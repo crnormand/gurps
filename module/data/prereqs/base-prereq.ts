@@ -57,4 +57,4 @@ type BasePrereqSchema = ReturnType<typeof basePrereqSchema>
 
 /* ---------------------------------------- */
 
-export { BasePrereq, type BasePrereqSchema }
+export { BasePrereq, basePrereqSchema, type BasePrereqSchema }

@@ -3,14 +3,11 @@ import { featureHolderSchema, IFeatureHolder } from '../../data/mixins/feature-h
 import { IPrereqHolder, prereqHolderSchema } from '../../data/mixins/prereq-holder.ts'
 import { fields } from '../../types/foundry/index.js'
 
-import { GcsBaseItemModel, GcsBaseItemSchema } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema } from './gcs-base.ts'
 
 class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements IFeatureHolder, IPrereqHolder {
   static override defineSchema(): GcsEquipmentSchema {
-    return {
-      ...super.defineSchema(),
-      ...gcsEquipmentSchema(),
-    }
+    return gcsEquipmentSchema()
   }
 
   /* ---------------------------------------- */
@@ -26,6 +23,7 @@ class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements 
 
 const gcsEquipmentSchema = () => {
   return {
+    ...gcsBaseItemSchema(),
     ...featureHolderSchema(),
     ...prereqHolderSchema(),
 
@@ -84,7 +82,7 @@ const gcsEquipmentSchema = () => {
   }
 }
 
-type GcsEquipmentSchema = ReturnType<typeof gcsEquipmentSchema> & GcsBaseItemSchema
+type GcsEquipmentSchema = ReturnType<typeof gcsEquipmentSchema>
 
 /* ---------------------------------------- */
 

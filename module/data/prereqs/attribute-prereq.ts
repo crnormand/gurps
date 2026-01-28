@@ -1,14 +1,11 @@
 import { fields } from '../../types/foundry/index.js'
 import { NumberCriteriaField } from '../criteria/number-criteria.ts'
 
-import { BasePrereq, BasePrereqSchema } from './base-prereq.ts'
+import { BasePrereq, basePrereqSchema } from './base-prereq.ts'
 
 class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
   static override defineSchema(): AttributePrereqSchema {
-    return {
-      ...super.defineSchema(),
-      ...attributePrereqSchema(),
-    }
+    return attributePrereqSchema()
   }
 }
 
@@ -16,6 +13,7 @@ class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
 
 const attributePrereqSchema = () => {
   return {
+    ...basePrereqSchema(),
     has: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     which: new fields.StringField({ required: true, nullable: false }),
     combinedWith: new fields.StringField({ required: true, nullable: true }),
@@ -23,7 +21,7 @@ const attributePrereqSchema = () => {
   }
 }
 
-type AttributePrereqSchema = ReturnType<typeof attributePrereqSchema> & BasePrereqSchema
+type AttributePrereqSchema = ReturnType<typeof attributePrereqSchema>
 
 /* ---------------------------------------- */
 
