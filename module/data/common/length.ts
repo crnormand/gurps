@@ -151,7 +151,8 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     function returnNull() {
       if (forced) return new Length({ value: 0, unit: Length.Unit.Inch })
 
-      // console.error('Invalid length string', text)
+      console.error('Invalid length string', text)
+
       return null
     }
 
@@ -192,7 +193,7 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
 
     if (inchesIndex !== -1) {
       if (feetIndex > inchesIndex) {
-        console.error(`Invalid lenght string format: ${text}`)
+        console.error(`Invalid length string format: ${text}`)
 
         return returnNull()
       }
