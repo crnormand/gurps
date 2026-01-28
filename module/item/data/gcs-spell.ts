@@ -78,7 +78,7 @@ const gcsSpellSchema = () => {
     duration: new fields.StringField({ required: true, nullable: false }),
     item: new fields.StringField({ required: true, nullable: false }),
     baseSkill: new fields.StringField({ required: true, nullable: false }),
-    preqCount: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    prereqCount: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
   }
 }
 
