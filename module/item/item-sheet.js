@@ -1,9 +1,9 @@
 'use strict'
 
-import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
-import { recurselist } from '../lib/utilities.js'
+import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
+import { recurselist } from '../../lib/utilities.js'
 
-import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components.js'
+import { Advantage, Melee, Ranged, Skill, Spell } from '../actor/actor-components.js'
 
 export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
   /** @override */
