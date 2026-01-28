@@ -50,10 +50,7 @@
     }
   },
   "download": "https://github.com/crnormand/gurps/releases/download/v0.18.10/system.zip",
-  "esmodules": [
-    "module/gurps.js",
-    "lib/xregexp-all.js"
-  ],
+  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "grid": {
     "distance": 1,
     "units": "yd"
@@ -106,14 +103,10 @@
     }
   ],
   "primaryTokenAttribute": "HP",
-  "scripts": [
-    "scripts/jquery.tinycolorpicker.js"
-  ],
+  "scripts": ["scripts/jquery.tinycolorpicker.js"],
   "secondaryTokenAttribute": "FP",
   "socket": true,
-  "styles": [
-    "gurps.css"
-  ],
+  "styles": ["gurps.css"],
   "title": "GURPS 4e Game Aid (Unofficial)",
   "url": "https://github.com/crnormand/gurps",
   "version": "1.0.0-alpha"
