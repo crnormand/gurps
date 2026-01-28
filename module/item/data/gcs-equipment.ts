@@ -1,3 +1,4 @@
+import { WeightUnit, WeightField } from '../../data/common/weight.ts'
 import { featureHolderSchema, IFeatureHolder } from '../../data/mixins/feature-holder.ts'
 import { IPrereqHolder, prereqHolderSchema } from '../../data/mixins/prereq-holder.ts'
 import { fields } from '../../types/foundry/index.js'
@@ -73,7 +74,11 @@ const gcsEquipmentSchema = () => {
     legalityClass: new fields.StringField({ required: true, nullable: false }),
     tags: new fields.ArrayField(new fields.StringField({ required: true, nullable: false })),
     baseValue: new fields.StringField({ required: true, nullable: false }),
-    baseWeight: new fields.StringField({ required: true, nullable: false }),
+    baseWeight: new WeightField({
+      required: true,
+      nullable: false,
+      initial: { value: 0, unit: WeightUnit.Pound },
+    }),
     maxUses: new fields.NumberField({ required: true, nullable: false }),
     ignoreWeightForSkills: new fields.BooleanField({ required: true, nullable: false }),
   }

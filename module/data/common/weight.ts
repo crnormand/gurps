@@ -1,3 +1,5 @@
+import { AnyObject } from 'fvtt-types/utils'
+
 import { DataModel, fields } from '../../types/foundry/index.ts'
 
 enum WeightUnit {
@@ -188,6 +190,63 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     return Weight.objectToString({ value: this.value, unit: this.unit })
   }
 }
+
 /* ---------------------------------------- */
 
-export { Weight, WeightUnit }
+namespace WeightField {
+  export type Options = fields.EmbeddedDataField.Options<typeof Weight>
+
+  /* ---------------------------------------- */
+
+  export type DefaultOptions = fields.EmbeddedDataField.DefaultOptions
+
+  /* ---------------------------------------- */
+
+  export type AssignmentType<Opts extends Options> = fields.EmbeddedDataField.AssignmentType<typeof Weight, Opts>
+
+  /* ---------------------------------------- */
+
+  export type InitializedType<Opts extends Options> = fields.EmbeddedDataField.InitializedType<typeof Weight, Opts>
+
+  /* ---------------------------------------- */
+
+  export type PersistedType<Opts extends Options> = fields.EmbeddedDataField.PersistedType<typeof Weight, Opts>
+}
+
+/* ---------------------------------------- */
+
+class WeightField<
+  const Options extends WeightField.Options,
+  const AssignmentType = WeightField.AssignmentType<Options>,
+  const InitializedType = WeightField.InitializedType<Options>,
+  const PersistedType extends AnyObject | null | undefined = WeightField.PersistedType<Options>,
+> extends fields.EmbeddedDataField<typeof Weight, Options, AssignmentType, InitializedType, PersistedType> {
+  constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
+    super(Weight, options, context)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _cast(value: unknown): AssignmentType {
+    if (typeof value === 'string' || typeof value === 'number') {
+      // TODO: find some way of replacing the defaultUnit value here. Probably options
+      const weight = Weight.from(value, WeightUnit.Pound)
+
+      if (weight) return weight.toObject() as AssignmentType
+    }
+
+    return super._cast(value)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _toInput(config: fields.DataField.ToInputConfig<InitializedType>): HTMLElement | HTMLCollection {
+    const stringConfig: fields.StringField.Options = { ...config }
+
+    return foundry.applications.fields.createTextInput(stringConfig)
+  }
+}
+
+/* ---------------------------------------- */
+
+export { Weight, WeightUnit, WeightField }
