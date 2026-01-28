@@ -96,6 +96,8 @@ function extractRefFromAttributeOrDefense(chatThing) {
 }
 
 export class GurpsActor extends Actor {
+  strengthCalculator = new StrengthCalculator()
+
   /** @override */
   getRollData() {
     const data = super.getRollData()
@@ -198,13 +200,15 @@ export class GurpsActor extends Actor {
     super.prepareEmbeddedEntities()
   }
 
-  async prepareDerivedData() {
+  prepareDerivedData() {
     super.prepareDerivedData()
 
-    this.strengthCalculator = new StrengthCalculator(parseInt(this.system.attributes.ST.import.toString()))
-    this._setBasicLift(this.strengthCalculator.calculateLift())
-    this.system.thrust = this.strengthCalculator.calculateThrustDamage()
-    this.system.swing = this.strengthCalculator.calculateSwingDamage()
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTO_UPDATE_STRENGTH)) {
+      this.strengthCalculator.strength = this.system.attributes.ST.import
+      this._setBasicLift(this.strengthCalculator.calculateLift())
+      this.system.thrust = this.strengthCalculator.calculateThrustDamage()
+      this.system.swing = this.strengthCalculator.calculateSwingDamage()
+    }
 
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
@@ -229,16 +233,24 @@ export class GurpsActor extends Actor {
 
   /**
    * Update the basic lift and recalculate encumbrance levels and lifting.
-   * @param {*} basicLift 
+   * @param {*} basicLift
    */
   _setBasicLift(basicLift) {
     this.system.basiclift = basicLift
-    
+
     const unit = this.system.encumbrance['00000']?.weight?.toString().split(' ')[1] || 'lb'
-    const encumbranceLevels = await calculateEncumbranceLevels(this.system.basiclift, 0, unit, {})
+    const encumbranceLevels = calculateEncumbranceLevels(this.system.basiclift, 0, unit, {})
     for (const [key, value] of Object.entries(encumbranceLevels)) {
       this.system.encumbrance[key].weight = value.weight
     }
+
+    this.system.liftingmoving.basiclift = basicLift
+    this.system.liftingmoving.onehandedlift = basicLift * 2
+    this.system.liftingmoving.twohandedlift = basicLift * 8
+    this.system.liftingmoving.shove = basicLift * 12
+    this.system.liftingmoving.carryonback = basicLift * 15
+    this.system.liftingmoving.runningshove = basicLift * 24
+    this.system.liftingmoving.shiftslightly = basicLift * 50
   }
 
   // execute after every import.

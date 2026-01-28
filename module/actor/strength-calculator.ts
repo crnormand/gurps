@@ -1,5 +1,5 @@
 // Create a class that given a ST value will calculate the derived attributes for an actor:
-// Lift, Carry, Move, and Basic Speed, and Swing and Thrust damage.
+// Basic Lift and Swing and Thrust damage.
 // This class should implement the Strategy pattern to allow for different calculation methods in the future.
 export interface StrengthCalculatorStrategy {
   calculateLift(strength: number): number
@@ -27,16 +27,12 @@ export class BasicSetStrategy implements StrengthCalculatorStrategy {
 }
 
 export class StrengthCalculator {
-  private strategy: StrengthCalculatorStrategy
-  private strength: number
+  strategy: StrengthCalculatorStrategy
+  strength: number
 
-  constructor(strength: number) {
+  constructor(strength: number = 10) {
     this.strategy = new BasicSetStrategy()
     this.strength = strength
-  }
-
-  setStrategy(strategy: StrengthCalculatorStrategy) {
-    this.strategy = strategy
   }
 
   calculateLift(): number {

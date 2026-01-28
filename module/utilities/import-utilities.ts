@@ -34,27 +34,34 @@ export function buildDamageOutput(weapon: Record<string, any> | null | undefined
   return `${weapon.damage.st}${sign}${modifier === 0 ? '' : modifier} ${weapon.damage.type}`
 }
 
+type Encumbrance = {
+  level: number
+  current: boolean
+  key: string
+  weight: string
+  move: number
+  dodge: number
+}
+
 /**
  * Given the basic lift, carried weight, and weight units, calculate encumbrance levels.
  * @param basicLift
  * @param carriedWeight
  * @param weightUnits
  * @param calc
- * @returns A promise that resolves to a record of encumbrance levels, with the current level marked.
+ * @returns A record of encumbrance levels, with the current level marked.
  */
-export async function calculateEncumbranceLevels(
+export function calculateEncumbranceLevels(
   basicLift: number,
   carriedWeight: number,
   weightUnits: string,
-  calc: any
-): Promise<Record<string, typeof Encumbrance>> {
-  // Dynamically import to avoid mocking all actor-component dependencies when unit testing.
-  const { Encumbrance } = await import('../actor/actor-components.js')
-  let es = {}
+  calc: { move?: number[]; dodge?: number[] } = {}
+): Record<string, Encumbrance> {
+  let es: Record<string, Encumbrance> = {}
   const encumbranceLevelWeightFactors = [1, 2, 3, 6, 10]
 
   for (let encumbranceLevelIndex = 0; encumbranceLevelIndex <= 4; encumbranceLevelIndex++) {
-    let encumbrance = new Encumbrance()
+    let encumbrance: Encumbrance = { level: 0, current: false, key: '', weight: '', move: 0, dodge: 0 }
     encumbrance.level = encumbranceLevelIndex
     encumbrance.current = false
     encumbrance.key = 'enc' + encumbranceLevelIndex

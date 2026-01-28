@@ -326,6 +326,12 @@
     "colorSheetMenuColorAreas": "Áreas de Cor",
     "colorSheetMenuCustomColors": "Cores Personalizadas",
     "colorSheetMenuOverride": "Desconsiderar Cores",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Atualizar Força Automaticamente",
+        "autoUpdateStrengthHint": "Atualizar automaticamente Força, Carga Básica, dano de Golpe e Balanço quando o ST muda."
+      }
+    },
     "combat": {
       "rof": {
         "bonusLabel": "Cadência {shots}",

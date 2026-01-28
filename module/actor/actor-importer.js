@@ -1532,7 +1532,7 @@ export class ActorImporter {
     data.vision = atts.find(e => e.attr_id === 'vision')?.calc?.value || 0
 
     let total_carried = this.calcTotalCarried(eqp)
-    const encumbranceLevels = await calculateEncumbranceLevels(bl_value, total_carried, bl_unit, calc)
+    const encumbranceLevels = calculateEncumbranceLevels(bl_value, total_carried, bl_unit, calc)
     const currentMove = Object.values(encumbranceLevels).find(e => e.current)?.move || 0
     const currentDodge = Object.values(encumbranceLevels).find(e => e.current)?.dodge || 0
 
