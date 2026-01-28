@@ -1,5 +1,4 @@
 import { Length } from '../../data/common/length.js'
-import { TidField } from '../../data/fields/tid-field.ts'
 import { fields } from '../../types/foundry/index.ts'
 
 import { BaseActorModel } from './base.ts'
@@ -248,7 +247,7 @@ const gcsCharacterSchema = () => {
     // ModifiedOn       jio.Time        `json:"modified_date"`
     // ThirdParty       map[string]any  `json:"third_party,omitzero"`
     version: new fields.NumberField({ required: true, nullable: false, initial: GcsCharacterVersion }),
-    id: new TidField({ kind: TidField.TidKind.Entity, required: true, nullable: false }),
+    tid: new fields.DocumentIdField({ required: true, nullable: false, initial: foundry.utils.randomID }),
     totalPoints: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     pointsRecord: new fields.ArrayField(new fields.SchemaField(pointsRecordSchema()), {
       required: true,

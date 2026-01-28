@@ -1,8 +1,8 @@
-import { BaseAction } from '../../action/base-action.js'
-import { CollectionField } from '../../data/fields/collection-field.js'
-import { IContainable, containableSchema } from '../../data/mixins/containable.js'
-import { ContainerUtils } from '../../data/mixins/container-utils.js'
-import { fields, TypeDataModel } from '../../types/foundry/index.js'
+import { BaseAction } from '../../action/base-action.ts'
+import { CollectionField } from '../../data/fields/collection-field.ts'
+import { IContainable, containableSchema } from '../../data/mixins/containable.ts'
+import { ContainerUtils } from '../../data/mixins/container-utils.ts'
+import { fields, TypeDataModel } from '../../types/foundry/index.ts'
 
 type GcsItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -255,6 +255,22 @@ const gcsBaseItemSchema = () => {
   return {
     // Include containable functionality
     ...containableSchema(),
+
+    tid: new fields.DocumentIdField({ required: true, nullable: false, initial: foundry.utils.randomID }),
+    // NOTE: Not currently used in GGA, just for GCS parity
+    source: new fields.SchemaField(
+      {
+        // Library string `json:"library"`
+        // Path    string `json:"path"`
+        // TID tid.TID `json:"id"`
+        library: new fields.StringField({ required: true, nullable: false }),
+        path: new fields.StringField({ required: true, nullable: false }),
+        id: new fields.StringField({ required: true, nullable: false }),
+      },
+      { required: true, nullable: true }
+    ),
+    reference: new fields.StringField({ required: true, nullable: false }),
+    referenceHighlight: new fields.StringField({ required: true, nullable: false }),
 
     actions: new CollectionField(BaseAction),
     isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
