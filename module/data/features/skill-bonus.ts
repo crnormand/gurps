@@ -1,13 +1,10 @@
 import { fields } from '../../types/foundry/index.js'
 
-import { BaseFeatureModel, BaseFeatureSchema } from './base.ts'
+import { BaseFeatureModel, baseFeatureSchema } from './base-feature.ts'
 
 class SkillBonus extends BaseFeatureModel<SkillBonusSchema> {
   static override defineSchema(): SkillBonusSchema {
-    return {
-      ...super.defineSchema(),
-      ...skillBonusSchema(),
-    }
+    return skillBonusSchema()
   }
 }
 
@@ -15,11 +12,12 @@ class SkillBonus extends BaseFeatureModel<SkillBonusSchema> {
 
 const skillBonusSchema = () => {
   return {
+    ...baseFeatureSchema(),
     selectionType: new fields.StringField({ required: true, nullable: false, choices: [] }),
   }
 }
 
-type SkillBonusSchema = ReturnType<typeof skillBonusSchema> & BaseFeatureSchema
+type SkillBonusSchema = ReturnType<typeof skillBonusSchema>
 
 /* ---------------------------------------- */
 

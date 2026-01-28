@@ -1,4 +1,4 @@
-import { DataModel, fields } from '../../types/foundry/index.js'
+import { DataModel, fields } from '../../types/foundry/index.ts'
 
 class BaseFeatureModel<Schema extends BaseFeatureSchema> extends DataModel<Schema> {
   static override defineSchema(): BaseFeatureSchema {
@@ -18,4 +18,4 @@ type BaseFeatureSchema = ReturnType<typeof baseFeatureSchema>
 
 /* ---------------------------------------- */
 
-export { BaseFeatureModel, type BaseFeatureSchema }
+export { BaseFeatureModel, baseFeatureSchema, type BaseFeatureSchema }
