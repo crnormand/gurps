@@ -234,6 +234,17 @@ abstract class GcsBaseItemModel<Schema extends GcsBaseItemSchema = GcsBaseItemSc
       action.prepareDerivedData()
     })
   }
+
+  /* ---------------------------------------- */
+  /*  Legacy Parity                           */
+  /* ---------------------------------------- */
+
+  // These functions and accessors currently exist only for the sake of parity with older item data models,
+  // but otherwise remain as stubs to be implemented later.
+
+  get itemModifiers(): string {
+    return ''
+  }
 }
 
 /* ---------------------------------------- */
