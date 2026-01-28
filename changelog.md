@@ -2,6 +2,9 @@
 
 ## Release 0.18.12
 
+### Features
+- Automatically update Swing, Thrust, and Basic Lift when updating ST.
+
 ### Bugfixes
 
 - Modern UI sheet uses `GURPS.LastActor` as actor target instead of sheet actor \#2472
