@@ -3,6 +3,7 @@ import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
+import { buildDamageOutput } from '../utilities/import-utilities.ts'
 import {
   Advantage,
   Encumbrance,
@@ -173,6 +174,8 @@ export class ActorImporter {
         ...commit,
         ...this.importSizeFromGCS(commit, r.profile, r.traits || r.advantages || [], r.skills, r.equipment),
       }
+
+      // TODO Continue from here.
       commit = { ...commit, ...(await this.importAdsFromGCS(r.traits || r.advantages || [])) }
       commit = { ...commit, ...(await this.importSkillsFromGCS(r.skills)) }
       commit = { ...commit, ...(await this.importSpellsFromGCS(r.spells)) }
@@ -196,7 +199,7 @@ export class ActorImporter {
       commit = { ...commit, ...this.importReactionsFromGCS(r.traits || r.advantages || [], r.skills, r.equipment) }
       commit = {
         ...commit,
-        ...this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment),
+        ...(await this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment)),
       }
     } catch (err) {
       console.log(err.stack)
@@ -438,8 +441,8 @@ export class ActorImporter {
       commit = { ...commit, ...(await this.importAttributesFromGCA(c.attributes)) }
       commit = { ...commit, ...(await this.importSkillsFromGCA(c.abilities?.skilllist)) }
       commit = { ...commit, ...this.importTraitsfromGCA(c.traits) }
-      commit = { ...commit, ...this.importCombatMeleeFromGCA(c.combat?.meleecombatlist) }
-      commit = { ...commit, ...this.importCombatRangedFromGCA(c.combat?.rangedcombatlist) }
+      commit = { ...commit, ...(await this.importCombatMeleeFromGCA(c.combat?.meleecombatlist)) }
+      commit = { ...commit, ...(await this.importCombatRangedFromGCA(c.combat?.rangedcombatlist)) }
       commit = { ...commit, ...(await this.importSpellsFromGCA(c.abilities?.spelllist)) }
       commit = { ...commit, ...this.importLangFromGCA(c.traits?.languagelist) }
       commit = { ...commit, ...(await this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist)) }
@@ -706,6 +709,13 @@ export class ActorImporter {
       })
     }
 
+    // When using Foundry Items, advantages are stored as feature Items, not in system.ads
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=ads': null,
+      }
+    }
+
     return {
       'system.-=ads': null,
       'system.ads': this.foldList(list),
@@ -784,6 +794,13 @@ export class ActorImporter {
       })
     }
 
+    // When using Foundry Items, skills are stored as skill Items, not in system.skills
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=skills': null,
+      }
+    }
+
     return {
       'system.-=skills': null,
       'system.skills': this.foldList(temp),
@@ -847,6 +864,13 @@ export class ActorImporter {
       })
     }
 
+    // When using Foundry Items, spells are stored as spell Items, not in system.spells
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=spells': null,
+      }
+    }
+
     return {
       'system.-=spells': null,
       'system.spells': this.foldList(temp),
@@ -856,9 +880,10 @@ export class ActorImporter {
   /**
    * @param {{ [key: string]: any }} json
    */
-  importCombatMeleeFromGCA(json) {
+  async importCombatMeleeFromGCA(json) {
     if (!json) return
     let t = this.textFrom
+
     let melee = {}
     let index = 0
     for (let key in json) {
@@ -890,9 +915,21 @@ export class ActorImporter {
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, t(j2.vtt_notes))
 
+            // When using Foundry Items, process through _processItemFrom to create Items
+            if (this.isUsingFoundryItems()) {
+              m = await this._processItemFrom(m, 'GCA')
+            }
+
             GURPS.put(melee, m, index++)
           }
         }
+      }
+    }
+
+    // When using Foundry Items, melee attacks are stored as melee Items, not in system.melee
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=melee': null,
       }
     }
     return {
@@ -904,9 +941,10 @@ export class ActorImporter {
   /**
    * @param {{ [key: string]: any }} json
    */
-  importCombatRangedFromGCA(json) {
+  async importCombatRangedFromGCA(json) {
     if (!json) return
     let t = this.textFrom
+
     let ranged = {}
     let index = 0
     for (let key in json) {
@@ -946,9 +984,21 @@ export class ActorImporter {
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, t(j2.vtt_notes))
 
+            // When using Foundry Items, process through _processItemFrom to create Items
+            if (this.isUsingFoundryItems()) {
+              r = await this._processItemFrom(r, 'GCA')
+            }
+
             GURPS.put(ranged, r, index++)
           }
         }
+      }
+    }
+
+    // When using Foundry Items, ranged attacks are stored as ranged Items, not in system.ranged
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=ranged': null,
       }
     }
     return {
@@ -1000,6 +1050,7 @@ export class ActorImporter {
     }
   }
 
+  // Ignore if using Foundry Items.
   async _preImport(generator, itemType) {
     if (!this.isUsingFoundryItems()) {
       // Before we import, we need to find all eligible items,
@@ -1641,6 +1692,13 @@ export class ActorImporter {
       })
     }
 
+    // When using Foundry Items, advantages are stored as feature Items, not in system.ads
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=ads': null,
+      }
+    }
+
     return {
       'system.-=ads': null,
       'system.ads': this.foldList(temp),
@@ -1718,6 +1776,13 @@ export class ActorImporter {
       })
     }
 
+    // When using Foundry Items, skills are stored as skill Items, not in system.skills
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=skills': null,
+      }
+    }
+
     return {
       'system.-=skills': null,
       'system.skills': this.foldList(temp),
@@ -1786,6 +1851,13 @@ export class ActorImporter {
         }
       }
     })
+
+    // When using Foundry Items, spells are stored as spell Items, not in system.spells
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=spells': null,
+      }
+    }
 
     return {
       'system.-=spells': null,
@@ -1893,9 +1965,31 @@ export class ActorImporter {
 
     for (const eqt of temp) {
       await Equipment.calc(eqt)
+
+      // TODO Update Foundry Item.
+      if (this.isUsingFoundryItems()) {
+        const item = this.actor.items.get(eqt.itemid)
+        if (!!item) {
+          const itemSysContain = `system.${item.itemSysKey}.`
+          await this.actor.updateEmbeddedDocuments('Item', [
+            {
+              _id: item._id,
+              eqt,
+            },
+          ])
+        }
+      }
+
       if (!eqt.parentuuid) {
         if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
         else GURPS.put(equipment.other, eqt, oindex++)
+      }
+    }
+
+    // When using Foundry Items, equipment is stored as equipment Items, not in system.equipment
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=equipment': null,
       }
     }
     return {
@@ -2242,7 +2336,7 @@ export class ActorImporter {
     }
   }
 
-  importCombatFromGCS(ads, skills, spells, equipment) {
+  async importCombatFromGCS(ads, skills, spells, equipment) {
     let melee = {}
     let ranged = {}
     let m_index = 0
@@ -2270,13 +2364,18 @@ export class ActorImporter {
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
             m.import = w.calc?.level?.toString() || '0'
-            m.damage = w.calc?.damage || ''
+            m.damage = buildDamageOutput(w)
             m.reach = w.reach || ''
             m.parry = w.calc?.parry || ''
             m.block = w.calc?.block || ''
             m = this._substituteItemReplacements(m, i)
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, i.vtt_notes, w.usage_notes)
+
+            // When using Foundry Items, process through _processItemFrom to create Items
+            if (this.isUsingFoundryItems()) {
+              m = await this._processItemFrom(m, 'GCS')
+            }
 
             GURPS.put(melee, m, m_index++)
           } else if (w.type == 'ranged_weapon') {
@@ -2291,7 +2390,7 @@ export class ActorImporter {
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
             r.import = w.calc?.level || '0'
-            r.damage = w.calc?.damage || ''
+            r.damage = buildDamageOutput(w)
             r.acc = w.accuracy || ''
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
@@ -2306,11 +2405,25 @@ export class ActorImporter {
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, i.vtt_notes, w.usage_notes)
 
+            // When using Foundry Items, process through _processItemFrom to create Items
+            if (this.isUsingFoundryItems()) {
+              r = await this._processItemFrom(r, 'GCS')
+            }
+
             GURPS.put(ranged, r, r_index++)
           }
         }
       }
     }
+
+    // When using Foundry Items, melee and ranged attacks are stored as Items, not in system.melee/ranged
+    if (this.isUsingFoundryItems()) {
+      return {
+        'system.-=melee': null,
+        'system.-=ranged': null,
+      }
+    }
+
     return {
       'system.-=melee': null,
       'system.melee': melee,
@@ -2606,7 +2719,10 @@ export class ActorImporter {
       const componentType = actorComp.constructor.name.toLowerCase()
 
       const existingItem = this.actor.items.find(i => {
-        const itemType = i.type === 'feature' ? 'advantage' : i.type
+        const itemType = i.type
+          .replace('feature', 'advantage')
+          .replace('rangedAtk', 'ranged')
+          .replace('meleeAtk', 'melee')
         return (
           itemType === componentType &&
           (i.system.importid === actorComp.uuid ||

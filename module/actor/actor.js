@@ -199,6 +199,14 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
 
+    // Build in-memory data structures from Items
+    this._buildFeaturesFromItems()
+    this._buildSkillsFromItems()
+    this._buildSpellsFromItems()
+    this._buildEquipmentFromItems()
+    this._buildMeleeFromItems()
+    this._buildRangedFromItems()
+
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
     if (this.system.encumbrance) {
@@ -218,6 +226,288 @@ export class GurpsActor extends Actor {
     }
 
     this.calculateDerivedValues()
+  }
+
+  /**
+   * Build in-memory system.ads from Items of type 'feature'.
+   * This allows the rest of the code to continue working with system.ads
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildFeaturesFromItems() {
+    // Initialize empty advantages object
+    this.system.ads = {}
+
+    // Populate from feature Items
+    const topLevelFeatures = this.items.contents.filter(item => item.type === 'feature' && !item.system.fea.parentuuid)
+    for (const item of topLevelFeatures) {
+      this._addFeaturesAndChildren(item, this.system.ads)
+    }
+  }
+
+  /**
+   * Recursively add an advantage and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The feature item
+   * @param {Object} collection - The collection to add to
+   */
+  _addFeaturesAndChildren(item, collection) {
+    const advantage = foundry.utils.duplicate(item.system.fea)
+    if (!advantage.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    advantage.itemid = item.id
+
+    // Add the advantage to the collection
+    GURPS.put(collection, advantage)
+
+    // Initialize contains if not present
+    if (!advantage.contains) advantage.contains = {}
+
+    // Find and add child features
+    const childFeatures = this.items.contents.filter(
+      child => child.type === 'feature' && child.system.fea.parentuuid === advantage.uuid
+    )
+    for (const childItem of childFeatures) {
+      this._addFeaturesAndChildren(childItem, advantage.contains)
+    }
+  }
+
+  /**
+   * Build in-memory system.skills from Items of type 'skill'.
+   * This allows the rest of the code to continue working with system.skills
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildSkillsFromItems() {
+    // Initialize empty skills object
+    this.system.skills = {}
+
+    // Populate from skill Items
+    const topLevelSkills = this.items.contents.filter(item => item.type === 'skill' && !item.system.ski.parentuuid)
+    for (const item of topLevelSkills) {
+      this._addSkillsAndChildren(item, this.system.skills)
+    }
+  }
+
+  /**
+   * Recursively add a skill and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The skill item
+   * @param {Object} collection - The collection to add to
+   */
+  _addSkillsAndChildren(item, collection) {
+    const skill = foundry.utils.duplicate(item.system.ski)
+    if (!skill.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    skill.itemid = item.id
+
+    // Add the skill to the collection
+    GURPS.put(collection, skill)
+
+    // Initialize contains if not present
+    if (!skill.contains) skill.contains = {}
+
+    // Find and add child skills
+    const childSkills = this.items.contents.filter(
+      child => child.type === 'skill' && child.system.ski.parentuuid === skill.uuid
+    )
+    for (const childItem of childSkills) {
+      this._addSkillsAndChildren(childItem, skill.contains)
+    }
+  }
+
+  /**
+   * Build in-memory system.spells from Items of type 'spell'.
+   * This allows the rest of the code to continue working with system.spells
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildSpellsFromItems() {
+    // Initialize empty spells object
+    this.system.spells = {}
+
+    // Populate from spell Items
+    const topLevelSpells = this.items.contents.filter(item => item.type === 'spell' && !item.system.spl.parentuuid)
+    for (const item of topLevelSpells) {
+      this._addSpellsAndChildren(item, this.system.spells)
+    }
+  }
+
+  /**
+   * Recursively add a spell and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The spell item
+   * @param {Object} collection - The collection to add to
+   */
+  _addSpellsAndChildren(item, collection) {
+    const spell = foundry.utils.duplicate(item.system.spl)
+    if (!spell.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    spell.itemid = item.id
+
+    // Add the spell to the collection
+    GURPS.put(collection, spell)
+
+    // Initialize contains if not present
+    if (!spell.contains) spell.contains = {}
+
+    // Find and add child spells
+    const childSpells = this.items.contents.filter(
+      child => child.type === 'spell' && child.system.spl.parentuuid === spell.uuid
+    )
+    for (const childItem of childSpells) {
+      this._addSpellsAndChildren(childItem, spell.contains)
+    }
+  }
+
+  /**
+   * Build in-memory system.eqt from Items of type 'equipment'.
+   * This allows the rest of the code to continue working with system.eqt
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildEquipmentFromItems() {
+    // Initialize empty equipment object
+    this.system.equipment = {
+      carried: {},
+      other: {},
+    }
+
+    // Populate from equipment Items
+    const topLevelEquipment = this.items.contents.filter(
+      item => item.type === 'equipment' && !item.system.eqt.parentuuid && item.system.eqt.carried
+    )
+    for (const item of topLevelEquipment) {
+      this._addEquipmentAndChildren(item, this.system.equipment.carried)
+    }
+
+    const topLevelOtherEquipment = this.items.contents.filter(
+      item => item.type === 'equipment' && !item.system.eqt.parentuuid && !item.system.eqt.carried
+    )
+    for (const item of topLevelOtherEquipment) {
+      this._addEquipmentAndChildren(item, this.system.equipment.other)
+    }
+  }
+
+  /**
+   * Recursively add an equipment and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The equipment item
+   * @param {Object} collection - The collection to add to
+   */
+  _addEquipmentAndChildren(item, collection) {
+    const equipment = foundry.utils.duplicate(item.system.eqt)
+    if (!equipment.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    equipment.itemid = item.id
+
+    // Add the equipment to the collection
+    GURPS.put(collection, equipment)
+
+    // Initialize contains if not present
+    if (!equipment.contains) equipment.contains = {}
+
+    // Find and add child equipment
+    const childEquipment = this.items.contents.filter(
+      child => child.type === 'equipment' && child.system.eqt.parentuuid === equipment.uuid
+    )
+    for (const childItem of childEquipment) {
+      this._addEquipmentAndChildren(childItem, equipment.contains)
+    }
+  }
+
+  /**
+   * Build in-memory system.melee from Items of type 'melee'.
+   * This allows the rest of the code to continue working with system.melee
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildMeleeFromItems() {
+    // Initialize empty melee object
+    this.system.melee = {}
+
+    // Populate from melee Items
+    const topLevelMelee = this.items.contents.filter(item => item.type === 'meleeAtk' && !item.system.mel.parentuuid)
+    for (const item of topLevelMelee) {
+      this._addMeleeAndChildren(item, this.system.melee)
+    }
+  }
+
+  /**
+   * Recursively add a melee attack and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The melee item
+   * @param {Object} collection - The collection to add to
+   */
+  _addMeleeAndChildren(item, collection) {
+    const melee = foundry.utils.duplicate(item.system.mel)
+    if (!melee.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    melee.itemid = item.id
+
+    // Add the melee to the collection
+    GURPS.put(collection, melee)
+
+    // Initialize contains if not present
+    if (!melee.contains) melee.contains = {}
+
+    // Find and add child melee
+    const childMelee = this.items.contents.filter(
+      child => child.type === 'meleeAtk' && child.system.mel.parentuuid === melee.uuid
+    )
+    for (const childItem of childMelee) {
+      this._addMeleeAndChildren(childItem, melee.contains)
+    }
+  }
+
+  /**
+   * Build in-memory system.ranged from Items of type 'ranged'.
+   * This allows the rest of the code to continue working with system.ranged
+   * while the source of truth is now the Items collection.
+   * Children are stored in the parent's `contains` field.
+   */
+  _buildRangedFromItems() {
+    // Initialize empty ranged object
+    this.system.ranged = {}
+
+    // Populate from ranged Items
+    const topLevelRanged = this.items.contents.filter(item => item.type === 'rangedAtk' && !item.system.rng.parentuuid)
+    for (const item of topLevelRanged) {
+      this._addRangedAndChildren(item, this.system.ranged)
+    }
+  }
+
+  /**
+   * Recursively add a ranged attack and its children to a collection.
+   * Children are placed in the parent's `contains` field.
+   * @param {GurpsItem} item - The ranged item
+   * @param {Object} collection - The collection to add to
+   */
+  _addRangedAndChildren(item, collection) {
+    const ranged = foundry.utils.duplicate(item.system.rng)
+    if (!ranged.uuid) return
+
+    // Link back to the source Item so double-click opens the Item editor
+    ranged.itemid = item.id
+
+    // Add the ranged to the collection
+    GURPS.put(collection, ranged)
+
+    // Initialize contains if not present
+    if (!ranged.contains) ranged.contains = {}
+
+    // Find and add child ranged
+    const childRanged = this.items.contents.filter(
+      child => child.type === 'rangedAtk' && child.system.rng.parentuuid === ranged.uuid
+    )
+    for (const childItem of childRanged) {
+      this._addRangedAndChildren(childItem, ranged.contains)
+    }
   }
 
   // execute after every import.
@@ -261,6 +551,42 @@ export class GurpsActor extends Actor {
     await this.setResourceTrackers()
     await this.syncLanguages()
 
+    // Clear persisted system.ads if it exists and there are feature Items to replace it
+    const hasFeatureItems = this.items.contents.some(item => item.type === 'feature')
+    if (hasFeatureItems && Object.keys(this.system.ads).length > 0) {
+      await this.internalUpdate({ 'system.ads': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.skills if it exists and there are skill Items to replace it
+    const hasSkillItems = this.items.contents.some(item => item.type === 'skill')
+    if (hasSkillItems && Object.keys(this.system.skills).length > 0) {
+      await this.internalUpdate({ 'system.skills': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.spells if it exists and there are spell Items to replace it
+    const hasSpellItems = this.items.contents.some(item => item.type === 'spell')
+    if (hasSpellItems && Object.keys(this.system.spells).length > 0) {
+      await this.internalUpdate({ 'system.spells': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.eqt if it exists and there are equipment Items to replace it
+    const hasEquipmentItems = this.items.contents.some(item => item.type === 'equipment')
+    if (hasEquipmentItems && Object.keys(this.system.equipment).length > 0) {
+      await this.internalUpdate({ 'system.equipment': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.melee if it exists and there are melee Items to replace it
+    const hasMeleeItems = this.items.contents.some(item => item.type === 'melee')
+    if (hasMeleeItems && Object.keys(this.system.melee).length > 0) {
+      await this.internalUpdate({ 'system.melee': {} }, { diff: false, render: false })
+    }
+
+    // Clear persisted system.ranged if it exists and there are ranged Items to replace it
+    const hasRangedItems = this.items.contents.some(item => item.type === 'ranged')
+    if (hasRangedItems && Object.keys(this.system.ranged).length > 0) {
+      await this.internalUpdate({ 'system.ranged': {} }, { diff: false, render: false })
+    }
+
     // If using Foundry Items we can remove Modifier Effects from Actor Components
     const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
@@ -287,22 +613,27 @@ export class GurpsActor extends Actor {
   }
 
   // Ensure Language Advantages conform to a standard (for Polygot module)
+  // Creates feature Items for languages instead of updating system.ads directly
   async syncLanguages() {
     if (this.system.languages) {
-      let updated = false
-      let newads = { ...this.system.ads }
       let langn = /Language:?/i
       let langt = new RegExp(game.i18n.localize('GURPS.language') + ':?', 'i')
+      const itemsToCreate = []
+
       recurselist(this.system.languages, (e, _k, _d) => {
         let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
         if (a) {
           if (!a.name.match(langn) && !a.name.match(langt)) {
-            // GCA4/GCS style
-            a.name = game.i18n.localize('GURPS.language') + ': ' + a.name
-            updated = true
+            // GCA4/GCS style - update existing feature Item
+            const existingItem = this.items.contents.find(
+              item => item.type === 'feature' && item.system.fea.uuid === a.uuid
+            )
+            if (existingItem) {
+              existingItem.update({ 'system.fea.name': game.i18n.localize('GURPS.language') + ': ' + a.name })
+            }
           }
         } else {
-          // GCA5 style (Language without Adv)
+          // GCA5 style (Language without Adv) - create new feature Item
           let n = game.i18n.localize('GURPS.language') + ': ' + e.name
           if (e.spoken == e.written)
             // If equal, then just report single level
@@ -311,15 +642,25 @@ export class GurpsActor extends Actor {
             // Otherwise, report type and level (like GCA4)
             n += ' (' + game.i18n.localize('GURPS.spoken') + ') (' + e.spoken + ')'
           else n += ' (' + game.i18n.localize('GURPS.written') + ') (' + e.written + ')'
-          let a = new Advantage()
-          a.name = n
-          a.points = e.points
-          GURPS.put(newads, a)
-          updated = true
+
+          const languageAdv = new Advantage()
+          languageAdv.name = n
+          languageAdv.points = e.points
+          languageAdv.uuid = foundry.utils.randomID(16)
+
+          itemsToCreate.push({
+            type: 'feature',
+            name: n,
+            system: {
+              fea: languageAdv,
+            },
+          })
         }
       })
-      if (updated) {
-        await this.internalUpdate({ 'system.ads': newads })
+
+      // Create all new language Items at once
+      if (itemsToCreate.length > 0) {
+        await this.createEmbeddedDocuments('Item', itemsToCreate)
       }
     }
   }
@@ -991,6 +1332,28 @@ export class GurpsActor extends Actor {
     return Math.max(1, step)
   }
 
+  async _preUpdate(changed, options, user) {
+    if (changed.system?.ads) {
+      console.debug('ITEMS: ads changed', changed.system.ads)
+    }
+    if (changed.system?.skills) {
+      console.debug('ITEMS: skills changed', changed.system.skills)
+    }
+    if (changed.system?.spells) {
+      console.debug('ITEMS: spells changed', changed.system.spells)
+    }
+    if (changed.system?.equipment) {
+      console.debug('ITEMS: equipment changed', changed.system.equipment)
+    }
+    if (changed.system?.melee) {
+      console.debug('ITEMS: melee changed', changed.system.melee)
+    }
+    if (changed.system?.ranged) {
+      console.debug('ITEMS: ranged changed', changed.system.ranged)
+    }
+    return super._preUpdate(changed, options, user)
+  }
+
   /**
    * Update this Document using incremental data, saving it to the database.
    * @see {@link Document.updateDocuments}
@@ -1546,6 +1909,8 @@ export class GurpsActor extends Actor {
           })
         }
 
+        // Store nested data on parent Item for reference (but won't be used for rendering,
+        // child Items will be created via _addItemAdditions)
         await this.updateEmbeddedDocuments('Item', [
           {
             _id: parentItem.id,
@@ -1915,7 +2280,7 @@ export class GurpsActor extends Actor {
 
   /**
    * Process Child Items from Parent Item.
-   *
+   * NOTE: This should only be called when USE_FOUNDRY_ITEMS is FALSE.
    * Why I did not use the original code? Too complex to add new scenarios.
    *
    * @param parentItem
@@ -2645,7 +3010,13 @@ export class GurpsActor extends Actor {
 
     // Update Item
     item.system.modifierTags = cleanTags(item.system.modifierTags).join(', ')
-    await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
+    await this.updateEmbeddedDocuments('Item', [
+      {
+        _id: item.id,
+        system: item.system,
+        name: item.name,
+      },
+    ])
 
     // Update Actor Component
     const itemInfo = item.getItemInfo()
