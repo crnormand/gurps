@@ -92,7 +92,7 @@ global.foundry = {
     // @ts-expect-error - mock namespace for testing
     fields: {
       // @ts-expect-error - mock class for testing
-      TypedSchemaField: class TypedSchemaField {
+      TypedSchemaField: class {
         constructor(types, options) {
           this.types = types
           this.options = options
@@ -103,47 +103,53 @@ global.foundry = {
         }
       },
       // @ts-expect-error - mock class for testing
-      TypedObjectField: class TypedObjectField {
+      TypedObjectField: class {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      SchemaField: class SchemaField {
+      SchemaField: class {
         constructor(schema, options) {
           this.schema = schema
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      StringField: class StringField {
+      StringField: class {
         constructor(options) {
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      NumberField: class NumberField {
+      NumberField: class {
         constructor(options) {
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      BooleanField: class BooleanField {
+      BooleanField: class {
         constructor(options) {
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      ArrayField: class ArrayField {
+      ArrayField: class {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      ObjectField: class ObjectField {
+      ObjectField: class {
         constructor(options) {
+          this.options = options
+        }
+      },
+      EmbeddedDataField: class {
+        constructor(model, options) {
+          this.model = model
           this.options = options
         }
       },

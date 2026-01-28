@@ -28,20 +28,9 @@ import {
 import { GGADebugger } from '../utils/debugger.js'
 
 import { Action } from './action/index.js'
-import {
-  GurpsActorCombatSheet,
-  GurpsActorEditorSheet,
-  GurpsActorNpcSheet,
-  GurpsActorSheet,
-  GurpsActorSheetReduced,
-  GurpsActorSimplifiedSheet,
-  GurpsActorTabSheet,
-  GurpsInventorySheet,
-} from './actor/actor-sheet.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
-import { GurpsActorV2 } from './actor/gurps-actor.js'
+import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
-import { GurpsActorModernSheet } from './actor/modern/sheet.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
@@ -69,13 +58,8 @@ import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
 import GurpsConditionalInjury from './injury/foundry/conditional-injury.js'
-import { EquipmentModel } from './item/data/equipment.js'
-import { SkillModel } from './item/data/skill.js'
-import { SpellModel } from './item/data/spell.js'
-import { TraitModel } from './item/data/trait.js'
-import { GurpsItemV2 } from './item/gurps-item.js'
+import { Item } from './item/index.js'
 import { AddImportEquipmentButton } from './item-import.js'
-import { GurpsItemSheet } from './item-sheet.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
@@ -101,15 +85,15 @@ if (!globalThis.GURPS) {
   GURPS.Migration = Migration
   GURPS.Length = Length
   GURPS.BANNER = `
-   __ ____ _____ _____ _____ _____ ____ __    
-  / /_____|_____|_____|_____|_____|_____\\ \\   
- / /      ____ _   _ ____  ____  ____    \\ \\  
- | |     / ___| | | |  _ \\|  _ \\/ ___|    | | 
- | |    | |  _| | | | |_) | |_) \\___ \\    | | 
- | |    | |_| | |_| |  _ <|  __/ ___) |   | | 
- | |     \\____|\\___/|_| \\_\\_|   |____/    | | 
-  \\ \\ _____ _____ _____ _____ _____ ____ / / 
-   \\_|_____|_____|_____|_____|_____|____|_/  
+   __ ____ _____ _____ _____ _____ ____ __
+  / /_____|_____|_____|_____|_____|_____\\ \\
+ / /      ____ _   _ ____  ____  ____    \\ \\
+ | |     / ___| | | |  _ \\|  _ \\/ ___|    | |
+ | |    | |  _| | | | |_) | |_) \\___ \\    | |
+ | |    | |_| | |_| |  _ <|  __/ ___) |   | |
+ | |     \\____|\\___/|_| \\_\\_|   |____/    | |
+  \\ \\ _____ _____ _____ _____ _____ ____ / /
+   \\_|_____|_____|_____|_____|_____|____|_/
 `
   GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`
 
@@ -120,10 +104,12 @@ if (!globalThis.GURPS) {
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
     Action,
+    Actor,
     Canvas,
     Combat,
     Damage,
     Importer,
+    Item,
     Pdf,
     ResourceTracker,
     Token,
@@ -621,7 +607,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.accumulate
      *
      * @param {JQuery.Event|null} data.event
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {string[]} data.targets
      */
     async damage({ action, event, actor, targets }) {
@@ -646,7 +632,7 @@ if (!globalThis.GURPS) {
       }
 
       if (action.accumulate) {
-        // store/increment value on GurpsActorV2
+        // store/increment value on Actor.Implementation
         await actor.accumulateDamageRoll(action)
 
         return true
@@ -689,7 +675,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.accumulate
      *
      * @param {JQuery.Event|null} data.event
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {string[]} data.targets
      */
     async deriveddamage({ action, event, actor, targets }) {
@@ -775,7 +761,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.action.desc
      *
      * @param {JQuery.Event|null} data.event
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {string[]} data.targets
      */
     attackdamage({ action, event, actor, targets }) {
@@ -831,7 +817,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.action.costs
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     roll({ action, actor, event }) {
@@ -879,7 +865,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.action.desc
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     controlroll({ action, actor, event }) {
@@ -922,7 +908,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.action.formula
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     derivedroll({ action, actor, event }) {
@@ -974,7 +960,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.calcOnly
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     async attack({ action, actor, event }) {
@@ -1093,7 +1079,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.calcOnly
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     ['weapon-block']({ action, actor, event }) {
@@ -1171,7 +1157,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.calcOnly
      * @param {boolean} data.action.blindroll
      *
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {JQuery.Event|null} data.event
      */
     ['weapon-parry']({ action, actor, event }) {
@@ -1249,7 +1235,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.blindroll
      * @param {string} [data.action.target]
      *
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {JQuery.Event|null} data.event
      * @param {string} data.originalOtf
      * @param {boolean} data.calcOnly
@@ -1332,7 +1318,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.blindroll
      * @param {string} [data.action.target]
      *
-     * @param {GurpsActorV2|null} data.actor
+     * @param {Actor.Implementation|null} data.actor
      * @param {JQuery.Event|null} data.event
      * @param {string} data.originalOtf
      * @param {boolean} data.calcOnly
@@ -1392,7 +1378,7 @@ if (!globalThis.GURPS) {
                   AT: attack
                   M: melee
                   R: ranged
-                  S: skills & spells 
+                  S: skills & spells
                   SK: skills
                   SP: spells
                   */
@@ -1481,7 +1467,7 @@ if (!globalThis.GURPS) {
 
   /**
    * @param {Action} action
-   * @param {GurpsActorV2|null} actor
+   * @param {Actor.Implementation|null} actor
    * @param {JQuery.Event|null} [event]
    * @param {string[] } [targets]
    * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
@@ -1513,7 +1499,7 @@ if (!globalThis.GURPS) {
 
   /**
    * Find the skill or spell. if isSkillOnly or isSpellOnly set, only check that list.
-   * @param {GurpsActorV2|GurpsActorData} actor
+   * @param {Actor.Implementation|GurpsActorData} actor
    * @param {string} sname
    */
   function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) {
@@ -1521,7 +1507,7 @@ if (!globalThis.GURPS) {
     var t
 
     if (!actor) return t
-    if (actor instanceof GurpsActorV2) actor = actor.system
+    if (actor instanceof CONFIG.Actor.documentClass) actor = actor.system
     let skillRegExp = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
     let best = 0
 
@@ -1550,7 +1536,7 @@ if (!globalThis.GURPS) {
   GURPS.objectToArray = objectToArray
 
   /**
-   * @param {GurpsActorV2} actor
+   * @param {Actor.Implementation} actor
    * @param {string} sname
    * @returns {any}
    */
@@ -1571,7 +1557,7 @@ if (!globalThis.GURPS) {
   GURPS.findSkill = findSkill
 
   /**
-   * @param {GurpsActorV2 | GurpsActorData} actor
+   * @param {Actor.Implementation | GurpsActorData} actor
    * @param {string} sname
    */
   function findAttack(actor, sname, isMelee = true, isRanged = true) {
@@ -1579,7 +1565,7 @@ if (!globalThis.GURPS) {
     var t
 
     if (!actor) return t
-    if (actor instanceof GurpsActorV2) actor = actor.system
+    if (actor instanceof CONFIG.Actor.documentClass) actor = actor.system
     let s = sanitize(sname)
     let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(s, false, false), 'i')
     let smode = ''
@@ -1658,7 +1644,7 @@ if (!globalThis.GURPS) {
    * The user clicked on a field that would allow a dice roll. Use the element
    * information to try to determine what type of roll.
    * @param {JQuery.MouseEventBase} event
-   * @param {GurpsActorV2 | null} actor
+   * @param {Actor.Implementation | null} actor
    * @param {string[]} targets - labels for multiple Damage rolls
    */
   async function handleRoll(event, actor, options) {
@@ -1811,7 +1797,7 @@ if (!globalThis.GURPS) {
 
   /**
    * If the desc contains *Cost ?FP or *Max:9 then perform action
-   * @param {GurpsActorV2|User} actor
+   * @param {Actor.Implementation|User} actor
    * @param {string} desc
    */
   async function applyModifierDesc(actor, desc) {
@@ -1905,7 +1891,7 @@ if (!globalThis.GURPS) {
   /**
    * Convolutions to remove a key from an object and fill in the gaps, necessary
    * because the default add behavior just looks for the first open gap
-   * @param {GurpsActorV2} actor
+   * @param {Actor.Implementation} actor
    * @param {string} path
    */
   async function removeKey(actor, path) {
@@ -2256,14 +2242,6 @@ if (!globalThis.GURPS) {
     GURPS.Maneuvers = Maneuvers
 
     // Define custom Entity classes
-    CONFIG.Actor.documentClass = GurpsActorV2
-    CONFIG.Item.documentClass = GurpsItemV2
-    CONFIG.Item.dataModels = {
-      featureV2: TraitModel,
-      skillV2: SkillModel,
-      spellV2: SpellModel,
-      equipmentV2: EquipmentModel,
-    }
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class
@@ -2277,47 +2255,6 @@ if (!globalThis.GURPS) {
     })
 
     // Register sheet application classes
-    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-      label: 'Combat',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-      label: 'Editor',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-      label: 'Simple',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
-      label: 'NPC/mini',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
-      label: 'Inventory Only',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
-      label: 'Tabbed Sheet',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-      label: 'Reduced Mode',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
-      label: 'Modern',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
-      // Add this sheet last
-      label: 'Full (GCS)',
-      makeDefault: true,
-    })
-
-    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
-    foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
     // @ts-expect-error - Foundry VTT hook callback parameter types not fully typed
@@ -2369,8 +2306,6 @@ if (!globalThis.GURPS) {
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
       // "ControlLeft", "ControlRight"
     })
-
-    GURPS.ActorSheets = { character: GurpsActorSheet }
 
     Hooks.call('gurpsinit', GURPS)
   })

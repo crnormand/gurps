@@ -20,6 +20,12 @@ export default class GurpsTokenRuler extends foundry.canvas.placeables.tokens.To
 
     if (!actor) return data
 
+    if (!actor.isOfType('character', 'enemy', 'characterV2')) {
+      console.error('Actor is of unsupported type, cannot get current move!')
+
+      return data
+    }
+
     const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
     const yards = Length.from(waypoint.measurement.cost, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0
 
