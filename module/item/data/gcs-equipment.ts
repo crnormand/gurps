@@ -1,11 +1,12 @@
 import { WeightUnit, WeightField } from '../../data/common/weight.ts'
-import { featureHolderSchema, IFeatureHolder } from '../../data/mixins/feature-holder.ts'
-import { IPrereqHolder, prereqHolderSchema } from '../../data/mixins/prereq-holder.ts'
+import { featuresSchema, IFeatures } from '../../data/mixins/features.ts'
+import { IPrereqs, prereqsSchema } from '../../data/mixins/prereqs.ts'
+import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.ts'
 import { fields } from '../../types/foundry/index.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema } from './gcs-base.ts'
 
-class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements IFeatureHolder, IPrereqHolder {
+class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements IFeatures, IPrereqs, IReplaceable {
   static override defineSchema(): GcsEquipmentSchema {
     return gcsEquipmentSchema()
   }
@@ -24,8 +25,9 @@ class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements 
 const gcsEquipmentSchema = () => {
   return {
     ...gcsBaseItemSchema(),
-    ...featureHolderSchema(),
-    ...prereqHolderSchema(),
+    ...featuresSchema(),
+    ...prereqsSchema(),
+    ...replaceableSchema(),
 
     carried: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     //  type EquipmentEditData struct
@@ -39,10 +41,6 @@ const gcsEquipmentSchema = () => {
     // Uses         int                  `json:"uses,omitzero"`
     // Equipped     bool                 `json:"equipped,omitzero"`
     vttNotes: new fields.StringField({ required: true, nullable: false }),
-    replacements: new fields.TypedObjectField(new fields.StringField({ required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
     ratedStrength: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     quantity: new fields.NumberField({ required: true, nullable: false, initial: 1 }),
     level: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
@@ -65,8 +63,6 @@ const gcsEquipmentSchema = () => {
     // WeightIgnoredForSkills bool        `json:"ignore_weight_for_skills,omitzero"`
     // NOTE: Not used: Use Item.name instead
     // name: new fields.StringField({required:true,nullable: false}),
-    reference: new fields.StringField({ required: true, nullable: false }),
-    referenceHighlight: new fields.StringField({ required: true, nullable: false }),
     localNotes: new fields.StringField({ required: true, nullable: false }),
     techLevel: new fields.StringField({ required: true, nullable: false }),
     legalityClass: new fields.StringField({ required: true, nullable: false }),
