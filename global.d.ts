@@ -7,6 +7,7 @@ import { DamageChat } from 'module/damage/damagechat.js'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { Importer } from 'module/importer/index.ts'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
+import { GcsEquipmentModel } from 'module/item/data/gcs-equipment.ts'
 import { SkillModel } from 'module/item/data/skill.ts'
 import { SpellModel } from 'module/item/data/spell.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
@@ -418,6 +419,7 @@ declare module 'fvtt-types/configuration' {
       featureV2: typeof TraitModel
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
+      equipmentGcs: typeof GcsEquipmentModel
     }
   }
 
