@@ -8,9 +8,9 @@ class BaseFeatureModel<Schema extends BaseFeatureSchema> extends DataModel<Schem
 
 /* ---------------------------------------- */
 
-const baseFeatureSchema = () => {
+const baseFeatureSchema = (options: { type: string } = { type: 'base' }) => {
   return {
-    type: new fields.StringField({ required: true, nullable: false }),
+    type: new fields.StringField({ required: true, nullable: false, blank: false, initial: options.type }),
   }
 }
 

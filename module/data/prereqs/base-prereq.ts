@@ -49,7 +49,7 @@ class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsB
 
 const basePrereqSchema = () => {
   return {
-    type: new fields.StringField({ required: true, nullable: false, choices: PrereqType }),
+    type: new fields.StringField({ required: true, nullable: false, blank: false, choices: Object.values(PrereqType) }),
   }
 }
 

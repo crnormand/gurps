@@ -73,7 +73,7 @@ const gcsEquipmentSchema = () => {
       nullable: false,
       initial: { value: 0, unit: WeightUnit.Pound },
     }),
-    maxUses: new fields.NumberField({ required: true, nullable: false }),
+    maxUses: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     ignoreWeightForSkills: new fields.BooleanField({ required: true, nullable: false }),
   }
 }
