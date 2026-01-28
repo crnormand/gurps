@@ -1,19 +1,12 @@
 import { AnyObject } from 'fvtt-types/utils'
 
-import { fields, DataModel } from '../../types/foundry/index.js'
+import { fields, DataModel } from '../../types/foundry/index.ts'
+import { Weight, WeightField } from '../common/weight.ts'
 
-enum NumericComparison {
-  Any = 'any',
-  Equals = 'is',
-  NotEquals = 'isNot',
-  AtLeast = 'atLeast',
-  AtMost = 'atMost',
-}
+import { NumericComparison } from './number-criteria.ts'
 
-/* ---------------------------------------- */
-
-class NumberCriteria extends DataModel<NumberCriteriaSchema> {
-  static override defineSchema(): NumberCriteriaSchema {
+class WeightCriteria extends DataModel<WeightCriteriaSchema> {
+  static override defineSchema(): WeightCriteriaSchema {
     return numberCriteriaSchema()
   }
 
@@ -23,20 +16,23 @@ class NumberCriteria extends DataModel<NumberCriteriaSchema> {
 
   /* ---------------------------------------- */
 
-  matches(value: number): boolean {
+  matches(value: Weight): boolean {
+    const valuePounds = value.to(Weight.Unit.Pound).value
+    const qualifierPounds = this.qualifier.to(Weight.Unit.Pound).value
+
     switch (this.compare) {
       case NumericComparison.Any:
         return true
       case NumericComparison.Equals:
-        return value === this.qualifier
+        return valuePounds === qualifierPounds
       case NumericComparison.NotEquals:
-        return value !== this.qualifier
+        return valuePounds !== qualifierPounds
       case NumericComparison.AtLeast:
-        return value >= this.qualifier
+        return valuePounds >= qualifierPounds
       case NumericComparison.AtMost:
-        return value <= this.qualifier
+        return valuePounds <= qualifierPounds
       default:
-        console.error(`Invalid numeric comparitor: ${this.compare}`)
+        console.error(`Invalid weight comparitor: ${this.compare}`)
 
         return true
     }
@@ -53,16 +49,16 @@ const numberCriteriaSchema = () => {
       choices: Object.values(NumericComparison),
       initial: NumericComparison.Any,
     }),
-    qualifier: new fields.NumberField({ required: true, nullable: false }),
+    qualifier: new WeightField({ required: true, nullable: false }),
   }
 }
 
-type NumberCriteriaSchema = ReturnType<typeof numberCriteriaSchema>
+type WeightCriteriaSchema = ReturnType<typeof numberCriteriaSchema>
 
 /* ---------------------------------------- */
 
-namespace NumberCriteriaField {
-  export interface Options extends fields.EmbeddedDataField.Options<typeof NumberCriteria> {
+namespace WeightCriteriaField {
+  export interface Options extends fields.EmbeddedDataField.Options<typeof WeightCriteria> {
     /**
      * An array of values or an object of values/labels which represent
      * allowed choices for the .compare field of this element. A function may be provided which dynamically
@@ -75,34 +71,34 @@ namespace NumberCriteriaField {
   /* ---------------------------------------- */
 
   export type AssignmentType<Opts extends Options> = fields.EmbeddedDataField.AssignmentType<
-    typeof NumberCriteria,
+    typeof WeightCriteria,
     Opts
   >
 
   /* ---------------------------------------- */
 
   export type InitializedType<Opts extends Options> = fields.EmbeddedDataField.InitializedType<
-    typeof NumberCriteria,
+    typeof WeightCriteria,
     Opts
   >
 
   /* ---------------------------------------- */
 
-  export type PersistedType<Opts extends Options> = fields.EmbeddedDataField.PersistedType<typeof NumberCriteria, Opts>
+  export type PersistedType<Opts extends Options> = fields.EmbeddedDataField.PersistedType<typeof WeightCriteria, Opts>
 
   /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */
 
-class NumberCriteriaField<
-  const Options extends NumberCriteriaField.Options,
-  const AssignmentType = NumberCriteriaField.AssignmentType<Options>,
-  const InitializedType = NumberCriteriaField.InitializedType<Options>,
-  const PersistedType extends AnyObject | null | undefined = NumberCriteriaField.PersistedType<Options>,
-> extends fields.EmbeddedDataField<typeof NumberCriteria, Options, AssignmentType, InitializedType, PersistedType> {
+class WeightCriteriaField<
+  const Options extends WeightCriteriaField.Options,
+  const AssignmentType = WeightCriteriaField.AssignmentType<Options>,
+  const InitializedType = WeightCriteriaField.InitializedType<Options>,
+  const PersistedType extends AnyObject | null | undefined = WeightCriteriaField.PersistedType<Options>,
+> extends fields.EmbeddedDataField<typeof WeightCriteria, Options, AssignmentType, InitializedType, PersistedType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
-    super(NumberCriteria, options, context)
+    super(WeightCriteria, options, context)
   }
 
   /* ---------------------------------------- */
@@ -140,4 +136,4 @@ class NumberCriteriaField<
   }
 }
 
-export { NumberCriteria, NumericComparison, NumberCriteriaField }
+export { WeightCriteria, NumericComparison, WeightCriteriaField }

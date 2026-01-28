@@ -1,6 +1,6 @@
 import { AnyObject } from 'fvtt-types/utils'
 
-import { fields, DataModel } from '../../types/foundry/index.js'
+import { fields, DataModel } from '../../types/foundry/index.ts'
 
 enum StringComparison {
   Any = 'any',
@@ -29,7 +29,7 @@ class StringCriteria extends DataModel<StringCriteriaSchema> {
 
   matches(value: string): boolean {
     const lowerValue = value.toLowerCase().trim()
-    const lowerQualifier = this.qualifier.toLowerCase().trim()
+    const lowerQualifier = this.qualifier?.toLowerCase().trim() || ''
 
     switch (this.compare) {
       case StringComparison.Any:
@@ -68,7 +68,7 @@ const stringCriteriaSchema = () => {
       choices: Object.values(StringComparison),
       initial: StringComparison.Any,
     }),
-    qualifier: new fields.StringField({ required: true, nullable: false }),
+    qualifier: new fields.StringField({ required: true, nullable: true }),
   }
 }
 
