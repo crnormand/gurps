@@ -131,8 +131,7 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     function returnNull() {
       if (forced) return new Weight({ value: 0, unit: Weight.Unit.Pound })
 
-      console.error('Invalid weight string', text)
-
+      // console.error('Invalid weight string', text)
       return null
     }
 
