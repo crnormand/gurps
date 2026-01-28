@@ -1175,6 +1175,19 @@
     "pointsSpells": "Spells",
     "pointsTotal": "Total Points",
     "pointsUnspent": "Unspent",
+    "prereq": {
+      "type": {
+        "attributePrereq": "attributePrereq",
+        "containedQuantityPrereq": "containedQuantityPrereq",
+        "containedWeightPrereq": "containedWeightPrereq",
+        "equippedEquipment": "equippedEquipment",
+        "prereqList": "prereqList",
+        "ScriptPrereq": "ScriptPrereq",
+        "skillPrereq": "skillPrereq",
+        "spellPrereq": "spellPrereq",
+        "traitPrereq": "traitPrereq"
+      }
+    },
     "publicRollAsDefault": "Public Roll as default",
     "quantity": "Quantity",
     "quickRoll": "Quick Roll",
