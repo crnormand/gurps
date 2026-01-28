@@ -1,5 +1,6 @@
 'use strict'
 
+import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
@@ -197,11 +198,11 @@ export class GurpsActor extends Actor {
     super.prepareEmbeddedEntities()
   }
 
-  prepareDerivedData() {
+  async prepareDerivedData() {
     super.prepareDerivedData()
 
-    this.strengthCalculator = new StrengthCalculator(parseInt(this.system.attributes.ST.value))
-    this.system.basiclift = this.strengthCalculator.calculateLift()
+    this.strengthCalculator = new StrengthCalculator(parseInt(this.system.attributes.ST.import.toString()))
+    this._setBasicLift(this.strengthCalculator.calculateLift())
     this.system.thrust = this.strengthCalculator.calculateThrustDamage()
     this.system.swing = this.strengthCalculator.calculateSwingDamage()
 
@@ -226,13 +227,17 @@ export class GurpsActor extends Actor {
     this.calculateDerivedValues()
   }
 
+  /**
+   * Update the basic lift and recalculate encumbrance levels and lifting.
+   * @param {*} basicLift 
+   */
   _setBasicLift(basicLift) {
     this.system.basiclift = basicLift
-
-    // Recalculate encumbrance levels
-    for (const [key, value] of Object.entries(this.system.encumbrance)) {
-      // Update encumbrance levels based on the new basic lift
-      value.weight = `${basicLift} lb`
+    
+    const unit = this.system.encumbrance['00000']?.weight?.toString().split(' ')[1] || 'lb'
+    const encumbranceLevels = await calculateEncumbranceLevels(this.system.basiclift, 0, unit, {})
+    for (const [key, value] of Object.entries(encumbranceLevels)) {
+      this.system.encumbrance[key].weight = value.weight
     }
   }
 
@@ -804,7 +809,7 @@ export class GurpsActor extends Actor {
   }
 
   getCurrentMoveMode() {
-    let move = this.system.move
+    let move = this.system.move || {}
     let current = Object.values(move).find(it => it.default)
     if (!current && Object.keys(move).length > 0) return move['00000']
     return current

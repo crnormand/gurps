@@ -3,7 +3,7 @@ import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
-import { buildDamageOutput } from '../utilities/import-utilities.ts'
+import { buildDamageOutput, calculateEncumbranceLevels } from '../utilities/import-utilities.ts'
 import {
   Advantage,
   Encumbrance,
@@ -1531,30 +1531,10 @@ export class ActorImporter {
     data.touch = atts.find(e => e.attr_id === 'touch')?.calc?.value || 0
     data.vision = atts.find(e => e.attr_id === 'vision')?.calc?.value || 0
 
-    let cm = 0
-    let cd = 0
-    let es = {}
-    let ew = [1, 2, 3, 6, 10]
-    let index = 0
     let total_carried = this.calcTotalCarried(eqp)
-    for (let i = 0; i <= 4; i++) {
-      let e = new Encumbrance()
-      e.level = i
-      e.current = false
-      e.key = 'enc' + i
-      let weight_value = bl_value * ew[i]
-      // e.current = total_carried <= weight_value && (i == 4 || total_carried < bl_value*ew[i+1]);
-      e.current =
-        (total_carried < weight_value || i == 4 || bl_value == 0) && (i == 0 || total_carried > bl_value * ew[i - 1])
-      e.weight = weight_value.toString() + ' ' + bl_unit
-      e.move = calc?.move[i].toString()
-      e.dodge = calc?.dodge[i]
-      if (e.current) {
-        cm = e.move
-        cd = e.dodge
-      }
-      GURPS.put(es, e, index++)
-    }
+    const encumbranceLevels = await calculateEncumbranceLevels(bl_value, total_carried, bl_unit, calc)
+    const currentMove = Object.values(encumbranceLevels).find(e => e.current)?.move || 0
+    const currentDodge = Object.values(encumbranceLevels).find(e => e.current)?.dodge || 0
 
     return {
       'system.attributes': att,
@@ -1571,9 +1551,9 @@ export class ActorImporter {
       'system.touch': data.touch,
       'system.vision': data.vision,
       'system.liftingmoving': lm,
-      'system.currentmove': cm,
-      'system.currentdodge': cd,
-      'system.encumbrance': es,
+      'system.currentmove': currentMove,
+      'system.currentdodge': currentDodge,
+      'system.encumbrance': encumbranceLevels,
       'system.QP': data.QP,
     }
   }

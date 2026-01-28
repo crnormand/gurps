@@ -29,7 +29,7 @@ declare global {
   interface GURPSGlobal {
     SYSTEM_NAME: 'gurps'
     decode<T = unknown>(actor: GurpsActor, path: string): T
-    put<T>(list: Record<string, T>, obj: T): string
+    put<T>(list: Record<string, T>, obj: T, index?: number = -1): string
     removeKey(actor: GurpsActor, key: string): void
     performAction(
       action: GurpsAction,

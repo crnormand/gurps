@@ -28,13 +28,13 @@ describe('BasicSetStrategy', () => {
   it('should calculate thrust and swing damage for ST = 12', () => {
     expect(strength.calculateSwingDamage(12)).toBe('1d+2')
     expect(strength.calculateThrustDamage(12)).toBe('1d-1')
-    expect(strength.calculateLift(12)).toBe(28)
+    expect(strength.calculateLift(12)).toBe(29)
   })
 
   it('should calculate thrust and swing damage for ST = 13', () => {
     expect(strength.calculateSwingDamage(13)).toBe('2d-1')
     expect(strength.calculateThrustDamage(13)).toBe('1d')
-    expect(strength.calculateLift(13)).toBe(33)
+    expect(strength.calculateLift(13)).toBe(34)
   })
 
   it('should calculate thrust and swing damage for ST = 14', () => {
@@ -64,7 +64,7 @@ describe('BasicSetStrategy', () => {
   it('should calculate thrust and swing damage for ST = 22', () => {
     expect(strength.calculateSwingDamage(22)).toBe('4d')
     expect(strength.calculateThrustDamage(22)).toBe('2d')
-    expect(strength.calculateLift(22)).toBe(96)
+    expect(strength.calculateLift(22)).toBe(97)
   })
 
   it('should calculate thrust and swing damage for ST = 26', () => {

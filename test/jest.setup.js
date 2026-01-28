@@ -22,3 +22,5 @@ global.game = {
     localize: key => key,
   },
 }
+// Mock Foundry VTT Application class
+global.Application = class {}

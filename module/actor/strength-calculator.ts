@@ -9,7 +9,7 @@ export interface StrengthCalculatorStrategy {
 
 export class BasicSetStrategy implements StrengthCalculatorStrategy {
   calculateLift(strength: number): number {
-    return Math.floor((strength * strength) / 5)
+    return Math.round((strength * strength) / 5)
   }
 
   calculateSwingDamage(strength: number): string {
