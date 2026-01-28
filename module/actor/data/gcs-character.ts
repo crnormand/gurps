@@ -20,8 +20,6 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
   get attributes(): Map<string, GcsAttribute> {
     return new Map(this._attributes.map(e => [e.id, e]))
   }
-
-  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */

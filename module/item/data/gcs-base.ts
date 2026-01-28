@@ -265,4 +265,4 @@ type GcsBaseItemSchema = ReturnType<typeof gcsBaseItemSchema>
 
 /* ---------------------------------------- */
 
-export { GcsBaseItemModel, type GcsBaseItemSchema, type GcsItemMetadata }
+export { GcsBaseItemModel, gcsBaseItemSchema, type GcsBaseItemSchema, type GcsItemMetadata }
