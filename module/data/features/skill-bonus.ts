@@ -12,8 +12,8 @@ class SkillBonus extends BaseFeatureModel<SkillBonusSchema> {
 
 const skillBonusSchema = () => {
   return {
-    ...baseFeatureSchema(),
-    selectionType: new fields.StringField({ required: true, nullable: false, choices: [] }),
+    ...baseFeatureSchema({ type: 'skillBonus' }),
+    selectionType: new fields.StringField({ required: true, nullable: false }),
   }
 }
 
