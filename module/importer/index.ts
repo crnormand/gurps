@@ -1,4 +1,3 @@
-import { CharacterModel } from '../actor/data/character.js'
 import { GurpsModule } from '../gurps-module.js'
 
 import { importerPrompt } from './importer-prompt.js'
@@ -25,8 +24,6 @@ function init() {
   console.log('GURPS | Initializing GURPS Importer module.')
 
   Hooks.on('init', () => {
-    CONFIG.Actor.dataModels.characterV2 = CharacterModel
-
     initializeGameSettings()
   })
 }
