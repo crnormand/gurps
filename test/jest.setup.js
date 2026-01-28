@@ -132,6 +132,12 @@ global.foundry = {
           this.options = options
         }
       },
+      EmbeddedDataField: class {
+        constructor(model, options) {
+          this.model = model
+          this.options = options
+        }
+      },
     },
   },
   utils: {
