@@ -1,5 +1,7 @@
 import { BaseAction } from 'module/action/base-action.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
+import { GcsCharacterModel } from 'module/actor/data/gcs-character.ts'
+import { GcsLootModel } from 'module/actor/data/gcs-loot.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
@@ -7,7 +9,13 @@ import { DamageChat } from 'module/damage/damagechat.js'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { Importer } from 'module/importer/index.ts'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
+import { GcsEquipmentModifierModel } from 'module/item/data/gcs-equipment-modifier.ts'
 import { GcsEquipmentModel } from 'module/item/data/gcs-equipment.ts'
+import { GcsNoteModel } from 'module/item/data/gcs-note.ts'
+import { GcsSkillModel } from 'module/item/data/gcs-skill.ts'
+import { GcsSpellModel } from 'module/item/data/gcs-spell.ts'
+import { GcsTraitModifierModel } from 'module/item/data/gcs-trait-modifier.ts'
+import { GcsTraitModel } from 'module/item/data/gcs-trait.ts'
 import { SkillModel } from 'module/item/data/skill.ts'
 import { SpellModel } from 'module/item/data/spell.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
@@ -409,6 +417,8 @@ declare module 'fvtt-types/configuration' {
       character: ActorV1Model
       characterV2: typeof CharacterModel
       enemy: typeof CharacterModel
+      gcsCharacter: typeof GcsCharacterModel
+      gcsLoot: typeof GcsLootModel
     }
     Item: {
       equipment: Equipment
@@ -419,7 +429,13 @@ declare module 'fvtt-types/configuration' {
       featureV2: typeof TraitModel
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
-      equipmentGcs: typeof GcsEquipmentModel
+      gcsTrait: typeof GcsTraitModel
+      gcsTraitModifier: typeof GcsTraitModifierModel
+      gcsSkill: typeof GcsSkillModel
+      gcsSpell: typeof GcsSpellModel
+      gcsEquipment: typeof GcsEquipmentModel
+      gcsEquipmentModifier: typeof GcsEquipmentModifierModel
+      gcsNote: typeof GcsNoteModel
     }
   }
 
