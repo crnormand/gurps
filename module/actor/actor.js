@@ -32,6 +32,7 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
+import { StrengthCalculator } from './strength-calculator.ts'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -199,6 +200,11 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
 
+    this.strengthCalculator = new StrengthCalculator(parseInt(this.system.attributes.ST.value))
+    this.system.basiclift = this.strengthCalculator.calculateLift()
+    this.system.thrust = this.strengthCalculator.calculateThrustDamage()
+    this.system.swing = this.strengthCalculator.calculateSwingDamage()
+
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
     if (this.system.encumbrance) {
@@ -218,6 +224,16 @@ export class GurpsActor extends Actor {
     }
 
     this.calculateDerivedValues()
+  }
+
+  _setBasicLift(basicLift) {
+    this.system.basiclift = basicLift
+
+    // Recalculate encumbrance levels
+    for (const [key, value] of Object.entries(this.system.encumbrance)) {
+      // Update encumbrance levels based on the new basic lift
+      value.weight = `${basicLift} lb`
+    }
   }
 
   // execute after every import.

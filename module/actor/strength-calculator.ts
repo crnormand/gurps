@@ -7,7 +7,7 @@ export interface StrengthCalculatorStrategy {
   calculateThrustDamage(strength: number): string
 }
 
-export class BasicSetStrength implements StrengthCalculatorStrategy {
+export class BasicSetStrategy implements StrengthCalculatorStrategy {
   calculateLift(strength: number): number {
     return Math.floor((strength * strength) / 5)
   }
@@ -23,6 +23,32 @@ export class BasicSetStrength implements StrengthCalculatorStrategy {
     let result: { dice: number; modifier: number } = { dice: 1, modifier: -2 }
     if (strength > 9) result.modifier += Math.floor((strength - 9) / 2)
     return convertDamageToString(result)
+  }
+}
+
+export class StrengthCalculator {
+  private strategy: StrengthCalculatorStrategy
+  private strength: number
+
+  constructor(strength: number) {
+    this.strategy = new BasicSetStrategy()
+    this.strength = strength
+  }
+
+  setStrategy(strategy: StrengthCalculatorStrategy) {
+    this.strategy = strategy
+  }
+
+  calculateLift(): number {
+    return this.strategy.calculateLift(this.strength)
+  }
+
+  calculateSwingDamage(): string {
+    return this.strategy.calculateSwingDamage(this.strength)
+  }
+
+  calculateThrustDamage(): string {
+    return this.strategy.calculateThrustDamage(this.strength)
   }
 }
 
