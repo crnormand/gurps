@@ -3,6 +3,7 @@ import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
+import { buildDamageOutput } from '../utilities/import-utilities.ts'
 import {
   Advantage,
   Encumbrance,
@@ -2363,7 +2364,7 @@ export class ActorImporter {
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
             m.import = w.calc?.level?.toString() || '0'
-            m.damage = w.calc?.damage || ''
+            m.damage = buildDamageOutput(w)
             m.reach = w.reach || ''
             m.parry = w.calc?.parry || ''
             m.block = w.calc?.block || ''
@@ -2389,7 +2390,7 @@ export class ActorImporter {
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
             r.import = w.calc?.level || '0'
-            r.damage = w.calc?.damage || ''
+            r.damage = buildDamageOutput(w)
             r.acc = w.accuracy || ''
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
