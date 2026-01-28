@@ -109,7 +109,6 @@ abstract class GcsBaseItemModel<Schema extends GcsBaseItemSchema = GcsBaseItemSc
   get contents(): Item.Implementation[] {
     return (
       this.parent.actor?.items.contents
-        // @ts-expect-error: Item models not yet migrated.
         .filter(item => (item.system as GcsBaseItemModel).containedBy === this.parent.id)
         .sort((a, b) => a.sort - b.sort) || []
     )
