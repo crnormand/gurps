@@ -1,5 +1,5 @@
 import { fields } from '../../types/foundry/index.js'
-import { NumberCriteriaField } from '../criteria/number.ts'
+import { NumberCriteriaField } from '../criteria/number-criteria.ts'
 
 import { BasePrereq, BasePrereqSchema } from './base-prereq.ts'
 
