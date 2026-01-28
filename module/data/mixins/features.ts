@@ -1,7 +1,7 @@
-import { fields } from '../../types/foundry/index.js'
+import { fields } from '../../types/foundry/index.ts'
 import { Feature, SkillBonus } from '../features/index.ts'
 
-const featureHolderSchema = () => {
+const featuresSchema = () => {
   return {
     features: new fields.ArrayField(new fields.TypedSchemaField({ skillBonus: SkillBonus })),
   }
@@ -9,8 +9,8 @@ const featureHolderSchema = () => {
 
 /* ---------------------------------------- */
 
-interface IFeatureHolder {
-  // List of features contained within this holder
+interface IFeatures {
+  // List of features contained within this item
   features: Feature[]
 
   // Apply bonuses from all contained features
@@ -19,8 +19,4 @@ interface IFeatureHolder {
 
 /* ---------------------------------------- */
 
-class FeatureHolder {}
-
-/* ---------------------------------------- */
-
-export { FeatureHolder, featureHolderSchema, type IFeatureHolder }
+export { featuresSchema, type IFeatures }
