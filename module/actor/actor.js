@@ -204,10 +204,7 @@ export class GurpsActor extends Actor {
     super.prepareDerivedData()
 
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTO_UPDATE_STRENGTH)) {
-      this.strengthCalculator.strength = this.system.attributes.ST.import
-      this._setBasicLift(this.strengthCalculator.calculateLift())
-      this.system.thrust = this.strengthCalculator.calculateThrustDamage()
-      this.system.swing = this.strengthCalculator.calculateSwingDamage()
+      this.updateStrengthBasedAttributes()
     }
 
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
@@ -229,6 +226,13 @@ export class GurpsActor extends Actor {
     }
 
     this.calculateDerivedValues()
+  }
+
+  updateStrengthBasedAttributes() {
+    this.strengthCalculator.strength = this.system.attributes.ST.import
+    this._setBasicLift(this.strengthCalculator.calculateLift())
+    this.system.thrust = this.strengthCalculator.calculateThrustDamage()
+    this.system.swing = this.strengthCalculator.calculateSwingDamage()
   }
 
   /**
