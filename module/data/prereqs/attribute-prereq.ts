@@ -19,7 +19,7 @@ class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
       return false
     }
 
-    let total = 0
+    // let total = 0
 
     const which = actor.system.attributes.get(this.which)
 
@@ -28,6 +28,9 @@ class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
 
       return false
     }
+
+    // NOTE: temporary
+    return true
   }
 }
 
