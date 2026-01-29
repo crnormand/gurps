@@ -2,9 +2,117 @@ import { fields, DataModel } from '../../types/foundry/index.ts'
 
 import { type GcsCharacterModel } from './gcs-character.ts'
 
+enum AttributeType {
+  Integer = 'integer',
+  IntegerRef = 'integerRef',
+  Decimal = 'decimal',
+  DecimalRef = 'decimalRef',
+  Pool = 'pool',
+  PoolRef = 'poolRef',
+  PrimarySeparator = 'primarySeparator',
+  SecondarySeparator = 'secondarySeparator',
+  PoolSeparator = 'poolSeparator',
+}
+
+/* ---------------------------------------- */
+
+enum GcsAttributePlacement {
+  Automatic = 'automatic',
+  Primary = 'primary',
+  Secondary = 'secondary',
+  Hidden = 'hidden',
+}
+
+/* ---------------------------------------- */
+
+enum GcsAttriuteKind {
+  Primary = 'primary',
+  Secondary = 'secondary',
+  Pool = 'pool',
+}
+
+/* ---------------------------------------- */
+
 class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, GcsCharacterModel> {
+  static TYPES = AttributeType
+  static PLACEMENTS = GcsAttributePlacement
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): GcsAttributeDefinitionSchema {
     return attributeDefinitionSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  get isPrimary(): boolean {
+    if (this.type === AttributeType.PrimarySeparator) return true
+    if (
+      this.type === AttributeType.Pool ||
+      this.type === AttributeType.PoolRef ||
+      this.placement === GcsAttributePlacement.Secondary ||
+      this.isSeparator
+    )
+      return false
+    if (this.placement === GcsAttributePlacement.Primary) return true
+    const value = Number(this.base)
+
+    return !isNaN(value)
+  }
+
+  /* ---------------------------------------- */
+
+  get isSecondary(): boolean {
+    if (this.type === AttributeType.SecondarySeparator) return true
+    if (
+      this.type === AttributeType.Pool ||
+      this.type === AttributeType.PoolRef ||
+      this.placement === GcsAttributePlacement.Primary ||
+      this.isSeparator
+    )
+      return false
+    if (this.placement === GcsAttributePlacement.Secondary) return true
+
+    const value = Number(this.base)
+
+    return isNaN(value)
+  }
+
+  /* ---------------------------------------- */
+
+  get isPool(): boolean {
+    return (
+      this.type === AttributeType.Pool ||
+      this.type === AttributeType.PoolRef ||
+      this.type === AttributeType.PoolSeparator
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get isSeparator(): boolean {
+    return (
+      this.type === AttributeType.PrimarySeparator ||
+      this.type === AttributeType.SecondarySeparator ||
+      this.type === AttributeType.PoolSeparator
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get kind(): GcsAttriuteKind {
+    if (this.isPool) return GcsAttriuteKind.Pool
+    if (this.isPrimary) return GcsAttriuteKind.Primary
+    if (this.isSecondary) return GcsAttriuteKind.Secondary
+    throw new Error(`GcsAttributeDefinition: Unable to determine kind for attribute definition ID ${this.id}`)
+  }
+
+  /* ---------------------------------------- */
+
+  get resolvedFullName(): string {
+    if (this.fullName === '') return this.name
+
+    return this.fullName
   }
 }
 
@@ -46,9 +154,19 @@ const attributeDefinitionSchema = () => {
     // Therefore, it should cycle through "a" -> "z", then "aa" etc.
     id: new fields.StringField({ required: true, nullable: false, blank: false, initial: 'a' }),
     // TODO: STUB. Include enum or enumlike values for attribute types
-    type: new fields.StringField({ required: true, nullable: false }),
+    type: new fields.StringField({
+      required: true,
+      nullable: false,
+      choices: Object.values(AttributeType),
+      initial: AttributeType.Integer,
+    }),
     // TODO: STUB. Include enum or enumlike values for attribute placement
-    placement: new fields.StringField({ required: true, nullable: false }),
+    placement: new fields.StringField({
+      required: true,
+      nullable: false,
+      choices: Object.values(GcsAttributePlacement),
+      initial: GcsAttributePlacement.Automatic,
+    }),
     name: new fields.StringField({ required: true, nullable: false }),
     fullName: new fields.StringField({ required: true, nullable: false }),
     // NOTE: This is parsed as JS code, but no type yet exists for this.
