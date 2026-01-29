@@ -66,21 +66,25 @@ export function calculateEncumbranceLevels(
   const encumbranceLevelWeightFactors = [1, 2, 3, 6, 10]
 
   for (let encumbranceLevelIndex = 0; encumbranceLevelIndex <= 4; encumbranceLevelIndex++) {
-    let encumbrance: Encumbrance = { level: 0, current: false, key: '', weight: '', move: 0, dodge: 0 }
-    encumbrance.level = encumbranceLevelIndex
-    encumbrance.current = false
-    encumbrance.key = 'enc' + encumbranceLevelIndex
+    let encumbrance: Encumbrance = {
+      level: encumbranceLevelIndex,
+      current: false,
+      key: 'enc' + encumbranceLevelIndex,
+      weight: '',
+      move: calc?.move ? calc?.move[encumbranceLevelIndex] : 0,
+      dodge: calc?.dodge ? calc?.dodge[encumbranceLevelIndex] : 0,
+    }
+
     let weight_value = basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex]
 
     // Find the highest encumbrance level whose weight_value is equal to or greater than carriedWeight.
     encumbrance.current =
-      (carriedWeight < weight_value || encumbranceLevelIndex == 4 || basicLift == 0) &&
-      (encumbranceLevelIndex == 0 ||
+      (carriedWeight < weight_value || encumbranceLevelIndex === 4 || basicLift === 0) &&
+      (encumbranceLevelIndex === 0 ||
         carriedWeight > basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex - 1])
 
     encumbrance.weight = weight_value.toString() + ' ' + weightUnits
-    encumbrance.move = calc?.move ? calc?.move[encumbranceLevelIndex] : 0
-    encumbrance.dodge = calc?.dodge ? calc?.dodge[encumbranceLevelIndex] : 0
+
     GURPS.put(es, encumbrance, encumbranceLevelIndex)
   }
   return es
