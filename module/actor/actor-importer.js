@@ -345,7 +345,7 @@ export class ActorImporter {
 
       let parsererror = r.parsererror
       if (!!parsererror) {
-        msg.push(game.i18n.format('GURPS.importErrorParsingXML', { text: this.textFrom(parsererror.div) }))
+        msg.push(game.i18n.format('GURPS.importErrorParsingXML', { text: readXmlText(parsererror.div) }))
         exit = true
       }
 
@@ -423,7 +423,7 @@ export class ActorImporter {
       })
       if (exit) return false // Some errors cannot be forgiven ;-)
     }
-    let nm = this.textFrom(c.name)
+    let nm = readXmlText(c.name)
     console.log("Importing '" + nm + "'")
     let starttime = performance.now()
 
@@ -874,29 +874,29 @@ export class ActorImporter {
           if (k2.startsWith('id-')) {
             let j2 = j.meleemodelist[k2]
             let m = new Melee()
-            m.name = this.textFrom(j.name)
-            m.originalName = this.textFrom(j.name)
-            m.st = this.textFrom(j.st)
-            m.weight = this.textFrom(j.weight)
-            m.techlevel = this.textFrom(j.tl)
-            m.cost = this.textFrom(j.cost)
+            m.name = readXmlText(j.name)
+            m.originalName = readXmlText(j.name)
+            m.st = readXmlText(j.st)
+            m.weight = readXmlText(j.weight)
+            m.techlevel = readXmlText(j.tl)
+            m.cost = readXmlText(j.cost)
 
             try {
-              m.setNotes(this.textFrom(j.text))
+              m.setNotes(readXmlText(j.text))
             } catch {
               console.log(m)
-              console.log(this.textFrom(j.text))
+              console.log(readXmlText(j.text))
             }
 
-            m.mode = this.textFrom(j2.name)
-            m.import = this.textFrom(j2.level)
-            // m.damage = this.textFrom(j2.damage)
+            m.mode = readXmlText(j2.name)
+            m.import = readXmlText(j2.level)
+            // m.damage = readXmlText(j2.damage)
             m.damage = buildDamageOutputGCA(j2)
-            m.reach = this.textFrom(j2.reach)
-            m.parry = this.textFrom(j2.parry)
-            m.block = this.textFrom(j2.block)
+            m.reach = readXmlText(j2.reach)
+            m.parry = readXmlText(j2.parry)
+            m.block = readXmlText(j2.block)
             let old = this._findElementIn('melee', false, m.name, m.mode)
-            this._migrateOtfsAndNotes(old, m, this.textFrom(j2.vtt_notes))
+            this._migrateOtfsAndNotes(old, m, readXmlText(j2.vtt_notes))
 
             GURPS.put(melee, m, index++)
           }
@@ -925,24 +925,24 @@ export class ActorImporter {
           if (k2.startsWith('id-')) {
             let j2 = j.rangedmodelist[k2]
             let r = new Ranged()
-            r.name = this.textFrom(j.name)
-            r.originalName = this.textFrom(j.name)
-            r.st = this.textFrom(j.st)
-            r.bulk = this.textFrom(j.bulk)
-            r.legalityclass = this.textFrom(j.lc)
-            r.ammo = this.textFrom(j.ammo)
+            r.name = readXmlText(j.name)
+            r.originalName = readXmlText(j.name)
+            r.st = readXmlText(j.st)
+            r.bulk = readXmlText(j.bulk)
+            r.legalityclass = readXmlText(j.lc)
+            r.ammo = readXmlText(j.ammo)
 
             try {
-              r.setNotes(this.textFrom(j.text))
+              r.setNotes(readXmlText(j.text))
             } catch {
               console.log(r)
-              console.log(this.textFrom(j.text))
+              console.log(readXmlText(j.text))
             }
 
-            r.mode = this.textFrom(j2.name)
-            r.import = this.textFrom(j2.level)
+            r.mode = readXmlText(j2.name)
+            r.import = readXmlText(j2.level)
             r.damage = buildDamageOutputGCA(j2)
-            r.acc = this.textFrom(j2.acc)
+            r.acc = readXmlText(j2.acc)
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
 
             if (m) {
@@ -950,13 +950,13 @@ export class ActorImporter {
               r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
 
-            r.rof = this.textFrom(j2.rof)
-            r.shots = this.textFrom(j2.shots)
-            r.rcl = this.textFrom(j2.rcl)
-            let rng = this.textFrom(j2.range)
+            r.rof = readXmlText(j2.rof)
+            r.shots = readXmlText(j2.shots)
+            r.rcl = readXmlText(j2.rcl)
+            let rng = readXmlText(j2.range)
             r.range = rng
             let old = this._findElementIn('ranged', false, r.name, r.mode)
-            this._migrateOtfsAndNotes(old, r, this.textFrom(j2.vtt_notes))
+            this._migrateOtfsAndNotes(old, r, readXmlText(j2.vtt_notes))
 
             GURPS.put(ranged, r, index++)
           }
@@ -1388,7 +1388,7 @@ export class ActorImporter {
    */
   importReactionsFromGCA(json, vernum) {
     if (!json) return
-    let text = this.textFrom(json)
+    let text = readXmlText(json)
     let a = vernum <= 9 ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
@@ -2309,18 +2309,6 @@ export class ActorImporter {
       'system.-=ranged': null,
       'system.ranged': ranged,
     }
-  }
-
-  // hack to get to private text element created by xml->json method.
-  /**
-   * @param {{ [key: string]: any }} o
-   */
-  textFrom(o) {
-    return readXmlText(o)
-    // if (!o) return ''
-    // let t = o['#text']
-    // if (!t) return ''
-    // return t.trim()
   }
 
   // similar hack to get text as integer.
