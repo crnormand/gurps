@@ -1,4 +1,4 @@
-import { buildDamageOutput } from '../module/utilities/import-utilities.ts'
+import { buildDamageOutputGCS } from '../module/utilities/import-utilities.ts'
 
 describe('buildDamageOutput', () => {
   describe('when damage.st is not "thr" or "sw"', () => {
@@ -7,14 +7,14 @@ describe('buildDamageOutput', () => {
         damage: { st: 'invalid' },
         calc: { damage: '2d+2 cr' },
       }
-      expect(buildDamageOutput(weapon)).toBe('2d+2 cr')
+      expect(buildDamageOutputGCS(weapon)).toBe('2d+2 cr')
     })
 
     test('should return empty string when calc.damage is not available', () => {
       const weapon = {
         damage: { st: 'invalid' },
       }
-      expect(buildDamageOutput(weapon)).toBe('')
+      expect(buildDamageOutputGCS(weapon)).toBe('')
     })
 
     test('should return calc.damage when damage.st is missing', () => {
@@ -22,12 +22,12 @@ describe('buildDamageOutput', () => {
         damage: {},
         calc: { damage: '1d cr' },
       }
-      expect(buildDamageOutput(weapon)).toBe('1d cr')
+      expect(buildDamageOutputGCS(weapon)).toBe('1d cr')
     })
 
     test('should return empty string when damage is missing', () => {
       const weapon = {}
-      expect(buildDamageOutput(weapon)).toBe('')
+      expect(buildDamageOutputGCS(weapon)).toBe('')
     })
   })
 
@@ -40,7 +40,7 @@ describe('buildDamageOutput', () => {
           type: 'cut',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('thr+2 cut')
+      expect(buildDamageOutputGCS(weapon)).toBe('thr+2 cut')
     })
 
     test('should format swing damage with positive modifier', () => {
@@ -51,7 +51,7 @@ describe('buildDamageOutput', () => {
           type: 'cr',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('sw+3 cr')
+      expect(buildDamageOutputGCS(weapon)).toBe('sw+3 cr')
     })
 
     test('should format damage with negative modifier', () => {
@@ -62,7 +62,7 @@ describe('buildDamageOutput', () => {
           type: 'imp',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('thr-1 imp')
+      expect(buildDamageOutputGCS(weapon)).toBe('thr-1 imp')
     })
 
     test('should format damage with zero modifier', () => {
@@ -73,7 +73,7 @@ describe('buildDamageOutput', () => {
           type: 'cut',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('sw cut')
+      expect(buildDamageOutputGCS(weapon)).toBe('sw cut')
     })
 
     test('should handle missing base modifier (defaults to 0)', () => {
@@ -83,7 +83,7 @@ describe('buildDamageOutput', () => {
           type: 'pi',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('thr pi')
+      expect(buildDamageOutputGCS(weapon)).toBe('thr pi')
     })
 
     test('should handle missing damage type', () => {
@@ -93,7 +93,7 @@ describe('buildDamageOutput', () => {
           base: '1',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('sw+1 undefined')
+      expect(buildDamageOutputGCS(weapon)).toBe('sw+1 undefined')
     })
 
     test('should parse numeric strings correctly', () => {
@@ -104,7 +104,7 @@ describe('buildDamageOutput', () => {
           type: 'cut',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('thr+5 cut')
+      expect(buildDamageOutputGCS(weapon)).toBe('thr+5 cut')
     })
 
     test('should handle large positive modifiers', () => {
@@ -115,7 +115,7 @@ describe('buildDamageOutput', () => {
           type: 'cr',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('sw+10 cr')
+      expect(buildDamageOutputGCS(weapon)).toBe('sw+10 cr')
     })
 
     test('should handle large negative modifiers', () => {
@@ -126,7 +126,7 @@ describe('buildDamageOutput', () => {
           type: 'imp',
         },
       }
-      expect(buildDamageOutput(weapon)).toBe('thr-5 imp')
+      expect(buildDamageOutputGCS(weapon)).toBe('thr-5 imp')
     })
 
     test('should handle different damage types', () => {
@@ -139,22 +139,22 @@ describe('buildDamageOutput', () => {
             type: type,
           },
         }
-        expect(buildDamageOutput(weapon)).toBe(`thr+1 ${type}`)
+        expect(buildDamageOutputGCS(weapon)).toBe(`thr+1 ${type}`)
       })
     })
   })
 
   describe('edge cases', () => {
     test('should handle null weapon', () => {
-      expect(buildDamageOutput(null)).toBe('')
+      expect(buildDamageOutputGCS(null)).toBe('')
     })
 
     test('should handle undefined weapon', () => {
-      expect(buildDamageOutput(undefined)).toBe('')
+      expect(buildDamageOutputGCS(undefined)).toBe('')
     })
 
     test('should handle empty weapon object', () => {
-      expect(buildDamageOutput({})).toBe('')
+      expect(buildDamageOutputGCS({})).toBe('')
     })
 
     test('should handle NaN base value', () => {
@@ -166,7 +166,7 @@ describe('buildDamageOutput', () => {
         },
         calc: { damage: '1d cut' },
       }
-      expect(buildDamageOutput(weapon)).toBe('1d cut')
+      expect(buildDamageOutputGCS(weapon)).toBe('1d cut')
     })
 
     test('should prioritize damage.st over calc.damage when st is valid', () => {
@@ -178,7 +178,7 @@ describe('buildDamageOutput', () => {
         },
         calc: { damage: '3d+1 cr' },
       }
-      expect(buildDamageOutput(weapon)).toBe('thr+2 cut')
+      expect(buildDamageOutputGCS(weapon)).toBe('thr+2 cut')
     })
   })
 })

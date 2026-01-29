@@ -327,7 +327,7 @@ export class GurpsActor extends Actor {
       let langn = /Language:?/i
       let langt = new RegExp(game.i18n.localize('GURPS.language') + ':?', 'i')
       recurselist(this.system.languages, (e, _k, _d) => {
-        let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
+        let a = GURPS.findAdDisad(this, e.name) // is there an Adv including the same name
         if (a) {
           if (!a.name.match(langn) && !a.name.match(langt)) {
             // GCA4/GCS style

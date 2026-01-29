@@ -3,7 +3,12 @@ import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
-import { buildDamageOutput, calculateEncumbranceLevels } from '../utilities/import-utilities.js'
+import {
+  buildDamageOutputGCA,
+  buildDamageOutputGCS,
+  calculateEncumbranceLevels,
+  readXmlText,
+} from '../utilities/import-utilities.js'
 import {
   Advantage,
   Encumbrance,
@@ -859,7 +864,6 @@ export class ActorImporter {
    */
   importCombatMeleeFromGCA(json) {
     if (!json) return
-    let t = this.textFrom
     let melee = {}
     let index = 0
     for (let key in json) {
@@ -870,26 +874,29 @@ export class ActorImporter {
           if (k2.startsWith('id-')) {
             let j2 = j.meleemodelist[k2]
             let m = new Melee()
-            m.name = t(j.name)
-            m.originalName = t(j.name)
-            m.st = t(j.st)
-            m.weight = t(j.weight)
-            m.techlevel = t(j.tl)
-            m.cost = t(j.cost)
+            m.name = this.textFrom(j.name)
+            m.originalName = this.textFrom(j.name)
+            m.st = this.textFrom(j.st)
+            m.weight = this.textFrom(j.weight)
+            m.techlevel = this.textFrom(j.tl)
+            m.cost = this.textFrom(j.cost)
+
             try {
-              m.setNotes(t(j.text))
+              m.setNotes(this.textFrom(j.text))
             } catch {
               console.log(m)
-              console.log(t(j.text))
+              console.log(this.textFrom(j.text))
             }
-            m.mode = t(j2.name)
-            m.import = t(j2.level)
-            m.damage = t(j2.damage)
-            m.reach = t(j2.reach)
-            m.parry = t(j2.parry)
-            m.block = t(j2.block)
+
+            m.mode = this.textFrom(j2.name)
+            m.import = this.textFrom(j2.level)
+            // m.damage = this.textFrom(j2.damage)
+            m.damage = buildDamageOutputGCA(j2)
+            m.reach = this.textFrom(j2.reach)
+            m.parry = this.textFrom(j2.parry)
+            m.block = this.textFrom(j2.block)
             let old = this._findElementIn('melee', false, m.name, m.mode)
-            this._migrateOtfsAndNotes(old, m, t(j2.vtt_notes))
+            this._migrateOtfsAndNotes(old, m, this.textFrom(j2.vtt_notes))
 
             GURPS.put(melee, m, index++)
           }
@@ -907,9 +914,9 @@ export class ActorImporter {
    */
   importCombatRangedFromGCA(json) {
     if (!json) return
-    let t = this.textFrom
     let ranged = {}
     let index = 0
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -918,34 +925,38 @@ export class ActorImporter {
           if (k2.startsWith('id-')) {
             let j2 = j.rangedmodelist[k2]
             let r = new Ranged()
-            r.name = t(j.name)
-            r.originalName = t(j.name)
-            r.st = t(j.st)
-            r.bulk = t(j.bulk)
-            r.legalityclass = t(j.lc)
-            r.ammo = t(j.ammo)
+            r.name = this.textFrom(j.name)
+            r.originalName = this.textFrom(j.name)
+            r.st = this.textFrom(j.st)
+            r.bulk = this.textFrom(j.bulk)
+            r.legalityclass = this.textFrom(j.lc)
+            r.ammo = this.textFrom(j.ammo)
+
             try {
-              r.setNotes(t(j.text))
+              r.setNotes(this.textFrom(j.text))
             } catch {
               console.log(r)
-              console.log(t(j.text))
+              console.log(this.textFrom(j.text))
             }
-            r.mode = t(j2.name)
-            r.import = t(j2.level)
-            r.damage = t(j2.damage)
-            r.acc = t(j2.acc)
+
+            r.mode = this.textFrom(j2.name)
+            r.import = this.textFrom(j2.level)
+            r.damage = buildDamageOutputGCA(j2)
+            r.acc = this.textFrom(j2.acc)
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
+
             if (m) {
               r.acc = m[1]
               r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
-            r.rof = t(j2.rof)
-            r.shots = t(j2.shots)
-            r.rcl = t(j2.rcl)
-            let rng = t(j2.range)
+
+            r.rof = this.textFrom(j2.rof)
+            r.shots = this.textFrom(j2.shots)
+            r.rcl = this.textFrom(j2.rcl)
+            let rng = this.textFrom(j2.range)
             r.range = rng
             let old = this._findElementIn('ranged', false, r.name, r.mode)
-            this._migrateOtfsAndNotes(old, r, t(j2.vtt_notes))
+            this._migrateOtfsAndNotes(old, r, this.textFrom(j2.vtt_notes))
 
             GURPS.put(ranged, r, index++)
           }
@@ -2251,7 +2262,7 @@ export class ActorImporter {
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
             m.import = w.calc?.level?.toString() || '0'
-            m.damage = buildDamageOutput(w)
+            m.damage = buildDamageOutputGCS(w)
             m.reach = w.reach || ''
             m.parry = w.calc?.parry || ''
             m.block = w.calc?.block || ''
@@ -2272,7 +2283,7 @@ export class ActorImporter {
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
             r.import = w.calc?.level || '0'
-            r.damage = buildDamageOutput(w)
+            r.damage = buildDamageOutputGCS(w)
             r.acc = w.accuracy || ''
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
@@ -2305,10 +2316,11 @@ export class ActorImporter {
    * @param {{ [key: string]: any }} o
    */
   textFrom(o) {
-    if (!o) return ''
-    let t = o['#text']
-    if (!t) return ''
-    return t.trim()
+    return readXmlText(o)
+    // if (!o) return ''
+    // let t = o['#text']
+    // if (!t) return ''
+    // return t.trim()
   }
 
   // similar hack to get text as integer.
