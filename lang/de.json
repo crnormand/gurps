@@ -326,6 +326,12 @@
     "colorSheetMenuColorAreas": "Farbige Bereiche",
     "colorSheetMenuCustomColors": "Benutzerdefinierte Farben",
     "colorSheetMenuOverride": "Farben überschreiben",
+    "actor": {
+    "setting": {
+      "autoUpdateStrength": "Stärke automatisch aktualisieren",
+      "autoUpdateStrengthHint": "Automatisch Grundlift, Stoß- und Schwungschaden aktualisieren, wenn sich die ST ändert."
+    }
+    },
     "combat": {
       "rof": {
         "bonusLabel": "RoF {shots}",
