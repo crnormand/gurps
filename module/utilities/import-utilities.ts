@@ -1,21 +1,3 @@
-// Example usage:
-// const weapon = {
-//   damage: {
-//     st: 'thr',
-//     base: '2',
-//     type: 'cut',
-//   },
-// }
-// console.log(buildDamageOutput(weapon)) // Output: "thr+2 cut"
-// const weapon2 = {
-//   damage: {
-//     st: 'sw',
-//     base: '-1',
-//     type: 'imp',
-//   },
-// }
-// console.log(buildDamageOutput(weapon2)) // Output: "sw-1 imp"
-
 /**
  * Build damage output string from weapon data
  * @param {object} weapon - Weapon object with damage properties
