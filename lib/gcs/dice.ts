@@ -24,21 +24,24 @@ export class GcsDice {
    * @returns
    */
   static normalizeDamage(damage: GcsDice): GcsDice {
-    if (damage.count === 1 && damage.modifier < 3) return damage
+    // Work on a copy so we don't mutate the caller's instance.
+    const result = new GcsDice(damage.count, damage.modifier, damage.multiplier, damage.sides)
+
+    if (result.count === 1 && result.modifier < 3) return result
 
     // If the modifier is larger than or equal to 3, we can convert some of it into extra dice.
-    while (damage.modifier > 2) {
-      damage.count++
-      damage.modifier -= 4
+    while (result.modifier > 2) {
+      result.count++
+      result.modifier -= 4
     }
 
     // If the modifier is negative, we can convert some of it into fewer dice.
-    while (damage.modifier < -1 && damage.count > 1) {
-      damage.count--
-      damage.modifier += 4
+    while (result.modifier < -1 && result.count > 1) {
+      result.count--
+      result.modifier += 4
     }
 
-    return new GcsDice(damage.count, damage.modifier)
+    return result
   }
 
   toString(): string {
