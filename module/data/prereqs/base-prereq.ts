@@ -1,5 +1,6 @@
-import { type GcsBaseItemModel } from '../../item/data/gcs-base.ts'
+import { GcsBaseItemModel } from '../../item/data/gcs-base.ts'
 import { DataModel, fields } from '../../types/foundry/index.ts'
+import { IPrereqs } from '../mixins/prereqs.ts'
 
 enum PrereqType {
   List = 'prereqList',
@@ -10,12 +11,12 @@ enum PrereqType {
   EquippedEquipment = 'equippedEquipment',
   Skill = 'skillPrereq',
   Spell = 'spellPrereq',
-  Script = 'ScriptPrereq',
+  Script = 'scriptPrereq',
 }
 
 /* ---------------------------------------- */
 
-class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsBaseItemModel> {
+class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsBaseItemModel & IPrereqs> {
   static override defineSchema(): BasePrereqSchema {
     return basePrereqSchema()
   }
@@ -38,7 +39,7 @@ class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsB
 
   /* ---------------------------------------- */
 
-  isSatisfied(): boolean {
+  get isSatisfied(): boolean {
     throw new Error(
       'Method "isSatisfied" is not implemented in the base class BasePrereqModel. It must be overridden in subclasses.'
     )
@@ -49,6 +50,16 @@ class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsB
 
 const basePrereqSchema = () => {
   return {
+    // The unique ID of this prerequisite
+    id: new fields.DocumentIdField({
+      required: true,
+      nullable: false,
+      blank: false,
+      initial: () => foundry.utils.randomID(),
+    }),
+    // The ID of the parent container, if any. A value of `null` means the prereq is at the top level,
+    // which applies only to the top-level prerequisite list of an item.
+    containerId: new fields.StringField({ required: false, nullable: true, blank: false, initial: null }),
     type: new fields.StringField({ required: true, nullable: false, blank: false, choices: Object.values(PrereqType) }),
   }
 }
