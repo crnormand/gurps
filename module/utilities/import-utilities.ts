@@ -70,15 +70,15 @@ export function calculateEncumbranceLevels(
     encumbrance.level = encumbranceLevelIndex
     encumbrance.current = false
     encumbrance.key = 'enc' + encumbranceLevelIndex
-    let weight_value = basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex]
+    let weightValue = basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex]
 
-    // Find the highest encumbrance level whose weight_value is equal to or greater than carriedWeight.
+    // Find the highest encumbrance level whose weightValue is equal to or greater than carriedWeight.
     encumbrance.current =
-      (carriedWeight < weight_value || encumbranceLevelIndex == 4 || basicLift == 0) &&
+      (carriedWeight < weightValue || encumbranceLevelIndex == 4 || basicLift == 0) &&
       (encumbranceLevelIndex == 0 ||
         carriedWeight > basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex - 1])
 
-    encumbrance.weight = weight_value.toString() + ' ' + weightUnits
+    encumbrance.weight = weightValue.toString() + ' ' + weightUnits
     encumbrance.move = calc?.move ? calc?.move[encumbranceLevelIndex] : 0
     encumbrance.dodge = calc?.dodge ? calc?.dodge[encumbranceLevelIndex] : 0
     GURPS.put(es, encumbrance, encumbranceLevelIndex)
