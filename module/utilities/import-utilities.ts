@@ -11,7 +11,7 @@ export function buildDamageOutputGCS(weapon: Record<string, any> | null | undefi
   // If modifier is NaN, fall back to calc.damage
   if (isNaN(modifier)) return weapon?.calc?.damage || ''
 
-  const sign = modifier < 1 ? '' : '+'
+  const sign = modifier <= 0 ? '' : '+'
 
   return `${weapon.damage.st}${sign}${modifier === 0 ? '' : modifier} ${weapon.damage.type}`
 }
