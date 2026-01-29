@@ -3,6 +3,8 @@ import { fields, DataModel } from '../../types/foundry/index.ts'
 import { GcsAttributeDefinition } from './gcs-attribute-definition.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'
 
+/* ---------------------------------------- */
+
 class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
   #definition: GcsAttributeDefinition | null = null
 
@@ -29,6 +31,12 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
+  get definition(): GcsAttributeDefinition | null {
+    return this.#definition
+  }
+
+  /* ---------------------------------------- */
+
   get actor(): Actor.Implementation | null {
     return this.parent?.parent || null
   }
@@ -38,7 +46,8 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
   get max(): number {
     if (!this.#definition) return 0
 
-    return this.#definition.base + this.adj
+    return 0
+    // return this.#definition.base + this.adj
   }
 
   /* ---------------------------------------- */
@@ -46,7 +55,8 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
   get current(): number {
     if (!this.#definition) return 0
 
-    return this.#definition.base + this.adj - this.damage
+    return 0
+    // return this.#definition.base + this.adj - this.damage
   }
 }
 
