@@ -3,7 +3,7 @@ import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
-import { buildDamageOutput, calculateEncumbranceLevels } from '../utilities/import-utilities.ts'
+import { buildDamageOutput, calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import {
   Advantage,
   Encumbrance,

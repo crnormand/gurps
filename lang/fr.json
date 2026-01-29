@@ -329,7 +329,7 @@
     "actor": {
       "setting": {
         "autoUpdateStrength": "Mise à jour automatique de la Force",
-        "autoUpdateStrengthHint": "Mettre à jour automatiquement la Force, la Charge de Base, les dégâts de Coup et de Balançage lorsque la ST change."
+        "autoUpdateStrengthHint": "Mettre à jour automatiquement la Charge de Base, les dégâts de Coup et de Balançage lorsque la ST change."
       }
     },
     "combat": {
