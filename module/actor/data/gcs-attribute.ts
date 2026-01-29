@@ -1,8 +1,52 @@
 import { fields, DataModel } from '../../types/foundry/index.ts'
 
-class GcsAttribute extends DataModel<GcsAttributeSchema> {
+import { GcsAttributeDefinition } from './gcs-attribute-definition.ts'
+import { type GcsCharacterModel } from './gcs-character.ts'
+
+class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
+  #definition: GcsAttributeDefinition | null = null
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): GcsAttributeSchema {
     return gcsAttributeSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _initialize(options?: DataModel.InitializeOptions | undefined): void {
+    super._initialize(options)
+    const actor = this.actor
+
+    if (!actor || !actor.isOfType('gcsCharacter')) {
+      console.error('GcsAttribute: No Actor provided or invalid Actor type.')
+
+      return
+    }
+
+    this.#definition = actor?.system.attributeDefinitions.get(this.id) || null
+  }
+
+  /* ---------------------------------------- */
+
+  get actor(): Actor.Implementation | null {
+    return this.parent?.parent || null
+  }
+
+  /* ---------------------------------------- */
+
+  get max(): number {
+    if (!this.#definition) return 0
+
+    return this.#definition.base + this.adj
+  }
+
+  /* ---------------------------------------- */
+
+  get current(): number {
+    if (!this.#definition) return 0
+
+    return this.#definition.base + this.adj - this.damage
   }
 }
 
