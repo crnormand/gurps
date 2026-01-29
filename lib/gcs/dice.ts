@@ -8,10 +8,6 @@ export class GcsDice {
     public multiplier: number = 1,
     public sides: number = 6
   ) {
-    this.count = count
-    this.modifier = modifier
-    this.multiplier = multiplier
-    this.sides = sides
   }
 
   /**
