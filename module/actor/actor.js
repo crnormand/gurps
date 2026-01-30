@@ -96,8 +96,6 @@ function extractRefFromAttributeOrDefense(chatThing) {
 }
 
 export class GurpsActor extends Actor {
-  strengthCalculator = new StrengthCalculator()
-
   /** @override */
   getRollData() {
     const data = super.getRollData()
@@ -229,6 +227,8 @@ export class GurpsActor extends Actor {
   }
 
   updateStrengthBasedAttributes() {
+    if (!this.strengthCalculator) this.strengthCalculator = new StrengthCalculator()
+
     this.strengthCalculator.strength = this.system.attributes.ST.import
     this._setBasicLift(this.strengthCalculator.calculateLift())
     this.system.thrust = this.strengthCalculator.calculateThrustDamage()
