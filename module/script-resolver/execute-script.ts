@@ -1,5 +1,7 @@
 import type { AnyFunction } from 'fvtt-types/utils'
 
+import { ScriptArgument } from './types.ts'
+
 type SandboxResult = { success: true; value: string } | { success: false; value: ''; reason: 'timeout' | 'error' }
 
 /**
@@ -10,7 +12,7 @@ type SandboxResult = { success: true; value: string } | { success: false; value:
  */
 export async function executeScript(
   code: string,
-  context: Record<string, unknown>,
+  context: Record<string, unknown> | ScriptArgument[],
   timeoutMs = 500
 ): Promise<SandboxResult> {
   const blockedKeys = [
@@ -21,7 +23,6 @@ export async function executeScript(
     'window',
     'document',
     'globalThis',
-    'self',
     'Function',
     'fetch',
     'XMLHttpRequest',
@@ -29,6 +30,17 @@ export async function executeScript(
     'EventSource',
     'importScripts',
   ] as const
+
+  context =
+    context instanceof Array
+      ? context.reduce((obj: Record<string, unknown>, e) => {
+          obj[e.name] = e.value
+
+          return obj
+        }, {})
+      : context
+
+  console.log(context)
 
   const blockedValues = blockedKeys.map(() => undefined)
 

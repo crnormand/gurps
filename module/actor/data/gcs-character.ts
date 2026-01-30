@@ -1,5 +1,5 @@
 import { Length } from '../../data/common/length.js'
-import { ResolverCacheKey } from '../../gcs-scripting/types.ts'
+import { ResolverCacheKey } from '../../script-resolver/types.ts'
 import { fields } from '../../types/foundry/index.ts'
 
 import { BaseActorModel } from './base.ts'

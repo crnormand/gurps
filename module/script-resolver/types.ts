@@ -27,4 +27,11 @@ interface ScriptArgument<T = any> {
 
 /* ---------------------------------------- */
 
+const MODULE_NAME = 'scriptResolver'
+
+const GLOBAL_RESOLVER_CACHE = `${MODULE_NAME}.global-resolver-cache`
+
+/* ---------------------------------------- */
+
+export { GLOBAL_RESOLVER_CACHE }
 export type { BaseProvider, ResolverCacheKey, ScriptArgument, SelfProvider }

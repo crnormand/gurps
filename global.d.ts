@@ -7,6 +7,7 @@ import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
 import DamageChat from 'module/damage/damagechat.js'
+import { MapField } from 'module/data/fields/map-field.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { Importer } from 'module/importer/index.ts'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
@@ -529,6 +530,15 @@ declare module 'fvtt-types/configuration' {
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
+
+    'gurps.scriptResolver.global-resolver-cache': MapField<
+      foundry.data.fields.SchemaField<{
+        id: foundry.data.fields.StringField<{ required: true; nullable: false }>
+        text: foundry.data.fields.StringField<{ required: true; nullable: false }>
+      }>,
+      foundry.data.fields.StringField<{ required: true; nullable: false }>,
+      { required: true; nullable: false }
+    >
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
