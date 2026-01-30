@@ -134,6 +134,7 @@
 .ms-col-points-positive {
   color: var(--ms-advantage);
 }
+
 .ms-col-points-negative {
   color: var(--ms-disadvantage);
 }
@@ -145,6 +146,7 @@
   a {
     color: var(--ms-accent);
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }
@@ -200,7 +202,7 @@ $attack-columns: 1fr 60px 36px 90px 50px 55px 50px;
     border-bottom: none;
   }
 
-  > span:not(:first-child) {
+  >span:not(:first-child) {
     text-align: center;
   }
 
@@ -229,6 +231,17 @@ $attack-columns: 1fr 60px 36px 90px 50px 55px 50px;
   .ms-attack-range {
     color: var(--ms-text-muted);
   }
+
+  .ms-attack-acc {
+    color: var(--ms-modifier-positive);
+    cursor: pointer;
+    font-weight: var(--ms-weight-semibold);
+  }
+
+  .ms-attack-acc:hover {
+    color: var(--ms-modifier-positive-hover);
+    text-decoration: underline;
+  }
 }
 
 .ms-attack-usage {
@@ -247,7 +260,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 .ms-enc-header {
   @include grid-header($encumbrance-columns);
 
-  > span {
+  >span {
     padding: var(--ms-space-4) var(--ms-space-3);
     text-align: center;
   }
@@ -269,7 +282,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
     @include interactive-row;
   }
 
-  > span {
+  >span {
     padding: var(--ms-space-3);
     text-align: center;
   }
@@ -298,8 +311,10 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 .ms-dodge-bonus {
   margin-left: var(--ms-space-2);
   color: var(--ms-advantage);
+
   &.rollable {
     cursor: pointer;
+
     &:hover {
       text-decoration: underline;
     }
@@ -425,6 +440,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 .ms-lock-icon {
   margin-left: auto;
   color: var(--ms-accent);
+
   &.ms-unlocked {
     color: var(--ms-disadvantage);
   }
@@ -439,7 +455,7 @@ $locations-columns: 50px 1fr 60px 60px;
 .ms-loc-header {
   @include grid-header($locations-columns);
 
-  > span {
+  >span {
     padding: var(--ms-space-4) var(--ms-space-3);
     text-align: center;
   }
@@ -452,7 +468,7 @@ $locations-columns: 50px 1fr 60px 60px;
   border-bottom: 1px solid var(--ms-border-light);
   @include zebra-striping;
 
-  > span {
+  >span {
     padding: var(--ms-space-2) var(--ms-space-3);
     text-align: center;
   }
@@ -539,7 +555,7 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   padding-left: 0;
   padding-right: 0;
 
-  > span {
+  >span {
     padding: var(--ms-space-4) var(--ms-space-2);
   }
 }
@@ -554,7 +570,7 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   @include zebra-striping;
   @include interactive-row;
 
-  > span {
+  >span {
     padding: var(--ms-space-3) var(--ms-space-2);
   }
 }
@@ -629,6 +645,7 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   a {
     color: var(--ms-accent);
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }

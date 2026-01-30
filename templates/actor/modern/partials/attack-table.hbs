@@ -26,7 +26,7 @@
         <span class='ms-attack-reach'>{{this.reach}}</span>
         <span class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry color='var(--ms-text-muted)'}}{{/if}}</span>
         {{else}}
-        <span class='ms-attack-acc'>{{this.acc}}</span>
+        <span class='ms-attack-acc {{gmod this.acc}}' data-name='Acc for {{name}}' data-otf='{{{displayNumber this.acc}}} Acc'>{{this.acc}}</span>
         <span class='ms-attack-range'>{{this.range}}</span>
         {{/if}}
         {{>row-actions editAction=../editAction deleteAction=../deleteAction key=(concat ../path '.' @key)}}
