@@ -51,8 +51,6 @@ import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
-import { executeScript } from './gcs-scripting/execute-script.ts'
-import { ScriptResolver } from './gcs-scripting/script-resolver.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
@@ -63,6 +61,7 @@ import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
+import { ScriptResolver } from './script-resolver/index.js'
 import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
@@ -112,6 +111,7 @@ if (!globalThis.GURPS) {
     Item,
     Pdf,
     ResourceTracker,
+    ScriptResolver,
     Token,
     UI,
   }
@@ -123,9 +123,6 @@ if (!globalThis.GURPS) {
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
-
-  GURPS.resolver = ScriptResolver
-  GURPS.executeScript = executeScript
 
   // CONFIG.debug.hooks = true
 
