@@ -6,7 +6,7 @@
 
 - Automatically update Swing, Thrust, and Basic Lift when updating ST.
 - Add clickable Acc modifiers to Ranged attacks on the Modern sheet.
-- Add a "recalculate" basic lift, thrust, and swing button to the Lifting and Moving Things table on the Modern sheet.
+- Add a "recalculate" basic lift, thrust, and swing button to the Lifting and Moving Things table on the Modern sheet. (Thanks @666f78!)
 
 ### Bugfixes
 
