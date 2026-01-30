@@ -120,7 +120,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find('.rollable').click(this._onClickRoll.bind(this))
 
     // Wire events to all OTFs on the sheet.
-    GurpsWiring.hookupAllEvents(html)
+    GurpsWiring.hookupAllEvents(html[0])
 
     // Allow OTFs on this actor sheet to be draggable.
     // TODO Redundant with `GurpsWiring.hookupAllEvents`, above.
