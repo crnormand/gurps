@@ -11,7 +11,7 @@ export function buildDamageOutputGCS(weapon: Record<string, any> | null | undefi
   // If modifier is NaN, fall back to calc.damage
   if (isNaN(modifier)) return weapon?.calc?.damage || ''
 
-  const sign = modifier < 1 ? '' : '+'
+  const sign = modifier <= 0 ? '' : '+'
 
   return `${weapon.damage.st}${sign}${modifier === 0 ? '' : modifier} ${weapon.damage.type}`
 }
@@ -75,16 +75,15 @@ export function calculateEncumbranceLevels(
       dodge: calc?.dodge ? calc?.dodge[encumbranceLevelIndex] : 0,
     }
 
-    let weight_value = basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex]
+    let weightValue = basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex]
 
-    // Find the highest encumbrance level whose weight_value is equal to or greater than carriedWeight.
+    // Find the highest encumbrance level whose weightValue is equal to or greater than carriedWeight.
     encumbrance.current =
-      (carriedWeight < weight_value || encumbranceLevelIndex === 4 || basicLift === 0) &&
+      (carriedWeight < weightValue || encumbranceLevelIndex === 4 || basicLift === 0) &&
       (encumbranceLevelIndex === 0 ||
         carriedWeight > basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex - 1])
 
-    encumbrance.weight = weight_value.toString() + ' ' + weightUnits
-
+    encumbrance.weight = weightValue.toString() + ' ' + weightUnits
     GURPS.put(es, encumbrance, encumbranceLevelIndex)
   }
   return es
