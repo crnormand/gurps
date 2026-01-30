@@ -1,5 +1,6 @@
 'use strict'
 
+import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
@@ -32,6 +33,7 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
+import { StrengthCalculator } from './strength-calculator.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -94,6 +96,8 @@ function extractRefFromAttributeOrDefense(chatThing) {
 }
 
 export class GurpsActor extends Actor {
+  strengthCalculator = new StrengthCalculator()
+
   /** @override */
   getRollData() {
     const data = super.getRollData()
@@ -199,6 +203,10 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
 
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTO_UPDATE_STRENGTH)) {
+      this.updateStrengthBasedAttributes()
+    }
+
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
     if (this.system.encumbrance) {
@@ -218,6 +226,35 @@ export class GurpsActor extends Actor {
     }
 
     this.calculateDerivedValues()
+  }
+
+  updateStrengthBasedAttributes() {
+    this.strengthCalculator.strength = this.system.attributes.ST.import
+    this._setBasicLift(this.strengthCalculator.calculateLift())
+    this.system.thrust = this.strengthCalculator.calculateThrustDamage()
+    this.system.swing = this.strengthCalculator.calculateSwingDamage()
+  }
+
+  /**
+   * Update the basic lift and recalculate encumbrance levels and lifting.
+   * @param {*} basicLift
+   */
+  _setBasicLift(basicLift) {
+    this.system.basiclift = basicLift
+
+    const unit = this.system.encumbrance['00000']?.weight?.toString().split(' ')[1] || 'lb'
+    const encumbranceLevels = calculateEncumbranceLevels(this.system.basiclift, 0, unit, {})
+    for (const [key, value] of Object.entries(encumbranceLevels)) {
+      this.system.encumbrance[key].weight = value.weight
+    }
+
+    this.system.liftingmoving.basiclift = basicLift
+    this.system.liftingmoving.onehandedlift = basicLift * 2
+    this.system.liftingmoving.twohandedlift = basicLift * 8
+    this.system.liftingmoving.shove = basicLift * 12
+    this.system.liftingmoving.carryonback = basicLift * 15
+    this.system.liftingmoving.runningshove = basicLift * 24
+    this.system.liftingmoving.shiftslightly = basicLift * 50
   }
 
   // execute after every import.
@@ -294,7 +331,7 @@ export class GurpsActor extends Actor {
       let langn = /Language:?/i
       let langt = new RegExp(game.i18n.localize('GURPS.language') + ':?', 'i')
       recurselist(this.system.languages, (e, _k, _d) => {
-        let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
+        let a = GURPS.findAdDisad(this, e.name) // is there an Adv including the same name
         if (a) {
           if (!a.name.match(langn) && !a.name.match(langt)) {
             // GCA4/GCS style
@@ -788,7 +825,7 @@ export class GurpsActor extends Actor {
   }
 
   getCurrentMoveMode() {
-    let move = this.system.move
+    let move = this.system.move || {}
     let current = Object.values(move).find(it => it.default)
     if (!current && Object.keys(move).length > 0) return move['00000']
     return current

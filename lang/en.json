@@ -326,6 +326,12 @@
     "colorSheetMenuColorAreas": "Color Areas",
     "colorSheetMenuCustomColors": "Custom Colors",
     "colorSheetMenuOverride": "Override Colors",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Auto Update Strength",
+        "autoUpdateStrengthHint": "Automatically update Basic Lift, Thrust and Swing damage when ST changes."
+      }
+    },
     "combat": {
       "rof": {
         "bonusLabel": "RoF {shots}",
