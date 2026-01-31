@@ -1,14 +1,12 @@
-interface BaseProvider {
-  self: any
-}
+import { AnyMutableObject } from 'fvtt-types/utils'
 
 /* ---------------------------------------- */
 
-interface SelfProvider<Provider extends BaseProvider = BaseProvider> {
+interface SelfProvider {
   id: string
   // The "provider" is an arbitrary object used to resolve the script against.
   // It represents a sandboxed environment in which the script runs.
-  provider: Provider
+  provider: ScriptContextEntry
 }
 
 /* ---------------------------------------- */
@@ -20,10 +18,21 @@ interface ResolverCacheKey {
 
 /* ---------------------------------------- */
 
-interface ScriptArgument<T = any> {
-  name: string
-  value: T
+enum ScriptMethodType {
+  Body = 'body',
+  Expr = 'expr',
 }
+
+type ScriptMethodSpec =
+  | { type: ScriptMethodType.Body; args: string[]; body: string }
+  | { type: ScriptMethodType.Expr; args: string[]; expr: string }
+
+interface ScriptContextEntry {
+  data: AnyMutableObject
+  methods: Record<string, ScriptMethodSpec>
+}
+
+type ScriptContext = Record<string, ScriptContextEntry>
 
 /* ---------------------------------------- */
 
@@ -33,5 +42,5 @@ const GLOBAL_RESOLVER_CACHE = `${MODULE_NAME}.global-resolver-cache`
 
 /* ---------------------------------------- */
 
-export { GLOBAL_RESOLVER_CACHE }
-export type { BaseProvider, ResolverCacheKey, ScriptArgument, SelfProvider }
+export { GLOBAL_RESOLVER_CACHE, ScriptMethodType }
+export type { ScriptContext, ScriptContextEntry, ScriptMethodSpec, SelfProvider, ResolverCacheKey }

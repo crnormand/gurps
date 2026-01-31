@@ -98,6 +98,10 @@ class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, Gcs
     )
   }
 
+  get isDecimal(): boolean {
+    return this.type === AttributeType.Decimal || this.type === AttributeType.DecimalRef
+  }
+
   /* ---------------------------------------- */
 
   get kind(): GcsAttriuteKind {

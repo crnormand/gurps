@@ -1,7 +1,7 @@
+import { ScriptAttribute } from './data/attribute.ts'
+import { ScriptCharacter } from './data/character.ts'
 import { executeScript } from './execute-script.ts'
-import { ScriptAttribute } from './script-attribute.ts'
-import { ScriptCharacter } from './script-character.ts'
-import { BaseProvider, GLOBAL_RESOLVER_CACHE, ResolverCacheKey, ScriptArgument, SelfProvider } from './types.ts'
+import { GLOBAL_RESOLVER_CACHE, ResolverCacheKey, ScriptContext, SelfProvider } from './types.ts'
 
 /* ---------------------------------------- */
 
@@ -10,11 +10,7 @@ class Resolver {
 
   static maximumScriptExecutionTimeMs = 1000
 
-  static resolveToNumber<Provider extends BaseProvider>(
-    actor: Actor.Implementation | null,
-    selfProvider: SelfProvider<Provider>,
-    text: string
-  ): number {
+  static resolveToNumber(actor: Actor.Implementation | null, selfProvider: SelfProvider, text: string): number {
     text = text.trim()
 
     if (text === '') return 0
@@ -38,9 +34,9 @@ class Resolver {
 
   /* ---------------------------------------- */
 
-  static async resolveScript<Provider extends BaseProvider>(
+  static async resolveScript(
     actor: Actor.Implementation | null,
-    selfProvider: SelfProvider<Provider>,
+    selfProvider: SelfProvider,
     text: string,
     resolutionDepth = 0
   ): Promise<string> {
@@ -68,20 +64,15 @@ class Resolver {
 
       const maxTime = this.maximumScriptExecutionTimeMs
 
-      const args: ScriptArgument[] = []
+      // const args: Record<string, unknown> = {}
+      const context: ScriptContext = {}
 
       if (selfProvider.provider) {
-        args.push({
-          name: 'self',
-          value: selfProvider.provider,
-        })
+        context.self = selfProvider.provider
       }
 
       if (actor && actor.isOfType('gcsCharacter')) {
-        args.push({
-          name: 'entity',
-          value: { ...new ScriptCharacter(actor.system) },
-        })
+        context.entity = { ...new ScriptCharacter(actor.system) }
 
         const list = actor.system._attributes
 
@@ -90,19 +81,11 @@ class Resolver {
 
           if (!def || def.isSeparator) continue
 
-          args.push({
-            name: '$' + attribute.id,
-            value: () => {
-              return new ScriptAttribute(attribute)
-            },
-          })
+          context[`$${attribute.id}`] = { ...new ScriptAttribute(attribute) }
         }
       }
 
-      console.log(text, args, maxTime)
-      const result = await executeScript(text, args, maxTime)
-
-      console.log('result', result)
+      const result = await executeScript(text, context, maxTime)
 
       if (result.success === false) {
         console.error('Script execution failed. Reason:', result.reason)
