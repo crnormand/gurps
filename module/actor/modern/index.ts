@@ -1,4 +1,5 @@
 export { GurpsActorModernSheet, countItems } from './sheet.ts'
+export { GurpsActorNpcModernSheet } from './npc-sheet.ts'
 export {
   bindInlineEdit,
   bindAllInlineEdits,

@@ -326,6 +326,12 @@
     "colorSheetMenuColorAreas": "Farbige Bereiche",
     "colorSheetMenuCustomColors": "Benutzerdefinierte Farben",
     "colorSheetMenuOverride": "Farben überschreiben",
+    "actor": {
+    "setting": {
+      "autoUpdateStrength": "Stärke automatisch aktualisieren",
+      "autoUpdateStrengthHint": "Automatisch Grundlift, Stoß- und Schwungschaden aktualisieren, wenn sich die ST ändert."
+    }
+    },
     "combat": {
       "rof": {
         "bonusLabel": "RoF {shots}",
@@ -567,6 +573,7 @@
     "grapplingUnrestrained": "Uneingeschränkt",
     "groundCreatures": "Boden Kreaturen",
     "groundCreaturesSuffer": "Boden Kreaturen erleiden",
+    "half": "Halb",
     "hardRoll": "Schwierige Chance",
     "headVitalsHit": "Kopf oder Lebenswichtiges Organ getroffen ",
     "hearing": "Hören",
@@ -1191,6 +1198,7 @@
     "selectTargetForDamageWarning": "Ziehe den Schaden auf das Ziel oder ziehe ihn auf die Karte, um ihn auf das ausgewählte Token anzuwenden.",
     "selectTargetForEquipmentWarning": "Ziehe die Ausrüstung auf ein einzelnes Ziel-Token",
     "selectToken": "Wähle Token",
+    "sendToChat": "An Chat senden",
     "serverity": "Schwere",
     "setManeuver": "Wähle Manöver",
     "settingActiveEffects": "Aktive Effekte einschalten",
@@ -1517,8 +1525,11 @@
       "Suffocate": "Erstickend",
       "TerriblePain": "Furchtbare Schmerzen",
       "Tipsy": "Angetrunken",
+      "tired": "Müde",
       "Wait": "Wartend"
     },
+    "step": "Schritt",
+    "stepOrTwo": "Schritt oder zwei",
     "submit": "Einreichen",
     "suffersAMajorWound": "{name} erleidet eine Schwere Wunde",
     "suffersHeadVitalsWound": "{name} wurde am {location} getroffen, und verursachte Schock.",
@@ -1592,6 +1603,7 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
+    "years": "Jahre",
     "youDoNotHavePermssion": "Du hast keine Berechtigung dies zu tun"
   }
 }

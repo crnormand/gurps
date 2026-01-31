@@ -1,148 +1,183 @@
 <form class='{{cssClass}}' autocomplete='off'>
-  <div class='gga-app {{classes}} npc-input'>
-    <div class='npc-input-grid-container'>
-      <div class='npc-input-top'>
-        <div class='npc-input-nm npc-input-label'>{{localize 'GURPS.sheet.personal.name'}}:</div>
-        <div class='npc-input-nm-val'><input
-            id='npc-input-name'
-            data-key='name'
-            class='gcs-input'
-            type='text'
-            value='{{mook.name}}'
-          /></div>
-        <div class='npc-input-title npc-input-label'>{{localize 'GURPS.sheet.personal.title'}}:</div>
-        <div class='npc-input-title-val'><input data-key='title' class='gcs-input' type='text' value='{{mook.title}}' />
+  <div class='ms-mook-generator'>
+    <div class='ms-mook-header'>
+      <div class='ms-mook-identity'>
+        <div class='ms-identity-row'>
+          <div class='ms-identity-field'>
+            <label for='npc-input-name'>{{localize 'GURPS.sheet.personal.name'}}</label>
+            <input id='npc-input-name' data-key='name' type='text' value='{{mook.name}}' />
+          </div>
+          <div class='ms-identity-field'>
+            <label>{{localize 'GURPS.sheet.personal.title'}}</label>
+            <input data-key='title' type='text' value='{{mook.title}}' />
+          </div>
         </div>
-        <div class='npc-input-desc npc-input-label'>Desc:</div>
-        <div class='npc-input-desc-val'><input data-key='desc' class='gcs-input' type='text' value='{{mook.desc}}' />
+        <div class='ms-identity-row'>
+          <div class='ms-identity-field'>
+            <label>{{localize 'GURPS.description'}}</label>
+            <input data-key='desc' type='text' value='{{mook.desc}}' />
+          </div>
         </div>
       </div>
-      <div class='npc-input-attr'>
-        <div class='npc-input-st npc-input-label'>{{localize 'GURPS.attributesST'}}:</div>
-        <div class='npc-input-st-val'><input data-key='st' class='gcs-input-sm2' type='text' value='{{mook.st}}' />
-        </div>
-        <div class='npc-input-dx npc-input-label'>{{localize 'GURPS.attributesDX'}}:</div>
-        <div class='npc-input-dx-val'><input data-key='dx' class='gcs-input-sm2' type='text' value='{{mook.dx}}' />
-        </div>
-        <div class='npc-input-iq npc-input-label'>{{localize 'GURPS.attributesIQ'}}:</div>
-        <div class='npc-input-iq-val'><input data-key='iq' class='gcs-input-sm2' type='text' value='{{mook.iq}}' />
-        </div>
-        <div class='npc-input-ht npc-input-label'>{{localize 'GURPS.attributesHT'}}:</div>
-        <div class='npc-input-ht-val'><input data-key='ht' class='gcs-input-sm2' type='text' value='{{mook.ht}}' />
-        </div>
-        <div class='npc-input-dmg npc-input-labelr'>Th/Sw:</div>
-        <div class='npc-input-dmg-val'><input
-            data-key='damage'
-            class='npc-input-sm3'
-            type='text'
-            value='{{mook.damage}}'
-          /></div>
-        <div class='npc-input-hp npc-input-label'>{{localize 'GURPS.HP'}}:</div>
-        <div class='npc-input-hp-val'><input data-key='hp' class='gcs-input-sm2' type='text' value='{{mook.hp}}' />
-        </div>
-        <div class='npc-input-will npc-input-label'>{{localize 'GURPS.attributesWILL'}}:</div>
-        <div class='npc-input-will-val'><input
-            data-key='will'
-            class='gcs-input-sm2'
-            type='text'
-            value='{{mook.will}}'
-          /></div>
-        <div class='npc-input-per npc-input-label'>{{localize 'GURPS.attributesPER'}}:</div>
-        <div class='npc-input-per-val'><input data-key='per' class='gcs-input-sm2' type='text' value='{{mook.per}}' />
-        </div>
-        <div class='npc-input-fp npc-input-label'>{{localize 'GURPS.FP'}}:</div>
-        <div class='npc-input-fp-val'><input data-key='fp' class='gcs-input-sm2' type='text' value='{{mook.fp}}' />
-        </div>
-        <div class='npc-input-parry npc-input-labelr'>{{localize 'GURPS.parry'}}:</div>
-        <div class='npc-input-parry-val'><input
-            data-key='parry'
-            class='gcs-input-sm2'
-            type='text'
-            value='{{mook.parry}}'
-          /></div>
-        <div class='npc-input-spd npc-input-labelr'>{{localize 'GURPS.speed'}}:</div>
-        <div class='npc-input-spd-val'><input
-            data-key='speed'
-            class='gcs-input-sm3'
-            type='text'
-            value='{{mook.speed}}'
-          /></div>
-        <div class='npc-input-mov npc-input-labelr'>{{localize 'GURPS.move'}}:</div>
-        <div class='npc-input-mov-val'><input data-key='move' class='gcs-input-sm2' type='text' value='{{mook.move}}' />
-        </div>
-        <div class='npc-input-sm npc-input-labelr'>SM:</div>
-        <div class='npc-input-sm-val'><input data-key='sm' class='npc-input-sm2' type='text' value='{{mook.sm}}' />
-        </div>
-        <div class='npc-input-dr npc-input-labelr'>{{localize 'GURPS.hitLocationDR'}}:</div>
-        <div class='npc-input-dr-val'><input data-key='dr' class='npc-input-sm2' type='text' value='{{mook.dr}}' />
-        </div>
-        <div class='npc-input-dodge npc-input-labelr'>{{localize 'GURPS.dodge'}}:</div>
-        <div class='npc-input-dodge-val'><input
-            data-key='dodge'
-            class='gcs-input-sm2'
-            type='text'
-            value='{{mook.dodge}}'
-          /></div>
-      </div>
-      <div class='npc-input-notes'>
-        <div class='npc-input-nt-val' style='--of:visible'><textarea
-            data-key='notes'
-            class='npc-input-ta'
-            type='text'
-          >{{mook.notes}}</textarea></div>
-      </div>
-      <div class='npc-input-melee'>
-        <div class='npc-input-me'>{{localize 'GURPS.melee'}}</div>
-        <div class='npc-input-me-val'><textarea
-            data-key='melee'
-            class='npc-input-ta'
-            type='text'
-          >{{mook.melee}}</textarea></div>
-      </div>
-      <div class='npc-input-ranged'>
-        <div class='npc-input-ra'>{{localize 'GURPS.ranged'}}</div>
-        <div class='npc-input-ra-val'><textarea
-            data-key='ranged'
-            class='npc-input-ta'
-            type='text'
-          >{{mook.ranged}}</textarea></div>
-      </div>
-      <div class='npc-input-traits'>
-        <div class='npc-input-tr'>{{localize 'GURPS.advDisadvPerkQuirks'}}</div>
-        <div class='npc-input-tr-val'><textarea
-            data-key='traits'
-            class='npc-input-ta'
-            type='text'
-          >{{mook.traits}}</textarea></div>
-      </div>
-      <div class='npc-input-skills'>
-        <div class='npc-input-sk'>{{localize 'GURPS.skills'}}</div>
-        <div class='npc-input-sk-val'><textarea
-            data-key='skills'
-            class='npc-input-ta'
-            type='text'
-          >{{mook.skills}}</textarea></div>
-      </div>
-      <div class='npc-input-equip'>
-        <div class='npc-input-eqt'>{{localize 'GURPS.equipment'}}</div>
-        <div class='npc-input-eqt-val'><textarea
-            data-key='equipment'
-            class='npc-input-ta'
-            type='text'
-          >{{mook.equipment}}</textarea></div>
-      </div>
-      <div class='npc-input-spells'>
-        <div class='npc-input-sp'>{{localize 'GURPS.pointsSpells'}}</div>
-        <div class='npc-input-sp-val'><textarea
-            data-key='spells'
-            class='npc-input-ta'
-            type='text'
-          >{{mook.spells}}</textarea></div>
-      </div>
-      {{#if this.displaybuttons}}
-        <div class='npc-input-create'><button id='npc-input-create' type='button'>{{mode}}</button></div>
-        <div class='npc-input-import'><button id='npc-input-import' type='button'>Import Stat block</button></div>
-      {{/if}}
     </div>
+
+    <div class='ms-mook-content'>
+      <div class='ms-mook-sidebar'>
+        <div class='ms-attr-section'>
+          <div class='ms-attr-section-title'>{{localize 'GURPS.attributes'}}</div>
+          <div class='ms-attr-group'>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.attributesST'}}</span>
+              <input data-key='st' type='text' value='{{mook.st}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.attributesDX'}}</span>
+              <input data-key='dx' type='text' value='{{mook.dx}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.attributesIQ'}}</span>
+              <input data-key='iq' type='text' value='{{mook.iq}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.attributesHT'}}</span>
+              <input data-key='ht' type='text' value='{{mook.ht}}' />
+            </div>
+          </div>
+        </div>
+
+        <div class='ms-attr-section'>
+          <div class='ms-attr-section-title'>{{localize 'GURPS.attributesSecondary'}}</div>
+          <div class='ms-attr-group'>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.HP'}}</span>
+              <input data-key='hp' type='text' value='{{mook.hp}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.attributesWILL'}}</span>
+              <input data-key='will' type='text' value='{{mook.will}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.attributesPER'}}</span>
+              <input data-key='per' type='text' value='{{mook.per}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.FP'}}</span>
+              <input data-key='fp' type='text' value='{{mook.fp}}' />
+            </div>
+          </div>
+        </div>
+
+        <div class='ms-attr-section'>
+          <div class='ms-attr-section-title'>{{localize 'GURPS.combatTab'}}</div>
+          <div class='ms-attr-group'>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.speed'}}</span>
+              <input data-key='speed' type='text' value='{{mook.speed}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.move'}}</span>
+              <input data-key='move' type='text' value='{{mook.move}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.dodge'}}</span>
+              <input data-key='dodge' type='text' value='{{mook.dodge}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.parry'}}</span>
+              <input data-key='parry' type='text' value='{{mook.parry}}' />
+            </div>
+          </div>
+        </div>
+
+        <div class='ms-attr-section'>
+          <div class='ms-attr-section-title'>Other</div>
+          <div class='ms-attr-group'>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>SM</span>
+              <input data-key='sm' type='text' value='{{mook.sm}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.hitLocationDR'}}</span>
+              <input data-key='dr' type='text' value='{{mook.dr}}' />
+            </div>
+            <div class='ms-attr-pair'>
+              <span class='ms-attr-label'>{{localize 'GURPS.damage'}}</span>
+              <input data-key='damage' type='text' value='{{mook.damage}}' />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class='ms-mook-editors'>
+        <div class='ms-editor-section ms-editor-small'>
+          <div class='ms-editor-label'>
+            <i class='fas fa-sticky-note'></i>
+            {{localize 'GURPS.notes'}}
+          </div>
+          <textarea data-key='notes'>{{mook.notes}}</textarea>
+        </div>
+
+        <div class='ms-editor-section ms-editor-small'>
+          <div class='ms-editor-label'>
+            <i class='fas fa-fist-raised'></i>
+            {{localize 'GURPS.melee'}}
+          </div>
+          <textarea data-key='melee'>{{mook.melee}}</textarea>
+        </div>
+
+        <div class='ms-editor-section ms-editor-small'>
+          <div class='ms-editor-label'>
+            <i class='fas fa-crosshairs'></i>
+            {{localize 'GURPS.ranged'}}
+          </div>
+          <textarea data-key='ranged'>{{mook.ranged}}</textarea>
+        </div>
+
+        <div class='ms-editor-section ms-editor-small'>
+          <div class='ms-editor-label'>
+            <i class='fas fa-star'></i>
+            {{localize 'GURPS.advDisadvPerkQuirks'}}
+          </div>
+          <textarea data-key='traits'>{{mook.traits}}</textarea>
+        </div>
+
+        <div class='ms-editor-section ms-editor-small'>
+          <div class='ms-editor-label'>
+            <i class='fas fa-graduation-cap'></i>
+            {{localize 'GURPS.skills'}}
+          </div>
+          <textarea data-key='skills'>{{mook.skills}}</textarea>
+        </div>
+
+        <div class='ms-editor-section ms-editor-small'>
+          <div class='ms-editor-label'>
+            <i class='fas fa-magic'></i>
+            {{localize 'GURPS.pointsSpells'}}
+          </div>
+          <textarea data-key='spells'>{{mook.spells}}</textarea>
+        </div>
+
+        <div class='ms-editor-section ms-editor-small'>
+          <div class='ms-editor-label'>
+            <i class='fas fa-box'></i>
+            {{localize 'GURPS.equipment'}}
+          </div>
+          <textarea data-key='equipment'>{{mook.equipment}}</textarea>
+        </div>
+      </div>
+    </div>
+
+    {{#if this.displaybuttons}}
+    <div class='ms-mook-footer'>
+      <button id='npc-input-import' type='button' class='ms-btn-secondary'>
+        <i class='fas fa-file-import'></i>
+        Import Stat block
+      </button>
+      <button id='npc-input-create' type='button' class='ms-btn-primary'>
+        <i class='fas fa-check'></i>
+        {{mode}}
+      </button>
+    </div>
+    {{/if}}
   </div>
 </form>

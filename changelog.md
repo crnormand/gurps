@@ -2,6 +2,10 @@
 
 ## Release 0.18.12
 
+### Features
+
+- Automatically update Swing, Thrust, and Basic Lift when updating ST.
+
 ### Bugfixes
 
 - Modern UI sheet uses `GURPS.LastActor` as actor target instead of sheet actor \#2472
@@ -9,6 +13,17 @@
 - Can't change encumbrance manually on modern UI sheet \#2475
 - Modern UI sheet does not display resource trackers \#2476
 - Weapon attack tagged modifiers are sometimes added to damage rolls \#2482
+- Some Token Action HUD interactions cause errors to appear for the user
+- Dashes in Ranged Weapon names used as Modifiers \#2461
+- Fixed drag-and-drop on the combat tracker. \#2486
+- Fixed drag-and-drop on the Modifier Bucket. \#2486
+- Movement range color indicators do not appear on gridless maps \#2489
+- DR Modifiers not working using Foundry Items \#2496
+- GM Editting Character Sheets Causes Permission Error for Players When Token is on Map \#2481
+- Restore Foundry v12 compatibility \#2500
+- ADD tool tips missing \#2503
+- Fix blank usermods being created.
+- Error when player chooses to end his turn in combat \#2502
 
 ## Release 0.18.11 01/09/2026
 

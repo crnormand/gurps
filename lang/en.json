@@ -326,6 +326,12 @@
     "colorSheetMenuColorAreas": "Color Areas",
     "colorSheetMenuCustomColors": "Custom Colors",
     "colorSheetMenuOverride": "Override Colors",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Auto Update Strength",
+        "autoUpdateStrengthHint": "Automatically update Basic Lift, Thrust and Swing damage when ST changes."
+      }
+    },
     "combat": {
       "rof": {
         "bonusLabel": "RoF {shots}",
@@ -567,6 +573,7 @@
     "grapplingUnrestrained": "Unrestrained",
     "groundCreatures": "Ground creatures",
     "groundCreaturesSuffer": "Ground creatures suffer",
+    "half": "Half",
     "hardRoll": "Difficult chance",
     "headVitalsHit": "Head or Vitals Hit ",
     "hearing": "Hearing",
@@ -1191,6 +1198,7 @@
     "selectTargetForDamageWarning": "Drop the damage on the target(s), or drop on the canvas to apply to targeted token(s).",
     "selectTargetForEquipmentWarning": "Drop the equipment on a single target token",
     "selectToken": "Select Token",
+    "sendToChat": "Send to chat",
     "serverity": "Severity",
     "setManeuver": "Set Maneuver",
     "settingActiveEffects": "Turn on Active Effects",
@@ -1517,8 +1525,11 @@
       "Suffocate": "Suffocating",
       "TerriblePain": "Terrible Pain",
       "Tipsy": "Tipsy",
+      "tired": "Tired",
       "Wait": "Waiting"
     },
+    "step": "Step",
+    "stepOrTwo": "Step or Two",
     "submit": "Submit",
     "suffersAMajorWound": "{name} suffers a Major Wound",
     "suffersHeadVitalsWound": "{name} was struck in the {location} with a Shock penalty.",
@@ -1592,6 +1603,7 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
+    "years": "years",
     "youDoNotHavePermssion": "You do not have permission to do that."
   }
 }

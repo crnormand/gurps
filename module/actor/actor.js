@@ -1,5 +1,6 @@
 'use strict'
 
+import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
@@ -32,6 +33,7 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
+import { StrengthCalculator } from './strength-calculator.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -129,6 +131,14 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /** @override */
+  _onUpdate(changed, options, userId) {
+    if (changed.flags?.core?.sheetClass !== undefined && game.user.id !== userId) {
+      delete changed.flags.core.sheetClass
+    }
+    super._onUpdate(changed, options, userId)
+  }
+
   prepareData() {
     super.prepareData()
     // By default, it does this:
@@ -191,6 +201,10 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
 
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTO_UPDATE_STRENGTH)) {
+      this.updateStrengthBasedAttributes()
+    }
+
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
     if (this.system.encumbrance) {
@@ -210,6 +224,37 @@ export class GurpsActor extends Actor {
     }
 
     this.calculateDerivedValues()
+  }
+
+  updateStrengthBasedAttributes() {
+    if (!this.strengthCalculator) this.strengthCalculator = new StrengthCalculator()
+
+    this.strengthCalculator.strength = this.system.attributes.ST.import
+    this._setBasicLift(this.strengthCalculator.calculateLift())
+    this.system.thrust = this.strengthCalculator.calculateThrustDamage()
+    this.system.swing = this.strengthCalculator.calculateSwingDamage()
+  }
+
+  /**
+   * Update the basic lift and recalculate encumbrance levels and lifting.
+   * @param {*} basicLift
+   */
+  _setBasicLift(basicLift) {
+    this.system.basiclift = basicLift
+
+    const unit = this.system.encumbrance['00000']?.weight?.toString().split(' ')[1] || 'lb'
+    const encumbranceLevels = calculateEncumbranceLevels(this.system.basiclift, 0, unit, {})
+    for (const [key, value] of Object.entries(encumbranceLevels)) {
+      this.system.encumbrance[key].weight = value.weight
+    }
+
+    this.system.liftingmoving.basiclift = basicLift
+    this.system.liftingmoving.onehandedlift = basicLift * 2
+    this.system.liftingmoving.twohandedlift = basicLift * 8
+    this.system.liftingmoving.shove = basicLift * 12
+    this.system.liftingmoving.carryonback = basicLift * 15
+    this.system.liftingmoving.runningshove = basicLift * 24
+    this.system.liftingmoving.shiftslightly = basicLift * 50
   }
 
   // execute after every import.
@@ -286,7 +331,7 @@ export class GurpsActor extends Actor {
       let langn = /Language:?/i
       let langt = new RegExp(game.i18n.localize('GURPS.language') + ':?', 'i')
       recurselist(this.system.languages, (e, _k, _d) => {
-        let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
+        let a = GURPS.findAdDisad(this, e.name) // is there an Adv including the same name
         if (a) {
           if (!a.name.match(langn) && !a.name.match(langt)) {
             // GCA4/GCS style
@@ -780,7 +825,7 @@ export class GurpsActor extends Actor {
   }
 
   getCurrentMoveMode() {
-    let move = this.system.move
+    let move = this.system.move || {}
     let current = Object.values(move).find(it => it.default)
     if (!current && Object.keys(move).length > 0) return move['00000']
     return current
@@ -846,15 +891,13 @@ export class GurpsActor extends Actor {
       case MOVE_STEP:
         return {
           move: this._getStep(),
-          text: 'Step',
-          //  text: game.i18n.format('GURPS.moveStep', { reason: reason })
+          text: game.i18n.localize('GURPS.step'),
         }
 
       case MOVE_TWO_STEPS:
         return {
           move: this._getStep() * 2,
-          text: 'Step or Two',
-          //          text: game.i18n.format('GURPS.moveTwoSteps', { reason: reason })
+          text: game.i18n.localize('GURPS.stepOrTwo'),
         }
 
       case MOVE_ONETHIRD:
@@ -867,8 +910,7 @@ export class GurpsActor extends Actor {
       case MOVE_HALF:
         return {
           move: Math.max(1, Math.ceil((move / 2) * threshold)),
-          text: 'Half',
-          //          text: game.i18n.format('GURPS.moveHalf', { reason: reason }),
+          text: game.i18n.localize('GURPS.half'),
         }
 
       case MOVE_TWOTHIRDS:
@@ -2651,8 +2693,8 @@ export class GurpsActor extends Actor {
         parentuuid: actorComp.parentuuid,
         itemInfo,
         addToQuickRoll: item.system.addToQuickRoll,
-        modifierTags: item.system.modifierTags,
-        itemModifiers: item.system.itemModifiers,
+        modifierTags: (item.system.modifierTags || '').trim(),
+        itemModifiers: (item.system.itemModifiers || '').trim(),
       },
     })
     await this._addItemAdditions(item, sysKey)
@@ -2740,13 +2782,13 @@ export class GurpsActor extends Actor {
         let m = bonus.match(/\[(.*)\]/)
         if (!!m) bonus = m[1] // remove extranious  [ ]
 
-        m = bonus.match(/DR *([+-]\d+) *(.*)/)
+        m = bonus.match(/DR *(?<delta>[+-]\d+) *(?<locations>.*)/)
         if (!!m) {
-          let delta = parseInt(m[1])
+          let delta = parseInt(m.groups.delta)
           let locPatterns = null
 
-          if (!!m[2]) {
-            let locs = splitArgs(m[2])
+          if (!!m.groups.locations) {
+            let locs = splitArgs(m.groups.locations)
             locPatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
             recurselist(actorLocations, (e, _k, _d) => {
               if (!locPatterns || locPatterns.find(p => !!e.where && e.where.match(p)) != null) {
@@ -2755,6 +2797,15 @@ export class GurpsActor extends Actor {
                   ...itemMap[e.key],
                   [item.name]: delta,
                 }
+              }
+            })
+          } else {
+            // No locations specified, so apply to all.
+            recurselist(actorLocations, (e, _k, _d) => {
+              if (update) e.drItem += delta
+              itemMap[e.where] = {
+                ...itemMap[e.key],
+                [item.name]: delta,
               }
             })
           }
@@ -3146,8 +3197,6 @@ export class GurpsActor extends Actor {
     }
 
     // Then get the modifiers from:
-    // Actor User Mods
-    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
     // Actor Self Mods
     const selfMods =
       foundry.utils.getProperty(this, 'system.conditions.self.modifiers').map(mod => {
@@ -3175,6 +3224,9 @@ export class GurpsActor extends Actor {
         if (sizeMod) targetMods.push(sizeMod)
       }
     }
+
+    // Actor User Mods
+    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
 
     const allMods = [...userMods, ...selfMods, ...targetMods]
     const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id) && game.combat?.isActive
