@@ -1,5 +1,6 @@
 'use strict'
 
+import { collectDeletions } from './deletion.js'
 import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
@@ -1663,7 +1664,7 @@ export class GurpsActor extends Actor {
       }
 
       // Adjust the source actor's equipment.
-      if (count >= eqt.count) await srcActor.deleteEquipment(dragData.key)
+      if (count >= eqt.count) await srcActor.deleteEntry(dragData.key)
       else await srcActor.updateEqtCount(dragData.key, +eqt.count - count)
     } else {
       // This actor and source actor have different owners.
@@ -2003,47 +2004,57 @@ export class GurpsActor extends Actor {
     return { ['system.' + key]: list }
   }
 
-  // return the item data that was deleted (since it might be transferred)
   /**
    * @param {string} path
+   * @param {Object} options
+   * @param {boolean} [options.refreshDR=true]
    */
-  async deleteEquipment(path, depth = 0) {
-    let eqt = foundry.utils.getProperty(this, path)
-    if (!eqt) return eqt
-    if (depth == 0) this.ignoreRender = true
+  async deleteEntry(path, { refreshDR = true } = {}) {
+    const data = foundry.utils.getProperty(this, path)
+    if (!data) return data
 
-    // Delete in reverse order so the keys don't get messed up
-    if (!!eqt.contains)
-      for (const k of Object.keys(eqt.contains).sort().reverse())
-        await this.deleteEquipment(path + '.contains.' + k, depth + 1)
-    if (!!eqt.collpased)
-      for (const k of Object.keys(eqt.collapsed).sort().reverse())
-        await this.deleteEquipment(path + '.collapsed.' + k, depth + 1)
+    const savedIgnoreRender = this.ignoreRender
+    this.ignoreRender = true
 
-    var item
-    if (!!eqt.itemid) {
-      item = await this.items.get(eqt.itemid)
-      if (!!item) await item.delete() // data protect for messed up mooks
-      await this._removeItemAdditions(eqt.itemid)
+    try {
+      const deletions = collectDeletions(data, path)
+
+      for (const { path: deletePath, itemid } of deletions) {
+        if (itemid) {
+          const foundryItem = this.items.get(itemid)
+          if (foundryItem) await foundryItem.delete()
+          await this._removeItemAdditions(itemid)
+        }
+        await GURPS.removeKey(this, deletePath)
+      }
+
+      if (refreshDR && path.includes('.equipment.')) {
+        await this.refreshDR()
+      }
+    } finally {
+      this.ignoreRender = savedIgnoreRender
+      this._forceRender()
     }
-    await GURPS.removeKey(this, path)
-    if (depth == 0) this._forceRender()
-    return item
+
+    return data
   }
 
   /**
    * @param {string} itemid
    */
   async _removeItemAdditions(itemid) {
-    let saved = this.ignoreRender
+    const saved = this.ignoreRender
     this.ignoreRender = true
-    await this._removeItemElement(itemid, 'melee')
-    await this._removeItemElement(itemid, 'ranged')
-    await this._removeItemElement(itemid, 'ads')
-    await this._removeItemElement(itemid, 'skills')
-    await this._removeItemElement(itemid, 'spells')
-    await this._removeItemEffect(itemid)
-    this.ignoreRender = saved
+    try {
+      await this._removeItemElement(itemid, 'melee')
+      await this._removeItemElement(itemid, 'ranged')
+      await this._removeItemElement(itemid, 'ads')
+      await this._removeItemElement(itemid, 'skills')
+      await this._removeItemElement(itemid, 'spells')
+      await this._removeItemEffect(itemid)
+    } finally {
+      this.ignoreRender = saved
+    }
   }
 
   /**
@@ -2053,8 +2064,8 @@ export class GurpsActor extends Actor {
    * @private
    */
   async _removeItemEffect(itemId) {
-    let userMods = foundry.utils.getProperty(this, 'system.conditions.usermods')
-    const mods = [...userMods.filter(mod => !mod.includes(`@${itemId}`))]
+    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
+    const mods = userMods.filter(mod => !mod.includes(`@${itemId}`))
     await this.update({ 'system.conditions.usermods': mods })
   }
 
@@ -2082,14 +2093,15 @@ export class GurpsActor extends Actor {
     let found = true
     let any = false
     if (!key.startsWith('system.')) key = 'system.' + key
-    while (!!found) {
+    while (found) {
       found = false
-      let list = foundry.utils.getProperty(this, key)
-      recurselist(list, (e, k, _d) => {
+      const list = foundry.utils.getProperty(this, key)
+      if (!list) break
+      recurselist(list, (element, elementKey, _depth) => {
         if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          if (e.itemid === itemid) found = k
+          if (element.itemid === itemid) found = elementKey
         } else {
-          if (e.fromItem === itemid) found = k
+          if (element.fromItem === itemid) found = elementKey
         }
       })
       if (!!found) {
@@ -2265,8 +2277,7 @@ export class GurpsActor extends Actor {
     ) {
       this.ignoreRender = true
       await this.updateEqtCount(targetkey, parseInt(srceqt.count) + parseInt(desteqt.count))
-      //if (srckey.includes('.carried') && targetkey.includes('.other')) await this._removeItemAdditionsBasedOn(desteqt)
-      await this.deleteEquipment(srckey)
+      await this.deleteEntry(srckey, { refreshDR: false })
       this._forceRender()
       return true
     }

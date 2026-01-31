@@ -2369,7 +2369,7 @@ if (!globalThis.GURPS) {
         let srcActor = game.actors.get(resp.srcactorid)
         let eqt = foundry.utils.getProperty(srcActor, resp.srckey)
         if (resp.count >= eqt.count) {
-          srcActor.deleteEquipment(resp.srckey)
+          srcActor.deleteEntry(resp.srckey)
         } else {
           srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
         }

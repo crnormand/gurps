@@ -49,7 +49,7 @@ export async function confirmAndDelete(
     content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
   if (confirmed) {
-    GURPS.removeKey(actor, key)
+    await actor.deleteEntry(key)
   }
   return confirmed ?? false
 }
