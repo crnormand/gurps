@@ -163,4 +163,58 @@ describe('collectDeletions', () => {
       { path: 'system.equipment.carried.00003', itemid: 'backpack-item-id' },
     ])
   })
+
+  test('root path is always last in the result', () => {
+    const data: EntryData = {
+      itemid: 'root',
+      contains: {
+        '00000': {
+          itemid: 'child',
+          contains: {
+            '00000': { itemid: 'grandchild' },
+          },
+        },
+      },
+    }
+
+    const result = collectDeletions(data, 'system.ads.00018')
+
+    expect(result[result.length - 1].path).toBe('system.ads.00018')
+  })
+
+  test('advantage with nested alternate ability structure', () => {
+    const data: EntryData = {
+      itemid: '',
+      contains: {
+        '00000': {
+          itemid: '',
+          contains: {},
+        },
+      },
+    }
+
+    const result = collectDeletions(data, 'system.ads.00018')
+
+    expect(result).toEqual([
+      { path: 'system.ads.00018.contains.00000', itemid: '' },
+      { path: 'system.ads.00018', itemid: '' },
+    ])
+  })
+
+  test('collects all itemids for Foundry item cleanup', () => {
+    const data: EntryData = {
+      itemid: 'parent-item',
+      contains: {
+        '00000': { itemid: 'child-item-1' },
+        '00001': { itemid: 'child-item-2' },
+      },
+    }
+
+    const result = collectDeletions(data, 'base')
+
+    const itemids = result.map(item => item.itemid).filter(Boolean)
+    expect(itemids).toContain('parent-item')
+    expect(itemids).toContain('child-item-1')
+    expect(itemids).toContain('child-item-2')
+  })
 })

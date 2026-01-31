@@ -2019,14 +2019,15 @@ export class GurpsActor extends Actor {
     try {
       const deletions = collectDeletions(data, path)
 
-      for (const { path: deletePath, itemid } of deletions) {
+      for (const { itemid } of deletions) {
         if (itemid) {
           const foundryItem = this.items.get(itemid)
           if (foundryItem) await foundryItem.delete()
           await this._removeItemAdditions(itemid)
         }
-        await GURPS.removeKey(this, deletePath)
       }
+
+      await GURPS.removeKey(this, path)
 
       if (refreshDR && path.includes('.equipment.')) {
         await this.refreshDR()
@@ -2104,14 +2105,15 @@ export class GurpsActor extends Actor {
           if (element.fromItem === itemid) found = elementKey
         }
       })
-      if (!!found) {
+      if (found) {
         any = true
         const actorKey = key + '.' + found
-        if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          // We need to remove the child item from the actor
+        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
           const childActorComponent = foundry.utils.getProperty(this, actorKey)
-          const existingChildItem = await this.items.get(childActorComponent.itemid)
-          if (!!existingChildItem) await existingChildItem.delete()
+          if (childActorComponent?.itemid) {
+            const existingChildItem = this.items.get(childActorComponent.itemid)
+            if (existingChildItem) await existingChildItem.delete()
+          }
         }
         await GURPS.removeKey(this, actorKey)
       }
