@@ -1,5 +1,5 @@
 import { Length } from '../../data/common/length.js'
-import { ResolverCacheKey } from '../../script-resolver/types.ts'
+import { ResolverCacheKey } from '../../scripting/types.ts'
 import { fields } from '../../types/foundry/index.ts'
 
 import { BaseActorModel } from './base.ts'
@@ -20,9 +20,13 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
 
   /* ---------------------------------------- */
 
+  /* ---------------------------------------- */
+
   get attributes(): Map<string, GcsAttribute> {
     return new Map(this._attributes.map(e => [e.id, e]))
   }
+
+  /* ---------------------------------------- */
 
   get attributeDefinitions(): Map<string, GcsAttributeDefinition> {
     return new Map(this.settings._attributes.map(e => [e.id, e]))
