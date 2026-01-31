@@ -61,7 +61,7 @@ import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
-import { ScriptResolver } from './script-resolver/index.js'
+import { Scripting } from './scripting/index.ts'
 import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
@@ -111,7 +111,7 @@ if (!globalThis.GURPS) {
     Item,
     Pdf,
     ResourceTracker,
-    ScriptResolver,
+    Scripting,
     Token,
     UI,
   }

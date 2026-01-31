@@ -1,5 +1,5 @@
 import { MapField } from '../data/fields/map-field.ts'
-import { fields } from '../types/foundry/index.js'
+import { fields } from '../types/foundry/index.ts'
 
 // const SETTINGS = 'GURPS.scriptResovler.settings.title'
 
