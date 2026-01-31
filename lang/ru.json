@@ -326,6 +326,12 @@
     "colorSheetMenuColorAreas": "Цветовые области",
     "colorSheetMenuCustomColors": "Пользовательские цвета",
     "colorSheetMenuOverride": "Переопределить цвета",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Автоматическое обновление Силы",
+        "autoUpdateStrengthHint": "Автоматически обновлять Базовый подъем, урон от удара и замаха при изменении ST."
+      }
+    },
     "combat": {
       "rof": {
         "bonusLabel": "Темп огня {shots}",
