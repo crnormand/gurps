@@ -4,9 +4,13 @@
 
 ### Features
 
-- Automatically update Swing, Thrust, and Basic Lift when updating ST.
 - Add clickable Acc modifiers to Ranged attacks on the Modern sheet.
 - Add a "recalculate" basic lift, thrust, and swing button to the Lifting and Moving Things table on the Modern sheet. (Thanks @666f78!)
+- Automatically update Swing, Thrust, and Basic Lift when updating ST. This can dynamically change damage on
+  muscle powered weapons after a fresh import: the import code has been enhanced to save ST-derived damage
+  such as `sw+2` but display it as dice (e.g., `2d+2`). Changing the ST of a character will now update both
+  Basic Swing and Basic Thrust which will also update the attack's damage. Likewise, if Basic Lift changes,
+  this affects encumbrance levels and Dodge.
 
 ### Bugfixes
 

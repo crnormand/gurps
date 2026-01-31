@@ -1581,6 +1581,11 @@ export class GurpsActor extends Actor {
         actorComp.duringotf = data.system[data.itemSysKey].duringotf
         actorComp.passotf = data.system[data.itemSysKey].passotf
         actorComp.failotf = data.system[data.itemSysKey].failotf
+        actorComp.bonuses = data.system.bonuses || ''
+        actorComp.itemModifiers = data.system.itemModifiers || ''
+        actorComp.modifierTags = data.system.modifierTags || ''
+        actorComp.addToQuickRoll =
+          data.system.addToQuickRoll !== undefined ? data.system.addToQuickRoll : actorComp.addToQuickRoll
 
         // 4. Create Parent Item
         const importer = new ActorImporter(this)
