@@ -781,11 +781,14 @@ export class TokenActions {
         )
         if (settingsAddParryMods) {
           this.totalParries += 1
+
           const nameRegex = /(?<="|:).+(?=\s\(|"|])/gm
           let name = chatThing.match(nameRegex)?.[0]
+
           if (name) name = name.replace(/"/g, '').split('(')[0].trim()
           const modeRegex = /(?<=\().+(?=\))/gm
           let mode = chatThing.match(modeRegex)?.[0] || ''
+
           this.currentParry = Object.keys(this.currentParry).reduce((acc, k) => {
             let parry = this.currentParry[k]
             if (name.includes(parry.name) && mode.includes(parry.mode)) {

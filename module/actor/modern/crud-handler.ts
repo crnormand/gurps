@@ -5,10 +5,7 @@ export type EntityWithItemId = EntityComponentBase & { itemid?: string }
 type GurpsItemWithEditingActor = GurpsItem & { editingActor?: GurpsActor; system?: { fromItem?: string } }
 type ActorWithSanityCheck = GurpsActor & { _sanityCheckItemSettings(obj: unknown): Promise<boolean> }
 
-export async function openItemSheetIfFoundryItem(
-  actor: GurpsActor,
-  entityData: EntityWithItemId
-): Promise<boolean> {
+export async function openItemSheetIfFoundryItem(actor: GurpsActor, entityData: EntityWithItemId): Promise<boolean> {
   if (!entityData?.itemid) return false
 
   if (!(await (actor as ActorWithSanityCheck)._sanityCheckItemSettings(entityData))) return true
@@ -49,10 +46,10 @@ export async function confirmAndDelete(
 ): Promise<boolean> {
   const confirmed = await Dialog.confirm({
     title: game.i18n!.localize('GURPS.delete'),
-    content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`
+    content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
   if (confirmed) {
-    GURPS.removeKey(actor, key)
+    await actor.deleteEntry(key)
   }
   return confirmed ?? false
 }

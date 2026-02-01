@@ -616,17 +616,15 @@ export class ModifierBucket extends Application {
     const globalModifier = html.querySelector('#globalmodifier')
     globalModifier?.addEventListener('click', event => this._onClick(event))
     globalModifier?.addEventListener('contextmenu', event => this.onRightClick(event))
-    Array.from(globalModifier.children).forEach(li => {
-      li.addEventListener('dragstart', ev => {
-        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
-        return ev.dataTransfer?.setData(
-          'text/plain',
-          JSON.stringify({
-            type: 'modifierbucket',
-            bucket: bucket,
-          })
-        )
-      })
+    globalModifier?.addEventListener('dragstart', ev => {
+      const bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+      return ev.dataTransfer?.setData(
+        'text/plain',
+        JSON.stringify({
+          type: 'modifierbucket',
+          bucket: bucket,
+        })
+      )
     })
 
     if (this.isTooltip) globalModifier.addEventListener('mouseenter', event => this._onenter(event))
@@ -636,9 +634,9 @@ export class ModifierBucket extends Application {
     modifierBucket?.addEventListener('drop', event => {
       event.stopPropagation()
       event.preventDefault()
-      let dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
+      const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
       if (!!dragData && !!dragData.otf) {
-        let link = parselink(dragData.otf)
+        const link = parselink(dragData.otf)
         if (link.action) {
           link.action.blindroll = true
           if (link.action.type == 'modifier' || !!dragData.actor)
@@ -666,9 +664,9 @@ export class ModifierBucket extends Application {
       event.stopPropagation()
       const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
       if (!!dragData && !!dragData.otf) {
-        let action = parselink(dragData.otf)
-        action.action.blindroll = true
-        GURPS.performAction(action.action, game.actors?.get(dragData.actor), {
+        const link = parselink(dragData.otf)
+        link.action.blindroll = true
+        GURPS.performAction(link.action, game.actors?.get(dragData.actor), {
           shiftKey: game.user?.isGM,
           ctrlKey: false,
           data: {},

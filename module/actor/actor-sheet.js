@@ -1,3 +1,4 @@
+import { DragDropType } from '../drag-drop-types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -121,6 +122,7 @@ export class GurpsActorSheet extends ActorSheet {
     GurpsWiring.hookupAllEvents(html)
 
     // Allow OTFs on this actor sheet to be draggable.
+    // TODO Redundant with `GurpsWiring.hookupAllEvents`, above.
     html.find('[data-otf]').each((_, li) => {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
@@ -581,7 +583,7 @@ export class GurpsActorSheet extends ActorSheet {
         await Dialog.confirm({
           title: game.i18n.localize('GURPS.removeItem'),
           content: game.i18n.format('GURPS.confirmRemoveItem', { name: eqt.name }),
-          yes: () => actor.deleteEquipment(path),
+          yes: () => actor.deleteEntry(path),
         })
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
@@ -605,8 +607,9 @@ export class GurpsActorSheet extends ActorSheet {
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
-        callback: e => {
-          GURPS.removeKey(this.actor, e[0].dataset.key)
+        callback: async event => {
+          const key = event[0].dataset.key
+          await this.actor.deleteEntry(key)
         },
       },
     ]
@@ -773,23 +776,9 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
-  _deleteItem(target) {
-    let key = target[0].dataset.key
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-      else GURPS.removeKey(this.actor, key)
-      this.actor.refreshDR().then()
-    } else {
-      let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
-      if (!!item) {
-        this.actor._removeItemAdditions(item.id).then(() => {
-          this.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => {
-            GURPS.removeKey(this.actor, key)
-            this.actor.refreshDR().then()
-          })
-        })
-      }
-    }
+  async _deleteItem(target) {
+    const key = target[0].dataset.key
+    await this.actor.deleteEntry(key)
   }
 
   _sortContentAscending(target) {
@@ -1189,7 +1178,7 @@ export class GurpsActorSheet extends ActorSheet {
                 item.system.eqt.techlevel = obj.techlevel
                 item.system.eqt.notes = obj.notes
                 item.system.eqt.pageref = obj.pageref
-                item.system.itemModifiers = obj.itemModifiers
+                item.system.itemModifiers = (obj.itemModifiers || '').trim()
                 await actor._updateItemFromForm(item)
                 await actor.updateParentOf(path, false)
               }
@@ -1359,9 +1348,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async editModifier(actor, path, obj, isReaction = true) {
     const dlgHtml = await renderTemplate('systems/gurps/templates/modifier-editor-popup.hbs', obj)
-    const title = isReaction
-      ? game.i18n.localize('GURPS.reaction')
-      : game.i18n.localize('GURPS.conditionalModifier')
+    const title = isReaction ? game.i18n.localize('GURPS.reaction') : game.i18n.localize('GURPS.conditionalModifier')
     new Dialog({
       title: `${title} Editor`,
       content: dlgHtml,
@@ -1492,7 +1479,7 @@ export class GurpsActorSheet extends ActorSheet {
     this.actor.ignoreRender = true
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
-    if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
+    if (dragData.type === DragDropType.DAMAGE) this.actor.handleDamageDrop(dragData.payload)
     if (dragData.type === 'Item') await this.actor.handleItemDrop(dragData)
 
     await this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
@@ -1741,8 +1728,8 @@ export class GurpsActorSheet extends ActorSheet {
       // Hold down the shift key for Simplified
       newSheet = 'gurps.GurpsActorSimplifiedSheet'
     if (game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
-      // Hold down the Ctrl key (Command on Mac) for Simplified
-      newSheet = 'gurps.GurpsActorNpcSheet'
+      // Hold down the Ctrl key (Command on Mac) for NPC/mini sheet
+      newSheet = 'gurps.GurpsActorNpcModernSheet'
 
     this.actor.openSheet(newSheet)
   }
@@ -1889,21 +1876,9 @@ export class GurpsActorSheet extends ActorSheet {
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
-        callback: async e => {
-          let key = e[0].dataset.key
-          if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-            // We need to remove linked item
-            const actorComponent = foundry.utils.getProperty(this.actor, key)
-            const existingItem = await this.actor.items.get(actorComponent.itemid)
-            if (!!existingItem) {
-              this.actor._removeItemAdditions(existingItem.id)
-              await existingItem.delete()
-            }
-          } else {
-            if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-          }
-          GURPS.removeKey(this.actor, key)
-          await this.actor.refreshDR()
+        callback: async event => {
+          const key = event[0].dataset.key
+          await this.actor.deleteEntry(key)
         },
       },
     ]
@@ -2231,57 +2206,6 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html)
-    html.find('.rollableicon').click(this._onClickRollableIcon.bind(this))
-  }
-
-  async _onClickRollableIcon(ev) {
-    ev.preventDefault()
-    let element = ev.currentTarget
-    let val = element.dataset.value
-    let parsed = parselink(val)
-    GURPS.performAction(parsed.action, this.actor, ev)
-  }
-}
-
-export class GurpsActorNpcSheet extends GurpsActorSheet {
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 750,
-      height: 450,
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-    })
-  }
-
-  /* -------------------------------------------- */
-
-  /** @override */
-  get template() {
-    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
-  }
-
-  getData() {
-    const data = super.getData()
-    data.currentdodge = this.actor.system.currentdodge
-    data.currentmove = this.actor.system.currentmove
-    data.defense = this.actor.getTorsoDr()
-    let p = this.actor.getEquippedParry()
-    //    let b = this.actor.getEquippedBlock();      // Don't have a good way to display block yet
-    //    if (b > 0)
-    //      data.parryblock = p + "/" + b;
-    //    else
-    data.parryblock = p
-
-    return data
-  }
-
-  activateListeners(html) {
-    super.activateListeners(html)
-    html.find('.npc-sheet').click(ev => {
-      this._onfocus(ev)
-    })
     html.find('.rollableicon').click(this._onClickRollableIcon.bind(this))
   }
 

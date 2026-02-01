@@ -64,7 +64,9 @@
   a {
     color: var(--ms-accent);
     text-decoration: none;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -79,8 +81,17 @@
   transition: background 0.1s;
   cursor: pointer;
 
-  &:last-child { border-bottom: none; }
-  &:hover { background: var(--ms-bg-hover); padding-left: var(--ms-space-2); padding-right: var(--ms-space-2); margin-left: calc(-1 * var(--ms-space-2)); margin-right: calc(-1 * var(--ms-space-2)); border-radius: var(--ms-radius-sm); }
+  &:last-child {
+    border-bottom: none;
+  }
+  &:hover {
+    background: var(--ms-bg-hover);
+    padding-left: var(--ms-space-2);
+    padding-right: var(--ms-space-2);
+    margin-left: calc(-1 * var(--ms-space-2));
+    margin-right: calc(-1 * var(--ms-space-2));
+    border-radius: var(--ms-radius-sm);
+  }
 
   .ms-skill-name {
     flex: 1;
@@ -118,7 +129,9 @@
   cursor: pointer;
   transition: background 0.1s;
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 
   &:hover {
     background: var(--ms-bg-hover);
@@ -130,11 +143,15 @@
   }
 
   &.ms-advantage {
-    .ms-trait-points { color: var(--ms-advantage); }
+    .ms-trait-points {
+      color: var(--ms-advantage);
+    }
   }
 
   &.ms-disadvantage {
-    .ms-trait-points { color: var(--ms-disadvantage); }
+    .ms-trait-points {
+      color: var(--ms-disadvantage);
+    }
   }
 
   .ms-trait-name {
@@ -167,7 +184,9 @@
 
 .ms-skill-row.expanded,
 .ms-trait-row.expanded {
-  .ms-notes { display: block; }
+  .ms-notes {
+    display: block;
+  }
 }
 
 .ms-notes {
@@ -215,10 +234,11 @@
 
 .ms-trackers-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--ms-space-4);
 
   .tracked-resource {
+    flex: 0 1;
     background: var(--ms-bg-card);
     border: 1px solid var(--ms-border);
     border-radius: var(--ms-radius);
@@ -226,6 +246,10 @@
 
     .header {
       background: var(--ms-accent);
+    }
+
+    button i {
+      color: var(--ms-text);
     }
   }
 }
@@ -247,7 +271,8 @@
   cursor: text;
   padding: var(--ms-space-3);
 
-  > .glinkmod, > .gurpslink {
+  > .glinkmod,
+  > .gurpslink {
     color: var(--ms-accent);
     cursor: pointer;
     font-weight: bold;

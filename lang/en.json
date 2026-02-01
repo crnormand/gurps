@@ -4,8 +4,15 @@
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",
     "acc": "Acc",
+    "accForWeapon": "Acc for {weapon}",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Auto Update Strength",
+        "autoUpdateStrengthHint": "Automatically update Basic Lift, Thrust and Swing damage when ST changes."
+      }
+    },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",
     "addAdjustedForDamageType": "‡ - Adjusted for Damage Modifier",
@@ -567,6 +574,7 @@
     "grapplingUnrestrained": "Unrestrained",
     "groundCreatures": "Ground creatures",
     "groundCreaturesSuffer": "Ground creatures suffer",
+    "half": "Half",
     "hardRoll": "Difficult chance",
     "headVitalsHit": "Head or Vitals Hit ",
     "hearing": "Hearing",
@@ -1121,6 +1129,7 @@
     "reach": "Reach",
     "reaction": "Reaction",
     "reactionMods": "Reaction Modifiers",
+    "recalculate": "Recalculate",
     "reference": "Reference",
     "removedShockEffect": "Removed Shock effect on target.",
     "removeItem": "Remove Item",
@@ -1191,6 +1200,7 @@
     "selectTargetForDamageWarning": "Drop the damage on the target(s), or drop on the canvas to apply to targeted token(s).",
     "selectTargetForEquipmentWarning": "Drop the equipment on a single target token",
     "selectToken": "Select Token",
+    "sendToChat": "Send to chat",
     "serverity": "Severity",
     "setManeuver": "Set Maneuver",
     "settingActiveEffects": "Turn on Active Effects",
@@ -1517,8 +1527,11 @@
       "Suffocate": "Suffocating",
       "TerriblePain": "Terrible Pain",
       "Tipsy": "Tipsy",
+      "tired": "Tired",
       "Wait": "Waiting"
     },
+    "step": "Step",
+    "stepOrTwo": "Step or Two",
     "submit": "Submit",
     "suffersAMajorWound": "{name} suffers a Major Wound",
     "suffersHeadVitalsWound": "{name} was struck in the {location} with a Shock penalty.",
@@ -1592,6 +1605,7 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
+    "years": "years",
     "youDoNotHavePermssion": "You do not have permission to do that."
   }
 }

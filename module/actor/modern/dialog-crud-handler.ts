@@ -49,22 +49,7 @@ export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet:
     const equipmentKey = target.dataset.key ?? ''
     const equipmentData = GURPS.decode<EquipmentComponent>(actor, equipmentKey)
 
-    const confirmed = await confirmAndDelete(actor, equipmentKey, equipmentData?.name, 'GURPS.equipment')
-    if (!confirmed) return
-
-    if (!game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      await actor.deleteEquipment(equipmentKey)
-      await actor.refreshDR()
-      return
-    }
-
-    const item = actor.items.get(equipmentData?.itemid ?? '')
-    if (item && item.id) {
-      await actor._removeItemAdditions(item.id)
-      await actor.deleteEmbeddedDocuments('Item', [item.id])
-      GURPS.removeKey(actor, equipmentKey)
-      await actor.refreshDR()
-    }
+    await confirmAndDelete(actor, equipmentKey, equipmentData?.name, 'GURPS.equipment')
   })
 }
 
@@ -78,7 +63,10 @@ export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: Gurp
     const list = foundry.utils.duplicate(foundry.utils.getProperty(actor, path) as Record<string, NoteComponent>) || {}
     const newNote = new Note('', true) as NoteComponent
 
-    const dialogContent = await renderTemplate('systems/gurps/templates/note-editor-popup.hbs', newNote as Record<string, string>)
+    const dialogContent = await renderTemplate(
+      'systems/gurps/templates/note-editor-popup.hbs',
+      newNote as Record<string, string>
+    )
 
     new Dialog({
       title: 'Note Editor',
@@ -114,10 +102,7 @@ export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: Gurp
     const noteKey = target.dataset.key ?? ''
     const noteData = GURPS.decode<NoteComponent>(actor, noteKey)
 
-    const confirmed = await confirmAndDelete(actor, noteKey, noteData?.notes, 'GURPS.notes')
-    if (confirmed) {
-      await actor.refreshDR()
-    }
+    await confirmAndDelete(actor, noteKey, noteData?.notes, 'GURPS.notes')
   })
 }
 

@@ -75,28 +75,30 @@ export default class EffectPicker extends Application {
     const activeEffectIds = new Set(
       this.actor.effects
         .filter(effect => !effect.disabled)
-        .flatMap(effect => effect.statuses ? Array.from(effect.statuses) : [])
+        .flatMap(effect => (effect.statuses ? Array.from(effect.statuses) : []))
     )
 
     const allEffects = CONFIG.statusEffects.filter(effect => effect.id !== 'dead')
 
-    const categories = Object.entries(EffectPicker.EFFECT_CATEGORIES).map(([key, category]) => {
-      const effects = category.ids
-        .map(effectId => allEffects.find(effect => effect.id === effectId))
-        .filter(effect => effect !== undefined)
-        .filter(effect => !activeEffectIds.has(effect.id))
-        .map(effect => ({
-          ...effect,
-          localizedName: game.i18n.localize(effect.name),
-        }))
+    const categories = Object.entries(EffectPicker.EFFECT_CATEGORIES)
+      .map(([key, category]) => {
+        const effects = category.ids
+          .map(effectId => allEffects.find(effect => effect.id === effectId))
+          .filter(effect => effect !== undefined)
+          .filter(effect => !activeEffectIds.has(effect.id))
+          .map(effect => ({
+            ...effect,
+            localizedName: game.i18n.localize(effect.name),
+          }))
 
-      return {
-        key,
-        label: game.i18n.localize(category.label),
-        effects,
-        hasEffects: effects.length > 0,
-      }
-    }).filter(category => category.hasEffects)
+        return {
+          key,
+          label: game.i18n.localize(category.label),
+          effects,
+          hasEffects: effects.length > 0,
+        }
+      })
+      .filter(category => category.hasEffects)
 
     return {
       categories,
@@ -157,9 +159,9 @@ export default class EffectPicker extends Application {
       icon: statusEffect.img,
       disabled: false,
       statuses: [statusEffect.id],
-      ...statusEffect.changes && { changes: statusEffect.changes },
-      ...statusEffect.flags && { flags: statusEffect.flags },
-      ...statusEffect.duration && { duration: statusEffect.duration },
+      ...(statusEffect.changes && { changes: statusEffect.changes }),
+      ...(statusEffect.flags && { flags: statusEffect.flags }),
+      ...(statusEffect.duration && { duration: statusEffect.duration }),
     }
 
     await this.actor.createEmbeddedDocuments('ActiveEffect', [effectData])

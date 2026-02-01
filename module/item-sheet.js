@@ -146,10 +146,10 @@ export class GurpsItemSheet extends ItemSheet {
     }
   }
 
-  async _deleteKey(ev) {
-    let key = ev.currentTarget.getAttribute('name')
-    let path = ev.currentTarget.getAttribute('data-path')
-    GURPS.removeKey(this.item, path + '.' + key)
+  async _deleteKey(event) {
+    const key = event.currentTarget.getAttribute('name')
+    const path = event.currentTarget.getAttribute('data-path')
+    await GURPS.removeKey(this.item, path + '.' + key)
   }
 
   async _onDrop(event) {

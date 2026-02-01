@@ -1,21 +1,21 @@
-<li name="result-effect">
+<li name='result-effect'>
   <div>
     <div>
-      <header>{{localize "GURPS.shock"}}</header>
-      <aside>{{localize "GURPS.shockPenalty" amount=amount}}.</aside>
+      <header>{{localize 'GURPS.shock'}}</header>
+      <aside>{{localize 'GURPS.shockPenalty' amount=amount}}.</aside>
     </div>
     {{#each buttons as |button|}}
-    <div id="add-shock-next" class="with-send-button">
-      <button name="add-shock-next" data-effect="{{jsonStringify this}}">
-        <span class="fa {{spanClass}}" title="{{effectTitle}}"></span>
-      </button>
-    </div>
+      <div id='add-shock-next' class='with-send-button'>
+        <button name='add-shock-next' data-effect='{{jsonStringify this}}' title='{{effectTitle}}'>
+          <span class='fa {{spanClass}}'></span>
+        </button>
+      </div>
     {{/each}}
-    <div class="with-send-button">
-      <button name="send-wound" data-struct="{{jsonStringify this}}" title="Send to chat">
-        <span class="fa fa-comment-alt"></span>
+    <div class='with-send-button'>
+      <button name='send-wound' data-struct='{{jsonStringify this}}' title='{{localize "GURPS.sendToChat"}}'>
+        <span class='fa fa-comment-alt'></span>
       </button>
     </div>
-    <div class="pdflink">{{localize "GURPS.pdfShock"}}</div>
+    <div class='pdflink'>{{localize 'GURPS.pdfShock'}}</div>
   </div>
 </li>

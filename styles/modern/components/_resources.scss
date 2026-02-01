@@ -33,8 +33,12 @@
     }
   }
 
-  &.ms-hp .ms-resource-fill { background: var(--ms-hp); }
-  &.ms-fp .ms-resource-fill { background: var(--ms-fp); }
+  &.ms-hp .ms-resource-fill {
+    background: var(--ms-hp);
+  }
+  &.ms-fp .ms-resource-fill {
+    background: var(--ms-fp);
+  }
 
   .ms-resource-text {
     min-width: 32px;
@@ -137,7 +141,9 @@
   cursor: pointer;
   padding: var(--ms-space-1);
   border-radius: var(--ms-radius);
-  transition: background .15s, color .15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   line-height: initial;
 
   &:hover {

@@ -99,24 +99,32 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindPointsEdit(html, this.actor)
 
     bindResourceReset(html, this.actor, [
-      { selector: '.ms-resource-reset[data-action="reset-hp"]', resourcePath: 'system.HP.value', maxPath: 'system.HP.max' },
-      { selector: '.ms-resource-reset[data-action="reset-fp"]', resourcePath: 'system.FP.value', maxPath: 'system.FP.max' }
+      {
+        selector: '.ms-resource-reset[data-action="reset-hp"]',
+        resourcePath: 'system.HP.value',
+        maxPath: 'system.HP.max',
+      },
+      {
+        selector: '.ms-resource-reset[data-action="reset-fp"]',
+        resourcePath: 'system.FP.value',
+        maxPath: 'system.FP.max',
+      },
     ])
 
     bindRowExpand(html, {
       rowSelector: '.ms-skills-row, .ms-traits-row',
-      excludeSelectors: ['.ms-use-button', '.expandcollapseicon', '.ms-row-actions']
+      excludeSelectors: ['.ms-use-button', '.expandcollapseicon', '.ms-row-actions'],
     })
 
     bindSectionCollapse(html, {
       headerSelector: '.ms-section-header.ms-collapsible',
-      excludeSelectors: ['.expandcollapseicon', '.ms-add-icon']
+      excludeSelectors: ['.expandcollapseicon', '.ms-add-icon'],
     })
 
     bindContainerCollapse(html, this.actor.id!, {
       tableSelector: '.ms-traits-table, .ms-skills-table, .ms-spells-table',
       rowSelector: '.ms-traits-row, .ms-skills-row, .ms-spells-row',
-      excludeSelectors: ['.ms-row-actions', '.ms-use-button', '.ms-col-otf', '.ms-col-level']
+      excludeSelectors: ['.ms-row-actions', '.ms-use-button', '.ms-col-otf', '.ms-col-level'],
     })
 
     const openQuickNoteEditor = async () => {
@@ -154,8 +162,9 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindTrackerActions(html, this.actor)
     this.bindPostureActions(html)
     this.bindManeuverActions(html)
-    this.bindMoveModeActions(html)
+    this.bindEncumbranceActions(html)
     this.bindEffectActions(html)
+    this.bindLiftingActions(html)
     this.bindEntityCrudActions(html)
   }
 
@@ -164,7 +173,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       dropdownSelector: '.ms-posture-dropdown',
       toggleSelector: '.ms-posture-selected',
       optionSelector: '.ms-posture-option',
-      onSelect: (posture: string) => this.actor.replacePosture(posture)
+      onSelect: (posture: string) => this.actor.replacePosture(posture),
     })
   }
 
@@ -177,7 +186,11 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     })
   }
 
-  bindMoveModeActions(html: JQuery): void {
+  bindEncumbranceActions(html: JQuery): void {
+    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE) === false) {
+      html.find('.ms-enc-row').on('click', this._onClickEnc.bind(this))
+    }
+
     html.find('.ms-move-mode-edit').on('click', () => {
       new MoveModeEditor(this.actor).render(true)
     })
@@ -212,13 +225,20 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     })
   }
 
+  bindLiftingActions(html: JQuery): void {
+    html.find('[data-action="recalc-lifting"]').on('click', async (event: JQuery.ClickEvent) => {
+      event.preventDefault()
+      await this.actor.updateAndPersistStrengthBasedAttributes()
+    })
+  }
+
   bindEntityCrudActions(html: JQuery): void {
     entityConfigurations.forEach(config => {
       const editMethodKey = config.editMethod as keyof this
       const resolvedConfig: EntityConfigWithMethod = {
         ...config,
         editMethod: (this[editMethodKey] as EntityConfigWithMethod['editMethod']).bind(this),
-        createArgs: config.createArgs?.()
+        createArgs: config.createArgs?.(),
       }
       bindCrudActions(html, this.actor, this, resolvedConfig)
     })

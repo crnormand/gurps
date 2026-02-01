@@ -5,7 +5,7 @@ import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
 
-export {  }
+export {}
 
 declare global {
   interface GurpsAction {
@@ -29,7 +29,7 @@ declare global {
   interface GURPSGlobal {
     SYSTEM_NAME: 'gurps'
     decode<T = unknown>(actor: GurpsActor, path: string): T
-    put<T>(list: Record<string, T>, obj: T): string
+    put<T>(list: Record<string, T>, obj: T, index?: number = -1): string
     removeKey(actor: GurpsActor, key: string): void
     performAction(
       action: GurpsAction,
@@ -42,6 +42,7 @@ declare global {
     ModifierBucket: {
       setTempRangeMod(mod: number): void
       addTempRangeMod(): void
+      addModifier(mod: string, label: string, options?: { situation?: string }): void
       currentSum(): number
       clear(): Promise<void>
       refreshPosition(): void
@@ -49,7 +50,10 @@ declare global {
 
     DamageTables: {
       translate(damageType: string): string
-      woundModifiers: Record<string, { label?: string; icon?: string; color?: string; multiplier?: number; resource?: boolean }>
+      woundModifiers: Record<
+        string,
+        { label?: string; icon?: string; color?: string; multiplier?: number; resource?: boolean }
+      >
       damageTypeMap: Record<string, string>
     }
 
@@ -68,7 +72,11 @@ declare global {
 
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
     DamageChat: {
-      _renderDamageChat(app: { data: { flags: { transfer: string } }; flags: { gurps: { transfer: object } } }, html: JQuery, msg: object): Promise<void>
+      _renderDamageChat(
+        app: { data: { flags: { transfer: string } }; flags: { gurps: { transfer: object } } },
+        html: JQuery,
+        msg: object
+      ): Promise<void>
     }
     resolveDamageRoll: (
       event: Event,
@@ -152,7 +160,7 @@ declare global {
   type EntityConstructorArgs = string[]
 
   interface EntityComponentClass {
-    new(name?: string, ...args: never[]): EntityComponentBase
+    new (name?: string, ...args: never[]): EntityComponentBase
   }
 
   interface EntityConfiguration {
@@ -201,6 +209,7 @@ declare global {
     'gurps.pdf-open-first': boolean
     'gurps.use-size-modifier-difference-in-melee': boolean
     'gurps.portrait-hp-tinting': boolean
+    'gurps.automatic-encumbrance': boolean
   }
 
   interface DialogV2Config {

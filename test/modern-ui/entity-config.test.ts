@@ -18,41 +18,38 @@ const entityConfigurations: EntityConfiguration[] = [
     path: 'system.skills',
     editMethod: 'editSkills',
     localeKey: 'GURPS.skill',
-    createArgs: () => [mockLocalize('GURPS.skill'), '10']
+    createArgs: () => [mockLocalize('GURPS.skill'), '10'],
   },
   {
     entityName: 'trait',
     path: 'system.ads',
     editMethod: 'editAds',
-    localeKey: 'GURPS.advantage'
+    localeKey: 'GURPS.advantage',
   },
   {
     entityName: 'spell',
     path: 'system.spells',
     editMethod: 'editSpells',
     localeKey: 'GURPS.spell',
-    createArgs: () => [mockLocalize('GURPS.spell'), '10']
+    createArgs: () => [mockLocalize('GURPS.spell'), '10'],
   },
   {
     entityName: 'melee',
     path: 'system.melee',
     editMethod: 'editMelee',
     localeKey: 'GURPS.melee',
-    createArgs: () => [mockLocalize('GURPS.melee'), '10', '1d']
+    createArgs: () => [mockLocalize('GURPS.melee'), '10', '1d'],
   },
   {
     entityName: 'ranged',
     path: 'system.ranged',
     editMethod: 'editRanged',
     localeKey: 'GURPS.ranged',
-    createArgs: () => [mockLocalize('GURPS.ranged'), '10', '1d']
-  }
+    createArgs: () => [mockLocalize('GURPS.ranged'), '10', '1d'],
+  },
 ]
 
-const modifierConfigurations: ModifierConfiguration[] = [
-  { isReaction: true },
-  { isReaction: false }
-]
+const modifierConfigurations: ModifierConfiguration[] = [{ isReaction: true }, { isReaction: false }]
 
 describe('entityConfigurations', () => {
   test('contains 5 entity types', () => {

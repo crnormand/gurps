@@ -77,7 +77,7 @@ const saveCollapsedState = (rows: HTMLElement[], actorId: string): void => {
 
 const restoreCollapsedState = (rows: HTMLElement[], actorId: string): void => {
   const stored = sessionStorage.getItem(getStorageKey(actorId))
-  const collapsedKeys = stored ? JSON.parse(stored) as string[] : []
+  const collapsedKeys = stored ? (JSON.parse(stored) as string[]) : []
   const collapsedSet = new Set(collapsedKeys)
 
   rows.forEach((row, rowIndex) => {

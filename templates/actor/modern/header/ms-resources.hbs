@@ -1,5 +1,6 @@
 <div class='ms-hp-fp-row'>
   <div class='ms-resource ms-hp'>
+    {{#if system.conditions.reeling}}<span class='ms-condition-badge' title='{{localize "GURPS.HP.reeling"}}'>R</span>{{/if}}
     <div class='ms-resource-display' data-edit-target='hp' title='{{localize "GURPS.attributesHPNAME"}}'>
       <div class='ms-resource-bar'>
         <div class='ms-resource-fill' style='width: {{percent system.HP.value system.HP.max}}%;'></div>
@@ -14,9 +15,9 @@
     <button type='button' class='ms-resource-reset' data-action='reset-hp' title='Reset to max'>
       <i class='fas fa-rotate-left'></i>
     </button>
-    {{#if system.conditions.reeling}}<span class='ms-condition-badge' title='{{localize "GURPS.HP.reeling"}}'>R</span>{{/if}}
   </div>
   <div class='ms-resource ms-fp'>
+    {{#if system.conditions.exhausted}}<span class='ms-condition-badge' title='{{localize "GURPS.FP.tired"}}'>T</span>{{/if}}
     <div class='ms-resource-display' data-edit-target='fp' title='{{localize "GURPS.attributesFPNAME"}}'>
       <div class='ms-resource-bar'>
         <div class='ms-resource-fill' style='width: {{percent system.FP.value system.FP.max}}%;'></div>
@@ -31,6 +32,5 @@
     <button type='button' class='ms-resource-reset' data-action='reset-fp' title='Reset to max'>
       <i class='fas fa-rotate-left'></i>
     </button>
-    {{#if system.conditions.exhausted}}<span class='ms-condition-badge' title='{{localize "GURPS.FP.tired"}}'>T</span>{{/if}}
   </div>
 </div>

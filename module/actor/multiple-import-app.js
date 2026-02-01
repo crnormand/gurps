@@ -27,8 +27,8 @@ export const AddMultipleImportButton = function (html) {
   const icon = document.createElement('i')
   icon.classList.add('fa-solid', 'fa-file-import')
   button.appendChild(icon)
-  const textNode = document.createTextNode(game.i18n.localize('GURPS.importMultiple'));
-  button.appendChild(textNode);
+  const textNode = document.createTextNode(game.i18n.localize('GURPS.importMultiple'))
+  button.appendChild(textNode)
 
   if (game.release.generation === 12) {
     html = html[0]
