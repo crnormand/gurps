@@ -495,7 +495,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.use-quick-rolls': AnyMutableObject
     'gurps.portrait-hp-tinting': boolean
 
-    'gurps.scriptResolver.global-resolver-cache': MapField<
+    'gurps.scripting.globalResolverCache': MapField<
       foundry.data.fields.SchemaField<{
         id: foundry.data.fields.StringField<{ required: true; nullable: false }>
         text: foundry.data.fields.StringField<{ required: true; nullable: false }>

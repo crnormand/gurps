@@ -72,8 +72,11 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
   get current(): number {
     if (!this._definition) return 0
 
-    return 0
-    // return this.#definition.base + this.adj - this.damage
+    const max = this.max
+
+    if (!this._definition.isPool) return max
+
+    return max - (this.damage || 0)
   }
 }
 
