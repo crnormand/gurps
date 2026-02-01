@@ -4,8 +4,15 @@
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",
     "acc": "Acc",
+    "accForWeapon": "Acc for {weapon}",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Auto Update Strength",
+        "autoUpdateStrengthHint": "Automatically update Basic Lift, Thrust and Swing damage when ST changes."
+      }
+    },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",
     "addAdjustedForDamageType": "‡ - Adjusted for Damage Modifier",
@@ -326,12 +333,6 @@
     "colorSheetMenuColorAreas": "Color Areas",
     "colorSheetMenuCustomColors": "Custom Colors",
     "colorSheetMenuOverride": "Override Colors",
-    "actor": {
-      "setting": {
-        "autoUpdateStrength": "Auto Update Strength",
-        "autoUpdateStrengthHint": "Automatically update Basic Lift, Thrust and Swing damage when ST changes."
-      }
-    },
     "combat": {
       "rof": {
         "bonusLabel": "RoF {shots}",

@@ -4,8 +4,15 @@
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",
     "acc": "Prec",
+    "accForWeapon": "Prec para {weapon}",
     "activeEffect": "Efeito Ativo",
     "activeEffects": "Efeitos Ativos",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Atualizar Força Automaticamente",
+        "autoUpdateStrengthHint": "Atualizar automaticamente Carga Básica, dano de Golpe e Balanço quando o ST muda."
+      }
+    },
     "addAbbrev": "Abrev",
     "addAdditionalStackingModifier": "Modificadores adicionais",
     "addAdjustedForDamageType": "‡ - Ajustado devido ao Modificador de Dano",
@@ -326,12 +333,6 @@
     "colorSheetMenuColorAreas": "Áreas de Cor",
     "colorSheetMenuCustomColors": "Cores Personalizadas",
     "colorSheetMenuOverride": "Desconsiderar Cores",
-    "actor": {
-      "setting": {
-        "autoUpdateStrength": "Atualizar Força Automaticamente",
-        "autoUpdateStrengthHint": "Atualizar automaticamente Carga Básica, dano de Golpe e Balanço quando o ST muda."
-      }
-    },
     "combat": {
       "rof": {
         "bonusLabel": "Cadência {shots}",
@@ -1525,7 +1526,7 @@
       "Suffocate": "Sufocando",
       "TerriblePain": "Dor Terrível",
       "Tipsy": "Embriagado(a)",
-      "Tired": "Cansado(a)",
+      "tired": "Tired",
       "Wait": "Aguardando"
     },
     "step": "Passo",

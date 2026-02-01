@@ -4,8 +4,15 @@
     "abbrevRef": "Ссыл",
     "abbrevReference": "Ссылка",
     "acc": "Точ",
+    "accForWeapon": "Точ для {weapon}",
     "activeEffect": "Активный эффект",
     "activeEffects": "Активные эффекты",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Автоматическое обновление Силы",
+        "autoUpdateStrengthHint": "Автоматически обновлять Базовый подъем, урон от удара и замаха при изменении ST."
+      }
+    },
     "addAbbrev": "Сокращение",
     "addAdditionalStackingModifier": "Дополнительный модификатор",
     "addAdjustedForDamageType": "‡ - С учётом модификатора урона",
@@ -326,12 +333,6 @@
     "colorSheetMenuColorAreas": "Цветовые области",
     "colorSheetMenuCustomColors": "Пользовательские цвета",
     "colorSheetMenuOverride": "Переопределить цвета",
-    "actor": {
-      "setting": {
-        "autoUpdateStrength": "Автоматическое обновление Силы",
-        "autoUpdateStrengthHint": "Автоматически обновлять Базовый подъем, урон от удара и замаха при изменении ST."
-      }
-    },
     "combat": {
       "rof": {
         "bonusLabel": "Темп огня {shots}",
