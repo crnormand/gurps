@@ -583,7 +583,7 @@ export class GurpsActorSheet extends ActorSheet {
         await Dialog.confirm({
           title: game.i18n.localize('GURPS.removeItem'),
           content: game.i18n.format('GURPS.confirmRemoveItem', { name: eqt.name }),
-          yes: () => actor.deleteEquipment(path),
+          yes: () => actor.deleteEntry(path),
         })
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
@@ -607,8 +607,9 @@ export class GurpsActorSheet extends ActorSheet {
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
-        callback: e => {
-          GURPS.removeKey(this.actor, e[0].dataset.key)
+        callback: async event => {
+          const key = event[0].dataset.key
+          await this.actor.deleteEntry(key)
         },
       },
     ]
@@ -775,23 +776,9 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
-  _deleteItem(target) {
-    let key = target[0].dataset.key
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-      else GURPS.removeKey(this.actor, key)
-      this.actor.refreshDR().then()
-    } else {
-      let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
-      if (!!item) {
-        this.actor._removeItemAdditions(item.id).then(() => {
-          this.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => {
-            GURPS.removeKey(this.actor, key)
-            this.actor.refreshDR().then()
-          })
-        })
-      }
-    }
+  async _deleteItem(target) {
+    const key = target[0].dataset.key
+    await this.actor.deleteEntry(key)
   }
 
   _sortContentAscending(target) {
@@ -1889,21 +1876,9 @@ export class GurpsActorSheet extends ActorSheet {
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
-        callback: async e => {
-          let key = e[0].dataset.key
-          if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-            // We need to remove linked item
-            const actorComponent = foundry.utils.getProperty(this.actor, key)
-            const existingItem = await this.actor.items.get(actorComponent.itemid)
-            if (!!existingItem) {
-              this.actor._removeItemAdditions(existingItem.id)
-              await existingItem.delete()
-            }
-          } else {
-            if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
-          }
-          GURPS.removeKey(this.actor, key)
-          await this.actor.refreshDR()
+        callback: async event => {
+          const key = event[0].dataset.key
+          await this.actor.deleteEntry(key)
         },
       },
     ]

@@ -18,6 +18,7 @@ import {
   wait,
   zeroFill,
 } from '../lib/utilities.js'
+import { prepareRemoveKey } from './actor/deletion.js'
 import { calculateRoFModifier } from './combat/utilities.js'
 import {
   GurpsActorCombatSheet,
@@ -1646,71 +1647,24 @@ if (!globalThis.GURPS) {
    * @param {string} path
    */
   async function removeKey(actor, path) {
-    let oldversion = true
-    let oldRender = actor.ignoreRender
-    actor.ignoreRender = true
+    const targetActor = game.actors.get(actor.id) ?? actor
+    const objectData = foundry.utils.duplicate(GURPS.decode(targetActor, path.substring(0, path.lastIndexOf('.'))))
+    const { deleteKey, objectPath, updatedObject } = prepareRemoveKey(path, objectData)
 
-    if (oldversion) {
-      let i = path.lastIndexOf('.')
-      let objpath = path.substring(0, i)
-      let key = path.substring(i + 1)
-      i = objpath.lastIndexOf('.')
-      let parentpath = objpath.substring(0, i)
-      let objkey = objpath.substring(i + 1)
-      // Create shallow copy of object
-      let object = foundry.utils.duplicate(GURPS.decode(actor, objpath))
-      let t = parentpath + '.-=' + objkey
-      await actor.internalUpdate({ [t]: null }) // Delete the whole object from the parent
+    const savedIgnoreRender = targetActor.ignoreRender
+    targetActor.ignoreRender = true
 
-      // Delete the key, ex: '00001'
-      delete object[key]
-      i = parseInt(key)
+    try {
+      await targetActor.update({ [deleteKey]: null })
+      await targetActor.update({ [objectPath]: updatedObject }, { diff: false })
 
-      // Since keys are serial index, move up any items after the current index
-      i = i + 1
-      while (object.hasOwnProperty(zeroFill(i))) {
-        let k = zeroFill(i)
-        object[key] = object[k]
-        delete object[k]
-        key = k
-        i++
+      if (Object.keys(updatedObject).length === 0) {
+        const parentPath = objectPath.substring(0, objectPath.lastIndexOf('.'))
+        const objectKey = objectPath.substring(objectPath.lastIndexOf('.') + 1)
+        GURPS.decode(targetActor, parentPath)[objectKey] = {}
       }
-      /*    Since object is duplicated, no longer need to create a sorted copy
-      let sorted = Object.keys(object)
-        .sort()
-        .reduce((a, v) => {
-          // @ts-ignore
-          a[v] = object[v]
-          return a
-        }, {}) // Enforced key order
-*/
-      actor.ignoreRender = oldRender
-      await actor.internalUpdate({ [objpath]: object }, { diff: false })
-      // Sad hack to ensure that an empty object exists on the client side (the DB is correct)
-      if (Object.keys(object).length === 0) GURPS.decode(actor, parentpath)[objkey] = {}
-    } else {
-      let i = path.lastIndexOf('.')
-      let objpath = path.substring(0, i)
-      let key = path.substring(i + 1)
-      let object = GURPS.decode(actor, objpath)
-      delete object[key]
-
-      await actor.internalUpdate({ [objpath]: null }) // instead of using "x.y.-=z" to remove the key 'z' and all its data, just remove x.y.z's data.
-
-      let sorted = Object.keys(object)
-        .sort()
-        .reduce((_, value, index) => {
-          let key = zeroFill(index)
-
-          if (key != value) {
-            object[key] = object[value]
-            delete object[value]
-          }
-          return object
-        }, {})
-
-      actor.ignoreRender = oldRender
-      await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
+    } finally {
+      targetActor.ignoreRender = savedIgnoreRender
     }
   }
   GURPS.removeKey = removeKey
@@ -2369,9 +2323,9 @@ if (!globalThis.GURPS) {
         let srcActor = game.actors.get(resp.srcactorid)
         let eqt = foundry.utils.getProperty(srcActor, resp.srckey)
         if (resp.count >= eqt.count) {
-          srcActor.deleteEquipment(resp.srckey)
+          await srcActor.deleteEntry(resp.srckey)
         } else {
-          srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
+          await srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
         }
         let destActor = game.actors.get(resp.destactorid)
         ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
