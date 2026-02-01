@@ -1,6 +1,8 @@
+type VarKind = 'var' | 'let' | 'const' | 'using' | 'await using'
+
 class Scope {
   parent?: Scope
-  vars = new Map<string, unknown>()
+  vars = new Map<string, { kind: VarKind; value: unknown }>()
 
   /* ---------------------------------------- */
 
@@ -18,29 +20,44 @@ class Scope {
 
   /* ---------------------------------------- */
 
-  set(name: string, value: unknown): void {
+  assign(name: string, value: unknown): void {
     if (this.vars.has(name)) {
-      this.vars.set(name, value)
+      const e = this.vars.get(name)!
+
+      if (e.kind === 'const') throw new Error(`Cannot assign to const '${name}'`)
+      e.value = value
 
       return
     }
 
-    if (this.parent && this.parent.has(name)) {
-      this.parent.set(name, value)
+    if (this.parent) return this.parent.assign(name, value)
+    // If not declared, treat as error (safer than implicit globals)
+    throw new Error(`'${name}' is not defined`)
+  }
 
-      return
+  /* ---------------------------------------- */
+
+  define(name: string, kind: VarKind, value: unknown): void {
+    if (kind === 'const' && this.vars.has(name)) {
+      throw new Error(`Cannot redefine const '${name}'`)
     }
 
-    this.vars.set(name, value)
+    if (kind === 'let' && this.vars.has(name)) {
+      throw new Error(`Cannot redefine let '${name}'`)
+    }
+
+    if (kind === 'using' || kind === 'await using') {
+      throw new Error(`'using' declarations are not supported in this context`)
+    }
+
+    this.vars.set(name, { kind, value })
   }
 
   /* ---------------------------------------- */
 
-  define(name: string, value: unknown): void {
-    this.vars.set(name, value)
+  hasHere(name: string): boolean {
+    return this.vars.has(name)
   }
-
-  /* ---------------------------------------- */
 
   has(name: string): boolean {
     if (this.vars.has(name)) return true
@@ -52,3 +69,4 @@ class Scope {
 /* ---------------------------------------- */
 
 export { Scope }
+export type { VarKind }
