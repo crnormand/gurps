@@ -29,15 +29,18 @@ function from(count: number, sides?: number, modifier?: number, multiplier?: num
   if (multiplier !== undefined) result.multiplier = multiplier
   else result.multiplier = 1
 
+  normalize(result)
+
   return diceToString(result)
 }
 
 /* ---------------------------------------- */
 
 function normalize(dice: Dice): void {
-  if (dice.count < 0) dice.count = 0
-  if (dice.sides < 0) dice.sides = 0
-  if (dice.multiplier < 1) dice.multiplier = 1
+  if (typeof dice.count !== 'number' || dice.count < 0) dice.count = 0
+  if (typeof dice.modifier !== 'number') dice.modifier = 0
+  if (typeof dice.sides !== 'number' || dice.sides < 0) dice.sides = 0
+  if (typeof dice.multiplier !== 'number' || dice.multiplier < 1) dice.multiplier = 1
 }
 
 /* ---------------------------------------- */
