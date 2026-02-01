@@ -531,7 +531,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
 
-    'gurps.scriptResolver.global-resolver-cache': MapField<
+    'gurps.scripting.globalResolverCache': MapField<
       foundry.data.fields.SchemaField<{
         id: foundry.data.fields.StringField<{ required: true; nullable: false }>
         text: foundry.data.fields.StringField<{ required: true; nullable: false }>
