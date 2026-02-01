@@ -57,11 +57,11 @@ type ScriptResult = ScriptOkResult | ScriptErrResult
 
 /* ---------------------------------------- */
 
-const MODULE_NAME = 'scriptResolver'
+const MODULE_NAME = 'scripting'
 
 /* ---------------------------------------- */
 
-const GLOBAL_RESOLVER_CACHE = `${MODULE_NAME}.global-resolver-cache`
+const GLOBAL_RESOLVER_CACHE = `${MODULE_NAME}.globalResolverCache`
 
 /* ---------------------------------------- */
 /*  Type Guards                             */
