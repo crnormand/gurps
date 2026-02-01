@@ -140,6 +140,12 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
 
   /* ---------------------------------------- */
 
+  static fromInches(value: number): Length {
+    return new Length({ value, unit: Length.Unit.Inch })
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * If forced is true, return 0 if the string is empty or invalid
    */
