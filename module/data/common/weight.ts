@@ -119,6 +119,12 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
 
   /* ---------------------------------------- */
 
+  static fromPounds(value: number): Weight {
+    return new Weight({ value, unit: Weight.Unit.Pound })
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * If forced is true, return 0 if the string is empty or invalid
    */
