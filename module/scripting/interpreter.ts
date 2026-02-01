@@ -28,8 +28,6 @@ class ScriptInterpreter {
     try {
       const program = interpreter.#parseScript(script)
 
-      console.log('Parsed program:', program)
-
       return interpreter.#runScript(program)
     } catch (error) {
       return interpreter.#toErrorResult(error)
@@ -248,7 +246,7 @@ class ScriptInterpreter {
 
           for (const switchCase of n.cases) {
             if (!matched) {
-              if (switchCase.test === null) {
+              if (!switchCase.test) {
                 matched = true // default case
               } else {
                 const testValue = this.#evaluateExpression(switchCase.test, scope)
@@ -318,7 +316,7 @@ class ScriptInterpreter {
         return n.elements.map((e: any) => (e ? this.#evaluateExpression(e, scope) : undefined))
 
       case 'ObjectExpression': {
-        const out: any = {}
+        const out: Record<string, unknown> = {}
 
         for (const p of n.properties) {
           if (p.type !== 'Property' || p.computed) throw new Error('Illegal object literal')
@@ -356,12 +354,19 @@ class ScriptInterpreter {
       case 'UpdateExpression': {
         if (n.argument.type !== 'Identifier') throw new Error('Illegal update target')
         const name = n.argument.name
-        const cur = scope.get(name) as number
-        const next = n.operator === '++' ? +cur + 1 : +cur - 1
+        const current = scope.get(name)
+
+        if (current === undefined) throw new Error(`Variable '${name}' is not defined`)
+
+        if (typeof current !== 'number') {
+          throw new Error('Can only increment or decrement numeric values')
+        }
+
+        const next = n.operator === '++' ? +current + 1 : +current - 1
 
         scope.assign(name, next)
 
-        return n.prefix ? next : cur
+        return n.prefix ? next : current
       }
 
       case 'AssignmentExpression': {
@@ -478,10 +483,8 @@ class ScriptInterpreter {
 
         const args = n.arguments.map((a: any) => this.#evaluateExpression(a, scope))
 
-        console.log('Calling function:', callee, 'with args:', args)
-
-        if (callee && (callee as any).__kind === 'function') {
-          return this.#callFunc(callee as FuncValue, args)
+        if (callee && callee.__kind === 'function') {
+          return this.#callFunc(callee, args)
         }
 
         if (typeof callee === 'function') {

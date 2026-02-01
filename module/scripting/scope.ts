@@ -13,7 +13,9 @@ class Scope {
   /* ---------------------------------------- */
 
   get(name: string): unknown {
-    if (this.vars.has(name)) return this.vars.get(name)
+    const entry = this.vars.get(name)
+
+    if (entry) return entry.value
 
     return this.parent?.get(name)
   }
