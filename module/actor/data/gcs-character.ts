@@ -1,7 +1,7 @@
 import { defaultAttributes } from '../../config/attributes.ts'
 import { Length } from '../../data/common/length.js'
 import { ResolverCacheKey } from '../../scripting/types.ts'
-import { fields } from '../../types/foundry/index.ts'
+import { fields, TypeDataModel } from '../../types/foundry/index.ts'
 
 import { BaseActorModel } from './base.ts'
 import { GcsAttributeDefinition } from './gcs-attribute-definition.ts'
@@ -17,6 +17,35 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
 
   static override defineSchema(): GcsCharacterSchema {
     return gcsCharacterSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _preCreate(
+    data: TypeDataModel.ParentAssignmentType<GcsCharacterSchema, Actor.Implementation>,
+    options: foundry.abstract.Document.Database.PreCreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
+    user: User.Implementation
+  ): Promise<boolean | void> {
+    super._preCreate(data, options, user)
+
+    // const attributeDefinitions = data.system?.settings?._attributes ?? defaultAttributes()
+    // const attributes = data.system?._attributes ?? []
+    //
+    // if (attributeDefinitions.length > 0 && (!attributes || attributes.length === 0)) {
+    //   data.system._attributes = this.#getNewAttributes(data.system.settings._attributes)
+    // }
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _onCreate(
+    data: TypeDataModel.ParentAssignmentType<GcsCharacterSchema, Actor.Implementation>,
+    options: foundry.abstract.Document.Database.CreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
+    userId: string
+  ): void {
+    super._onCreate(data, options, userId)
+
+    console.log('_onCreate', data, options, userId)
   }
 
   /* ---------------------------------------- */
@@ -217,7 +246,12 @@ const gcsCharacterSchema = () => {
     }),
     profile: new fields.SchemaField(profileSchema(), { required: true, nullable: false }),
     settings: new fields.SchemaField(sheetSettingsSchema()),
-    _attributes: new fields.ArrayField(new fields.EmbeddedDataField(GcsAttribute)),
+    _attributes: new fields.ArrayField(new fields.EmbeddedDataField(GcsAttribute), {
+      required: true,
+      nullable: false,
+      initial: (data: any) =>
+        data.settings?._attributes ? GcsAttributeDefinition.newAttributes(data.settings._attributes) : [],
+    }),
     createdOn: new fields.StringField({ required: true, nullable: false }),
     modifiedOn: new fields.StringField({ required: true, nullable: false }),
     // Arbitrary data field

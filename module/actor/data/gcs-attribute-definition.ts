@@ -1,5 +1,8 @@
+import { ScriptAttribute } from '../../scripting/interfaces/attribute.ts'
+import { ScriptResolver } from '../../scripting/resolver.ts'
 import { fields, DataModel } from '../../types/foundry/index.ts'
 
+import { GcsAttribute } from './gcs-attribute.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'
 
 enum AttributeType {
@@ -51,6 +54,44 @@ class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, Gcs
 
   static override defineSchema(): GcsAttributeDefinitionSchema {
     return attributeDefinitionSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static newAttributes(
+    defs: GcsAttributeDefinition[] | DataModel.CreateData<DataModel.SchemaOf<GcsAttributeDefinition>>[]
+  ): DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>>[] {
+    const attributes: DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>>[] = []
+
+    for (const definition of defs) {
+      attributes.push(this.newAttribute(definition))
+    }
+
+    return attributes
+  }
+
+  /* ---------------------------------------- */
+
+  static newAttribute(
+    def: GcsAttributeDefinition | DataModel.CreateData<DataModel.SchemaOf<GcsAttributeDefinition>>
+  ): DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>> {
+    const data: DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>> = {
+      id: def.id,
+      adj: 0,
+      damage: null,
+    }
+
+    if (def.type === AttributeType.Pool || def.type === AttributeType.PoolRef) data.damage = 0
+
+    return data
+  }
+
+  /* ---------------------------------------- */
+
+  baseValue(att: GcsAttribute): number {
+    if (this.isSeparator) return 0
+
+    return ScriptResolver.resolveToNumber(att.actor, ScriptAttribute.newProvider(att), this.base)
   }
 
   /* ---------------------------------------- */
@@ -108,7 +149,7 @@ class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, Gcs
     )
   }
 
-  get isDecimal(): boolean {
+  get allowsDecimal(): boolean {
     return this.type === AttributeType.Decimal || this.type === AttributeType.DecimalRef
   }
 
@@ -170,14 +211,12 @@ const attributeDefinitionSchema = () => {
     // as an alphanumeric (plus _) string of minimum length to ensure there are no duplicate ID keys.
     // Therefore, it should cycle through "a" -> "z", then "aa" etc.
     id: new fields.StringField({ required: true, nullable: false, blank: false, initial: 'a' }),
-    // TODO: STUB. Include enum or enumlike values for attribute types
     type: new fields.StringField({
       required: true,
       nullable: false,
       choices: Object.values(AttributeType),
       initial: AttributeType.Integer,
     }),
-    // TODO: STUB. Include enum or enumlike values for attribute placement
     placement: new fields.StringField({
       required: true,
       nullable: false,
@@ -193,10 +232,13 @@ const attributeDefinitionSchema = () => {
     // NOTE: Should be displayed as a percentage
     costAdjPerSm: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // TODO: Check if required and nullable even works for array fields
-    thresholds: new fields.ArrayField(new fields.SchemaField(attributeThresholdSchema()), {
-      required: true,
-      nullable: true,
-    }),
+    thresholds: new fields.ArrayField(
+      new fields.SchemaField(attributeThresholdSchema(), { required: true, nullable: false }),
+      {
+        required: false,
+        nullable: true,
+      }
+    ),
   }
 }
 
