@@ -271,6 +271,7 @@ const gcsBaseItemSchema = () => {
     ),
     reference: new fields.StringField({ required: true, nullable: false }),
     referenceHighlight: new fields.StringField({ required: true, nullable: false }),
+    thirdParty: new fields.ObjectField({ required: true, nullable: false }),
 
     actions: new CollectionField(BaseAction),
     isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
