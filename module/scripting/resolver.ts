@@ -1,7 +1,7 @@
 import { ScriptAttribute } from './interfaces/attribute.ts'
 import { ScriptEntity } from './interfaces/entity.ts'
 import { ScriptInterpreter } from './interpreter.ts'
-import { ResolverCacheKey, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE } from './types.ts'
+import { ResolverCacheKey, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE, ScriptResult } from './types.ts'
 
 class ScriptResolver {
   static MAXIMUM_ALLOWED_DEPTH = 20
@@ -24,7 +24,7 @@ class ScriptResolver {
 
   /* ---------------------------------------- */
 
-  static resolveScript(actor: Actor.Implementation, selfProvider: SelfProvider, script: string): string {
+  static resolveScript(actor: Actor.Implementation, selfProvider: SelfProvider, script: string): ScriptResult | string {
     const resolver = new ScriptResolver()
 
     return resolver.#resolveScript(actor, selfProvider, script)
@@ -32,7 +32,7 @@ class ScriptResolver {
 
   /* ---------------------------------------- */
 
-  #resolveScript(actor: Actor.Implementation, selfProvider: SelfProvider, script: string): string {
+  #resolveScript(actor: Actor.Implementation, selfProvider: SelfProvider, script: string): ScriptResult | string {
     this.depth += 1
 
     try {
@@ -74,9 +74,9 @@ class ScriptResolver {
         }
       }
 
-      const value = String(ScriptInterpreter.runScript(script, environment))
+      const value = ScriptInterpreter.runScript(script, environment)
 
-      resolverCache.set(key, value)
+      // resolverCache.set(key, value)
 
       return value
     } finally {
