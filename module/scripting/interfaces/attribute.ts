@@ -59,11 +59,11 @@ class ScriptAttribute {
     return this.#attribute.definition?.allowsDecimal ?? false
   }
 
+  /* ---------------------------------------- */
+
   valueOf(): number {
     return this.#attribute.max
   }
 }
-
-/* ---------------------------------------- */
 
 export { ScriptAttribute }
