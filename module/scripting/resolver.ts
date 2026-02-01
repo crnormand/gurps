@@ -1,5 +1,4 @@
-import { ScriptAttribute } from './interfaces/attribute.ts'
-import { ScriptEntity } from './interfaces/entity.ts'
+import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './interfaces/index.ts'
 import { ScriptInterpreter } from './interpreter.ts'
 import { ResolverCacheKey, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE, ScriptResult } from './types.ts'
 
@@ -56,7 +55,7 @@ class ScriptResolver {
 
       // const maxTime = ScriptResolver.MAXIMUM_EXECUTION_TIME_MS
 
-      const environment: ScriptEnvironment = {}
+      const environment: ScriptEnvironment = { ...ScriptGlobal }
 
       if (selfProvider.provider) {
         environment['self'] = selfProvider.provider
