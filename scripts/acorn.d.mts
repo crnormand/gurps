@@ -20,12 +20,12 @@ export interface Position {
 }
 
 export interface Identifier extends Node {
-  type: "Identifier"
+  type: 'Identifier'
   name: string
 }
 
 export interface Literal extends Node {
-  type: "Literal"
+  type: 'Literal'
   value?: string | boolean | null | number | RegExp | bigint
   raw?: string
   regex?: {
@@ -36,9 +36,9 @@ export interface Literal extends Node {
 }
 
 export interface Program extends Node {
-  type: "Program"
+  type: 'Program'
   body: Array<Statement | ModuleDeclaration>
-  sourceType: "script" | "module"
+  sourceType: 'script' | 'module'
 }
 
 export interface Function extends Node {
@@ -51,102 +51,102 @@ export interface Function extends Node {
 }
 
 export interface ExpressionStatement extends Node {
-  type: "ExpressionStatement"
+  type: 'ExpressionStatement'
   expression: Expression | Literal
   directive?: string
 }
 
 export interface BlockStatement extends Node {
-  type: "BlockStatement"
+  type: 'BlockStatement'
   body: Array<Statement>
 }
 
 export interface EmptyStatement extends Node {
-  type: "EmptyStatement"
+  type: 'EmptyStatement'
 }
 
 export interface DebuggerStatement extends Node {
-  type: "DebuggerStatement"
+  type: 'DebuggerStatement'
 }
 
 export interface WithStatement extends Node {
-  type: "WithStatement"
+  type: 'WithStatement'
   object: Expression
   body: Statement
 }
 
 export interface ReturnStatement extends Node {
-  type: "ReturnStatement"
+  type: 'ReturnStatement'
   argument?: Expression | null
 }
 
 export interface LabeledStatement extends Node {
-  type: "LabeledStatement"
+  type: 'LabeledStatement'
   label: Identifier
   body: Statement
 }
 
 export interface BreakStatement extends Node {
-  type: "BreakStatement"
+  type: 'BreakStatement'
   label?: Identifier | null
 }
 
 export interface ContinueStatement extends Node {
-  type: "ContinueStatement"
+  type: 'ContinueStatement'
   label?: Identifier | null
 }
 
 export interface IfStatement extends Node {
-  type: "IfStatement"
+  type: 'IfStatement'
   test: Expression
   consequent: Statement
   alternate?: Statement | null
 }
 
 export interface SwitchStatement extends Node {
-  type: "SwitchStatement"
+  type: 'SwitchStatement'
   discriminant: Expression
   cases: Array<SwitchCase>
 }
 
 export interface SwitchCase extends Node {
-  type: "SwitchCase"
+  type: 'SwitchCase'
   test?: Expression | null
   consequent: Array<Statement>
 }
 
 export interface ThrowStatement extends Node {
-  type: "ThrowStatement"
+  type: 'ThrowStatement'
   argument: Expression
 }
 
 export interface TryStatement extends Node {
-  type: "TryStatement"
+  type: 'TryStatement'
   block: BlockStatement
   handler?: CatchClause | null
   finalizer?: BlockStatement | null
 }
 
 export interface CatchClause extends Node {
-  type: "CatchClause"
+  type: 'CatchClause'
   param?: Pattern | null
   body: BlockStatement
 }
 
 export interface WhileStatement extends Node {
-  type: "WhileStatement"
+  type: 'WhileStatement'
   test: Expression
   body: Statement
 }
 
 export interface DoWhileStatement extends Node {
-  type: "DoWhileStatement"
+  type: 'DoWhileStatement'
   body: Statement
   test: Expression
 }
 
 export interface ForStatement extends Node {
-  type: "ForStatement"
+  type: 'ForStatement'
   init?: VariableDeclaration | Expression | null
   test?: Expression | null
   update?: Expression | null
@@ -154,106 +154,144 @@ export interface ForStatement extends Node {
 }
 
 export interface ForInStatement extends Node {
-  type: "ForInStatement"
+  type: 'ForInStatement'
   left: VariableDeclaration | Pattern
   right: Expression
   body: Statement
 }
 
 export interface FunctionDeclaration extends Function {
-  type: "FunctionDeclaration"
+  type: 'FunctionDeclaration'
   id: Identifier
   body: BlockStatement
 }
 
 export interface VariableDeclaration extends Node {
-  type: "VariableDeclaration"
+  type: 'VariableDeclaration'
   declarations: Array<VariableDeclarator>
-  kind: "var" | "let" | "const" | "using" | "await using"
+  kind: 'var' | 'let' | 'const' | 'using' | 'await using'
 }
 
 export interface VariableDeclarator extends Node {
-  type: "VariableDeclarator"
+  type: 'VariableDeclarator'
   id: Pattern
   init?: Expression | null
 }
 
 export interface ThisExpression extends Node {
-  type: "ThisExpression"
+  type: 'ThisExpression'
 }
 
 export interface ArrayExpression extends Node {
-  type: "ArrayExpression"
+  type: 'ArrayExpression'
   elements: Array<Expression | SpreadElement | null>
 }
 
 export interface ObjectExpression extends Node {
-  type: "ObjectExpression"
+  type: 'ObjectExpression'
   properties: Array<Property | SpreadElement>
 }
 
 export interface Property extends Node {
-  type: "Property"
+  type: 'Property'
   key: Expression
   value: Expression
-  kind: "init" | "get" | "set"
+  kind: 'init' | 'get' | 'set'
   method: boolean
   shorthand: boolean
   computed: boolean
 }
 
 export interface FunctionExpression extends Function {
-  type: "FunctionExpression"
+  type: 'FunctionExpression'
   body: BlockStatement
 }
 
 export interface UnaryExpression extends Node {
-  type: "UnaryExpression"
+  type: 'UnaryExpression'
   operator: UnaryOperator
   prefix: boolean
   argument: Expression
 }
 
-export type UnaryOperator = "-" | "+" | "!" | "~" | "typeof" | "void" | "delete"
+export type UnaryOperator = '-' | '+' | '!' | '~' | 'typeof' | 'void' | 'delete'
 
 export interface UpdateExpression extends Node {
-  type: "UpdateExpression"
+  type: 'UpdateExpression'
   operator: UpdateOperator
   argument: Expression
   prefix: boolean
 }
 
-export type UpdateOperator = "++" | "--"
+export type UpdateOperator = '++' | '--'
 
 export interface BinaryExpression extends Node {
-  type: "BinaryExpression"
+  type: 'BinaryExpression'
   operator: BinaryOperator
   left: Expression | PrivateIdentifier
   right: Expression
 }
 
-export type BinaryOperator = "==" | "!=" | "===" | "!==" | "<" | "<=" | ">" | ">=" | "<<" | ">>" | ">>>" | "+" | "-" | "*" | "/" | "%" | "|" | "^" | "&" | "in" | "instanceof" | "**"
+export type BinaryOperator =
+  | '=='
+  | '!='
+  | '==='
+  | '!=='
+  | '<'
+  | '<='
+  | '>'
+  | '>='
+  | '<<'
+  | '>>'
+  | '>>>'
+  | '+'
+  | '-'
+  | '*'
+  | '/'
+  | '%'
+  | '|'
+  | '^'
+  | '&'
+  | 'in'
+  | 'instanceof'
+  | '**'
 
 export interface AssignmentExpression extends Node {
-  type: "AssignmentExpression"
+  type: 'AssignmentExpression'
   operator: AssignmentOperator
   left: Pattern
   right: Expression
 }
 
-export type AssignmentOperator = "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "<<=" | ">>=" | ">>>=" | "|=" | "^=" | "&=" | "**=" | "||=" | "&&=" | "??="
+export type AssignmentOperator =
+  | '='
+  | '+='
+  | '-='
+  | '*='
+  | '/='
+  | '%='
+  | '<<='
+  | '>>='
+  | '>>>='
+  | '|='
+  | '^='
+  | '&='
+  | '**='
+  | '||='
+  | '&&='
+  | '??='
 
 export interface LogicalExpression extends Node {
-  type: "LogicalExpression"
+  type: 'LogicalExpression'
   operator: LogicalOperator
   left: Expression
   right: Expression
 }
 
-export type LogicalOperator = "||" | "&&" | "??"
+export type LogicalOperator = '||' | '&&' | '??'
 
 export interface MemberExpression extends Node {
-  type: "MemberExpression"
+  type: 'MemberExpression'
   object: Expression | Super
   property: Expression | PrivateIdentifier
   computed: boolean
@@ -261,32 +299,32 @@ export interface MemberExpression extends Node {
 }
 
 export interface ConditionalExpression extends Node {
-  type: "ConditionalExpression"
+  type: 'ConditionalExpression'
   test: Expression
   alternate: Expression
   consequent: Expression
 }
 
 export interface CallExpression extends Node {
-  type: "CallExpression"
+  type: 'CallExpression'
   callee: Expression | Super
   arguments: Array<Expression | SpreadElement>
   optional: boolean
 }
 
 export interface NewExpression extends Node {
-  type: "NewExpression"
+  type: 'NewExpression'
   callee: Expression
   arguments: Array<Expression | SpreadElement>
 }
 
 export interface SequenceExpression extends Node {
-  type: "SequenceExpression"
+  type: 'SequenceExpression'
   expressions: Array<Expression>
 }
 
 export interface ForOfStatement extends Node {
-  type: "ForOfStatement"
+  type: 'ForOfStatement'
   left: VariableDeclaration | Pattern
   right: Expression
   body: Statement
@@ -294,38 +332,38 @@ export interface ForOfStatement extends Node {
 }
 
 export interface Super extends Node {
-  type: "Super"
+  type: 'Super'
 }
 
 export interface SpreadElement extends Node {
-  type: "SpreadElement"
+  type: 'SpreadElement'
   argument: Expression
 }
 
 export interface ArrowFunctionExpression extends Function {
-  type: "ArrowFunctionExpression"
+  type: 'ArrowFunctionExpression'
 }
 
 export interface YieldExpression extends Node {
-  type: "YieldExpression"
+  type: 'YieldExpression'
   argument?: Expression | null
   delegate: boolean
 }
 
 export interface TemplateLiteral extends Node {
-  type: "TemplateLiteral"
+  type: 'TemplateLiteral'
   quasis: Array<TemplateElement>
   expressions: Array<Expression>
 }
 
 export interface TaggedTemplateExpression extends Node {
-  type: "TaggedTemplateExpression"
+  type: 'TaggedTemplateExpression'
   tag: Expression
   quasi: TemplateLiteral
 }
 
 export interface TemplateElement extends Node {
-  type: "TemplateElement"
+  type: 'TemplateElement'
   tail: boolean
   value: {
     cooked?: string | null
@@ -334,32 +372,32 @@ export interface TemplateElement extends Node {
 }
 
 export interface AssignmentProperty extends Node {
-  type: "Property"
+  type: 'Property'
   key: Expression
   value: Pattern
-  kind: "init"
+  kind: 'init'
   method: false
   shorthand: boolean
   computed: boolean
 }
 
 export interface ObjectPattern extends Node {
-  type: "ObjectPattern"
+  type: 'ObjectPattern'
   properties: Array<AssignmentProperty | RestElement>
 }
 
 export interface ArrayPattern extends Node {
-  type: "ArrayPattern"
+  type: 'ArrayPattern'
   elements: Array<Pattern | null>
 }
 
 export interface RestElement extends Node {
-  type: "RestElement"
+  type: 'RestElement'
   argument: Pattern
 }
 
 export interface AssignmentPattern extends Node {
-  type: "AssignmentPattern"
+  type: 'AssignmentPattern'
   left: Pattern
   right: Expression
 }
@@ -371,65 +409,65 @@ export interface Class extends Node {
 }
 
 export interface ClassBody extends Node {
-  type: "ClassBody"
+  type: 'ClassBody'
   body: Array<MethodDefinition | PropertyDefinition | StaticBlock>
 }
 
 export interface MethodDefinition extends Node {
-  type: "MethodDefinition"
+  type: 'MethodDefinition'
   key: Expression | PrivateIdentifier
   value: FunctionExpression
-  kind: "constructor" | "method" | "get" | "set"
+  kind: 'constructor' | 'method' | 'get' | 'set'
   computed: boolean
   static: boolean
 }
 
 export interface ClassDeclaration extends Class {
-  type: "ClassDeclaration"
+  type: 'ClassDeclaration'
   id: Identifier
 }
 
 export interface ClassExpression extends Class {
-  type: "ClassExpression"
+  type: 'ClassExpression'
 }
 
 export interface MetaProperty extends Node {
-  type: "MetaProperty"
+  type: 'MetaProperty'
   meta: Identifier
   property: Identifier
 }
 
 export interface ImportDeclaration extends Node {
-  type: "ImportDeclaration"
+  type: 'ImportDeclaration'
   specifiers: Array<ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier>
   source: Literal
   attributes: Array<ImportAttribute>
 }
 
 export interface ImportSpecifier extends Node {
-  type: "ImportSpecifier"
+  type: 'ImportSpecifier'
   imported: Identifier | Literal
   local: Identifier
 }
 
 export interface ImportDefaultSpecifier extends Node {
-  type: "ImportDefaultSpecifier"
+  type: 'ImportDefaultSpecifier'
   local: Identifier
 }
 
 export interface ImportNamespaceSpecifier extends Node {
-  type: "ImportNamespaceSpecifier"
+  type: 'ImportNamespaceSpecifier'
   local: Identifier
 }
 
 export interface ImportAttribute extends Node {
-  type: "ImportAttribute"
+  type: 'ImportAttribute'
   key: Identifier | Literal
   value: Literal
 }
 
 export interface ExportNamedDeclaration extends Node {
-  type: "ExportNamedDeclaration"
+  type: 'ExportNamedDeclaration'
   declaration?: Declaration | null
   specifiers: Array<ExportSpecifier>
   source?: Literal | null
@@ -437,57 +475,62 @@ export interface ExportNamedDeclaration extends Node {
 }
 
 export interface ExportSpecifier extends Node {
-  type: "ExportSpecifier"
+  type: 'ExportSpecifier'
   exported: Identifier | Literal
   local: Identifier | Literal
 }
 
 export interface AnonymousFunctionDeclaration extends Function {
-  type: "FunctionDeclaration"
+  type: 'FunctionDeclaration'
   id: null
   body: BlockStatement
 }
 
 export interface AnonymousClassDeclaration extends Class {
-  type: "ClassDeclaration"
+  type: 'ClassDeclaration'
   id: null
 }
 
 export interface ExportDefaultDeclaration extends Node {
-  type: "ExportDefaultDeclaration"
-  declaration: AnonymousFunctionDeclaration | FunctionDeclaration | AnonymousClassDeclaration | ClassDeclaration | Expression
+  type: 'ExportDefaultDeclaration'
+  declaration:
+    | AnonymousFunctionDeclaration
+    | FunctionDeclaration
+    | AnonymousClassDeclaration
+    | ClassDeclaration
+    | Expression
 }
 
 export interface ExportAllDeclaration extends Node {
-  type: "ExportAllDeclaration"
+  type: 'ExportAllDeclaration'
   source: Literal
   exported?: Identifier | Literal | null
   attributes: Array<ImportAttribute>
 }
 
 export interface AwaitExpression extends Node {
-  type: "AwaitExpression"
+  type: 'AwaitExpression'
   argument: Expression
 }
 
 export interface ChainExpression extends Node {
-  type: "ChainExpression"
+  type: 'ChainExpression'
   expression: MemberExpression | CallExpression
 }
 
 export interface ImportExpression extends Node {
-  type: "ImportExpression"
+  type: 'ImportExpression'
   source: Expression
   options: Expression | null
 }
 
 export interface ParenthesizedExpression extends Node {
-  type: "ParenthesizedExpression"
+  type: 'ParenthesizedExpression'
   expression: Expression
 }
 
 export interface PropertyDefinition extends Node {
-  type: "PropertyDefinition"
+  type: 'PropertyDefinition'
   key: Expression | PrivateIdentifier
   value?: Expression | null
   computed: boolean
@@ -495,98 +538,120 @@ export interface PropertyDefinition extends Node {
 }
 
 export interface PrivateIdentifier extends Node {
-  type: "PrivateIdentifier"
+  type: 'PrivateIdentifier'
   name: string
 }
 
 export interface StaticBlock extends Node {
-  type: "StaticBlock"
+  type: 'StaticBlock'
   body: Array<Statement>
 }
 
-export type Statement = 
-| ExpressionStatement
-| BlockStatement
-| EmptyStatement
-| DebuggerStatement
-| WithStatement
-| ReturnStatement
-| LabeledStatement
-| BreakStatement
-| ContinueStatement
-| IfStatement
-| SwitchStatement
-| ThrowStatement
-| TryStatement
-| WhileStatement
-| DoWhileStatement
-| ForStatement
-| ForInStatement
-| ForOfStatement
-| Declaration
+export type Statement =
+  | ExpressionStatement
+  | BlockStatement
+  | EmptyStatement
+  | DebuggerStatement
+  | WithStatement
+  | ReturnStatement
+  | LabeledStatement
+  | BreakStatement
+  | ContinueStatement
+  | IfStatement
+  | SwitchStatement
+  | ThrowStatement
+  | TryStatement
+  | WhileStatement
+  | DoWhileStatement
+  | ForStatement
+  | ForInStatement
+  | ForOfStatement
+  | Declaration
 
-export type Declaration = 
-| FunctionDeclaration
-| VariableDeclaration
-| ClassDeclaration
+export type Declaration = FunctionDeclaration | VariableDeclaration | ClassDeclaration
 
-export type Expression = 
-| Identifier
-| Literal
-| ThisExpression
-| ArrayExpression
-| ObjectExpression
-| FunctionExpression
-| UnaryExpression
-| UpdateExpression
-| BinaryExpression
-| AssignmentExpression
-| LogicalExpression
-| MemberExpression
-| ConditionalExpression
-| CallExpression
-| NewExpression
-| SequenceExpression
-| ArrowFunctionExpression
-| YieldExpression
-| TemplateLiteral
-| TaggedTemplateExpression
-| ClassExpression
-| MetaProperty
-| AwaitExpression
-| ChainExpression
-| ImportExpression
-| ParenthesizedExpression
+export type Expression =
+  | Identifier
+  | Literal
+  | ThisExpression
+  | ArrayExpression
+  | ObjectExpression
+  | FunctionExpression
+  | UnaryExpression
+  | UpdateExpression
+  | BinaryExpression
+  | AssignmentExpression
+  | LogicalExpression
+  | MemberExpression
+  | ConditionalExpression
+  | CallExpression
+  | NewExpression
+  | SequenceExpression
+  | ArrowFunctionExpression
+  | YieldExpression
+  | TemplateLiteral
+  | TaggedTemplateExpression
+  | ClassExpression
+  | MetaProperty
+  | AwaitExpression
+  | ChainExpression
+  | ImportExpression
+  | ParenthesizedExpression
 
-export type Pattern = 
-| Identifier
-| MemberExpression
-| ObjectPattern
-| ArrayPattern
-| RestElement
-| AssignmentPattern
+export type Pattern = Identifier | MemberExpression | ObjectPattern | ArrayPattern | RestElement | AssignmentPattern
 
-export type ModuleDeclaration = 
-| ImportDeclaration
-| ExportNamedDeclaration
-| ExportDefaultDeclaration
-| ExportAllDeclaration
+export type ModuleDeclaration =
+  | ImportDeclaration
+  | ExportNamedDeclaration
+  | ExportDefaultDeclaration
+  | ExportAllDeclaration
 
 /**
-  * This interface is only used for defining {@link AnyNode}.
-  * It exists so that it can be extended by plugins:
-  *
-  * @example
-  * ```typescript
-  * declare module 'acorn' {
-  *   interface NodeTypes {
-  *     pluginName: FirstNode | SecondNode | ThirdNode | ... | LastNode
-  *   }
-  * }
-  * ```
-  */
+ * This interface is only used for defining {@link AnyNode}.
+ * It exists so that it can be extended by plugins:
+ *
+ * @example
+ * ```typescript
+ * declare module 'acorn' {
+ *   interface NodeTypes {
+ *     pluginName: FirstNode | SecondNode | ThirdNode | ... | LastNode
+ *   }
+ * }
+ * ```
+ */
 interface NodeTypes {
-  core: Statement | Expression | Declaration | ModuleDeclaration | Literal | Program | SwitchCase | CatchClause | Property | Super | SpreadElement | TemplateElement | AssignmentProperty | ObjectPattern | ArrayPattern | RestElement | AssignmentPattern | ClassBody | MethodDefinition | MetaProperty | ImportAttribute | ImportSpecifier | ImportDefaultSpecifier | ImportNamespaceSpecifier | ExportSpecifier | AnonymousFunctionDeclaration | AnonymousClassDeclaration | PropertyDefinition | PrivateIdentifier | StaticBlock | VariableDeclarator
+  core:
+    | Statement
+    | Expression
+    | Declaration
+    | ModuleDeclaration
+    | Literal
+    | Program
+    | SwitchCase
+    | CatchClause
+    | Property
+    | Super
+    | SpreadElement
+    | TemplateElement
+    | AssignmentProperty
+    | ObjectPattern
+    | ArrayPattern
+    | RestElement
+    | AssignmentPattern
+    | ClassBody
+    | MethodDefinition
+    | MetaProperty
+    | ImportAttribute
+    | ImportSpecifier
+    | ImportDefaultSpecifier
+    | ImportNamespaceSpecifier
+    | ExportSpecifier
+    | AnonymousFunctionDeclaration
+    | AnonymousClassDeclaration
+    | PropertyDefinition
+    | PrivateIdentifier
+    | StaticBlock
+    | VariableDeclarator
 }
 
 export type AnyNode = NodeTypes[keyof NodeTypes]
@@ -595,12 +660,42 @@ export function parse(input: string, options: Options): Program
 
 export function parseExpressionAt(input: string, pos: number, options: Options): Expression
 
-export function tokenizer(input: string, options: Options): {
+export function tokenizer(
+  input: string,
+  options: Options
+): {
   getToken(): Token
   [Symbol.iterator](): Iterator<Token>
 }
 
-export type ecmaVersion = 3 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 | "latest"
+export type ecmaVersion =
+  | 3
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 2015
+  | 2016
+  | 2017
+  | 2018
+  | 2019
+  | 2020
+  | 2021
+  | 2022
+  | 2023
+  | 2024
+  | 2025
+  | 2026
+  | 'latest'
 
 export interface Options {
   /**
@@ -617,7 +712,7 @@ export interface Options {
    * Can be either `"script"`, `"module"` or `"commonjs"`. This influences global
    * strict mode and parsing of `import` and `export` declarations.
    */
-  sourceType?: "script" | "module" | "commonjs"
+  sourceType?: 'script' | 'module' | 'commonjs'
 
   /**
    * a callback that will be called when a semicolon is automatically inserted.
@@ -639,9 +734,9 @@ export interface Options {
    * an off. When this option has the value "never", reserved words
    * and keywords can also not be used as property names.
    */
-  allowReserved?: boolean | "never"
+  allowReserved?: boolean | 'never'
 
-  /** 
+  /**
    * When enabled, a return at the top level is not considered an error.
    */
   allowReturnOutsideFunction?: boolean
@@ -695,10 +790,9 @@ export interface Options {
    */
   onToken?: ((token: Token) => void) | Token[]
 
-
   /**
    * This takes a export function or an array.
-   * 
+   *
    * When a export function is passed, Acorn will call that export function with `(block, text, start,
    * end)` parameters whenever a comment is skipped. `block` is a
    * boolean indicating whether this is a block (`/* *\/`) comment,
@@ -707,16 +801,15 @@ export interface Options {
    * When the {@link locations} option is on, two more parameters are
    * passed, the full locations of {@link Position} export type of the start and
    * end of the comments.
-   * 
+   *
    * When a array is passed, each found comment of {@link Comment} export type is pushed to the array.
-   * 
+   *
    * Note that you are not allowed to call the
    * parser from the callback—that will corrupt its internal state.
    */
-  onComment?: ((
-    isBlock: boolean, text: string, start: number, end: number, startLoc?: Position,
-    endLoc?: Position
-  ) => void) | Comment[]
+  onComment?:
+    | ((isBlock: boolean, text: string, start: number, end: number, startLoc?: Position, endLoc?: Position) => void)
+    | Comment[]
 
   /**
    * Nodes have their start and end characters offsets recorded in
@@ -754,17 +847,20 @@ export interface Options {
    */
   preserveParens?: boolean
 }
-  
+
 export class Parser {
   options: Options
   input: string
-  
+
   protected constructor(options: Options, input: string, startPos?: number)
   parse(): Program
-  
+
   static parse(input: string, options: Options): Program
   static parseExpressionAt(input: string, pos: number, options: Options): Expression
-  static tokenizer(input: string, options: Options): {
+  static tokenizer(
+    input: string,
+    options: Options
+  ): {
     getToken(): Token
     [Symbol.iterator](): Iterator<Token>
   }
@@ -864,7 +960,7 @@ export const tokTypes: {
 }
 
 export interface Comment {
-  type: "Line" | "Block"
+  type: 'Line' | 'Block'
   value: string
   start: number
   end: number
