@@ -6,7 +6,7 @@ import { type GcsCharacterModel } from './gcs-character.ts'
 /* ---------------------------------------- */
 
 class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
-  #definition: GcsAttributeDefinition | null = null
+  private _definition: GcsAttributeDefinition | null = null
 
   /* ---------------------------------------- */
 
@@ -26,13 +26,21 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
       return
     }
 
-    this.#definition = actor?.system.attributeDefinitions.get(this.id) || null
+    this._definition = actor?.system?.attributeDefinitions?.get(this.id) || null
   }
 
   /* ---------------------------------------- */
 
   get definition(): GcsAttributeDefinition | null {
-    return this.#definition
+    if (this._definition) return this._definition
+
+    const definition = this.actor?.system?.settings?._attributes?.find(e => e.id === this.id)
+
+    if (!definition) return null
+
+    this._definition = definition
+
+    return definition
   }
 
   /* ---------------------------------------- */
@@ -43,17 +51,26 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
-  get max(): number {
-    if (!this.#definition) return 0
-
+  get bonus(): number {
     return 0
-    // return this.#definition.base + this.adj
+  }
+
+  /* ---------------------------------------- */
+
+  get max(): number {
+    if (!this.definition || this.definition.isSeparator) return 0
+
+    let maximum = this.definition.baseValue(this) + this.adj + this.bonus
+
+    if (!this.definition.allowsDecimal) maximum = Math.floor(maximum)
+
+    return maximum
   }
 
   /* ---------------------------------------- */
 
   get current(): number {
-    if (!this.#definition) return 0
+    if (!this._definition) return 0
 
     return 0
     // return this.#definition.base + this.adj - this.damage

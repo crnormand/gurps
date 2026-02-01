@@ -1,6 +1,6 @@
 import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './interfaces/index.ts'
 import { ScriptInterpreter } from './interpreter.ts'
-import { ResolverCacheKey, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE, ScriptResult } from './types.ts'
+import { ResolverCacheKey, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE } from './types.ts'
 
 class ScriptResolver {
   static MAXIMUM_ALLOWED_DEPTH = 20
@@ -23,7 +23,30 @@ class ScriptResolver {
 
   /* ---------------------------------------- */
 
-  static resolveScript(actor: Actor.Implementation, selfProvider: SelfProvider, script: string): ScriptResult | string {
+  static resolveToNumber(actor: Actor.Implementation | null, selfProvider: SelfProvider<any>, script: string): number {
+    script = script.trim()
+    if (script === '') return 0
+
+    let value = Number(script)
+
+    if (!isNaN(value)) return value
+
+    const result = this.resolveScript(actor, selfProvider, script)
+
+    value = Number(result)
+
+    if (isNaN(value)) {
+      console.error(`Unable to resolve script result to a number, result: "${result}", script: "${script}"`)
+
+      return 0
+    }
+
+    return value
+  }
+
+  /* ---------------------------------------- */
+
+  static resolveScript(actor: Actor.Implementation | null, selfProvider: SelfProvider, script: string): string {
     const resolver = new ScriptResolver()
 
     return resolver.#resolveScript(actor, selfProvider, script)
@@ -31,7 +54,7 @@ class ScriptResolver {
 
   /* ---------------------------------------- */
 
-  #resolveScript(actor: Actor.Implementation, selfProvider: SelfProvider, script: string): ScriptResult | string {
+  #resolveScript(actor: Actor.Implementation | null, selfProvider: SelfProvider, script: string): string {
     this.depth += 1
 
     try {
@@ -73,11 +96,17 @@ class ScriptResolver {
         }
       }
 
-      const value = ScriptInterpreter.runScript(script, environment)
+      const result = ScriptInterpreter.runScript(script, environment)
 
-      // resolverCache.set(key, value)
+      if (result.ok) {
+        resolverCache.set(key, String(result.value))
 
-      return value
+        return String(result.value)
+      } else {
+        console.error(`An error occurred while attempting to resolve script: ${script}`)
+
+        return ''
+      }
     } finally {
       this.depth -= 1
     }

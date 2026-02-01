@@ -1,4 +1,5 @@
 import { GcsAttribute } from '../../actor/data/gcs-attribute.ts'
+import { SelfProvider } from '../types.ts'
 
 class ScriptAttribute {
   #attribute: GcsAttribute
@@ -10,6 +11,13 @@ class ScriptAttribute {
   // maximum: number
   // isDecimal: boolean
   // valueOf: number
+
+  static newProvider(attribute: GcsAttribute): SelfProvider<ScriptAttribute> {
+    return {
+      id: '$' + attribute.id,
+      provider: new ScriptAttribute(attribute),
+    }
+  }
 
   constructor(attribute: GcsAttribute) {
     this.#attribute = attribute
@@ -48,7 +56,7 @@ class ScriptAttribute {
   /* ---------------------------------------- */
 
   get isDecimal(): boolean {
-    return this.#attribute.definition?.isDecimal ?? false
+    return this.#attribute.definition?.allowsDecimal ?? false
   }
 
   valueOf(): number {

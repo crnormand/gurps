@@ -5,9 +5,9 @@ interface ResolverCacheKey {
 
 /* ---------------------------------------- */
 
-interface SelfProvider {
+interface SelfProvider<T = Record<string, unknown>> {
   id: string
-  provider: Record<string, unknown>
+  provider: T
 }
 
 /* ---------------------------------------- */
