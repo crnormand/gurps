@@ -1,8 +1,18 @@
-import { BlockStatement, ModuleDeclaration, parse, Program, Statement } from '../../scripts/acorn.mjs'
+import { AnyObject } from 'fvtt-types/utils'
+
+import { BlockStatement, ModuleDeclaration, parse, Program, Statement, Node, Expression } from '../../scripts/acorn.mjs'
 
 import { Scope, VarKind } from './scope.ts'
 import { BreakSignal, ContinueSignal, ReturnSignal } from './signals.ts'
-import { ScriptEnvironment, ScriptErrResult, ScriptResult } from './types.ts'
+import {
+  asNodeLocContext,
+  asThrownDetails,
+  isRecord,
+  NodeLocContext,
+  ScriptEnvironment,
+  ScriptErrResult,
+  ScriptResult,
+} from './types.ts'
 
 type FuncValue = {
   __kind: 'function'
@@ -29,7 +39,7 @@ class ScriptInterpreter {
       const program = interpreter.#parseScript(script)
 
       return interpreter.#runScript(program)
-    } catch (error) {
+    } catch (error: unknown) {
       return interpreter.#toErrorResult(error)
     }
   }
@@ -44,47 +54,60 @@ class ScriptInterpreter {
 
   /* ---------------------------------------- */
 
-  #toErrorResult(e: any): ScriptErrResult {
+  #toErrorResult(thrown: unknown): ScriptErrResult {
+    const details = asThrownDetails(thrown)
     const err: ScriptErrResult['error'] = {
-      name: e?.name ?? 'Error',
-      message: e?.message ?? String(e),
+      name: thrown instanceof Error ? thrown.name : typeof details?.name === 'string' ? details.name : 'Error',
+      message:
+        thrown instanceof Error
+          ? thrown.message
+          : typeof details?.message === 'string'
+            ? details.message
+            : String(thrown),
     }
 
-    if (typeof e?.pos === 'number') err.start = (e as any).pos
-    if (typeof e?.raisedAt === 'number') err.end = (e as any).raisedAt
+    if (typeof details?.pos === 'number') err.start = details.pos
+    if (typeof details?.raisedAt === 'number') err.end = details.raisedAt
 
-    if (e?.loc) {
-      err.line = e.loc.line
-      err.column = (e.loc.column ?? 0) + 1
+    if (isRecord(details?.loc)) {
+      const line = (details!.loc as any).line
+      const column = (details!.loc as any).column
+
+      if (typeof line === 'number') err.line = line
+      if (typeof column === 'number') err.column = column + 1
     }
 
-    if (e?.__nodeLoc) {
-      const n = e.__nodeLoc
+    const nodeLoc = asNodeLocContext(details?.__nodeLoc)
 
-      err.start ??= n.start
-      err.end ??= n.end
+    if (nodeLoc) {
+      err.start ??= nodeLoc.start
+      err.end ??= nodeLoc.end
+      const line = nodeLoc.loc?.start?.line
+      const column = nodeLoc.loc?.start?.column
 
-      if (n.loc?.start) {
-        err.line ??= n.loc.start.line
-        err.column ??= (n.loc.start.column ?? 0) + 1
-      }
+      if (typeof line === 'number') err.line ??= line
+      if (typeof column === 'number') err.column ??= column + 1
     }
-
-    console.trace()
 
     return { ok: false, error: err }
   }
 
   /* ---------------------------------------- */
 
-  #attachNodeContext(e: any, node: any): void {
+  #attachNodeContext<T>(thrown: T, node: Node): T {
+    if (!isRecord(thrown)) return thrown
+
     try {
-      e.__nodeLoc = { start: node.start, end: node.end, loc: node.loc }
+      ;(thrown as Record<string, unknown> & { __nodeLoc?: NodeLocContext }).__nodeLoc = {
+        start: node.start,
+        end: node.end,
+        loc: node.loc,
+      }
     } catch {
-      // Do nothing
+      // ignore (frozen objects, etc.)
     }
 
-    return e
+    return thrown
   }
 
   /* ---------------------------------------- */
@@ -102,8 +125,8 @@ class ScriptInterpreter {
 
   /* ---------------------------------------- */
 
-  #executeBlock(statements: any[], scope: Scope): unknown {
-    let last: unknown = undefined
+  #executeBlock(statements: Statement[], scope: Scope): unknown {
+    let last = undefined
 
     for (const stmt of statements) last = this.#executeStatement(stmt, scope)
 
@@ -112,49 +135,49 @@ class ScriptInterpreter {
 
   /* ---------------------------------------- */
 
-  #executeStatement(n: Statement | ModuleDeclaration, scope: Scope): unknown {
+  #executeStatement(node: Statement | ModuleDeclaration, scope: Scope): unknown {
     this.#bump()
 
     try {
-      switch (n.type) {
+      switch (node.type) {
         case 'EmptyStatement':
           return undefined
 
         case 'BlockStatement': {
           const inner = new Scope(scope)
 
-          return this.#executeBlock(n.body, inner)
+          return this.#executeBlock(node.body, inner)
         }
 
         case 'ExpressionStatement': {
-          return this.#evaluateExpression(n.expression, scope)
+          return this.#evaluateExpression(node.expression, scope)
         }
 
         case 'ReturnStatement': {
-          const v = n.argument ? this.#evaluateExpression(n.argument, scope) : undefined
+          const v = node.argument ? this.#evaluateExpression(node.argument, scope) : undefined
 
           throw new ReturnSignal(v)
         }
 
         case 'BreakStatement':
-          throw new BreakSignal(n.label ? n.label.name : undefined)
+          throw new BreakSignal(node.label ? node.label.name : undefined)
 
         case 'ContinueStatement':
-          throw new ContinueSignal(n.label ? n.label.name : undefined)
+          throw new ContinueSignal(node.label ? node.label.name : undefined)
 
         case 'IfStatement': {
-          const test = this.#evaluateExpression(n.test, scope)
+          const test = this.#evaluateExpression(node.test, scope)
 
-          if (test) return this.#executeStatement(n.consequent, scope)
-          if (test === false && n.alternate) return this.#executeStatement(n.alternate, scope)
+          if (test) return this.#executeStatement(node.consequent, scope)
+          if (node.alternate) return this.#executeStatement(node.alternate, scope)
 
           return undefined
         }
 
         case 'VariableDeclaration': {
-          const kind: VarKind = n.kind // 'var', 'let', or 'const'
+          const kind: VarKind = node.kind // 'var', 'let', or 'const'
 
-          for (const decl of n.declarations) {
+          for (const decl of node.declarations) {
             if (decl.id.type !== 'Identifier') throw new Error('Only simple variable declarations are supported')
             const name = decl.id.name
 
@@ -171,11 +194,11 @@ class ScriptInterpreter {
         }
 
         case 'FunctionDeclaration': {
-          const name = n.id.name
+          const name = node.id.name
 
           if (!name) throw new Error('Anonymous function declarations are not supported')
 
-          const params = n.params.map(param => {
+          const params = node.params.map(param => {
             if (param.type !== 'Identifier') throw new Error('Only simple parameters are supported')
 
             return param.name
@@ -185,7 +208,7 @@ class ScriptInterpreter {
             __kind: 'function',
             name,
             params,
-            body: n.body,
+            body: node.body,
             scope,
           }
 
@@ -195,9 +218,9 @@ class ScriptInterpreter {
         }
 
         case 'WhileStatement': {
-          while (this.#evaluateExpression(n.test, scope)) {
+          while (this.#evaluateExpression(node.test, scope)) {
             try {
-              this.#executeStatement(n.body, scope)
+              this.#executeStatement(node.body, scope)
             } catch (sig) {
               if (sig instanceof ContinueSignal) continue
               if (sig instanceof BreakSignal) break
@@ -213,14 +236,14 @@ class ScriptInterpreter {
         case 'ForStatement': {
           const loopScope = new Scope(scope)
 
-          if (n.init) {
-            if (n.init.type === 'VariableDeclaration') this.#executeStatement(n.init, loopScope)
-            else this.#evaluateExpression(n.init, loopScope)
+          if (node.init) {
+            if (node.init.type === 'VariableDeclaration') this.#executeStatement(node.init, loopScope)
+            else this.#evaluateExpression(node.init, loopScope)
           }
 
-          while (n.test ? this.#evaluateExpression(n.test, loopScope) : true) {
+          while (node.test ? this.#evaluateExpression(node.test, loopScope) : true) {
             try {
-              this.#executeStatement(n.body, loopScope)
+              this.#executeStatement(node.body, loopScope)
             } catch (sig) {
               if (sig instanceof ContinueSignal) {
                 // continue => still run update
@@ -231,7 +254,7 @@ class ScriptInterpreter {
               }
             }
 
-            if (n.update) this.#evaluateExpression(n.update, loopScope)
+            if (node.update) this.#evaluateExpression(node.update, loopScope)
             this.#bump()
           }
 
@@ -239,12 +262,12 @@ class ScriptInterpreter {
         }
 
         case 'SwitchStatement': {
-          const discriminant = this.#evaluateExpression(n.discriminant, scope)
+          const discriminant = this.#evaluateExpression(node.discriminant, scope)
 
           let matched = false
-          let last: unknown = undefined
+          let last = undefined
 
-          for (const switchCase of n.cases) {
+          for (const switchCase of node.cases) {
             if (!matched) {
               if (!switchCase.test) {
                 matched = true // default case
@@ -270,10 +293,10 @@ class ScriptInterpreter {
         }
 
         default:
-          throw new Error(`Unsupported statement type: ${n.type}`)
+          throw new Error(`Unsupported statement type: ${node.type}`)
       }
-    } catch (e) {
-      throw this.#attachNodeContext(e, n)
+    } catch (error) {
+      throw this.#attachNodeContext(error, node)
     }
   }
 
@@ -298,27 +321,63 @@ class ScriptInterpreter {
 
   /* ---------------------------------------- */
 
-  #evaluateExpression(n: any, scope: Scope): any {
+  #evaluateExpression(node: Expression, scope: Scope): unknown {
     this.#bump()
 
-    switch (n.type) {
+    switch (node.type) {
       case 'Literal':
-        return n.value
+        return node.value
 
       case 'Identifier': {
-        return scope.get(n.name)
+        return scope.get(node.name)
       }
 
       case 'ThisExpression':
         throw new Error('`this` is not allowed')
 
-      case 'ArrayExpression':
-        return n.elements.map((e: any) => (e ? this.#evaluateExpression(e, scope) : undefined))
+      case 'ArrayExpression': {
+        const out: unknown[] = []
+
+        for (const element of node.elements) {
+          if (!element) {
+            out.push(undefined)
+            continue
+          }
+
+          if (element.type === 'SpreadElement') {
+            const spreadValue = this.#evaluateExpression(element.argument, scope)
+
+            if (Array.isArray(spreadValue)) {
+              for (const item of spreadValue) {
+                out.push(item)
+                this.#bump()
+              }
+
+              continue
+            }
+
+            if (typeof spreadValue === 'string') {
+              for (const character of spreadValue) {
+                out.push(character)
+                this.#bump()
+              }
+
+              continue
+            }
+
+            throw new Error('Can only spread arrays or strings')
+          }
+
+          out.push(this.#evaluateExpression(element, scope))
+        }
+
+        return out
+      }
 
       case 'ObjectExpression': {
         const out: Record<string, unknown> = {}
 
-        for (const p of n.properties) {
+        for (const p of node.properties) {
           if (p.type !== 'Property' || p.computed) throw new Error('Illegal object literal')
           const key =
             p.key.type === 'Identifier'
@@ -337,23 +396,23 @@ class ScriptInterpreter {
       }
 
       case 'UnaryExpression': {
-        const v = this.#evaluateExpression(n.argument, scope)
+        const value = this.#evaluateExpression(node.argument, scope)
 
-        switch (n.operator) {
+        switch (node.operator) {
           case '!':
-            return !v
+            return !value
           case '+':
-            return +v
+            return Number(value)
           case '-':
-            return -v
+            return -Number(value)
           default:
-            throw new Error(`Unsupported unary operator: ${n.operator}`)
+            throw new Error(`Unsupported unary operator: ${node.operator}`)
         }
       }
 
       case 'UpdateExpression': {
-        if (n.argument.type !== 'Identifier') throw new Error('Illegal update target')
-        const name = n.argument.name
+        if (node.argument.type !== 'Identifier') throw new Error('Illegal update target')
+        const name = node.argument.name
         const current = scope.get(name)
 
         if (current === undefined) throw new Error(`Variable '${name}' is not defined`)
@@ -362,43 +421,44 @@ class ScriptInterpreter {
           throw new Error('Can only increment or decrement numeric values')
         }
 
-        const next = n.operator === '++' ? +current + 1 : +current - 1
+        const next = node.operator === '++' ? +current + 1 : +current - 1
 
         scope.assign(name, next)
 
-        return n.prefix ? next : current
+        return node.prefix ? next : current
       }
 
       case 'AssignmentExpression': {
-        // a = b, a += b, etc.
-        if (n.left.type !== 'Identifier') throw new Error('Illegal assignment target')
-        const name = n.left.name
-        const right = this.#evaluateExpression(n.right, scope)
+        if (node.left.type !== 'Identifier') throw new Error('Illegal assignment target')
+        const name = node.left.name
+        const right = this.#evaluateExpression(node.right, scope)
 
-        if (n.operator === '=') {
+        if (node.operator === '=') {
           scope.assign(name, right)
 
           return right
         }
 
-        const cur = scope.get(name)
-        let next: any
+        const current = scope.get(name)
+        let next: unknown
 
-        switch (n.operator) {
-          case '+=':
-            next = (cur as any) + (right as any)
+        switch (node.operator) {
+          case '+=': {
+            if (typeof current === 'string' || typeof right === 'string') next = String(current) + String(right)
+            else next = Number(current) + Number(right)
             break
+          }
           case '-=':
-            next = (cur as any) - (right as any)
+            next = Number(current) - Number(right)
             break
           case '*=':
-            next = (cur as any) * (right as any)
+            next = Number(current) * Number(right)
             break
           case '/=':
-            next = (cur as any) / (right as any)
+            next = Number(current) / Number(right)
             break
           case '%=':
-            next = (cur as any) % (right as any)
+            next = Number(current) % Number(right)
             break
           default:
             throw new Error('Illegal assignment operator')
@@ -410,103 +470,151 @@ class ScriptInterpreter {
       }
 
       case 'BinaryExpression': {
-        const l = this.#evaluateExpression(n.left, scope)
-        const r = this.#evaluateExpression(n.right, scope)
+        const leftNode = node.left
+        const rightNode = node.right
 
-        switch (n.operator) {
-          case '+':
-            return l + r
+        if (leftNode.type === 'PrivateIdentifier' || (rightNode as any).type === 'PrivateIdentifier') {
+          throw new Error('Private identifiers are not supported')
+        }
+
+        const left = this.#evaluateExpression(leftNode, scope)
+        const right = this.#evaluateExpression(rightNode, scope)
+
+        switch (node.operator) {
+          case '+': {
+            if (typeof left === 'string' || typeof right === 'string') return String(left) + String(right)
+
+            return Number(left) + Number(right)
+          }
           case '-':
-            return l - r
+            return Number(left) - Number(right)
           case '*':
-            return l * r
+            return Number(left) * Number(right)
           case '/':
-            return l / r
+            return Number(left) / Number(right)
           case '%':
-            return l % r
+            return Number(left) % Number(right)
           default:
-            throw new Error(`Unsupported binary operator: ${n.operator}`)
+            throw new Error(`Unsupported binary operator: ${node.operator}`)
         }
       }
 
       case 'LogicalExpression': {
-        if (n.operator === '&&') {
-          const l = this.#evaluateExpression(n.left, scope)
+        if (node.operator === '&&') {
+          const left = this.#evaluateExpression(node.left, scope)
 
-          return l && this.#evaluateExpression(n.right, scope)
+          return left && this.#evaluateExpression(node.right, scope)
         }
 
-        if (n.operator === '||') {
-          const l = this.#evaluateExpression(n.left, scope)
+        if (node.operator === '||') {
+          const left = this.#evaluateExpression(node.left, scope)
 
-          return l || this.#evaluateExpression(n.right, scope)
+          return left || this.#evaluateExpression(node.right, scope)
         }
 
         throw new Error('Illegal logical operator')
       }
 
       case 'ConditionalExpression': {
-        const t = this.#evaluateExpression(n.test, scope)
+        const test = this.#evaluateExpression(node.test, scope)
 
-        return t ? this.#evaluateExpression(n.consequent, scope) : this.#evaluateExpression(n.alternate, scope)
+        return test ? this.#evaluateExpression(node.consequent, scope) : this.#evaluateExpression(node.alternate, scope)
       }
 
       case 'MemberExpression': {
-        if (n.computed) throw new Error('Computed member access is not allowed')
-        const obj = this.#evaluateExpression(n.object, scope)
+        if (node.computed) throw new Error('Computed member access is not allowed')
+        if (node.object.type === 'Super') throw new Error('super member access is not supported')
+
+        if (node.property.type === 'PrivateIdentifier') {
+          throw new Error('Private identifiers are not supported')
+        }
+
+        if (node.property.type !== 'Identifier') {
+          throw new Error('Illegal member access')
+        }
+
+        const obj = this.#evaluateExpression(node.object, scope)
 
         if (!obj || (typeof obj !== 'object' && typeof obj !== 'function')) return undefined
-
-        const prop = n.property.name as string
+        const prop = node.property.name
 
         if (this.#isForbiddenProp(prop)) throw new Error('Illegal property access')
 
-        return obj[prop]
+        return (obj as AnyObject)[prop]
       }
 
       case 'CallExpression': {
-        let callee: any
-        let thisArg: any = undefined
+        let callee: unknown
+        let thisArg: unknown = undefined
 
-        if (n.callee.type === 'Identifier') {
-          callee = scope.get(n.callee.name)
-        } else if (n.callee.type === 'MemberExpression' && !n.callee.computed) {
-          const obj = this.#evaluateExpression(n.callee.object, scope)
-          const prop = n.callee.property.name as string
+        if (node.callee.type === 'Identifier') {
+          callee = scope.get(node.callee.name)
+        } else if (node.callee.type === 'MemberExpression' && !node.callee.computed) {
+          if (node.callee.object.type === 'Super') throw new Error('super member calls are not supported')
+
+          if (node.callee.property.type === 'PrivateIdentifier')
+            throw new Error('Private identifiers are not supported')
+
+          if (node.callee.property.type !== 'Identifier') throw new Error('Illegal call target')
+
+          const obj = this.#evaluateExpression(node.callee.object, scope)
+          const prop = node.callee.property.name
 
           if (this.#isForbiddenProp(prop)) throw new Error('Illegal member call')
           thisArg = obj
-          callee = obj?.[prop]
+          callee = (obj as AnyObject)?.[prop]
         } else {
           throw new Error('Illegal call target')
         }
 
-        const args = n.arguments.map((a: any) => this.#evaluateExpression(a, scope))
+        const args: unknown[] = []
 
-        if (callee && callee.__kind === 'function') {
-          return this.#callFunc(callee, args)
+        for (const a of node.arguments) {
+          if (a.type === 'SpreadElement') {
+            const spreadValue = this.#evaluateExpression(a.argument, scope)
+
+            if (Array.isArray(spreadValue)) {
+              for (const item of spreadValue) {
+                args.push(item)
+                this.#bump()
+              }
+
+              continue
+            }
+
+            if (typeof spreadValue === 'string') {
+              for (const ch of spreadValue) {
+                args.push(ch)
+                this.#bump()
+              }
+
+              continue
+            }
+
+            throw new Error('Can only spread arrays or strings')
+          }
+
+          args.push(this.#evaluateExpression(a, scope))
         }
 
-        if (typeof callee === 'function') {
-          return callee.apply(thisArg, args)
-        }
-
+        if (callee && (callee as AnyObject).__kind === 'function') return this.#callFunc(callee as any, args)
+        if (typeof callee === 'function') return callee.apply(thisArg, args)
         throw new Error('Not a function')
       }
 
       default:
-        throw new Error(`Unsupported expression type: ${n.type}`)
+        throw new Error(`Unsupported expression type: ${node.type}`)
     }
   }
 
   #parseScript(sourceCode: string): Program {
-    return parse(sourceCode, { ecmaVersion: 'latest', sourceType: 'script' })
+    return parse(sourceCode, { ecmaVersion: 'latest', sourceType: 'script', locations: true, ranges: true })
   }
 
   /* ---------------------------------------- */
 
   #runScript(program: Program): ScriptResult {
-    let lastValue: unknown = undefined
+    let lastValue = undefined
 
     try {
       for (const statement of program.body) {
