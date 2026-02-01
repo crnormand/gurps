@@ -2323,9 +2323,9 @@ if (!globalThis.GURPS) {
         let srcActor = game.actors.get(resp.srcactorid)
         let eqt = foundry.utils.getProperty(srcActor, resp.srckey)
         if (resp.count >= eqt.count) {
-          srcActor.deleteEntry(resp.srckey)
+          await srcActor.deleteEntry(resp.srckey)
         } else {
-          srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
+          await srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
         }
         let destActor = game.actors.get(resp.destactorid)
         ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
