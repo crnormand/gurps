@@ -25,7 +25,7 @@ enum GcsAttributePlacement {
 
 /* ---------------------------------------- */
 
-enum GcsAttriuteKind {
+enum GcsAttributeKind {
   Primary = 'primary',
   Secondary = 'secondary',
   Pool = 'pool',
@@ -33,9 +33,19 @@ enum GcsAttriuteKind {
 
 /* ---------------------------------------- */
 
+enum GcsThresholdOp {
+  HalveMove = 'halve_move',
+  HalveDodge = 'halve_dodge',
+  HalveST = 'halve_st',
+}
+
+/* ---------------------------------------- */
+
 class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, GcsCharacterModel> {
   static TYPES = AttributeType
+  static KINDS = GcsAttributeKind
   static PLACEMENTS = GcsAttributePlacement
+  static OPS = GcsThresholdOp
 
   /* ---------------------------------------- */
 
@@ -104,10 +114,10 @@ class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, Gcs
 
   /* ---------------------------------------- */
 
-  get kind(): GcsAttriuteKind {
-    if (this.isPool) return GcsAttriuteKind.Pool
-    if (this.isPrimary) return GcsAttriuteKind.Primary
-    if (this.isSecondary) return GcsAttriuteKind.Secondary
+  get kind(): GcsAttributeKind {
+    if (this.isPool) return GcsAttributeKind.Pool
+    if (this.isPrimary) return GcsAttributeKind.Primary
+    if (this.isSecondary) return GcsAttributeKind.Secondary
     throw new Error(`GcsAttributeDefinition: Unable to determine kind for attribute definition ID ${this.id}`)
   }
 
@@ -134,7 +144,10 @@ const attributeThresholdSchema = () => {
     // NOTE: STUB. This field is used to store operation names (as strings) which correspond to
     // halving values like ST, Move, etc. at the given threshold. There may be a better way of
     // storing this information.
-    ops: new fields.ArrayField(new fields.StringField()),
+    ops: new fields.SetField(
+      new fields.StringField({ required: true, nullable: false, choices: Object.values(GcsThresholdOp) }),
+      { required: true, nullable: false }
+    ),
   }
 }
 

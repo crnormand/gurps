@@ -1,3 +1,4 @@
+import { defaultAttributes } from '../../config/attributes.ts'
 import { Length } from '../../data/common/length.js'
 import { ResolverCacheKey } from '../../scripting/types.ts'
 import { fields } from '../../types/foundry/index.ts'
@@ -151,6 +152,7 @@ const sheetSettingsSchema = () => {
     _attributes: new fields.ArrayField(new fields.EmbeddedDataField(GcsAttributeDefinition), {
       required: true,
       nullable: false,
+      initial: defaultAttributes(),
     }),
     bodyType: new fields.EmbeddedDataField(GcsBody),
     // TODO: STUB. Include enum or enumlike values for damage progression
