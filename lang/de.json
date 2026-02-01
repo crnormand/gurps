@@ -4,8 +4,15 @@
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",
     "acc": "ZG",
+    "accForWeapon": "ZG für {weapon}",
     "activeEffect": "Aktiver Effekt",
     "activeEffects": "Active Effects",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Stärke automatisch aktualisieren",
+        "autoUpdateStrengthHint": "Automatisch Grundlift, Stoß- und Schwungschaden aktualisieren, wenn sich die ST ändert."
+      }
+    },
     "addAbbrev": "Abkürzung",
     "addAdditionalStackingModifier": "Weiterer Modifikator",
     "addAdjustedForDamageType": "‡ - Angepasst nach Schadensmodifikator",
@@ -326,12 +333,6 @@
     "colorSheetMenuColorAreas": "Farbige Bereiche",
     "colorSheetMenuCustomColors": "Benutzerdefinierte Farben",
     "colorSheetMenuOverride": "Farben überschreiben",
-    "actor": {
-    "setting": {
-      "autoUpdateStrength": "Stärke automatisch aktualisieren",
-      "autoUpdateStrengthHint": "Automatisch Grundlift, Stoß- und Schwungschaden aktualisieren, wenn sich die ST ändert."
-    }
-    },
     "combat": {
       "rof": {
         "bonusLabel": "RoF {shots}",
@@ -1128,6 +1129,7 @@
     "reach": "Länge",
     "reaction": "Reaktion",
     "reactionMods": "Reaktionsmodifikatoren",
+    "recalculate": "Neu berechnen",
     "reference": "Referenz",
     "removedShockEffect": "Schockeffekt auf Ziel entfernt.",
     "removeItem": "Gegenstand entfernen",

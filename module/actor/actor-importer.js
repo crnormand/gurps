@@ -890,7 +890,6 @@ export class ActorImporter {
 
             m.mode = readXmlText(j2.name)
             m.import = readXmlText(j2.level)
-            // m.damage = readXmlText(j2.damage)
             m.damage = buildDamageOutputGCA(j2)
             m.reach = readXmlText(j2.reach)
             m.parry = readXmlText(j2.parry)

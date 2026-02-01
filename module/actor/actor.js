@@ -227,6 +227,16 @@ export class GurpsActor extends Actor {
     this.calculateDerivedValues()
   }
 
+  async updateAndPersistStrengthBasedAttributes() {
+    this.updateStrengthBasedAttributes()
+    await this.internalUpdate({
+      'system.thrust': this.system.thrust,
+      'system.swing': this.system.swing,
+      'system.basiclift': this.system.basiclift,
+      'system.liftingmoving': this.system.liftingmoving,
+    })
+  }
+
   updateStrengthBasedAttributes() {
     if (!this.strengthCalculator) this.strengthCalculator = new StrengthCalculator()
 

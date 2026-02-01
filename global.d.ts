@@ -42,6 +42,7 @@ declare global {
     ModifierBucket: {
       setTempRangeMod(mod: number): void
       addTempRangeMod(): void
+      addModifier(mod: string, label: string, options?: { situation?: string }): void
       currentSum(): number
       clear(): Promise<void>
       refreshPosition(): void
