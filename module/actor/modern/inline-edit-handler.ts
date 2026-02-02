@@ -1,5 +1,3 @@
-import { GurpsActorV2 } from '../gurps-actor.ts'
-
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()
   return trimmedName.length > 0 && trimmedName !== currentName
@@ -77,7 +75,7 @@ const inlineEditConfigs: InlineEditConfigInternal[] = [
 
 export function buildOnBlurHandler(
   config: InlineEditConfigInternal,
-  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>
+  actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>
 ): ((input: HTMLInputElement) => void) | undefined {
   if (config.fieldType === 'name') {
     return (input: HTMLInputElement) => {
@@ -102,14 +100,14 @@ export function buildOnBlurHandler(
   return undefined
 }
 
-export function bindAllInlineEdits(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
+export function bindAllInlineEdits(html: JQuery, actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>): void {
   inlineEditConfigs.forEach(config => {
     const onBlur = buildOnBlurHandler(config, actor)
     bindInlineEdit(html, { ...config, onBlur })
   })
 }
 
-export function bindAttributeEdit(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
+export function bindAttributeEdit(html: JQuery, actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>): void {
   const wrapperSelector = '.ms-attr-wrapper'
   const badgeSelector = '.ms-attr-badge'
   const inputSelector = '.ms-attr-input'
@@ -170,7 +168,7 @@ export function bindAttributeEdit(html: JQuery, actor: GurpsActorV2<'character' 
   })
 }
 
-export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
+export function bindSecondaryStatsEdit(html: JQuery, actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>): void {
   const fieldsetSelector = '.ms-editable-stats'
   const editButtonSelector = '.ms-stat-box-edit'
   const inputSelector = '.ms-stat-input'
@@ -228,7 +226,7 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActorV2<'charac
   })
 }
 
-export function bindPointsEdit(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
+export function bindPointsEdit(html: JQuery, actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>): void {
   const itemSelector = '.ms-points-item'
   const inputSelector = '.ms-points-input'
   const editingClass = 'editing'

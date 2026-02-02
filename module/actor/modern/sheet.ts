@@ -101,6 +101,8 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   override activateListeners(html: JQuery): void {
     super.activateListeners(html)
 
+    if (!this.actor.isOfType('character', 'characterV2', 'enemy')) return
+
     bindAllInlineEdits(html, this.actor)
     bindAttributeEdit(html, this.actor)
     bindSecondaryStatsEdit(html, this.actor)
@@ -153,6 +155,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
               const form = button.form as HTMLFormElement
               const input = form.elements.namedItem('i') as HTMLTextAreaElement
               const value = input.value
+              // @ts-expect-error: Unknown system types for legacy actor model
               actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
             },
           },
