@@ -24,6 +24,7 @@ import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
+import { Scripting } from 'module/scripting/index.ts'
 import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 

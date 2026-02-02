@@ -1,7 +1,7 @@
 import { fields } from '../../types/foundry/index.js'
 import { NumberCriteriaField } from '../criteria/number-criteria.ts'
 
-import { BasePrereq, basePrereqSchema } from './base-prereq.ts'
+import { BasePrereq, basePrereqSchema, PrereqType } from './base-prereq.ts'
 
 class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
   static override defineSchema(): AttributePrereqSchema {
@@ -21,7 +21,7 @@ class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
 
     // let total = 0
 
-    const which = actor.system.attributes.get(this.which)
+    const which = actor.system.attributes[this.which]
 
     if (!which) {
       console.error(`AttributePrereq: Specified attribute not found on actor: ${which}`)
@@ -38,7 +38,7 @@ class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
 
 const attributePrereqSchema = () => {
   return {
-    ...basePrereqSchema(),
+    ...basePrereqSchema({ type: PrereqType.Attribute }),
     has: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     which: new fields.StringField({ required: true, nullable: false }),
     combinedWith: new fields.StringField({ required: true, nullable: true }),
