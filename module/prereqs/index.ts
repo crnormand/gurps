@@ -13,6 +13,12 @@ import { TraitPrereq } from './trait-prereq.ts'
 
 /* ---------------------------------------- */
 
+interface PrereqsModule extends GurpsModule {
+  models: typeof PrereqClasses
+}
+
+/* ---------------------------------------- */
+
 const PrereqClasses = {
   [PrereqType.List]: PrereqList,
   [PrereqType.Trait]: TraitPrereq,
@@ -56,8 +62,9 @@ function init() {
 
 /* ---------------------------------------- */
 
-export const Prereqs: GurpsModule = {
+export const Prereqs: PrereqsModule = {
   init,
+  models: PrereqClasses,
 }
 
 export {
