@@ -50,16 +50,14 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
 
   /* ---------------------------------------- */
 
-  /* ---------------------------------------- */
-
-  get attributes(): Map<string, GcsAttribute> {
-    return new Map(this._attributes.map(e => [e.id, e]))
+  get atttributes(): Record<string, GcsAttribute> {
+    return Object.fromEntries(Object.values(this._attributes).map(e => [e.id, e]))
   }
 
   /* ---------------------------------------- */
 
-  get attributeDefinitions(): Map<string, GcsAttributeDefinition> {
-    return new Map(this.settings._attributes.map(e => [e.id, e]))
+  get attributeDefinitions(): Record<string, GcsAttributeDefinition> {
+    return Object.fromEntries(Object.values(this.settings._attributes).map(e => [e.id, e]))
   }
 }
 
@@ -175,10 +173,13 @@ const sheetSettingsSchema = () => {
     // instantiated data is of type Map<string, AttributeDef>. It is important to note that the JSON
     // data maintains a particular order to the defined attributes,w hich is reflected in the sheets.
     // The Map on the other hand relies on the .order attribute of each AttributeDef to represent this order.
-    // Here, we define ._attributes as an ArrayField, while .attributes is a Map<string, AttributeDef>
-    // and is created at runtime. However, this can be changed if making .attributes (the Map<string,AttributeDef> field)
-    // persistent makes more sense.
-    _attributes: new fields.ArrayField(new fields.EmbeddedDataField(GcsAttributeDefinition), {
+    // Here, we define ._attributes as an TypedObjectField (ArrayFields cannot be updated incrementally, so are best
+    // avoided in cases where they represent anything more comples than an array of primitives), and maps each attribute
+    // to a randomly generated ID. the .attributes accessor maps each definition to its GCS ID. While this may seem
+    // redundant, the latter GCS ID is user-editable and poses potential issues with duplicate IDs and could force
+    // issues wherein the field by which attributes are keyed is changed, forcing a replacement of the whole object
+    // rather than changing of a single property.
+    _attributes: new fields.TypedObjectField(new fields.EmbeddedDataField(GcsAttributeDefinition), {
       required: true,
       nullable: false,
       initial: defaultAttributes(),
@@ -239,18 +240,18 @@ const gcsCharacterSchema = () => {
     version: new fields.NumberField({ required: true, nullable: false, initial: GcsCharacterVersion }),
     tid: new fields.DocumentIdField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
     totalPoints: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    pointsRecord: new fields.ArrayField(new fields.SchemaField(pointsRecordSchema()), {
+    pointsRecord: new fields.TypedObjectField(new fields.SchemaField(pointsRecordSchema()), {
       required: true,
       nullable: false,
-      initial: [],
+      initial: {},
     }),
     profile: new fields.SchemaField(profileSchema(), { required: true, nullable: false }),
     settings: new fields.SchemaField(sheetSettingsSchema()),
-    _attributes: new fields.ArrayField(new fields.EmbeddedDataField(GcsAttribute), {
+    _attributes: new fields.TypedObjectField(new fields.EmbeddedDataField(GcsAttribute), {
       required: true,
       nullable: false,
       initial: (data: any) =>
-        data.settings?._attributes ? GcsAttributeDefinition.newAttributes(data.settings._attributes) : [],
+        data.settings?._attributes ? GcsAttribute.setFromDefinitions(data.settings._attributes) : {},
     }),
     createdOn: new fields.StringField({ required: true, nullable: false }),
     modifiedOn: new fields.StringField({ required: true, nullable: false }),

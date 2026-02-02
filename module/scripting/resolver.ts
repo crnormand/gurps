@@ -87,7 +87,7 @@ class ScriptResolver {
       if (actor && actor.isOfType('gcsCharacter')) {
         environment['entity'] = new ScriptEntity(actor.system)
 
-        for (const attribute of actor.system._attributes) {
+        for (const attribute of Object.values(actor.system._attributes)) {
           const definition = attribute.definition
 
           if (!definition || definition.isSeparator) continue
