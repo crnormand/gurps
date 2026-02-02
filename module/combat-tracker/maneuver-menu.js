@@ -16,15 +16,18 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   // Determine current maneuver and icon.
   let actorManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
+
   if (!actorManeuverName || actorManeuverName === 'undefined') actorManeuverName = 'do_nothing'
   const actorManeuver = Maneuvers.getManeuver(actorManeuverName)
 
   const currentManeuver = document.createElement('img')
+
   currentManeuver.className = 'token-effect maneuver-badge'
   currentManeuver.src = actorManeuver.icon
 
   // Add active class if initialized.
   const initiative = combatant?.initiative
+
   if (typeof initiative === 'number') currentManeuver.classList.add('active')
   else currentManeuver.classList.remove('active')
 
@@ -52,18 +55,23 @@ export const addManeuverMenu = async (html, combatant, token) => {
       event.stopPropagation()
 
       const combatantElement = event.target.closest('.combatant')
+
       if (!combatantElement) return
 
       const combatantId = combatantElement.dataset.combatantId
+
       if (!combatantId || !game.combat) return
 
       const combatant = game.combat.combatants.get(combatantId)
+
       if (!combatant || !combatant.token) return
 
       const doNothing = Maneuvers.getManeuver('do_nothing')
       const token = canvas?.tokens?.get(combatant.token.id)
+
       if (!token || !token.actor) return
       const currentManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
+
       if (currentManeuverName === 'do_nothing') return
       await token.setManeuver(doNothing.flags.gurps.name)
     },
@@ -72,6 +80,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   // Replace initiative span with maneuver image.
   const initiativeSpan = html.querySelector?.('.token-initiative')
+
   if (initiativeSpan) initiativeSpan.replaceWith(currentManeuver)
 
   // Build the maneuvers menu from template.
@@ -85,36 +94,46 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   // Convert HTML string to DOM element and append to html.
   const tempDiv = document.createElement('div')
+
   tempDiv.innerHTML = menuHtmlString
   html.appendChild(tempDiv.firstElementChild)
 
   // Find the maneuver token-effect and remove it and its tooltip entry.
   const tokenEffects = html.querySelector('.token-effects')
   const tooltipHtmlRaw = tokenEffects?.getAttribute('data-tooltip-html')
+
   if (tokenEffects && tooltipHtmlRaw) {
     const tempTooltipContainer = document.createElement('div')
+
     tempTooltipContainer.innerHTML = tooltipHtmlRaw.toString()
 
     const tooltipListItems = tempTooltipContainer.querySelectorAll('li')
+
     tooltipListItems.forEach(li => {
       const text = li.textContent || ''
+
       if (text.toLowerCase().includes('maneuvers')) {
         li.remove()
       }
     })
 
     const cleanedTooltipHtml = tempTooltipContainer.innerHTML
+
     tokenEffects.setAttribute('data-tooltip-html', cleanedTooltipHtml)
   }
+
   const maneuverEffect = tokenEffects?.querySelector(`img.token-effect[src*="/maneuvers/"]`)
+
   if (maneuverEffect) maneuverEffect.remove()
 
   // Finally, set the token image tooltip content.
   const image = html.querySelector?.('.token-image')
+
   if (image) {
     image.setAttribute('aria-label', 'Token Image')
 
     const replacementText = typeof initiative === 'number' ? initiative.toFixed(5) : 'N/A'
+
     image.setAttribute('data-tooltip', game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText }))
   }
 
@@ -137,6 +156,7 @@ export const addManeuverListeners = () => {
   // Menu item click handler
   document.addEventListener('click', async event => {
     const target = event.target.closest('.maneuver-select-info')
+
     if (!target) return
 
     event.preventDefault()
@@ -154,11 +174,14 @@ export const addManeuverListeners = () => {
 
     if (!game.combat || !combatantId) return
     const combatant = game.combat.combatants.get(combatantId)
+
     if (!combatant || !combatant.token?.id) return
 
     const token = canvas.tokens?.get(combatant.token.id)
+
     if (!token?.actor) return
     const currentManeuver = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
+
     if (currentManeuver === maneuverName) return
 
     await token.setManeuver(maneuverName)
@@ -173,6 +196,7 @@ export const addManeuverListeners = () => {
     const badge = event.target
 
     const combatantElement = badge.closest('.combatant')
+
     if (!combatantElement) return
 
     event.preventDefault()
@@ -185,10 +209,12 @@ export const addManeuverListeners = () => {
     })
 
     const menu = badge.parentElement.querySelector('.maneuver-combat-tracker-menu')
+
     if (menu) {
       if (menu.style.display === 'block') {
         menu.style.display = 'none'
         badge.classList.remove('open')
+
         return
       } else {
         menu.style.display = 'block'

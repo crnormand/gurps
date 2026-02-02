@@ -42,10 +42,12 @@ export class _Collection extends Map {
    */
   find(condition) {
     let i = 0
+
     for (const v of this.values()) {
       if (condition(v, i, this)) return v
       i++
     }
+
     return undefined
   }
 
@@ -67,10 +69,12 @@ export class _Collection extends Map {
   filter(condition) {
     const entries = []
     let i = 0
+
     for (const v of this.values()) {
       if (condition(v, i, this)) entries.push(v)
       i++
     }
+
     return entries
   }
 
@@ -112,9 +116,11 @@ export class _Collection extends Map {
    */
   get(key, { strict = false } = {}) {
     const entry = super.get(key)
+
     if (strict && entry === undefined) {
       throw new Error(`The key ${key} does not exist in the ${this.constructor.name} Collection`)
     }
+
     return entry
   }
 
@@ -138,9 +144,11 @@ export class _Collection extends Map {
    */
   getName(name, { strict = false } = {}) {
     const entry = this.find(e => e.name === name)
+
     if (strict && entry === undefined) {
       throw new Error(`An entry with name ${name} does not exist in the collection`)
     }
+
     return entry ?? undefined
   }
 
@@ -155,10 +163,12 @@ export class _Collection extends Map {
   map(transformer) {
     const transformed = []
     let i = 0
+
     for (const v of this.values()) {
       transformed.push(transformer(v, i, this))
       i++
     }
+
     return transformed
   }
 
@@ -183,10 +193,12 @@ export class _Collection extends Map {
   reduce(reducer, initial) {
     let accumulator = initial
     let i = 0
+
     for (const v of this.values()) {
       accumulator = reducer(accumulator, v, i, this)
       i++
     }
+
     return accumulator
   }
 
@@ -201,11 +213,14 @@ export class _Collection extends Map {
    */
   some(condition) {
     let i = 0
+
     for (const v of this.values()) {
       const pass = condition(v, i, this)
+
       i++
       if (pass) return true
     }
+
     return false
   }
 

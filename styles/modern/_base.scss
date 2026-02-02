@@ -21,7 +21,7 @@ body {
     display: flex;
     flex-direction: column;
 
-    >form {
+    > form {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -108,4 +108,5 @@ body {
   }
 }
 
-.ms-equipment-grid {}
+.ms-equipment-grid {
+}

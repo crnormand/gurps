@@ -1,11 +1,13 @@
 import fields = foundry.data.fields
+
 import { AnyObject } from 'fvtt-types/utils'
 
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { BaseAction, BaseActionSchema } from './base-action.js'
-import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
-import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
+import { makeRegexPatternFrom } from '../../lib/utilities.js'
+import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
+
+import { BaseAction, BaseActionSchema } from './base-action.js'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class RangedAttackModel extends BaseAction<RangedAttackSchema> {
@@ -44,8 +46,10 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
    */
   #prepareLevelsFromOtf(): void {
     let otf = this.component.otf
+
     if (otf === '') {
       this.component.level = this.component.import
+
       return
     }
 
@@ -56,14 +60,17 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
     if (otf.match(/^\d+$/)) {
       this.component.import = parseInt(otf)
       this.component.level = this.component.import
+
       return
     }
 
     // If the OTF is not a number, parse it using the OTF parser.
     const action = parselink(otf)
+
     // If the OTF does not return an action, we cannot set the level.
     if (!action.action) {
       console.warn(`GURPS | MeleeAttackModel: OTF "${otf}" did not return a valid action.`)
+
       return
     }
 
@@ -84,6 +91,7 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
     super.prepareDerivedData()
 
     const actor = this.actor as Actor<'characterV2'> | null
+
     if (!actor) return
     this.convertRanges(actor.system.attributes.ST.value)
   }
@@ -93,15 +101,17 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
   convertRanges(st: number): void {
     if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_CONVERT_RANGED) === false) return
 
-    let range = this.component.range
+    const range = this.component.range
     // Match the range format, e.g., "x2", "x20", "x30"
     const matchSingle = range.match(/^\s*[×xX]([\d\.]+)\s*$/)
     const matchMultiple = range.match(/^\s*[×xX]([\d\.]+)\s*-\s*[×xX]([\d\.]+)\s*$/)
+
     if (matchSingle) {
       this.component.range = `${parseFloat(matchSingle[1]) * st}`
     } else if (matchMultiple) {
       const newRangeStart = parseFloat(matchMultiple[1]) * st
       const newRangeEnd = parseFloat(matchMultiple[2]) * st
+
       this.component.range = `${newRangeStart} - ${newRangeEnd}`
     }
   }

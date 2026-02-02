@@ -8,19 +8,23 @@ export function bindContainerCollapse(html: JQuery, actorId: string, config: Con
 
     rows.forEach((row, rowIndex) => {
       const hasChildren = row.dataset.hasChildren === 'true'
+
       if (!hasChildren) return
 
       row.addEventListener('click', (event: MouseEvent) => {
         const target = event.target as HTMLElement
         const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+
         if (shouldExclude) return
 
         const isCollapsed = row.classList.toggle('container-collapsed')
+
         if (isCollapsed) {
           row.classList.remove('expanded')
         } else {
           row.classList.add('expanded')
         }
+
         const rowIndent = parseInt(row.dataset.indent || '0', 10)
 
         for (let nextIndex = rowIndex + 1; nextIndex < rows.length; nextIndex++) {
@@ -33,6 +37,7 @@ export function bindContainerCollapse(html: JQuery, actorId: string, config: Con
             nextRow.classList.add('ms-child-hidden')
           } else {
             const parentCollapsed = isParentCollapsed(rows, nextIndex, rowIndent)
+
             if (!parentCollapsed) {
               nextRow.classList.remove('ms-child-hidden')
             }
@@ -57,8 +62,10 @@ const isParentCollapsed = (rows: HTMLElement[], childIndex: number, stopAtIndent
         return true
       }
     }
+
     if (parentIndent <= stopAtIndent) break
   }
+
   return false
 }
 
@@ -80,6 +87,7 @@ const restoreCollapsedState = (rows: HTMLElement[], actorId: string): void => {
 
   rows.forEach((row, rowIndex) => {
     const hasChildren = row.dataset.hasChildren === 'true'
+
     if (!hasChildren) return
 
     const key = row.dataset.key
@@ -108,9 +116,11 @@ export function bindRowExpand(html: JQuery, config: RowExpandConfig): void {
   html.find(rowSelector).on('click', (event: JQuery.ClickEvent) => {
     const target = event.target as HTMLElement
     const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+
     if (shouldExclude) return
 
     const row = event.currentTarget as HTMLElement
+
     row.classList.toggle(expandedClass)
   })
 }
@@ -121,10 +131,12 @@ export function bindSectionCollapse(html: JQuery, config: SectionCollapseConfig)
   html.find(headerSelector).on('click', (event: JQuery.ClickEvent) => {
     const target = event.target as HTMLElement
     const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+
     if (shouldExclude) return
 
     const header = event.currentTarget as HTMLElement
     const section = header.closest('.ms-section') as HTMLElement
+
     section.classList.toggle(collapsedClass)
     header.classList.toggle(collapsedClass)
   })
@@ -135,6 +147,7 @@ export function bindResourceReset(html: JQuery, actor: Actor.Implementation, con
     html.find(selector).on('click', (event: JQuery.ClickEvent) => {
       event.preventDefault()
       const maxValue = foundry.utils.getProperty(actor, maxPath)
+
       actor.update({ [resourcePath]: maxValue })
     })
   })

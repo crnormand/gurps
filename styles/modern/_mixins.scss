@@ -8,7 +8,7 @@
   border-bottom: 2px solid var(--ms-border);
   padding: var(--ms-space-3) var(--ms-space-4);
 
-  >span:not(:first-child) {
+  > span:not(:first-child) {
     text-align: center;
   }
 }
@@ -174,7 +174,7 @@
   @include zebra-striping;
   @include interactive-row;
 
-  >span {
+  > span {
     padding: var(--ms-space-3);
   }
 }

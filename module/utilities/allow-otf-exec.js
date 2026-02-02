@@ -12,7 +12,8 @@
 export function allowOtfExec(options) {
   options.targets.forEach(tuple => {
     let tokenActor = game.canvas.tokens.get(tuple[1]).actor
-    let tokenOwner = !!tuple[0] ? game.users.get(tuple[0]) : game.user
+    let tokenOwner = tuple[0] ? game.users.get(tuple[0]) : game.user
+
     if (tokenOwner.isSelf && tokenActor.isOwner) {
       setTimeout(async () => {
         const proceed = await foundry.applications.api.DialogV2.confirm({
@@ -20,8 +21,10 @@ export function allowOtfExec(options) {
           rejectClose: false,
           modal: true,
         })
+
         if (proceed) {
           let old = GURPS.LastActor
+
           GURPS.SetLastActor(tokenActor)
           GURPS.executeOTF(options.command).then(p => GURPS.SetLastActor(old))
         }

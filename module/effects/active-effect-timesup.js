@@ -8,6 +8,7 @@ export function readyTimesUpSetup() {
 
     if (effect.transfer && !(getEffectActor(effect) instanceof Actor)) return
     if (debugEnabled > 0) debug('create active effect', effect.uuid, effect.updateDuration(), isTransferEffect(effect))
+
     // record passive, start time/round/turn duration any flags of relevance.
     if (hasDurationSeconds(effect)) {
       if (debugEnabled > 0) warn('create effect', effect.uuid, effect.updateDuration(), isTransferEffect(effect))
@@ -18,30 +19,38 @@ export function readyTimesUpSetup() {
   Hooks.on('preUpdateActiveEffect', (effect, update, options, user) => {
     if (!timesUpEnabled || !enablePassiveEffects || !isTransferEffect(effect)) return true
     const durationToUse = effect.updateDuration()
+
     if (update.duration) {
       durationToUse.seconds = update.duration.seconds ?? durationToUse.seconds
       durationToUse.rounds = update.duration.rounds ?? durationToUse.rounds
       durationToUse.turns = update.duration.turns ?? durationToUse.turns
     }
+
     // If disabled updated to false, isTransfer and expired then reset the duration start time/round/turn
     if (hasExpiry(durationToUse)) {
       if (debugEnabled > 1)
         debug('Update active effect', effect.uuid, update, effect.updateDuration(), isTransferEffect(effect))
       const isExpired = isDurationExpired(durationToUse, { secondsOnly: true }) || !durationToUse.starTime
+
       if (!isExpired) return true
+
       if (update.disabled === false) {
         // we are enabling an expired transfer effect set it's start time/round/turn to now.
         if (debugEnabled > 0) warn('resetting duration', effect.uuid, durationToUse, isTransferEffect(effect))
         // game.combat should be the current users combat
         const unexpireUpdate = getUnexpireEffectUpdate(effect, game.combat, durationToUse)
+
         update = mergeObject(update, unexpireUpdate, { inplace: true })
       } else if (update.disabled ?? effect.disabled === true) {
         if (debugEnabled > 0) warn('expiring effect', effect.uuid, effect.updateDuration(), isTransferEffect(effect))
         const expireUpdate = getExpireTransferEffectUpdate(effect)
+
         update = mergeObject(update, expireUpdate, { inplace: true })
       }
     }
+
     if (debugEnabled > 0) warn('update effect', effect.uuid, update, effect.updateDuration(), isTransferEffect(effect))
+
     return true
   })
 
@@ -51,6 +60,7 @@ export function readyTimesUpSetup() {
     if (!effect.transfer && effect.parent instanceof Item) return
     if (!hasDurationSeconds(effect) || (update.disabled ?? effect.disabled)) GMEffectQueue('deleteEffect', effect)
     else if (hasDurationSeconds(effect)) GMEffectQueue('createEffect', effect)
+
     return
   })
 
@@ -67,9 +77,11 @@ export function readyTimesUpSetup() {
     //@ts-expect-error
     if (!game.users.activeGM?.isSelf) return
     warn('world time update', worldTime, dt)
+
     for (let entry of effectQueue.effects) {
       //@ts-expect-error
       const effect = fromUuidSync(entry)
+
       if (effect && isEffectExpired(effect, { secondsOnly: true })) {
         if (debugEnabled > 0)
           warn('world time expired effect', effect.name, effect.uuid, effect.updateDuration(), isTransferEffect(effect))
@@ -84,6 +96,7 @@ export function readyTimesUpSetup() {
     foundry.utils.setProperty(options, 'times-up.combat.round', combat.round)
     //@ts-expect-error
     foundry.utils.setProperty(options, 'times-up.combat.turn', combat.turn)
+
     return true
   })
 
@@ -103,9 +116,10 @@ export function readyTimesUpSetup() {
     for (let combatant of combat.turns) {
       if (combatant.actor) {
         let actor = combatant.actor
+
         for (let effect of getApplicableEffects(actor, { includeEnchantments: true })) {
           if (isEffectExpired(effect, { combat, secondsOnly: false })) {
-            if (!!timesUpEnabled) {
+            if (timesUpEnabled) {
               if (debugEnabled > 0)
                 warn('update combat expired effect', effect.name, effect.updateDuration(), isTransferEffect(effect))
               GMEffectQueue('deleteEffect', effect)
@@ -122,10 +136,12 @@ export function readyTimesUpSetup() {
         const advanced1Turn = lastCheckedTurn + 1 === checkTurn
         //@ ts-expect-error
         let combatantNextTurn = (update.round ?? combat.round) * totalTurns + combatantIndex
+
         if (combatantNextTurn < checkTurn) combatantNextTurn += totalTurns
         //@ts-expect-error
         let combatantLastTurn =
           (foundry.utils.getProperty(options, 'times-up.combat.round') ?? combat.round) * totalTurns + combatantIndex
+
         // if (combatantLastTurn > lastCheckedTurn) combatantLastTurn -= totalTurns;
         if (update.round !== undefined || update.turn !== undefined) {
           // Handle any turn start/end effects
@@ -133,6 +149,7 @@ export function readyTimesUpSetup() {
             let effectStart = (effect.duration.startRound ?? 0) * totalTurns + (effect.duration.startTurn ?? 0)
             //@ts-expect-error
             const specialDuration = foundry.utils.getProperty(effect, 'flags.dae.specialDuration')
+
             if (specialDuration?.length > 0) {
               if (
                 specialDuration.includes('turnStart') &&
@@ -141,6 +158,7 @@ export function readyTimesUpSetup() {
                 GMEffectQueue('deleteEffect', effect)
                 await expireEffect(effect, { 'expiry-reason': `times-up:turnStart` })
               }
+
               if (
                 specialDuration?.includes('turnEnd') &&
                 checkTurn > combatantLastTurn &&
@@ -153,6 +171,7 @@ export function readyTimesUpSetup() {
 
             if (dae) {
               const macroRepeat = getMacroRepeat(effect)
+
               switch (macroRepeat) {
                 case 'startEveryTurn':
                 case 'startEveryTurnAny':
@@ -176,6 +195,7 @@ export function readyTimesUpSetup() {
                         turn: 'startTurn',
                       })
                   }
+
                   if (['startEveryTurn', 'startEveryTurnAny'].includes(macroRepeat)) break
                 case 'endEveryTurn':
                 case 'endEveryTurnAny':
@@ -198,19 +218,25 @@ export function readyTimesUpSetup() {
                       turn: 'endTurn',
                     })
                   }
+
                   break
               }
             }
           }
+
           for (let turn of combat.turns) {
             let testActor = turn.actor
+
             if (!testActor) continue
+
             for (let effect of getApplicableEffects(testActor, { includeEnchantments: true })) {
               //@ts-expect-error
               const specialDuration = foundry.utils.getProperty(effect, 'flags.dae.specialDuration')
+
               if (!(specialDuration?.length > 0)) continue
               if (!effect.origin?.startsWith(actor?.uuid)) continue
               let effectStart = (effect.duration.startRound ?? 0) * totalTurns + (effect.duration.startTurn ?? 0)
+
               if (
                 specialDuration.includes('turnStartSource') &&
                 checkTurn >= combatantNextTurn &&
@@ -232,6 +258,7 @@ export function readyTimesUpSetup() {
         // Handle any each turn effects
         // starting combat is update round 0 turn 1
       }
+
       combatantIndex += 1
     }
   })
@@ -240,6 +267,7 @@ export function readyTimesUpSetup() {
     if (!timesUpEnabled) return
     //@ts-expect-error
     if (!game.users.activeGM?.isSelf) return
+
     for (let combatant of combat.combatants) {
       if (combatant.actor) setEffectsExpiryToRounds(combatant.actor, combat)
     }
@@ -272,9 +300,11 @@ export function readyTimesUpSetup() {
 
   async function expireCombatEndEffects(actor) {
     if (!timesUpEnabled) return
+
     for (let effect of getApplicableEffects(actor, { includeEnchantments: true })) {
       //@ts-expect-error
       const specialDurations = foundry.utils.getProperty(effect, 'flags.dae.specialDuration')
+
       if (specialDurations?.includes('combatEnd')) {
         if (debugEnabled > 0)
           warn('end combat expired effect', effect.name, effect.updateDuration(), isTransferEffect(effect))
@@ -301,6 +331,7 @@ export function readyTimesUpSetup() {
     //@ts-expect-error
     if (!game.users.activeGM?.isSelf) return
     if (CONFIG.ActiveEffect.legacyTransferral) return
+
     for (let effect of item.effects) {
       if (effect.disabled || !hasDuration(effect) || !isTransferEffect(effect)) {
         if (debugEnabled > 1)
@@ -308,11 +339,13 @@ export function readyTimesUpSetup() {
         GMEffectQueue('deleteEffect', effect)
         continue
       }
+
       // Only auto expire when seconds is updated - since we don't know what combat to use
       // Will have to wait for the combat to update
       if (isEffectExpired(effect, { secondsOnly: true })) {
         if (debugEnabled > 0) warn('updateItem | expired', effect.uuid, effect.duration, isTransferEffect(effect))
-        if (!!timesUpEnabled) {
+
+        if (timesUpEnabled) {
           // update the effect queue
           GMEffectQueue('deleteEffect', effect)
           expireEffect(effect, { 'expiry-reason': 'times-up:expired' })

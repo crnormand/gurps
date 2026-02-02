@@ -13,12 +13,11 @@ import {
   SETTING_DEFAULT_COLOR_TEXT,
   SETTING_DEFAULT_COLOR_TEXT_HOVER,
 } from '../../module/color-character-sheet/color-character-sheet-settings.js'
+
 import { addColorWheelsToSettings, colorGurpsActorSheet, saveColorWheelsToSettings } from './color-character-sheet.js'
 
 export const updateSheets = () => {
-  // eslint-disable-next-line no-undef
   for (const actor of game.actors.contents) {
-    // eslint-disable-next-line no-undef
     if (actor.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER) {
       // Return true if the current game user has observer or owner rights to an actor
       actor.render()
@@ -30,12 +29,12 @@ export function colorSettingsSaveUpdate() {
   saveColorWheelsToSettings()
   colorGurpsActorSheet()
 }
-// eslint-disable-next-line no-undef
+
 export default class ColorCharacterSheetSettings extends FormApplication {
   static getSheetColors() {
-    // eslint-disable-next-line no-undef
     const colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
     const results = objectToArray(colorData.colors)
+
     return results
   }
 
@@ -44,7 +43,6 @@ export default class ColorCharacterSheetSettings extends FormApplication {
   }
 
   static get defaultOptions() {
-    // eslint-disable-next-line no-undef
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'color-sheets',
       template: 'systems/gurps/templates/color-character-sheet/color-character-sheet.hbs',
@@ -64,8 +62,10 @@ export default class ColorCharacterSheetSettings extends FormApplication {
    */
   getData(options) {
     const data = super.getData(options)
+
     data.colorData = ColorCharacterSheetSettings.getSheetColors()
     data.allColors = this._htmlColorCharacterSheet
+
     return data
   }
 
@@ -84,7 +84,6 @@ export default class ColorCharacterSheetSettings extends FormApplication {
    * }
    */
   get _htmlColorCharacterSheet() {
-    // eslint-disable-next-line no-undef
     const colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
     const htmlColorCharacterSheet = objectToArray(colorData.colors)
 
@@ -103,6 +102,7 @@ export default class ColorCharacterSheetSettings extends FormApplication {
         default_color_hover_text: SETTING_DEFAULT_COLOR_TEXT_HOVER,
       }
     })
+
     return results
   }
 

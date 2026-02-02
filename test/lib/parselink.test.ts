@@ -295,6 +295,7 @@ describe('parseForRollOrDamage', () => {
     ],
   ])('parses %s correctly', (input, expected) => {
     const result = parseForRollOrDamage(input)
+
     expect(result!.action).toEqual(expected)
   })
 
@@ -737,6 +738,7 @@ describe('parseLink', () => {
 
     test('#> Per 12', () => {
       const result = parselink(input)
+
       expect(result.action).toEqual({
         attribute: 'Per',
         attrkey: 'PER',
@@ -753,6 +755,7 @@ describe('parseLink', () => {
 
     test('#> Per: 12', () => {
       const result = parselink(input)
+
       expect(result.action).toEqual({
         attribute: 'Per',
         attrkey: 'PER',
@@ -768,7 +771,7 @@ describe('parseLink', () => {
     })
 
     test('#> Fright Check -2 for Fear', () => {
-      let result = parselink(input)
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'Fright Check',
@@ -788,7 +791,7 @@ describe('parseLink', () => {
     })
 
     test('#> Fright Check14', () => {
-      let result = parselink(input)
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'Fright Check',
@@ -805,7 +808,7 @@ describe('parseLink', () => {
     })
 
     test('#> ST12 +2 Some description', () => {
-      let result = parselink(input)
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: 'ST12 +2 Some description',
@@ -1486,6 +1489,7 @@ describe('parseLink', () => {
   describe('Melee/Ranged/Attack/Damage/Block/Parry', () => {
     test('#> A:', () => {
       const result = parselink(input)
+
       expect(result.action).toBeUndefined()
     })
 
@@ -1985,6 +1989,7 @@ describe('parseLink', () => {
 
     test('#> ?AK:Broadsword', () => {
       const result = parselink(input)
+
       expect(result.action).toBeUndefined()
     })
   })

@@ -128,6 +128,7 @@ describe('entityConfigurations', () => {
 
     test('trait has no createArgs', () => {
       const config = entityConfigurations.find(c => c.entityName === 'trait')
+
       expect(config!.createArgs).toBeUndefined()
     })
   })

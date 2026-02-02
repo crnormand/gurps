@@ -91,6 +91,7 @@ describe('GcsDice', () => {
     ])('$description', ({ input, expected }) => {
       const damage = new GcsDice(input.count, input.modifier)
       const result = GcsDice.normalizeDamage(damage)
+
       expect(result.count).toBe(expected.count)
       expect(result.modifier).toBe(expected.modifier)
     })
@@ -106,6 +107,7 @@ describe('GcsDice', () => {
       { count: 5, modifier: 0, expected: '5d' },
     ])('should format $count dice with modifier $modifier as "$expected"', ({ count, modifier, expected }) => {
       const dice = new GcsDice(count, modifier)
+
       expect(dice.toString()).toBe(expected)
     })
   })

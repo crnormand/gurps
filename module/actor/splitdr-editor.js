@@ -21,7 +21,9 @@ export default class SplitDREditor extends Application {
 
   getData() {
     const sheetData = super.getData()
+
     sheetData.location = this.location
+
     return sheetData
   }
 
@@ -57,9 +59,11 @@ export default class SplitDREditor extends Application {
         {
           // add a new entry
           let entry = {}
+
           entry[`${this.key}.split`] = { none: 0 }
           await this.actor.update(entry)
         }
+
         break
 
       // click:  action [delete] key [00000] value [null]
@@ -67,14 +71,17 @@ export default class SplitDREditor extends Application {
         {
           // remove existing entries
           let entry = {}
+
           entry[`${this.key}.-=split`] = null
           await this.actor.update(entry)
         }
+
         break
 
       default:
         return
     }
+
     this.render(true)
   }
 
@@ -96,6 +103,7 @@ export default class SplitDREditor extends Application {
           // if 'other', don't trigger an update ... just display the hidden field
           if (value === 'other') {
             html.find(`#expand-contract-splitdr`).removeClass('contracted')
+
             return
           }
 
@@ -103,6 +111,7 @@ export default class SplitDREditor extends Application {
           html.find(`#expand-contract-splitdr`).addClass('contracted')
           await this._updateSplitDRKey(existingValue, value)
         }
+
         break
 
       // change: action [value] key [00000] value [6]
@@ -118,23 +127,28 @@ export default class SplitDREditor extends Application {
       default:
         return
     }
+
     this.render(true)
   }
 
   async _updateSplitDRValue(existingKey, newValue) {
     let updated = {}
+
     updated[`${this.key}.split.${existingKey}`] = +newValue
     await this.actor.update(updated)
   }
 
   async _updateSplitDRKey(existingValue, newKey) {
     let old = {}
+
     old[`${this.key}.-=split`] = null
     await this.actor.update(old)
 
     let split = {}
+
     split[newKey] = existingValue
     let updated = {}
+
     updated[`${this.key}.split`] = split
     await this.actor.update(updated)
   }

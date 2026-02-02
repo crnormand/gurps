@@ -1,8 +1,9 @@
 import { jest } from '@jest/globals'
-import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
+
 import { CharacterModel } from '../../../module/actor/data/character.js'
-import { GurpsItemV2 } from '../../../module/item/gurps-item.js'
+import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
 import { TraitModel } from '../../../module/item/data/trait.js'
+import { GurpsItemV2 } from '../../../module/item/gurps-item.js'
 import { _Collection } from '../../foundry-utils/collection.js'
 
 describe('GurpsActorV2._preUpdate', () => {
@@ -91,6 +92,7 @@ describe('GurpsActorV2._preUpdate', () => {
 
       // Mock the actor's items collection for testing: actor.items should return our test ads.
       const itemsCollection = new _Collection()
+
       allAds.forEach(ad => itemsCollection.set(ad._id!, ad))
       Object.defineProperty(actor, 'items', {
         get: jest.fn(() => itemsCollection),
@@ -101,6 +103,7 @@ describe('GurpsActorV2._preUpdate', () => {
     it('converts a request to remove the entire ads array with calls to Actor.deleteEmbeddedDocuments', async () => {
       const deleteEmbeddedDocuments = jest.spyOn(actor, 'deleteEmbeddedDocuments').mockResolvedValue([])
       const updateData: Record<string, any> = { system: { '-=ads': null } }
+
       // @ts-ignore
       await actor._preUpdate(updateData, {}, {})
 
@@ -139,6 +142,7 @@ describe('GurpsActorV2._preUpdate', () => {
           },
         },
       }
+
       // @ts-ignore
       await actor._preUpdate(updateData, {}, {})
 

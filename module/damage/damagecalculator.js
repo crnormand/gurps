@@ -5,6 +5,7 @@ import { objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { TokenActions } from '../token-actions.js'
+
 import {
   defaultADDAction,
   useArmorDivisor,
@@ -63,6 +64,7 @@ export class CompositeDamageCalculator {
 
     this._defaultWoundingModifiers = Object.keys(GURPS.DamageTables.woundModifiers).reduce(function (r, e) {
       if (!GURPS.DamageTables.woundModifiers[e].nodisplay) r[e] = GURPS.DamageTables.woundModifiers[e]
+
       return r
     }, {})
 
@@ -72,11 +74,12 @@ export class CompositeDamageCalculator {
       this._damageType = damageData[0].damageType
     else {
       let temp = GURPS.DamageTables.translate(damageData[0].damageType)
+
       if (temp) this._damageType = temp
       else this._damageType = 'none'
     }
 
-    if (!!CompositeDamageCalculator.isResourceDamageType(this._damageType)) {
+    if (CompositeDamageCalculator.isResourceDamageType(this._damageType)) {
       this._applyTo = this._damageType
     } else {
       this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
@@ -85,6 +88,7 @@ export class CompositeDamageCalculator {
     this._damageModifier = damageData[0].damageModifier
 
     this._armorDivisor = damageData[0].armorDivisor
+
     if (this._armorDivisor === 0) {
       this._useArmorDivisor = false
     }
@@ -93,8 +97,9 @@ export class CompositeDamageCalculator {
 
     let hitlocations = objectToArray(this._defender.system.hitlocations)
     let wheres = hitlocations.map(it => it.where.toLowerCase())
-    let damageLocation = !!damageData[0].hitlocation ? damageData[0].hitlocation.toLowerCase() : ''
+    let damageLocation = damageData[0].hitlocation ? damageData[0].hitlocation.toLowerCase() : ''
     let hlIndex = wheres.indexOf(damageLocation)
+
     if (hlIndex >= 0) this._hitLocation = hitlocations[hlIndex].where
     else this._hitLocation = this._defender.defaultHitLocation
 
@@ -134,14 +139,17 @@ export class CompositeDamageCalculator {
     //    _isInjuryTolerance = true
     //    _injuryToleranceType = 'unliving'
     let values = Object.values(this._defender.system.ads)
+
     if (this.isUnliving(values, false)) {
       this._isInjuryTolerance = true
       this._injuryToleranceType = UNLIVING
     }
+
     if (this.isHomogenous(values)) {
       this._isInjuryTolerance = true
       this._injuryToleranceType = HOMOGENOUS
     }
+
     if (this.isDiffuse(values)) {
       this._isInjuryTolerance = true
       this._injuryToleranceType = DIFFUSE
@@ -155,24 +163,29 @@ export class CompositeDamageCalculator {
 
     if (!found) {
       let self = this
+
       found = values.find(value => {
         let found = !!(
           ['Injury Tolerance (Unliving)', 'Unliving'].includes(value.name) ||
           (value.name === 'Injury Tolerance' && value.notes.includes('Unliving'))
         )
         const contents = value.contains ?? value.collapsed
+
         if (!found && Object.keys(contents).length > 0) {
           found = self.isUnliving(Object.values(contents), false)
         }
+
         return found
       })
     }
+
     return !!found
   }
 
   isHomogenous(values, found) {
     if (!found) {
       let self = this
+
       found = values.find(value => {
         let found = !!(
           ['Injury Tolerance (Homogenous)', 'Homogenous'].includes(value.name) ||
@@ -180,18 +193,22 @@ export class CompositeDamageCalculator {
         )
 
         const contents = value.contains ?? value.collapsed
+
         if (!found && Object.keys(contents).length > 0) {
           found = self.isHomogenous(Object.values(contents), false)
         }
+
         return found
       })
     }
+
     return !!found
   }
 
   isDiffuse(values, found) {
     if (!found) {
       let self = this
+
       found = values.find(value => {
         let found = !!(
           ['Injury Tolerance (Diffuse)', 'Diffuse'].includes(value.name) ||
@@ -199,22 +216,27 @@ export class CompositeDamageCalculator {
         )
 
         const contents = value.contains ?? value.collapsed
+
         if (!found && Object.keys(contents).length > 0) {
           found = self.isDiffuse(Object.values(contents), false)
         }
+
         return found
       })
     }
+
     return !!found
   }
 
   static isResourceDamageType(damageType) {
     let modifier = GURPS.DamageTables.woundModifiers[damageType]
+
     return !!modifier && !!GURPS.DamageTables.woundModifiers[damageType].resource
   }
 
   get(viewId) {
     if (viewId === 'all') return this
+
     return this._calculators[viewId]
   }
 
@@ -267,6 +289,7 @@ export class CompositeDamageCalculator {
    */
   get basicDamage() {
     if (this._viewId === 'all') return this._calculators.reduce((sum, a) => sum + a._basicDamage, 0)
+
     return this._calculators[this._viewId].basicDamage
   }
 
@@ -317,6 +340,7 @@ export class CompositeDamageCalculator {
     // using the localized name.
     if (!hitlocation) {
       const alternative = game.i18n.localize(`GURPS.hitLocation${this._hitLocation}`)
+
       hitlocation = HitLocationEntry.findLocation(entries, alternative)
     }
 
@@ -328,6 +352,7 @@ export class CompositeDamageCalculator {
 
   async addEffectsContext() {
     let tokenId = this._defender.token?.id
+
     if (!tokenId) tokenId = canvas.tokens.placeables.find(it => it.actor === this._defender)?.id
     if (!tokenId) return // TODO Need to handle this in a better way.
 
@@ -342,6 +367,7 @@ export class CompositeDamageCalculator {
         } else {
           isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === `${effect.type}${effect.amount}`))
         }
+
         return {
           ...effect,
           buttons: [
@@ -363,6 +389,7 @@ export class CompositeDamageCalculator {
           case 'crippling':
             const stunIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'stun'))
             const proneIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+
             return {
               ...effect,
               testTitle: game.i18n.localize('GURPS.saveRollforEffect'),
@@ -391,6 +418,7 @@ export class CompositeDamageCalculator {
             }
           case 'knockback':
             isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+
             return {
               ...effect,
               testTitle: game.i18n.localize('GURPS.saveRollforEffect'),
@@ -412,6 +440,7 @@ export class CompositeDamageCalculator {
         }
       }
     })
+
     return data.filter(effect => !!effect)
   }
 
@@ -420,6 +449,7 @@ export class CompositeDamageCalculator {
     // each call to _calculator.effects returns an array of effects
     // create a flattened array of effects
     let effects = []
+
     this._calculators.map(calculator => calculator.effects).forEach(effect => effects.push(effect))
     effects = effects.flat()
 
@@ -461,21 +491,24 @@ export class CompositeDamageCalculator {
         amount: knockbackValue,
         modifier: knockbackMods,
         unit: knockbackValue === 1 ? game.i18n.localize('GURPS.yard') : game.i18n.localize('GURPS.yards'),
-        modifierText: !!knockbackMods ? `–${knockbackMods}` : '',
+        modifierText: knockbackMods ? `–${knockbackMods}` : '',
       })
     }
 
     // process crippling -- just keep one of them
     let crippling = effects.find(it => it.type === 'crippling')
-    if (!!crippling) results.push(crippling)
+
+    if (crippling) results.push(crippling)
 
     // process major wound -- just keep one of them
     let majorwound = effects.find(it => it.type === 'majorwound')
-    if (!!majorwound) results.push(majorwound)
+
+    if (majorwound) results.push(majorwound)
 
     // process headvitalshit -- just keep one of them
     let headvitalshit = effects.find(it => it.type === 'headvitalshit')
-    if (!!headvitalshit) results.push(headvitalshit)
+
+    if (headvitalshit) results.push(headvitalshit)
 
     return results
   }
@@ -488,19 +521,24 @@ export class CompositeDamageCalculator {
       let _divisor = this._armorDivisor == 4 ? 3 : this._armorDivisor //If you're using survivable guns check if it's (4) because it's not part of the regular progression, thus we treat it as 3.
       let maxIndex = armorDivisorSteps.length - 1
       let index = armorDivisorSteps.indexOf(_divisor)
+
       index = Math.min(index + this._hardenedDRLevel, maxIndex)
+
       return armorDivisorSteps[index]
     }
+
     return this._armorDivisor
   }
 
   get effectiveBluntTrauma() {
     if (this._viewId === 'all') return
+
     return this._calculators[this._viewId].effectiveBluntTrauma
   }
 
   get effectiveDamage() {
     if (this._viewId === 'all') return
+
     return this._calculators[this._viewId].effectiveDamage
   }
 
@@ -515,11 +553,13 @@ export class CompositeDamageCalculator {
     if (this._useArmorDivisor && !!this._armorDivisor) {
       // -1 divisor means "Ignore DR"
       let armorDivisor = this.effectiveArmorDivisor
+
       if (armorDivisor === -1) return 0
       if (armorDivisor < 1 && dr === 0) return 1
 
       return Math.floor(dr / armorDivisor)
     }
+
     return dr
   }
 
@@ -612,6 +652,7 @@ export class CompositeDamageCalculator {
     if (this._isExplosion) {
       return this._hexesFromExplosion * 3
     }
+
     return 1
   }
 
@@ -649,9 +690,11 @@ export class CompositeDamageCalculator {
 
   get hitLocationRole() {
     let hitLocation = this._defender._hitLocationRolls[this._hitLocation]
-    if (!!hitLocation?.role) {
+
+    if (hitLocation?.role) {
       return hitLocation.role
     }
+
     return null
   }
 
@@ -666,7 +709,9 @@ export class CompositeDamageCalculator {
    */
   get hitLocationsWithDR() {
     let locations = this._defender.hitLocationsWithDR
+
     for (let l of locations) l.damageType = this.damageType
+
     return locations
   }
 
@@ -676,6 +721,7 @@ export class CompositeDamageCalculator {
 
   get injury() {
     if (this._viewId === 'all') return
+
     return this._calculators[this._viewId].injury
   }
 
@@ -715,6 +761,7 @@ export class CompositeDamageCalculator {
 
   get isBluntTraumaInjury() {
     if (this._viewId === 'all') return
+
     return this._calculators[this._viewId].isBluntTraumaInjury
   }
 
@@ -733,6 +780,7 @@ export class CompositeDamageCalculator {
     } else if (!value && this._isExplosion) {
       this._hitLocation = this._previousHitLocation
     }
+
     this._isExplosion = value
   }
 
@@ -754,6 +802,7 @@ export class CompositeDamageCalculator {
 
   get isInjuryReducedByLocation() {
     if (this._viewId === 'all') return
+
     return this._calculators[this._viewId].isInjuryReducedByLocation
   }
 
@@ -771,6 +820,7 @@ export class CompositeDamageCalculator {
 
   set isRangedHalfDamage(value) {
     this._isRangedHalfDamage = value
+
     if (value) {
       this._isShotgun = false
       this._isExplosion = false
@@ -783,6 +833,7 @@ export class CompositeDamageCalculator {
 
   set isShotgun(value) {
     this._isShotgun = value
+
     if (value) {
       this._isRangedHalfDamage = false
       this._isExplosion = false
@@ -808,18 +859,21 @@ export class CompositeDamageCalculator {
   get isWoundModifierAdjustedForInjuryTolerance() {
     let table = this.effectiveWoundModifiers
     let entries = Object.keys(table).filter(key => table[key].changed === 'injury-tolerance')
+
     return entries.length > 0
   }
 
   get isWoundModifierAdjustedForLocation() {
     let table = this.effectiveWoundModifiers
     let entries = Object.keys(table).filter(key => table[key].changed === 'hitlocation')
+
     return entries.length > 0
   }
 
   get isWoundModifierAdjustedForDamageType() {
     let table = this.effectiveWoundModifiers
     let entries = Object.keys(table).filter(key => table[key].changed === 'damagemodifier')
+
     return entries.length > 0
   }
 
@@ -830,6 +884,7 @@ export class CompositeDamageCalculator {
   get cripplingThreshold() {
     if (this.hitLocationRole === hitlocation.LIMB) return this.HP.max / 2
     if (this.hitLocationRole === hitlocation.EXTREMITY) return this.HP.max / 3
+
     if (this._useBodyHits) {
       if (this.hitLocationRole === hitlocation.CHEST) return this.HP.max * 2
       if (this.hitLocationRole === hitlocation.GROIN) return this.HP.max * 2
@@ -837,12 +892,15 @@ export class CompositeDamageCalculator {
       if (this.hitLocationRole === hitlocation.CHEST) return Infinity
       if (this.hitLocationRole === hitlocation.GROIN) return Infinity
     }
+
     if (this.hitLocation === 'Eye') return this.HP.max / 10
+
     return Infinity
   }
 
   get locationMaxHP() {
     const adjustHp = [hitlocation.EXTREMITY, hitlocation.LIMB].includes(this.hitLocationRole) ? 1 : 0
+
     return this.isCrippleableLocation ? this.cripplingThreshold + adjustHp : Infinity
   }
 
@@ -852,11 +910,13 @@ export class CompositeDamageCalculator {
 
   get maxInjuryForDiffuse() {
     if (this._viewId === 'all') return
+
     return this._calculators[this._viewId].maxInjuryForDiffuse
   }
 
   get penetratingDamage() {
     if (this._viewId === 'all') return
+
     return this._calculators[this._viewId].penetratingDamage
   }
 
@@ -869,17 +929,20 @@ export class CompositeDamageCalculator {
     let trackers = objectToArray(this._defender.system.additionalresources.tracker)
     let tracker = null
     let index = null
+
     trackers.forEach((t, i) => {
       if (t.alias === this._applyTo) {
         index = i
         tracker = t
+
         return
       }
     })
-    if (!!tracker) return [tracker, `system.additionalresources.tracker.${zeroFill(index, 4)}`]
+    if (tracker) return [tracker, `system.additionalresources.tracker.${zeroFill(index, 4)}`]
     // }
 
     if (this._applyTo === 'FP') return [this._defender.system.FP, 'system.FP']
+
     return [this._defender.system.HP, 'system.HP']
   }
 
@@ -887,10 +950,12 @@ export class CompositeDamageCalculator {
     // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
     let trackers = objectToArray(this._defender.system.additionalresources.tracker)
     let tracker = trackers.find(it => it.alias === this._applyTo)
-    if (!!tracker) return tracker.name
+
+    if (tracker) return tracker.name
     // }
 
     if (this._applyTo === 'FP') return 'FP'
+
     return 'HP'
   }
 
@@ -898,6 +963,7 @@ export class CompositeDamageCalculator {
     if (this._isShotgun && this._shotgunRofMultiplier > 1) {
       return Math.floor(this._shotgunRofMultiplier / 2)
     }
+
     return 1
   }
 
@@ -983,6 +1049,7 @@ export class CompositeDamageCalculator {
         results[key].multiplier = 1
         results[key].changed = 'hitlocation'
       })
+
     return results
   }
 
@@ -993,6 +1060,7 @@ export class CompositeDamageCalculator {
     // update the ones that need it
     results['cor'].multiplier = 1.5
     results['cor'].changed = 'hitlocation'
+
     return results
   }
 
@@ -1007,6 +1075,7 @@ export class CompositeDamageCalculator {
     results['cr'].changed = 'hitlocation'
     results['cor'].changed = 'hitlocation'
     results['cut'].changed = 'hitlocation'
+
     return results
   }
 
@@ -1021,6 +1090,7 @@ export class CompositeDamageCalculator {
         results[key].multiplier = 4
         results[key].changed = 'hitlocation'
       })
+
     return results
   }
 
@@ -1085,13 +1155,16 @@ export class CompositeDamageCalculator {
       this._hitLocation === 'Torso'
     ) {
       const vitalsRoll = Roll.create('1d6[Vitals]')
+
       await vitalsRoll.evaluate()
 
       const total = vitalsRoll.total
+
       if (total === 1) this._hitLocation = 'Vitals'
 
       return vitalsRoll
     }
+
     return undefined
   }
 }
@@ -1179,11 +1252,13 @@ class DamageCalculator {
       // regardless of penetrating damage!
       if (['imp', ...piercing].includes(this._parent.damageType)) {
         this._maxInjuryForDiffuse = Math.min(1, injury)
+
         return this._maxInjuryForDiffuse
       }
 
       // ...Other attacks can never do more than 2 HP of injury.
       this._maxInjuryForDiffuse = Math.min(2, injury)
+
       return this._maxInjuryForDiffuse
     }
 
@@ -1194,6 +1269,7 @@ class DamageCalculator {
     if (this.effectiveDamage === 0 || this.penetratingDamage > 0) return 0
     if (!bluntTraumaTypes.includes(this._parent.damageType)) return 0
     if (this._parent.damageType === 'cr') return Math.floor(this.effectiveDamage / 5)
+
     return Math.floor(this.effectiveDamage / 10)
   }
 
@@ -1212,6 +1288,7 @@ class DamageCalculator {
           ? this.effectiveBluntTrauma
           : 0
         : injury
+
     return pointsToApply
   }
 
@@ -1221,6 +1298,7 @@ class DamageCalculator {
    */
   get pointsToApply() {
     let pointsToApply = this.unmodifiedPointsToApply
+
     if (this._parent.useLocationModifiers) {
       if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this._parent.hitLocationRole)) {
         return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
@@ -1232,6 +1310,7 @@ class DamageCalculator {
         return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
       }
     }
+
     return pointsToApply
   }
 
@@ -1242,6 +1321,7 @@ class DamageCalculator {
   get calculatedShock() {
     let factor = Math.max(1, Math.floor(this._parent.HP.max / 10))
     let shock = Math.min(4, Math.floor(this.pointsToApply / factor))
+
     return shock
   }
 
@@ -1253,6 +1333,7 @@ class DamageCalculator {
     // Diffuse or Homogenous: Ignore all knockdown modifiers for hit location.
     let isInjuryTolerance = this._parent.isInjuryTolerance
     let injuryToleranceType = this._parent.injuryToleranceType
+
     if (isInjuryTolerance && (injuryToleranceType === DIFFUSE || injuryToleranceType === HOMOGENOUS)) {
       return 0
     }
@@ -1272,6 +1353,7 @@ class DamageCalculator {
     if (this._parent.useLocationModifiers && this._parent.isCrippleableLocation) {
       return this.unmodifiedPointsToApply > this._parent.cripplingThreshold
     }
+
     return false
   }
 
@@ -1309,6 +1391,7 @@ class DamageCalculator {
       }
 
       let isMajorWound = false
+
       if ([...head, 'Vitals'].includes(this._parent.hitLocation) && shock > 0) {
         _effects.push({
           type: 'headvitalshit',
@@ -1346,6 +1429,7 @@ class DamageCalculator {
 
       // if the target has no ST score, use its HPs instead (B378)
       let knockbackResistance = !st || st == 0 ? hp - 2 : st - 2
+
       // if ST or HP is less than 3, knockback is one yard per point of damage (B378)
       knockbackResistance = Math.max(knockbackResistance, 1)
       // For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker. (B378)
@@ -1357,6 +1441,7 @@ class DamageCalculator {
 
       if (knockback > 0) {
         let modifier = knockback - 1
+
         _effects.push({
           type: 'knockback',
           amount: knockback,

@@ -1,4 +1,5 @@
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
+
 import DataModel = foundry.abstract.DataModel
 
 class ModelCollection<Model extends DataModel.Any = DataModel.Any> extends foundry.utils.Collection<Model> {
@@ -46,6 +47,7 @@ class ModelCollection<Model extends DataModel.Any = DataModel.Any> extends found
 
     if (!this.#types.has(type)) this.#types.set(type, new Set())
     this.#types.get(type)!.add(key)
+
     return super.set(key, value)
   }
 
@@ -62,10 +64,13 @@ class ModelCollection<Model extends DataModel.Any = DataModel.Any> extends found
 
   override delete(key: string) {
     const value = this.get(key)
+
     if (value) {
       const typeKey = 'type' in value && typeof value.type === 'string' ? value.type : 'base'
+
       if (typeKey) this.#types.get(typeKey)?.delete(key)
     }
+
     return super.delete(key)
   }
 

@@ -32,10 +32,12 @@ class TypedPseudoDocument<
    */
   static get TYPES(): Record<string, typeof TypedPseudoDocument> {
     if (!globalThis.GURPS) return {}
+
     return Object.values(
       GURPS.CONFIG[this.metadata.documentName] as Record<string, { documentClass: typeof TypedPseudoDocument }>
     ).reduce((acc: Record<string, typeof TypedPseudoDocument>, { documentClass }) => {
       if (documentClass.TYPE) acc[documentClass.TYPE] = documentClass
+
       return acc
     }, {})
   }
@@ -47,6 +49,7 @@ class TypedPseudoDocument<
    */
   get typeLabel(): string {
     if (!globalThis.GURPS) return ''
+
     return (GURPS.CONFIG[this.metadata.documentName] as any)[this.type].label
   }
 
@@ -59,6 +62,7 @@ class TypedPseudoDocument<
     data = foundry.utils.deepClone(data)
     // @ts-expect-error
     if (!data.type) data.type = Object.keys(this.TYPES)[0]
+
     // @ts-expect-error
     if (!data.type || !(data.type in this.TYPES)) {
       throw new Error(
@@ -66,6 +70,7 @@ class TypedPseudoDocument<
         `The '${data.type}' type is not a valid type for a '${this.metadata.documentName}' pseudo-document!`
       )
     }
+
     return super.create(data, { parent, ...operation })
   }
 

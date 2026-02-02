@@ -1,25 +1,26 @@
 import DataModel = foundry.abstract.DataModel
 
-import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'
-import { CharacterSchema } from 'module/actor/data/character.js'
-import { BaseItemModel } from 'module/item/data/base.js'
 import {
   MeleeAttackComponentSchema,
   MeleeAttackSchema,
   RangedAttackComponentSchema,
   RangedAttackSchema,
 } from 'module/action/index.js'
-import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
-import { SpellComponentSchema, SpellSchema } from 'module/item/data/spell.js'
+import { CharacterSchema } from 'module/actor/data/character.js'
+import { HitLocationSchemaV2 } from 'module/actor/data/hit-location-entry.js'
+import { BaseItemModel } from 'module/item/data/base.js'
 import { ItemComponentSchema } from 'module/item/data/component.js'
 import { EquipmentSchema, EquipmentComponentSchema } from 'module/item/data/equipment.js'
 import { SkillSchema, SkillComponentSchema } from 'module/item/data/skill.js'
-import { HitLocationSchemaV2 } from 'module/actor/data/hit-location-entry.js'
-import { ImportSettings } from '../index.js'
+import { SpellComponentSchema, SpellSchema } from 'module/item/data/spell.js'
+import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
 
 // TODO: get rid of when this is migrated
 import * as HitLocations from '../../hitlocation/hitlocation.js'
 import { createDataIsOfType } from '../helpers.ts'
+import { ImportSettings } from '../index.js'
+
+import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'
 
 /**
  * NOTE: Some parts of this importer are not fully implemented and cannot be without pretty significantly
@@ -105,6 +106,7 @@ class GcaImporter {
         items: this.items,
       })
     }
+
     if (!actor) {
       throw new Error('Failed to create GURPS actor during import.')
     }
@@ -119,6 +121,7 @@ class GcaImporter {
       for (const itemData of this.items) {
         if (createDataIsOfType(itemData, 'equipmentV2')) {
           const eqt = itemData.system?.eqt
+
           if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
             eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
             eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
@@ -143,6 +146,7 @@ class GcaImporter {
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
       const component = item.system.fea ?? item.system.ski ?? item.system.spl ?? item.system.eqt
+
       return ['GCS', 'GCA'].includes(component?.importFrom)
     })
 
@@ -156,12 +160,15 @@ class GcaImporter {
 
   #saveEquipmentCountsIfNecessary(items: Item.OfType<'equipmentV2'>[]) {
     const savedEquipmentCounts = new Map<string, { quantity: number; uses: number }>()
+
     items.forEach(item => {
       const eqt = item.system.eqt
+
       if (eqt && eqt.importFrom === 'GCA' && eqt.ignoreImportQty && eqt.importid) {
         savedEquipmentCounts.set(eqt.importid, { quantity: eqt.count, uses: eqt.uses })
       }
     })
+
     return savedEquipmentCounts
   }
 
@@ -181,6 +188,7 @@ class GcaImporter {
         `User "${game.user?.name}" does not have permissions to upload a portrait to the user directory.
 Portrait will not be imported.`
       )
+
       return
     }
 
@@ -196,8 +204,10 @@ Portrait will not be imported.`
 
   #importAttributes() {
     this.output.attributes = { ST: {}, DX: {}, IQ: {}, HT: {} }
-    for (let key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PERCEPTION'] as const) {
+
+    for (const key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PERCEPTION'] as const) {
       const attribute = this.input.traits.attributes.find(attr => attr.name.toLowerCase() === key.toLowerCase())
+
       this.output.attributes[key === 'PERCEPTION' ? 'PER' : key] = {
         import: attribute?.score ?? 10,
         points: attribute?.points ?? 0,
@@ -205,18 +215,21 @@ Portrait will not be imported.`
     }
 
     const basicSpeed = this.input.traits.attributes.find(attr => attr.name === 'Basic Speed')
+
     this.output.basicspeed = {
       value: basicSpeed?.score ?? 5,
       points: basicSpeed?.points ?? 0,
     }
 
     const basicMove = this.input.traits.attributes.find(attr => attr.name === 'Basic Move')
+
     this.output.basicmove = {
       value: basicMove?.score ?? 5,
       points: basicMove?.points ?? 0,
     }
 
     const dodge = this.input.traits.attributes.find(attr => attr.name === 'Dodge')
+
     this.output.dodge = {
       value: dodge?.score ?? 8,
     }
@@ -227,6 +240,7 @@ Portrait will not be imported.`
 
     for (const key of ['HP', 'FP', 'QP'] as const) {
       const attribute = this.input.traits.attributes.find(attr => attr.symbol?.toLowerCase() === key.toLowerCase())
+
       if (attribute) {
         this.output[key] = {
           min: 0,
@@ -255,6 +269,7 @@ Portrait will not be imported.`
 
     for (const [gga, gca] of Object.entries(otherAttributeKeys)) {
       const attribute = this.input.traits.attributes.find(attr => attr.name === gca)
+
       if (attribute) {
         this.output[gga as 'frightcheck' | 'vision' | 'tastesmell' | 'touch'] = attribute.score
       } else {
@@ -266,6 +281,7 @@ Portrait will not be imported.`
     const st = this.output.attributes?.ST?.import ?? 0
 
     let basicDamageEntry = this.input.basicdamages.find(e => e.st === st)
+
     if (!basicDamageEntry) {
       console.error(`GURPS | Failed to import basic damages: No entry corresponding to ST value "${st}"`)
       basicDamageEntry = { st: 0, thbase: '1', thadd: '-6', swbase: '1', swadd: '-6' }
@@ -310,6 +326,7 @@ Portrait will not be imported.`
     const enhancedMove = this.input.traits.attributes.find(
       attr => attr.name.toLowerCase() === `Enhanced ${moveType}`.toLowerCase()
     )
+
     return {
       basic: basicMove?.score ?? 0,
       enhanced: enhancedMove?.score ?? 0,
@@ -359,15 +376,18 @@ Portrait will not be imported.`
         // These are different but related tables. All locations in "hitlocationtable" *should* be in "body".
         // However, different names may be in use. We're accounting for these possibilities.
         let lookupName = location.location
+
         if (lookupName === 'Eye') lookupName = 'Eyes'
         if (lookupName === 'Foot') lookupName = 'Feet'
         if (lookupName === 'Hand') lookupName = 'Hands'
 
         const bodyLocation = this.input.body?.find(e => e.name === lookupName)
+
         if (!bodyLocation) {
           console.error(
             `Failed to import hit location table entry "${location.location}". No matching body part found.`
           )
+
           return acc
         }
 
@@ -375,6 +395,7 @@ Portrait will not be imported.`
 
         if (table) {
           const [_, standardEntry] = HitLocations.HitLocation.findTableEntry(table, bodyLocation.name)
+
           if (standardEntry) {
             roll = standardEntry.roll
           }
@@ -388,7 +409,9 @@ Portrait will not be imported.`
           rollText: roll,
           split: {},
         }
+
         acc.push(newLocation)
+
         return acc
       },
       []
@@ -450,9 +473,12 @@ Portrait will not be imported.`
             if (!weapon._id || typeof weapon._id !== 'string') {
               console.error('GURPS | Failed to import weapon: No _id set.')
               console.error(weapon)
+
               return acc
             }
+
             acc[weapon._id] = weapon
+
             return acc
           },
           {}
@@ -466,6 +492,7 @@ Portrait will not be imported.`
 
   #importWeapon(weapon: GCAAttackMode, item: GCATrait): DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema> {
     if (weapon.reach !== null) return this.#importMeleeWeapon(weapon, item)
+
     return this.#importRangedWeapon(weapon, item)
   }
 
@@ -669,6 +696,7 @@ Portrait will not be imported.`
       vtt_notes: item.ref?.vttnotes ?? '',
       importFrom: 'GCA',
     }
+
     return component
   }
 
@@ -704,6 +732,7 @@ Portrait will not be imported.`
   #importSpellComponent(spell: GCATrait): DataModel.CreateData<SpellComponentSchema> {
     let spellClass = ''
     let spellResist = ''
+
     if (spell.ref?.class?.includes('/')) {
       ;[spellClass, spellResist] = spell.ref.class.split('/')
     } else {
@@ -712,6 +741,7 @@ Portrait will not be imported.`
 
     let spellCost = ''
     let spellMaintain = ''
+
     if (spell.ref?.castingcost?.includes('/')) {
       ;[spellCost, spellMaintain] = spell.ref.castingcost.split('/')
     } else {

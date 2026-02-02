@@ -39,6 +39,7 @@ export function addDice(diceterm, addend) {
 
     // Convert groups.adds to a number.
     let adds = groups.adds ? parseInt(groups.adds) : 0
+
     // Apply the sign to the adds.
     adds = sign === '+' ? adds : -adds
     // Add the addend.
@@ -48,6 +49,7 @@ export function addDice(diceterm, addend) {
 
     let sides = groups.sides ?? ''
     let remainder = groups.remainder ?? ''
+
     return `${dice}d${sides}${addString}${remainder}`.trim()
   }
 }
@@ -57,7 +59,9 @@ export function getDiceData(diceterm) {
     let groups = diceterm.match(diceRegex).groups
     let dice = parseInt(groups.dice)
     let adds = groups.adds ? parseInt(groups.adds) : 0
+
     if (groups.sign !== '+') adds = -adds
+
     return { dice: dice, adds: adds }
   }
 }
@@ -83,6 +87,7 @@ export function getDicePlusAdds(rawDamage) {
 
   // Otherwise, round fractions of 0.5 or more up to a full die.
   let dice = Math.floor(rawDamage)
+
   if (rawDamage - dice >= 0.5) dice++
 
   return { dice: dice, adds: 0 }

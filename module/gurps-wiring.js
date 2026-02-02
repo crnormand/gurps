@@ -1,5 +1,6 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
+
 import { GgaContextMenuV2 } from './ui/context-menu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
@@ -29,7 +30,9 @@ export default class GurpsWiring {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
         let display = ''
-        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+
+        if (ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
@@ -65,6 +68,7 @@ export default class GurpsWiring {
     html.querySelectorAll('[data-otf]').forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickOtf))
 
     const pdfLinks = html.querySelectorAll('.pdflink')
+
     if (pdfLinks.length > 0) {
       for (const link of pdfLinks) {
         GurpsWiring._createPdfLinkMenu(link)
@@ -126,6 +130,7 @@ export default class GurpsWiring {
   static _chatClickGmod(event) {
     let element = event.currentTarget
     let desc = element.dataset.name
+
     GurpsWiring.handleGurpslink(event, GURPS.LastActor)
   }
 
@@ -140,7 +145,8 @@ export default class GurpsWiring {
     event.preventDefault()
     let element = event.currentTarget
     let action = element.dataset?.action // If we have already parsed
-    if (!!action) action = JSON.parse(atou(action))
+
+    if (action) action = JSON.parse(atou(action))
     else action = parselink(element.innerText).action
 
     if (!action && element.dataset?.otf) action = parselink(element.dataset.otf).action
@@ -166,7 +172,8 @@ export default class GurpsWiring {
     event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
     let el = event.currentTarget
     let action = el.dataset.action
-    if (!!action) {
+
+    if (action) {
       action = JSON.parse(atou(action))
       if (action.type === 'damage' || action.type === 'deriveddamage' || action.type === 'attackdamage')
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
@@ -179,6 +186,7 @@ export default class GurpsWiring {
     let el = event.currentTarget
     let n = el.dataset.name
     let t = el.innerText
+
     GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, this.actor)
   }
 

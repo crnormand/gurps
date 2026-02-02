@@ -1,4 +1,5 @@
 import fields = foundry.data.fields
+
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 
 /* ---------------------------------------- */

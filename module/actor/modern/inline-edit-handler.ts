@@ -1,10 +1,12 @@
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()
+
   return trimmedName.length > 0 && trimmedName !== currentName
 }
 
 export function shouldUpdateField(newValue: string, currentValue: string | undefined): boolean {
   const trimmedValue = newValue.trim()
+
   return trimmedValue !== (currentValue ?? '')
 }
 
@@ -14,8 +16,10 @@ export function bindInlineEdit(html: JQuery, config: InlineEditConfig): void {
   html.find(displaySelector).on('click', (event: JQuery.ClickEvent) => {
     event.preventDefault()
     const container = (event.currentTarget as HTMLElement).closest(containerSelector) as HTMLElement
+
     container.classList.add(editingClass)
     const input = container.querySelector(inputSelector) as HTMLInputElement | null
+
     if (input) {
       input.focus()
       input.select()
@@ -25,6 +29,7 @@ export function bindInlineEdit(html: JQuery, config: InlineEditConfig): void {
   html.find(inputSelector).on('blur', (event: JQuery.BlurEvent) => {
     const input = event.currentTarget as HTMLInputElement
     const container = input.closest(containerSelector) as HTMLElement
+
     setTimeout(() => {
       if (!container.contains(document.activeElement)) {
         container.classList.remove(editingClass)
@@ -38,6 +43,7 @@ export function bindInlineEdit(html: JQuery, config: InlineEditConfig): void {
       event.preventDefault()
       const input = event.currentTarget as HTMLInputElement
       const container = input.closest(containerSelector) as HTMLElement
+
       container.classList.remove(editingClass)
       input.blur()
     }
@@ -80,29 +86,35 @@ export function buildOnBlurHandler(
   if (config.fieldType === 'name') {
     return (input: HTMLInputElement) => {
       const newName = input.value
+
       if (shouldUpdateName(newName, actor.name)) {
         actor.update({ name: newName.trim() })
       }
     }
   }
+
   if (config.fieldType === 'tag') {
     return (input: HTMLInputElement) => {
       const field = input.dataset.field
       const newValue = input.value
+
       if (field) {
         const currentValue = foundry.utils.getProperty(actor, field) as string | undefined
+
         if (shouldUpdateField(newValue, currentValue)) {
           actor.update({ [field]: newValue.trim() })
         }
       }
     }
   }
+
   return undefined
 }
 
 export function bindAllInlineEdits(html: JQuery, actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>): void {
   inlineEditConfigs.forEach(config => {
     const onBlur = buildOnBlurHandler(config, actor)
+
     bindInlineEdit(html, { ...config, onBlur })
   })
 }
@@ -119,8 +131,10 @@ export function bindAttributeEdit(html: JQuery, actor: Actor.OfType<'character' 
     event.stopPropagation()
     const wrapper = (event.currentTarget as HTMLElement).closest(wrapperSelector) as HTMLElement
     const badge = wrapper.querySelector(badgeSelector) as HTMLElement
+
     badge.classList.add(editingClass)
     const input = badge.querySelector(inputSelector) as HTMLInputElement
+
     if (input) {
       input.focus()
       input.select()
@@ -129,6 +143,7 @@ export function bindAttributeEdit(html: JQuery, actor: Actor.OfType<'character' 
 
   html.find(badgeSelector).on('click', (event: JQuery.ClickEvent) => {
     const badge = event.currentTarget as HTMLElement
+
     if (badge.classList.contains(editingClass)) {
       event.stopPropagation()
     }
@@ -137,6 +152,7 @@ export function bindAttributeEdit(html: JQuery, actor: Actor.OfType<'character' 
   html.find(inputSelector).on('blur', (event: JQuery.BlurEvent) => {
     const input = event.currentTarget as HTMLInputElement
     const badge = input.closest(badgeSelector) as HTMLElement
+
     badge.classList.remove(editingClass)
 
     const attrName = badge.dataset.attr
@@ -159,9 +175,11 @@ export function bindAttributeEdit(html: JQuery, actor: Actor.OfType<'character' 
       event.preventDefault()
       const input = event.currentTarget as HTMLInputElement
       const badge = input.closest(badgeSelector) as HTMLElement
+
       badge.classList.remove(editingClass)
       const attrName = badge.dataset.attr
       const fieldPath = `system.attributes.${attrName}.import`
+
       input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
       input.blur()
     }
@@ -178,9 +196,12 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: Actor.OfType<'charac
     event.preventDefault()
     event.stopPropagation()
     const fieldset = (event.currentTarget as HTMLElement).closest(fieldsetSelector) as HTMLElement
+
     fieldset.classList.toggle(editingClass)
+
     if (fieldset.classList.contains(editingClass)) {
       const firstInput = fieldset.querySelector(inputSelector) as HTMLInputElement
+
       if (firstInput) {
         firstInput.focus()
         firstInput.select()
@@ -211,6 +232,7 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: Actor.OfType<'charac
     if (event.key === 'Enter') {
       event.preventDefault()
       const input = event.currentTarget as HTMLInputElement
+
       input.blur()
     }
 
@@ -218,8 +240,10 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: Actor.OfType<'charac
       event.preventDefault()
       const input = event.currentTarget as HTMLInputElement
       const fieldset = input.closest(fieldsetSelector) as HTMLElement
+
       fieldset.classList.remove(editingClass)
       const fieldPath = input.name
+
       input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
       input.blur()
     }
@@ -233,10 +257,12 @@ export function bindPointsEdit(html: JQuery, actor: Actor.OfType<'character' | '
 
   html.find(itemSelector).on('click', (event: JQuery.ClickEvent) => {
     const item = event.currentTarget as HTMLElement
+
     if (item.classList.contains(editingClass)) return
 
     item.classList.add(editingClass)
     const input = item.querySelector(inputSelector) as HTMLInputElement
+
     if (input) {
       input.focus()
       input.select()
@@ -246,6 +272,7 @@ export function bindPointsEdit(html: JQuery, actor: Actor.OfType<'character' | '
   html.find(inputSelector).on('blur', (event: JQuery.BlurEvent) => {
     const input = event.currentTarget as HTMLInputElement
     const item = input.closest(itemSelector) as HTMLElement
+
     item.classList.remove(editingClass)
 
     const fieldPath = input.name
@@ -267,8 +294,10 @@ export function bindPointsEdit(html: JQuery, actor: Actor.OfType<'character' | '
       event.preventDefault()
       const input = event.currentTarget as HTMLInputElement
       const item = input.closest(itemSelector) as HTMLElement
+
       item.classList.remove(editingClass)
       const fieldPath = input.name
+
       input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
       input.blur()
     }

@@ -27,6 +27,7 @@ describe('utilities', () => {
     test('should create a select structure from an array', () => {
       const array = ['Title', '*Group1', 'Option1', 'Option2', '*Group2', 'Option3']
       const result = makeSelect(array)
+
       expect(result).toEqual({
         title: 'Title',
         groups: [
@@ -41,6 +42,7 @@ describe('utilities', () => {
     test('should return a div with the given text', () => {
       const text = 'Sample Text'
       const result = utilities.horiz(text)
+
       expect(result).toBe("<div class='subtitle'>Sample Text</div>")
     })
   })
@@ -49,6 +51,7 @@ describe('utilities', () => {
     test.skip('should convert XML text to JSON', () => {
       const xmlText = '<root><child>value</child></root>'
       const result = utilities.xmlTextToJson(xmlText)
+
       expect(result).toEqual({ root: { child: 'value' } })
     })
   })
@@ -132,6 +135,7 @@ describe('utilities', () => {
     test.skip('should generate a unique ID', () => {
       const id1 = utilities.generateUniqueId()
       const id2 = utilities.generateUniqueId()
+
       expect(id1).not.toBe(id2)
     })
   })
@@ -141,6 +145,7 @@ describe('utilities', () => {
       const original = 'Hello, World!'
       const encoded = utilities.utoa(original)
       const decoded = utilities.atou(encoded)
+
       expect(decoded).toBe(original)
     })
   })
@@ -149,6 +154,7 @@ describe('utilities', () => {
     test('should convert array to object', () => {
       const array = ['a', 'b', 'c']
       const result = utilities.arrayToObject(array, 2)
+
       expect(result).toEqual({ '00': 'a', '01': 'b', '02': 'c' })
     })
   })
@@ -157,6 +163,7 @@ describe('utilities', () => {
     test('should convert object to array', () => {
       const object = { '00': 'a', '01': 'b', '02': 'c' }
       const result = utilities.objectToArray(object)
+
       expect(result).toEqual(['a', 'b', 'c'])
     })
   })
@@ -201,6 +208,7 @@ describe('utilities', () => {
   describe('diceToFormula', () => {
     test('should convert dice object to formula string', () => {
       const dice = { dice: 2, adds: -1 }
+
       expect(utilities.diceToFormula(dice, '[flavor]')).toBe('2d6[flavor]-1')
     })
   })
@@ -214,7 +222,7 @@ describe('utilities', () => {
   describe('locateToken', () => {
     beforeAll(() => {
       // @ts-expect-error: global.canvas is used for testing purposes
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
       global.canvas = {
         tokens: {
           placeables: [
@@ -227,21 +235,25 @@ describe('utilities', () => {
 
     test('should locate token by ID', () => {
       const result = utilities.locateToken('token1')
+
       expect(result).toEqual([{ id: 'token1', name: 'Token One', actor: { id: 'actor1', name: 'Actor One' } }])
     })
 
     test('should locate token by actor ID', () => {
       const result = utilities.locateToken('actor2')
+
       expect(result).toEqual([{ id: 'token2', name: 'Token Two', actor: { id: 'actor2', name: 'Actor Two' } }])
     })
 
     test('should locate token by name', () => {
       const result = utilities.locateToken('Token One')
+
       expect(result).toEqual([{ id: 'token1', name: 'Token One', actor: { id: 'actor1', name: 'Actor One' } }])
     })
 
     test('should locate token by actor name', () => {
       const result = utilities.locateToken('Actor Two')
+
       expect(result).toEqual([{ id: 'token2', name: 'Token Two', actor: { id: 'actor2', name: 'Actor Two' } }])
     })
   })
@@ -250,6 +262,7 @@ describe('utilities', () => {
     test('should sanitize string for parsing', () => {
       const input = 'Hello &amp; World &minus; &plus; &times; <b>bold</b>'
       const output = 'Hello & World - + x bold'
+
       expect(utilities.sanitize(input)).toBe(output)
     })
   })
@@ -257,8 +270,10 @@ describe('utilities', () => {
   describe('wait', () => {
     test('should wait for specified time', async () => {
       const start = Date.now()
+
       await utilities.wait(100)
       const end = Date.now()
+
       expect(end - start).toBeGreaterThanOrEqual(100)
     })
   })
@@ -266,6 +281,7 @@ describe('utilities', () => {
   describe('makeElementDraggable', () => {
     test.skip('should make element draggable', () => {
       const element = document.createElement('div')
+
       utilities.makeElementDraggable(element, 'type', 'cssClass', { data: 'payload' }, undefined, [0, 0])
       expect(element.getAttribute('draggable')).toBe('true')
     })
@@ -275,6 +291,7 @@ describe('utilities', () => {
     test('should convert array buffer to base64 string', () => {
       const buffer = new TextEncoder().encode('Hello, World!')
       const result = utilities.arrayBuffertoBase64(buffer)
+
       expect(result).toBe('Hello, World!')
     })
   })
@@ -282,31 +299,37 @@ describe('utilities', () => {
   describe('quotedAttackName', () => {
     test('should return quoted attack name', () => {
       const item = { name: 'Attack', mode: 'Mode' }
+
       expect(utilities.quotedAttackName(item)).toBe(`"Attack (Mode)"`)
     })
 
     test('should return quoted attack name without mode', () => {
       const item = { name: 'Attack' }
+
       expect(utilities.quotedAttackName(item)).toBe(`"Attack"`)
     })
 
     test('should handle quoted item name', () => {
       const item = { name: 'Sword "Saethors Bane"' }
+
       expect(utilities.quotedAttackName(item)).toBe(`'Sword "Saethors Bane"'`)
     })
 
     test('should handle single quotes in item name', () => {
       const item = { name: "Sword 'Saethors Bane'" }
+
       expect(utilities.quotedAttackName(item)).toBe(`"Sword 'Saethors Bane'"`)
     })
 
     test('should handle mixed quotes in item name', () => {
       const item = { name: `Sword "Saethor's Bane"` }
+
       expect(utilities.quotedAttackName(item)).toBe(`'Sword "Saethor\\'s Bane"'`)
     })
 
     test('Dashes in Ranged Weapon names used as Modifiers', () => {
       const item = { name: `AK-98` }
+
       expect(utilities.quotedAttackName(item)).toBe(`"AK-98"`)
     })
   })

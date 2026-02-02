@@ -202,7 +202,7 @@ $attack-columns: 1fr 60px 36px 90px 50px 55px 50px;
     border-bottom: none;
   }
 
-  >span:not(:first-child) {
+  > span:not(:first-child) {
     text-align: center;
   }
 
@@ -260,7 +260,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 .ms-enc-header {
   @include grid-header($encumbrance-columns);
 
-  >span {
+  > span {
     padding: var(--ms-space-4) var(--ms-space-3);
     text-align: center;
   }
@@ -282,7 +282,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
     @include interactive-row;
   }
 
-  >span {
+  > span {
     padding: var(--ms-space-3);
     text-align: center;
   }
@@ -455,7 +455,7 @@ $locations-columns: 50px 1fr 60px 60px;
 .ms-loc-header {
   @include grid-header($locations-columns);
 
-  >span {
+  > span {
     padding: var(--ms-space-4) var(--ms-space-3);
     text-align: center;
   }
@@ -468,7 +468,7 @@ $locations-columns: 50px 1fr 60px 60px;
   border-bottom: 1px solid var(--ms-border-light);
   @include zebra-striping;
 
-  >span {
+  > span {
     padding: var(--ms-space-2) var(--ms-space-3);
     text-align: center;
   }
@@ -555,7 +555,7 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   padding-left: 0;
   padding-right: 0;
 
-  >span {
+  > span {
     padding: var(--ms-space-4) var(--ms-space-2);
   }
 }
@@ -570,7 +570,7 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   @include zebra-striping;
   @include interactive-row;
 
-  >span {
+  > span {
     padding: var(--ms-space-3) var(--ms-space-2);
   }
 }

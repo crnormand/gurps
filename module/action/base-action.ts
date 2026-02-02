@@ -1,8 +1,12 @@
 import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
+
 import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
+
 import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
+
 import { AnyObject } from 'fvtt-types/utils'
+
 import { GurpsItemV2 } from 'module/item/gurps-item.js'
 
 class BaseAction<

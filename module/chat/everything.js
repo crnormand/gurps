@@ -2,6 +2,7 @@
 
 import { parselink } from '../../lib/parselink.js'
 import { isNiceDiceEnabled, splitArgs } from '../../lib/utilities.js'
+
 import ChatProcessor from './chat-processor.js'
 
 export class EveryoneAChatProcessor extends ChatProcessor {
@@ -14,6 +15,7 @@ export class EveryoneAChatProcessor extends ChatProcessor {
 
   matches(line) {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) reset/i)
+
     return !!this.match
   }
   usagematches(line) {
@@ -26,16 +28,20 @@ export class EveryoneAChatProcessor extends ChatProcessor {
   async process(line) {
     let m = this.match
     let any = false
+
     for (const t of canvas.tokens.ownedTokens) {
       let actor = t.actor
+
       if (actor.hasPlayerOwner) {
         any = true
         let attr = m[2].toUpperCase()
         let max = actor.system[attr].max
+
         await actor.update({ ['system.' + attr + '.value']: max })
         this.priv(`${actor.displayname} ${attr} reset to ${max}`)
       }
     }
+
     if (!any) this.priv(`There are no player owned characters!`)
   }
 }
@@ -50,6 +56,7 @@ export class EveryoneBChatProcessor extends ChatProcessor {
 
   matches(line) {
     this.match = line.match(/^\/(everyone|ev) \[(.*)\]/i)
+
     return !!this.match
   }
 
@@ -57,17 +64,21 @@ export class EveryoneBChatProcessor extends ChatProcessor {
     let m = this.match
     let any = false
     let action = parselink(m[2].trim())
-    if (!!action.action) {
+
+    if (action.action) {
       if (!['modifier', 'chat', 'pdf'].includes(action.action.type)) {
         for (const t of canvas.tokens.ownedTokens) {
           let actor = t.actor
+
           if (actor.hasPlayerOwner) {
             any = true
             let event = { data: {} }
+
             event.blind = this.msgs().quiet
             await GURPS.performAction(action.action, actor, event)
           }
         }
+
         if (!any) this.priv(`There are no player owned characters!`)
       } else this.priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`)
     } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`)
@@ -85,15 +96,19 @@ export class EveryoneCChatProcessor extends ChatProcessor {
   matches(line) {
     // /everyone +1 fp or /everyone -2d-1 fp
     this.match = line.match(/^\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i)
+
     return !!this.match
   }
 
   async process(line) {
     let m = this.match
+
     if (!!m[3] || !!m[4]) {
       let any = false
+
       for (const t of canvas.tokens.ownedTokens) {
         let actor = t.actor
+
         if (actor.hasPlayerOwner) {
           any = true
           let mod = m[4] || ''
@@ -102,17 +117,21 @@ export class EveryoneCChatProcessor extends ChatProcessor {
           let txt = ''
           let attr = m[2].toUpperCase()
 
-          if (!!dice) {
+          if (dice) {
             let sign = dice[0] == '-' ? -1 : 1
             let d = dice.match(/[+-](\d+)d(\d*)/)
-            let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/ev ${attr}]`
+            let r = d[1] + 'd' + (d[2] ? d[2] : '6') + `[/ev ${attr}]`
             let roll = Roll.create(r)
+
             await roll.evaluate()
+
             if (isNiceDiceEnabled()) {
               let throws = []
               let dc = []
+
               roll.dice.forEach(die => {
                 let type = 'd' + die.faces
+
                 die.results.forEach(s =>
                   dc.push({
                     result: s.result,
@@ -124,42 +143,52 @@ export class EveryoneCChatProcessor extends ChatProcessor {
                 )
               })
               throws.push({ dice: dc })
+
               if (dc.length > 0) {
                 // The user made a "multi-damage" roll... let them see the dice!
                 // @ts-ignore
                 game.dice3d.show({ throws: throws })
               }
             }
+
             value = roll.total
-            if (!!mod)
+            if (mod)
               if (isNaN(mod)) {
                 ui.notifications.warn(`Unrecognized format for '${line}'`)
+
                 return
               } else value += parseInt(mod)
-            value = Math.max(value, !!m[5] ? 1 : 0)
+            value = Math.max(value, m[5] ? 1 : 0)
             value *= sign
             txt = `(${value}) `
           }
+
           let cur = actor.system[attr].value
           let newval = parseInt(value)
+
           if (isNaN(newval)) {
             // only happens on =10
             newval = parseInt(value.substr(1))
+
             if (isNaN(newval)) {
               ui.notifications.warn(`Unrecognized format for '${line}'`)
+
               return
             }
           } else newval += cur
           let mtxt = ''
           let max = actor.system[attr].max
+
           if (newval > max) {
             newval = max
             mtxt = `(max: ${max})`
           }
+
           await actor.update({ ['system.' + attr + '.value']: newval })
           this.priv(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
         }
       }
+
       if (!any) this.priv(`There are no player owned characters!`)
     } // Didn't provide dice or scalar, so maybe someone else wants to handle it
     else ui.notifications.warn(`There was no dice or number formula to apply '${line}'`)
@@ -176,6 +205,7 @@ export class RemoteChatProcessor extends ChatProcessor {
 
   matches(line) {
     this.match = line.match(/^\/(remote|rem) \[(.*)\](.*)/i)
+
     return !!this.match
   }
 
@@ -189,8 +219,10 @@ export class RemoteChatProcessor extends ChatProcessor {
   async process(line) {
     let m = this.match
     let action = parselink(m[2].trim())
-    if (!!action.action) {
-      let users = !!m[3] ? splitArgs(m[3]) : [] // empty array means everyone
+
+    if (action.action) {
+      let users = m[3] ? splitArgs(m[3]) : [] // empty array means everyone
+
       this.priv(line)
       game.socket.emit('system.gurps', {
         type: 'executeOtF',

@@ -1,4 +1,5 @@
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
+
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { SETTING_TRACKER_TEMPLATES } from './types.js'
 
@@ -77,6 +78,7 @@ export class ResourceTrackerManager extends FormApplication {
   static getAllTemplates() {
     const settings = game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES)
     const templates = objectToArray(settings || {})
+
     return templates
   }
 
@@ -87,11 +89,13 @@ export class ResourceTrackerManager extends FormApplication {
   static getMissingRequiredTemplates(currentTrackers) {
     const newTrackers = []
     const templates = ResourceTrackerManager.getAllTemplates().filter(t => t.autoapply)
+
     for (const template of templates) {
       if (!currentTrackers.some(t => t.name === template.tracker.name)) {
         newTrackers.push(template)
       }
     }
+
     return newTrackers
   }
 
@@ -121,7 +125,9 @@ export class ResourceTrackerManager extends FormApplication {
 
   getData(options) {
     const data = super.getData(options)
+
     data.templates = this._templates
+
     return data
   }
 
@@ -153,6 +159,7 @@ export class ResourceTrackerManager extends FormApplication {
 
     html.find('[name="delete-template"]').click(ev => {
       let index = $(ev.currentTarget).attr('data')
+
       this._templates.splice(index, 1)
       this.render(true)
     })
@@ -174,13 +181,15 @@ export class ResourceTrackerManager extends FormApplication {
                 (!!t.tracker.alias && t.tracker.alias === newTracker.alias)
             )
 
-          while (!!match) {
+          while (match) {
             if (this._templates.filter((_, i) => i !== index).some(t => t.tracker.name === newTracker.name)) {
               newTracker.name += ' (copy)'
             }
+
             if (this._templates.filter((_, i) => i !== index).some(t => t.tracker.alias === newTracker.alias)) {
               newTracker.alias += ' (copy)'
             }
+
             match = this._templates
               .filter((_, i) => i !== index)
               .some(
@@ -192,9 +201,11 @@ export class ResourceTrackerManager extends FormApplication {
 
           resolve(dialog._tracker)
         }
+
         dialog.close = () => {
           resolve(this._templates[index].tracker)
         }
+
         dialog.render(true)
       })
 
@@ -207,12 +218,14 @@ export class ResourceTrackerManager extends FormApplication {
     html.find('[name="autoapply"]').change(ev => {
       let index = parseInt($(ev.currentTarget).attr('data'))
       let value = ev.currentTarget.checked
+
       this._templates[index].autoapply = value
       this.render(true)
     })
 
     html.find('[name="initial-value"]').change(ev => {
       let index = parseInt($(ev.currentTarget).attr('data'))
+
       this._templates[index].initialValue = ev.currentTarget.value
     })
   }
@@ -223,13 +236,16 @@ export class ResourceTrackerManager extends FormApplication {
   async _updateObject() {
     // convert the array into an object:
     let data = arrayToObject(this._templates)
+
     game.settings.set(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, data)
 
     // remove all resources from the two objects:
     let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([k, v]) => !!v.resource)
+
     entries.forEach(([key, _]) => delete GURPS.DamageTables.woundModifiers[key])
     entries.forEach(([key, _]) => {
       let toDelete = Object.entries(GURPS.DamageTables.damageTypeMap).filter(([k, v]) => v === key)
+
       toDelete.forEach(([k, v]) => delete GURPS.DamageTables.damageTypeMap[k])
     })
 
@@ -238,6 +254,7 @@ export class ResourceTrackerManager extends FormApplication {
       .filter(it => !!it.tracker.isDamageType)
       .filter(it => !!it.tracker.alias)
       .map(it => it.tracker)
+
     resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
     resourceTrackers.forEach(
       it =>

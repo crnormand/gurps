@@ -125,6 +125,7 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     function returnNull() {
       if (forced) return new Length({ value: 0, unit: Length.Unit.Inch })
       console.error('Invalid length value', value)
+
       return null
     }
 
@@ -150,6 +151,7 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   static fromString(text: string, defaultUnits: LengthUnit, forced: boolean = false): Length | null {
     function returnNull() {
       if (forced) return new Length({ value: 0, unit: Length.Unit.Inch })
+
       // console.error('Invalid length string', text)
       return null
     }
@@ -160,7 +162,9 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
       for (const label of labels) {
         if (text.endsWith(label)) {
           const value = parseFloat(text.slice(0, -label.length).trim())
+
           if (isNaN(value)) return returnNull()
+
           return new Length({ value, unit: unit as LengthUnit })
         }
       }
@@ -169,14 +173,19 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     // Didn't match any of the units, so check for feet and inches
     const feetIndex = text.indexOf("'")
     const inchesIndex = text.indexOf('"')
+
     if (feetIndex === -1 && inchesIndex === -1) {
       // Didn't match that either so return the default units
       const value = parseFloat(text)
+
       if (isNaN(value)) return returnNull()
+
       return new Length({ value, unit: defaultUnits })
     }
+
     let feet = 0
     let inches = 0
+
     if (feetIndex !== -1) {
       feet = parseFloat(text.slice(0, feetIndex).trim())
       if (isNaN(feet)) return returnNull()
@@ -185,11 +194,14 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     if (inchesIndex !== -1) {
       if (feetIndex > inchesIndex) {
         console.error(`Invalid lenght string format: ${text}`)
+
         return returnNull()
       }
+
       inches = parseFloat(text.slice(feetIndex + 1, inchesIndex).trim())
       if (isNaN(inches)) return returnNull()
     }
+
     return new Length({ value: feet * 12 + inches, unit: Length.Unit.FeetAndInches })
   }
 
@@ -199,6 +211,7 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     for (const [unit, labels] of Object.entries(Length.UNIT_LABELS)) {
       if (labels.some(label => text.endsWith(label))) return unit as LengthUnit
     }
+
     return LengthUnit.Yard // Default to Inch if no unit is found
   }
 
@@ -208,9 +221,12 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     if (data.unit === Length.Unit.FeetAndInches) {
       const feet = Math.floor(data.value / 12)
       const inches = Math.round(data.value % 12)
+
       if (feet === 0) return `${inches}"`
+
       return `${feet}' ${inches}"`
     }
+
     return `${Math.round(data.value * Math.pow(10, Length.ROUNDING_PRECISION)) / Math.pow(10, Length.ROUNDING_PRECISION)} ${Length.UNIT_LABELS[data.unit][0]}`
   }
 

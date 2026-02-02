@@ -1,5 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { i18nFallback } from '../utilities/i18nFallback.js'
+
 import DamageChat from './damagechat.js'
 
 export async function rollDamage(
@@ -56,6 +57,7 @@ export async function rollDamage(
     if ($(document).find('.dialog-button.cancel').length > 0) {
       // Wait for the dialog to close.
       await new Promise(resolve => setTimeout(resolve, 500))
+
       // If there still is a cancel button, click it.
       for (const button of $(document).find('.dialog-button.cancel')) {
         console.log('clicking cancel button')
@@ -122,13 +124,16 @@ export async function rollDamage(
         action.extdamagetype,
         action.hitlocation
       )
+
       if (action.next) {
         return await GURPS.performAction(action.next, actor, event, targets)
       }
+
       return true
     } else {
       await GURPS.ModifierBucket.clear()
       GURPS.stopActions = true
+
       return false
     }
   } else {
@@ -142,9 +147,11 @@ export async function rollDamage(
       action.extdamagetype,
       action.hitlocation
     )
+
     if (action.next) {
       return await GURPS.performAction(action.next, actor, event, targets)
     }
+
     return true
   }
 }

@@ -1,5 +1,6 @@
-import { GurpsActorModernSheet, countItems } from './sheet.ts'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
+
+import { GurpsActorModernSheet, countItems } from './sheet.ts'
 import { isPostureOrManeuver } from './utils/effect.ts'
 
 interface NpcSheetData {
@@ -32,6 +33,7 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
   // @ts-expect-error - Template returns NPC sheet path which differs from parent
   override get template() {
     if (!game.user!.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+
     return 'systems/gurps/templates/actor/actor-npc-modern-sheet.hbs'
   }
 
@@ -60,9 +62,12 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
   override async _render(force?: boolean, options?: Application.RenderOptions): Promise<void> {
     const scrollContainer = this.element?.find('.ms-npc-body')[0]
     const scrollTop = scrollContainer?.scrollTop ?? 0
+
     await super._render(force, options)
+
     if (scrollTop > 0) {
       const newContainer = this.element?.find('.ms-npc-body')[0]
+
       if (newContainer) newContainer.scrollTop = scrollTop
     }
   }

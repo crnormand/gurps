@@ -133,6 +133,7 @@ describe('collectDeletions', () => {
     const result = collectDeletions(data, 'base')
 
     const paths = result.map(item => item.path)
+
     expect(paths).toEqual(['base.contains.00000', 'base.collapsed.00000', 'base'])
   })
 
@@ -209,6 +210,7 @@ describe('collectDeletions', () => {
     const result = collectDeletions(data, 'base')
 
     const itemids = result.map(item => item.itemid).filter(Boolean)
+
     expect(itemids).toContain('parent-item')
     expect(itemids).toContain('child-item-1')
     expect(itemids).toContain('child-item-2')

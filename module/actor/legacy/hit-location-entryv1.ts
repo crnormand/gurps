@@ -1,6 +1,8 @@
 import { HitLocationEntryV2 } from '../data/hit-location-entry.js'
+
 import fields = foundry.data.fields
 import DataModel = foundry.abstract.DataModel
+
 import { convertRangeTextToArray } from '../../utilities/text-utilties.js'
 
 class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
@@ -70,6 +72,7 @@ const hitLocationSchemaV1 = () => {
     role: new fields.StringField({ required: true, nullable: false, initial: '' }),
   }
 }
+
 type HitLocationSchemaV1 = ReturnType<typeof hitLocationSchemaV1>
 
 export { HitLocationEntryV1, type HitLocationSchemaV1 }

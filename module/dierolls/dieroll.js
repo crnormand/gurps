@@ -1,10 +1,12 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
+
 import { computePotentialHits } from './compute-potential-hits.js'
 
 export const rollData = target => {
   let targetColor, rollChance
+
   if (target < 6) {
     targetColor = '#b30000'
     rollChance = game.i18n.localize('GURPS.veryHardRoll')
@@ -21,6 +23,7 @@ export const rollData = target => {
     targetColor = '#0a8d0a'
     rollChance = game.i18n.localize('GURPS.veryEasyRoll')
   }
+
   return { targetColor, rollChance }
 }
 
@@ -46,6 +49,7 @@ export const rollData = target => {
 export const addBucketToDamage = (formula, addDamageType = true) => {
   let dice = undefined
   let value = undefined
+
   if (formula.match(/^(?<dice>\d+)d/)) {
     dice = parseInt(formula.match(/^(?<dice>\d+)d/).groups.dice)
   } else if (formula.match(/^(?<number>\d+)/)) {
@@ -72,11 +76,13 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
       newAdd -= 7
       dice += 2
     }
+
     while (newAdd >= 4) {
       newAdd -= 4
       dice += 1
     }
   }
+
   const plus = newAdd > 0 ? '+' : ''
   const addText = newAdd !== 0 ? newAdd : ''
   const minDamageText = hasMinDamage ? '! ' : ''
@@ -86,7 +92,9 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
   const multiplierText = multiplier ? `*${multiplier}` : ''
   const newDice =
     `${dice}d${plus}${addText}${multiplierText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
+
   console.debug(`addBucketToDamage: ${formula} => ${newDice}`)
+
   return newDice
 }
 
@@ -107,18 +115,22 @@ export async function doRoll({
   const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   let result = { canRoll: true, hasActions: true }
   let token
+
   if (actor instanceof Actor && action) {
     const actorTokens =
       canvas.tokens?.placeables.filter(t => {
         if (t.actor) return t.actor.id === actor.id
         ui.notifications?.warn(`Token is not linked to an actor [${t.id}]`)
+
         return false
       }) || []
+
     if (actorTokens.length === 1) {
       token = actorTokens[0]
     } else {
       token = getTokenForActor(actor)
     }
+
     result = await actor.canRoll(action, token, chatthing, optionalArgs.obj)
   }
 
@@ -130,6 +142,7 @@ export async function doRoll({
     for (const message of messages) {
       ui.notifications.warn(message)
     }
+
     return false
   }
 
@@ -138,19 +151,24 @@ export async function doRoll({
   const isAttributeOrCheckRoll = Object.keys(GURPS.PARSELINK_MAPPINGS).includes(
     chatthing.split('@').pop().slice(0, -1).toUpperCase()
   )
+
   if (actor instanceof Actor && (action || isAttributeOrCheckRoll) && taggedSettings.autoAdd) {
     // We need to clear all tagged modifiers from the bucket when user starts
     // a new targeted roll (for the same actor or another)
     await GURPS.ModifierBucket.clearTaggedModifiers()
+
     for (let mod of targetmods || []) {
       GURPS.ModifierBucket.addModifier(mod.mod, mod.desc || 'from action')
     }
+
     targetmods = []
     const isDamageRoll = await actor.addTaggedRollModifiers(chatthing, optionalArgs)
+
     if (isDamageRoll) {
       displayFormula = addBucketToDamage(formula)
       const currentSum = GURPS.ModifierBucket.currentSum()
       const signal = currentSum >= 0 ? '+' : ''
+
       bucketRoll = `(${signal}${currentSum})`
     }
   }
@@ -166,6 +184,7 @@ export async function doRoll({
     let totalMods = GURPS.ModifierBucket.currentSum()
     const operator = totalMods >= 0 ? '+' : '-'
     let totalRoll = origtarget + totalMods
+
     // Set min value 3 for targeted rolls
     totalRoll = Math.max(totalRoll, 3)
     totalMods = Math.abs(totalMods)
@@ -177,6 +196,7 @@ export async function doRoll({
     const itemImage = item?.img || ''
     let itemIcon, itemColor, rollType
     let targetRoll = targetData.name
+
     if (origtarget > 0) targetRoll += `-${origtarget}`
 
     let template = 'confirmation-roll.hbs'
@@ -193,9 +213,11 @@ export async function doRoll({
       originalFormula,
       otfDamageText,
       usingDiceAdd
+
     if (!action && !chatthing && targetData.name === formula) {
       template = 'confirmation-damage-roll.hbs'
       const damageOTFType = prefix.match(/\[(.+)]/)?.[1] || ''
+
       if (['thrust', 'swing', 'sw', 'thr'].includes(damageOTFType.toLowerCase())) {
         // Special Case: `[thrust]` and `[swing]` OTFs are formula based, not targeted rolls
         // We receive here the full dice formula, like 1d6+2, and we need to extract the dice + adds parts
@@ -211,8 +233,10 @@ export async function doRoll({
         damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
         usingDiceAdd = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
       }
+
       const dice = displayFormula.match(/\d+d/)?.[0] || ''
       const adds = displayFormula.match(/[+-]\d+/)?.[0] || ''
+
       simpleFormula = `${dice}${adds}`
       originalFormula = simpleFormula
       damageRoll = simpleFormula
@@ -227,8 +251,10 @@ export async function doRoll({
     const settingsUseMaxActions = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
     const dontShowMaxActions =
       settingsUseMaxActions === 'Disable' || (!result.isCombatant && settingsUseMaxActions === 'AllCombatant')
+
     if (settingsAllowAfterMaxActions !== 'Allow' && !dontShowMaxActions) {
       const canConsumeAction = actor.canConsumeAction(action, chatthing, optionalArgs.obj)
+
       consumeActionIcon = !result.hasActions
         ? '<i class="fas fa-exclamation"></i>'
         : canConsumeAction
@@ -258,6 +284,7 @@ export async function doRoll({
           itemColor = 'rgba(12,79,119)'
           rollType = game.i18n.localize('GURPS.ranged')
         }
+
         break
       case 'weapon-parry':
         itemIcon = 'fas fa-swords'
@@ -279,6 +306,7 @@ export async function doRoll({
           itemColor = '#6f63d9'
           rollType = game.i18n.localize('GURPS.spell')
         }
+
         break
       case 'controlroll':
         itemIcon = 'fas fa-head-side-gear'
@@ -288,6 +316,7 @@ export async function doRoll({
       case 'attribute':
         itemColor = '#620707'
         const ref = chatthing.split('@').pop().slice(0, -1)
+
         switch (ref) {
           case 'ST':
             itemIcon = 'fas fa-dumbbell'
@@ -339,12 +368,13 @@ export async function doRoll({
             break
           default:
             itemIcon = 'fas fa-dice'
-            rollType = !!targetData?.name
+            rollType = targetData?.name
               ? targetData.name
               : thing
                 ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1)
                 : formula
         }
+
         break
       default:
         itemIcon = 'fas fa-dice'
@@ -365,6 +395,7 @@ export async function doRoll({
 
     if ($(document).find('.dialog-button.cancel').length > 0) {
       await new Promise(resolve => setTimeout(resolve, 500))
+
       for (const button of $(document).find('.dialog-button.cancel')) {
         console.log('clicking cancel button')
         await button.click()
@@ -419,11 +450,12 @@ export async function doRoll({
       buttons: [
         {
           action: 'roll',
-          icon: !!optionalArgs.blind ? 'fas fa-eye-slash' : 'fas fa-dice',
-          label: !!optionalArgs.blind ? 'GURPS.blindRoll' : 'GURPS.roll',
+          icon: optionalArgs.blind ? 'fas fa-eye-slash' : 'fas fa-dice',
+          label: optionalArgs.blind ? 'GURPS.blindRoll' : 'GURPS.roll',
           default: true,
           callback: async (event, button, dialog) => {
             GURPS.stopActions = false
+
             return await _doRoll({
               actor,
               formula,
@@ -444,6 +476,7 @@ export async function doRoll({
           callback: async (event, button, dialog) => {
             await GURPS.ModifierBucket.clearTaggedModifiers()
             GURPS.stopActions = true
+
             return false
           },
         },
@@ -504,6 +537,7 @@ async function _doRoll({
 
   chatdata['targetmods'] = targetmods
   let multiples = [] // The roll results (to display the individual dice rolls)
+
   chatdata['multiples'] = multiples
 
   for (let m of targetmods) {
@@ -517,22 +551,28 @@ async function _doRoll({
     user: game.user.id,
     speaker: speaker,
   }
+
   if (optionalArgs.event?.data?.private) {
     messageData.whisper = [game.user.id]
   }
 
   let roll = null // Will be the Roll
+
   if (isTargeted) {
     // This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
     let finaltarget = parseInt(origtarget) + modifier
+
     if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
-    if (!!thing) {
+
+    if (thing) {
       //let flav = thing.replace(/\[.*\] */, '') // Flavor text cannot handle internal []
       const r1 = /\[/g
       const r2 = /\]/g
       let flav = thing.replaceAll(r1, '').replaceAll(r2, '') // Flavor text cannot handle internal []
+
       formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
     }
+
     roll = Roll.create(formula) // The formula will always be "3d6" for a "targetted" roll
     await roll.evaluate()
     let rtotal = roll.total
@@ -540,7 +580,7 @@ async function _doRoll({
     chatdata['showPlus'] = true
     chatdata['rtotal'] = rtotal
     chatdata['loaded'] = !!roll.isLoaded
-    chatdata['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result.toString()).join(',') : ''
+    chatdata['rolls'] = roll.dice[0] ? roll.dice[0].results.map(it => it.result.toString()).join(',') : ''
     chatdata['modifier'] = modifier
     chatdata['finaltarget'] = finaltarget
 
@@ -550,6 +590,7 @@ async function _doRoll({
       rtotal >= 18 || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0)
     let margin = finaltarget - rtotal
     let seventeen = rtotal >= 17
+
     failure = seventeen || margin < 0
 
     chatdata['isCritSuccess'] = isCritSuccess
@@ -566,6 +607,7 @@ async function _doRoll({
       /** @type {import('./compute-potential-hits.js').WeaponDescriptor} */
       const weapon = { recoil: optionalArgs.obj.rcl, rateOfFire: optionalArgs.obj.rof }
       const potentialHits = computePotentialHits(weapon, optionalArgs.shots, margin)
+
       chatdata['rof'] = potentialHits.rateOfFire
       chatdata['rcl'] = potentialHits.recoil
       chatdata['rofrcl'] = potentialHits.potentialHits
@@ -581,48 +623,59 @@ async function _doRoll({
       if (failure && optionalArgs.obj?.failotf) GURPS.executeOTF(optionalArgs.obj.failotf, optionalArgs.event)
       if (!failure && optionalArgs.obj?.passotf) GURPS.executeOTF(optionalArgs.obj.passotf, optionalArgs.event)
     }
+
     let r = {}
+
     r['rtotal'] = rtotal
     r['loaded'] = !!roll.isLoaded
-    r['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
+    r['rolls'] = roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
     multiples.push(r)
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
 
     let min = 0
+
     if (formula.slice(-1) === '!') {
       formula = formula.slice(0, -1)
       min = 1
     }
 
     let max = +optionalArgs.event?.data?.repeat || 1
+
     if (max > 1) chatdata['chatthing'] = 'x' + max
+
     for (let i = 0; i < max; i++) {
       roll = Roll.create(formula + `+${modifier}`)
       await roll.evaluate()
 
       let rtotal = roll.total
+
       if (rtotal < min) {
         rtotal = min
       }
 
       // ? if (rtotal == 1) thing = thing.replace('points', 'point')
       let r = {}
+
       r['rtotal'] = rtotal
       r['loaded'] = !!roll.isLoaded
-      r['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
+      r['rolls'] = roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
       multiples.push(r)
     }
+
     chatdata['modifier'] = modifier
   }
+
   chatdata['isBlind'] = !!(optionalArgs.blind || optionalArgs.event?.blind)
   if (isTargeted) GURPS.setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
 
   // For last, let's consume this action in Token
   const actorToken = canvas.tokens?.placeables.find(t => t.id === speaker.token)
-  if (!!actorToken) {
+
+  if (actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
+
     await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj, usingRapidStrike)
   }
 
@@ -635,6 +688,7 @@ async function _doRoll({
   messageData.rolls = [roll]
 
   let whoCanSeeDice = null
+
   if (optionalArgs.event?.shiftKey) {
     whoCanSeeDice = [game.user.id]
     messageData.whisper = [game.user.id]
@@ -642,6 +696,7 @@ async function _doRoll({
 
   let isCtrl = false
   let creatOptions = {}
+
   try {
     isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
   } catch {}
@@ -668,9 +723,11 @@ async function _doRoll({
     let messageData = {
       whisper: ids,
     }
+
     if (!failure && !!optionalArgs.action.truetext) messageData.content = optionalArgs.action.truetext
     if (failure && !!optionalArgs.action.falsetext) messageData.content = optionalArgs.action.falsetext
-    if (!!messageData.content) ChatMessage.create(messageData)
+    if (messageData.content) ChatMessage.create(messageData)
   }
+
   return !failure
 }

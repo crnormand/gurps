@@ -1,29 +1,30 @@
-import { AnyMutableObject } from 'fvtt-types/utils'
+import { BaseAction } from 'module/action/base-action.ts'
+import { DamageActionSchema } from 'module/actor/data/character-components.ts'
+import { CharacterModel } from 'module/actor/data/character.ts'
+import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
+import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
+import { GurpsCombatant } from 'module/combat/combatant.ts'
+import DamageChat from 'module/damage/damagechat.js'
+import { GurpsActiveEffect } from 'module/effects/active-effect.js'
+import { EquipmentModel } from 'module/item/data/equipment.ts'
+import { SkillModel } from 'module/item/data/skill.ts'
+import { SpellModel } from 'module/item/data/spell.ts'
+import { TraitModel } from 'module/item/data/trait.ts'
+import { GurpsItemV2 } from 'module/item/gurps-item.ts'
+import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
+import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
+import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
+import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
+import { GurpsToken } from 'module/token/gurps-token.ts'
+
+import { AnyMutableObject } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
+
 import { GurpsActor } from './module/actor/actor.js'
 import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
 import { GurpsToken } from './module/token/gurps-token.ts'
-
-import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
-import { GurpsCombatant } from 'module/combat/combatant.ts'
-import { GurpsToken } from 'module/token/gurps-token.ts'
-import { GurpsItemV2 } from 'module/item/gurps-item.ts'
-import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
-import { EquipmentModel } from 'module/item/data/equipment.ts'
-import { TraitModel } from 'module/item/data/trait.ts'
-import { SpellModel } from 'module/item/data/spell.ts'
-import { SkillModel } from 'module/item/data/skill.ts'
-import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
-import { CharacterModel } from 'module/actor/data/character.ts'
-import { GurpsActiveEffect } from 'module/effects/active-effect.js'
-import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
-import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
-import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
-import { BaseAction } from 'module/action/base-action.ts'
-import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
-import { DamageActionSchema } from 'module/actor/data/character-components.ts'
-import DamageChat from 'module/damage/damagechat.js'
 
 export {}
 
@@ -490,7 +491,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.use-foundry-items': boolean
     // TODO: Deprecated settings.
     'gurps.auto-ignore-qty': boolean
-    'gurps.basicsetpdf': String
+    'gurps.basicsetpdf': string
     'gurps.block-import': boolean
     'gurps.combat-apply-divisor': boolean
     'gurps.combat-blunt-trauma': boolean

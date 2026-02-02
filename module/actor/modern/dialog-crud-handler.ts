@@ -1,4 +1,5 @@
 import { GurpsActorV2 } from '../gurps-actor.ts'
+
 import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.ts'
 
 export function bindEquipmentCrudActions(
@@ -20,6 +21,7 @@ export function bindEquipmentCrudActions(
     newEquipment.save = true
     const payload = newEquipment.toItemData(actor, '')
     const [item] = await actor.createEmbeddedDocuments('Item', [payload] as never)
+
     newEquipment.itemid = (item as { _id: string })._id
 
     if (!newEquipment.uuid) {
@@ -27,6 +29,7 @@ export function bindEquipmentCrudActions(
     }
 
     const list = GURPS.decode<Record<string, EquipmentComponent>>(actor, path) || {}
+
     GURPS.put(list, foundry.utils.duplicate(newEquipment) as EquipmentComponent)
     await actor.internalUpdate({ [path]: list })
   })
@@ -98,6 +101,7 @@ export function bindNoteCrudActions(
     const target = event.currentTarget as HTMLElement
     const notePath = target.dataset.key ?? ''
     const noteData = foundry.utils.duplicate(GURPS.decode<NoteComponent>(actor, notePath))
+
     await sheet.editNotes(actor, notePath, noteData)
   })
 

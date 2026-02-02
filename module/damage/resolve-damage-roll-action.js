@@ -11,6 +11,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
       icon: 'fas fa-paper-plane',
       callback: (event, button, dialog) => {
         const rolls = button.form.elementsnumber?.valueAsNumber || 1
+
         return { rolls: rolls, action: 'send' }
       },
     })
@@ -55,12 +56,14 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
     case 'multiple': {
       const rolls = choice.rolls || 1
       let targets = Array.from({ length: rolls }, (_, i) => (i + 1).toString())
+
       if (isOtf) GurpsWiring.handleGurpslink(event, actor, { targets: targets })
       else GURPS.handleRoll(event, actor, { targets: targets })
       break
     }
     case 'combine': {
       const rolls = choice.rolls || 1
+
       if (isOtf) otf = multiplyDice(otf, rolls)
       if (isOtf) GurpsWiring.handleGurpslink(event, actor, { combined: rolls })
       else GURPS.handleRoll(event, actor, { combined: rolls })

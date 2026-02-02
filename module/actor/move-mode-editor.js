@@ -20,12 +20,15 @@ export default class MoveModeEditor extends Application {
 
   getData() {
     const sheetData = super.getData()
+
     sheetData.modes = this.actor.system.move
+
     return sheetData
   }
 
   get title() {
     let name = this.actor?.name || 'UNKNOWN'
+
     return game.i18n.format('GURPS.moveModeEditorTitle', { name: name })
   }
 
@@ -59,6 +62,7 @@ export default class MoveModeEditor extends Application {
 	*/
   async _updateMoveData(moveId, attrib, value) {
     let old = this.moveData[moveId]
+
     old[attrib] = value
     await this.actor.update({ [`system.move.${moveId}`]: old })
   }
@@ -71,6 +75,7 @@ export default class MoveModeEditor extends Application {
           // if 'other', don't trigger an update ... just display the hidden field
           if (value === 'other') {
             html.find(`#expand-contract-${key}`).removeClass('contracted')
+
             return
           }
 
@@ -78,6 +83,7 @@ export default class MoveModeEditor extends Application {
           html.find(`#expand-contract-${key}`).addClass('contracted')
           await this._updateMoveData(key, action, value)
         }
+
         break
 
       // change: action [value] key [00000] value [6]
@@ -98,6 +104,7 @@ export default class MoveModeEditor extends Application {
       default:
         return
     }
+
     this.render(true)
   }
 
@@ -112,6 +119,7 @@ export default class MoveModeEditor extends Application {
         {
           // copy existing entries
           let move = {}
+
           for (const k in this.moveData)
             foundry.utils.setProperty(move, k, {
               mode: this.moveData[k].mode,
@@ -122,6 +130,7 @@ export default class MoveModeEditor extends Application {
 
           // add a new entry at the end.
           let empty = Object.values(this.moveData).length === 0
+
           GURPS.put(move, { mode: 'other', basic: 0, default: !!empty })
 
           // remove existing entries
@@ -130,29 +139,35 @@ export default class MoveModeEditor extends Application {
           // add the new entries
           await this.actor.update({ 'system.move': move })
         }
+
         break
 
       // click:  action [default] key [00000] value [on|off]
       case 'default':
         {
           let state = foundry.utils.getProperty(this.moveData, `${key}.default`)
+
           if (foundry.utils.getType(state) === 'string') state = state === 'true'
 
           // only handle changing from false to true
           if (!state) {
             let json = []
+
             // turn off everything whose key isn't 'k'
             for (const k in this.moveData) json.push(`"system.move.${k}.default": ${key === k}`)
             let text = '{ ' + json.join(',') + ' }'
+
             await this.actor.update(JSON.parse(text))
           }
         }
+
         break
 
       // click:  action [delete] key [00000] value [null]
       case 'delete':
         {
           let move = {}
+
           // Copy every entry except the one to delete.
           for (const k in this.moveData) {
             if (k !== key)
@@ -163,16 +178,19 @@ export default class MoveModeEditor extends Application {
                 default: this.moveData[k].default,
               })
           }
+
           // remove existing entries
           await this.actor.update({ 'system.-=move': null })
           // add the new entries
           await this.actor.update({ 'system.move': move })
         }
+
         break
 
       default:
         return
     }
+
     this.render(true)
   }
 }

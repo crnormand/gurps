@@ -1,9 +1,12 @@
-import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from '../actor-components.js'
-import { HitLocationEntryV1 } from './hit-location-entryv1.js'
 import { GurpsItemV2 } from 'module/item/gurps-item.js'
-import { AnyObject } from 'fvtt-types/utils'
-import { CanRollResult, CheckInfo } from '../types.js'
 import { TrackerInstance } from 'module/resource-tracker/resource-tracker.js'
+
+import { AnyObject } from 'fvtt-types/utils'
+
+import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from '../actor-components.js'
+import { CanRollResult, CheckInfo } from '../types.js'
+
+import { HitLocationEntryV1 } from './hit-location-entryv1.js'
 
 interface HitLocationRecord {
   id: string

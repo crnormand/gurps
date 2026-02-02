@@ -25,20 +25,24 @@ export const addQuickRollButton = async (html, combatant, token) => {
     event.stopPropagation()
 
     const clickedMenuId = $(this).data('combatant-id')
+
     $(`.${buttonClass}`).each(function () {
       const menuId = $(this).data('combatant-id')
+
       if (!!menuId && clickedMenuId !== menuId) {
         $(this).parents().siblings('.quick-roll-menu').hide()
       }
     })
 
     const menu = $(this).parents().siblings('.quick-roll-menu')
+
     menu.toggle()
 
     // Let the #combat-popout has the correct height based on opened menu
     if (menu.is(':visible')) {
       // Set menu top position to quick roll button position + offset
       const menuOffset = $(this).position().top + 40
+
       menu.css('top', `${menuOffset}px`)
 
       // Find the selected <li> element
@@ -52,6 +56,7 @@ export const addQuickRollButton = async (html, combatant, token) => {
       const menuHeight = menu.outerHeight(true)
       const trackerHeight = popout.outerHeight(true)
       const additionalHeight = lisBelow * selectedLi.outerHeight(true)
+
       popout.css('min-height', `${menuHeight + trackerHeight - additionalHeight}px`)
     } else {
       $('#combat-popout').css('min-height', `unset`).css('height', `auto`)
@@ -59,6 +64,7 @@ export const addQuickRollButton = async (html, combatant, token) => {
   })
 
   const combatantControlsDiv = $(html).find('.combatant-controls').first()
+
   combatantControlsDiv.prepend(quickRollButton)
 
   // Add Quick Roll Menu
@@ -78,6 +84,7 @@ export const addQuickRollButton = async (html, combatant, token) => {
     }
   )
   const quickMenu = $(quickRollMenu)
+
   $(html).append(quickMenu)
 
   return html
@@ -87,8 +94,10 @@ export const addQuickRollListeners = () => {
   const updateText = event => {
     // find all buttons and make the change
     const buttons = $(document).find('.quick-roll-button.sm.atk')
+
     buttons.each(function () {
       const attackValue = $(this).find('.qr-attack-value')
+
       if (event.ctrlKey) {
         attackValue.text($(this).data('damage'))
       } else {
@@ -107,6 +116,7 @@ export const addQuickRollListeners = () => {
       const combatant = game.combat.combatants.get(combatantId)
       const token = canvas.tokens.get(combatant.token.id)
       const actions = await TokenActions.fromToken(token)
+
       actions.blindAsDefault = !actions.blindAsDefault
       await actions.save()
       $(this)
@@ -130,6 +140,7 @@ export const addQuickRollListeners = () => {
     .on('mouseout', '.quick-roll-menu', function (event) {
       const button = $(this)
       const attackValue = button.find('.qr-attack-value')
+
       attackValue.text(button.data('skill'))
 
       $(document).off('keydown', updateText)

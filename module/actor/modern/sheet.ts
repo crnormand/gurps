@@ -1,15 +1,16 @@
-import { GurpsActorSheet } from '../actor-sheet.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
+import { GurpsActorSheet } from '../actor-sheet.js'
 import EffectPicker from '../effect-picker.js'
-import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.ts'
-import { bindCrudActions, bindModifierCrudActions } from './crud-handler.ts'
-import { entityConfigurations, modifierConfigurations } from './entity-config.ts'
-import { bindDropdownToggle } from './dropdown-handler.ts'
-import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
-import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
-import { isPostureOrManeuver } from './utils/effect.ts'
 import MoveModeEditor from '../move-mode-editor.js'
 import { ImportSettings } from '../../importer/index.ts'
+
+import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
+import { bindCrudActions, bindModifierCrudActions } from './crud-handler.ts'
+import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
+import { bindDropdownToggle } from './dropdown-handler.ts'
+import { entityConfigurations, modifierConfigurations } from './entity-config.ts'
+import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.ts'
+import { isPostureOrManeuver } from './utils/effect.ts'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -17,6 +18,7 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
   return Object.values(record).reduce((count, item) => {
     const nestedContains = item?.contains ? countItems(item.contains) : 0
     const nestedCollapsed = item?.collapsed ? countItems(item.collapsed) : 0
+
     return count + 1 + nestedContains + nestedCollapsed
   }, 0)
 }
@@ -50,6 +52,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   // @ts-expect-error - Template returns modern sheet path which extends base templates
   override get template() {
     if (!game.user!.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+
     return 'systems/gurps/templates/actor/actor-modern-sheet.hbs'
   }
 
@@ -89,9 +92,12 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   override async _render(force?: boolean, options?: Application.RenderOptions): Promise<void> {
     const scrollContainer = this.element?.find('.ms-body')[0]
     const scrollTop = scrollContainer?.scrollTop ?? 0
+
     await super._render(force, options)
+
     if (scrollTop > 0) {
       const newContainer = this.element?.find('.ms-body')[0]
+
       if (newContainer) newContainer.scrollTop = scrollTop
     }
   }
@@ -155,12 +161,14 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
               const input = form.elements.namedItem('i') as HTMLTextAreaElement
               const value = input.value
               // @ts-expect-error: Unknown system types for legacy actor model
+
               actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
             },
           },
         ],
       }).render({ force: true })
       const textarea = dialog.element.querySelector('textarea') as HTMLTextAreaElement
+
       textarea.addEventListener('drop', this.dropFoundryLinks.bind(this) as EventListener)
     }
 
@@ -223,11 +231,13 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       const target = event.currentTarget as HTMLElement
       const effectId = target.dataset.effectId ?? ''
       const effect = this.actor.effects.get(effectId)
+
       if (!effect) return
       const confirmed = await Dialog.confirm({
         title: game.i18n!.localize('GURPS.delete'),
         content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${effect.name}</strong>?</p>`,
       })
+
       if (confirmed) {
         await effect.delete()
       }
@@ -242,6 +252,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
         editMethod: (this[editMethodKey] as EntityConfigWithMethod['editMethod']).bind(this),
         createArgs: config.createArgs?.(),
       }
+
       bindCrudActions(html, this.actor, this, resolvedConfig)
     })
 

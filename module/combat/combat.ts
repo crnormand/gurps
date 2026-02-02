@@ -5,11 +5,14 @@ class GurpsCombat<SubType extends Combat.SubType = Combat.SubType> extends Comba
     user: User.Implementation
   ): Promise<boolean | void> {
     await super._preDelete(options, user)
+
     if (user.id === game.user?.id) {
       for (const combatant of this.combatants) {
         const tokenId = combatant.token?.id ?? null
+
         if (tokenId === null) continue
         const token = canvas?.tokens?.get(tokenId)
+
         if (token) {
           await token.removeManeuver()
         }

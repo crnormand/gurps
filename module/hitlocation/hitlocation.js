@@ -37,6 +37,7 @@ export class HitLocation {
     this.equipment = equipment
     this.penalty = penalty
     this.roll = roll
+
     return this
   }
 
@@ -421,7 +422,7 @@ export class HitLocation {
   }
 
   static translate(text) {
-    return !!translations[text] ? translations[text] : text
+    return translations[text] ? translations[text] : text
   }
 
   /**
@@ -433,8 +434,10 @@ export class HitLocation {
     if (!bodyplan) {
       bodyplan = HitLocation.HUMANOID
     }
+
     let table = hitlocationDictionary[bodyplan]
-    return !!table ? table : hitlocationDictionary[HitLocation.HUMANOID]
+
+    return table ? table : hitlocationDictionary[HitLocation.HUMANOID]
   }
 
   /**
@@ -448,11 +451,14 @@ export class HitLocation {
     var lbl, entry
     let re = /^([A-Za-z]+) *(\d+)/
     let m = where.match(re)
-    if (!!m) {
+
+    if (m) {
       let t = parseInt(m[2])
+
       Object.keys(table).forEach(e => {
         if (e.startsWith(m[1])) {
           let indexes = convertRollStringToArrayOfInt(e.split(' ')[1])
+
           if (indexes.includes(t)) {
             lbl = e
             entry = table[e]
@@ -460,11 +466,13 @@ export class HitLocation {
         }
       })
     }
+
     return [lbl, entry]
   }
 
   setEquipment(frmttext) {
     let e = extractP(frmttext)
+
     this.equipment = e.trim().replace('\n', ', ')
   }
 
@@ -476,6 +484,7 @@ export class HitLocation {
    */
   locations(includeself = false) {
     let entry = hitLocationAlias[this.where]
+
     if (!entry) {
       return [this]
     }
@@ -484,10 +493,12 @@ export class HitLocation {
     this.where = entry.RAW
 
     let locations = []
-    if (!!entry.prefix) {
+
+    if (entry.prefix) {
       if (includeself) locations.push(this)
       entry.prefix.forEach(it => {
         let location = new HitLocation()
+
         location.import = this.import
         location.dr = this.dr
         location.equipment = this.equipment
@@ -495,6 +506,7 @@ export class HitLocation {
         locations.push(location)
       })
     } else locations.push(this)
+
     return locations
   }
 }
@@ -502,11 +514,14 @@ export class HitLocation {
 export var getHitLocationTableNames = function () {
   let keys = []
   var last
+
   Object.keys(hitlocationDictionary).forEach(e => {
     let t = hitlocationDictionary[e]
+
     if (t != last) keys.push(e)
     last = t
   })
+
   return keys
 }
 

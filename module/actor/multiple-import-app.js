@@ -3,6 +3,7 @@ import { GurpsActorV2 } from './gurps-actor.js'
 
 export const AddMultipleImportButton = function (html) {
   const button = document.createElement('button')
+
   button.classList.add('mass-import')
   button.addEventListener('click', async () => {
     const dirHandle = await window.showDirectoryPicker()
@@ -25,9 +26,11 @@ export const AddMultipleImportButton = function (html) {
   })
 
   const icon = document.createElement('i')
+
   icon.classList.add('fa-solid', 'fa-file-import')
   button.appendChild(icon)
   const textNode = document.createTextNode(game.i18n.localize('GURPS.importMultiple'))
+
   button.appendChild(textNode)
 
   html.querySelector('.header-actions').append(button)
@@ -47,8 +50,10 @@ class MultipleImportApp extends Application {
       choices: { create: 'GURPS.importCreate', update: 'GURPS.importUpdate', replace: 'GURPS.importReplace' },
       files: [],
     }
+
     for (const ii in files) {
       const actor = game.actors.find(it => it.system.additionalresources.importname === files[ii])
+
       this.data.files.push({
         selected: false,
         file: files[ii],
@@ -99,22 +104,28 @@ class MultipleImportApp extends Application {
     switch (target.dataset.action) {
       case 'select-all':
         this.data.selectAll = isChecked
+
         for (const ii in this.data.files) {
           this.data.files[ii].selected = isChecked
         }
+
         return this.render(true)
 
       case 'select':
         this.data.files[index].selected = isChecked
+
         return this.render(true)
 
       case 'import': {
         // Import the selected files
         const selectedFiles = this.data.files.filter(it => it.selected)
+
         if (selectedFiles.length === 0) {
           return ui.notifications.error(game.i18n.localize('GURPS.importer.error.noFilesSelected'))
         }
+
         this._importFiles(selectedFiles)
+
         return this.close()
       }
 
@@ -132,7 +143,9 @@ class MultipleImportApp extends Application {
       const file = this.data.files[index]
 
       const value = target.value
+
       file.onImport = file.actor ? value : 'create'
+
       return this.render(true)
     }
   }
@@ -160,6 +173,7 @@ class MultipleImportApp extends Application {
 
       // Import the actor.
       const importer = new ActorImporter(actor)
+
       await importer.importActorFromExternalProgram(text, fileObject.name, await this.getDirectoryPath(this.dirHandle))
 
       // If Replace, delete the old actor.

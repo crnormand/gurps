@@ -1,9 +1,11 @@
 import * as Settings from '../lib/miscellaneous-settings.js'
 import { zeroFill } from '../lib/utilities.js'
+
 import { ImportSettings } from './importer/index.js'
 
 export const AddImportEquipmentButton = async function (html) {
   const button = document.createElement('button')
+
   button.classList.add('import-items')
   button.addEventListener('click', async () => {
     new foundry.applications.api.DialogV2({
@@ -19,10 +21,12 @@ export const AddImportEquipmentButton = async function (html) {
           default: true,
           callback: async (html, button, dialog) => {
             const files = button.form.elements.data.files
+
             if (!files.length) {
               return ui.notifications.error(game.i18n.localize('GURPS.noFile'))
             } else {
               const file = files[0]
+
               console.log(file)
               GURPS.readTextFromFile(file).then(text =>
                 ItemImporter.importItems(text, file.name.split('.').slice(0, -1).join('.'), file.path)
@@ -41,9 +45,11 @@ export const AddImportEquipmentButton = async function (html) {
   })
 
   const icon = document.createElement('i')
+
   icon.classList.add('fa-solid', 'fa-file-import')
   button.appendChild(icon)
   const textNode = document.createTextNode(game.i18n.localize('GURPS.itemImport'))
+
   button.appendChild(textNode)
 
   if (game.release.generation === 12) {
@@ -61,11 +67,13 @@ export class ItemImporter {
 
   static async importItems(text, filename, filepath) {
     let importer = new ItemImporter()
+
     importer._importItems(text, filename, filepath)
   }
 
   async _importItems(text, filename, filepath) {
     let j = {}
+
     try {
       j = JSON.parse(text)
     } catch {
@@ -88,6 +96,7 @@ export class ItemImporter {
 
     const compendiumName = filename.replace(/ /g, '_')
     let pack = game.packs.find(p => p.metadata.name === compendiumName)
+
     if (!pack)
       pack = await CompendiumCollection.createCompendium({
         type: 'Item',
@@ -96,10 +105,13 @@ export class ItemImporter {
         package: 'world',
       })
     let timestamp = new Date()
+
     ui.notifications.info('Importing Items from ' + filename + '...')
+
     for (let i of j.rows) {
       await this._importItem(i, pack, compendiumName, timestamp)
     }
+
     ui.notifications.info('Finished Importing ' + this.count + ' Items!')
   }
 
@@ -109,8 +121,10 @@ export class ItemImporter {
     }
 
     let value
-    if (!!i.calc?.extended_value) value = parseFloat(i.calc.extended_value)
+
+    if (i.calc?.extended_value) value = parseFloat(i.calc.extended_value)
     if (!value) value = this._getCostValue(i)
+
     return value
   }
 
@@ -124,8 +138,10 @@ export class ItemImporter {
     }
 
     let weight
-    if (!!i.calc?.extended_weight) weight = parseFloat(i.calc.extended_weight)
+
+    if (i.calc?.extended_weight) weight = parseFloat(i.calc.extended_weight)
     if (!weight) weight = this._getWeightValue(i)
+
     return weight
   }
 
@@ -136,10 +152,12 @@ export class ItemImporter {
   async _importItem(i, pack, filename, timestamp) {
     console.log('Importing Item: ', i.description)
     this.count++
+
     if (i.children?.length)
       for (let ch of i.children) {
         await this._importItem(ch, pack, filename, timestamp)
       }
+
     let itemData = {
       name: i.description,
       type: 'equipment',
@@ -157,10 +175,10 @@ export class ItemImporter {
           techlevel: i.tech_level || '',
           categories: i.categories || '',
           legalityclass: i.legality_class || '',
-          costsum: !!i.value ? parseFloat(i.value) : 0,
-          weightsum: !!i.weight ? parseFloat(i.weight) : 0,
-          uses: !!i.max_uses ? i.max_uses.toString() : '',
-          maxuses: !!i.max_uses ? i.max_uses.toString() : 0,
+          costsum: i.value ? parseFloat(i.value) : 0,
+          weightsum: i.weight ? parseFloat(i.weight) : 0,
+          uses: i.max_uses ? i.max_uses.toString() : '',
+          maxuses: i.max_uses ? i.max_uses.toString() : 0,
           last_import: timestamp,
           uuid: i.id,
         },
@@ -171,12 +189,15 @@ export class ItemImporter {
         carried: true,
       },
     }
+
     if (i.weapons?.length)
       for (let w of i.weapons) {
         let otf_list = []
+
         if (w.defaults)
           for (let d of w.defaults) {
-            let mod = !!d.modifier ? (d.modifier > -1 ? `+${d.modifier}` : d.modifier.toString()) : ''
+            let mod = d.modifier ? (d.modifier > -1 ? `+${d.modifier}` : d.modifier.toString()) : ''
+
             if (d.type === 'skill') {
               //otf_list.push(`S:${d.name.replace(/ /g, "*")}` + (d.specialization ? `*(${d.specialization.replace(/ /g, "*")})` : "") + mod);
               otf_list.push(`S:"${d.name}` + (d.specialization ? `*(${d.specialization})` : '') + '"' + mod)
@@ -200,6 +221,7 @@ export class ItemImporter {
               otf_list.push(d.type.replace('_', ' ') + mod)
             }
           }
+
         if (this.isMeleeWeapon(w)) {
           let wep = {
             block: w.block || '',
@@ -213,6 +235,7 @@ export class ItemImporter {
             st: w.strength || '',
             otf: otf_list.join('|') || '',
           }
+
           itemData.system.melee[zeroFill(Object.keys(itemData.system.melee).length + 1)] = wep
         } else if (this.isRangedWeapon(w)) {
           let wep = {
@@ -231,30 +254,38 @@ export class ItemImporter {
             st: w.strength,
             otf: otf_list.join('|') || '',
           }
+
           itemData.system.ranged[zeroFill(Object.keys(itemData.system.ranged).length + 1)] = wep
         }
       }
+
     let bonus_list = []
     let feat_list = []
+
     if (i.features?.length)
       for (let f of i.features) {
         feat_list.push(f)
       }
+
     if (i.modifiers?.length)
       for (let m of i.modifiers) {
         if (!m.disabled && m.features?.length)
           for (let f of m.features) {
             let clonedFeature = { ...f, modifier: true }
+
             feat_list.push(clonedFeature)
           }
       }
+
     if (feat_list.length)
       for (let f of feat_list) {
         let bonus = f.amount ? (f.amount > -1 ? `+${f.amount}` : f.amount.toString()) : ''
+
         if (f.type === 'attribute_bonus') {
           bonus_list.push(`${f.attribute} ${bonus}`)
         } else if (f.type === 'dr_bonus') {
           let locations = []
+
           // Handle modifiers like "Fortify" that don't have locations, but are applied to "this armor". In that case,
           // we create a DR bonus that applies to all locations that the other DR bonuses apply to.
           if (f.modifier && (!f.locations || f.locations.length === 0)) {
@@ -320,17 +351,23 @@ export class ItemImporter {
           }
         }
       }
+
     itemData.system.bonuses = bonus_list.join('\n')
     const cachedItems = []
+
     for (let i of pack.index) {
       cachedItems.push(await pack.getDocument(i._id))
     }
+
     let oi = await cachedItems.find(p => p.system.eqt.uuid === itemData.system.eqt.uuid)
-    if (!!oi) {
+
+    if (oi) {
       let oldData = foundry.utils.duplicate(oi)
       let newData = foundry.utils.duplicate(itemData)
+
       delete oldData.system.eqt.uuid
       delete newData.system.eqt.uuid
+
       if (oldData != newData) {
         return oi.update(newData)
       }
@@ -341,7 +378,9 @@ export class ItemImporter {
 
   _getTextAfterNthSpace(text, number) {
     const parts = text.split(' ')
+
     if (parts.length <= number) return ''
+
     return parts.slice(number).join(' ')
   }
 

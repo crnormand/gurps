@@ -1,6 +1,9 @@
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
+
 import fields = foundry.data.fields
+
 import { ItemComponent, ItemComponentSchema } from './component.js'
+
 import { AnyObject } from 'fvtt-types/utils'
 
 class EquipmentModel extends BaseItemModel<EquipmentSchema> {

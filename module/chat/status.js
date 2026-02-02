@@ -2,6 +2,7 @@
 
 import { locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
 import { GurpsActorV2 } from '../actor/gurps-actor.js'
+
 import ChatProcessor from './chat-processor.js'
 
 const Command = {
@@ -34,6 +35,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    */
   matches(line) {
     this.match = line.match(StatusChatProcessor.regex())
+
     return !!this.match
   }
 
@@ -54,38 +56,46 @@ export default class StatusChatProcessor extends ChatProcessor {
     let commandText = this.match.groups?.command
 
     let theCommand = Command[commandText]
+
     if (theCommand === Command.list) return this.priv(this.list())
 
     let self = this.match.groups?.target /* this.match[4] */ === '@self'
     let tokenName = !self && !!this.match.groups?.target ? this.match.groups.target.replace(/^:(.*)$/, '$1') : null
 
-    let tokens = !!tokenName ? this.getTokensFor(tokenName) : !!self ? this.getSelfTokens() : canvas.tokens?.controlled
+    let tokens = tokenName ? this.getTokensFor(tokenName) : self ? this.getSelfTokens() : canvas.tokens?.controlled
 
     if (!tokens || tokens.length === 0) {
       ui.notifications.warn(game.i18n.format('GURPS.chatSelectSelfOrNameTokens', { self: '@self' }))
+
       return
     }
 
     if (theCommand === Command.clear) return await this.clear(tokens)
 
     let effectText = this.match.groups?.name?.trim() //this.match[3]?.trim()
-    let effect = !!effectText ? this.findEffect(effectText) : null
+    let effect = effectText ? this.findEffect(effectText) : null
     let isStanding = false
+
     if (!effect) {
       if (!effectText) {
         ui.notifications.warn(game.i18n.localize('GURPS.chatNoStatusMatched'))
+
         return
       } else if (
         !effectText.match(new RegExp(makeRegexPatternFrom(GURPS.StatusEffectStanding), 'i')) &&
         !effectText.match(new RegExp(makeRegexPatternFrom(game.i18n.localize(GURPS.StatusEffectStandingLabel)), 'i'))
       ) {
         ui.notifications.warn(game.i18n.localize('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
+
         return
       }
+
       isStanding = true
     }
+
     if (this.match.groups?.data) {
       let data = JSON.parse(this.match.groups.data)
+
       data.duration.combat = game.combats?.active?.id
       foundry.utils.mergeObject(effect, data)
     }
@@ -95,8 +105,10 @@ export default class StatusChatProcessor extends ChatProcessor {
         for (const pid in GURPS.StatusEffect.getAllPostures()) {
           await this.unset(tokens, this.findEffect(pid))
         }
+
       return // can't toggle or unset standing
     }
+
     if (theCommand == Command.toggle) return await this.toggle(tokens, effect)
     else if (theCommand == Command.set) return await this.set(tokens, effect)
     else if (theCommand == Command.unset) return await this.unset(tokens, effect)
@@ -111,10 +123,13 @@ export default class StatusChatProcessor extends ChatProcessor {
     /** @type {EffectData[]} */
     let sortedEffects = []
     let effectIds = Object.values(CONFIG.statusEffects.map(it => game.i18n.localize(it.id)))
+
     effectIds.push(GURPS.StatusEffectStanding)
     effectIds.sort()
+
     for (const id of effectIds) {
       let effect = CONFIG.statusEffects.find(it => it.id === id)
+
       if (effect) {
         effect.posture = !!GURPS.StatusEffect.getAllPostures()[id] || id == GURPS.StatusEffectStanding
         sortedEffects.push(effect)
@@ -124,9 +139,11 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     sortedEffects.forEach(s => {
       let p = s.posture ? ' *' : ''
+
       html += `<tr><td>${s.id}</td><td>'${game.i18n.localize(s.name)}'${p}</td></tr>`
     })
     html += `<tr><td></td><td>* => ${game.i18n.localize('GURPS.modifierPosture')}</td></tr>`
+
     return html + '</table>'
   }
 
@@ -141,7 +158,9 @@ export default class StatusChatProcessor extends ChatProcessor {
         matches.length === 0 //
           ? game.i18n.format('GURPS.chatNoTokenFound', { name: name })
           : game.i18n.format('GURPS.chatMultipleTokensFound', { name: name })
+
       ui.notifications.warn(msg)
+
       return null
     }
 
@@ -150,6 +169,7 @@ export default class StatusChatProcessor extends ChatProcessor {
 
   getSelfTokens() {
     let list = canvas.tokens?.placeables.filter(it => it.owner)
+
     if (list && list.length === 1) return list
 
     list = canvas.tokens?.placeables.filter(it => it.actor == GURPS.LastActor)
@@ -159,7 +179,9 @@ export default class StatusChatProcessor extends ChatProcessor {
       list && list.length === 0
         ? game.i18n.localize('GURPS.chatNoOwnedTokenFound')
         : game.i18n.localize('GURPS.chatMultipleOwnedFound')
+
     ui.notifications.warn(msg)
+
     return null
   }
 
@@ -171,6 +193,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     let pattern = !statusText ? '.*' : new RegExp(makeRegexPatternFrom(statusText)) // Make string into a RegEx pattern
 
     let effect = null
+
     Object.values(CONFIG.statusEffects).forEach(s => {
       if (game.i18n.localize(s.name).match(pattern)) effect = s // match on name or id (shock1, shock2, etc.)
       if (s.id.match(pattern)) effect = s
@@ -188,6 +211,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     /** @type {GurpsActorV2} */
     // @ts-ignore
     let actor = token?.actor || game.actors?.get(token?.document.actorId)
+
     return actor.isEffectActive(effect)
     // return actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
   }
@@ -199,9 +223,10 @@ export default class StatusChatProcessor extends ChatProcessor {
    * @param {string} actionText
    */
   async toggleTokenEffect(token, effect, actionText) {
-    if (!!effect) {
+    if (effect) {
       await token.actor.toggleStatusEffect(effect.id)
       let actor = /** @type {GurpsActorV2} */ (token.actor)
+
       // TODO We need to turn this into a single string, instead of multiple localized strings concatenated.
       // This assumes an English-like word order, which may not apply to another language.
       this.prnt(

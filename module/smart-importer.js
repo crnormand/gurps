@@ -1,11 +1,14 @@
 import * as Settings from '../lib/miscellaneous-settings.js'
+
 import { UniversalFileHandler } from './file-handlers/universal-file-handler.js'
 
 export class SmartImporter {
   static async getFileForActor(actor) {
     const file = this.actorToFileMap.get(actor)
     const template = await getTemplate('systems/gurps/templates/import-gcs-or-gca.hbs')
+
     console.log(template)
+
     return (
       file ??
       (await UniversalFileHandler.getFile({
@@ -25,6 +28,7 @@ export class SmartImporter {
       game.i18n.localize('GURPS.importTraitToFoundryItem')
     // : game.i18n.localize('GURPS.importTraitToClassicData')
     const equipColor = /* useFoundryItems ? */ '#35713e' //: '#337bb7'
+
     return {
       title: game.i18n.localize('GURPS.importSelectFileTitle'),
       source: game.i18n.localize('GURPS.importSelectFileSource'),

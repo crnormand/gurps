@@ -58,7 +58,7 @@ class Maneuver {
     data.defense = data.defense || DEFENSE_ANY
     data.fullturn = !!data.fullturn
     data.icon = Maneuver.filepath + data.icon
-    data.alt = !!data.alt ? Maneuver.filepath + data.alt : null
+    data.alt = data.alt ? Maneuver.filepath + data.alt : null
     data.introducedBy = data.introducedBy ?? null
     this._data = data
   }
@@ -371,6 +371,7 @@ export default class Maneuvers {
     const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     const filter = []
+
     if (useOnTarget) {
       filter.push(MANEUVER_INTRODUCED_BY_ON_TARGET)
     }
@@ -380,6 +381,7 @@ export default class Maneuvers {
 
   static getAllData() {
     let data = {}
+
     for (const key in Maneuvers.getAll()) {
       // @ts-ignore
       data[key] = Maneuvers.getAll()[key].data

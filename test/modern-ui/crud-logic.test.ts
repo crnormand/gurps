@@ -31,6 +31,7 @@ describe('buildEntityPath', () => {
 describe('getDisplayName', () => {
   test('returns name property when present', () => {
     const obj = { name: 'Test Skill' }
+
     expect(getDisplayName(obj, 'name', 'GURPS.skill')).toBe('Test Skill')
   })
 
@@ -40,21 +41,25 @@ describe('getDisplayName', () => {
 
   test('returns fallback when property is missing', () => {
     const obj = { other: 'value' }
+
     expect(getDisplayName(obj, 'name', 'GURPS.skill')).toBe('GURPS.skill')
   })
 
   test('returns fallback when property is not a string', () => {
     const obj = { name: 123 }
+
     expect(getDisplayName(obj, 'name', 'GURPS.skill')).toBe('GURPS.skill')
   })
 
   test('uses custom display property', () => {
     const obj = { situation: 'When attacking' }
+
     expect(getDisplayName(obj, 'situation', 'GURPS.modifier')).toBe('When attacking')
   })
 
   test('returns empty string property value', () => {
     const obj = { name: '' }
+
     expect(getDisplayName(obj, 'name', 'GURPS.skill')).toBe('')
   })
 

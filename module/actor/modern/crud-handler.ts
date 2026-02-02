@@ -16,15 +16,18 @@ export async function openItemSheetIfFoundryItem(
   if (!(await (actor as ActorWithSanityCheck)._sanityCheckItemSettings(entityData))) return true
 
   let item = actor.items.get(entityData.itemid) as GurpsItemWithEditingActor | undefined
+
   if (!item) return false
 
   if (item.system?.fromItem) {
     item = actor.items.get(item.system.fromItem) as GurpsItemWithEditingActor | undefined
   }
+
   if (!item) return false
 
   item.editingActor = actor
   item.sheet?.render(true)
+
   return true
 }
 
@@ -40,6 +43,7 @@ export function getDisplayName(
   if (obj && typeof obj[displayProperty] === 'string') {
     return obj[displayProperty]
   }
+
   return game.i18n!.localize(fallbackLocaleKey)
 }
 
@@ -53,11 +57,13 @@ export async function confirmAndDelete(
     title: game.i18n!.localize('GURPS.delete'),
     content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
+
   if (confirmed) {
     // TODO: Update Actor.OfType with new methods in GurpsActor (_actor.js).
     // @ts-expect-error: waiting for methods to be updated.
     await actor.deleteEntry(key)
   }
+
   return confirmed ?? false
 }
 
@@ -74,10 +80,12 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
     const newEntity = createArgs ? new EntityClass(...createArgs) : new EntityClass(game.i18n!.localize(localeKey))
     const list = GURPS.decode<Record<string, EntityComponentBase>>(actor, path) || {}
     const key = GURPS.put(list, foundry.utils.duplicate(newEntity))
+
     await actor.internalUpdate({ [path]: list })
 
     const fullPath = buildEntityPath(path, key)
     const duplicatedEntity = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, fullPath))
+
     await editMethod.call(sheet, actor, fullPath, duplicatedEntity)
   })
 
@@ -100,6 +108,7 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
     const entityKey = target.dataset.key ?? ''
     const entityData = GURPS.decode<EntityComponentBase>(actor, entityKey)
     const displayValue = displayProperty === 'name' ? entityData?.name : entityData?.notes
+
     await confirmAndDelete(actor, entityKey, displayValue, localeKey)
   })
 }
@@ -122,10 +131,12 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     const newModifier = new ModifierClass('0', game.i18n!.localize(localeKey))
     const list = GURPS.decode<Record<string, ModifierComponent>>(actor, path) || {}
     const key = GURPS.put(list, foundry.utils.duplicate(newModifier))
+
     await actor.internalUpdate({ [path]: list })
 
     const fullPath = buildEntityPath(path, key)
     const duplicatedModifier = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, fullPath))
+
     await editMethod.call(sheet, actor, fullPath, duplicatedModifier, isReaction)
   })
 
@@ -135,6 +146,7 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     const target = event.currentTarget as HTMLElement
     const modifierPath = target.dataset.key ?? ''
     const modifierData = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, modifierPath))
+
     await editMethod.call(sheet, actor, modifierPath, modifierData, isReaction)
   })
 
@@ -144,6 +156,7 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     const target = event.currentTarget as HTMLElement
     const modifierKey = target.dataset.key ?? ''
     const modifierData = GURPS.decode<ModifierComponent>(actor, modifierKey)
+
     await confirmAndDelete(actor, modifierKey, modifierData?.situation, localeKey)
   })
 }

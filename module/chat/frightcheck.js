@@ -2,6 +2,7 @@
 
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
+
 import ChatProcessor from './chat-processor.js'
 
 export class FrightCheckChatProcessor extends ChatProcessor {
@@ -15,12 +16,14 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
   matches(line) {
     this.match = line.match(/^\/(fc|frightcheck)/)
+
     return !!this.match
   }
 
   async process(line) {
     if (!GURPS.LastActor) {
       ui.notifications.error('Please select a token/character.')
+
       return
     }
 
@@ -101,34 +104,40 @@ export class FrightCheckChatProcessor extends ChatProcessor {
   getCombatModifier(actor) {
     const combatReflexes = actor.findAdvantage(game.i18n.localize('GURPS.traits.combatReflexes'))
     const combatParalysis = actor.findAdvantage(game.i18n.localize('GURPS.traits.combatParalysis'))
+
     return combatReflexes ? 2 : combatParalysis ? -2 : 0
   }
 
   getFearModifier(actor) {
     const fearless = actor.findAdvantage(game.i18n.localize('GURPS.traits.fearlessness'))
     const fearful = actor.findAdvantage(game.i18n.localize('GURPS.traits.fearfulness'))
+
     return fearless ? fearless.level || 0 : fearful ? -fearful.level || 0 : 0
   }
 
   getCowardiceModifier(actor) {
     const cowardice = actor.findAdvantage(game.i18n.localize('GURPS.traits.cowardice'))
     const cr = cowardice ? cowardice.cr || 0 : 0
+
     if (cr === 0) return 0
     if (cr <= 6) return -4
     if (cr <= 9) return -3
     if (cr <= 12) return -2
     if (cr <= 15) return -1
+
     return 0
   }
 
   getXenophiliaModifier(actor) {
     const xenophilia = actor.findAdvantage(game.i18n.localize('GURPS.traits.xenophilia'))
     const cr = xenophilia ? xenophilia.cr || 0 : 0
+
     if (cr === 0) return 0
     if (cr <= 6) return 4
     if (cr <= 9) return 3
     if (cr <= 12) return 2
     if (cr <= 15) return 1
+
     return 0
   }
 
@@ -161,10 +170,12 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       '#mod1',
     ]
     let targetmods = []
+
     for (const id of selectIds) {
       //console.log(id)
       targetmods.push(this._getMod(html, id))
     }
+
     targetmods = targetmods.filter(it => it != null)
 
     let totalMod = targetmods.map(it => it.mod).reduce((a, b) => a + b, 0)
@@ -173,6 +184,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
     // true or false?
     let ruleOf14 = finaltarget > 13
+
     finaltarget = ruleOf14 ? 13 : finaltarget
 
     let tblname = html.querySelector('#tblname').value
@@ -180,6 +192,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     if (table) game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, table.name)
 
     let roll = Roll.create('3d6[Fright Check]')
+
     await roll.evaluate()
 
     let margin = finaltarget - roll.total
@@ -208,11 +221,14 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       rollMode: game.settings.get('core', 'rollMode'),
     }).then(async html => {
       GURPS.setLastTargetedRoll({ margin: -margin }, actor)
+
       if (failure) {
         // Draw results using a custom roll formula. Use the negated margin for the rolltable only
         let tableRoll = Roll.create(`3d6[Fright Check table roll] + @margin`)
+
         if (!table) {
           ui.notifications.error('No Rollable Table found for ' + tblname)
+
           return
         }
 
@@ -223,17 +239,21 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
   _getMod(html, id) {
     let mod = html.querySelector(id)
+
     if (mod.type === 'select' || mod.type === 'select-one') {
       if (parseInt(mod.value, 10) === 0) return null
+
       return { mod: parseInt(mod.value, 10), desc: mod.options[mod.selectedIndex].text }
     } else if (mod.type === 'checkbox') {
       if (mod.checked) {
         let label = html.querySelector(`label[for="${mod.id}"]`).innerText
+
         return { mod: parseInt(mod.value, 10), desc: label }
       }
     } else if (mod.type === 'number') {
       if (parseInt(mod.value, 10) === 0) return null
       let label = html.querySelector(`label[for="${mod.id}"]`).innerText
+
       return { mod: parseInt(mod.value, 10), desc: label }
     }
 
@@ -243,6 +263,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
   _findFrightCheckTable(tblname) {
     let pat = new RegExp(makeRegexPatternFrom(tblname, false), 'i')
     let tables = game.tables.contents.filter(t => t.name.match(pat))
+
     if (tables.length == 0) {
       ui.notifications.error("No table found for '" + tblname + "'")
     } else if (tables.length > 1) {
@@ -250,6 +271,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     } else {
       return tables[0]
     }
+
     return null
   }
 }

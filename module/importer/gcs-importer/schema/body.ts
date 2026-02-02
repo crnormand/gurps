@@ -1,4 +1,5 @@
 import fields = foundry.data.fields
+
 import { GcsElement } from './base.js'
 
 class GcsHitLocation extends GcsElement<GcsHitLocationData> {
@@ -13,9 +14,11 @@ class GcsHitLocation extends GcsElement<GcsHitLocationData> {
         return GcsHitLocation.importSchema(subTableData, GcsHitLocation.defineSchema())
       })
     }
+
     if (name === 'dr') {
       return data // NOTE: this is a plain object of numbers, no real issue just importing it as is
     }
+
     return super._importField(data, field, name)
   }
 }
@@ -60,6 +63,7 @@ class GcsBody extends GcsElement<GcsBodyData> {
         return GcsHitLocation.importSchema(locationData, GcsHitLocation.defineSchema())
       })
     }
+
     return super._importField(data, field, name)
   }
 }

@@ -1,4 +1,5 @@
 import { atou } from '../lib/utilities.js'
+
 import GurpsWiring from './gurps-wiring.js'
 
 export default class GurpsJournalEntry {
@@ -28,6 +29,7 @@ export default class GurpsJournalEntry {
       if (html instanceof HTMLElement) html = $(html)
 
       let h = html.parent().find('.journal-page-content')
+
       if (!!h && h.length > 0) {
         GurpsWiring.hookupAllEvents(html)
 
@@ -35,20 +37,28 @@ export default class GurpsJournalEntry {
           event.preventDefault()
           if (event.originalEvent) event = event.originalEvent
           const data = JSON.parse(event.dataTransfer.getData('text/plain'))
+
           if (!!data && !!data.otf) {
             let cmd = ''
-            if (!!data.encodedAction) {
+
+            if (data.encodedAction) {
               let action = JSON.parse(atou(data.encodedAction))
+
               if (action.quiet) cmd += '!'
             }
+
             cmd += data.otf
-            if (!!data.displayname) {
+
+            if (data.displayname) {
               let q = '"'
+
               if (data.displayname.includes('"')) q = "'"
               cmd = "'" + data.displayname + "'" + cmd
             }
+
             cmd = '[' + cmd + ']'
             let content = app.document.text.content
+
             if (content) cmd = '<br>' + cmd
             app.document.update({ 'text.content': content + cmd })
           }
