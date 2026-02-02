@@ -7,6 +7,7 @@ import {
   arrayToObject,
   atou,
   d6ify,
+  displayAsDice,
   flattenContainedList,
   makeRegexPatternFrom,
   objectToArray,
@@ -1876,6 +1877,7 @@ if (!globalThis.GURPS) {
   GURPS.recurselist = recurselist
   GURPS.flattenContainedList = flattenContainedList
   GURPS.parselink = parselink
+  GURPS.displayAsDice = displayAsDice
 
   /* -------------------------------------------- */
   /*  Foundry VTT Initialization                  */
