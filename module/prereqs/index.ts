@@ -78,7 +78,6 @@ export {
   SpellPrereq,
   TraitPrereq,
   PrereqClasses,
-  init,
 }
 
 export type { AnyPrereq, AnyPrereqClass, Prereq, PrereqClass }
