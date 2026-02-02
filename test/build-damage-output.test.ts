@@ -1,6 +1,17 @@
+import { spyOn } from 'jest-mock'
 import { buildDamageOutputGCS } from '../module/utilities/import-utilities.ts'
 
 describe('buildDamageOutput', () => {
+  beforeEach(() => {
+    // Mock game settings
+    spyOn(game.settings!, 'get').mockImplementation((systemName: string, settingName: string) => {
+      if (systemName === GURPS.SYSTEM_NAME && settingName === 'auto-update-strength') {
+        return true // Enable auto-update-strength for tests
+      }
+      return null
+    })
+  })
+
   describe('when damage.st is not "thr" or "sw"', () => {
     test('should return calc.damage when available', () => {
       const weapon = {
@@ -141,6 +152,25 @@ describe('buildDamageOutput', () => {
         }
         expect(buildDamageOutputGCS(weapon)).toBe(`thr+1 ${type}`)
       })
+    })
+  })
+
+  describe('when weapon.damage is not equal to weapon.calc.damage', () => {
+    test('should handle thrust weapon damage with a bonus', () => {
+      const weapon = {
+        damage: {
+          st: 'thr',
+          base: '2',
+          type: 'imp',
+        },
+        calc: { damage: '1d+4 imp' },
+      }
+      const attributes = {
+        thrust: '1d+1',
+        swing: '2d+2',
+      }
+
+      expect(buildDamageOutputGCS(weapon, attributes)).toBe('thr+3 imp')
     })
   })
 

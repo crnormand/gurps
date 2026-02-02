@@ -1,16 +1,38 @@
+import { GcsDice } from '../../lib/gcs/dice.js'
+
 /**
  * Build damage output string from weapon data
  * @param {object} weapon - Weapon object with damage properties
  * @returns {string} Formatted damage string
  */
-export function buildDamageOutputGCS(weapon: Record<string, any> | null | undefined): string {
+export function buildDamageOutputGCS(
+  weapon: Record<string, any> | null | undefined,
+  attributes?: Record<string, any> | null | undefined
+): string {
+  if (!game.settings!.get(GURPS.SYSTEM_NAME, 'auto-update-strength')) {
+    return weapon?.calc?.damage || ''
+  }
+
   if (!weapon?.damage?.st || !['thr', 'sw'].includes(weapon.damage.st)) return weapon?.calc?.damage || ''
 
+  if (!!attributes && !!attributes.thrust && !!attributes.swing) {
+    const damage = weapon?.calc?.damage.replace(weapon.damage.type, '').trim()
+
+    const calcDamage = GcsDice.fromString(damage || '')
+    const modifier = parseInt(weapon.damage?.base || '0')
+    const thrustDamage = GcsDice.fromString(attributes.thrust)
+    const swingDamage = GcsDice.fromString(attributes.swing)
+    const weaponDamage = weapon.damage.st === 'thr' ? thrustDamage.add(modifier) : swingDamage.add(modifier)
+
+    // This is the bonus to add to derived damage to make it equal weaponDamage.
+    const diff = calcDamage.difference(weaponDamage)
+    const finalModifier = modifier + diff
+    const sign = finalModifier <= 0 ? '' : '+'
+    return `${weapon.damage.st}${sign}${finalModifier === 0 ? '' : finalModifier} ${weapon.damage.type}`
+  }
+
   const modifier = parseInt(weapon.damage?.base || '0')
-
-  // If modifier is NaN, fall back to calc.damage
   if (isNaN(modifier)) return weapon?.calc?.damage || ''
-
   const sign = modifier <= 0 ? '' : '+'
 
   return `${weapon.damage.st}${sign}${modifier === 0 ? '' : modifier} ${weapon.damage.type}`
@@ -32,6 +54,10 @@ export const readXmlText = (value: XmlTextLike): string => {
  */
 export function buildDamageOutputGCA(mode: Record<string, any> | null | undefined): string {
   if (!mode) return ''
+
+  if (!game.settings!.get(GURPS.SYSTEM_NAME, 'auto-update-strength')) {
+    return readXmlText(mode.damage)
+  }
 
   const direct = readXmlText(mode.unmodifiedDamage)
   if (direct.toLowerCase().match(/^(sw|thr)[ +-]/)) return direct

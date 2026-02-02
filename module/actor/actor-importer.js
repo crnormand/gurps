@@ -202,7 +202,7 @@ export class ActorImporter {
       commit = { ...commit, ...this.importReactionsFromGCS(r.traits || r.advantages || [], r.skills, r.equipment) }
       commit = {
         ...commit,
-        ...this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment),
+        ...this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment, r.attributes),
       }
     } catch (err) {
       console.log(err.stack)
@@ -2233,7 +2233,7 @@ export class ActorImporter {
     }
   }
 
-  importCombatFromGCS(ads, skills, spells, equipment) {
+  importCombatFromGCS(ads, skills, spells, equipment, attributes) {
     let melee = {}
     let ranged = {}
     let m_index = 0
@@ -2261,7 +2261,7 @@ export class ActorImporter {
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
             m.import = w.calc?.level?.toString() || '0'
-            m.damage = buildDamageOutputGCS(w)
+            m.damage = buildDamageOutputGCS(w, attributes)
             m.reach = w.reach || ''
             m.parry = w.calc?.parry || ''
             m.block = w.calc?.block || ''
@@ -2282,7 +2282,7 @@ export class ActorImporter {
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
             r.import = w.calc?.level || '0'
-            r.damage = buildDamageOutputGCS(w)
+            r.damage = buildDamageOutputGCS(w, attributes)
             r.acc = w.accuracy || ''
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
