@@ -18,6 +18,7 @@ function init() {
   console.log('GURPS | Initializing GURPS Action module.')
   // @ts-expect-error: Invalid type
   GURPS.CONFIG ||= {}
+
   GURPS.CONFIG.Action = {
     meleeAttack: {
       // TODO: localize
