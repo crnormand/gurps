@@ -25,6 +25,14 @@ import { entityConfigurations, modifierConfigurations } from './entity-config.ts
 import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.ts'
 import { isPostureOrManeuver } from './utils/effect.ts'
 
+import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
+import { bindCrudActions, bindModifierCrudActions } from './crud-handler.ts'
+import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
+import { bindDropdownToggle } from './dropdown-handler.ts'
+import { entityConfigurations, modifierConfigurations } from './entity-config.ts'
+import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.ts'
+import { isPostureOrManeuver } from './utils/effect.ts'
+
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
 

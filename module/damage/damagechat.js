@@ -2,6 +2,7 @@
 
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
+import { GurpsActorV2 } from '../actor/gurps-actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
 import { DragDropType } from '../drag-drop-types.ts'
 import selectTarget from '../utilities/select-target.js'

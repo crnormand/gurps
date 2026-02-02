@@ -11,6 +11,8 @@ import { fields, TypeDataModel } from '../../types/foundry/index.js'
 
 import { ItemComponent } from './component.js'
 
+import { ItemComponent } from './component.js'
+
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
   type: string
