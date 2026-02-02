@@ -80,7 +80,7 @@ class ScriptEntity {
   /* ---------------------------------------- */
 
   get attributes(): ScriptAttribute[] {
-    return this.#character._attributes.map(attr => new ScriptAttribute(attr))
+    return Object.values(this.#character._attributes).map(attr => new ScriptAttribute(attr))
   }
 
   /* ---------------------------------------- */
