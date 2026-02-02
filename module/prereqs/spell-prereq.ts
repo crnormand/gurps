@@ -1,12 +1,18 @@
-import { fields } from '../../types/foundry/index.js'
-import { NumberCriteriaField } from '../criteria/number-criteria.ts'
-import { StringCriteriaField } from '../criteria/string-criteria.ts'
+import { NumberCriteriaField } from '../data/criteria/number-criteria.ts'
+import { StringCriteriaField } from '../data/criteria/string-criteria.ts'
+import { fields } from '../types/foundry/index.ts'
 
-import { BasePrereq, basePrereqSchema, PrereqType } from './base-prereq.ts'
+import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 
 class SpellPrereq extends BasePrereq<SpellPrereqSchema> {
   static override defineSchema(): SpellPrereqSchema {
-    return spellPrereqSchema()
+    return Object.assign(super.defineSchema(), spellPrereqSchema())
+  }
+
+  /* ---------------------------------------- */
+
+  static override get TYPE(): PrereqType {
+    return PrereqType.Spell
   }
 }
 
@@ -14,7 +20,6 @@ class SpellPrereq extends BasePrereq<SpellPrereqSchema> {
 
 const spellPrereqSchema = () => {
   return {
-    ...basePrereqSchema({ type: PrereqType.Skill }),
     has: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     subType: new fields.StringField({ required: false, nullable: true }),
     qualifier: new StringCriteriaField({ required: true, nullable: false }),
@@ -22,7 +27,7 @@ const spellPrereqSchema = () => {
   }
 }
 
-type SpellPrereqSchema = ReturnType<typeof spellPrereqSchema>
+type SpellPrereqSchema = BasePrereqSchema & ReturnType<typeof spellPrereqSchema>
 
 /* ---------------------------------------- */
 

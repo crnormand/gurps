@@ -1,10 +1,16 @@
-import { fields } from '../../types/foundry/index.js'
+import { fields } from '../types/foundry/index.ts'
 
-import { BasePrereq, basePrereqSchema, PrereqType } from './base-prereq.ts'
+import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 
 class ScriptPrereq extends BasePrereq<ScriptPrereqSchema> {
   static override defineSchema(): ScriptPrereqSchema {
-    return scriptPrereqSchema()
+    return Object.assign(super.defineSchema(), scriptPrereqSchema())
+  }
+
+  /* ---------------------------------------- */
+
+  static override get TYPE(): PrereqType {
+    return PrereqType.Script
   }
 
   /* ---------------------------------------- */
@@ -27,12 +33,11 @@ class ScriptPrereq extends BasePrereq<ScriptPrereqSchema> {
 
 const scriptPrereqSchema = () => {
   return {
-    ...basePrereqSchema({ type: PrereqType.Script }),
     script: new fields.JavaScriptField({ required: true, nullable: false }),
   }
 }
 
-type ScriptPrereqSchema = ReturnType<typeof scriptPrereqSchema>
+type ScriptPrereqSchema = BasePrereqSchema & ReturnType<typeof scriptPrereqSchema>
 
 /* ---------------------------------------- */
 

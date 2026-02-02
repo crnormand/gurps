@@ -5,11 +5,24 @@ import { IStudies, studiesSchema } from '../../data/mixins/studies.ts'
 import { SkillDefault } from '../../data/skill-default.ts'
 import { fields } from '../../types/foundry/index.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 
 class GcsSkillModel extends GcsBaseItemModel<GcsSkillSchema> implements IFeatures, IPrereqs, IReplaceable, IStudies {
   static override defineSchema(): GcsSkillSchema {
     return gcsSkillSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): GcsItemMetadata {
+    return {
+      embedded: { Prereq: 'prereqs' },
+      type: 'gcsSkill',
+      invalidActorTypes: [],
+      actions: {},
+      childTypes: [],
+      modifierTypes: [],
+    }
   }
 
   /* ---------------------------------------- */

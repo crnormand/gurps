@@ -6,6 +6,11 @@ import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
 import { DataModel, fields } from '../types/foundry/index.js'
 
+enum ActionType {
+  MeleeAttack = 'meleeAttack',
+  RangedAttack = 'rangedAttack',
+}
+
 class BaseAction<
   Schema extends BaseActionSchema = BaseActionSchema,
   Parent extends DataModel.Any = DataModel.Any,
@@ -24,6 +29,8 @@ class BaseAction<
       embedded: {},
     }
   }
+
+  /* ---------------------------------------- */
 
   get item(): GurpsItemV2 {
     return this.parent.parent as GurpsItemV2
@@ -67,4 +74,4 @@ type BaseActionSchema = TypedPseudoDocumentSchema & ReturnType<typeof baseAction
 
 /* ---------------------------------------- */
 
-export { BaseAction, type BaseActionSchema }
+export { BaseAction, type BaseActionSchema, ActionType }
