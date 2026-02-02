@@ -1,12 +1,17 @@
-import { fields } from '../../types/foundry/index.js'
-import { NumberCriteriaField } from '../criteria/number-criteria.ts'
-import { StringCriteriaField } from '../criteria/string-criteria.ts'
+import { NumberCriteriaField } from '../data/criteria/number-criteria.ts'
+import { StringCriteriaField } from '../data/criteria/string-criteria.ts'
+import { fields } from '../types/foundry/index.ts'
 
-import { BasePrereq, basePrereqSchema, PrereqType } from './base-prereq.ts'
+import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 
 class SkillPrereq extends BasePrereq<SkillPrereqSchema> {
   static override defineSchema(): SkillPrereqSchema {
-    return skillPrereqSchema()
+    return Object.assign(super.defineSchema(), skillPrereqSchema())
+  }
+  /* ---------------------------------------- */
+
+  static override get TYPE(): PrereqType {
+    return PrereqType.Skill
   }
 }
 
@@ -14,7 +19,6 @@ class SkillPrereq extends BasePrereq<SkillPrereqSchema> {
 
 const skillPrereqSchema = () => {
   return {
-    ...basePrereqSchema({ type: PrereqType.Skill }),
     has: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     name: new StringCriteriaField({ required: true, nullable: false }),
     level: new NumberCriteriaField({ required: true, nullable: false }),
@@ -22,7 +26,7 @@ const skillPrereqSchema = () => {
   }
 }
 
-type SkillPrereqSchema = ReturnType<typeof skillPrereqSchema>
+type SkillPrereqSchema = BasePrereqSchema & ReturnType<typeof skillPrereqSchema>
 
 /* ---------------------------------------- */
 

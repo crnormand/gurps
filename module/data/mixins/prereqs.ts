@@ -1,6 +1,6 @@
+import { AnyPrereq, PrereqClasses } from '../../prereqs/index.ts'
 import { fields } from '../../types/foundry/index.ts'
 // import { AnyPrereq, Prereq, PrereqClasses, PrereqType } from '../prereqs/index.ts'
-import { AnyPrereq, PrereqClasses } from '../prereqs/index.ts'
 
 const prereqsSchema = (types = PrereqClasses) => {
   return {
@@ -12,7 +12,7 @@ const prereqsSchema = (types = PrereqClasses) => {
 
 interface IPrereqs {
   // List of prereqs contained within this item
-  prereqs: AnyPrereq[]
+  prereqs: Record<string, AnyPrereq>
 
   // // Add a new prereq
   // createPrereq<Type extends PrereqType>(

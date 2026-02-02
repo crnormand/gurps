@@ -1,6 +1,8 @@
-import { GcsBaseItemModel } from '../../item/data/gcs-base.ts'
-import { DataModel, fields } from '../../types/foundry/index.ts'
-import { IPrereqs } from '../mixins/prereqs.ts'
+import { IPrereqs } from '../data/mixins/prereqs.ts'
+import { GcsBaseItemModel } from '../item/data/gcs-base.ts'
+import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.ts'
+import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.ts'
+import { fields } from '../types/foundry/index.ts'
 
 enum PrereqType {
   List = 'prereqList',
@@ -16,15 +18,21 @@ enum PrereqType {
 
 /* ---------------------------------------- */
 
-class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsBaseItemModel & IPrereqs> {
+class BasePrereq<Schema extends BasePrereqSchema> extends TypedPseudoDocument<Schema, GcsBaseItemModel & IPrereqs> {
   static override defineSchema(): BasePrereqSchema {
-    // Defualt to Trait Prereq
-    return basePrereqSchema({ type: PrereqType.Trait })
+    return Object.assign(super.defineSchema(), basePrereqSchema())
   }
 
   /* ---------------------------------------- */
 
-  static Type = PrereqType
+  static override get metadata(): PseudoDocumentMetadata {
+    return {
+      documentName: 'Prereq',
+      label: '',
+      icon: '',
+      embedded: {},
+    }
+  }
 
   /* ---------------------------------------- */
 
@@ -49,29 +57,13 @@ class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsB
 
 /* ---------------------------------------- */
 
-const basePrereqSchema = (options: { type: PrereqType }) => {
+const basePrereqSchema = () => {
   return {
-    // The unique ID of this prerequisite
-    id: new fields.DocumentIdField({
-      required: true,
-      nullable: false,
-      blank: false,
-      initial: () => foundry.utils.randomID(),
-    }),
-    // The ID of the parent container, if any. A value of `null` means the prereq is at the top level,
-    // which applies only to the top-level prerequisite list of an item.
     containerId: new fields.StringField({ required: false, nullable: true, blank: false, initial: null }),
-    type: new fields.StringField({
-      required: true,
-      nullable: false,
-      blank: false,
-      choices: Object.values(PrereqType),
-      initial: options.type,
-    }),
   }
 }
 
-type BasePrereqSchema = ReturnType<typeof basePrereqSchema>
+type BasePrereqSchema = TypedPseudoDocumentSchema & ReturnType<typeof basePrereqSchema>
 
 /* ---------------------------------------- */
 

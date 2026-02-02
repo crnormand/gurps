@@ -6,21 +6,18 @@ import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { fields } from '../types/foundry/index.js'
 
-import { BaseAction, BaseActionSchema } from './base-action.js'
+import { ActionType, BaseAction, BaseActionSchema } from './base-action.js'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class RangedAttackModel extends BaseAction<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {
-    return {
-      ...super.defineSchema(),
-      ...rangedAttackSchema(),
-    }
+    return Object.assign(super.defineSchema(), rangedAttackSchema())
   }
 
   /* ---------------------------------------- */
 
   static override get TYPE(): string {
-    return 'rangedAttack'
+    return ActionType.RangedAttack
   }
 
   /* ---------------------------------------- */

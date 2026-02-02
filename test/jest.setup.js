@@ -299,10 +299,15 @@ global.foundry = {
         }
       },
       ApplicationV2: class {},
+      DocumentSheetV2: class {},
       HandlebarsApplicationMixin: Base => class extends Base {},
     },
     handlebars: {
       renderTemplate: async () => '',
+    },
+    sheets: {
+      ActorSheet: class {},
+      ItemSheet: class {},
     },
     ux: {
       ContextMenu: class {

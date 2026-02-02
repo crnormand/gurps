@@ -22,6 +22,7 @@ import { SpellModel } from 'module/item/data/spell.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
+import { AnyPrereqClass } from 'module/prereqs/index.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
 import { Scripting } from 'module/scripting/index.ts'
@@ -108,19 +109,32 @@ declare global {
 
     SJGProductMappings: Record<string, string>
     CONFIG: {
-      Action: Record<
-        string,
-        {
-          label: string
-          documentClass: typeof BaseAction
-        }
-      >
+      Action: PseudoDocumentConfig<AnyActionClass>
+      // Action: Record<
+      //   string,
+      //   {
+      //     label: string
+      //     documentClass: typeof BaseAction
+      //   }
+      // >
+      Prereq: PseudoDocumentConfig<AnyPrereqClass>
       // HACK: to get rid of later. just used for TypedPseudoDocument.TYPES at the moment
       [key: string]: unknown
     }
   }
 
   var GURPS: GURPSGlobal
+
+  /* ---------------------------------------- */
+
+  type PseudoDocumentConfig<T = any, S = any> = Record<
+    string,
+    {
+      documentClass: T
+      label?: string
+      sheetClass?: S
+    }
+  >
 
   /* ---------------------------------------- */
 

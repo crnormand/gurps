@@ -1,12 +1,18 @@
-import { fields } from '../../types/foundry/index.js'
-import { NumberCriteriaField } from '../criteria/number-criteria.ts'
-import { StringCriteriaField } from '../criteria/string-criteria.ts'
+import { NumberCriteriaField } from '../data/criteria/number-criteria.ts'
+import { StringCriteriaField } from '../data/criteria/string-criteria.ts'
+import { fields } from '../types/foundry/index.ts'
 
-import { BasePrereq, basePrereqSchema, PrereqType } from './base-prereq.ts'
+import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 
 class TraitPrereq extends BasePrereq<TraitPrereqSchema> {
   static override defineSchema(): TraitPrereqSchema {
-    return traitPrereqSchema()
+    return Object.assign(super.defineSchema(), traitPrereqSchema())
+  }
+
+  /* ---------------------------------------- */
+
+  static override get TYPE(): PrereqType {
+    return PrereqType.Trait
   }
 }
 
@@ -14,7 +20,6 @@ class TraitPrereq extends BasePrereq<TraitPrereqSchema> {
 
 const traitPrereqSchema = () => {
   return {
-    ...basePrereqSchema({ type: PrereqType.Trait }),
     has: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     name: new StringCriteriaField({ required: true, nullable: false }),
     level: new NumberCriteriaField({ required: true, nullable: false }),
@@ -22,7 +27,7 @@ const traitPrereqSchema = () => {
   }
 }
 
-type TraitPrereqSchema = ReturnType<typeof traitPrereqSchema>
+type TraitPrereqSchema = BasePrereqSchema & ReturnType<typeof traitPrereqSchema>
 
 /* ---------------------------------------- */
 
