@@ -10,6 +10,8 @@ interface NpcSheetData {
   meleeCount?: number
   rangedCount?: number
   showHPTinting?: boolean
+  // TODO Waiting for Global declarations update.
+  // @ts-expect-error: waiting for Global declarations update.
   moveMode?: GurpsMoveMode
   parryblock?: string | number
   defense?: { dr: string; split?: Record<string, number> }
@@ -42,9 +44,13 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
     sheetData.traitCount = countItems(sheetData.system?.ads)
     sheetData.meleeCount = countItems(sheetData.system?.melee)
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
+    // @ts-expect-error: update settings typing.
     sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
+    // TODO: Update GurpsActorV2 with new methods in GurpsActor (_actor.js).
+    // @ts-expect-error: waiting for GurpsActorV2 update.
     sheetData.moveMode = this.actor.getCurrentMoveMode()
 
+    // @ts-expect-error: waiting for GurpsActorV2 update.
     sheetData.defense = this.actor.getTorsoDr()
     sheetData.parryblock = this.actor.getEquippedParry()
     sheetData.useCI = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_CONDITIONAL_INJURY as never)

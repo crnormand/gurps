@@ -143,7 +143,8 @@ describe('GurpsActorV2.moveItem', () => {
     expect(actor.system.allEquipmentV2.length).toBe(4)
     expect(actor.system.equipmentV2.carried.length).toBe(3)
     expect(actor.system.equipmentV2.other.length).toBe(0)
-    expect(actor.system.equipmentV2.carried[1].contains.length).toBe(1)
+    const carriedItem = actor.system.equipmentV2.carried[1] as GurpsItemV2<'equipmentV2'>
+    expect(carriedItem.contents.length).toBe(1)
   })
 
   it('returns early if source and target keys are identical', async () => {
@@ -338,7 +339,7 @@ describe('GurpsActorV2.moveItem', () => {
   it('sets containedBy to null when moving out of container', async () => {
     setDropPosition(actor, 'before')
 
-    await actor.moveItem('system.equipmentV2.carried.1.contains.0', 'system.equipmentV2.carried.0')
+    await actor.moveItem('system.equipmentV2.carried.1.contents.0', 'system.equipmentV2.carried.0')
 
     expect(actor.updateEmbeddedDocuments).toHaveBeenCalledWith(
       'Item',

@@ -1,4 +1,4 @@
-import { buildDamageOutputGCS } from '../module/utilities/import-utilities.ts'
+import { buildDamageOutputGCS } from '../../../module/utilities/import-utilities.ts'
 
 describe('buildDamageOutput', () => {
   describe('when damage.st is not "thr" or "sw"', () => {

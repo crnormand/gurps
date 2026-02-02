@@ -1,4 +1,4 @@
-import { GurpsActor } from '../actor.js'
+import { GurpsActorV2 } from '../gurps-actor.ts'
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()
@@ -77,7 +77,7 @@ const inlineEditConfigs: InlineEditConfigInternal[] = [
 
 export function buildOnBlurHandler(
   config: InlineEditConfigInternal,
-  actor: GurpsActor
+  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>
 ): ((input: HTMLInputElement) => void) | undefined {
   if (config.fieldType === 'name') {
     return (input: HTMLInputElement) => {
@@ -102,14 +102,14 @@ export function buildOnBlurHandler(
   return undefined
 }
 
-export function bindAllInlineEdits(html: JQuery, actor: GurpsActor): void {
+export function bindAllInlineEdits(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
   inlineEditConfigs.forEach(config => {
     const onBlur = buildOnBlurHandler(config, actor)
     bindInlineEdit(html, { ...config, onBlur })
   })
 }
 
-export function bindAttributeEdit(html: JQuery, actor: GurpsActor): void {
+export function bindAttributeEdit(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
   const wrapperSelector = '.ms-attr-wrapper'
   const badgeSelector = '.ms-attr-badge'
   const inputSelector = '.ms-attr-input'
@@ -170,7 +170,7 @@ export function bindAttributeEdit(html: JQuery, actor: GurpsActor): void {
   })
 }
 
-export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActor): void {
+export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
   const fieldsetSelector = '.ms-editable-stats'
   const editButtonSelector = '.ms-stat-box-edit'
   const inputSelector = '.ms-stat-input'
@@ -228,7 +228,7 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActor): void {
   })
 }
 
-export function bindPointsEdit(html: JQuery, actor: GurpsActor): void {
+export function bindPointsEdit(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
   const itemSelector = '.ms-points-item'
   const inputSelector = '.ms-points-input'
   const editingClass = 'editing'

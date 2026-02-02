@@ -1,4 +1,4 @@
-import { prepareRemoveKey } from '../module/actor/deletion.ts'
+import { prepareRemoveKey } from '../../../module/actor/deletion.ts'
 
 describe('prepareRemoveKey', () => {
   test('removes key from middle and reindexes', () => {

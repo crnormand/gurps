@@ -100,7 +100,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   // Item subtype guard helpers
-  private isFeatureV2(item: Item.Implementation): item is Item.OfType<'featureV2'> {
+  private isFeatureV2(item: GurpsItemV2): item is GurpsItemV2<'featureV2'> {
     return item.isOfType('featureV2')
   }
 
@@ -216,11 +216,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const attacks: (MeleeAttackModel | RangedAttackModel)[] = []
     for (const item of this.items) {
       if (options.attackType === 'melee') {
-        attacks.push(...item.getItemAttacks({ attackType: 'melee' }))
+        attacks.push(...(item as GurpsItemV2).getItemAttacks({ attackType: 'melee' }))
       } else if (options.attackType === 'ranged') {
-        attacks.push(...item.getItemAttacks({ attackType: 'ranged' }))
+        attacks.push(...(item as GurpsItemV2).getItemAttacks({ attackType: 'ranged' }))
       } else {
-        attacks.push(...item.getItemAttacks({ attackType: 'both' }))
+        attacks.push(...(item as GurpsItemV2).getItemAttacks({ attackType: 'both' }))
       }
     }
     return attacks
@@ -231,7 +231,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
     const out: foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] = []
     for (const item of this.items) {
-      if (!this.isFeatureV2(item)) continue
+      if (!this.isFeatureV2(item as GurpsItemV2)) continue
       out.push(...(item.system[key] ?? []))
     }
     return out
@@ -1442,7 +1442,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   async runOTF(otf: string): Promise<void> {
     const action = GURPS.parselink(otf)
-    await GURPS.performAction(action.action, this)
+    await GURPS.performAction(action.action!, this)
   }
 
   /* ---------------------------------------- */
@@ -1821,7 +1821,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       let item: GurpsItemV2 | undefined
       if (!!eqt.itemid) {
-        item = await this.items.get(eqt.itemid)
+        item = this.items.get(eqt.itemid) as GurpsItemV2 | undefined
         if (!!item) await item.delete() // data protect for messed up mooks
         await this._removeItemAdditions(eqt.itemid)
       }
@@ -1910,8 +1910,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       return false
     }
 
-    let srcActor = game.actors!.get(dragData.actorid)
-    let eqt = foundry.utils.getProperty(srcActor!, dragData.key) as EquipmentV1
+    const srcActor = game.actors!.get(dragData.actorid) as GurpsActorV2<Actor.SubType> | undefined
+    if (!srcActor) return false
+    let eqt = foundry.utils.getProperty(srcActor, dragData.key) as EquipmentV1
 
     if (
       (!!eqt.contains && Object.keys(eqt.contains).length > 0) ||
@@ -3049,7 +3050,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const data = this.modelV1
 
     for (const item of this.items.contents) {
-      let itemData = item.modelV1 as Record<string, any>
+      const itemData = (item as GurpsItemV2<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>).modelV1 as Record<
+        string,
+        any
+      >
 
       if (
         (item.type !== 'equipment' || (itemData.equipped && itemData.carried)) &&
@@ -4096,7 +4100,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let item = this.items.find(i => i.system.originalName === name)
     // @ts-expect-error: equipment system type not registering correctly
     if (!item) item = this.items.find(i => i.system.name === name)
-    if (!!item) return item
+    if (!!item) return item as Item.Implementation
 
     const actorSysKeys = ['ads', 'skills', 'spells']
     for (let key of actorSysKeys) {
@@ -4619,7 +4623,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     // Check for deletion pattern: { system: { '-=ads': null } }
     const deleteKey = '-=ads' in data.system
     if (deleteKey) {
-      const featureIds = this.items.filter(item => item.isOfType('featureV2')).map(item => item.id!)
+      const featureIds = this.items.filter(item => item.type === 'featureV2').map(item => item.id!)
       await this.deleteEmbeddedDocuments('Item', featureIds)
 
       delete data.system['-=ads']
@@ -4670,8 +4674,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         toCreate.forEach((it, index) => {
           if (it.system?.containedBy === null) {
             const length = this.items
-              .filter(item => item.isOfType('featureV2'))
-              .filter(ad => ad.modelV2.containedBy === null).length
+              .filter(item => item.type === 'featureV2')
+              .filter(ad => (ad as GurpsItemV2<'featureV2'>).containedBy === null).length
             it.sort = length + index
           }
         })

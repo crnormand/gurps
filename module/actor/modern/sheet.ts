@@ -29,6 +29,8 @@ interface ModernSheetData {
   rangedCount?: number
   modifierCount?: number
   showHPTinting?: boolean
+  // TODO Waiting for Global declarations update.
+  // @ts-expect-error: waiting for Global declarations update.
   moveMode?: GurpsMoveMode
 }
 
@@ -60,13 +62,19 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.meleeCount = countItems(sheetData.system?.melee)
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
     sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
+    // TODO Update typing.
+    // @ts-expect-error: update settings typing.
     sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
+    // TODO: Update GurpsActorV2 with new methods in GurpsActor (_actor.js).
+    // @ts-expect-error: waiting for GurpsActorV2 update.
     sheetData.moveMode = this.actor.getCurrentMoveMode()
 
     return sheetData
   }
 
   override getCustomHeaderButtons() {
+    // TODO Update typing.
+    // @ts-expect-error: update settings typing.
     const blockImport = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT as never) as boolean
     if (blockImport && !game.user!.isTrusted) return []
 

@@ -1,8 +1,11 @@
-import * as Settings from '../../../lib/miscellaneous-settings.js'
-import { GurpsActor } from '../actor.js'
+import { GurpsActorV2 } from '../gurps-actor.ts'
 import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.ts'
 
-export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet: GurpsActorSheetEditMethods): void {
+export function bindEquipmentCrudActions(
+  html: JQuery,
+  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  sheet: GurpsActorSheetEditMethods
+): void {
   const entityType = 'equipment'
 
   html.find(`[data-action="add-${entityType}"]`).on('click', async (event: JQuery.ClickEvent) => {
@@ -14,12 +17,10 @@ export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet:
     const { Equipment } = await import('../actor-components.js')
     const newEquipment: EquipmentInstance = new Equipment(`${game.i18n!.localize('GURPS.equipment')}...`, true)
 
-    if (game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-      newEquipment.save = true
-      const payload = newEquipment.toItemData(actor, '')
-      const [item] = await actor.createEmbeddedDocuments('Item', [payload] as never)
-      newEquipment.itemid = (item as { _id: string })._id
-    }
+    newEquipment.save = true
+    const payload = newEquipment.toItemData(actor, '')
+    const [item] = await actor.createEmbeddedDocuments('Item', [payload] as never)
+    newEquipment.itemid = (item as { _id: string })._id
 
     if (!newEquipment.uuid) {
       newEquipment.uuid = newEquipment._getGGAId({ name: newEquipment.name ?? '', type: container, generator: '' })
@@ -53,7 +54,11 @@ export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet:
   })
 }
 
-export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: GurpsActorSheetEditMethods): void {
+export function bindNoteCrudActions(
+  html: JQuery,
+  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  sheet: GurpsActorSheetEditMethods
+): void {
   const entityType = 'note'
   const path = 'system.notes'
 
@@ -78,6 +83,7 @@ export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: Gurp
             newNote.notes = dialogHtml.find('.notes').val() as string
             newNote.title = dialogHtml.find('.title').val() as string
             GURPS.put(list, newNote)
+            // @ts-expect-error: need to update internalUpdate typing.
             await actor.internalUpdate({ [path]: list })
           },
         },
@@ -106,7 +112,7 @@ export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: Gurp
   })
 }
 
-export function bindTrackerActions(html: JQuery, actor: GurpsActor): void {
+export function bindTrackerActions(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
   html.find('[data-action="add-tracker"]').on('click', (event: JQuery.ClickEvent) => {
     event.preventDefault()
     actor.addTracker()

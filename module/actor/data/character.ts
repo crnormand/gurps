@@ -33,6 +33,7 @@ import { TrackerInstance } from '../../resource-tracker/resource-tracker.js'
 import { MeleeAttackModel } from 'module/action/melee-attack.js'
 import { RangedAttackModel } from 'module/action/ranged-attack.js'
 import { EquipmentModel } from 'module/item/data/equipment.js'
+import { GurpsItemV2 } from 'module/item/gurps-item.js'
 
 // Legacy models.
 import { HitLocationEntry } from '../actor-components.js'
@@ -69,10 +70,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // Item collections
   // Flat list of all Items of each type.
-  allAdsV2: Item.OfType<'featureV2'>[] = []
-  allSkillsV2: Item.OfType<'skillV2'>[] = []
-  allSpellsV2: Item.OfType<'spellV2'>[] = []
-  allEquipmentV2: Item.OfType<'equipmentV2'>[] = []
+  allAdsV2: GurpsItemV2<'featureV2'>[] = []
+  allSkillsV2: GurpsItemV2<'skillV2'>[] = []
+  allSpellsV2: GurpsItemV2<'spellV2'>[] = []
+  allEquipmentV2: GurpsItemV2<'equipmentV2'>[] = []
 
   // Action collections
   meleeV2: MeleeAttackModel[] = []
@@ -182,7 +183,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   // List of top-level ADs (not contained in another AD), sorted by `sort` field.
-  get adsV2(): Item.OfType<'featureV2'>[] {
+  get adsV2(): GurpsItemV2<'featureV2'>[] {
     return this.allAdsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
   }
 
@@ -198,7 +199,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get skillsV2(): Item.OfType<'skillV2'>[] {
+  get skillsV2(): GurpsItemV2<'skillV2'>[] {
     return this.allSkillsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
   }
 
@@ -214,7 +215,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get spellsV2(): Item.OfType<'spellV2'>[] {
+  get spellsV2(): GurpsItemV2<'spellV2'>[] {
     return this.allSpellsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
   }
 
@@ -392,10 +393,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       item.system.applyBonuses(this._globalBonuses)
     }
 
-    this.allAdsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
-    this.allSkillsV2 = this.parent.items.filter(item => item.isOfType('skillV2'))
-    this.allSpellsV2 = this.parent.items.filter(item => item.isOfType('spellV2'))
-    this.allEquipmentV2 = this.parent.items.filter(item => item.isOfType('equipmentV2'))
+    this.allAdsV2 = this.parent.items
+      .filter(item => (item as GurpsItemV2).isOfType('featureV2'))
+      .map(item => item as GurpsItemV2<'featureV2'>)
+    this.allSkillsV2 = this.parent.items
+      .filter(item => (item as GurpsItemV2).isOfType('skillV2'))
+      .map(item => item as GurpsItemV2<'skillV2'>)
+    this.allSpellsV2 = this.parent.items
+      .filter(item => (item as GurpsItemV2).isOfType('spellV2'))
+      .map(item => item as GurpsItemV2<'spellV2'>)
+    this.allEquipmentV2 = this.parent.items
+      .filter(item => (item as GurpsItemV2).isOfType('equipmentV2'))
+      .map(item => item as GurpsItemV2<'equipmentV2'>)
     this.meleeV2 = this.parent.getItemAttacks({ attackType: 'melee' })
     this.rangedV2 = this.parent.getItemAttacks({ attackType: 'ranged' })
 
@@ -625,14 +634,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #prepareUserModifiers() {
     this.parent.items.forEach(item => {
-      if (!item.isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
+      if (!(item as GurpsItemV2).isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
 
       for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
         if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
       }
 
-      for (const attack of item.getItemAttacks()) {
+      for (const attack of (item as GurpsItemV2).getItemAttacks()) {
         if ((item.system as BaseItemModel).itemModifiers === '') continue
         for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
           const modifierDescription = `${modifier} ${item.id}`
@@ -662,7 +671,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #getMoveAdjustmentForManeuver(base: number): { value: number; tooltip: string } {
     let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
-    const maneuver = GURPS.Maneuvers.get(this.conditions.maneuver)
+    const maneuver = GURPS.Maneuvers.get(this.conditions.maneuver!)
     if (maneuver) {
       tooltip = game.i18n?.localize(maneuver.label) ?? ''
       const override = this.#getMoveAdjustmentForOverride(base, maneuver.move)
@@ -1058,7 +1067,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
-    await GURPS.performAction(accumulator, GURPS.LastActor)
+    await GURPS.performAction(accumulator as unknown as GurpsAction, GURPS.LastActor)
   }
 
   /* ---------------------------------------- */
@@ -1220,7 +1229,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         checks.push(
           ...this.parent.items
             .reduce((acc: (MeleeAttackModel | RangedAttackModel)[], item) => {
-              acc.push(...item.getItemAttacks())
+              acc.push(...(item as GurpsItemV2).getItemAttacks())
               return acc
             }, [])
             .map(attack => {
@@ -1280,12 +1289,17 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return { data: checks, size: checks.length }
 
       case 'markedChecks':
-        const items = this.parent.items.filter(item => item.isOfType('featureV2', 'skillV2', 'spellV2'))
+        const items = this.parent.items.filter(item =>
+          (item as GurpsItemV2).isOfType('featureV2', 'skillV2', 'spellV2')
+        )
         for (const item of items) {
           if (item.system.addToQuickRoll) {
             const type = item.type === 'featureV2' ? 'ad' : item.type
             let value = 0
-            if (item.isOfType('skillV2', 'spellV2')) value = item.system.component.import
+            if ((item as GurpsItemV2).isOfType('skillV2'))
+              value = (item as GurpsItemV2<'skillV2'>).system.component.import
+            if ((item as GurpsItemV2).isOfType('spellV2'))
+              value = (item as GurpsItemV2<'spellV2'>).system.component.import
 
             checks.push({
               symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',

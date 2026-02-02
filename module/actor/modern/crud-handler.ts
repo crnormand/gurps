@@ -1,11 +1,19 @@
-import { GurpsActor } from '../actor.js'
-import { GurpsItem } from '../../item.js'
+import { GurpsItemV2 } from '../../item/gurps-item.ts'
+import { GurpsActorV2 } from '../gurps-actor.ts'
 
 export type EntityWithItemId = EntityComponentBase & { itemid?: string }
-type GurpsItemWithEditingActor = GurpsItem & { editingActor?: GurpsActor; system?: { fromItem?: string } }
-type ActorWithSanityCheck = GurpsActor & { _sanityCheckItemSettings(obj: unknown): Promise<boolean> }
+type GurpsItemWithEditingActor = GurpsItemV2 & {
+  editingActor?: GurpsActorV2<'character' | 'characterV2' | 'enemy'>
+  system?: { fromItem?: string }
+}
+type ActorWithSanityCheck = GurpsActorV2<'character' | 'characterV2' | 'enemy'> & {
+  _sanityCheckItemSettings(obj: unknown): Promise<boolean>
+}
 
-export async function openItemSheetIfFoundryItem(actor: GurpsActor, entityData: EntityWithItemId): Promise<boolean> {
+export async function openItemSheetIfFoundryItem(
+  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  entityData: EntityWithItemId
+): Promise<boolean> {
   if (!entityData?.itemid) return false
 
   if (!(await (actor as ActorWithSanityCheck)._sanityCheckItemSettings(entityData))) return true
@@ -39,7 +47,7 @@ export function getDisplayName(
 }
 
 export async function confirmAndDelete(
-  actor: GurpsActor,
+  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
   key: string,
   displayName: string | undefined,
   fallbackLocaleKey: string
@@ -49,6 +57,8 @@ export async function confirmAndDelete(
     content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
   if (confirmed) {
+    // TODO: Update GurpsActorV2 with new methods in GurpsActor (_actor.js).
+    // @ts-expect-error: waiting for methods to be updated.
     await actor.deleteEntry(key)
   }
   return confirmed ?? false
@@ -56,7 +66,7 @@ export async function confirmAndDelete(
 
 export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: JQuery,
-  actor: GurpsActor,
+  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
   sheet: TSheet,
   config: EntityConfigWithMethod
 ): void {
@@ -99,7 +109,7 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
 
 export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: JQuery,
-  actor: GurpsActor,
+  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
   sheet: TSheet,
   editMethod: TSheet['editModifier'],
   isReaction: boolean

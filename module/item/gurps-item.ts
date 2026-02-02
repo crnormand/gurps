@@ -114,7 +114,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
     // If this item is contained by another Item, it is disabled if the containing Item is disabled.
     return !disabled && this.modelV2.containedBy
-      ? this.parent?.items.get(this.modelV2.containedBy!)?.disabled === true
+      ? (this.parent?.items.get(this.modelV2.containedBy!) as GurpsItemV2 | undefined)?.disabled === true
       : disabled
   }
 

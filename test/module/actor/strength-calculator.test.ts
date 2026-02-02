@@ -1,4 +1,4 @@
-import { BasicSetStrategy } from '../module/actor/strength-calculator.ts'
+import { BasicSetStrategy } from '../../../module/actor/strength-calculator.ts'
 
 describe('BasicSetStrategy', () => {
   let strength: BasicSetStrategy

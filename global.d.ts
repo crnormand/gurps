@@ -30,6 +30,7 @@ export {}
 declare global {
   interface GURPSGlobal {
     SYSTEM_NAME: 'gurps'
+    module: Record<string, GurpsModule>
     LastActor: Actor.Implementation | null
     StatusEffect: {
       lookup(id: string): any
@@ -49,15 +50,16 @@ declare global {
       actor: Actor | GurpsActor | null,
       event?: Event | null,
       targets?: string[]
-    ): Promise<boolean>
+    ): Promise<any>
     stopActions: boolean
     ModifierBucket: {
       setTempRangeMod(mod: number): void
       addTempRangeMod(): void
-      addModifier(mod: string, label: string, options?: { situation?: string }): void
+      addModifier(mod: string, label: string, options?: { situation?: string }, tagged?: boolean): void
       currentSum(): number
       clear(): Promise<void>
       refreshPosition(): void
+      render(): Promise<void>
     }
     DamageTables: {
       translate(damageType: string): string
@@ -74,7 +76,7 @@ declare global {
       ranges: Array<{ modifier: number; max: number; penalty: number }>
     }
     Maneuvers: {
-      get(id: string): { icon?: string } | undefined
+      get(id: string): { icon?: string; label: string; move: string | null } | undefined
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
