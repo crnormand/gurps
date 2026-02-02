@@ -99,8 +99,6 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   override activateListeners(html: JQuery): void {
     super.activateListeners(html)
 
-    if (!this.actor.isOfType('character', 'characterV2', 'enemy')) return
-
     bindAllInlineEdits(html, this.actor)
     bindAttributeEdit(html, this.actor)
     bindSecondaryStatsEdit(html, this.actor)
