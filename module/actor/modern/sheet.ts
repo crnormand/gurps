@@ -66,8 +66,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     // @ts-expect-error: update settings typing.
     sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
     // TODO: Update GurpsActorV2 with new methods in GurpsActor (_actor.js).
-    // @ts-expect-error: waiting for GurpsActorV2 update.
-    sheetData.moveMode = this.actor.getCurrentMoveMode()
+    sheetData.moveMode = this.actor.currentMoveMode
 
     return sheetData
   }
