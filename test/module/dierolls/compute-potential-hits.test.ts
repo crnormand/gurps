@@ -1,4 +1,3 @@
-// @ts-expect-error - test-only import; module resolution not configured in tsconfig for this path
 import { computePotentialHits, WeaponDescriptor } from '../../../module/dierolls/compute-potential-hits.ts'
 
 describe('Compute Potential Hits', () => {
