@@ -50,6 +50,7 @@ import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
+import { Features } from './features/index.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
@@ -107,6 +108,7 @@ if (!globalThis.GURPS) {
     Combat,
     CombatTracker,
     Damage,
+    Features,
     Prereqs,
     Importer,
     Item,

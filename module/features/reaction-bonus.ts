@@ -1,0 +1,38 @@
+import { fields } from '../types/foundry/index.ts'
+
+import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
+import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
+import { FeatureType } from './types.ts'
+
+class ReactionBonus extends BaseFeature<ReactionBonusSchema> implements ILeveledAmount {
+  static override defineSchema(): ReactionBonusSchema {
+    return Object.assign(super.defineSchema(), reactionBonusSchema())
+  }
+
+  /* ---------------------------------------- */
+
+  static override get TYPE(): FeatureType {
+    return FeatureType.ReactionBonus
+  }
+
+  /* ---------------------------------------- */
+
+  get adjustedAmount(): number {
+    return getLeveledAmount(this)
+  }
+}
+
+/* ---------------------------------------- */
+
+const reactionBonusSchema = () => {
+  return {
+    ...leveledAmountSchema(),
+    situation: new fields.StringField({ required: true, nullable: false }),
+  }
+}
+
+type ReactionBonusSchema = BaseFeatureSchema & ReturnType<typeof reactionBonusSchema>
+
+/* ---------------------------------------- */
+
+export { ReactionBonus }

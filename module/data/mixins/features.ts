@@ -1,9 +1,9 @@
+import { AnyFeature, FeatureClasses } from '../../features/index.ts'
 import { fields } from '../../types/foundry/index.ts'
-import { Feature, SkillBonus } from '../features/index.ts'
 
-const featuresSchema = () => {
+const featuresSchema = (types = FeatureClasses) => {
   return {
-    features: new fields.ArrayField(new fields.TypedSchemaField({ skillBonus: SkillBonus })),
+    features: new fields.TypedObjectField(new fields.TypedSchemaField(types)),
   }
 }
 
@@ -11,7 +11,7 @@ const featuresSchema = () => {
 
 interface IFeatures {
   // List of features contained within this item
-  features: Feature[]
+  features: Record<string, AnyFeature>
 
   // Apply bonuses from all contained features
   applyBonuses(): void
