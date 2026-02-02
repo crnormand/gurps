@@ -18,7 +18,8 @@ enum PrereqType {
 
 class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsBaseItemModel & IPrereqs> {
   static override defineSchema(): BasePrereqSchema {
-    return basePrereqSchema()
+    // Defualt to Trait Prereq
+    return basePrereqSchema({ type: PrereqType.Trait })
   }
 
   /* ---------------------------------------- */
@@ -48,7 +49,7 @@ class BasePrereq<Schema extends BasePrereqSchema> extends DataModel<Schema, GcsB
 
 /* ---------------------------------------- */
 
-const basePrereqSchema = () => {
+const basePrereqSchema = (options: { type: PrereqType }) => {
   return {
     // The unique ID of this prerequisite
     id: new fields.DocumentIdField({
@@ -60,7 +61,13 @@ const basePrereqSchema = () => {
     // The ID of the parent container, if any. A value of `null` means the prereq is at the top level,
     // which applies only to the top-level prerequisite list of an item.
     containerId: new fields.StringField({ required: false, nullable: true, blank: false, initial: null }),
-    type: new fields.StringField({ required: true, nullable: false, blank: false, choices: Object.values(PrereqType) }),
+    type: new fields.StringField({
+      required: true,
+      nullable: false,
+      blank: false,
+      choices: Object.values(PrereqType),
+      initial: options.type,
+    }),
   }
 }
 
@@ -68,4 +75,4 @@ type BasePrereqSchema = ReturnType<typeof basePrereqSchema>
 
 /* ---------------------------------------- */
 
-export { BasePrereq, basePrereqSchema, type BasePrereqSchema }
+export { BasePrereq, basePrereqSchema, type BasePrereqSchema, PrereqType }

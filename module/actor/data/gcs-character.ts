@@ -50,7 +50,7 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get atttributes(): Record<string, GcsAttribute> {
+  get attributes(): Record<string, GcsAttribute> {
     return Object.fromEntries(Object.values(this._attributes).map(e => [e.id, e]))
   }
 

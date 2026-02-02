@@ -1,7 +1,7 @@
 import { fields } from '../../types/foundry/index.js'
 import { NumberCriteriaField } from '../criteria/number-criteria.ts'
 
-import { BasePrereq, basePrereqSchema } from './base-prereq.ts'
+import { BasePrereq, basePrereqSchema, PrereqType } from './base-prereq.ts'
 
 class ContainedQuantityPrereq extends BasePrereq<ContainedQuantityPrereqSchema> {
   static override defineSchema(): ContainedQuantityPrereqSchema {
@@ -13,7 +13,7 @@ class ContainedQuantityPrereq extends BasePrereq<ContainedQuantityPrereqSchema> 
 
 const containedQuantityPrereqSchema = () => {
   return {
-    ...basePrereqSchema(),
+    ...basePrereqSchema({ type: PrereqType.ContainedQuantity }),
     has: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     qualifier: new NumberCriteriaField({ required: true, nullable: false }),
   }

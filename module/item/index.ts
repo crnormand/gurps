@@ -3,6 +3,7 @@ import { GurpsModule } from 'module/gurps-module.js'
 import * as dataModels from './data/index.ts'
 import { GurpsItemV2 } from './gurps-item.ts'
 import { GurpsItemSheet } from './item-sheet.js'
+import { TestItemSheet } from './test-item-sheet.ts'
 
 function init() {
   console.log('GURPS | Initializing GURPS Actor module.')
@@ -25,6 +26,12 @@ function init() {
 
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
+
+    // @ts-expect-error: broken typing
+    foundry.documents.collections.Items.registerSheet('gurps', TestItemSheet, {
+      makeDefault: true,
+      types: ['gcsEquipment'],
+    })
   })
 }
 
