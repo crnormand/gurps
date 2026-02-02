@@ -26,7 +26,7 @@ class GcsSubTable extends DataModel<GcsSubTableSchema, GcsBody, GcsSubTableConst
   /* ---------------------------------------- */
 
   get loations(): GcsHitLocation[] {
-    return this.parent._locations.filter(e => e._owningTable === this._id)
+    return Object.values(this.parent._locations).filter(e => e._owningTable === this._id)
   }
 }
 
@@ -74,7 +74,7 @@ class GcsHitLocation extends DataModel<GcsHitLocationSchema, GcsBody, GcsHitLoca
   /* ---------------------------------------- */
 
   get subTable(): GcsSubTable | null {
-    return this.parent._subTables.find(e => e._owningLocation === this._id) || null
+    return Object.values(this.parent._subTables).find(e => e._owningLocation === this._id) || null
   }
 }
 
@@ -124,7 +124,7 @@ class GcsBody extends DataModel<GcsBodySchema> {
   /* ---------------------------------------- */
 
   get locations(): GcsHitLocation[] {
-    return this._locations.filter(e => e._owningTable === null)
+    return Object.values(this._locations).filter(e => e._owningTable === null)
   }
 }
 
@@ -137,11 +137,14 @@ const gcsBodySchema = () => {
     // NOTE: To avoid recursive DataModel errors, all locations are defined at the top-level table.
     // Sub-locations are assigned to subTable by ID. Locations are arranged in terms of position in the locations Array,
     // using the owningTable property in the location table
-    _locations: new fields.ArrayField(new fields.EmbeddedDataField(GcsHitLocation), {
+    _locations: new fields.TypedObjectField(new fields.EmbeddedDataField(GcsHitLocation), {
       required: true,
       nullable: false,
     }),
-    _subTables: new fields.ArrayField(new fields.EmbeddedDataField(GcsSubTable), { required: true, nullable: false }),
+    _subTables: new fields.TypedObjectField(new fields.EmbeddedDataField(GcsSubTable), {
+      required: true,
+      nullable: false,
+    }),
   }
 }
 

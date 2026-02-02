@@ -1,6 +1,6 @@
 import { fields, DataModel } from '../../types/foundry/index.ts'
 
-import { GcsAttributeDefinition } from './gcs-attribute-definition.ts'
+import { AttributeType, GcsAttributeDefinition } from './gcs-attribute-definition.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'
 
 /* ---------------------------------------- */
@@ -16,6 +16,41 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
+  static setFromDefinitions(
+    defs:
+      | Record<string, GcsAttributeDefinition>
+      | Record<string, DataModel.CreateData<DataModel.SchemaOf<GcsAttributeDefinition>>>
+  ): Record<string, DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>>> {
+    return Object.fromEntries(
+      Object.values(defs).map(def => {
+        const attribute = this.fromDefinition(def)
+
+        return [attribute._id, attribute]
+      })
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  static fromDefinition(
+    def: GcsAttributeDefinition | DataModel.CreateData<DataModel.SchemaOf<GcsAttributeDefinition>>
+  ): DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>> {
+    const data: DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>> = {
+      _id: def._id,
+      id: def.id,
+      adj: 0,
+      damage: null,
+    }
+
+    if (def.type === AttributeType.Pool || def.type === AttributeType.PoolRef) data.damage = 0
+
+    return data
+  }
+
+  /* ---------------------------------------- */
+
+  /* ---------------------------------------- */
+
   protected override _initialize(options?: DataModel.InitializeOptions | undefined): void {
     super._initialize(options)
     const actor = this.actor
@@ -25,8 +60,6 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
 
       return
     }
-
-    this._definition = actor?.system?.attributeDefinitions?.get(this.id) || null
   }
 
   /* ---------------------------------------- */
@@ -34,7 +67,7 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
   get definition(): GcsAttributeDefinition | null {
     if (this._definition) return this._definition
 
-    const definition = this.actor?.system?.settings?._attributes?.find(e => e.id === this.id)
+    const definition = this.actor?.system?.settings?._attributes?.[this._id]
 
     if (!definition) return null
 
@@ -82,6 +115,7 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
 
 const gcsAttributeSchema = () => {
   return {
+    _id: new fields.StringField({ required: true, nullable: false }),
     id: new fields.StringField({ required: true, nullable: false }),
     adj: new fields.NumberField({ required: true, nullable: false }),
     damage: new fields.NumberField({ required: true, nullable: true }),

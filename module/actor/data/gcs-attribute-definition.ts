@@ -58,36 +58,6 @@ class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, Gcs
 
   /* ---------------------------------------- */
 
-  static newAttributes(
-    defs: GcsAttributeDefinition[] | DataModel.CreateData<DataModel.SchemaOf<GcsAttributeDefinition>>[]
-  ): DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>>[] {
-    const attributes: DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>>[] = []
-
-    for (const definition of defs) {
-      attributes.push(this.newAttribute(definition))
-    }
-
-    return attributes
-  }
-
-  /* ---------------------------------------- */
-
-  static newAttribute(
-    def: GcsAttributeDefinition | DataModel.CreateData<DataModel.SchemaOf<GcsAttributeDefinition>>
-  ): DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>> {
-    const data: DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>> = {
-      id: def.id,
-      adj: 0,
-      damage: null,
-    }
-
-    if (def.type === AttributeType.Pool || def.type === AttributeType.PoolRef) data.damage = 0
-
-    return data
-  }
-
-  /* ---------------------------------------- */
-
   baseValue(att: GcsAttribute): number {
     if (this.isSeparator) return 0
 
@@ -179,6 +149,8 @@ const attributeThresholdSchema = () => {
     // Value       string         `json:"value"`
     // Explanation string         `json:"explanation,omitzero"`
     // Ops         []threshold.Op `json:"ops,omitzero"`
+    _id: new fields.StringField({ required: true, nullable: false, readonly: true }),
+    order: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     state: new fields.StringField({ required: true, nullable: false }),
     value: new fields.StringField({ required: true, nullable: false }),
     explanation: new fields.StringField({ required: true, nullable: false }),
@@ -210,6 +182,8 @@ const attributeDefinitionSchema = () => {
     // NOTE: The .initial value of this field is a temporary placeholder. GCS generates a new ID
     // as an alphanumeric (plus _) string of minimum length to ensure there are no duplicate ID keys.
     // Therefore, it should cycle through "a" -> "z", then "aa" etc.
+    _id: new fields.StringField({ required: true, nullable: false, readonly: true }),
+    order: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     id: new fields.StringField({ required: true, nullable: false, blank: false, initial: 'a' }),
     type: new fields.StringField({
       required: true,
@@ -232,7 +206,7 @@ const attributeDefinitionSchema = () => {
     // NOTE: Should be displayed as a percentage
     costAdjPerSm: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // TODO: Check if required and nullable even works for array fields
-    thresholds: new fields.ArrayField(
+    thresholds: new fields.TypedObjectField(
       new fields.SchemaField(attributeThresholdSchema(), { required: true, nullable: false }),
       {
         required: false,
@@ -246,4 +220,4 @@ type GcsAttributeDefinitionSchema = ReturnType<typeof attributeDefinitionSchema>
 
 /* ---------------------------------------- */
 
-export { GcsAttributeDefinition }
+export { GcsAttributeDefinition, AttributeType, GcsAttributePlacement, GcsAttributeKind }
