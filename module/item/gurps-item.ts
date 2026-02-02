@@ -156,9 +156,14 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     createOptions?: Item.Database.DialogCreateOptions,
     options?: Item.CreateDialogOptions
   ): Promise<Item.Stored | null | undefined> {
-    options ||= {}
-    // @ts-expect-error: Improper types
-    options.types = ['equipmentV2', 'featureV2', 'skillV2', 'spellV2']
+    const isDevMode = game.settings?.get(GURPS.SYSTEM_NAME, 'developerMode') ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      // Disable in-development Item types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = ['equipment', 'feature', 'skill', 'spell', 'equipmentV2', 'featureV2', 'skillV2', 'spellV2']
+    }
 
     return super.createDialog(data, createOptions, options)
   }

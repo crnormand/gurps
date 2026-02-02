@@ -173,7 +173,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     createOptions?: Actor.Database.DialogCreateOptions,
     options?: Actor.CreateDialogOptions
   ): Promise<Actor.Stored | null | undefined> {
-    console.log('GURPS | Creating Actor via custom createDialog.', data, createOptions, options)
+    const isDevMode = game.settings?.get(GURPS.SYSTEM_NAME, 'developerMode') ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      // Disable in-development Actor types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = ['character', 'characterV2']
+    }
 
     return super.createDialog(data, createOptions, options)
   }
