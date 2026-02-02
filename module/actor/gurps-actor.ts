@@ -172,6 +172,25 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
+  static override async createDialog(
+    data?: Actor.CreateDialogData,
+    createOptions?: Actor.Database.DialogCreateOptions,
+    options?: Actor.CreateDialogOptions
+  ): Promise<Actor.Stored | null | undefined> {
+    const isDevMode = game.settings?.get(GURPS.SYSTEM_NAME, 'developerMode') ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      // Disable in-development Actor types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = ['character', 'characterV2']
+    }
+
+    return super.createDialog(data, createOptions, options)
+  }
+
+  /* ---------------------------------------- */
+
   override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
     embeddedName: EmbeddedName,
     id: string,
@@ -1996,7 +2015,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   async editItem(path: string, obj: any) {
-    if (this.isNewActorType) {
+    if (this.isOfType('characterV2', 'enemy')) {
       const note = foundry.utils.getProperty(this, path) as NoteV1
       const item = note.noteV2
       const array = foundry.utils.deepClone(this.system._source.allNotes)

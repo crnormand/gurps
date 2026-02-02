@@ -1,20 +1,31 @@
-import { BaseAction } from 'module/action/base-action.ts'
 import { DamageActionSchema } from 'module/actor/data/character-components.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
+import { GcsCharacterModel } from 'module/actor/data/gcs-character.ts'
+import { GcsLootModel } from 'module/actor/data/gcs-loot.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
 import DamageChat from 'module/damage/damagechat.js'
+import { MapField } from 'module/data/fields/map-field.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { Importer } from 'module/importer/index.ts'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
+import { GcsEquipmentModifierModel } from 'module/item/data/gcs-equipment-modifier.ts'
+import { GcsEquipmentModel } from 'module/item/data/gcs-equipment.ts'
+import { GcsNoteModel } from 'module/item/data/gcs-note.ts'
+import { GcsSkillModel } from 'module/item/data/gcs-skill.ts'
+import { GcsSpellModel } from 'module/item/data/gcs-spell.ts'
+import { GcsTraitModifierModel } from 'module/item/data/gcs-trait-modifier.ts'
+import { GcsTraitModel } from 'module/item/data/gcs-trait.ts'
 import { SkillModel } from 'module/item/data/skill.ts'
 import { SpellModel } from 'module/item/data/spell.ts'
 import { TraitModel } from 'module/item/data/trait.ts'
 import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
+import { AnyPrereqClass } from 'module/prereqs/index.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
+import { Scripting } from 'module/scripting/index.ts'
 import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 
@@ -32,6 +43,7 @@ declare global {
 
     modules: {
       Importer: typeof Importer
+      Scripting: typeof Scripting
       Pdf: {
         handleOnPdf(event: Event): void
       }
@@ -133,17 +145,30 @@ declare global {
     SJGProductMappings: Record<string, string>
 
     CONFIG: {
-      Action: Record<
-        string,
-        {
-          label: string
-          documentClass: typeof BaseAction
-        }
-      >
+      Action: PseudoDocumentConfig<AnyActionClass>
+      // Action: Record<
+      //   string,
+      //   {
+      //     label: string
+      //     documentClass: typeof BaseAction
+      //   }
+      // >
+      Prereq: PseudoDocumentConfig<AnyPrereqClass>
       // HACK: to get rid of later. just used for TypedPseudoDocument.TYPES at the moment
       [key: string]: unknown
     }
   }
+
+  /* ---------------------------------------- */
+
+  type PseudoDocumentConfig<T = any, S = any> = Record<
+    string,
+    {
+      documentClass: T
+      label?: string
+      sheetClass?: S
+    }
+  >
 
   /* ---------------------------------------- */
 
@@ -444,6 +469,8 @@ declare module 'fvtt-types/configuration' {
       character: ActorV1Model
       characterV2: typeof CharacterModel
       enemy: typeof CharacterModel
+      gcsCharacter: typeof GcsCharacterModel
+      gcsLoot: typeof GcsLootModel
     }
     Item: {
       equipment: Equipment
@@ -454,6 +481,13 @@ declare module 'fvtt-types/configuration' {
       featureV2: typeof TraitModel
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
+      gcsTrait: typeof GcsTraitModel
+      gcsTraitModifier: typeof GcsTraitModifierModel
+      gcsSkill: typeof GcsSkillModel
+      gcsSpell: typeof GcsSpellModel
+      gcsEquipment: typeof GcsEquipmentModel
+      gcsEquipmentModifier: typeof GcsEquipmentModifierModel
+      gcsNote: typeof GcsNoteModel
     }
     ChatMessage: Record<string, unknown>
   }
@@ -511,6 +545,15 @@ declare module 'fvtt-types/configuration' {
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
+    'gurps.scripting.globalResolverCache': MapField<
+      foundry.data.fields.SchemaField<{
+        id: foundry.data.fields.StringField<{ required: true; nullable: false }>
+        text: foundry.data.fields.StringField<{ required: true; nullable: false }>
+      }>,
+      foundry.data.fields.StringField<{ required: true; nullable: false }>,
+      { required: true; nullable: false }
+    >
+    'gurps.developerMode': boolean
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

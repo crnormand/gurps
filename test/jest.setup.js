@@ -92,7 +92,7 @@ global.foundry = {
     // @ts-expect-error - mock namespace for testing
     fields: {
       // @ts-expect-error - mock class for testing
-      TypedSchemaField: class TypedSchemaField {
+      TypedSchemaField: class {
         constructor(types, options) {
           this.types = types
           this.options = options
@@ -103,47 +103,53 @@ global.foundry = {
         }
       },
       // @ts-expect-error - mock class for testing
-      TypedObjectField: class TypedObjectField {
+      TypedObjectField: class {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      SchemaField: class SchemaField {
+      SchemaField: class {
         constructor(schema, options) {
           this.schema = schema
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      StringField: class StringField {
+      StringField: class {
         constructor(options) {
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      NumberField: class NumberField {
+      NumberField: class {
         constructor(options) {
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      BooleanField: class BooleanField {
+      BooleanField: class {
         constructor(options) {
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      ArrayField: class ArrayField {
+      ArrayField: class {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
       // @ts-expect-error - mock class for testing
-      ObjectField: class ObjectField {
+      ObjectField: class {
         constructor(options) {
+          this.options = options
+        }
+      },
+      EmbeddedDataField: class {
+        constructor(model, options) {
+          this.model = model
           this.options = options
         }
       },
@@ -298,30 +304,29 @@ global.foundry = {
   appv1: {
     sheets: {
       // Minimal base classes to satisfy extends
-      // @ts-expect-error - mock class for testing
       ActorSheet: class {},
-      // @ts-expect-error - mock class for testing
       ItemSheet: class {},
     },
   },
   applications: {
     api: {
-      // @ts-expect-error - mock class for testing
       Application: class {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       ApplicationV2: class {},
-      // @ts-expect-error - mock mixin for testing
+      DocumentSheetV2: class {},
       HandlebarsApplicationMixin: Base => class extends Base {},
     },
     handlebars: {
       renderTemplate: async () => '',
     },
+    sheets: {
+      ActorSheet: class {},
+      ItemSheet: class {},
+    },
     ux: {
-      // @ts-expect-error - mock class for testing
       ContextMenu: class {
         constructor(element, selector, menuItems, options) {
           this.element = element
