@@ -1,9 +1,6 @@
-// @ts-ignore
-import { Length } from '../../../../module/data/common/length'
+import { Length } from '../../../../module/data/common/length.ts'
 
 describe('Length', () => {
-  Length._localize = (key: any) => key // or a mock function
-
   describe('fromString', () => {
     it('parses inches', () => {
       const l = Length.fromString('12 in', Length.Unit.Inch)
@@ -131,7 +128,7 @@ describe('Length', () => {
 
   describe('From -> To', () => {
     it('converts from feet to inches', () => {
-      const yards = Length.from(3, 'yd').to(Length.Unit.Yard).value
+      const yards = Length.from(3, Length.Unit.Yard)?.to(Length.Unit.Yard).value
 
       expect(yards).toBe(3)
     })

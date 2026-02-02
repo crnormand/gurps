@@ -1,4 +1,3 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
@@ -137,7 +136,7 @@ export class ActorImporter {
     try {
       r = JSON.parse(json)
       this.json = r
-    } catch (err) {
+    } catch {
       msg.push(game.i18n.localize('GURPS.importNoJSONDetected'))
       exit = true
     }
@@ -1098,37 +1097,6 @@ export class ActorImporter {
     }
   }
 
-  async _preImport(generator, itemType) {
-    // if (!this.isUsingFoundryItems()) {
-    //   // Before we import, we need to find all eligible items,
-    //   // and backup their exclusive info inside Actor system.itemInfo
-    //   const isEligibleItem = item => {
-    //     const sysKey =
-    //       itemType === 'equipment'
-    //         ? this.actor._findEqtkeyForId('itemid', item.id)
-    //         : this.actor._findSysKeyForId('itemid', item.id, item.actorComponentKey)
-    //     return (
-    //       (!!item.system.importid && item.system.importFrom === generator && item.type === itemType) ||
-    //       !foundry.utils.getProperty(this.actor, sysKey)?.save
-    //     )
-    //   }
-    //   let backupItemData = foundry.utils.getProperty(this.actor, `system.backupItemInfo`) || {}
-    //   const eligibleItems = this.actor.items.filter(i => !!isEligibleItem(i))
-    //   backupItemData = eligibleItems.reduce((acc, i) => {
-    //     return {
-    //       ...acc,
-    //       [i.system.importid || i.system.originalName]: i.getItemInfo(),
-    //     }
-    //   }, backupItemData)
-    //   await this.actor.internalUpdate({ 'system.backupItemInfo': backupItemData })
-    //   if (eligibleItems.length > 0)
-    //     await this.actor.deleteEmbeddedDocuments(
-    //       'Item',
-    //       eligibleItems.map(i => i.id)
-    //     )
-    // }
-  }
-
   /**
    * @param {{ [key: string]: any }} json
    */
@@ -1281,7 +1249,7 @@ export class ActorImporter {
     let fullName = readXmlText(j.name)
     let techLevel = readXmlText(j.tl)
     const localizedTL = game.i18n.localize('GURPS.TL')
-    let regex = new RegExp(`.+\/[TL|${localizedTL}].+`)
+    let regex = new RegExp(`.+/[TL|${localizedTL}].+`)
 
     if (fullName.match(regex)) {
       let i = fullName.lastIndexOf('/TL') || fullName.lastIndexOf(`/${localizedTL}`)
@@ -1634,7 +1602,7 @@ export class ActorImporter {
 
     data.QP.value = qp
 
-    let bl_string = calc?.basic_lift.match(/[\d,\.]+/g)[0]
+    let bl_string = calc?.basic_lift.match(/[\d,.]+/g)[0]
     let bl_value = parseDecimalNumber(bl_string)
     let bl_unit = calc?.basic_lift.replace(bl_string + ' ', '')
 
@@ -2653,7 +2621,7 @@ export class ActorImporter {
       if (i.id.startsWith('P')) i.type = 'spell_container'
     }
 
-    if (i.type == ('skill_container' || 'spell_container') && i.children?.length)
+    if ((i.type === 'skill_container' || i.type === 'spell_container') && i.children?.length)
       for (let j of i.children) skills = this.skPointCount(j, skills)
     else skills += i.points ?? 0
 
@@ -2692,8 +2660,10 @@ export class ActorImporter {
     let oldotf = oldobj[objkey]
 
     newobj[objkey] = oldotf
-    var notes, newotf
+    let notes,
+      newotf
 
+      // Remove OTF
     ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
     if (newotf) newobj[objkey] = newotf
     newobj.notes = notes.trim()
@@ -2782,7 +2752,7 @@ export class ActorImporter {
     // increment the count for a tableScore if it contains the same hit location as "prot"
     locations.forEach(function (hitLocation) {
       tableNames.forEach(function (tableName) {
-        if (HitLocations.hitlocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
+        if (Object.hasOwn(HitLocations.hitlocationDictionary[tableName], hitLocation.where)) {
           tableScores[tableName] = tableScores[tableName] + 1
         }
       })
@@ -2835,7 +2805,6 @@ export class ActorImporter {
   }
 
   async _processItemFrom(actorComp, fromProgram) {
-    // if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     // Sanity check
     if (
       !(actorComp instanceof Equipment) &&
@@ -2898,12 +2867,10 @@ export class ActorImporter {
       actorComp.modifierTags = existingItem.system.modifierTags
     }
 
-    // }
     return actorComp
   }
 
-  async _updateItemContains(actorComp, parent) {
-    // if (this.isUsingFoundryItems()) {
+  async _updateItemContains(actorComp) {
     const item = this.actor.items.get(actorComp.itemid)
 
     if (item) {

@@ -16,7 +16,7 @@ export default async function selectTarget(targets, selectOptions = { selectAll:
       }
     ),
     ok: {
-      callback: (event, button, dialog) => {
+      callback: (event, button) => {
         const allTokens = button.form.elements.tokens
         const ids = Array.from(allTokens)
           .filter(token => token.checked)

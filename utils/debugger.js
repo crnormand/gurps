@@ -16,7 +16,7 @@ export let patchFunc = (prop, func, type = 'WRAPPER') => {
   if (game.modules.get('lib-wrapper')?.active) {
     try {
       libWrapper.register('gurps', prop, func, type)
-    } catch (e) {
+    } catch {
       nonLibWrapper()
     }
   } else {

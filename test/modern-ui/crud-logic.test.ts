@@ -1,9 +1,9 @@
-// @ts-expect-error - test-only import
-import { buildEntityPath, getDisplayName } from '../../module/actor/modern/crud-handler'
+import { buildEntityPath, getDisplayName } from '../../module/actor/modern/crud-handler.ts'
 
 beforeAll(() => {
   // @ts-expect-error - mock for testing
   globalThis.game = {
+    ready: true,
     i18n: {
       localize: (key: string) => key,
     },
@@ -42,18 +42,21 @@ describe('getDisplayName', () => {
   test('returns fallback when property is missing', () => {
     const obj = { other: 'value' }
 
+    // @ts-expect-error - testing missing property
     expect(getDisplayName(obj, 'name', 'GURPS.skill')).toBe('GURPS.skill')
   })
 
   test('returns fallback when property is not a string', () => {
     const obj = { name: 123 }
 
+    // @ts-expect-error - testing invalid property type
     expect(getDisplayName(obj, 'name', 'GURPS.skill')).toBe('GURPS.skill')
   })
 
   test('uses custom display property', () => {
     const obj = { situation: 'When attacking' }
 
+    // @ts-expect-error - testing custom display property
     expect(getDisplayName(obj, 'situation', 'GURPS.modifier')).toBe('When attacking')
   })
 
