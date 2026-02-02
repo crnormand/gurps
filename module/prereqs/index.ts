@@ -1,7 +1,7 @@
 import { GurpsModule } from '../gurps-module.ts'
 
 import { AttributePrereq } from './attribute-prereq.ts'
-import { PrereqType } from './base-prereq.ts'
+import { BasePrereq, PrereqType } from './base-prereq.ts'
 import { ContainedQuantityPrereq } from './contained-quantity-prereq.ts'
 import { ContainedWeightPrereq } from './contained-weight-prereq.ts'
 import { EquippedEquipmentPrereq } from './equipped-equipment-prereq.ts'
@@ -68,16 +68,17 @@ export const Prereqs: PrereqsModule = {
 }
 
 export {
-  PrereqType,
+  BasePrereq,
   ContainedQuantityPrereq,
   ContainedWeightPrereq,
   EquippedEquipmentPrereq,
+  PrereqClasses,
   PrereqList,
+  PrereqType,
   ScriptPrereq,
   SkillPrereq,
   SpellPrereq,
   TraitPrereq,
-  PrereqClasses,
 }
 
 export type { AnyPrereq, AnyPrereqClass, Prereq, PrereqClass }

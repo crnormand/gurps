@@ -15,7 +15,7 @@ class GcsTraitModel extends GcsBaseItemModel<GcsTraitSchema> implements IFeature
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'prereqs', Feature: 'features' },
+      embedded: { Prereq: 'system.prereqs', Feature: 'system.features' },
       type: 'gcsTrait',
       invalidActorTypes: [],
       actions: {},

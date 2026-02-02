@@ -518,6 +518,7 @@ declare module 'fvtt-types/configuration' {
       foundry.data.fields.StringField<{ required: true; nullable: false }>,
       { required: true; nullable: false }
     >
+    'gurps.developerMode': boolean
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

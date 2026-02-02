@@ -17,7 +17,7 @@ class GcsEquipmentModifierModel
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Feature: 'features' },
+      embedded: { Feature: 'system.features' },
       type: 'gcsEquipmentModifier',
       invalidActorTypes: [],
       actions: {},

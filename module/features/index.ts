@@ -1,6 +1,7 @@
 import { GurpsModule } from '../gurps-module.ts'
 
 import { AttributeBonus } from './attribute-bonus.ts'
+import { BaseFeature } from './base-feature.ts'
 import { ConditionalModifier } from './conditional-modifier.ts'
 import { ContainedWeightReduction } from './contained-weight-reduction.ts'
 import { CostReduction } from './cost-reduction.ts'
@@ -147,6 +148,6 @@ export const Features: FeaturesModule = {
   models: FeatureClasses,
 }
 
-export { FeatureClasses, FeatureType }
+export { FeatureClasses, FeatureType, BaseFeature }
 
 export type { AnyFeature, AnyFeatureClass, Feature, FeatureClass }

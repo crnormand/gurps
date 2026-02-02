@@ -14,7 +14,7 @@ class GcsSpellModel extends GcsBaseItemModel<GcsSpellSchema> implements IPrereqs
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'prereqs' },
+      embedded: { Prereq: 'system.prereqs' },
       type: 'gcsSpell',
       invalidActorTypes: [],
       actions: {},

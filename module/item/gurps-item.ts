@@ -15,6 +15,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
   implements ItemV1Interface, IContainable<GurpsItemV2>
 {
+  /* ---------------------------------------- */
+
   // Narrowed view of this.system for GurpsItemV2 logic.
   get modelV2(): BaseItemModel {
     return this.system as Item.SystemOfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
@@ -38,8 +40,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Item.SubType)
   }
-
-  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /*  IContainable Interface Implementation   */
@@ -147,6 +147,20 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     }
 
     return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+  }
+
+  /* ---------------------------------------- */
+
+  static override async createDialog(
+    data?: Item.CreateDialogData,
+    createOptions?: Item.Database.DialogCreateOptions,
+    options?: Item.CreateDialogOptions
+  ): Promise<Item.Stored | null | undefined> {
+    options ||= {}
+    // @ts-expect-error: Improper types
+    options.types = ['equipmentV2', 'featureV2', 'skillV2', 'spellV2']
+
+    return super.createDialog(data, createOptions, options)
   }
 
   /* ---------------------------------------- */

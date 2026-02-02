@@ -16,7 +16,7 @@ class GcsSkillModel extends GcsBaseItemModel<GcsSkillSchema> implements IFeature
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'prereqs', Feature: 'features' },
+      embedded: { Prereq: 'system.prereqs', Feature: 'system.features' },
       type: 'gcsSkill',
       invalidActorTypes: [],
       actions: {},

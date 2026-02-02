@@ -1,10 +1,10 @@
-import { AnyPrereq, PrereqClasses } from '../../prereqs/index.ts'
-import { fields } from '../../types/foundry/index.ts'
-// import { AnyPrereq, Prereq, PrereqClasses, PrereqType } from '../prereqs/index.ts'
+import { BasePrereq } from '../../prereqs/index.ts'
+import { CollectionField } from '../fields/collection-field.ts'
+import { ModelCollection } from '../model-collection.ts'
 
-const prereqsSchema = (types = PrereqClasses) => {
+const prereqsSchema = () => {
   return {
-    prereqs: new fields.TypedObjectField(new fields.TypedSchemaField(types)),
+    prereqs: new CollectionField(BasePrereq),
   }
 }
 
@@ -12,7 +12,7 @@ const prereqsSchema = (types = PrereqClasses) => {
 
 interface IPrereqs {
   // List of prereqs contained within this item
-  prereqs: Record<string, AnyPrereq>
+  prereqs: ModelCollection<BasePrereq<any>>
 
   // // Add a new prereq
   // createPrereq<Type extends PrereqType>(
