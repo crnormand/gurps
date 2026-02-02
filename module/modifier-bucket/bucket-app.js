@@ -134,7 +134,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
    * @override
    */
   async _evaluate({ minimize = false, maximize = false } = {}) {
-    let physicalDice = game.user?.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
+    let physicalDice = game.user?.isTrusted && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     if (physicalDice) {
       return new Promise(async resolve => {
@@ -208,7 +208,7 @@ class ModifierStack {
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
-    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     if (taggedSettings.autoAdd && this.currentSum !== oldSum) {
       const signal = this.minus ? '-' : '+'
       const target = $('#cr-target').text()
@@ -397,7 +397,7 @@ export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
-    this.isTooltip = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
+    this.isTooltip = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
 
     this.editor = new ModifierBucketEditor(this, {
       popOut: !this.isTooltip,
@@ -413,7 +413,7 @@ export class ModifierBucket extends Application {
     this.modifierStack = new ModifierStack()
 
     // is the Dice section visible?
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)) {
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)) {
       // FIXME do nothing, for now...
     }
 
@@ -432,7 +432,7 @@ export class ModifierBucket extends Application {
 
   // Called from Range Ruler after measurement ends, to possible add range to stack
   addTempRangeMod() {
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
       if (!!this._tempRangeMod) this.modifierStack.add(this._tempRangeMod, 'for range', true) // Only allow 1 measured range, for the moment.
       this.refresh()
     }
@@ -579,10 +579,10 @@ export class ModifierBucket extends Application {
     const data = super.getData(options)
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
-    const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+    const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
     data.cssContainerClass = `force-${position}`
-    data.dice3dImagePath = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_3D6_IMAGE)
-    data.diceImagePath = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_D6_IMAGE)
+    data.dice3dImagePath = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_3D6_IMAGE)
+    data.diceImagePath = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_D6_IMAGE)
 
     let ca = null
     if (!!GURPS.LastActor) {
@@ -592,7 +592,7 @@ export class ModifierBucket extends Application {
       if (ca && ca.length > 25) ca = ca.substring(0, 22) + '…'
     }
     data.currentActor = ca
-    data.diceVisible = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)
+    data.diceVisible = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)
     return data
   }
 
@@ -839,7 +839,7 @@ export class ModifierBucket extends Application {
 
   refreshPosition(element = this.element) {
     if (!element || !element[0]) return
-    const positionSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+    const positionSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
     if (game.release.generation >= 13) {
       if (positionSetting === 'left') {
@@ -913,11 +913,11 @@ export class ModifierBucket extends Application {
    * @override
    */
   _injectHTML($html) {
-    const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+    const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
     const bucketExists = !!document.querySelector('#modifierbucket')
     if (!bucketExists) {
-      const position = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+      const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
       if (game.release.generation >= 13) {
         if (position === 'left') {
           const hotbar = document.querySelector('#hotbar')

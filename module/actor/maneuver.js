@@ -368,7 +368,7 @@ export default class Maneuvers {
   }
 
   static getAll() {
-    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     const filter = []
     if (useOnTarget) {

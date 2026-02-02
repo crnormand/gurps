@@ -75,7 +75,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.system.eqtsummary
     sheetData.navigateBar = {
-      visible: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_SHEET_NAVIGATION),
+      visible: game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_SHEET_NAVIGATION),
       hasMelee: !isEmptyObject(this.actor.system.melee),
       hasRanged: !isEmptyObject(this.actor.system.ranged),
       hasSpells: !isEmptyObject(this.actor.system.spells),
@@ -84,7 +84,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
-    sheetData.useQN = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
+    sheetData.useQN = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
 
     sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
 
@@ -149,7 +149,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     this._createGlobalItemMenus(html)
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       html.find('.enc').click(this._onClickEnc.bind(this))
     }
 
@@ -299,7 +299,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     // END CONDITIONAL INJURY
 
     // If using the "enhanced" inputs for trackers, enable the ribbon popup.
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ENHANCED_INPUT)) {
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ENHANCED_INPUT)) {
       // On Focus, initialize the ribbon popup and show it.
       html.find('.spinner details summary input').focus(ev => {
         let details = ev.currentTarget.closest('details')
@@ -542,7 +542,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       if (!(await this.actor._sanityCheckItemSettings(eqt))) return
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
-      // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       //   await this.actor.internalUpdate({ [path + '.uses']: value })
       // } else {
       let item = this.actor.items.get(eqt.itemid)
@@ -559,7 +559,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       //   await this.actor.internalUpdate({ [path + '.uses']: value })
       // } else {
       let item = this.actor.items.get(eqt.itemid)
@@ -998,7 +998,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         item = j.pages.get(dragData.uuid.split('.').at(-1))
         break
     }
-    // const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+    // const equipmentAsItem = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
     return item.type !== 'equipment' // || !equipmentAsItem
       ? {
@@ -1156,7 +1156,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+              // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
               //   ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
               //     a => (obj[a] = html.find(`.${a}`).val())
               //   )
@@ -1623,7 +1623,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
-    const altsheet = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
+    const altsheet = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
 
     const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
     let b = [
@@ -1767,7 +1767,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   async _onClickEnc(ev) {
     ev.preventDefault()
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       const element = ev.currentTarget
       const key = element.dataset.key
       if (!key) return
@@ -1802,7 +1802,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     eqt.equipped = !eqt.equipped
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     await this.actor.internalUpdate({ [key]: eqt })
-    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    // if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     let item = this.actor.items.get(eqt.itemid)
     item.system.equipped = eqt.equipped
     item.system.eqt.equipped = eqt.equipped
@@ -2199,11 +2199,11 @@ export class ItemImageSettings extends FormApplication {
 
   getData() {
     return {
-      settings: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE),
+      settings: game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE),
     }
   }
 
   async _updateObject(event, formData) {
-    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE, formData)
+    await game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE, formData)
   }
 }

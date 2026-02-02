@@ -65,7 +65,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
     // TODO Update typing.
     // @ts-expect-error: update settings typing.
-    sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
+    sheetData.showHPTinting = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
     // TODO: Update GurpsActorV2 with new methods in GurpsActor (_actor.js).
     sheetData.moveMode = this.actor.currentMoveMode
 

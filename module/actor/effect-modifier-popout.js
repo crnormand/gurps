@@ -26,7 +26,7 @@ export const calculateRange = (token1, token2) => {
 }
 
 export const getRangedModifier = (source, target) => {
-  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const taggedModifiersSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
   const baseTags = `#${rangedTag}`
   let rangeModifier
@@ -51,11 +51,11 @@ export const getRangedModifier = (source, target) => {
  */
 export const getSizeModifier = (source, target) => {
   if (!source || !target) return undefined
-  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const taggedModifiersSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
   const baseTags = `#${meleeTag}`
   let sizeModifier
-  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+  if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
     const attackerSM = foundry.utils.getProperty(source.actor, 'system.traits.sizemod') || 0
     const targetSM = foundry.utils.getProperty(target.actor, 'system.traits.sizemod') || 0
     const sizeDiff = targetSM - attackerSM
@@ -295,7 +295,7 @@ export class EffectModifierPopout extends Application {
       const itemMods = actor.applyItemModEffects({})
       let sheetMods = []
 
-      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       if (taggedSettings.checkConditionals) {
         const conditionalMods = foundry.utils.getProperty(actor, 'system.conditionalmods') || {}
         recurselist(conditionalMods, (e, _k, _d) => {
@@ -481,7 +481,7 @@ export class TaggedModifierSettings extends FormApplication {
 
   getData() {
     return {
-      ...game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS),
+      ...game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS),
     }
   }
 
@@ -498,6 +498,6 @@ export class TaggedModifierSettings extends FormApplication {
       }
       return acc
     }, {})
-    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS, cleanData)
+    await game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS, cleanData)
   }
 }

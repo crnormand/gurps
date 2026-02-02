@@ -746,7 +746,7 @@ export class TokenActions {
     return icon
   }
   async removeCombatTempMods() {
-    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const combatTempTags = taggedSettings.combatTempTag
       .split(',')
       .map(it => it.trim().toLowerCase())
@@ -778,7 +778,7 @@ export class TokenActions {
         break
       case 'p':
         const settingsAddParryMods = game.settings.get(
-          Settings.SYSTEM_NAME,
+          GURPS.SYSTEM_NAME,
           Settings.SETTING_ADD_CUMULATIVE_PARRY_PENALTIES
         )
         if (settingsAddParryMods) {

@@ -35,7 +35,7 @@ class QuickRollSettings extends foundry.applications.api.HandlebarsApplicationMi
     const context = await super._prepareContext(options)
 
     return foundry.utils.mergeObject(context, {
-      settings: game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS),
+      settings: game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS),
     })
   }
 
@@ -47,7 +47,7 @@ class QuickRollSettings extends foundry.applications.api.HandlebarsApplicationMi
     _form: HTMLFormElement,
     formData: FormDataExtended
   ): Promise<void> {
-    await game.settings?.set(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS, formData.object)
+    await game.settings?.set(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS, formData.object)
   }
 }
 

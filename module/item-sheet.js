@@ -159,7 +159,7 @@ export class GurpsItemSheet extends ItemSheet {
     let srcData = foundry.utils.getProperty(srcActor, dragData.key)
     srcData.contains = {} // don't include any contained/collapsed items from source
     srcData.collapsed = {}
-    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     //   // Scenario 1: Only works for Equipment
     //   if (dragData.type === 'equipment') {
     //     await this.item.update({
@@ -235,7 +235,7 @@ export class GurpsItemSheet extends ItemSheet {
   }
 
   // get useFoundryItems() {
-  //   return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+  //   return game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
   // }
   get isContainer() {
     return (
