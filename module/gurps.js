@@ -27,7 +27,7 @@ import {
 } from '../lib/utilities.js'
 import { GGADebugger } from '../utils/debugger.js'
 
-import { Action } from './action/index.js'
+import { ActionModule } from './action/index.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
@@ -63,6 +63,7 @@ import { AddImportEquipmentButton } from './item-import.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
+import { Prereqs } from './prereqs/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
 import { Scripting } from './scripting/index.ts'
 import { Token } from './token/index.js'
@@ -104,11 +105,12 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
-    Action,
+    Action: ActionModule,
     Actor,
     Canvas,
     Combat,
     Damage,
+    Prereqs,
     Importer,
     Item,
     Pdf,

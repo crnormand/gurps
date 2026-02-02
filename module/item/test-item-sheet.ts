@@ -24,15 +24,10 @@ class TestItemSheet extends foundry.applications.api.HandlebarsApplicationMixin(
     // @ts-expect-error: Improper typing
     const context = await super._prepareContext(options)
 
-    const script: string = (this.item as any).system.test.script
-
-    const result = GURPS.modules.Scripting.resolver.resolveScript(this.actor, {}, script)
-
     Object.assign(context, {
       system: this.item.system,
       systemSource: this.item._source.system,
       systemFields: this.item.system.schema.fields,
-      result,
     })
 
     console.log('context', context)

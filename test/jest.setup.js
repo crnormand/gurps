@@ -304,30 +304,29 @@ global.foundry = {
   appv1: {
     sheets: {
       // Minimal base classes to satisfy extends
-      // @ts-expect-error - mock class for testing
       ActorSheet: class {},
-      // @ts-expect-error - mock class for testing
       ItemSheet: class {},
     },
   },
   applications: {
     api: {
-      // @ts-expect-error - mock class for testing
       Application: class {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       ApplicationV2: class {},
-      // @ts-expect-error - mock mixin for testing
+      DocumentSheetV2: class {},
       HandlebarsApplicationMixin: Base => class extends Base {},
     },
     handlebars: {
       renderTemplate: async () => '',
     },
+    sheets: {
+      ActorSheet: class {},
+      ItemSheet: class {},
+    },
     ux: {
-      // @ts-expect-error - mock class for testing
       ContextMenu: class {
         constructor(element, selector, menuItems, options) {
           this.element = element

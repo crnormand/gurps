@@ -1,6 +1,6 @@
 import { DataModel, Document, fields } from '../types/foundry/index.js'
 
-import { PseudoDocument, PseudoDocumentSchema } from './pseudo-document.js'
+import { pseudoDocumentSchema, PseudoDocument } from './pseudo-document.js'
 
 interface TypedPseudoDocumentCreateDialogOptions
   extends foundry.config.ApplicationConfiguration, foundry.applications.api.Dialog.WaitOptions {}
@@ -9,8 +9,8 @@ class TypedPseudoDocument<
   Schema extends TypedPseudoDocumentSchema = TypedPseudoDocumentSchema,
   Parent extends DataModel.Any = DataModel.Any,
 > extends PseudoDocument<Schema, Parent> {
-  static override defineSchema() {
-    return Object.assign(super.defineSchema(), typedPseudoDocumentSchema(this))
+  static override defineSchema(): TypedPseudoDocumentSchema {
+    return typedPseudoDocumentSchema(this)
   }
 
   /* ---------------------------------------- */
@@ -117,14 +117,18 @@ class TypedPseudoDocument<
 
 /* ---------------------------------------- */
 
-const typedPseudoDocumentSchema = (self: { TYPES: Record<string, unknown> }) => {
+const typedPseudoDocumentSchema = (document: DataModel.AnyConstructor) => {
   return {
-    type: new fields.DocumentTypeField(self as unknown as Document.AnyConstructor, { required: true, nullable: false }),
+    ...pseudoDocumentSchema(),
+    type: new fields.DocumentTypeField(document as unknown as Document.AnyConstructor, {
+      required: true,
+      nullable: false,
+    }),
   }
 }
 
-type TypedPseudoDocumentSchema = PseudoDocumentSchema & ReturnType<typeof typedPseudoDocumentSchema>
+type TypedPseudoDocumentSchema = ReturnType<typeof typedPseudoDocumentSchema>
 
 /* ---------------------------------------- */
 
-export { TypedPseudoDocument, type TypedPseudoDocumentSchema }
+export { TypedPseudoDocument, type TypedPseudoDocumentSchema, typedPseudoDocumentSchema }
