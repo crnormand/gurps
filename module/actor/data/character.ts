@@ -1414,7 +1414,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         refTags = taggedSettings.allAttackRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
       }
 
-      const attackMods = attack?.component.modifierTags ?? []
+      const attackMods = attack?.component?.modifierTags ?? []
       modifierTags = [...allRollTags, ...attackMods, ...refTags]
       itemRef = attack?.name ?? ''
     }

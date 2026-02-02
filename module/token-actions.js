@@ -383,14 +383,16 @@ export class TokenActions {
    */
   async addModifiers() {
     const addModifier = mod => {
-      if (!maneuverModifiers.includes(mod) && !allModifiers.includes(mod)) {
+      if (!maneuverModifiers.includes(mod) && !allModifiers.has(mod)) {
         maneuverModifiers.push(mod)
       }
     }
 
-    const allModifiers = await foundry.utils
+    let allModifiers = await foundry.utils
       .getProperty(this.actor, 'system.conditions.usermods')
       .filter(m => !m.includes('#maneuver') && !m.includes('@eft:'))
+
+    if (!(allModifiers instanceof Set)) allModifiers = new Set(allModifiers)
 
     const maneuverModifiers = []
     if (this.toHitBonus !== 0) {
