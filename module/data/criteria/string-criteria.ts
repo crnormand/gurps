@@ -27,7 +27,11 @@ class StringCriteria extends DataModel<StringCriteriaSchema> {
 
   /* ---------------------------------------- */
 
-  matches(value: string): boolean {
+  matches(value: string | string[]): boolean {
+    if (Array.isArray(value)) {
+      return this.matchesArray(value)
+    }
+
     const lowerValue = value.toLowerCase().trim()
     const lowerQualifier = this.qualifier?.toLowerCase().trim() || ''
 
@@ -54,6 +58,33 @@ class StringCriteria extends DataModel<StringCriteriaSchema> {
         console.error(`Invalid string comparitor: ${this.compare}`)
 
         return true
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  matchesArray(values: string[]): boolean {
+    if (values.length === 0) return this.matches('')
+    let matches = 0
+
+    for (const value of values) {
+      if (this.matches(value)) matches++
+    }
+
+    switch (this.compare) {
+      case StringComparison.Any:
+      case StringComparison.Is:
+      case StringComparison.Contains:
+      case StringComparison.StartsWith:
+      case StringComparison.EndsWith:
+        return matches > 0
+      case StringComparison.IsNot:
+      case StringComparison.DoesNotContain:
+      case StringComparison.DoesNotStartWith:
+      case StringComparison.DoesNotEndWith:
+        return matches === values.length
+      default:
+        return matches > 0
     }
   }
 
