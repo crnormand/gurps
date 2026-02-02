@@ -355,7 +355,7 @@ export default class Maneuvers {
    * @returns {ManeuverData}
    */
   static getManeuver(maneuverText = 'do_nothing') {
-    if (maneuverText === 'undefined') maneuverText = 'do_nothing'
+    if (!maneuverText || maneuverText === 'undefined') maneuverText = 'do_nothing'
     return Maneuvers.getAll()[maneuverText].data
   }
 
