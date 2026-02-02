@@ -15,7 +15,7 @@ class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements 
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'prereqs', Feature: 'features' },
+      embedded: { Prereq: 'system.prereqs', Feature: 'system.features' },
       type: 'gcsEquipment',
       invalidActorTypes: [],
       actions: {},

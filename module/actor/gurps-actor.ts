@@ -168,6 +168,18 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
+  static override async createDialog(
+    data?: Actor.CreateDialogData,
+    createOptions?: Actor.Database.DialogCreateOptions,
+    options?: Actor.CreateDialogOptions
+  ): Promise<Actor.Stored | null | undefined> {
+    console.log('GURPS | Creating Actor via custom createDialog.', data, createOptions, options)
+
+    return super.createDialog(data, createOptions, options)
+  }
+
+  /* ---------------------------------------- */
+
   override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
     embeddedName: EmbeddedName,
     id: string,
