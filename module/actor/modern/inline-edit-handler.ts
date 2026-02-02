@@ -1,3 +1,5 @@
+import { GurpsActor } from '../actor.js'
+
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()
   return trimmedName.length > 0 && trimmedName !== currentName
@@ -75,7 +77,7 @@ const inlineEditConfigs: InlineEditConfigInternal[] = [
 
 export function buildOnBlurHandler(
   config: InlineEditConfigInternal,
-  actor: Actor.Implementation
+  actor: GurpsActor
 ): ((input: HTMLInputElement) => void) | undefined {
   if (config.fieldType === 'name') {
     return (input: HTMLInputElement) => {
@@ -100,14 +102,14 @@ export function buildOnBlurHandler(
   return undefined
 }
 
-export function bindAllInlineEdits(html: JQuery, actor: Actor.Implementation): void {
+export function bindAllInlineEdits(html: JQuery, actor: GurpsActor): void {
   inlineEditConfigs.forEach(config => {
     const onBlur = buildOnBlurHandler(config, actor)
     bindInlineEdit(html, { ...config, onBlur })
   })
 }
 
-export function bindAttributeEdit(html: JQuery, actor: Actor.Implementation): void {
+export function bindAttributeEdit(html: JQuery, actor: GurpsActor): void {
   const wrapperSelector = '.ms-attr-wrapper'
   const badgeSelector = '.ms-attr-badge'
   const inputSelector = '.ms-attr-input'
@@ -168,7 +170,7 @@ export function bindAttributeEdit(html: JQuery, actor: Actor.Implementation): vo
   })
 }
 
-export function bindSecondaryStatsEdit(html: JQuery, actor: Actor.Implementation): void {
+export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActor): void {
   const fieldsetSelector = '.ms-editable-stats'
   const editButtonSelector = '.ms-stat-box-edit'
   const inputSelector = '.ms-stat-input'
@@ -226,7 +228,7 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: Actor.Implementation
   })
 }
 
-export function bindPointsEdit(html: JQuery, actor: Actor.Implementation): void {
+export function bindPointsEdit(html: JQuery, actor: GurpsActor): void {
   const itemSelector = '.ms-points-item'
   const inputSelector = '.ms-points-input'
   const editingClass = 'editing'

@@ -4,9 +4,22 @@
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",
     "acc": "Acc",
+    "accForWeapon": "Acc for {weapon}",
     "active": "Active",
+    "activeEffects": "Active Effects",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
+    "actor": {
+      "setting": {
+        "autoUpdateStrength": "Auto Update Strength",
+        "autoUpdateStrengthHint": "Automatically update Basic Lift, Thrust and Swing damage when ST changes."
+      }
+    },
+    "addAbbrev": "Abbrev",
+    "addAdditionalStackingModifier": "Additional modifier",
+    "addAdjustedForDamageType": "‡ - Adjusted for Damage Modifier",
+    "addAdjustedForHitLocation": "* - Adjusted for hit location",
+    "addAdjustedForInjuryTolerance": "† - Adjusted for Injury Tolerance",
     "addAdvantage": "Add an Advantage",
     "adDisad": "Advantage/Disadvantage",
     "adDisadQuirkPerk": "Advantage/Disadvantage/Quirk/Perk",
@@ -281,6 +294,7 @@
     "combatTracker": {
       "initiative": "Initiative: {value}"
     },
+    "concentrationCheck": "Concentration check",
     "condition": "Condition",
     "conditionalModifier": "Conditional Modifier",
     "conditionalMods": "Conditional Modifiers",
@@ -488,6 +502,7 @@
       "title": "Add Effect",
       "utility": "Utility"
     },
+    "effects": "Effects",
     "effectsEffect": "Effect",
     "effectsNotApplicableDefenses": "Does not apply to Active Defenses or other defensive reactions.",
     "effectsTemporaryAttributePenalties": "See Temporary Attribute Penalties",
@@ -575,6 +590,8 @@
     "grapplingRestrained": "Restrained [-6 DX]",
     "grapplingUnrestrained": "Unrestrained",
     "groundCreatures": "Ground creatures",
+    "groundCreaturesSuffer": "Ground creatures suffer",
+    "half": "Half",
     "hardRoll": "Difficult chance",
     "headVitalsHit": "Head or Vitals Hit ",
     "hearing": "Hearing",
@@ -1065,6 +1082,7 @@
     "moveModeGround": "Ground",
     "moveModeOther": "Other...",
     "moveModeSpace": "Space",
+    "moveModeSpiderClimb": "Spider-Climb",
     "moveModeType": "Move Type",
     "moveModeWater": "Water",
     "moveNone": "None ({reason})",
@@ -1181,6 +1199,7 @@
     "reach": "Reach",
     "reaction": "Reaction",
     "reactionMods": "Reaction Modifiers",
+    "recalculate": "Recalculate",
     "reference": "Reference",
     "removedShockEffect": "Removed Shock effect on target.",
     "removeItem": "Remove Item",
@@ -1242,6 +1261,7 @@
     "selectTargetForDamageWarning": "Drop the damage on the target(s), or drop on the canvas to apply to targeted token(s).",
     "selectTargetForEquipmentWarning": "Drop the equipment on a single target token",
     "selectToken": "Select Token",
+    "sendToChat": "Send to chat",
     "serverity": "Severity",
     "setManeuver": "Set Maneuver",
     "settingActiveEffects": "Turn on Active Effects",
@@ -1507,8 +1527,11 @@
       "Suffocate": "Suffocating",
       "TerriblePain": "Terrible Pain",
       "Tipsy": "Tipsy",
+      "tired": "Tired",
       "Wait": "Waiting"
     },
+    "step": "Step",
+    "stepOrTwo": "Step or Two",
     "submit": "Submit",
     "suffersAMajorWound": "{name} suffers a Major Wound",
     "suffersHeadVitalsWound": "{name} was struck in the {location} with a Shock penalty.",
@@ -1574,7 +1597,8 @@
     "written": "Written",
     "yard": "yard",
     "yards": "yards",
-    "youDoNotHavePermission": "You do not have permission to do that."
+    "years": "years",
+    "youDoNotHavePermssion": "You do not have permission to do that."
   },
   "TYPES": {
     "Actor": {

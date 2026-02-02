@@ -20,18 +20,22 @@
       <span class='ms-stat-label'>{{localize 'GURPS.dodge'}}</span>
       {{>dice-button otf='Dodge' level=system.currentdodge}}
     </div>
+    {{#if system.thrust}}
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.thrust'}}</span>
       {{>dice-button otf=(concat system.thrust ' dmg') text=system.thrust damage=true}}
       <input class='ms-stat-input' type='text'
              name='system.thrust' value='{{system.thrust}}'/>
     </div>
+    {{/if}}
+    {{#if system.swing}}
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.swing'}}</span>
       {{>dice-button otf=(concat system.swing ' dmg') text=system.swing damage=true}}
       <input class='ms-stat-input' type='text'
              name='system.swing' value='{{system.swing}}'/>
     </div>
+    {{/if}}
   </fieldset>
   <fieldset class='ms-stat-box ms-editable-stats'>
     <legend>{{localize 'GURPS.effectPicker.senses'}}</legend>
@@ -69,4 +73,32 @@
              name='system.frightcheck' value='{{system.frightcheck}}'/>
     </div>
   </fieldset>
+  {{#if showCombatStats}}
+  <fieldset class='ms-stat-box'>
+    <legend>{{localize 'GURPS.combatTab'}}</legend>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.parry'}}</span>
+      {{#if (isNum parryblock)}}
+      <button type='button' class='ms-use-button rollable' data-otf='Parry' title='Parry'>
+        <i class='fas fa-dice'></i>
+        <span class='ms-btn-level'>{{parryblock}}</span>
+      </button>
+      {{else}}
+      <span class='ms-stat-value'>-</span>
+      {{/if}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>SM</span>
+      {{#if system.traits.sizemod}}
+      <span class='ms-stat-value gmod' data-name='for Size Modifier' data-otf='{{system.traits.sizemod}} for Size Modifier'>{{system.traits.sizemod}}</span>
+      {{else}}
+      <span class='ms-stat-value gmod' data-name='for Size Modifier' data-otf='+0 for Size Modifier'>+0</span>
+      {{/if}}
+    </div>
+    <div class='ms-stat'>
+      <span class='ms-stat-label'>{{localize 'GURPS.hitLocationDR'}}</span>
+      <span class='ms-stat-value'>{{defense.dr}}</span>
+    </div>
+  </fieldset>
+  {{/if}}
 </div>

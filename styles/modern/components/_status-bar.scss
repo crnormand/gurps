@@ -235,7 +235,10 @@
     &.rollable {
       color: var(--ms-accent);
       cursor: pointer;
-      &:hover { text-decoration: underline; }
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -274,7 +277,10 @@
     &.rollable {
       color: var(--ms-accent);
       cursor: pointer;
-      &:hover { text-decoration: underline; }
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }

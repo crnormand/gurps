@@ -1,6 +1,7 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
+import { computePotentialHits } from './compute-potential-hits.js'
 
 export const rollData = target => {
   let targetColor, rollChance
@@ -562,23 +563,12 @@ async function _doRoll({
 
     // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      let rofText
-      let potentialHits = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1
-
-      const rof = Math.min(optionalArgs.shots || 1, parseInt(optionalArgs.obj.rof))
-      potentialHits = Math.min(rof, potentialHits)
-      rofText = potentialHits.toString()
-
-      // Support shotgun RoF (3x9, for example).
-      const matchShotgunRoF = optionalArgs.obj.rof.match(/(?<rof>\d+)[×xX\*](?<projectiles>\d+)/)
-      if (matchShotgunRoF) {
-        potentialHits = potentialHits * matchShotgunRoF.groups.projectiles
-        rofText = `${rof}x${matchShotgunRoF.groups.projectiles}`
-      }
-
-      chatdata['rof'] = rofText
-      chatdata['rcl'] = optionalArgs.obj.rcl
-      chatdata['rofrcl'] = potentialHits
+      /** @type {import('./compute-potential-hits.js').WeaponDescriptor} */
+      const weapon = { recoil: optionalArgs.obj.rcl, rateOfFire: optionalArgs.obj.rof }
+      const potentialHits = computePotentialHits(weapon, optionalArgs.shots, margin)
+      chatdata['rof'] = potentialHits.rateOfFire
+      chatdata['rcl'] = potentialHits.recoil
+      chatdata['rofrcl'] = potentialHits.potentialHits
     }
 
     chatdata['optlabel'] = optionalArgs.text || ''

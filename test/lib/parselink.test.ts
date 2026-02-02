@@ -828,8 +828,7 @@ describe('parseLink', () => {
     test('(Russian DX) #> ЛВ', () => {
       const result = parselink(input)
 
-      // TODO code comments says it deals with non-English translations, but it doesn't
-      // seem to do anything.
+      // TODO code comments says it deals with non-English translations, but it doesn't seem to do anything.
       expect(result).toEqual({ text: 'ЛВ' })
     })
 
@@ -1451,6 +1450,7 @@ describe('parseLink', () => {
         )
       )
     })
+
     test('#> S:Acrobatics | DX-6', () => {
       const result = parselink(input)
 
@@ -1610,13 +1610,11 @@ describe('parseLink', () => {
       )
     })
 
-    // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
     test('#> A:Broadsword *Costs 1 tr("Control Points")', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
-        // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
         costs: '*Costs 1 tr("Control Points")',
         desc: '',
         isMelee: true,
@@ -1632,13 +1630,11 @@ describe('parseLink', () => {
       )
     })
 
-    // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
     test('#> A:Broadsword *Costs 1 tr(Control Points)', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
-        // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
         costs: '*Costs 1 tr(Control Points)',
         desc: '',
         isMelee: true,
@@ -1654,13 +1650,11 @@ describe('parseLink', () => {
       )
     })
 
-    // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
     test('#> A:Broadsword *Costs 1 tr(Control*Points)', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
-        // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
         costs: '*Costs 1 tr(Control*Points)',
         desc: '',
         isMelee: true,
@@ -1676,7 +1670,6 @@ describe('parseLink', () => {
       )
     })
 
-    // TODO I personally would require a space between the weapon name and the modifier.
     test('#> A:Broadsword-2 stunned', () => {
       const result = parselink(input)
 
@@ -1852,6 +1845,43 @@ describe('parseLink', () => {
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='A:Throwing Axe -2 stunned'><b>A:</b>Throwing</span> Axe -2 stunned")
+      )
+    })
+
+    test('#> A:"Mage\'s Staff" +1 magic attack', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'magic attack',
+        isMelee: true,
+        isRanged: true,
+        mod: '+1',
+        name: "Mage's Staff",
+        orig: 'A:"Mage\'s Staff" +1 magic attack',
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='A:\"Mage's Staff\" +1 magic attack'><b>A:</b>Mage's Staff+1 magic attack</span>"
+        )
+      )
+    })
+
+    test("#> A:'Sword \"Saethor\\'s Bane\"'", () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        name: 'Sword "Saethor*s Bane"',
+        orig: 'A:\'Sword "Saethor*s Bane"\'',
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining('data-otf=\'A:\'Sword "Saethor*s Bane"\'\'><b>A:</b>Sword "Saethor*s Bane"</span>')
       )
     })
   })

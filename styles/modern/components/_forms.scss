@@ -1,7 +1,11 @@
 @use '../mixins' as *;
 
 .modern-sheet {
-  input[type="text"], input[type="number"], textarea, select {
+
+  input[type='text'],
+  input[type='number'],
+  textarea,
+  select {
     background: var(--ms-bg);
     color: var(--ms-text);
     border: 1px solid var(--ms-border);
@@ -17,6 +21,7 @@
 
   .rollable {
     cursor: pointer;
+
     &:hover {
       color: var(--ms-accent);
       text-decoration: underline;
@@ -24,7 +29,9 @@
   }
 
   #identity {
-    .header { @include form-header; }
+    .header {
+      @include form-header;
+    }
 
     .fieldblock {
       display: grid;
@@ -45,7 +52,9 @@
   }
 
   #description {
-    .header { @include form-header; }
+    .header {
+      @include form-header;
+    }
 
     .fieldblock {
       display: grid;
@@ -67,7 +76,9 @@
   }
 
   #miscellaneous {
-    .header { @include form-header; }
+    .header {
+      @include form-header;
+    }
 
     .fieldblock {
       display: grid;
@@ -84,7 +95,9 @@
   }
 
   #points {
-    .header { @include form-header; }
+    .header {
+      @include form-header;
+    }
 
     .fieldblock {
       display: grid;
@@ -148,7 +161,8 @@
       letter-spacing: 0.03em;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
     }
   }
@@ -171,8 +185,13 @@
     }
 
     &.editing {
-      .ms-points-display { visibility: hidden; }
-      .ms-points-input { opacity: 1; }
+      .ms-points-display {
+        visibility: hidden;
+      }
+
+      .ms-points-input {
+        opacity: 1;
+      }
     }
   }
 

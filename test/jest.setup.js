@@ -435,3 +435,5 @@ global.FormApplication = class extends global.Application {
     return {}
   }
 }
+// Mock Foundry VTT Application class
+global.Application = class {}

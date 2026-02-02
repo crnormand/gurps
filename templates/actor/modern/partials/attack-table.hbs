@@ -8,31 +8,33 @@
         <span class='ms-attack-level'>{{localize 'GURPS.level'}}</span>
         <span class='ms-attack-damage'>{{localize 'GURPS.damage'}}</span>
         {{#if isMelee}}
-        <span class='ms-attack-reach'>{{localize 'GURPS.reach'}}</span>
-        <span class='ms-attack-parry'>{{localize 'GURPS.parry'}}</span>
+          <span class='ms-attack-reach'>{{localize 'GURPS.reach'}}</span>
+          <span class='ms-attack-parry'>{{localize 'GURPS.parry'}}</span>
         {{else}}
-        <span class='ms-attack-acc'>{{localize 'GURPS.acc'}}</span>
-        <span class='ms-attack-range'>{{localize 'GURPS.range'}}</span>
+          <span class='ms-attack-acc'>{{localize 'GURPS.acc'}}</span>
+          <span class='ms-attack-range'>{{localize 'GURPS.range'}}</span>
         {{/if}}
         <span></span>
       </div>
       {{#each (attackflatlist items)}}
-      <div class='ms-attack-row' data-key='{{../path}}.{{@key}}'>
-        <span class='ms-attack-name'>{{>dice-button otf=(quotedAttackName ../otfPrefix this) text=this.name}}</span>
-        <span class='ms-attack-usage'>{{this.mode}}</span>
-        <span class='ms-attack-level'>{{this.level}}</span>
-        <span class='ms-attack-damage'>{{>dice-button otf=this.damage level=null text=this.damage damage=true color='var(--ms-hp)'}}</span>
-        {{#if ../isMelee}}
-        <span class='ms-attack-reach'>{{this.reach}}</span>
-        <span class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry color='var(--ms-text-muted)'}}{{/if}}</span>
-        {{else}}
-        <span class='ms-attack-acc'>{{this.acc}}</span>
-        <span class='ms-attack-range'>{{this.range}}</span>
-        {{/if}}
-        {{>row-actions editAction=../editAction deleteAction=../deleteAction key=(concat ../path '.' @key)}}
-      </div>
+        <div class='ms-attack-row' data-key='{{../path}}.{{@key}}'>
+          <span class='ms-attack-name'>{{>dice-button otf=(quotedAttackName ../otfPrefix this) text=this.name}}</span>
+          <span class='ms-attack-usage'>{{this.mode}}</span>
+          <span class='ms-attack-level'>{{this.level}}</span>
+          <span
+            class='ms-attack-damage'>{{>dice-button otf=(quotedAttackName "D" this) level=null text=(displayAsDice this.damage ../system) damage=true color='var(--ms-hp)'}}</span>
+          {{#if ../isMelee}}
+            <span class='ms-attack-reach'>{{this.reach}}</span>
+            <span
+              class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry color='var(--ms-text-muted)'}}{{/if}}</span>
+          {{else}}
+            <span class='ms-attack-acc {{gmod this.acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=this.name}}" data-otf='{{{displayNumber this.acc}}} Acc'>{{this.acc}}</span>
+            <span class='ms-attack-range'>{{this.range}}</span>
+          {{/if}}
+          {{>row-actions editAction=../editAction deleteAction=../deleteAction key=(concat ../path '.' @key)}}
+        </div>
       {{else}}
-      <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+        <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
       {{/each}}
       {{>add-row action=addAction label=addLabel}}
     </div>

@@ -1097,7 +1097,7 @@ export const GURPSActiveEffectsChanges = {
   'system.conditions.exhausted': 'GURPS.exhausted',
   'system.conditions.maneuver': 'GURPS.maneuver',
   'system.conditions.posture': 'GURPS.posture',
-  'system.conditions.reeling': 'GURPS.reeling',
+  'system.conditions.reeling': 'GURPS.status.Reeling',
   'system.conditions.self.modifiers': 'GURPS.selfModifiers',
   'system.conditions.target.modifiers': 'GURPS.targetModifiers',
   'system.moveoverride.maneuver': 'GURPS.moveManeuver',

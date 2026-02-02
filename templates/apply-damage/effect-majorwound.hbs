@@ -1,29 +1,30 @@
-<li name="result-effect">
+<li name='result-effect'>
   <div>
     <div>
-      <header>{{localize "GURPS.majorWound"}}</header>
+      <header>{{localize 'GURPS.majorWound'}}</header>
       <aside>
-        {{localize "GURPS.htCheck"}}{{#if modifier}}{{#if (lt modifier 0)}}+{{else}}&minus;{{/if}}{{abs
-        modifier}}{{/if}}{{localize "GURPS.majorWoundEffect"}}
+        {{localize 'GURPS.htCheck'}}{{#if modifier}}{{#if (lt modifier 0)}}+{{else}}&minus;{{/if}}{{abs
+            modifier
+          }}{{/if}}{{localize 'GURPS.majorWoundEffect'}}
       </aside>
     </div>
-    <div id="test-major" class="with-send-button">
-      <button name="test-major" data-effect="{{jsonStringify this}}">
-        <span class="fa fa-dice" title="{{testTitle}}"></span>
+    <div id='test-major' class='with-send-button'>
+      <button name='test-major' data-effect='{{jsonStringify this}}' title='{{testTitle}}'>
+        <span class='fa fa-dice'></span>
       </button>
     </div>
     {{#each buttons as |button|}}
-    <div id="add-major" class="with-send-button">
-      <button name="add-major" data-effect="{{jsonStringify this}}">
-        <span class="fa {{spanClass}} {{effectName}}" data-actor="{{actorId}}" title="{{effectTitle}}"></span>
-      </button>
-    </div>
+      <div id='add-major' class='with-send-button'>
+        <button name='add-major' data-effect='{{jsonStringify this}}' title='{{effectTitle}}'>
+          <span class='fa {{spanClass}} {{effectName}}' data-actor='{{actorId}}'></span>
+        </button>
+      </div>
     {{/each}}
-    <div class="with-send-button">
-      <button name="send-wound" data-struct="{{jsonStringify this}}" title="Send to chat">
-        <span class="fa fa-comment-alt"></span>
+    <div class='with-send-button'>
+      <button name='send-wound' data-struct='{{jsonStringify this}}' title='{{localize "GURPS.sendToChat"}}'>
+        <span class='fa fa-comment-alt'></span>
       </button>
     </div>
-    <div><span class="pdflink">{{localize "GURPS.pdfMajorWound"}}</span></div>
+    <div><span class='pdflink'>{{localize 'GURPS.pdfMajorWound'}}</span></div>
   </div>
 </li>

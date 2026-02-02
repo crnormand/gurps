@@ -4,6 +4,12 @@ import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '.
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
 import {
+  buildDamageOutputGCA,
+  buildDamageOutputGCS,
+  calculateEncumbranceLevels,
+  readXmlText,
+} from '../utilities/import-utilities.js'
+import {
   Advantage,
   Encumbrance,
   Equipment,
@@ -348,7 +354,7 @@ export class ActorImporter {
 
       let parsererror = r.parsererror
       if (!!parsererror) {
-        msg.push(game.i18n.format('GURPS.importErrorParsingXML', { text: this.textFrom(parsererror.div) }))
+        msg.push(game.i18n.format('GURPS.importErrorParsingXML', { text: readXmlText(parsererror.div) }))
         exit = true
       }
 
@@ -429,7 +435,7 @@ export class ActorImporter {
       })
       if (exit) return false // Some errors cannot be forgiven ;-)
     }
-    let nm = this.textFrom(c.name)
+    let nm = readXmlText(c.name)
     console.log("Importing '" + nm + "'")
     let starttime = performance.now()
 
@@ -876,7 +882,6 @@ export class ActorImporter {
    */
   importCombatMeleeFromGCA(json) {
     if (!json) return
-    let t = this.textFrom
     let melee = {}
     let index = 0
     for (let key in json) {
@@ -887,26 +892,28 @@ export class ActorImporter {
           if (k2.startsWith('id-')) {
             let j2 = j.meleemodelist[k2]
             let m = new Melee()
-            m.name = t(j.name)
-            m.originalName = t(j.name)
-            m.st = t(j.st)
-            m.weight = t(j.weight)
-            m.techlevel = t(j.tl)
-            m.cost = t(j.cost)
+            m.name = readXmlText(j.name)
+            m.originalName = readXmlText(j.name)
+            m.st = readXmlText(j.st)
+            m.weight = readXmlText(j.weight)
+            m.techlevel = readXmlText(j.tl)
+            m.cost = readXmlText(j.cost)
+
             try {
-              m.setNotes(t(j.text))
+              m.setNotes(readXmlText(j.text))
             } catch {
               console.log(m)
-              console.log(t(j.text))
+              console.log(readXmlText(j.text))
             }
-            m.mode = t(j2.name)
-            m.import = t(j2.level)
-            m.damage = t(j2.damage)
-            m.reach = t(j2.reach)
-            m.parry = t(j2.parry)
-            m.block = t(j2.block)
+
+            m.mode = readXmlText(j2.name)
+            m.import = readXmlText(j2.level)
+            m.damage = buildDamageOutputGCA(j2)
+            m.reach = readXmlText(j2.reach)
+            m.parry = readXmlText(j2.parry)
+            m.block = readXmlText(j2.block)
             let old = this._findElementIn('melee', false, m.name, m.mode)
-            this._migrateOtfsAndNotes(old, m, t(j2.vtt_notes))
+            this._migrateOtfsAndNotes(old, m, readXmlText(j2.vtt_notes))
 
             GURPS.put(melee, m, index++)
           }
@@ -924,9 +931,9 @@ export class ActorImporter {
    */
   importCombatRangedFromGCA(json) {
     if (!json) return
-    let t = this.textFrom
     let ranged = {}
     let index = 0
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -935,34 +942,38 @@ export class ActorImporter {
           if (k2.startsWith('id-')) {
             let j2 = j.rangedmodelist[k2]
             let r = new Ranged()
-            r.name = t(j.name)
-            r.originalName = t(j.name)
-            r.st = t(j.st)
-            r.bulk = t(j.bulk)
-            r.legalityclass = t(j.lc)
-            r.ammo = t(j.ammo)
+            r.name = readXmlText(j.name)
+            r.originalName = readXmlText(j.name)
+            r.st = readXmlText(j.st)
+            r.bulk = readXmlText(j.bulk)
+            r.legalityclass = readXmlText(j.lc)
+            r.ammo = readXmlText(j.ammo)
+
             try {
-              r.setNotes(t(j.text))
+              r.setNotes(readXmlText(j.text))
             } catch {
               console.log(r)
-              console.log(t(j.text))
+              console.log(readXmlText(j.text))
             }
-            r.mode = t(j2.name)
-            r.import = t(j2.level)
-            r.damage = t(j2.damage)
-            r.acc = t(j2.acc)
+
+            r.mode = readXmlText(j2.name)
+            r.import = readXmlText(j2.level)
+            r.damage = buildDamageOutputGCA(j2)
+            r.acc = readXmlText(j2.acc)
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
+
             if (m) {
               r.acc = m[1]
               r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
-            r.rof = t(j2.rof)
-            r.shots = t(j2.shots)
-            r.rcl = t(j2.rcl)
-            let rng = t(j2.range)
+
+            r.rof = readXmlText(j2.rof)
+            r.shots = readXmlText(j2.shots)
+            r.rcl = readXmlText(j2.rcl)
+            let rng = readXmlText(j2.range)
             r.range = rng
             let old = this._findElementIn('ranged', false, r.name, r.mode)
-            this._migrateOtfsAndNotes(old, r, t(j2.vtt_notes))
+            this._migrateOtfsAndNotes(old, r, readXmlText(j2.vtt_notes))
 
             GURPS.put(ranged, r, index++)
           }
@@ -1390,7 +1401,7 @@ export class ActorImporter {
    */
   importReactionsFromGCA(json, vernum) {
     if (!json) return
-    let text = this.textFrom(json)
+    let text = readXmlText(json)
     let a = vernum <= 9 ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
@@ -1544,30 +1555,10 @@ export class ActorImporter {
     data.touch = atts.find(e => e.attr_id === 'touch')?.calc?.value || 0
     data.vision = atts.find(e => e.attr_id === 'vision')?.calc?.value || 0
 
-    let cm = 0
-    let cd = 0
-    let es = {}
-    let ew = [1, 2, 3, 6, 10]
-    let index = 0
     let total_carried = this.calcTotalCarried(eqp)
-    for (let i = 0; i <= 4; i++) {
-      let e = new Encumbrance()
-      e.level = i
-      e.current = false
-      e.key = 'enc' + i
-      let weight_value = bl_value * ew[i]
-      // e.current = total_carried <= weight_value && (i == 4 || total_carried < bl_value*ew[i+1]);
-      e.current =
-        (total_carried < weight_value || i == 4 || bl_value == 0) && (i == 0 || total_carried > bl_value * ew[i - 1])
-      e.weight = weight_value.toString() + ' ' + bl_unit
-      e.move = calc?.move[i].toString()
-      e.dodge = calc?.dodge[i]
-      if (e.current) {
-        cm = e.move
-        cd = e.dodge
-      }
-      GURPS.put(es, e, index++)
-    }
+    const encumbranceLevels = calculateEncumbranceLevels(bl_value, total_carried, bl_unit, calc)
+    const currentMove = Object.values(encumbranceLevels).find(e => e.current)?.move || 0
+    const currentDodge = Object.values(encumbranceLevels).find(e => e.current)?.dodge || 0
 
     return {
       'system.attributes': att,
@@ -1584,9 +1575,9 @@ export class ActorImporter {
       'system.touch': data.touch,
       'system.vision': data.vision,
       'system.liftingmoving': lm,
-      'system.currentmove': cm,
-      'system.currentdodge': cd,
-      'system.encumbrance': es,
+      'system.currentmove': currentMove,
+      'system.currentdodge': currentDodge,
+      'system.encumbrance': encumbranceLevels,
       'system.QP': data.QP,
     }
   }
@@ -2284,7 +2275,7 @@ export class ActorImporter {
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
             m.import = w.calc?.level?.toString() || '0'
-            m.damage = w.calc?.damage || ''
+            m.damage = buildDamageOutputGCS(w)
             m.reach = w.reach || ''
             m.parry = w.calc?.parry || ''
             m.block = w.calc?.block || ''
@@ -2305,7 +2296,7 @@ export class ActorImporter {
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
             r.import = w.calc?.level || '0'
-            r.damage = w.calc?.damage || ''
+            r.damage = buildDamageOutputGCS(w)
             r.acc = w.accuracy || ''
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {
@@ -2331,17 +2322,6 @@ export class ActorImporter {
       'system.-=ranged': null,
       'system.ranged': ranged,
     }
-  }
-
-  // hack to get to private text element created by xml->json method.
-  /**
-   * @param {{ [key: string]: any }} o
-   */
-  textFrom(o) {
-    if (!o) return ''
-    let t = o['#text']
-    if (!t) return ''
-    return t.trim()
   }
 
   // similar hack to get text as integer.
@@ -2464,9 +2444,9 @@ export class ActorImporter {
     if (oldobj.name?.startsWith(newobj.name)) newobj.name = oldobj.name
     // If notes have `\n  ` fix it
     newobj.notes = newobj.notes.replace(/\n\s\s+/g, ' ')
-    if (!newobj.itemModifiers) newobj.itemModifiers = oldobj.itemModifiers || ''
+    if (!newobj.itemModifiers) newobj.itemModifiers = (oldobj.itemModifiers || '').trim()
     if (!newobj.addToQuickRoll) newobj.addToQuickRoll = oldobj.addToQuickRoll || false
-    if (!newobj.modifierTags) newobj.modifierTags = oldobj.modifierTags || ''
+    if (!newobj.modifierTags) newobj.modifierTags = (oldobj.modifierTags || '').trim()
   }
 
   /**

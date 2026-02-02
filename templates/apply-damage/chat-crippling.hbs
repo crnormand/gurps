@@ -1,15 +1,21 @@
-<div class="gga-chat-message">
-  <div class="prefix">
-    {{{localize "GURPS.chatSuffersCripplingInjury" name=name classStart=classStart classEnd=classEnd pdfref=pdfref
-    location=location}}}
+<div class='gga-chat-message'>
+  <div class='prefix'>
+    {{{localize
+      'GURPS.chatSuffersCripplingInjury'
+      name=name
+      classStart=classStart
+      classEnd=classEnd
+      pdfref=pdfref
+      location=location
+    }}}
   </div>
   {{#if (eq location 'Tail')}}
-  <hr />
-  <div class="roll-result">
-    <ul class="modifier-list">
-      <li>{{localize "GURPS.groundCreatures"}}: [-1 DX].</li>
-      <li>{{localize "GURPS.swimmerFlyer"}}: [-2 DX] {{localize "GURPS.andHalfMove"}}</li>
-    </ul>
-  </div>
+    <hr />
+    <div class='roll-result'>
+      <ul class='modifier-list'>
+        <li>{{localize 'GURPS.groundCreatures'}}: [-1 DX].</li>
+        <li>{{localize 'GURPS.swimmerFlyer'}}: [-2 DX] {{localize 'GURPS.andHalfMove'}}</li>
+      </ul>
+    </div>
   {{/if}}
 </div>

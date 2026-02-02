@@ -9,8 +9,6 @@ import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } fro
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
 import { isPostureOrManeuver } from './utils/effect.ts'
 import MoveModeEditor from '../move-mode-editor.js'
-import { MoveMode } from '../legacy/actorv1-interface.js'
-import { ImportSettings } from '../../importer/index.js'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -23,7 +21,7 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
 }
 
 interface ModernSheetData {
-  system?: Actor.SystemOfType<'character' | 'characterV2'>
+  system?: GurpsActorSystem
   effects?: ActiveEffect[]
   skillCount?: number
   traitCount?: number
@@ -31,7 +29,7 @@ interface ModernSheetData {
   rangedCount?: number
   modifierCount?: number
   showHPTinting?: boolean
-  moveMode?: MoveMode | null
+  moveMode?: GurpsMoveMode
 }
 
 export class GurpsActorModernSheet extends GurpsActorSheet {
@@ -61,19 +59,15 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.traitCount = countItems(sheetData.system?.ads)
     sheetData.meleeCount = countItems(sheetData.system?.melee)
     sheetData.rangedCount = countItems(sheetData.system?.ranged)
-    sheetData.modifierCount =
-      Object.keys(sheetData.system?.reactions ?? {}).length +
-      Object.keys(sheetData.system?.conditionalmods ?? {}).length
-    // sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
-    sheetData.showHPTinting = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
-    // @ts-expect-error Different Move Mode types, TODO: fix
-    sheetData.moveMode = this.actor.currentMoveMode
+    sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
+    sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
+    sheetData.moveMode = this.actor.getCurrentMoveMode()
 
     return sheetData
   }
 
   override getCustomHeaderButtons() {
-    const blockImport = ImportSettings.onlyTrustedUsersCanImport
+    const blockImport = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT as never) as boolean
     if (blockImport && !game.user!.isTrusted) return []
 
     return [
@@ -134,8 +128,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     })
 
     const openQuickNoteEditor = async () => {
-      // HACK: to check later
-      const actorSystem = this.actor.system
+      const actorSystem = this.actor.system as GurpsActorSystem
       const noteText = (actorSystem.additionalresources?.qnotes || '').replace(/<br>/g, '\n')
       const actor = this.actor
 
@@ -152,7 +145,6 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
               const form = button.form as HTMLFormElement
               const input = form.elements.namedItem('i') as HTMLTextAreaElement
               const value = input.value
-              // @ts-expect-error: Not sure why key is not recognized. TODO: fix
               actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
             },
           },
@@ -170,8 +162,9 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     bindTrackerActions(html, this.actor)
     this.bindPostureActions(html)
     this.bindManeuverActions(html)
-    this.bindMoveModeActions(html)
+    this.bindEncumbranceActions(html)
     this.bindEffectActions(html)
+    this.bindLiftingActions(html)
     this.bindEntityCrudActions(html)
   }
 
@@ -193,7 +186,11 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     })
   }
 
-  bindMoveModeActions(html: JQuery): void {
+  bindEncumbranceActions(html: JQuery): void {
+    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE) === false) {
+      html.find('.ms-enc-row').on('click', this._onClickEnc.bind(this))
+    }
+
     html.find('.ms-move-mode-edit').on('click', () => {
       new MoveModeEditor(this.actor).render(true)
     })
@@ -218,13 +215,20 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       const effectId = target.dataset.effectId ?? ''
       const effect = this.actor.effects.get(effectId)
       if (!effect) return
-      const confirmed = await foundry.applications.api.DialogV2.confirm({
+      const confirmed = await Dialog.confirm({
         title: game.i18n!.localize('GURPS.delete'),
         content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${effect.name}</strong>?</p>`,
       })
       if (confirmed) {
         await effect.delete()
       }
+    })
+  }
+
+  bindLiftingActions(html: JQuery): void {
+    html.find('[data-action="recalc-lifting"]').on('click', async (event: JQuery.ClickEvent) => {
+      event.preventDefault()
+      await this.actor.updateAndPersistStrengthBasedAttributes()
     })
   }
 

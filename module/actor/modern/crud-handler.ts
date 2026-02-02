@@ -1,14 +1,11 @@
-export type EntityWithItemId = EntityComponentBase & { itemid?: string }
-type GurpsItemWithEditingActor = Item.Implementation & {
-  editingActor?: Actor.Implementation
-  system?: { fromItem?: string }
-}
-type ActorWithSanityCheck = Actor.Implementation & { _sanityCheckItemSettings(obj: unknown): Promise<boolean> }
+import { GurpsActor } from '../actor.js'
+import { GurpsItem } from '../../item.js'
 
-export async function openItemSheetIfFoundryItem(
-  actor: Actor.Implementation,
-  entityData: EntityWithItemId
-): Promise<boolean> {
+export type EntityWithItemId = EntityComponentBase & { itemid?: string }
+type GurpsItemWithEditingActor = GurpsItem & { editingActor?: GurpsActor; system?: { fromItem?: string } }
+type ActorWithSanityCheck = GurpsActor & { _sanityCheckItemSettings(obj: unknown): Promise<boolean> }
+
+export async function openItemSheetIfFoundryItem(actor: GurpsActor, entityData: EntityWithItemId): Promise<boolean> {
   if (!entityData?.itemid) return false
 
   if (!(await (actor as ActorWithSanityCheck)._sanityCheckItemSettings(entityData))) return true
@@ -42,24 +39,24 @@ export function getDisplayName(
 }
 
 export async function confirmAndDelete(
-  actor: Actor.Implementation,
+  actor: GurpsActor,
   key: string,
   displayName: string | undefined,
   fallbackLocaleKey: string
 ): Promise<boolean> {
-  const confirmed = await foundry.applications.api.DialogV2.confirm({
+  const confirmed = await Dialog.confirm({
     title: game.i18n!.localize('GURPS.delete'),
     content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
   if (confirmed) {
-    GURPS.removeKey(actor, key)
+    await actor.deleteEntry(key)
   }
   return confirmed ?? false
 }
 
 export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: JQuery,
-  actor: Actor.Implementation,
+  actor: GurpsActor,
   sheet: TSheet,
   config: EntityConfigWithMethod
 ): void {
@@ -102,7 +99,7 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
 
 export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: JQuery,
-  actor: Actor.Implementation,
+  actor: GurpsActor,
   sheet: TSheet,
   editMethod: TSheet['editModifier'],
   isReaction: boolean

@@ -1,6 +1,7 @@
 'use strict'
 
 import { GurpsActorV2 } from '../actor/gurps-actor.js'
+import { DragDropType } from '../drag-drop-types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
@@ -79,7 +80,7 @@ export default class DamageChat {
     const actor = game.actors.get(dropData.actorid)
 
     switch (dropData.type) {
-      case 'damageItem':
+      case DragDropType.DAMAGE:
         await DamageChat._calculateAndSelectTargets(canvas, dropData)
         break
       case 'Item':
@@ -410,7 +411,7 @@ export default class DamageChat {
     }
 
     messageData['flags.gurps.transfer'] = {
-      type: 'damageItem',
+      type: DragDropType.DAMAGE,
       payload: draggableData,
       userTarget: !!userTarget ? userTarget.id : null,
     }

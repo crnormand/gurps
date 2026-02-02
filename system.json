@@ -25,7 +25,7 @@
   "compatibility": {
     "minimum": "13",
     "maximum": "13",
-    "verified": "13.350"
+    "verified": "13.351"
   },
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "scripts": ["scripts/jquery.tinycolorpicker.js"],
@@ -56,7 +56,7 @@
       "flags": {}
     },
     {
-      "lang": "Fr",
+      "lang": "fr",
       "name": "French",
       "path": "lang/fr.json",
       "flags": {}
@@ -98,9 +98,9 @@
   "background": "systems/gurps/assets/gurps-background.webp",
   "primaryTokenAttribute": "HP",
   "secondaryTokenAttribute": "FP",
+  "license": "LICENSE.txt",
+  "socket": true,
   "url": "https://github.com/crnormand/gurps",
   "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-  "download": "https://github.com/crnormand/gurps/releases/download/v0.18.10/system.zip",
-  "socket": true,
-  "license": "LICENSE.txt"
+  "download": "https://github.com/crnormand/gurps/releases/download/v0.18.12/system.zip"
 }

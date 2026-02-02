@@ -12,22 +12,23 @@ import {
   quotedAttackName,
   recurselist,
   sanitize,
+  stripBracketContents,
   utoa,
   wait,
   zeroFill,
 } from '../lib/utilities.js'
+import { prepareRemoveKey } from './actor/deletion.js'
 import { calculateRoFModifier } from './combat/utilities.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
-  GurpsActorNpcSheet,
   GurpsActorSheet,
   GurpsActorSheetReduced,
   GurpsActorSimplifiedSheet,
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
-import { GurpsActorModernSheet } from './actor/modern/index.js'
+import { GurpsActorModernSheet, GurpsActorNpcModernSheet } from './actor/modern/index.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -61,8 +62,6 @@ import { GGADebugger } from '../utils/debugger.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
-import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
-import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
@@ -83,6 +82,7 @@ import { EquipmentModel } from './item/data/equipment.js'
 import { Action } from './action/index.js'
 import { Canvas } from './canvas/index.js'
 import { Combat } from './combat/index.js'
+import { CombatTracker } from './combat-tracker/index.js'
 import { Damage } from './damage/index.js'
 import { Importer, ImportSettings } from './importer/index.js'
 import { Length } from './data/common/length.js'
@@ -128,6 +128,7 @@ if (!globalThis.GURPS) {
     Action,
     Canvas,
     Combat,
+    CombatTracker,
     Damage,
     Importer,
     Pdf,
@@ -610,7 +611,7 @@ if (!globalThis.GURPS) {
       const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = action.formula
       if (actor && taggedSettings.autoAdd) {
-        await actor.addTaggedRollModifiers('', {}, action.att)
+        await actor.addTaggedRollModifiers('', { action }, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
       return await Damage.rollDamage(
@@ -677,7 +678,7 @@ if (!globalThis.GURPS) {
       const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = formula
       if (actor && taggedSettings.autoAdd) {
-        await actor.addTaggedRollModifiers('', {}, action.att)
+        await actor.addTaggedRollModifiers('', { action }, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
@@ -902,11 +903,7 @@ if (!globalThis.GURPS) {
       let p = 'A:'
       if (!!action.isMelee && !action.isRanged) p = 'M:'
       if (!action.isMelee && !!action.isRanged) p = 'R:'
-      // Need to finagle chatthing to allow for attack names that include OtFs
-      let thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      let thing = stripBracketContents(att.name)
       let qn = quotedAttackName({ name: thing, mode: att.mode })
       let aid = actor ? `@${actor.id}@` : ''
       const chatthing = `[${aid}${p}${qn}]`
@@ -999,10 +996,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn(`No Block for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
         return false
       }
-      const thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      const thing = stripBracketContents(att.name)
       if (action.calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
         if (isNaN(modifier)) modifier = 0
@@ -1063,10 +1057,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn(`No Parry for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
         return false
       }
-      const thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      const thing = stripBracketContents(att.name)
       if (action.calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
         if (isNaN(modifier)) modifier = 0
@@ -1194,10 +1185,7 @@ if (!globalThis.GURPS) {
       if (!action) {
         return false
       }
-      let thing = action.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      let thing = stripBracketContents(action.name)
       if (calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
         if (isNaN(modifier)) modifier = 0
@@ -1528,8 +1516,7 @@ if (!globalThis.GURPS) {
       // "M:"["Quarterstaff"A:"Quarterstaff (Thrust)"] (Thrust)""
       let m = otf.match(/^([sSmMrRaA]):"\["([^"]+)([^\]]+)]( *\(\w*\))?/)
       if (!!m) otf = m[1] + ':' + m[2] + (!!m[4] ? m[4] : '')
-      otf = otf.replace(/\[.*\]/, '')
-      otf = otf.replace(/ +/g, ' ') // remove duplicate blanks
+      otf = stripBracketContents(otf)
       return GURPS.executeOTF(otf)
     } else if ('name' in element.dataset) {
       prefix = '' // "Attempting ";
@@ -1669,65 +1656,24 @@ if (!globalThis.GURPS) {
    * @param {string} path
    */
   async function removeKey(actor, path) {
-    let oldversion = true
-    let oldRender = actor.ignoreRender
-    actor.ignoreRender = true
+    const targetActor = game.actors.get(actor.id) ?? actor
+    const objectData = foundry.utils.duplicate(GURPS.decode(targetActor, path.substring(0, path.lastIndexOf('.'))))
+    const { deleteKey, objectPath, updatedObject } = prepareRemoveKey(path, objectData)
 
-    if (oldversion) {
-      let i = path.lastIndexOf('.')
-      let objpath = path.substring(0, i)
-      let key = path.substring(i + 1)
-      i = objpath.lastIndexOf('.')
-      let parentpath = objpath.substring(0, i)
-      let objkey = objpath.substring(i + 1)
+    const savedIgnoreRender = targetActor.ignoreRender
+    targetActor.ignoreRender = true
 
-      // Create shallow copy of object
-      let object = foundry.utils.duplicate(GURPS.decode(actor, objpath))
-      let t = parentpath + '.-=' + objkey
-      await actor.internalUpdate({ [t]: null }) // Delete the whole object from the parent
+    try {
+      await targetActor.update({ [deleteKey]: null })
+      await targetActor.update({ [objectPath]: updatedObject }, { diff: false })
 
-      // Delete the key, ex: '00001'
-      delete object[key]
-      i = parseInt(key)
-
-      // Since keys are serial index, move up any items after the current index
-      i = i + 1
-      while (object.hasOwnProperty(zeroFill(i))) {
-        let k = zeroFill(i)
-        object[key] = object[k]
-        delete object[k]
-        key = k
-        i++
+      if (Object.keys(updatedObject).length === 0) {
+        const parentPath = objectPath.substring(0, objectPath.lastIndexOf('.'))
+        const objectKey = objectPath.substring(objectPath.lastIndexOf('.') + 1)
+        GURPS.decode(targetActor, parentPath)[objectKey] = {}
       }
-
-      actor.ignoreRender = oldRender
-      await actor.internalUpdate({ [objpath]: object }, { diff: false })
-
-      // Sad hack to ensure that an empty object exists on the client side (the DB is correct)
-      if (Object.keys(object).length === 0) GURPS.decode(actor, parentpath)[objkey] = {}
-    } else {
-      let i = path.lastIndexOf('.')
-      let objpath = path.substring(0, i)
-      let key = path.substring(i + 1)
-      let object = GURPS.decode(actor, objpath)
-      delete object[key]
-
-      await actor.internalUpdate({ [objpath]: null }) // instead of using "x.y.-=z" to remove the key 'z' and all its data, just remove x.y.z's data.
-
-      let sorted = Object.keys(object)
-        .sort()
-        .reduce((_, value, index) => {
-          let key = zeroFill(index)
-
-          if (key != value) {
-            object[key] = object[value]
-            delete object[value]
-          }
-          return object
-        }, {})
-
-      actor.ignoreRender = oldRender
-      await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
+    } finally {
+      targetActor.ignoreRender = savedIgnoreRender
     }
   }
   GURPS.removeKey = removeKey
@@ -1995,44 +1941,46 @@ if (!globalThis.GURPS) {
     })
 
     // Register sheet application classes
-    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-      label: 'Combat',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-      label: 'Editor',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-      label: 'Simple',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
-      label: 'NPC/mini',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
-      label: 'Inventory Only',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
-      label: 'Tabbed Sheet',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-      label: 'Reduced Mode',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
-      label: 'Modern',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
-      // Add this sheet last
-      label: 'Full (GCS)',
-      makeDefault: true,
-    })
+    // COMPATIBILITY: v12
+    if (game.release.generation >= 13) {
+      foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
+        label: 'Combat',
+        makeDefault: false,
+      })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
+        label: 'Editor',
+        makeDefault: false,
+      })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
+        label: 'Simple',
+        makeDefault: false,
+      })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcModernSheet, {
+        label: 'NPC/mini',
+        makeDefault: false,
+      })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
+        label: 'Inventory Only',
+        makeDefault: false,
+      })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
+        label: 'Tabbed Sheet',
+        makeDefault: false,
+      })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
+        label: 'Modern',
+        makeDefault: false,
+      })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+        label: 'Reduced Mode',
+        makeDefault: false,
+      })
+      foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
+        // Add this sheet last
+        label: 'Full (GCS)',
+        makeDefault: true,
+      })
 
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
@@ -2210,91 +2158,6 @@ if (!globalThis.GURPS) {
       return false
     })
 
-    Hooks.on('renderCombatTracker', async function (_app, element, _options, _context) {
-      const html = $(element)
-      if (!html.hasClass('bound')) {
-        html.addClass('bound')
-        // @ts-ignore
-        html.on('drop', function (ev) {
-          ev.preventDefault()
-          ev.stopPropagation()
-          let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
-
-          // @ts-ignore
-          let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-          // @ts-ignore
-          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
-
-          let event = ev.originalEvent
-          let dropData = JSON.parse(event.dataTransfer.getData('text/plain'))
-          if (dropData.type === 'damageItem') {
-            // @ts-ignore
-            target.actor.handleDamageDrop(dropData.payload)
-          }
-          if (dropData.type === 'initiative') {
-            let target = game.combat.combatants.get(combatant)
-            let src = game.combat.combatants.get(dropData.combatant)
-            let updates = []
-            if (!!target && !!src) {
-              if (target.initiative < src.initiative) {
-                updates.push({
-                  _id: dropData.combatant,
-                  initiative: target.initiative - 0.00001,
-                })
-                console.log('Moving ' + src.name + ' below ' + target.name)
-              } else {
-                updates.push({
-                  _id: dropData.combatant,
-                  initiative: target.initiative + 0.00001,
-                })
-                console.log('Moving ' + src.name + ' above ' + target.name)
-              }
-              game.combat.updateEmbeddedDocuments('Combatant', updates)
-            }
-          }
-        })
-      }
-
-      if (game.user.isGM) {
-        html.find('.combatant').each((_, li) => {
-          li.setAttribute('draggable', true)
-          li.addEventListener('dragstart', ev => {
-            if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
-            let dragIcon = $(event.currentTarget).find('.token-image')[0]
-            ev.dataTransfer.setDragImage(dragIcon, 25, 25)
-            return ev.dataTransfer.setData(
-              'text/plain',
-              JSON.stringify({
-                type: 'initiative',
-                combatant: li.getAttribute('data-combatant-id'),
-              })
-            )
-          })
-        })
-      }
-
-      // Resolve Quick Roll and Maneuver buttons
-      const combatants = html.find('.combatant')
-      for (let combatantElement of combatants) {
-        const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
-        const token = canvas.tokens.get(combatant.token.id)
-        if (!token) {
-          console.warn(`Token not found for combatant: ${combatant.name}`)
-          continue
-        }
-
-        // Add Quick Roll Menu
-        combatantElement = await addQuickRollButton(combatantElement, combatant, token)
-
-        // Add Maneuver Menu
-        combatantElement = await addManeuverMenu(combatantElement, combatant, token)
-      }
-      // Add Quick Roll Listeners.
-      addQuickRollListeners()
-    })
-
-    addManeuverListeners()
-
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {
         if (resp.users.includes(game.user.id)) {
@@ -2364,9 +2227,9 @@ if (!globalThis.GURPS) {
         let srcActor = game.actors.get(resp.srcactorid)
         let eqt = foundry.utils.getProperty(srcActor, resp.srckey)
         if (resp.count >= eqt.count) {
-          srcActor.deleteEquipment(resp.srckey)
+          await srcActor.deleteEntry(resp.srckey)
         } else {
-          srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
+          await srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
         }
         let destActor = game.actors.get(resp.destactorid)
         ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
@@ -2457,27 +2320,30 @@ if (!globalThis.GURPS) {
       await resetTokenActions(combat)
     })
 
-    // TODO: Move to the combat module.
-    Hooks.on('combatRound', async (combat, round) => {
-      await handleCombatTurn(combat, round)
-    })
-
-    // TODO: Move to the combat module.
-    Hooks.on('combatTurn', async (combat, turn, combatant) => {
-      await handleCombatTurn(combat, turn)
-    })
+    if (game.user.isGM) {
+      Hooks.on('combatTurnChange', async (combat, previousTurn, newTurn) => {
+        await handleCombatTurnChange(combat, previousTurn, newTurn)
+      })
+    }
 
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
 }
 
-const handleCombatTurn = async (combat, round) => {
-  const nextCombatant = combat.nextCombatant
-  console.info(`New combat round started: ${round.round}/${round.turn} - combatant: ${nextCombatant.name}`)
-  const token = canvas.tokens.get(nextCombatant.token.id)
+const handleCombatTurnChange = async (combat, previousTurn, newTurn) => {
+  if (!game.user.isGM) return
+
+  const token = canvas.tokens.get(newTurn.tokenId)
+  if (!token) {
+    console.warn(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - token not found: ${newTurn.tokenId}`)
+    return
+  }
+
+  console.info(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
+
   const actions = await TokenActions.fromToken(token)
-  await actions.newTurn(round.round)
+  await actions.newTurn(newTurn.round)
 }
 
 const resetTokenActions = async combat => {
