@@ -4,11 +4,24 @@ import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.t
 import { IStudies, studiesSchema } from '../../data/mixins/studies.ts'
 import { fields } from '../../types/foundry/index.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 
 class GcsTraitModel extends GcsBaseItemModel<GcsTraitSchema> implements IFeatures, IPrereqs, IReplaceable, IStudies {
   static override defineSchema(): GcsTraitSchema {
     return gcsTraitSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): GcsItemMetadata {
+    return {
+      embedded: { Prereq: 'prereqs', Feature: 'features' },
+      type: 'gcsTrait',
+      invalidActorTypes: [],
+      actions: {},
+      childTypes: [],
+      modifierTypes: [],
+    }
   }
 
   /* ---------------------------------------- */

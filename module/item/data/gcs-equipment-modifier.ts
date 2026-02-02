@@ -3,7 +3,7 @@ import { featuresSchema, IFeatures } from '../../data/mixins/features.ts'
 import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.ts'
 import { fields } from '../../types/foundry/index.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 
 class GcsEquipmentModifierModel
   extends GcsBaseItemModel<GcsEquipmentModifierSchema>
@@ -11,6 +11,19 @@ class GcsEquipmentModifierModel
 {
   static override defineSchema(): GcsEquipmentModifierSchema {
     return gcsEquipmentModifierSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): GcsItemMetadata {
+    return {
+      embedded: { Feature: 'features' },
+      type: 'gcsEquipmentModifier',
+      invalidActorTypes: [],
+      actions: {},
+      childTypes: [],
+      modifierTypes: [],
+    }
   }
 
   /* ---------------------------------------- */

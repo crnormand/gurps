@@ -1,11 +1,24 @@
 import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.ts'
 import { fields } from '../../types/foundry/index.ts'
 
-import { GcsBaseItemModel, gcsBaseItemSchema } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 
 class GcsNoteModel extends GcsBaseItemModel<GcsNoteSchema> implements IReplaceable {
   static override defineSchema(): GcsNoteSchema {
     return gcsNoteSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): GcsItemMetadata {
+    return {
+      embedded: {},
+      type: 'gcsNote',
+      invalidActorTypes: [],
+      actions: {},
+      childTypes: [],
+      modifierTypes: [],
+    }
   }
 
   /* ---------------------------------------- */

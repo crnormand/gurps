@@ -4,11 +4,24 @@ import { IPrereqs, prereqsSchema } from '../../data/mixins/prereqs.ts'
 import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.ts'
 import { fields } from '../../types/foundry/index.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 
 class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements IFeatures, IPrereqs, IReplaceable {
   static override defineSchema(): GcsEquipmentSchema {
     return gcsEquipmentSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): GcsItemMetadata {
+    return {
+      embedded: { Prereq: 'prereqs', Feature: 'features' },
+      type: 'gcsEquipment',
+      invalidActorTypes: [],
+      actions: {},
+      childTypes: [],
+      modifierTypes: [],
+    }
   }
 
   /* ---------------------------------------- */

@@ -3,11 +3,24 @@ import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.t
 import { IStudies, studiesSchema } from '../../data/mixins/studies.ts'
 import { fields } from '../../types/foundry/index.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 
 class GcsSpellModel extends GcsBaseItemModel<GcsSpellSchema> implements IPrereqs, IReplaceable, IStudies {
   static override defineSchema(): GcsSpellSchema {
     return gcsSpellSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): GcsItemMetadata {
+    return {
+      embedded: { Prereq: 'prereqs' },
+      type: 'gcsSpell',
+      invalidActorTypes: [],
+      actions: {},
+      childTypes: [],
+      modifierTypes: [],
+    }
   }
 
   /* ---------------------------------------- */
