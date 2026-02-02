@@ -9,6 +9,7 @@ import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } fro
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
 import { isPostureOrManeuver } from './utils/effect.ts'
 import MoveModeEditor from '../move-mode-editor.js'
+import { ImportSettings } from '../../importer/index.ts'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -72,9 +73,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   }
 
   override getCustomHeaderButtons() {
-    // TODO Update typing.
-    // @ts-expect-error: update settings typing.
-    const blockImport = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT as never) as boolean
+    const blockImport = ImportSettings.onlyTrustedUsersCanImport
     if (blockImport && !game.user!.isTrusted) return []
 
     return [
