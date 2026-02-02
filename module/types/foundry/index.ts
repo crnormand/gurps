@@ -1,4 +1,4 @@
-export { Application, ItemSheet, DocumentSheetV2, HandlebarsApplicationMixin } from './application.ts'
+export { Application, ItemSheet, DocumentSheetV2, DialogV2, HandlebarsApplicationMixin } from './application.ts'
 export { fields } from './data-fields.ts'
 export { DataModel } from './data-model.ts'
 export { Document } from './document.ts'

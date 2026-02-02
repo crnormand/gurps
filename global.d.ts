@@ -545,7 +545,6 @@ declare module 'fvtt-types/configuration' {
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
-
     'gurps.scripting.globalResolverCache': MapField<
       foundry.data.fields.SchemaField<{
         id: foundry.data.fields.StringField<{ required: true; nullable: false }>
@@ -554,6 +553,7 @@ declare module 'fvtt-types/configuration' {
       foundry.data.fields.StringField<{ required: true; nullable: false }>,
       { required: true; nullable: false }
     >
+    'gurps.developerMode': boolean
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

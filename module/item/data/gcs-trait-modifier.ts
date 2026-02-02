@@ -13,7 +13,7 @@ class GcsTraitModifierModel extends GcsBaseItemModel<GcsTraitModifierSchema> imp
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Feature: 'features' },
+      embedded: { Feature: 'system.features' },
       type: 'gcsTraitModifier',
       invalidActorTypes: [],
       actions: {},
