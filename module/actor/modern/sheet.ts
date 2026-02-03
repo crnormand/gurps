@@ -164,7 +164,6 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     this.bindManeuverActions(html)
     this.bindEncumbranceActions(html)
     this.bindEffectActions(html)
-    this.bindLiftingActions(html)
     this.bindEntityCrudActions(html)
   }
 
@@ -222,13 +221,6 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       if (confirmed) {
         await effect.delete()
       }
-    })
-  }
-
-  bindLiftingActions(html: JQuery): void {
-    html.find('[data-action="recalc-lifting"]').on('click', async (event: JQuery.ClickEvent) => {
-      event.preventDefault()
-      await this.actor.updateAndPersistStrengthBasedAttributes()
     })
   }
 

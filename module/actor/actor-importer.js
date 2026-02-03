@@ -3,12 +3,7 @@ import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
-import {
-  buildDamageOutputGCA,
-  buildDamageOutputGCS,
-  calculateEncumbranceLevels,
-  readXmlText,
-} from '../utilities/import-utilities.js'
+import { calculateEncumbranceLevels, readXmlText } from '../utilities/import-utilities.js'
 import {
   Advantage,
   Encumbrance,
@@ -202,7 +197,7 @@ export class ActorImporter {
       commit = { ...commit, ...this.importReactionsFromGCS(r.traits || r.advantages || [], r.skills, r.equipment) }
       commit = {
         ...commit,
-        ...this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment, r.attributes),
+        ...this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment),
       }
     } catch (err) {
       console.log(err.stack)
@@ -890,7 +885,7 @@ export class ActorImporter {
 
             m.mode = readXmlText(j2.name)
             m.import = readXmlText(j2.level)
-            m.damage = buildDamageOutputGCA(j2)
+            m.damage = readXmlText(j2.damage)
             m.reach = readXmlText(j2.reach)
             m.parry = readXmlText(j2.parry)
             m.block = readXmlText(j2.block)
@@ -940,7 +935,7 @@ export class ActorImporter {
 
             r.mode = readXmlText(j2.name)
             r.import = readXmlText(j2.level)
-            r.damage = buildDamageOutputGCA(j2)
+            r.damage = readXmlText(j2.damage)
             r.acc = readXmlText(j2.acc)
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
 
@@ -2233,7 +2228,7 @@ export class ActorImporter {
     }
   }
 
-  importCombatFromGCS(ads, skills, spells, equipment, attributes) {
+  importCombatFromGCS(ads, skills, spells, equipment) {
     let melee = {}
     let ranged = {}
     let m_index = 0
@@ -2261,7 +2256,7 @@ export class ActorImporter {
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
             m.import = w.calc?.level?.toString() || '0'
-            m.damage = buildDamageOutputGCS(w, attributes)
+            m.damage = w.calc?.damage || ''
             m.reach = w.reach || ''
             m.parry = w.calc?.parry || ''
             m.block = w.calc?.block || ''
@@ -2282,7 +2277,7 @@ export class ActorImporter {
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
             r.import = w.calc?.level || '0'
-            r.damage = buildDamageOutputGCS(w, attributes)
+            r.damage = w.calc?.damage || ''
             r.acc = w.accuracy || ''
             let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
             if (m) {

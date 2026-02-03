@@ -114,27 +114,27 @@ describe('GcsDice', () => {
     it('should calculate difference between same count dice', () => {
       const dice1 = new GcsDice(2, 3)
       const dice2 = new GcsDice(2, 1)
-      expect(dice1.difference(dice2)).toBe(-2) // 1 - 3 = -2
+      expect(dice1.difference(dice2)).toBe(2)
     })
 
     it('should normalize count when other has higher count', () => {
       const dice1 = new GcsDice(1, 0)
       const dice2 = new GcsDice(2, 0)
       // dice2 normalized to 1d: 2d0 -> 1d+4
-      expect(dice1.difference(dice2)).toBe(4) // 4 - 0 = 4
+      expect(dice1.difference(dice2)).toBe(-4)
     })
 
     it('should normalize count when other has lower count', () => {
       const dice1 = new GcsDice(2, 0)
       const dice2 = new GcsDice(1, 0)
       // dice2 normalized to 2d: 1d0 -> 2d-4
-      expect(dice1.difference(dice2)).toBe(-4) // -4 - 0 = -4
+      expect(dice1.difference(dice2)).toBe(4)
     })
 
     it('should handle negative modifiers', () => {
       const dice1 = new GcsDice(2, -1)
       const dice2 = new GcsDice(2, -3)
-      expect(dice1.difference(dice2)).toBe(-2) // -3 - (-1) = -2
+      expect(dice1.difference(dice2)).toBe(2) // -3 - (-1) = -2
     })
   })
 

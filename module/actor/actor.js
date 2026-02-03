@@ -34,7 +34,6 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
-import { StrengthCalculator } from './strength-calculator.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -202,10 +201,6 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
 
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTO_UPDATE_STRENGTH)) {
-      this.updateStrengthBasedAttributes()
-    }
-
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
     // value in the first entry of the encumbrance object.
     if (this.system.encumbrance) {
@@ -225,47 +220,6 @@ export class GurpsActor extends Actor {
     }
 
     this.calculateDerivedValues()
-  }
-
-  async updateAndPersistStrengthBasedAttributes() {
-    this.updateStrengthBasedAttributes()
-    await this.internalUpdate({
-      'system.thrust': this.system.thrust,
-      'system.swing': this.system.swing,
-      'system.basiclift': this.system.basiclift,
-      'system.liftingmoving': this.system.liftingmoving,
-    })
-  }
-
-  updateStrengthBasedAttributes() {
-    if (!this.strengthCalculator) this.strengthCalculator = new StrengthCalculator()
-
-    this.strengthCalculator.strength = this.system.attributes.ST.import
-    this._setBasicLift(this.strengthCalculator.calculateLift())
-    this.system.thrust = this.strengthCalculator.calculateThrustDamage()
-    this.system.swing = this.strengthCalculator.calculateSwingDamage()
-  }
-
-  /**
-   * Update the basic lift and recalculate encumbrance levels and lifting.
-   * @param {*} basicLift
-   */
-  _setBasicLift(basicLift) {
-    this.system.basiclift = basicLift
-
-    const unit = this.system.encumbrance['00000']?.weight?.toString().split(' ')[1] || 'lb'
-    const encumbranceLevels = calculateEncumbranceLevels(this.system.basiclift, 0, unit, {})
-    for (const [key, value] of Object.entries(encumbranceLevels)) {
-      this.system.encumbrance[key].weight = value.weight
-    }
-
-    this.system.liftingmoving.basiclift = basicLift
-    this.system.liftingmoving.onehandedlift = basicLift * 2
-    this.system.liftingmoving.twohandedlift = basicLift * 8
-    this.system.liftingmoving.shove = basicLift * 12
-    this.system.liftingmoving.carryonback = basicLift * 15
-    this.system.liftingmoving.runningshove = basicLift * 24
-    this.system.liftingmoving.shiftslightly = basicLift * 50
   }
 
   // execute after every import.
