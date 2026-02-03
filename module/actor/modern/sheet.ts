@@ -162,6 +162,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
               const value = input.value
               // @ts-expect-error: Unknown system types for legacy actor model
 
+              // @ts-expect-error: path not recognized for legacy Actor types
               actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
             },
           },

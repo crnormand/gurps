@@ -1,10 +1,8 @@
-import { GurpsActorV2 } from '../gurps-actor.ts'
-
 import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.ts'
 
 export function bindEquipmentCrudActions(
   html: JQuery,
-  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  actor: Actor.Implementation,
   sheet: GurpsActorSheetEditMethods
 ): void {
   const entityType = 'equipment'
@@ -59,7 +57,7 @@ export function bindEquipmentCrudActions(
 
 export function bindNoteCrudActions(
   html: JQuery,
-  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  actor: Actor.Implementation,
   sheet: GurpsActorSheetEditMethods
 ): void {
   const entityType = 'note'
@@ -116,7 +114,7 @@ export function bindNoteCrudActions(
   })
 }
 
-export function bindTrackerActions(html: JQuery, actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>): void {
+export function bindTrackerActions(html: JQuery, actor: Actor.Implementation): void {
   html.find('[data-action="add-tracker"]').on('click', (event: JQuery.ClickEvent) => {
     event.preventDefault()
     actor.addTracker()

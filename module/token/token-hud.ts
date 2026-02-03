@@ -1,6 +1,6 @@
 import { DeepPartial } from 'fvtt-types/utils'
 
-export default class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
+export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
   static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
     actions: {
       maneuver: GurpsTokenHUDV2.#onSetManeuver,
