@@ -1,5 +1,5 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { computePotentialHits } from '../combat/compute-potential-hits.js'
+import { computePotentialHits } from '../compute-potential-hits.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
 
