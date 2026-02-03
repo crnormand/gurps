@@ -452,7 +452,6 @@ export class ActorImporter {
       commit = { ...commit, ...(await this.importProtectionFromGCA(c.combat?.protectionlist)) }
     } catch (err) {
       // Do not return, because we want to see how much actually gets committed.
-      console.log(err)
       console.log(err.stack)
     }
     console.log('Starting commit')
@@ -1650,7 +1649,7 @@ export class ActorImporter {
         if (!j.disabled) a.notes += `${!!a.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
     }
     // Not certain if this is needed, or is it a type-o (note vs. notes)
-    if (!!a.note) a.notes += (!!a.notes ? '\n' : '') + a.note
+    // if (!!a.note) a.notes += (!!a.notes ? '\n' : '') + a.note
 
     if (!!a.userdesc) a.notes += (!!a.notes ? '\n' : '') + a.userdesc
     a.pageRef(i.reference)
@@ -1909,7 +1908,7 @@ export class ActorImporter {
       for (let j of i.modifiers)
         if (!j.disabled) e.notes += `${!!e.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
     }
-    if (!!e.note) e.notes += (!!e.notes ? '\n' : '') + e.note
+    // if (!!e.note) e.notes += (!!e.notes ? '\n' : '') + e.note
     e.weight =
       (parseFloat(i.calc?.extended_weight) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || '0'
     e.pageRef(i.reference || '')
@@ -2410,7 +2409,7 @@ export class ActorImporter {
     this._updateOtf('during', oldobj, newobj)
     this._updateOtf('pass', oldobj, newobj)
     this._updateOtf('fail', oldobj, newobj)
-    if (oldobj.notes?.startsWith(newobj.notes))
+    if (typeof oldobj.notes === 'string' && oldobj.notes.startsWith(newobj.notes))
       // Must be done AFTER OTFs have been stripped out
       newobj.notes = oldobj.notes
     if (oldobj.name?.startsWith(newobj.name)) newobj.name = oldobj.name

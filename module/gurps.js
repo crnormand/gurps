@@ -1876,7 +1876,6 @@ if (!globalThis.GURPS) {
   GURPS.recurselist = recurselist
   GURPS.flattenContainedList = flattenContainedList
   GURPS.parselink = parselink
-  GURPS.displayAsDice = displayAsDice
 
   /* -------------------------------------------- */
   /*  Foundry VTT Initialization                  */
