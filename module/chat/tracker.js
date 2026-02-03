@@ -71,7 +71,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
       let value = theTracker.isDamageTracker ? parseInt(theTracker.min) : parseInt(theTracker.max)
 
       //if (!!theTracker.isDamageTracker) max = 0
-      await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
+      await actor.update({ ['system.additionalresources.tracker.' + theTrackerKey + '.value']: value })
       this.prnt(
         `${game.i18n.localize('GURPS.chatResourceTracker', 'Resource Tracker')}${display} ${game.i18n.localize(
           'GURPS.chatResetTo',

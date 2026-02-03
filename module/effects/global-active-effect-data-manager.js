@@ -246,7 +246,7 @@ class ActiveEffectDataConfig extends FormApplication {
     const data = super.getData()
 
     data.object.oldName = data.object.name
-    console.log('data', data)
+
 
     return data
   }

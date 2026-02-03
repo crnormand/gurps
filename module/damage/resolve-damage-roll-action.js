@@ -10,7 +10,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
       label: 'GURPS.resolveDamage.sendTo',
       icon: 'fas fa-paper-plane',
       callback: (event, button) => {
-        const rolls = button.form.elementsnumber?.valueAsNumber || 1
+        const rolls = button.form.elements.number?.valueAsNumber || 1
 
         return { rolls: rolls, action: 'send' }
       },

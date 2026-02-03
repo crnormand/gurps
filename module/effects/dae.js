@@ -188,7 +188,7 @@ export async function createToken(tokenData, x, y) {
   let targetSceneId = canvas.scene.id
 
   // requestGMAction(GMAction.actions.createToken, {userId: game.user.id, targetSceneId, tokenData, x, y})
-  return socketlibSocket.execuateAsGM('createToken', { userId: game.user.id, targetSceneId, tokenData, x, y })
+  return socketlibSocket.executeAsGM('createToken', { userId: game.user.id, targetSceneId, tokenData, x, y })
 }
 
 export let teleport = async (tokenDocument, targetScene, xpos, ypos) => {
