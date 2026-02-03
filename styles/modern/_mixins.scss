@@ -21,11 +21,9 @@
   &:nth-child(odd) {
     background: var(--ms-bg-section);
   }
-
   &:hover {
     background: var(--ms-bg-hover);
   }
-
   &:last-child {
     border-bottom: none;
   }
@@ -140,7 +138,6 @@
 @mixin interactive-row {
   cursor: pointer;
   transition: background 0.1s;
-
   &:hover {
     background: var(--ms-bg-hover);
   }

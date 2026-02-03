@@ -1,11 +1,11 @@
+import { getGame, isHTMLElement } from '../../utilities/guards.ts'
+
 export type EntityWithItemId = EntityComponentBase & { itemid?: string }
 type GurpsItemWithEditingActor = Item.Implementation & {
   editingActor?: Actor.Implementation
   system?: { fromItem?: string }
 }
-type ActorWithSanityCheck = Actor.Implementation & {
-  _sanityCheckItemSettings(obj: unknown): Promise<boolean>
-}
+type ActorWithSanityCheck = Actor.Implementation & { _sanityCheckItemSettings(obj: unknown): Promise<boolean> }
 
 export async function openItemSheetIfFoundryItem(
   actor: Actor.Implementation,
@@ -44,7 +44,7 @@ export function getDisplayName(
     return obj[displayProperty]
   }
 
-  return game.i18n!.localize(fallbackLocaleKey)
+  return getGame().i18n.localize(fallbackLocaleKey)
 }
 
 export async function confirmAndDelete(
@@ -53,68 +53,84 @@ export async function confirmAndDelete(
   displayName: string | undefined,
   fallbackLocaleKey: string
 ): Promise<boolean> {
-  const confirmed = await Dialog.confirm({
-    title: game.i18n!.localize('GURPS.delete'),
-    content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
+  const confirmed = await foundry.applications.api.DialogV2.confirm({
+    window: { title: getGame().i18n.localize('GURPS.delete') },
+    content: `<p>${getGame().i18n.localize('GURPS.delete')}: <strong>${displayName || getGame().i18n.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
 
   if (confirmed) {
-    // TODO: Update Actor.OfType with new methods in GurpsActor (_actor.js).
-    // @ts-expect-error: waiting for methods to be updated.
-    await actor.deleteEntry(key)
+    await this.actor.deleteEntry(key)
   }
 
   return confirmed ?? false
 }
 
 export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
-  html: JQuery,
+  html: HTMLElement,
   actor: Actor.Implementation,
   sheet: TSheet,
   config: EntityConfigWithMethod
 ): void {
   const { entityName, path, EntityClass, editMethod, localeKey, displayProperty = 'name', createArgs } = config
 
-  html.find(`[data-action="add-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    const newEntity = createArgs ? new EntityClass(...createArgs) : new EntityClass(game.i18n!.localize(localeKey))
-    const list = GURPS.decode<Record<string, EntityComponentBase>>(actor, path) || {}
-    const key = GURPS.put(list, foundry.utils.duplicate(newEntity))
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add-${entityName}"]`)
 
-    await actor.internalUpdate({ [path]: list })
+  addButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      const newEntity = createArgs
+        ? new EntityClass(...createArgs)
+        : new EntityClass(getGame().i18n.localize(localeKey))
+      const list = GURPS.decode<Record<string, EntityComponentBase>>(actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(newEntity))
 
-    const fullPath = buildEntityPath(path, key)
-    const duplicatedEntity = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, fullPath))
+      await actor.internalUpdate({ [path]: list })
 
-    await editMethod.call(sheet, actor, fullPath, duplicatedEntity)
+      const fullPath = buildEntityPath(path, key)
+      const duplicatedEntity = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, fullPath))
+
+      await editMethod.call(sheet, actor, fullPath, duplicatedEntity)
+    })
   })
 
-  html.find(`[data-action="edit-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const entityPath = target.dataset.key ?? ''
-    const entityData = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, entityPath))
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit-${entityName}"]`)
 
-    if (await openItemSheetIfFoundryItem(actor, entityData as EntityWithItemId)) return
+  editButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
 
-    await editMethod.call(sheet, actor, entityPath, entityData)
+      if (!isHTMLElement(target)) return
+      const entityPath = target.dataset.key ?? ''
+      const entityData = foundry.utils.duplicate(GURPS.decode<EntityComponentBase>(actor, entityPath))
+
+      if (await openItemSheetIfFoundryItem(actor, entityData as EntityWithItemId)) return
+
+      await editMethod.call(sheet, actor, entityPath, entityData)
+    })
   })
 
-  html.find(`[data-action="delete-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const entityKey = target.dataset.key ?? ''
-    const entityData = GURPS.decode<EntityComponentBase>(actor, entityKey)
-    const displayValue = displayProperty === 'name' ? entityData?.name : entityData?.notes
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete-${entityName}"]`)
 
-    await confirmAndDelete(actor, entityKey, displayValue, localeKey)
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const entityKey = target.dataset.key ?? ''
+      const entityData = GURPS.decode<EntityComponentBase>(actor, entityKey)
+      const displayValue = displayProperty === 'name' ? entityData?.name : entityData?.notes
+
+      await confirmAndDelete(actor, entityKey, displayValue, localeKey)
+    })
   })
 }
 
 export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethods>(
-  html: JQuery,
+  html: HTMLElement,
   actor: Actor.Implementation,
   sheet: TSheet,
   editMethod: TSheet['editModifier'],
@@ -124,39 +140,55 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
   const path = isReaction ? 'system.reactions' : 'system.conditionalmods'
   const localeKey = isReaction ? 'GURPS.reaction' : 'GURPS.conditionalModifier'
 
-  html.find(`[data-action="add-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    const { Reaction, Modifier } = await import('../actor-components.js')
-    const ModifierClass = isReaction ? Reaction : Modifier
-    const newModifier = new ModifierClass('0', game.i18n!.localize(localeKey))
-    const list = GURPS.decode<Record<string, ModifierComponent>>(actor, path) || {}
-    const key = GURPS.put(list, foundry.utils.duplicate(newModifier))
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add-${entityName}"]`)
 
-    await actor.internalUpdate({ [path]: list })
+  addButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      const { Reaction, Modifier } = await import('../actor-components.js')
+      const ModifierClass = isReaction ? Reaction : Modifier
+      const newModifier = new ModifierClass('0', getGame().i18n.localize(localeKey))
+      const list = GURPS.decode<Record<string, ModifierComponent>>(actor, path) || {}
+      const key = GURPS.put(list, foundry.utils.duplicate(newModifier))
 
-    const fullPath = buildEntityPath(path, key)
-    const duplicatedModifier = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, fullPath))
+      await actor.internalUpdate({ [path]: list })
 
-    await editMethod.call(sheet, actor, fullPath, duplicatedModifier, isReaction)
+      const fullPath = buildEntityPath(path, key)
+      const duplicatedModifier = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, fullPath))
+
+      await editMethod.call(sheet, actor, fullPath, duplicatedModifier, isReaction)
+    })
   })
 
-  html.find(`[data-action="edit-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const modifierPath = target.dataset.key ?? ''
-    const modifierData = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, modifierPath))
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit-${entityName}"]`)
 
-    await editMethod.call(sheet, actor, modifierPath, modifierData, isReaction)
+  editButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const modifierPath = target.dataset.key ?? ''
+      const modifierData = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, modifierPath))
+
+      await editMethod.call(sheet, actor, modifierPath, modifierData, isReaction)
+    })
   })
 
-  html.find(`[data-action="delete-${entityName}"]`).on('click', async (event: JQuery.ClickEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const modifierKey = target.dataset.key ?? ''
-    const modifierData = GURPS.decode<ModifierComponent>(actor, modifierKey)
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete-${entityName}"]`)
 
-    await confirmAndDelete(actor, modifierKey, modifierData?.situation, localeKey)
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const modifierKey = target.dataset.key ?? ''
+      const modifierData = GURPS.decode<ModifierComponent>(actor, modifierKey)
+
+      await confirmAndDelete(actor, modifierKey, modifierData?.situation, localeKey)
+    })
   })
 }

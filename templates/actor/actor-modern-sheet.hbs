@@ -1,4 +1,4 @@
-<form class='{{cssClass}}' autocomplete='off'>
+<section class='{{cssClass}}' autocomplete='off'>
   <div class='modern-sheet'>
     {{!-- PERSISTENT HEADER - Always visible --}}
     <header class='ms-header'>
@@ -77,7 +77,7 @@
       {{#unless this.disabled}}
       <span class='ms-effect-tag {{effectTagClass this}}' data-effect-id='{{this.id}}' title='{{this.name}}'>
         <span class='ms-effect-icon-wrapper'>
-          {{#if this.icon}}<img src='{{this.icon}}' class='ms-effect-icon' />{{/if}}
+          {{#if this.img}}<img src='{{this.img}}' class='ms-effect-icon' />{{/if}}
           <button class='ms-effect-delete' data-action='delete-effect' data-effect-id='{{this.id}}' title='Delete'>
             <i class='fas fa-trash'></i>
           </button>
@@ -92,20 +92,20 @@
     </div>
 
     {{!-- TAB NAVIGATION --}}
-    <nav class='ms-tabs' data-group='modern-tabs'>
-      <a class='ms-tab-item' data-tab='character' title='{{localize "GURPS.basic"}}'>
+    <nav class='ms-tabs tabs' data-group='modern-tabs'>
+      <a class='ms-tab-item active' data-tab='character' data-group='modern-tabs' data-action='tab'>
         <i class='fas fa-user'></i>
         <span>{{localize "GURPS.basic"}}</span>
       </a>
-      <a class='ms-tab-item' data-tab='combat' title='{{localize "GURPS.combatTab"}}'>
+      <a class='ms-tab-item' data-tab='combat' data-group='modern-tabs' data-action='tab'>
         <i class='fas fa-swords'></i>
         <span>{{localize "GURPS.combatTab"}}</span>
       </a>
-      <a class='ms-tab-item' data-tab='equipment' title='{{localize "GURPS.equipmentTab"}}'>
+      <a class='ms-tab-item' data-tab='equipment' data-group='modern-tabs' data-action='tab'>
         <i class='fas fa-backpack'></i>
         <span>{{localize "GURPS.equipmentTab"}}</span>
       </a>
-      <a class='ms-tab-item' data-tab='notes' title='{{localize "GURPS.description"}}'>
+      <a class='ms-tab-item' data-tab='notes' data-group='modern-tabs' data-action='tab'>
         <i class='fas fa-book'></i>
         <span>{{localize "GURPS.description"}}</span>
       </a>
@@ -113,7 +113,7 @@
 
     {{!-- TAB CONTENT --}}
     <section class='ms-body'>
-      <div class='tab' data-tab='character' data-group='modern-tabs'>
+      <div class='tab active' data-tab='character' data-group='modern-tabs'>
         {{>tab-character}}
       </div>
 
@@ -130,4 +130,4 @@
       </div>
     </section>
   </div>
-</form>
+</section>

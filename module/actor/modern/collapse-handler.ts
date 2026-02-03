@@ -1,8 +1,12 @@
-export function bindContainerCollapse(html: JQuery, actorId: string, config: ContainerCollapseConfig): void {
+import { isHTMLElement } from '../../utilities/guards.ts'
+
+export function bindContainerCollapse(html: HTMLElement, actorId: string, config: ContainerCollapseConfig): void {
   const { tableSelector, rowSelector, excludeSelectors = [] } = config
 
-  html.find(tableSelector).each((_index: number, table: HTMLElement) => {
-    const rows = Array.from(table.querySelectorAll(rowSelector)) as HTMLElement[]
+  const tables = html.querySelectorAll<HTMLElement>(tableSelector)
+
+  tables.forEach(table => {
+    const rows = Array.from(table.querySelectorAll<HTMLElement>(rowSelector))
 
     restoreCollapsedState(rows, actorId)
 
@@ -12,7 +16,9 @@ export function bindContainerCollapse(html: JQuery, actorId: string, config: Con
       if (!hasChildren) return
 
       row.addEventListener('click', (event: MouseEvent) => {
-        const target = event.target as HTMLElement
+        const target = event.target
+
+        if (!isHTMLElement(target)) return
         const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
 
         if (shouldExclude) return
@@ -110,45 +116,63 @@ const restoreCollapsedState = (rows: HTMLElement[], actorId: string): void => {
   })
 }
 
-export function bindRowExpand(html: JQuery, config: RowExpandConfig): void {
+export function bindRowExpand(html: HTMLElement, config: RowExpandConfig): void {
   const { rowSelector, excludeSelectors = [], expandedClass = 'expanded' } = config
 
-  html.find(rowSelector).on('click', (event: JQuery.ClickEvent) => {
-    const target = event.target as HTMLElement
-    const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+  const rows = html.querySelectorAll<HTMLElement>(rowSelector)
 
-    if (shouldExclude) return
+  rows.forEach(row => {
+    row.addEventListener('click', (event: MouseEvent) => {
+      const target = event.target
 
-    const row = event.currentTarget as HTMLElement
+      if (!isHTMLElement(target)) return
+      const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
 
-    row.classList.toggle(expandedClass)
+      if (shouldExclude) return
+
+      row.classList.toggle(expandedClass)
+    })
   })
 }
 
-export function bindSectionCollapse(html: JQuery, config: SectionCollapseConfig): void {
+export function bindSectionCollapse(html: HTMLElement, config: SectionCollapseConfig): void {
   const { headerSelector, excludeSelectors = [], collapsedClass = 'collapsed' } = config
 
-  html.find(headerSelector).on('click', (event: JQuery.ClickEvent) => {
-    const target = event.target as HTMLElement
-    const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+  const headers = html.querySelectorAll<HTMLElement>(headerSelector)
 
-    if (shouldExclude) return
+  headers.forEach(header => {
+    header.addEventListener('click', (event: MouseEvent) => {
+      const target = event.target
 
-    const header = event.currentTarget as HTMLElement
-    const section = header.closest('.ms-section') as HTMLElement
+      if (!isHTMLElement(target)) return
+      const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
 
-    section.classList.toggle(collapsedClass)
-    header.classList.toggle(collapsedClass)
+      if (shouldExclude) return
+
+      const section = header.closest('.ms-section')
+
+      if (!isHTMLElement(section)) return
+      section.classList.toggle(collapsedClass)
+      header.classList.toggle(collapsedClass)
+    })
   })
 }
 
-export function bindResourceReset(html: JQuery, actor: Actor.Implementation, configs: ResourceResetConfig[]): void {
+export function bindResourceReset(
+  html: HTMLElement,
+  actor: Actor.Implementation,
+  configs: ResourceResetConfig[]
+): void {
   configs.forEach(({ selector, resourcePath, maxPath }) => {
-    html.find(selector).on('click', (event: JQuery.ClickEvent) => {
-      event.preventDefault()
-      const maxValue = foundry.utils.getProperty(actor, maxPath)
+    const buttons = html.querySelectorAll<HTMLElement>(selector)
 
-      actor.update({ [resourcePath]: maxValue })
+    buttons.forEach(button => {
+      button.addEventListener('click', (event: MouseEvent) => {
+        event.preventDefault()
+        const maxValue = foundry.utils.getProperty(actor, maxPath)
+
+        actor.update({ [resourcePath]: maxValue })
+      })
     })
   })
 }
