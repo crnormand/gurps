@@ -19,10 +19,6 @@ export default {
     ],
   },
   moduleFileExtensions: ['js', 'ts', 'json', 'node'],
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
-  },
   transformIgnorePatterns: ['/node_modules/'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   setupFiles: ['./test/jest.setup.js'],
 }

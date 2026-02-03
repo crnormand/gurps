@@ -15,7 +15,7 @@ Hooks.once('init', async function () {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
 
-  Hooks.on('updateLastActorGURPS', async actor => {
+  Hooks.on('updateLastActorGURPS', async () => {
     if (GURPS.ModifierBucket) {
       // Update any actor-specific modifiers in the bucket, such as Advantage levels, and then refresh the UI.
       GURPS.ModifierBucket.resetActorModifiers()
@@ -66,7 +66,7 @@ export class GurpsRoll extends Roll {
     const _data = super._prepareData(data)
 
     // Add the gmodc property, that returns the current sum of the modifier bucket and then clears it.
-    if (!_data.hasOwnProperty('gmodc'))
+    if (!Object.hasOwn(_data, 'gmodc'))
       Object.defineProperty(_data, 'gmodc', {
         get() {
           let m = GURPS.ModifierBucket.currentSum()
@@ -144,7 +144,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
     let physicalDice = game.user?.isTrusted && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     if (physicalDice) {
-      return new Promise(async resolve => {
+      return new Promise(resolve => {
         let dialog = new ResolveDiceRoll(this)
 
         let callback = async () => {
@@ -159,7 +159,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
         dialog.render(true)
       })
     } else {
-      // @ts-ignore
+      // @ts-expect-error - Foundry VTT dice API changed between versions, super._evaluate signature varies
       return await super._evaluate({ minimize, maximize })
     }
   }
@@ -667,16 +667,19 @@ export class ModifierBucket extends Application {
 
     globalModifier?.addEventListener('click', event => this._onClick(event))
     globalModifier?.addEventListener('contextmenu', event => this.onRightClick(event))
-    globalModifier?.addEventListener('dragstart', ev => {
-      const bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
 
-      return ev.dataTransfer?.setData(
-        'text/plain',
-        JSON.stringify({
-          type: 'modifierbucket',
-          bucket: bucket,
-        })
-      )
+    Array.from(globalModifier.children).forEach(li => {
+      li.addEventListener('dragstart', ev => {
+        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+
+        return ev.dataTransfer?.setData(
+          'text/plain',
+          JSON.stringify({
+            type: 'modifierbucket',
+            bucket: bucket,
+          })
+        )
+      })
     })
 
     if (this.isTooltip) globalModifier.addEventListener('mouseenter', event => this._onenter(event))
@@ -686,10 +689,10 @@ export class ModifierBucket extends Application {
     modifierBucket?.addEventListener('drop', event => {
       event.stopPropagation()
       event.preventDefault()
-      const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
+      let dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
 
       if (!!dragData && !!dragData.otf) {
-        const link = parselink(dragData.otf)
+        let link = parselink(dragData.otf)
 
         if (link.action) {
           link.action.blindroll = true
@@ -732,10 +735,10 @@ export class ModifierBucket extends Application {
       const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
 
       if (!!dragData && !!dragData.otf) {
-        const link = parselink(dragData.otf)
+        let action = parselink(dragData.otf)
 
-        link.action.blindroll = true
-        GURPS.performAction(link.action, game.actors?.get(dragData.actor), {
+        action.action.blindroll = true
+        GURPS.performAction(action.action, game.actors?.get(dragData.actor), {
           shiftKey: game.user?.isGM,
           ctrlKey: false,
           data: {},
@@ -748,10 +751,9 @@ export class ModifierBucket extends Application {
       .forEach(a => a.addEventListener('click', event => this._onAccumulatorClick(html, event)))
   }
 
-  _onAccumulatorClick(html, event) {
+  _onAccumulatorClick(_html, event) {
     event.preventDefault()
     const a = event.currentTarget
-    const value = a.value ?? null
     const action = a.dataset.action ?? null
 
     switch (action) {
@@ -812,16 +814,16 @@ export class ModifierBucket extends Application {
   /**
    * @param {JQuery.MouseEnterEvent} ev
    */
-  _onenter(ev) {
+  _onenter() {
     this.SHOWING = true
     // The location of bucket is hardcoded in the css #modifierbucket, so I'm ok with hardcoding it here.
     // let position = {
-    //   // @ts-ignore
+    //   // @ts-expect-error - accessing private property
     //   left: 805 + 70 / 2 - this.editor.position.width / 2,
-    //   // @ts-ignore
+    //   // @ts-expect-error - accessing private property
     //   top: window.innerHeight - this.editor.position.height - 4,
     // }
-    // @ts-ignore
+    // @ts-expect-error - accessing private property _position
     // this.editor._position = position
     this.editor.render(true)
   }
@@ -938,7 +940,7 @@ export class ModifierBucket extends Application {
         // Can't adjust position if there is no #chat-message element
         if (!chatBox) return
 
-        const chatBoxIsFloating = chatBox?.parentNode.id === 'chat-notifications' ?? false
+        const chatBoxIsFloating = chatBox.parentNode.id === 'chat-notifications'
 
         const uiRight = document.getElementById('ui-right-column-1')
 
@@ -989,8 +991,6 @@ export class ModifierBucket extends Application {
    * @override
    */
   _injectHTML($html) {
-    const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
-
     const bucketExists = !!document.querySelector('#modifierbucket')
 
     if (!bucketExists) {

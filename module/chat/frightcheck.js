@@ -20,7 +20,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     return !!this.match
   }
 
-  async process(line) {
+  async process() {
     if (!GURPS.LastActor) {
       ui.notifications.error('Please select a token/character.')
 
@@ -219,7 +219,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       content: content,
       roll: JSON.stringify(roll),
       rollMode: game.settings.get('core', 'rollMode'),
-    }).then(async html => {
+    }).then(async () => {
       GURPS.setLastTargetedRoll({ margin: -margin }, actor)
 
       if (failure) {

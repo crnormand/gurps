@@ -1,14 +1,11 @@
 'use strict'
 
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
-import * as Settings from '../lib/miscellaneous-settings.js'
 import { recurselist } from '../lib/utilities.js'
 
 import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components.js'
 
-// export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
-// COMPATIBILITY: v12
-export class GurpsItemSheet extends ItemSheet {
+export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -57,10 +54,10 @@ export class GurpsItemSheet extends ItemSheet {
         name: nm,
       }
 
-      recurselist(this.item.system.melee, (e, k, d) => {
+      recurselist(this.item.system.melee, (_e, k) => {
         commit = { ...commit, ...{ ['system.melee.' + k + '.name']: nm } }
       })
-      recurselist(this.item.system.ranged, (e, k, d) => {
+      recurselist(this.item.system.ranged, (_e, k) => {
         commit = { ...commit, ...{ ['system.ranged.' + k + '.name']: nm } }
       })
       await this.item.update(commit)
@@ -165,11 +162,11 @@ export class GurpsItemSheet extends ItemSheet {
     }
   }
 
-  async _deleteKey(event) {
-    const key = event.currentTarget.getAttribute('name')
-    const path = event.currentTarget.getAttribute('data-path')
+  async _deleteKey(ev) {
+    let key = ev.currentTarget.getAttribute('name')
+    let path = ev.currentTarget.getAttribute('data-path')
 
-    await GURPS.removeKey(this.item, path + '.' + key)
+    GURPS.removeKey(this.item, path + '.' + key)
   }
 
   async _onDrop(event) {

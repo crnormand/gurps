@@ -1,10 +1,8 @@
 import { BaseAction } from 'module/action/base-action.ts'
-import { DamageActionSchema } from 'module/actor/data/character-components.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
-import DamageChat from 'module/damage/damagechat.js'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
 import { SkillModel } from 'module/item/data/skill.ts'
@@ -14,17 +12,12 @@ import { GurpsItemV2 } from 'module/item/gurps-item.ts'
 import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-interface.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
-import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
 import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 
-import { AnyMutableObject } from 'fvtt-types/utils'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { GurpsActor } from './module/actor/actor.js'
-import { GurpsCombatant } from './module/combat/combatant.ts'
-import { GurpsItem } from './module/item.js'
-import { GurpsToken } from './module/token/gurps-token.ts'
 
 export {}
 
@@ -414,7 +407,6 @@ declare module 'fvtt-types/configuration' {
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
     }
-    ChatMessage: {}
   }
 
   /* ---------------------------------------- */

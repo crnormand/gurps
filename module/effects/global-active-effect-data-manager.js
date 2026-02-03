@@ -43,8 +43,6 @@ export class GlobalActiveEffectDataControl {
       let tokenButton = controls.find(b => b.name == 'token')
 
       if (tokenButton) {
-        let self = this
-
         tokenButton.tools.push({
           name: GlobalActiveEffectDataControl.EFFECT_MANAGER_NAME,
           title: game.i18n.localize('GURPS.tokenToolsActiveEffects'),
@@ -52,7 +50,7 @@ export class GlobalActiveEffectDataControl {
           toggle: true,
           active: this.showPopup,
           visible: true,
-          onClick: value => (self.showPopup = value),
+          onClick: value => (this.showPopup = value),
         })
       }
     }
@@ -91,7 +89,7 @@ export class GlobalActiveEffectDataControl {
     }
   }
 
-  async close(options) {
+  async close() {
     this.showPopup = false
   }
 }

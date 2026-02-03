@@ -14,9 +14,9 @@ import {
   useLocationWoundMods,
 } from './settings.js'
 
-/* 
+/*
   Crippling injury:
- 
+
   Limb (arm, leg, wing, striker, or prehensile tail): Injury over HP/2.
   Extremity (hand, foot, tail, fin, or extraneous head): Injury over HP/3.
   Eye: Injury over HP/10.
@@ -162,8 +162,6 @@ export class CompositeDamageCalculator {
     // console.log(convertToEnglish('Schadensanfälligkeit')) => "Vulnerability"
 
     if (!found) {
-      let self = this
-
       found = values.find(value => {
         let found = !!(
           ['Injury Tolerance (Unliving)', 'Unliving'].includes(value.name) ||
@@ -172,7 +170,7 @@ export class CompositeDamageCalculator {
         const contents = value.contains ?? value.collapsed
 
         if (!found && Object.keys(contents).length > 0) {
-          found = self.isUnliving(Object.values(contents), false)
+          found = this.isUnliving(Object.values(contents), false)
         }
 
         return found
@@ -184,8 +182,6 @@ export class CompositeDamageCalculator {
 
   isHomogenous(values, found) {
     if (!found) {
-      let self = this
-
       found = values.find(value => {
         let found = !!(
           ['Injury Tolerance (Homogenous)', 'Homogenous'].includes(value.name) ||
@@ -195,7 +191,7 @@ export class CompositeDamageCalculator {
         const contents = value.contains ?? value.collapsed
 
         if (!found && Object.keys(contents).length > 0) {
-          found = self.isHomogenous(Object.values(contents), false)
+          found = this.isHomogenous(Object.values(contents), false)
         }
 
         return found
@@ -207,8 +203,6 @@ export class CompositeDamageCalculator {
 
   isDiffuse(values, found) {
     if (!found) {
-      let self = this
-
       found = values.find(value => {
         let found = !!(
           ['Injury Tolerance (Diffuse)', 'Diffuse'].includes(value.name) ||
@@ -218,7 +212,7 @@ export class CompositeDamageCalculator {
         const contents = value.contains ?? value.collapsed
 
         if (!found && Object.keys(contents).length > 0) {
-          found = self.isDiffuse(Object.values(contents), false)
+          found = this.isDiffuse(Object.values(contents), false)
         }
 
         return found
@@ -262,10 +256,6 @@ export class CompositeDamageCalculator {
 
   set armorDivisor(value) {
     this._armorDivisor = value
-  }
-
-  get useArmorDivisor() {
-    return this._useArmorDivisor
   }
 
   get applyTo() {
@@ -386,7 +376,7 @@ export class CompositeDamageCalculator {
         switch (effect.type) {
           case 'headvitalshit':
           case 'majorwound':
-          case 'crippling':
+          case 'crippling': {
             const stunIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'stun'))
             const proneIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
 
@@ -416,6 +406,8 @@ export class CompositeDamageCalculator {
                 },
               ],
             }
+          }
+
           case 'knockback':
             isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
 
@@ -459,7 +451,7 @@ export class CompositeDamageCalculator {
     let shock = effects
       .filter(it => it.type === 'shock')
       .map(it => it.amount)
-      .reduce((acc, value, index, array) => {
+      .reduce((acc, value) => {
         return acc + value
       }, 0)
 
@@ -475,13 +467,13 @@ export class CompositeDamageCalculator {
 
     let knockbackValue = allKnockbacks
       .map(it => it.amount)
-      .reduce((acc, value, index, array) => {
+      .reduce((acc, value) => {
         return acc + value
       }, 0)
 
     let knockbackMods = allKnockbacks
       .map(it => it.modifier)
-      .reduce((acc, value, index, array) => {
+      .reduce((acc, value) => {
         return acc + value
       }, 0)
 
@@ -531,13 +523,13 @@ export class CompositeDamageCalculator {
   }
 
   get effectiveBluntTrauma() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return undefined
 
     return this._calculators[this._viewId].effectiveBluntTrauma
   }
 
   get effectiveDamage() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return undefined
 
     return this._calculators[this._viewId].effectiveDamage
   }
@@ -720,7 +712,7 @@ export class CompositeDamageCalculator {
   }
 
   get injury() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return undefined
 
     return this._calculators[this._viewId].injury
   }
@@ -760,7 +752,7 @@ export class CompositeDamageCalculator {
   }
 
   get isBluntTraumaInjury() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return undefined
 
     return this._calculators[this._viewId].isBluntTraumaInjury
   }
@@ -801,7 +793,7 @@ export class CompositeDamageCalculator {
   }
 
   get isInjuryReducedByLocation() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return undefined
 
     return this._calculators[this._viewId].isInjuryReducedByLocation
   }
@@ -909,13 +901,13 @@ export class CompositeDamageCalculator {
   }
 
   get maxInjuryForDiffuse() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return undefined
 
     return this._calculators[this._viewId].maxInjuryForDiffuse
   }
 
   get penetratingDamage() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return undefined
 
     return this._calculators[this._viewId].penetratingDamage
   }

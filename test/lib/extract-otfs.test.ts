@@ -3,10 +3,10 @@ import { extractOtfs } from '../../module/utilities/otf.ts'
 
 beforeAll(() => {
   globalThis.GURPS = {} as any
-  // @ts-ignore
+  // @ts-expect-error - game is a partial mock for testing
   globalThis.game = {
     i18n: {
-      // @ts-ignore
+      // @ts-expect-error - localize is a simplified mock for testing
       localize: str => str,
     },
   }

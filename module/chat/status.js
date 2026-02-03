@@ -1,7 +1,6 @@
 'use strict'
 
 import { locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
-import { GurpsActorV2 } from '../actor/gurps-actor.js'
 
 import ChatProcessor from './chat-processor.js'
 
@@ -22,7 +21,7 @@ const Command = {
 
 export default class StatusChatProcessor extends ChatProcessor {
   static regex() {
-    return /^\/(st|status) +(?<command>toggle|t|on|off|\+|-|clear|set|unset|list) *(?<name>[^\@: ]+)? *(?<target>\@self|:\S+)? *(?<data>\{.*\})?/i
+    return /^\/(st|status) +(?<command>toggle|t|on|off|\+|-|clear|set|unset|list) *(?<name>[^@: ]+)? *(?<target>@self|:\S+)? *(?<data>\{.*\})?/i
   }
 
   help() {
@@ -40,7 +39,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   }
 
   usagematches(line) {
-    return line.match(/^[\/\?](st|status)$/i)
+    return line.match(/^[/?](st|status)$/i)
   }
 
   usage() {
@@ -209,7 +208,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    */
   isEffectActive(token, effect) {
     /** @type {GurpsActorV2} */
-    // @ts-ignore
+    // @ts-expect-error - GurpsActorV2 type assertion for actor from token
     let actor = token?.actor || game.actors?.get(token?.document.actorId)
 
     return actor.isEffectActive(effect)

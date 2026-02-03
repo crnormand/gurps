@@ -1,11 +1,10 @@
-import fields = foundry.data.fields
-
 import { AnyObject } from 'fvtt-types/utils'
 
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
+import { fields } from '../types/foundry/index.js'
 
 import { BaseAction, BaseActionSchema } from './base-action.js'
 
@@ -103,8 +102,8 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
 
     const range = this.component.range
     // Match the range format, e.g., "x2", "x20", "x30"
-    const matchSingle = range.match(/^\s*[×xX]([\d\.]+)\s*$/)
-    const matchMultiple = range.match(/^\s*[×xX]([\d\.]+)\s*-\s*[×xX]([\d\.]+)\s*$/)
+    const matchSingle = range.match(/^\s*[×xX]([\d.]+)\s*$/)
+    const matchMultiple = range.match(/^\s*[×xX]([\d.]+)\s*-\s*[×xX]([\d.]+)\s*$/)
 
     if (matchSingle) {
       this.component.range = `${parseFloat(matchSingle[1]) * st}`

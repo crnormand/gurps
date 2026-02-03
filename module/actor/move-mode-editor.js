@@ -58,7 +58,7 @@ export default class MoveModeEditor extends Application {
   }
 
   /** Since the default move object may not actually be part of the DB,
-		(laissez-faire init), we need to update the full move object. 
+		(laissez-faire init), we need to update the full move object.
 	*/
   async _updateMoveData(moveId, attrib, value) {
     let old = this.moveData[moveId]
@@ -112,7 +112,7 @@ export default class MoveModeEditor extends Application {
     return this.actor.system.move
   }
 
-  async _click(action, key, value) {
+  async _click(action, key) {
     switch (action) {
       // click:  action [create] key [null] value [null]
       case 'create':

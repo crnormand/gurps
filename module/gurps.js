@@ -29,7 +29,7 @@ import {
 import { GGADebugger } from '../utils/debugger.js'
 
 import { Action } from './action/index.js'
-import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
+// import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
@@ -57,12 +57,6 @@ import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
-
-/**
- * Added to color the rollable parts of the character sheet.
- * Made this part eslint compatible...
- * ~Stevil
- */
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
@@ -103,15 +97,15 @@ if (!globalThis.GURPS) {
   GURPS.Migration = Migration
   GURPS.Length = Length
   GURPS.BANNER = `
-   __ ____ _____ _____ _____ _____ ____ __    
-  / /_____|_____|_____|_____|_____|_____\\ \\   
- / /      ____ _   _ ____  ____  ____    \\ \\  
- | |     / ___| | | |  _ \\|  _ \\/ ___|    | | 
- | |    | |  _| | | | |_) | |_) \\___ \\    | | 
- | |    | |_| | |_| |  _ <|  __/ ___) |   | | 
- | |     \\____|\\___/|_| \\_\\_|   |____/    | | 
-  \\ \\ _____ _____ _____ _____ _____ ____ / / 
-   \\_|_____|_____|_____|_____|_____|____|_/  
+   __ ____ _____ _____ _____ _____ ____ __
+  / /_____|_____|_____|_____|_____|_____\\ \\
+ / /      ____ _   _ ____  ____  ____    \\ \\
+ | |     / ___| | | |  _ \\|  _ \\/ ___|    | |
+ | |    | |  _| | | | |_) | |_) \\___ \\    | |
+ | |    | |_| | |_| |  _ <|  __/ ___) |   | |
+ | |     \\____|\\___/|_| \\_\\_|   |____/    | |
+  \\ \\ _____ _____ _____ _____ _____ ____ / /
+   \\_|_____|_____|_____|_____|_____|____|_/
 `
   GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`
 
@@ -282,12 +276,12 @@ if (!globalThis.GURPS) {
     const reader = new FileReader()
 
     return new Promise((resolve, reject) => {
-      // @ts-ignore
+      // @ts-expect-error - FileReader event handler type mismatch with ProgressEvent
       reader.onload = _ev => {
         resolve(reader.result)
       }
 
-      // @ts-ignore
+      // @ts-expect-error - FileReader event handler type mismatch with ProgressEvent
       reader.onerror = _ev => {
         reader.abort()
         reject()
@@ -372,7 +366,7 @@ if (!globalThis.GURPS) {
           '{['[+isArray] +
           Object.keys(obj)
             .map(function (key) {
-              // @ts-ignore
+              // @ts-expect-error - dynamic property access on unknown object type
               return '\n\t' + indent + key + ': ' + objToString(obj[key], (ndeep || 1) + 1)
             })
             .join(',') +
@@ -445,11 +439,11 @@ if (!globalThis.GURPS) {
       // Skill-12
       skill = {
         name: action.name,
-        // @ts-ignore
+        // @ts-expect-error - action.target is string but parseInt expects string|undefined
         level: parseInt(action.target),
       }
     }
-    // @ts-ignore
+    // @ts-expect-error - GURPS global object not fully typed
     else skill = GURPS.findSkillSpell(actor?.system, action.name, !!action.isSkillOnly, !!action.isSpellOnly)
 
     if (!skill) {
@@ -458,7 +452,7 @@ if (!globalThis.GURPS) {
 
     let skillLevel = skill.level
 
-    // @ts-ignore
+    // @ts-expect-error - dynamically adding obj property to action
     action.obj = skill
 
     // on a floating skill check, we want the skill with the highest relative skill level
@@ -507,7 +501,7 @@ if (!globalThis.GURPS) {
         // if [@margin] tests for >=0
         return GURPS.lastTargetedRoll.margin >= 0
       else {
-        let m = action.equation.match(/ *([=<>]+) *([+-]?[\d\.]+)/)
+        let m = action.equation.match(/ *([=<>]+) *([+-]?[\d.]+)/)
         let value = Number(m[2])
 
         switch (m[1]) {
@@ -552,7 +546,7 @@ if (!globalThis.GURPS) {
      * @param {JQuery.Event|null} data.event
      */
     async chat({ action, actor, event }) {
-      // @ts-ignore
+      // @ts-expect-error - Foundry VTT API not fully typed
       const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(
         KeyboardManager.MODIFIER_KEYS.CONTROL
       )}\n${action.orig}`
@@ -565,7 +559,7 @@ if (!globalThis.GURPS) {
       let savedActor = GURPS.LastActor
 
       if (actor) GURPS.SetLastActor(actor) // try to ensure the correct last actor.
-      // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
+      // @ts-expect-error - custom chatmsgData property added to MouseEvent
       let ret = await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
 
       if (savedActor) GURPS.SetLastActor(savedActor)
@@ -580,12 +574,13 @@ if (!globalThis.GURPS) {
      */
     dragdrop({ action }) {
       switch (action.link) {
-        case 'JournalEntry':
+        case 'JournalEntry': {
           let j = game.journal?.get(action.id)
 
           if (j) j.sheet?.render(true)
 
           return true
+        }
         case 'JournalEntryPage':
           Journal._showEntry(action.id)
 
@@ -1380,7 +1375,7 @@ if (!globalThis.GURPS) {
                   AT: attack
                   M: melee
                   R: ranged
-                  S: skills & spells 
+                  S: skills & spells
                   SK: skills
                   SP: spells
                   */
@@ -1585,7 +1580,7 @@ if (!globalThis.GURPS) {
     let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(s, false, false), 'i')
 
     if (isMelee)
-      // @ts-ignore
+      // @ts-expect-error - actor.melee type not fully typed
       recurselist(actor.melee, (e, _k, _d) => {
         if (!t) {
           let full = e.name
@@ -1600,7 +1595,7 @@ if (!globalThis.GURPS) {
       })
     //    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
     if (isRanged && !t)
-      // @ts-ignore
+      // @ts-expect-error - actor.ranged type not fully typed
       recurselist(actor.ranged, (e, _k, _d) => {
         if (!t) {
           let full = e.name
@@ -1812,7 +1807,7 @@ if (!globalThis.GURPS) {
       if (target.match(/^[hf]p/i)) {
         let k = target.toUpperCase()
 
-        // @ts-ignore
+        // @ts-expect-error - dynamic property access on actor.system
         delta = actor.system[k].value - delta
         await actor.update({ ['system.' + k + '.value']: delta })
       }
@@ -1877,7 +1872,7 @@ if (!globalThis.GURPS) {
   function put(obj, value, index = -1) {
     if (index == -1) {
       index = 0
-      while (obj.hasOwnProperty(zeroFill(index))) index++
+      while (Object.hasOwn(obj, zeroFill(index))) index++
     }
 
     let k = zeroFill(index)
@@ -1942,7 +1937,7 @@ if (!globalThis.GURPS) {
     let start = parseInt(key)
 
     i = start + 1
-    while (object.hasOwnProperty(zeroFill(i))) i++
+    while (Object.hasOwn(object, zeroFill(i))) i++
     i = i - 1
 
     for (let z = i; z >= start; z--) {
@@ -1953,7 +1948,7 @@ if (!globalThis.GURPS) {
     let sorted = Object.keys(object)
       .sort()
       .reduce((a, v) => {
-        // @ts-ignore
+        // @ts-expect-error - dynamic property access on accumulator object
         a[v] = object[v]
 
         return a
@@ -2047,7 +2042,7 @@ if (!globalThis.GURPS) {
     let canblind = false
 
     if (blindcheck) {
-      canblind = blindcheck == true || blindcheck.hasOwnProperty('blindroll')
+      canblind = blindcheck == true || Object.hasOwn(blindcheck, 'blindroll')
 
       if (canblind && blindcheck.blindroll) {
         otf = '!' + otf
@@ -2108,7 +2103,7 @@ if (!globalThis.GURPS) {
       },
     })
 
-    let d = new foundry.applications.api.DialogV2({
+    new foundry.applications.api.DialogV2({
       window: { title: 'GM Send Formula' },
       content: `<div style='text-align:center'>How would you like to send the formula:<div><strong>${otf}</strong></div>`,
       position: { height: 'auto', width: 'auto' },
@@ -2145,7 +2140,7 @@ if (!globalThis.GURPS) {
     let d = m && !!m[2] ? parseInt(m[2]) : 5
 
     CONFIG.Combat.initiative = {
-      // @ts-ignore - technically, m could be null
+      // @ts-expect-error - m could be null but is checked implicitly by context
       formula: m[1],
       decimals: d, // Important to be able to maintain resolution
     }
@@ -2259,24 +2254,24 @@ if (!globalThis.GURPS) {
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
-    // @ts-ignore
+    // @ts-expect-error - Foundry VTT hook callback parameter types not fully typed
     Hooks.on('createRollTable', async function (entity, _options, _userId) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
       entity.img = 'systems/gurps/icons/single-die.webp'
     })
 
-    Hooks.on('renderActorDirectory', (app, html, context) => {
+    Hooks.on('renderActorDirectory', (app, html) => {
       // Add the Import Multiple Actors button to the Actors tab.
       AddMultipleImportButton(html)
     })
 
-    Hooks.on('renderCompendiumDirectory', (app, html, context) => {
+    Hooks.on('renderCompendiumDirectory', (app, html) => {
       // Add the import equipment button to the Compendiums tab.
       AddImportEquipmentButton(html)
     })
 
     // TODO Move to a new 'bucket' module?
-    Hooks.on('renderChatLog', (app, html, data) => {
+    Hooks.on('renderChatLog', (app, html) => {
       html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
     })
 
@@ -2332,7 +2327,6 @@ if (!globalThis.GURPS) {
     let previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
 
     console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
-    const migrationVersion = SemanticVersion.fromString(previousVersionString)
 
     // Run any needed migrations.
     Migration.run()
@@ -2747,7 +2741,7 @@ const showGURPSCopyright = function () {
     <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.webp"></a></div>
   </div>
 </div>`,
-    // @ts-ignore
+    // @ts-expect-error - game.user could be null but is safe in this context
     whisper: [game.user],
   })
 }

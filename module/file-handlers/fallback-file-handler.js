@@ -45,9 +45,11 @@ export class FallbackFileHandler {
 
             files = extensions.length > 0 ? files.filter(f => extensions.some(ext => f.name.endsWith(ext))) : files
 
-            files.length === 0
-              ? reject('no files with the correct extensions were chosen')
-              : resolve(files.map(f => new FallbackFile(f)))
+            if (files.length === 0) {
+              reject('no files with the correct extensions were chosen')
+            } else {
+              resolve(files.map(f => new FallbackFile(f)))
+            }
           },
         },
       })

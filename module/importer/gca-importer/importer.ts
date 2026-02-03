@@ -1,5 +1,3 @@
-import DataModel = foundry.abstract.DataModel
-
 import {
   MeleeAttackComponentSchema,
   MeleeAttackSchema,
@@ -17,6 +15,7 @@ import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
 
 // TODO: get rid of when this is migrated
 import * as HitLocations from '../../hitlocation/hitlocation.js'
+import { DataModel } from '../../types/foundry/index.js'
 import { createDataIsOfType } from '../helpers.ts'
 import { ImportSettings } from '../index.js'
 
@@ -593,7 +592,7 @@ Portrait will not be imported.`
         ...this.input.traits.cultures,
         ...this.input.traits.languages,
       ])
-      ?.map((child: GCATrait) => this.#importTrait(child, _id)) ?? []
+      ?.forEach((child: GCATrait) => this.#importTrait(child, _id))
 
     const item: Item.CreateData = {
       _id,
@@ -619,7 +618,7 @@ Portrait will not be imported.`
     const system: DataModel.CreateData<SkillSchema> = this.#importItem(skill, containedBy)
     const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
 
-    skill.getChildren(this.input.traits.skills)?.map((child: GCATrait) => this.#importSkill(child, _id)) ?? []
+    skill.getChildren(this.input.traits.skills)?.forEach((child: GCATrait) => this.#importSkill(child, _id))
 
     const item: Item.CreateData = {
       _id,
@@ -645,7 +644,7 @@ Portrait will not be imported.`
     const system: DataModel.CreateData<SpellSchema> = this.#importItem(spell, containedBy)
     const component: DataModel.CreateData<SpellComponentSchema> = this.#importSpellComponent(spell)
 
-    spell.getChildren(this.input.traits.spells)?.map((child: GCATrait) => this.#importSpell(child, _id)) ?? []
+    spell.getChildren(this.input.traits.spells)?.forEach((child: GCATrait) => this.#importSpell(child, _id))
 
     const item: Item.CreateData = {
       _id,
@@ -670,8 +669,7 @@ Portrait will not be imported.`
     const system: DataModel.CreateData<EquipmentSchema> = this.#importItem(equipment, containedBy)
     const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importEquipmentComponent(equipment)
 
-    equipment.getChildren(this.input.traits.equipment)?.map((child: GCATrait) => this.#importEquipment(child, _id)) ??
-      []
+    equipment.getChildren(this.input.traits.equipment)?.forEach((child: GCATrait) => this.#importEquipment(child, _id))
 
     const item: Item.CreateData = {
       _id,

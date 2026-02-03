@@ -1,5 +1,3 @@
-import * as Settings from '../lib/miscellaneous-settings.js'
-
 import { UniversalFileHandler } from './file-handlers/universal-file-handler.js'
 
 export class SmartImporter {

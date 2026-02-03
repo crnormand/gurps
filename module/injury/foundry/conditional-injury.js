@@ -3,10 +3,8 @@ import * as CI from '../domain/ConditionalInjury.js'
 
 export default class GurpsConditionalInjury {
   constructor() {
-    let self = this
-
-    Handlebars.registerHelper('ciSeveritiesTooltip', self.severitiesTooltip)
-    Handlebars.registerHelper('ciCurrentGrossEffects', self.currentGrossEffects)
+    Handlebars.registerHelper('ciSeveritiesTooltip', this.severitiesTooltip)
+    Handlebars.registerHelper('ciCurrentGrossEffects', this.currentGrossEffects)
   }
 
   async update() {

@@ -109,7 +109,7 @@ export default class ColorCharacterSheetSettings extends FormApplication {
   /**
    * @override
    */
-  _updateObject(event, formData) {
+  _updateObject() {
     colorGurpsActorSheet()
   }
 }

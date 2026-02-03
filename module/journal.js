@@ -4,9 +4,6 @@ import GurpsWiring from './gurps-wiring.js'
 
 export default class GurpsJournalEntry {
   static ready() {
-    // Foundry v12
-    Hooks.on('renderJournalPageSheet', GurpsJournalEntry._renderJournalPageSheet)
-    // Foundry v13
     Hooks.on('renderJournalEntryPageTextSheet', GurpsJournalEntry._renderJournalPageSheet)
   }
 
@@ -15,7 +12,7 @@ export default class GurpsJournalEntry {
    * @param {JQuery<HTMLElement>} html
    * @param {*} _options
    */
-  static _renderJournalPageSheet(app, html, document, options) {
+  static _renderJournalPageSheet(app, html, document) {
     if ((game.release?.generation ?? 12) >= 13) {
       if (!app.isView) return
     } else if (document.isEditable) return
@@ -33,7 +30,7 @@ export default class GurpsJournalEntry {
       if (!!h && h.length > 0) {
         GurpsWiring.hookupAllEvents(html)
 
-        const dropHandler = function (event, app, options) {
+        const dropHandler = function (event, app) {
           event.preventDefault()
           if (event.originalEvent) event = event.originalEvent
           const data = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -50,9 +47,6 @@ export default class GurpsJournalEntry {
             cmd += data.otf
 
             if (data.displayname) {
-              let q = '"'
-
-              if (data.displayname.includes('"')) q = "'"
               cmd = "'" + data.displayname + "'" + cmd
             }
 
@@ -67,7 +61,7 @@ export default class GurpsJournalEntry {
         html
           .parent()
           .parent()
-          .on('drop', event => dropHandler(event, app, document))
+          .on('drop', event => dropHandler(event, app))
       }
     }, 10)
   }

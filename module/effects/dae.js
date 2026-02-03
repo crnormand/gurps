@@ -1,5 +1,5 @@
 /**
-  This is a subset of Dynamic effects for Active Effects module (which only work with DnD5e).   
+  This is a subset of Dynamic effects for Active Effects module (which only work with DnD5e).
   Mainly for the 'teleport token function.   ;-)
 **/
 
@@ -40,12 +40,11 @@ function DAEfromUuid(uuid) {
       doc = doc.getEmbeddedDocument(embeddedName, embeddedId)
       parts = parts.slice(2)
     }
-  } finally {
-    /*catch (err) {
-      error(`dae | could not fetch ${uuid} ${err}`)
-    } */
-    return doc || null
+  } catch {
+    // could not fetch uuid
   }
+
+  return doc || null
 }
 
 function DAEfromActorUuid(uuid) {
@@ -100,7 +99,7 @@ async function _createToken(data) {
   let scenes = game.scenes
   let targetScene = scenes.get(data.targetSceneId)
 
-  //@ts-ignore
+  // @ts-expect-error - Foundry VTT API not fully typed
   return await targetScene.createEmbeddedDocuments('Token', [
     foundry.utils.mergeObject(
       foundry.utils.duplicate(data.tokenData),
@@ -127,17 +126,17 @@ async function _renameToken(data) {
 let tokenScene = (tokenName, sceneName) => {
   if (!sceneName) {
     for (let scene of game.scenes) {
-      //@ts-ignore
+      // @ts-expect-error - Foundry VTT API not fully typed
       let found = scene.tokens.getName(tokenName)
 
       if (found) return { scene, found }
     }
   } else {
-    //@ts-ignore
+    // @ts-expect-error - Foundry VTT API not fully typed
     let scene = game.scenes.getName(sceneName)
 
     if (scene) {
-      //@ts-ignore
+      // @ts-expect-error - Foundry VTT API not fully typed
       let found = scene.tokens.getName(tokenName)
 
       if (found) {
@@ -210,7 +209,7 @@ export let teleport = async (tokenDocument, targetScene, xpos, ypos) => {
 
   // Hide the current token
   if (targetScene.name === canvas.scene.name) {
-    //@ts-ignore
+    // @ts-expect-error - Foundry VTT internal API
     CanvasAnimation.terminateAnimation(`Token.${tokenDocument.id}.animateMovement`)
     let sourceSceneId = canvas.scene.id
 
@@ -259,7 +258,7 @@ export let teleport = async (tokenDocument, targetScene, xpos, ypos) => {
     setTimeout(() => canvas.pan({ x: xpos, y: ypos }), 200)
   })
   // Need to stop animation since we are going to delete the token and if that happens before the animation completes we get an error
-  //@ts-ignore
+  // @ts-expect-error - Foundry VTT internal API
   CanvasAnimation.terminateAnimation(`Token.${tokenDocument.id}.animateMovement`)
 
   return await targetScene.view()

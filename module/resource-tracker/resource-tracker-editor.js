@@ -37,7 +37,7 @@ export class ResourceTrackerEditor extends Application {
    * By default, do nothing. Each specific use will need its own update method.
    * @param {*} html
    */
-  async _updateTracker(html) {}
+  async _updateTracker(_html) {}
 
   /** @override */
   activateListeners(html) {
@@ -163,7 +163,7 @@ export class ResourceTrackerEditor extends Application {
 
     html.find('#update').click(() => this._updateTracker())
 
-    html.find('#reset').on('click', ev => {
+    html.find('#reset').on('click', _ev => {
       this._tracker = {
         name: '',
         alias: '',

@@ -1,5 +1,3 @@
-import DataModel = foundry.abstract.DataModel
-
 import { NoteV2Schema } from 'module/actor/data/note.js'
 import { BaseItemModel } from 'module/item/data/base.js'
 import { ItemComponentSchema } from 'module/item/data/component.js'
@@ -15,6 +13,7 @@ import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { EquipmentSchema, EquipmentComponentSchema } from '../../item/data/equipment.js'
 import { SkillComponentSchema, SkillSchema } from '../../item/data/skill.js'
 import { SpellComponentSchema, SpellSchema } from '../../item/data/spell.js'
+import { DataModel } from '../../types/foundry/index.js'
 import { createDataIsOfType } from '../helpers.ts'
 import { ImportSettings } from '../index.js'
 
@@ -714,7 +713,7 @@ Portrait will not be imported.`
 
     // Update any actions with the containing trait id:
     for (const action of Object.values(system.actions)) {
-      // @ts-expect-error
+      // @ts-expect-error - containedBy is not in the action type but is dynamically assigned
       action.containedBy = _id
     }
 
@@ -753,7 +752,7 @@ Portrait will not be imported.`
 
     // Update any actions with the containing trait id:
     for (const action of Object.values(system.actions)) {
-      // @ts-expect-error
+      // @ts-expect-error - containedBy is not in the action type but is dynamically assigned
       action.containedBy = _id
     }
 
@@ -791,7 +790,7 @@ Portrait will not be imported.`
 
     // Update any actions with the containing trait id:
     for (const action of Object.values(system.actions)) {
-      // @ts-expect-error
+      // @ts-expect-error - containedBy is not in the action type but is dynamically assigned
       action.containedBy = _id
     }
 
@@ -834,7 +833,7 @@ Portrait will not be imported.`
 
     // Update any actions with the containing trait id:
     for (const action of Object.values(system.actions)) {
-      // @ts-expect-error
+      // @ts-expect-error - containedBy is not in the action type but is dynamically assigned
       action.containedBy = _id
     }
 
@@ -976,8 +975,9 @@ Portrait will not be imported.`
       this.#importNote(child, id)
     })
 
-    // @ts-expect-error
-    this.output.allNotes!.push(note)
+    if (Array.isArray(this.output.allNotes)) {
+      this.output.allNotes.push(note)
+    }
   }
 
   /* ---------------------------------------- */

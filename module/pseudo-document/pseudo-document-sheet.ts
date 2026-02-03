@@ -1,8 +1,8 @@
-import { PseudoDocument } from './pseudo-document.js'
-
-import Application = foundry.applications.api.Application
-
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
+
+import { Application } from '../types/foundry/index.ts'
+
+import { PseudoDocument } from './pseudo-document.js'
 
 namespace PseudoDocumentSheet {
   export interface Configuration extends Application.Configuration {

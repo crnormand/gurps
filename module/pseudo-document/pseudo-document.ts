@@ -1,14 +1,25 @@
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
-import Document = foundry.abstract.Document
-
 import { AnyObject } from 'fvtt-types/utils'
 
+import { type ModelCollection } from '../data/model-collection.js'
 import { type BaseItemModel } from '../item/data/base.js'
+import { DataModel, Document, fields } from '../types/foundry/index.ts'
+import { isObject } from '../utilities/guards.ts'
 
 import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 
-import { type ModelCollection } from '../data/model-collection.js'
+interface UpdatableDocument extends Document.Any {
+  update(data: AnyObject, options?: AnyObject): Promise<this>
+}
+
+const isUpdatableDocument = (value: unknown): value is UpdatableDocument =>
+  isObject(value) && 'update' in value && typeof value.update === 'function'
+
+interface PseudoDocumentConstructor {
+  metadata: PseudoDocumentMetadata
+}
+
+const hasPseudoDocumentMetadata = (value: unknown): value is PseudoDocumentConstructor =>
+  isObject(value) && 'metadata' in value
 
 type PseudoDocumentMetadata = {
   /* ---------------------------------------- */
@@ -95,11 +106,13 @@ class PseudoDocument<
    * The parent document of this pseudo-document.
    */
   get document(): Document.Any {
-    let parent: DataModel.Any = this
+    const findDocument = (model: DataModel.Any): Document.Any => {
+      if (model instanceof Document) return model
 
-    while (!(parent instanceof Document)) parent = parent.parent
+      return findDocument(model.parent)
+    }
 
-    return parent
+    return findDocument(this)
   }
 
   /* ---------------------------------------- */
@@ -208,8 +221,13 @@ class PseudoDocument<
    */
   get isSource() {
     const docName = this.documentName
-    // @ts-expect-error: TODO: revise parent types
-    const fieldPath = this.parent.constructor.metadata.embedded[docName]
+
+    if (!hasPseudoDocumentMetadata(this.parent.constructor)) return false
+
+    const fieldPath = docName ? this.parent.constructor.metadata.embedded[docName] : undefined
+
+    if (!fieldPath) return false
+
     const parent = this.parent instanceof foundry.abstract.TypeDataModel ? this.parent.parent : this.parent
     const source = foundry.utils.getProperty(parent._source, fieldPath) as AnyObject
 
@@ -267,13 +285,15 @@ class PseudoDocument<
     operation: Document.Database.DeleteOperation<foundry.abstract.types.DatabaseDeleteOperation<Document.Any>>
   ): Promise<Document.Any | undefined> {
     if (!this.isSource) throw new Error('You cannot delete a non-source pseudo-document!')
+    if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
 
     Object.assign(operation, { pseudo: { operation: 'delete', type: this.documentName, uuid: this.uuid } })
     const update = { [`${this.fieldPath}.-=${this.id}`]: null }
 
-    ;(this.constructor as typeof PseudoDocument)._configureUpdates('delete', this.document, update, operation)
+    if (hasPseudoDocumentMetadata(this.constructor)) {
+      PseudoDocument._configureUpdates('delete', this.document, update, operation)
+    }
 
-    // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
     return this.document.update(update, operation)
   }
 
@@ -303,14 +323,17 @@ class PseudoDocument<
   async update(
     change: AnyObject = {},
     operation: Document.Database.UpdateOperation<foundry.abstract.types.DatabaseUpdateOperation> = {}
-  ): Promise<Parent> {
+  ): Promise<UpdatableDocument> {
     if (!this.isSource) throw new Error('You cannot update a non-source pseudo-document!')
+    if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
+
     const path = [this.fieldPath, this.id].join('.')
     const update = { [path]: change }
 
-    ;(this.constructor as typeof PseudoDocument)._configureUpdates('update', this.document, update, operation)
+    if (hasPseudoDocumentMetadata(this.constructor)) {
+      PseudoDocument._configureUpdates('update', this.document, update, operation)
+    }
 
-    // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
     return this.document.update(update, operation)
   }
 

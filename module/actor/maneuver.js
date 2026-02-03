@@ -21,8 +21,6 @@ const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target'
 
 const MANEUVER_NAME_AIM = 'aim'
 
-const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
-
 // Override Actor.temporaryEffects getter to sort maneuvers to the front of the array
 // Object.defineProperty(Actor.prototype, 'temporaryEffects', {
 //   get: function () {
@@ -325,7 +323,7 @@ export default class Maneuvers {
    * @returns {ManeuverData}
    */
   static get(id) {
-    // @ts-ignore
+    // @ts-expect-error - dynamic property access returns Maneuver which has data property
     return Maneuvers.getAll()[id]?.data
   }
 
@@ -383,7 +381,7 @@ export default class Maneuvers {
     let data = {}
 
     for (const key in Maneuvers.getAll()) {
-      // @ts-ignore
+      // @ts-expect-error - dynamic property access returns Maneuver which has data property
       data[key] = Maneuvers.getAll()[key].data
     }
 

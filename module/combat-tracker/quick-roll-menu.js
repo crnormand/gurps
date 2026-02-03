@@ -10,10 +10,10 @@ export const addQuickRollButton = async (html, combatant, token) => {
   const buttonClass = `combatant-control`
   let quickRollButton = $(
     `<a class="${buttonClass}"
-          aria-label="Quick Roll" 
-          role="button" 
+          aria-label="Quick Roll"
+          role="button"
           data-control="quickRollMenu"
-          data-combatant-id="${combatant.id}" 
+          data-combatant-id="${combatant.id}"
           data-tooltip="GURPS.quickRollMenu"
           id="quick-roll-${combatant.id}">
           <i class="fa-solid fa-dice-five"></i>`
@@ -137,7 +137,7 @@ export const addQuickRollListeners = () => {
     })
   $(document)
     .off('mouseout', '.quick-roll-menu')
-    .on('mouseout', '.quick-roll-menu', function (event) {
+    .on('mouseout', '.quick-roll-menu', function () {
       const button = $(this)
       const attackValue = button.find('.qr-attack-value')
 

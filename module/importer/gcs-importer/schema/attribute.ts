@@ -1,6 +1,6 @@
-import { GcsElement } from './base.js'
+import { fields } from '../../../types/foundry/index.js'
 
-import fields = foundry.data.fields
+import { GcsElement } from './base.js'
 
 /* ---------------------------------------- */
 

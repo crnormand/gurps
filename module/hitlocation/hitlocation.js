@@ -445,8 +445,8 @@ export class HitLocation {
    * GCA might send "Leg 7" which we map to "Leg 7-8"
    */
   static findTableEntry(table, where) {
-    if (table.hasOwnProperty(where)) return [where, table[where]]
-    if (table.hasOwnProperty(HitLocation.BRAIN) && where == HitLocation.SKULL)
+    if (Object.hasOwn(table, where)) return [where, table[where]]
+    if (Object.hasOwn(table, HitLocation.BRAIN) && where == HitLocation.SKULL)
       return [HitLocation.BRAIN, table[HitLocation.BRAIN]]
     var lbl, entry
     let re = /^([A-Za-z]+) *(\d+)/

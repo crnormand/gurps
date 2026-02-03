@@ -2,9 +2,7 @@
 
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
-import { GurpsActorV2 } from '../actor/gurps-actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
-import { DragDropType } from '../drag-drop-types.js'
 import selectTarget from '../utilities/select-target.js'
 
 /**
@@ -64,7 +62,7 @@ export default class DamageChat {
       if (game.user.isGM) {
         button.style.display = 'block'
 
-        button.addEventListener('click', ev => {
+        button.addEventListener('click', () => {
           // get actor from id
           let token = canvas.tokens?.get(transfer.userTarget) // ...
           // get payload; its either the "all damage" payload or ...
@@ -86,13 +84,14 @@ export default class DamageChat {
     const actor = game.actors.get(dropData.actorid)
 
     switch (dropData.type) {
-      case DragDropType.DAMAGE:
+      case 'damageItem':
         await DamageChat._calculateAndSelectTargets(canvas, dropData)
         break
       case 'Item':
         await actor.handleItemDrop(dropData)
         break
-      case 'equipment':
+
+      case 'equipment': {
         const token = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y, true)
 
         if (token.length !== 1) {
@@ -102,6 +101,7 @@ export default class DamageChat {
 
         await token[0].actor.handleEquipmentDrop(dropData)
         break
+      }
     }
 
     return false
@@ -429,7 +429,7 @@ export default class DamageChat {
       numtimes: draggableData.length > 1 ? ' x' + draggableData.length : '',
     })
 
-    // @ts-ignore
+    // @ts-expect-error - getSpeaker accepts actor which may be User in our implementation
     const speaker = ChatMessage.getSpeaker({ actor: actor })
     /** @type {Record<string,any>} */
     let messageData = {
@@ -447,7 +447,7 @@ export default class DamageChat {
     }
 
     messageData['flags.gurps.transfer'] = {
-      type: DragDropType.DAMAGE,
+      type: 'damageItem',
       payload: draggableData,
       userTarget: userTarget ? userTarget.id : null,
     }
@@ -481,7 +481,7 @@ export default class DamageChat {
 
       if (dice.length > 0) {
         // The user made a "multi-damage" roll... let them see the dice!
-        // @ts-ignore
+        // @ts-expect-error - dice3d is added by Dice So Nice module and not in core types
         game.dice3d.show({ throws: throws })
       }
     } else {
@@ -565,7 +565,7 @@ export default class DamageChat {
 }
 
 DamageChat.fullRegex =
-  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]@?\w+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+\.?\d*))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
+  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]@?\w+)?(?<adds2>[+-]\d+)?)(?:[×xX*](?<mult>\d+\.?\d*))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
 /*
 let transfer = {

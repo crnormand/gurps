@@ -1,12 +1,11 @@
-import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
-import { ItemComponent, ItemComponentSchema } from './component.js'
-
-import fields = foundry.data.fields
-
 import { AnyObject } from 'fvtt-types/utils'
 
-import { makeRegexPatternFrom } from '../../../lib/utilities.js'
 import { parselink } from '../../../lib/parselink.js'
+import { makeRegexPatternFrom } from '../../../lib/utilities.js'
+import { fields } from '../../types/foundry/index.js'
+
+import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
+import { ItemComponent, ItemComponentSchema } from './component.js'
 
 class SkillModel extends BaseItemModel<SkillSchema> {
   static override defineSchema(): SkillSchema {

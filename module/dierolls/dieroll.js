@@ -2,8 +2,6 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
 
-import { computePotentialHits } from './compute-potential-hits.js'
-
 export const rollData = target => {
   let targetColor, rollChance
 
@@ -313,7 +311,8 @@ export async function doRoll({
         itemColor = '#c5360b'
         rollType = game.i18n.localize('GURPS.ControlRoll')
         break
-      case 'attribute':
+
+      case 'attribute': {
         itemColor = '#620707'
         const ref = chatthing.split('@').pop().slice(0, -1)
 
@@ -376,6 +375,8 @@ export async function doRoll({
         }
 
         break
+      }
+
       default:
         itemIcon = 'fas fa-dice'
         itemColor = '#015401'
@@ -453,7 +454,7 @@ export async function doRoll({
           icon: optionalArgs.blind ? 'fas fa-eye-slash' : 'fas fa-dice',
           label: optionalArgs.blind ? 'GURPS.blindRoll' : 'GURPS.roll',
           default: true,
-          callback: async (event, button, dialog) => {
+          callback: async () => {
             GURPS.stopActions = false
 
             return await _doRoll({
@@ -473,7 +474,7 @@ export async function doRoll({
           action: 'cancel',
           icon: 'fas fa-times',
           label: 'GURPS.cancel',
-          callback: async (event, button, dialog) => {
+          callback: async () => {
             await GURPS.ModifierBucket.clearTaggedModifiers()
             GURPS.stopActions = true
 
@@ -687,10 +688,7 @@ async function _doRoll({
   messageData.content = message
   messageData.rolls = [roll]
 
-  let whoCanSeeDice = null
-
   if (optionalArgs.event?.shiftKey) {
-    whoCanSeeDice = [game.user.id]
     messageData.whisper = [game.user.id]
   }
 
@@ -699,7 +697,9 @@ async function _doRoll({
 
   try {
     isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
-  } catch {}
+  } catch {
+    // Keyboard manager may not be available during initialization
+  }
 
   if (
     game.settings.get('core', 'rollMode') === 'blindroll' ||

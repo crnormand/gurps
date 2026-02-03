@@ -826,7 +826,7 @@ export class TokenActions {
       case 'b':
         this.totalBlocks += 1
         break
-      case 'p':
+      case 'p': {
         const settingsAddParryMods = game.settings.get(
           GURPS.SYSTEM_NAME,
           Settings.SETTING_ADD_CUMULATIVE_PARRY_PENALTIES
@@ -856,6 +856,7 @@ export class TokenActions {
         }
 
         break
+      }
       case 'm':
       case 'r':
         this.totalActions += 1

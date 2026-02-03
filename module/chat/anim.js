@@ -195,7 +195,7 @@ export class AnimChatProcessor extends ChatProcessor {
       // Throw effect locally
       try {
         canvas.specials.playVideo(effectData)
-      } catch (e) {
+      } catch {
         //in case people have older versions of fxmaster
         canvas.fxmaster.playVideo(effectData)
       }
@@ -252,7 +252,7 @@ export class AnimChatProcessor extends ChatProcessor {
       console.log(error)
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       window.addEventListener(
         'mousedown',
         e => {
@@ -308,14 +308,14 @@ export class AnimChatProcessor extends ChatProcessor {
   matches(line) {
     // TODO This should be able to match ONLY '/anim' and then show the usage.
     this.match = line.match(
-      /^\/anim +(?<list>list)? *(?<wait>w[\d\.]+)? *(?<file>[\S]+)? *(?<center>cf?m?n?\d*(:[\d\.]+,[\d\.]+)?)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<stretch>[\+>][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/
+      /^\/anim +(?<list>list)? *(?<wait>w[\d.]+)? *(?<file>[\S]+)? *(?<center>cf?m?n?\d*(:[\d.]+,[\d.]+)?)? *(?<scale>\*[\d.]+)? *(?<x>-[\d.]+)? *(?<stretch>[+>][\d.]+)? *(?<count>[\d.]+[xX])?(?<delay>:[\d.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/
     )
 
     return !!this.match
   }
 
   usagematches(line) {
-    return line.match(/^[\/\?]anim$/i)
+    return line.match(/^[/?]anim$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpAnim')
@@ -370,7 +370,7 @@ export class AnimChatProcessor extends ChatProcessor {
     if (m.center) {
       centered = true
       x = 0.5
-      let t = m.center.match(/c(f)?(m)?(n)?(\d*)(:[\d\.]+,[\d\.]+)?/)
+      let t = m.center.match(/c(f)?(m)?(n)?(\d*)(:[\d.]+,[\d.]+)?/)
 
       flip = !!t[1]
       move = !!t[2]

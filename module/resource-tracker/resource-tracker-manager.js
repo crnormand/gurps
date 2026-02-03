@@ -169,7 +169,7 @@ export class ResourceTrackerManager extends FormApplication {
       let dialog = new ResourceTrackerEditor(JSON.parse(JSON.stringify(this._templates[index].tracker)))
       let defaultClose = dialog.close
 
-      let tracker = await new Promise((resolve, reject) => {
+      let tracker = await new Promise(resolve => {
         dialog._updateTracker = () => {
           // validate that the new tracker's name and alias are unique
           let newTracker = dialog._tracker
@@ -240,13 +240,13 @@ export class ResourceTrackerManager extends FormApplication {
     game.settings.set(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, data)
 
     // remove all resources from the two objects:
-    let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([k, v]) => !!v.resource)
+    let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([_k, v]) => !!v.resource)
 
     entries.forEach(([key, _]) => delete GURPS.DamageTables.woundModifiers[key])
     entries.forEach(([key, _]) => {
-      let toDelete = Object.entries(GURPS.DamageTables.damageTypeMap).filter(([k, v]) => v === key)
+      let toDelete = Object.entries(GURPS.DamageTables.damageTypeMap).filter(([_k, v]) => v === key)
 
-      toDelete.forEach(([k, v]) => delete GURPS.DamageTables.damageTypeMap[k])
+      toDelete.forEach(([k, _v]) => delete GURPS.DamageTables.damageTypeMap[k])
     })
 
     // get all aliases defined in the resource tracker templates and register them as damage types

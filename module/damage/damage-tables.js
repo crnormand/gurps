@@ -108,6 +108,6 @@ export class DamageTable {
   }
 
   parseDmg(dmg) {
-    return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, '$1~$2~$3~$4~$5~$6')
+    return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, '$1~$2~$3~$4~$5~$6')
   }
 }

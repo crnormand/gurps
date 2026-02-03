@@ -1,17 +1,15 @@
 import { generateUniqueId } from '../../lib/utilities.js'
 
-import { GurpsDie } from './bucket-app.js'
-
-export const commaSeparatedNumbers = /^\d*([ ,0-9\.\+-])*$/
+export const commaSeparatedNumbers = /^\d*([ ,0-9.+-])*$/
 
 /**
- * @typedef {{term: GurpsDie, text: string}} RollResult
+ * @typedef {{term: import('./bucket-app.js').GurpsDie, text: string}} RollResult
  * @typedef {{oldValue?: string, oldSelectionStart?: number|null, oldSelectionEnd?: number|null}} SelectionHistory
  */
 
 export default class ResolveDiceRoll extends Application {
   /**
-   * @param {GurpsDie} diceTerm
+   * @param {import('./bucket-app.js').GurpsDie} diceTerm
    */
   constructor(diceTerm, options = {}, id = generateUniqueId()) {
     super(options)
@@ -64,10 +62,10 @@ export default class ResolveDiceRoll extends Application {
     super.activateListeners(html)
 
     // accept only digits and commas
-    // @ts-ignore
+    // @ts-expect-error - inputFilter is a jQuery plugin method not in standard types
     html.find('input').inputFilter(value => commaSeparatedNumbers.test(value))
 
-    html.find('input').on('change', ev => {
+    html.find('input').on('change', () => {
       let inputs = html.find('input.invalid')
 
       this.applyEnabled = !inputs.length
@@ -94,7 +92,7 @@ export default class ResolveDiceRoll extends Application {
           target.oldSelectionStart = target.selectionStart
           target.oldSelectionEnd = target.selectionEnd
           diceTerm.text = target.value
-        } else if (target.hasOwnProperty('oldValue')) {
+        } else if (Object.hasOwn(target, 'oldValue')) {
           target.value = target.oldValue || target.value
           target.setSelectionRange(target.oldSelectionStart || null, target.oldSelectionEnd || null)
         } else {
@@ -138,7 +136,7 @@ export default class ResolveDiceRoll extends Application {
       // diceTerm.term._loaded = result
     }
 
-    // @ts-ignore
+    // @ts-expect-error - applyCallback accepts a boolean parameter at runtime
     this.applyCallback(true)
   }
 

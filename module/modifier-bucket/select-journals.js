@@ -91,7 +91,7 @@ export default class ModifierBucketJournals extends FormApplication {
   /**
    * @override
    */
-  _updateObject(event, formData) {
+  _updateObject(event) {
     let html = $(event.currentTarget)
     let checkboxes = html.find('#entry-list').find('input[type="checkbox"]:checked')
     let ids = Array.from(checkboxes).map(it => it.id)

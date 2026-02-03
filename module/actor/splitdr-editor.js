@@ -52,7 +52,7 @@ export default class SplitDREditor extends Application {
     if (event.type === 'click') this._click(action, value, html)
   }
 
-  async _click(action, value) {
+  async _click(action) {
     switch (action) {
       // click:  action [create] key [null] value [null]
       case 'create':

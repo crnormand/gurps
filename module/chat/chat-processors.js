@@ -68,12 +68,12 @@ class SoundChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/sound +(?<wait>w[\d\.]+)? *(?<vol>v[\d\.]+)? *(?<file>.*)/i)
+    this.match = line.match(/^\/sound +(?<wait>w[\d.]+)? *(?<vol>v[\d.]+)? *(?<file>.*)/i)
 
     return !!this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?]sound$/i)
+    return line.match(/^[/?]sound$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpSound')
@@ -132,7 +132,7 @@ class QuickDamageChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^[.\/](.*?)( +[xX*]?(?<num>\d+))?$/)
+    this.match = line.match(/^[./](.*?)( +[xX*]?(?<num>\d+))?$/)
 
     if (this.match) {
       this.action = parselink(this.match[1])
@@ -190,7 +190,7 @@ class ForceMigrateChatProcessor extends ChatProcessor {
     /*    await Migration.migrateTo096()
 		await Migration.migrateTo097()
 		await Migration.migrateTo0104()
-		await Migration.fixDataModelProblems() 
+		await Migration.fixDataModelProblems()
 	*/
   }
 }
@@ -241,7 +241,7 @@ class WhisperChatProcessor extends ChatProcessor {
     return !!this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?]w$/i)
+    return line.match(/^[/?]w$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpW')
@@ -303,7 +303,7 @@ class WaitChatProcessor extends ChatProcessor {
     return this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?]wait$/i)
+    return line.match(/^[/?]wait$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpWait')
@@ -360,12 +360,12 @@ class RollAgainstChatProcessor extends ChatProcessor {
     return '/ra N | Skillname-N'
   }
   matches(line) {
-    this.match = line.match(/^([\.\/]p?ra) +([\w-'" ]+-)?(\d+)/i)
+    this.match = line.match(/^([./]p?ra) +([\w-'" ]+-)?(\d+)/i)
 
     return !!this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?\.]p?ra$/i)
+    return line.match(/^[/?.]p?ra$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpRa')
@@ -502,7 +502,7 @@ class FpHpChatProcessor extends ChatProcessor {
     return !!this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?][fh]p$/i)
+    return line.match(/^[/?][fh]p$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpFpHp')
@@ -621,7 +621,7 @@ class FpHpChatProcessor extends ChatProcessor {
 
           if (dc.length > 0) {
             // The user made a "multi-damage" roll... let them see the dice!
-            // @ts-ignore
+            // @ts-expect-error - dice3d is added by Dice So Nice module and not in core types
             game.dice3d.show({ throws: throws })
           }
         }
@@ -657,7 +657,7 @@ class SelectChatProcessor extends ChatProcessor {
     return '/select &lt;Actor name&gt'
   }
   matches(line) {
-    this.match = line.match(/^\/(select|sel) ?(\@self)?([^!]*)(!)?/)
+    this.match = line.match(/^\/(select|sel) ?(@self)?([^!]*)(!)?/)
 
     return !!this.match
   }
@@ -753,7 +753,7 @@ class RollChatProcessor extends ChatProcessor {
     return '/roll (or /r) [On-the-Fly formula]<br>/private (or /pr) [On-the-Fly formula] "Private"<br>/sr [On-the-Fly formula] "Selected Roll"<br>/psr [On-the-Fly formula] "Private Selected Roll"'
   }
   matches(line) {
-    this.match = line.match(/^(\/roll|\/r|\/private|\/pr|\/sr|\/psr) \[(.+)\] *[xX\*]?(\d+)?/)
+    this.match = line.match(/^(\/roll|\/r|\/private|\/pr|\/sr|\/psr) \[(.+)\] *[xX*]?(\d+)?/)
 
     return !!this.match
   }
@@ -806,12 +806,12 @@ class UsesChatProcessor extends ChatProcessor {
     return '/uses &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/uses +([\+-=]\w+)?(reset)?(.*)/i)
+    this.match = line.match(/^\/uses +([+-=]\w+)?(reset)?(.*)/i)
 
     return !!this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?]uses$/i)
+    return line.match(/^[/?]uses$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpUses')
@@ -824,7 +824,7 @@ class UsesChatProcessor extends ChatProcessor {
     if (!actor) ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
     else {
       var eqt, key
-      let m2 = m[3].trim().match(/^(o[\.:])?(.*)/i)
+      let m2 = m[3].trim().match(/^(o[.:])?(.*)/i)
       let pattern = m2[2].trim()
 
       if (pattern) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
@@ -895,12 +895,12 @@ class QtyChatProcessor extends ChatProcessor {
     return '/qty &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/qty +([\+-=] *\d+)(.*)/i)
+    this.match = line.match(/^\/qty +([+-=] *\d+)(.*)/i)
 
     return !!this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?]qty$/i)
+    return line.match(/^[/?]qty$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpQty')
@@ -913,7 +913,7 @@ class QtyChatProcessor extends ChatProcessor {
     if (!actor) ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
     else {
       var eqt, key
-      let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
+      let m2 = m[2].trim().match(/^(o[.:])?(.*)/i)
       let pattern = m2[2].trim()
 
       if (pattern) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
@@ -974,13 +974,13 @@ class LightChatProcessor extends ChatProcessor {
 
     this.match = line.match(
       //      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
-      /^\/(light|li) +(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<colorint>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li) +(?<off>none|off)? *(?<dim>[\d.]+)? *(?<bright>[\d.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<colorint>[\d.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
 
     return !!this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?](light|li)$/i)
+    return line.match(/^[/?](light|li)$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpLight')
@@ -1061,7 +1061,7 @@ class ShowChatProcessor extends ChatProcessor {
   }
 
   usagematches(line) {
-    return line.match(/^[\/\?](show|sh)$/i)
+    return line.match(/^[/?](show|sh)$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpShow')
@@ -1286,7 +1286,7 @@ class RepeatChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/(repeat|rpt) +([\d\.]+) *(.*)/i)
+    this.match = line.match(/^\/(repeat|rpt) +([\d.]+) *(.*)/i)
 
     return !!this.match
   }
@@ -1381,13 +1381,13 @@ class DRChatProcessor extends ChatProcessor {
    * @returns {boolean}
    */
   matches(line) {
-    this.match = line.match(/^\/(dr) +(reset|[\+\-\*\/\!]?\d+) *([\S\s,]*)?/)
+    this.match = line.match(/^\/(dr) +(reset|[+\-*/!]?\d+) *([\S\s,]*)?/)
 
     return !!this.match
   }
 
   usagematches(line) {
-    return line.match(/^[\/\?]dr$/i)
+    return line.match(/^[/?]dr$/i)
   }
 
   usage() {
@@ -1425,7 +1425,7 @@ class DRChatProcessor extends ChatProcessor {
     let drLocations = this.match[3] ? this.match[3].split(',').map(l => l.toLowerCase()) : []
     let actor = GURPS.LastActor
 
-    const { changed, msg = '', warn = '', info = '' } = await actor.changeDR(drFormula, drLocations)
+    const { msg = '', warn = '', info = '' } = await actor.changeDR(drFormula, drLocations)
 
     if (msg) await actor.sendChatMessage(msg)
     if (warn) ui.notifications.warn(warn)

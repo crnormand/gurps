@@ -1,4 +1,3 @@
-import * as Settings from '../lib/miscellaneous-settings.js'
 import { zeroFill } from '../lib/utilities.js'
 
 import { ImportSettings } from './importer/index.js'
@@ -19,7 +18,7 @@ export const AddImportEquipmentButton = async function (html) {
           label: game.i18n.localize('GURPS.import'),
           icon: 'fa-solid fa-file-import',
           default: true,
-          callback: async (html, button, dialog) => {
+          callback: async (_html, button) => {
             const files = button.form.elements.data.files
 
             if (!files.length) {
@@ -65,13 +64,13 @@ export class ItemImporter {
     this.count = 0
   }
 
-  static async importItems(text, filename, filepath) {
+  static async importItems(text, filename) {
     let importer = new ItemImporter()
 
-    importer._importItems(text, filename, filepath)
+    importer._importItems(text, filename)
   }
 
-  async _importItems(text, filename, filepath) {
+  async _importItems(text, filename) {
     let j = {}
 
     try {
@@ -83,7 +82,7 @@ export class ItemImporter {
     if ([5].includes(j.version)) {
       // Version 5 does not have a type field ... find some other way to validate the data.
       // Verify that the contained objects has an 'equipped' field.
-      if (j.rows[0].hasOwnProperty('quantity') === false) {
+      if (Object.hasOwn(j.rows[0], 'quantity') === false) {
         return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
       }
     } else if ([2, 4].includes(j.version)) {
@@ -389,7 +388,7 @@ export class ItemImporter {
   }
 
   isRangedWeapon(w) {
-    return w.hasOwnProperty('range')
+    return Object.hasOwn(w, 'range')
   }
 
   isMeleeWeapon(w) {

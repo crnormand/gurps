@@ -1,6 +1,3 @@
-import fields = foundry.data.fields
-import TypeDataModel = foundry.abstract.TypeDataModel
-
 import { AnyObject } from 'fvtt-types/utils'
 
 import { parselink } from '../../../lib/parselink.js'
@@ -10,6 +7,7 @@ import { reactionSchema } from '../../actor/data/character-components.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
+import { fields, TypeDataModel } from '../../types/foundry/index.js'
 
 import { ItemComponent } from './component.js'
 
@@ -23,7 +21,7 @@ type ItemMetadata = Readonly<{
   /** Record of document names of pseudo-documents and the path to the collection. */
   embedded: Record<string, string>
   /** Record of actions the item can perform */
-  actions: Record<string, Function>
+  actions: Record<string, (...args: any[]) => any>
   /** A set of Item subtypes that this item cna contain as children */
   childTypes: string[]
   /** A set of Item subtypes that this item can contain as modifiers */

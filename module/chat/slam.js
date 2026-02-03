@@ -28,7 +28,7 @@ export default class SlamChatProcessor extends ChatProcessor {
     return line.startsWith('/slam')
   }
 
-  async process(line) {
+  async process() {
     let actor = GURPS.LastActor
 
     if (!actor) {
@@ -54,8 +54,6 @@ export default class SlamChatProcessor extends ChatProcessor {
     this.priv(text)
   }
 }
-
-const diceregex = /^(?<dice>\d+)d(?<mods>[+-]\d+)?/i
 
 class SlamCalculatorForm extends FormApplication {
   static process(actor, target) {
@@ -140,7 +138,7 @@ class SlamCalculatorForm extends FormApplication {
     return this._attackerSpeed + this._targetSpeed
   }
 
-  _updateObject(event) {
+  _updateObject() {
     this._calculator.process(this.getData())
   }
 

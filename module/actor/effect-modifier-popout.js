@@ -214,18 +214,21 @@ export class EffectModifierPopout extends Application {
             const refValue = itemReference.match(/\w{3}:(\S+)/)[1]
 
             switch (refType) {
-              case 'man':
+              case 'man': {
                 const maneuver = Maneuvers.getManeuver(refValue)
 
                 obj.name = game.i18n.localize(maneuver.label)
                 obj.type = 'maneuver'
                 break
-              case 'eft':
+              }
+
+              case 'eft': {
                 const effect = this._token?.actor.effects.get(refValue)
 
                 obj.name = effect?.name || game.i18n.localize('GURPS.activeEffect')
                 obj.type = 'active-effect'
                 break
+              }
             }
           } else {
             obj = this._token?.actor.items.get(itemReference) || {}
@@ -309,7 +312,7 @@ export class EffectModifierPopout extends Application {
     return buttons
   }
 
-  async refreshUserMods(event) {
+  async refreshUserMods() {
     const actor = this.getToken()?.actor
 
     if (actor) {
@@ -359,7 +362,7 @@ export class EffectModifierPopout extends Application {
     }
   }
 
-  async clearUserMods(event) {
+  async clearUserMods() {
     const actor = this.getToken()?.actor
     // Add a Confirm dialog
     const proceed = await foundry.applications.api.DialogV2.confirm({
@@ -375,7 +378,7 @@ export class EffectModifierPopout extends Application {
     }
   }
 
-  async addUserMod(event) {
+  async addUserMod() {
     if (this.getToken()) {
       setTimeout(() => $.find('#GURPS-user-mod-input')[0].focus(), 200)
       const input = await foundry.applications.api.DialogV2.prompt({
@@ -383,7 +386,7 @@ export class EffectModifierPopout extends Application {
         content: `<input type='text' id='GURPS-user-mod-input' name='input' style='text-align: left;' placeholder="${game.i18n.localize('GURPS.userModInputPlaceholder')}">`,
         ok: {
           label: 'Add (or press Enter)',
-          callback: (event, button, dialog) => button.form.elements.input.value,
+          callback: (_event, button) => button.form.elements.input.value,
         },
       })
 
@@ -401,7 +404,7 @@ export class EffectModifierPopout extends Application {
     } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
-  getDescription(text, itemRef) {
+  getDescription(text) {
     const regex = /^(.*?)(?=[#@])/
     const desc = text.match(regex)?.[1]
 

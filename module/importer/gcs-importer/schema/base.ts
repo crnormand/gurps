@@ -1,7 +1,6 @@
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
+import { DataModel, fields } from '../../../types/foundry/index.js'
 
 const sourcedIdSchema = () => {
   return {

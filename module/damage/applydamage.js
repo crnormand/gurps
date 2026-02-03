@@ -11,7 +11,6 @@ import {
   parseFloatFrom,
   parseIntFrom,
 } from '../../lib/utilities.js'
-import { GurpsActorV2 } from '../actor/gurps-actor.js'
 import { TokenActions } from '../token-actions.js'
 
 import { CompositeDamageCalculator } from './damagecalculator.js'
@@ -114,7 +113,7 @@ export default class ApplyDamageDialog extends Application {
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 
     // ==== Multiple Dice ====
-    html.find('#pagination-left').on('click', ev => {
+    html.find('#pagination-left').on('click', () => {
       if (this._calculator.viewId === 'all') return
       if (this._calculator.viewId === 0) this._calculator.viewId = 'all'
       else this._calculator.viewId = this._calculator.viewId - 1
@@ -122,7 +121,7 @@ export default class ApplyDamageDialog extends Application {
       this.updateUI()
     })
 
-    html.find('#pagination-right').on('click', ev => {
+    html.find('#pagination-right').on('click', () => {
       if (this._calculator.viewId === 'all') this._calculator.viewId = 0
       else {
         let index = this._calculator.viewId + 1
@@ -135,13 +134,13 @@ export default class ApplyDamageDialog extends Application {
     })
 
     for (let index = 0; index < this._calculator.length; index++) {
-      html.find(`#pagination-${index}`).on('click', ev => {
+      html.find(`#pagination-${index}`).on('click', () => {
         this._calculator.viewId = index
         this.updateUI()
       })
     }
 
-    html.find('#pagination-all').on('click', ev => {
+    html.find('#pagination-all').on('click', () => {
       this._calculator.viewId = 'all'
       this.updateUI()
     })
@@ -162,21 +161,21 @@ export default class ApplyDamageDialog extends Application {
       this.submitDirectApply(ev.shiftKey, false)
     })
 
-    html.find('#apply-keep').on('click', ev => {
+    html.find('#apply-keep').on('click', () => {
       let content = html.find('#apply-dropdown')
 
       this._toggleVisibility(content, content.hasClass('invisible'))
       this.submitDirectApply(true, true)
     })
 
-    html.find('#apply-secretly-keep').on('click', ev => {
+    html.find('#apply-secretly-keep').on('click', () => {
       let content = html.find('#apply-dropdown')
 
       this._toggleVisibility(content, content.hasClass('invisible'))
       this.submitDirectApply(true, false)
     })
 
-    html.find('#apply-split').on('click', ev => {
+    html.find('#apply-split').on('click', () => {
       let content = html.find('#apply-dropdown')
 
       this._toggleVisibility(content, content.hasClass('invisible'))
@@ -372,7 +371,7 @@ export default class ApplyDamageDialog extends Application {
       .find('#test-major button, #test-knockback button, #test-vitals button, #test-crippling button')
       .on('click', ev => this._handleTestSaveEffectButtonClick(ev))
 
-    html.find('#apply-injury-split').on('click', ev => {
+    html.find('#apply-injury-split').on('click', () => {
       let content = html.find('#apply-injury-dropdown')
 
       this._toggleVisibility(content, content.hasClass('invisible'))
@@ -529,7 +528,7 @@ export default class ApplyDamageDialog extends Application {
     switch (effect.type) {
       case 'headvitalshit':
       case 'majorwound':
-      case 'crippling':
+      case 'crippling': {
         const htCheck =
           (effect?.modifier ?? 0) === 0
             ? 'HT'
@@ -539,8 +538,9 @@ export default class ApplyDamageDialog extends Application {
 
         otf = `/r [!${htCheck}]`
         break
+      }
 
-      case 'knockback':
+      case 'knockback': {
         const dx = game.i18n.localize('GURPS.attributesDX')
         const dxCheck = effect?.modifier && effect.modifier === 0 ? dx : `${dx} -${effect.modifier}`
         const localeAcrobaticsName = game.i18n.localize('GURPS.skillAcrobatics')
@@ -554,6 +554,7 @@ export default class ApplyDamageDialog extends Application {
 
         otf = `/r [!${dxCheck} | Sk:${localeAcrobaticsCheck} | Sk:${localeJudoCheck}]`
         break
+      }
     }
 
     if (otf) await this.actor.runOTF(otf)
@@ -597,7 +598,7 @@ export default class ApplyDamageDialog extends Application {
     const span = button.find('span')
 
     switch (effect.type) {
-      case 'shock':
+      case 'shock': {
         // Check if the effect is already in the next turn or applied
         const shockEffect = `shock${effect.amount}`
         const applyAt = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
@@ -627,6 +628,8 @@ export default class ApplyDamageDialog extends Application {
         }
 
         break
+      }
+
       case 'headvitalshit':
       case 'majorwound':
       case 'crippling':
@@ -680,7 +683,6 @@ export default class ApplyDamageDialog extends Application {
       let htCheck =
         object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
 
-      object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
       let button = `/if ![${htCheck}] {/st + stun \\\\ /st + prone}`
 
       if (token) button = `/sel ${token.id} \\\\ ${button}`

@@ -1,9 +1,8 @@
-import { GcsElement } from './base.js'
-
-import fields = foundry.data.fields
-
 import { AnyObject } from 'fvtt-types/utils'
 
+import { fields } from '../../../types/foundry/index.js'
+
+import { GcsElement } from './base.js'
 import { GcsSkillDefault } from './skill-default.js'
 
 class GcsWeapon extends GcsElement<WeaponData> {

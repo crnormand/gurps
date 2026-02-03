@@ -22,7 +22,7 @@ describe('Compute Potential Hits', () => {
       const text = expect.getState().currentTestName!.split('#> ')[1]
 
       if (text) {
-        const rofMatch = text.match(/RoF\("(?<rof>\d+([×xX\*]\d+)?)"\)/)
+        const rofMatch = text.match(/RoF\("(?<rof>\d+([×xX*]\d+)?)"\)/)
         const rclMatch = text.match(/Recoil\("(?<rcl>\d+)"\)/)
         const shotsMatch = text.match(/Shots\((?<shots>\d+)\)/)
         const marginMatch = text.match(/Margin\((?<margin>-?\d+)\)/)

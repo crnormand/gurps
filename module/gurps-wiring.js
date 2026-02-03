@@ -128,9 +128,6 @@ export default class GurpsWiring {
    * @param {Event} event
    */
   static _chatClickGmod(event) {
-    let element = event.currentTarget
-    let desc = element.dataset.name
-
     GurpsWiring.handleGurpslink(event, GURPS.LastActor)
   }
 
@@ -193,7 +190,7 @@ export default class GurpsWiring {
   static async _onRightClickOtf(event) {
     event.preventDefault()
     let el = event.currentTarget
-    let isDamageRoll = el.dataset.hasOwnProperty('damage')
+    let isDamageRoll = Object.hasOwn(el.dataset, 'damage')
     let otf = event.currentTarget.dataset.otf
 
     if (isDamageRoll) {

@@ -19,13 +19,13 @@ export class EveryoneAChatProcessor extends ChatProcessor {
     return !!this.match
   }
   usagematches(line) {
-    return line.match(/^[\/\?](everyone|ev)$/i)
+    return line.match(/^[/?](everyone|ev)$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpEveryone')
   }
 
-  async process(line) {
+  async process() {
     let m = this.match
     let any = false
 
@@ -60,7 +60,7 @@ export class EveryoneBChatProcessor extends ChatProcessor {
     return !!this.match
   }
 
-  async process(line) {
+  async process() {
     let m = this.match
     let any = false
     let action = parselink(m[2].trim())
@@ -146,7 +146,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
 
               if (dc.length > 0) {
                 // The user made a "multi-damage" roll... let them see the dice!
-                // @ts-ignore
+                // @ts-expect-error - dice3d is added by Dice So Nice module and not in core types
                 game.dice3d.show({ throws: throws })
               }
             }
@@ -210,7 +210,7 @@ export class RemoteChatProcessor extends ChatProcessor {
   }
 
   usagematches(line) {
-    return line.match(/^[\/\?](remote|rem)$/i)
+    return line.match(/^[/?](remote|rem)$/i)
   }
   usage() {
     return game.i18n.localize('GURPS.chatHelpRemote')
