@@ -1,7 +1,8 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { computePotentialHits } from '../compute-potential-hits.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
+
+import { computePotentialHits } from './compute-potential-hits.js'
 
 export const rollData = target => {
   let targetColor, rollChance

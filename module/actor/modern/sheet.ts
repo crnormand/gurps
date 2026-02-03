@@ -36,7 +36,7 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
   }, 0)
 }
 
-interface ModernSheetContext extends ActorSheetV2RenderContext {
+export interface ModernSheetContext extends ActorSheetV2RenderContext {
   system: Actor.SystemOfType<'character' | 'characterV2'>
   effects: ActiveEffect[]
   skillCount: number
