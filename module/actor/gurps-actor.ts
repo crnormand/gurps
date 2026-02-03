@@ -31,6 +31,7 @@ import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Sp
 import { ActorImporter } from './actor-importer.js'
 import { DamageActionSchema, ReactionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
+import { collectDeletions } from './deletion.js'
 import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
 import {
   ActorV1Interface,
@@ -56,7 +57,7 @@ import { StrengthCalculator } from './strength-calculator.js'
 import { CanRollResult, CheckInfo } from './types.js'
 
 function DamageModule() {
-  return GURPS.module.Damage
+  return GURPS.modules.Damage
 }
 
 export const MoveModes = {
@@ -65,8 +66,6 @@ export const MoveModes = {
   Water: 'GURPS.moveModeWater',
   Space: 'GURPS.moveModeSpace',
 }
-// Legacy TODO
-// TODO Uncaught (in promise) TypeError: this.actor.getEquippedParry is not a function
 
 interface EquipmentDropData {
   actorid: string
@@ -1916,45 +1915,38 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  /**
-   * NOTE: Both character and characterV2.
-   */
-  async deleteEquipment(path: string, depth = 0): Promise<Item.Implementation | undefined> {
-    if (this.isNewActorType) {
-      const eqt = foundry.utils.getProperty(this, path) as EquipmentV1
-      const item = eqt.equipmentV2
+  async deleteEntry(path: string, { refreshDR = true } = {}): Promise<unknown> {
+    const data = foundry.utils.getProperty(this, path)
 
-      await this.deleteItem(item)
+    if (!data) return data
 
-      return item
-    } else {
-      // Legacy actor type
-      const eqt: { [key: string]: any } = foundry.utils.getProperty(this, path) as any
+    const savedIgnoreRender = this.ignoreRender
 
-      if (!eqt) return eqt
-      if (depth == 0) this.ignoreRender = true
+    this.ignoreRender = true
 
-      // Delete in reverse order so the keys don't get messed up
-      if (eqt.contains)
-        for (const k of Object.keys(eqt.contains).sort().reverse())
-          await this.deleteEquipment(path + '.contains.' + k, depth + 1)
-      if (eqt.collpased)
-        for (const k of Object.keys(eqt.collapsed).sort().reverse())
-          await this.deleteEquipment(path + '.collapsed.' + k, depth + 1)
+    try {
+      const deletions = collectDeletions(data, path)
 
-      let item: Item.Implementation | undefined
+      for (const { itemid } of deletions) {
+        if (itemid) {
+          const foundryItem = this.items.get(itemid)
 
-      if (eqt.itemid) {
-        item = this.items.get(eqt.itemid) as Item.Implementation | undefined
-        if (item) await item.delete() // data protect for messed up mooks
-        await this._removeItemAdditions(eqt.itemid)
+          if (foundryItem) await foundryItem.delete()
+          await this._removeItemAdditions(itemid)
+        }
       }
 
       await GURPS.removeKey(this, path)
-      if (depth == 0) this._forceRender()
 
-      return item
+      if (refreshDR && path.includes('.equipment.')) {
+        await this.refreshDR()
+      }
+    } finally {
+      this.ignoreRender = savedIgnoreRender
+      this._forceRender()
     }
+
+    return data
   }
 
   /* ---------------------------------------- */
@@ -1965,30 +1957,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   /* ---------------------------------------- */
-
-  async deleteNote(path: string) {
-    if (this.isNewActorType) {
-      const note = foundry.utils.getProperty(this, path) as NoteV1
-      const item = note.noteV2
-      const array = foundry.utils.deepClone(this.modelV2._source.allNotes)
-
-      for (const child of item.allContents) {
-        const index = array.findIndex(n => n.id === child.id)
-
-        if (index !== -1) array.splice(index, 1)
-      }
-
-      array.splice(
-        array.findIndex(it => it.id === item.id),
-        1
-      )
-
-      await this.update({ 'system.allNotes': array } as Actor.UpdateData)
-    } else {
-      // Legacy actor type
-      GURPS.removeKey(this, path)
-    }
-  }
 
   async editItem(path: string, obj: any) {
     if (this.isNewActorType) {
@@ -2082,7 +2050,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         // Adjust the source actor's equipment.
-        if (count >= eqt.count) await srcActor.deleteEquipment(dragData.key)
+        if (count >= eqt.count) await srcActor.deleteEntry(dragData.key)
         else await srcActor.updateEqtCount(dragData.key, +eqt.count - count)
       } else {
         // Legacy actor type
@@ -2105,7 +2073,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         // Adjust the source actor's equipment.
-        if (count >= eqt.count) await srcActor.deleteEquipment(dragData.key)
+        if (count >= eqt.count) await srcActor.deleteEntry(dragData.key)
         else await srcActor.updateEqtCount(dragData.key, +eqt.count - count)
       }
     } else {
@@ -4690,8 +4658,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     ) {
       this.ignoreRender = true
       await this.updateEqtCount(targetkey, parseInt(srceqt.count) + parseInt(desteqt.count))
-      //if (srckey.includes('.carried') && targetkey.includes('.other')) await this._removeItemAdditionsBasedOn(desteqt)
-      await this.deleteEquipment(srckey)
+      await this.deleteEntry(srckey, { refreshDR: false })
       this._forceRender()
 
       return true

@@ -74,7 +74,7 @@ export function bindEquipmentCrudActions(
 
       if (!confirmed) return
 
-      await actor.deleteEquipment(equipmentKey)
+      await actor.deleteEntry(equipmentKey)
       await actor.refreshDR()
     })
   })

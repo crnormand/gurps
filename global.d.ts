@@ -25,7 +25,7 @@ export {}
 declare global {
   interface GURPSGlobal {
     SYSTEM_NAME: 'gurps'
-    module: Record<string, GurpsModule>
+    modules: Record<string, GurpsModule>
     LastActor: Actor.Implementation | null
     StatusEffect: {
       lookup(id: string): any
@@ -463,6 +463,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
+    'gurps.portrait-hp-tinting': boolean
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

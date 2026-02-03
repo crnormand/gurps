@@ -59,7 +59,7 @@ export async function confirmAndDelete(
   })
 
   if (confirmed) {
-    await this.actor.deleteEntry(key)
+    await actor.deleteEntry(key)
   }
 
   return confirmed ?? false
