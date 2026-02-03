@@ -252,7 +252,7 @@ export class GurpsActor extends Actor {
     this.calculateDerivedValues()
 
     // Convoluted code to add Items (and features) into the equipment list
-    // @ts-ignore
+    // @ts-expect-error - GurpsItem type not recognized by TS
     let orig = /** @type {GurpsItem[]} */ (
       this.items.contents
         .filter(i => i.type === 'equipment')
@@ -270,7 +270,7 @@ export class GurpsActor extends Actor {
       let atLeastOne = false
 
       for (const i of orig) {
-        // @ts-ignore
+        // @ts-expect-error - dynamic property access on item system
         if (!i.system.eqt.parentuuid || good.find(e => e.system.eqt.uuid == i.system.eqt.parentuuid)) {
           atLeastOne = true
           good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
@@ -420,11 +420,11 @@ export class GurpsActor extends Actor {
     // if (!!data.conditions.exhausted)
     //   data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
     recurselist(data.skills, (e, _k, _d) => {
-      // @ts-ignore
+      // @ts-expect-error - dynamic property access on recurselist element
       if (e.import) e.level = parseInt(+e.import)
     })
     recurselist(data.spells, (e, _k, _d) => {
-      // @ts-ignore
+      // @ts-expect-error - dynamic property access on recurselist element
       if (e.import) e.level = parseInt(+e.import)
     })
 
@@ -617,7 +617,7 @@ export class GurpsActor extends Actor {
                 let dr = e.dr ?? ''
 
                 dr += ''
-                let m = dr.match(/(\d+) *([/\|]) *(\d+)/) // check for split DR 5|3 or 5/3
+                let m = dr.match(/(\d+) *([/|]) *(\d+)/) // check for split DR 5|3 or 5/3
 
                 if (m) {
                   dr = parseInt(m[1]) + delta
@@ -720,7 +720,6 @@ export class GurpsActor extends Actor {
       sum += this._sumeqt(e.collapsed, type, checkEquipped)
     }
 
-    // @ts-ignore
     return parseInt(sum * 100) / 100
   }
 
@@ -826,8 +825,11 @@ export class GurpsActor extends Actor {
 
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
-    let updateMove = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
+    } catch {
+      // During game startup, an exception is being thrown trying to access 'game.combat'
+    }
+
+    let updateMove = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
@@ -860,7 +862,7 @@ export class GurpsActor extends Actor {
         }
   }
 
-  _adjustMove(move, threshold, value, reason) {
+  _adjustMove(move, threshold, value, _reason) {
     switch (value.toString()) {
       case MOVE_NONE:
         return {
@@ -938,12 +940,12 @@ export class GurpsActor extends Actor {
       let rng = r.range || '' // Data protection
 
       rng = rng + '' // force to string
-      let m = rng.match(/^ *[xX]([\d\.]+) *$/)
+      let m = rng.match(/^ *[xX]([\d.]+) *$/)
 
       if (m) {
         rng = parseFloat(m[1]) * st
       } else {
-        m = rng.match(/^ *[xX]([\d\.]+) *\/ *[xX]([\d\.]+) *$/)
+        m = rng.match(/^ *[xX]([\d.]+) *\/ *[xX]([\d.]+) *$/)
 
         if (m) {
           let r1 = parseFloat(m[1]) * st
@@ -990,7 +992,6 @@ export class GurpsActor extends Actor {
             this.ignoreRender = true
             action.action.calcOnly = true
             GURPS.performAction(action.action, this).then(ret => {
-              // @ts-ignore
               e.level = ret.target
 
               if (isMelee) {
@@ -998,7 +999,6 @@ export class GurpsActor extends Actor {
                   let p = '' + e.parry
                   let m = p.match(/([+-]\d+)(.*)/)
 
-                  // @ts-ignore
                   if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (m) {
@@ -1013,7 +1013,6 @@ export class GurpsActor extends Actor {
                   let b = '' + e.block
                   let m = b.match(/([+-]\d+)(.*)/)
 
-                  // @ts-ignore
                   if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (m) {
@@ -1047,8 +1046,8 @@ export class GurpsActor extends Actor {
    * @remarks If no document has actually been updated, the returned {@link Promise} resolves to `undefined`.
    */
   async update(data, context) {
-    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
-      if (data.hasOwnProperty('system.HP.value')) {
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
+      if (Object.hasOwn(data, 'system.HP.value')) {
         let flag = data['system.HP.value'] < this.system.HP.max / 3
 
         if (!!this.system.conditions.reeling != flag) {
@@ -1067,7 +1066,7 @@ export class GurpsActor extends Actor {
         }
       }
 
-      if (data.hasOwnProperty('system.FP.value')) {
+      if (Object.hasOwn(data, 'system.FP.value')) {
         let flag = data['system.FP.value'] < this.system.FP.max / 3
 
         if (!!this.system.conditions.exhausted != flag) {
@@ -1093,12 +1092,10 @@ export class GurpsActor extends Actor {
   }
 
   sendChatMessage(msg) {
-    let self = this
-
     foundry.applications.handlebars
       .renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [msg] })
       .then(content => {
-        let users = self.getOwners()
+        let users = this.getOwners()
         let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
 
         let messageData = {
@@ -1782,7 +1779,6 @@ export class GurpsActor extends Actor {
    * @param {Item} item
    */
   async updateItem(item) {
-    // @ts-ignore
     delete item.editingActor
     this.ignoreRender = true
     if (item.id) await this._removeItemAdditions(item.id)
@@ -1823,13 +1819,11 @@ export class GurpsActor extends Actor {
   async addNewItemData(itemData, targetkey = null) {
     let d = itemData
 
-    // @ts-ignore
     if (typeof itemData.toObject === 'function') {
       d = itemData.toObject()
       d.system.eqt.count = itemData.system.eqt.count // For some reason the count isn't deepcopied correctly.
     }
 
-    // @ts-ignore
     let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
 
@@ -1900,7 +1894,7 @@ export class GurpsActor extends Actor {
         let index = 0
         let list = foundry.utils.getProperty(this, targetkey)
 
-        while (list.hasOwnProperty(zeroFill(index))) index++
+        while (Object.hasOwn(list, zeroFill(index))) index++
         targetkey += '.' + zeroFill(index)
       } else targetkey = 'system.equipment.other'
     if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
@@ -1914,9 +1908,9 @@ export class GurpsActor extends Actor {
       eqt.itemid = itemData._id
       eqt.globalid = _data.uuid
       //eqt.uuid = 'item-' + eqt.itemid
-      eqt.equipped = !!_data.equipped ?? true
+      eqt.equipped = _data.equipped ?? true
       eqt.img = itemData.img
-      eqt.carried = !!_data.carried ?? true
+      eqt.carried = _data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
 
@@ -1954,7 +1948,7 @@ export class GurpsActor extends Actor {
 
         if (!!parentItem.system[subType] && typeof parentItem.system[subType] === 'object') {
           for (const key in parentItem.system[subType]) {
-            if (parentItem.system[subType].hasOwnProperty(key)) {
+            if (Object.hasOwn(parentItem.system[subType], key)) {
               const childItemData = parentItem.system[subType][key]
               const commitData = await this._addChildItemElement(parentItem, childItemData, subType, newList)
 
@@ -2015,18 +2009,14 @@ export class GurpsActor extends Actor {
   async _addItemElement(itemData, eqtkey, key) {
     let found = false
 
-    // @ts-ignore
     recurselist(this.system[key], (e, _k, _d) => {
       if (e.itemid == itemData._id) found = true
     })
     if (found) return
-    // @ts-ignore
     let list = { ...this.system[key] } // shallow copy
     let i = 0
 
-    // @ts-ignore
     for (const k in itemData.system[key]) {
-      // @ts-ignore
       let e = foundry.utils.duplicate(itemData.system[key][k])
 
       e.itemid = itemData._id
@@ -3233,7 +3223,7 @@ export class GurpsActor extends Actor {
     let size = 0
 
     switch (checkType) {
-      case 'attributeChecks':
+      case 'attributeChecks': {
         const keys = ['ST', 'DX', 'IQ', 'HT', 'WILL', 'PER']
 
         for (const key of keys) {
@@ -3250,7 +3240,8 @@ export class GurpsActor extends Actor {
         result.data = checks
         result.size = checks.length
         break
-      case 'otherChecks':
+      }
+      case 'otherChecks': {
         const icons = {
           checks: {
             vision: 'fa-solid fa-eye',
@@ -3286,7 +3277,8 @@ export class GurpsActor extends Actor {
         result.data = data
         result.size = size
         break
-      case 'attackChecks':
+      }
+      case 'attackChecks': {
         const attacks = ['melee', 'ranged']
 
         for (const key of attacks) {
@@ -3299,9 +3291,7 @@ export class GurpsActor extends Actor {
               if (!comp) comp = this.findEquipmentByName(attack.name)[0]
               const img = this.items.get(comp?.itemid)?.img
               const symbol = game.i18n.localize(`GURPS.${key}`)
-              let otf = `${key.slice(0, 1)}:"${attack.name}"`
 
-              if (attack.mode) otf += ` (${attack.mode})`
               let oftName = attack.name
 
               if (attack.mode) oftName += ` (${attack.mode})`
@@ -3324,7 +3314,8 @@ export class GurpsActor extends Actor {
         result.data = data
         result.size = size
         break
-      case 'defenseChecks':
+      }
+      case 'defenseChecks': {
         recurselist(this.system.encumbrance, (enc, _k, _d) => {
           if (enc.current) {
             data.dodge = {
@@ -3367,7 +3358,8 @@ export class GurpsActor extends Actor {
         result.data = data
         result.size = size + 1
         break
-      case 'markedChecks':
+      }
+      case 'markedChecks': {
         const traits = ['skills', 'spells', 'ads']
 
         for (const traitType of traits) {
@@ -3398,7 +3390,7 @@ export class GurpsActor extends Actor {
                   checks.push({
                     symbol,
                     img,
-                    label: parsed.text.replace(/[\[\]]/g, ''),
+                    label: parsed.text.replace(/[[\]]/g, ''),
                     value: '',
                     notes: trait.notes,
                     otf: `/r ${parsed.text}`,
@@ -3413,6 +3405,7 @@ export class GurpsActor extends Actor {
         result.data = checks
         result.size = checks.length
         break
+      }
     }
 
     return result
@@ -3524,7 +3517,7 @@ export class GurpsActor extends Actor {
           canApply = canApply && (userMod.includes(itemRef) || userMod.includes('@man:'))
         }
 
-        if (optionalArgs.hasOwnProperty('itemPath')) {
+        if (Object.hasOwn(optionalArgs, 'itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
@@ -3973,7 +3966,7 @@ export class GurpsActor extends Actor {
     let name, mode
 
     switch (originType) {
-      case 'attack':
+      case 'attack': {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+)\)/)?.[1]
         const path = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
@@ -4001,7 +3994,7 @@ export class GurpsActor extends Actor {
         }
 
         break
-
+      }
       case 'weapon-block':
       case 'weapon-parry':
         name = action.name.split('(')[0].trim()
@@ -4029,7 +4022,7 @@ export class GurpsActor extends Actor {
         }
 
         break
-      case 'skill-spell':
+      case 'skill-spell': {
         const item = this.findByOriginalName(action.name)
 
         if (item) {
@@ -4051,8 +4044,8 @@ export class GurpsActor extends Actor {
         }
 
         break
-
-      case 'attribute':
+      }
+      case 'attribute': {
         let attrName = action?.overridetxt
 
         if (!attrName) attrName = game.i18n.localize(`GURPS.${action.attrkey.toLowerCase()}`)
@@ -4065,7 +4058,7 @@ export class GurpsActor extends Actor {
           pageRef: null,
         }
         break
-
+      }
       case 'controlroll':
         result = {
           name: action.overridetxt || action.orig,
