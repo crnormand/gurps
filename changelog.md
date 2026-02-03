@@ -2,8 +2,10 @@
 
 ## Release 0.18.13
 
-- Removed "Auto Update Strength" code.
-- Remved "Recalculate" button for Swing, Thrust, Basic Lift.
+### Bugfixes
+
+- Changing ST does not change damage in weapon attacks \#2538" -- fixed by removing "Auto Update Strength" code.
+- Removed "Recalculate" button for Swing, Thrust, Basic Lift.
 
 ## Release 0.18.12 02/01/2026
 
