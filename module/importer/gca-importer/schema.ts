@@ -1,7 +1,6 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
 
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
+import { fields, DataModel } from '../../types/foundry/index.js'
 
 /**
  * These classes use Foundry's own DataModel system for its inbuilt validation and easy translation into useful data.

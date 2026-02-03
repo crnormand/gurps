@@ -1,4 +1,4 @@
-import fields = foundry.data.fields
+import { fields } from '../types/foundry/index.js'
 
 /* ---------------------------------------- */
 

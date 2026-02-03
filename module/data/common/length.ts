@@ -1,5 +1,4 @@
-import DataModel = foundry.abstract.DataModel
-import fields = foundry.data.fields
+import { fields, DataModel } from '../../types/foundry/index.js'
 
 enum LengthUnit {
   FeetAndInches = 'ft_in',
