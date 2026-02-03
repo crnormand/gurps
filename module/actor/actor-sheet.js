@@ -1,7 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
-import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
-import { DragDropType } from '../drag-drop-types.js'
+import { atou, isEmptyObject, zeroFill } from '../../lib/utilities.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
@@ -13,7 +12,6 @@ import { GgaContextMenuV2 } from '../ui/context-menu.js'
 
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
-import { cleanTags } from './effect-modifier-popout.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
 
@@ -686,7 +684,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       }
     )
 
-    html.find('#qnotes .qnotes-content').dblclick(async ex => {
+    html.find('#qnotes .qnotes-content').dblclick(async () => {
       let n = this.actor.system.additionalresources.qnotes || ''
 
       n = n.replace(/<br>/g, '\n')
@@ -700,7 +698,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           {
             label: 'Save',
             icon: 'fas fa-save',
-            callback: (event, button, dialog) => {
+            callback: (event, button, _dialog) => {
               let value = button.form.elements.i.value
 
               actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
@@ -714,7 +712,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     html.find('#qnotes .qnotes-content').on('drop', this.handleQnoteDrop.bind(this))
 
-    html.find('#qnotes .toggle-label').click(ev => {
+    html.find('#qnotes .toggle-label').click(() => {
       this.actor.setFlag('gurps', 'qnotes', !this.actor.getFlag('gurps', 'qnotes'))
     })
 
@@ -733,7 +731,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find('#open-modifier-popup').on('click', this._showActiveEffectsListPopup.bind(this))
     html.find('#edit-move-modes').on('click', this._showMoveModeEditorPopup.bind(this))
 
-    html.find('#addFirstResourceTracker').on('click', ev => this._addTracker())
+    html.find('#addFirstResourceTracker').on('click', () => this._addTracker())
   }
 
   _createHeaderMenus(html) {
@@ -757,7 +755,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           {
             name: game.i18n.localize('GURPS.addTracker'),
             icon: '<i class="fas fa-plus"></i>',
-            callback: e => {
+            callback: () => {
               this._addTracker().then()
             },
           },
@@ -934,7 +932,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     return {
       name: game.i18n.format('GURPS.editorAddItem', { name: name }),
       icon: '<i class="fas fa-plus"></i>',
-      callback: async e => {
+      callback: async () => {
         if (path.includes('system.equipment')) {
           obj.save = true
           let payload = obj.toItemData(this.actor, '')
@@ -1044,7 +1042,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     d.render(true)
   }
 
-  async _addTracker(event) {
+  async _addTracker() {
     this.actor.addTracker()
   }
 
@@ -1075,11 +1073,12 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       case 'Item':
         item = game.items.get(dragData.id)
         break
-      case 'JournalEntryPage':
+      case 'JournalEntryPage': {
         let j = game.journal.get(dragData.id)
 
         item = j.pages.get(dragData.uuid.split('.').at(-1))
         break
+      }
     }
     // const equipmentAsItem = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
@@ -1255,19 +1254,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         buttons: {
           one: {
             label: 'Update',
-            callback: async html => {
-              // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-              //   ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-              //     a => (obj[a] = html.find(`.${a}`).val())
-              //   )
-              //   ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
-              //   let u = html.find('.save') // Should only find in Note (or equipment)
-              //   if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
-              //   let v = html.find('.ignoreImportQty') // Should only find in equipment
-              //   if (!!v) obj.ignoreImportQty = v.is(':checked')
-              //   await actor.internalUpdate({ [path]: obj })
-              //   await actor.updateParentOf(path, false)
-              // } else {
+            callback: async () => {
               let item = actor.items.get(obj.itemid)
 
               item.name = obj.name
@@ -1281,7 +1268,6 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
               item.system.itemModifiers = (obj.itemModifiers || '').trim()
               await actor._updateItemFromForm(item)
               await actor.updateParentOf(path, false)
-              // }
             },
           },
         },
@@ -1538,7 +1524,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     return {
       name: game.i18n.localize('GURPS.sortAscending'),
       icon: '<i class="fas fa-sort-amount-down-alt"></i>',
-      callback: e => this.sortAscending(key),
+      callback: () => this.sortAscending(key),
     }
   }
 
@@ -1546,7 +1532,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     return {
       name: game.i18n.localize('GURPS.sortDescending'),
       icon: '<i class="fas fa-sort-amount-down"></i>',
-      callback: e => this.sortDescending(key),
+      callback: () => this.sortDescending(key),
     }
   }
 
@@ -1591,7 +1577,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     this.actor.ignoreRender = true
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
-    if (dragData.type === DragDropType.DAMAGE) this.actor.handleDamageDrop(dragData.payload)
+    if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
     if (dragData.type === 'Item') await this.actor.handleItemDrop(dragData)
 
     await this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
@@ -1859,7 +1845,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   async _onRightClickOtf(event) {
     event.preventDefault()
     let el = event.currentTarget
-    let isDamageRoll = el.dataset.hasOwnProperty('damage')
+    let isDamageRoll = Object.hasOwn(el.dataset, 'damage')
     let otf = event.currentTarget.dataset.otf
 
     if (isDamageRoll) {
@@ -1959,7 +1945,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     this.actor._forceRender()
   }
 
-  deleteItemMenu(obj) {
+  deleteItemMenu() {
     return [
       {
         name: 'Delete',
