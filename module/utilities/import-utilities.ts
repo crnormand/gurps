@@ -7,24 +7,6 @@ export const readXmlText = (value: XmlTextLike): string => {
   return ''
 }
 
-/**
- * Build damage output string from GCA melee mode data
- * @param {object} mode - GCA melee mode object
- * @returns {string} Formatted damage string
- */
-export function buildDamageOutputGCA(mode: Record<string, any> | null | undefined): string {
-  if (!mode) return ''
-
-  if (!game.settings!.get(GURPS.SYSTEM_NAME, 'auto-update-strength')) {
-    return readXmlText(mode.damage)
-  }
-
-  const direct = readXmlText(mode.unmodifiedDamage)
-  if (direct.toLowerCase().match(/^(sw|thr)[ +-]/)) return direct
-
-  return readXmlText(mode.damage)
-}
-
 type Encumbrance = {
   level: number
   current: boolean

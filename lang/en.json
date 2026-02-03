@@ -7,6 +7,9 @@
     "accForWeapon": "Acc for {weapon}",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
+    "actor": {
+      "setting": {}
+    },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",
     "addAdjustedForDamageType": "‡ - Adjusted for Damage Modifier",

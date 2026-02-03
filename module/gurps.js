@@ -7,7 +7,6 @@ import {
   arrayToObject,
   atou,
   d6ify,
-  displayAsDice,
   flattenContainedList,
   makeRegexPatternFrom,
   objectToArray,

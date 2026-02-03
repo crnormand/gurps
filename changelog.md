@@ -1,4 +1,8 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
+## Release 0.18.13
+
+- Removed "Auto Update Strength" code.
+- Remved "Recalculate" button for Swing, Thrust, Basic Lift.
 
 ## Release 0.18.12 02/01/2026
 

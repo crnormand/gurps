@@ -133,11 +133,7 @@ describe('collectDeletions', () => {
     const result = collectDeletions(data, 'base')
 
     const paths = result.map(item => item.path)
-    expect(paths).toEqual([
-      'base.contains.00000',
-      'base.collapsed.00000',
-      'base',
-    ])
+    expect(paths).toEqual(['base.contains.00000', 'base.collapsed.00000', 'base'])
   })
 
   test('real-world equipment structure with nested container', () => {

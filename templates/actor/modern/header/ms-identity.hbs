@@ -3,7 +3,7 @@
   <input type='text' form='none' value='{{actor.name}}' class='ms-name-input' data-field='name' />
 </div>
 {{#if compact}}
-{{#if system.traits.title}}<div class='ms-title'>{{system.traits.title}}</div>{{/if}}
+  {{#if system.traits.title}}<div class='ms-title'>{{system.traits.title}}</div>{{/if}}
 {{/if}}
 <div class='ms-tagline'>
   {{#if system.traits.race}}
@@ -34,7 +34,7 @@
   {{/if}}
   {{#if system.traits.age}}
     <span class='ms-tag ms-tag-age'>
-      <span class='ms-tag-display'>{{system.traits.age}} {{localize "GURPS.years"}}</span>
+      <span class='ms-tag-display'>{{system.traits.age}} {{localize 'GURPS.years'}}</span>
       <input
         type='text'
         form='none'
