@@ -6,7 +6,6 @@
  * to think really hard about potentially moving the class back to actor.js.
  */
 
-import * as Settings from '../../lib/miscellaneous-settings.js'
 import { simpleHash } from '../../lib/simple-hash.js'
 import { arraysEqual, compareColleges, convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
 
@@ -208,7 +207,7 @@ export class Named extends _Base {
    * @param {Actor} actor - The actor to use.
    * @return {*} The converted item data.
    */
-  toItemData(actor, fromProgram = '') {
+  toItemData(actor, _fromProgram = '') {
     throw new Error('Not implemented')
   }
 
@@ -244,7 +243,7 @@ export class Named extends _Base {
    * @param {Object} item - The item to check for an update.
    * @return {boolean} - Returns true if the item needs an update, otherwise false.
    */
-  _itemNeedsUpdate(item) {
+  _itemNeedsUpdate(_item) {
     throw new Error('Not implemented')
   }
 
@@ -1064,7 +1063,7 @@ export class Equipment extends Named {
 
     // NOTE: no longer necessary with DataModel validation
     const num = (/** @type {string | number} */ s) => {
-      // @ts-ignore
+      // @ts-expect-error - isNaN accepts string for type coercion
       return isNaN(s) ? 0 : Number(s)
     }
 
@@ -1084,7 +1083,7 @@ export class Equipment extends Named {
 
     if (eqt.contains) {
       for (let k in eqt.contains) {
-        // @ts-ignore
+        // @ts-expect-error - contains entries are Equipment objects
         let e = eqt.contains[k]
 
         await Equipment.calcUpdate(actor, e, objkey + '.contains.' + k)
@@ -1095,7 +1094,7 @@ export class Equipment extends Named {
 
     if (eqt.collapsed) {
       for (let k in eqt.collapsed) {
-        // @ts-ignore
+        // @ts-expect-error - collapsed entries are Equipment objects
         let e = eqt.collapsed[k]
 
         await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)
