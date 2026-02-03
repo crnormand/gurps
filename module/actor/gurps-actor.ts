@@ -52,6 +52,7 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
+import { StrengthCalculator } from './strength-calculator.js'
 import { CanRollResult, CheckInfo } from './types.js'
 
 function DamageModule() {
