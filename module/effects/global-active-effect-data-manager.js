@@ -247,7 +247,6 @@ class ActiveEffectDataConfig extends FormApplication {
 
     data.object.oldName = data.object.name
 
-
     return data
   }
 
