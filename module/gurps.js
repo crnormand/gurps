@@ -2005,6 +2005,7 @@ if (!globalThis.GURPS) {
       }
 
       let display = true
+
       if (!!src && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
         // if an optional src is provided (which == actor.system) assume we are checking attacks to see if they are equipped
         recurselist(src.equipment.carried, e => {
@@ -2131,6 +2132,7 @@ if (!globalThis.GURPS) {
   // TODO: Move to the combat module.
   GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
     let formula = /** @type {string} */ (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
+
     if (!formula) {
       formula = Initiative.defaultFormula()
       if (game.user.isGM) game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA, formula)

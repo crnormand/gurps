@@ -352,6 +352,7 @@ export class CompositeDamageCalculator {
     const data = this.effects.map(effect => {
       if (effect.type.includes('shock')) {
         const applyAt = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
+
         if (applyAt === 'AtNextTurn') {
           isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
         } else {

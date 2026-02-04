@@ -174,6 +174,7 @@ export async function doRoll({
   }
 
   const showRollDialog = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+
   if (showRollDialog && actor instanceof Actor) {
     // Get Actor Info
     const tokenImg = token?.document.texture.src || actor?.img
@@ -244,10 +245,7 @@ export async function doRoll({
 
     // If Max Actions Check is enabled get Consume Action Info
     let consumeActionIcon, consumeActionLabel, consumeActionColor
-    const settingsAllowAfterMaxActions = game.settings.get(
-      GURPS.SYSTEM_NAME,
-      Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS
-    )
+    const settingsAllowAfterMaxActions = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
     const settingsUseMaxActions = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
     const dontShowMaxActions =
       settingsUseMaxActions === 'Disable' || (!result.isCombatant && settingsUseMaxActions === 'AllCombatant')

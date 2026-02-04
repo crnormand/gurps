@@ -59,6 +59,7 @@ export const getSizeModifier = (source, target) => {
   const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
   const baseTags = `#${meleeTag}`
   let sizeModifier
+
   if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
     const attackerSM = foundry.utils.getProperty(source.actor, 'system.traits.sizemod') || 0
     const targetSM = foundry.utils.getProperty(target.actor, 'system.traits.sizemod') || 0
@@ -322,6 +323,7 @@ export class EffectModifierPopout extends Application {
       let sheetMods = []
 
       const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+
       if (taggedSettings.checkConditionals) {
         const conditionalMods = foundry.utils.getProperty(actor, 'system.conditionalmods') || {}
 
@@ -558,6 +560,7 @@ export class TaggedModifierSettings extends FormApplication {
 
       return acc
     }, {})
+
     await game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS, cleanData)
   }
 }

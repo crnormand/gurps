@@ -736,6 +736,7 @@ export class GurpsActor extends Actor {
       othercost: this._sumeqt(eqt.other, 'cost'),
       otherlbs: this._sumeqt(eqt.other, 'weight'),
     }
+
     if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE))
       this.checkEncumbance(eqtsummary.eqtlbs)
     data.eqtsummary = eqtsummary
@@ -1285,6 +1286,7 @@ export class GurpsActor extends Actor {
 
   getPortraitPath() {
     if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_PATH) == 'global') return 'images/portraits/'
+
     return `worlds/${game.world.id}/images/portraits`
   }
 
@@ -1831,6 +1833,7 @@ export class GurpsActor extends Actor {
       { _id: localItem.id, 'system.eqt.uuid': generateUniqueId(), 'system.eqt.save': true },
     ])
     await this.addItemData(localItem, targetkey) // only created 1 item
+
     if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       const item = await this.items.get(localItem._id)
 
@@ -1935,6 +1938,7 @@ export class GurpsActor extends Actor {
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
     const subTypes = ['melee', 'ranged', 'ads', 'skills', 'spells']
+
     if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       for (const subType of subTypes) {
         commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, subType)) }
@@ -2227,6 +2231,7 @@ export class GurpsActor extends Actor {
       if (found) {
         any = true
         const actorKey = key + '.' + found
+
         if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
           const childActorComponent = foundry.utils.getProperty(this, actorKey)
 
@@ -2637,12 +2642,14 @@ export class GurpsActor extends Actor {
     const effects = allEffects.filter(e => !e.isManeuver)
 
     const visibility = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
+
     if (visibility === 'NoOne') return effects
 
     if (!game.user?.isGM && !this.isOwner) {
       if (visibility === 'GMAndOwner') return effects
 
       const detail = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
+
       if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
         if (maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
       }
@@ -2762,6 +2769,7 @@ export class GurpsActor extends Actor {
 
     if (ImportSettings.ignoreQuantityOnImport) update[eqtkey + '.ignoreImportQty'] = true
     await this.update(update)
+
     if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       eqt = foundry.utils.getProperty(this, eqtkey)
       await this.updateParentOf(eqtkey, false)
@@ -2917,7 +2925,7 @@ export class GurpsActor extends Actor {
     let canEdit = false
     let message
 
-    if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       message = 'GURPS.settingNoEquipAllowedHint'
       if (actorComp.itemid) canEdit = true
     } else {
@@ -3213,6 +3221,7 @@ export class GurpsActor extends Actor {
    */
   getChecks(checkType) {
     const quickRollSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
+
     if (!quickRollSettings[checkType]) {
       return { data: [], size: 0 }
     }
@@ -3756,6 +3765,7 @@ export class GurpsActor extends Actor {
   canConsumeAction(action, chatThing, actorComp = {}) {
     if (!action && !chatThing) return false
     const settingsUseMaxActions = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
+
     if (settingsUseMaxActions === 'Disable') return false
     const isCombatant = !!game.combat?.combatants.find(c => c.actor.id === this.id)
 
@@ -3933,6 +3943,7 @@ export class GurpsActor extends Actor {
     // Check if roll need Target
     const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
     const checkForTargetSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
+
     if (isCombatant && needTarget && game.user.targets.size === 0) {
       result = {
         ...result,

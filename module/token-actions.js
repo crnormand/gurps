@@ -449,7 +449,8 @@ export class TokenActions {
       if (parry.currentPenalty !== 0) {
         const signal = parry.currentPenalty > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toParryBonus' : 'GURPS.toParryPenalty')
-        addModifierq(
+
+        addModifier(
           `${signal}${Math.abs(parry.currentPenalty)} ${signalLabel} ${parry.name} #parry #maneuver #${parry.mode} @${parry.key}`
         )
       }

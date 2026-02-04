@@ -37,6 +37,7 @@ function registerRuler() {
 
     yardsToRangePenalty(yards: number): number {
       const strategy = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY) ?? 'Standard'
+
       if (strategy === 'Standard') {
         return GURPS.SSRT.getModifier(yards)
       } else {

@@ -53,7 +53,6 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
-import { StrengthCalculator } from './strength-calculator.js'
 import { CanRollResult, CheckInfo } from './types.js'
 
 function DamageModule() {
@@ -3657,8 +3656,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    */
   private _getCurrentMoveMode() {
-    let move = (this.modelV1?.move ?? {}) as Record<string, MoveMode>
-    let current = Object.values(move).find(it => it.default)
+    const move = (this.modelV1?.move ?? {}) as Record<string, MoveMode>
+    const current = Object.values(move).find(it => it.default)
+
     if (!current && Object.keys(move).length > 0) return move['00000']
 
     return current

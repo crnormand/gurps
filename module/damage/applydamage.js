@@ -602,6 +602,7 @@ export default class ApplyDamageDialog extends Application {
         // Check if the effect is already in the next turn or applied
         const shockEffect = `shock${effect.amount}`
         const applyAt = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
+
         if (applyAt === 'AtNextTurn') {
           const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
 
@@ -754,6 +755,7 @@ export default class ApplyDamageDialog extends Application {
       author: game.user.id,
       type: CONST.CHAT_MESSAGE_STYLES.OOC,
     }
+
     if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_WHISPER_STATUS_EFFECTS)) {
       let users = this.actor.getOwners()
       let ids = users.map(it => it.id)

@@ -222,6 +222,7 @@ class ModifierStack {
 
     // Update the Confirmation Dialog if opened
     const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+
     if (taggedSettings.autoAdd && this.currentSum !== oldSum) {
       const signal = this.minus ? '-' : '+'
       const target = $('#cr-target').text()
@@ -628,6 +629,7 @@ export class ModifierBucket extends Application {
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
     const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+
     data.cssContainerClass = `force-${position}`
     data.dice3dImagePath = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_3D6_IMAGE)
     data.diceImagePath = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_D6_IMAGE)
@@ -643,6 +645,7 @@ export class ModifierBucket extends Application {
 
     data.currentActor = ca
     data.diceVisible = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)
+
     return data
   }
 
@@ -995,6 +998,7 @@ export class ModifierBucket extends Application {
 
     if (!bucketExists) {
       const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+
       if (game.release.generation >= 13) {
         if (position === 'left') {
           const hotbar = document.querySelector('#hotbar')

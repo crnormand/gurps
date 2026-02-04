@@ -18,6 +18,7 @@ export async function rollDamage(
     throw new Error('GURPS | rollDamage: game settings or i18n or users not available.')
 
   const showRollDialog = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+
   if (showRollDialog && !canRoll.isSlam) {
     // Get Actor Info
     const gmUser = game.users.find((it: User) => it.isGM && it.active)

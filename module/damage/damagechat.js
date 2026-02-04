@@ -136,6 +136,7 @@ export default class DamageChat {
     let dice = null
     let diceFormula = addBucketToDamage(diceText, true) // run before applyMods()
     const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+
     if (!tokenNames || tokenNames.length == 0) tokenNames.push('')
 
     const oldAutoEmpty = GURPS.ModifierBucket.modifierStack.AUTO_EMPTY

@@ -1080,6 +1080,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         break
       }
     }
+
     // const equipmentAsItem = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
 
@@ -1889,6 +1890,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   async _onClickEnc(ev) {
     ev.preventDefault()
+
     if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       const element = ev.currentTarget
       const key = element.dataset.key

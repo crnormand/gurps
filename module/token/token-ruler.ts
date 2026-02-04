@@ -16,6 +16,7 @@ class GurpsTokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
   ): foundry.canvas.placeables.tokens.TokenRuler.GridHighlightStyle {
     const data = super._getGridHighlightStyle(waypoint, offset)
     const actor = this.token.actor
+
     if (!actor) return data
 
     return { ...data, color: this._getColorForDistance(waypoint.measurement.cost, data.color) }
@@ -46,6 +47,7 @@ class GurpsTokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
    */
   protected _getColorForDistance(distance: number, defaultColor: PIXI.ColorSource = 0x000000): PIXI.ColorSource {
     const actor = this.token.actor
+
     if (!actor) return defaultColor
 
     const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)

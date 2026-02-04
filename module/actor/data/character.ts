@@ -1484,6 +1484,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
 
       const attackMods = attack?.component?.modifierTags ?? []
+
       modifierTags = [...allRollTags, ...attackMods, ...refTags]
       itemRef = attack?.name ?? ''
     }

@@ -189,6 +189,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
     let tblname = html.querySelector('#tblname').value
     let table = this._findFrightCheckTable(tblname)
+
     if (table) game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, table.name)
 
     let roll = Roll.create('3d6[Fright Check]')

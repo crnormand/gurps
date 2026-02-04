@@ -1,6 +1,6 @@
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import GurpsWiring from '../../gurps-wiring.js'
-import { ImportSettings } from '../../importer/index.js'
+import { ImportSettings } from '../../importer/index.ts'
 import type {
   DeepPartial,
   ActorSheetV2Configuration,
@@ -15,7 +15,6 @@ import { ActorImporter } from '../actor-importer.js'
 import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.ts'
 import MoveModeEditor from '../move-mode-editor.js'
-import { ImportSettings } from '../../importer/index.ts'
 
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.ts'
@@ -147,17 +146,22 @@ export class GurpsActorModernSheet extends SheetBase {
   protected override async _onRender(context: ActorSheetV2RenderContext, options: RenderOptions): Promise<void> {
     super._onRender(context, options)
 
+    // Add character v1/v2 type guard
+    const actor = this.actor
+
+    if (!actor.isOfType('character', 'characterV2', 'enemy')) return
+
     const html = this.element
 
     // Bind inline edit handlers (click-to-edit pattern)
-    bindAllInlineEdits(html, this.actor)
-    bindAttributeEdit(html, this.actor)
-    bindSecondaryStatsEdit(html, this.actor)
-    bindPointsEdit(html, this.actor)
+    bindAllInlineEdits(html, actor)
+    bindAttributeEdit(html, actor)
+    bindSecondaryStatsEdit(html, actor)
+    bindPointsEdit(html, actor)
 
     // Bind resource reset handlers - note: these are now handled by actions system
     // but keeping for complex multi-resource configs
-    bindResourceReset(html, this.actor, [
+    bindResourceReset(html, actor, [
       {
         selector: '.ms-resource-reset[data-action="reset-hp"]',
         resourcePath: 'system.HP.value',

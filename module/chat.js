@@ -325,6 +325,7 @@ class ChatProcessorRegistry {
    */
   prnt(txt) {
     let p_setting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
+
     if (game.user?.isGM || p_setting) this.priv(txt)
     else this.pub(txt)
   }
