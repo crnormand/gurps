@@ -134,7 +134,7 @@ describe('GcsDice', () => {
     it('should handle negative modifiers', () => {
       const dice1 = new GcsDice(2, -1)
       const dice2 = new GcsDice(2, -3)
-      expect(dice1.difference(dice2)).toBe(2) // -3 - (-1) = -2
+      expect(dice1.difference(dice2)).toBe(2) // (-1) - (-3) = 2
     })
   })
 
