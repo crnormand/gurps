@@ -31,9 +31,14 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
   /* ---------------------------------------- */
 
   static override PARTS: Record<string, HandlebarsTemplatePart> = {
-    sheet: {
-      template: 'systems/gurps/templates/actor/actor-npc-modern-sheet.hbs',
-      scrollable: ['.ms-npc-body'],
+    header: {
+      template: 'systems/gurps/templates/actor/modern/npc-header.hbs',
+    },
+    statusBar: {
+      template: 'systems/gurps/templates/actor/modern/status-bar.hbs',
+    },
+    body: {
+      template: 'systems/gurps/templates/actor/modern/npc-body.hbs',
     },
   }
 

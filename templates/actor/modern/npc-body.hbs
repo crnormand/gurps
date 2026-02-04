@@ -1,0 +1,97 @@
+<section class='ms-npc-body'>
+  <div class='ms-npc-combat-row'>
+    {{>attack-table section="melee" icon="fa-sword" title=(localize "GURPS.melee") count=meleeCount items=system.melee path="system.melee" attackType="melee" otfPrefix="M" isMelee=true editAction="edit-melee" deleteAction="delete-melee" addAction="add-melee" addLabel=(localize "GURPS.melee")}}
+
+    {{>attack-table section="ranged" icon="fa-crosshairs" title=(localize "GURPS.ranged") count=rangedCount items=system.ranged path="system.ranged" attackType="ranged" otfPrefix="R" isMelee=false editAction="edit-ranged" deleteAction="delete-ranged" addAction="add-ranged" addLabel=(localize "GURPS.ranged")}}
+  </div>
+
+  <div class='ms-npc-skills-row'>
+    {{>data-table
+      section="skills"
+      icon="fa-graduation-cap"
+      title=(localize "GURPS.skills")
+      count=skillCount
+      items=(flatlist system.skills)
+      path="system.skills"
+      entityType="skills"
+      otfPrefix="Sk"
+      editAction="edit-skill"
+      deleteAction="delete-skill"
+      addAction="add-skill"
+      addLabel=(localize "GURPS.skill")
+    }}
+
+    {{#if (notEmpty system.spells)}}
+    {{>data-table
+      section="spells"
+      icon="fa-hat-wizard"
+      title=(localize "GURPS.spells")
+      items=(flatlist system.spells)
+      path="system.spells"
+      entityType="spells"
+      otfPrefix="Sp"
+      editAction="edit-spell"
+      deleteAction="delete-spell"
+      addAction="add-spell"
+      addLabel=(localize "GURPS.spell")
+      hasCollege=true
+    }}
+    {{/if}}
+  </div>
+
+  {{>traits-table}}
+
+  {{>equipment-table container="carried" items=system.equipment.carried showEquipped=true title=(localize "GURPS.equipment") icon="fa-box"}}
+
+  <div class='ms-section' data-section='notes'>
+    {{>section-header icon="fa-sticky-note" title=(localize "GURPS.notes")}}
+    <div class='ms-section-content'>
+      {{#each (flatlist system.notes)}}
+      <div class='ms-notes-row' data-key='system.notes.{{@key}}'>
+        <span class='ms-note-text'>{{{gurpslinkbr this.notes}}}</span>
+        {{>row-actions editAction="edit-note" deleteAction="delete-note" key=(concat "system.notes." @key)}}
+      </div>
+      {{else}}
+      <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+      {{/each}}
+      {{>add-row action="add-note" label=(localize "GURPS.notes")}}
+    </div>
+  </div>
+
+  {{#if useCI}}
+  <div class='ms-section ms-ci-section'>
+    {{>section-header icon="fa-heartbeat" title=(localize "GURPS.addInjury")}}
+    <div class='ms-section-content'>
+      <div class='ms-ci-controls'>
+        <div class='ms-ci-control'>
+          <span class='ms-ci-label'>Severity</span>
+          <div class='ms-ci-spinner'>
+            <button type='button' data-operation='ci-severity-dec'><i class='fas fa-minus'></i></button>
+            <input name='system.conditionalinjury.injury.severity' type='text' value='{{system.conditionalinjury.injury.severity}}' data-dtype='String' data-operation='ci-severity-set' />
+            <button type='button' data-operation='ci-severity-inc'><i class='fas fa-plus'></i></button>
+          </div>
+          <button type='button' class='ms-ci-reset' data-operation='ci-reset'><i class='fas fa-undo'></i></button>
+        </div>
+        <div class='ms-ci-control'>
+          <span class='ms-ci-label'>Time to Heal</span>
+          <div class='ms-ci-spinner'>
+            <button type='button' data-operation='ci-days-dec'><i class='fas fa-minus'></i></button>
+            <input name='injury.daystoheal' type='text' value='{{system.conditionalinjury.injury.daystoheal}}' data-dtype='Number' data-operation='ci-days-set' />
+            <button type='button' data-operation='ci-days-inc'><i class='fas fa-plus'></i></button>
+          </div>
+          <span class='ms-ci-label'>{{localize 'GURPS.days'}}</span>
+        </div>
+        <div class='ms-ci-status'>
+          <span class='ms-ci-severity-badge {{ciCurrentGrossEffects system.conditionalinjury.injury.severity "style"}}'>
+            {{ciCurrentGrossEffects system.conditionalinjury.injury.severity 'label'}}
+          </span>
+          <span class='ms-ci-info'>
+            [{{#if system.conditionalinjury.RT.points}}{{system.conditionalinjury.RT.points}}{{else}}{{system.HP.points}}{{/if}}]
+            {{system.conditionalinjury.RT.value}} {{localize 'GURPS.rt'}} | {{system.HP.max}} HP
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+</section>
