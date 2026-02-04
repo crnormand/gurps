@@ -147,8 +147,6 @@ export class GurpsActorModernSheet extends SheetBase {
       moveMode: this.actor.currentMoveMode,
     }
 
-    console.log(context)
-
     return context
   }
 
@@ -160,8 +158,6 @@ export class GurpsActorModernSheet extends SheetBase {
     await super._preparePartContext(partId, context, options)
 
     if (context.tabs && partId in context.tabs) context.tab = context.tabs[partId]
-
-    console.log(partId, context)
 
     return context
   }
