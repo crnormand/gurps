@@ -1908,7 +1908,6 @@ export class ActorImporter {
       for (let j of i.modifiers)
         if (!j.disabled) e.notes += `${!!e.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
     }
-    // if (!!e.note) e.notes += (!!e.notes ? '\n' : '') + e.note
     e.weight =
       (parseFloat(i.calc?.extended_weight) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || '0'
     e.pageRef(i.reference || '')
