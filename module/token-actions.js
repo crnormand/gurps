@@ -383,16 +383,14 @@ export class TokenActions {
    */
   async addModifiers() {
     const addModifier = mod => {
-      if (!maneuverModifiers.includes(mod) && !allModifiers.has(mod)) {
+      if (!maneuverModifiers.includes(mod) && !allModifiers.includes(mod)) {
         maneuverModifiers.push(mod)
       }
     }
 
-    let allModifiers = await foundry.utils
-      .getProperty(this.actor, 'system.conditions.usermods')
-      .filter(m => !m.includes('#maneuver') && !m.includes('@eft:'))
-
-    if (!(allModifiers instanceof Set)) allModifiers = new Set(allModifiers)
+    const allModifiers = await [...foundry.utils.getProperty(this.actor, 'system.conditions.usermods')].filter(
+      m => !m.includes('#maneuver') && !m.includes('@eft:')
+    )
 
     const maneuverModifiers = []
     if (this.toHitBonus !== 0) {
@@ -428,7 +426,7 @@ export class TokenActions {
       if (parry.currentPenalty !== 0) {
         const signal = parry.currentPenalty > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toParryBonus' : 'GURPS.toParryPenalty')
-        addModifier(
+        addModifierq(
           `${signal}${Math.abs(parry.currentPenalty)} ${signalLabel} ${parry.name} #parry #maneuver #${parry.mode} @${parry.key}`
         )
       }
