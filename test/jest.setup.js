@@ -27,15 +27,9 @@ global.game = {
 global.Application = class {}
 
 global.GURPS = { SYSTEM_NAME: 'gurps' }
-global.game = {
-  settings: {
-    get: () => null,
-  },
+global.game.settings = {
+  get: () => null,
 }
-
-// Mock Foundry VTT Application class
-global.Application = class {}
-
 // Mock Foundry VTT FormApplication class
 global.FormApplication = class FormApplication {
   constructor(object = {}, options = {}) {
