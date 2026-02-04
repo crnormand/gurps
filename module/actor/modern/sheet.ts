@@ -71,7 +71,7 @@ export class GurpsActorModernSheet extends SheetBase {
       resizable: true,
     },
     form: {
-      submitOnChange: false,
+      submitOnChange: true,
     },
     actions: {
       resetHp: GurpsActorModernSheet.#onResetResource,
