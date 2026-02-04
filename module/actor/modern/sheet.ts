@@ -99,10 +99,14 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   override activateListeners(html: JQuery): void {
     super.activateListeners(html)
 
-    bindAllInlineEdits(html, this.actor)
-    bindAttributeEdit(html, this.actor)
-    bindSecondaryStatsEdit(html, this.actor)
-    bindPointsEdit(html, this.actor)
+    // Apply character v1/v2 type guard
+    const actor = this.actor
+    if (!actor.isOfType('character', 'characterV2', 'enemy')) return
+
+    bindAllInlineEdits(html, actor)
+    bindAttributeEdit(html, actor)
+    bindSecondaryStatsEdit(html, actor)
+    bindPointsEdit(html, actor)
 
     bindResourceReset(html, this.actor, [
       {
@@ -136,7 +140,6 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     const openQuickNoteEditor = async () => {
       const actorSystem = this.actor.system as GurpsActorSystem
       const noteText = (actorSystem.additionalresources?.qnotes || '').replace(/<br>/g, '\n')
-      const actor = this.actor
 
       const dialog = await new foundry.applications.api.DialogV2({
         window: { title: 'Quick Note', resizable: true },
@@ -164,9 +167,9 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     html.find('.ms-quicknotes-content').on('dblclick', openQuickNoteEditor)
     html.find('.ms-quicknotes-edit').on('click', openQuickNoteEditor)
 
-    bindEquipmentCrudActions(html, this.actor, this)
-    bindNoteCrudActions(html, this.actor, this)
-    bindTrackerActions(html, this.actor)
+    bindEquipmentCrudActions(html, actor, this)
+    bindNoteCrudActions(html, actor, this)
+    bindTrackerActions(html, actor)
     this.bindPostureActions(html)
     this.bindManeuverActions(html)
     this.bindEncumbranceActions(html)
