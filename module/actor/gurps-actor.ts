@@ -51,8 +51,6 @@ import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { NoteV1 } from './legacy/note-adapter.js'
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { ImportSettings } from '../importer/index.js'
-import { StrengthCalculator } from './strength-calculator.ts'
-import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 
 function DamageModule() {
   return GURPS.module.Damage
@@ -84,10 +82,6 @@ interface EquipmentDropData {
 }
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> implements ActorV1Interface {
-  strengthCalculator: StrengthCalculator | null = null
-
-  /* ---------------------------------------- */
-
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
     return this.system as Actor.SystemOfType<'characterV2' | 'enemy'>
@@ -535,72 +529,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       this.calculateDerivedValues()
     }
-  }
-
-  /* ---------------------------------------- */
-
-  updateStrengthBasedAttributes() {
-    if (!this.strengthCalculator) this.strengthCalculator = new StrengthCalculator()
-
-    this.strengthCalculator.strength = this.system.attributes.ST.import
-    this._setBasicLift(this.strengthCalculator.calculateLift())
-    this.system.thrust = this.strengthCalculator.calculateThrustDamage()
-    this.system.swing = this.strengthCalculator.calculateSwingDamage()
-  }
-
-  /* ---------------------------------------- */
-
-  /**
-   * Update the basic lift and recalculate encumbrance levels and lifting.
-   * @param {*} basicLift
-   */
-  _setBasicLift(basicLift: unknown): void {
-    if (!this.isOfType('character')) {
-      console.log('Cannot update basic lift. Wrong Actor type!')
-
-      return
-    }
-
-    // @ts-expect-error: old character types in use
-    this.system.basiclift = basicLift
-
-    // @ts-expect-error: old character types in use
-    const unit = this.system.encumbrance['00000']?.weight?.toString().split(' ')[1] || 'lb'
-    // @ts-expect-error: old character types in use
-    const encumbranceLevels = calculateEncumbranceLevels(this.system.basiclift, 0, unit, {})
-    for (const [key, value] of Object.entries(encumbranceLevels)) {
-      // @ts-expect-error: old character types in use
-      this.system.encumbrance[key].weight = value.weight
-    }
-
-    // @ts-expect-error: old character types in use
-    this.system.liftingmoving.basiclift = basicLift
-    // @ts-expect-error: old character types in use
-    this.system.liftingmoving.onehandedlift = basicLift * 2
-    // @ts-expect-error: old character types in use
-    this.system.liftingmoving.twohandedlift = basicLift * 8
-    // @ts-expect-error: old character types in use
-    this.system.liftingmoving.shove = basicLift * 12
-    // @ts-expect-error: old character types in use
-    this.system.liftingmoving.carryonback = basicLift * 15
-    // @ts-expect-error: old character types in use
-    this.system.liftingmoving.runningshove = basicLift * 24
-    // @ts-expect-error: old character types in use
-    this.system.liftingmoving.shiftslightly = basicLift * 50
-  }
-
-  /* ---------------------------------------- */
-
-  async updateAndPersistStrengthBasedAttributes() {
-    this.updateStrengthBasedAttributes()
-    await this.internalUpdate({
-      // @ts-expect-error: old character types in use
-      'system.thrust': this.system.thrust,
-      'system.swing': this.system.swing,
-      // @ts-expect-error: old character types in use
-      'system.basiclift': this.system.basiclift,
-      'system.liftingmoving': this.system.liftingmoving,
-    })
   }
 
   /* ---------------------------------------- */
