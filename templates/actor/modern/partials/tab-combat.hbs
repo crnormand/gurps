@@ -1,3 +1,4 @@
+<section class='tab {{tab.cssClass}}' data-tab='combat' data-group='primary'>
 {{!-- Full-width attacks --}}
 <div class='ms-attacks-section'>
   {{>attack-table section="melee" icon="fa-sword" title=(localize "GURPS.melee") count=meleeCount items=system.melee path="system.melee" attackType="melee" otfPrefix="M" isMelee=true editAction="edit-melee" deleteAction="delete-melee" addAction="add-melee" addLabel=(localize "GURPS.melee")}}
@@ -14,3 +15,4 @@
     {{>encumbrance-table}}
   </div>
 </div>
+      </section>

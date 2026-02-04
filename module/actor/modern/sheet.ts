@@ -10,6 +10,7 @@ import type {
   HeaderControlsEntry,
   HandlebarsActorSheetV2Constructor,
 } from '../../types/foundry/actor-sheet-v2.ts'
+import { Application } from '../../types/foundry/application.ts'
 import { getGame, getUser, isHTMLElement } from '../../utilities/guards.ts'
 import { ActorImporter } from '../actor-importer.js'
 import EffectPicker from '../effect-picker.js'
@@ -46,7 +47,7 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
   showHPTinting: boolean
   // Uses getter's union return type since it varies between v1/v2 actor models
   moveMode: GurpsActorV2<Actor.SubType>['currentMoveMode']
-  cssClass: string
+  tab?: Application.Tab
 }
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
@@ -59,10 +60,6 @@ const SheetBase = foundry.applications.api.HandlebarsApplicationMixin(
 ) as unknown as HandlebarsActorSheetV2Constructor<GurpsActor>
 
 export class GurpsActorModernSheet extends SheetBase {
-  tabGroups = {
-    'modern-tabs': 'character',
-  }
-
   static override DEFAULT_OPTIONS: DeepPartial<ActorSheetV2Configuration> = {
     classes: ['gurps', 'sheet', 'actor', 'modern-sheet'],
     tag: 'form',
@@ -87,20 +84,47 @@ export class GurpsActorModernSheet extends SheetBase {
     },
   }
 
+  /* ---------------------------------------- */
+
   static override PARTS: Record<string, HandlebarsTemplatePart> = {
-    sheet: {
-      template: 'systems/gurps/templates/actor/actor-modern-sheet.hbs',
-      scrollable: ['.ms-body .tab'],
+    header: {
+      template: 'systems/gurps/templates/actor/modern/header.hbs',
+    },
+    statusBar: {
+      template: 'systems/gurps/templates/actor/modern/status-bar.hbs',
+    },
+    tabNavigation: {
+      template: 'systems/gurps/templates/actor/modern/tab-navigation.hbs',
+    },
+    character: {
+      template: 'systems/gurps/templates/actor/modern/tab-character.hbs',
+    },
+    combat: {
+      template: 'systems/gurps/templates/actor/modern/tab-combat.hbs',
+    },
+    equipment: {
+      template: 'systems/gurps/templates/actor/modern/tab-equipment.hbs',
+    },
+    notes: {
+      template: 'systems/gurps/templates/actor/modern/tab-notes.hbs',
     },
   }
 
-  get template(): string {
-    if (!getUser().isGM && this.actor.limited) {
-      return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    }
+  /* ---------------------------------------- */
 
-    return 'systems/gurps/templates/actor/actor-modern-sheet.hbs'
+  static override TABS: Record<string, Application.TabsConfiguration> = {
+    primary: {
+      tabs: [
+        { id: 'character', label: 'GURPS.basic', icon: 'fas fa-user' },
+        { id: 'combat', label: 'GURPS.combatTab', icon: 'fas fa-swords' },
+        { id: 'equipment', label: 'GURPS.equipmentTab', icon: 'fas fa-backpack' },
+        { id: 'notes', label: 'GURPS.description', icon: 'fas fa-book' },
+      ],
+      initial: 'character',
+    },
   }
+
+  /* ---------------------------------------- */
 
   protected override async _prepareContext(options: RenderOptions): Promise<ModernSheetContext> {
     const baseContext = await super._prepareContext(options)
@@ -121,8 +145,23 @@ export class GurpsActorModernSheet extends SheetBase {
         Object.keys(actorSystem?.reactions ?? {}).length + Object.keys(actorSystem?.conditionalmods ?? {}).length,
       showHPTinting: getGame().settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
       moveMode: this.actor.currentMoveMode,
-      cssClass: 'gurps sheet actor modern-sheet',
     }
+
+    console.log(context)
+
+    return context
+  }
+
+  protected override async _preparePartContext(
+    partId: string,
+    context: ModernSheetContext,
+    options: DeepPartial<ActorSheetV2RenderOptions>
+  ): Promise<ModernSheetContext> {
+    await super._preparePartContext(partId, context, options)
+
+    if (context.tabs && partId in context.tabs) context.tab = context.tabs[partId]
+
+    console.log(partId, context)
 
     return context
   }

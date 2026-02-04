@@ -284,10 +284,12 @@
 
 .gurps .window-content {
   height: 100%;
-  padding: 5px;
+  padding: 0;
+  /* padding: 5px; */
   scroll-behavior: smooth;
-  background: white;
+  /* background: white; */
   overflow-x: auto;
+  overflow-y: auto;
 }
 
 .gurps .sheet-header {
@@ -346,8 +348,8 @@
 
 .gurps .tabs {
   height: 40px;
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
+  /* border-top: 1px solid #aaa; */
+  /* border-bottom: 1px solid #aaa; */
 }
 
 .gurps .tabs .item {
@@ -681,8 +683,8 @@
 }
 
 /* #sheet #condition .fieldblock {
-  /display: inline-grid; 
-  /grid-template-columns: min-content 1fr min-content; 
+  /display: inline-grid;
+  /grid-template-columns: min-content 1fr min-content;
 } */
 
 #combat-tab #condition .fieldblock .label {
