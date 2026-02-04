@@ -203,7 +203,6 @@ declare global {
     'gurps.pdf.basicset': String
     'gurps.pdf.open-first': boolean
     'gurps.use-foundry-items': boolean
-    'gurps.auto-update-strength': boolean
     // TODO: Deprecated settings.
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
     'gurps.basicsetpdf': String
@@ -296,7 +295,6 @@ declare module '*/miscellaneous-settings.js' {
   export const SYSTEM_NAME: 'gurps'
   export const SETTING_USE_FOUNDRY_ITEMS: 'use-foundry-items'
   export const SETTING_PORTRAIT_HP_TINTING: 'portrait-hp-tinting'
-  export const SETTING_AUTO_UPDATE_STRENGTH: 'auto-update-strength'
 }
 
 declare namespace foundry.applications.api {
