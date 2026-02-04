@@ -73,7 +73,7 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
 ): void {
   const { entityName, path, EntityClass, editMethod, localeKey, displayProperty = 'name', createArgs } = config
 
-  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add-${entityName}"]`)
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityName}"]`)
 
   addButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -93,7 +93,7 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
     })
   })
 
-  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit-${entityName}"]`)
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit${entityName}"]`)
 
   editButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -111,7 +111,7 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
     })
   })
 
-  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete-${entityName}"]`)
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete${entityName}"]`)
 
   deleteButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -140,7 +140,7 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
   const path = isReaction ? 'system.reactions' : 'system.conditionalmods'
   const localeKey = isReaction ? 'GURPS.reaction' : 'GURPS.conditionalModifier'
 
-  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add-${entityName}"]`)
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityName}"]`)
 
   addButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -160,7 +160,7 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     })
   })
 
-  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit-${entityName}"]`)
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit${entityName}"]`)
 
   editButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -176,7 +176,7 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     })
   })
 
-  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete-${entityName}"]`)
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete${entityName}"]`)
 
   deleteButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {

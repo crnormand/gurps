@@ -149,8 +149,8 @@
         </div>
         <span class='ms-note-ref'>{{{pdflinkext this}}}</span>
         <span class='ms-note-actions'>
-          <i class='fas fa-pen-to-square ms-action-btn' data-action='edit-note' data-key='system.notes.{{@key}}' title='Edit'></i>
-          <i class='fas fa-trash ms-action-btn ms-delete' data-action='delete-note' data-key='system.notes.{{@key}}' title='Delete'></i>
+          <i class='fas fa-pen-to-square ms-action-btn' data-action='editNote' data-key='system.notes.{{@key}}' title='Edit'></i>
+          <i class='fas fa-trash ms-action-btn ms-delete' data-action='deleteNote' data-key='system.notes.{{@key}}' title='Delete'></i>
         </span>
       </div>
       {{/unless}}
@@ -158,7 +158,7 @@
       <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
       {{/each}}
       <div class='ms-add-row'>
-        <span class='ms-add-btn' data-action='add-note'><i class='fas fa-plus'></i> {{localize 'GURPS.notes'}}</span>
+        <span class='ms-add-btn' data-action='addNote'><i class='fas fa-plus'></i> {{localize 'GURPS.notes'}}</span>
       </div>
     </div>
   </div>
@@ -195,7 +195,7 @@
   <h3 class='ms-section-header'>
     <i class='fas fa-heartbeat'></i>
     {{localize 'GURPS.resourceTrackers'}}
-    <i class='fas fa-plus ms-add-icon' data-action='add-tracker'></i>
+    <i class='fas fa-plus ms-add-icon' data-action='addTracker'></i>
   </h3>
   <div class='ms-trackers-list'>
     {{#each system.additionalresources.tracker}}
@@ -213,7 +213,7 @@
   <h3 class='ms-section-header'>
     <i class='fas fa-heartbeat'></i>
     {{localize 'GURPS.resourceTrackers'}}
-    <i class='fas fa-plus ms-add-icon' data-action='add-tracker'></i>
+    <i class='fas fa-plus ms-add-icon' data-action='addTracker'></i>
   </h3>
   <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
 </div>

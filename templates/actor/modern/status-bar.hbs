@@ -63,7 +63,7 @@
   <span class='ms-effect-tag {{effectTagClass this}}' data-effect-id='{{this.id}}' title='{{this.name}}'>
     <span class='ms-effect-icon-wrapper'>
       {{#if this.img}}<img src='{{this.img}}' class='ms-effect-icon' />{{/if}}
-      <button class='ms-effect-delete' data-action='delete-effect' data-effect-id='{{this.id}}' title='Delete'>
+      <button class='ms-effect-delete' data-action='deleteEffect' data-effect-id='{{this.id}}' title='Delete'>
         <i class='fas fa-trash'></i>
       </button>
     </span>
@@ -71,7 +71,7 @@
   </span>
   {{/unless}}
   {{/each}}
-  <button type='button' class='ms-effect-add' data-action='add-effect' title='Add Effect'>
+  <button type='button' class='ms-effect-add' data-action='addEffect' title='Add Effect'>
     <i class='fas fa-plus'></i>
   </button>
 </div>

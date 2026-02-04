@@ -198,12 +198,12 @@ export class GurpsActorModernSheet extends SheetBase {
     // but keeping for complex multi-resource configs
     bindResourceReset(html, actor, [
       {
-        selector: '.ms-resource-reset[data-action="reset-hp"]',
+        selector: '.ms-resource-reset[data-action="resetHp"]',
         resourcePath: 'system.HP.value',
         maxPath: 'system.HP.max',
       },
       {
-        selector: '.ms-resource-reset[data-action="reset-fp"]',
+        selector: '.ms-resource-reset[data-action="resetFp"]',
         resourcePath: 'system.FP.value',
         maxPath: 'system.FP.max',
       },
@@ -292,6 +292,7 @@ export class GurpsActorModernSheet extends SheetBase {
 
   static async #onAddEffect(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
+    console.log('#onAddEffect')
     new EffectPicker(this.actor).render(true)
   }
 
