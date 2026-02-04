@@ -1653,7 +1653,7 @@ export class ActorImporter {
   }
 
   // isUsingFoundryItems() {
-  //   return !!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+  //   return !!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
   // }
 
   async importAd(i, p) {
@@ -2582,7 +2582,7 @@ export class ActorImporter {
   }
 
   async _processItemFrom(actorComp, fromProgram) {
-    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    // if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     // Sanity check
     if (
       !(actorComp instanceof Equipment) &&

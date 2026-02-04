@@ -5,7 +5,7 @@ export class StatusEffect {
   static SETTING_USE_ACTIVE_EFFECTS = 'use-active-effects'
 
   static useActiveEffects() {
-    return game.settings.get(Settings.SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS)
+    return game.settings.get(GURPS.SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS)
   }
 
   constructor() {
@@ -38,7 +38,7 @@ export class StatusEffect {
   }
 
   _registerSetting() {
-    game.settings.register(Settings.SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS, {
+    game.settings.register(GURPS.SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS, {
       name: game.i18n.localize('GURPS.settingActiveEffects'),
       hint: game.i18n.localize('GURPS.settingHintActiveEffects'),
       scope: 'world',
@@ -71,7 +71,7 @@ export class StatusEffect {
   }
 
   get rawStatusEffects() {
-    const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedModifiersSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const defenseTag = taggedModifiersSetting.allDefenseRolls.split(',')[0]
     const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
     const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
@@ -683,7 +683,7 @@ export class StatusEffect {
 }
 
 const _getActiveEffectsData = function (id) {
-  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const taggedModifiersSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const hitTag = taggedModifiersSetting.allAttackRolls.split(',')[0]
   const defenseTag = taggedModifiersSetting.allDefenseRolls.split(',')[0]
   const dxTag = taggedModifiersSetting.allDXRolls.split(',')[0]

@@ -1,17 +1,14 @@
-import { GurpsItemV2 } from '../../item/gurps-item.ts'
-import { GurpsActorV2 } from '../gurps-actor.ts'
-
 export type EntityWithItemId = EntityComponentBase & { itemid?: string }
-type GurpsItemWithEditingActor = GurpsItemV2 & {
-  editingActor?: GurpsActorV2<'character' | 'characterV2' | 'enemy'>
+type GurpsItemWithEditingActor = Item.Implementation & {
+  editingActor?: Actor.Implementation
   system?: { fromItem?: string }
 }
-type ActorWithSanityCheck = GurpsActorV2<'character' | 'characterV2' | 'enemy'> & {
+type ActorWithSanityCheck = Actor.Implementation & {
   _sanityCheckItemSettings(obj: unknown): Promise<boolean>
 }
 
 export async function openItemSheetIfFoundryItem(
-  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  actor: Actor.Implementation,
   entityData: EntityWithItemId
 ): Promise<boolean> {
   if (!entityData?.itemid) return false
@@ -47,7 +44,7 @@ export function getDisplayName(
 }
 
 export async function confirmAndDelete(
-  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  actor: Actor.Implementation,
   key: string,
   displayName: string | undefined,
   fallbackLocaleKey: string
@@ -57,7 +54,7 @@ export async function confirmAndDelete(
     content: `<p>${game.i18n!.localize('GURPS.delete')}: <strong>${displayName || game.i18n!.localize(fallbackLocaleKey)}</strong>?</p>`,
   })
   if (confirmed) {
-    // TODO: Update GurpsActorV2 with new methods in GurpsActor (_actor.js).
+    // TODO: Update Actor.OfType with new methods in GurpsActor (_actor.js).
     // @ts-expect-error: waiting for methods to be updated.
     await actor.deleteEntry(key)
   }
@@ -66,7 +63,7 @@ export async function confirmAndDelete(
 
 export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: JQuery,
-  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  actor: Actor.Implementation,
   sheet: TSheet,
   config: EntityConfigWithMethod
 ): void {
@@ -109,7 +106,7 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
 
 export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: JQuery,
-  actor: GurpsActorV2<'character' | 'characterV2' | 'enemy'>,
+  actor: Actor.Implementation,
   sheet: TSheet,
   editMethod: TSheet['editModifier'],
   isReaction: boolean

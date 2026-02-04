@@ -388,9 +388,9 @@ export class TokenActions {
       }
     }
 
-    const allModifiers = await foundry.utils
-      .getProperty(this.actor, 'system.conditions.usermods')
-      .filter(m => !m.includes('#maneuver') && !m.includes('@eft:'))
+    const allModifiers = await [...foundry.utils.getProperty(this.actor, 'system.conditions.usermods')].filter(
+      m => !m.includes('#maneuver') && !m.includes('@eft:')
+    )
 
     const maneuverModifiers = []
     if (this.toHitBonus !== 0) {
@@ -426,7 +426,7 @@ export class TokenActions {
       if (parry.currentPenalty !== 0) {
         const signal = parry.currentPenalty > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toParryBonus' : 'GURPS.toParryPenalty')
-        addModifier(
+        addModifierq(
           `${signal}${Math.abs(parry.currentPenalty)} ${signalLabel} ${parry.name} #parry #maneuver #${parry.mode} @${parry.key}`
         )
       }
@@ -744,7 +744,7 @@ export class TokenActions {
     return icon
   }
   async removeCombatTempMods() {
-    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const combatTempTags = taggedSettings.combatTempTag
       .split(',')
       .map(it => it.trim().toLowerCase())
@@ -776,7 +776,7 @@ export class TokenActions {
         break
       case 'p':
         const settingsAddParryMods = game.settings.get(
-          Settings.SYSTEM_NAME,
+          GURPS.SYSTEM_NAME,
           Settings.SETTING_ADD_CUMULATIVE_PARRY_PENALTIES
         )
         if (settingsAddParryMods) {

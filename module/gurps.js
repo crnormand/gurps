@@ -608,7 +608,7 @@ if (!globalThis.GURPS) {
 
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
 
-      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = action.formula
       if (actor && taggedSettings.autoAdd) {
         await actor.addTaggedRollModifiers('', { action }, action.att)
@@ -675,7 +675,7 @@ if (!globalThis.GURPS) {
 
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
 
-      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = formula
       if (actor && taggedSettings.autoAdd) {
         await actor.addTaggedRollModifiers('', { action }, action.att)
@@ -1464,7 +1464,7 @@ if (!globalThis.GURPS) {
     const blindroll =
       event.ctrlKey ||
       game.settings.get('core', 'rollMode') === 'blindroll' ||
-      (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
+      (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
 
     if ('damage' in element.dataset) {
       // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
@@ -1753,7 +1753,7 @@ if (!globalThis.GURPS) {
         data.count = eqt.count
       }
       let display = true
-      if (!!src && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
+      if (!!src && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
         // if an optional src is provided (which == actor.system) assume we are checking attacks to see if they are equipped
         recurselist(src.equipment.carried, e => {
           if (eqt.name.startsWith(e.name) && !e.equipped) display = false
@@ -1862,10 +1862,10 @@ if (!globalThis.GURPS) {
 
   // TODO: Move to the combat module.
   GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
-    let formula = /** @type {string} */ (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
+    let formula = /** @type {string} */ (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
     if (!formula) {
       formula = Initiative.defaultFormula()
-      if (game.user.isGM) game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA, formula)
+      if (game.user.isGM) game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA, formula)
     }
     let m = formula.match(/([^:]*):?(\d)?/)
     let d = m && !!m[2] ? parseInt(m[2]) : 5
@@ -2021,13 +2021,13 @@ if (!globalThis.GURPS) {
       name: 'Toggle dice display',
       uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
       onDown: () => {
-        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) {
+        if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) {
           GURPS.savedRollMode = game.settings.get('core', 'rollMode')
           game.settings.set('core', 'rollMode', game.user?.isGM ? 'gmroll' : 'blindroll')
         }
       },
       onUp: () => {
-        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CTRL_KEY))
+        if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY))
           game.settings.set('core', 'rollMode', GURPS.savedRollMode)
       },
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
@@ -2054,7 +2054,7 @@ if (!globalThis.GURPS) {
     HitLocation.ready()
 
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
-    let previousVersionString = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
+    let previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
 
     console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
     const migrationVersion = SemanticVersion.fromString(previousVersionString)
@@ -2067,24 +2067,24 @@ if (!globalThis.GURPS) {
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
     // migration version to the current version even if it is lower than the current version.
-    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
+    game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
 
     // Show changelog
-    const v = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
+    const v = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
     const changelogVersion = SemanticVersion.fromString(v)
 
     if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
       // If it isn't already in the chat log somewhere
       if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0) showGURPSCopyright()
 
-      if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CHANGELOG)) {
+      if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CHANGELOG)) {
         const app = new ChangeLogWindow(changelogVersion)
         app.render(true)
       }
       GURPS.executeOTF('/help')
     }
 
-    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
+    game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
 
     Hooks.on('hotbarDrop', async (_bar, data, slot) => {
       if (!data.otf && !data.bucket) return
@@ -2279,9 +2279,9 @@ if (!globalThis.GURPS) {
     // This system setting must be built AFTER all of the character sheets have been registered
     let sheets = /** @type {Record<string,string>} */ ({})
     Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
-      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
+      if (e.id.toString().startsWith(GURPS.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
     })
-    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
+    game.settings.register(GURPS.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
       name: game.i18n.localize('GURPS.settingSheetDetail'),
       hint: game.i18n.localize('GURPS.settingHintSheetDetail'),
       scope: 'world',

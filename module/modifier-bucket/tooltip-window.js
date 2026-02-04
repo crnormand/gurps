@@ -18,7 +18,7 @@ export default class ModifierBucketEditor extends Application {
   }
 
   static get defaultOptions() {
-    let scale = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
+    let scale = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
 
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
@@ -54,7 +54,7 @@ export default class ModifierBucketEditor extends Application {
   }
 
   get journals() {
-    const settings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS) || []
+    const settings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS) || []
     let bucketPages = []
     game.journal.forEach(j => {
       j.pages.forEach(p => {
@@ -132,8 +132,8 @@ export default class ModifierBucketEditor extends Application {
     super.activateListeners(html)
 
     // if this is a tooltip, scale and position
-    let scale = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
-    const positionSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+    let scale = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
+    const positionSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
     if (!this.options.popOut) {
       html.css('font-size', `${13 * scale}px`)
@@ -436,7 +436,7 @@ const ModifierLiterals = {
   },
 
   get RangedMods() {
-    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     return (
       `[+1 ${game.i18n.localize('GURPS.modifiers_.aim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aim')}]
@@ -456,7 +456,7 @@ ${horiz(game.i18n.localize('GURPS.modifiers_.onTargetAiming'))}
   },
 
   get DefenseMods() {
-    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     return `[+2 ${game.i18n.localize('GURPS.modifiers_.aodIncreased')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aodIncreased')}]
     [+1 ${game.i18n.localize('GURPS.modifiers_.shieldDB')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.shieldDB')}]

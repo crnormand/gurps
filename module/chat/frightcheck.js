@@ -25,7 +25,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     }
 
     let actor = GURPS.LastActor
-    let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || 'Fright Check'
+    let tblname = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || 'Fright Check'
 
     const data = {
       tblname: tblname,
@@ -177,7 +177,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
     let tblname = html.querySelector('#tblname').value
     let table = this._findFrightCheckTable(tblname)
-    if (table) game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, table.name)
+    if (table) game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, table.name)
 
     let roll = Roll.create('3d6[Fright Check]')
     await roll.evaluate()

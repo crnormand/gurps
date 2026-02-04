@@ -15,7 +15,7 @@ export default class GurpsConditionalInjury {
       .forEach(app => app.render(true))
   }
 
-  isInUse = () => game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_CONDITIONAL_INJURY)
+  isInUse = () => game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_CONDITIONAL_INJURY)
 
   conditionalEffectsTable = () => {
     return CI.conditionalEffectsTable

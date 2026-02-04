@@ -82,8 +82,6 @@ interface EquipmentDropData {
 }
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> implements ActorV1Interface {
-  /* ---------------------------------------- */
-
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
     return this.system as Actor.SystemOfType<'characterV2' | 'enemy'>
@@ -533,6 +531,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
   }
 
+  /* ---------------------------------------- */
+
   /** Iterate through all embedded pseudo-documents and execute a function */
   doForEachEmbedded(fn: (pd: PseudoDocument) => void) {
     const embedded = this.modelV2?.metadata?.embedded ?? {}
@@ -578,7 +578,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     // Legacy V1 handling.
     let isDamageRoll = false
-    const taggedSettings = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedSettings = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const allRollTags = taggedSettings.allRolls.split(',').map(it => it.trim().toLowerCase())
 
     // First get Item or Attribute Effect Tags
@@ -3409,7 +3409,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    */
   private _getCurrentMoveMode() {
-    let move = this.modelV1.move as Record<string, MoveMode>
+    let move = (this.modelV1?.move ?? {}) as Record<string, MoveMode>
     let current = Object.values(move).find(it => it.default)
     if (!current && Object.keys(move).length > 0) return move['00000']
     return current
@@ -3423,7 +3423,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
     } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
-    let updateMove = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
+    let updateMove = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)

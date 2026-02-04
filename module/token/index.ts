@@ -1,7 +1,7 @@
 import { GurpsModule } from 'module/gurps-module.js'
 import GurpsToken from './gurps-token.js'
 import GurpsTokenHUDV2 from './token-hud.js'
-import GurpsTokenRuler from './token-ruler.js'
+import { GurpsTokenRuler } from './token-ruler.js'
 
 export * from './gurps-token.js'
 export * from './quick-roll-settings.js'

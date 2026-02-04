@@ -9,6 +9,7 @@ import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } fro
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
 import { isPostureOrManeuver } from './utils/effect.ts'
 import MoveModeEditor from '../move-mode-editor.js'
+import { ImportSettings } from '../../importer/index.ts'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -64,18 +65,15 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     sheetData.modifierCount = countItems(sheetData.system?.reactions) + countItems(sheetData.system?.conditionalmods)
     // TODO Update typing.
     // @ts-expect-error: update settings typing.
-    sheetData.showHPTinting = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
+    sheetData.showHPTinting = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
     // TODO: Update GurpsActorV2 with new methods in GurpsActor (_actor.js).
-    // @ts-expect-error: waiting for GurpsActorV2 update.
-    sheetData.moveMode = this.actor.getCurrentMoveMode()
+    sheetData.moveMode = this.actor.currentMoveMode
 
     return sheetData
   }
 
   override getCustomHeaderButtons() {
-    // TODO Update typing.
-    // @ts-expect-error: update settings typing.
-    const blockImport = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_BLOCK_IMPORT as never) as boolean
+    const blockImport = ImportSettings.onlyTrustedUsersCanImport
     if (blockImport && !game.user!.isTrusted) return []
 
     return [
@@ -101,10 +99,14 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
   override activateListeners(html: JQuery): void {
     super.activateListeners(html)
 
-    bindAllInlineEdits(html, this.actor)
-    bindAttributeEdit(html, this.actor)
-    bindSecondaryStatsEdit(html, this.actor)
-    bindPointsEdit(html, this.actor)
+    // Apply character v1/v2 type guard
+    const actor = this.actor
+    if (!actor.isOfType('character', 'characterV2', 'enemy')) return
+
+    bindAllInlineEdits(html, actor)
+    bindAttributeEdit(html, actor)
+    bindSecondaryStatsEdit(html, actor)
+    bindPointsEdit(html, actor)
 
     bindResourceReset(html, this.actor, [
       {
@@ -138,7 +140,6 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     const openQuickNoteEditor = async () => {
       const actorSystem = this.actor.system as GurpsActorSystem
       const noteText = (actorSystem.additionalresources?.qnotes || '').replace(/<br>/g, '\n')
-      const actor = this.actor
 
       const dialog = await new foundry.applications.api.DialogV2({
         window: { title: 'Quick Note', resizable: true },
@@ -153,6 +154,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
               const form = button.form as HTMLFormElement
               const input = form.elements.namedItem('i') as HTMLTextAreaElement
               const value = input.value
+              // @ts-expect-error: Unknown system types for legacy actor model
               actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
             },
           },
@@ -165,14 +167,13 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
     html.find('.ms-quicknotes-content').on('dblclick', openQuickNoteEditor)
     html.find('.ms-quicknotes-edit').on('click', openQuickNoteEditor)
 
-    bindEquipmentCrudActions(html, this.actor, this)
-    bindNoteCrudActions(html, this.actor, this)
-    bindTrackerActions(html, this.actor)
+    bindEquipmentCrudActions(html, actor, this)
+    bindNoteCrudActions(html, actor, this)
+    bindTrackerActions(html, actor)
     this.bindPostureActions(html)
     this.bindManeuverActions(html)
     this.bindEncumbranceActions(html)
     this.bindEffectActions(html)
-    this.bindLiftingActions(html)
     this.bindEntityCrudActions(html)
   }
 
@@ -230,13 +231,6 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       if (confirmed) {
         await effect.delete()
       }
-    })
-  }
-
-  bindLiftingActions(html: JQuery): void {
-    html.find('[data-action="recalc-lifting"]').on('click', async (event: JQuery.ClickEvent) => {
-      event.preventDefault()
-      await this.actor.updateAndPersistStrengthBasedAttributes()
     })
   }
 

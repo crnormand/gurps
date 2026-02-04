@@ -80,13 +80,7 @@ declare global {
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
-    DamageChat: {
-      _renderDamageChat(
-        app: { data: { flags: { transfer: string } }; flags: { gurps: { transfer: object } } },
-        html: JQuery,
-        msg: object
-      ): Promise<void>
-    }
+    DamageChat: typeof DamageChat
     resolveDamageRoll: (
       event: Event,
       actor: GurpsActor,
@@ -366,7 +360,9 @@ declare global {
     terminateActions?: { type: string; args: string }[]
     statusId?: string
   }
+}
 
+declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
     Actor: typeof GurpsActorV2<Actor.SubType>
     Item: typeof GurpsItemV2<Item.SubType>
