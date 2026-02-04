@@ -18,7 +18,6 @@ import { GurpsItem } from '../item.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
-import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
