@@ -3676,7 +3676,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       // During game startup, an exception is being thrown trying to access 'game.combat'
     }
 
-    const updateMove = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
+    const updateMove = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     const maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     const posture = this._getMoveAdjustedForPosture(move, threshold)

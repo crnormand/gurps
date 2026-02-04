@@ -93,7 +93,7 @@ export class _Base {
       const existingComponentItem = actor.items.get(actorComp.itemid)
 
       if (existingComponentItem) {
-        // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        // if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
         actorComp.itemid = existingComponentItem.itemid || ''
         // }
         // actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
