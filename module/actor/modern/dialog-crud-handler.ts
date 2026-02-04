@@ -74,7 +74,6 @@ export function bindEquipmentCrudActions(
 
       if (!confirmed) return
 
-      await actor.deleteEntry(equipmentKey)
       await actor.refreshDR()
     })
   })
@@ -121,7 +120,8 @@ export function bindNoteCrudActions(
               newNote.notes = notesInput instanceof HTMLTextAreaElement ? notesInput.value : ''
               newNote.title = titleInput instanceof HTMLInputElement ? titleInput.value : ''
               GURPS.put(list, newNote)
-              actor.internalUpdate({ [path]: list } as Actor.UpdateData)
+
+              return actor.internalUpdate({ [path]: list } as Actor.UpdateData)
             },
           },
         ],
