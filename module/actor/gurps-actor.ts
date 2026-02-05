@@ -4542,7 +4542,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    */
   async _removeKey(sourceKey: string) {
-    // source key is the whole path, like 'data.melee.00001'
+    // source key is the whole path, like 'system.melee.00001'
     const components = sourceKey.split('.')
 
     const index = parseInt(components.pop()!)
@@ -4571,7 +4571,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    */
   async _insertBeforeKey(targetKey: string, element: any) {
-    // target key is the whole path, like 'data.melee.00001'
+    // target key is the whole path, like 'system.melee.00001'
     const components = targetKey.split('.')
 
     const index = parseInt(components.pop()!)
@@ -4609,7 +4609,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (!count || count <= 0) return true // didn't want to split
     if (count >= srceqt.count) return false // not a split, but a move
 
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0)
+    if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0)
 
     if (srceqt.globalid) {
       this.ignoreRender = true

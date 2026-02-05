@@ -4113,7 +4113,7 @@ export class GurpsActor extends Actor {
   }
 
   async _removeKey(sourceKey) {
-    // source key is the whole path, like 'data.melee.00001'
+    // source key is the whole path, like 'system.melee.00001'
     let components = sourceKey.split('.')
 
     let index = parseInt(components.pop())
@@ -4139,7 +4139,7 @@ export class GurpsActor extends Actor {
   }
 
   async _insertBeforeKey(targetKey, element) {
-    // target key is the whole path, like 'data.melee.00001'
+    // target key is the whole path, like 'system.melee.00001'
     let components = targetKey.split('.')
 
     let index = parseInt(components.pop())
