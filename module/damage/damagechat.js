@@ -3,6 +3,7 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
+import { DragDropType } from '../drag-drop-types.ts'
 import selectTarget from '../utilities/select-target.js'
 
 /**
@@ -38,7 +39,7 @@ export default class DamageChat {
         let message = damageMessages[index]
         let payload = transfer.payload[index]
 
-        makeElementDraggable(message, 'damageItem', 'dragging', payload, DamageChat.damageDragImage, [30, 30])
+        makeElementDraggable(message, DragDropType.DAMAGE, 'dragging', payload, DamageChat.damageDragImage, [30, 30])
       }
     } // end-if (!!damageMessages && damageMessages.length)
 
@@ -48,7 +49,14 @@ export default class DamageChat {
     if (!!allDamageMessage && allDamageMessage.length == 1) {
       let message = allDamageMessage[0]
 
-      makeElementDraggable(message, 'damageItem', 'dragging', transfer.payload, DamageChat.damageDragImage, [30, 30])
+      makeElementDraggable(
+        message,
+        DragDropType.DAMAGE,
+        'dragging',
+        transfer.payload,
+        DamageChat.damageDragImage,
+        [30, 30]
+      )
     }
 
     // If there was a target, enable the GM's apply button
@@ -84,7 +92,7 @@ export default class DamageChat {
     const actor = game.actors.get(dropData.actorid)
 
     switch (dropData.type) {
-      case 'damageItem':
+      case DragDropType.DAMAGE:
         await DamageChat._calculateAndSelectTargets(canvas, dropData)
         break
       case 'Item':
@@ -448,7 +456,7 @@ export default class DamageChat {
     }
 
     messageData['flags.gurps.transfer'] = {
-      type: 'damageItem',
+      type: DragDropType.DAMAGE,
       payload: draggableData,
       userTarget: userTarget ? userTarget.id : null,
     }
