@@ -102,5 +102,5 @@
   "socket": true,
   "url": "https://github.com/crnormand/gurps",
   "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-  "download": "https://github.com/crnormand/gurps/releases/download/v0.18.12/system.zip"
+  "download": "https://github.com/crnormand/gurps/releases/download/v0.18.13/system.zip"
 }

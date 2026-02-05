@@ -1,6 +1,56 @@
 import { GcsDice } from '../../../lib/gcs/dice.ts'
 
 describe('GcsDice', () => {
+  describe('constructor', () => {
+    it('should create a dice with default parameters', () => {
+      const dice = new GcsDice(2, 3)
+      expect(dice.count).toBe(2)
+      expect(dice.modifier).toBe(3)
+      expect(dice.multiplier).toBe(1)
+      expect(dice.sides).toBe(6)
+    })
+
+    it('should create a dice with custom multiplier and sides', () => {
+      const dice = new GcsDice(3, 1, 2, 8)
+      expect(dice.count).toBe(3)
+      expect(dice.modifier).toBe(1)
+      expect(dice.multiplier).toBe(2)
+      expect(dice.sides).toBe(8)
+    })
+  })
+
+  describe('fromString', () => {
+    it('should parse simple dice notation', () => {
+      const dice = GcsDice.fromString('2d')
+      expect(dice.count).toBe(2)
+      expect(dice.modifier).toBe(0)
+    })
+
+    it('should parse dice notation with positive modifier', () => {
+      const dice = GcsDice.fromString('3d+2')
+      expect(dice.count).toBe(3)
+      expect(dice.modifier).toBe(2)
+    })
+
+    it('should parse dice notation with negative modifier', () => {
+      const dice = GcsDice.fromString('2d-1')
+      expect(dice.count).toBe(2)
+      expect(dice.modifier).toBe(-1)
+    })
+
+    it('should parse dice notation with en dash', () => {
+      const dice = GcsDice.fromString('2d–3')
+      expect(dice.count).toBe(2)
+      expect(dice.modifier).toBe(-3)
+    })
+
+    it('should throw error for invalid dice notation', () => {
+      expect(() => GcsDice.fromString('invalid')).toThrow('Invalid dice string: invalid')
+      expect(() => GcsDice.fromString('d2')).toThrow('Invalid dice string: d2')
+      expect(() => GcsDice.fromString('2d+a')).toThrow('Invalid dice string: 2d+a')
+    })
+  })
+
   describe('normalizeDamage', () => {
     it.each([
       // 1d with low modifiers stays the same (modifier < 3 when count == 1)
@@ -57,6 +107,71 @@ describe('GcsDice', () => {
     ])('should format $count dice with modifier $modifier as "$expected"', ({ count, modifier, expected }) => {
       const dice = new GcsDice(count, modifier)
       expect(dice.toString()).toBe(expected)
+    })
+  })
+
+  describe('minus', () => {
+    it('should calculate difference between same count dice', () => {
+      const dice1 = new GcsDice(2, 3)
+      const dice2 = new GcsDice(2, 1)
+      expect(dice1.difference(dice2)).toBe(2)
+    })
+
+    it('should normalize count when other has higher count', () => {
+      const dice1 = new GcsDice(1, 0)
+      const dice2 = new GcsDice(2, 0)
+      // dice2 normalized to 1d: 2d0 -> 1d+4
+      expect(dice1.difference(dice2)).toBe(-4)
+    })
+
+    it('should normalize count when other has lower count', () => {
+      const dice1 = new GcsDice(2, 0)
+      const dice2 = new GcsDice(1, 0)
+      // dice2 normalized to 2d: 1d0 -> 2d-4
+      expect(dice1.difference(dice2)).toBe(4)
+    })
+
+    it('should handle negative modifiers', () => {
+      const dice1 = new GcsDice(2, -1)
+      const dice2 = new GcsDice(2, -3)
+      expect(dice1.difference(dice2)).toBe(2) // (-1) - (-3) = 2
+    })
+  })
+
+  describe('normalizeCount', () => {
+    it('should return other unchanged when counts are equal', () => {
+      const dice = new GcsDice(2, 0)
+      const result = dice.normalizeCount(new GcsDice(2, 3))
+      expect(result.count).toBe(2)
+      expect(result.modifier).toBe(3)
+    })
+
+    it('should convert higher count to lower count', () => {
+      const dice = new GcsDice(1, 0)
+      const result = dice.normalizeCount(new GcsDice(3, 0))
+      expect(result.count).toBe(1)
+      expect(result.modifier).toBe(8) // 0 + 4 + 4
+    })
+
+    it('should convert lower count to higher count', () => {
+      const dice = new GcsDice(3, 0)
+      const result = dice.normalizeCount(new GcsDice(1, 0))
+      expect(result.count).toBe(3)
+      expect(result.modifier).toBe(-8) // 0 - 4 - 4
+    })
+
+    it('should preserve existing modifier', () => {
+      const dice = new GcsDice(2, 0)
+      const result = dice.normalizeCount(new GcsDice(1, 2))
+      expect(result.count).toBe(2)
+      expect(result.modifier).toBe(-2) // 2 - 4
+    })
+
+    it('should handle multiple normalizations', () => {
+      const dice = new GcsDice(4, 0)
+      const result = dice.normalizeCount(new GcsDice(1, 1))
+      expect(result.count).toBe(4)
+      expect(result.modifier).toBe(-11) // 1 - 4 - 4 - 4
     })
   })
 })

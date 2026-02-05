@@ -11,7 +11,7 @@ A Game Aid for the Generic Universal Role-Playing System (GURPS) from [Steve Jac
 
 [Changelog](https://github.com/crnormand/gurps/blob/main/changelog.md)
 
-## Current Release Version 0.18.12
+## Current Release Version 0.18.13
 
 If you like our work [Sponsor our development](https://github.com/sponsors/crnormand) or <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 

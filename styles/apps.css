@@ -2120,6 +2120,15 @@ details .popup.square5x4 {
   display: inline-block;
 }
 
+.system-gurps .sheet.actor .gurpslink,
+.system-gurps .sheet.actor .glinkmodplus,
+.system-gurps .sheet.actor .glinkmodminus,
+.system-gurps .sheet.actor .glinkmod {
+  padding: 1px 4px;
+  line-height: inherit;
+  color: inherit;
+}
+
 .system-gurps .gurpslink {
   border: 1px solid var(--gga-bordercolor-gurpslink);
   background: var(--gga-background-gurpslink);
