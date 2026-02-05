@@ -8,10 +8,7 @@
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
     "actor": {
-      "setting": {
-        "autoUpdateStrength": "Auto Update Strength",
-        "autoUpdateStrengthHint": "Automatically update Basic Lift, Thrust and Swing damage when ST changes."
-      }
+      "setting": {}
     },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",

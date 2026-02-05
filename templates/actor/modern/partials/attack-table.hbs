@@ -22,7 +22,7 @@
           <span class='ms-attack-usage'>{{this.mode}}</span>
           <span class='ms-attack-level'>{{this.level}}</span>
           <span
-            class='ms-attack-damage'>{{>dice-button otf=(quotedAttackName "D" this) level=null text=(displayAsDice this.damage ../system) damage=true color='var(--ms-hp)'}}</span>
+            class='ms-attack-damage'>{{>dice-button otf=(quotedAttackName "D" this) level=null text=this.damage damage=true color='var(--ms-hp)'}}</span>
           {{#if ../isMelee}}
             <span class='ms-attack-reach'>{{this.reach}}</span>
             <span

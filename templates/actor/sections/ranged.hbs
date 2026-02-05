@@ -40,7 +40,7 @@
         <input name='system.ranged.{{@key}}.acc' class='gcs-input-sm2' type='text' value='{{acc}}' />
       </div>
       <div class='damage'>
-        <input name='system.ranged.{{@key}}.damage' class='gcs-input-5' type='text' value='{{displayAsDice damage ../system}}' />
+        <input name='system.ranged.{{@key}}.damage' class='gcs-input-5' type='text' value='{{damage}}' />
       </div>
       <div class='range'>
         <input name='system.ranged.{{@key}}.range' class='gcs-input-sm5' type='text' value='{{range}}' />
@@ -108,7 +108,7 @@
         >
           {{{displayNumber this.acc showPlus=false}}}
         </div>
-        <div class='damage flex-center rollable' data-damage data-otf='{{quotedAttackName "D" this}}'>{{displayAsDice damage ../system}}</div>
+        <div class='damage flex-center rollable' data-damage data-otf='{{quotedAttackName "D" this}}'>{{damage}}</div>
         <div class='range flex-center'>{{range}}</div>
         <div class='rof gga-right'>{{rof}}</div>
         <div class='shots flex-center'>{{shots}}</div>

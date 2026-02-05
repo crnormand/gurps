@@ -8,10 +8,7 @@
     "activeEffect": "Активный эффект",
     "activeEffects": "Активные эффекты",
     "actor": {
-      "setting": {
-        "autoUpdateStrength": "Автоматическое обновление Силы",
-        "autoUpdateStrengthHint": "Автоматически обновлять Базовый подъем, урон от удара и замаха при изменении ST."
-      }
+      "setting": {}
     },
     "addAbbrev": "Сокращение",
     "addAdditionalStackingModifier": "Дополнительный модификатор",

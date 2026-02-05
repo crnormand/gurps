@@ -8,10 +8,7 @@
     "activeEffect": "Aktiver Effekt",
     "activeEffects": "Active Effects",
     "actor": {
-      "setting": {
-        "autoUpdateStrength": "Stärke automatisch aktualisieren",
-        "autoUpdateStrengthHint": "Automatisch Grundlift, Stoß- und Schwungschaden aktualisieren, wenn sich die ST ändert."
-      }
+      "setting": {}
     },
     "addAbbrev": "Abkürzung",
     "addAdditionalStackingModifier": "Weiterer Modifikator",

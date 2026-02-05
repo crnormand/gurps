@@ -8,10 +8,7 @@
     "activeEffect": "Efeito Ativo",
     "activeEffects": "Efeitos Ativos",
     "actor": {
-      "setting": {
-        "autoUpdateStrength": "Atualizar Força Automaticamente",
-        "autoUpdateStrengthHint": "Atualizar automaticamente Carga Básica, dano de Golpe e Balanço quando o ST muda."
-      }
+      "setting": {}
     },
     "addAbbrev": "Abrev",
     "addAdditionalStackingModifier": "Modificadores adicionais",

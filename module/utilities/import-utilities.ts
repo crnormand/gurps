@@ -1,21 +1,3 @@
-/**
- * Build damage output string from weapon data
- * @param {object} weapon - Weapon object with damage properties
- * @returns {string} Formatted damage string
- */
-export function buildDamageOutputGCS(weapon: Record<string, any> | null | undefined): string {
-  if (!weapon?.damage?.st || !['thr', 'sw'].includes(weapon.damage.st)) return weapon?.calc?.damage || ''
-
-  const modifier = parseInt(weapon.damage?.base || '0')
-
-  // If modifier is NaN, fall back to calc.damage
-  if (isNaN(modifier)) return weapon?.calc?.damage || ''
-
-  const sign = modifier <= 0 ? '' : '+'
-
-  return `${weapon.damage.st}${sign}${modifier === 0 ? '' : modifier} ${weapon.damage.type}`
-}
-
 type XmlTextLike = { ['#text']?: string } | string | number | null | undefined
 
 export const readXmlText = (value: XmlTextLike): string => {
@@ -23,20 +5,6 @@ export const readXmlText = (value: XmlTextLike): string => {
   if (typeof value === 'string' || typeof value === 'number') return String(value).trim()
   if (typeof value === 'object' && value['#text']) return String(value['#text']).trim()
   return ''
-}
-
-/**
- * Build damage output string from GCA melee mode data
- * @param {object} mode - GCA melee mode object
- * @returns {string} Formatted damage string
- */
-export function buildDamageOutputGCA(mode: Record<string, any> | null | undefined): string {
-  if (!mode) return ''
-
-  const direct = readXmlText(mode.unmodifiedDamage)
-  if (direct.toLowerCase().match(/^(sw|thr)[ +-]/)) return direct
-
-  return readXmlText(mode.damage)
 }
 
 type Encumbrance = {
