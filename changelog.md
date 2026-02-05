@@ -1,11 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.13
+## Release 0.18.13 02/05/2026
 
 ### Bugfixes
 
 - Changing ST does not change damage in weapon attacks \#2538" -- fixed by removing "Auto Update Strength" code.
 - Removed "Recalculate" button for Swing, Thrust, Basic Lift.
+- New UI - Mook Creator doesn't allow Floatational (sic) Speed \#2544
+
 
 ## Release 0.18.12 02/01/2026
 
