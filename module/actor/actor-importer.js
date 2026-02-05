@@ -251,16 +251,16 @@ export class ActorImporter {
 
       // For each saved item with global id, lets run their additions
       // if (this.isUsingFoundryItems()) {
-        for (let key of ['ads', 'skills', 'spells']) {
-          await aRecurselist(this.actor.system[key], async item => {
-            if (!!item.itemid) {
-              const i = this.actor.items.get(item.itemid)
-              if (!!i.system.globalid) {
-                await this.actor._addItemAdditions(i, '')
-              }
+      for (let key of ['ads', 'skills', 'spells']) {
+        await aRecurselist(this.actor.system[key], async item => {
+          if (!!item.itemid) {
+            const i = this.actor.items.get(item.itemid)
+            if (!!i.system.globalid) {
+              await this.actor._addItemAdditions(i, '')
             }
-          })
-        }
+          }
+        })
+      }
       // }
       // Recalculate DR
       await this.actor.refreshDR()
@@ -486,16 +486,16 @@ export class ActorImporter {
 
       // For each saved item with global id, lets run their additions
       // if (this.isUsingFoundryItems()) {
-        for (let key of ['ads', 'skills', 'spells']) {
-          await aRecurselist(this.actor.system[key], async item => {
-            if (!!item.itemid) {
-              const i = this.actor.items.get(item.itemid)
-              if (!!i.system.globalid) {
-                await this.actor._addItemAdditions(i, '')
-              }
+      for (let key of ['ads', 'skills', 'spells']) {
+        await aRecurselist(this.actor.system[key], async item => {
+          if (!!item.itemid) {
+            const i = this.actor.items.get(item.itemid)
+            if (!!i.system.globalid) {
+              await this.actor._addItemAdditions(i, '')
             }
-          })
-        }
+          }
+        })
+      }
       // }
       // Recalculate DR
       await this.actor.refreshDR()
@@ -788,16 +788,16 @@ export class ActorImporter {
 
     // Find all skills with globalId
     // if (this.isUsingFoundryItems()) {
-      await aRecurselist(this.actor.system.skills, async item => {
-        if (!!item.itemid) {
-          const i = this.actor.items.get(item.itemid)
-          if (!!i?.system.globalid) {
-            if (!(item instanceof Skill)) item = Skill.fromObject(item, this.actor)
-            item = await this._processItemFrom(item, 'GCA')
-            temp.push(item)
-          }
+    await aRecurselist(this.actor.system.skills, async item => {
+      if (!!item.itemid) {
+        const i = this.actor.items.get(item.itemid)
+        if (!!i?.system.globalid) {
+          if (!(item instanceof Skill)) item = Skill.fromObject(item, this.actor)
+          item = await this._processItemFrom(item, 'GCA')
+          temp.push(item)
         }
-      })
+      }
+    })
     // }
 
     return {
@@ -850,16 +850,16 @@ export class ActorImporter {
 
     // Find all spells with globalId
     // if (this.isUsingFoundryItems()) {
-      await aRecurselist(this.actor.system.spells, async item => {
-        if (!!item.itemid) {
-          const i = this.actor.items.get(item.itemid)
-          if (!!i?.system.globalid) {
-            if (!(item instanceof Spell)) item = Spell.fromObject(item, this.actor)
-            item = await this._processItemFrom(item, 'GCA')
-            temp.push(item)
-          }
+    await aRecurselist(this.actor.system.spells, async item => {
+      if (!!item.itemid) {
+        const i = this.actor.items.get(item.itemid)
+        if (!!i?.system.globalid) {
+          if (!(item instanceof Spell)) item = Spell.fromObject(item, this.actor)
+          item = await this._processItemFrom(item, 'GCA')
+          temp.push(item)
         }
-      })
+      }
+    })
     // }
 
     return {
