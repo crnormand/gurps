@@ -39,7 +39,7 @@ export function bindDropdownToggle(html: HTMLElement, config: DropdownConfig): v
     const openDropdown = html.querySelector(`${dropdownSelector}.open`)
     const target = event.target
 
-    if (openDropdown && isHTMLElement(target) && !openDropdown.contains(target)) {
+    if (openDropdown && target instanceof Node && !openDropdown.contains(target)) {
       openDropdown.classList.remove('open')
     }
   })

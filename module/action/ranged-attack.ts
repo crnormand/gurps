@@ -68,7 +68,7 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
 
     // If the OTF does not return an action, we cannot set the level.
     if (!action.action) {
-      console.warn(`GURPS | MeleeAttackModel: OTF "${otf}" did not return a valid action.`)
+      console.warn(`GURPS | RangedAttackModel: OTF "${otf}" did not return a valid action.`)
 
       return
     }

@@ -90,6 +90,33 @@
         >
           {{this.level}}
         </div>
+        <div data-path='system.melee'>
+          {{{gurpslink this.name}}}
+          <div class='list_note'>{{{gurpslink this.notes}}}</div>
+        </div>
+        <div
+          class='rollable simple_roll_label'
+          data-damage
+          data-otf='{{quotedAttackName "D" this}}'
+        >{{this.damage}}</div>
+        <div class='rollable simple_roll_label' data-name='{{this.name}} ({{this.mode}})' data-otf='A:"{{this.name}}"'>
+          {{this.level}}
+        </div>
+      {{/each}}
+      {{#each system.ranged as |this key|}}
+        <div data-path='system.ranged'>
+          {{{gurpslink this.name}}}
+          <div class='list_note'>{{{gurpslink this.notes}}}</div>
+        </div>
+        <div class='rollable simple_roll_label' data-damage>{{this.damage}}</div>
+        <div
+          class='rollable simple_roll_label'
+          data-name='{{this.name}} ({{this.mode}})'
+          data-key='system.ranged.{{key}}'
+          data-otf='A:"{{this.name}}"'
+        >
+          {{this.level}}
+        </div>
       {{/each}}
     </div>
     <div class='simple_Skills'>
@@ -108,13 +135,14 @@
     </div>
     <div class='simple_Eqt'>
       <label class='eqtdragtarget dblclksort' data-key='system.equipment.carried'>My Belongings</label>
-      <label></label>
       <label>#</label>
       {{#listeqt system.equipment.carried}}
         <div class='indent{{@indent}} eqtdraggable' data-key='system.equipment.carried.{{@key}}'>
           {{{gurpslink this.name}}}
         </div>
-        <div class='list_note' data-key='system.equipment.carried.{{@key}}'>{{{gurpslink this.notes}}}</div>
+        <div class='list_note eqtdraggable' data-key='system.equipment.carried.{{@key}}'>{{{gurpslink
+            this.notes
+          }}}</div>
         <div>{{this.count}}</div>
       {{/listeqt}}
     </div>
@@ -123,7 +151,7 @@
       {{#each system.ads as |this key|}}
         <div class='adsdraggable' data-key='system.ads.{{key}}'>
           {{{gurpslink this.name}}}
-          <div class='list_note' data-key='system.ads.{{key}}'>{{{gurpslinkbr this.notes}}}</div>
+          <div class='adsdraggable' data-key='system.ads.{{key}}'>{{{gurpslinkbr this.notes}}}</div>
         </div>
       {{/each}}
     </div>
@@ -133,9 +161,7 @@
     <div class='simple_Notes'>
       <label>Notes</label>
       {{#each system.notes}}
-        <div>
-          {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
-        </div>
+        <div>{{{gurpslinkbr this.notes}}}</div>
       {{/each}}
     </div>
   </div>

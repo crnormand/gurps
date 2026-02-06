@@ -17,7 +17,7 @@ export async function rollDamage(
   if (!game.settings || !game.i18n || !game.users)
     throw new Error('GURPS | rollDamage: game settings or i18n or users not available.')
 
-  const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+  const showRollDialog = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
 
   if (showRollDialog && !canRoll.isSlam) {
     // Get Actor Info
@@ -50,7 +50,7 @@ export async function rollDamage(
     const originalFormula = action.formula.match(/\d+d[+-]?\d*/)?.[0]
     const damageCost = action.costs?.split(' ').pop() || ''
     const otfDamageText = !!action.overridetxt && action.overridetxt !== action.formula ? action.overridetxt : ''
-    const usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
+    const usingDiceAdd = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
 
     // Before open a new dialog, we need to make sure all other dialogs are closed, because bucket must be reset
     // before we start a new roll.
@@ -127,7 +127,6 @@ export async function rollDamage(
       )
 
       if (action.next) {
-        // @ts-expect-error: Unrefined type
         return await GURPS.performAction(action.next, actor, event, targets)
       }
 
@@ -151,7 +150,6 @@ export async function rollDamage(
     )
 
     if (action.next) {
-      // @ts-expect-error: Unrefined type
       return await GURPS.performAction(action.next, actor, event, targets)
     }
 

@@ -406,9 +406,9 @@ export class TokenActions {
       }
     }
 
-    const allModifiers = await foundry.utils
-      .getProperty(this.actor, 'system.conditions.usermods')
-      .filter(m => !m.includes('#maneuver') && !m.includes('@eft:'))
+    const allModifiers = await [...foundry.utils.getProperty(this.actor, 'system.conditions.usermods')].filter(
+      m => !m.includes('#maneuver') && !m.includes('@eft:')
+    )
 
     const maneuverModifiers = []
 
@@ -793,7 +793,7 @@ export class TokenActions {
     return icon
   }
   async removeCombatTempMods() {
-    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const combatTempTags = taggedSettings.combatTempTag
       .split(',')
       .map(it => it.trim().toLowerCase())
@@ -827,15 +827,15 @@ export class TokenActions {
       case 'b':
         this.totalBlocks += 1
         break
-
       case 'p': {
         const settingsAddParryMods = game.settings.get(
-          Settings.SYSTEM_NAME,
+          GURPS.SYSTEM_NAME,
           Settings.SETTING_ADD_CUMULATIVE_PARRY_PENALTIES
         )
 
         if (settingsAddParryMods) {
           this.totalParries += 1
+
           const nameRegex = /(?<="|:).+(?=\s\(|"|])/gm
           let name = chatThing.match(nameRegex)?.[0]
 
@@ -858,7 +858,6 @@ export class TokenActions {
 
         break
       }
-
       case 'm':
       case 'r':
         this.totalActions += 1

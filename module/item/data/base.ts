@@ -112,6 +112,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
     return this.parent.actor?.items.get(this.containedBy ?? '') || null
   }
 
+  /* ---------------------------------------- */
+
   get isContained(): boolean {
     return ContainerUtils.isContained(this)
   }

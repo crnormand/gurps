@@ -5,7 +5,7 @@
     {{#if thresholds}}
       {{#if breakpoints}}
         {{#with (lookup thresholds (breakpointIndex-of thresholds max value))}}
-          <div class='tooltip condition' style='background-color: {{color}} {{! concat color "80"}};'>{{{gurpslink condition}}}
+				<div class='tooltip condition' style='background-color: {{color}}; color: {{contrastColor color}}'>{{{gurpslink condition}}}
             <span class="tooltiptext">
               <div style="display: grid; grid-template-columns: min-content min-content auto;">
                 {{#each (controlBreakpoints ../this)}}
@@ -25,7 +25,7 @@
         {{/with}}
       {{else}}
         {{#with (lookup thresholds (threshold-of thresholds max value))}}
-          <div class='tooltip condition' style='background-color: {{concat color "80"}};'>{{{gurpslink condition}}}
+          <div class='tooltip condition' style='background-color: {{color}}; color: {{contrastColor color}}'>{{{gurpslink condition}}}
             <span class="tooltiptext">
               <div style="display: grid; grid-template-columns: min-content min-content auto;">
                 {{#each (thresholdBreakpoints ../this)}}

@@ -93,7 +93,7 @@ export class _Base {
       const existingComponentItem = actor.items.get(actorComp.itemid)
 
       if (existingComponentItem) {
-        // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        // if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
         actorComp.itemid = existingComponentItem.itemid || ''
         // }
         // actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
@@ -207,7 +207,7 @@ export class Named extends _Base {
    * @param {Actor} actor - The actor to use.
    * @return {*} The converted item data.
    */
-  toItemData() {
+  toItemData(actor, _fromProgram = '') {
     throw new Error('Not implemented')
   }
 
@@ -243,7 +243,7 @@ export class Named extends _Base {
    * @param {Object} item - The item to check for an update.
    * @return {boolean} - Returns true if the item needs an update, otherwise false.
    */
-  _itemNeedsUpdate() {
+  _itemNeedsUpdate(_item) {
     throw new Error('Not implemented')
   }
 
@@ -403,13 +403,13 @@ export class Skill extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -530,13 +530,13 @@ export class Spell extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -661,13 +661,13 @@ export class Advantage extends NamedCost {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -814,46 +814,47 @@ export class Melee extends Attack {
       type: 'meleeAtk',
       system: {
         mel: {
-          notes: this.notes || system.notes || '',
-          pageref: this.pageref || '',
-          contains: this.contains || {},
-          uuid: uniqueId,
-          parentuuid: this.parentuuid || '',
-          points: this.points || 0,
-          ['import']: this['import'] || '',
-          level: this.level || 0,
-          weight: this.weight || '',
-          techlevel: this.techlevel || '',
-          cost: this.cost || '',
-          reach: this.reach || '',
-          parry: this.parry || '',
           baseParryPenalty: this.baseParryPenalty || -4,
           block: this.block || '',
-          name: this.name,
-          originalName: this.originalName || '',
-          st: this.st || '',
-          mode: this.mode || '',
-          otf: this.otf || '',
           checkotf: this.checkotf || '',
-          duringotf: this.duringotf || '',
-          passotf: this.passotf || '',
-          failotf: this.failotf || '',
-          extraAttacks: this.extraAttacks || 0,
           consumeAction: this.consumeAction || true,
+          contains: this.contains || {},
+          cost: this.cost || '',
+          damage: this.damage || '',
+          duringotf: this.duringotf || '',
+          extraAttacks: this.extraAttacks || 0,
+          failotf: this.failotf || '',
+          ['import']: this['import'] || '',
+          level: this.level || 0,
+          mode: this.mode || '',
+          name: this.name,
+          notes: this.notes || system.notes || '',
+          originalName: this.originalName || '',
+          otf: this.otf || '',
+          pageref: this.pageref || '',
+          parentuuid: this.parentuuid || '',
+          parry: this.parry || '',
+          passotf: this.passotf || '',
+          points: this.points || 0,
+          reach: this.reach || '',
+          st: this.st || '',
+          techlevel: this.techlevel || '',
+          uuid: uniqueId,
+          weight: this.weight || '',
         },
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
         ads: this.ads || system.ads || {},
+        bonuses: this.bonuses || system.bonuses || '',
+        fromItem: this.fromItem || '',
+        globalid: system.globalid || '',
+        importFrom: importFrom,
+        importid: importId,
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
+        melee: this.melee || system.melee || {},
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
+        ranged: this.ranged || system.ranged || {},
         skills: this.skills || system.skills || {},
         spells: this.spells || system.spells || {},
-        melee: this.melee || system.melee || {},
-        ranged: this.ranged || system.ranged || {},
-        bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
-        globalid: system.globalid || '',
-        importid: importId,
-        importFrom: importFrom,
-        fromItem: this.fromItem || '',
-        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
       },
     }
   }
@@ -973,13 +974,13 @@ export class Ranged extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -1157,7 +1158,7 @@ export class Equipment extends Named {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         equipped: this.equipped,
         carried: this.carried,
         globalid: system.globalid || '',
@@ -1165,7 +1166,7 @@ export class Equipment extends Named {
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }

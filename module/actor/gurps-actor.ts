@@ -1,4 +1,3 @@
-import { GurpsItemV2 } from 'module/item/gurps-item.js'
 import { EquipmentV1 } from 'module/item/legacy/equipment-adapter.js'
 
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -24,7 +23,7 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { TokenActions } from '../token-actions.js'
-import { fields } from '../types/foundry/index.ts'
+import { fields } from '../types/foundry/data-fields.ts'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { parseItemKey } from '../utilities/object-utils.js'
 
@@ -32,6 +31,7 @@ import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Sp
 import { ActorImporter } from './actor-importer.js'
 import { DamageActionSchema, ReactionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
+import { collectDeletions } from './deletion.js'
 import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
 import {
   ActorV1Interface,
@@ -56,7 +56,7 @@ import Maneuvers, {
 import { CanRollResult, CheckInfo } from './types.js'
 
 function DamageModule() {
-  return GURPS.module.Damage
+  return GURPS.modules.Damage
 }
 
 export const MoveModes = {
@@ -65,8 +65,6 @@ export const MoveModes = {
   Water: 'GURPS.moveModeWater',
   Space: 'GURPS.moveModeSpace',
 }
-// Legacy TODO
-// TODO Uncaught (in promise) TypeError: this.actor.getEquippedParry is not a function
 
 interface EquipmentDropData {
   actorid: string
@@ -85,8 +83,6 @@ interface EquipmentDropData {
 }
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> implements ActorV1Interface {
-  /* ---------------------------------------- */
-
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
     return this.system as Actor.SystemOfType<'characterV2' | 'enemy'>
@@ -228,11 +224,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     for (const item of this.items) {
       if (options.attackType === 'melee') {
-        attacks.push(...item.getItemAttacks({ attackType: 'melee' }))
+        attacks.push(...(item as Item.Implementation).getItemAttacks({ attackType: 'melee' }))
       } else if (options.attackType === 'ranged') {
-        attacks.push(...item.getItemAttacks({ attackType: 'ranged' }))
+        attacks.push(...(item as Item.Implementation).getItemAttacks({ attackType: 'ranged' }))
       } else {
-        attacks.push(...item.getItemAttacks({ attackType: 'both' }))
+        attacks.push(...(item as Item.Implementation).getItemAttacks({ attackType: 'both' }))
       }
     }
 
@@ -245,7 +241,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const out: foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] = []
 
     for (const item of this.items) {
-      if (!this.isFeatureV2(item)) continue
+      if (!this.isFeatureV2(item as Item.Implementation)) continue
       out.push(...(item.system[key] ?? []))
     }
 
@@ -267,7 +263,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to GurpsActorV2#toggleStatusEffect`)
 
     if (this.isPostureEffect(status)) {
-      const postureEffects = this.getAllActivePostureEffects().filter(effect => !effect.statuses.has(statusId))
+      // If the status effect is a posture, remove all other postures first
+      const postureEffects = this.getAllActivePostureEffects().filter(e => e.statuses.find(s => s !== statusId))
+
+      for (const it of postureEffects) {
+        await super.toggleStatusEffect(it.statuses.first()!, options)
+      }
 
       for (const postureEffect of postureEffects) {
         await super.toggleStatusEffect(postureEffect.statuses.first()!, options)
@@ -559,6 +560,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
   }
 
+  /* ---------------------------------------- */
+
   /** Iterate through all embedded pseudo-documents and execute a function */
   doForEachEmbedded(fn: (pd: PseudoDocument) => void) {
     const embedded = this.modelV2?.metadata?.embedded ?? {}
@@ -605,7 +608,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     // Legacy V1 handling.
     let isDamageRoll = false
-    const taggedSettings = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedSettings = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const allRollTags = taggedSettings.allRolls.split(',').map(it => it.trim().toLowerCase())
 
     // First get Item or Attribute Effect Tags
@@ -870,7 +873,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         break
       }
-
       case 'weapon-block':
       case 'weapon-parry':
         name = action.name.split('(')[0].trim()
@@ -898,7 +900,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         break
-
       case 'skill-spell': {
         const item = this.findByOriginalName(action.name)
 
@@ -925,7 +926,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         break
       }
-
       case 'attribute': {
         let attrName = action?.overridetxt
 
@@ -940,7 +940,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
         break
       }
-
       case 'controlroll':
         result = {
           name: action.overridetxt || action.orig,
@@ -1265,15 +1264,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * one toggles status effects. Consider unifying the behavior.
    */
   async replacePosture(postureId: string) {
-    if (postureId === GURPS.StatusEffectStanding) {
-      for (const statusId of Object.keys(GURPS.StatusEffect.getAllPostures())) {
-        const effect = this.effects.find(activeEffect => activeEffect.statuses.has(statusId))
+    const id = postureId === GURPS.StatusEffectStanding ? this.modelV2.conditions.posture : postureId
 
-        if (effect) await effect.delete()
-      }
-    } else {
-      await this.toggleStatusEffect(postureId)
-    }
+    this.toggleStatusEffect(id)
   }
 
   /* ---------------------------------------- */
@@ -1401,7 +1394,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * NOTE: Both character and characterV2.
    */
-  findEquipmentByName(pattern: string, otherFirst = false): [GurpsItemV2 | null, string | null] | null {
+  findEquipmentByName(pattern: string, otherFirst = false): [Item.Implementation | null, string | null] | null {
     if (this.isNewActorType) {
       // Removed leading slashes
       const patterns = makeRegexPatternFrom(pattern.replace(/^\/+/, ''))
@@ -1412,17 +1405,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         // Apply ^ to each pattern
         .map(e => new RegExp('^' + e, 'i'))
 
-      const carriedItem = this.modelV2.equipmentV2.carried.find((e: GurpsItemV2<'equipmentV2'>) =>
+      const carriedItem = this.modelV2.equipmentV2.carried.find((e: Item.OfType<'equipmentV2'>) =>
         patterns.some(p => p.test(e.name))
       )
-      const otherItem = this.modelV2.equipmentV2.other.find((e: GurpsItemV2<'equipmentV2'>) =>
+      const otherItem = this.modelV2.equipmentV2.other.find((e: Item.OfType<'equipmentV2'>) =>
         patterns.some(p => p.test(e.name))
       )
 
-      const carriedResult: [GurpsItemV2<'equipmentV2'>, string] | null = carriedItem
+      const carriedResult: [Item.OfType<'equipmentV2'>, string] | null = carriedItem
         ? [carriedItem ?? null, carriedItem.id ?? '']
         : null
-      const otherResult: [GurpsItemV2<'equipmentV2'>, string] | null = otherItem
+      const otherResult: [Item.OfType<'equipmentV2'>, string] | null = otherItem
         ? [otherItem ?? null, otherItem.id ?? '']
         : null
 
@@ -1573,7 +1566,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.size = checks.length
           break
         }
-
         case 'otherChecks': {
           const icons = {
             checks: {
@@ -1611,7 +1603,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.size = size
           break
         }
-
         case 'attackChecks': {
           const attacks = ['melee', 'ranged']
 
@@ -1627,6 +1618,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
                 // @ts-expect-error - itemid property not in Item type definition
                 const img = this.items.get(comp?.itemid)?.img
                 const symbol = game.i18n!.localize(`GURPS.${key}`)
+
                 let oftName = attack.name
 
                 if (attack.mode) oftName += ` (${attack.mode})`
@@ -1650,7 +1642,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.size = size
           break
         }
-
         case 'defenseChecks': {
           recurselist(this.modelV1.encumbrance, (enc, _k, _d) => {
             if (enc.current) {
@@ -1697,7 +1688,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result.size = size + 1
           break
         }
-
         case 'markedChecks': {
           const traits = ['skills', 'spells', 'ads']
 
@@ -1921,79 +1911,48 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  /**
-   * NOTE: Both character and characterV2.
-   */
-  async deleteEquipment(path: string, depth = 0): Promise<GurpsItemV2 | undefined> {
-    if (this.isNewActorType) {
-      const eqt = foundry.utils.getProperty(this, path) as EquipmentV1
-      const item = eqt.equipmentV2
+  async deleteEntry(path: string, { refreshDR = true } = {}): Promise<unknown> {
+    const data = foundry.utils.getProperty(this, path)
 
-      await this.deleteItem(item)
+    if (!data) return data
 
-      return item
-    } else {
-      // Legacy actor type
-      const eqt: { [key: string]: any } = foundry.utils.getProperty(this, path) as any
+    const savedIgnoreRender = this.ignoreRender
 
-      if (!eqt) return eqt
-      if (depth == 0) this.ignoreRender = true
+    this.ignoreRender = true
 
-      // Delete in reverse order so the keys don't get messed up
-      if (eqt.contains)
-        for (const k of Object.keys(eqt.contains).sort().reverse())
-          await this.deleteEquipment(path + '.contains.' + k, depth + 1)
-      if (eqt.collpased)
-        for (const k of Object.keys(eqt.collapsed).sort().reverse())
-          await this.deleteEquipment(path + '.collapsed.' + k, depth + 1)
+    try {
+      const deletions = collectDeletions(data, path)
 
-      let item: GurpsItemV2 | undefined
+      for (const { itemid } of deletions) {
+        if (itemid) {
+          const foundryItem = this.items.get(itemid)
 
-      if (eqt.itemid) {
-        item = await this.items.get(eqt.itemid)
-        if (item) await item.delete() // data protect for messed up mooks
-        await this._removeItemAdditions(eqt.itemid)
+          if (foundryItem) await foundryItem.delete()
+          await this._removeItemAdditions(itemid)
+        }
       }
 
       await GURPS.removeKey(this, path)
-      if (depth == 0) this._forceRender()
 
-      return item
+      if (refreshDR && path.includes('.equipment.')) {
+        await this.refreshDR()
+      }
+    } finally {
+      this.ignoreRender = savedIgnoreRender
+      this._forceRender()
     }
+
+    return data
   }
 
   /* ---------------------------------------- */
 
-  async deleteItem(item: GurpsItemV2) {
+  async deleteItem(item: Item.Implementation) {
     for (const child of item.contents) await this.deleteItem(child)
     await this.deleteEmbeddedDocuments('Item', [item.id!])
   }
 
   /* ---------------------------------------- */
-
-  async deleteNote(path: string) {
-    if (this.isNewActorType) {
-      const note = foundry.utils.getProperty(this, path) as NoteV1
-      const item = note.noteV2
-      const array = foundry.utils.deepClone(this.modelV2._source.allNotes)
-
-      for (const child of item.allContents) {
-        const index = array.findIndex(n => n.id === child.id)
-
-        if (index !== -1) array.splice(index, 1)
-      }
-
-      array.splice(
-        array.findIndex(it => it.id === item.id),
-        1
-      )
-
-      await this.update({ 'system.allNotes': array } as Actor.UpdateData)
-    } else {
-      // Legacy actor type
-      GURPS.removeKey(this, path)
-    }
-  }
 
   async editItem(path: string, obj: any) {
     if (this.isNewActorType) {
@@ -2047,8 +2006,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       return false
     }
 
-    const srcActor = game.actors!.get(dragData.actorid)
-    const eqt = foundry.utils.getProperty(srcActor!, dragData.key) as EquipmentV1
+    const srcActor = game.actors!.get(dragData.actorid) as GurpsActorV2<Actor.SubType> | undefined
+
+    if (!srcActor) return false
+    const eqt = foundry.utils.getProperty(srcActor, dragData.key) as EquipmentV1
 
     if (
       (!!eqt.contains && Object.keys(eqt.contains).length > 0) ||
@@ -2085,7 +2046,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         // Adjust the source actor's equipment.
-        if (count >= eqt.count) await srcActor.deleteEquipment(dragData.key)
+        if (count >= eqt.count) await srcActor.deleteEntry(dragData.key)
         else await srcActor.updateEqtCount(dragData.key, +eqt.count - count)
       } else {
         // Legacy actor type
@@ -2108,7 +2069,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         }
 
         // Adjust the source actor's equipment.
-        if (count >= eqt.count) await srcActor.deleteEquipment(dragData.key)
+        if (count >= eqt.count) await srcActor.deleteEntry(dragData.key)
         else await srcActor.updateEqtCount(dragData.key, +eqt.count - count)
       }
     } else {
@@ -2139,7 +2100,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  async #createEquipment(eqt: Record<string, any>, count: number, parent: GurpsItemV2<'equipmentV2'> | null = null) {
+  async #createEquipment(eqt: Record<string, any>, count: number, parent: Item.OfType<'equipmentV2'> | null = null) {
     const { _id: _omit, ...itemData } = foundry.utils.duplicate(eqt) as Record<string, any>
 
     itemData.system.containedBy = parent?.id ?? null
@@ -2286,7 +2247,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     // Get the item to move.
-    const item = foundry.utils.getProperty(this, sourcekey) as GurpsItemV2
+    const item = foundry.utils.getProperty(this, sourcekey) as Item.Implementation
 
     // If Item is equipmentV2, check if we should split the item's quantity.
     if (item && item.type === 'equipmentV2' && split) {
@@ -2301,14 +2262,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     // If the item is being dropped onto a same-named item, check if we should merge them.
-    if (item.type === 'equipmentV2' && (await this.checkForMerge(item as GurpsItemV2<'equipmentV2'>, targetkey))) return
+    if (item.type === 'equipmentV2' && (await this.checkForMerge(item as Item.OfType<'equipmentV2'>, targetkey))) return
 
     let where: 'before' | 'inside' | 'after' | null = null
 
     if (targetkey === targetCollection)
       where = 'after' // Dropping on the collection itself, so add to the end.
     else
-      where = await this.resolveDropPosition(item as GurpsItemV2<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>)
+      where = await this.resolveDropPosition(item as Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>)
 
     if (!where) return
 
@@ -2316,7 +2277,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const sourceArray = foundry.utils.getProperty(
       this,
       sourcePath ? [sourceCollection, sourcePath].join('.') : sourceCollection
-    ) as GurpsItemV2[]
+    ) as Item.Implementation[]
 
     // Adjust the target index if dropping before and the source comes before the target.
     if (where === 'before' && isSrcFirst && targetIndex && targetIndex > 0) targetIndex--
@@ -2338,7 +2299,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       targetArray = foundry.utils.getProperty(
         this,
         targetPath ? [targetCollection, targetPath].join('.') : targetCollection
-      ) as GurpsItemV2[]
+      ) as Item.Implementation[]
 
     // Remove the item from the source array.
     sourceArray.splice(sourceIndex!, 1)
@@ -2353,7 +2314,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const container = foundry.utils.getProperty(
         this,
         targetCollection + '.' + targetPath.replace(/\.contains$/, '') // Get rid of the final '.contains'.
-      ) as GurpsItemV2
+      ) as Item.Implementation
 
       containedBy = container.id
     }
@@ -2393,7 +2354,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   private async resolveDropPosition(
-    item: GurpsItemV2<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
+    item: Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
   ): Promise<'before' | 'inside' | 'after' | null> {
     return await foundry.applications.api.DialogV2.wait({
       window: { title: item.name },
@@ -2444,7 +2405,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @returns true if split was handled.
    */
   async #splitEquipment(srckey: string, targetkey: string): Promise<boolean> {
-    const sourceItem = (foundry.utils.getProperty(this, srckey) as GurpsItemV2<'equipmentV2'>) ?? null
+    const sourceItem = (foundry.utils.getProperty(this, srckey) as Item.OfType<'equipmentV2'>) ?? null
 
     if (!sourceItem || !sourceItem.eqt || sourceItem.eqt.count <= 1) return false // Nothing to split
 
@@ -2458,7 +2419,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let parent = null
 
     if (!targetkey.match(/^system\.equipmentV2\.(other|carried)$/)) {
-      parent = (foundry.utils.getProperty(this, targetkey) as GurpsItemV2<'equipmentV2'>) ?? null
+      parent = (foundry.utils.getProperty(this, targetkey) as Item.OfType<'equipmentV2'>) ?? null
     }
 
     // Copy item and save.
@@ -2497,9 +2458,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  private async checkForMerge(item: GurpsItemV2<'equipmentV2'>, targetkey: string): Promise<boolean> {
+  private async checkForMerge(item: Item.OfType<'equipmentV2'>, targetkey: string): Promise<boolean> {
     // If dropping on an item of the same name and type, ask if they want to merge.
-    const targetItem = (foundry.utils.getProperty(this, targetkey) as GurpsItemV2<'equipmentV2'>) ?? null
+    const targetItem = (foundry.utils.getProperty(this, targetkey) as Item.OfType<'equipmentV2'>) ?? null
 
     if (!targetItem || targetItem.type !== 'equipmentV2' || targetItem.name !== item.name) return false
 
@@ -2569,7 +2530,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (this.isNewActorType) {
       if (targetKey) {
         targetKey = this.#convertLegacyItemKey(targetKey)
-        const parent = foundry.utils.getProperty(this, targetKey) as GurpsItemV2<'equipmentV2'> | null
+        const parent = foundry.utils.getProperty(this, targetKey) as Item.OfType<'equipmentV2'> | null
 
         if (parent && parent.isOfType('equipmentV2')) {
           itemData.system.containedBy = parent.id
@@ -2600,7 +2561,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       ])
 
       await this.addItemData(localItem, targetKey) // only created 1 item
-      const item = this.items.get(localItem._id) as GurpsItemV2<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>
+      const item = this.items.get(localItem._id) as Item.OfType<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>
 
       return this._updateItemFromForm(item!)
     }
@@ -3207,7 +3168,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @param item
    */
   async updateItem(item: Item): Promise<void> {
-    // @ts-expect-error - editingActor is a runtime property
+    // @ts-expect-error - dynamic property access on modelV1
     delete item.editingActor
     this.ignoreRender = true
     if (item.id) await this._removeItemAdditions(item.id)
@@ -3293,7 +3254,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const data = this.modelV1
 
     for (const item of this.items.contents) {
-      const itemData = item.modelV1 as Record<string, any>
+      const itemData = (item as Item.OfType<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>).modelV1 as Record<
+        string,
+        any
+      >
 
       if (
         (item.type !== 'equipment' || (itemData.equipped && itemData.carried)) &&
@@ -3689,7 +3653,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    */
   private _getCurrentMoveMode() {
-    const move = this.modelV1.move as Record<string, MoveMode>
+    const move = (this.modelV1?.move ?? {}) as Record<string, MoveMode>
     const current = Object.values(move).find(it => it.default)
 
     if (!current && Object.keys(move).length > 0) return move['00000']
@@ -3709,7 +3673,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       // During game startup, an exception is being thrown trying to access 'game.combat'
     }
 
-    const updateMove = game.settings!.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
+    const updateMove = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     const maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     const posture = this._getMoveAdjustedForPosture(move, threshold)
@@ -3862,7 +3826,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
             this.ignoreRender = true
             action.action.calcOnly = true
             GURPS.performAction(action.action, this).then(ret => {
-              // @ts-expect-error - ret.target property from performAction result
               e.level = ret.target
 
               if (isMelee) {
@@ -4346,7 +4309,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    * @param item
    */
-  async _updateItemFromForm(item: GurpsItemV2<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>) {
+  async _updateItemFromForm(item: Item.OfType<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>) {
     if (this.isNewActorType) return
 
     const sysKey =
@@ -4576,7 +4539,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    */
   async _removeKey(sourceKey: string) {
-    // source key is the whole path, like 'data.melee.00001'
+    // source key is the whole path, like 'system.melee.00001'
     const components = sourceKey.split('.')
 
     const index = parseInt(components.pop()!)
@@ -4605,7 +4568,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    */
   async _insertBeforeKey(targetKey: string, element: any) {
-    // target key is the whole path, like 'data.melee.00001'
+    // target key is the whole path, like 'system.melee.00001'
     const components = targetKey.split('.')
 
     const index = parseInt(components.pop()!)
@@ -4643,7 +4606,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (!count || count <= 0) return true // didn't want to split
     if (count >= srceqt.count) return false // not a split, but a move
 
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0)
+    if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0)
 
     if (srceqt.globalid) {
       this.ignoreRender = true
@@ -4651,7 +4614,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const rawItem = this.items.get(srceqt.itemid)
 
       if (rawItem) {
-        const item = rawItem as GurpsItemV2<'equipment'>
+        const item = rawItem as Item.OfType<'equipment'>
 
         item.modelV1.eqt.count = count
         await this.addNewItemData(item, targetkey)
@@ -4692,8 +4655,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     ) {
       this.ignoreRender = true
       await this.updateEqtCount(targetkey, parseInt(srceqt.count) + parseInt(desteqt.count))
-      //if (srckey.includes('.carried') && targetkey.includes('.other')) await this._removeItemAdditionsBasedOn(desteqt)
-      await this.deleteEquipment(srckey)
+      await this.deleteEntry(srckey, { refreshDR: false })
       this._forceRender()
 
       return true
@@ -4909,7 +4871,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /*  CRUD Operations                                                                            */
   /* =========================================================================================== */
 
-  override async _preUpdate(changes: Actor.UpdateData): Promise<void> {
+  override async _preUpdate(changes: Actor.UpdateData, _options: AnyObject, _user: User): Promise<void> {
     if (this.isNewActorType) {
       this.#translateLegacyHitlocationData(changes)
       this.#translateLegacyEncumbranceData(changes)

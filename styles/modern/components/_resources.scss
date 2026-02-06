@@ -36,6 +36,7 @@
   &.ms-hp .ms-resource-fill {
     background: var(--ms-hp);
   }
+
   &.ms-fp .ms-resource-fill {
     background: var(--ms-fp);
   }
@@ -106,6 +107,7 @@
   .ms-resource-display {
     display: none;
   }
+
   .ms-resource-edit {
     display: flex;
   }

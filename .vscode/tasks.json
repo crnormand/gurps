@@ -1,14 +1,14 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Build GURPS system",
-			"type": "shell",
-			"command": "npm run build",
-			"args": [],
-			"isBackground": false,
-			"problemMatcher": [],
-			"group": "build"
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build GURPS system",
+      "type": "shell",
+      "command": "npm run build",
+      "args": [],
+      "isBackground": false,
+      "problemMatcher": [],
+      "group": "build"
+    }
+  ]
 }

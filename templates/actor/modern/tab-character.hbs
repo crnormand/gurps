@@ -1,3 +1,4 @@
+<section class='tab {{tab.cssClass}}' data-tab='character' data-group='primary'>
 {{!-- Quick Notes --}}
 <div class='ms-quicknotes'>
   <div class='ms-quicknotes-content'>
@@ -21,9 +22,9 @@
   path="system.skills"
   entityType="skills"
   otfPrefix="Sk"
-  editAction="edit-skill"
-  deleteAction="delete-skill"
-  addAction="add-skill"
+  editAction="editSkill"
+  deleteAction="deleteSkill"
+  addAction="addSkill"
   addLabel=(localize "GURPS.skill")
 }}
 
@@ -37,9 +38,10 @@
   path="system.spells"
   entityType="spells"
   otfPrefix="Sp"
-  editAction="edit-spell"
-  deleteAction="delete-spell"
-  addAction="add-spell"
+  editAction="editSpell"
+  deleteAction="deleteSpell"
+  addAction="addSpell"
   addLabel=(localize "GURPS.spell")
   hasCollege=true
 }}
+</section>

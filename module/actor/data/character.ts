@@ -400,10 +400,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       item.system.applyBonuses(this._globalBonuses)
     }
 
-    this.allAdsV2 = this.parent.items.filter(item => item.isOfType('featureV2'))
-    this.allSkillsV2 = this.parent.items.filter(item => item.isOfType('skillV2'))
-    this.allSpellsV2 = this.parent.items.filter(item => item.isOfType('spellV2'))
-    this.allEquipmentV2 = this.parent.items.filter(item => item.isOfType('equipmentV2'))
+    this.allAdsV2 = this.parent.items
+      .filter(item => (item as Item.Implementation).isOfType('featureV2'))
+      .map(item => item as Item.OfType<'featureV2'>)
+    this.allSkillsV2 = this.parent.items
+      .filter(item => (item as Item.Implementation).isOfType('skillV2'))
+      .map(item => item as Item.OfType<'skillV2'>)
+    this.allSpellsV2 = this.parent.items
+      .filter(item => (item as Item.Implementation).isOfType('spellV2'))
+      .map(item => item as Item.OfType<'spellV2'>)
+    this.allEquipmentV2 = this.parent.items
+      .filter(item => (item as Item.Implementation).isOfType('equipmentV2'))
+      .map(item => item as Item.OfType<'equipmentV2'>)
     this.meleeV2 = this.parent.getItemAttacks({ attackType: 'melee' })
     this.rangedV2 = this.parent.getItemAttacks({ attackType: 'ranged' })
 
@@ -642,7 +650,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #prepareUserModifiers() {
     this.parent.items.forEach(item => {
-      if (!item.isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
+      if (!(item as Item.Implementation).isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
 
       for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
@@ -650,7 +658,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
       }
 
-      for (const attack of item.getItemAttacks()) {
+      for (const attack of (item as Item.Implementation).getItemAttacks()) {
         if ((item.system as BaseItemModel).itemModifiers === '') continue
 
         for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
@@ -1012,7 +1020,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           dr = drCap
           drMod = drCap - drItem - value.import
           break
-
         case '!': {
           const mod = parseInt(formula.slice(1))
 
@@ -1113,7 +1120,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
-    await GURPS.performAction(accumulator, GURPS.LastActor)
+    await GURPS.performAction(accumulator as unknown as GurpsAction, GURPS.LastActor)
   }
 
   /* ---------------------------------------- */
@@ -1471,7 +1478,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         refTags = taggedSettings.allAttackRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
       }
 
-      const attackMods = attack?.component.modifierTags ?? []
+      const attackMods = attack?.component?.modifierTags ?? []
 
       modifierTags = [...allRollTags, ...attackMods, ...refTags]
       itemRef = attack?.name ?? ''

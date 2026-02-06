@@ -21,6 +21,7 @@ import { multiplyDice } from '../utilities/damage-utils.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
+import { collectDeletions } from './deletion.js'
 import { cleanTags, getRangedModifier, getSizeModifier } from './effect-modifier-popout.js'
 import Maneuvers, {
   MOVE_HALF,
@@ -142,6 +143,24 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /** @override */
+  _onUpdate(changed, options, userId) {
+    if (changed.flags?.core?.sheetClass !== undefined && game.user.id !== userId) {
+      delete changed.flags.core.sheetClass
+    }
+
+    super._onUpdate(changed, options, userId)
+  }
+
+  prepareData() {
+    super.prepareData()
+    // By default, it does this:
+    // this.data.reset()
+    // this.prepareBaseData()
+    // this.prepareEmbeddedEntities()
+    // this.prepareDerivedData()
+  }
+
   prepareBaseData() {
     super.prepareBaseData()
 
@@ -169,7 +188,7 @@ export class GurpsActor extends Actor {
 
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
 
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+      if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
         if (sizemod !== '0' && sizemod !== '+0') {
           this.system.conditions.target.modifiers.push(
             `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #hit @sizemod`
@@ -199,6 +218,7 @@ export class GurpsActor extends Actor {
 
   prepareDerivedData() {
     super.prepareDerivedData()
+
     if (this.type !== 'character') return
 
     // Handle new move data -- if data.move exists, use the default value in that object to set the move
@@ -273,7 +293,7 @@ export class GurpsActor extends Actor {
 
     // If using Foundry Items we can remove Modifier Effects from Actor Components
     const userMods = foundry.utils.getProperty(this.system, 'conditions.usermods') || []
-    // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    // if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     const validMods = userMods.filter(m => !m.includes('@system.'))
 
     await this.update({ 'system.conditions.usermods': validMods })
@@ -699,7 +719,6 @@ export class GurpsActor extends Actor {
       sum += this._sumeqt(e.collapsed, type, checkEquipped)
     }
 
-    // @ts-expect-error - parseInt accepts number for truncation
     return parseInt(sum * 100) / 100
   }
 
@@ -711,13 +730,13 @@ export class GurpsActor extends Actor {
       eqtlbs: this._sumeqt(
         eqt.carried,
         'weight',
-        game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CHECK_EQUIPPED)
+        game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHECK_EQUIPPED)
       ),
       othercost: this._sumeqt(eqt.other, 'cost'),
       otherlbs: this._sumeqt(eqt.other, 'weight'),
     }
 
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE))
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE))
       this.checkEncumbance(eqtsummary.eqtlbs)
     data.eqtsummary = eqtsummary
   }
@@ -775,11 +794,11 @@ export class GurpsActor extends Actor {
   }
 
   _isEnhancedMove() {
-    return !!this._getCurrentMoveMode()?.enhanced
+    return !!this.getCurrentMoveMode()?.enhanced
   }
 
   _getSprintMove() {
-    let current = this._getCurrentMoveMode()
+    let current = this.getCurrentMoveMode()
 
     if (!current) return 0
     if (current?.enhanced) return current.enhanced
@@ -787,8 +806,8 @@ export class GurpsActor extends Actor {
     return Math.floor(current.basic * 1.2)
   }
 
-  _getCurrentMoveMode() {
-    let move = this.system.move
+  getCurrentMoveMode() {
+    let move = this.system.move || {}
     let current = Object.values(move).find(it => it.default)
 
     if (!current && Object.keys(move).length > 0) return move['00000']
@@ -810,7 +829,7 @@ export class GurpsActor extends Actor {
       // During game startup, an exception is being thrown trying to access 'game.combat'
     }
 
-    let updateMove = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
+    let updateMove = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
@@ -829,6 +848,8 @@ export class GurpsActor extends Actor {
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_MANEUVER)) {
       let value = foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_MANEUVER)
+      let mv = GURPS.Maneuvers.get(this.system.conditions.maneuver)
+      let reason = mv ? game.i18n.localize(mv.label) : ''
 
       adjustment = this._adjustMove(move, threshold, value)
     }
@@ -841,7 +862,7 @@ export class GurpsActor extends Actor {
         }
   }
 
-  _adjustMove(move, threshold, value) {
+  _adjustMove(move, threshold, value, _reason) {
     switch (value.toString()) {
       case MOVE_NONE:
         return {
@@ -860,15 +881,13 @@ export class GurpsActor extends Actor {
       case MOVE_STEP:
         return {
           move: this._getStep(),
-          text: 'Step',
-          //  text: game.i18n.format('GURPS.moveStep', { reason: reason })
+          text: game.i18n.localize('GURPS.step'),
         }
 
       case MOVE_TWO_STEPS:
         return {
           move: this._getStep() * 2,
-          text: 'Step or Two',
-          //          text: game.i18n.format('GURPS.moveTwoSteps', { reason: reason })
+          text: game.i18n.localize('GURPS.stepOrTwo'),
         }
 
       case MOVE_ONETHIRD:
@@ -881,8 +900,7 @@ export class GurpsActor extends Actor {
       case MOVE_HALF:
         return {
           move: Math.max(1, Math.ceil((move / 2) * threshold)),
-          text: 'Half',
-          //          text: game.i18n.format('GURPS.moveHalf', { reason: reason }),
+          text: game.i18n.localize('GURPS.half'),
         }
 
       case MOVE_TWOTHIRDS:
@@ -901,8 +919,9 @@ export class GurpsActor extends Actor {
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)) {
       let value = foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)
+      let reason = game.i18n.localize(GURPS.StatusEffect.lookup(this.system.conditions.posture).name)
 
-      adjustment = this._adjustMove(move, threshold, value)
+      adjustment = this._adjustMove(move, threshold, value, reason)
     }
 
     return adjustment
@@ -914,7 +933,7 @@ export class GurpsActor extends Actor {
   }
 
   _calculateRangedRanges() {
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CONVERT_RANGED)) return
+    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CONVERT_RANGED)) return
     let st = +this.system.attributes.ST.value
 
     recurselist(this.system.ranged, r => {
@@ -973,7 +992,6 @@ export class GurpsActor extends Actor {
             this.ignoreRender = true
             action.action.calcOnly = true
             GURPS.performAction(action.action, this).then(ret => {
-              // @ts-expect-error - ret.target exists on performAction result
               e.level = ret.target
 
               if (isMelee) {
@@ -981,7 +999,6 @@ export class GurpsActor extends Actor {
                   let p = '' + e.parry
                   let m = p.match(/([+-]\d+)(.*)/)
 
-                  // @ts-expect-error - assigning array literal to regex match result
                   if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (m) {
@@ -996,7 +1013,6 @@ export class GurpsActor extends Actor {
                   let b = '' + e.block
                   let m = b.match(/([+-]\d+)(.*)/)
 
-                  // @ts-expect-error - assigning array literal to regex match result
                   if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (m) {
@@ -1030,14 +1046,14 @@ export class GurpsActor extends Actor {
    * @remarks If no document has actually been updated, the returned {@link Promise} resolves to `undefined`.
    */
   async update(data, context) {
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (Object.hasOwn(data, 'system.HP.value')) {
         let flag = data['system.HP.value'] < this.system.HP.max / 3
 
         if (!!this.system.conditions.reeling != flag) {
           this.toggleStatusEffect('reeling', { active: flag })
 
-          if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
+          if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
             // send the chat message
             let tag = flag ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
             let msg = game.i18n.format(tag, { name: this.displayname, pdfref: game.i18n.localize('GURPS.pdfReeling') })
@@ -1057,7 +1073,7 @@ export class GurpsActor extends Actor {
           this.toggleStatusEffect('exhausted', { active: flag })
 
           // send the chat message
-          if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
+          if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
             let tag = flag ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
             let msg = game.i18n.format(tag, { name: this.displayname, pdfref: game.i18n.localize('GURPS.pdfTired') })
 
@@ -1268,7 +1284,7 @@ export class GurpsActor extends Actor {
   }
 
   getPortraitPath() {
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PORTRAIT_PATH) == 'global') return 'images/portraits/'
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_PATH) == 'global') return 'images/portraits/'
 
     return `worlds/${game.world.id}/images/portraits`
   }
@@ -1555,7 +1571,7 @@ export class GurpsActor extends Actor {
 
     if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
     this.ignoreRender = true
-    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     //   // Scenario 1: Work only for Equipment dropped
     //   ui.notifications?.info(data.name + ' => ' + this.name)
     //   await this.addNewItemData(data)
@@ -1721,7 +1737,7 @@ export class GurpsActor extends Actor {
       }
 
       // Adjust the source actor's equipment.
-      if (count >= eqt.count) await srcActor.deleteEquipment(dragData.key)
+      if (count >= eqt.count) await srcActor.deleteEntry(dragData.key)
       else await srcActor.updateEqtCount(dragData.key, +eqt.count - count)
     } else {
       // This actor and source actor have different owners.
@@ -1764,7 +1780,6 @@ export class GurpsActor extends Actor {
    * @param {Item} item
    */
   async updateItem(item) {
-    // @ts-expect-error - editingActor is a custom property added dynamically
     delete item.editingActor
     this.ignoreRender = true
     if (item.id) await this._removeItemAdditions(item.id)
@@ -1805,13 +1820,11 @@ export class GurpsActor extends Actor {
   async addNewItemData(itemData, targetkey = null) {
     let d = itemData
 
-    // @ts-expect-error - toObject may exist on Document-like objects
     if (typeof itemData.toObject === 'function') {
       d = itemData.toObject()
       d.system.eqt.count = itemData.system.eqt.count // For some reason the count isn't deepcopied correctly.
     }
 
-    // @ts-expect-error - Foundry VTT API not fully typed
     let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
 
@@ -1820,7 +1833,7 @@ export class GurpsActor extends Actor {
     ])
     await this.addItemData(localItem, targetkey) // only created 1 item
 
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       const item = await this.items.get(localItem._id)
 
       return this._updateItemFromForm(item)
@@ -1925,7 +1938,7 @@ export class GurpsActor extends Actor {
     let commit = {}
     const subTypes = ['melee', 'ranged', 'ads', 'skills', 'spells']
 
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       for (const subType of subTypes) {
         commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, subType)) }
       }
@@ -1999,18 +2012,14 @@ export class GurpsActor extends Actor {
   async _addItemElement(itemData, eqtkey, key) {
     let found = false
 
-    // @ts-expect-error - dynamic property access with string key
     recurselist(this.system[key], (e, _k, _d) => {
       if (e.itemid == itemData._id) found = true
     })
     if (found) return
-    // @ts-expect-error - dynamic property access with string key
     let list = { ...this.system[key] } // shallow copy
     let i = 0
 
-    // @ts-expect-error - dynamic property access with string key
     for (const k in itemData.system[key]) {
-      // @ts-expect-error - dynamic property access with string key
       let e = foundry.utils.duplicate(itemData.system[key][k])
 
       e.itemid = itemData._id
@@ -2107,52 +2116,63 @@ export class GurpsActor extends Actor {
     return { ['system.' + key]: list }
   }
 
-  // return the item data that was deleted (since it might be transferred)
   /**
    * @param {string} path
+   * @param {Object} options
+   * @param {boolean} [options.refreshDR=true]
    */
-  async deleteEquipment(path, depth = 0) {
-    let eqt = foundry.utils.getProperty(this, path)
+  async deleteEntry(path, { refreshDR = true } = {}) {
+    const data = foundry.utils.getProperty(this, path)
 
-    if (!eqt) return eqt
-    if (depth == 0) this.ignoreRender = true
+    if (!data) return data
 
-    // Delete in reverse order so the keys don't get messed up
-    if (eqt.contains)
-      for (const k of Object.keys(eqt.contains).sort().reverse())
-        await this.deleteEquipment(path + '.contains.' + k, depth + 1)
-    if (eqt.collpased)
-      for (const k of Object.keys(eqt.collapsed).sort().reverse())
-        await this.deleteEquipment(path + '.collapsed.' + k, depth + 1)
+    const savedIgnoreRender = this.ignoreRender
 
-    var item
+    this.ignoreRender = true
 
-    if (eqt.itemid) {
-      item = await this.items.get(eqt.itemid)
-      if (item) await item.delete() // data protect for messed up mooks
-      await this._removeItemAdditions(eqt.itemid)
+    try {
+      const deletions = collectDeletions(data, path)
+
+      for (const { itemid } of deletions) {
+        if (itemid) {
+          const foundryItem = this.items.get(itemid)
+
+          if (foundryItem) await foundryItem.delete()
+          await this._removeItemAdditions(itemid)
+        }
+      }
+
+      await GURPS.removeKey(this, path)
+
+      if (refreshDR && path.includes('.equipment.')) {
+        await this.refreshDR()
+      }
+    } finally {
+      this.ignoreRender = savedIgnoreRender
+      this._forceRender()
     }
 
-    await GURPS.removeKey(this, path)
-    if (depth == 0) this._forceRender()
-
-    return item
+    return data
   }
 
   /**
    * @param {string} itemid
    */
   async _removeItemAdditions(itemid) {
-    let saved = this.ignoreRender
+    const saved = this.ignoreRender
 
     this.ignoreRender = true
-    await this._removeItemElement(itemid, 'melee')
-    await this._removeItemElement(itemid, 'ranged')
-    await this._removeItemElement(itemid, 'ads')
-    await this._removeItemElement(itemid, 'skills')
-    await this._removeItemElement(itemid, 'spells')
-    await this._removeItemEffect(itemid)
-    this.ignoreRender = saved
+
+    try {
+      await this._removeItemElement(itemid, 'melee')
+      await this._removeItemElement(itemid, 'ranged')
+      await this._removeItemElement(itemid, 'ads')
+      await this._removeItemElement(itemid, 'skills')
+      await this._removeItemElement(itemid, 'spells')
+      await this._removeItemEffect(itemid)
+    } finally {
+      this.ignoreRender = saved
+    }
   }
 
   /**
@@ -2162,8 +2182,8 @@ export class GurpsActor extends Actor {
    * @private
    */
   async _removeItemEffect(itemId) {
-    let userMods = foundry.utils.getProperty(this, 'system.conditions.usermods')
-    const mods = [...userMods.filter(mod => !mod.includes(`@${itemId}`))]
+    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
+    const mods = userMods.filter(mod => !mod.includes(`@${itemId}`))
 
     await this.update({ 'system.conditions.usermods': mods })
   }
@@ -2196,13 +2216,14 @@ export class GurpsActor extends Actor {
 
     while (found) {
       found = false
-      let list = foundry.utils.getProperty(this, key)
+      const list = foundry.utils.getProperty(this, key)
 
-      recurselist(list, (e, k, _d) => {
-        if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          if (e.itemid === itemid) found = k
+      if (!list) break
+      recurselist(list, (element, elementKey, _depth) => {
+        if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+          if (element.itemid === itemid) found = elementKey
         } else {
-          if (e.fromItem === itemid) found = k
+          if (element.fromItem === itemid) found = elementKey
         }
       })
 
@@ -2210,12 +2231,14 @@ export class GurpsActor extends Actor {
         any = true
         const actorKey = key + '.' + found
 
-        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-          // We need to remove the child item from the actor
+        if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
           const childActorComponent = foundry.utils.getProperty(this, actorKey)
-          const existingChildItem = await this.items.get(childActorComponent.itemid)
 
-          if (existingChildItem) await existingChildItem.delete()
+          if (childActorComponent?.itemid) {
+            const existingChildItem = this.items.get(childActorComponent.itemid)
+
+            if (existingChildItem) await existingChildItem.delete()
+          }
         }
 
         await GURPS.removeKey(this, actorKey)
@@ -2412,8 +2435,7 @@ export class GurpsActor extends Actor {
     ) {
       this.ignoreRender = true
       await this.updateEqtCount(targetkey, parseInt(srceqt.count) + parseInt(desteqt.count))
-      //if (srckey.includes('.carried') && targetkey.includes('.other')) await this._removeItemAdditionsBasedOn(desteqt)
-      await this.deleteEquipment(srckey)
+      await this.deleteEntry(srckey, { refreshDR: false })
       this._forceRender()
 
       return true
@@ -2618,14 +2640,14 @@ export class GurpsActor extends Actor {
 
     const effects = allEffects.filter(e => !e.isManeuver)
 
-    const visibility = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
+    const visibility = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
 
     if (visibility === 'NoOne') return effects
 
     if (!game.user?.isGM && !this.isOwner) {
       if (visibility === 'GMAndOwner') return effects
 
-      const detail = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
+      const detail = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
 
       if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
         if (maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
@@ -2747,7 +2769,7 @@ export class GurpsActor extends Actor {
     if (ImportSettings.ignoreQuantityOnImport) update[eqtkey + '.ignoreImportQty'] = true
     await this.update(update)
 
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       eqt = foundry.utils.getProperty(this, eqtkey)
       await this.updateParentOf(eqtkey, false)
 
@@ -2886,8 +2908,8 @@ export class GurpsActor extends Actor {
         parentuuid: actorComp.parentuuid,
         itemInfo,
         addToQuickRoll: item.system.addToQuickRoll,
-        modifierTags: item.system.modifierTags,
-        itemModifiers: item.system.itemModifiers,
+        modifierTags: (item.system.modifierTags || '').trim(),
+        itemModifiers: (item.system.itemModifiers || '').trim(),
       },
     })
     await this._addItemAdditions(item, sysKey)
@@ -2902,7 +2924,7 @@ export class GurpsActor extends Actor {
     let canEdit = false
     let message
 
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       message = 'GURPS.settingNoEquipAllowedHint'
       if (actorComp.itemid) canEdit = true
     } else {
@@ -2960,7 +2982,7 @@ export class GurpsActor extends Actor {
    * @return {boolean} The value of the 'usingQuintessence' setting.
    */
   get usingQuintessence() {
-    return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
+    return game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
   }
 
   // TODO review and refactor
@@ -2982,14 +3004,14 @@ export class GurpsActor extends Actor {
 
         if (m) bonus = m[1] // remove extranious  [ ]
 
-        m = bonus.match(/DR *([+-]\d+) *(.*)/)
+        m = bonus.match(/DR *(?<delta>[+-]\d+) *(?<locations>.*)/)
 
         if (m) {
-          let delta = parseInt(m[1])
+          let delta = parseInt(m.groups.delta)
           let locPatterns = null
 
-          if (m[2]) {
-            let locs = splitArgs(m[2])
+          if (m.groups.locations) {
+            let locs = splitArgs(m.groups.locations)
 
             locPatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
             recurselist(actorLocations, (e, _k, _d) => {
@@ -2999,6 +3021,15 @@ export class GurpsActor extends Actor {
                   ...itemMap[e.key],
                   [item.name]: delta,
                 }
+              }
+            })
+          } else {
+            // No locations specified, so apply to all.
+            recurselist(actorLocations, (e, _k, _d) => {
+              if (update) e.drItem += delta
+              itemMap[e.where] = {
+                ...itemMap[e.key],
+                [item.name]: delta,
               }
             })
           }
@@ -3188,7 +3219,7 @@ export class GurpsActor extends Actor {
    * @returns {{integer}} result.size - The number of checks
    */
   getChecks(checkType) {
-    const quickRollSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
+    const quickRollSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
 
     if (!quickRollSettings[checkType]) {
       return { data: [], size: 0 }
@@ -3218,7 +3249,6 @@ export class GurpsActor extends Actor {
         result.size = checks.length
         break
       }
-
       case 'otherChecks': {
         const icons = {
           checks: {
@@ -3256,7 +3286,6 @@ export class GurpsActor extends Actor {
         result.size = size
         break
       }
-
       case 'attackChecks': {
         const attacks = ['melee', 'ranged']
 
@@ -3270,6 +3299,7 @@ export class GurpsActor extends Actor {
               if (!comp) comp = this.findEquipmentByName(attack.name)[0]
               const img = this.items.get(comp?.itemid)?.img
               const symbol = game.i18n.localize(`GURPS.${key}`)
+
               let oftName = attack.name
 
               if (attack.mode) oftName += ` (${attack.mode})`
@@ -3293,7 +3323,6 @@ export class GurpsActor extends Actor {
         result.size = size
         break
       }
-
       case 'defenseChecks': {
         recurselist(this.system.encumbrance, (enc, _k, _d) => {
           if (enc.current) {
@@ -3338,7 +3367,6 @@ export class GurpsActor extends Actor {
         result.size = size + 1
         break
       }
-
       case 'markedChecks': {
         const traits = ['skills', 'spells', 'ads']
 
@@ -3403,8 +3431,9 @@ export class GurpsActor extends Actor {
    */
   async addTaggedRollModifiers(chatThing, optionalArgs, attack) {
     let isDamageRoll = false
-    const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const allRollTags = taggedSettings.allRolls.split(',').map(it => it.trim().toLowerCase())
+    const actionType = optionalArgs?.action?.type ?? ''
 
     let modifierTags, itemRef, refTags
 
@@ -3429,7 +3458,7 @@ export class GurpsActor extends Actor {
       modifierTags = [...allRollTags, ...refTags]
     } else {
       // Damage roll from OTF or Attack
-      if (!attack) {
+      if (!attack || ['damage', 'attackdamage', 'deriveddamage'].includes(actionType)) {
         refTags = taggedSettings.allDamageRolls.split(',').map(it => it.trim().toLowerCase())
         isDamageRoll = true
       } else {
@@ -3443,8 +3472,6 @@ export class GurpsActor extends Actor {
     }
 
     // Then get the modifiers from:
-    // Actor User Mods
-    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
     // Actor Self Mods
     const selfMods =
       foundry.utils.getProperty(this, 'system.conditions.self.modifiers').map(mod => {
@@ -3481,6 +3508,9 @@ export class GurpsActor extends Actor {
         if (sizeMod) targetMods.push(sizeMod)
       }
     }
+
+    // Actor User Mods
+    const userMods = foundry.utils.getProperty(this, 'system.conditions.usermods') || []
 
     const allMods = [...userMods, ...selfMods, ...targetMods]
     const actorInCombat = game.combat?.combatants.find(c => c.actor.id === this.id) && game.combat?.isActive
@@ -3733,7 +3763,7 @@ export class GurpsActor extends Actor {
    */
   canConsumeAction(action, chatThing, actorComp = {}) {
     if (!action && !chatThing) return false
-    const settingsUseMaxActions = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
+    const settingsUseMaxActions = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
 
     if (settingsUseMaxActions === 'Disable') return false
     const isCombatant = !!game.combat?.combatants.find(c => c.actor.id === this.id)
@@ -3797,7 +3827,7 @@ export class GurpsActor extends Actor {
         const maneuverLabel = game.i18n.localize(maneuver.label)
         const roll = game.i18n.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll')
         const checkManeuverSettings = game.settings.get(
-          Settings.SYSTEM_NAME,
+          GURPS.SYSTEM_NAME,
           Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER
         )
         const message =
@@ -3815,7 +3845,7 @@ export class GurpsActor extends Actor {
       }
 
       // Check for Max Actions
-      const checkMaxActionSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
+      const checkMaxActionSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
       const maxActions = foundry.utils.getProperty(this, 'system.conditions.actions.maxActions') || 1
       const actorExtraActions = actions.extraActions || 0
 
@@ -3895,7 +3925,7 @@ export class GurpsActor extends Actor {
       // Check if Combat is started
       if (!combatStarted) {
         const checkCombatSettings = game.settings.get(
-          Settings.SYSTEM_NAME,
+          GURPS.SYSTEM_NAME,
           Settings.SETTING_ALLOW_ROLLS_BEFORE_COMBAT_START
         )
 
@@ -3911,7 +3941,7 @@ export class GurpsActor extends Actor {
 
     // Check if roll need Target
     const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
-    const checkForTargetSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
+    const checkForTargetSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
 
     if (isCombatant && needTarget && game.user.targets.size === 0) {
       result = {
@@ -3975,7 +4005,6 @@ export class GurpsActor extends Actor {
 
         break
       }
-
       case 'weapon-block':
       case 'weapon-parry':
         name = action.name.split('(')[0].trim()
@@ -4003,7 +4032,6 @@ export class GurpsActor extends Actor {
         }
 
         break
-
       case 'skill-spell': {
         const item = this.findByOriginalName(action.name)
 
@@ -4027,7 +4055,6 @@ export class GurpsActor extends Actor {
 
         break
       }
-
       case 'attribute': {
         let attrName = action?.overridetxt
 
@@ -4042,7 +4069,6 @@ export class GurpsActor extends Actor {
         }
         break
       }
-
       case 'controlroll':
         result = {
           name: action.overridetxt || action.orig,
@@ -4087,7 +4113,7 @@ export class GurpsActor extends Actor {
   }
 
   async _removeKey(sourceKey) {
-    // source key is the whole path, like 'data.melee.00001'
+    // source key is the whole path, like 'system.melee.00001'
     let components = sourceKey.split('.')
 
     let index = parseInt(components.pop())
@@ -4113,7 +4139,7 @@ export class GurpsActor extends Actor {
   }
 
   async _insertBeforeKey(targetKey, element) {
-    // target key is the whole path, like 'data.melee.00001'
+    // target key is the whole path, like 'system.melee.00001'
     let components = targetKey.split('.')
 
     let index = parseInt(components.pop())

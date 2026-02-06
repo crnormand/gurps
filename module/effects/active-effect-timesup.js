@@ -30,7 +30,7 @@ export function readyTimesUpSetup() {
     if (hasExpiry(durationToUse)) {
       if (debugEnabled > 1)
         debug('Update active effect', effect.uuid, update, effect.updateDuration(), isTransferEffect(effect))
-      const isExpired = isDurationExpired(durationToUse, { secondsOnly: true }) || !durationToUse.starTime
+      const isExpired = isDurationExpired(durationToUse, { secondsOnly: true }) || !durationToUse.startTime
 
       if (!isExpired) return true
 

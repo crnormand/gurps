@@ -21,6 +21,7 @@ import {
   quotedAttackName,
   recurselist,
   sanitize,
+  stripBracketContents,
   utoa,
   wait,
   zeroFill,
@@ -31,17 +32,17 @@ import { Action } from './action/index.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
-  GurpsActorNpcSheet,
   GurpsActorSheet,
   GurpsActorSheetReduced,
   GurpsActorSimplifiedSheet,
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor/actor-sheet.js'
+import { prepareRemoveKey } from './actor/deletion.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import Maneuvers from './actor/maneuver.js'
-import { GurpsActorModernSheet } from './actor/modern/sheet.js'
+import { GurpsActorModernSheet, GurpsActorNpcModernSheet } from './actor/modern/index.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
@@ -50,16 +51,10 @@ import { registerColorPickerSettings } from './color-character-sheet/color-chara
 import { colorGurpsActorSheet } from './color-character-sheet/color-character-sheet.js'
 import { Combat } from './combat/index.js'
 import { calculateRoFModifier } from './combat/utilities.js'
-import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
-import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
+import { CombatTracker } from './combat-tracker/index.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
-/**
- * Added to color the rollable parts of the character sheet.
- * Made this part eslint compatible...
- * ~Stevil
- */
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
@@ -101,15 +96,15 @@ if (!globalThis.GURPS) {
   GURPS.Migration = Migration
   GURPS.Length = Length
   GURPS.BANNER = `
-   __ ____ _____ _____ _____ _____ ____ __    
-  / /_____|_____|_____|_____|_____|_____\\ \\   
- / /      ____ _   _ ____  ____  ____    \\ \\  
- | |     / ___| | | |  _ \\|  _ \\/ ___|    | | 
- | |    | |  _| | | | |_) | |_) \\___ \\    | | 
- | |    | |_| | |_| |  _ <|  __/ ___) |   | | 
- | |     \\____|\\___/|_| \\_\\_|   |____/    | | 
-  \\ \\ _____ _____ _____ _____ _____ ____ / / 
-   \\_|_____|_____|_____|_____|_____|____|_/  
+   __ ____ _____ _____ _____ _____ ____ __
+  / /_____|_____|_____|_____|_____|_____\\ \\
+ / /      ____ _   _ ____  ____  ____    \\ \\
+ | |     / ___| | | |  _ \\|  _ \\/ ___|    | |
+ | |    | |  _| | | | |_) | |_) \\___ \\    | |
+ | |    | |_| | |_| |  _ <|  __/ ___) |   | |
+ | |     \\____|\\___/|_| \\_\\_|   |____/    | |
+  \\ \\ _____ _____ _____ _____ _____ ____ / /
+   \\_|_____|_____|_____|_____|_____|____|_/
 `
   GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`
 
@@ -122,6 +117,7 @@ if (!globalThis.GURPS) {
     Action,
     Canvas,
     Combat,
+    CombatTracker,
     Damage,
     Importer,
     Pdf,
@@ -584,7 +580,6 @@ if (!globalThis.GURPS) {
 
           return true
         }
-
         case 'JournalEntryPage':
           Journal._showEntry(action.id)
 
@@ -656,11 +651,11 @@ if (!globalThis.GURPS) {
 
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
 
-      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = action.formula
 
       if (actor && taggedSettings.autoAdd) {
-        await actor.addTaggedRollModifiers('', {}, action.att)
+        await actor.addTaggedRollModifiers('', { action }, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
@@ -732,11 +727,11 @@ if (!globalThis.GURPS) {
 
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
 
-      const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = formula
 
       if (actor && taggedSettings.autoAdd) {
-        await actor.addTaggedRollModifiers('', {}, action.att)
+        await actor.addTaggedRollModifiers('', { action }, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
@@ -1004,11 +999,7 @@ if (!globalThis.GURPS) {
 
       if (!!action.isMelee && !action.isRanged) p = 'M:'
       if (!action.isMelee && !!action.isRanged) p = 'R:'
-      // Need to finagle chatthing to allow for attack names that include OtFs
-      let thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      let thing = stripBracketContents(att.name)
       let qn = quotedAttackName({ name: thing, mode: att.mode })
       let aid = actor ? `@${actor.id}@` : ''
       const chatthing = `[${aid}${p}${qn}]`
@@ -1120,10 +1111,7 @@ if (!globalThis.GURPS) {
         return false
       }
 
-      const thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      const thing = stripBracketContents(att.name)
 
       if (action.calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
@@ -1198,10 +1186,7 @@ if (!globalThis.GURPS) {
         return false
       }
 
-      const thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      const thing = stripBracketContents(att.name)
 
       if (action.calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
@@ -1350,10 +1335,7 @@ if (!globalThis.GURPS) {
         return false
       }
 
-      let thing = action.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
+      let thing = stripBracketContents(action.name)
 
       if (calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
@@ -1392,7 +1374,7 @@ if (!globalThis.GURPS) {
                   AT: attack
                   M: melee
                   R: ranged
-                  S: skills & spells 
+                  S: skills & spells
                   SK: skills
                   SP: spells
                   */
@@ -1680,7 +1662,7 @@ if (!globalThis.GURPS) {
     const blindroll =
       event.ctrlKey ||
       game.settings.get('core', 'rollMode') === 'blindroll' ||
-      (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
+      (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
 
     if ('damage' in element.dataset) {
       // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
@@ -1743,8 +1725,7 @@ if (!globalThis.GURPS) {
       let m = otf.match(/^([sSmMrRaA]):"\["([^"]+)([^\]]+)]( *\(\w*\))?/)
 
       if (m) otf = m[1] + ':' + m[2] + (m[4] ? m[4] : '')
-      otf = otf.replace(/\[.*\]/, '')
-      otf = otf.replace(/ +/g, ' ') // remove duplicate blanks
+      otf = stripBracketContents(otf)
 
       return GURPS.executeOTF(otf)
     } else if ('name' in element.dataset) {
@@ -1909,72 +1890,26 @@ if (!globalThis.GURPS) {
    * @param {string} path
    */
   async function removeKey(actor, path) {
-    let oldversion = true
-    let oldRender = actor.ignoreRender
+    const targetActor = game.actors.get(actor.id) ?? actor
+    const objectData = foundry.utils.duplicate(GURPS.decode(targetActor, path.substring(0, path.lastIndexOf('.'))))
+    const { deleteKey, objectPath, updatedObject } = prepareRemoveKey(path, objectData)
 
-    actor.ignoreRender = true
+    const savedIgnoreRender = targetActor.ignoreRender
 
-    if (oldversion) {
-      let i = path.lastIndexOf('.')
-      let objpath = path.substring(0, i)
-      let key = path.substring(i + 1)
+    targetActor.ignoreRender = true
 
-      i = objpath.lastIndexOf('.')
-      let parentpath = objpath.substring(0, i)
-      let objkey = objpath.substring(i + 1)
+    try {
+      await targetActor.update({ [deleteKey]: null })
+      await targetActor.update({ [objectPath]: updatedObject }, { diff: false })
 
-      // Create shallow copy of object
-      let object = foundry.utils.duplicate(GURPS.decode(actor, objpath))
-      let t = parentpath + '.-=' + objkey
+      if (Object.keys(updatedObject).length === 0) {
+        const parentPath = objectPath.substring(0, objectPath.lastIndexOf('.'))
+        const objectKey = objectPath.substring(objectPath.lastIndexOf('.') + 1)
 
-      await actor.internalUpdate({ [t]: null }) // Delete the whole object from the parent
-
-      // Delete the key, ex: '00001'
-      delete object[key]
-      i = parseInt(key)
-
-      // Since keys are serial index, move up any items after the current index
-      i = i + 1
-
-      while (Object.hasOwn(object, zeroFill(i))) {
-        let k = zeroFill(i)
-
-        object[key] = object[k]
-        delete object[k]
-        key = k
-        i++
+        GURPS.decode(targetActor, parentPath)[objectKey] = {}
       }
-
-      actor.ignoreRender = oldRender
-      await actor.internalUpdate({ [objpath]: object }, { diff: false })
-
-      // Sad hack to ensure that an empty object exists on the client side (the DB is correct)
-      if (Object.keys(object).length === 0) GURPS.decode(actor, parentpath)[objkey] = {}
-    } else {
-      let i = path.lastIndexOf('.')
-      let objpath = path.substring(0, i)
-      let key = path.substring(i + 1)
-      let object = GURPS.decode(actor, objpath)
-
-      delete object[key]
-
-      await actor.internalUpdate({ [objpath]: null }) // instead of using "x.y.-=z" to remove the key 'z' and all its data, just remove x.y.z's data.
-
-      let sorted = Object.keys(object)
-        .sort()
-        .reduce((_, value, index) => {
-          let key = zeroFill(index)
-
-          if (key != value) {
-            object[key] = object[value]
-            delete object[value]
-          }
-
-          return object
-        }, {})
-
-      actor.ignoreRender = oldRender
-      await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
+    } finally {
+      targetActor.ignoreRender = savedIgnoreRender
     }
   }
 
@@ -2070,7 +2005,7 @@ if (!globalThis.GURPS) {
 
       let display = true
 
-      if (!!src && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
+      if (!!src && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
         // if an optional src is provided (which == actor.system) assume we are checking attacks to see if they are equipped
         recurselist(src.equipment.carried, e => {
           if (eqt.name.startsWith(e.name) && !e.equipped) display = false
@@ -2195,11 +2130,11 @@ if (!globalThis.GURPS) {
 
   // TODO: Move to the combat module.
   GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
-    let formula = /** @type {string} */ (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
+    let formula = /** @type {string} */ (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
 
     if (!formula) {
       formula = Initiative.defaultFormula()
-      if (game.user.isGM) game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA, formula)
+      if (game.user.isGM) game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA, formula)
     }
 
     let m = formula.match(/([^:]*):?(\d)?/)
@@ -2290,7 +2225,7 @@ if (!globalThis.GURPS) {
       label: 'Simple',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcModernSheet, {
       label: 'NPC/mini',
       makeDefault: false,
     })
@@ -2302,12 +2237,12 @@ if (!globalThis.GURPS) {
       label: 'Tabbed Sheet',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-      label: 'Reduced Mode',
-      makeDefault: false,
-    })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
       label: 'Modern',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
+      label: 'Reduced Mode',
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
@@ -2357,13 +2292,13 @@ if (!globalThis.GURPS) {
       name: 'Toggle dice display',
       uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
       onDown: () => {
-        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) {
+        if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) {
           GURPS.savedRollMode = game.settings.get('core', 'rollMode')
           game.settings.set('core', 'rollMode', game.user?.isGM ? 'gmroll' : 'blindroll')
         }
       },
       onUp: () => {
-        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CTRL_KEY))
+        if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY))
           game.settings.set('core', 'rollMode', GURPS.savedRollMode)
       },
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
@@ -2390,7 +2325,7 @@ if (!globalThis.GURPS) {
     HitLocation.ready()
 
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
-    let previousVersionString = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
+    let previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
 
     console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
 
@@ -2402,17 +2337,17 @@ if (!globalThis.GURPS) {
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
     // migration version to the current version even if it is lower than the current version.
-    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
+    game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
 
     // Show changelog
-    const v = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
+    const v = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
     const changelogVersion = SemanticVersion.fromString(v)
 
     if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
       // If it isn't already in the chat log somewhere
       if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0) showGURPSCopyright()
 
-      if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CHANGELOG)) {
+      if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CHANGELOG)) {
         const app = new ChangeLogWindow(changelogVersion)
 
         app.render(true)
@@ -2421,7 +2356,7 @@ if (!globalThis.GURPS) {
       GURPS.executeOTF('/help')
     }
 
-    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
+    game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
 
     Hooks.on('hotbarDrop', async (_bar, data, slot) => {
       if (!data.otf && !data.bucket) return
@@ -2502,100 +2437,6 @@ if (!globalThis.GURPS) {
       return false
     })
 
-    Hooks.on('renderCombatTracker', async function (_app, element, _options, _context) {
-      const html = $(element)
-
-      if (!html.hasClass('bound')) {
-        html.addClass('bound')
-        // @ts-expect-error - jQuery event handler types not fully compatible
-        html.on('drop', function (ev) {
-          ev.preventDefault()
-          ev.stopPropagation()
-          let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
-
-          // @ts-expect-error - jQuery selector chain returns optional string
-          let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-          // @ts-expect-error - game.combat could be null
-          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
-
-          let event = ev.originalEvent
-          let dropData = JSON.parse(event.dataTransfer.getData('text/plain'))
-
-          if (dropData.type === 'damageItem') {
-            // @ts-expect-error - handleDamageDrop is a custom GURPS actor method
-            target.actor.handleDamageDrop(dropData.payload)
-          }
-
-          if (dropData.type === 'initiative') {
-            let target = game.combat.combatants.get(combatant)
-            let src = game.combat.combatants.get(dropData.combatant)
-            let updates = []
-
-            if (!!target && !!src) {
-              if (target.initiative < src.initiative) {
-                updates.push({
-                  _id: dropData.combatant,
-                  initiative: target.initiative - 0.00001,
-                })
-                console.log('Moving ' + src.name + ' below ' + target.name)
-              } else {
-                updates.push({
-                  _id: dropData.combatant,
-                  initiative: target.initiative + 0.00001,
-                })
-                console.log('Moving ' + src.name + ' above ' + target.name)
-              }
-
-              game.combat.updateEmbeddedDocuments('Combatant', updates)
-            }
-          }
-        })
-      }
-
-      if (game.user.isGM) {
-        html.find('.combatant').each((_, li) => {
-          li.setAttribute('draggable', true)
-          li.addEventListener('dragstart', ev => {
-            let dragIcon = $(event.currentTarget).find('.token-image')[0]
-
-            ev.dataTransfer.setDragImage(dragIcon, 25, 25)
-
-            return ev.dataTransfer.setData(
-              'text/plain',
-              JSON.stringify({
-                type: 'initiative',
-                combatant: li.getAttribute('data-combatant-id'),
-              })
-            )
-          })
-        })
-      }
-
-      // Resolve Quick Roll and Maneuver buttons
-      const combatants = html.find('.combatant')
-
-      for (let combatantElement of combatants) {
-        const combatant = await game.combat.combatants.get(combatantElement.dataset.combatantId)
-        const token = canvas.tokens.get(combatant.token.id)
-
-        if (!token) {
-          console.warn(`Token not found for combatant: ${combatant.name}`)
-          continue
-        }
-
-        // Add Quick Roll Menu
-        combatantElement = await addQuickRollButton(combatantElement, combatant, token)
-
-        // Add Maneuver Menu
-        combatantElement = await addManeuverMenu(combatantElement, combatant, token)
-      }
-
-      // Add Quick Roll Listeners.
-      addQuickRollListeners()
-    })
-
-    addManeuverListeners()
-
     game.socket.on('system.gurps', async resp => {
       if (resp.type == 'updatebucket') {
         if (resp.users.includes(game.user.id)) {
@@ -2674,9 +2515,9 @@ if (!globalThis.GURPS) {
         let eqt = foundry.utils.getProperty(srcActor, resp.srckey)
 
         if (resp.count >= eqt.count) {
-          srcActor.deleteEquipment(resp.srckey)
+          await srcActor.deleteEntry(resp.srckey)
         } else {
-          srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
+          await srcActor.updateEqtCount(resp.srckey, +eqt.count - resp.count)
         }
 
         let destActor = game.actors.get(resp.destactorid)
@@ -2740,9 +2581,9 @@ if (!globalThis.GURPS) {
     let sheets = /** @type {Record<string,string>} */ ({})
 
     Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
-      if (e.id.toString().startsWith(Settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
+      if (e.id.toString().startsWith(GURPS.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
     })
-    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
+    game.settings.register(GURPS.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
       name: game.i18n.localize('GURPS.settingSheetDetail'),
       hint: game.i18n.localize('GURPS.settingHintSheetDetail'),
       scope: 'world',
@@ -2782,29 +2623,33 @@ if (!globalThis.GURPS) {
       await resetTokenActions(combat)
     })
 
-    // TODO: Move to the combat module.
-    Hooks.on('combatRound', async (combat, round) => {
-      await handleCombatTurn(combat, round)
-    })
-
-    // TODO: Move to the combat module.
-    Hooks.on('combatTurn', async (combat, turn) => {
-      await handleCombatTurn(combat, turn)
-    })
+    if (game.user.isGM) {
+      Hooks.on('combatTurnChange', async (combat, previousTurn, newTurn) => {
+        await handleCombatTurnChange(combat, previousTurn, newTurn)
+      })
+    }
 
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
 }
 
-const handleCombatTurn = async (combat, round) => {
-  const nextCombatant = combat.nextCombatant
+const handleCombatTurnChange = async (combat, previousTurn, newTurn) => {
+  if (!game.user.isGM) return
 
-  console.info(`New combat round started: ${round.round}/${round.turn} - combatant: ${nextCombatant.name}`)
-  const token = canvas.tokens.get(nextCombatant.token.id)
+  const token = canvas.tokens.get(newTurn.tokenId)
+
+  if (!token) {
+    console.warn(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - token not found: ${newTurn.tokenId}`)
+
+    return
+  }
+
+  console.info(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
+
   const actions = await TokenActions.fromToken(token)
 
-  await actions.newTurn(round.round)
+  await actions.newTurn(newTurn.round)
 }
 
 const resetTokenActions = async combat => {

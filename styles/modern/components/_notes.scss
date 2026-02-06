@@ -64,6 +64,7 @@
   a {
     color: var(--ms-accent);
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }
@@ -84,6 +85,7 @@
   &:last-child {
     border-bottom: none;
   }
+
   &:hover {
     background: var(--ms-bg-hover);
     padding-left: var(--ms-space-2);
@@ -234,10 +236,11 @@
 
 .ms-trackers-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--ms-space-4);
 
   .tracked-resource {
+    flex: 0 1;
     background: var(--ms-bg-card);
     border: 1px solid var(--ms-border);
     border-radius: var(--ms-radius);
@@ -245,6 +248,10 @@
 
     .header {
       background: var(--ms-accent);
+    }
+
+    button i {
+      color: var(--ms-text);
     }
   }
 }
@@ -273,6 +280,7 @@
     font-weight: bold;
     text-decoration: underline;
     text-decoration-style: dotted;
+
     &:hover {
       text-decoration-style: solid;
     }
@@ -302,6 +310,7 @@
   color: var(--ms-text-dim);
   cursor: pointer;
   padding: var(--ms-space-2);
+
   &:hover {
     color: var(--ms-accent);
   }

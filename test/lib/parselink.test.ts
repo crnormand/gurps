@@ -1856,6 +1856,43 @@ describe('parseLink', () => {
         expect.stringContaining("data-otf='A:Throwing Axe -2 stunned'><b>A:</b>Throwing</span> Axe -2 stunned")
       )
     })
+
+    test('#> A:"Mage\'s Staff" +1 magic attack', () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: 'magic attack',
+        isMelee: true,
+        isRanged: true,
+        mod: '+1',
+        name: "Mage's Staff",
+        orig: 'A:"Mage\'s Staff" +1 magic attack',
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining(
+          "data-otf='A:\"Mage's Staff\" +1 magic attack'><b>A:</b>Mage's Staff+1 magic attack</span>"
+        )
+      )
+    })
+
+    test("#> A:'Sword \"Saethor\\'s Bane\"'", () => {
+      const result = parselink(input)
+
+      expect(result.action).toEqual({
+        blindroll: false,
+        desc: '',
+        isMelee: true,
+        isRanged: true,
+        name: 'Sword "Saethor*s Bane"',
+        orig: 'A:\'Sword "Saethor*s Bane"\'',
+        type: 'attack',
+      })
+      expect(result.text).toEqual(
+        expect.stringContaining('data-otf=\'A:\'Sword "Saethor*s Bane"\'\'><b>A:</b>Sword "Saethor*s Bane"</span>')
+      )
+    })
   })
 
   describe('Check existence', () => {

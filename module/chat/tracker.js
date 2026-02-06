@@ -71,7 +71,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
       let value = theTracker.isDamageTracker ? parseInt(theTracker.min) : parseInt(theTracker.max)
 
       //if (!!theTracker.isDamageTracker) max = 0
-      await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
+      await actor.update({ ['system.additionalresources.tracker.' + theTrackerKey + '.value']: value })
       this.prnt(
         `${game.i18n.localize('GURPS.chatResourceTracker', 'Resource Tracker')}${display} ${game.i18n.localize(
           'GURPS.chatResetTo',
@@ -101,7 +101,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
       } else {
         value = theTracker.isMaximumEnforced && value > parseInt(theTracker.max) ? parseInt(theTracker.max) : value
         value = theTracker.isMinimumEnforced && value < parseInt(theTracker.min) ? parseInt(theTracker.min) : value
-        await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
+        await actor.update({ ['system.additionalresources.tracker.' + theTrackerKey + '.value']: value })
         this.prnt(`${game.i18n.localize('GURPS.chatResourceTracker')}${display} set to ${value}`)
 
         return true

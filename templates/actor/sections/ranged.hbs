@@ -24,41 +24,41 @@
       </div>
 
       <div class='desc indent{{indent}}'>
-        <input name='system.ranged.{{@key}}.name' class='gcs-input-25' type='text' value='{{this.name}}' />
+        <input name='system.ranged.{{@key}}.name' class='gcs-input-25' type='text' value='{{name}}' />
         <div class='list_note'>
-          <input name='system.ranged.{{@key}}.notes' class='gcs-input-25' type='text' value='{{this.notes}}' />
+          <input name='system.ranged.{{@key}}.notes' class='gcs-input-25' type='text' value='{{notes}}' />
         </div>
       </div>
 
       <div class='usage'>
-        <input name='system.ranged.{{@key}}.mode' class='gcs-input' type='text' value='{{this.mode}}' />
+        <input name='system.ranged.{{@key}}.mode' class='gcs-input' type='text' value='{{mode}}' />
       </div>
       <div class='level'>
-        <input name='system.ranged.{{@key}}.import' class='gcs-input-sm2' type='text' value='{{this.import}}' />
+        <input name='system.ranged.{{@key}}.import' class='gcs-input-sm2' type='text' value='{{import}}' />
       </div>
       <div class='acc'>
-        <input name='system.ranged.{{@key}}.acc' class='gcs-input-sm2' type='text' value='{{this.acc}}' />
+        <input name='system.ranged.{{@key}}.acc' class='gcs-input-sm2' type='text' value='{{acc}}' />
       </div>
       <div class='damage'>
-        <input name='system.ranged.{{@key}}.damage' class='gcs-input-5' type='text' value='{{this.damage}}' />
+        <input name='system.ranged.{{@key}}.damage' class='gcs-input-5' type='text' value='{{damage}}' />
       </div>
       <div class='range'>
-        <input name='system.ranged.{{@key}}.range' class='gcs-input-sm5' type='text' value='{{this.range}}' />
+        <input name='system.ranged.{{@key}}.range' class='gcs-input-sm5' type='text' value='{{range}}' />
       </div>
       <div class='rof'>
-        <input name='system.ranged.{{@key}}.rof' class='gcs-input-sm2' type='text' value='{{this.rof}}' />
+        <input name='system.ranged.{{@key}}.rof' class='gcs-input-sm2' type='text' value='{{rof}}' />
       </div>
       <div class='shots'>
-        <input name='system.ranged.{{@key}}.shots' class='gcs-input-sm2' type='text' value='{{this.shots}}' />
+        <input name='system.ranged.{{@key}}.shots' class='gcs-input-sm2' type='text' value='{{shots}}' />
       </div>
       <div class='bulk'>
-        <input name='system.ranged.{{@key}}.bulk' class='gcs-input-sm2' type='text' value='{{this.bulk}}' />
+        <input name='system.ranged.{{@key}}.bulk' class='gcs-input-sm2' type='text' value='{{bulk}}' />
       </div>
       <div class='rcl'>
-        <input name='system.ranged.{{@key}}.rcl' class='gcs-input-sm2' type='text' value='{{this.rcl}}' />
+        <input name='system.ranged.{{@key}}.rcl' class='gcs-input-sm2' type='text' value='{{rcl}}' />
       </div>
       <div class='st'>
-        <input name='system.ranged.{{@key}}.st' class='gcs-input-sm2' type='text' value='{{this.st}}' />
+        <input name='system.ranged.{{@key}}.st' class='gcs-input-sm2' type='text' value='{{st}}' />
       </div>
     {{else}}
       {{#unless isCollapsed}}
@@ -74,7 +74,7 @@
               <div class='tooltip gga-manual'>
                 {{{gurpslink this.name}}}
                 {{#if (displayItemHover this)}}
-                  <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
+                  <div class='tooltiptext gga-manual'><img src='{{img}}' /></div>
                 {{/if}}
               </div>
               <div>
@@ -97,29 +97,29 @@
         >{{mode}}</div>
         <div
           class='level rollable flex-center'
-          data-name='{{this.name}} ({{this.mode}})'
+          data-name='{{name}} ({{mode}})'
           data-key='system.ranged.{{@key}}'
           data-otf='{{quotedAttackName 'R' this}}'
-        >{{this.level}}</div>
+        >{{level}}</div>
         <div
           class='acc gga-right {{gmod this.acc}}'
-          data-name='Acc for {{this.name}}'
+          data-name={{localize 'GURPS.accForWeapon' weapon=name}}
           data-otf='{{{displayNumber this.acc}}} Acc'
         >
           {{{displayNumber this.acc showPlus=false}}}
         </div>
-        <div class='damage flex-center rollable' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
-        <div class='range flex-center'>{{this.range}}</div>
-        <div class='rof gga-right'>{{this.rof}}</div>
-        <div class='shots flex-center'>{{this.shots}}</div>
+        <div class='damage flex-center rollable' data-damage data-otf='{{quotedAttackName "D" this}}'>{{damage}}</div>
+        <div class='range flex-center'>{{range}}</div>
+        <div class='rof gga-right'>{{rof}}</div>
+        <div class='shots flex-center'>{{shots}}</div>
         <div
           class='bulk gga-right {{gmod this.bulk}}'
-          data-name='Bulk for {{this.name}}'
-          data-otf='{{this.bulk}} Bulk'
+          data-name='Bulk for {{name}}'
+          data-otf='{{bulk}} Bulk'
         >{{{displayNumber this.bulk}}}
         </div>
-        <div class='rcl gga-right'>{{this.rcl}}</div>
-        <div class='st flex-center'>{{this.st}}</div>
+        <div class='rcl gga-right'>{{rcl}}</div>
+        <div class='st flex-center'>{{st}}</div>
       {{/unless}}
     {{/if}}
   {{/each}}

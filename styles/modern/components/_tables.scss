@@ -134,6 +134,7 @@
 .ms-col-points-positive {
   color: var(--ms-advantage);
 }
+
 .ms-col-points-negative {
   color: var(--ms-disadvantage);
 }
@@ -145,6 +146,7 @@
   a {
     color: var(--ms-accent);
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }
@@ -178,7 +180,7 @@
   font-size: var(--ms-font-sm);
 }
 
-$attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
+$attack-columns: 1fr 60px 36px 90px 50px 55px 50px;
 
 .ms-attack-header {
   @include grid-header($attack-columns);
@@ -228,6 +230,17 @@ $attack-columns: 1fr 50px 36px 70px 50px 50px 50px;
   .ms-attack-parry,
   .ms-attack-range {
     color: var(--ms-text-muted);
+  }
+
+  .ms-attack-acc {
+    color: var(--ms-modifier-positive);
+    cursor: pointer;
+    font-weight: var(--ms-weight-semibold);
+  }
+
+  .ms-attack-acc:hover {
+    color: var(--ms-modifier-positive-hover);
+    text-decoration: underline;
   }
 }
 
@@ -298,8 +311,10 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 .ms-dodge-bonus {
   margin-left: var(--ms-space-2);
   color: var(--ms-advantage);
+
   &.rollable {
     cursor: pointer;
+
     &:hover {
       text-decoration: underline;
     }
@@ -425,6 +440,7 @@ $encumbrance-columns: 24px 1fr 60px 60px 60px;
 .ms-lock-icon {
   margin-left: auto;
   color: var(--ms-accent);
+
   &.ms-unlocked {
     color: var(--ms-disadvantage);
   }
@@ -617,7 +633,7 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
 
 .ms-eqt-cost,
 .ms-eqt-weight {
-  text-align: right;
+  text-align: center;
   @include tabular-nums;
 }
 
@@ -629,6 +645,7 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
   a {
     color: var(--ms-accent);
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }

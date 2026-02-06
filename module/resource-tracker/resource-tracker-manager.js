@@ -242,11 +242,11 @@ export class ResourceTrackerManager extends FormApplication {
     // remove all resources from the two objects:
     let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([_k, v]) => !!v.resource)
 
-    entries.forEach(([key]) => delete GURPS.DamageTables.woundModifiers[key])
-    entries.forEach(([key]) => {
+    entries.forEach(([key, _]) => delete GURPS.DamageTables.woundModifiers[key])
+    entries.forEach(([key, _]) => {
       let toDelete = Object.entries(GURPS.DamageTables.damageTypeMap).filter(([_k, v]) => v === key)
 
-      toDelete.forEach(([k]) => delete GURPS.DamageTables.damageTypeMap[k])
+      toDelete.forEach(([k, _v]) => delete GURPS.DamageTables.damageTypeMap[k])
     })
 
     // get all aliases defined in the resource tracker templates and register them as damage types

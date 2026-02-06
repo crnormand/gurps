@@ -3,7 +3,7 @@ import { Advantage, Melee, Ranged, Skill, Spell } from '../actor-components.js'
 
 export const entityConfigurations: EntityConfiguration[] = [
   {
-    entityName: 'skill',
+    entityName: 'Skill',
     path: 'system.skills',
     EntityClass: Skill,
     editMethod: 'editSkills',
@@ -11,14 +11,14 @@ export const entityConfigurations: EntityConfiguration[] = [
     createArgs: () => [getGame().i18n.localize('GURPS.skill'), '10'],
   },
   {
-    entityName: 'trait',
+    entityName: 'Trait',
     path: 'system.ads',
     EntityClass: Advantage,
     editMethod: 'editAds',
     localeKey: 'GURPS.advantage',
   },
   {
-    entityName: 'spell',
+    entityName: 'Spell',
     path: 'system.spells',
     EntityClass: Spell,
     editMethod: 'editSpells',
@@ -26,7 +26,7 @@ export const entityConfigurations: EntityConfiguration[] = [
     createArgs: () => [getGame().i18n.localize('GURPS.spell'), '10'],
   },
   {
-    entityName: 'melee',
+    entityName: 'Melee',
     path: 'system.melee',
     EntityClass: Melee,
     editMethod: 'editMelee',
@@ -34,7 +34,7 @@ export const entityConfigurations: EntityConfiguration[] = [
     createArgs: () => [getGame().i18n.localize('GURPS.melee'), '10', '1d'],
   },
   {
-    entityName: 'ranged',
+    entityName: 'Ranged',
     path: 'system.ranged',
     EntityClass: Ranged,
     editMethod: 'editRanged',

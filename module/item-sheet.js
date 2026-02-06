@@ -5,9 +5,7 @@ import { recurselist } from '../lib/utilities.js'
 
 import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components.js'
 
-// export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
-// COMPATIBILITY: v12
-export class GurpsItemSheet extends ItemSheet {
+export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -180,7 +178,7 @@ export class GurpsItemSheet extends ItemSheet {
 
     srcData.contains = {} // don't include any contained/collapsed items from source
     srcData.collapsed = {}
-    // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     //   // Scenario 1: Only works for Equipment
     //   if (dragData.type === 'equipment') {
     //     await this.item.update({
@@ -263,7 +261,7 @@ export class GurpsItemSheet extends ItemSheet {
   }
 
   // get useFoundryItems() {
-  //   return game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+  //   return game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
   // }
   get isContainer() {
     return (

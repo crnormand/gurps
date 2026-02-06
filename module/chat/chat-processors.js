@@ -190,7 +190,7 @@ class ForceMigrateChatProcessor extends ChatProcessor {
     /*    await Migration.migrateTo096()
 		await Migration.migrateTo097()
 		await Migration.migrateTo0104()
-		await Migration.fixDataModelProblems() 
+		await Migration.fixDataModelProblems()
 	*/
   }
 }
@@ -806,7 +806,7 @@ class UsesChatProcessor extends ChatProcessor {
     return '/uses &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/uses +([+\-=]\w+)?(reset)?(.*)/i)
+    this.match = line.match(/^\/uses +([+-=]\w+)?(reset)?(.*)/i)
 
     return !!this.match
   }
@@ -895,7 +895,7 @@ class QtyChatProcessor extends ChatProcessor {
     return '/qty &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/qty +([+\-=] *\d+)(.*)/i)
+    this.match = line.match(/^\/qty +([+-=] *\d+)(.*)/i)
 
     return !!this.match
   }

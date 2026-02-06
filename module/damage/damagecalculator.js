@@ -14,9 +14,9 @@ import {
   useLocationWoundMods,
 } from './settings.js'
 
-/* 
+/*
   Crippling injury:
- 
+
   Limb (arm, leg, wing, striker, or prehensile tail): Injury over HP/2.
   Extremity (hand, foot, tail, fin, or extraneous head): Injury over HP/3.
   Eye: Injury over HP/10.
@@ -351,7 +351,7 @@ export class CompositeDamageCalculator {
     let isReady
     const data = this.effects.map(effect => {
       if (effect.type.includes('shock')) {
-        const applyAt = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
+        const applyAt = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
 
         if (applyAt === 'AtNextTurn') {
           isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)

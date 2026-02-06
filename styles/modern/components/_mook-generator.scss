@@ -1,0 +1,254 @@
+@use '../mixins' as *;
+
+.ms-mook-generator {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--ms-bg);
+  color: var(--ms-text);
+  font-size: var(--ms-font-sm);
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}
+
+.ms-mook-header {
+  padding: var(--ms-space-4) var(--ms-space-6);
+  background: var(--ms-bg-header);
+  border-bottom: 1px solid var(--ms-border);
+}
+
+.ms-mook-identity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-3);
+
+  .ms-identity-row {
+    display: flex;
+    gap: var(--ms-space-4);
+    align-items: center;
+
+    &.ms-identity-full {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  .ms-identity-field {
+    display: flex;
+    align-items: center;
+    gap: var(--ms-space-2);
+    flex: 1;
+    min-width: 0;
+
+    label {
+      flex: 0 0 auto;
+      font-size: var(--ms-font-xs);
+      font-weight: var(--ms-weight-medium);
+      color: var(--ms-text-muted);
+      white-space: nowrap;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      background: var(--ms-bg-card);
+      border: 1px solid var(--ms-border);
+      border-radius: var(--ms-radius-sm);
+      padding: var(--ms-space-2) var(--ms-space-3);
+      font-size: var(--ms-font-sm);
+      color: var(--ms-text);
+      @include focus-ring;
+
+      &::placeholder {
+        color: var(--ms-text-dim);
+      }
+    }
+  }
+}
+
+.ms-mook-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: var(--ms-space-4);
+  padding: var(--ms-space-4) var(--ms-space-6);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.ms-mook-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-4);
+  overflow-y: auto;
+}
+
+.ms-attr-section {
+  background: var(--ms-bg-card);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius);
+  padding: var(--ms-space-4);
+}
+
+.ms-attr-section-title {
+  font-size: var(--ms-font-xs);
+  font-weight: var(--ms-weight-semibold);
+  color: var(--ms-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--ms-space-3);
+  padding-bottom: var(--ms-space-2);
+  border-bottom: 1px solid var(--ms-border-light);
+}
+
+.ms-attr-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ms-space-2) var(--ms-space-4);
+}
+
+.ms-attr-pair {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ms-space-1);
+
+  .ms-attr-label {
+    font-size: var(--ms-font-xs);
+    font-weight: var(--ms-weight-medium);
+    color: var(--ms-text-muted);
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  input {
+    width: 100%;
+    max-width: 4em;
+    text-align: center;
+    background: var(--ms-bg);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-sm);
+    padding: var(--ms-space-1) var(--ms-space-2);
+    font-size: var(--ms-font-sm);
+    font-weight: var(--ms-weight-semibold);
+    color: var(--ms-text);
+    @include tabular-nums;
+    @include focus-ring;
+  }
+}
+
+.ms-mook-editors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ms-space-3);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.ms-editor-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 100px;
+  flex: 1 1 auto;
+
+  &.ms-editor-small {
+    min-height: 80px;
+    flex: 0 1 auto;
+  }
+
+  .ms-editor-label {
+    font-size: var(--ms-font-xs);
+    font-weight: var(--ms-weight-semibold);
+    color: var(--ms-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: var(--ms-space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--ms-space-2);
+
+    i {
+      color: var(--ms-accent);
+      font-size: 10px;
+    }
+  }
+
+  textarea {
+    flex: 1;
+    min-height: 60px;
+    resize: vertical;
+    background: var(--ms-bg-card);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    padding: var(--ms-space-3);
+    font-size: var(--ms-font-xs);
+    font-family: monospace;
+    line-height: var(--ms-leading-normal);
+    color: var(--ms-text);
+    @include focus-ring;
+
+    &::placeholder {
+      color: var(--ms-text-dim);
+    }
+  }
+}
+
+.ms-mook-footer {
+  display: flex;
+  gap: var(--ms-space-4);
+  padding: var(--ms-space-4) var(--ms-space-6);
+  background: var(--ms-bg-header);
+  border-top: 1px solid var(--ms-border);
+
+  button {
+    flex: 1;
+    padding: var(--ms-space-3) var(--ms-space-6);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    font-size: var(--ms-font-sm);
+    font-weight: var(--ms-weight-medium);
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &.ms-btn-primary {
+      background: var(--ms-accent);
+      border-color: var(--ms-accent);
+      color: white;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+    }
+
+    &.ms-btn-secondary {
+      background: var(--ms-bg-card);
+      color: var(--ms-text);
+
+      &:hover {
+        background: var(--ms-bg-hover);
+        border-color: var(--ms-accent);
+      }
+    }
+  }
+}
+
+.app.window-app.sheet.ms-mook-generator-app {
+  .window-content {
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--ms-bg);
+
+    > form {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+  }
+}

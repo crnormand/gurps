@@ -1,5 +1,5 @@
-import * as utilities from '../../lib/utilities.js'
-import { displayMod, makeSelect } from '../../lib/utilities.js'
+import * as utilities from '../../../lib/utilities.js'
+import { displayMod, makeSelect } from '../../../lib/utilities.js'
 
 describe('utilities', () => {
   describe('displayMod', () => {
@@ -300,7 +300,37 @@ describe('utilities', () => {
     test('should return quoted attack name', () => {
       const item = { name: 'Attack', mode: 'Mode' }
 
-      expect(utilities.quotedAttackName(item)).toBe('"Attack (Mode)"')
+      expect(utilities.quotedAttackName(item)).toBe(`"Attack (Mode)"`)
+    })
+
+    test('should return quoted attack name without mode', () => {
+      const item = { name: 'Attack' }
+
+      expect(utilities.quotedAttackName(item)).toBe(`"Attack"`)
+    })
+
+    test('should handle quoted item name', () => {
+      const item = { name: 'Sword "Saethors Bane"' }
+
+      expect(utilities.quotedAttackName(item)).toBe(`'Sword "Saethors Bane"'`)
+    })
+
+    test('should handle single quotes in item name', () => {
+      const item = { name: "Sword 'Saethors Bane'" }
+
+      expect(utilities.quotedAttackName(item)).toBe(`"Sword 'Saethors Bane'"`)
+    })
+
+    test('should handle mixed quotes in item name', () => {
+      const item = { name: `Sword "Saethor's Bane"` }
+
+      expect(utilities.quotedAttackName(item)).toBe(`'Sword "Saethor\\'s Bane"'`)
+    })
+
+    test('Dashes in Ranged Weapon names used as Modifiers', () => {
+      const item = { name: `AK-98` }
+
+      expect(utilities.quotedAttackName(item)).toBe(`"AK-98"`)
     })
   })
 

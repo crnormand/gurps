@@ -7,7 +7,12 @@ function init() {
 
   Hooks.once('init', () => {
     if (!game.release) return
-    registerRuler()
+
+    if (game.release?.generation >= 13) {
+      registerRuler()
+    } else {
+      CONFIG.Canvas.rulerClass = GurpsRulerV12
+    }
   })
 }
 

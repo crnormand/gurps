@@ -4,9 +4,6 @@ import GurpsWiring from './gurps-wiring.js'
 
 export default class GurpsJournalEntry {
   static ready() {
-    // Foundry v12
-    Hooks.on('renderJournalPageSheet', GurpsJournalEntry._renderJournalPageSheet)
-    // Foundry v13
     Hooks.on('renderJournalEntryPageTextSheet', GurpsJournalEntry._renderJournalPageSheet)
   }
 

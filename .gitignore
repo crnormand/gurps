@@ -13,6 +13,7 @@ coverage
 data/monsters.csv
 .history
 simple.css.map
+.vscode/launch.json
 
 # Build
 dist/

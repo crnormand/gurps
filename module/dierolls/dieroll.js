@@ -2,6 +2,8 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
 
+import { computePotentialHits } from './compute-potential-hits.js'
+
 export const rollData = target => {
   let targetColor, rollChance
 
@@ -69,7 +71,7 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
     return `${value + newAdd} ${addDamageType ? damageType : ''}`.trim()
   }
 
-  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)) {
+  if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)) {
     while (newAdd >= 7) {
       newAdd -= 7
       dice += 2
@@ -110,7 +112,7 @@ export async function doRoll({
 }) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 
-  const taggedSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   let result = { canRoll: true, hasActions: true }
   let token
 
@@ -171,7 +173,7 @@ export async function doRoll({
     }
   }
 
-  const showRollDialog = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+  const showRollDialog = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
 
   if (showRollDialog && actor instanceof Actor) {
     // Get Actor Info
@@ -230,7 +232,7 @@ export async function doRoll({
         )
         damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
         damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
-        usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
+        usingDiceAdd = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
       }
 
       const dice = displayFormula.match(/\d+d/)?.[0] || ''
@@ -243,11 +245,8 @@ export async function doRoll({
 
     // If Max Actions Check is enabled get Consume Action Info
     let consumeActionIcon, consumeActionLabel, consumeActionColor
-    const settingsAllowAfterMaxActions = game.settings.get(
-      Settings.SYSTEM_NAME,
-      Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS
-    )
-    const settingsUseMaxActions = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
+    const settingsAllowAfterMaxActions = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS)
+    const settingsUseMaxActions = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_MAX_ACTIONS)
     const dontShowMaxActions =
       settingsUseMaxActions === 'Disable' || (!result.isCombatant && settingsUseMaxActions === 'AllCombatant')
 
@@ -606,25 +605,13 @@ async function _doRoll({
 
     // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      let rofText
-      let potentialHits = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1
+      /** @type {import('./compute-potential-hits.js').WeaponDescriptor} */
+      const weapon = { recoil: optionalArgs.obj.rcl, rateOfFire: optionalArgs.obj.rof }
+      const potentialHits = computePotentialHits(weapon, optionalArgs.shots, margin)
 
-      const rof = Math.min(optionalArgs.shots || 1, parseInt(optionalArgs.obj.rof))
-
-      potentialHits = Math.min(rof, potentialHits)
-      rofText = potentialHits.toString()
-
-      // Support shotgun RoF (3x9, for example).
-      const matchShotgunRoF = optionalArgs.obj.rof.match(/(?<rof>\d+)[×xX*](?<projectiles>\d+)/)
-
-      if (matchShotgunRoF) {
-        potentialHits = potentialHits * matchShotgunRoF.groups.projectiles
-        rofText = `${rof}x${matchShotgunRoF.groups.projectiles}`
-      }
-
-      chatdata['rof'] = rofText
-      chatdata['rcl'] = optionalArgs.obj.rcl
-      chatdata['rofrcl'] = potentialHits
+      chatdata['rof'] = potentialHits.rateOfFire
+      chatdata['rcl'] = potentialHits.recoil
+      chatdata['rofrcl'] = potentialHits.potentialHits
     }
 
     chatdata['optlabel'] = optionalArgs.text || ''
@@ -719,7 +706,7 @@ async function _doRoll({
     !!optionalArgs.blind ||
     !!optionalArgs.event?.blind ||
     isCtrl ||
-    (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
+    (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
   ) {
     messageData.whisper = ChatMessage.getWhisperRecipients('GM').map(u => u.id)
     messageData.blind = true

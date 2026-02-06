@@ -42,8 +42,8 @@
       <span class='ms-eqt-weight'>{{toLocaleString (toNumber weight)}}</span>
       <span class='ms-eqt-ref'>{{{pdflinkext this}}}</span>
       <span class='ms-eqt-actions'>
-        <i class='fas fa-pen-to-square ms-action-btn' data-action='edit-equipment' data-key='system.equipment.{{../container}}.{{@key}}' title='Edit'></i>
-        <i class='fas fa-trash ms-action-btn ms-delete' data-action='delete-equipment' data-key='system.equipment.{{../container}}.{{@key}}' title='Delete'></i>
+        <i class='fas fa-pen-to-square ms-action-btn' data-action='editEquipment' data-key='system.equipment.{{../container}}.{{@key}}' title='Edit'></i>
+        <i class='fas fa-trash ms-action-btn ms-delete' data-action='deleteEquipment' data-key='system.equipment.{{../container}}.{{@key}}' title='Delete'></i>
       </span>
     </div>
     {{/unless}}
@@ -51,7 +51,7 @@
     <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
     {{/each}}
     <div class='ms-add-row'>
-      <span class='ms-add-btn' data-action='add-equipment' data-container='{{container}}'><i class='fas fa-plus'></i> {{localize 'GURPS.equipment'}}</span>
+      <span class='ms-add-btn' data-action='addEquipment' data-container='{{container}}'><i class='fas fa-plus'></i> {{localize 'GURPS.equipment'}}</span>
     </div>
   </div>
 </div>

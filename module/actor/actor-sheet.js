@@ -77,7 +77,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.system.eqtsummary
     sheetData.navigateBar = {
-      visible: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_SHEET_NAVIGATION),
+      visible: game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_SHEET_NAVIGATION),
       hasMelee: !isEmptyObject(this.actor.system.melee),
       hasRanged: !isEmptyObject(this.actor.system.ranged),
       hasSpells: !isEmptyObject(this.actor.system.spells),
@@ -86,7 +86,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
-    sheetData.useQN = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
+    sheetData.useQN = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
 
     sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
 
@@ -123,6 +123,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     GurpsWiring.hookupAllEvents(html)
 
     // Allow OTFs on this actor sheet to be draggable.
+    // TODO Redundant with `GurpsWiring.hookupAllEvents`, above.
     html.find('[data-otf]').each((_, li) => {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
@@ -152,7 +153,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     this._createGlobalItemMenus(html)
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       html.find('.enc').click(this._onClickEnc.bind(this))
     }
 
@@ -307,7 +308,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     // END CONDITIONAL INJURY
 
     // If using the "enhanced" inputs for trackers, enable the ribbon popup.
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ENHANCED_INPUT)) {
+    if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ENHANCED_INPUT)) {
       // On Focus, initialize the ribbon popup and show it.
       html.find('.spinner details summary input').focus(ev => {
         let details = ev.currentTarget.closest('details')
@@ -577,7 +578,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
 
       if (isNaN(value)) value = eqt.uses
-      // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       //   await this.actor.internalUpdate({ [path + '.uses']: value })
       // } else {
       let item = this.actor.items.get(eqt.itemid)
@@ -597,7 +598,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+      // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       //   await this.actor.internalUpdate({ [path + '.uses']: value })
       // } else {
       let item = this.actor.items.get(eqt.itemid)
@@ -621,7 +622,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         await Dialog.confirm({
           title: game.i18n.localize('GURPS.removeItem'),
           content: game.i18n.format('GURPS.confirmRemoveItem', { name: eqt.name }),
-          yes: () => actor.deleteEquipment(path),
+          yes: () => actor.deleteEntry(path),
         })
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
@@ -647,8 +648,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
-        callback: e => {
-          this.actor.deleteNote(e.dataset.key)
+        callback: async event => {
+          const key = event[0].dataset.key
+
+          await this.actor.deleteEntry(key)
         },
       },
     ]
@@ -695,7 +698,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           {
             label: 'Save',
             icon: 'fas fa-save',
-            callback: (_event, button, _dialog) => {
+            callback: (event, button, _dialog) => {
               let value = button.form.elements.i.value
 
               actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
@@ -830,18 +833,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     }
   }
 
-  _deleteItem(target) {
-    let key = target.dataset.key
-    let item = this.actor.items.get(GURPS.decode(this.actor, key).itemid)
+  async _deleteItem(target) {
+    const key = target[0].dataset.key
 
-    if (item) {
-      this.actor._removeItemAdditions(item.id).then(() => {
-        this.actor.deleteEmbeddedDocuments('Item', [item.id]).then(() => {
-          GURPS.removeKey(this.actor, key)
-          this.actor.refreshDR().then()
-        })
-      })
-    }
+    await this.actor.deleteEntry(key)
   }
 
   _sortContentAscending(target) {
@@ -1078,7 +1073,6 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       case 'Item':
         item = game.items.get(dragData.id)
         break
-
       case 'JournalEntryPage': {
         let j = game.journal.get(dragData.id)
 
@@ -1087,7 +1081,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       }
     }
 
-    // const equipmentAsItem = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
+    // const equipmentAsItem = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
     if (!item) return {}
 
     return item.type !== 'equipment' // || !equipmentAsItem
@@ -1262,18 +1256,6 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           one: {
             label: 'Update',
             callback: async () => {
-              // if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-              //   ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-              //     a => (obj[a] = html.find(`.${a}`).val())
-              //   )
-              //   ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
-              //   let u = html.find('.save') // Should only find in Note (or equipment)
-              //   if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
-              //   let v = html.find('.ignoreImportQty') // Should only find in equipment
-              //   if (!!v) obj.ignoreImportQty = v.is(':checked')
-              //   await actor.internalUpdate({ [path]: obj })
-              //   await actor.updateParentOf(path, false)
-              // } else {
               let item = actor.items.get(obj.itemid)
 
               item.name = obj.name
@@ -1284,10 +1266,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
               item.system.eqt.techlevel = obj.techlevel
               item.system.eqt.notes = obj.notes
               item.system.eqt.pageref = obj.pageref
-              item.system.itemModifiers = obj.itemModifiers
+              item.system.itemModifiers = (obj.itemModifiers || '').trim()
               await actor._updateItemFromForm(item)
               await actor.updateParentOf(path, false)
-              // }
             },
           },
         },
@@ -1758,7 +1739,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
-    const altsheet = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
+    const altsheet = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
 
     const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
     let b = [
@@ -1798,7 +1779,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         return new ActorImporter(this.actor).importActor()
       case 'enemy':
       case 'characterV2':
-        return GURPS.modules.Importer.importGCS(this.actor)
+        return GURPS.modules.Importer.importerPrompt(this.actor)
       default:
         throw new Error(`Invalid actor type for import: ${this.actor.type}`)
     }
@@ -1818,8 +1799,8 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       // Hold down the shift key for Simplified
       newSheet = 'gurps.GurpsActorSimplifiedSheet'
     if (game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
-      // Hold down the Ctrl key (Command on Mac) for Simplified
-      newSheet = 'gurps.GurpsActorNpcSheet'
+      // Hold down the Ctrl key (Command on Mac) for NPC/mini sheet
+      newSheet = 'gurps.GurpsActorNpcModernSheet'
 
     this.actor.openSheet(newSheet)
   }
@@ -1910,7 +1891,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   async _onClickEnc(ev) {
     ev.preventDefault()
 
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       const element = ev.currentTarget
       const key = element.dataset.key
 
@@ -1949,7 +1930,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     eqt.equipped = !eqt.equipped
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     await this.actor.internalUpdate({ [key]: eqt })
-    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+    // if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     let item = this.actor.items.get(eqt.itemid)
 
     item.system.equipped = eqt.equipped
@@ -1971,26 +1952,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
-        callback: async e => {
-          let key = e[0].dataset.key
-          const actorComponent = foundry.utils.getProperty(this.actor, key)
+        callback: async event => {
+          const key = event[0].dataset.key
 
-          if (this.actor.type === 'characterV2') {
-            if (key.startsWith('system.ads')) this.actor.deleteItem(actorComponent.traitV2)
-
-            return
-          }
-
-          // We need to remove linked item
-          const existingItem = await this.actor.items.get(actorComponent.itemid)
-
-          if (existingItem) {
-            this.actor._removeItemAdditions(existingItem.id)
-            await existingItem.delete()
-          }
-
-          GURPS.removeKey(this.actor, key)
-          await this.actor.refreshDR()
+          await this.actor.deleteEntry(key)
         },
       },
     ]
@@ -2347,61 +2312,6 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
   }
 }
 
-export class GurpsActorNpcSheet extends GurpsActorSheet {
-  /** @override */
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 750,
-      height: 450,
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-    })
-  }
-
-  /* -------------------------------------------- */
-
-  /** @override */
-  get template() {
-    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-
-    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
-  }
-
-  getData() {
-    const data = super.getData()
-
-    data.currentdodge = this.actor.system.currentdodge
-    data.currentmove = this.actor.system.currentmove
-    data.defense = this.actor.getTorsoDr()
-    let p = this.actor.getEquippedParry()
-
-    //    let b = this.actor.getEquippedBlock();      // Don't have a good way to display block yet
-    //    if (b > 0)
-    //      data.parryblock = p + "/" + b;
-    //    else
-    data.parryblock = p
-
-    return data
-  }
-
-  activateListeners(html) {
-    super.activateListeners(html)
-    html.find('.npc-sheet').click(ev => {
-      this._onfocus(ev)
-    })
-    html.find('.rollableicon').click(this._onClickRollableIcon.bind(this))
-  }
-
-  async _onClickRollableIcon(ev) {
-    ev.preventDefault()
-    let element = ev.currentTarget
-    let val = element.dataset.value
-    let parsed = parselink(val)
-
-    GURPS.performAction(parsed.action, this.actor, ev)
-  }
-}
-
 export class GurpsInventorySheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
@@ -2438,11 +2348,11 @@ export class ItemImageSettings extends FormApplication {
 
   getData() {
     return {
-      settings: game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE),
+      settings: game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE),
     }
   }
 
   async _updateObject(event, formData) {
-    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE, formData)
+    await game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE, formData)
   }
 }
