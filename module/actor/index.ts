@@ -3,7 +3,6 @@ import { GurpsModule } from 'module/gurps-module.js'
 import {
   GurpsActorCombatSheet,
   GurpsActorEditorSheet,
-  GurpsActorNpcSheet,
   GurpsActorSheet,
   GurpsActorSheetReduced,
   GurpsActorSimplifiedSheet,
@@ -12,7 +11,8 @@ import {
 } from './actor-sheet.js'
 import * as dataModels from './data/index.ts'
 import { GurpsActorV2 } from './gurps-actor.ts'
-import { GurpsActorModernSheet } from './modern/sheet.js'
+import { GurpsActorNpcModernSheet } from './modern/npc-sheet.ts'
+import { GurpsActorModernSheet } from './modern/sheet.ts'
 
 function init() {
   console.log('GURPS | Initializing GURPS Actor module.')
@@ -38,7 +38,8 @@ function init() {
       label: 'Simple',
       makeDefault: false,
     })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcSheet, {
+    // @ts-expect-error: Not an ApplicationV2, we can safely ignore this though
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcModernSheet, {
       label: 'NPC/mini',
       makeDefault: false,
     })

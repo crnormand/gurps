@@ -861,7 +861,7 @@ export class GurpsActor extends Actor {
       let mv = GURPS.Maneuvers.get(this.system.conditions.maneuver)
       let reason = mv ? game.i18n.localize(mv.label) : ''
 
-      adjustment = this._adjustMove(move, threshold, value)
+      adjustment = this._adjustMove(move, threshold, value, reason)
     }
 
     return adjustment

@@ -49,6 +49,7 @@ class GurpsTokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     const actor = this.token.actor
 
     if (!actor) return defaultColor
+    if (!actor.isOfType('character', 'characterV2', 'enemy')) return defaultColor
 
     const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
     const yards = Length.from(distance, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0

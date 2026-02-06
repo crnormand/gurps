@@ -1541,7 +1541,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async runOTF(otf: string): Promise<void> {
     const action = GURPS.parselink(otf)
 
-    await GURPS.performAction(action.action!, this)
+    if (!action.action) return
+
+    await GURPS.performAction(action.action, this)
   }
 
   /* ---------------------------------------- */

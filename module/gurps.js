@@ -28,7 +28,7 @@ import {
 } from '../lib/utilities.js'
 import { GGADebugger } from '../utils/debugger.js'
 
-import { Action } from './action/index.js'
+import { ActionModule } from './action/index.js'
 import { prepareRemoveKey } from './actor/deletion.ts'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { Actor } from './actor/index.js'
@@ -41,8 +41,7 @@ import { registerColorPickerSettings } from './color-character-sheet/color-chara
 import { colorGurpsActorSheet } from './color-character-sheet/color-character-sheet.js'
 import { Combat } from './combat/index.js'
 import { calculateRoFModifier } from './combat/utilities.js'
-import { addManeuverListeners, addManeuverMenu } from './combat-tracker/maneuver-menu.js'
-import { addQuickRollButton, addQuickRollListeners } from './combat-tracker/quick-roll-menu.js'
+import { CombatTracker } from './combat-tracker/index.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'

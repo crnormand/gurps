@@ -1,5 +1,5 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { Length, LengthUnit } from '../data/common/index.js'
+import { Length, LengthUnit } from '../data/common/index.ts'
 
 class GurpsRuler extends foundry.canvas.interaction.Ruler {
   // Used to determine the distance modifier to apply to the modifier bucket when releasing the ruler.
@@ -47,7 +47,6 @@ class GurpsRuler extends foundry.canvas.interaction.Ruler {
         if (yards <= range.max) return range.penalty
       }
     }
-  }
 
     return 0
   }

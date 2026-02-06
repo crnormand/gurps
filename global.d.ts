@@ -1,4 +1,3 @@
-import { BaseAction } from 'module/action/base-action.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GcsCharacterModel } from 'module/actor/data/gcs-character.ts'
 import { GcsLootModel } from 'module/actor/data/gcs-loot.ts'
@@ -8,7 +7,6 @@ import { GurpsCombatant } from 'module/combat/combatant.ts'
 import DamageChat from 'module/damage/damagechat.js'
 import { MapField } from 'module/data/fields/map-field.ts'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
-import { Importer } from 'module/importer/index.ts'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
 import { GcsEquipmentModifierModel } from 'module/item/data/gcs-equipment-modifier.ts'
 import { GcsEquipmentModel } from 'module/item/data/gcs-equipment.ts'
@@ -25,7 +23,6 @@ import { Equipment, Feature, Skill, Spell } from 'module/item/legacy/itemv1-inte
 import { AnyPrereqClass } from 'module/prereqs/index.ts'
 import { ResourceTrackerManager } from 'module/resource-tracker/resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from 'module/resource-tracker/resource-tracker.ts'
-import { Scripting } from 'module/scripting/index.ts'
 import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.ts'
 import { GurpsToken } from 'module/token/gurps-token.ts'
 
@@ -83,7 +80,7 @@ declare global {
       ranges: Array<{ modifier: number; max: number; penalty: number }>
     }
     Maneuvers: {
-      get(id: string): { icon?: string; label: string; move: string | null } | undefined
+      get(id: string | null): { icon?: string; label: string; move: string | null } | undefined
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
