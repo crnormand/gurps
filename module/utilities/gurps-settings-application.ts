@@ -77,8 +77,8 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
     const context = await super._prepareContext(options)
 
     const settings =
-      (Array.from(game.settings!.settings.values()).filter((s: any) =>
-        s.id.startsWith(`gurps.${this._module}.`)
+      (Array.from(game.settings!.settings.values()).filter((e: any) =>
+        e.id.startsWith(`gurps.${this._module}.`)
       ) as any) || []
 
     const entries: SettingEntry[] = []

@@ -81,29 +81,29 @@ function handlePdf(links: string): void {
 
   for (const link of links.split(',')) {
     if (!!success && isOpenFirstPDFSetting()) continue
-    const t = link.trim()
-    const i = t.indexOf(':')
+    const trimmedLink = link.trim()
+    const i = trimmedLink.indexOf(':')
     let book = ''
     let page = 0
 
     if (i > 0) {
       // Special case for refs like "PU8:12" or "DFRPG:A12"
       // First we need to check if after the colon is only numbers or has a letter
-      const afterColon = t.substring(i + 1).trim()
+      const afterColon = trimmedLink.substring(i + 1).trim()
 
       if (afterColon.match(/^[0-9]+$/)) {
-        book = t.substring(0, i).trim()
+        book = trimmedLink.substring(0, i).trim()
         page = parseInt(afterColon)
       } else {
-        const codeBefore = t.substring(0, i).trim() // e.g. "DFRPG"
+        const codeBefore = trimmedLink.substring(0, i).trim() // e.g. "DFRPG"
         const codeAfter = afterColon.replace(/[0-9]*/g, '').trim() // e.g. "A"
 
         book = `${codeBefore}:${codeAfter}` // e.g. "DFRPG:A"
         page = parseInt(afterColon.replace(/[a-zA-Z]*/g, '')) // e.g. 12
       }
     } else {
-      book = t.replace(/(.*?)[0-9].*/g, '$1').trim()
-      page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
+      book = trimmedLink.replace(/(.*?)[0-9].*/g, '$1').trim()
+      page = parseInt(trimmedLink.replace(/[a-zA-Z]*/g, ''))
     }
 
     // Special case for Separate Basic Set PDFs
@@ -125,8 +125,8 @@ function handlePdf(links: string): void {
     const pdfPages: foundry.documents.JournalEntryPage[] = []
 
     game.journal!.forEach(j => {
-      j.pages.forEach(p => {
-        if (p.type === 'pdf') pdfPages.push(p)
+      j.pages.forEach(page => {
+        if (page.type === 'pdf') pdfPages.push(page)
       })
     })
 

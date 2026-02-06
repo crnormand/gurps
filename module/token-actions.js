@@ -130,7 +130,7 @@ export class TokenActions {
 
   async removeManeuverModifiers() {
     const allModifiers = await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')
-    const validModifiers = allModifiers.filter(m => !m.includes('#maneuver'))
+    const validModifiers = allModifiers.filter(e => !e.includes('#maneuver'))
 
     await this.actor.update({ 'system.conditions.usermods': validModifiers })
   }
@@ -386,7 +386,7 @@ export class TokenActions {
    */
   async removeModifiers() {
     const allModifiers = (await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')) || []
-    const nonManeuverModifiers = allModifiers.filter(m => !m.includes('#maneuver'))
+    const nonManeuverModifiers = allModifiers.filter(e => !e.includes('#maneuver'))
 
     await this.actor.update({ 'system.conditions.usermods': nonManeuverModifiers })
   }
@@ -407,7 +407,7 @@ export class TokenActions {
     }
 
     const allModifiers = await [...foundry.utils.getProperty(this.actor, 'system.conditions.usermods')].filter(
-      m => !m.includes('#maneuver') && !m.includes('@eft:')
+      e => !e.includes('#maneuver') && !e.includes('@eft:')
     )
 
     const maneuverModifiers = []
@@ -443,8 +443,8 @@ export class TokenActions {
       )
     }
 
-    Object.keys(this.currentParry).map(k => {
-      const parry = this.currentParry[k]
+    Object.keys(this.currentParry).map(key => {
+      const parry = this.currentParry[key]
 
       if (parry.currentPenalty !== 0) {
         const signal = parry.currentPenalty > 0 ? '+' : '-'
@@ -456,8 +456,8 @@ export class TokenActions {
       }
     })
 
-    Object.keys(this.currentAim).map(k => {
-      const aim = this.currentAim[k]
+    Object.keys(this.currentAim).map(key => {
+      const aim = this.currentAim[key]
 
       if (aim.aimBonus !== 0) {
         const signal = aim.aimBonus > 0 ? '+' : '-'
@@ -650,10 +650,10 @@ export class TokenActions {
     this.extraAttacks = 0
     this.extraBlocks = 0
     this.maxParries = Infinity
-    Object.keys(this.currentParry).map(k => {
-      const p = this.currentParry[k]
+    Object.keys(this.currentParry).map(key => {
+      const parry = this.currentParry[key]
 
-      p.currentPenalty = 0
+      parry.currentPenalty = 0
     })
 
     switch (lastManeuver) {
@@ -680,18 +680,18 @@ export class TokenActions {
         console.log(`Add +1 Move bonus to ${this.token.name})`)
         break
       case 'aim':
-        Object.keys(this.currentAim).map(k => {
-          const a = this.currentAim[k]
+        Object.keys(this.currentAim).map(key => {
+          const aim = this.currentAim[key]
 
-          if (a.startAt === null) a.startAt = this.currentTurn - 1
-          const acc = parseInt(a.acc || 0)
+          if (aim.startAt === null) aim.startAt = this.currentTurn - 1
+          const acc = parseInt(aim.acc || 0)
           const maxAccBonus = acc + 2 // Add here an Acc bonus field on Item like Extra Attack?
-          const dif = this.currentTurn - a.startAt
+          const dif = this.currentTurn - aim.startAt
 
           if (dif === 1) {
-            a.aimBonus = acc
-          } else if (a.aimBonus < maxAccBonus) {
-            a.aimBonus += 1
+            aim.aimBonus = acc
+          } else if (aim.aimBonus < maxAccBonus) {
+            aim.aimBonus += 1
           }
         })
 
@@ -801,10 +801,10 @@ export class TokenActions {
 
     if (!combatTempTags.length) return
     const userMods = foundry.utils.getProperty(this.actor, 'system.conditions.usermods')
-    const validMods = userMods.filter(m => {
-      const tags = m.match(/#(\S+)/g) || []
+    const validMods = userMods.filter(mod => {
+      const tags = mod.match(/#(\S+)/g) || []
 
-      return tags.every(t => !combatTempTags.includes(t.toLowerCase()))
+      return tags.every(tag => !combatTempTags.includes(tag.toLowerCase()))
     })
 
     await this.actor.update({ 'system.conditions.usermods': validMods })
@@ -843,14 +843,14 @@ export class TokenActions {
           const modeRegex = /(?<=\().+(?=\))/gm
           let mode = chatThing.match(modeRegex)?.[0] || ''
 
-          this.currentParry = Object.keys(this.currentParry).reduce((acc, k) => {
-            let parry = this.currentParry[k]
+          this.currentParry = Object.keys(this.currentParry).reduce((acc, key) => {
+            let parry = this.currentParry[key]
 
             if (name.includes(parry.name) && mode.includes(parry.mode)) {
               parry.currentPenalty += parry.basePenalty
             }
 
-            acc[k] = parry
+            acc[key] = parry
 
             return acc
           }, {})

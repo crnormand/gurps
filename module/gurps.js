@@ -311,20 +311,20 @@ if (!globalThis.GURPS) {
     xml = xml.replace(/ & /g, ' &amp; ')
 
     let swap = function (/** @type {string} */ xml, /** @type {string} */ tagin, /** @type {string} */ tagout) {
-      let s = xml.indexOf(tagin)
+      let indexIn = xml.indexOf(tagin)
 
-      while (s > 0) {
-        let e = xml.indexOf(tagout, s)
+      while (indexIn > 0) {
+        let indexOut = xml.indexOf(tagout, indexIn)
 
-        if (e > s) {
-          let t1 = xml.substring(0, s)
-          let t2 = xml.substring(s + 3, e)
+        if (indexOut > indexIn) {
+          let t1 = xml.substring(0, indexIn)
+          let t2 = xml.substring(indexIn + 3, indexOut)
 
           t2 = '@@@@' + utoa(t2) + '\n'
-          let t3 = xml.substring(e + 4)
+          let t3 = xml.substring(indexOut + 4)
 
           xml = t1 + t2 + t3
-          s = xml.indexOf(tagin, s + t2.length)
+          indexIn = xml.indexOf(tagin, indexIn + t2.length)
         }
       }
 
@@ -382,10 +382,10 @@ if (!globalThis.GURPS) {
   GURPS.objToString = objToString
 
   /**
-   * @param {string} s
+   * @param {string} str
    */
-  function trim(s) {
-    return s.replace(/^\s*$(?:\r\n?|\n)/gm, '').trim() // /^\s*[\r\n]/gm
+  function trim(str) {
+    return str.replace(/^\s*$(?:\r\n?|\n)/gm, '').trim() // /^\s*[\r\n]/gm
   }
 
   GURPS.trim = trim
@@ -501,10 +501,10 @@ if (!globalThis.GURPS) {
         // if [@margin] tests for >=0
         return GURPS.lastTargetedRoll.margin >= 0
       else {
-        let m = action.equation.match(/ *([=<>]+) *([+-]?[\d.]+)/)
-        let value = Number(m[2])
+        let match = action.equation.match(/ *([=<>]+) *([+-]?[\d.]+)/)
+        let value = Number(match[2])
 
-        switch (m[1]) {
+        switch (match[1]) {
           case '=':
           case '==':
             return GURPS.lastTargetedRoll.margin == value
@@ -839,7 +839,7 @@ if (!globalThis.GURPS) {
         } else {
           const token = actor.getActiveTokens()[0]
 
-          actor.canRoll(action, token).then(r => (canRoll = r.canRoll))
+          actor.canRoll(action, token).then(e => (canRoll = e.canRoll))
         }
       }
 
@@ -996,14 +996,14 @@ if (!globalThis.GURPS) {
         return false
       }
 
-      let p = 'A:'
+      let prefix = 'A:'
 
-      if (!!action.isMelee && !action.isRanged) p = 'M:'
-      if (!action.isMelee && !!action.isRanged) p = 'R:'
+      if (!!action.isMelee && !action.isRanged) prefix = 'M:'
+      if (!action.isMelee && !!action.isRanged) prefix = 'R:'
       let thing = stripBracketContents(att.name)
       let qn = quotedAttackName({ name: thing, mode: att.mode })
       let aid = actor ? `@${actor.id}@` : ''
-      const chatthing = `[${aid}${p}${qn}]`
+      const chatthing = `[${aid}${prefix}${qn}]`
       const followon = `[${aid}D:${qn}]`
       let target = att.level
 
@@ -1439,13 +1439,13 @@ if (!globalThis.GURPS) {
 
     const calculations = []
 
-    for (const a of actions) {
-      const func = GURPS.actionFuncs[a.type]
+    for (const action of actions) {
+      const func = GURPS.actionFuncs[action.type]
 
       if (func.constructor.name === 'AsyncFunction') {
-        calculations.push(await func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
+        calculations.push(await func({ action, actor, event, targets, originalOtf, calcOnly: true }))
       } else {
-        calculations.push(func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
+        calculations.push(func({ action, actor, event, targets, originalOtf, calcOnly: true }))
       }
     }
 
@@ -1501,30 +1501,30 @@ if (!globalThis.GURPS) {
    */
   function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) {
     const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
-    var t
+    var item
 
-    if (!actor) return t
+    if (!actor) return item
     if (actor instanceof GurpsActorV2) actor = actor.system
     let skillRegExp = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
     let best = 0
 
     if (!isSpellOnly)
-      recurselist(actor.skills, s => {
-        if (s.name?.match(skillRegExp) && s.level > best) {
-          t = s
-          best = parseInt(s.level)
+      recurselist(actor.skills, skill => {
+        if (skill.name?.match(skillRegExp) && skill.level > best) {
+          item = skill
+          best = parseInt(skill.level)
         }
       })
-    if (!t)
+    if (!item)
       if (!isSkillOnly)
-        recurselist(actor.spells, s => {
-          if (s.name?.match(skillRegExp) && s.level > best) {
-            t = s
-            best = parseInt(s.level)
+        recurselist(actor.spells, spell => {
+          if (spell.name?.match(skillRegExp) && spell.level > best) {
+            item = spell
+            best = parseInt(spell.level)
           }
         })
 
-    return t
+    return item
   }
 
   GURPS.findSkillSpell = findSkillSpell
@@ -1559,58 +1559,57 @@ if (!globalThis.GURPS) {
    */
   function findAttack(actor, sname, isMelee = true, isRanged = true) {
     const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
-    var t
+    var item
 
-    if (!actor) return t
+    if (!actor) return item
     if (actor instanceof GurpsActorV2) actor = actor.system
-    let s = sanitize(sname)
-    let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(s, false, false), 'i')
+    let name = sanitize(sname)
+    let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(name, false, false), 'i')
     let smode = ''
-    let m = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', {
+    let match = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', {
       unbalanced: 'skip-lazy',
       valueNames: ['between', null, 'match', null],
     })
 
-    if (m.length == 2) {
+    if (match.length == 2) {
       // Found a mode "(xxx)" in the search name
-      sname = m[0].value.trim()
-      smode = m[1].value.trim().toLowerCase()
+      sname = match[0].value.trim()
+      smode = match[1].value.trim().toLowerCase()
     }
 
-    let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(s, false, false), 'i')
+    let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(name, false, false), 'i')
 
     if (isMelee)
       // @ts-expect-error - actor.melee type not fully typed
-      recurselist(actor.melee, (e, _k, _d) => {
-        if (!t) {
-          let full = e.name
+      recurselist(actor.melee, (melee, _k, _d) => {
+        if (!item) {
+          let full = melee.name
 
-          if (e.mode) full += ' (' + e.mode + ')'
-          let em = e.mode ? e.mode.toLowerCase() : ''
+          if (melee.mode) full += ' (' + melee.mode + ')'
+          let em = melee.mode ? melee.mode.toLowerCase() : ''
 
-          if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
-          else if (e.name.match(fullregex)) t = e
-          else if (full.match(fullregex)) t = e
+          if (melee.name.match(nameregex) && (smode == '' || em == smode)) item = melee
+          else if (melee.name.match(fullregex)) item = melee
+          else if (full.match(fullregex)) item = melee
         }
       })
     //    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
-    if (isRanged && !t)
+    if (isRanged && !item)
       // @ts-expect-error - actor.ranged type not fully typed
-      recurselist(actor.ranged, (e, _k, _d) => {
-        if (!t) {
-          let full = e.name
+      recurselist(actor.ranged, (ranged, _k, _d) => {
+        if (!item) {
+          let full = ranged.name
 
-          if (e.mode) full += ' (' + e.mode + ')'
-          let em = e.mode ? e.mode.toLowerCase() : ''
+          if (ranged.mode) full += ' (' + ranged.mode + ')'
+          let em = ranged.mode ? ranged.mode.toLowerCase() : ''
 
-          if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
-          else if (e.name.match(fullregex)) t = e
-          else if (full.match(fullregex)) t = e
+          if (ranged.name.match(nameregex) && (smode == '' || em == smode)) item = ranged
+          else if (ranged.name.match(fullregex)) item = ranged
+          else if (full.match(fullregex)) item = ranged
         }
       })
 
-    //    t = Object.values(actor.ranged).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
-    return t
+    return item
   }
 
   GURPS.findAttack = findAttack
@@ -1667,9 +1666,9 @@ if (!globalThis.GURPS) {
 
     if ('damage' in element.dataset) {
       // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
-      let f = element.dataset.otf ? element.dataset.otf : element.innerText.trim()
+      let text = element.dataset.otf ? element.dataset.otf : element.innerText.trim()
 
-      let parts = f.includes(',') ? f.split(',') : [f]
+      let parts = text.includes(',') ? text.split(',') : [text]
 
       for (let part of parts) {
         //let result = parseForRollOrDamage(part.trim())
@@ -1723,9 +1722,9 @@ if (!globalThis.GURPS) {
       let otf = element.dataset.otf.trim()
       // But there is a special case where the OtF is the first thing
       // "M:"["Quarterstaff"A:"Quarterstaff (Thrust)"] (Thrust)""
-      let m = otf.match(/^([sSmMrRaA]):"\["([^"]+)([^\]]+)]( *\(\w*\))?/)
+      let match = otf.match(/^([sSmMrRaA]):"\["([^"]+)([^\]]+)]( *\(\w*\))?/)
 
-      if (m) otf = m[1] + ':' + m[2] + (m[4] ? m[4] : '')
+      if (match) otf = match[1] + ':' + match[2] + (match[4] ? match[4] : '')
       otf = stripBracketContents(otf)
 
       return GURPS.executeOTF(otf)
@@ -1741,32 +1740,32 @@ if (!globalThis.GURPS) {
 
       if (opt.text === text) opt.text = ''
       else opt.text = "<span style='font-size:85%'>(" + opt.text + ')</span>'
-      let k = $(element).closest('[data-key]').attr('data-key')
+      let key = $(element).closest('[data-key]').attr('data-key')
 
-      if (!k) k = element.dataset.key
+      if (!key) key = element.dataset.key
 
-      if (k) {
-        if (actor) opt.obj = foundry.utils.getProperty(actor, k) // During the roll, we may want to extract something from the object
+      if (key) {
+        if (actor) opt.obj = foundry.utils.getProperty(actor, key) // During the roll, we may want to extract something from the object
         if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
         if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return
       }
 
       formula = '3d6'
-      let t = element.innerText
+      let eText = element.innerText
 
-      if (t) {
-        let a = t.trim().split(' ')
+      if (eText) {
+        let textParts = eText.trim().split(' ')
 
-        t = a[0]
-        if (t) target = parseInt(t)
+        eText = textParts[0]
+        if (eText) target = parseInt(eText)
 
         if (isNaN(target)) target = 0
         // Can't roll against a non-integer
         else {
-          a.shift()
-          let m = a.join(' ')
+          textParts.shift()
+          let mod = textParts.join(' ')
 
-          if (m) GURPS.ModifierBucket.addModifier(0, m)
+          if (mod) GURPS.ModifierBucket.addModifier(0, mod)
         }
       }
     } else if ('roll' in element.dataset) {
@@ -1798,18 +1797,18 @@ if (!globalThis.GURPS) {
    */
   async function applyModifierDesc(actor, desc) {
     if (!desc) return null
-    let m = desc.match(COSTS_REGEX)
+    let match = desc.match(COSTS_REGEX)
 
-    if (!!m && !!actor && !actor.isSelf) {
-      let delta = parseInt(m.groups.cost)
-      let target = m.groups.type
+    if (!!match && !!actor && !actor.isSelf) {
+      let delta = parseInt(match.groups.cost)
+      let target = match.groups.type
 
       if (target.match(/^[hf]p/i)) {
-        let k = target.toUpperCase()
+        let key = target.toUpperCase()
 
         // @ts-expect-error - dynamic property access on actor.system
-        delta = actor.system[k].value - delta
-        await actor.update({ ['system.' + k + '.value']: delta })
+        delta = actor.system[key].value - delta
+        await actor.update({ ['system.' + key + '.value']: delta })
       }
 
       if (target.match(/^tr/i)) {
@@ -1875,11 +1874,11 @@ if (!globalThis.GURPS) {
       while (Object.hasOwn(obj, zeroFill(index))) index++
     }
 
-    let k = zeroFill(index)
+    let key = zeroFill(index)
 
-    obj[k] = value
+    obj[key] = value
 
-    return k
+    return key
   }
 
   GURPS.put = put
@@ -1931,27 +1930,27 @@ if (!globalThis.GURPS) {
     let parentpath = objpath.substring(0, i)
     let objkey = objpath.substring(i + 1)
     let object = GURPS.decode(actor, objpath)
-    let t = parentpath + '.-=' + objkey
+    let removalPath = parentpath + '.-=' + objkey
 
-    await actor.internalUpdate({ [t]: null }) // Delete the whole object
+    await actor.internalUpdate({ [removalPath]: null }) // Delete the whole object
     let start = parseInt(key)
 
     i = start + 1
     while (Object.hasOwn(object, zeroFill(i))) i++
     i = i - 1
 
-    for (let z = i; z >= start; z--) {
-      object[zeroFill(z + 1)] = object[zeroFill(z)]
+    for (let j = i; j >= start; j--) {
+      object[zeroFill(j + 1)] = object[zeroFill(j)]
     }
 
     object[key] = newobj
     let sorted = Object.keys(object)
       .sort()
-      .reduce((a, v) => {
+      .reduce((acc, value) => {
         // @ts-expect-error - dynamic property access on accumulator object
-        a[v] = object[v]
+        acc[value] = object[value]
 
-        return a
+        return acc
       }, {}) // Enforced key order
 
     await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
@@ -1965,15 +1964,15 @@ if (!globalThis.GURPS) {
    * @param {string} path
    */
   function decode(obj, path, all = true) {
-    let p = path.split('.')
-    let end = p.length
+    let part = path.split('.')
+    let end = part.length
 
     if (!all) end = end - 1
 
     for (let i = 0; i < end; i++) {
-      let q = p[i]
+      let key = part[i]
 
-      obj = obj[q]
+      obj = obj[key]
     }
 
     return obj
@@ -2055,7 +2054,7 @@ if (!globalThis.GURPS) {
       if (overridetxt.includes('"')) overridetxt = "'" + overridetxt + "'"
       else overridetxt = '"' + overridetxt + '"'
     } else overridetxt = ''
-    let users = actor?.getOwners()?.filter(u => !u.isGM) || []
+    let users = actor?.getOwners()?.filter(user => !user.isGM) || []
     let botf = '[' + overridetxt + '!' + otf + ']'
 
     otf = '[' + overridetxt + otf + ']'
@@ -2081,7 +2080,7 @@ if (!globalThis.GURPS) {
       buttons.push({
         action: 'whisper',
         icon: 'fas fa-user',
-        label: 'Whisper to ' + users.map(u => u.name).join(' '),
+        label: 'Whisper to ' + users.map(user => user.name).join(' '),
         callback: () => GURPS.sendOtfMessage(otf, false, users),
       })
 
@@ -2089,7 +2088,7 @@ if (!globalThis.GURPS) {
         buttons.push({
           action: 'blind-whisper',
           icon: 'fas fa-user-slash',
-          label: 'Whisper Blindroll to ' + users.map(u => u.name).join(' '),
+          label: 'Whisper Blindroll to ' + users.map(user => user.name).join(' '),
           callback: () => GURPS.sendOtfMessage(botf, true, users),
         })
     }
@@ -2138,19 +2137,19 @@ if (!globalThis.GURPS) {
       if (game.user.isGM) game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA, formula)
     }
 
-    let m = formula.match(/([^:]*):?(\d)?/)
-    let d = m && !!m[2] ? parseInt(m[2]) : 5
+    let match = formula.match(/([^:]*):?(\d)?/)
+    let decimal = match && !!match[2] ? parseInt(match[2]) : 5
 
     CONFIG.Combat.initiative = {
       // @ts-expect-error - m could be null but is checked implicitly by context
-      formula: m[1],
-      decimals: d, // Important to be able to maintain resolution
+      formula: match[1],
+      decimals: decimal, // Important to be able to maintain resolution
     }
-    if (broadcast && m)
+    if (broadcast && match)
       game.socket?.emit('system.gurps', {
         type: 'initiativeChanged',
-        formula: m[1],
-        decimals: d,
+        formula: match[1],
+        decimals: decimal,
       })
   }
 
@@ -2341,8 +2340,8 @@ if (!globalThis.GURPS) {
     game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
 
     // Show changelog
-    const v = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
-    const changelogVersion = SemanticVersion.fromString(v)
+    const version = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
+    const changelogVersion = SemanticVersion.fromString(version)
 
     if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
       // If it isn't already in the chat log somewhere
@@ -2367,9 +2366,9 @@ if (!globalThis.GURPS) {
       let cmd = ''
 
       if (data.actor) {
-        let a = game.actors.get(data.actor)
+        let actor = game.actors.get(data.actor)
 
-        if (a) cmd = `!/select ${a.name}\n` + cmd
+        if (actor) cmd = `!/select ${actor.name}\n` + cmd
         name = game.actors.get(data.actor).name + ': ' + name
       }
 
@@ -2402,7 +2401,7 @@ if (!globalThis.GURPS) {
       let oldmacro = game.macros.get(game.user.hotbar[slot])
 
       if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
-        let c = (data.bucket ? '/clearmb\n' : '') + cmd
+        let clear = (data.bucket ? '/clearmb\n' : '') + cmd
 
         // TODO Use CSS to style the dialog.
         new foundry.applications.api.DialogV2({
@@ -2413,7 +2412,7 @@ if (!globalThis.GURPS) {
           </div>
           <div>Or <strong>replace</strong> current macro with:</div>
           <div style='color: darkslategrey; border: 1px solid var(--color-cool-4);  border-radius: 4px; padding: 1rem;'>
-            ${c}
+            ${clear}
           </div>`,
           buttons: [
             {
@@ -2539,11 +2538,11 @@ if (!globalThis.GURPS) {
       if (GURPS.IgnoreTokenSelect) return
 
       if (args.length > 1) {
-        let a = args[0]?.actor
+        let actor = args[0]?.actor
 
-        if (a) {
-          if (args[1]) GURPS.SetLastActor(a, args[0].document)
-          else GURPS.ClearLastActor(a)
+        if (actor) {
+          if (args[1]) GURPS.SetLastActor(actor, args[0].document)
+          else GURPS.ClearLastActor(actor)
         }
       }
     })
@@ -2556,21 +2555,21 @@ if (!globalThis.GURPS) {
       console.log('Mapping ' + game.i18n.lang + ' translations into PARSELINK_MAPPINGS')
       let mappings = /** @type {Record<String, string>} */ ({})
 
-      for (let k in GURPS.PARSELINK_MAPPINGS) {
-        let v = GURPS.PARSELINK_MAPPINGS[k]
-        let i = v.indexOf('.value')
-        let nk = v
+      for (let key in GURPS.PARSELINK_MAPPINGS) {
+        let value = GURPS.PARSELINK_MAPPINGS[key]
+        let i = value.indexOf('.value')
+        let newKey = value
 
         if (i >= 0) {
-          nk = nk.substring(0, i)
+          newKey = newKey.substring(0, i)
         }
 
-        nk = nk.replace(/\./g, '') // remove periods
-        nk = game.i18n.localize('GURPS.' + nk).toUpperCase()
+        newKey = newKey.replace(/\./g, '') // remove periods
+        newKey = game.i18n.localize('GURPS.' + newKey).toUpperCase()
 
-        if (!GURPS.PARSELINK_MAPPINGS[nk]) {
-          console.log(`Mapping '${k}' -> '${nk}'`)
-          mappings[nk] = GURPS.PARSELINK_MAPPINGS[k]
+        if (!GURPS.PARSELINK_MAPPINGS[newKey]) {
+          console.log(`Mapping '${key}' -> '${newKey}'`)
+          mappings[newKey] = GURPS.PARSELINK_MAPPINGS[key]
         }
       }
 
@@ -2601,10 +2600,10 @@ if (!globalThis.GURPS) {
       {
         pattern: /\[.*\]/gm,
         enricher: async (match, _options) => {
-          let s = gurpslink(match[0])
+          let text = gurpslink(match[0])
           const doc = document.createElement('span')
 
-          doc.innerHTML = s
+          doc.innerHTML = text
 
           return doc
         },
@@ -2612,9 +2611,9 @@ if (!globalThis.GURPS) {
     ])
 
     Hooks.on('renderGMNote', (_app, html, _options) => {
-      let h = html.find('[data-edit')
+      let element = html.find('[data-edit')
 
-      h[0].innerHTML = gurpslink(h[0].innerHTML)
+      element[0].innerHTML = gurpslink(element[0].innerHTML)
       GurpsWiring.hookupAllEvents(html)
     })
 
@@ -2687,10 +2686,10 @@ const buildCommandFromDragData = function (data) {
   }
 
   if (data.displayname) {
-    let q = '"'
+    let quote = '"'
 
-    if (data.displayname.includes('"')) q = "'"
-    cmd = q + data.displayname + q + cmd
+    if (data.displayname.includes('"')) quote = "'"
+    cmd = quote + data.displayname + quote + cmd
   }
 
   cmd = '[' + cmd + ']'

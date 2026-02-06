@@ -173,9 +173,9 @@ global.foundry = {
       const parts = String(path).split('.')
       let ref = obj
 
-      for (const p of parts) {
+      for (const part of parts) {
         if (ref == null) return undefined
-        ref = ref[p]
+        ref = ref[part]
       }
 
       return ref
@@ -202,17 +202,17 @@ global.foundry = {
         throw new Error('Maximum depth exceeded')
       }
 
-      for (const [k, v] of Object.entries(obj)) {
-        const t = foundry.utils.getType(v)
+      for (const [key, value] of Object.entries(obj)) {
+        const type = foundry.utils.getType(value)
 
-        if (t === 'Object') {
-          if (foundry.utils.isEmpty(v)) flat[k] = v
-          const inner = foundry.utils.flattenObject(v, _d + 1)
+        if (type === 'Object') {
+          if (foundry.utils.isEmpty(value)) flat[key] = value
+          const inner = foundry.utils.flattenObject(value, _d + 1)
 
           for (const [ik, iv] of Object.entries(inner)) {
-            flat[`${k}.${ik}`] = iv
+            flat[`${key}.${ik}`] = iv
           }
-        } else flat[k] = v
+        } else flat[key] = value
       }
 
       return flat
@@ -239,9 +239,9 @@ global.foundry = {
       return 'Unknown'
     },
     isEmpty: value => {
-      const t = foundry.utils.getType(value)
+      const type = foundry.utils.getType(value)
 
-      switch (t) {
+      switch (type) {
         case 'undefined':
           return true
         case 'null':
@@ -263,14 +263,14 @@ global.foundry = {
       let target = object
       const parts = key.split('.')
 
-      for (const p of parts) {
+      for (const part of parts) {
         if (!target) return false
         const type = typeof target
 
         if (type !== 'object' && type !== 'function') return false
-        if (!(p in target)) return false
+        if (!(part in target)) return false
         parent = target
-        target = parent[p]
+        target = parent[part]
       }
 
       delete parent[parts.at(-1)]

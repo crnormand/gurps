@@ -450,16 +450,16 @@ export class HitLocation {
       return [HitLocation.BRAIN, table[HitLocation.BRAIN]]
     var lbl, entry
     let re = /^([A-Za-z]+) *(\d+)/
-    let m = where.match(re)
+    let match = where.match(re)
 
-    if (m) {
-      let t = parseInt(m[2])
+    if (match) {
+      let location = parseInt(match[2])
 
       Object.keys(table).forEach(e => {
-        if (e.startsWith(m[1])) {
+        if (e.startsWith(match[1])) {
           let indexes = convertRollStringToArrayOfInt(e.split(' ')[1])
 
-          if (indexes.includes(t)) {
+          if (indexes.includes(location)) {
             lbl = e
             entry = table[e]
           }
@@ -516,10 +516,10 @@ export var getHitLocationTableNames = function () {
   var last
 
   Object.keys(hitlocationDictionary).forEach(e => {
-    let t = hitlocationDictionary[e]
+    let table = hitlocationDictionary[e]
 
-    if (t != last) keys.push(e)
-    last = t
+    if (table != last) keys.push(e)
+    last = table
   })
 
   return keys

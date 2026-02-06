@@ -40,7 +40,7 @@ export class GlobalActiveEffectDataControl {
 
   _createGlobalActiveEffectButton(controls) {
     if (this._shouldUseActiveEffectManagerPopup()) {
-      let tokenButton = controls.find(b => b.name == 'token')
+      let tokenButton = controls.find(e => e.name == 'token')
 
       if (tokenButton) {
         tokenButton.tools.push({
@@ -65,8 +65,8 @@ export class GlobalActiveEffectDataControl {
     return this._showPopup
   }
 
-  set showPopup(b) {
-    if (b !== this.showPopup) this._togglePopup()
+  set showPopup(value) {
+    if (value !== this.showPopup) this._togglePopup()
   }
 
   _togglePopup(closeOptions) {
@@ -168,12 +168,12 @@ class ActiveEffectManagerPopout extends Application {
     }
   }
 
-  getAllCheckedIndexes(a) {
+  getAllCheckedIndexes(list) {
     const indexes = []
-    const x = $(a.closest('.active-effects-list')).find('#gga-effects-data-list input[type=checkbox]')
+    const elements = $(list.closest('.active-effects-list')).find('#gga-effects-data-list input[type=checkbox]')
 
-    for (let index = 0; index < x.length; index++) {
-      if ($(x[index]).is(':checked')) indexes.push(index)
+    for (let index = 0; index < elements.length; index++) {
+      if ($(elements[index]).is(':checked')) indexes.push(index)
     }
 
     return indexes

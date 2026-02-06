@@ -166,7 +166,7 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
       'data-tooltip': copyLabel,
       'aria-label': copyLabel,
     })
-      .map(([k, v]) => `${k}="${v}"`)
+      .map(([key, value]) => `${key}="${value}"`)
       .join(' ')
     const copyId = `<button ${properties}></button>`
 

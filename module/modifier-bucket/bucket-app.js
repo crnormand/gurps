@@ -69,11 +69,11 @@ export class GurpsRoll extends Roll {
     if (!Object.hasOwn(_data, 'gmodc'))
       Object.defineProperty(_data, 'gmodc', {
         get() {
-          let m = GURPS.ModifierBucket.currentSum()
+          let sum = GURPS.ModifierBucket.currentSum()
 
           GURPS.ModifierBucket.clear()
 
-          return parseInt(m)
+          return parseInt(sum)
         },
       })
     _data.gmod = GURPS.ModifierBucket.currentSum()
@@ -110,9 +110,9 @@ export class GurpsDie extends foundry.dice.terms.Die {
   }
 
   baseExpression() {
-    const x = foundry.dice.terms.Die.DENOMINATION === 'd' ? this.faces : foundry.dice.terms.Die.DENOMINATION
+    const sides = foundry.dice.terms.Die.DENOMINATION === 'd' ? this.faces : foundry.dice.terms.Die.DENOMINATION
 
-    return `${this.number}d${x}`
+    return `${this.number}d${sides}`
   }
 
   /**
@@ -206,8 +206,8 @@ class ModifierStack {
 
     this.currentSum = 0
 
-    for (let m of this.modifierList) {
-      this.currentSum += m.modint
+    for (let mod of this.modifierList) {
+      this.currentSum += mod.modint
     }
 
     this.displaySum = displayMod(this.currentSum)
@@ -216,7 +216,7 @@ class ModifierStack {
     game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
-    let rs = this.modifierList.find(m => m.desc.includes(game.i18n.localize('GURPS.modifiers_.rapidStrike')))
+    let rs = this.modifierList.find(mod => mod.desc.includes(game.i18n.localize('GURPS.modifiers_.rapidStrike')))
 
     this.usingRapidStrike = !!rs
 
@@ -264,13 +264,13 @@ class ModifierStack {
    * @returns {Modifier}
    */
   _makeModifier(mod, reason, tagged) {
-    let n = displayMod(mod)
+    let displayMod = displayMod(mod)
 
     return {
-      mod: n,
-      modint: parseInt(n),
+      mod: displayMod,
+      modint: parseInt(displayMod),
       desc: reason,
-      plus: n[0] !== '-',
+      plus: displayMod[0] !== '-',
       tagged: tagged,
     }
   }
@@ -312,11 +312,11 @@ class ModifierStack {
     }
 
     // Check if the modifier string contains '@margin'
-    let m = (mod + '').match(/(?<sign>[+-])?@margin/i)
+    let margin = (mod + '').match(/(?<sign>[+-])?@margin/i)
 
-    if (m) {
+    if (margin) {
       // Calculate the modifier based on the margin of the last targeted roll
-      mod = (GURPS.lastTargetedRoll?.margin || 0) * (m.groups.sign === '-' ? -1 : 1)
+      mod = (GURPS.lastTargetedRoll?.margin || 0) * (margin.groups.sign === '-' ? -1 : 1)
       // If the last targeted roll has an associated "thing", update the reason string
       if (GURPS.lastTargetedRoll?.thing)
         reason = reason.replace(/-@/, ' -').replace(/\+@/, '') + ' for ' + GURPS.lastTargetedRoll.thing
@@ -343,10 +343,10 @@ class ModifierStack {
     }
 
     if (oldmod) {
-      let m = oldmod.modint + parseInt(mod)
+      let newMod = oldmod.modint + parseInt(mod)
 
-      oldmod.mod = displayMod(m)
-      oldmod.modint = m
+      oldmod.mod = displayMod(newMod)
+      oldmod.modint = newMod
     } else {
       list.push(this._makeModifier(mod, reason, tagged))
     }
@@ -528,7 +528,7 @@ export class ModifierBucket extends Application {
    * @param {boolean} update - whether to refresh the UI after clearing
    */
   clearTaggedModifiers(update = true) {
-    this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => !m.tagged)
+    this.modifierStack.modifierList = this.modifierStack.modifierList.filter(mod => !mod.tagged)
     this.modifierStack.sum()
     this.modifierStack.maxTotal = undefined
     if (update) this.refresh()
@@ -552,7 +552,7 @@ export class ModifierBucket extends Application {
     if (_users) {
       let players = _users.players
 
-      if (usernames.length > 0) players = players.filter(u => u.name && usernames.includes(u.name))
+      if (usernames.length > 0) players = players.filter(user => user.name && usernames.includes(user.name))
       if (players) this._sendBucket(players)
       this.modifierStack.reset(saved)
     }
@@ -569,12 +569,12 @@ export class ModifierBucket extends Application {
       let _users = game.users
 
       if (_users) {
-        let everyone = _users.filter(u => u.id != game.user?.id)
+        let everyone = _users.filter(user => user.id != game.user?.id)
 
         if (everyone) this._sendBucket(everyone)
       }
     } else {
-      let users = game.users?.filter(u => u.id == id) || []
+      let users = game.users?.filter(user => user.id == id) || []
 
       if (users.length > 0) this._sendBucket(users)
       else ui.notifications?.warn("No player with ID '" + id + "'")
@@ -601,12 +601,12 @@ export class ModifierBucket extends Application {
 
     if (game.user?.hasRole('GAMEMASTER'))
       // Only actual GMs can update other user's flags
-      users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
+      users.forEach(user => user.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
     let ctrl = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
 
     game.socket?.emit('system.gurps', {
       type: 'updatebucket',
-      users: users.map(u => u.id),
+      users: users.map(user => user.id),
       bucket: GURPS.ModifierBucket.modifierStack,
       add: ctrl,
     })
@@ -673,7 +673,7 @@ export class ModifierBucket extends Application {
 
     Array.from(globalModifier.children).forEach(li => {
       li.addEventListener('dragstart', ev => {
-        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(mod => `${mod.mod} ${mod.desc}`)
 
         return ev.dataTransfer?.setData(
           'text/plain',
@@ -706,7 +706,7 @@ export class ModifierBucket extends Application {
     })
 
     modifierBucket?.addEventListener('dragstart', ev => {
-      let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+      let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(mod => `${mod.mod} ${mod.desc}`)
 
       return ev.dataTransfer?.setData(
         'text/plain',
@@ -721,9 +721,9 @@ export class ModifierBucket extends Application {
       'wheel',
       event => {
         event.preventDefault()
-        const s = Math.round(event.deltaY / -100)
+        const scrollAmount = Math.round(event.deltaY / -100)
 
-        this.addModifier(s, '')
+        this.addModifier(scrollAmount, '')
       },
       { passive: false }
     )
@@ -751,13 +751,13 @@ export class ModifierBucket extends Application {
 
     html
       .querySelectorAll('.accumulator-control')
-      .forEach(a => a.addEventListener('click', event => this._onAccumulatorClick(html, event)))
+      .forEach(element => element.addEventListener('click', event => this._onAccumulatorClick(html, event)))
   }
 
   _onAccumulatorClick(_html, event) {
     event.preventDefault()
-    const a = event.currentTarget
-    const action = a.dataset.action ?? null
+    const target = event.currentTarget
+    const action = target.dataset.action ?? null
 
     switch (action) {
       case 'inc':
@@ -871,13 +871,13 @@ export class ModifierBucket extends Application {
   }
 
   async showOthers() {
-    let users = game.users?.filter(u => u.id != game.user?.id)
+    let users = game.users?.filter(user => user.id != game.user?.id)
     let content = ''
-    let d = ''
+    let spacer = ''
 
     for (let user of users || []) {
-      content += d
-      d = '<hr>'
+      content += spacer
+      spacer = '<hr>'
       let stack = await user.getFlag('gurps', 'modifierstack')
 
       if (!!stack && !!stack.modifierList) content += this.chatString(stack, user.name + ', ')
@@ -982,8 +982,8 @@ export class ModifierBucket extends Application {
     if (modst.modifierList.length > 0) {
       content = name + 'total: ' + modst.displaySum
 
-      for (let m of modst.modifierList) {
-        content += '<br> &nbsp;' + m.mod + ' : ' + m.desc
+      for (let mod of modst.modifierList) {
+        content += '<br> &nbsp;' + mod.mod + ' : ' + mod.desc
       }
     }
 

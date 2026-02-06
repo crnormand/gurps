@@ -43,8 +43,8 @@ export class _Collection extends Map {
   find(condition) {
     let i = 0
 
-    for (const v of this.values()) {
-      if (condition(v, i, this)) return v
+    for (const value of this.values()) {
+      if (condition(value, i, this)) return value
       i++
     }
 
@@ -70,8 +70,8 @@ export class _Collection extends Map {
     const entries = []
     let i = 0
 
-    for (const v of this.values()) {
-      if (condition(v, i, this)) entries.push(v)
+    for (const value of this.values()) {
+      if (condition(value, i, this)) entries.push(value)
       i++
     }
 
@@ -164,8 +164,8 @@ export class _Collection extends Map {
     const transformed = []
     let i = 0
 
-    for (const v of this.values()) {
-      transformed.push(transformer(v, i, this))
+    for (const value of this.values()) {
+      transformed.push(transformer(value, i, this))
       i++
     }
 
@@ -194,8 +194,8 @@ export class _Collection extends Map {
     let accumulator = initial
     let i = 0
 
-    for (const v of this.values()) {
-      accumulator = reducer(accumulator, v, i, this)
+    for (const value of this.values()) {
+      accumulator = reducer(accumulator, value, i, this)
       i++
     }
 
@@ -214,8 +214,8 @@ export class _Collection extends Map {
   some(condition) {
     let i = 0
 
-    for (const v of this.values()) {
-      const pass = condition(v, i, this)
+    for (const value of this.values()) {
+      const pass = condition(value, i, this)
 
       i++
       if (pass) return true

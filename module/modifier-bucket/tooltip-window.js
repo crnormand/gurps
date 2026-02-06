@@ -58,11 +58,11 @@ export default class ModifierBucketEditor extends Application {
     let bucketPages = []
 
     game.journal.forEach(j => {
-      j.pages.forEach(p => {
-        for (const k in settings) {
-          const id = settings[k]
+      j.pages.forEach(page => {
+        for (const key in settings) {
+          const id = settings[key]
 
-          if (p.id == id) bucketPages.push(p)
+          if (page.id == id) bucketPages.push(page)
         }
       })
     })
@@ -98,7 +98,7 @@ export default class ModifierBucketEditor extends Application {
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.hasRole('TRUSTED') || game.user?.hasRole('ASSISTANT')
-    data.users = game.users?.filter(u => u.id != game.user.id) || []
+    data.users = game.users?.filter(user => user.id != game.user.id) || []
     data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
     data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
     data.lightingmods = ModifierLiterals.LightingModifiers
@@ -295,14 +295,14 @@ export default class ModifierBucketEditor extends Application {
   async _onSimpleList(event, prefix) {
     event.preventDefault()
     let element = event.currentTarget
-    let v = element.value
+    let value = element.value
 
-    if (!v) v = element.textContent
-    v = v.trim()
-    let i = v.indexOf(' ')
+    if (!value) value = element.textContent
+    value = value.trim()
+    let i = value.indexOf(' ')
 
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
-    this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
+    this.bucket.addModifier(value.substring(0, i), prefix + value.substr(i + 1))
   }
 
   async _onGMbutton(event) {

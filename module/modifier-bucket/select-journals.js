@@ -54,8 +54,8 @@ export default class ModifierBucketJournals extends FormApplication {
     let htmlJournals = []
 
     game.journal.forEach(j => {
-      j.pages.forEach(p => {
-        if (p.type === 'text') htmlJournals.push(p)
+      j.pages.forEach(page => {
+        if (page.type === 'text') htmlJournals.push(page)
       })
     })
 
@@ -66,7 +66,9 @@ export default class ModifierBucketJournals extends FormApplication {
       return { id: it.id, folder: this._folderPath(it.folder), name: it.name }
     })
 
-    return results.sort((a, b) => `${a.folder}/${a.name}`.localeCompare(`${b.folder}/${b.name}`))
+    return results.sort((first, second) =>
+      `${first.folder}/${first.name}`.localeCompare(`${second.folder}/${second.name}`)
+    )
   }
 
   /**

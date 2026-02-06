@@ -88,10 +88,10 @@ export class ResourceTrackerManager extends FormApplication {
    */
   static getMissingRequiredTemplates(currentTrackers) {
     const newTrackers = []
-    const templates = ResourceTrackerManager.getAllTemplates().filter(t => t.autoapply)
+    const templates = ResourceTrackerManager.getAllTemplates().filter(template => template.autoapply)
 
     for (const template of templates) {
-      if (!currentTrackers.some(t => t.name === template.tracker.name)) {
+      if (!currentTrackers.some(template => template.name === template.tracker.name)) {
         newTrackers.push(template)
       }
     }
@@ -176,26 +176,32 @@ export class ResourceTrackerManager extends FormApplication {
           let match = this._templates
             .filter((_, i) => i !== index)
             .some(
-              t =>
-                (!!t.tracker.name && t.tracker.name === newTracker.name) ||
-                (!!t.tracker.alias && t.tracker.alias === newTracker.alias)
+              template =>
+                (!!template.tracker.name && template.tracker.name === newTracker.name) ||
+                (!!template.tracker.alias && template.tracker.alias === newTracker.alias)
             )
 
           while (match) {
-            if (this._templates.filter((_, i) => i !== index).some(t => t.tracker.name === newTracker.name)) {
+            if (
+              this._templates.filter((_, i) => i !== index).some(template => template.tracker.name === newTracker.name)
+            ) {
               newTracker.name += ' (copy)'
             }
 
-            if (this._templates.filter((_, i) => i !== index).some(t => t.tracker.alias === newTracker.alias)) {
+            if (
+              this._templates
+                .filter((_, i) => i !== index)
+                .some(template => template.tracker.alias === newTracker.alias)
+            ) {
               newTracker.alias += ' (copy)'
             }
 
             match = this._templates
               .filter((_, i) => i !== index)
               .some(
-                t =>
-                  (!!t.tracker.name && t.tracker.name === newTracker.name) ||
-                  (!!t.tracker.alias && t.tracker.alias === newTracker.alias)
+                template =>
+                  (!!template.tracker.name && template.tracker.name === newTracker.name) ||
+                  (!!template.tracker.alias && template.tracker.alias === newTracker.alias)
               )
           }
 
@@ -240,13 +246,13 @@ export class ResourceTrackerManager extends FormApplication {
     game.settings.set(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, data)
 
     // remove all resources from the two objects:
-    let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([_k, v]) => !!v.resource)
+    let entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([_, value]) => !!value.resource)
 
     entries.forEach(([key, _]) => delete GURPS.DamageTables.woundModifiers[key])
     entries.forEach(([key, _]) => {
-      let toDelete = Object.entries(GURPS.DamageTables.damageTypeMap).filter(([_k, v]) => v === key)
+      let toDelete = Object.entries(GURPS.DamageTables.damageTypeMap).filter(([_, value]) => value === key)
 
-      toDelete.forEach(([k, _v]) => delete GURPS.DamageTables.damageTypeMap[k])
+      toDelete.forEach(([key, _]) => delete GURPS.DamageTables.damageTypeMap[key])
     })
 
     // get all aliases defined in the resource tracker templates and register them as damage types
