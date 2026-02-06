@@ -50,7 +50,15 @@ class BasePrereq<Schema extends BasePrereqSchema> extends TypedPseudoDocument<Sc
 
   get isSatisfied(): boolean {
     throw new Error(
-      'Method "isSatisfied" is not implemented in the base class BasePrereqModel. It must be overridden in subclasses.'
+      'Method "isSatisfied" is not implemented in the base class BasePrereq. It must be overridden in subclasses.'
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get unsatisifedMessage(): string {
+    throw new Error(
+      'Method "unsatisifedMessage" is not implemented in the base class BasePrereq. It must be overridden in subclasses.'
     )
   }
 }
