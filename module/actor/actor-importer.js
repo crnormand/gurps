@@ -4,6 +4,7 @@ import * as HitLocations from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
 import { SmartImporter } from '../smart-importer.js'
 import { calculateEncumbranceLevels, readXmlText } from '../utilities/import-utilities.js'
+
 import {
   Advantage,
   Encumbrance,
@@ -630,6 +631,7 @@ export class ActorImporter {
     }
 
     let lm = {}
+
     lm.basiclift = readXmlText(json.basiclift)
     lm.carryonback = readXmlText(json.carryonback)
     lm.onehandedlift = readXmlText(json.onehandedlift)
@@ -719,6 +721,7 @@ export class ActorImporter {
   importTraitsfromGCA(json) {
     if (!json) return
     let ts = {}
+
     ts.race = readXmlText(json.race)
     ts.height = readXmlText(json.height)
     ts.weight = readXmlText(json.weight)
@@ -734,6 +737,7 @@ export class ActorImporter {
     ts.techlevel = readXmlText(json.tl)
     // <appearance type="string">@GENDER, Eyes: @EYES, Hair: @HAIR, Skin: @SKIN</appearance>
     let a = readXmlText(json.appearance)
+
     ts.appearance = a
 
     try {
@@ -798,11 +802,13 @@ export class ActorImporter {
    */
   async importBaseAdvantagesFromGCA(datalist, json) {
     if (!json) return
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let a = new Advantage()
+
         a.name = readXmlText(j.name)
         a.originalName = readXmlText(j.name)
         a.points = this.intFrom(j.points)
@@ -811,6 +817,7 @@ export class ActorImporter {
         a.uuid = readXmlText(j.uuid)
         a.parentuuid = readXmlText(j.parentuuid)
         let old = this._findElementIn('ads', a.uuid)
+
         this._migrateOtfsAndNotes(old, a, readXmlText(j.vtt_notes))
         a = await this._processItemFrom(a, 'GCA')
         datalist.push(a)
@@ -825,11 +832,13 @@ export class ActorImporter {
     if (!json) return
     await this._preImport('GCA', 'skill')
     let temp = []
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let sk = new Skill()
+
         sk.name = readXmlText(j.name)
         sk.originalName = readXmlText(j.name)
         sk.type = readXmlText(j.type)
@@ -838,10 +847,11 @@ export class ActorImporter {
         sk.points = this.intFrom(j.points)
         sk.relativelevel = readXmlText(j.relativelevel)
         sk.setNotes(readXmlText(j.text))
-        if (!!j.pageref) sk.pageRef(readXmlText(j.pageref))
+        if (j.pageref) sk.pageRef(readXmlText(j.pageref))
         sk.uuid = readXmlText(j.uuid)
         sk.parentuuid = readXmlText(j.parentuuid)
         let old = this._findElementIn('skills', sk.uuid)
+
         this._migrateOtfsAndNotes(old, sk, readXmlText(j.vtt_notes))
         sk = await this._processItemFrom(sk, 'GCA')
         temp.push(sk)
@@ -851,9 +861,10 @@ export class ActorImporter {
     // Find all skills with globalId
     // if (this.isUsingFoundryItems()) {
     await aRecurselist(this.actor.system.skills, async item => {
-      if (!!item.itemid) {
+      if (item.itemid) {
         const i = this.actor.items.get(item.itemid)
-        if (!!i?.system.globalid) {
+
+        if (i?.system.globalid) {
           if (!(item instanceof Skill)) item = Skill.fromObject(item, this.actor)
           item = await this._processItemFrom(item, 'GCA')
           temp.push(item)
@@ -878,11 +889,13 @@ export class ActorImporter {
     if (!json) return
     await this._preImport('GCA', 'spell')
     let temp = []
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let sp = new Spell()
+
         sp.name = readXmlText(j.name)
         sp.originalName = readXmlText(j.name)
         sp.class = readXmlText(j.class)
@@ -896,6 +909,7 @@ export class ActorImporter {
         } else {
           sp.cost = cm
         }
+
         sp.setNotes(readXmlText(j.text))
         sp.pageRef(readXmlText(j.pageref))
         sp.duration = readXmlText(j.duration)
@@ -905,6 +919,7 @@ export class ActorImporter {
         sp.uuid = readXmlText(j.uuid)
         sp.parentuuid = readXmlText(j.parentuuid)
         let old = this._findElementIn('spells', sp.uuid)
+
         this._migrateOtfsAndNotes(old, sp, readXmlText(j.vtt_notes))
         sp = await this._processItemFrom(sp, 'GCA')
         temp.push(sp)
@@ -914,9 +929,10 @@ export class ActorImporter {
     // Find all spells with globalId
     // if (this.isUsingFoundryItems()) {
     await aRecurselist(this.actor.system.spells, async item => {
-      if (!!item.itemid) {
+      if (item.itemid) {
         const i = this.actor.items.get(item.itemid)
-        if (!!i?.system.globalid) {
+
+        if (i?.system.globalid) {
           if (!(item instanceof Spell)) item = Spell.fromObject(item, this.actor)
           item = await this._processItemFrom(item, 'GCA')
           temp.push(item)
@@ -1062,6 +1078,7 @@ export class ActorImporter {
       // support for GCA description
 
       let n = new Note()
+
       n.notes = readXmlText(descjson).replace(/\\r/g, '\n')
       n.imported = true
       temp.push(n)
@@ -1075,7 +1092,8 @@ export class ActorImporter {
 
         n.notes = readXmlText(j.name)
         let txt = readXmlText(j.text)
-        if (!!txt) n.notes = n.notes + '\n' + txt.replace(/\\r/g, '\n')
+
+        if (txt) n.notes = n.notes + '\n' + txt.replace(/\\r/g, '\n')
         n.uuid = readXmlText(j.uuid)
         n.parentuuid = readXmlText(j.parentuuid)
         n.pageref = readXmlText(j.pageref)
@@ -1124,7 +1142,7 @@ export class ActorImporter {
         eqt.originalName = readXmlText(j.name)
         eqt.count = i(j.count)
         eqt.originalCount = i(j.count)
-        eqt.cost = !!parentuuid ? readXmlText(j.cost) : 0
+        eqt.cost = parentuuid ? readXmlText(j.cost) : 0
         eqt.location = readXmlText(j.location)
         let cstatus = i(j.carried)
 
@@ -1285,6 +1303,7 @@ export class ActorImporter {
         let j = json[key]
         let hl = new HitLocations.HitLocation(readXmlText(j.location))
         let i = readXmlText(j.dr)
+
         if (i.match(/^\d+ *(\+ *\d+ *)?$/)) i = eval(readXmlText(j.dr)) // supports "0 + 8"
         hl.import = !i ? 0 : i
         hl.penalty = readXmlText(j.db)
@@ -1316,6 +1335,7 @@ export class ActorImporter {
     // potentially other features) will not work. Sometime in the future, we will look at
     // user-entered hit locations.
     let bodyplan = readXmlText(json.bodyplan)?.toLowerCase() // Was a body plan actually in the import?
+
     if (bodyplan === 'snakemen') bodyplan = 'snakeman'
     let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
 
@@ -1443,6 +1463,7 @@ export class ActorImporter {
     if (!json) return
     let langs = {}
     let index = 0
+
     for (let key in json) {
       if (key.startsWith('id-')) {
         let j = json[key]
@@ -1506,10 +1527,12 @@ export class ActorImporter {
       e.level = i
       let k = 'enc_' + i
       let c = readXmlText(json[k])
+
       e.current = c === '1'
       k = 'enc' + i
       e.key = k
       let k2 = k + '_weight'
+
       e.weight = readXmlText(json[k2])
       k2 = k + '_move'
       e.move = this.intFrom(json[k2])
