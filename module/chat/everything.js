@@ -26,15 +26,15 @@ export class EveryoneAChatProcessor extends ChatProcessor {
   }
 
   async process() {
-    let m = this.match
+    let match = this.match
     let any = false
 
-    for (const t of canvas.tokens.ownedTokens) {
-      let actor = t.actor
+    for (const token of canvas.tokens.ownedTokens) {
+      let actor = token.actor
 
       if (actor.hasPlayerOwner) {
         any = true
-        let attr = m[2].toUpperCase()
+        let attr = match[2].toUpperCase()
         let max = actor.system[attr].max
 
         await actor.update({ ['system.' + attr + '.value']: max })
@@ -61,14 +61,14 @@ export class EveryoneBChatProcessor extends ChatProcessor {
   }
 
   async process() {
-    let m = this.match
+    let match = this.match
     let any = false
-    let action = parselink(m[2].trim())
+    let action = parselink(match[2].trim())
 
     if (action.action) {
       if (!['modifier', 'chat', 'pdf'].includes(action.action.type)) {
-        for (const t of canvas.tokens.ownedTokens) {
-          let actor = t.actor
+        for (const token of canvas.tokens.ownedTokens) {
+          let actor = token.actor
 
           if (actor.hasPlayerOwner) {
             any = true
@@ -80,8 +80,8 @@ export class EveryoneBChatProcessor extends ChatProcessor {
         }
 
         if (!any) this.priv(`There are no player owned characters!`)
-      } else this.priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`)
-    } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`)
+      } else this.priv(`Not allowed to execute Modifier, Chat or PDF links [${match[2].trim()}]`)
+    } else this.priv(`Unable to parse On-the-Fly formula: [${match[2].trim()}]`)
   }
 }
 
@@ -101,27 +101,27 @@ export class EveryoneCChatProcessor extends ChatProcessor {
   }
 
   async process(line) {
-    let m = this.match
+    let match = this.match
 
-    if (!!m[3] || !!m[4]) {
+    if (!!match[3] || !!match[4]) {
       let any = false
 
-      for (const t of canvas.tokens.ownedTokens) {
-        let actor = t.actor
+      for (const token of canvas.tokens.ownedTokens) {
+        let actor = token.actor
 
         if (actor.hasPlayerOwner) {
           any = true
-          let mod = m[4] || ''
+          let mod = match[4] || ''
           let value = mod
-          let dice = m[3] || ''
+          let dice = match[3] || ''
           let txt = ''
-          let attr = m[2].toUpperCase()
+          let attr = match[2].toUpperCase()
 
           if (dice) {
             let sign = dice[0] == '-' ? -1 : 1
-            let d = dice.match(/[+-](\d+)d(\d*)/)
-            let r = d[1] + 'd' + (d[2] ? d[2] : '6') + `[/ev ${attr}]`
-            let roll = Roll.create(r)
+            let die = dice.match(/[+-](\d+)d(\d*)/)
+            let rollFormula = die[1] + 'd' + (die[2] ? die[2] : '6') + `[/ev ${attr}]`
+            let roll = Roll.create(rollFormula)
 
             await roll.evaluate()
 
@@ -132,10 +132,10 @@ export class EveryoneCChatProcessor extends ChatProcessor {
               roll.dice.forEach(die => {
                 let type = 'd' + die.faces
 
-                die.results.forEach(s =>
+                die.results.forEach(result =>
                   dc.push({
-                    result: s.result,
-                    resultLabel: s.result,
+                    result: result.result,
+                    resultLabel: result.result,
                     type: type,
                     vectors: [],
                     options: {},
@@ -158,7 +158,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
 
                 return
               } else value += parseInt(mod)
-            value = Math.max(value, m[5] ? 1 : 0)
+            value = Math.max(value, match[5] ? 1 : 0)
             value *= sign
             txt = `(${value}) `
           }
@@ -217,11 +217,11 @@ export class RemoteChatProcessor extends ChatProcessor {
   }
 
   async process(line) {
-    let m = this.match
-    let action = parselink(m[2].trim())
+    let match = this.match
+    let action = parselink(match[2].trim())
 
     if (action.action) {
-      let users = m[3] ? splitArgs(m[3]) : [] // empty array means everyone
+      let users = match[3] ? splitArgs(match[3]) : [] // empty array means everyone
 
       this.priv(line)
       game.socket.emit('system.gurps', {
@@ -229,6 +229,6 @@ export class RemoteChatProcessor extends ChatProcessor {
         action: action.action,
         users: users,
       })
-    } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`)
+    } else this.priv(`Unable to parse On-the-Fly formula: [${match[2].trim()}]`)
   }
 }

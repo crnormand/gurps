@@ -114,12 +114,12 @@ export class EffectModifierPopout extends Application {
 
     selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
     selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
-    selfMods.sort((a, b) => {
-      if (a.itemName === b.itemName) {
-        return a.desc.localeCompare(b.desc)
+    selfMods.sort((first, second) => {
+      if (first.itemName === second.itemName) {
+        return first.desc.localeCompare(second.desc)
       }
 
-      return a.itemName.localeCompare(b.itemName)
+      return first.itemName.localeCompare(second.itemName)
     })
     const targetModifiers = this._token
       ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
@@ -160,8 +160,8 @@ export class EffectModifierPopout extends Application {
       }
 
       // Sort the target modifiers by itemId.
-      result.targetmodifiers.sort((a, b) => {
-        return a.itemId.localeCompare(b.itemId)
+      result.targetmodifiers.sort((first, second) => {
+        return first.itemId.localeCompare(second.itemId)
       })
 
       results.push(result)
@@ -454,15 +454,16 @@ export class EffectModifierPopout extends Application {
       return
     }
 
-    let t = this.getToken()
+    let token = this.getToken()
 
-    if (t && t.actor) {
-      let umods = t.actor.system.conditions.usermods
+    if (token && token.actor) {
+      let umods = token.actor.system.conditions.usermods
 
       if (umods) {
-        let m = umods.filter(i => !sanitize(i).includes(this.getDescription(text)))
+        let mods = umods.filter(i => !sanitize(i).includes(this.getDescription(text)))
 
-        if (umods.length !== m.length) t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
+        if (umods.length !== mods.length)
+          token.actor.update({ 'system.conditions.usermods': mods }).then(() => this.render(true))
       }
     }
   }
@@ -494,14 +495,14 @@ export class EffectModifierPopout extends Application {
   }
 
   _addUserMod(mod) {
-    let t = this.getToken()
+    let token = this.getToken()
 
-    if (t && t.actor) {
+    if (token && token.actor) {
       mod += ' (' + game.i18n.localize('GURPS.equipmentUserCreated') + ')'
-      let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
+      let mods = token.actor.system.conditions.usermods ? [...token.actor.system.conditions.usermods] : []
 
-      m.push(`${mod} @custom`)
-      t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
+      mods.push(`${mod} @custom`)
+      token.actor.update({ 'system.conditions.usermods': mods }).then(() => this.render(true))
     } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 

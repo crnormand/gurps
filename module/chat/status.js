@@ -136,10 +136,10 @@ export default class StatusChatProcessor extends ChatProcessor {
         sortedEffects.push({ id: id, label: GURPS.StatusEffectStandingLabel, posture: true })
     }
 
-    sortedEffects.forEach(s => {
-      let p = s.posture ? ' *' : ''
+    sortedEffects.forEach(effect => {
+      let posture = effect.posture ? ' *' : ''
 
-      html += `<tr><td>${s.id}</td><td>'${game.i18n.localize(s.name)}'${p}</td></tr>`
+      html += `<tr><td>${effect.id}</td><td>'${game.i18n.localize(effect.name)}'${posture}</td></tr>`
     })
     html += `<tr><td></td><td>* => ${game.i18n.localize('GURPS.modifierPosture')}</td></tr>`
 
@@ -193,9 +193,9 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     let effect = null
 
-    Object.values(CONFIG.statusEffects).forEach(s => {
-      if (game.i18n.localize(s.name).match(pattern)) effect = s // match on name or id (shock1, shock2, etc.)
-      if (s.id.match(pattern)) effect = s
+    Object.values(CONFIG.statusEffects).forEach(eff => {
+      if (game.i18n.localize(eff.name).match(pattern)) effect = eff // match on name or id (shock1, shock2, etc.)
+      if (eff.id.match(pattern)) effect = eff
     })
 
     return effect

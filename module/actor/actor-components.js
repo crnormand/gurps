@@ -53,12 +53,12 @@ export class _Base {
   /**
    * @param {string} r
    */
-  pageRef(r) {
-    this.pageref = r
+  pageRef(ref) {
+    this.pageref = ref
 
-    if (!!r && r.match(/https?:\/\//i)) {
+    if (!!ref && ref.match(/https?:\/\//i)) {
       this.pageref = '*Link'
-      this.externallink = r
+      this.externallink = ref
     }
   }
 
@@ -66,18 +66,18 @@ export class _Base {
   /**
    * @param {string} n
    */
-  setNotes(n) {
-    if (n) {
-      let v = extractP(n)
-      let k = 'Page Ref: '
-      let i = v.indexOf(k)
+  setNotes(note) {
+    if (note) {
+      let value = extractP(note)
+      let key = 'Page Ref: '
+      let i = value.indexOf(key)
 
       if (i >= 0) {
-        this.notes = v.substr(0, i).trim()
+        this.notes = value.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageRef(v.substr(i + k.length).trim())
+        this.pageRef(value.substr(i + key.length).trim())
       } else {
-        this.notes = v.trim()
+        this.notes = value.trim()
         this.pageref = ''
       }
     }
@@ -118,13 +118,13 @@ export class Named extends _Base {
 
   setName(name) {
     if (name) {
-      let k = 'Page Ref: '
-      let i = name.indexOf(k)
+      let key = 'Page Ref: '
+      let i = name.indexOf(key)
 
       if (i >= 0) {
         this.name = name.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageRef(name.substr(i + k.length).trim())
+        this.pageRef(name.substr(i + key.length).trim())
       } else {
         this.name = name.trim()
         this.pageref = ''
@@ -991,10 +991,10 @@ export class Note extends _Base {
    * @param {string} [n]
    * @param {boolean} [ue]
    */
-  constructor(n, ue) {
+  constructor(notes, ue) {
     super()
 
-    this.notes = n || ''
+    this.notes = notes || ''
     this.save = ue
     this.markdown = false
   }
@@ -1062,14 +1062,14 @@ export class Equipment extends Named {
     if (!eqt) return
 
     // NOTE: no longer necessary with DataModel validation
-    const num = (/** @type {string | number} */ s) => {
+    const num = (/** @type {string | number} */ str) => {
       // @ts-expect-error - isNaN accepts string for type coercion
-      return isNaN(s) ? 0 : Number(s)
+      return isNaN(str) ? 0 : Number(str)
     }
 
     // NOTE: no longer necessary with DataModel validation
-    const cln = (/** @type {number} */ s) => {
-      return !s ? 0 : num(String(s).replace(/,/g, ''))
+    const cln = (/** @type {number} */ str) => {
+      return !str ? 0 : num(String(str).replace(/,/g, ''))
     }
 
     // NOTE: no longer necessary with DataModel validation
@@ -1082,22 +1082,22 @@ export class Equipment extends Named {
     let ws = eqt.count * eqt.weight
 
     if (eqt.contains) {
-      for (let k in eqt.contains) {
+      for (let key in eqt.contains) {
         // @ts-expect-error - contains entries are Equipment objects
-        let e = eqt.contains[k]
+        let e = eqt.contains[key]
 
-        await Equipment.calcUpdate(actor, e, objkey + '.contains.' + k)
+        await Equipment.calcUpdate(actor, e, objkey + '.contains.' + key)
         cs += e.costsum
         ws += e.weightsum
       }
     }
 
     if (eqt.collapsed) {
-      for (let k in eqt.collapsed) {
+      for (let key in eqt.collapsed) {
         // @ts-expect-error - collapsed entries are Equipment objects
-        let e = eqt.collapsed[k]
+        let e = eqt.collapsed[key]
 
-        await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)
+        await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + key)
         cs += e.costsum
         ws += e.weightsum
       }
@@ -1239,9 +1239,9 @@ export class Reaction {
    * @param {string | undefined} [m]
    * @param {string | undefined} [s]
    */
-  constructor(m, s) {
-    this.modifier = m || ''
-    this.situation = s || ''
+  constructor(modifier, situation) {
+    this.modifier = modifier || ''
+    this.situation = situation || ''
     this.modifierTags = ''
   }
 }
@@ -1249,11 +1249,11 @@ export class Reaction {
 export class Modifier extends Reaction {}
 
 export class Language {
-  constructor(n, s, w, p) {
-    this.name = n
-    this.spoken = s || ''
-    this.written = w || ''
-    this.points = p || ''
+  constructor(name, spoken, written, points) {
+    this.name = name
+    this.spoken = spoken || ''
+    this.written = written || ''
+    this.points = points || ''
   }
 }
 

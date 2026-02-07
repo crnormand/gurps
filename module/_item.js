@@ -186,6 +186,6 @@ export class GurpsItem extends Item {
    * @returns {BaseItem.SubType[]}
    */
   static get TYPES() {
-    return Object.keys(game.model[this.metadata.name]).filter(k => !k.includes('Atk'))
+    return Object.keys(game.model[this.metadata.name]).filter(key => !key.includes('Atk'))
   }
 }

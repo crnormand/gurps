@@ -54,12 +54,12 @@ export default class ApplyDamageDialog extends Application {
     const gmUser = game.users.find(it => it.isGM && it.active)
 
     this.sourceTokenImg =
-      canvas.tokens.placeables.find(t => t.actor?.id === attacker?.id)?.document.texture.src ||
+      canvas.tokens.placeables.find(token => token.actor?.id === attacker?.id)?.document.texture.src ||
       attacker?.img ||
       gmUser.avatar
 
     this.sourceTokenName =
-      canvas.tokens.placeables.find(t => t.actor?.id === attacker?.id)?.name || attacker?.name || gmUser.name
+      canvas.tokens.placeables.find(token => token.actor?.id === attacker?.id)?.name || attacker?.name || gmUser.name
 
     this.targetTokenImg = actor.token?.texture.src || actor.img
     this.targetTokenName = actor.token?.name || actor.name
@@ -239,7 +239,7 @@ export default class ApplyDamageDialog extends Application {
 
     html
       .find('#adddamagemodifier')
-      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageModifier', t => t))
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageModifier', text => text))
 
     // ==== Tactical Rules ====
     // use armor divisor rules

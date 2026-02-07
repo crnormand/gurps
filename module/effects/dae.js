@@ -120,7 +120,7 @@ async function _recreateToken(data) {
 }
 
 async function _renameToken(data) {
-  return await canvas.tokens.placeables.find(t => t.id === data.tokenData._id).update({ name: data.newName })
+  return await canvas.tokens.placeables.find(token => token.id === data.tokenData._id).update({ name: data.newName })
 }
 
 let tokenScene = (tokenName, sceneName) => {

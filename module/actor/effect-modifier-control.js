@@ -31,8 +31,8 @@ export class EffectModifierControl {
     return this._showPopup
   }
 
-  set showPopup(b) {
-    if (b !== this.showPopup) this.togglePopup()
+  set showPopup(val) {
+    if (val !== this.showPopup) this.togglePopup()
   }
 
   togglePopup(closeOptions) {

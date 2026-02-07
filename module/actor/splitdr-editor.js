@@ -43,9 +43,9 @@ export default class SplitDREditor extends Application {
 
   async _onSplitDRControl(html, event) {
     event.preventDefault()
-    const a = event.currentTarget
-    const value = a.value ?? null
-    const action = a.dataset.action ?? null
+    const target = event.currentTarget
+    const value = target.value ?? null
+    const action = target.dataset.action ?? null
 
     if (event.type === 'change') this._change(action, value, html)
     if (event.type === 'keyup') this._keyup(action, event.key, html)

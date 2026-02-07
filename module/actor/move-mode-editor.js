@@ -40,10 +40,10 @@ export default class MoveModeEditor extends Application {
 
   async _onEffectControl(html, event) {
     event.preventDefault()
-    const a = event.currentTarget
-    const key = a.dataset.key ?? null
-    const value = a.value ?? null
-    const action = a.dataset.action ?? null
+    const target = event.currentTarget
+    const key = target.dataset.key ?? null
+    const value = target.value ?? null
+    const action = target.dataset.action ?? null
 
     if (event.type === 'change') this._change(action, key, value, html)
     if (event.type === 'click') this._click(action, key, value, html)
@@ -120,12 +120,12 @@ export default class MoveModeEditor extends Application {
           // copy existing entries
           let move = {}
 
-          for (const k in this.moveData)
-            foundry.utils.setProperty(move, k, {
-              mode: this.moveData[k].mode,
-              basic: this.moveData[k].basic,
-              enhanced: this.moveData[k].enhanced,
-              default: this.moveData[k].default,
+          for (const moveKey in this.moveData)
+            foundry.utils.setProperty(move, moveKey, {
+              mode: this.moveData[moveKey].mode,
+              basic: this.moveData[moveKey].basic,
+              enhanced: this.moveData[moveKey].enhanced,
+              default: this.moveData[moveKey].default,
             })
 
           // add a new entry at the end.
@@ -154,7 +154,7 @@ export default class MoveModeEditor extends Application {
             let json = []
 
             // turn off everything whose key isn't 'k'
-            for (const k in this.moveData) json.push(`"system.move.${k}.default": ${key === k}`)
+            for (const moveKey in this.moveData) json.push(`"system.move.${moveKey}.default": ${key === moveKey}`)
             let text = '{ ' + json.join(',') + ' }'
 
             await this.actor.update(JSON.parse(text))
@@ -169,13 +169,13 @@ export default class MoveModeEditor extends Application {
           let move = {}
 
           // Copy every entry except the one to delete.
-          for (const k in this.moveData) {
-            if (k !== key)
+          for (const moveKey in this.moveData) {
+            if (moveKey !== key)
               GURPS.put(move, {
-                mode: this.moveData[k].mode,
-                basic: this.moveData[k].basic,
-                enhanced: this.moveData[k].enhanced,
-                default: this.moveData[k].default,
+                mode: this.moveData[moveKey].mode,
+                basic: this.moveData[moveKey].basic,
+                enhanced: this.moveData[moveKey].enhanced,
+                default: this.moveData[moveKey].default,
               })
           }
 

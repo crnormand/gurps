@@ -640,9 +640,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         icon: "<i class='fas fa-edit'></i>",
         callback: e => {
           let path = e.dataset.key
-          let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+          let obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
 
-          this.editNotes(this.actor, path, o)
+          this.editNotes(this.actor, path, obj)
         },
       },
       {
@@ -685,14 +685,14 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     )
 
     html.find('#qnotes .qnotes-content').dblclick(async () => {
-      let n = this.actor.system.additionalresources.qnotes || ''
+      let notes = this.actor.system.additionalresources.qnotes || ''
 
-      n = n.replace(/<br>/g, '\n')
+      notes = notes.replace(/<br>/g, '\n')
       let actor = this.actor
 
       const dlg = await new foundry.applications.api.DialogV2({
         window: { title: 'Quick Note', resizable: true },
-        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<textarea rows="4" id="i">${n}</textarea><b>Examples:</b>
+        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<textarea rows="4" id="i">${notes}</textarea><b>Examples:</b>
           [+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
         buttons: [
           {
@@ -819,9 +819,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   _editEquipment(target) {
     let path = target.dataset.key
-    let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+    let obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
 
-    this.editEquipment(this.actor, path, o)
+    this.editEquipment(this.actor, path, obj)
   }
 
   _createMenu(label, icon, callback, condition = () => true) {
@@ -847,16 +847,18 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   async _sortContent(parentpath, objkey, reverse) {
     let key = parentpath + '.' + objkey
     let list = foundry.utils.getProperty(this.actor, key)
-    let t = parentpath + '.-=' + objkey
+    let nullPath = parentpath + '.-=' + objkey
 
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
+    await this.actor.internalUpdate({ [nullPath]: null }) // Delete the whole object
 
     let sortedobj = {}
     let index = 0
 
     Object.values(list)
-      .sort((a, b) => (reverse ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)))
-      .forEach(o => GURPS.put(sortedobj, o, index++))
+      .sort((first, second) =>
+        reverse ? second.name.localeCompare(first.name) : first.name.localeCompare(second.name)
+      )
+      .forEach(obj => GURPS.put(sortedobj, obj, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
   }
 
@@ -942,10 +944,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           if (!obj.uuid) obj.uuid = obj._getGGAId({ name: obj.name, type: path.split('.')[1], generator: '' })
         }
 
-        let o = GURPS.decode(this.actor, path) || {}
+        let obj2 = GURPS.decode(this.actor, path) || {}
 
-        GURPS.put(o, foundry.utils.duplicate(obj))
-        await this.actor.internalUpdate({ [path]: o })
+        GURPS.put(obj2, foundry.utils.duplicate(obj))
+        await this.actor.internalUpdate({ [path]: obj2 })
       },
     }
   }
@@ -974,9 +976,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           let img = new Image()
 
           if (itemData) img.src = itemData.img
-          const w = 50
-          const h = 50
-          const preview = DragDrop.createDragImage(img, w, h)
+          const width = 50
+          const height = 50
+          const preview = DragDrop.createDragImage(img, width, height)
 
           ev.dataTransfer.setDragImage(preview, 0, 0)
         }
@@ -1012,7 +1014,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       obj
     )
 
-    let d = new Dialog(
+    let dialog = new Dialog(
       {
         title: 'Note Editor',
         content: dlgHtml,
@@ -1020,10 +1022,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           one: {
             label: 'Create',
             callback: async html => {
-              ;['notes', 'pageref', 'title'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
-              let u = html.find('.save') // Should only find in Note (or equipment)
+              ;['notes', 'pageref', 'title'].forEach(e => (obj[e] = html.find(`.${e}`).val()))
+              let save = html.find('.save') // Should only find in Note (or equipment)
 
-              if (u) obj.save = u.is(':checked')
+              if (save) obj.save = save.is(':checked')
               GURPS.put(list, obj)
               await actor.internalUpdate({ [path]: list })
             },
@@ -1039,7 +1041,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       }
     )
 
-    d.render(true)
+    dialog.render(true)
   }
 
   async _addTracker() {
@@ -1119,10 +1121,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let prefix = ''
 
       if (dragData.displayname) {
-        let q = '"'
+        let quote = '"'
 
-        if (dragData.displayname.includes(q)) q = "'"
-        prefix = q + dragData.displayname + q
+        if (dragData.displayname.includes(quote)) quote = "'"
+        prefix = quote + dragData.displayname + quote
       }
 
       add = '[' + prefix + dragData.otf + ']'
@@ -1141,13 +1143,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     if (add)
       if (modelkey) {
-        let t = foundry.utils.getProperty(this.actor, modelkey) || ''
+        let obj = foundry.utils.getProperty(this.actor, modelkey) || ''
 
-        this.actor.internalUpdate({ [modelkey]: t + (t ? ' ' : '') + add })
+        this.actor.internalUpdate({ [modelkey]: obj + (obj ? ' ' : '') + add })
       } else {
-        let t = $(ev.currentTarget).val()
+        let obj = $(ev.currentTarget).val()
 
-        $(ev.currentTarget).val(t + (t ? ' ' : '') + add)
+        $(ev.currentTarget).val(obj + (obj ? ' ' : '') + add)
       }
   }
 
@@ -1196,7 +1198,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       }
     }
 
-    let d = new Dialog(
+    let dialog = new Dialog(
       {
         title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
         content: await foundry.applications.handlebars.renderTemplate(
@@ -1210,7 +1212,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       { width: 600 }
     )
 
-    d.render(true)
+    dialog.render(true)
   }
 
   async _editTracker(path) {
@@ -1248,7 +1250,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     if (!(await this.actor._sanityCheckItemSettings(obj))) return
 
-    let d = new Dialog(
+    let dialog = new Dialog(
       {
         title: 'Equipment Editor',
         content: dlgHtml,
@@ -1272,9 +1274,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
             },
           },
         },
-        render: h => {
-          $(h).find('textarea').on('drop', this.dropFoundryLinks)
-          $(h).find('input').on('drop', this.dropFoundryLinks)
+        render: html => {
+          $(html).find('textarea').on('drop', this.dropFoundryLinks)
+          $(html).find('input').on('drop', this.dropFoundryLinks)
         },
         default: 'one',
       },
@@ -1286,7 +1288,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       }
     )
 
-    d.render(true)
+    dialog.render(true)
   }
 
   async editMelee(actor, path, obj) {
@@ -1457,7 +1459,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   async editItem(actor, path, obj, html, title, strprops, numprops, width = 560) {
     let dlgHtml = await foundry.applications.handlebars.renderTemplate(html, obj)
-    let d = new Dialog(
+    let dialog = new Dialog(
       {
         title: title,
         content: dlgHtml,
@@ -1465,20 +1467,20 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              strprops.forEach(a => (obj[a] = html.find(`.${a}`)?.val() || ''))
-              numprops.forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
+              strprops.forEach(key => (obj[key] = html.find(`.${key}`)?.val() || ''))
+              numprops.forEach(key => (obj[key] = parseFloat(html.find(`.${key}`).val())))
 
-              let q = html.find('.quick-roll')
+              let quickRoll = html.find('.quick-roll')
 
-              if (q) obj.addToQuickRoll = q.is(':checked')
+              if (quickRoll) obj.addToQuickRoll = quickRoll.is(':checked')
 
               let ca = html.find('.consumeAction')
 
               if (ca) obj.consumeAction = ca.is(':checked')
 
-              let u = html.find('.save') // Should only find in Note (or equipment)
+              let save = html.find('.save') // Should only find in Note (or equipment)
 
-              if (u) obj.save = u.is(':checked')
+              if (save) obj.save = save.is(':checked')
 
               actor.editItem(path, obj)
 
@@ -1499,9 +1501,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
             },
           },
         },
-        render: h => {
-          $(h).find('textarea').on('drop', this.dropFoundryLinks)
-          $(h).find('input').on('drop', this.dropFoundryLinks)
+        render: html => {
+          $(html).find('textarea').on('drop', this.dropFoundryLinks)
+          $(html).find('input').on('drop', this.dropFoundryLinks)
         },
       },
       {
@@ -1512,7 +1514,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       }
     )
 
-    d.render(true)
+    dialog.render(true)
   }
 
   _makeHeaderMenu(html, cssclass, menuitems, eventname = 'contextmenu') {
@@ -1542,15 +1544,15 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let parentpath = key.substring(0, i)
     let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
-    let t = parentpath + '.-=' + objkey
+    let nullKey = parentpath + '.-=' + objkey
 
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
+    await this.actor.internalUpdate({ [nullKey]: null }) // Delete the whole object
     let sortedobj = {}
     let index = 0
 
     Object.values(object)
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach(o => GURPS.put(sortedobj, o, index++))
+      .sort((first, second) => first.name.localeCompare(second.name))
+      .forEach(obj => GURPS.put(sortedobj, obj, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
   }
 
@@ -1559,15 +1561,15 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let parentpath = key.substring(0, i)
     let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
-    let t = parentpath + '.-=' + objkey
+    let nullKey = parentpath + '.-=' + objkey
 
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
+    await this.actor.internalUpdate({ [nullKey]: null }) // Delete the whole object
     let sortedobj = {}
     let index = 0
 
     Object.values(object)
-      .sort((a, b) => b.name.localeCompare(a.name))
-      .forEach(o => GURPS.put(sortedobj, o, index++))
+      .sort((first, second) => second.name.localeCompare(first.name))
+      .forEach(obj => GURPS.put(sortedobj, obj, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
   }
 
@@ -1666,7 +1668,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         if (this.actor.type === 'characterV2') {
           this.actor.moveItem(sourceKey, targetkey)
         } else {
-          let d = new Dialog({
+          let dialog = new Dialog({
             title: object.name,
             content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
             buttons: {
@@ -1690,7 +1692,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
             default: 'one',
           })
 
-          d.render(true)
+          dialog.render(true)
         }
       }
     }
@@ -1716,10 +1718,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   get title() {
-    const t = this.actor.name
+    const name = this.actor.name
     const sheet = this.actor.getFlag('core', 'sheetClass')
 
-    return sheet === 'gurps.GurpsActorEditorSheet' ? '**** Editing: ' + t + ' ****' : t
+    return sheet === 'gurps.GurpsActorEditorSheet' ? '**** Editing: ' + name + ' ****' : name
   }
 
   _getHeaderButtons() {
@@ -1742,7 +1744,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     const altsheet = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
 
     const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
-    let b = [
+    let button = [
       {
         label: isFull ? altsheet : 'Full View',
         class: 'toggle',
@@ -1752,7 +1754,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     ]
 
     if (!ImportSettings.onlyTrustedUsersCanImport || game.user.isTrusted)
-      b.push({
+      button.push({
         label: 'Import',
         class: 'import',
         icon: 'fas fa-file-import',
@@ -1760,7 +1762,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       })
 
     if (!isEditor) {
-      b.push({
+      button.push({
         label: 'Editor',
         class: 'edit',
         icon: 'fas fa-edit',
@@ -1768,7 +1770,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       })
     }
 
-    return b
+    return button
   }
 
   async _onFileImport(event) {
@@ -1788,11 +1790,11 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   async _onToggleSheet(event, altsheet) {
     event.preventDefault()
-    let newSheet = Object.values(CONFIG.Actor.sheetClasses['character']).filter(s => s.label == altsheet)[0].id
+    let newSheet = Object.values(CONFIG.Actor.sheetClasses['character']).filter(sheet => sheet.label == altsheet)[0].id
 
     const original =
       this.actor.getFlag('core', 'sheetClass') ||
-      Object.values(CONFIG.Actor.sheetClasses['character']).filter(s => s.default)[0].id
+      Object.values(CONFIG.Actor.sheetClasses['character']).filter(sheet => sheet.default)[0].id
 
     if (original != 'gurps.GurpsActorSheet') newSheet = 'gurps.GurpsActorSheet'
     if (event.shiftKey)
@@ -1837,10 +1839,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   async _onRightClickGmod(event) {
     event.preventDefault()
     let el = event.currentTarget
-    let n = el.dataset.name
-    let t = el.innerText
+    let name = el.dataset.name
+    let text = el.innerText
 
-    GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, this.actor)
+    GURPS.whisperOtfToOwner(text + ' ' + name, null, event, false, this.actor)
   }
 
   async _onRightClickOtf(event) {
@@ -1898,8 +1900,8 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       if (!key) return
 
       const encs = this.actor.system.encumbrance
-      const currentIndex = Object.keys(encs).find(k => {
-        if (encs[k].current) return k
+      const currentIndex = Object.keys(encs).find(eKey => {
+        if (encs[eKey].current) return eKey
       })
       const newIndex = key
 
@@ -1930,19 +1932,17 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     eqt.equipped = !eqt.equipped
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     await this.actor.internalUpdate({ [key]: eqt })
-    // if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     let item = this.actor.items.get(eqt.itemid)
 
     item.system.equipped = eqt.equipped
     item.system.eqt.equipped = eqt.equipped
     await this.actor._updateItemFromForm(item)
-    // }
-    let p = this.actor.getEquippedParry()
-    let b = this.actor.getEquippedBlock()
+    let parry = this.actor.getEquippedParry()
+    let block = this.actor.getEquippedBlock()
 
     await this.actor.internalUpdate({
-      'system.equippedparry': p,
-      'system.equippedblock': b,
+      'system.equippedparry': parry,
+      'system.equippedblock': block,
     })
     this.actor._forceRender()
   }

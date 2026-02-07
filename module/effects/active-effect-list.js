@@ -40,10 +40,10 @@ export default class GurpsActiveEffectListSheet extends Application {
 
   async _onEffectControl(event) {
     event.preventDefault()
-    const a = event.currentTarget
-    const effect = a.dataset.effectId ? this.actor.effects.get(a.dataset.effectId) : null
+    const target = event.currentTarget
+    const effect = target.dataset.effectId ? this.actor.effects.get(target.dataset.effectId) : null
 
-    switch (a.dataset.action) {
+    switch (target.dataset.action) {
       case 'create':
         await this.actor.createEmbeddedDocuments('ActiveEffect', [
           {
@@ -62,7 +62,7 @@ export default class GurpsActiveEffectListSheet extends Application {
       case 'edit':
         return effect.sheet.render(true, { parentWindow: this })
       case 'disable':
-        await effect.update({ disabled: !a.checked })
+        await effect.update({ disabled: !target.checked })
 
         return this.render(true)
     }

@@ -187,7 +187,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // List of top-level ADs (not contained in another AD), sorted by `sort` field.
   get adsV2(): Item.OfType<'featureV2'>[] {
-    return this.allAdsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+    return this.allAdsV2.filter(item => item.containedBy === null).sort((first, second) => first.sort - second.sort)
   }
 
   /* ---------------------------------------- */
@@ -203,7 +203,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   get skillsV2(): Item.OfType<'skillV2'>[] {
-    return this.allSkillsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+    return this.allSkillsV2.filter(item => item.containedBy === null).sort((first, second) => first.sort - second.sort)
   }
 
   /* ---------------------------------------- */
@@ -219,7 +219,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   get spellsV2(): Item.OfType<'spellV2'>[] {
-    return this.allSpellsV2.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort)
+    return this.allSpellsV2.filter(item => item.containedBy === null).sort((first, second) => first.sort - second.sort)
   }
 
   /* ---------------------------------------- */
@@ -236,8 +236,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   get equipmentV2() {
     return {
-      carried: this.allEquipmentCarried.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort),
-      other: this.allEquipmentOther.filter(item => item.containedBy === null).sort((a, b) => a.sort - b.sort),
+      carried: this.allEquipmentCarried
+        .filter(item => item.containedBy === null)
+        .sort((first, second) => first.sort - second.sort),
+      other: this.allEquipmentOther
+        .filter(item => item.containedBy === null)
+        .sort((first, second) => first.sort - second.sort),
     }
   }
 
@@ -1433,7 +1437,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         if (ref === 'd') isDamageRoll = true
 
         for (const tag of correspondingTags[ref]) {
-          refTags.push(...(taggedSettings[tag] as string).split(',').map((t: string) => t.trim().toLowerCase()))
+          refTags.push(...(taggedSettings[tag] as string).split(',').map((e: string) => e.trim().toLowerCase()))
         }
       }
 
@@ -1471,7 +1475,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
 
         for (const tag of correspondingTags[ref]) {
-          refTags.push(...(taggedSettings[tag] as string).split(',').map((t: string) => t.trim().toLowerCase()))
+          refTags.push(...(taggedSettings[tag] as string).split(',').map((e: string) => e.trim().toLowerCase()))
         }
       }
     } else {
