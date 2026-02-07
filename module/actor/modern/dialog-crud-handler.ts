@@ -7,9 +7,9 @@ export function bindEquipmentCrudActions(
   actor: Actor.Implementation,
   sheet: GurpsActorSheetEditMethods
 ): void {
-  const entityType = 'equipment'
+  const entityType = 'Equipment'
 
-  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add-${entityType}"]`)
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityType}"]`)
 
   addButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -40,7 +40,7 @@ export function bindEquipmentCrudActions(
     })
   })
 
-  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit-${entityType}"]`)
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit${entityType}"]`)
 
   editButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -58,7 +58,7 @@ export function bindEquipmentCrudActions(
     })
   })
 
-  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete-${entityType}"]`)
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete${entityType}"]`)
 
   deleteButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -74,7 +74,6 @@ export function bindEquipmentCrudActions(
 
       if (!confirmed) return
 
-      await actor.deleteEquipment(equipmentKey)
       await actor.refreshDR()
     })
   })
@@ -85,10 +84,10 @@ export function bindNoteCrudActions(
   actor: Actor.Implementation,
   sheet: GurpsActorSheetEditMethods
 ): void {
-  const entityType = 'note'
+  const entityType = 'Note'
   const path = 'system.notes'
 
-  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add-${entityType}"]`)
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityType}"]`)
 
   addButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -121,7 +120,8 @@ export function bindNoteCrudActions(
               newNote.notes = notesInput instanceof HTMLTextAreaElement ? notesInput.value : ''
               newNote.title = titleInput instanceof HTMLInputElement ? titleInput.value : ''
               GURPS.put(list, newNote)
-              actor.internalUpdate({ [path]: list } as Actor.UpdateData)
+
+              return actor.internalUpdate({ [path]: list } as Actor.UpdateData)
             },
           },
         ],
@@ -129,7 +129,7 @@ export function bindNoteCrudActions(
     })
   })
 
-  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit-${entityType}"]`)
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit${entityType}"]`)
 
   editButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -145,7 +145,7 @@ export function bindNoteCrudActions(
     })
   })
 
-  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete-${entityType}"]`)
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete${entityType}"]`)
 
   deleteButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
@@ -167,7 +167,7 @@ export function bindNoteCrudActions(
 }
 
 export function bindTrackerActions(html: HTMLElement, actor: Actor.Implementation): void {
-  const addButtons = html.querySelectorAll<HTMLElement>('[data-action="add-tracker"]')
+  const addButtons = html.querySelectorAll<HTMLElement>('[data-action="addTracker"]')
 
   addButtons.forEach(button => {
     button.addEventListener('click', (event: MouseEvent) => {

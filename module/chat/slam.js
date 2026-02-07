@@ -38,7 +38,7 @@ export default class SlamChatProcessor extends ChatProcessor {
     }
 
     // see if there are any targets
-    let targets = actor.getOwners().flatMap(u => [...u.targets])
+    let targets = actor.getOwners().flatMap(user => [...user.targets])
 
     // try to find the attacker's token
     let attacker = actor.token || canvas.tokens.placeables.find(it => it.actor === actor)

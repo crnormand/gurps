@@ -2,7 +2,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 
 export const addQuickRollButton = async (html, combatant, token) => {
-  const quickRollSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
+  const quickRollSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
   const canShowButtons = quickRollSettings.enabled && (game.user.isGM || combatant.isOwner)
 
   if (!canShowButtons || !token?.actor) return html
@@ -10,10 +10,10 @@ export const addQuickRollButton = async (html, combatant, token) => {
   const buttonClass = `combatant-control`
   let quickRollButton = $(
     `<a class="${buttonClass}"
-          aria-label="Quick Roll" 
-          role="button" 
+          aria-label="Quick Roll"
+          role="button"
           data-control="quickRollMenu"
-          data-combatant-id="${combatant.id}" 
+          data-combatant-id="${combatant.id}"
           data-tooltip="GURPS.quickRollMenu"
           id="quick-roll-${combatant.id}">
           <i class="fa-solid fa-dice-five"></i>`

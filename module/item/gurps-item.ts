@@ -116,7 +116,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
     // If this item is contained by another Item, it is disabled if the containing Item is disabled.
     return !disabled && this.modelV2.containedBy
-      ? this.parent?.items.get(this.modelV2.containedBy!)?.disabled === true
+      ? (this.parent?.items.get(this.modelV2.containedBy!) as GurpsItemV2 | undefined)?.disabled === true
       : disabled
   }
 
@@ -354,7 +354,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   /* ---------------------------------------- */
 
   get sortedContents() {
-    return this.contents.sort((a, b) => a.sort - b.sort) ?? []
+    return this.contents.sort((first, second) => first.sort - second.sort) ?? []
   }
 
   /* ---------------------------------------- */
@@ -437,22 +437,22 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     if (attackType !== 'both') attackTypes = [attackType]
 
     for (const type of attackTypes) {
-      recurselist((this.actor!.system as Record<string, any>)[type], (e, _k, _d) => {
+      recurselist((this.actor!.system as Record<string, any>)[type], (attackComponent, _k, _d) => {
         let key = undefined
 
-        if (!!actorComponentUUID && e.uuid === actorComponentUUID) {
-          key = this.actor!._findSysKeyForId('uuid', e.uuid, type)
-        } else if (!!originalName && e.originalName === originalName) {
-          key = this.actor!._findSysKeyForId('originalName', e.originalName, type)
-        } else if (!!currentName && e.name === currentName) {
-          key = this.actor!._findSysKeyForId('name', e.name, type)
-        } else if (this.id === e.fromItem) {
-          key = this.actor!._findSysKeyForId('fromItem', e.fromItem, type)
+        if (!!actorComponentUUID && attackComponent.uuid === actorComponentUUID) {
+          key = this.actor!._findSysKeyForId('uuid', attackComponent.uuid, type)
+        } else if (!!originalName && attackComponent.originalName === originalName) {
+          key = this.actor!._findSysKeyForId('originalName', attackComponent.originalName, type)
+        } else if (!!currentName && attackComponent.name === currentName) {
+          key = this.actor!._findSysKeyForId('name', attackComponent.name, type)
+        } else if (this.id === attackComponent.fromItem) {
+          key = this.actor!._findSysKeyForId('fromItem', attackComponent.fromItem, type)
         }
 
         if (key) {
           attacks.push({
-            component: e,
+            component: attackComponent,
             key,
           })
         }

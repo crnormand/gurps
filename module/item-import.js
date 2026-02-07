@@ -71,22 +71,22 @@ export class ItemImporter {
   }
 
   async _importItems(text, filename) {
-    let j = {}
+    let jsonData = {}
 
     try {
-      j = JSON.parse(text)
+      jsonData = JSON.parse(text)
     } catch {
       return ui.notifications.error('The file you uploaded was not of the right format!')
     }
 
-    if ([5].includes(j.version)) {
+    if ([5].includes(jsonData.version)) {
       // Version 5 does not have a type field ... find some other way to validate the data.
       // Verify that the contained objects has an 'equipped' field.
-      if (Object.hasOwn(j.rows[0], 'quantity') === false) {
+      if (Object.hasOwn(jsonData.rows[0], 'quantity') === false) {
         return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
       }
-    } else if ([2, 4].includes(j.version)) {
-      if (j.type !== 'equipment_list') {
+    } else if ([2, 4].includes(jsonData.version)) {
+      if (jsonData.type !== 'equipment_list') {
         return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
       }
     } else {
@@ -94,7 +94,7 @@ export class ItemImporter {
     }
 
     const compendiumName = filename.replace(/ /g, '_')
-    let pack = game.packs.find(p => p.metadata.name === compendiumName)
+    let pack = game.packs.find(pack => pack.metadata.name === compendiumName)
 
     if (!pack)
       pack = await CompendiumCollection.createCompendium({
@@ -107,7 +107,7 @@ export class ItemImporter {
 
     ui.notifications.info('Importing Items from ' + filename + '...')
 
-    for (let i of j.rows) {
+    for (let i of jsonData.rows) {
       await this._importItem(i, pack, compendiumName, timestamp)
     }
 
@@ -190,16 +190,16 @@ export class ItemImporter {
     }
 
     if (i.weapons?.length)
-      for (let w of i.weapons) {
+      for (let weapon of i.weapons) {
         let otf_list = []
 
-        if (w.defaults)
-          for (let d of w.defaults) {
-            let mod = d.modifier ? (d.modifier > -1 ? `+${d.modifier}` : d.modifier.toString()) : ''
+        if (weapon.defaults)
+          for (let def of weapon.defaults) {
+            let mod = def.modifier ? (def.modifier > -1 ? `+${def.modifier}` : def.modifier.toString()) : ''
 
-            if (d.type === 'skill') {
-              //otf_list.push(`S:${d.name.replace(/ /g, "*")}` + (d.specialization ? `*(${d.specialization.replace(/ /g, "*")})` : "") + mod);
-              otf_list.push(`S:"${d.name}` + (d.specialization ? `*(${d.specialization})` : '') + '"' + mod)
+            if (def.type === 'skill') {
+              //otf_list.push(`S:${def.name.replace(/ /g, "*")}` + (def.specialization ? `*(${def.specialization.replace(/ /g, "*")})` : "") + mod);
+              otf_list.push(`S:"${def.name}` + (def.specialization ? `*(${def.specialization})` : '') + '"' + mod)
             } else if (
               [
                 '10',
@@ -215,42 +215,42 @@ export class ItemImporter {
                 'touch',
                 'parry',
                 'block',
-              ].includes(d.type)
+              ].includes(def.type)
             ) {
-              otf_list.push(d.type.replace('_', ' ') + mod)
+              otf_list.push(def.type.replace('_', ' ') + mod)
             }
           }
 
-        if (this.isMeleeWeapon(w)) {
+        if (this.isMeleeWeapon(weapon)) {
           let wep = {
-            block: w.block || '',
-            damage: w.calc?.damage || '',
-            mode: w.usage || '',
+            block: weapon.block || '',
+            damage: weapon.calc?.damage || '',
+            mode: weapon.usage || '',
             name: itemData.name,
             notes: itemData.system.eqt.notes || '',
             pageref: itemData.system.eqt.pageref || '',
-            parry: w.parry || '',
-            reach: w.reach || '',
-            st: w.strength || '',
+            parry: weapon.parry || '',
+            reach: weapon.reach || '',
+            st: weapon.strength || '',
             otf: otf_list.join('|') || '',
           }
 
           itemData.system.melee[zeroFill(Object.keys(itemData.system.melee).length + 1)] = wep
-        } else if (this.isRangedWeapon(w)) {
+        } else if (this.isRangedWeapon(weapon)) {
           let wep = {
-            acc: w.accuracy || '',
+            acc: weapon.accuracy || '',
             ammo: '',
-            bulk: w.bulk || '',
-            damage: w.calc?.damage || '',
-            mode: w.usage,
+            bulk: weapon.bulk || '',
+            damage: weapon.calc?.damage || '',
+            mode: weapon.usage,
             name: itemData.name,
             notes: itemData.system.eqt.notes || '',
             pageref: itemData.system.eqt.pageref || '',
-            range: w.range,
-            rcl: w.recoil,
-            rof: w.rate_of_fire,
-            shots: w.shots,
-            st: w.strength,
+            range: weapon.range,
+            rcl: weapon.recoil,
+            rof: weapon.rate_of_fire,
+            shots: weapon.shots,
+            st: weapon.strength,
             otf: otf_list.join('|') || '',
           }
 
@@ -262,40 +262,40 @@ export class ItemImporter {
     let feat_list = []
 
     if (i.features?.length)
-      for (let f of i.features) {
-        feat_list.push(f)
+      for (let feature of i.features) {
+        feat_list.push(feature)
       }
 
     if (i.modifiers?.length)
-      for (let m of i.modifiers) {
-        if (!m.disabled && m.features?.length)
-          for (let f of m.features) {
-            let clonedFeature = { ...f, modifier: true }
+      for (let mod of i.modifiers) {
+        if (!mod.disabled && mod.features?.length)
+          for (let feature of mod.features) {
+            let clonedFeature = { ...feature, modifier: true }
 
             feat_list.push(clonedFeature)
           }
       }
 
     if (feat_list.length)
-      for (let f of feat_list) {
-        let bonus = f.amount ? (f.amount > -1 ? `+${f.amount}` : f.amount.toString()) : ''
+      for (let feature of feat_list) {
+        let bonus = feature.amount ? (feature.amount > -1 ? `+${feature.amount}` : feature.amount.toString()) : ''
 
-        if (f.type === 'attribute_bonus') {
-          bonus_list.push(`${f.attribute} ${bonus}`)
-        } else if (f.type === 'dr_bonus') {
+        if (feature.type === 'attribute_bonus') {
+          bonus_list.push(`${feature.attribute} ${bonus}`)
+        } else if (feature.type === 'dr_bonus') {
           let locations = []
 
           // Handle modifiers like "Fortify" that don't have locations, but are applied to "this armor". In that case,
           // we create a DR bonus that applies to all locations that the other DR bonuses apply to.
-          if (f.modifier && (!f.locations || f.locations.length === 0)) {
+          if (feature.modifier && (!feature.locations || feature.locations.length === 0)) {
             locations.push(
               bonus_list
-                .filter(b => b.startsWith('DR ')) // This will get all the DR entries in the bonus list
-                .map(b => this._getTextAfterNthSpace(b, 2)) // This gets the locations part
+                .filter(bonus => bonus.startsWith('DR ')) // This will get all the DR entries in the bonus list
+                .map(bonus => this._getTextAfterNthSpace(bonus, 2)) // This gets the locations part
                 .join(' ')
             )
           } else {
-            locations = f.locations.map(loc => this._formatLocation(loc))
+            locations = feature.locations.map(loc => this._formatLocation(loc))
           }
 
           if (locations.length > 0) {
@@ -303,49 +303,46 @@ export class ItemImporter {
           } else {
             bonus_list.push(`DR ${bonus}`)
           }
-        } else if (f.type === 'skill_bonus') {
-          if (f.selection_type === 'skills_with_name' && f.name?.compare === 'is') {
-            if (f.specialization?.compare === 'is') {
+        } else if (feature.type === 'skill_bonus') {
+          if (feature.selection_type === 'skills_with_name' && feature.name?.compare === 'is') {
+            if (feature.specialization?.compare === 'is') {
               bonus_list.push(
-                `A:${(f.name.qualifier || '').replace(/ /g, '*')}${(f.specialization.qualifier || '').replace(
-                  / /g,
-                  '*'
-                )} ${bonus}`
+                `A:${(feature.name.qualifier || '').replace(/ /g, '*')}${(
+                  feature.specialization.qualifier || ''
+                ).replace(/ /g, '*')} ${bonus}`
               )
-            } else if (!f.specialization) {
-              bonus_list.push(`A:${(f.name.qualifier || '').replace(/ /g, '*')} ${bonus}`)
+            } else if (!feature.specialization) {
+              bonus_list.push(`A:${(feature.name.qualifier || '').replace(/ /g, '*')} ${bonus}`)
             }
-          } else if (f.selection_type === 'weapons_with_name' && f.name?.compare === 'is') {
-            if (f.specialization?.compare === 'is') {
+          } else if (feature.selection_type === 'weapons_with_name' && feature.name?.compare === 'is') {
+            if (feature.specialization?.compare === 'is') {
               bonus_list.push(
-                `A:${(f.name.qualifier || '').replace(/ /g, '*')}${(f.specialization.qualifier || '').replace(
-                  / /g,
-                  '*'
-                )} ${bonus}`
+                `A:${(feature.name.qualifier || '').replace(/ /g, '*')}${(
+                  feature.specialization.qualifier || ''
+                ).replace(/ /g, '*')} ${bonus}`
               )
-            } else if (!f.specialization) {
-              bonus_list.push(`A:${(f.name.qualifier || '').replace(/ /g, '*')} ${bonus}`)
+            } else if (!feature.specialization) {
+              bonus_list.push(`A:${(feature.name.qualifier || '').replace(/ /g, '*')} ${bonus}`)
             }
-          } else if (f.selection_type === 'this_weapon') {
+          } else if (feature.selection_type === 'this_weapon') {
             bonus_list.push(`A:${itemData.name.replace(/ /g, '*')} ${bonus}`)
           }
-        } else if (f.type === 'spell_bonus') {
-          if (f.match === 'spell_name' && f.name?.compare === 'is') {
-            bonus_list.push(`S:${(f.name.qualifier || '').replace(/ /g, '*')} ${bonus}`)
+        } else if (feature.type === 'spell_bonus') {
+          if (feature.match === 'spell_name' && feature.name?.compare === 'is') {
+            bonus_list.push(`S:${(feature.name.qualifier || '').replace(/ /g, '*')} ${bonus}`)
           }
-        } else if (f.type === 'weapon_bonus') {
-          if (f.selection_type === 'weapons_with_name') {
-            if (f.specialization?.compare === 'is') {
+        } else if (feature.type === 'weapon_bonus') {
+          if (feature.selection_type === 'weapons_with_name') {
+            if (feature.specialization?.compare === 'is') {
               bonus_list.push(
-                `D:${(f.name?.qualifier || '').replace(/ /g, '*')}${(f.specialization.qualifier || '').replace(
-                  / /g,
-                  '*'
-                )} ${bonus}`
+                `D:${(feature.name?.qualifier || '').replace(/ /g, '*')}${(
+                  feature.specialization.qualifier || ''
+                ).replace(/ /g, '*')} ${bonus}`
               )
-            } else if (!f.specialization) {
-              bonus_list.push(`D:${(f.name?.qualifier || '').replace(/ /g, '*')} ${bonus}`)
+            } else if (!feature.specialization) {
+              bonus_list.push(`D:${(feature.name?.qualifier || '').replace(/ /g, '*')} ${bonus}`)
             }
-          } else if (f.selection_type === 'this_weapon') {
+          } else if (feature.selection_type === 'this_weapon') {
             bonus_list.push(`D:${itemData.name.replace(/ /g, '*')} ${bonus}`)
           }
         }
@@ -358,7 +355,7 @@ export class ItemImporter {
       cachedItems.push(await pack.getDocument(i._id))
     }
 
-    let oi = await cachedItems.find(p => p.system.eqt.uuid === itemData.system.eqt.uuid)
+    let oi = await cachedItems.find(cachedItem => cachedItem.system.eqt.uuid === itemData.system.eqt.uuid)
 
     if (oi) {
       let oldData = foundry.utils.duplicate(oi)
@@ -387,11 +384,11 @@ export class ItemImporter {
     return /\s+/.test(text) ? `"*${text}"` : `*${text}`
   }
 
-  isRangedWeapon(w) {
-    return Object.hasOwn(w, 'range')
+  isRangedWeapon(weapon) {
+    return Object.hasOwn(weapon, 'range')
   }
 
-  isMeleeWeapon(w) {
-    return !this.isRangedWeapon(w)
+  isMeleeWeapon(weapon) {
+    return !this.isRangedWeapon(weapon)
   }
 }

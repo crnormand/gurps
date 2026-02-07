@@ -27,11 +27,11 @@ class HelpChatProcessor extends ChatProcessor {
    * @param {any} _msgs
    */
   async process(_line, _msgs) {
-    let l = _line.split(' ')
+    let lines = _line.split(' ')
 
-    if (l.length > 1) return this.registry.handle('?' + l[1].trim())
+    if (lines.length > 1) return this.registry.handle('?' + lines[1].trim())
 
-    let t = `<a href='${GURPS.USER_GUIDE_URL}'>${game.i18n.localize('GURPS.gameAidUsersGuide')}</a><br>`
+    let element = `<a href='${GURPS.USER_GUIDE_URL}'>${game.i18n.localize('GURPS.gameAidUsersGuide')}</a><br>`
     let all = ChatProcessors.processorsForAll()
       .filter(it => !!it.help())
       .map(it => it.help())
@@ -40,16 +40,16 @@ class HelpChatProcessor extends ChatProcessor {
       .map(it => it.help())
 
     all.sort()
-    t += all.join('<br>')
+    element += all.join('<br>')
 
     if (gmonly.length > 0) {
       gmonly.sort()
-      t += '<br>--- GM only ---<br>'
-      t += gmonly.join('<br>')
+      element += '<br>--- GM only ---<br>'
+      element += gmonly.join('<br>')
     }
 
-    t += '<br><br>' + game.i18n.localize('GURPS.chatHelpHelp')
-    this.priv(t)
+    element += '<br><br>' + game.i18n.localize('GURPS.chatHelpHelp')
+    this.priv(element)
   }
 }
 
@@ -81,8 +81,12 @@ class ChatProcessorRegistry {
     let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
 
     for (const line of lines)
-      for (const p of this._processors) {
-        if (p.matches(line) || (line[0] === '!' ? p.matches(line.substring(1)) : p.matches(line))) return true
+      for (const processor of this._processors) {
+        if (
+          processor.matches(line) ||
+          (line[0] === '!' ? processor.matches(line.substring(1)) : processor.matches(line))
+        )
+          return true
       }
 
     return false
@@ -132,9 +136,9 @@ class ChatProcessorRegistry {
     let backslash = false
 
     for (let i = 0; i < message.length; i++) {
-      const c = message[i]
+      const char = message[i]
 
-      if (c === '\\') {
+      if (char === '\\') {
         if (escaped === 0) {
           if (backslash) {
             lines.push(message.substring(start, i - 1))
@@ -143,10 +147,10 @@ class ChatProcessorRegistry {
           } else backslash = true
         }
       } else backslash = false
-      if (c === '{') escaped++
-      if (c === '}') escaped--
+      if (char === '{') escaped++
+      if (char === '}') escaped--
 
-      if (c === '\n') {
+      if (char === '\n') {
         lines.push(message.substring(start, i))
         start = i + 1
       }
@@ -278,9 +282,9 @@ class ChatProcessorRegistry {
   _sendPub(pub, chatData) {
     if (pub.length === 0) return
 
-    let d = foundry.utils.duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
+    let dupe = foundry.utils.duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
 
-    d.alreadyProcessed = true
+    dupe.alreadyProcessed = true
     let lines = pub.slice()
 
     foundry.applications.handlebars
@@ -288,8 +292,8 @@ class ChatProcessorRegistry {
         lines: lines,
       })
       .then(content => {
-        d.content = content
-        ChatMessage.create(d)
+        dupe.content = content
+        ChatMessage.create(dupe)
       })
     pub.length = 0
   }
@@ -324,7 +328,7 @@ class ChatProcessorRegistry {
    * @param {string} txt
    */
   prnt(txt) {
-    let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
+    let p_setting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
 
     if (game.user?.isGM || p_setting) this.priv(txt)
     else this.pub(txt)
@@ -340,7 +344,17 @@ class ChatProcessorRegistry {
     this.msgs.quiet = quiet
     this.msgs.oldQuiet = quiet
     this.msgs.data.whisper = [game.user?.id]
-    foundry.utils.mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
+
+    // HACK: This try / catch prevents errors from showing to the user in cases where properties shiftKey and/or ctrlKey of `this.msgs.event`
+    // are not writeable, such as if the event is a PointerEvent (e.g. in Token Action HUD). The real underlying problem is that we are
+    // attempting to mutate properties of a native Event object, whose modifier-key properties may be immutable; a more correct long-term
+    // solution would be to store the desired shift/ctrl flags separately (e.g. on the message data) rather than modifying the event object
+    // itself. This workaround should not persist following any refactor of our chat processing code. - MT
+    try {
+      foundry.utils.mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
+    } catch (err) {
+      console.warn('Failed to set event flags on event object:', err)
+    }
   }
 }
 
@@ -376,24 +390,24 @@ export default function addChatHooks() {
     Hooks.on(
       'preCreateChatMessage',
       (/** @type {ChatMessage} */ chatMessage, /** @type {any} */ _options, /** @type {any} */ _userId) => {
-        let c = chatMessage.content
+        let content = chatMessage.content
 
         try {
-          let html = $(c)
+          let html = $(content)
           let rt = html.find('.result-text') // Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
           let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/
-          let t = rt[0]?.innerText
+          let text = rt[0]?.innerText
 
-          if (t) {
-            t.split('\n').forEach(e => {
-              let m = e.match(re)
+          if (text) {
+            text.split('\n').forEach(rollCommandLine => {
+              let match = rollCommandLine.match(re)
 
-              if (!!m && !!m[2]) {
-                let action = parselink(m[2])
+              if (!!match && !!match[2]) {
+                let action = parselink(match[2])
 
                 if (action.action) {
                   GURPS.performAction(action.action, GURPS.LastActor, {
-                    shiftKey: e.startsWith('/pr'),
+                    shiftKey: rollCommandLine.startsWith('/pr'),
                   })
                   //          return false; // Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
                 }
@@ -404,7 +418,7 @@ export default function addChatHooks() {
           // a dangerous game... but limited to GURPs /roll OtF
         }
 
-        let newContent = gurpslink(c)
+        let newContent = gurpslink(content)
 
         foundry.utils.setProperty(chatMessage, '_source.content', newContent)
 

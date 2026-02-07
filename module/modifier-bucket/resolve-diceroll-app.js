@@ -132,7 +132,7 @@ export default class ResolveDiceRoll extends Application {
     for (const diceTerm of this.diceTerms) {
       let result = this.getValues(diceTerm)
 
-      result.forEach(n => diceTerm.term.results.push({ active: true, result: n }))
+      result.forEach(res => diceTerm.term.results.push({ active: true, result: res }))
       // diceTerm.term._loaded = result
     }
 
@@ -144,7 +144,7 @@ export default class ResolveDiceRoll extends Application {
     for (const diceTerm of this.diceTerms) {
       let result = this.getValues(diceTerm)
 
-      result.forEach(n => diceTerm.term.results.push({ active: true, result: n }))
+      result.forEach(res => diceTerm.term.results.push({ active: true, result: res }))
     }
 
     this.rollCallback()

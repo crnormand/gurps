@@ -1,10 +1,9 @@
 import { BaseAction } from 'module/action/base-action.ts'
-import { DamageActionSchema } from 'module/actor/data/character-components.ts'
 import { CharacterModel } from 'module/actor/data/character.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
-import DamageChat from 'module/damage/damagechat.js'
+import { DamageChat } from 'module/damage/damagechat.js'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
 import { EquipmentModel } from 'module/item/data/equipment.ts'
 import { SkillModel } from 'module/item/data/skill.ts'
@@ -22,24 +21,10 @@ import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 export {}
 
 declare global {
-  var GURPS: {
+  interface GURPSGlobal {
     SYSTEM_NAME: 'gurps'
-
-    module: {
-      Damage: any
-    }
-
-    modules: {
-      Importer: {
-        importGCS(actor: Actor.Implementation): Promise<void>
-      }
-      Pdf: {
-        handleOnPdf(event: Event): void
-      }
-    }
-
+    modules: Record<string, GurpsModule>
     LastActor: Actor.Implementation | null
-
     StatusEffect: {
       lookup(id: string): any
       getAllPostures(): Record<string, any>
@@ -47,43 +32,29 @@ declare global {
     SavedStatusEffects: typeof CONFIG.statusEffects
     StatusEffectStanding: 'standing'
     StatusEffectStandingLabel: 'GURPS.status.Standing'
-
-    decode<T = unknown>(actor: Actor.Implementation, path: string): T
-
-    put<T>(list: Record<string, T>, obj: T): string
-
+    decode<T = unknown>(actor: GurpsActor, path: string): T
+    put<T>(list: Record<string, T>, obj: T, index?: number = -1): string
     parselink(input: string): { text: string; action?: GurpsAction }
-
-    removeKey(actor: Actor.Implementation, key: string): void
-
+    removeKey(actor: GurpsActor, key: string): void
     insertBeforeKey(actor: Actor.Implementation, path: string, newobj: AnyObject): Promise<void>
-
     findAdDisad(actor: Actor.Implementation, adName: string): Feature['fea'] | undefined
-
     readTextFromFile(file: File): Promise<string>
-
     performAction(
-      action: GurpsAction | foundry.data.fields.SchemaField.SourceData<DamageActionSchema> | undefined,
-      actor: Actor.Implementation | null,
+      action: GurpsAction,
+      actor: Actor | GurpsActor | null,
       event?: Event | null,
       targets?: string[]
-    ): Promise<boolean | { target: any; thing: any } | undefined>
-
+    ): Promise<any>
     stopActions: boolean
-
-    ModifierBucket: foundry.appv1.api.Application & {
+    ModifierBucket: {
       setTempRangeMod(mod: number): void
       addTempRangeMod(): void
+      addModifier(mod: string, label: string, options?: { situation?: string }, tagged?: boolean): void
       currentSum(): number
       clear(): Promise<void>
       refreshPosition(): void
-      addModifier(mod: string | number, reason: string, list?: Modifier[], tagged?: boolean): void
+      render(): Promise<void>
     }
-
-    // @deprecated -- TODO: move to module
-    DamageChat: typeof DamageChat
-
-    // @deprecated -- TODO: move to module
     DamageTables: {
       translate(damageType: string): string
       woundModifiers: Record<
@@ -92,26 +63,18 @@ declare global {
       >
       damageTypeMap: Record<string, string>
     }
-
-    // @deprecated -- TODO: move to module
     SSRT: {
       getModifier(yards: number): number
     }
-
-    // @deprecated -- TODO: move to module
     rangeObject: {
       ranges: Array<{ modifier: number; max: number; penalty: number }>
     }
-
-    // @deprecated -- TODO: move to module
     Maneuvers: {
-      get(id?: string | null): ManeuverData | undefined
+      get(id: string): { icon?: string; label: string; move: string | null } | undefined
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
-
-    // @deprecated -- TODO: move to module
-    ApplyDamageDialog: new (actor: Actor.Implementation, damageData: DamageData[], options?: object) => Application
-
+    ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
+    DamageChat: typeof DamageChat
     resolveDamageRoll: (
       event: Event,
       actor: Actor.Implementation | null,
@@ -132,7 +95,6 @@ declare global {
     sendOtfMessage: (content: string, blindroll: boolean, users?: User[] | null) => void
 
     SJGProductMappings: Record<string, string>
-
     CONFIG: {
       Action: Record<
         string,
@@ -145,6 +107,8 @@ declare global {
       [key: string]: unknown
     }
   }
+
+  var GURPS: GURPSGlobal
 
   /* ---------------------------------------- */
 
@@ -403,8 +367,6 @@ declare global {
   }
 }
 
-/* ---------------------------------------- */
-
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
     Actor: typeof GurpsActorV2<Actor.SubType>
@@ -456,7 +418,6 @@ declare module 'fvtt-types/configuration' {
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
     }
-    ChatMessage: Record<string, unknown>
   }
 
   /* ---------------------------------------- */
@@ -512,6 +473,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
+    'gurps.portrait-hp-tinting': boolean
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
@@ -530,6 +492,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.use-quintessence': boolean
     'gurps.use-tagged-modifiers': TaggedModifiersSettings
 
+    'gurps.use-foundry-items': boolean
     // TODO: Deprecated settings.
     'gurps.auto-ignore-qty': boolean
     'gurps.basicsetpdf': string
@@ -554,7 +517,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
     'gurps.use-browser-importer': boolean
     'gurps.use-size-modifier-difference-in-melee': boolean
-    'gurps.portrait-hp-tinting': boolean
+    'gurps.automatic-encumbrance': boolean
   }
 }
 

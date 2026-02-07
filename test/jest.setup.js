@@ -1,12 +1,10 @@
 global.foundry = {
   abstract: {
-    // @ts-expect-error - mock class for testing
     DataModel: class {
       constructor(data) {
         Object.assign(this, data)
       }
     },
-    // @ts-expect-error - mock class for testing
     TypeDataModel: class {
       constructor(data) {
         const isGetterProperty = (instance, propertyKey) => {
@@ -40,7 +38,6 @@ global.foundry = {
 
       static LOCALIZATION_PREFIXES = []
     },
-    // @ts-expect-error - mock class for testing
     Document: class {
       constructor(data) {
         this._id = data?._id || 'TEST_ID'
@@ -49,7 +46,6 @@ global.foundry = {
     },
   },
   documents: {
-    // @ts-expect-error - mock class for testing
     BaseActor: class {
       constructor(data = {}) {
         this.name = data.name || ''
@@ -61,7 +57,6 @@ global.foundry = {
         this._id = data._id || this.id
       }
     },
-    // @ts-expect-error - mock class for testing
     BaseItem: class {
       constructor(data = {}, options = {}) {
         this.name = data.name || ''
@@ -87,11 +82,8 @@ global.foundry = {
       }
     },
   },
-  // @ts-expect-error - mock namespace for testing
   data: {
-    // @ts-expect-error - mock namespace for testing
     fields: {
-      // @ts-expect-error - mock class for testing
       TypedSchemaField: class TypedSchemaField {
         constructor(types, options) {
           this.types = types
@@ -102,46 +94,39 @@ global.foundry = {
           return true
         }
       },
-      // @ts-expect-error - mock class for testing
       TypedObjectField: class TypedObjectField {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       SchemaField: class SchemaField {
         constructor(schema, options) {
           this.schema = schema
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       StringField: class StringField {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       NumberField: class NumberField {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       BooleanField: class BooleanField {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       ArrayField: class ArrayField {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       ObjectField: class ObjectField {
         constructor(options) {
           this.options = options
@@ -188,9 +173,9 @@ global.foundry = {
       const parts = String(path).split('.')
       let ref = obj
 
-      for (const p of parts) {
+      for (const part of parts) {
         if (ref == null) return undefined
-        ref = ref[p]
+        ref = ref[part]
       }
 
       return ref
@@ -199,7 +184,6 @@ global.foundry = {
     deepClone: obj => {
       try {
         // Prefer structuredClone when available
-        // @ts-expect-error - structuredClone may not exist in all environments
         if (typeof structuredClone === 'function') return structuredClone(obj)
       } catch {
         // fall through to JSON clone
@@ -209,7 +193,6 @@ global.foundry = {
     },
     // Foundry has both deepClone and duplicate; map duplicate to deepClone here
     duplicate: obj => {
-      // @ts-expect-error - accessing global.foundry mock
       return global.foundry.utils.deepClone(obj)
     },
     flattenObject: (obj, _d = 0) => {
@@ -219,17 +202,17 @@ global.foundry = {
         throw new Error('Maximum depth exceeded')
       }
 
-      for (const [k, v] of Object.entries(obj)) {
-        const t = foundry.utils.getType(v)
+      for (const [key, value] of Object.entries(obj)) {
+        const type = foundry.utils.getType(value)
 
-        if (t === 'Object') {
-          if (foundry.utils.isEmpty(v)) flat[k] = v
-          const inner = foundry.utils.flattenObject(v, _d + 1)
+        if (type === 'Object') {
+          if (foundry.utils.isEmpty(value)) flat[key] = value
+          const inner = foundry.utils.flattenObject(value, _d + 1)
 
           for (const [ik, iv] of Object.entries(inner)) {
-            flat[`${k}.${ik}`] = iv
+            flat[`${key}.${ik}`] = iv
           }
-        } else flat[k] = v
+        } else flat[key] = value
       }
 
       return flat
@@ -256,9 +239,9 @@ global.foundry = {
       return 'Unknown'
     },
     isEmpty: value => {
-      const t = foundry.utils.getType(value)
+      const type = foundry.utils.getType(value)
 
-      switch (t) {
+      switch (type) {
         case 'undefined':
           return true
         case 'null':
@@ -280,14 +263,14 @@ global.foundry = {
       let target = object
       const parts = key.split('.')
 
-      for (const p of parts) {
+      for (const part of parts) {
         if (!target) return false
         const type = typeof target
 
         if (type !== 'object' && type !== 'function') return false
-        if (!(p in target)) return false
+        if (!(part in target)) return false
         parent = target
-        target = parent[p]
+        target = parent[part]
       }
 
       delete parent[parts.at(-1)]
@@ -298,30 +281,24 @@ global.foundry = {
   appv1: {
     sheets: {
       // Minimal base classes to satisfy extends
-      // @ts-expect-error - mock class for testing
       ActorSheet: class {},
-      // @ts-expect-error - mock class for testing
       ItemSheet: class {},
     },
   },
   applications: {
     api: {
-      // @ts-expect-error - mock class for testing
       Application: class {
         constructor(options) {
           this.options = options
         }
       },
-      // @ts-expect-error - mock class for testing
       ApplicationV2: class {},
-      // @ts-expect-error - mock mixin for testing
       HandlebarsApplicationMixin: Base => class extends Base {},
     },
     handlebars: {
       renderTemplate: async () => '',
     },
     ux: {
-      // @ts-expect-error - mock class for testing
       ContextMenu: class {
         constructor(element, selector, menuItems, options) {
           this.element = element
@@ -340,7 +317,6 @@ foundry.documents.Actor = foundry.documents.BaseActor
 
 global.canvas = {
   layer: {
-    // @ts-expect-error - simplified mock implementation
     get: () => ({}),
   },
 }
@@ -348,7 +324,6 @@ global.canvas = {
 global.game = {
   ready: true,
   i18n: {
-    // @ts-expect-error - mock method for testing
     localize: key => {
       // Mock specific GURPS localization keys
       if (key === 'GURPS.CR12') return 'CR: 12 (Resist Quite Often)'
@@ -441,25 +416,74 @@ global.Item = class extends foundry.documents.BaseItem {
 }
 
 // Minimal Application base class for sheet subclasses used by imports
-// @ts-expect-error - mock class for testing
 global.Application = class {
   constructor(_options = {}) {}
   render() {}
 }
 
-// Minimal ContextMenu for utilities/contextmenu usages
-// @ts-expect-error - mock class for testing
-global.ContextMenu = class {
-  constructor(_element, _selector, _items, _events) {}
+global.GURPS = { SYSTEM_NAME: 'gurps' }
+global.game.settings = {
+  get: () => null,
+}
+// Mock Foundry VTT FormApplication class
+global.FormApplication = class FormApplication {
+  constructor(object = {}, options = {}) {
+    this.object = object
+    this.options = options
+  }
+
+  static get defaultOptions() {
+    return {
+      classes: [],
+      template: '',
+      width: 400,
+      height: 'auto',
+      closeOnSubmit: true,
+      submitOnChange: false,
+      submitOnClose: false,
+      editable: true,
+    }
+  }
+
+  get template() {
+    return this.options.template
+  }
+
+  getData(_options = {}) {
+    return { object: this.object }
+  }
+
+  async render(_force = false, _options = {}) {
+    return this
+  }
+
+  async close(_options = {}) {
+    return this
+  }
+
+  activateListeners(_html) {}
+
+  async _updateObject(_event, _formData) {}
 }
 
-// Minimal FormApplication for classes extending it
-global.FormApplication = class extends global.Application {
-  constructor(object = {}, options = {}) {
-    super(options)
-    this.object = object
+// Mock Foundry VTT ContextMenu class
+global.ContextMenu = class ContextMenu {
+  constructor(element, selector, menuItems, events = {}) {
+    this.element = element
+    this.selector = selector
+    this.menuItems = menuItems
+    this.events = events
   }
-  static get defaultOptions() {
-    return {}
+
+  bind() {
+    return this
+  }
+
+  close(_options = {}) {
+    return this
+  }
+
+  render(_target) {
+    return this
   }
 }

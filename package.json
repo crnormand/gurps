@@ -1,5 +1,5 @@
 {
-  "description": "NaN's GURPS Game Aid",
+  "description": "GURPS Game Aid",
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
@@ -42,22 +42,22 @@
     "build:styles": "sass --no-source-map --style=compressed gurps.scss:dist/gurps.css",
     "clean": "rimraf dist",
     "dev": "run-s clean watch",
-    "gen:actor-methods": "node dev-utilities/generate-actor-methods.mjs",
-    "handlebars": "handlebars",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "gen:actor-methods": "node dev-utilities/generate-actor-methods.mjs",
+    "handlebars": "handlebars",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prepare": "husky",
     "tdd": "NODE_OPTIONS=\"--experimental-vm-modules --disable-warning=ExperimentalWarning\" jest --coverage --config=jest.config.mjs",
     "test": "NODE_OPTIONS=\"--experimental-vm-modules --disable-warning=ExperimentalWarning\" jest --config=jest.config.mjs",
     "typecheck": "tsc --noEmit",
     "verify": "run-s format:check lint typecheck test",
-    "watch:styles": "sass --watch --update --style=expanded gurps.scss:dist/gurps.css",
     "watch": "run-p watch:styles watch:code watch:static",
     "watch:code": "tsc-watch",
     "watch:static": "node build/cpx.js --watch",
-    "prepare": "husky"
+    "watch:styles": "sass --watch --update --style=expanded gurps.scss:dist/gurps.css"
   },
   "type": "module",
-  "version": "0.18.6"
+  "version": "1.0.0"
 }

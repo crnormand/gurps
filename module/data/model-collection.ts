@@ -79,7 +79,10 @@ class ModelCollection<Model extends DataModel.Any = DataModel.Any> extends found
    * Test the given predicate against every entry in the Collection.
    */
   every(predicate: (arg0: any, arg1: number, arg2: ModelCollection) => boolean): boolean {
-    return this.reduce((pass, v, i) => pass && predicate(v, i, this as unknown as ModelCollection), true)
+    return this.reduce(
+      (pass, value, index) => pass && predicate(value, index, this as unknown as ModelCollection),
+      true
+    )
   }
 
   /* ---------------------------------------- */

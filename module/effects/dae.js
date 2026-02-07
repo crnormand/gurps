@@ -1,5 +1,5 @@
 /**
-  This is a subset of Dynamic effects for Active Effects module (which only work with DnD5e).   
+  This is a subset of Dynamic effects for Active Effects module (which only work with DnD5e).
   Mainly for the 'teleport token function.   ;-)
 **/
 
@@ -120,7 +120,7 @@ async function _recreateToken(data) {
 }
 
 async function _renameToken(data) {
-  return await canvas.tokens.placeables.find(t => t.id === data.tokenData._id).update({ name: data.newName })
+  return await canvas.tokens.placeables.find(token => token.id === data.tokenData._id).update({ name: data.newName })
 }
 
 let tokenScene = (tokenName, sceneName) => {
@@ -188,7 +188,7 @@ export async function createToken(tokenData, x, y) {
   let targetSceneId = canvas.scene.id
 
   // requestGMAction(GMAction.actions.createToken, {userId: game.user.id, targetSceneId, tokenData, x, y})
-  return socketlibSocket.execuateAsGM('createToken', { userId: game.user.id, targetSceneId, tokenData, x, y })
+  return socketlibSocket.executeAsGM('createToken', { userId: game.user.id, targetSceneId, tokenData, x, y })
 }
 
 export let teleport = async (tokenDocument, targetScene, xpos, ypos) => {

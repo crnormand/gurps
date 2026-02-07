@@ -146,13 +146,13 @@ export class SlamCalculator {
     await ChatMessage.create(messageData)
     let targets = []
 
-    game.user.targets.forEach(t => targets.push(t))
+    game.user.targets.forEach(target => targets.push(target))
     game.user.targets.clear()
     await GURPS.executeOTF(`/r [${attackerResult} cr @${data.targetToken.name} "slam damage"]`)
     GURPS.LastActor = data.targetToken.actor
     await GURPS.executeOTF(`/r [${targetResult} cr @${data.attackerToken.name} "slam damage"]`)
     GURPS.LastActor = data.attackerToken.actor
-    targets.forEach(t => game.user.targets.add(t))
+    targets.forEach(target => game.user.targets.add(target))
   }
 
   _getSlamData(data) {
@@ -216,14 +216,14 @@ export class SlamCalculator {
 
     let dice = []
 
-    rollArray.forEach(r => {
-      r.dice.forEach(d => {
-        let type = 'd' + d.faces
+    rollArray.forEach(roll => {
+      roll.dice.forEach(die => {
+        let type = 'd' + die.faces
 
-        d.results.forEach(s =>
+        die.results.forEach(result =>
           dice.push({
-            result: s.result,
-            resultLabel: s.result,
+            result: result.result,
+            resultLabel: result.result,
             type: type,
             vectors: [],
             options: {},

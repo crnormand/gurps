@@ -112,6 +112,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
     return this.parent.actor?.items.get(this.containedBy ?? '') || null
   }
 
+  /* ---------------------------------------- */
+
   get isContained(): boolean {
     return ContainerUtils.isContained(this)
   }
@@ -120,7 +122,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
     return (
       this.parent.actor?.items.contents
         .filter(item => (item.system as BaseItemModel).containedBy === this.parent.id)
-        .sort((a, b) => a.sort - b.sort) || []
+        .sort((first, second) => first.sort - second.sort) || []
     )
   }
 
@@ -176,13 +178,13 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   // TODO I'm not sure what this is trying to do.
   get children(): Item.Implementation[] {
-    return this.contents.filter(e => this.metadata.childTypes.includes(e.type))
+    return this.contents.filter(contentItem => this.metadata.childTypes.includes(contentItem.type))
   }
 
   /* ---------------------------------------- */
 
   get modifiers(): Item.Implementation[] {
-    return this.contents.filter(e => this.metadata.modifierTypes.includes(e.type))
+    return this.contents.filter(contentItem => this.metadata.modifierTypes.includes(contentItem.type))
   }
 
   /* ---------------------------------------- */

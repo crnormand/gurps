@@ -14,7 +14,9 @@ async function GetNumberInput(options: GetNumberInputOptions): Promise<number> {
   try {
     return await foundry.applications.api.DialogV2.prompt({
       window: { title: options.title },
-      content: await foundry.applications.handlebars.renderTemplate('systems/gurps/templates/ui/get-number-input.hbs', {
+      // COMPATIBILITY: Foundry v12 and earlier
+      // content: await foundry.applications.handlebars.renderTemplate(
+      content: await renderTemplate('systems/gurps/templates/ui/get-number-input.hbs', {
         headerText: options.headerText,
         promptText: options.promptText,
         label: options.label,
@@ -25,7 +27,8 @@ async function GetNumberInput(options: GetNumberInputOptions): Promise<number> {
       }),
       ok: {
         label: options.okLabel || 'GURPS.submit',
-        callback: (_event: Event, button: HTMLButtonElement) => (button.form!.elements as any).number.valueAsNumber,
+        callback: (_event: Event, button: HTMLButtonElement, _dialog: foundry.applications.api.DialogV2.Any) =>
+          (button.form!.elements as any).number.valueAsNumber,
       },
     })
   } catch (err) {

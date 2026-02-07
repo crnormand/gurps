@@ -20,6 +20,7 @@
 
   .rollable {
     cursor: pointer;
+
     &:hover {
       color: var(--ms-accent);
       text-decoration: underline;
@@ -186,6 +187,7 @@
       .ms-points-display {
         visibility: hidden;
       }
+
       .ms-points-input {
         opacity: 1;
       }

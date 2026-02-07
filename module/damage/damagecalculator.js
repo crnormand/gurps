@@ -14,9 +14,9 @@ import {
   useLocationWoundMods,
 } from './settings.js'
 
-/* 
+/*
   Crippling injury:
- 
+
   Limb (arm, leg, wing, striker, or prehensile tail): Injury over HP/2.
   Extremity (hand, foot, tail, fin, or extraneous head): Injury over HP/3.
   Eye: Injury over HP/10.
@@ -62,10 +62,10 @@ export class CompositeDamageCalculator {
 
     this.viewId = this._calculators.length == 1 ? 0 : 'all'
 
-    this._defaultWoundingModifiers = Object.keys(GURPS.DamageTables.woundModifiers).reduce(function (r, e) {
-      if (!GURPS.DamageTables.woundModifiers[e].nodisplay) r[e] = GURPS.DamageTables.woundModifiers[e]
+    this._defaultWoundingModifiers = Object.keys(GURPS.DamageTables.woundModifiers).reduce((acc, mod) => {
+      if (!GURPS.DamageTables.woundModifiers[mod].nodisplay) acc[mod] = GURPS.DamageTables.woundModifiers[mod]
 
-      return r
+      return acc
     }, {})
 
     this._attacker = damageData[0].attacker
@@ -278,7 +278,9 @@ export class CompositeDamageCalculator {
    * Override at the individual dice roll level.
    */
   get basicDamage() {
-    if (this._viewId === 'all') return this._calculators.reduce((sum, a) => sum + a._basicDamage, 0)
+    if (this._viewId === 'all') {
+      return this._calculators.reduce((sum, calculator) => sum + calculator._basicDamage, 0)
+    }
 
     return this._calculators[this._viewId].basicDamage
   }
@@ -351,12 +353,14 @@ export class CompositeDamageCalculator {
     let isReady
     const data = this.effects.map(effect => {
       if (effect.type.includes('shock')) {
-        const applyAt = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
+        const applyAt = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
 
         if (applyAt === 'AtNextTurn') {
           isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
         } else {
-          isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === `${effect.type}${effect.amount}`))
+          isReady = defenderToken.actor.effects.find(activeEffect =>
+            activeEffect.statuses.find(status => status === `${effect.type}${effect.amount}`)
+          )
         }
 
         return {
@@ -378,8 +382,12 @@ export class CompositeDamageCalculator {
           case 'headvitalshit':
           case 'majorwound':
           case 'crippling': {
-            const stunIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'stun'))
-            const proneIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+            const stunIsReady = defenderToken.actor.effects.find(activeEffect =>
+              activeEffect.statuses.find(status => status === 'stun')
+            )
+            const proneIsReady = defenderToken.actor.effects.find(activeEffect =>
+              activeEffect.statuses.find(status => status === 'prone')
+            )
 
             return {
               ...effect,
@@ -410,7 +418,9 @@ export class CompositeDamageCalculator {
           }
 
           case 'knockback':
-            isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+            isReady = defenderToken.actor.effects.find(activeEffect =>
+              activeEffect.statuses.find(status => status === 'prone')
+            )
 
             return {
               ...effect,
@@ -703,7 +713,7 @@ export class CompositeDamageCalculator {
   get hitLocationsWithDR() {
     let locations = this._defender.hitLocationsWithDR
 
-    for (let l of locations) l.damageType = this.damageType
+    for (let loc of locations) loc.damageType = this.damageType
 
     return locations
   }
@@ -923,10 +933,10 @@ export class CompositeDamageCalculator {
     let tracker = null
     let index = null
 
-    trackers.forEach((t, i) => {
-      if (t.alias === this._applyTo) {
+    trackers.forEach((resourceTracker, i) => {
+      if (resourceTracker.alias === this._applyTo) {
         index = i
-        tracker = t
+        tracker = resourceTracker
 
         return
       }
@@ -1113,10 +1123,10 @@ export class CompositeDamageCalculator {
   }
 
   _modifyForInjuryTolerance(result, value) {
-    let m = Math.min(result.multiplier, value)
+    let min = Math.min(result.multiplier, value)
 
-    if (m <= result.multiplier) {
-      result.multiplier = m
+    if (min <= result.multiplier) {
+      result.multiplier = min
       result.changed = 'injury-tolerance'
     }
   }

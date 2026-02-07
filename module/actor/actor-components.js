@@ -53,12 +53,12 @@ export class _Base {
   /**
    * @param {string} r
    */
-  pageRef(r) {
-    this.pageref = r
+  pageRef(ref) {
+    this.pageref = ref
 
-    if (!!r && r.match(/https?:\/\//i)) {
+    if (!!ref && ref.match(/https?:\/\//i)) {
       this.pageref = '*Link'
-      this.externallink = r
+      this.externallink = ref
     }
   }
 
@@ -66,18 +66,18 @@ export class _Base {
   /**
    * @param {string} n
    */
-  setNotes(n) {
-    if (n) {
-      let v = extractP(n)
-      let k = 'Page Ref: '
-      let i = v.indexOf(k)
+  setNotes(note) {
+    if (note) {
+      let value = extractP(note)
+      let key = 'Page Ref: '
+      let i = value.indexOf(key)
 
       if (i >= 0) {
-        this.notes = v.substr(0, i).trim()
+        this.notes = value.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageRef(v.substr(i + k.length).trim())
+        this.pageRef(value.substr(i + key.length).trim())
       } else {
-        this.notes = v.trim()
+        this.notes = value.trim()
         this.pageref = ''
       }
     }
@@ -93,7 +93,7 @@ export class _Base {
       const existingComponentItem = actor.items.get(actorComp.itemid)
 
       if (existingComponentItem) {
-        // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
+        // if (!!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
         actorComp.itemid = existingComponentItem.itemid || ''
         // }
         // actorComp.itemInfo = actorComp.itemInfo || !!existingComponentItem ? existingComponentItem.getItemInfo() : {}
@@ -118,13 +118,13 @@ export class Named extends _Base {
 
   setName(name) {
     if (name) {
-      let k = 'Page Ref: '
-      let i = name.indexOf(k)
+      let key = 'Page Ref: '
+      let i = name.indexOf(key)
 
       if (i >= 0) {
         this.name = name.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageRef(name.substr(i + k.length).trim())
+        this.pageRef(name.substr(i + key.length).trim())
       } else {
         this.name = name.trim()
         this.pageref = ''
@@ -207,7 +207,7 @@ export class Named extends _Base {
    * @param {Actor} actor - The actor to use.
    * @return {*} The converted item data.
    */
-  toItemData() {
+  toItemData(actor, _fromProgram = '') {
     throw new Error('Not implemented')
   }
 
@@ -243,7 +243,7 @@ export class Named extends _Base {
    * @param {Object} item - The item to check for an update.
    * @return {boolean} - Returns true if the item needs an update, otherwise false.
    */
-  _itemNeedsUpdate() {
+  _itemNeedsUpdate(_item) {
     throw new Error('Not implemented')
   }
 
@@ -403,13 +403,13 @@ export class Skill extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -530,13 +530,13 @@ export class Spell extends Leveled {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -661,13 +661,13 @@ export class Advantage extends NamedCost {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -814,46 +814,47 @@ export class Melee extends Attack {
       type: 'meleeAtk',
       system: {
         mel: {
-          notes: this.notes || system.notes || '',
-          pageref: this.pageref || '',
-          contains: this.contains || {},
-          uuid: uniqueId,
-          parentuuid: this.parentuuid || '',
-          points: this.points || 0,
-          ['import']: this['import'] || '',
-          level: this.level || 0,
-          weight: this.weight || '',
-          techlevel: this.techlevel || '',
-          cost: this.cost || '',
-          reach: this.reach || '',
-          parry: this.parry || '',
           baseParryPenalty: this.baseParryPenalty || -4,
           block: this.block || '',
-          name: this.name,
-          originalName: this.originalName || '',
-          st: this.st || '',
-          mode: this.mode || '',
-          otf: this.otf || '',
           checkotf: this.checkotf || '',
-          duringotf: this.duringotf || '',
-          passotf: this.passotf || '',
-          failotf: this.failotf || '',
-          extraAttacks: this.extraAttacks || 0,
           consumeAction: this.consumeAction || true,
+          contains: this.contains || {},
+          cost: this.cost || '',
+          damage: this.damage || '',
+          duringotf: this.duringotf || '',
+          extraAttacks: this.extraAttacks || 0,
+          failotf: this.failotf || '',
+          ['import']: this['import'] || '',
+          level: this.level || 0,
+          mode: this.mode || '',
+          name: this.name,
+          notes: this.notes || system.notes || '',
+          originalName: this.originalName || '',
+          otf: this.otf || '',
+          pageref: this.pageref || '',
+          parentuuid: this.parentuuid || '',
+          parry: this.parry || '',
+          passotf: this.passotf || '',
+          points: this.points || 0,
+          reach: this.reach || '',
+          st: this.st || '',
+          techlevel: this.techlevel || '',
+          uuid: uniqueId,
+          weight: this.weight || '',
         },
+        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
         ads: this.ads || system.ads || {},
+        bonuses: this.bonuses || system.bonuses || '',
+        fromItem: this.fromItem || '',
+        globalid: system.globalid || '',
+        importFrom: importFrom,
+        importid: importId,
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
+        melee: this.melee || system.melee || {},
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
+        ranged: this.ranged || system.ranged || {},
         skills: this.skills || system.skills || {},
         spells: this.spells || system.spells || {},
-        melee: this.melee || system.melee || {},
-        ranged: this.ranged || system.ranged || {},
-        bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
-        globalid: system.globalid || '',
-        importid: importId,
-        importFrom: importFrom,
-        fromItem: this.fromItem || '',
-        addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
       },
     }
   }
@@ -973,13 +974,13 @@ export class Ranged extends Attack {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         globalid: system.globalid || '',
         importid: importId,
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -990,10 +991,10 @@ export class Note extends _Base {
    * @param {string} [n]
    * @param {boolean} [ue]
    */
-  constructor(n, ue) {
+  constructor(notes, ue) {
     super()
 
-    this.notes = n || ''
+    this.notes = notes || ''
     this.save = ue
     this.markdown = false
   }
@@ -1061,14 +1062,14 @@ export class Equipment extends Named {
     if (!eqt) return
 
     // NOTE: no longer necessary with DataModel validation
-    const num = (/** @type {string | number} */ s) => {
+    const num = (/** @type {string | number} */ str) => {
       // @ts-expect-error - isNaN accepts string for type coercion
-      return isNaN(s) ? 0 : Number(s)
+      return isNaN(str) ? 0 : Number(str)
     }
 
     // NOTE: no longer necessary with DataModel validation
-    const cln = (/** @type {number} */ s) => {
-      return !s ? 0 : num(String(s).replace(/,/g, ''))
+    const cln = (/** @type {number} */ str) => {
+      return !str ? 0 : num(String(str).replace(/,/g, ''))
     }
 
     // NOTE: no longer necessary with DataModel validation
@@ -1081,24 +1082,24 @@ export class Equipment extends Named {
     let ws = eqt.count * eqt.weight
 
     if (eqt.contains) {
-      for (let k in eqt.contains) {
+      for (let key in eqt.contains) {
         // @ts-expect-error - contains entries are Equipment objects
-        let e = eqt.contains[k]
+        let containedEquipment = eqt.contains[key]
 
-        await Equipment.calcUpdate(actor, e, objkey + '.contains.' + k)
-        cs += e.costsum
-        ws += e.weightsum
+        await Equipment.calcUpdate(actor, containedEquipment, objkey + '.contains.' + key)
+        cs += containedEquipment.costsum
+        ws += containedEquipment.weightsum
       }
     }
 
     if (eqt.collapsed) {
-      for (let k in eqt.collapsed) {
+      for (let key in eqt.collapsed) {
         // @ts-expect-error - collapsed entries are Equipment objects
-        let e = eqt.collapsed[k]
+        let collapsedEquipment = eqt.collapsed[key]
 
-        await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)
-        cs += e.costsum
-        ws += e.weightsum
+        await Equipment.calcUpdate(actor, collapsedEquipment, objkey + '.collapsed.' + key)
+        cs += collapsedEquipment.costsum
+        ws += collapsedEquipment.weightsum
       }
     }
 
@@ -1157,7 +1158,7 @@ export class Equipment extends Named {
         melee: this.melee || system.melee || {},
         ranged: this.ranged || system.ranged || {},
         bonuses: this.bonuses || system.bonuses || '',
-        itemModifiers: this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '',
+        itemModifiers: (this.itemInfo?.itemModifiers || this.itemModifiers || system.itemModifiers || '').trim(),
         equipped: this.equipped,
         carried: this.carried,
         globalid: system.globalid || '',
@@ -1165,7 +1166,7 @@ export class Equipment extends Named {
         importFrom: importFrom,
         fromItem: this.fromItem || '',
         addToQuickRoll: this.itemInfo?.addToQuickRoll || this.addToQuickRoll || false,
-        modifierTags: this.itemInfo?.modifierTags || this.modifierTags || '',
+        modifierTags: (this.itemInfo?.modifierTags || this.modifierTags || '').trim(),
       },
     }
   }
@@ -1238,9 +1239,9 @@ export class Reaction {
    * @param {string | undefined} [m]
    * @param {string | undefined} [s]
    */
-  constructor(m, s) {
-    this.modifier = m || ''
-    this.situation = s || ''
+  constructor(modifier, situation) {
+    this.modifier = modifier || ''
+    this.situation = situation || ''
     this.modifierTags = ''
   }
 }
@@ -1248,11 +1249,11 @@ export class Reaction {
 export class Modifier extends Reaction {}
 
 export class Language {
-  constructor(n, s, w, p) {
-    this.name = n
-    this.spoken = s || ''
-    this.written = w || ''
-    this.points = p || ''
+  constructor(name, spoken, written, points) {
+    this.name = name
+    this.spoken = spoken || ''
+    this.written = written || ''
+    this.points = points || ''
   }
 }
 

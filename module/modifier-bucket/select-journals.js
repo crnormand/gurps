@@ -3,7 +3,7 @@ import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 
 export default class ModifierBucketJournals extends FormApplication {
   static getJournalIds() {
-    let journals = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS)
+    let journals = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS)
     let results = objectToArray(journals)
 
     return results
@@ -53,9 +53,9 @@ export default class ModifierBucketJournals extends FormApplication {
   get _htmlJournals() {
     let htmlJournals = []
 
-    game.journal.forEach(j => {
-      j.pages.forEach(p => {
-        if (p.type === 'text') htmlJournals.push(p)
+    game.journal.forEach(journalEntry => {
+      journalEntry.pages.forEach(page => {
+        if (page.type === 'text') htmlJournals.push(page)
       })
     })
 
@@ -66,7 +66,9 @@ export default class ModifierBucketJournals extends FormApplication {
       return { id: it.id, folder: this._folderPath(it.folder), name: it.name }
     })
 
-    return results.sort((a, b) => `${a.folder}/${a.name}`.localeCompare(`${b.folder}/${b.name}`))
+    return results.sort((first, second) =>
+      `${first.folder}/${first.name}`.localeCompare(`${second.folder}/${second.name}`)
+    )
   }
 
   /**
@@ -98,6 +100,6 @@ export default class ModifierBucketJournals extends FormApplication {
 
     let data = arrayToObject(ids)
 
-    game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS, data)
+    game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS, data)
   }
 }

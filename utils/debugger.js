@@ -26,7 +26,7 @@ export let patchFunc = (prop, func, type = 'WRAPPER') => {
 
 export class GGADebugger {
   static init() {
-    if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_DEBUG_INFO)) return
+    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_DEBUG_INFO)) return
     patchFunc('DocumentSheet.prototype._createDocumentIdLink', async function (wrapped, ...args) {
       wrapped(...args)
       let [html] = args

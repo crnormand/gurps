@@ -18,7 +18,7 @@ export default class ModifierBucketEditor extends Application {
   }
 
   static get defaultOptions() {
-    let scale = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
+    let scale = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
 
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
@@ -54,15 +54,15 @@ export default class ModifierBucketEditor extends Application {
   }
 
   get journals() {
-    const settings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS) || []
+    const settings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS) || []
     let bucketPages = []
 
-    game.journal.forEach(j => {
-      j.pages.forEach(p => {
-        for (const k in settings) {
-          const id = settings[k]
+    game.journal.forEach(journalEntry => {
+      journalEntry.pages.forEach(page => {
+        for (const key in settings) {
+          const id = settings[key]
 
-          if (p.id == id) bucketPages.push(p)
+          if (page.id == id) bucketPages.push(page)
         }
       })
     })
@@ -98,7 +98,7 @@ export default class ModifierBucketEditor extends Application {
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.hasRole('TRUSTED') || game.user?.hasRole('ASSISTANT')
-    data.users = game.users?.filter(u => u.id != game.user.id) || []
+    data.users = game.users?.filter(user => user.id != game.user.id) || []
     data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
     data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
     data.lightingmods = ModifierLiterals.LightingModifiers
@@ -114,13 +114,13 @@ export default class ModifierBucketEditor extends Application {
     if (GURPS.LastActor) {
       let self = this.convertModifiers(GURPS.LastActor.system.conditions.self.modifiers)
 
-      self.forEach(e => data.currentmods.push(e))
+      self.forEach(modifierText => data.currentmods.push(modifierText))
 
       let target = this.convertModifiers(GURPS.LastActor.system.conditions.target.modifiers)
 
       if (target.length > 0) {
         data.currentmods.push(horiz(game.i18n.localize('GURPS.targetedModifiers')))
-        target.forEach(e => data.currentmods.push(e))
+        target.forEach(modifierText => data.currentmods.push(modifierText))
       }
 
       let user = this.convertModifiers(
@@ -131,7 +131,7 @@ export default class ModifierBucketEditor extends Application {
         let uc = '(' + game.i18n.localize('GURPS.equipmentUserCreated') + ')'
 
         data.currentmods.push(horiz(game.i18n.localize('GURPS.equipmentUserCreated')))
-        user.forEach(e => data.currentmods.push(e.replace(uc, '')))
+        user.forEach(modifierText => data.currentmods.push(modifierText.replace(uc, '')))
       }
     }
 
@@ -142,8 +142,8 @@ export default class ModifierBucketEditor extends Application {
     super.activateListeners(html)
 
     // if this is a tooltip, scale and position
-    let scale = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
-    const positionSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+    let scale = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
+    const positionSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
 
     if (!this.options.popOut) {
       html.css('font-size', `${13 * scale}px`)
@@ -295,14 +295,14 @@ export default class ModifierBucketEditor extends Application {
   async _onSimpleList(event, prefix) {
     event.preventDefault()
     let element = event.currentTarget
-    let v = element.value
+    let value = element.value
 
-    if (!v) v = element.textContent
-    v = v.trim()
-    let i = v.indexOf(' ')
+    if (!value) value = element.textContent
+    value = value.trim()
+    let i = value.indexOf(' ')
 
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
-    this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
+    this.bucket.addModifier(value.substring(0, i), prefix + value.substr(i + 1))
   }
 
   async _onGMbutton(event) {
@@ -462,7 +462,7 @@ const ModifierLiterals = {
   },
 
   get RangedMods() {
-    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     return (
       `[+1 ${game.i18n.localize('GURPS.modifiers_.aim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aim')}]
@@ -482,7 +482,7 @@ ${horiz(game.i18n.localize('GURPS.modifiers_.onTargetAiming'))}
   },
 
   get DefenseMods() {
-    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     return `[+2 ${game.i18n.localize('GURPS.modifiers_.aodIncreased')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aodIncreased')}]
     [+1 ${game.i18n.localize('GURPS.modifiers_.shieldDB')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.shieldDB')}]

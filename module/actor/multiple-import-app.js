@@ -64,7 +64,7 @@ class MultipleImportApp extends Application {
       })
     }
 
-    this.data.files.sort((a, b) => a.file.localeCompare(b.file))
+    this.data.files.sort((first, second) => first.file.localeCompare(second.file))
     this.dirHandle = dirHandle
   }
 

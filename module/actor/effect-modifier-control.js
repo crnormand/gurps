@@ -31,8 +31,8 @@ export class EffectModifierControl {
     return this._showPopup
   }
 
-  set showPopup(b) {
-    if (b !== this.showPopup) this.togglePopup()
+  set showPopup(val) {
+    if (val !== this.showPopup) this.togglePopup()
   }
 
   togglePopup(closeOptions) {
@@ -99,7 +99,7 @@ export class EffectModifierControl {
   /*
     when an user switches targets, there are two calls to the targetToken hook, one for the old target and one for the new target
     if we rerender on the first call, we will miss the second call, because we are allready rerendering.
-    Therefore we  need to wait and check  for the second call. 
+    Therefore we  need to wait and check  for the second call.
   */
   _targetTokenInner = newEvent => {
     //needs to be an lambda to capture this in the clousure

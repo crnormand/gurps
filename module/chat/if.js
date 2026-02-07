@@ -10,16 +10,16 @@ export class IfChatProcessor extends ChatProcessor {
   }
   matches(line) {
     // Since this can get called recursively, we cannot use an instance variable to save the match status
-    let m = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
+    let match = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
 
-    return m
+    return match
   }
 
   async _handleResult(then) {
-    let m = then.match(/^\[([^\]]+)\]/)
+    let match = then.match(/^\[([^\]]+)\]/)
 
-    if (m) {
-      let action = parselink(m[1].trim())
+    if (match) {
+      let action = parselink(match[1].trim())
 
       if (action.action) {
         if (action.action.type === 'modifier')
@@ -32,24 +32,24 @@ export class IfChatProcessor extends ChatProcessor {
   }
 
   async process(line) {
-    let m = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/) // Since this can get called recursively, we cannot use an instance variable to save the match status
-    const invert = !!m[1] // !
-    const otf = m[2]
-    const restOfLine = m[3].trim()
+    let match = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/) // Since this can get called recursively, we cannot use an instance variable to save the match status
+    const invert = !!match[1] // !
+    const otf = match[2]
+    const restOfLine = match[3].trim()
     const results = {
       s: restOfLine, // assume what is left if the success result.
     } // s, f, cs, cf
 
     if (restOfLine.match(/{.*}/)) {
       // using the advanced sytax
-      m = XRegExp.matchRecursive(restOfLine, '{', '}', 'g', { valueNames: ['between', null, 'match', null] })
+      match = XRegExp.matchRecursive(restOfLine, '{', '}', 'g', { valueNames: ['between', null, 'match', null] })
       let needSuccess = true // if we don't get a prefix, assume it is s:{} 'success'
       var next, key
 
-      while ((next = m.shift())) {
-        let v = next.value.trim()
+      while ((next = match.shift())) {
+        let value = next.value.trim()
 
-        if (next.name === 'between' && v.endsWith(':')) key = v.slice(0, -1)
+        if (next.name === 'between' && value.endsWith(':')) key = value.slice(0, -1)
         if (!key || !key.trim()) key = needSuccess ? 's' : 'f'
         if (key === 's') needSuccess = false
 
@@ -59,9 +59,9 @@ export class IfChatProcessor extends ChatProcessor {
         }
       }
     } else if (restOfLine.includes('/else ')) {
-      m = restOfLine.match(/(.*)\/else (.*)/)
-      results.s = m[1].trim()
-      results.f = m[2].trim()
+      match = restOfLine.match(/(.*)\/else (.*)/)
+      results.s = match[1].trim()
+      results.f = match[2].trim()
     }
 
     let action = parselink(otf)

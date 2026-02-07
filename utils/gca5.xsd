@@ -1,0 +1,1239 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="gca5" targetNamespace="gca5" elementFormDefault="qualified">
+	<xs:annotation>
+		<xs:documentation>
+			GCA5 File Format Schema
+			Copyright © 2012-2023 Armin D. Sykes
+			
+			Revision 0 -	November 10, 2012
+			Revision 1 -	April 11, 2013
+			Revision 2 -	April 11, 2013
+			Revision 3 -	July 22, 2013
+			Revision 4 -	August 29, 2013
+			Revision 5 -	September 20, 2013
+			Revision 6 -	September 26, 2013
+			Revision 7 -	October 2, 2013
+			Revision 8 -	October 10, 2013
+			Revision 9 -	November 14, 2014
+				added 'tags' block to GCACharacter after 'body' block
+			Revision 10 -	Novemenber 29, 2014
+				added support for 'allowstackingdeflect' and 'allowstackingfortify' to GCACharacter settings
+			Revision 11 -	December 3, 2014
+				added 'sheetviewsheet' to 'output' block of GCACharacter
+			Revision 12 -	December 5, 2014
+				added 'chardeflect' and 'charfortify' to 'armordata' block of GCATrait
+			Revision 13 -	April 3, 2015
+				All IDKey values changed to Long
+				Character LastKey element changed to Long
+			Revision 14 -	June 1, 2015
+				Added GCAMessagesBlock, GCAMessage, and inserted 'messages' item into GCACharacter after 'tags'
+			Revision 15 -	July 30-31, 2015
+				Added support for including the character portrait image as Base64 encoded text inside a 
+					CDATA in the 'portraitimage' element of 'vitals'
+				Added GCASymbolsBlock and GCAFlagSymbol types
+				Added support for GCASymbolsBlock to GCACharacter
+				Added 'appliedsymbols' element to GCATrait, which is a list of all the character's Symbols that apply to it.
+				Added 'showcharactertraitsymbols' elements to the GCACharacter settings block.
+			Revision 16 -	August 2, 2015
+				Added 'itemnotes' node to GCATrait 'ref' node.
+			Revision 17 -	August 31, 2015
+				Added export sheet nodes to output node of character
+				Added GCAGroupingOptions and GCATraitGroupingBlock types
+				Added traitgrouping node to settings node of character
+			Revision 18 -	December 27, 2016
+				Changed how GCAFlagSymbol handles criteria, to allow supporting of and/or statements, which is now 
+					handled with a single 'criteria' element, replacing the 'appliesto', 'tag', 'comparison', and 
+					'valuewanted' elements. Those elements remain for now to support older character saves, but
+					will likely be removed in the future.
+			Revision 19 -	January 16, 2017
+				Updated some expected tags for traits: reachbasedon, units, shortcat, prereqcount, magery, class, 
+					time, duration, castingcost, preformulacost, preformulaweight, postformulacost, postformulaweight,
+					prechildrencost, prechildrenweight, coverage, charlocation, locationcoverage
+				Added to GCACharacter 'settings' block: rendernonloadoutitemsinactive, grayoutinactiveitems
+			Revision 20 -	February 8, 2017
+				Added 'transforms' block between 'loadouts' and 'campaign' blocks in GCACharacter.
+				Added 'currenttransform' element after 'currentloadout' element in GCACharacter.
+			Revision 21 - 	February 20, 2017
+				Added money values to Campaign and LogEntry.
+			Revision 22 -	March 1, 2017
+				Added 'classes' element to GCABonus
+				Added GCABonusClass and GCABonusClassesBlock types
+				Added 'bonusclasses' element of type GCABonusClassesBlock to GCACharacter
+			Revision 23 -	June 21, 2017
+				Added trait type 'features' to GCACharacter
+			Revision 24 -	December 8, 2017
+				Added elements 'charbulk' and 'stcap' to the WeaponModesData block of GCATrait
+				Added element 'includeunassigneditemsincurrentloadout' to the settings block of GCACharacter
+			Revision 25 -	January 13, 2018
+				Added element 'targetext' which was mysteriously overlooked in GCABonus, so target name extensions
+					were getting lost, and bonuses were getting applied based only on base names of targets
+			Revision 26 - 	February 15, 2018
+				Added element 'nodefaultleveldiscount' to GCACharacter settings block.
+			Revision 27 -	June 25, 2019
+				Added element 'allowusertraitordering' to GCACharacter settings block.
+			Revision 28 -	August 20, 2019	
+				Added block GCAAttackModesBlock for elements of GCAAttackMode type.
+				Added 'attackmodes' element of type GCAAttackModesBlock to GCATrait.
+				For now, GCA will continue to support reading of the 'weaponmodesdata' block of GCATrait
+					from older character saves, but that will no longer be written out by GCA, and will
+					eventually be removed from the spec.
+				Also, 'itemnotes', 'notes', and 'lc' will no longer be written to the Ref section, and will
+					eventually be removed from that section of the spec.
+				Tags supported in the new AttackModes elements are updated to current.
+			Revision 29 -	May 16, 2020
+				Added fromprefix, fromname, fromext, fromtag, and fromtype elements (for gains bonuses) to GCABonus type.
+			Revision 30 -	February 8, 2021
+				Added highlightme, hideme, collapse, collapseme elements to the 'ref' block of GCATrait
+			Revision 31 -	February 20, 2021
+				Added name and description elements to the GCABody block
+			Revision 32 -	February 28, 2021
+				Added blocks GCAImageStore and GCAImageRef
+				Added 'bodyimagestore' element of type GCAImageStore to GCACharacter
+				Added 'bodyimagefile' element to Loadout
+				Added blocks GCAHitLocationTable, GCAHitLocationLine, GCAHitLocationNote
+				Added 'hitlocationtable' element of type GCAHitLocationTable to GCACharacter just after 'body' for the default table
+				Added 'hitlocationtable' element of type GCAHitLocationTable to Loadout
+			Revision 33 -	March 8, 2021
+				Added 'uses', 'uses_sections', 'uses_used', and 'uses_settings' to the GCAAttackMode block
+				Added 'charskillusedkey' to the GCAAttackMode block
+			Revision 34 -	June 4, 2021
+				Added brokenlinks, linked, linkedfrom, linkedfromnames, linkedname elements to the 'ref' block of GCATrait
+				Added weightcapacity, weightcapacitylevel, overweightcapacity, overweightcapacityby elements to the 'ref' block of GCATrait
+				Added countcapacity, countcapacitylevel, overcountcapacity, overcountcapacityby elements to the 'ref' block of GCATrait
+				Added countasneed, ident elements to the 'ref' block of GCATrait
+				Added displaynameformula, vars elements to the main block of GCATrait
+				Added drnotes element to the 'armordata' block of GCATrait
+			Revision 35 -	August 6, 2021
+				Added charunits, weightcapacityunits, charweightcapacity, charweightcapacityunits elements to the 'ref' block of GCATrait
+			Revision 36 -	September 24, 2021
+				Added element 'flagoverspentskills' to GCACharacter settings block.
+			Revision 37 -	January 21, 2022
+				Updated 'loadouts' element 'items' to allow for 0 items, since empty loadouts are no longer discarded within GCA.
+			Revision 38 -	February 24, 2022
+				Added childcapacity, childcapacitylevel, overchildcapacity, overchildcapacityby elements to the 'ref' block of GCATrait
+			Revision 39 -	March 3, 2022
+				Added the overlooked 'scopeacc' and 'charscopeacc', and the new 'malf' and 'charmalf' to the GCAAttackMode block.
+			Revision 40 - 	April 16, 2022
+				Added the 'treataslist' element to GCAGroupingOptions 
+			Revision 41 -	April 28, 2022
+				Added element 'charblockscore' to GCAAttackMode block
+				Added element 'applydbtoactivedefenses' to GCACharacter settings block
+			Revision 42 -	July 6, 2022
+				Changed element 'penalty' in GCAHitLocationLine to a string
+			Revision 43 -	August 12, 2022
+				Added element 'vttmodenotes' to GCAAttackMode block
+				Added element 'vttnotes' to the 'ref' block of GCATrait
+				Added elements 'minimode_damage','minimode_damtype','minimode_armordivisor', and 'minimode_radius' to GCAAttackMode block
+			Revision 44 -	December 23, 2022
+				Added elements 'rollto' and 'rolltophrase' to GCAAttackMode block
+			Revision 45 -	October 10, 2023
+				Added element 'description' to GCAModifier
+				Added elements 'baseweightconverted', 'baseweightunconverted', 'charammo' and 'charammounits' to the Calcs block of GCATrait
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:complexType name="GCAHitLocationTable">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="hitlocationline" type="GCAHitLocationLine" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="hitlocationnote" type="GCAHitLocationNote" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="GCAHitLocationLine">
+		<xs:all>
+			<xs:element name="roll" type="xs:string" />
+			<xs:element name="location" type="xs:string" />
+			<xs:element minOccurs="0" name="penalty" type="xs:string" />
+			<xs:element minOccurs="0" name="notes" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="GCAHitLocationNote">
+		<xs:all>
+			<xs:element name="key" type="xs:string" />
+			<xs:element name="value" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+
+
+
+
+	<xs:complexType name="GCAImageStore">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="imageref" type="GCAImageRef" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="GCAImageRef">
+		<xs:all>
+			<xs:element name="filename" type="xs:string" />
+			<xs:element name="fullfilename" type="xs:string" />
+			<xs:element minOccurs="0" name="purpose" type="xs:string" />
+			<xs:element minOccurs="0" name="image" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="GCABonusClassesBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="bonusclass" type="GCABonusClass" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCABonusClass">
+		<xs:all>
+			<xs:element name="name" type="xs:string" />
+			<xs:element minOccurs="0" name="affects" type="xs:string" />
+			<xs:element minOccurs="0" name="stacks" type="xs:string" />
+			<xs:element minOccurs="0" name="upto" type="xs:string" />
+			<xs:element minOccurs="0" name="downto" type="xs:string" />
+			<xs:element minOccurs="0" name="uptoisset" type="xs:integer" />
+			<xs:element minOccurs="0" name="downtoisset" type="xs:integer" />
+			<xs:element minOccurs="0" name="best" type="xs:string" />
+			<xs:element minOccurs="0" name="worst" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="GCAGroupingOptions">
+		<xs:all>
+			<xs:element name="traittype" type="xs:string" />
+			<xs:element name="groupingtype" type="xs:string" />
+			<xs:element name="specifiedtag" type="xs:string" />
+			<xs:element name="includetagpartinheader" type="xs:string" />
+			<xs:element name="specifiedvaluesonly" type="xs:string" />
+			<xs:element name="specifiedvalueslist" type="xs:string" />
+			<xs:element name="groupsatend" type="xs:string" />
+			<xs:element minOccurs="0" name="treataslist" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="GCATraitGroupingBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="groupingoptions" type="GCAGroupingOptions" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="GCAFlagSymbol">
+		<xs:all>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="filename" type="xs:string" />
+			
+			<!-- these are now deprecated -->
+			<xs:element minOccurs="0" name="appliesto" type="xs:string" />
+			<xs:element minOccurs="0" name="tag" type="xs:string" />
+			<xs:element minOccurs="0" name="comparison" type="xs:string" />
+			<xs:element minOccurs="0" name="valuewanted" type="xs:string" />
+			<!-- this replaces the four deprecated elements above -->
+			<xs:element name="criteria" type="xs:string" />
+
+			<xs:element name="image" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="GCASymbolsBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="symbol" type="GCAFlagSymbol" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCAMessagesBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="message" type="GCAMessage" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCAMessage">
+		<xs:sequence>
+			<xs:element name="caption" type="xs:string" />
+			<xs:element name="text" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="GCAExtendedTagsBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="extendedtag" type="GCAUnknownTag" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCAUnknownTag">
+		<xs:sequence>
+			<xs:element name="tagname" type="xs:string" />
+			<xs:element name="tagvalue" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="GCABonusesBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="bonus" type="GCABonus" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCABonus">
+		<xs:all>
+			<xs:element minOccurs="0" name="targetprefix" type="xs:string" />
+			<xs:element name="targetname" type="xs:string" />
+			<xs:element minOccurs="0" name="targetext" type="xs:string" />
+			<xs:element minOccurs="0" name="targettag" type="xs:string" />
+			<xs:element name="targettype" type="xs:string" />
+			<xs:element name="affects" type="xs:string" />
+			<xs:element name="bonuspart" type="xs:string" />
+			<xs:element name="bonustype" type="xs:unsignedByte" />
+			<xs:element name="fullbonustext" type="xs:string" />
+			<xs:element minOccurs="0" name="upto" type="xs:string" />
+			<xs:element name="value" type="xs:decimal" />
+			<xs:element minOccurs="0" name="stringvalue" type="xs:string" />
+			<xs:element minOccurs="0" name="stringvaluetext" type="xs:string" />
+			<xs:element minOccurs="0" name="notes" type="xs:string" />
+			<xs:element minOccurs="0" name="listas" type="xs:string" />
+			<xs:element minOccurs="0" name="unless" type="xs:string" />
+			<xs:element minOccurs="0" name="onlyif" type="xs:string" />
+			<xs:element minOccurs="0" name="classes" type="xs:string" />
+			
+			<xs:element minOccurs="0" name="fromname" type="xs:string" />
+			<xs:element minOccurs="0" name="fromtype" type="xs:string" />
+			<xs:element minOccurs="0" name="fromprefix" type="xs:string" />
+			<xs:element minOccurs="0" name="fromext" type="xs:string" />
+			<xs:element minOccurs="0" name="fromtag" type="xs:string" />
+			
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="GCABody">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string" />
+			<xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string" />
+			<xs:element maxOccurs="unbounded" name="bodyitem" type="GCABodyItem" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCABodyItem">
+		<xs:all>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="cat" type="xs:string" />
+			<xs:element name="group" type="xs:string" />
+			<xs:element name="basedb" type="xs:string" />
+			<xs:element name="basedr" type="xs:string" />
+			<xs:element name="basehp" type="xs:string" />
+			<xs:element name="display" type="xs:byte" />
+			<xs:element name="posx" type="xs:float" />
+			<xs:element name="posy" type="xs:float" />
+			<xs:element minOccurs="0" name="width" type="xs:float" />
+			<xs:element minOccurs="0" name="height" type="xs:float" />
+			<xs:element name="expanded" type="xs:byte" />
+			<xs:element name="layers" type="xs:integer" />
+			<xs:element name="db" type="xs:string" />
+			<xs:element name="dr" type="xs:string" />
+			<xs:element name="hp" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="GCAOrderedLayers">
+		<xs:sequence>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="layeritem" type="GCALayerItem" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCALayerItem">
+		<xs:all>
+			<xs:element name="itemname" type="xs:string" />
+			<xs:element name="isinnate" type="xs:byte" />
+			<xs:element name="countaslayer" type="xs:byte" />
+			<xs:element name="isflexible" type="xs:byte" />
+		</xs:all>
+		<xs:attribute name="idkey" type="xs:long" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCACategoriesBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="category" type="GCACategory" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCACategory">
+		<xs:all>
+			<xs:element name="name" type="xs:string" />
+			<xs:element minOccurs="0" name="code" type="xs:string" />
+			<xs:element name="itemtype" type="xs:string" />
+		</xs:all>
+	</xs:complexType>
+	
+	<xs:complexType name="GCAModifiersBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="modifier" type="GCAModifier" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="GCAModifier">
+		<xs:all>
+			<xs:element name="name" type="xs:string" />
+			<xs:element minOccurs="0" name="nameext" type="xs:string" />
+			<xs:element name="group" type="xs:string" />
+			<xs:element name="cost" type="xs:string" />
+			<xs:element minOccurs="0" name="formula" type="xs:string" />
+			<xs:element minOccurs="0" name="forceformula" type="xs:string" />
+			<xs:element name="level" type="xs:integer" />
+			<xs:element name="premodsvalue" type="xs:string" />
+			<xs:element name="value" type="xs:string" />
+			<xs:element name="valuenum" type="xs:string" />
+
+			<xs:element minOccurs="0" name="gives" type="xs:string" />
+			<xs:element minOccurs="0" name="conditional" type="xs:string" />
+			<xs:element minOccurs="0" name="round" type="xs:string" />
+			<xs:element minOccurs="0" name="shortname" type="xs:string" />
+			<xs:element minOccurs="0" name="page" type="xs:string" />
+			<xs:element minOccurs="0" name="mods" type="xs:string" />
+			<xs:element minOccurs="0" name="tier" type="xs:string" />
+			<xs:element minOccurs="0" name="upto" type="xs:string" />
+			<xs:element minOccurs="0" name="levelnames" type="xs:string" />
+			<xs:element minOccurs="0" name="description" type="xs:string" />
+
+			<xs:element minOccurs="0" name="extended" type="GCAExtendedTagsBlock" />
+
+			<xs:element minOccurs="0" name="modifiers" type="GCAModifiersBlock" />
+			<xs:element minOccurs="0" name="bonuses" type="GCABonusesBlock" />
+			<xs:element minOccurs="0" name="conditionals" type="GCABonusesBlock" />
+		</xs:all>
+		<xs:attribute name="idkey" type="xs:long" use="required" />
+	</xs:complexType>
+
+
+	<xs:complexType name="GCAAttackModesBlock">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" name="attackmode" type="GCAAttackMode" />
+		</xs:sequence>
+		<xs:attribute name="count" type="xs:unsignedShort" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="GCAAttackMode">
+		<xs:all>
+			<xs:element minOccurs="0" name="name" type="xs:string" />
+
+			<xs:element minOccurs="0" name="acc" type="xs:string" />
+			<xs:element minOccurs="0" name="armordivisor" type="xs:string" />
+			<xs:element minOccurs="0" name="break" type="xs:string" />
+			<xs:element minOccurs="0" name="bulk" type="xs:string" />
+			<xs:element minOccurs="0" name="damage" type="xs:string" />
+			<xs:element minOccurs="0" name="damtype" type="xs:string" />
+			<xs:element minOccurs="0" name="dmg" type="xs:string" />
+			<xs:element minOccurs="0" name="lc" type="xs:string" />
+			<xs:element minOccurs="0" name="minst" type="xs:string" />
+			<xs:element minOccurs="0" name="notes" type="xs:string" />
+			<xs:element minOccurs="0" name="parry" type="xs:string" />
+			<xs:element minOccurs="0" name="rangehalfdam" type="xs:string" />
+			<xs:element minOccurs="0" name="rangemax" type="xs:string" />
+			<xs:element minOccurs="0" name="radius" type="xs:string" />
+			<xs:element minOccurs="0" name="rcl" type="xs:string" />
+			<xs:element minOccurs="0" name="reach" type="xs:string" />
+			<xs:element minOccurs="0" name="rof" type="xs:string" />
+			<xs:element minOccurs="0" name="shots" type="xs:string" />
+			<xs:element minOccurs="0" name="skillused" type="xs:string" />
+			<xs:element minOccurs="0" name="stcap" type="xs:string" />
+
+			<xs:element minOccurs="0" name="scopeacc" type="xs:string" />
+			<xs:element minOccurs="0" name="malf" type="xs:string" />
+
+			<xs:element minOccurs="0" name="damagebasedon" type="xs:string" />
+			<xs:element minOccurs="0" name="minstbasedon" type="xs:string" />
+			<xs:element minOccurs="0" name="reachbasedon" type="xs:string" />
+			<xs:element minOccurs="0" name="damageistext" type="xs:string" />
+
+			<xs:element minOccurs="0" name="characc" type="xs:string" />
+			<xs:element minOccurs="0" name="chararmordivisor" type="xs:string" />
+			<xs:element minOccurs="0" name="charbreak" type="xs:string" />
+			<xs:element minOccurs="0" name="charbulk" type="xs:string" />
+			<xs:element minOccurs="0" name="chardamage" type="xs:string" />
+			<xs:element minOccurs="0" name="chardamtype" type="xs:string" />
+			<xs:element minOccurs="0" name="chareffectivest" type="xs:string" />
+			<xs:element minOccurs="0" name="charminst" type="xs:string" />
+			<xs:element minOccurs="0" name="charparry" type="xs:string" />
+			<xs:element minOccurs="0" name="charparryscore" type="xs:string" />
+			
+			<xs:element minOccurs="0" name="charblockscore" type="xs:string" />
+			
+			<xs:element minOccurs="0" name="charradius" type="xs:string" />
+			<xs:element minOccurs="0" name="charrangehalfdam" type="xs:string" />
+			<xs:element minOccurs="0" name="charrangemax" type="xs:string" />
+			<xs:element minOccurs="0" name="charrcl" type="xs:string" />
+			<xs:element minOccurs="0" name="charreach" type="xs:string" />
+			<xs:element minOccurs="0" name="charrof" type="xs:string" />
+			<xs:element minOccurs="0" name="charshots" type="xs:string" />
+			<xs:element minOccurs="0" name="charskillscore" type="xs:string" />
+			<xs:element minOccurs="0" name="charskillused" type="xs:string" />
+
+			<xs:element minOccurs="0" name="charskillusedkey" type="xs:string" />
+
+			<xs:element minOccurs="0" name="charscopeacc" type="xs:string" />
+			<xs:element minOccurs="0" name="charmalf" type="xs:string" />
+
+			<xs:element minOccurs="0" name="uses" type="xs:string" />
+			<xs:element minOccurs="0" name="uses_sections" type="xs:string" />
+			<xs:element minOccurs="0" name="uses_used" type="xs:string" />
+			<xs:element minOccurs="0" name="uses_settings" type="xs:string" />
+			
+			<xs:element minOccurs="0" name="itemnotes" type="xs:string" />
+			
+			<xs:element minOccurs="0" name="vttmodenotes" type="xs:string" />
+
+			<xs:element minOccurs="0" name="rollto" type="xs:string" />
+			<xs:element minOccurs="0" name="rolltophrase" type="xs:string" />
+
+			<xs:element minOccurs="0" name="minimode_damage" type="xs:string" />
+			<xs:element minOccurs="0" name="minimode_damtype" type="xs:string" />
+			<xs:element minOccurs="0" name="minimode_armordivisor" type="xs:string" />
+			<xs:element minOccurs="0" name="minimode_radius" type="xs:string" />
+
+		</xs:all>
+	</xs:complexType>
+	
+	
+
+	
+	<xs:complexType name="GCATrait">
+		<xs:all>
+			<xs:element minOccurs="1" name="name" type="xs:string" />
+			<xs:element minOccurs="0" name="nameext" type="xs:string" />
+			<xs:element minOccurs="0" name="symbol" type="xs:string" />
+			<xs:element minOccurs="0" name="parentkey" type="xs:string" />
+			<xs:element minOccurs="0" name="childkeylist" type="xs:string" />
+			<xs:element minOccurs="0" name="cat" type="xs:string" />
+			<xs:element minOccurs="0" name="tl" type="xs:string" />
+			<xs:element minOccurs="0" name="bonuslist" type="xs:string" />
+			<xs:element minOccurs="0" name="conditionallist" type="xs:string" />
+			<xs:element minOccurs="0" name="needscheck" type="xs:byte" />
+			<xs:element minOccurs="0" name="taboofailed" type="xs:byte" />
+			<xs:element minOccurs="0" name="points" type="xs:decimal" />
+			<xs:element minOccurs="0" name="score" type="xs:decimal" />
+			<xs:element minOccurs="0" name="type" type="xs:string" />
+			<xs:element minOccurs="0" name="level" type="xs:integer" />
+			<xs:element minOccurs="0" name="step" type="xs:string" />
+			<xs:element minOccurs="0" name="stepoff" type="xs:string" />
+			<xs:element minOccurs="0" name="cost" type="xs:decimal" />
+			<xs:element minOccurs="0" name="count" type="xs:unsignedShort" />
+			<xs:element minOccurs="0" name="weight" type="xs:decimal" />
+			<xs:element minOccurs="0" name="parrylevel" type="xs:unsignedShort" />
+			<xs:element minOccurs="0" name="blocklevel" type="xs:unsignedShort" />
+			<xs:element minOccurs="0" name="hide" type="xs:string" />
+			<xs:element minOccurs="0" name="lock" type="xs:string" />
+
+			<xs:element minOccurs="0" name="displaynameformula" type="xs:string" />
+			<xs:element minOccurs="0" name="vars" type="xs:string" />
+			
+			<xs:element name="calcs">
+			  <xs:complexType>
+				<xs:all>
+					<xs:element minOccurs="0" name="cost" type="xs:string" />
+					<xs:element minOccurs="0" name="sd" type="xs:string" />
+					<xs:element minOccurs="0" name="deflevel" type="xs:string" />
+					<xs:element minOccurs="0" name="deffrom" type="xs:string" />
+					<xs:element minOccurs="0" name="deffromid" type="xs:string" />
+					<xs:element minOccurs="0" name="pointmult" type="xs:string" />
+					<xs:element minOccurs="0" name="levelmult" type="xs:string" />
+					<xs:element minOccurs="0" name="syslevels" type="xs:string" />
+					<xs:element minOccurs="0" name="bonuslevels" type="xs:string" />
+					<xs:element minOccurs="0" name="extralevels" type="xs:string" />
+					<xs:element minOccurs="0" name="baselevel" type="xs:string" />
+					<xs:element minOccurs="0" name="basepoints" type="xs:string" />
+					<xs:element minOccurs="0" name="multpoints" type="xs:string" />
+					<xs:element minOccurs="0" name="apppoints" type="xs:string" />
+					<xs:element minOccurs="0" name="premodspoints" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="preformulacost" type="xs:string" />
+					<xs:element minOccurs="0" name="preformulaweight" type="xs:string" />
+					<xs:element minOccurs="0" name="postformulacost" type="xs:string" />
+					<xs:element minOccurs="0" name="postformulaweight" type="xs:string" />
+					<xs:element minOccurs="0" name="prechildrencost" type="xs:string" />
+					<xs:element minOccurs="0" name="prechildrenweight" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="childpoints" type="xs:string" />
+					<xs:element minOccurs="0" name="baseapppoints" type="xs:string" />
+					<xs:element minOccurs="0" name="defpoints" type="xs:string" />
+					<xs:element minOccurs="0" name="extrapoints" type="xs:string" />
+					<xs:element minOccurs="0" name="basecost" type="xs:string" />
+					<xs:element minOccurs="0" name="baseweight" type="xs:string" />
+					<xs:element minOccurs="0" name="childrencosts" type="xs:string" />
+					<xs:element minOccurs="0" name="childrenweights" type="xs:string" />
+					<xs:element minOccurs="0" name="precountcost" type="xs:string" />
+					<xs:element minOccurs="0" name="precountweight" type="xs:string" />
+					<xs:element minOccurs="0" name="premodscost" type="xs:string" />
+					<xs:element minOccurs="0" name="basevalue" type="xs:string" />
+					<xs:element minOccurs="0" name="maxscore" type="xs:string" />
+					<xs:element minOccurs="0" name="minscore" type="xs:string" />
+					<xs:element minOccurs="0" name="up" type="xs:string" />
+					<xs:element minOccurs="0" name="down" type="xs:string" />
+					<xs:element minOccurs="0" name="step" type="xs:string" />
+					<xs:element minOccurs="0" name="round" type="xs:string" />
+					<xs:element minOccurs="0" name="basescore" type="xs:string" />
+					<xs:element minOccurs="0" name="parryat" type="xs:string" />
+					<xs:element minOccurs="0" name="blockat" type="xs:string" />
+					<xs:element minOccurs="0" name="upto" type="xs:string" />
+					<xs:element minOccurs="0" name="downto" type="xs:string" />
+					<xs:element minOccurs="0" name="levelnames" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="baseweightconverted" type="xs:string" />
+					<xs:element minOccurs="0" name="baseweightunconverted" type="xs:string" />
+					<xs:element minOccurs="0" name="charammo" type="xs:string" />
+					<xs:element minOccurs="0" name="charammounits" type="xs:string" />
+									
+				</xs:all>
+			  </xs:complexType>
+			</xs:element>
+
+			<xs:element minOccurs="0" name="weaponmodesdata">
+			  <xs:complexType>
+				<xs:all>
+					<xs:element minOccurs="0" name="mode" type="xs:string" />
+					<xs:element minOccurs="0" name="damage" type="xs:string" />
+					<xs:element minOccurs="0" name="damtype" type="xs:string" />
+					<xs:element minOccurs="0" name="dmg" type="xs:string" />
+					<xs:element minOccurs="0" name="reach" type="xs:string" />
+					<xs:element minOccurs="0" name="parry" type="xs:string" />
+					<xs:element minOccurs="0" name="minst" type="xs:string" />
+					<xs:element minOccurs="0" name="skillused" type="xs:string" />
+					<xs:element minOccurs="0" name="acc" type="xs:string" />
+					<xs:element minOccurs="0" name="rangehalfdam" type="xs:string" />
+					<xs:element minOccurs="0" name="rangemax" type="xs:string" />
+					<xs:element minOccurs="0" name="rof" type="xs:string" />
+					<xs:element minOccurs="0" name="rcl" type="xs:string" />
+					<xs:element minOccurs="0" name="shots" type="xs:string" />
+					<xs:element minOccurs="0" name="armordivisor" type="xs:string" />
+					<xs:element minOccurs="0" name="break" type="xs:string" />
+					<xs:element minOccurs="0" name="radius" type="xs:string" />
+					<xs:element minOccurs="0" name="bulk" type="xs:string" />
+					<xs:element minOccurs="0" name="damagebasedon" type="xs:string" />
+					<xs:element minOccurs="0" name="minstbasedon" type="xs:string" />
+					<xs:element minOccurs="0" name="reachbasedon" type="xs:string" />
+					<xs:element minOccurs="0" name="damageistext" type="xs:string" />
+					<xs:element minOccurs="0" name="calcrange" type="xs:string" />
+					<xs:element minOccurs="0" name="chardamage" type="xs:string" />
+					<xs:element minOccurs="0" name="chardamtype" type="xs:string" />
+					<xs:element minOccurs="0" name="charreach" type="xs:string" />
+					<xs:element minOccurs="0" name="charparry" type="xs:string" />
+					<xs:element minOccurs="0" name="charminst" type="xs:string" />
+					<xs:element minOccurs="0" name="charskillused" type="xs:string" />
+					<xs:element minOccurs="0" name="charskillscore" type="xs:string" />
+					<xs:element minOccurs="0" name="charparryscore" type="xs:string" />
+					<xs:element minOccurs="0" name="characc" type="xs:string" />
+					<xs:element minOccurs="0" name="charrangehalfdam" type="xs:string" />
+					<xs:element minOccurs="0" name="charrangemax" type="xs:string" />
+					<xs:element minOccurs="0" name="charrof" type="xs:string" />
+					<xs:element minOccurs="0" name="charrcl" type="xs:string" />
+					<xs:element minOccurs="0" name="charshots" type="xs:string" />
+					<xs:element minOccurs="0" name="chararmordivisor" type="xs:string" />
+					<xs:element minOccurs="0" name="charbreak" type="xs:string" />
+					<xs:element minOccurs="0" name="charradius" type="xs:string" />
+					<xs:element minOccurs="0" name="chareffectivest" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="charbulk" type="xs:string" />
+					<xs:element minOccurs="0" name="stcap" type="xs:string" />
+				</xs:all>
+			  </xs:complexType>
+			</xs:element>
+
+			<xs:element minOccurs="0" name="armordata">
+			  <xs:complexType>
+				<xs:all>
+					<xs:element minOccurs="0" name="dr" type="xs:string" />
+					<xs:element minOccurs="0" name="chardr" type="xs:string" />
+					<xs:element minOccurs="0" name="db" type="xs:string" />
+					<xs:element minOccurs="0" name="chardb" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="chardeflect" type="xs:integer" />
+					<xs:element minOccurs="0" name="charfortify" type="xs:integer" />
+					
+					<xs:element minOccurs="0" name="location" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="coverage" type="xs:string" />
+					<xs:element minOccurs="0" name="charlocation" type="xs:string" />
+					<xs:element minOccurs="0" name="locationcoverage" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="aa" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="drnotes" type="xs:string" />
+				</xs:all>
+			  </xs:complexType>
+			</xs:element>
+
+			<xs:element minOccurs="0" name="ref">
+			  <xs:complexType>
+				<xs:all>
+					<xs:element minOccurs="0" name="basedon" type="xs:string" />
+					<xs:element minOccurs="0" name="page" type="xs:string" />
+					<xs:element minOccurs="0" name="itemnotes" type="xs:string" />
+					<xs:element minOccurs="0" name="usernotes" type="xs:string" />
+					<xs:element minOccurs="0" name="familiarities" type="xs:string" />
+					<xs:element minOccurs="0" name="notes" type="xs:string" />
+					<xs:element minOccurs="0" name="description" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="units" type="xs:string" />
+
+					<xs:element minOccurs="0" name="shortcat" type="xs:string" />
+					<xs:element minOccurs="0" name="prereqcount" type="xs:string" />
+					<xs:element minOccurs="0" name="magery" type="xs:string" />
+					<xs:element minOccurs="0" name="class" type="xs:string" />
+					<xs:element minOccurs="0" name="time" type="xs:string" />
+					<xs:element minOccurs="0" name="duration" type="xs:string" />
+					<xs:element minOccurs="0" name="castingcost" type="xs:string" />
+
+					<xs:element minOccurs="0" name="countasneed" type="xs:string" />
+					<xs:element minOccurs="0" name="ident" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="needs" type="xs:string" />
+					<xs:element minOccurs="0" name="gives" type="xs:string" />
+					<xs:element minOccurs="0" name="conditional" type="xs:string" />
+					<xs:element minOccurs="0" name="taboo" type="xs:string" />
+					<xs:element minOccurs="0" name="default" type="xs:string" />
+					<xs:element minOccurs="0" name="mods" type="xs:string" />
+					<xs:element minOccurs="0" name="initmods" type="xs:string" />
+					<xs:element minOccurs="0" name="techlvl" type="xs:string" />
+					<xs:element minOccurs="0" name="load" type="xs:string" />
+					<xs:element minOccurs="0" name="lc" type="xs:string" />
+					<xs:element minOccurs="0" name="ndl" type="xs:string" />
+
+					<xs:element minOccurs="0" name="highlight" type="xs:string" />
+					<xs:element minOccurs="0" name="highlightme" type="xs:string" />
+					<xs:element minOccurs="0" name="hideme" type="xs:string" />
+					<xs:element minOccurs="0" name="collapse" type="xs:string" />
+					<xs:element minOccurs="0" name="collapseme" type="xs:string" />
+
+					<xs:element minOccurs="0" name="keep" type="xs:string" />
+					<xs:element minOccurs="0" name="owned" type="xs:string" />
+					<xs:element minOccurs="0" name="locked" type="xs:string" />
+					<xs:element minOccurs="0" name="owns" type="xs:string" />
+					<xs:element minOccurs="0" name="pkids" type="xs:string" />
+					
+					<xs:element minOccurs="0" name="gms" type="xs:string" />
+					<xs:element minOccurs="0" name="mainwin" type="xs:string" />
+					<xs:element minOccurs="0" name="display" type="xs:string" />
+					<xs:element minOccurs="0" name="isparent" type="xs:string" />
+					<xs:element minOccurs="0" name="noresync" type="xs:string" />
+					<xs:element minOccurs="0" name="disadat" type="xs:string" />
+
+					<xs:element minOccurs="0" name="brokenlinks" type="xs:string" />
+					<xs:element minOccurs="0" name="linked" type="xs:string" />
+					<xs:element minOccurs="0" name="linkedname" type="xs:string" />
+					<xs:element minOccurs="0" name="linkedfrom" type="xs:string" />
+					<xs:element minOccurs="0" name="linkedfromnames" type="xs:string" />
+
+					<xs:element minOccurs="0" name="weightcapacity" type="xs:string" />
+					<xs:element minOccurs="0" name="weightcapacitylevel" type="xs:string" />
+					<xs:element minOccurs="0" name="overweightcapacity" type="xs:string" />
+					<xs:element minOccurs="0" name="overweightcapacityby" type="xs:string" />
+					<xs:element minOccurs="0" name="countcapacity" type="xs:string" />
+					<xs:element minOccurs="0" name="countcapacitylevel" type="xs:string" />
+					<xs:element minOccurs="0" name="overcountcapacity" type="xs:string" />
+					<xs:element minOccurs="0" name="overcountcapacityby" type="xs:string" />
+
+					<xs:element minOccurs="0" name="childcapacity" type="xs:string" />
+					<xs:element minOccurs="0" name="childcapacitylevel" type="xs:string" />
+					<xs:element minOccurs="0" name="overchildcapacity" type="xs:string" />
+					<xs:element minOccurs="0" name="overchildcapacityby" type="xs:string" />
+
+					<xs:element minOccurs="0" name="charunits" type="xs:string" />
+					<xs:element minOccurs="0" name="weightcapacityunits" type="xs:string" />
+					<xs:element minOccurs="0" name="charweightcapacity" type="xs:string" />
+					<xs:element minOccurs="0" name="charweightcapacityunits" type="xs:string" />
+
+					<xs:element minOccurs="0" name="vttnotes" type="xs:string" />
+
+					<xs:element minOccurs="0" name="appliedsymbols" type="xs:string" />
+				</xs:all>
+			  </xs:complexType>
+			</xs:element>
+			
+			<xs:element minOccurs="0" name="attackmodes" type="GCAAttackModesBlock" />
+
+			<xs:element minOccurs="0" name="extended" type="GCAExtendedTagsBlock" />
+		
+			<xs:element minOccurs="0" name="modifiers" type="GCAModifiersBlock" />
+			<xs:element minOccurs="0" name="bonuses" type="GCABonusesBlock" />
+			<xs:element minOccurs="0" name="conditionals" type="GCABonusesBlock" />
+		</xs:all>
+
+		<xs:attribute name="type" type="xs:string" use="required" />
+		<xs:attribute name="idkey" type="xs:long" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="GCACharacter">
+      <xs:all>
+        <xs:element minOccurs="0" name="author">
+          <xs:complexType>
+            <xs:all>
+				<xs:element minOccurs="0" name="name" type="xs:string" />
+				<xs:element minOccurs="0" name="version" type="xs:string" />
+				<xs:element minOccurs="0" name="copyright" type="xs:string" />
+				<xs:element minOccurs="0" name="datecreated" type="xs:string" />
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="system">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="version" type="xs:string" />
+              <xs:element name="lastkey" type="xs:long" />
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+		<xs:element minOccurs="0" name="library">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="unbounded" name="book" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+        <xs:element minOccurs="0" name="settings">
+          <xs:complexType>
+            <xs:all>
+				<xs:element minOccurs="0" name="ruleof" type="xs:unsignedShort" />
+				<xs:element minOccurs="0" name="globalruleof" type="xs:integer" />
+				<xs:element minOccurs="0" name="modmultpercents" type="xs:integer" />
+				<xs:element minOccurs="0" name="usediceaddsconversion" type="xs:integer" />
+				<xs:element minOccurs="0" name="allownoniqoptspecs" type="xs:integer" />
+				<xs:element minOccurs="0" name="allowstackingdeflect" type="xs:integer" />
+				<xs:element minOccurs="0" name="allowstackingfortify" type="xs:integer" />
+				<xs:element minOccurs="0" name="inplay" type="xs:integer" />
+				<xs:element minOccurs="0" name="showcharactertraitsymbols" type="xs:integer" />
+				
+				<xs:element minOccurs="0" name="rendernonloadoutitemsinactive" type="xs:integer" />
+				<xs:element minOccurs="0" name="grayoutinactiveitems" type="xs:integer" />
+				
+				<xs:element minOccurs="0" name="includeunassigneditemsincurrentloadout" type="xs:integer" />
+
+				<xs:element minOccurs="0" name="nodefaultleveldiscount" type="xs:integer" />
+								
+				<xs:element minOccurs="0" name="allowusertraitordering" type="xs:integer" />
+				
+				<xs:element minOccurs="0" name="flagoverspentskills" type="xs:integer" />
+				
+				<xs:element minOccurs="0" name="applydbtoactivedefenses" type="xs:integer" />
+												
+				<xs:element minOccurs="0" name="traitgrouping" type="GCATraitGroupingBlock" />
+
+			</xs:all>
+          </xs:complexType>
+        </xs:element>
+        
+		<xs:element name="name" type="xs:string" />
+        <xs:element minOccurs="0" name="player" type="xs:string" />
+        <xs:element name="bodytype" type="xs:string" />
+		<xs:element minOccurs="0" name="bodyimagefile" type="xs:string" />
+		<xs:element minOccurs="0" name="bodyimage" type="xs:string" />
+        <xs:element name="currentloadout" type="xs:string" />
+		<xs:element minOccurs="0" name="currenttransform" type="xs:string" />
+		
+        <xs:element minOccurs="0" name="output">
+          <xs:complexType>
+            <xs:sequence>
+				<xs:element minOccurs="0" name="sheetviewsheet" type="xs:string" />
+				<xs:element minOccurs="0" name="charactersheet" type="xs:string" />
+				<xs:element minOccurs="0" maxOccurs="unbounded" name="altcharactersheet" type="xs:string" />
+				<xs:element minOccurs="0" name="exportsheet" type="xs:string" />
+				<xs:element minOccurs="0" maxOccurs="unbounded" name="altexportsheet" type="xs:string" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+		
+        <xs:element minOccurs="0" name="vitals">
+          <xs:complexType>
+            <xs:sequence>
+				<xs:element minOccurs="0" name="race" type="xs:string" />
+				<xs:element minOccurs="0" name="height" type="xs:string" />
+				<xs:element minOccurs="0" name="weight" type="xs:string" />
+				<xs:element minOccurs="0" name="age" type="xs:string" />
+				<xs:element minOccurs="0" name="appearance" type="xs:string" />
+				<xs:element minOccurs="0" name="portraitfile" type="xs:string" />
+				<xs:element minOccurs="0" name="portraitimage" type="xs:string" />
+			</xs:sequence>
+          </xs:complexType>
+        </xs:element>
+		
+        <xs:element minOccurs="0" name="basicdefense">
+          <xs:complexType>
+            <xs:all>
+				<xs:element name="parryidkey" type="xs:long" />
+				<xs:element name="parryusing" type="xs:string" />
+				<xs:element name="parryscore" type="xs:integer" />
+				<xs:element name="blockidkey" type="xs:long" />
+				<xs:element name="blockusing" type="xs:string" />
+				<xs:element name="blockscore" type="xs:integer" />
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+		
+		<xs:element minOccurs="0" name="description" type="xs:string" />
+		<xs:element minOccurs="0" name="notes" type="xs:string" />
+
+		<xs:element minOccurs="0" name="body" type="GCABody" />
+		<xs:element minOccurs="0" name="hitlocationtable" type="GCAHitLocationTable" />
+
+		<xs:element minOccurs="0" name="tags" type="GCAExtendedTagsBlock" />
+		<xs:element minOccurs="0" name="messages" type="GCAMessagesBlock" />
+		
+		<xs:element name="traits">
+			<xs:complexType>
+				<xs:all>
+					<xs:element name="attributes">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="cultures">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="languages">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="advantages">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="disadvantages">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="quirks">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="perks">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element minOccurs="0" name="features">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="skills">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="spells">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="equipment">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+					<xs:element name="templates">
+					  <xs:complexType>
+						<xs:sequence>
+						  <xs:element minOccurs="0" maxOccurs="unbounded" name="trait" type="GCATrait" />
+						</xs:sequence>
+						<xs:attribute name="count" type="xs:unsignedByte" use="required" />
+					  </xs:complexType>
+					</xs:element>
+				</xs:all>
+			</xs:complexType>
+		</xs:element>
+        <xs:element name="loadouts">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="loadout">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element minOccurs="0" name="bodyimagefile" type="xs:string" />
+                    <xs:element name="weight" type="xs:decimal" />
+                    <xs:element name="shielddb" type="xs:integer" />
+                    <xs:element name="hexmask" type="xs:string" />
+					<xs:element minOccurs="0" name="alwaysautocalcarmor" type="xs:string" />
+					<xs:element minOccurs="0" name="userorderedlayers" type="xs:string" />
+                    <xs:element name="facingdb">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="leftflank" type="xs:integer" />
+                          <xs:element name="leftfront" type="xs:integer" />
+                          <xs:element name="centerfront" type="xs:integer" />
+                          <xs:element name="rightfront" type="xs:integer" />
+                          <xs:element name="rightflank" type="xs:integer" />
+                          <xs:element name="rear" type="xs:integer" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="items">
+                      <xs:complexType>
+                        <xs:sequence minOccurs="0">
+                          <xs:element maxOccurs="unbounded" name="item">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="name" type="xs:string" />
+                              </xs:sequence>
+                              <xs:attribute name="idkey" type="xs:long" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="armoritems">
+                      <xs:complexType>
+                        <xs:sequence minOccurs="0">
+                          <xs:element maxOccurs="unbounded" name="item">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="name" type="xs:string" />
+                              </xs:sequence>
+                              <xs:attribute name="idkey" type="xs:long" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="shielditems">
+                      <xs:complexType>
+                        <xs:sequence minOccurs="0">
+                          <xs:element maxOccurs="unbounded" name="item">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="name" type="xs:string" />
+                                <xs:element name="shieldarc" type="xs:string" />
+                              </xs:sequence>
+                              <xs:attribute name="idkey" type="xs:long" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+
+					<xs:element minOccurs="0" name="orderedlayers" type="GCAOrderedLayers" />
+					
+					<xs:element minOccurs="0" name="body" type="GCABody" />
+					<xs:element minOccurs="0" name="hitlocationtable" type="GCAHitLocationTable" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+          </xs:complexType>
+        </xs:element>
+		
+        <xs:element minOccurs="0" name="transforms">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="transform">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="points" type="xs:decimal" />
+                    <xs:element name="items">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element maxOccurs="unbounded" name="item">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="name" type="xs:string" />
+                              </xs:sequence>
+                              <xs:attribute name="idkey" type="xs:long" use="required" />
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+          </xs:complexType>
+        </xs:element>
+		
+        <xs:element name="campaign">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="name" />
+              <xs:element name="basetl" type="xs:unsignedByte" />
+              <xs:element name="basepoints" type="xs:decimal" />
+              <xs:element name="disadlimit" type="xs:decimal" />
+              <xs:element name="quirklimit" type="xs:decimal" />
+              <xs:element name="hasdisadlimit" type="xs:byte" />
+              <xs:element name="hasquirklimit" type="xs:byte" />
+              <xs:element name="loggedpoints" type="xs:decimal" />
+              <xs:element name="otherpoints" type="xs:decimal" />
+              <xs:element name="totalpoints" type="xs:decimal" />
+			  
+			  <xs:element minOccurs="0" name="loggedmoney" type="xs:decimal" />
+			  <xs:element minOccurs="0" name="othermoney" type="xs:decimal" />
+			  <xs:element minOccurs="0" name="totalmoney" type="xs:decimal" />
+			  
+              <xs:element name="logentries">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="logentry">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="entrydate" type="xs:string" />
+                          <xs:element name="campaigndate" type="xs:string" />
+                          <xs:element name="charpoints" type="xs:decimal" />
+						  
+						  <xs:element minOccurs="0" name="charmoney" type="xs:decimal" />
+						  						  
+                          <xs:element name="caption" type="xs:string" />
+                          <xs:element name="notes" type="xs:string" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="basicdamages">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="basicdamage">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="st" type="xs:unsignedByte" />
+                    <xs:element name="thbase" type="xs:string" />
+                    <xs:element name="thadd" type="xs:string" />
+                    <xs:element name="swbase" type="xs:string" />
+                    <xs:element name="swadd" type="xs:string" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="damagebreaks">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="damagebreak">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="break" type="xs:unsignedByte" />
+                    <xs:element name="adddice" type="xs:unsignedByte" />
+                    <xs:element name="subtract" type="xs:unsignedByte" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="skilltypes">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="skilltype">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element name="costs" type="xs:string" />
+                    <xs:element name="baseadj" type="xs:byte" />
+                    <xs:element name="adds" type="xs:integer" />
+                    <xs:element name="defaultstat" type="xs:string" />
+                    <xs:element name="relname" type="xs:string" />
+                    <xs:element name="zeropointsokay" type="xs:integer" />
+                    <xs:element name="subzero" type="xs:integer" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="groups">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="group">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                    <xs:element maxOccurs="unbounded" name="groupitem">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="name" type="xs:string" />
+                          <xs:element minOccurs="0" name="nameext" type="xs:string" />
+                          <xs:element name="itemtype" type="xs:string" />
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="count" type="xs:unsignedShort" use="required" />
+          </xs:complexType>
+        </xs:element>
+		<xs:element minOccurs="0" name="categories" type="GCACategoriesBlock" />
+
+		<xs:element minOccurs="0" name="symbols" type="GCASymbolsBlock" />
+		
+		<xs:element minOccurs="0" name="bonusclasses" type="GCABonusClassesBlock" />
+		
+		<xs:element minOccurs="0" name="bodyimagestore" type="GCAImageStore" />
+		</xs:all>
+	</xs:complexType>
+
+	<xs:element name="gca5">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="1" maxOccurs="unbounded" name="character" type="GCACharacter" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

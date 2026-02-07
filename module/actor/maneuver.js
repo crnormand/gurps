@@ -334,7 +334,7 @@ export default class Maneuvers {
    */
   static isManeuverIcon(text) {
     return Object.values(Maneuvers.getAll())
-      .map(m => m.icon)
+      .map(maneuver => maneuver.icon)
       .includes(text)
   }
 
@@ -353,7 +353,7 @@ export default class Maneuvers {
    * @returns {ManeuverData}
    */
   static getManeuver(maneuverText = 'do_nothing') {
-    if (maneuverText === 'undefined') maneuverText = 'do_nothing'
+    if (!maneuverText || maneuverText === 'undefined') maneuverText = 'do_nothing'
 
     return Maneuvers.getAll()[maneuverText].data
   }
@@ -367,7 +367,7 @@ export default class Maneuvers {
   }
 
   static getAll() {
-    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
     const filter = []
 
@@ -405,7 +405,7 @@ export default class Maneuvers {
    * @returns {boolean}
    */
   static isActiveEffectManeuver(activeEffect) {
-    return activeEffect.statuses.find(s => s === 'maneuver')
+    return activeEffect.statuses.find(status => status === 'maneuver')
     // return activeEffect.getFlag ? activeEffect.getFlag('core', 'statusId') === MANEUVER : false
   }
 

@@ -28,7 +28,7 @@ export default class ChatProcessor {
    * @param {any|null} msgs
    * @returns {Promise<any>}
    */
-  async process() {}
+  async process(_line, _msgs = null) {}
 
   /**
    * Override to return the '/help' display string

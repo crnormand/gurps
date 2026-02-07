@@ -17,7 +17,7 @@ class ChromiumFolder {
   async files(extensions) {
     const allFiles = await this._getFiles()
 
-    return extensions ? allFiles.filter(f => extensions.some(ext => f.name.endsWith(ext))) : allFiles
+    return extensions ? allFiles.filter(file => extensions.some(ext => file.name.endsWith(ext))) : allFiles
   }
   async _getFiles(handle, path) {
     path = path ?? this.name
