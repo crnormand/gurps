@@ -36,40 +36,19 @@ const gcsEquipmentModifierSchema = () => {
   return {
     ...gcsBaseItemSchema(),
     ...featuresSchema(),
-    ...replaceableSchema(), // NOTE: the replaceable field is not used for Equipment Modifiers
+    // NOTE: the `replaceable` field is not used for Equipment Modifiers.
+    // EquipmentModifiers uses the IReplaceable functionality but the strings
+    // which replace the placeholder values in its fields are always inherited
+    // from a parent Equipment Item, so the `replaceable` field is never used.
+    ...replaceableSchema(),
 
-    //  type EquipmentModifierEditData struct
-    // EquipmentModifierSyncData
-    // VTTNotes     string            `json:"vtt_notes,omitzero"`
-    // Replacements map[string]string `json:"replacements,omitzero"` // Not actually used any longer, but kept so that we can migrate old data
-    // EquipmentModifierEditDataNonContainerOnly
     vttNotes: new fields.StringField({ required: true, nullable: false }),
-    //  type EquipmentModifierEditDataNonContainerOnly struct
-    // EquipmentModifierNonContainerSyncData
-    // Disabled bool `json:"disabled,omitzero"`
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    //  type EquipmentModifierSyncData struct
-    // Name             string   `json:"name,omitzero"`
-    // PageRef          string   `json:"reference,omitzero"`
-    // PageRefHighlight string   `json:"reference_highlight,omitzero"`
-    // LocalNotes       string   `json:"local_notes,omitzero"`
-    // Tags             []string `json:"tags,omitzero"`
     localNotes: new fields.StringField({ required: true, nullable: false }),
     tags: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: false,
     }),
-    //  type EquipmentModifierNonContainerSyncData struct
-    // CostType          emcost.Type   `json:"cost_type,omitzero"`
-    // CostIsPerLevel    bool          `json:"cost_is_per_level,omitzero"`
-    // CostIsPerPound    bool          `json:"cost_is_per_pound,omitzero"`
-    // WeightType        emweight.Type `json:"weight_type,omitzero"`
-    // WeightIsPerLevel  bool          `json:"weight_is_per_level,omitzero"`
-    // ShowNotesOnWeapon bool          `json:"show_notes_on_weapon,omitzero"`
-    // TechLevel         string        `json:"tech_level,omitzero"`
-    // CostAmount        string        `json:"cost,omitzero"`
-    // WeightAmount      string        `json:"weight,omitzero"`
-    // Features          Features      `json:"features,omitzero"`
     costType: new fields.StringField({ required: true, nullable: false }),
     costIsPerLevel: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     costIsPerPound: new fields.BooleanField({ required: true, nullable: false, initial: false }),

@@ -36,47 +36,14 @@ const gcsSpellSchema = () => {
     ...replaceableSchema(),
     ...studiesSchema(),
 
-    //  type SpellEditData struct
-    // SpellSyncData
-    // VTTNotes     string            `json:"vtt_notes,omitzero"`
-    // Replacements map[string]string `json:"replacements,omitzero"`
-    // SpellNonContainerOnlyEditData
-    // SkillContainerOnlySyncData
     vttNotes: new fields.StringField({ required: true, nullable: false }),
-    // type SpellNonContainerOnlyEditData struct
-    // SpellNonContainerOnlySyncData
-    // TechLevel        *string     `json:"tech_level,omitzero"`
-    // Points           fxp.Int     `json:"points,omitzero"`
-    // Study            []*Study    `json:"study,omitzero"`
-    // StudyHoursNeeded study.Level `json:"study_hours_needed,omitzero"`
     techLevel: new fields.StringField({ required: true, nullable: true }),
     points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    // type SpellSyncData struct
-    // Name             string   `json:"name,omitzero"`
-    // PageRef          string   `json:"reference,omitzero"`
-    // PageRefHighlight string   `json:"reference_highlight,omitzero"`
-    // LocalNotes       string   `json:"local_notes,omitzero"`
-    // Tags             []string `json:"tags,omitzero"`
     localNotes: new fields.StringField({ required: true, nullable: false }),
     tags: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: false,
     }),
-    // type SpellNonContainerOnlySyncData struct
-    // Difficulty      AttributeDifficulty `json:"difficulty,omitzero"`
-    // College         CollegeList         `json:"college,omitzero"`
-    // PowerSource     string              `json:"power_source,omitzero"`
-    // Class           string              `json:"spell_class,omitzero"`
-    // Resist          string              `json:"resist,omitzero"`
-    // CastingCost     string              `json:"casting_cost,omitzero"`
-    // MaintenanceCost string              `json:"maintenance_cost,omitzero"`
-    // CastingTime     string              `json:"casting_time,omitzero"`
-    // Duration        string              `json:"duration,omitzero"`
-    // Item            string              `json:"item,omitzero"`
-    // RitualSkillName string              `json:"base_skill,omitzero"`
-    // PrereqCount     int                 `json:"prereq_count,omitzero"`
-    // Prereq          *PrereqList         `json:"prereqs,omitzero"`
-    // Weapons         []*Weapon           `json:"weapons,omitzero"`
     difficulty: new fields.StringField({ required: true, nullable: false }),
     college: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,

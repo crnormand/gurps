@@ -21,23 +21,6 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
 
   /* ---------------------------------------- */
 
-  protected override async _preCreate(
-    data: TypeDataModel.ParentAssignmentType<GcsCharacterSchema, Actor.Implementation>,
-    options: foundry.abstract.Document.Database.PreCreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
-    user: User.Implementation
-  ): Promise<boolean | void> {
-    super._preCreate(data, options, user)
-
-    // const attributeDefinitions = data.system?.settings?._attributes ?? defaultAttributes()
-    // const attributes = data.system?._attributes ?? []
-    //
-    // if (attributeDefinitions.length > 0 && (!attributes || attributes.length === 0)) {
-    //   data.system._attributes = this.#getNewAttributes(data.system.settings._attributes)
-    // }
-  }
-
-  /* ---------------------------------------- */
-
   protected override _onCreate(
     data: TypeDataModel.ParentAssignmentType<GcsCharacterSchema, Actor.Implementation>,
     options: foundry.abstract.Document.Database.CreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
@@ -67,9 +50,6 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
 
 const pointsRecordSchema = () => {
   return {
-    // When   jio.Time `json:"when"`
-    // Points fxp.Int  `json:"points"`
-    // Reason string   `json:"reason,omitzero"`
     when: new fields.StringField({ required: true, nullable: false, initial: () => new Date().toISOString() }),
     points: new fields.NumberField({ required: true, nullable: false, initia: 0 }),
     reason: new fields.StringField({ required: true, nullable: false, initial: '' }),
@@ -80,20 +60,9 @@ const pointsRecordSchema = () => {
 
 const profileSchema = () => {
   return {
-    // type ProfileRandom struct
-    // 	Name       string     `json:"name,omitzero"`
-    // 	Age        string     `json:"age,omitzero"`
-    // 	Birthday   string     `json:"birthday,omitzero"`
-    // 	Eyes       string     `json:"eyes,omitzero"`
-    // 	Hair       string     `json:"hair,omitzero"`
-    // 	Skin       string     `json:"skin,omitzero"`
-    // 	Handedness string     `json:"handedness,omitzero"`
-    // 	Gender     string     `json:"gender,omitzero"`
-    // 	Height     fxp.Length `json:"height,omitzero"`
-    // 	Weight     fxp.Weight `json:"weight,omitzero"`
     // TODO: Implement randomization function in field
     // NOTE: Unused. Use Actor#name instead.
-    name: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    // name: new fields.StringField({ required: true, nullable: false, initial: '' }),
     age: new fields.StringField({ required: true, nullable: false, initial: '' }),
     birthday: new fields.StringField({ required: true, nullable: false, initial: '' }),
     eyes: new fields.StringField({ required: true, nullable: false, initial: '' }),
@@ -104,18 +73,6 @@ const profileSchema = () => {
     height: new fields.EmbeddedDataField(Length, { required: true, nullable: false }),
     // TODO: Convert to Weight DataModel or special field
     weight: new fields.StringField({ required: true, nullable: false, initial: '' }),
-
-    // type Profile struct
-    // 	ProfileRandom
-    // 	PlayerName        string        `json:"player_name,omitzero"`
-    // 	Title             string        `json:"title,omitzero"`
-    // 	Organization      string        `json:"organization,omitzero"`
-    // 	Religion          string        `json:"religion,omitzero"`
-    // 	TechLevel         string        `json:"tech_level,omitzero"`
-    // 	PortraitData      []byte        `json:"portrait,omitzero"`
-    // 	PortraitImage     *unison.Image `json:"-"`
-    // 	SizeModifier      int           `json:"SM,omitzero"`
-    // 	SizeModifierBonus fxp.Int       `json:"-"`
     playerName: new fields.StringField({ required: true, nullable: false, initial: '' }),
     title: new fields.StringField({ required: true, nullable: false, initial: '' }),
     organization: new fields.StringField({ required: true, nullable: false, initial: '' }),
@@ -131,32 +88,6 @@ const profileSchema = () => {
 
 const sheetSettingsSchema = () => {
   return {
-    // Page                          *PageSettings      `json:"page,omitzero"`
-    // BlockLayout                   *BlockLayout       `json:"block_layout,omitzero"`
-    // Attributes                    *AttributeDefs     `json:"attributes,omitzero"`
-    // BodyType                      *Body              `json:"body_type,omitzero"`
-    // DamageProgression             progression.Option `json:"damage_progression"`
-    // DefaultLengthUnits            fxp.LengthUnit     `json:"default_length_units"`
-    // DefaultWeightUnits            fxp.WeightUnit     `json:"default_weight_units"`
-    // UserDescriptionDisplay        display.Option     `json:"user_description_display"`
-    // ModifiersDisplay              display.Option     `json:"modifiers_display"`
-    // NotesDisplay                  display.Option     `json:"notes_display"`
-    // SkillLevelAdjDisplay          display.Option     `json:"skill_level_adj_display"`
-    // UseMultiplicativeModifiers    bool               `json:"use_multiplicative_modifiers,omitzero"`
-    // UseModifyingDicePlusAdds      bool               `json:"use_modifying_dice_plus_adds,omitzero"`
-    // UseHalfStatDefaults           bool               `json:"use_half_stat_defaults,omitzero"`
-    // ShowTraitModifierAdj          bool               `json:"show_trait_modifier_adj,omitzero"`
-    // ShowEquipmentModifierAdj      bool               `json:"show_equipment_modifier_adj,omitzero"`
-    // ShowAllWeapons                bool               `json:"show_all_weapons,omitzero"`
-    // ShowSpellAdj                  bool               `json:"show_spell_adj,omitzero"`
-    // HideSourceMismatch            bool               `json:"hide_source_mismatch,omitzero"`
-    // HideTLColumn                  bool               `json:"hide_tl_column,omitzero"`
-    // HideLCColumn                  bool               `json:"hide_lc_column,omitzero"`
-    // HidePageRefColumn             bool               `json:"hide_page_ref_column,omitzero"`
-    // UseTitleInFooter              bool               `json:"use_title_in_footer,omitzero"`
-    // ExcludeUnspentPointsFromTotal bool               `json:"exclude_unspent_points_from_total,omitzero"`
-    // ShowLiftingSTDamage           bool               `json:"show_lifting_st_damage,omitzero"`
-    // ShowIQBasedDamage             bool               `json:"show_iq_based_damage,omitzero"`
     // NOTE: Only used for data parity with GCS. Not used in GGA.
     page: new fields.SchemaField(
       {

@@ -32,37 +32,20 @@ const gcsTraitModifierSchema = () => {
   return {
     ...gcsBaseItemSchema(),
     ...featuresSchema(),
-    ...replaceableSchema(), // NOTE: the replaceable field is not used for Trait Modifiers
+    // NOTE: the `replaceable` field is not used for Trait Modifiers.
+    // TraitModifiers uses the IReplaceable functionality but the strings
+    // which replace the placeholder values in its fields are always inherited
+    // from a parent Trait Item, so the `replaceable` field is never used.
+    ...replaceableSchema(),
 
-    // type TraitModifierEditData struct
-    // TraitModifierSyncData
-    // VTTNotes     string            `json:"vtt_notes,omitzero"`
-    // Replacements map[string]string `json:"replacements,omitzero"` // Not actually used any longer, but kept so that we can migrate old data
-    // TraitModifierEditDataNonContainerOnly
     vttNotes: new fields.StringField({ required: true, nullable: false }),
-    // type TraitModifierEditDataNonContainerOnly struct
-    // TraitModifierNonContainerSyncData
-    // Levels   fxp.Int `json:"levels,omitzero"`
-    // Disabled bool    `json:"disabled,omitzero"`
     levels: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    // type TraitModifierSyncData struct
-    // Name             string   `json:"name,omitzero"`
-    // PageRef          string   `json:"reference,omitzero"`
-    // PageRefHighlight string   `json:"reference_highlight,omitzero"`
-    // LocalNotes       string   `json:"local_notes,omitzero"`
-    // Tags             []string `json:"tags,omitzero"`
     localNotes: new fields.StringField({ required: true, nullable: false }),
     tags: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: false,
     }),
-    // type TraitModifierNonContainerSyncData struct
-    // CostAdj           string         `json:"cost_adj,omitzero"`
-    // UseLevelFromTrait bool           `json:"use_level_from_trait,omitzero"`
-    // ShowNotesOnWeapon bool           `json:"show_notes_on_weapon,omitzero"`
-    // Affects           affects.Option `json:"affects,omitzero"`
-    // Features          Features       `json:"features,omitzero"`
     costAdj: new fields.StringField({ required: true, nullable: false }),
     useLevelFromTrait: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     showNotesOnWeapon: new fields.BooleanField({ required: true, nullable: false, initial: false }),

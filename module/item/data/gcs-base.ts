@@ -260,9 +260,6 @@ const gcsBaseItemSchema = () => {
     // NOTE: Not currently used in GGA, just for GCS parity
     source: new fields.SchemaField(
       {
-        // Library string `json:"library"`
-        // Path    string `json:"path"`
-        // TID tid.TID `json:"id"`
         library: new fields.StringField({ required: true, nullable: false }),
         path: new fields.StringField({ required: true, nullable: false }),
         id: new fields.StringField({ required: true, nullable: false }),
