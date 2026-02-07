@@ -255,11 +255,11 @@ export class AnimChatProcessor extends ChatProcessor {
     return new Promise(resolve => {
       window.addEventListener(
         'mousedown',
-        e => {
+        mouseDownEvent => {
           let pt = getMousePos(game.canvas)
 
-          e.preventDefault()
-          e.stopPropagation()
+          mouseDownEvent.preventDefault()
+          mouseDownEvent.stopPropagation()
           let grid_size = canvas.scene.grid.size
 
           canvas.tokens.targetObjects({
@@ -344,7 +344,7 @@ export class AnimChatProcessor extends ChatProcessor {
     else {
       let pat = new RegExp(matchGroups.file.split('*').join('.*?').replace(/\//g, '\\/'), 'i')
 
-      files = ANIM_LIBRARY.filter(e => e.match(pat))
+      files = ANIM_LIBRARY.filter(animationPath => animationPath.match(pat))
       if (files.length == 0) return this.errorExit(`Unable to find animation for '${pat}'`)
     }
 
@@ -417,7 +417,7 @@ export class AnimChatProcessor extends ChatProcessor {
       if (centered && !move) this.priv('Stretch option only valid on moving animations')
     }
 
-    let srcToken = canvas.tokens.placeables.find(e => e.actor == GURPS.LastActor)
+    let srcToken = canvas.tokens.placeables.find(token => token.actor == GURPS.LastActor)
 
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
@@ -489,10 +489,10 @@ export class AnimChatProcessor extends ChatProcessor {
     }
 
     this.priv('Src:' + srcToken?.name)
-    this.priv('Dest:' + destTokens.map(e => e?.name))
+    this.priv('Dest:' + destTokens.map(token => token?.name))
     this.priv('Opts: ' + opts.join(', '))
     this.priv('Possible:')
-    this.priv(files.map(e => e.split('/').pop()).join('<br>'))
+    this.priv(files.map(animationPath => animationPath.split('/').pop()).join('<br>'))
     let [used, dist] = await this.drawEffect(effect, srcToken, destTokens)
 
     this.priv('Used:<br>' + used.join('<br>'))

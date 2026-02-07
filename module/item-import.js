@@ -71,22 +71,22 @@ export class ItemImporter {
   }
 
   async _importItems(text, filename) {
-    let j = {}
+    let jsonData = {}
 
     try {
-      j = JSON.parse(text)
+      jsonData = JSON.parse(text)
     } catch {
       return ui.notifications.error('The file you uploaded was not of the right format!')
     }
 
-    if ([5].includes(j.version)) {
+    if ([5].includes(jsonData.version)) {
       // Version 5 does not have a type field ... find some other way to validate the data.
       // Verify that the contained objects has an 'equipped' field.
-      if (Object.hasOwn(j.rows[0], 'quantity') === false) {
+      if (Object.hasOwn(jsonData.rows[0], 'quantity') === false) {
         return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
       }
-    } else if ([2, 4].includes(j.version)) {
-      if (j.type !== 'equipment_list') {
+    } else if ([2, 4].includes(jsonData.version)) {
+      if (jsonData.type !== 'equipment_list') {
         return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!')
       }
     } else {
@@ -107,7 +107,7 @@ export class ItemImporter {
 
     ui.notifications.info('Importing Items from ' + filename + '...')
 
-    for (let i of j.rows) {
+    for (let i of jsonData.rows) {
       await this._importItem(i, pack, compendiumName, timestamp)
     }
 
@@ -355,7 +355,7 @@ export class ItemImporter {
       cachedItems.push(await pack.getDocument(i._id))
     }
 
-    let oi = await cachedItems.find(e => e.system.eqt.uuid === itemData.system.eqt.uuid)
+    let oi = await cachedItems.find(cachedItem => cachedItem.system.eqt.uuid === itemData.system.eqt.uuid)
 
     if (oi) {
       let oldData = foundry.utils.duplicate(oi)

@@ -399,15 +399,15 @@ export default function addChatHooks() {
           let text = rt[0]?.innerText
 
           if (text) {
-            text.split('\n').forEach(e => {
-              let match = e.match(re)
+            text.split('\n').forEach(rollCommandLine => {
+              let match = rollCommandLine.match(re)
 
               if (!!match && !!match[2]) {
                 let action = parselink(match[2])
 
                 if (action.action) {
                   GURPS.performAction(action.action, GURPS.LastActor, {
-                    shiftKey: e.startsWith('/pr'),
+                    shiftKey: rollCommandLine.startsWith('/pr'),
                   })
                   //          return false; // Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
                 }

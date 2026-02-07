@@ -656,7 +656,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.parent.items.forEach(item => {
       if (!(item as Item.Implementation).isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
 
-      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(e => e.trim())) {
+      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(line => line.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
 
         if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
@@ -665,7 +665,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       for (const attack of (item as Item.Implementation).getItemAttacks()) {
         if ((item.system as BaseItemModel).itemModifiers === '') continue
 
-        for (const modifier of attack.component.itemModifiers.split('\n').map(e => e.trim())) {
+        for (const modifier of attack.component.itemModifiers.split('\n').map(line => line.trim())) {
           const modifierDescription = `${modifier} ${item.id}`
 
           if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
@@ -868,11 +868,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
    * the array.
    */
   getTemporaryEffects(effects: ActiveEffect.Implementation[]): ActiveEffect.Implementation[] {
-    const maneuver = effects.find(e => e.isManeuver)
+    const maneuver = effects.find(effect => effect.isManeuver)
 
     if (!maneuver) return effects
 
-    const nonManeuverEffects = effects.filter(e => !e.isManeuver)
+    const nonManeuverEffects = effects.filter(effect => !effect.isManeuver)
 
     const visibility = this.getSetting(Settings.SETTING_MANEUVER_VISIBILITY, 'NoOne')
 
@@ -1061,7 +1061,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   async accumulateDamageRoll(action: fields.SchemaField.InitializedData<DamageActionSchema>): Promise<void> {
     const accumulatedActions = this.conditions.damageAccumulators
 
-    const existingActionIndex = accumulatedActions.findIndex(e => e.orig === action.orig)
+    const existingActionIndex = accumulatedActions.findIndex(
+      accumulatedAction => accumulatedAction.orig === action.orig
+    )
 
     if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
 
@@ -1437,7 +1439,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         if (ref === 'd') isDamageRoll = true
 
         for (const tag of correspondingTags[ref]) {
-          refTags.push(...(taggedSettings[tag] as string).split(',').map((e: string) => e.trim().toLowerCase()))
+          refTags.push(
+            ...(taggedSettings[tag] as string).split(',').map((tagValue: string) => tagValue.trim().toLowerCase())
+          )
         }
       }
 
@@ -1475,7 +1479,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
 
         for (const tag of correspondingTags[ref]) {
-          refTags.push(...(taggedSettings[tag] as string).split(',').map((e: string) => e.trim().toLowerCase()))
+          refTags.push(
+            ...(taggedSettings[tag] as string).split(',').map((tagValue: string) => tagValue.trim().toLowerCase())
+          )
         }
       }
     } else {
@@ -1590,7 +1596,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         const weapon = this.parent
           // @ts-expect-error: Not sure why this isn't resolving correctly.
           .getItemAttacks({ attackType })
-          .find(e => e.name === name && (!mode || e.component.mode === mode))
+          .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.component.mode === mode))
 
         if (weapon)
           return {
@@ -1615,7 +1621,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         mode = action.name.match(/\((.+?)\)/)?.[1]
         const weapon = this.parent
           .getItemAttacks({ attackType: 'melee' })
-          .find(e => e.name === name && (!mode || e.component.mode === mode))
+          .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.component.mode === mode))
 
         if (weapon)
           return {
@@ -1635,7 +1641,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           }
       }
       case 'skill-spell': {
-        const item = [...this.allSkillsV2, ...this.allSpellsV2].find(e => e.name === action.name)
+        const item = [...this.allSkillsV2, ...this.allSpellsV2].find(skillOrSpell => skillOrSpell.name === action.name)
 
         if (item)
           return {

@@ -303,7 +303,7 @@ class ModifierStack {
     var oldmod
 
     reason = reason.replace('(' + game.i18n.localize('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
-    let i = list.findIndex(e => e.desc === reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
+    let i = list.findIndex(modifier => modifier.desc === reason && !modifier.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
 
     if (i > -1) {
       if (replace)

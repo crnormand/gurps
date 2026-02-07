@@ -327,24 +327,24 @@ export class EffectModifierPopout extends Application {
       if (taggedSettings.checkConditionals) {
         const conditionalMods = foundry.utils.getProperty(actor, 'system.conditionalmods') || {}
 
-        recurselist(conditionalMods, (e, _k, _d) => {
-          const mod = parseInt(e.modifier) || 0
+        recurselist(conditionalMods, (conditionalModifier, _k, _d) => {
+          const mod = parseInt(conditionalModifier.modifier) || 0
           const signal = mod > 0 ? '+' : '-'
           const source = `system.conditionalmods.${_k}`
 
-          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
+          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${conditionalModifier.situation} @${source}`)
         })
       }
 
       if (taggedSettings.checkReactions) {
         const reactionMods = foundry.utils.getProperty(actor, 'system.reactions') || {}
 
-        recurselist(reactionMods, (e, _k, _d) => {
-          const mod = parseInt(e.modifier) || 0
+        recurselist(reactionMods, (reaction, _k, _d) => {
+          const mod = parseInt(reaction.modifier) || 0
           const signal = mod > 0 ? '+' : '-'
           const source = `system.reactions.${_k}`
 
-          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
+          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${reaction.situation} @${source}`)
         })
       }
 

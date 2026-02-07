@@ -124,15 +124,15 @@ function handlePdf(links: string): void {
 
     const pdfPages: foundry.documents.JournalEntryPage[] = []
 
-    game.journal!.forEach(j => {
-      j.pages.forEach(page => {
+    game.journal!.forEach(journalEntry => {
+      journalEntry.pages.forEach(page => {
         if (page.type === 'pdf') pdfPages.push(page)
       })
     })
 
     let journalPage: foundry.documents.JournalEntryPage | undefined = undefined
 
-    if (pdfPages.length) journalPage = pdfPages.find(e => (e.system as any).code === book)
+    if (pdfPages.length) journalPage = pdfPages.find(pdfPage => (pdfPage.system as any).code === book)
 
     if (journalPage) {
       // @ts-expect-error pageNumber may not be typed in Foundry's API.

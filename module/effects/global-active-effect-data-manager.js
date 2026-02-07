@@ -40,7 +40,7 @@ export class GlobalActiveEffectDataControl {
 
   _createGlobalActiveEffectButton(controls) {
     if (this._shouldUseActiveEffectManagerPopup()) {
-      let tokenButton = controls.find(e => e.name == 'token')
+      let tokenButton = controls.find(control => control.name == 'token')
 
       if (tokenButton) {
         tokenButton.tools.push({

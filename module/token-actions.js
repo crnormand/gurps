@@ -130,7 +130,7 @@ export class TokenActions {
 
   async removeManeuverModifiers() {
     const allModifiers = await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')
-    const validModifiers = allModifiers.filter(e => !e.includes('#maneuver'))
+    const validModifiers = allModifiers.filter(modifierText => !modifierText.includes('#maneuver'))
 
     await this.actor.update({ 'system.conditions.usermods': validModifiers })
   }
@@ -240,13 +240,13 @@ export class TokenActions {
   _getInitialAim() {
     let currentAim = {}
 
-    recurselist(this.actor.system.ranged, (e, _k, _d) => {
+    recurselist(this.actor.system.ranged, (rangedAttack, _k, _d) => {
       currentAim[_k] = {
         aimBonus: 0,
-        acc: parseInt(e.acc),
-        uuid: e.uuid,
-        name: e.name,
-        originalName: e.originalName,
+        acc: parseInt(rangedAttack.acc),
+        uuid: rangedAttack.uuid,
+        name: rangedAttack.name,
+        originalName: rangedAttack.originalName,
         startAt: null,
         targetToken: null,
         key: `system.ranged.${_k}`,
@@ -259,16 +259,16 @@ export class TokenActions {
   _getInitialParry() {
     let currentParry = {}
 
-    recurselist(this.actor.system.melee, (e, _k, _d) => {
-      if (e.parry) {
+    recurselist(this.actor.system.melee, (meleeAttack, _k, _d) => {
+      if (meleeAttack.parry) {
         currentParry[_k] = {
           currentPenalty: 0,
-          uuid: e.uuid,
-          name: e.name,
-          originalName: e.originalName,
-          mode: e.mode,
+          uuid: meleeAttack.uuid,
+          name: meleeAttack.name,
+          originalName: meleeAttack.originalName,
+          mode: meleeAttack.mode,
           startAt: null,
-          basePenalty: e.baseParryPenalty,
+          basePenalty: meleeAttack.baseParryPenalty,
           key: `system.melee.${_k}`,
         }
       }
@@ -386,7 +386,7 @@ export class TokenActions {
    */
   async removeModifiers() {
     const allModifiers = (await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')) || []
-    const nonManeuverModifiers = allModifiers.filter(e => !e.includes('#maneuver'))
+    const nonManeuverModifiers = allModifiers.filter(modifierText => !modifierText.includes('#maneuver'))
 
     await this.actor.update({ 'system.conditions.usermods': nonManeuverModifiers })
   }
@@ -407,7 +407,7 @@ export class TokenActions {
     }
 
     const allModifiers = await [...foundry.utils.getProperty(this.actor, 'system.conditions.usermods')].filter(
-      e => !e.includes('#maneuver') && !e.includes('@eft:')
+      modifierText => !modifierText.includes('#maneuver') && !modifierText.includes('@eft:')
     )
 
     const maneuverModifiers = []
@@ -916,7 +916,9 @@ export class TokenActions {
     if (!this.lastManeuvers[this.currentTurn]) this.lastManeuvers[this.currentTurn] = this._getNewLastManeuvers()
     const markedEffects = this.lastManeuvers[this.currentTurn]?.nextTurnEffects || []
 
-    this.lastManeuvers[this.currentTurn].nextTurnEffects = markedEffects.filter(e => !effectNames.includes(e))
+    this.lastManeuvers[this.currentTurn].nextTurnEffects = markedEffects.filter(
+      markedEffectName => !effectNames.includes(markedEffectName)
+    )
     await this.save()
   }
 }

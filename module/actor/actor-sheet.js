@@ -638,8 +638,8 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       {
         name: 'Edit',
         icon: "<i class='fas fa-edit'></i>",
-        callback: e => {
-          let path = e.dataset.key
+        callback: noteElement => {
+          let path = noteElement.dataset.key
           let obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
 
           this.editNotes(this.actor, path, obj)
@@ -1022,7 +1022,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
           one: {
             label: 'Create',
             callback: async html => {
-              ;['notes', 'pageref', 'title'].forEach(e => (obj[e] = html.find(`.${e}`).val()))
+              ;['notes', 'pageref', 'title'].forEach(fieldName => (obj[fieldName] = html.find(`.${fieldName}`).val()))
               let save = html.find('.save') // Should only find in Note (or equipment)
 
               if (save) obj.save = save.is(':checked')
@@ -1076,9 +1076,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         item = game.items.get(dragData.id)
         break
       case 'JournalEntryPage': {
-        let j = game.journal.get(dragData.id)
+        let journalEntry = game.journal.get(dragData.id)
 
-        item = j.pages.get(dragData.uuid.split('.').at(-1))
+        item = journalEntry.pages.get(dragData.uuid.split('.').at(-1))
         break
       }
     }
@@ -1518,8 +1518,8 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   _makeHeaderMenu(html, cssclass, menuitems, eventname = 'contextmenu') {
-    eventname.split(' ').forEach(function (e) {
-      new GgaContextMenuV2(html[0], cssclass, menuitems, null, { eventName: e })
+    eventname.split(' ').forEach(function (eventName) {
+      new GgaContextMenuV2(html[0], cssclass, menuitems, null, { eventName: eventName })
     })
   }
 
@@ -2122,8 +2122,8 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeDeleteMenu(html, '.spellmenu', new Spell('???'), 'click')
     this.makeDeleteMenu(html, '.notemenu', new Note('???', true), 'contextmenu')
 
-    html.find('#body-plan').change(async e => {
-      let bodyplan = e.currentTarget.value
+    html.find('#body-plan').change(async event => {
+      let bodyplan = event.currentTarget.value
 
       if (bodyplan !== this.actor.system.additionalresources.bodyplan) {
         let hitlocationTable = hitlocationDictionary[bodyplan]

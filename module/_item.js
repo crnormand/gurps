@@ -40,22 +40,22 @@ export class GurpsItem extends Item {
     if (attackType !== 'both') attackTypes = [attackType]
 
     for (let at of attackTypes) {
-      recurselist(this.actor.system[at], (e, _k, _d) => {
+      recurselist(this.actor.system[at], (component, _k, _d) => {
         let key = undefined
 
-        if (!!actorComponentUUID && e.uuid === actorComponentUUID) {
-          key = this.actor._findSysKeyForId('uuid', e.uuid, at)
-        } else if (!!originalName && e.originalName === originalName) {
-          key = this.actor._findSysKeyForId('originalName', e.originalName, at)
-        } else if (!!currentName && e.name === currentName) {
-          key = this.actor._findSysKeyForId('name', e.name, at)
-        } else if (this.id === e.fromItem) {
-          key = this.actor._findSysKeyForId('fromItem', e.fromItem, at)
+        if (!!actorComponentUUID && component.uuid === actorComponentUUID) {
+          key = this.actor._findSysKeyForId('uuid', component.uuid, at)
+        } else if (!!originalName && component.originalName === originalName) {
+          key = this.actor._findSysKeyForId('originalName', component.originalName, at)
+        } else if (!!currentName && component.name === currentName) {
+          key = this.actor._findSysKeyForId('name', component.name, at)
+        } else if (this.id === component.fromItem) {
+          key = this.actor._findSysKeyForId('fromItem', component.fromItem, at)
         }
 
         if (key) {
           attacks.push({
-            component: e,
+            component,
             key,
           })
         }

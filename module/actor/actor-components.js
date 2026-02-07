@@ -1084,22 +1084,22 @@ export class Equipment extends Named {
     if (eqt.contains) {
       for (let key in eqt.contains) {
         // @ts-expect-error - contains entries are Equipment objects
-        let e = eqt.contains[key]
+        let containedEquipment = eqt.contains[key]
 
-        await Equipment.calcUpdate(actor, e, objkey + '.contains.' + key)
-        cs += e.costsum
-        ws += e.weightsum
+        await Equipment.calcUpdate(actor, containedEquipment, objkey + '.contains.' + key)
+        cs += containedEquipment.costsum
+        ws += containedEquipment.weightsum
       }
     }
 
     if (eqt.collapsed) {
       for (let key in eqt.collapsed) {
         // @ts-expect-error - collapsed entries are Equipment objects
-        let e = eqt.collapsed[key]
+        let collapsedEquipment = eqt.collapsed[key]
 
-        await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + key)
-        cs += e.costsum
-        ws += e.weightsum
+        await Equipment.calcUpdate(actor, collapsedEquipment, objkey + '.collapsed.' + key)
+        cs += collapsedEquipment.costsum
+        ws += collapsedEquipment.weightsum
       }
     }
 

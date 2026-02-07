@@ -265,8 +265,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     // TODO See if isPostureEffect can be moved to status.
     if (this.isPostureEffect(status)) {
       // If the status effect is a posture, remove all other postures first
-      const postureEffects = this.getAllActivePostureEffects().filter(e =>
-        e.statuses.find(status => status !== statusId)
+      const postureEffects = this.getAllActivePostureEffects().filter(postureEffect =>
+        postureEffect.statuses.find(effectStatus => effectStatus !== statusId)
       )
 
       for (const it of postureEffects) {
@@ -275,7 +275,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       await this.deleteEmbeddedDocuments(
         'ActiveEffect',
-        postureEffects.map(e => e.id!),
+        postureEffects.map(postureEffect => postureEffect.id!),
         { parent: this }
       )
     }
@@ -298,7 +298,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * NOTE: Both character and characterV2.
    */
   private getAllActivePostureEffects() {
-    return this.effects.filter(e => this.isPostureEffect(e))
+    return this.effects.filter(activeEffect => this.isPostureEffect(activeEffect))
   }
 
   /* ---------------------------------------- */
@@ -443,11 +443,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     // Legacy V1 handling.
     const allEffects = super.temporaryEffects
-    const maneuver = allEffects.find(e => e.isManeuver)
+    const maneuver = allEffects.find(activeEffect => activeEffect.isManeuver)
 
     if (!maneuver) return allEffects
 
-    const effects = allEffects.filter(e => !e.isManeuver)
+    const effects = allEffects.filter(activeEffect => !activeEffect.isManeuver)
 
     const visibility = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
 
@@ -1281,7 +1281,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * NOTE: Both character and characterV2.
    */
   isEffectActive(effect: ActiveEffect.Implementation | { id: string }): boolean {
-    return this.effects.some(e => e.id === effect.id)
+    return this.effects.some(activeEffect => activeEffect.id === effect.id)
   }
 
   /* ---------------------------------------- */
@@ -1409,13 +1409,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         // Split by /
         .split('/')
         // Apply ^ to each pattern
-        .map(e => new RegExp('^' + e, 'i'))
+        .map(patternFragment => new RegExp('^' + patternFragment, 'i'))
 
-      const carriedItem = this.modelV2.equipmentV2.carried.find((e: Item.OfType<'equipmentV2'>) =>
-        patterns.some(pattern => pattern.test(e.name))
+      const carriedItem = this.modelV2.equipmentV2.carried.find((equipmentItem: Item.OfType<'equipmentV2'>) =>
+        patterns.some(pattern => pattern.test(equipmentItem.name))
       )
-      const otherItem = this.modelV2.equipmentV2.other.find((e: Item.OfType<'equipmentV2'>) =>
-        patterns.some(pattern => pattern.test(e.name))
+      const otherItem = this.modelV2.equipmentV2.other.find((equipmentItem: Item.OfType<'equipmentV2'>) =>
+        patterns.some(pattern => pattern.test(equipmentItem.name))
       )
 
       const carriedResult: [Item.OfType<'equipmentV2'>, string] | null = carriedItem
@@ -1433,7 +1433,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const patterns = pattern
         .substring(1) // remove the ^ from the beginning of the string
         .split('/')
-        .map(e => new RegExp('^' + e, 'i')) // and apply it to each pattern
+        .map(patternFragment => new RegExp('^' + patternFragment, 'i')) // and apply it to each pattern
       /**
        * @type {any}
        */
@@ -1487,7 +1487,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async updateEqtCountV2(id: string, count: number) {
     if (!this.isOfType('characterV2', 'enemy')) return null
 
-    const equipment = this.modelV2.allEquipmentV2.find(e => e.id === id)
+    const equipment = this.modelV2.allEquipmentV2.find(equipmentItem => equipmentItem.id === id)
     const updateData: Record<string, any> = { _id: id, system: { eqt: { count } } }
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
@@ -1965,7 +1965,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const note = foundry.utils.getProperty(this, path) as NoteV1
       const item = note.noteV2
       const array = foundry.utils.deepClone(this.system._source.allNotes)
-      const index = array.findIndex(e => e.id === item.id)
+      const index = array.findIndex(noteSource => noteSource.id === item.id)
 
       if (index !== -1) {
         array[index] = { ...array[index], ...obj }
@@ -2727,8 +2727,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       let atLeastOne = false
 
       for (const i of orig) {
-        // @ts-expect-error: equipment item type not registering correctly
-        if (!i.system.eqt!.parentuuid || good.find(e => e.system.eqt!.uuid == i.system.eqt!.parentuuid)) {
+        const equipmentParentUuid = (i as any).system.eqt!.parentuuid
+
+        if (
+          !equipmentParentUuid ||
+          good.find(existingEquipmentItem => (existingEquipmentItem as any).system.eqt!.uuid == equipmentParentUuid)
+        ) {
           atLeastOne = true
           good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
         } else left.push(i)
@@ -2874,49 +2878,49 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       }
     }
 
-    recurselist(data.skills as Record<string, Skill>, (e, _k, _d) => {
-      if (e.import) e.level = parseInt(e.import)
+    recurselist(data.skills as Record<string, Skill>, (skill, _k, _d) => {
+      if (skill.import) skill.level = parseInt(skill.import)
     })
 
-    recurselist(data.spells as Record<string, Spell>, (e, _k, _d) => {
-      if (e.import) e.level = parseInt(e.import)
+    recurselist(data.spells as Record<string, Spell>, (spell, _k, _d) => {
+      if (spell.import) spell.level = parseInt(spell.import)
     })
 
     // we don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future
-    recurselist(data.melee, (e, _k, _d) => {
-      if (e.import) {
-        e.level = parseInt(e.import)
+    recurselist(data.melee, (meleeWeapon, _k, _d) => {
+      if (meleeWeapon.import) {
+        meleeWeapon.level = parseInt(meleeWeapon.import)
 
-        if (!isNaN(parseInt(e.parry))) {
+        if (!isNaN(parseInt(meleeWeapon.parry))) {
           // allows for '14f' and 'no'
-          const base = 3 + Math.floor(e.level / 2)
-          const bonus = parseInt(e.parry) - base
+          const base = 3 + Math.floor(meleeWeapon.level / 2)
+          const bonus = parseInt(meleeWeapon.parry) - base
 
           if (bonus != 0) {
-            e.parrybonus = (bonus > 0 ? '+' : '') + bonus
+            meleeWeapon.parrybonus = (bonus > 0 ? '+' : '') + bonus
           }
         }
 
-        if (!isNaN(parseInt(e.block))) {
-          const base = 3 + Math.floor(e.level / 2)
-          const bonus = parseInt(e.block) - base
+        if (!isNaN(parseInt(meleeWeapon.block))) {
+          const base = 3 + Math.floor(meleeWeapon.level / 2)
+          const bonus = parseInt(meleeWeapon.block) - base
 
           if (bonus != 0) {
-            e.blockbonus = (bonus > 0 ? '+' : '') + bonus
+            meleeWeapon.blockbonus = (bonus > 0 ? '+' : '') + bonus
           }
         }
       } else {
-        e.parrybonus = e.parry
-        e.blockbonus = e.block
+        meleeWeapon.parrybonus = meleeWeapon.parry
+        meleeWeapon.blockbonus = meleeWeapon.block
       }
     })
 
-    recurselist(data.ranged, (e, _k, _d) => {
-      e.level = parseInt(e.import)
+    recurselist(data.ranged, (rangedWeapon, _k, _d) => {
+      rangedWeapon.level = parseInt(rangedWeapon.import)
     })
 
-    recurselist(data.hitlocations, (e, _k, _d) => {
-      if (!e.dr) e.dr = e.import
+    recurselist(data.hitlocations, (hitLocation, _k, _d) => {
+      if (!hitLocation.dr) hitLocation.dr = hitLocation.import
     })
   }
 
@@ -3054,7 +3058,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (found) {
       // Use existing actor component uuid
       // @ts-expect-error - dynamic property access on modelV1
-      const existingActorComponent = (this.modelV1[key] as Record<string, any>).find(e => e.fromItem === parentItem._id)
+      const existingActorComponent = (this.modelV1[key] as Record<string, any>).find(
+        (actorComponent: any) => actorComponent.fromItem === parentItem._id
+      )
 
       childItemData.uuid = existingActorComponent?.uuid || ''
     }
@@ -3132,9 +3138,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const paths = [this.modelV1.melee, this.modelV1.ranged]
 
     for (const path of paths) {
-      recurselist(path, (e, _k, _d) => {
-        if (e.itemModifiers) {
-          const allEffects = e.itemModifiers.split('\n').map((mod: string) => mod.trim())
+      recurselist(path, (actorComponent, _k, _d) => {
+        if (actorComponent.itemModifiers) {
+          const allEffects = actorComponent.itemModifiers.split('\n').map((mod: string) => mod.trim())
 
           for (const effect of allEffects) {
             const fullDesc = `${effect} @system.${path}.${_k}`
@@ -3326,38 +3332,42 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
               }
             }) // end melee
 
-            recurselist(data.ranged, (e, _k, _d) => {
-              e.level = pi(e.level)
-              if (link.action.type == 'attribute' && link.action.attrkey == 'DX') e.level += pi(link.action.mod)
+            recurselist(data.ranged, (rangedWeapon, _k, _d) => {
+              rangedWeapon.level = pi(rangedWeapon.level)
+              if (link.action.type == 'attribute' && link.action.attrkey == 'DX')
+                rangedWeapon.level += pi(link.action.mod)
 
               if (link.action.type == 'attack' && !!link.action.isRanged) {
-                if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
+                if (rangedWeapon.name.match(makeRegexPatternFrom(link.action.name, false)))
+                  rangedWeapon.level += pi(link.action.mod)
               }
             }) // end ranged
 
-            recurselist(data.skills, (e, _k, _d) => {
-              e.level = pi(e.level)
+            recurselist(data.skills, (skill, _k, _d) => {
+              skill.level = pi(skill.level)
 
               if (link.action.type == 'attribute') {
                 // skills affected by attribute changes
-                if (e.relativelevel?.toUpperCase().startsWith(link.action.attrkey)) e.level += pi(link.action.mod)
+                if (skill.relativelevel?.toUpperCase().startsWith(link.action.attrkey))
+                  skill.level += pi(link.action.mod)
               }
 
               if (link.action.type == 'skill-spell' && !link.action.isSpellOnly) {
-                if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
+                if (skill.name.match(makeRegexPatternFrom(link.action.name, false))) skill.level += pi(link.action.mod)
               }
             }) // end skills
 
-            recurselist(data.spells, (e, _k, _d) => {
-              e.level = pi(e.level)
+            recurselist(data.spells, (spell, _k, _d) => {
+              spell.level = pi(spell.level)
 
               if (link.action.type == 'attribute') {
                 // spells affected by attribute changes
-                if (e.relativelevel?.toUpperCase().startsWith(link.action.attrkey)) e.level += pi(link.action.mod)
+                if (spell.relativelevel?.toUpperCase().startsWith(link.action.attrkey))
+                  spell.level += pi(link.action.mod)
               }
 
               if (link.action.type == 'skill-spell' && !link.action.isSkillOnly) {
-                if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
+                if (spell.name.match(makeRegexPatternFrom(link.action.name, false))) spell.level += pi(link.action.mod)
               }
             }) // end spells
 
@@ -3390,9 +3400,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
               locpatterns = locs.map(loc => new RegExp(makeRegexPatternFrom(loc), 'i'))
             }
 
-            recurselist(data.hitlocations, (e, _k, _d) => {
-              if (!locpatterns || locpatterns.find(pattern => !!e.where && e.where.match(pattern)) != null) {
-                let dr = e.dr ?? ''
+            recurselist(data.hitlocations, (hitLocation, _k, _d) => {
+              if (
+                !locpatterns ||
+                locpatterns.find(pattern => !!hitLocation.where && hitLocation.where.match(pattern)) != null
+              ) {
+                let dr = hitLocation.dr ?? ''
 
                 dr += ''
                 const match = dr.match(/(\d+) *([/|]) *(\d+)/) // check for split DR 5|3 or 5/3
@@ -3401,10 +3414,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
                   dr = parseInt(match[1]) + delta
                   const dr2 = parseInt(match[3]) + delta
 
-                  e.dr = dr + match[2] + dr2
+                  hitLocation.dr = dr + match[2] + dr2
                 } else if (!isNaN(parseInt(dr))) {
-                  e.dr = parseInt(dr) + delta
-                  if (!!e.drCap && e.dr > e.drCap) e.dr = e.drCap
+                  hitLocation.dr = parseInt(dr) + delta
+                  if (!!hitLocation.drCap && hitLocation.dr > hitLocation.drCap) hitLocation.dr = hitLocation.drCap
                 }
                 //console.warn(e.where, e.dr)
               }
@@ -3529,8 +3542,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const keys = ['melee', 'ranged', 'ads', 'spells', 'skills']
 
       for (const key of keys) {
-        recurselist(data.system[key], e => {
-          if (!e.uuid) e.uuid = foundry.utils.randomID(16)
+        recurselist(data.system[key], actorComponentEntry => {
+          if (!actorComponentEntry.uuid) actorComponentEntry.uuid = foundry.utils.randomID(16)
         })
       }
 
@@ -3814,8 +3827,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * Convert Item feature OTF formulas into actual skill levels.
    */
   private _collapseQuantumEq(list: object, isMelee = false) {
-    recurselist(list, async e => {
-      let otf = e.otf
+    recurselist(list, async actorComponent => {
+      let otf = actorComponent.otf
 
       if (otf) {
         const match = otf.match(/\[(.*)\]/)
@@ -3824,7 +3837,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         if (otf.match(/^ *\d+ *$/)) {
           // just a number
-          e.import = parseInt(otf)
+          actorComponent.import = parseInt(otf)
         } else {
           const action = parselink(otf)
 
@@ -3832,37 +3845,37 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
             this.ignoreRender = true
             action.action.calcOnly = true
             GURPS.performAction(action.action, this).then(ret => {
-              e.level = ret.target
+              actorComponent.level = ret.target
 
               if (isMelee) {
-                if (!isNaN(parseInt(e.parry))) {
-                  const parry = '' + e.parry
+                if (!isNaN(parseInt(actorComponent.parry))) {
+                  const parry = '' + actorComponent.parry
                   let match = parry.match(/([+-]\d+)(.*)/)
 
                   // @ts-expect-error - assigning array literal to match result type
                   if (!match && parry.trim() == '0') match = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (match) {
-                    e.parrybonus = parseInt(match[1])
-                    e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
+                    actorComponent.parrybonus = parseInt(match[1])
+                    actorComponent.parry = actorComponent.parrybonus + 3 + Math.floor(actorComponent.level / 2)
                   }
 
-                  if (!!match && !!match[2]) e.parry = `${e.parry}${match[2]}`
+                  if (!!match && !!match[2]) actorComponent.parry = `${actorComponent.parry}${match[2]}`
                 }
 
-                if (!isNaN(parseInt(e.block))) {
-                  const block = '' + e.block
+                if (!isNaN(parseInt(actorComponent.block))) {
+                  const block = '' + actorComponent.block
                   let match = block.match(/([+-]\d+)(.*)/)
 
                   // @ts-expect-error - assigning array literal to match result type
                   if (!match && block.trim() == '0') match = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
 
                   if (match) {
-                    e.blockbonus = parseInt(match[1])
-                    e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
+                    actorComponent.blockbonus = parseInt(match[1])
+                    actorComponent.block = actorComponent.blockbonus + 3 + Math.floor(actorComponent.level / 2)
                   }
 
-                  if (!!match && !!match[2]) e.block = `${e.block}${match[2]}`
+                  if (!!match && !!match[2]) actorComponent.block = `${actorComponent.block}${match[2]}`
                 }
               }
             })
@@ -4276,8 +4289,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       found = false
       const list = foundry.utils.getProperty(this, key) as any
 
-      recurselist(list, (e, key, _d) => {
-        if (e.fromItem === itemid) found = key
+      recurselist(list, (actorComponent, entryKey, _d) => {
+        if (actorComponent.fromItem === itemid) found = entryKey
       })
 
       if (found) {
@@ -4451,8 +4464,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const itemMap: Record<string, any> = {}
 
     if (update) {
-      recurselist(actorLocations, (e, _k, _d) => {
-        e.drItem = 0
+      recurselist(actorLocations, (hitLocation, _k, _d) => {
+        hitLocation.drItem = 0
       })
     }
 
@@ -4475,11 +4488,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
             const locs = splitArgs(match[2])
 
             locPatterns = locs.map(loc => new RegExp(makeRegexPatternFrom(loc), 'i'))
-            recurselist(actorLocations, (e, _k, _d) => {
-              if (!locPatterns || locPatterns.find(pattern => !!e.where && e.where.match(pattern)) != null) {
-                if (update) e.drItem += delta
-                itemMap[e.where] = {
-                  ...itemMap[e.key],
+            recurselist(actorLocations, (hitLocation, _k, _d) => {
+              if (
+                !locPatterns ||
+                locPatterns.find(pattern => !!hitLocation.where && hitLocation.where.match(pattern)) != null
+              ) {
+                if (update) hitLocation.drItem += delta
+                itemMap[hitLocation.where] = {
+                  ...itemMap[hitLocation.key],
                   [item.name]: delta,
                 }
               }

@@ -601,7 +601,7 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
 
   getChildren(list: GCATrait[]): GCATrait[] {
     const children: GCATrait[] = []
-    const childKeyList = this.childkeylist?.split(',').map(e => e.trim()) ?? []
+    const childKeyList = this.childkeylist?.split(',').map(childKey => childKey.trim()) ?? []
 
     for (const childKey of childKeyList) {
       const child = list.find(trait => `k${trait.$idkey}` === childKey)

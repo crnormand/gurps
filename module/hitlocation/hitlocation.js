@@ -455,13 +455,13 @@ export class HitLocation {
     if (match) {
       let location = parseInt(match[2])
 
-      Object.keys(table).forEach(e => {
-        if (e.startsWith(match[1])) {
-          let indexes = convertRollStringToArrayOfInt(e.split(' ')[1])
+      Object.keys(table).forEach(tableKey => {
+        if (tableKey.startsWith(match[1])) {
+          let indexes = convertRollStringToArrayOfInt(tableKey.split(' ')[1])
 
           if (indexes.includes(location)) {
-            lbl = e
-            entry = table[e]
+            lbl = tableKey
+            entry = table[tableKey]
           }
         }
       })
@@ -471,9 +471,9 @@ export class HitLocation {
   }
 
   setEquipment(frmttext) {
-    let e = extractP(frmttext)
+    let equipmentText = extractP(frmttext)
 
-    this.equipment = e.trim().replace('\n', ', ')
+    this.equipment = equipmentText.trim().replace('\n', ', ')
   }
 
   /**
@@ -515,10 +515,10 @@ export var getHitLocationTableNames = function () {
   let keys = []
   var last
 
-  Object.keys(hitlocationDictionary).forEach(e => {
-    let table = hitlocationDictionary[e]
+  Object.keys(hitlocationDictionary).forEach(hitLocationTableName => {
+    let table = hitlocationDictionary[hitLocationTableName]
 
-    if (table != last) keys.push(e)
+    if (table != last) keys.push(hitLocationTableName)
     last = table
   })
 

@@ -121,8 +121,8 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
   get allEquippedWeapons(): GcsWeapon[] {
     const weapons: GcsWeapon[] = []
 
-    ;[...this.allTraits, ...this.allSkills, ...this.allSpells, ...this.allCarriedEquipment].forEach(e => {
-      if (!e.isEnabled) weapons.push(...e.weaponItems)
+    ;[...this.allTraits, ...this.allSkills, ...this.allSpells, ...this.allCarriedEquipment].forEach(gcsItem => {
+      if (!gcsItem.isEnabled) weapons.push(...gcsItem.weaponItems)
     })
 
     return weapons

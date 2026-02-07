@@ -575,9 +575,9 @@ if (!globalThis.GURPS) {
     dragdrop({ action }) {
       switch (action.link) {
         case 'JournalEntry': {
-          let j = game.journal?.get(action.id)
+          let journalEntry = game.journal?.get(action.id)
 
-          if (j) j.sheet?.render(true)
+          if (journalEntry) journalEntry.sheet?.render(true)
 
           return true
         }
@@ -839,7 +839,7 @@ if (!globalThis.GURPS) {
         } else {
           const token = actor.getActiveTokens()[0]
 
-          actor.canRoll(action, token).then(e => (canRoll = e.canRoll))
+          actor.canRoll(action, token).then(rollPermission => (canRoll = rollPermission.canRoll))
         }
       }
 
@@ -1939,8 +1939,8 @@ if (!globalThis.GURPS) {
     while (Object.hasOwn(object, zeroFill(i))) i++
     i = i - 1
 
-    for (let j = i; j >= start; j--) {
-      object[zeroFill(j + 1)] = object[zeroFill(j)]
+    for (let index = i; index >= start; index--) {
+      object[zeroFill(index + 1)] = object[zeroFill(index)]
     }
 
     object[key] = newobj
@@ -2007,8 +2007,8 @@ if (!globalThis.GURPS) {
 
       if (!!src && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
         // if an optional src is provided (which == actor.system) assume we are checking attacks to see if they are equipped
-        recurselist(src.equipment.carried, e => {
-          if (eqt.name.startsWith(e.name) && !e.equipped) display = false
+        recurselist(src.equipment.carried, carriedEquipment => {
+          if (eqt.name.startsWith(carriedEquipment.name) && !carriedEquipment.equipped) display = false
         })
       }
 
@@ -2441,7 +2441,9 @@ if (!globalThis.GURPS) {
       if (resp.type == 'updatebucket') {
         if (resp.users.includes(game.user.id)) {
           if (resp.add) {
-            resp.bucket.modifierList.forEach(e => GURPS.ModifierBucket.addModifier(e.mod, e.desc))
+            resp.bucket.modifierList.forEach(bucketModifier =>
+              GURPS.ModifierBucket.addModifier(bucketModifier.mod, bucketModifier.desc)
+            )
           } else GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
         }
       }
@@ -2580,8 +2582,10 @@ if (!globalThis.GURPS) {
     // This system setting must be built AFTER all of the character sheets have been registered
     let sheets = /** @type {Record<string,string>} */ ({})
 
-    Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
-      if (e.id.toString().startsWith(GURPS.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
+    Object.values(CONFIG.Actor.sheetClasses['character']).forEach(sheetClass => {
+      if (sheetClass.id.toString().startsWith(GURPS.SYSTEM_NAME) && sheetClass.id != 'gurps.GurpsActorSheet') {
+        sheets[sheetClass.label] = sheetClass.label
+      }
     })
     game.settings.register(GURPS.SYSTEM_NAME, Settings.SETTING_ALT_SHEET, {
       name: game.i18n.localize('GURPS.settingSheetDetail'),

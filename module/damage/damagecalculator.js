@@ -278,7 +278,9 @@ export class CompositeDamageCalculator {
    * Override at the individual dice roll level.
    */
   get basicDamage() {
-    if (this._viewId === 'all') return this._calculators.reduce((sum, e) => sum + e._basicDamage, 0)
+    if (this._viewId === 'all') {
+      return this._calculators.reduce((sum, calculator) => sum + calculator._basicDamage, 0)
+    }
 
     return this._calculators[this._viewId].basicDamage
   }
@@ -356,8 +358,8 @@ export class CompositeDamageCalculator {
         if (applyAt === 'AtNextTurn') {
           isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
         } else {
-          isReady = defenderToken.actor.effects.find(e =>
-            e.statuses.find(status => status === `${effect.type}${effect.amount}`)
+          isReady = defenderToken.actor.effects.find(activeEffect =>
+            activeEffect.statuses.find(status => status === `${effect.type}${effect.amount}`)
           )
         }
 
@@ -380,8 +382,12 @@ export class CompositeDamageCalculator {
           case 'headvitalshit':
           case 'majorwound':
           case 'crippling': {
-            const stunIsReady = defenderToken.actor.effects.find(e => e.statuses.find(status => status === 'stun'))
-            const proneIsReady = defenderToken.actor.effects.find(e => e.statuses.find(status => status === 'prone'))
+            const stunIsReady = defenderToken.actor.effects.find(activeEffect =>
+              activeEffect.statuses.find(status => status === 'stun')
+            )
+            const proneIsReady = defenderToken.actor.effects.find(activeEffect =>
+              activeEffect.statuses.find(status => status === 'prone')
+            )
 
             return {
               ...effect,
@@ -412,7 +418,9 @@ export class CompositeDamageCalculator {
           }
 
           case 'knockback':
-            isReady = defenderToken.actor.effects.find(e => e.statuses.find(status => status === 'prone'))
+            isReady = defenderToken.actor.effects.find(activeEffect =>
+              activeEffect.statuses.find(status => status === 'prone')
+            )
 
             return {
               ...effect,
@@ -925,10 +933,10 @@ export class CompositeDamageCalculator {
     let tracker = null
     let index = null
 
-    trackers.forEach((e, i) => {
-      if (e.alias === this._applyTo) {
+    trackers.forEach((resourceTracker, i) => {
+      if (resourceTracker.alias === this._applyTo) {
         index = i
-        tracker = e
+        tracker = resourceTracker
 
         return
       }

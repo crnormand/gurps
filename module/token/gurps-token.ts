@@ -51,7 +51,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
       if (activeManeuvers.length > 1) {
         await this.actor?.deleteEmbeddedDocuments(
           'ActiveEffect',
-          (activeManeuvers as { id: string }[]).map(e => e.id!)
+          (activeManeuvers as { id: string }[]).map(activeManeuver => activeManeuver.id!)
         )
       }
 
@@ -88,7 +88,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
 
     this.actor?.deleteEmbeddedDocuments(
       'ActiveEffect',
-      maneuvers.map(e => e.id!)
+      maneuvers.map(activeManeuver => activeManeuver.id!)
     )
   }
 }

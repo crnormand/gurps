@@ -4,7 +4,7 @@
  * @returns An array of numbers representing the range.
  */
 export function convertRangeTextToArray(rangeText: string): number[] {
-  const ranges = rangeText.split(',').map(e => e.trim())
+  const ranges = rangeText.split(',').map(token => token.trim())
   let result: number[] = []
 
   for (const range of ranges) {

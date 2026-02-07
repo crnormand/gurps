@@ -92,8 +92,8 @@ export class _Collection extends Map {
    * ```
    */
   forEach(fn) {
-    for (const e of this.values()) {
-      fn(e)
+    for (const entry of this.values()) {
+      fn(entry)
     }
   }
 
@@ -143,7 +143,7 @@ export class _Collection extends Map {
    * ```
    */
   getName(name, { strict = false } = {}) {
-    const entry = this.find(e => e.name === name)
+    const entry = this.find(element => element.name === name)
 
     if (strict && entry === undefined) {
       throw new Error(`An entry with name ${name} does not exist in the collection`)
@@ -231,6 +231,6 @@ export class _Collection extends Map {
    * @returns {object[]}  An array of contained values
    */
   toJSON() {
-    return this.map(e => (e.toJSON ? e.toJSON() : e))
+    return this.map(element => (element.toJSON ? element.toJSON() : element))
   }
 }

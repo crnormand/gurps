@@ -410,8 +410,8 @@ Portrait will not be imported.`
     const currentBodyPlan = this.actor.system.additionalresources.bodyplan
 
     // Remove derived values / all values not proper to the hit location on its own.
-    const currentHitLocations = this.actor.system.hitlocationsV2.map(e => {
-      const location = e.toObject() as AnyMutableObject
+    const currentHitLocations = this.actor.system.hitlocationsV2.map(hitLocation => {
+      const location = hitLocation.toObject() as AnyMutableObject
 
       delete location._damageType
       delete location._dr
@@ -597,25 +597,25 @@ Portrait will not be imported.`
     const level = item instanceof GcsTrait ? (item.levels ?? 0) : 1
 
     system.reactions = item.features
-      ?.filter(e => e.type === 'reaction_bonus')
-      .map(e => {
-        const amount = e.per_level ? Number(e.amount) * level : Number(e.amount)
+      ?.filter(feature => feature.type === 'reaction_bonus')
+      .map(feature => {
+        const amount = feature.per_level ? Number(feature.amount) * level : Number(feature.amount)
 
         return {
           modifier: amount,
-          situation: String(e.situation),
+          situation: String(feature.situation),
           modifierTags: '',
         }
       })
 
     system.conditionalmods = item.features
-      ?.filter(e => e.type === 'conditional_modifier')
-      .map(e => {
-        const amount = e.per_level ? Number(e.amount) * level : Number(e.amount)
+      ?.filter(feature => feature.type === 'conditional_modifier')
+      .map(feature => {
+        const amount = feature.per_level ? Number(feature.amount) * level : Number(feature.amount)
 
         return {
           modifier: amount,
-          situation: String(e.situation),
+          situation: String(feature.situation),
           modifierTags: '',
         }
       })

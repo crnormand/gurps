@@ -180,13 +180,13 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   // TODO I'm not sure what this is trying to do.
   get children(): Item.Implementation[] {
-    return this.contents.filter(e => this.metadata.childTypes.includes(e.type))
+    return this.contents.filter(contentItem => this.metadata.childTypes.includes(contentItem.type))
   }
 
   /* ---------------------------------------- */
 
   get modifiers(): Item.Implementation[] {
-    return this.contents.filter(e => this.metadata.modifierTypes.includes(e.type))
+    return this.contents.filter(contentItem => this.metadata.modifierTypes.includes(contentItem.type))
   }
 
   /* ---------------------------------------- */

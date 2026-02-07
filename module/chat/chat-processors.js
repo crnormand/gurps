@@ -291,7 +291,7 @@ class ReimportChatProcessor extends ChatProcessor {
     }
 
     if (actornames.length == 0) actors = allPlayerActors
-    actors.forEach(e => new ActorImporter(e).importActor())
+    actors.forEach(actor => new ActorImporter(actor).importActor())
   }
 }
 
@@ -721,9 +721,13 @@ class SelectChatProcessor extends ChatProcessor {
         }) || []
 
       if (match[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
-      let actors = list.filter(e => e?.name?.match(pat))
+      let actors = list.filter(actor => actor?.name?.match(pat))
       let msg =
-        game.i18n.localize('GURPS.chatMoreThanOneActor') + " '" + match[3] + "': " + actors.map(e => e.name).join(', ')
+        game.i18n.localize('GURPS.chatMoreThanOneActor') +
+        " '" +
+        match[3] +
+        "': " +
+        actors.map(actor => actor.name).join(', ')
 
       if (actors.length == 0 || actors.length > 1) {
         // No good match on actors, try token names
@@ -733,7 +737,7 @@ class SelectChatProcessor extends ChatProcessor {
           " '" +
           match[3] +
           "': " +
-          actors.map(e => e.name).join(', ')
+          actors.map(token => token.name).join(', ')
         actors = actors.map(token => token.actor)
       }
 
@@ -1172,7 +1176,7 @@ class ShowChatProcessor extends ChatProcessor {
           return first.name > second.name ? 1 : -1
         }
 
-      output.sort(sortfunc).forEach(e => this.priv(e.text))
+      output.sort(sortfunc).forEach(outputEntry => this.priv(outputEntry.text))
     }
   }
 }
@@ -1259,8 +1263,8 @@ class ManeuverChatProcessor extends ChatProcessor {
     if (!this.match[2]) {
       this.priv(game.i18n.localize('GURPS.chatHelpManeuver'))
       Object.values(Maneuvers.getAll())
-        .map(e => game.i18n.localize(e.data.label))
-        .forEach(e => this.priv(e))
+        .map(maneuver => game.i18n.localize(maneuver.data.label))
+        .forEach(maneuverLabel => this.priv(maneuverLabel))
 
       return true
     }
@@ -1272,7 +1276,9 @@ class ManeuverChatProcessor extends ChatProcessor {
     }
 
     let regex = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
-    let match = Object.values(Maneuvers.getAll()).find(e => game.i18n.localize(e.data.label).toLowerCase().match(regex))
+    let match = Object.values(Maneuvers.getAll()).find(maneuver =>
+      game.i18n.localize(maneuver.data.label).toLowerCase().match(regex)
+    )
 
     if (!GURPS.LastActor) {
       ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
@@ -1321,7 +1327,7 @@ class RepeatChatProcessor extends ChatProcessor {
   }
   async repeatLoop(actor, anim, delay) {
     if (delay < 20) delay = delay * 1000
-    const token = canvas.tokens.placeables.find(e => e.actor == actor)
+    const token = canvas.tokens.placeables.find(placeableToken => placeableToken.actor == actor)
 
     if (!token) {
       ui.notifications.warn("/repeat only works on 'linked' actors, " + actor.name)
@@ -1434,7 +1440,7 @@ class DRChatProcessor extends ChatProcessor {
     }
 
     let drFormula = this.match[2]
-    let drLocations = this.match[3] ? this.match[3].split(',').map(e => e.toLowerCase()) : []
+    let drLocations = this.match[3] ? this.match[3].split(',').map(location => location.toLowerCase()) : []
     let actor = GURPS.LastActor
 
     const { msg = '', warn = '', info = '' } = await actor.changeDR(drFormula, drLocations)

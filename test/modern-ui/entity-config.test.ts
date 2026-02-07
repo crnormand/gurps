@@ -73,7 +73,7 @@ describe('entityConfigurations', () => {
     ['Melee', 'system.melee', 'editMelee', 'GURPS.melee'],
     ['Ranged', 'system.ranged', 'editRanged', 'GURPS.ranged'],
   ])('config for %s has correct path and edit method', (entityName, expectedPath, expectedMethod, expectedLocale) => {
-    const config = entityConfigurations.find(e => e.entityName === entityName)
+    const config = entityConfigurations.find(entity => entity.entityName === entityName)
 
     expect(config).toBeDefined()
     expect(config!.path).toBe(expectedPath)
@@ -89,7 +89,7 @@ describe('entityConfigurations', () => {
 
   describe('createArgs', () => {
     test('skill createArgs returns name and level', () => {
-      const config = entityConfigurations.find(e => e.entityName === 'Skill')
+      const config = entityConfigurations.find(entity => entity.entityName === 'Skill')
       const args = config!.createArgs!()
 
       expect(args).toHaveLength(2)
@@ -98,7 +98,7 @@ describe('entityConfigurations', () => {
     })
 
     test('spell createArgs returns name and level', () => {
-      const config = entityConfigurations.find(e => e.entityName === 'Spell')
+      const config = entityConfigurations.find(entity => entity.entityName === 'Spell')
       const args = config!.createArgs!()
 
       expect(args).toHaveLength(2)
@@ -107,7 +107,7 @@ describe('entityConfigurations', () => {
     })
 
     test('melee createArgs returns name, level, and damage', () => {
-      const config = entityConfigurations.find(e => e.entityName === 'Melee')
+      const config = entityConfigurations.find(entity => entity.entityName === 'Melee')
       const args = config!.createArgs!()
 
       expect(args).toHaveLength(3)
@@ -117,7 +117,7 @@ describe('entityConfigurations', () => {
     })
 
     test('ranged createArgs returns name, level, and damage', () => {
-      const config = entityConfigurations.find(e => e.entityName === 'Ranged')
+      const config = entityConfigurations.find(entity => entity.entityName === 'Ranged')
       const args = config!.createArgs!()
 
       expect(args).toHaveLength(3)
@@ -127,7 +127,7 @@ describe('entityConfigurations', () => {
     })
 
     test('trait has no createArgs', () => {
-      const config = entityConfigurations.find(e => e.entityName === 'Trait')
+      const config = entityConfigurations.find(entity => entity.entityName === 'Trait')
 
       expect(config!.createArgs).toBeUndefined()
     })

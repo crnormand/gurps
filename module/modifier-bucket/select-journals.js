@@ -53,8 +53,8 @@ export default class ModifierBucketJournals extends FormApplication {
   get _htmlJournals() {
     let htmlJournals = []
 
-    game.journal.forEach(j => {
-      j.pages.forEach(page => {
+    game.journal.forEach(journalEntry => {
+      journalEntry.pages.forEach(page => {
         if (page.type === 'text') htmlJournals.push(page)
       })
     })
