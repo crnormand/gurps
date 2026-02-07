@@ -986,7 +986,6 @@ export class ActorImporter {
 
             melee.mode = readXmlText(meleeModeJson.name)
             melee.import = readXmlText(meleeModeJson.level)
-            melee.damage = buildDamageOutputGCA(meleeModeJson)
             melee.reach = readXmlText(meleeModeJson.reach)
             melee.parry = readXmlText(meleeModeJson.parry)
             melee.block = readXmlText(meleeModeJson.block)
@@ -1040,7 +1039,6 @@ export class ActorImporter {
 
             ranged.mode = readXmlText(rangedModeJson.name)
             ranged.import = readXmlText(rangedModeJson.level)
-            ranged.damage = buildDamageOutputGCA(rangedModeJson)
             ranged.acc = readXmlText(rangedModeJson.acc)
             let match = ranged.acc.trim().match(/(\d+)([+-]\d+)/)
 
@@ -2478,7 +2476,6 @@ export class ActorImporter {
             melee.pageRef(i.reference || '')
             melee.mode = weapon.usage || ''
             melee.import = weapon.calc?.level?.toString() || '0'
-            melee.damage = buildDamageOutputGCS(weapon)
             melee.reach = weapon.reach || ''
             melee.parry = weapon.calc?.parry || ''
             melee.block = weapon.calc?.block || ''
@@ -2501,7 +2498,6 @@ export class ActorImporter {
             ranged.pageRef(i.reference || '')
             ranged.mode = weapon.usage || ''
             ranged.import = weapon.calc?.level || '0'
-            ranged.damage = buildDamageOutputGCS(weapon)
             ranged.acc = weapon.accuracy || ''
             let match = ranged.acc.trim().match(/(\d+)([+-]\d+)/)
 
