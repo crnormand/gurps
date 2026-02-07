@@ -91,7 +91,7 @@ export class ResourceTrackerManager extends FormApplication {
     const templates = ResourceTrackerManager.getAllTemplates().filter(template => template.autoapply)
 
     for (const template of templates) {
-      if (!currentTrackers.some(template => template.name === template.tracker.name)) {
+      if (!currentTrackers.some(tracker => tracker.name === template.tracker.name)) {
         newTrackers.push(template)
       }
     }

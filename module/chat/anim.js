@@ -118,15 +118,15 @@ export class AnimChatProcessor extends ChatProcessor {
       let best = 0
 
       for (const file of effect.files) {
-        let fileWidth = fileWidth(file)
-        let scale = distance / (fileWidth.width / stretchfactor)
+        let fileInfo = fileWidth(file)
+        let scale = distance / (fileInfo.width / stretchfactor)
 
-        fileWidth.scale = scale
-        files.push(fileWidth)
+        fileInfo.scale = scale
+        files.push(fileInfo)
 
         if (scale >= best && scale < 1.0) {
           best = scale
-          bestWidth = fileWidth.width
+          bestWidth = fileInfo.width
         }
       }
 

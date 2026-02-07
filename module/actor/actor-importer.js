@@ -1496,9 +1496,9 @@ export class ActorImporter {
     let rs = {}
     let index = 0
 
-    mods.forEach((/** @type {string} */ mod) => {
-      if (mod) {
-        let text = mod.trim()
+    mods.forEach((/** @type {string} */ modText) => {
+      if (modText) {
+        let text = modText.trim()
         let i = text.indexOf(' ')
         let mod = text.substring(0, i)
         let sit = text.substring(i + 1)

@@ -264,13 +264,13 @@ class ModifierStack {
    * @returns {Modifier}
    */
   _makeModifier(mod, reason, tagged) {
-    let displayMod = displayMod(mod)
+    let display = displayMod(mod)
 
     return {
-      mod: displayMod,
-      modint: parseInt(displayMod),
+      mod: display,
+      modint: parseInt(display),
       desc: reason,
-      plus: displayMod[0] !== '-',
+      plus: display[0] !== '-',
       tagged: tagged,
     }
   }

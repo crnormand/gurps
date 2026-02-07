@@ -1573,7 +1573,6 @@ if (!globalThis.GURPS) {
 
     if (match.length == 2) {
       // Found a mode "(xxx)" in the search name
-      sname = match[0].value.trim()
       smode = match[1].value.trim().toLowerCase()
     }
 
