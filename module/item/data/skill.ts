@@ -1,9 +1,11 @@
+import { AnyObject } from 'fvtt-types/utils'
+
+import { parselink } from '../../../lib/parselink.js'
+import { makeRegexPatternFrom } from '../../../lib/utilities.js'
+import { fields } from '../../types/foundry/index.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
-import fields = foundry.data.fields
-import { AnyObject } from 'fvtt-types/utils'
-import { makeRegexPatternFrom } from '../../../lib/utilities.js'
-import { parselink } from '../../../lib/parselink.js'
 
 class SkillModel extends BaseItemModel<SkillSchema> {
   static override defineSchema(): SkillSchema {
@@ -69,8 +71,10 @@ class SkillModel extends BaseItemModel<SkillSchema> {
    */
   #prepareLevelsFromOtf(): void {
     let otf = this.component.otf
+
     if (otf === '') {
       this.component.level = this.component.import
+
       return
     }
 
@@ -81,11 +85,13 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     if (otf.match(/^\d+$/)) {
       this.component.import = parseInt(otf)
       this.component.level = this.component.import
+
       return
     }
 
     // If the OTF is not a number, parse it using the OTF parser.
     const action = parselink(otf)
+
     // If the OTF does not return an action, we cannot set the level.
     if (!action.action) return
 

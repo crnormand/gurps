@@ -1,5 +1,5 @@
 // Regex to match shotgun rate of fire formats like '3x9', '2*5', etc.
-const SHOTGUN_ROF = /(?<rof>\d+)[×xX\*](?<projectiles>\d+)/
+const SHOTGUN_ROF = /(?<rof>\d+)[×xX*](?<projectiles>\d+)/
 
 export type WeaponDescriptor = {
   rateOfFire: string

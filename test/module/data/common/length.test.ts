@@ -1,12 +1,10 @@
-// @ts-ignore
-import { Length } from '../../../../module/data/common/length'
+import { Length } from '../../../../module/data/common/length.ts'
 
 describe('Length', () => {
-  Length._localize = (key: any) => key // or a mock function
-
   describe('fromString', () => {
     it('parses inches', () => {
       const l = Length.fromString('12 in', Length.Unit.Inch)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(12)
       expect(l?.unit).toBe(Length.Unit.Inch)
@@ -14,6 +12,7 @@ describe('Length', () => {
 
     it('parses feet', () => {
       const l = Length.fromString('3 ft', Length.Unit.Inch)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(3)
       expect(l?.unit).toBe(Length.Unit.Feet)
@@ -21,6 +20,7 @@ describe('Length', () => {
 
     it('parses feet and inches notation', () => {
       const l = Length.fromString(`5' 7"`, Length.Unit.Inch)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(5 * 12 + 7)
       expect(l?.unit).toBe(Length.Unit.FeetAndInches)
@@ -28,6 +28,7 @@ describe('Length', () => {
 
     it('parses only inches in feet/inches notation', () => {
       const l = Length.fromString(`0' 11"`, Length.Unit.Inch)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(11)
       expect(l?.unit).toBe(Length.Unit.FeetAndInches)
@@ -35,6 +36,7 @@ describe('Length', () => {
 
     it('parses only feet in feet/inches notation', () => {
       const l = Length.fromString(`6'`, Length.Unit.Inch)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(72)
       expect(l?.unit).toBe(Length.Unit.FeetAndInches)
@@ -42,6 +44,7 @@ describe('Length', () => {
 
     it('parses centimeters', () => {
       const l = Length.fromString('100 cm', Length.Unit.Inch)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(100)
       expect(l?.unit).toBe(Length.Unit.Centimeter)
@@ -49,6 +52,7 @@ describe('Length', () => {
 
     it('parses kilometers', () => {
       const l = Length.fromString('2 km', Length.Unit.Inch)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(2)
       expect(l?.unit).toBe(Length.Unit.Kilometer)
@@ -56,6 +60,7 @@ describe('Length', () => {
 
     it('parses lightyears', () => {
       const l = Length.fromString('1 ly', Length.Unit.Inch)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(1)
       expect(l?.unit).toBe(Length.Unit.Lightyear)
@@ -63,6 +68,7 @@ describe('Length', () => {
 
     it('parses plain number as default unit', () => {
       const l = Length.fromString('42', Length.Unit.Meter)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(42)
       expect(l?.unit).toBe(Length.Unit.Meter)
@@ -70,11 +76,13 @@ describe('Length', () => {
 
     it('returns null for invalid string', () => {
       const l = Length.fromString('not a number', Length.Unit.Inch)
+
       expect(l).toBeNull()
     })
 
     it('returns Length(0) if forced and invalid', () => {
       const l = Length.fromString('invalid', Length.Unit.Inch, true)
+
       expect(l).not.toBeNull()
       expect(l?.value).toBe(0)
       expect(l?.unit).toBe(Length.Unit.Inch)
@@ -96,6 +104,7 @@ describe('Length', () => {
     it('converts inches to feet', () => {
       const l = new Length({ value: 24, unit: Length.Unit.Inch })
       const feet = l.to(Length.Unit.Feet)
+
       expect(feet.value).toBeCloseTo(2)
       expect(feet.unit).toBe(Length.Unit.Feet)
     })
@@ -103,6 +112,7 @@ describe('Length', () => {
     it('converts miles to inches', () => {
       const l = new Length({ value: 1, unit: Length.Unit.Mile })
       const inches = l.to(Length.Unit.Inch)
+
       expect(inches.value).toBeCloseTo(63360)
       expect(inches.unit).toBe(Length.Unit.Inch)
     })
@@ -111,13 +121,15 @@ describe('Length', () => {
   describe.skip('toString', () => {
     it('calls objectToString', () => {
       const l = new Length({ value: 12, unit: Length.Unit.Inch })
+
       expect(l.toString()).toBe('12 in')
     })
   })
 
   describe('From -> To', () => {
     it('converts from feet to inches', () => {
-      const yards = Length.from(3, 'yd').to(Length.Unit.Yard).value
+      const yards = Length.from(3, Length.Unit.Yard)?.to(Length.Unit.Yard).value
+
       expect(yards).toBe(3)
     })
   })

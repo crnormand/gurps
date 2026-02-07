@@ -41,8 +41,8 @@ export class GlobalActiveEffectDataControl {
   _createGlobalActiveEffectButton(controls) {
     if (this._shouldUseActiveEffectManagerPopup()) {
       let tokenButton = controls.find(b => b.name == 'token')
+
       if (tokenButton) {
-        let self = this
         tokenButton.tools.push({
           name: GlobalActiveEffectDataControl.EFFECT_MANAGER_NAME,
           title: game.i18n.localize('GURPS.tokenToolsActiveEffects'),
@@ -50,7 +50,7 @@ export class GlobalActiveEffectDataControl {
           toggle: true,
           active: this.showPopup,
           visible: true,
-          onClick: value => (self.showPopup = value),
+          onClick: value => (this.showPopup = value),
         })
       }
     }
@@ -74,6 +74,7 @@ export class GlobalActiveEffectDataControl {
 
     // show the token control as active
     let toggle = $.find(`[data-tool=${GlobalActiveEffectDataControl.EFFECT_MANAGER_NAME}]`)
+
     if (this._showPopup) toggle[0]?.classList.add('active')
     else toggle[0]?.classList.remove('active')
 
@@ -88,7 +89,7 @@ export class GlobalActiveEffectDataControl {
     }
   }
 
-  async close(options) {
+  async close() {
     this.showPopup = false
   }
 }
@@ -148,11 +149,13 @@ class ActiveEffectManagerPopout extends Application {
       case 'create':
         activeEffectsData.push(newEffect)
         this._saveActiveEffects(activeEffectsData)
+
         return this.render(true)
 
       case 'delete':
         activeEffectsData.splice(index, 1)
         this._saveActiveEffects(activeEffectsData)
+
         return this.render(true)
 
       case 'edit':
@@ -160,6 +163,7 @@ class ActiveEffectManagerPopout extends Application {
 
       case 'apply':
         this._apply(indexes)
+
         return
     }
   }
@@ -167,9 +171,11 @@ class ActiveEffectManagerPopout extends Application {
   getAllCheckedIndexes(a) {
     const indexes = []
     const x = $(a.closest('.active-effects-list')).find('#gga-effects-data-list input[type=checkbox]')
+
     for (let index = 0; index < x.length; index++) {
       if ($(x[index]).is(':checked')) indexes.push(index)
     }
+
     return indexes
   }
 
@@ -238,8 +244,9 @@ class ActiveEffectDataConfig extends FormApplication {
   /** @override */
   getData() {
     const data = super.getData()
+
     data.object.oldName = data.object.name
-    console.log('data', data)
+
     return data
   }
 
@@ -268,6 +275,7 @@ class ActiveEffectDataConfig extends FormApplication {
     this.object = foundry.utils.mergeObject(this.object, formData)
 
     const activeEffectsData = game.settings.get(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA)
+
     activeEffectsData[this._index] = this.object
     game.settings.set(SYSTEM_NAME, GlobalActiveEffectDataControl.ACTIVE_EFFECTS_DATA, activeEffectsData)
   }

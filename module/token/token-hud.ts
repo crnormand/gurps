@@ -1,6 +1,6 @@
 import { DeepPartial } from 'fvtt-types/utils'
 
-export default class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
+export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
   static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
     actions: {
       maneuver: GurpsTokenHUDV2.#onSetManeuver,
@@ -51,10 +51,12 @@ export default class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
     // @ts-expect-error: waiting for types to catch up
     if (!this.actor) {
       ui.notifications?.warn('HUD.WarningEffectNoActor', { localize: true })
+
       return
     }
 
     const maneuverId = target.dataset.statusId || 'do_nothing'
+
     await this.object.setManeuver(maneuverId)
   }
 }

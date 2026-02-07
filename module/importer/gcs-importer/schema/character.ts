@@ -1,8 +1,8 @@
-import fields = foundry.data.fields
+import { fields } from '../../../types/foundry/index.js'
 
 import { GcsAttribute } from './attribute.js'
-import { GcsBody } from './body.js'
 import { GcsElement } from './base.js'
+import { GcsBody } from './body.js'
 import { GcsEquipment } from './equipment.js'
 import { GcsNote } from './note.js'
 import { GcsSkill } from './skill.js'
@@ -50,9 +50,11 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   get allTraits(): GcsTrait[] {
     const traits = this.traits ?? []
+
     for (const trait of traits) {
       traits.push(...trait.allChildItems)
     }
+
     return traits
   }
 
@@ -60,9 +62,11 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   get allSkills(): GcsSkill[] {
     const skills = this.skills ?? []
+
     for (const skill of skills) {
       skills.push(...skill.allChildItems)
     }
+
     return skills
   }
 
@@ -70,9 +74,11 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   get allSpells(): GcsSpell[] {
     const spells = this.spells ?? []
+
     for (const spell of spells) {
       spells.push(...spell.allChildItems)
     }
+
     return spells
   }
 
@@ -80,9 +86,11 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   get allCarriedEquipment(): GcsEquipment[] {
     const equipment = this.equipment ?? []
+
     for (const item of equipment) {
       equipment.push(...item.allChildItems)
     }
+
     return equipment
   }
 
@@ -90,9 +98,11 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   get allOtherEquipment(): GcsEquipment[] {
     const equipment = this.other_equipment ?? []
+
     for (const item of equipment) {
       equipment.push(...item.allChildItems)
     }
+
     return equipment
   }
 
@@ -110,9 +120,11 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   get allEquippedWeapons(): GcsWeapon[] {
     const weapons: GcsWeapon[] = []
+
     ;[...this.allTraits, ...this.allSkills, ...this.allSpells, ...this.allCarriedEquipment].forEach(e => {
       if (!e.isEnabled) weapons.push(...e.weaponItems)
     })
+
     return weapons
   }
 }

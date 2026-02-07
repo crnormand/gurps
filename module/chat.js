@@ -1,7 +1,9 @@
 'use strict'
+
 import * as Settings from '../lib/miscellaneous-settings.js'
 import { parselink } from '../lib/parselink.js'
 import { gurpslink } from '../module/utilities/gurpslink.js'
+
 import ChatProcessor from './chat/chat-processor.js'
 import GurpsWiring from './gurps-wiring.js'
 
@@ -16,7 +18,7 @@ class HelpChatProcessor extends ChatProcessor {
 
   /** @param {string} line */
   matches(line) {
-    return line.match(/[!\/\?]help/i)
+    return line.match(/[!/?]help/i)
   }
 
   /**
@@ -26,6 +28,7 @@ class HelpChatProcessor extends ChatProcessor {
    */
   async process(_line, _msgs) {
     let l = _line.split(' ')
+
     if (l.length > 1) return this.registry.handle('?' + l[1].trim())
 
     let t = `<a href='${GURPS.USER_GUIDE_URL}'>${game.i18n.localize('GURPS.gameAidUsersGuide')}</a><br>`
@@ -35,13 +38,16 @@ class HelpChatProcessor extends ChatProcessor {
     let gmonly = ChatProcessors.processorsForGMOnly()
       .filter(it => !!it.help())
       .map(it => it.help())
+
     all.sort()
     t += all.join('<br>')
+
     if (gmonly.length > 0) {
       gmonly.sort()
       t += '<br>--- GM only ---<br>'
       t += gmonly.join('<br>')
     }
+
     t += '<br><br>' + game.i18n.localize('GURPS.chatHelpHelp')
     this.priv(t)
   }
@@ -73,10 +79,12 @@ class ChatProcessorRegistry {
    */
   willTryToHandle(message) {
     let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
+
     for (const line of lines)
       for (const p of this._processors) {
         if (p.matches(line) || (line[0] === '!' ? p.matches(line.substring(1)) : p.matches(line))) return true
       }
+
     return false
   }
 
@@ -93,19 +101,23 @@ class ChatProcessorRegistry {
     if (!chatmsgData)
       chatmsgData = {
         user: game.user?.id || null,
-        // @ts-ignore
+        // @ts-expect-error - partial speaker object initialization
         speaker: {
-          actor: !!GURPS.LastActor ? GURPS.LastActor.id : undefined,
+          actor: GURPS.LastActor ? GURPS.LastActor.id : undefined,
         },
       }
 
     this.msgs.quiet = false
     this.msgs.oldQuiet = false
     this.msgs.data = chatmsgData
-    this.msgs.event = event || { shiftKey: false, ctrlKey: false, data: {} }
+    this.msgs.event = event
+      ? { shiftKey: event.shiftKey, ctrlKey: event.ctrlKey, data: event.data || {}, currentTarget: event.currentTarget }
+      : { shiftKey: false, ctrlKey: false, data: {} }
 
     let answer = await this.processLines(message)
+
     this.send()
+
     return answer
   }
 
@@ -118,8 +130,10 @@ class ChatProcessorRegistry {
     let start = 0
     let escaped = 0
     let backslash = false
+
     for (let i = 0; i < message.length; i++) {
       const c = message[i]
+
       if (c === '\\') {
         if (escaped === 0) {
           if (backslash) {
@@ -131,11 +145,13 @@ class ChatProcessorRegistry {
       } else backslash = false
       if (c === '{') escaped++
       if (c === '}') escaped--
+
       if (c === '\n') {
         lines.push(message.substring(start, i))
         start = i + 1
       }
     }
+
     if (start < message.length) lines.push(message.substr(start))
     let answer = false
 
@@ -143,12 +159,14 @@ class ChatProcessorRegistry {
     for (const line of lines) {
       // use for loop to ensure single thread
       answer = await this.processLine(line)
-      if (!!GURPS.stopActions) {
+
+      if (GURPS.stopActions) {
         console.log('Stop actions after dialog canceled')
         GURPS.stopActions = false
         break
       }
     }
+
     return answer
   }
 
@@ -158,25 +176,29 @@ class ChatProcessorRegistry {
   async processLine(line) {
     line = line.trim()
     this.msgs.oldQuiet = this.msgs.quiet
+
     if (line[0] === '!') {
       this.msgs.quiet = true
       line = line.substr(1)
     }
+
     let [handled, answer] = await this.handle(line)
+
     if (!handled) {
       if (line.trim().startsWith('/')) {
         // immediately flush our stored msgs, and execute the slash command using the default parser
         this.send()
         GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
-        ui.chat // @ts-ignore
-          ?.processMessage(line)
-          .catch(err => {
-            ui.notifications?.error(err)
-            console.error(err)
-          })
+        // @ts-expect-error - Foundry VTT ChatLog API not fully typed
+        ui.chat?.processMessage(line).catch(err => {
+          ui.notifications?.error(err)
+          console.error(err)
+        })
       } else this.pub(line) // If not handled, must just be public text
     }
+
     this.msgs.quiet = this.msgs.oldQuiet
+
     return answer
   }
 
@@ -188,7 +210,8 @@ class ChatProcessorRegistry {
   async handle(line) {
     let answer = false
     let processor = this._processors.find(it => it.matches(line))
-    if (!!processor) {
+
+    if (processor) {
       if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(game.i18n.localize('GURPS.chatYouMustBeGM'))
       else {
         try {
@@ -197,18 +220,23 @@ class ChatProcessorRegistry {
           ui.notifications?.error(err)
           console.error(err)
         }
+
         return [true, answer != false]
       }
     }
+
     // if nothing matchs, check for chat command without options... and return a help output
     processor = this._processors.find(it => it.usagematches(line))
-    if (!!processor) {
+
+    if (processor) {
       if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(game.i18n.localize('GURPS.chatYouMustBeGM'))
       else this.priv(line)
       this.priv('<hr>')
       this.priv(processor.usage().replaceAll('\n', '<br>'))
+
       return [true, true]
     }
+
     return [false, false]
   }
 
@@ -227,6 +255,7 @@ class ChatProcessorRegistry {
   _sendPriv(priv) {
     if (priv.length === 0) return
     let lines = priv.slice()
+
     foundry.applications.handlebars
       .renderTemplate('systems/gurps/templates/chat-processing.hbs', {
         lines: lines,
@@ -250,8 +279,10 @@ class ChatProcessorRegistry {
     if (pub.length === 0) return
 
     let d = foundry.utils.duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
+
     d.alreadyProcessed = true
     let lines = pub.slice()
+
     foundry.applications.handlebars
       .renderTemplate('systems/gurps/templates/chat-processing.hbs', {
         lines: lines,
@@ -294,6 +325,7 @@ class ChatProcessorRegistry {
    */
   prnt(txt) {
     let p_setting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
+
     if (game.user?.isGM || p_setting) this.priv(txt)
     else this.pub(txt)
   }
@@ -308,6 +340,7 @@ class ChatProcessorRegistry {
     this.msgs.quiet = quiet
     this.msgs.oldQuiet = quiet
     this.msgs.data.whisper = [game.user?.id]
+
     // HACK: This try / catch prevents errors from showing to the user in cases where properties shiftKey and/or ctrlKey of `this.msgs.event`
     // are not writeable, such as if the event is a PointerEvent (e.g. in Token Action HUD). The real underlying problem is that we are
     // attempting to mutate properties of a native Event object, whose modifier-key properties may be immutable; a more correct long-term
@@ -327,13 +360,14 @@ export default function addChatHooks() {
   Hooks.once('init', async function () {
     GURPS.ChatProcessors = ChatProcessors
     Hooks.on('chatMessage', (_log, message, chatmsgData) => {
-      // @ts-ignore
-      if (!!chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
+      // @ts-expect-error - custom property added to chat message data
+      if (chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
 
       if (GURPS.ChatCommandsInProcess.includes(message)) {
         GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(
           (/** @type {string} */ item) => item !== message
         )
+
         return true // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
       }
 
@@ -341,8 +375,9 @@ export default function addChatHooks() {
       // if we are going to process this message, and if so, return false so Foundry doesn't
       if (ChatProcessors.willTryToHandle(message)) {
         // Now we can handle the processing of each line in an async method, so we can ensure a single thread
-        // @ts-ignore
+        // @ts-expect-error - chatmsgData type mismatch with expected parameter
         ChatProcessors.startProcessingLines(message, chatmsgData)
+
         return false
       } else return true
     })
@@ -352,17 +387,21 @@ export default function addChatHooks() {
       'preCreateChatMessage',
       (/** @type {ChatMessage} */ chatMessage, /** @type {any} */ _options, /** @type {any} */ _userId) => {
         let c = chatMessage.content
+
         try {
           let html = $(c)
           let rt = html.find('.result-text') // Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
           let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/
           let t = rt[0]?.innerText
-          if (!!t) {
+
+          if (t) {
             t.split('\n').forEach(e => {
               let m = e.match(re)
+
               if (!!m && !!m[2]) {
                 let action = parselink(m[2])
-                if (!!action.action) {
+
+                if (action.action) {
                   GURPS.performAction(action.action, GURPS.LastActor, {
                     shiftKey: e.startsWith('/pr'),
                   })
@@ -371,9 +410,14 @@ export default function addChatHooks() {
               }
             })
           }
-        } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
+        } catch {
+          // a dangerous game... but limited to GURPs /roll OtF
+        }
+
         let newContent = gurpslink(c)
+
         foundry.utils.setProperty(chatMessage, '_source.content', newContent)
+
         return true
       }
     )
@@ -386,9 +430,11 @@ export default function addChatHooks() {
       'diceSoNiceRollComplete',
       async (/** @type {any} */ _app, /** @type {any} */ _html, /** @type {any} */ _msg) => {
         let otf = GURPS.PendingOTFs.pop()
+
         while (otf) {
           let action = parselink(otf)
-          if (!!action.action) await GURPS.performAction(action.action, GURPS.LastActor || game.user)
+
+          if (action.action) await GURPS.performAction(action.action, GURPS.LastActor || game.user)
           otf = GURPS.PendingOTFs.pop()
         }
       }

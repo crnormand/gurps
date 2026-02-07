@@ -1,7 +1,8 @@
-import { CharacterModel } from './character.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
-import fields = foundry.data.fields
+import { fields } from '../../types/foundry/index.js'
+
+import { CharacterModel } from './character.js'
 
 /* ---------------------------------------- */
 
@@ -93,9 +94,11 @@ class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> implements IContai
     // Notes are embedded in the character, so we need to update through the character
     const character = this.parent! as CharacterModel
     const noteIndex = character.allNotes.findIndex(note => note.id === this.id)
+
     if (noteIndex === -1) return
 
     const notes = foundry.utils.deepClone(character._source.allNotes)
+
     notes[noteIndex].open = newValue
     await character.parent.update({ system: { allNotes: notes } })
   }
@@ -118,7 +121,7 @@ class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> implements IContai
    * @returns The resolved markdown content
    */
   get resolvedContent(): string | null {
-    return !!this.calc?.resolved_notes ? this.calc.resolved_notes : this.text
+    return this.calc?.resolved_notes ? this.calc.resolved_notes : this.text
   }
 }
 

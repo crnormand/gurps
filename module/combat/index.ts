@@ -1,4 +1,5 @@
 import { GurpsModule } from 'module/gurps-module.js'
+
 import { GurpsCombat } from './combat.js'
 import { GurpsCombatant } from './combatant.js'
 

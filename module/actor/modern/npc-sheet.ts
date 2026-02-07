@@ -1,68 +1,75 @@
-import { GurpsActorModernSheet, countItems } from './sheet.ts'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
-import { isPostureOrManeuver } from './utils/effect.ts'
+import {
+  ActorSheetV2Configuration,
+  ActorSheetV2RenderContext,
+  ActorSheetV2RenderOptions,
+  DeepPartial,
+  HandlebarsTemplatePart,
+} from '../../types/foundry/actor-sheet-v2.ts'
 
-interface NpcSheetData {
-  system?: GurpsActorSystem
-  effects?: ActiveEffect[]
-  skillCount?: number
-  traitCount?: number
-  meleeCount?: number
-  rangedCount?: number
-  showHPTinting?: boolean
-  // TODO Waiting for Global declarations update.
-  // @ts-expect-error: waiting for Global declarations update.
-  moveMode?: GurpsMoveMode
+import { GurpsActorModernSheet, ModernSheetContext } from './sheet.ts'
+
+type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
+
+/* ---------------------------------------- */
+
+interface ModernNPCSheetContext extends ModernSheetContext {
   parryblock?: string | number
-  defense?: { dr: string; split?: Record<string, number> }
+  defense?: { dr: string; split?: Record<string, number> } | Record<string, unknown>
   useCI?: boolean
 }
 
 export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
-  static override get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['gurps', 'sheet', 'actor', 'modern-sheet', 'ms-compact', 'ms-npc-modern-sheet'],
+  static override DEFAULT_OPTIONS: DeepPartial<ActorSheetV2Configuration> = {
+    classes: ['gurps', 'sheet', 'actor', 'modern-sheet', 'ms-compact', 'ms-npc-modern-sheet'],
+    position: {
       width: 650,
       height: 550,
-      tabs: [],
-      scrollY: ['.ms-npc-body'],
-    })
+    },
   }
 
-  // @ts-expect-error - Template returns NPC sheet path which differs from parent
-  override get template() {
-    if (!game.user!.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/actor-npc-modern-sheet.hbs'
+  /* ---------------------------------------- */
+
+  static override PARTS: Record<string, HandlebarsTemplatePart> = {
+    header: {
+      template: 'systems/gurps/templates/actor/modern/npc-header.hbs',
+    },
+    statusBar: {
+      template: 'systems/gurps/templates/actor/modern/status-bar.hbs',
+    },
+    body: {
+      template: 'systems/gurps/templates/actor/modern/npc-body.hbs',
+    },
   }
 
-  override getData(): NpcSheetData {
-    const sheetData = super.getData() as NpcSheetData
+  /* ---------------------------------------- */
 
-    sheetData.effects = sheetData.effects?.filter(effect => !isPostureOrManeuver(effect))
+  protected override async _prepareContext(options: RenderOptions): Promise<ModernSheetContext> {
+    const baseContext = await super._prepareContext(options)
 
-    sheetData.skillCount = countItems(sheetData.system?.skills)
-    sheetData.traitCount = countItems(sheetData.system?.ads)
-    sheetData.meleeCount = countItems(sheetData.system?.melee)
-    sheetData.rangedCount = countItems(sheetData.system?.ranged)
-    // @ts-expect-error: update settings typing.
-    sheetData.showHPTinting = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING)
-    // TODO: Update GurpsActorV2 with new methods in GurpsActor (_actor.js).
-    sheetData.moveMode = this.actor.currentMoveMode
+    const context: ModernNPCSheetContext = {
+      ...baseContext,
+      defense: this.actor.getTorsoDr(),
+      parryblock: this.actor.getEquippedParry(),
+      useCI: game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_CONDITIONAL_INJURY as never),
+    }
 
-    // @ts-expect-error: waiting for GurpsActorV2 update.
-    sheetData.defense = this.actor.getTorsoDr()
-    sheetData.parryblock = this.actor.getEquippedParry()
-    sheetData.useCI = game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_CONDITIONAL_INJURY as never)
-
-    return sheetData
+    return context
   }
 
-  override async _render(force?: boolean, options?: Application.RenderOptions): Promise<void> {
-    const scrollContainer = this.element?.find('.ms-npc-body')[0]
+  /* ---------------------------------------- */
+
+  protected override async _onRender(context: ActorSheetV2RenderContext, options: RenderOptions): Promise<void> {
+    const html = this.element
+
+    const scrollContainer = html.querySelector('.ms-npc-body')
     const scrollTop = scrollContainer?.scrollTop ?? 0
-    await super._render(force, options)
+
+    await super._onRender(context, options)
+
     if (scrollTop > 0) {
-      const newContainer = this.element?.find('.ms-npc-body')[0]
+      const newContainer = html.querySelector('.ms-npc-body')
+
       if (newContainer) newContainer.scrollTop = scrollTop
     }
   }

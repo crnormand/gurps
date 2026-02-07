@@ -6,6 +6,7 @@
 
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import { objectToArray } from '../../lib/utilities.js'
+
 import {
   SETTING_COLOR_CHARACTER_SHEET_DATA,
   SETTING_COLOR_ROLLABLE,
@@ -18,6 +19,7 @@ import {
 export function addColorWheelsToSettings() {
   $('#color-sheets input[type="checkbox"]').on('click', function () {
     const overrideColor = $(this).attr('id')
+
     if ($(this).prop('checked')) {
       $(this).attr('checked', 'checked')
     } else {
@@ -32,6 +34,7 @@ export function addColorWheelsToSettings() {
       $(`.${overrideColor}-hover-text .color`).css('background-color', $(`.default-${overrideColor}-hover-text`).val())
       $(this).removeAttr('checked')
     }
+
     saveColorWheelsToSettings()
   })
 
@@ -124,7 +127,6 @@ export function addColorWheelsToSettings() {
 }
 
 export function colorGurpsActorSheet() {
-  // eslint-disable-next-line no-undef
   const colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
   // console.log(`Read Character Sheet Colors: ${JSON.stringify(colorData)}`)
 
@@ -495,7 +497,7 @@ export function saveColorWheelsToSettings() {
       },
     ],
   }
-  // eslint-disable-next-line no-undef
+
   game.settings.set(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA, data)
   // console.log(`Saved Character Sheet Colors: ${JSON.stringify(data)}`)
 }

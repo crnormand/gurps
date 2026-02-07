@@ -1,6 +1,6 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
+
+import { fields, DataModel } from '../../types/foundry/index.js'
 
 /**
  * These classes use Foundry's own DataModel system for its inbuilt validation and easy translation into useful data.
@@ -40,7 +40,9 @@ class GCASchemaBlock<Schema extends fields.DataSchema> extends DataModel<Schema>
 
       if (key.startsWith('$')) {
         const attribute = xml.getAttribute(key.slice(1))
+
         if (!attribute) return
+
         switch (field.constructor) {
           case fields.StringField:
             data[key] = attribute
@@ -54,7 +56,9 @@ class GCASchemaBlock<Schema extends fields.DataSchema> extends DataModel<Schema>
         }
       } else {
         const element = xml.querySelector(`:scope > ${key}`)
+
         if (!element) return
+
         switch (field.constructor) {
           case fields.StringField:
             data[key] = element.textContent ?? null
@@ -87,6 +91,7 @@ class GCABonusClass extends GCASchemaBlock<GCABonusClassSchema> {
       xml,
       this.schema.fields
     )
+
     return new this(data)
   }
 }
@@ -138,6 +143,7 @@ const gcaGroupingOptionsSchema = () => {
     groupsatend: new fields.BooleanField({ required: true, nullable: false }),
   }
 }
+
 type GCAGroupingOptionsSchema = ReturnType<typeof gcaGroupingOptionsSchema>
 
 /* ---------------------------------------- */
@@ -154,6 +160,7 @@ class GCAFlagSymbol extends GCASchemaBlock<GCAFlagSymbolSchema> {
       xml,
       this.schema.fields
     )
+
     return new this(data)
   }
 }
@@ -180,6 +187,7 @@ class GCAMessage extends GCASchemaBlock<GCAMessageSchema> {
 
   static fromXML(xml: HTMLElement): GCAMessage {
     const data: Partial<DataModel.CreateData<GCAMessageSchema>> = this._primitiveFieldsFromXML(xml, this.schema.fields)
+
     return new this(data)
   }
 }
@@ -190,6 +198,7 @@ const gcaMessageSchema = () => {
     text: new fields.StringField({ required: true, nullable: false }),
   }
 }
+
 type GCAMessageSchema = ReturnType<typeof gcaMessageSchema>
 
 /* ---------------------------------------- */
@@ -206,6 +215,7 @@ class GCAUnknownTag extends GCASchemaBlock<GCAUnknownTagSchema> {
       xml,
       this.schema.fields
     )
+
     return new this(data)
   }
 }
@@ -216,6 +226,7 @@ const gcaUnknownTagSchema = () => {
     text: new fields.StringField({ required: true, nullable: false }),
   }
 }
+
 type GCAUnknownTagSchema = ReturnType<typeof gcaUnknownTagSchema>
 
 /* ---------------------------------------- */
@@ -232,6 +243,7 @@ class GCABonus extends GCASchemaBlock<GCABonusSchema> {
       xml,
       this.schema.fields
     )
+
     return new this(data)
   }
 }
@@ -265,6 +277,7 @@ const gcaBonusSchema = () => {
     fromtag: new fields.StringField({ required: true, nullable: true }),
   }
 }
+
 type GCABonusSchema = ReturnType<typeof gcaBonusSchema>
 
 /* ---------------------------------------- */
@@ -281,6 +294,7 @@ class GCABodyItem extends GCASchemaBlock<GCABodyItemSchema> {
       xml,
       this.schema.fields
     )
+
     return new this(data)
   }
 }
@@ -305,6 +319,7 @@ const gcaBodyItemSchema = () => {
     hp: new fields.StringField({ required: true, nullable: false }),
   }
 }
+
 type GCABodyItemSchema = ReturnType<typeof gcaBodyItemSchema>
 
 /* ---------------------------------------- */
@@ -321,6 +336,7 @@ class GCALayerItem extends GCASchemaBlock<GCALayerItemSchema> {
       xml,
       this.schema.fields
     )
+
     return new this(data)
   }
 }
@@ -334,6 +350,7 @@ const gcaLayerItemSchema = () => {
     $idkey: new fields.StringField({ required: true, nullable: false }),
   }
 }
+
 type GCALayerItemSchema = ReturnType<typeof gcaLayerItemSchema>
 
 /* ---------------------------------------- */
@@ -347,6 +364,7 @@ class GCACategory extends GCASchemaBlock<GCACategorySchema> {
 
   static fromXML(xml: HTMLElement): GCACategory {
     const data: Partial<DataModel.CreateData<GCACategorySchema>> = this._primitiveFieldsFromXML(xml, this.schema.fields)
+
     return new this(data)
   }
 }
@@ -358,6 +376,7 @@ const gcaCategorySchema = () => {
     itemtype: new fields.StringField({ required: true, nullable: false }),
   }
 }
+
 type GCACategorySchema = ReturnType<typeof gcaCategorySchema>
 
 /* ---------------------------------------- */
@@ -374,6 +393,7 @@ class GCAModifier extends GCASchemaBlock<GCAModifierSchema> {
       xml,
       this.schema.fields
     )
+
     return new this(data)
   }
 }
@@ -505,6 +525,7 @@ const gcaAttackModeSchema = () => {
     minimode_radius: new fields.StringField({ required: true, nullable: true }),
   }
 }
+
 type GCAAttackModeSchema = ReturnType<typeof gcaAttackModeSchema>
 
 /* ---------------------------------------- */
@@ -520,6 +541,7 @@ class GCAHitLocationLine extends GCASchemaBlock<GCAHitLocationLineSchema> {
     const schema = this.schema.fields
 
     const data: Partial<DataModel.CreateData<GCAHitLocationLineSchema>> = this._primitiveFieldsFromXML(xml, schema)
+
     return new this(data)
   }
 }
@@ -568,6 +590,7 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
     ).reduce((acc: DataModel.CreateData<GCAAttackModeSchema>[], node) => {
       if (node.children.length > 2)
         acc.push(GCAAttackMode._primitiveFieldsFromXML(node as HTMLElement, GCAAttackMode.schema.fields))
+
       return acc
     }, [])
 
@@ -582,6 +605,7 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
 
     for (const childKey of childKeyList) {
       const child = list.find(trait => `k${trait.$idkey}` === childKey)
+
       if (child) children.push(child)
     }
 
@@ -816,6 +840,7 @@ const gcaTraitSchema = () => {
     $idkey: new fields.StringField({ required: true, nullable: false }),
   }
 }
+
 type GCATraitSchema = ReturnType<typeof gcaTraitSchema>
 
 /* ---------------------------------------- */
@@ -1382,6 +1407,7 @@ const gcaCharacterSchema = () => {
     }),
   }
 }
+
 type GCACharacterSchema = ReturnType<typeof gcaCharacterSchema>
 
 /* ---------------------------------------- */
@@ -1399,8 +1425,10 @@ class GCA5 extends GCASchemaBlock<GCA5Schema> {
 
     for (const child of xml.querySelectorAll(':scope > character') ?? []) {
       const character = GCACharacter.fromXML(child as HTMLElement)
+
       characters.push(character)
     }
+
     data.character = characters
 
     return new this(data, { strict: false })
@@ -1412,6 +1440,7 @@ const gca5Schema = () => {
     character: new fields.ArrayField(new fields.EmbeddedDataField(GCACharacter), { required: true, nullable: false }),
   }
 }
+
 type GCA5Schema = ReturnType<typeof gca5Schema>
 
 export {

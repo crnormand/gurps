@@ -3,6 +3,7 @@ import { parselink } from '../../lib/parselink.js'
 import { displayMod, generateUniqueId } from '../../lib/utilities.js'
 import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+
 import ModifierBucketEditor from './tooltip-window.js'
 
 /**
@@ -14,7 +15,7 @@ Hooks.once('init', async function () {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
 
-  Hooks.on('updateLastActorGURPS', async actor => {
+  Hooks.on('updateLastActorGURPS', async () => {
     if (GURPS.ModifierBucket) {
       // Update any actor-specific modifiers in the bucket, such as Advantage levels, and then refresh the UI.
       GURPS.ModifierBucket.resetActorModifiers()
@@ -65,11 +66,13 @@ export class GurpsRoll extends Roll {
     const _data = super._prepareData(data)
 
     // Add the gmodc property, that returns the current sum of the modifier bucket and then clears it.
-    if (!_data.hasOwnProperty('gmodc'))
+    if (!Object.hasOwn(_data, 'gmodc'))
       Object.defineProperty(_data, 'gmodc', {
         get() {
           let m = GURPS.ModifierBucket.currentSum()
+
           GURPS.ModifierBucket.clear()
+
           return parseInt(m)
         },
       })
@@ -108,6 +111,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
 
   baseExpression() {
     const x = foundry.dice.terms.Die.DENOMINATION === 'd' ? this.faces : foundry.dice.terms.Die.DENOMINATION
+
     return `${this.number}d${x}`
   }
 
@@ -122,11 +126,14 @@ export class GurpsDie extends foundry.dice.terms.Die {
     // Preserve the order: set value to the first element in _loaded, and update
     // _loaded to contain the remaining elements.
     let [value, ...remainder] = this._loaded
+
     this._loaded = remainder
 
     /** @type {DiceTerm.Result} */
     const roll = { active: true, result: value }
+
     this.results.push(roll)
+
     return roll
   }
 
@@ -137,11 +144,12 @@ export class GurpsDie extends foundry.dice.terms.Die {
     let physicalDice = game.user?.isTrusted && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     if (physicalDice) {
-      return new Promise(async resolve => {
+      return new Promise(resolve => {
         let dialog = new ResolveDiceRoll(this)
 
         let callback = async () => {
           let die = this._evaluateSync({ minimize, maximize }).asDiceTerm()
+
           await dialog.close()
           resolve(die)
         }
@@ -151,7 +159,7 @@ export class GurpsDie extends foundry.dice.terms.Die {
         dialog.render(true)
       })
     } else {
-      // @ts-ignore
+      // @ts-expect-error - Foundry VTT dice API changed between versions, super._evaluate signature varies
       return await super._evaluate({ minimize, maximize })
     }
   }
@@ -178,6 +186,7 @@ class ModifierStack {
 
   toggleAutoEmpty() {
     this.AUTO_EMPTY = !this.AUTO_EMPTY
+
     return this.AUTO_EMPTY
   }
 
@@ -194,10 +203,13 @@ class ModifierStack {
 
   sum() {
     const oldSum = this.currentSum
+
     this.currentSum = 0
+
     for (let m of this.modifierList) {
       this.currentSum += m.modint
     }
+
     this.displaySum = displayMod(this.currentSum)
     this.plus = this.currentSum > 0 || this.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
     this.minus = this.currentSum < 0
@@ -205,30 +217,38 @@ class ModifierStack {
 
     // Check if Rapid Strike is on list.
     let rs = this.modifierList.find(m => m.desc.includes(game.i18n.localize('GURPS.modifiers_.rapidStrike')))
+
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
     const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+
     if (taggedSettings.autoAdd && this.currentSum !== oldSum) {
       const signal = this.minus ? '-' : '+'
       const target = $('#cr-target').text()
+
       if (!!target && !isNaN(target)) {
         let total = Math.max(3, parseInt(target) + this.currentSum)
+
         if (this.maxTotal) total = Math.min(total, this.maxTotal)
         const { targetColor, rollChance } = rollData(total)
+
         $('#cr-operator').text(signal)
         $('#cr-totalmods').text(Math.abs(this.currentSum))
         $('#cr-total').text(total).css('color', targetColor)
         $('.cr-tooltip').text(rollChance)
       }
+
       const damage = $('#cr-damage').text()
       const formula = $('#cr-formula').text()
       const originalFormula = $('#cr-damage').data('original')
+
       if (!!formula && !!damage && !!originalFormula) {
         const newFormula = addBucketToDamage(originalFormula, false)
         const bucketTotal = this.currentSum
         const bucketRollModifier = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
         const bucketRollModifierColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
+
         $('#cr-damage').text(newFormula)
         $('#cr-bucket').text(bucketRollModifier).css('color', bucketRollModifierColor)
       }
@@ -245,6 +265,7 @@ class ModifierStack {
    */
   _makeModifier(mod, reason, tagged) {
     let n = displayMod(mod)
+
     return {
       mod: n,
       modint: parseInt(n),
@@ -280,8 +301,10 @@ class ModifierStack {
   _add(list, mod, reason = '', replace = false, tagged = false) {
     /** @type {Modifier|undefined} */
     var oldmod
+
     reason = reason.replace('(' + game.i18n.localize('GURPS.equipmentUserCreated') + ')', '').trim() // Remove User Created tag
     let i = list.findIndex(e => e.desc === reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
+
     if (i > -1) {
       if (replace)
         list.splice(i, 1) // only used by range modifier
@@ -290,7 +313,8 @@ class ModifierStack {
 
     // Check if the modifier string contains '@margin'
     let m = (mod + '').match(/(?<sign>[+-])?@margin/i)
-    if (!!m) {
+
+    if (m) {
       // Calculate the modifier based on the margin of the last targeted roll
       mod = (GURPS.lastTargetedRoll?.margin || 0) * (m.groups.sign === '-' ? -1 : 1)
       // If the last targeted roll has an associated "thing", update the reason string
@@ -301,21 +325,26 @@ class ModifierStack {
     // Check if the modifier is a leveled advantage.
     // TODO: Find where the modifier is *applied* to the roll, and move this code there.
     const adv = (mod + '').match(/(?<sign>[+-])?A:(?<adv>"[^"]+"|'[^']+'|[^ ]+)/i)
-    if (!!adv) {
+
+    if (adv) {
       let originalText = `(${mod})`
       const advname = adv.groups.adv.replace(/['"]/g, '')
       const actor = GURPS.LastActor
-      reason = `${originalText}${!!reason ? ' ' + reason : ''}`
-      if (!!actor) {
+
+      reason = `${originalText}${reason ? ' ' + reason : ''}`
+
+      if (actor) {
         const matches = actor.findAdvantage(advname.replace(/\*/, '.*'))
-        mod = !!matches ? (matches.level ?? 0) * (adv.groups.sign === '-' ? -1 : 1) : 0
+
+        mod = matches ? (matches.level ?? 0) * (adv.groups.sign === '-' ? -1 : 1) : 0
       } else {
         mod = 0
       }
     }
 
-    if (!!oldmod) {
+    if (oldmod) {
       let m = oldmod.modint + parseInt(mod)
+
       oldmod.mod = displayMod(m)
       oldmod.modint = m
     } else {
@@ -329,9 +358,11 @@ class ModifierStack {
    * @returns {Modifier[]}
    */
   applyMods(targetmods = []) {
-    let answer = !!targetmods ? targetmods : []
+    let answer = targetmods ? targetmods : []
+
     answer = answer.concat(this.modifierList)
     if (this.AUTO_EMPTY) this.reset()
+
     return answer
   }
 
@@ -350,14 +381,17 @@ class ModifierStack {
     // These are leveled advantages that need to be recalculated.
     const actor = GURPS.LastActor
     const regex = /^(\((?<sign>[+-])A:(?<name>[^\]]+)\))/i
+
     this.modifierList
       .filter(modifier => modifier.desc.match(regex))
       .forEach(modifier => {
         const match = modifier.desc.match(regex)
-        if (!!actor) {
+
+        if (actor) {
           const advname = match.groups.name.replace(/['"]/g, '')
           const advantage = actor.findAdvantage(advname.replace(/\*/, '.*'))
-          if (!!advantage) {
+
+          if (advantage) {
             modifier.modint = (advantage.level ?? 0) * (match.groups.sign === '-' ? -1 : 1)
             modifier.mod = displayMod(modifier.modint)
             this.sum()
@@ -433,7 +467,7 @@ export class ModifierBucket extends Application {
   // Called from Range Ruler after measurement ends, to possible add range to stack
   addTempRangeMod() {
     if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
-      if (!!this._tempRangeMod) this.modifierStack.add(this._tempRangeMod, 'for range', true) // Only allow 1 measured range, for the moment.
+      if (this._tempRangeMod) this.modifierStack.add(this._tempRangeMod, 'for range', true) // Only allow 1 measured range, for the moment.
       this.refresh()
     }
   }
@@ -446,7 +480,7 @@ export class ModifierBucket extends Application {
    * @param {boolean} tagged
    */
   addModifier(mod, reason, list, tagged = false) {
-    if (!!list) this.modifierStack._add(list, mod.toString(), reason, false, tagged)
+    if (list) this.modifierStack._add(list, mod.toString(), reason, false, tagged)
     else this.modifierStack.add(mod.toString(), reason, false, tagged)
     this.refresh()
   }
@@ -466,7 +500,9 @@ export class ModifierBucket extends Application {
    */
   applyMods(targetmods = []) {
     let answer = this.modifierStack.applyMods(targetmods)
+
     this.refresh()
+
     return answer
   }
 
@@ -505,15 +541,19 @@ export class ModifierBucket extends Application {
    */
   sendToPlayers(action, usernames) {
     const saved = this.modifierStack.modifierList
-    if (!!action) {
+
+    if (action) {
       this.modifierStack.modifierList = []
       GURPS.performAction(action)
     }
+
     let _users = game.users
+
     if (_users) {
       let players = _users.players
+
       if (usernames.length > 0) players = players.filter(u => u.name && usernames.includes(u.name))
-      if (!!players) this._sendBucket(players)
+      if (players) this._sendBucket(players)
       this.modifierStack.reset(saved)
     }
   }
@@ -523,15 +563,19 @@ export class ModifierBucket extends Application {
    */
   sendBucketToPlayer(id) {
     if ('SHOWALL' == id) return
+
     if (!id) {
       // Only occurs if the GM clicks on 'everyone'
       let _users = game.users
-      if (!!_users) {
+
+      if (_users) {
         let everyone = _users.filter(u => u.id != game.user?.id)
-        if (!!everyone) this._sendBucket(everyone)
+
+        if (everyone) this._sendBucket(everyone)
       }
     } else {
       let users = game.users?.filter(u => u.id == id) || []
+
       if (users.length > 0) this._sendBucket(users)
       else ui.notifications?.warn("No player with ID '" + id + "'")
     }
@@ -549,13 +593,17 @@ export class ModifierBucket extends Application {
   _sendBucket(users) {
     if (users.length == 0) {
       ui.notifications?.warn('No users to send to.')
+
       return
     }
+
     let mb = GURPS.ModifierBucket.modifierStack
+
     if (game.user?.hasRole('GAMEMASTER'))
       // Only actual GMs can update other user's flags
       users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
     let ctrl = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+
     game.socket?.emit('system.gurps', {
       type: 'updatebucket',
       users: users.map(u => u.id),
@@ -577,22 +625,27 @@ export class ModifierBucket extends Application {
 
   getData(options) {
     const data = super.getData(options)
+
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
     const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+
     data.cssContainerClass = `force-${position}`
     data.dice3dImagePath = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_3D6_IMAGE)
     data.diceImagePath = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_D6_IMAGE)
 
     let ca = null
-    if (!!GURPS.LastActor) {
+
+    if (GURPS.LastActor) {
       data.damageAccumulators = GURPS.LastActor.damageAccumulators
       data.accumulatorIndex = this.accumulatorIndex
       ca = GURPS.LastActor.displayname
       if (ca && ca.length > 25) ca = ca.substring(0, 22) + '…'
     }
+
     data.currentActor = ca
     data.diceVisible = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)
+
     return data
   }
 
@@ -614,28 +667,36 @@ export class ModifierBucket extends Application {
     html.querySelector('#magnet')?.addEventListener('click', event => this._onClickMagnet(event))
 
     const globalModifier = html.querySelector('#globalmodifier')
+
     globalModifier?.addEventListener('click', event => this._onClick(event))
     globalModifier?.addEventListener('contextmenu', event => this.onRightClick(event))
-    globalModifier?.addEventListener('dragstart', ev => {
-      const bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
-      return ev.dataTransfer?.setData(
-        'text/plain',
-        JSON.stringify({
-          type: 'modifierbucket',
-          bucket: bucket,
-        })
-      )
+
+    Array.from(globalModifier.children).forEach(li => {
+      li.addEventListener('dragstart', ev => {
+        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+
+        return ev.dataTransfer?.setData(
+          'text/plain',
+          JSON.stringify({
+            type: 'modifierbucket',
+            bucket: bucket,
+          })
+        )
+      })
     })
 
     if (this.isTooltip) globalModifier.addEventListener('mouseenter', event => this._onenter(event))
 
     const modifierBucket = html.querySelector('#modifierbucket')
+
     modifierBucket?.addEventListener('drop', event => {
       event.stopPropagation()
       event.preventDefault()
-      const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
+      let dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
+
       if (!!dragData && !!dragData.otf) {
-        const link = parselink(dragData.otf)
+        let link = parselink(dragData.otf)
+
         if (link.action) {
           link.action.blindroll = true
           if (link.action.type == 'modifier' || !!dragData.actor)
@@ -646,6 +707,7 @@ export class ModifierBucket extends Application {
 
     modifierBucket?.addEventListener('dragstart', ev => {
       let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+
       return ev.dataTransfer?.setData(
         'text/plain',
         JSON.stringify({
@@ -660,6 +722,7 @@ export class ModifierBucket extends Application {
       event => {
         event.preventDefault()
         const s = Math.round(event.deltaY / -100)
+
         this.addModifier(s, '')
       },
       { passive: false }
@@ -673,10 +736,12 @@ export class ModifierBucket extends Application {
       event.preventDefault()
       event.stopPropagation()
       const dragData = JSON.parse(event.dataTransfer?.getData('text/plain') || '')
+
       if (!!dragData && !!dragData.otf) {
-        const link = parselink(dragData.otf)
-        link.action.blindroll = true
-        GURPS.performAction(link.action, game.actors?.get(dragData.actor), {
+        let action = parselink(dragData.otf)
+
+        action.action.blindroll = true
+        GURPS.performAction(action.action, game.actors?.get(dragData.actor), {
           shiftKey: game.user?.isGM,
           ctrlKey: false,
           data: {},
@@ -689,10 +754,9 @@ export class ModifierBucket extends Application {
       .forEach(a => a.addEventListener('click', event => this._onAccumulatorClick(html, event)))
   }
 
-  _onAccumulatorClick(html, event) {
+  _onAccumulatorClick(_html, event) {
     event.preventDefault()
     const a = event.currentTarget
-    const value = a.value ?? null
     const action = a.dataset.action ?? null
 
     switch (action) {
@@ -711,6 +775,7 @@ export class ModifierBucket extends Application {
       default:
         break
     }
+
     this.render()
   }
 
@@ -734,6 +799,7 @@ export class ModifierBucket extends Application {
       formula: '3d6',
       desc: '',
     }
+
     GURPS.performAction(action, GURPS.LastActor || game.user, event)
   }
 
@@ -744,22 +810,23 @@ export class ModifierBucket extends Application {
       formula: '1d6',
       desc: '',
     }
+
     GURPS.performAction(action, GURPS.LastActor || game.user, event)
   }
 
   /**
    * @param {JQuery.MouseEnterEvent} ev
    */
-  _onenter(ev) {
+  _onenter() {
     this.SHOWING = true
     // The location of bucket is hardcoded in the css #modifierbucket, so I'm ok with hardcoding it here.
     // let position = {
-    //   // @ts-ignore
+    //   // @ts-expect-error - accessing private property
     //   left: 805 + 70 / 2 - this.editor.position.width / 2,
-    //   // @ts-ignore
+    //   // @ts-expect-error - accessing private property
     //   top: window.innerHeight - this.editor.position.height - 4,
     // }
-    // @ts-ignore
+    // @ts-expect-error - accessing private property _position
     // this.editor._position = position
     this.editor.render(true)
   }
@@ -774,6 +841,7 @@ export class ModifierBucket extends Application {
 
   async _onClickMagnet(event) {
     event.preventDefault()
+
     if (this.modifierStack.toggleAutoEmpty()) {
       $(event.currentTarget).removeClass('enabled')
     } else {
@@ -786,6 +854,7 @@ export class ModifierBucket extends Application {
    */
   async _onClick(event) {
     event.preventDefault()
+
     if (event.shiftKey) {
       // If not the GM, just broadcast our mods to the chat
       if (!game.user?.isGM) {
@@ -793,6 +862,7 @@ export class ModifierBucket extends Application {
           content: this.chatString(this.modifierStack),
           type: CONST.CHAT_MESSAGE_STYLES.OOC,
         }
+
         ChatMessage.create(messageData, {})
       } else this.showOthers()
     } else if (!this.isTooltip) {
@@ -804,15 +874,18 @@ export class ModifierBucket extends Application {
     let users = game.users?.filter(u => u.id != game.user?.id)
     let content = ''
     let d = ''
+
     for (let user of users || []) {
       content += d
       d = '<hr>'
       let stack = await user.getFlag('gurps', 'modifierstack')
+
       if (!!stack && !!stack.modifierList) content += this.chatString(stack, user.name + ', ')
       else content += user.name + ', No modifiers'
     }
 
     let chatData = {}
+
     chatData.user = game.user?.id || null
     chatData.content = content
     chatData.whisper = [game.user?.id || '']
@@ -832,6 +905,7 @@ export class ModifierBucket extends Application {
 
   refresh() {
     this.render()
+
     if (this.SHOWING) {
       this.editor.render()
     }
@@ -865,20 +939,24 @@ export class ModifierBucket extends Application {
         element[0].style.setProperty('--offset', `${hotbarOffset}px`)
       } else {
         const chatBox = document.getElementById('chat-message')
+
         // Can't adjust position if there is no #chat-message element
         if (!chatBox) return
 
-        const chatBoxIsFloating = chatBox?.parentNode.id === 'chat-notifications' ?? false
+        const chatBoxIsFloating = chatBox.parentNode.id === 'chat-notifications'
 
         const uiRight = document.getElementById('ui-right-column-1')
+
         if (!uiRight) {
           // Can't adjust position if there is no #ui-right element
           return
         }
+
         const uiRightWidth = uiRight.getBoundingClientRect().width
 
         if (chatBoxIsFloating) {
           const chatBoxTop = window.innerHeight - chatBox.getBoundingClientRect().top
+
           element[0].style.marginBottom = `${chatBoxTop + 16}px`
           element[0].style.setProperty('--offset', `${uiRightWidth}px`)
         } else {
@@ -900,12 +978,15 @@ export class ModifierBucket extends Application {
    */
   chatString(modst, name = '') {
     let content = name + 'No modifiers'
+
     if (modst.modifierList.length > 0) {
       content = name + 'total: ' + modst.displaySum
+
       for (let m of modst.modifierList) {
         content += '<br> &nbsp;' + m.mod + ' : ' + m.desc
       }
     }
+
     return content
   }
 
@@ -913,24 +994,28 @@ export class ModifierBucket extends Application {
    * @override
    */
   _injectHTML($html) {
-    const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
-
     const bucketExists = !!document.querySelector('#modifierbucket')
+
     if (!bucketExists) {
       const position = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_POSITION)
+
       if (game.release.generation >= 13) {
         if (position === 'left') {
           const hotbar = document.querySelector('#hotbar')
+
           hotbar.parentNode.insertBefore($html[0], hotbar)
         } else {
           const uiRight = document.querySelector('#ui-right')
+
           uiRight.prepend($html[0])
         }
+
         this.refreshPosition($html)
       } else {
         document.querySelector('#ui-bottom > div').append($html[0])
         if (position === 'left') document.querySelector('#ui-bottom > div').style.justifyContent = 'flex-start'
       }
+
       this._element = $html
     } else {
       console.warn('GURPS | ModifierBucket: _injectHTML called, but bucket already exists.')

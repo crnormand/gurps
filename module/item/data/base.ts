@@ -1,15 +1,15 @@
-import fields = foundry.data.fields
-import TypeDataModel = foundry.abstract.TypeDataModel
 import { AnyObject } from 'fvtt-types/utils'
 
-import { ItemComponent } from './component.js'
 import { parselink } from '../../../lib/parselink.js'
-import { MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
-import { CollectionField } from '../../data/fields/collection-field.js'
 import { BaseAction } from '../../action/base-action.js'
+import { MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
 import { reactionSchema } from '../../actor/data/character-components.js'
+import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
+import { fields, TypeDataModel } from '../../types/foundry/index.js'
+
+import { ItemComponent } from './component.js'
 
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -21,7 +21,7 @@ type ItemMetadata = Readonly<{
   /** Record of document names of pseudo-documents and the path to the collection. */
   embedded: Record<string, string>
   /** Record of actions the item can perform */
-  actions: Record<string, Function>
+  actions: Record<string, (...args: any[]) => any>
   /** A set of Item subtypes that this item cna contain as children */
   childTypes: string[]
   /** A set of Item subtypes that this item can contain as modifiers */
@@ -205,6 +205,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   async toggleEnabled(_enabled: boolean | null = null): Promise<this['parent'] | undefined> {
     console.warn(`Item of type "${this.parent.type}" cannot be toggled.`)
+
     return this.parent
   }
 
@@ -213,6 +214,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   use(options: ItemUseOptions = {}) {
     if (options.action && options.action in this.metadata.actions) {
       const actionFn = this.metadata.actions[options.action]
+
       if (typeof actionFn === 'function') {
         return actionFn.call(this, options)
       }
@@ -232,6 +234,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
     // Delete a container's contents when it is deleted
     const contents = this.allContents
+
     if (contents.length > 0) {
       await Item.deleteDocuments(Array.from(contents.map(i => i.id!)), options)
     }
@@ -267,9 +270,11 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
     for (let bonus of this.bonuses.split('\n')) {
       // Remove square brackets around OTF
       const internalOTF = bonus.match(/\[(.*)\]/)
+
       if (internalOTF) bonus = internalOTF[1].trim()
 
       const parsedOTF = parselink(bonus)
+
       if (parsedOTF.action) bonuses.push(parsedOTF.action)
     }
 
@@ -316,6 +321,7 @@ const baseItemModelSchema = () => {
     ),
   }
 }
+
 type BaseItemModelSchema = ReturnType<typeof baseItemModelSchema>
 
 /* ---------------------------------------- */

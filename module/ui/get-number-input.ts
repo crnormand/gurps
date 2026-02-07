@@ -27,12 +27,13 @@ async function GetNumberInput(options: GetNumberInputOptions): Promise<number> {
       }),
       ok: {
         label: options.okLabel || 'GURPS.submit',
-        callback: (event: Event, button: HTMLButtonElement, dialog: foundry.applications.api.DialogV2.Any) =>
+        callback: (_event: Event, button: HTMLButtonElement, _dialog: foundry.applications.api.DialogV2.Any) =>
           (button.form!.elements as any).number.valueAsNumber,
       },
     })
   } catch (err) {
     console.error('GetNumberInput: failed to open or process number input dialog.', err)
+
     return options.value || 1
   }
 }

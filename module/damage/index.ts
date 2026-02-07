@@ -1,4 +1,5 @@
 import { GurpsModule } from 'module/gurps-module.js'
+
 import ApplyDamageDialog from './applydamage.js'
 import { DamageTable } from './damage-tables.js'
 import DamageChat from './damagechat.js'
@@ -43,16 +44,19 @@ function init() {
 
     // preload drag-and-drop image
     {
-      let img = new Image()
+      const img = new Image()
+
       img.src = 'systems/gurps/icons/blood-splatter-clipart-small.webp'
       DamageChat.damageDragImage = img // used in DamageChat._dropCanvasData
     }
+
     initializeGameSettings()
   })
 
   Hooks.on('ready', () => {
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'
+
     foundry.applications.handlebars.loadTemplates([
       __dirname + '/apply-damage/effect-blunttrauma.hbs',
       __dirname + '/apply-damage/effect-crippling.hbs',

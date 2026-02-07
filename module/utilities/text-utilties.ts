@@ -9,6 +9,7 @@ export function convertRangeTextToArray(rangeText: string): number[] {
 
   for (const range of ranges) {
     const parsed = parseRangeToken(range)
+
     result.push(...parsed)
   }
 
@@ -20,12 +21,14 @@ export function convertRangeTextToArray(rangeText: string): number[] {
 
 function parseRangeToken(token: string): number[] {
   const parts = token.split('-').map(p => p.trim())
+
   if (parts.length === 0) return []
   if (parts.length === 1) return isNaN(parseInt(parts[0])) ? [] : [parseInt(parts[0])]
   if (parts.length > 2) return []
 
   const start = parseInt(parts[0])
   const end = parseInt(parts[1])
+
   if (isNaN(start) || isNaN(end) || start > end) return []
 
   return Array.from({ length: end - start + 1 }, (_, i) => start + i)

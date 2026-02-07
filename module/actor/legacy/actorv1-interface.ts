@@ -1,9 +1,11 @@
-import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from '../actor-components.js'
-import { HitLocationEntryV1 } from './hit-location-entryv1.js'
-import { GurpsItemV2 } from 'module/item/gurps-item.js'
-import { AnyObject } from 'fvtt-types/utils'
-import { CanRollResult, CheckInfo } from '../types.js'
 import { TrackerInstance } from 'module/resource-tracker/resource-tracker.js'
+
+import { AnyObject } from 'fvtt-types/utils'
+
+import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from '../actor-components.js'
+import { CanRollResult, CheckInfo } from '../types.js'
+
+import { HitLocationEntryV1 } from './hit-location-entryv1.js'
 
 interface HitLocationRecord {
   id: string
@@ -48,7 +50,7 @@ interface ActorV1Interface {
   _forceRender(): void
   _removeItemAdditions(itemId: string): Promise<void>
   _sanityCheckItemSettings(component: AnyObject): Promise<boolean>
-  _updateItemFromForm(item: GurpsItemV2<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>): Promise<void>
+  _updateItemFromForm(item: Item.OfType<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>): Promise<void>
   accumulateDamageRoll(action: any): Promise<void>
   addNewItemData(itemData: Record<string, any>, targetkey: string | null): void
   addTaggedRollModifiers(
@@ -78,9 +80,9 @@ interface ActorV1Interface {
   }>
   clearDamageAccumulator(index: number): Promise<void>
   decrementDamageAccumulator(index: number): Promise<void>
-  deleteEquipment(path: string, depth?: number): Promise<GurpsItemV2 | undefined>
+  deleteEntry(path: string, options?: { refreshDR?: boolean }): Promise<unknown>
   findAdvantage(name: string): Advantage | undefined
-  findEquipmentByName(pattern: string, otherFirst?: boolean): [GurpsItemV2 | null, string | null] | null
+  findEquipmentByName(pattern: string, otherFirst?: boolean): [Item.Implementation | null, string | null] | null
   findUsingAction(action: Record<string, any>, chatthing: string, formula: string, thing: string): RollInfo
   getChecks(type: string): {
     data: CheckInfo[] | Record<string, CheckInfo> | Record<string, CheckInfo[]>

@@ -3,6 +3,7 @@
 GitHub Copilot: To compare `GurpsActor` (classic, v1-style) and `GurpsActorV2` (modern, v2-style), we look for functions present in `GurpsActor` that **do not** have a direct counterpart in `GurpsActorV2`.
 
 ### **How to Compare**
+
 - `GurpsActorV2` moves most data logic to the `CharacterModel` (and related data models).
 - Many methods in `GurpsActor` are marked as "migrated" or "not needed" in comments, indicating their logic has moved or is obsolete.
 - Some methods are now handled by the sheet classes or by the new data model system.
@@ -14,6 +15,7 @@ GitHub Copilot: To compare `GurpsActor` (classic, v1-style) and `GurpsActorV2` (
 Below are functions that are present in `GurpsActor` but **do not** have a direct, 1:1 method in `GurpsActorV2` (either because they are obsolete, moved to the data model, or their logic is now handled differently):
 
 ### **Sheet/UI/Foundry Integration**
+
 - `openSheet(newSheet)`
 - `getRollData()`
 - `asGurpsActor()`
@@ -21,6 +23,7 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 - `get Damage` (getter for `GURPS.modules.Damage`)
 
 ### **Item/Equipment Management**
+
 - `handleItemDrop(dragData)`
 - `handleEquipmentDrop(dragData)`
 - `promptEquipmentQuantity(eqt, title)`
@@ -45,11 +48,13 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 - `findEquipmentByName(pattern, otherFirst)`
 
 ### **Equipment/Item Calculation**
+
 - `_updateEquipmentCalc(equipKey)`
 - `_updateItemFromForm(item)`
 - `_sanityCheckItemSettings(actorComp)`
 
 ### **Data Preparation/Calculation**
+
 - `_initializeStartingValues()`
 - `_applyItemBonuses()`
 - `_collapseQuantumEq(list, isMelee)`
@@ -66,6 +71,7 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 - `_getSkillLevelFromOTF(otf)`
 
 ### **Resource Trackers**
+
 - `setResourceTrackers()`
 - `_initializeTrackerValues(template)`
 - `applyTrackerTemplate(path, template)`
@@ -79,6 +85,7 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 - `addTrackerToDataObject(data, trackerData)`
 
 ### **Damage Accumulators**
+
 - `accumulateDamageRoll(action)`
 - `incrementDamageAccumulator(index)`
 - `decrementDamageAccumulator(index)`
@@ -87,6 +94,7 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 - `get damageAccumulators` (getter)
 
 ### **DR/Hit Location**
+
 - `get hitLocationsWithDR`
 - `get hitLocationByWhere`
 - `get _hitLocationRolls`
@@ -105,6 +113,7 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 - `changeDR(drFormula, drLocations)`
 
 ### **Status Effects and Conditions**
+
 - `toggleStatusEffect(statusId, { active, overlay })`
 - `getAllActivePostureEffects()`
 - `replaceManeuver(maneuverText)`
@@ -114,6 +123,7 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 - `get displayname()`
 
 ### **Checks and Rolls**
+
 - `getChecks(checkType)`
 - `addTaggedRollModifiers(chatThing, optionalArgs, attack)`
 - `canConsumeAction(action, chatThing, actorComp)`
@@ -123,6 +133,7 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 - `usingQuintessence` (getter)
 
 ### **Miscellaneous**
+
 - `removeAccents(str)`
 - `getPortraitPath()`
 - `postImport()`
@@ -147,15 +158,15 @@ Below are functions that are present in `GurpsActor` but **do not** have a direc
 
 ## **Summary Table**
 
-| Category                | Example Methods (GurpsActor only)         | Where to Find in V2 / Reason for Absence         |
-|-------------------------|-------------------------------------------|--------------------------------------------------|
-| Sheet/UI                | openSheet, getRollData                    | Sheet classes, core Foundry                      |
-| Item/Equipment          | handleItemDrop, addNewItemData            | Data models, sheet classes, core Foundry         |
-| Data Preparation        | _initializeStartingValues, _applyItemBonuses | CharacterModel, data models                   |
-| DR/Hit Location         | getTorsoDr, getEquippedParry              | CharacterModel, data models                      |
-| Status Effects          | toggleStatusEffect, replaceManeuver       | CharacterModel, data models                      |
-| Checks/Rolls            | getChecks, addTaggedRollModifiers         | CharacterModel, data models                      |
-| Miscellaneous           | removeAccents, getPortraitPath            | Not needed, utility modules                      |
+| Category         | Example Methods (GurpsActor only)              | Where to Find in V2 / Reason for Absence |
+| ---------------- | ---------------------------------------------- | ---------------------------------------- |
+| Sheet/UI         | openSheet, getRollData                         | Sheet classes, core Foundry              |
+| Item/Equipment   | handleItemDrop, addNewItemData                 | Data models, sheet classes, core Foundry |
+| Data Preparation | \_initializeStartingValues, \_applyItemBonuses | CharacterModel, data models              |
+| DR/Hit Location  | getTorsoDr, getEquippedParry                   | CharacterModel, data models              |
+| Status Effects   | toggleStatusEffect, replaceManeuver            | CharacterModel, data models              |
+| Checks/Rolls     | getChecks, addTaggedRollModifiers              | CharacterModel, data models              |
+| Miscellaneous    | removeAccents, getPortraitPath                 | Not needed, utility modules              |
 
 ---
 

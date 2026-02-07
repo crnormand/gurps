@@ -4,12 +4,10 @@ import { DamageTable } from '../../module/damage/damage-tables.js'
 beforeAll(() => {
   globalThis.GURPS = {} as any
 
-  /** @type {Game} */
-  // @ts-ignore
+  // @ts-expect-error - mock for testing
   globalThis.game = {
     i18n: {
-      // @ts-ignore
-      localize: str => str,
+      localize: (str: string) => str,
     },
   }
 })
@@ -295,6 +293,7 @@ describe('parseForRollOrDamage', () => {
     ],
   ])('parses %s correctly', (input, expected) => {
     const result = parseForRollOrDamage(input)
+
     expect(result!.action).toEqual(expected)
   })
 
@@ -737,6 +736,7 @@ describe('parseLink', () => {
 
     test('#> Per 12', () => {
       const result = parselink(input)
+
       expect(result.action).toEqual({
         attribute: 'Per',
         attrkey: 'PER',
@@ -753,6 +753,7 @@ describe('parseLink', () => {
 
     test('#> Per: 12', () => {
       const result = parselink(input)
+
       expect(result.action).toEqual({
         attribute: 'Per',
         attrkey: 'PER',
@@ -768,7 +769,7 @@ describe('parseLink', () => {
     })
 
     test('#> Fright Check -2 for Fear', () => {
-      let result = parselink(input)
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'Fright Check',
@@ -788,7 +789,7 @@ describe('parseLink', () => {
     })
 
     test('#> Fright Check14', () => {
-      let result = parselink(input)
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         attribute: 'Fright Check',
@@ -805,7 +806,7 @@ describe('parseLink', () => {
     })
 
     test('#> ST12 +2 Some description', () => {
-      let result = parselink(input)
+      const result = parselink(input)
 
       expect(result.action).toEqual({
         orig: 'ST12 +2 Some description',
@@ -828,7 +829,8 @@ describe('parseLink', () => {
     test('(Russian DX) #> ЛВ', () => {
       const result = parselink(input)
 
-      // TODO code comments says it deals with non-English translations, but it doesn't seem to do anything.
+      // TODO code comments says it deals with non-English translations, but it doesn't
+      // seem to do anything.
       expect(result).toEqual({ text: 'ЛВ' })
     })
 
@@ -1450,7 +1452,6 @@ describe('parseLink', () => {
         )
       )
     })
-
     test('#> S:Acrobatics | DX-6', () => {
       const result = parselink(input)
 
@@ -1486,6 +1487,7 @@ describe('parseLink', () => {
   describe('Melee/Ranged/Attack/Damage/Block/Parry', () => {
     test('#> A:', () => {
       const result = parselink(input)
+
       expect(result.action).toBeUndefined()
     })
 
@@ -1610,11 +1612,13 @@ describe('parseLink', () => {
       )
     })
 
+    // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
     test('#> A:Broadsword *Costs 1 tr("Control Points")', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
+        // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
         costs: '*Costs 1 tr("Control Points")',
         desc: '',
         isMelee: true,
@@ -1630,11 +1634,13 @@ describe('parseLink', () => {
       )
     })
 
+    // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
     test('#> A:Broadsword *Costs 1 tr(Control Points)', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
+        // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
         costs: '*Costs 1 tr(Control Points)',
         desc: '',
         isMelee: true,
@@ -1650,11 +1656,13 @@ describe('parseLink', () => {
       )
     })
 
+    // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
     test('#> A:Broadsword *Costs 1 tr(Control*Points)', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
+        // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
         costs: '*Costs 1 tr(Control*Points)',
         desc: '',
         isMelee: true,
@@ -1670,6 +1678,7 @@ describe('parseLink', () => {
       )
     })
 
+    // TODO I personally would require a space between the weapon name and the modifier.
     test('#> A:Broadsword-2 stunned', () => {
       const result = parselink(input)
 
@@ -1985,6 +1994,7 @@ describe('parseLink', () => {
 
     test('#> ?AK:Broadsword', () => {
       const result = parselink(input)
+
       expect(result.action).toBeUndefined()
     })
   })
@@ -2047,7 +2057,7 @@ describe('parseLink', () => {
       spantext: '<b>Sk:</b>Scrounging | Per -4 ',
       type: 'skill-spell',
     })
-    expect(result.text).toEqual(expect.stringContaining('data-otf=\'Sk:\"Scrounging\" | Per-4\'>Scrounging</span>'))
+    expect(result.text).toEqual(expect.stringContaining('data-otf=\'Sk:"Scrounging" | Per-4\'>Scrounging</span>'))
   })
 
   test('#> Sk:Scrounging | Per-4', () => {

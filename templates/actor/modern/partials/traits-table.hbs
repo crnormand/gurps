@@ -22,13 +22,13 @@
         </span>
         <span class='ms-col-points {{pointsClass this.points}}'>[{{this.points}}]</span>
         <span class='ms-col-ref'>{{{pdflinkext this}}}</span>
-        {{>row-actions editAction="edit-trait" deleteAction="delete-trait" key=(concat "system.ads." @key)}}
+        {{>row-actions editAction="editTrait" deleteAction="deleteTrait" key=(concat "system.ads." @key)}}
         {{>row-notes notes=this.notes}}
       </div>
       {{else}}
       <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
       {{/each}}
-      {{>add-row action="add-trait" label=(localize "GURPS.advantage")}}
+      {{>add-row action="addTrait" label=(localize "GURPS.advantage")}}
     </div>
   </div>
 </div>

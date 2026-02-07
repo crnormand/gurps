@@ -1,0 +1,77 @@
+{{!-- STATUS BAR (outside tabs) --}}
+<div class='ms-status-bar'>
+  <div class='ms-status-item ms-posture-dropdown'>
+    <div class='ms-posture-selected' data-posture='{{system.conditions.posture}}'>
+      {{#if (eq system.conditions.posture 'prone')}}<span>{{localize 'GURPS.status.Prone'}}</span>
+      {{else if (eq system.conditions.posture 'kneel')}}<span>{{localize 'GURPS.status.Kneel'}}</span>
+      {{else if (eq system.conditions.posture 'crouch')}}<span>{{localize 'GURPS.status.Crouch'}}</span>
+      {{else if (eq system.conditions.posture 'sit')}}<span>{{localize 'GURPS.status.Sit'}}</span>
+      {{else if (eq system.conditions.posture 'crawl')}}<span>{{localize 'GURPS.status.Crawling'}}</span>
+      {{else}}<span>{{localize 'GURPS.status.Standing'}}</span>
+      {{/if}}
+      <span class='ms-posture-icons'>
+        {{#if (eq system.conditions.posture 'prone')}}<img src='systems/gurps/icons/statuses/dd-condition-prone.webp' />
+        {{else if (eq system.conditions.posture 'kneel')}}<img src='systems/gurps/icons/statuses/condition-kneel.webp' />
+        {{else if (eq system.conditions.posture 'crouch')}}<img src='systems/gurps/icons/statuses/condition-crouch.webp' />
+        {{else if (eq system.conditions.posture 'sit')}}<img src='systems/gurps/icons/statuses/condition-sit.webp' />
+        {{else if (eq system.conditions.posture 'crawl')}}<img src='systems/gurps/icons/statuses/condition-crawl.webp' />
+        {{else}}<img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+        {{/if}}
+        <i class='fas fa-caret-down'></i>
+      </span>
+    </div>
+    <div class='ms-posture-options'>
+      <div class='ms-posture-option' data-value='standing'>
+        <span>{{localize 'GURPS.status.Standing'}}</span>
+        <img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
+      </div>
+      {{#each (listAllPostures) as |this key|}}
+      <div class='ms-posture-option' data-value='{{key}}'>
+        <span>{{localize this.name}}</span>
+        <img src='{{this.img}}' />
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{#if (inCombat this)}}
+  <div class='ms-status-item ms-maneuver-dropdown'>
+    <div class='ms-maneuver-selected' data-maneuver='{{system.conditions.maneuver}}'>
+      {{#with (getManeuver system.conditions.maneuver) as |maneuver|}}
+      <span>{{localize maneuver.label}}</span>
+      <span class='ms-maneuver-icons'>
+        <img src='{{maneuver.icon}}' />
+        <i class='fas fa-caret-down'></i>
+      </span>
+      {{/with}}
+    </div>
+    <div class='ms-maneuver-options'>
+      {{#each (listAllManeuvers) as |this key|}}
+      <div class='ms-maneuver-option' data-value='{{key}}'>
+        <span>{{localize this.label}}</span>
+        <img src='{{this.icon}}' />
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+  <div class='ms-status-item'>
+    <span>{{localize 'GURPS.conditionsCombatMove'}}: <strong>{{system.conditions.move}}</strong></span>
+  </div>
+  {{!-- ACTIVE EFFECTS TAGS (enabled only) --}}
+  {{#each effects}}
+  {{#unless this.disabled}}
+  <span class='ms-effect-tag {{effectTagClass this}}' data-effect-id='{{this.id}}' title='{{this.name}}'>
+    <span class='ms-effect-icon-wrapper'>
+      {{#if this.img}}<img src='{{this.img}}' class='ms-effect-icon' />{{/if}}
+      <button class='ms-effect-delete' data-action='deleteEffect' data-effect-id='{{this.id}}' title='Delete'>
+        <i class='fas fa-trash'></i>
+      </button>
+    </span>
+    <span class='ms-tag-text'>{{this.name}}</span>
+  </span>
+  {{/unless}}
+  {{/each}}
+  <button type='button' class='ms-effect-add' data-action='addEffect' title='Add Effect'>
+    <i class='fas fa-plus'></i>
+  </button>
+</div>

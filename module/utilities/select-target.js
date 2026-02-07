@@ -16,17 +16,20 @@ export default async function selectTarget(targets, selectOptions = { selectAll:
       }
     ),
     ok: {
-      callback: (event, button, dialog) => {
+      callback: (event, button) => {
         const allTokens = button.form.elements.tokens
         const ids = Array.from(allTokens)
           .filter(token => token.checked)
           .map(token => token.value)
 
         const selected = []
+
         ids.forEach(id => {
           const target = targets.find(token => token.id === id)
+
           if (target) selected.push(target)
         })
+
         return selected
       },
     },
@@ -44,6 +47,7 @@ export default async function selectTarget(targets, selectOptions = { selectAll:
         })
       } else {
         const allCheckbox = element.querySelector('input[name="all"]')
+
         if (selectOptions.selectAll) {
           allCheckbox.checked = true
           tokenCheckboxes.forEach(checkbox => (checkbox.checked = true))

@@ -21,6 +21,7 @@ export const collectDeletions = (data: EntryData, basePath: string): DeletionIte
       items.push(...collectDeletions(data.collapsed[key], `${basePath}.collapsed.${key}`))
 
   items.push({ path: basePath, itemid: data.itemid })
+
   return items
 }
 
@@ -34,6 +35,7 @@ const toZeroFilledKey = (index: number): string => String(index).padStart(5, '0'
 
 const findConsecutiveKeys = <T>(startIndex: number, data: Record<string, T>): string[] => {
   const key = toZeroFilledKey(startIndex)
+
   return Object.hasOwn(data, key) ? [key, ...findConsecutiveKeys(startIndex + 1, data)] : []
 }
 
@@ -57,6 +59,7 @@ export const prepareRemoveKey = <T>(path: string, objectData: Record<string, T>)
       } else {
         acc[key] = value
       }
+
       return acc
     }, {})
 

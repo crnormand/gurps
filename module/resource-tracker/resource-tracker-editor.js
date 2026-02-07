@@ -27,7 +27,9 @@ export class ResourceTrackerEditor extends Application {
   /** @override */
   getData(options) {
     const data = super.getData(options)
+
     data.tracker = this._tracker
+
     return data
   }
 
@@ -35,7 +37,7 @@ export class ResourceTrackerEditor extends Application {
    * By default, do nothing. Each specific use will need its own update method.
    * @param {*} html
    */
-  async _updateTracker(html) {}
+  async _updateTracker(_html) {}
 
   /** @override */
   activateListeners(html) {
@@ -48,6 +50,7 @@ export class ResourceTrackerEditor extends Application {
     html.find('.inputs .alias').change(ev => {
       // change the regex from /(w+)(.*)/ to /([A-Za-z0-9_+-]+)(.*)/ to make sure we recognize pi-, pi+ and pi++
       let alias = ev.currentTarget.value
+
       if (/^[A-Za-z0-9_+-]+$/.test(alias)) this._tracker.alias = alias
       else {
         ui.notifications.warn(game.i18n.format('GURPS.resourceInvalidAlias', { alias: alias }))
@@ -57,30 +60,35 @@ export class ResourceTrackerEditor extends Application {
 
     html.find('[name="damage-type"]').click(ev => {
       let element = $(ev.currentTarget)
+
       this._tracker.isDamageType = element.is(':checked')
       this.render(false)
     })
 
     html.find('[name="enforce-minimum"]').click(ev => {
       let element = $(ev.currentTarget)
+
       this._tracker.isMinimumEnforced = element.is(':checked')
       this.render(false)
     })
 
     html.find('[name="enforce-maximum"]').click(ev => {
       let element = $(ev.currentTarget)
+
       this._tracker.isMaximumEnforced = element.is(':checked')
       this.render(false)
     })
 
     html.find('[name="damage-tracker"]').click(ev => {
       let element = $(ev.currentTarget)
+
       this._tracker.isDamageTracker = element.is(':checked')
       this.render(false)
     })
 
     html.find('[name="breakpoints"]').click(ev => {
       let element = $(ev.currentTarget)
+
       this._tracker.breakpoints = element.is(':checked')
       this.render(false)
     })
@@ -118,38 +126,44 @@ export class ResourceTrackerEditor extends Application {
 
     html.find('[name="delete-threshold"]').click(ev => {
       let index = $(ev.currentTarget).attr('data')
+
       this._tracker.thresholds.splice(index, 1)
       this.render(false)
     })
 
     html.find('[name="comparison"]').change(ev => {
       let index = $(ev.currentTarget).attr('data')
+
       this._tracker.thresholds[index].comparison = ev.currentTarget.value
     })
 
     html.find('[name="operator"]').change(ev => {
       let index = $(ev.currentTarget).attr('data')
+
       this._tracker.thresholds[index].operator = ev.currentTarget.value
     })
 
     html.find('[name="value"]').change(ev => {
       let index = $(ev.currentTarget).attr('data')
+
       this._tracker.thresholds[index].value = parseFloat(ev.currentTarget.value)
     })
 
     html.find('[name="condition"]').change(ev => {
       let index = $(ev.currentTarget).attr('data')
+
       this._tracker.thresholds[index].condition = ev.currentTarget.value
     })
 
     html.find('[name="color"]').change(ev => {
       let index = $(ev.currentTarget).attr('data')
+
       this._tracker.thresholds[index].color = ev.currentTarget.value
     })
 
     html.find('#update').click(() => this._updateTracker())
 
-    html.find('#reset').on('click', ev => {
+    html.find('#reset').on('click', _ev => {
       this._tracker = {
         name: '',
         alias: '',

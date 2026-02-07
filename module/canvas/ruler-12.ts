@@ -9,16 +9,21 @@ export class GurpsRulerV12 extends Ruler {
     const totalDistance = this.totalDistance
     const gridUnits = canvas?.scene?.grid.units ?? Length.Unit.Yard
     const units = Length.unitFromString(gridUnits ?? Length.Unit.Yard)
-    let dist = (d: number, u: string) => {
+
+    const dist = (d: number, u: string) => {
       return `${Math.round(d * 100) / 100} ${u}`
     }
+
     const length = Length.from(totalDistance, units as unknown as LengthUnit, true)
     const yards = length.to(Length.Unit.Yard)
     let label = dist(length.value, gridUnits)
-    let mod = this.yardsToRangePenalty(yards.value)
+    const mod = this.yardsToRangePenalty(yards.value)
+
     GURPS.ModifierBucket.setTempRangeMod(mod)
+
     if (segment.last) {
-      let total = dist(totalDistance, gridUnits)
+      const total = dist(totalDistance, gridUnits)
+
       if (total !== label) label += ` [${total}]`
     }
 
@@ -30,7 +35,8 @@ export class GurpsRulerV12 extends Ruler {
   // @ts-expect-error: Waiting for types to catch up
   override _endMeasurement() {
     // @ts-expect-error: dependent on DragRuler
-    let addRangeMod = !this.draggedEntity // Will be false if using DragRuler and it was movement
+    const addRangeMod = !this.draggedEntity // Will be false if using DragRuler and it was movement
+
     // @ts-expect-error: Waiting for types to catch up
     super._endMeasurement()
     if (addRangeMod) GURPS.ModifierBucket.addTempRangeMod()
@@ -40,16 +46,18 @@ export class GurpsRulerV12 extends Ruler {
 
   yardsToRangePenalty(yards: number): number {
     const strategy = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY) ?? 'Standard'
+
     if (strategy === 'Standard') {
       return GURPS.SSRT.getModifier(yards)
     } else {
-      for (let range of GURPS.rangeObject.ranges) {
+      for (const range of GURPS.rangeObject.ranges) {
         if (typeof range.max === 'string')
           // Handles last distance being "500+"
           return range.penalty
         if (yards <= range.max) return range.penalty
       }
     }
+
     return 0
   }
 }

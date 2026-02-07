@@ -36,10 +36,13 @@ export class GurpsItem extends Item {
     // Look at Melee and Ranged attacks in actor.system
     let attacks = []
     let attackTypes = ['melee', 'ranged']
+
     if (attackType !== 'both') attackTypes = [attackType]
+
     for (let at of attackTypes) {
       recurselist(this.actor.system[at], (e, _k, _d) => {
         let key = undefined
+
         if (!!actorComponentUUID && e.uuid === actorComponentUUID) {
           key = this.actor._findSysKeyForId('uuid', e.uuid, at)
         } else if (!!originalName && e.originalName === originalName) {
@@ -49,7 +52,8 @@ export class GurpsItem extends Item {
         } else if (this.id === e.fromItem) {
           key = this.actor._findSysKeyForId('fromItem', e.fromItem, at)
         }
-        if (!!key) {
+
+        if (key) {
           attacks.push({
             component: e,
             key,
@@ -57,7 +61,9 @@ export class GurpsItem extends Item {
         }
       })
     }
-    if (!!checkOnly) return !!attacks.length > 0
+
+    if (checkOnly) return !!attacks.length > 0
+
     return attacks
   }
 
@@ -76,12 +82,14 @@ export class GurpsItem extends Item {
   getItemOTFs(checkOnly = false) {
     const { notes } = this.system[this.itemSysKey]
     const action = parselink(notes || '')
-    if (!!checkOnly) return !!action.text
+
+    if (checkOnly) return !!action.text
+
     return action
   }
 
   get hasOTFs() {
-    !!this.getItemOTFs(true)
+    return !!this.getItemOTFs(true)
   }
 
   async toogleEquip(equipped) {
@@ -89,11 +97,13 @@ export class GurpsItem extends Item {
 
     const key = this.actor._findEqtkeyForId('itemid', this._id)
     let eqt = foundry.utils.duplicate(GURPS.decode(this.actor, key))
+
     if (eqt) {
       eqt.equipped = !eqt.equipped
       await this.actor.updateItemAdditionsBasedOn(eqt, key)
       await this.actor.internalUpdate({ [key]: eqt })
     }
+
     this.system.equipped = eqt.equipped
     this.system.eqt.equipped = eqt.equipped
     await this.actor._updateItemFromForm(this)
@@ -103,7 +113,8 @@ export class GurpsItem extends Item {
 
   async internalUpdate(data, context) {
     let ctx = { render: !this.ignoreRender }
-    if (!!context) ctx = { ...context, ...ctx }
+
+    if (context) ctx = { ...context, ...ctx }
     await this.update(data, ctx)
   }
 
@@ -122,7 +133,9 @@ export class GurpsItem extends Item {
       rangedAtk: 'ranged',
     }
     const sysKey = keys[this.type]
+
     if (!sysKey) throw new Error(`No actor system key found for ${this.type}`)
+
     return sysKey
   }
 
@@ -141,7 +154,9 @@ export class GurpsItem extends Item {
       rangedAtk: 'rng',
     }
     const sysKey = keys[this.type]
+
     if (!sysKey) throw new Error(`No item system key found for ${this.type}`)
+
     return sysKey
   }
 
@@ -153,6 +168,7 @@ export class GurpsItem extends Item {
   getItemInfo() {
     let data = foundry.utils.duplicate(this)
     let itemSystem = data.system
+
     return {
       id: this._id,
       img: this.img,

@@ -1,7 +1,9 @@
+import { AnyMutableObject } from 'fvtt-types/utils'
+
+import { fields } from '../../types/foundry/index.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
-import fields = foundry.data.fields
-import { AnyMutableObject } from 'fvtt-types/utils'
 
 class TraitModel extends BaseItemModel<TraitSchema> {
   static override defineSchema(): TraitSchema {
@@ -34,6 +36,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
   get selfControlNote(): string {
     if (this.component.cr === null) return ''
+
     return '[' + game.i18n?.localize('GURPS.CR' + this.component.cr.toString()) + ': ' + this.parent.name + ']'
   }
 

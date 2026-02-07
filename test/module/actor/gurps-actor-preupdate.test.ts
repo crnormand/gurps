@@ -1,8 +1,9 @@
 import { jest } from '@jest/globals'
-import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
+
 import { CharacterModel } from '../../../module/actor/data/character.js'
-import { GurpsItemV2 } from '../../../module/item/gurps-item.js'
+import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
 import { TraitModel } from '../../../module/item/data/trait.js'
+import { GurpsItemV2 } from '../../../module/item/gurps-item.js'
 import { _Collection } from '../../foundry-utils/collection.js'
 
 describe('GurpsActorV2._preUpdate', () => {
@@ -11,20 +12,20 @@ describe('GurpsActorV2._preUpdate', () => {
   beforeEach(() => {
     // Ensure minimal globals exist
     global.GURPS = global.GURPS || { module: {} }
-    // @ts-expect-error
+    // @ts-expect-error - mock for testing
     global.game = global.game || {}
 
     // Instantiate with minimal data that our test base Actor supports
     actor = new GurpsActorV2({ name: 'Test Actor', type: 'characterV2' })
     actor.system = new CharacterModel()
-    // @ts-expect-error
+    // @ts-expect-error - mock for testing
     actor.system._source = { allNotes: [], moveV2: [] }
   })
 
   it('does not transform non-legacy data', async () => {
     const updateData = { name: 'Updated Actor' }
 
-    // @ts-expect-error
+    // @ts-expect-error - testing protected method
     await actor._preUpdate(updateData, {}, {})
 
     expect(updateData).toBe(updateData)
@@ -32,65 +33,27 @@ describe('GurpsActorV2._preUpdate', () => {
 
   describe('translate legacy Ads data', () => {
     beforeEach(() => {
+      const createMockItem = (id: string, name: string, containedBy: string | null) =>
+        new GurpsItemV2({
+          _id: id,
+          name,
+          type: 'featureV2',
+          // @ts-expect-error - partial mock data for testing
+          system: new TraitModel({ containedBy } as unknown),
+        })
+
       const allAds = [
-        new GurpsItemV2({
-          _id: 'ad1',
-          name: 'Ad 1',
-          type: 'featureV2',
-          // @ts-expect-error
-          system: new TraitModel({
-            containedBy: null,
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad2',
-          name: 'Ad 2',
-          type: 'featureV2',
-          // @ts-expect-error
-          system: new TraitModel({
-            containedBy: null,
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad3',
-          name: 'Ad 3',
-          type: 'featureV2',
-          // @ts-expect-error
-          system: new TraitModel({
-            containedBy: null,
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad2.1',
-          name: 'Ad 2.1',
-          type: 'featureV2',
-          // @ts-expect-error
-          system: new TraitModel({
-            containedBy: 'ad2',
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad2.2',
-          name: 'Ad 2.2',
-          type: 'featureV2',
-          // @ts-expect-error
-          system: new TraitModel({
-            containedBy: 'ad2',
-          }),
-        }),
-        new GurpsItemV2({
-          _id: 'ad2.2.1',
-          name: 'Ad 2.2.1',
-          type: 'featureV2',
-          // @ts-expect-error
-          system: new TraitModel({
-            containedBy: 'ad2.2',
-          }),
-        }),
+        createMockItem('ad1', 'Ad 1', null),
+        createMockItem('ad2', 'Ad 2', null),
+        createMockItem('ad3', 'Ad 3', null),
+        createMockItem('ad2.1', 'Ad 2.1', 'ad2'),
+        createMockItem('ad2.2', 'Ad 2.2', 'ad2'),
+        createMockItem('ad2.2.1', 'Ad 2.2.1', 'ad2.2'),
       ]
 
       // Mock the actor's items collection for testing: actor.items should return our test ads.
       const itemsCollection = new _Collection()
+
       allAds.forEach(ad => itemsCollection.set(ad._id!, ad))
       Object.defineProperty(actor, 'items', {
         get: jest.fn(() => itemsCollection),
@@ -101,7 +64,8 @@ describe('GurpsActorV2._preUpdate', () => {
     it('converts a request to remove the entire ads array with calls to Actor.deleteEmbeddedDocuments', async () => {
       const deleteEmbeddedDocuments = jest.spyOn(actor, 'deleteEmbeddedDocuments').mockResolvedValue([])
       const updateData: Record<string, any> = { system: { '-=ads': null } }
-      // @ts-ignore
+
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData.system).includes('-=ads')).toBe(false)
@@ -139,7 +103,8 @@ describe('GurpsActorV2._preUpdate', () => {
           },
         },
       }
-      // @ts-ignore
+
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(createSpy).toHaveBeenCalledTimes(1)
@@ -176,7 +141,7 @@ describe('GurpsActorV2._preUpdate', () => {
     it('converts a request to remove the entire move array with an empty array on MoveV2', async () => {
       const updateData: Record<string, any> = { system: { '-=move': null } }
 
-      // @ts-expect-error
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData).length).toBe(1)
@@ -211,7 +176,7 @@ describe('GurpsActorV2._preUpdate', () => {
         },
       }
 
-      // @ts-expect-error
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData.system).length).toBe(1)
@@ -234,7 +199,7 @@ describe('GurpsActorV2._preUpdate', () => {
 
       const updateData: Record<string, any> = { system: { move: { '00001': { basic: 10 } } } }
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData.system)).toContain('moveV2')
@@ -268,7 +233,7 @@ describe('GurpsActorV2._preUpdate', () => {
         },
       }
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData.system).length).toBe(1)
@@ -314,14 +279,14 @@ describe('GurpsActorV2._preUpdate', () => {
       ] as any
 
       actor.system.allNotes = allNotes
-      // @ts-expect-error
+      // @ts-expect-error - mock for testing
       actor.system._source = { allNotes } as any
     })
 
     it('converts a request to remove the entire notes array with an empty array on allNotes', async () => {
       const updateData: Record<string, any> = { system: { '-=notes': null } }
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData).length).toBe(1)
@@ -335,7 +300,7 @@ describe('GurpsActorV2._preUpdate', () => {
         system: { notes: { '00004': { notes: 'Note 4', id: 'note4', open: true, containedBy: null } } },
       } as any
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData.system).length).toBe(1)
@@ -356,7 +321,7 @@ describe('GurpsActorV2._preUpdate', () => {
     it("updates the entire allNotes array if any element's data is updated", async () => {
       const updateData = { system: { notes: { '00001': { notes: 'Updated Note 2' } } } } as any
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData.system).length).toBe(1)
@@ -378,7 +343,7 @@ describe('GurpsActorV2._preUpdate', () => {
         system: { notes: { '00000': { contains: { '00000': { notes: 'Updated Note 1.1' } } } } },
       } as any
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
       expect(Object.keys(updateData).length).toBe(1)
       expect(Object.keys(updateData.system).length).toBe(1)
@@ -408,7 +373,7 @@ describe('GurpsActorV2._preUpdate', () => {
         },
       } as any
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData).length).toBe(1)
@@ -491,14 +456,14 @@ describe('GurpsActorV2._preUpdate', () => {
       ] as any
 
       actor.system.hitlocationsV2 = allHitLocations
-      // @ts-expect-error
+      // @ts-expect-error - mock for testing
       actor.system._source = { hitlocationsV2: allHitLocations } as any
     })
 
     it('converts a request to remove the entire hitlocations array with an empty array on hitlocationsV2', async () => {
       const updateData: Record<string, any> = { system: { '-=hitlocations': null } }
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData).length).toBe(1)
@@ -524,7 +489,7 @@ describe('GurpsActorV2._preUpdate', () => {
         },
       }
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData.system).length).toBe(1)
@@ -575,7 +540,7 @@ describe('GurpsActorV2._preUpdate', () => {
         },
       }
 
-      // @ts-ignore
+      // @ts-expect-error - testing protected method
       await actor._preUpdate(updateData, {}, {})
 
       expect(Object.keys(updateData.system).length).toBe(1)

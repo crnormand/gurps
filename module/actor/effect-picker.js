@@ -115,12 +115,14 @@ export default class EffectPicker extends Application {
     html.find('.effect-picker-item').on('click', async event => {
       event.preventDefault()
       const effectId = event.currentTarget.dataset.effectId
+
       await this.addEffect(effectId)
       this.close()
     })
 
     html.find('.effect-picker-category-header').on('click', event => {
       const categoryElement = event.currentTarget.closest('.effect-picker-category')
+
       categoryElement.classList.toggle('collapsed')
     })
 
@@ -138,6 +140,7 @@ export default class EffectPicker extends Application {
       items.each((itemIndex, itemElement) => {
         const name = $(itemElement).find('.effect-picker-name').text().toLowerCase()
         const matches = !query || name.includes(searchLower)
+
         $(itemElement).toggle(matches)
         if (matches) visibleCount++
       })
@@ -147,11 +150,13 @@ export default class EffectPicker extends Application {
     })
 
     const hasVisible = this.element.find('.effect-picker-item:visible').length > 0
+
     this.element.find('.effect-picker-empty').toggle(!hasVisible)
   }
 
   async addEffect(effectId) {
     const statusEffect = CONFIG.statusEffects.find(effect => effect.id === effectId)
+
     if (!statusEffect) return
 
     const effectData = {

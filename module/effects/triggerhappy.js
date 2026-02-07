@@ -34,29 +34,41 @@ export default class TriggerHappySupport {
   _teleport(args) {
     if (!GURPS.LastTokenDocument) {
       ui.notifications.warn('No last token')
+
       return
     }
+
     args = args.join(' ').split('/')
     let sn = args[0]
     let tn = args[1]
+
     if (!tn) {
       // If only one name, assume the current scene
       tn = sn
       sn = canvas.scene.name
     }
+
     if (!tn) {
       ui.notifications.warn('Requires scene name / drawing (or token) name or just drawing (or token) name ')
+
       return
     }
+
     let scene = game.scenes.contents.find(s => s.name == sn)
+
     if (!scene) {
       ui.notifications.warn('Unable to find scene ' + sn)
+
       return
     }
+
     let target = scene.drawings.contents.find(d => d.data.text == tn)
+
     if (!target) target = scene.tokens.find(t => t.name == tn)
+
     if (!target) {
       ui.notifications.warn('Unable to find drawing or token ' + tn + ' in scene ' + sn)
+
       return
     }
 

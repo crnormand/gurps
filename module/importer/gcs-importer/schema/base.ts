@@ -1,6 +1,6 @@
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
-import fields = foundry.data.fields
-import DataModel = foundry.abstract.DataModel
+
+import { DataModel, fields } from '../../../types/foundry/index.js'
 
 const sourcedIdSchema = () => {
   return {
@@ -84,8 +84,10 @@ class GcsElement<
     const process = (datum: string) => {
       for (const key of Object.keys(replacements)) {
         const pattern = new RegExp('@' + key + '@', 'g')
+
         if (datum.match(pattern)) datum = datum.replace(pattern, replacements[key])
       }
+
       return datum
     }
 
@@ -154,13 +156,16 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
     switch (name) {
       case 'children':
         if (this.metadata.childClass === null) return null
+
         return data?.map((childData: any) => this.metadata.childClass?.importSchema(childData))
       case 'modifiers':
         if (this.metadata.modifierClass === null) return null
+
         return data?.map((modifierData: any) => this.metadata.modifierClass?.importSchema(modifierData))
 
       case 'weapons':
         if (this.metadata.weaponClass === null) return null
+
         return data?.map((weaponData: any) => this.metadata.weaponClass?.importSchema(weaponData))
       default:
         return super._importField(data, field, name)
@@ -171,6 +176,7 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
 
   get childItems() {
     if (this.metadata.childClass === null) return []
+
     return ((this as any).children ?? []).map((childData: any) =>
       this.metadata.childClass?.fromImportData(childData, this)
     )
@@ -178,9 +184,11 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
 
   get allChildItems() {
     const children = this.childItems
+
     children.forEach((child: GcsItem) => {
       if (child.isContainer) children.push(...child.allChildItems)
     })
+
     return children
   }
 
@@ -188,6 +196,7 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
 
   get modifierItems() {
     if (this.metadata.modifierClass === null) return []
+
     return ((this as any).modifiers ?? []).map((modifierData: any) =>
       this.metadata.modifierClass?.fromImportData(modifierData, this)
     )
@@ -197,6 +206,7 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
 
   get weaponItems() {
     if (this.metadata.weaponClass === null) return []
+
     return ((this as any).weapons ?? []).map((weaponData: any) =>
       this.metadata.weaponClass?.fromImportData(weaponData, this)
     )

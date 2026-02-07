@@ -4,6 +4,7 @@ export const readXmlText = (value: XmlTextLike): string => {
   if (value === null || value === undefined) return ''
   if (typeof value === 'string' || typeof value === 'number') return String(value).trim()
   if (typeof value === 'object' && value['#text']) return String(value['#text']).trim()
+
   return ''
 }
 
@@ -30,11 +31,11 @@ export function calculateEncumbranceLevels(
   weightUnits: string,
   calc: { move?: number[]; dodge?: number[] } = {}
 ): Record<string, Encumbrance> {
-  let es: Record<string, Encumbrance> = {}
+  const es: Record<string, Encumbrance> = {}
   const encumbranceLevelWeightFactors = [1, 2, 3, 6, 10]
 
   for (let encumbranceLevelIndex = 0; encumbranceLevelIndex <= 4; encumbranceLevelIndex++) {
-    let encumbrance: Encumbrance = {
+    const encumbrance: Encumbrance = {
       level: encumbranceLevelIndex,
       current: false,
       key: 'enc' + encumbranceLevelIndex,
@@ -43,7 +44,7 @@ export function calculateEncumbranceLevels(
       dodge: calc?.dodge ? calc?.dodge[encumbranceLevelIndex] : 0,
     }
 
-    let weightValue = basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex]
+    const weightValue = basicLift * encumbranceLevelWeightFactors[encumbranceLevelIndex]
 
     // Find the highest encumbrance level whose weightValue is equal to or greater than carriedWeight.
     encumbrance.current =
@@ -54,5 +55,6 @@ export function calculateEncumbranceLevels(
     encumbrance.weight = weightValue.toString() + ' ' + weightUnits
     GURPS.put(es, encumbrance, encumbranceLevelIndex)
   }
+
   return es
 }

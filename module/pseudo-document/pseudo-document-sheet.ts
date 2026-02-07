@@ -1,6 +1,8 @@
-import { PseudoDocument } from './pseudo-document.js'
-import Application = foundry.applications.api.Application
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
+
+import { Application } from '../types/foundry/index.ts'
+
+import { PseudoDocument } from './pseudo-document.js'
 
 namespace PseudoDocumentSheet {
   export interface Configuration extends Application.Configuration {
@@ -55,14 +57,18 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
    */
   static getSheet(pseudoDocument: PseudoDocument): PseudoDocumentSheet | null {
     const doc = pseudoDocument.document
+
     if (!PseudoDocumentSheet.#sheets.get(doc)) {
       PseudoDocumentSheet.#sheets.set(doc, new Map())
     }
+
     if (!PseudoDocumentSheet.#sheets.get(doc)?.get(pseudoDocument.uuid)) {
       const Cls = pseudoDocument.metadata.sheetClass
+
       if (!Cls) return null
       PseudoDocumentSheet.#sheets.get(doc)?.set(pseudoDocument.uuid, new Cls({ document: pseudoDocument }))
     }
+
     return PseudoDocumentSheet.#sheets.get(doc)?.get(pseudoDocument.uuid) || null
   }
 
@@ -74,13 +80,16 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
   get pseudoDocument(): PseudoDocument | null {
     let relative = this.document
     const uuidParts = this.#pseudoUuid.replace(relative.uuid, '').slice(1).split('.')
+
     for (let i = 0; i < uuidParts.length; i += 2) {
       const dname = uuidParts[i]
       const id = uuidParts[i + 1]
+
       // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
       relative = relative?.getEmbeddedDocument(dname, id)
       if (!relative) return null
     }
+
     return relative as unknown as PseudoDocument | null
   }
 
@@ -109,6 +118,7 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
 
   override get title(): string {
     const { documentName, name, id }: { documentName: string; name: string; id: string } = this.pseudoDocument as any
+
     return `${game.i18n?.localize(`DOCUMENT.${documentName}`)}: ${name ? name : id}`
   }
 
@@ -120,6 +130,7 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
   }: DeepPartial<PseudoDocumentSheet.Configuration>): PseudoDocumentSheet.Configuration {
     options = super._initializeApplicationOptions(options)
     options.uniqueId = `${this.constructor.name}-${document?.uuid?.replaceAll('.', '-')}`
+
     return options as PseudoDocumentSheet.Configuration
   }
 
@@ -158,7 +169,9 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
       .map(([k, v]) => `${k}="${v}"`)
       .join(' ')
     const copyId = `<button ${properties}></button>`
+
     this.window.close?.insertAdjacentHTML('beforebegin', copyId)
+
     return frame
   }
 
@@ -167,6 +180,7 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
   override _canRender(_options: DeepPartial<Application.RenderOptions>): false | void {
     if (!this.pseudoDocument) {
       if (this.rendered) this.close()
+
       return false
     }
   }
@@ -185,6 +199,7 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
     formData: FormDataExtended
   ) {
     const submitData = foundry.utils.expandObject(formData.object)
+
     this.pseudoDocument!.update(submitData as AnyObject)
   }
 
@@ -198,6 +213,7 @@ class PseudoDocumentSheet extends foundry.applications.api.HandlebarsApplication
     const id = event.button === 2 ? pseudo.id : pseudo.uuid
     const type = event.button === 2 ? 'id' : 'uuid'
     const label = game.i18n?.localize(`DOCUMENT.${pseudo.documentName}`) ?? ''
+
     game.clipboard?.copyPlainText(id)
     ui.notifications?.info('DOCUMENT.IdCopiedClipboard', { format: { label, type, id } })
   }

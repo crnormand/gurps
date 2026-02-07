@@ -1,10 +1,11 @@
-import fields = foundry.data.fields
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAction, BaseActionSchema } from './base-action.js'
-import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
-import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
+import { makeRegexPatternFrom } from '../../lib/utilities.js'
+import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
+import { fields } from '../types/foundry/index.js'
+
+import { BaseAction, BaseActionSchema } from './base-action.js'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
@@ -46,8 +47,10 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
    */
   #prepareLevelsFromOtf(): void {
     let otf = this.component.otf
+
     if (otf === '') {
       this.component.level = this.component.import
+
       return
     }
 
@@ -58,14 +61,17 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
     if (otf.match(/^\d+$/)) {
       this.component.import = parseInt(otf)
       this.component.level = this.component.import
+
       return
     }
 
     // If the OTF is not a number, parse it using the OTF parser.
     const action = parselink(otf)
+
     // If the OTF does not return an action, we cannot set the level.
     if (!action.action) {
       console.warn(`GURPS | MeleeAttackModel: OTF "${otf}" did not return a valid action.`)
+
       return
     }
 
@@ -84,6 +90,7 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
         if (!isNaN(parseInt(this.component.parry))) {
           const parryLevel = parseInt(this.component.parry)
           const parrySuffix = this.component.parry.replace(parryLevel.toString(), '').trim()
+
           this.component.parry = `${3 + Math.floor(this.component.level / 2) + this.component.parrybonus}${parrySuffix}`
         }
 
@@ -94,6 +101,7 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
         if (!isNaN(parseInt(this.component.block))) {
           const blockLevel = parseInt(this.component.block)
           const blockSuffix = this.component.block.replace(blockLevel.toString(), '').trim()
+
           this.component.block = `${3 + Math.floor(this.component.level / 2) + this.component.blockbonus}${blockSuffix}`
         }
       }
@@ -125,12 +133,15 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
       if (bonus.type === 'attack' && bonus.isMelee) {
         if (this.component.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
           this.component.level += bonus.mod as number
+
           // Handle parry with a suffix such as "F"
           if (!isNaN(parseInt(this.component.parry))) {
             const parryLevel = parseInt(this.component.parry)
             const parrySuffix = this.component.parry.replace(parryLevel.toString(), '').trim()
+
             this.component.parry = `${3 + Math.floor(this.component.level / 2)}${parrySuffix}`
           }
+
           if (!isNaN(parseInt(this.component.block))) {
             this.component.block = `${3 + Math.floor(this.component.level / 2)}`
           }

@@ -40,6 +40,7 @@ class SkillV1 {
     const containedItems: GurpsItemV2<'skillV2'>[] = this.skillV2.sortedContents.map(
       item => item as GurpsItemV2<'skillV2'>
     )
+
     this._contains = arrayToObject(
       containedItems?.map(item => new SkillV1(item)),
       5
@@ -115,12 +116,14 @@ class SkillV1 {
   get name(): string {
     const techlevel = this.skillV2.ski?.techlevel ? '/TL' + this.skillV2.ski.techlevel : ''
     const specialization = this.skillV2.ski?.specialization ? ' (' + this.skillV2.ski.specialization + ')' : ''
+
     return `${this.skillV2.name}${techlevel}${specialization}`
   }
 
   get notes(): string {
     const vttNotes = this.skillV2.system.ski?.vtt_notes
     const notes = this.skillV2.ski?.notes
+
     return [notes, vttNotes]
       .filter(it => !!it)
       .join('<br>')
@@ -159,4 +162,5 @@ class SkillV1 {
     return this.skillV2.toggleOpen(expandOnly)
   }
 }
+
 export { SkillV1 }

@@ -1,25 +1,46 @@
-export function bindDropdownToggle(html: JQuery, config: DropdownConfig): void {
+import { isHTMLElement } from '../../utilities/guards.ts'
+
+export function bindDropdownToggle(html: HTMLElement, config: DropdownConfig): void {
   const { dropdownSelector, toggleSelector, optionSelector, onSelect } = config
 
-  html.find(toggleSelector).on('click', (event: JQuery.ClickEvent) => {
-    event.stopPropagation()
-    const dropdown = event.currentTarget.closest(dropdownSelector) as HTMLElement
-    dropdown.classList.toggle('open')
+  const toggles = html.querySelectorAll<HTMLElement>(toggleSelector)
+
+  toggles.forEach(toggle => {
+    toggle.addEventListener('click', (event: MouseEvent) => {
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const dropdown = target.closest(dropdownSelector)
+
+      if (!isHTMLElement(dropdown)) return
+      dropdown.classList.toggle('open')
+    })
   })
 
-  html.find(optionSelector).on('click', async (event: JQuery.ClickEvent) => {
-    event.stopPropagation()
-    const target = event.currentTarget as HTMLElement
-    const value = target.dataset.value ?? ''
-    const dropdown = target.closest(dropdownSelector) as HTMLElement
-    dropdown.classList.remove('open')
-    await onSelect(value)
-  })
+  const options = html.querySelectorAll<HTMLElement>(optionSelector)
 
-  html.on('click', (event: JQuery.ClickEvent) => {
-    const dropdown = html.find(`${dropdownSelector}.open`)[0]
-    if (dropdown && !dropdown.contains(event.target as Node)) {
+  options.forEach(option => {
+    option.addEventListener('click', async (event: MouseEvent) => {
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const value = target.dataset.value ?? ''
+      const dropdown = target.closest(dropdownSelector)
+
+      if (!isHTMLElement(dropdown)) return
       dropdown.classList.remove('open')
+      await onSelect(value)
+    })
+  })
+
+  html.addEventListener('click', (event: MouseEvent) => {
+    const openDropdown = html.querySelector(`${dropdownSelector}.open`)
+    const target = event.target
+
+    if (openDropdown && target instanceof Node && !openDropdown.contains(target)) {
+      openDropdown.classList.remove('open')
     }
   })
 }

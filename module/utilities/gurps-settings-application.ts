@@ -1,4 +1,4 @@
-import fields = foundry.data.fields
+import { fields } from '../types/foundry/index.js'
 
 // define an object with two fields: title and icon.
 type GurpsSettingsConfig = {
@@ -94,6 +94,7 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
         entry.field = new fields.BooleanField({ initial: setting.default ?? false })
       } else if (setting.type === Number) {
         const { min, max, step } = setting.range ?? {}
+
         entry.field = new fields.NumberField({
           required: true,
           choices: setting.choices,
@@ -110,6 +111,7 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
           initial: setting.default,
         })
       }
+
       entry.field!.name = `${setting.namespace}.${setting.key}`
       entry.field!.label ||= game.i18n!.localize(setting.name ?? '')
       entry.field!.hint ||= game.i18n!.localize(setting.hint ?? '')
@@ -120,6 +122,7 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
     const result = foundry.utils.mergeObject(context, {
       entries,
     })
+
     return result
   }
 
@@ -135,8 +138,10 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
       .forEach(async (key: any) => {
         const namespace = key.split('.')[0]
         const settingId = key.split('.').slice(1).join('.')
+
         if (namespace !== GURPS.SYSTEM_NAME) {
           console.warn(`GURPS | GurpsSettingsApplication.update: Skipping setting ${key} with namespace ${namespace}`)
+
           return
         }
 

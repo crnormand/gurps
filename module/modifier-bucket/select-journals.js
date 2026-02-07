@@ -5,6 +5,7 @@ export default class ModifierBucketJournals extends FormApplication {
   static getJournalIds() {
     let journals = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS)
     let results = objectToArray(journals)
+
     return results
   }
 
@@ -30,8 +31,10 @@ export default class ModifierBucketJournals extends FormApplication {
    */
   getData(options) {
     const data = super.getData(options)
+
     data.journals = ModifierBucketJournals.getJournalIds()
     data.allJournals = this._htmlJournals
+
     return data
   }
 
@@ -49,6 +52,7 @@ export default class ModifierBucketJournals extends FormApplication {
    */
   get _htmlJournals() {
     let htmlJournals = []
+
     game.journal.forEach(j => {
       j.pages.forEach(p => {
         if (p.type === 'text') htmlJournals.push(p)
@@ -61,6 +65,7 @@ export default class ModifierBucketJournals extends FormApplication {
     let results = htmlJournals.map(it => {
       return { id: it.id, folder: this._folderPath(it.folder), name: it.name }
     })
+
     return results.sort((a, b) => `${a.folder}/${a.name}`.localeCompare(`${b.folder}/${b.name}`))
   }
 
@@ -77,19 +82,22 @@ export default class ModifierBucketJournals extends FormApplication {
     if (!!folder && !!folder.parent) {
       name = this._folderPath(folder.parent.id, name) + '/'
     }
-    if (!!folder) name = name + folder.name
+
+    if (folder) name = name + folder.name
+
     return name
   }
 
   /**
    * @override
    */
-  _updateObject(event, formData) {
+  _updateObject(event) {
     let html = $(event.currentTarget)
     let checkboxes = html.find('#entry-list').find('input[type="checkbox"]:checked')
     let ids = Array.from(checkboxes).map(it => it.id)
 
     let data = arrayToObject(ids)
+
     game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS, data)
   }
 }
