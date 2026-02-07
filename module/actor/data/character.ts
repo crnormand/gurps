@@ -187,7 +187,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // List of top-level ADs (not contained in another AD), sorted by `sort` field.
   get adsV2(): Item.OfType<'featureV2'>[] {
-    return this.allAdsV2.filter(item => item.containedBy === null).sort((first, second) => first.sort - second.sort)
+    return this.allAdsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
   }
 
   /* ---------------------------------------- */
@@ -203,7 +203,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   get skillsV2(): Item.OfType<'skillV2'>[] {
-    return this.allSkillsV2.filter(item => item.containedBy === null).sort((first, second) => first.sort - second.sort)
+    return this.allSkillsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
   }
 
   /* ---------------------------------------- */
@@ -219,7 +219,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   get spellsV2(): Item.OfType<'spellV2'>[] {
-    return this.allSpellsV2.filter(item => item.containedBy === null).sort((first, second) => first.sort - second.sort)
+    return this.allSpellsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
   }
 
   /* ---------------------------------------- */
@@ -238,10 +238,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return {
       carried: this.allEquipmentCarried
         .filter(item => item.containedBy === null)
-        .sort((first, second) => first.sort - second.sort),
+        .sort((left, right) => left.sort - right.sort),
       other: this.allEquipmentOther
         .filter(item => item.containedBy === null)
-        .sort((first, second) => first.sort - second.sort),
+        .sort((left, right) => left.sort - right.sort),
     }
   }
 

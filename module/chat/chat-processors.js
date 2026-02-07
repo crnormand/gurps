@@ -1167,13 +1167,13 @@ class ShowChatProcessor extends ChatProcessor {
         }
       }
 
-      let sortfunc = (first, second) => {
-        return first.value < second.value ? 1 : -1
+      let sortfunc = (left, right) => {
+        return left.value < right.value ? 1 : -1
       }
 
       if (alpha)
-        sortfunc = (first, second) => {
-          return first.name > second.name ? 1 : -1
+        sortfunc = (left, right) => {
+          return left.name > right.name ? 1 : -1
         }
 
       output.sort(sortfunc).forEach(outputEntry => this.priv(outputEntry.text))

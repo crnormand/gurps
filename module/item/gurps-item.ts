@@ -354,7 +354,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   /* ---------------------------------------- */
 
   get sortedContents() {
-    return this.contents.sort((first, second) => first.sort - second.sort) ?? []
+    return this.contents.sort((left, right) => left.sort - right.sort) ?? []
   }
 
   /* ---------------------------------------- */

@@ -122,7 +122,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
     return (
       this.parent.actor?.items.contents
         .filter(item => (item.system as BaseItemModel).containedBy === this.parent.id)
-        .sort((first, second) => first.sort - second.sort) || []
+        .sort((left, right) => left.sort - right.sort) || []
     )
   }
 

@@ -256,7 +256,7 @@ export class GurpsActor extends Actor {
       this.items.contents
         .filter(i => i.type === 'equipment')
         .slice()
-        .sort((first, second) => second.name.localeCompare(first.name))
+        .sort((left, right) => right.name.localeCompare(left.name))
     ) // in case items are in the same list... add them alphabetically
     /**
      * @type {any[]}

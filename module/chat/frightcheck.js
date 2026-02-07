@@ -178,7 +178,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
     targetmods = targetmods.filter(it => it != null)
 
-    let totalMod = targetmods.map(it => it.mod).reduce((first, second) => first + second, 0)
+    let totalMod = targetmods.map(it => it.mod).reduce((left, right) => left + right, 0)
     let WILLVar = parseInt(actor.system.frightcheck || actor.system.attributes.WILL.value, 10)
     let finaltarget = totalMod + WILLVar
 

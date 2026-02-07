@@ -14,7 +14,7 @@ export function convertRangeTextToArray(rangeText: string): number[] {
   }
 
   result = Array.from(new Set(result))
-  result.sort((first, second) => first - second)
+  result.sort((left, right) => left - right)
 
   return result
 }

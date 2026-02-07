@@ -66,9 +66,7 @@ export default class ModifierBucketJournals extends FormApplication {
       return { id: it.id, folder: this._folderPath(it.folder), name: it.name }
     })
 
-    return results.sort((first, second) =>
-      `${first.folder}/${first.name}`.localeCompare(`${second.folder}/${second.name}`)
-    )
+    return results.sort((left, right) => `${left.folder}/${left.name}`.localeCompare(`${right.folder}/${right.name}`))
   }
 
   /**

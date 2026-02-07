@@ -114,12 +114,12 @@ export class EffectModifierPopout extends Application {
 
     selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
     selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
-    selfMods.sort((first, second) => {
-      if (first.itemName === second.itemName) {
-        return first.desc.localeCompare(second.desc)
+    selfMods.sort((left, right) => {
+      if (left.itemName === right.itemName) {
+        return left.desc.localeCompare(right.desc)
       }
 
-      return first.itemName.localeCompare(second.itemName)
+      return left.itemName.localeCompare(right.itemName)
     })
     const targetModifiers = this._token
       ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
@@ -160,8 +160,8 @@ export class EffectModifierPopout extends Application {
       }
 
       // Sort the target modifiers by itemId.
-      result.targetmodifiers.sort((first, second) => {
-        return first.itemId.localeCompare(second.itemId)
+      result.targetmodifiers.sort((left, right) => {
+        return left.itemId.localeCompare(right.itemId)
       })
 
       results.push(result)

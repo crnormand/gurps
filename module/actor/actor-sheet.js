@@ -855,9 +855,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let index = 0
 
     Object.values(list)
-      .sort((first, second) =>
-        reverse ? second.name.localeCompare(first.name) : first.name.localeCompare(second.name)
-      )
+      .sort((left, right) => (reverse ? right.name.localeCompare(left.name) : left.name.localeCompare(right.name)))
       .forEach(obj => GURPS.put(sortedobj, obj, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
   }
@@ -1551,7 +1549,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let index = 0
 
     Object.values(object)
-      .sort((first, second) => first.name.localeCompare(second.name))
+      .sort((left, right) => left.name.localeCompare(right.name))
       .forEach(obj => GURPS.put(sortedobj, obj, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
   }
@@ -1568,7 +1566,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let index = 0
 
     Object.values(object)
-      .sort((first, second) => second.name.localeCompare(first.name))
+      .sort((left, right) => right.name.localeCompare(left.name))
       .forEach(obj => GURPS.put(sortedobj, obj, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
   }
