@@ -1,6 +1,6 @@
 import { AnyObject } from 'fvtt-types/utils'
 
-import { fields, DataModel } from '../../types/foundry/index.ts'
+import { fields, DataModel } from '../../../types/foundry/index.ts'
 
 /* ---------------------------------------- */
 

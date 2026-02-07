@@ -1,6 +1,6 @@
-import { fields, DataModel } from '../../types/foundry/index.ts'
+import { fields, DataModel } from '../../../types/foundry/index.ts'
 
-import { AttributeType, GcsAttributeDefinition } from './gcs-attribute-definition.ts'
+import { AttributeType, GcsAttributeDefinition } from './attribute-definition.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'
 
 /* ---------------------------------------- */
@@ -46,8 +46,6 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
 
     return data
   }
-
-  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
 

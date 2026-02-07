@@ -1,4 +1,4 @@
-import { GcsCharacterModel } from '../../actor/data/gcs-character.ts'
+import { GcsCharacterModel } from '../../actor/data/gcs-character/gcs-character.ts'
 
 import { ScriptAttribute } from './attribute.ts'
 

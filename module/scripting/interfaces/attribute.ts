@@ -1,4 +1,4 @@
-import { GcsAttribute } from '../../actor/data/gcs-attribute.ts'
+import { GcsAttribute } from '../../actor/data/gcs-character/attribute.ts'
 import { SelfProvider } from '../types.ts'
 
 class ScriptAttribute {

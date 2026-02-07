@@ -1,8 +1,8 @@
-import { ScriptAttribute } from '../../scripting/interfaces/attribute.ts'
-import { ScriptResolver } from '../../scripting/resolver.ts'
-import { fields, DataModel } from '../../types/foundry/index.ts'
+import { ScriptAttribute } from '../../../scripting/interfaces/attribute.ts'
+import { ScriptResolver } from '../../../scripting/resolver.ts'
+import { fields, DataModel } from '../../../types/foundry/index.ts'
 
-import { GcsAttribute } from './gcs-attribute.ts'
+import { GcsAttribute } from './attribute.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'
 
 enum AttributeType {

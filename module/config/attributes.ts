@@ -1,4 +1,4 @@
-import { GcsAttributeDefinition } from '../actor/data/gcs-attribute-definition.ts'
+import { GcsAttributeDefinition } from '../actor/data/gcs-character/attribute-definition.ts'
 import { DataModel } from '../types/foundry/index.ts'
 
 const DEFAULT_ATTRIBUTE_IDS = {

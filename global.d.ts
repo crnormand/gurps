@@ -1,5 +1,5 @@
 import { CharacterModel } from 'module/actor/data/character.ts'
-import { GcsCharacterModel } from 'module/actor/data/gcs-character.ts'
+import { GcsCharacterModel } from 'module/actor/data/gcs-character/gcs-character.ts'
 import { GcsLootModel } from 'module/actor/data/gcs-loot.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
 import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
