@@ -94,10 +94,10 @@ function getAdjustedCountAndModifier(dice: Dice, applyExtraDiceFromModifiers: bo
 /* ---------------------------------------- */
 
 export function fromString(spec: string): Dice {
-  const m = spec.match(DICE_RE)
+  const match = spec.match(DICE_RE)
 
-  if (!m?.groups) throw new Error(`Invalid dice spec: ${spec}`)
-  const { count, d, sides, mod, mult } = m.groups
+  if (!match?.groups) throw new Error(`Invalid dice spec: ${spec}`)
+  const { count, d, sides, mod, mult } = match.groups
   const hasCount = !!count
   const hasD = !!d
   const hasSides = !!sides
@@ -128,9 +128,9 @@ export function fromString(spec: string): Dice {
 
   // x multiplier
   if (mult) {
-    const n = parseInt(mult.replace(/\s+/g, '').slice(1), 10)
+    const multiplierValue = parseInt(mult.replace(/\s+/g, '').slice(1), 10)
 
-    dice.multiplier = n || 1
+    dice.multiplier = multiplierValue || 1
   }
 
   normalize(dice)
@@ -167,20 +167,20 @@ function diceToString(dice: Dice, GURPSFormat = true): string {
 
 /* ---------------------------------------- */
 
-function flattenMultiplier(d: Dice): Dice {
-  normalize(d)
+function flattenMultiplier(dice: Dice): Dice {
+  normalize(dice)
 
-  if (d.multiplier !== 1) {
-    d.count *= d.multiplier
-    d.modifier *= d.multiplier
-    d.multiplier = 1
+  if (dice.multiplier !== 1) {
+    dice.count *= dice.multiplier
+    dice.modifier *= dice.multiplier
+    dice.multiplier = 1
   }
 
-  return d
+  return dice
 }
 
-function isPureModifier(d: Dice): boolean {
-  return d.count === 0 && d.sides === 0
+function isPureModifier(dice: Dice): boolean {
+  return dice.count === 0 && dice.sides === 0
 }
 
 export function addDiceSpecsStrict(left: string, right: string): string {
@@ -279,17 +279,17 @@ export const multiplier = (spec: string) => fromString(spec).multiplier
 export function roll(spec: string, extraDiceFromModifiers: boolean): number {
   const dice = fromString(spec)
 
-  let count = 0
+  let rollCount = 0
   let result = 0
 
-  ;[count, result] = getAdjustedCountAndModifier(fromString(spec), extraDiceFromModifiers)
+  ;[rollCount, result] = getAdjustedCountAndModifier(fromString(spec), extraDiceFromModifiers)
 
   if (dice.sides > 1) {
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < rollCount; i++) {
       result += 1 + randInt(0, dice.sides)
     }
   } else if (dice.sides === 1) {
-    result = count
+    result = rollCount
   }
 
   return result * dice.multiplier

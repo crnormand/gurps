@@ -98,13 +98,13 @@ class MapField<
     if (type === 'Object') {
       const arr: [AssignmentKeyType, AssignmentValueType][] = []
 
-      for (const [k, e] of Object.entries(value as AnyObject)) {
-        const i = Number(k)
+      for (const [key, element] of Object.entries(value as AnyObject)) {
+        const i = Number(key)
 
-        const eType = foundry.utils.getType(e)
+        const elementType = foundry.utils.getType(element)
 
-        if (eType === 'Array' && (e as unknown[]).length === 2) {
-          if (Number.isInteger(i) && i >= 0) arr[i] = e as [AssignmentKeyType, AssignmentValueType]
+        if (elementType === 'Array' && (element as unknown[]).length === 2) {
+          if (Number.isInteger(i) && i >= 0) arr[i] = element as [AssignmentKeyType, AssignmentValueType]
         }
       }
 
@@ -120,9 +120,9 @@ class MapField<
     value: MapField.InitializedType<InitializedKeyType, InitializedValueType, Options>,
     options?: fields.DataField.CleanOptions
   ): MapField.InitializedType<InitializedKeyType, InitializedValueType, Options> {
-    const arr: [InitializedKeyType, InitializedValueType][] = Array.from(value ?? []).map(([k, v]) => [
-      this.key.clean(k, { ...options, partial: false }),
-      this.value.clean(v, { ...options, partial: false }),
+    const arr: [InitializedKeyType, InitializedValueType][] = Array.from(value ?? []).map(([key, value]) => [
+      this.key.clean(key, { ...options, partial: false }),
+      this.value.clean(value, { ...options, partial: false }),
     ])
 
     const map = new Map(arr)
@@ -153,18 +153,18 @@ class MapField<
     const keyFailure = new foundry.data.validation.DataModelValidationFailure()
     const valueFailure = new foundry.data.validation.DataModelValidationFailure()
 
-    for (const [k, v] of Array.from(value.entries())) {
-      const kFailure = this._validateKey(k, { ...options, partial: false })
-      const vFailure = this._validateValue(v, { ...options, partial: false })
+    for (const [entryKey, entryValue] of Array.from(value.entries())) {
+      const keyFailureResult = this._validateKey(entryKey, { ...options, partial: false })
+      const valueFailureResult = this._validateValue(entryValue, { ...options, partial: false })
 
-      if (kFailure) {
-        keyFailure.elements.push({ id: k as string, failure: kFailure })
-        mapFailure.unresolved ||= kFailure.unresolved
+      if (keyFailureResult) {
+        keyFailure.elements.push({ id: entryKey as string, failure: keyFailureResult })
+        mapFailure.unresolved ||= keyFailureResult.unresolved
       }
 
-      if (vFailure) {
-        valueFailure.elements.push({ id: k as string, failure: vFailure })
-        mapFailure.unresolved ||= vFailure.unresolved
+      if (valueFailureResult) {
+        valueFailure.elements.push({ id: entryKey as string, failure: valueFailureResult })
+        mapFailure.unresolved ||= valueFailureResult.unresolved
       }
     }
 
@@ -239,8 +239,8 @@ class MapField<
 
     map.clear()
 
-    for (const [k, v] of [...(value as Map<unknown, unknown>).entries()]) {
-      map.set(k, v)
+    for (const [entryKey, entryValue] of [...(value as Map<unknown, unknown>).entries()]) {
+      map.set(entryKey, entryValue)
     }
   }
 }

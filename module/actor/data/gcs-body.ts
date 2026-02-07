@@ -26,7 +26,7 @@ class GcsSubTable extends DataModel<GcsSubTableSchema, GcsBody, GcsSubTableConst
   /* ---------------------------------------- */
 
   get loations(): GcsHitLocation[] {
-    return Object.values(this.parent._locations).filter(e => e._owningTable === this._id)
+    return Object.values(this.parent._locations).filter(location => location._owningTable === this._id)
   }
 }
 
@@ -74,7 +74,7 @@ class GcsHitLocation extends DataModel<GcsHitLocationSchema, GcsBody, GcsHitLoca
   /* ---------------------------------------- */
 
   get subTable(): GcsSubTable | null {
-    return Object.values(this.parent._subTables).find(e => e._owningLocation === this._id) || null
+    return Object.values(this.parent._subTables).find(subTable => subTable._owningLocation === this._id) || null
   }
 }
 
@@ -124,7 +124,7 @@ class GcsBody extends DataModel<GcsBodySchema> {
   /* ---------------------------------------- */
 
   get locations(): GcsHitLocation[] {
-    return Object.values(this._locations).filter(e => e._owningTable === null)
+    return Object.values(this._locations).filter(location => location._owningTable === null)
   }
 }
 

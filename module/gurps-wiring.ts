@@ -29,18 +29,27 @@ export default class GurpsWiring {
 
     // Make any OtF element draggable
     html.querySelectorAll('[data-otf]').forEach(li => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
+      li.setAttribute('draggable', 'true')
+      // Foundry's typings don't include DragEvent in ElementEventMap.
+      li.addEventListener('dragstart', (ev: Event) => {
+        const dragEvent = ev as DragEvent
+        const element = dragEvent.currentTarget
+
+        if (!isHTMLElement(element)) return
+
         let display = ''
 
-        if (ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+        if (element.dataset.action) display = element.innerText
 
-        return ev.dataTransfer.setData(
+        const otf = element.dataset.otf ?? element.getAttribute('data-otf') ?? ''
+        const encodedAction = element.dataset.action ?? ''
+
+        dragEvent.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
-            otf: element.getAttribute('data-otf'),
+            otf,
             displayname: display,
-            encodedAction: target.dataset.action,
+            encodedAction,
           })
         )
       })
@@ -81,15 +90,12 @@ export default class GurpsWiring {
     const text = link.innerText
     const target = link.parentElement
 
-    let actor = GURPS.LastActor
-    let users = actor?.getOwners()?.filter(user => !user.isGM) || []
-    let otf = '[PDF:' + text + ']'
-    let names = users.map(user => user.name).join(' ')
+    if (!target) return
 
     const actor = GURPS.LastActor
-    const users = actor?.getOwners()?.filter((u: User) => !u.isGM) ?? []
+    const users = actor?.getOwners()?.filter((user: User) => !user.isGM) ?? []
     const otf = '[PDF:' + text + ']'
-    const names = users.map((u: User) => u.name).join(' ')
+    const names = users.map((user: User) => user.name).join(' ')
 
     const container = target.closest<HTMLElement>('section.window-content')
 
@@ -131,7 +137,7 @@ export default class GurpsWiring {
   /**
    * @param {Event} event
    */
-  static _chatClickGmod(event) {
+  static _chatClickGmod(event: Event) {
     GurpsWiring.handleGurpslink(event, GURPS.LastActor)
   }
 
@@ -142,8 +148,11 @@ export default class GurpsWiring {
    */
   static handleGurpslink(event: Event, actor: Actor.Implementation | null, options?: HandleGurpslinkOptions): void {
     event.preventDefault()
-    let element = event.currentTarget
-    let action = element.dataset?.action // If we have already parsed
+    const element = event.currentTarget
+
+    if (!isHTMLElement(element)) return
+
+    let action: any = element.dataset?.action // If we have already parsed
 
     if (action) action = JSON.parse(atou(action))
     else action = parselink(element.innerText).action
@@ -162,37 +171,49 @@ export default class GurpsWiring {
         : undefined
     }
 
+    if (!action) return
     GURPS.performAction(action, actor, event, options?.targets)
   }
 
   private static _onRightClickGurpslink(event: Event): void {
     event.preventDefault()
     event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
-    let el = event.currentTarget
-    let action = el.dataset.action
+    const element = event.currentTarget
+
+    if (!isHTMLElement(element)) return
+
+    let action: any = element.dataset.action
 
     if (action) {
       action = JSON.parse(atou(action))
       if (action.type === 'damage' || action.type === 'deriveddamage' || action.type === 'attackdamage')
-        GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
+        GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user?.isGM ?? false, true)
       else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
     }
   }
 
   private static _onRightClickGmod(event: Event): void {
     event.preventDefault()
-    let el = event.currentTarget
-    let name = el.dataset.name
-    let text = el.innerText
+    const element = event.currentTarget
 
-    GURPS.whisperOtfToOwner(text + ' ' + name, null, event, false, this.actor)
+    if (!isHTMLElement(element)) return
+
+    const name = element.dataset.name
+    const text = element.innerText
+
+    GURPS.whisperOtfToOwner(text + ' ' + name, null, event, false, GURPS.LastActor)
   }
 
   private static _onRightClickOtf(event: Event): void {
     event.preventDefault()
-    let el = event.currentTarget
-    let isDamageRoll = Object.hasOwn(el.dataset, 'damage')
-    let otf = event.currentTarget.dataset.otf
+    const element = event.currentTarget
+
+    if (!isHTMLElement(element)) return
+
+    const isDamageRoll = Object.hasOwn(element.dataset, 'damage')
+    const otf = element.dataset.otf
+
+    if (!otf) return
 
     if (isDamageRoll) {
       GURPS.resolveDamageRoll(event, GURPS.LastActor, otf, null, getUser().isGM)

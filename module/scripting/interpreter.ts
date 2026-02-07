@@ -154,9 +154,9 @@ class ScriptInterpreter {
         }
 
         case 'ReturnStatement': {
-          const v = node.argument ? this.#evaluateExpression(node.argument, scope) : undefined
+          const returnValue = node.argument ? this.#evaluateExpression(node.argument, scope) : undefined
 
-          throw new ReturnSignal(v)
+          throw new ReturnSignal(returnValue)
         }
 
         case 'BreakStatement':
@@ -308,7 +308,9 @@ class ScriptInterpreter {
     const callScope = new Scope(func.scope)
 
     for (let i = 0; i < func.params.length; i++) {
-      callScope.define(func.params[i], 'let', args[i])
+      const paramName = func.params[i]
+
+      callScope.define(paramName, 'let', args[i])
     }
 
     try {
@@ -377,19 +379,19 @@ class ScriptInterpreter {
       case 'ObjectExpression': {
         const out: Record<string, unknown> = {}
 
-        for (const p of node.properties) {
-          if (p.type !== 'Property' || p.computed) throw new Error('Illegal object literal')
+        for (const property of node.properties) {
+          if (property.type !== 'Property' || property.computed) throw new Error('Illegal object literal')
           const key =
-            p.key.type === 'Identifier'
-              ? p.key.name
-              : p.key.type === 'Literal'
-                ? String(p.key.value)
+            property.key.type === 'Identifier'
+              ? property.key.name
+              : property.key.type === 'Literal'
+                ? String(property.key.value)
                 : (() => {
                     throw new Error('Illegal object key')
                   })()
 
           if (this.#isForbiddenProp(key)) throw new Error('Illegal object key')
-          out[key] = this.#evaluateExpression(p.value, scope)
+          out[key] = this.#evaluateExpression(property.value, scope)
         }
 
         return out
@@ -548,7 +550,9 @@ class ScriptInterpreter {
         let thisArg: unknown = undefined
 
         if (node.callee.type === 'Identifier') {
-          callee = scope.get(node.callee.name)
+          const calleeName = node.callee.name
+
+          callee = scope.get(calleeName)
         } else if (node.callee.type === 'MemberExpression' && !node.callee.computed) {
           if (node.callee.object.type === 'Super') throw new Error('super member calls are not supported')
 
@@ -558,20 +562,20 @@ class ScriptInterpreter {
           if (node.callee.property.type !== 'Identifier') throw new Error('Illegal call target')
 
           const obj = this.#evaluateExpression(node.callee.object, scope)
-          const prop = node.callee.property.name
+          const propName = node.callee.property.name
 
-          if (this.#isForbiddenProp(prop)) throw new Error('Illegal member call')
+          if (this.#isForbiddenProp(propName)) throw new Error('Illegal member call')
           thisArg = obj
-          callee = (obj as AnyObject)?.[prop]
+          callee = (obj as AnyObject)?.[propName]
         } else {
           throw new Error('Illegal call target')
         }
 
         const args: unknown[] = []
 
-        for (const a of node.arguments) {
-          if (a.type === 'SpreadElement') {
-            const spreadValue = this.#evaluateExpression(a.argument, scope)
+        for (const arg of node.arguments) {
+          if (arg.type === 'SpreadElement') {
+            const spreadValue = this.#evaluateExpression(arg.argument, scope)
 
             if (Array.isArray(spreadValue)) {
               for (const item of spreadValue) {
@@ -594,7 +598,7 @@ class ScriptInterpreter {
             throw new Error('Can only spread arrays or strings')
           }
 
-          args.push(this.#evaluateExpression(a, scope))
+          args.push(this.#evaluateExpression(arg, scope))
         }
 
         if (callee && (callee as AnyObject).__kind === 'function') return this.#callFunc(callee as any, args)

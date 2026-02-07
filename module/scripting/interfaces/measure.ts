@@ -176,30 +176,30 @@ function ssrtToYards(value: number): number {
     multiplier *= 10
   }
 
-  let v = 0
+  let valueYards = 0
 
   switch (value % 6) {
     case 0:
-      v = 10
+      valueYards = 10
       break
     case 1:
-      v = 7
+      valueYards = 7
       break
     case 2:
-      v = 5
+      valueYards = 5
       break
     case 3:
-      v = 3
+      valueYards = 3
       break
     case 4:
-      v = 2
+      valueYards = 2
       break
     case 5:
-      v = 1.5
+      valueYards = 1.5
       break
   }
 
-  return v * multiplier
+  return valueYards * multiplier
 }
 
 /* ---------------------------------------- */

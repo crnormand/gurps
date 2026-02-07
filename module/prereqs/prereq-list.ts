@@ -17,7 +17,7 @@ class PrereqList extends BasePrereq<PrereqListSchema> {
   /* ---------------------------------------- */
 
   get children(): BasePrereq<any>[] {
-    return Object.values(this.parent?.prereqs).filter(e => e.containerId === this._id) ?? []
+    return Object.values(this.parent?.prereqs).filter(prereq => prereq.containerId === this._id) ?? []
   }
 
   /* ---------------------------------------- */

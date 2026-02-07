@@ -67,26 +67,26 @@ const GLOBAL_RESOLVER_CACHE = `${MODULE_NAME}.globalResolverCache`
 /*  Type Guards                             */
 /* ---------------------------------------- */
 
-function isRecord(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
 }
 
 /* ---------------------------------------- */
 
-function asThrownDetails(v: unknown): ThrownDetails | undefined {
-  return isRecord(v) ? (v as ThrownDetails) : undefined
+function asThrownDetails(value: unknown): ThrownDetails | undefined {
+  return isRecord(value) ? (value as ThrownDetails) : undefined
 }
 
 /* ---------------------------------------- */
 
-function asNodeLocContext(v: unknown): NodeLocContext | undefined {
-  if (!isRecord(v)) return undefined
-  const start = (v as any).start
-  const end = (v as any).end
+function asNodeLocContext(value: unknown): NodeLocContext | undefined {
+  if (!isRecord(value)) return undefined
+  const start = (value as any).start
+  const end = (value as any).end
 
   if (typeof start !== 'number' || typeof end !== 'number') return undefined
 
-  return v as NodeLocContext
+  return value as NodeLocContext
 }
 
 export { GLOBAL_RESOLVER_CACHE, isRecord, asThrownDetails, asNodeLocContext }

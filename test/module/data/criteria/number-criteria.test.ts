@@ -15,7 +15,7 @@ describe('Number Criteria', () => {
   })
 
   describe('Comparitor: Equals', () => {
-    const c = new NumberCriteria({ compare: NumberCriteria.Comparison.Equals, qualifier: 10 })
+    const criteria = new NumberCriteria({ compare: NumberCriteria.Comparison.Equals, qualifier: 10 })
     const nanC = new NumberCriteria({ compare: NumberCriteria.Comparison.Equals, qualifier: NaN })
     const infC = new NumberCriteria({ compare: NumberCriteria.Comparison.Equals, qualifier: Infinity })
     const negInfC = new NumberCriteria({ compare: NumberCriteria.Comparison.Equals, qualifier: -Infinity })
@@ -30,7 +30,7 @@ describe('Number Criteria', () => {
     const nullC = new NumberCriteria({ compare: NumberCriteria.Comparison.Equals, qualifier: null })
 
     it('matches exact number', () => {
-      expect(c.matches(10)).toBe(true)
+      expect(criteria.matches(10)).toBe(true)
       expect(floatC.matches(10.5)).toBe(true)
       expect(negFloatC.matches(-10.5)).toBe(true)
       expect(largeC.matches(1e19)).toBe(true)
@@ -44,7 +44,7 @@ describe('Number Criteria', () => {
     })
 
     it('does not match different number', () => {
-      expect(c.matches(5)).toBe(false)
+      expect(criteria.matches(5)).toBe(false)
       expect(floatC.matches(10.4)).toBe(false)
       expect(negFloatC.matches(-10.4)).toBe(false)
       expect(largeC.matches(1e18)).toBe(false)
@@ -60,7 +60,7 @@ describe('Number Criteria', () => {
     })
 
     it('does not match null for any qualifier', () => {
-      expect(c.matches(null)).toBe(false)
+      expect(criteria.matches(null)).toBe(false)
       expect(floatC.matches(null)).toBe(false)
       expect(negFloatC.matches(null)).toBe(false)
       expect(largeC.matches(null)).toBe(false)
@@ -77,7 +77,7 @@ describe('Number Criteria', () => {
   })
 
   describe('Comparitor: Is Not Equal', () => {
-    const c = new NumberCriteria({ compare: NumberCriteria.Comparison.NotEquals, qualifier: 10 })
+    const criteria = new NumberCriteria({ compare: NumberCriteria.Comparison.NotEquals, qualifier: 10 })
     const nanC = new NumberCriteria({ compare: NumberCriteria.Comparison.NotEquals, qualifier: NaN })
     const infC = new NumberCriteria({ compare: NumberCriteria.Comparison.NotEquals, qualifier: Infinity })
     const negInfC = new NumberCriteria({ compare: NumberCriteria.Comparison.NotEquals, qualifier: -Infinity })
@@ -92,7 +92,7 @@ describe('Number Criteria', () => {
     const nullC = new NumberCriteria({ compare: NumberCriteria.Comparison.NotEquals, qualifier: null })
 
     it('does not match exact number', () => {
-      expect(c.matches(10)).toBe(false)
+      expect(criteria.matches(10)).toBe(false)
       expect(floatC.matches(10.5)).toBe(false)
       expect(negFloatC.matches(-10.5)).toBe(false)
       expect(largeC.matches(1e19)).toBe(false)
@@ -106,7 +106,7 @@ describe('Number Criteria', () => {
     })
 
     it('matches different number', () => {
-      expect(c.matches(5)).toBe(true)
+      expect(criteria.matches(5)).toBe(true)
       expect(floatC.matches(10.4)).toBe(true)
       expect(negFloatC.matches(-10.4)).toBe(true)
       expect(largeC.matches(1e18)).toBe(true)
@@ -123,7 +123,7 @@ describe('Number Criteria', () => {
 
     it('matches NaN for any qualifier', () => {
       expect(nanC.matches(NaN)).toBe(true)
-      expect(c.matches(NaN)).toBe(true)
+      expect(criteria.matches(NaN)).toBe(true)
       expect(floatC.matches(NaN)).toBe(true)
       expect(negFloatC.matches(NaN)).toBe(true)
       expect(largeC.matches(NaN)).toBe(true)
@@ -138,7 +138,7 @@ describe('Number Criteria', () => {
     })
 
     it('matches null when qualifier is a number', () => {
-      expect(c.matches(null)).toBe(true)
+      expect(criteria.matches(null)).toBe(true)
       expect(floatC.matches(null)).toBe(true)
       expect(negFloatC.matches(null)).toBe(true)
       expect(largeC.matches(null)).toBe(true)
@@ -158,7 +158,7 @@ describe('Number Criteria', () => {
   })
 
   describe('Comparitor: At Least', () => {
-    const c = new NumberCriteria({ compare: NumberCriteria.Comparison.AtLeast, qualifier: 10 })
+    const criteria = new NumberCriteria({ compare: NumberCriteria.Comparison.AtLeast, qualifier: 10 })
     const nanC = new NumberCriteria({ compare: NumberCriteria.Comparison.AtLeast, qualifier: NaN })
     const infC = new NumberCriteria({ compare: NumberCriteria.Comparison.AtLeast, qualifier: Infinity })
     const negInfC = new NumberCriteria({ compare: NumberCriteria.Comparison.AtLeast, qualifier: -Infinity })
@@ -173,8 +173,8 @@ describe('Number Criteria', () => {
     const nullC = new NumberCriteria({ compare: NumberCriteria.Comparison.AtLeast, qualifier: null })
 
     it('matches numbers greater than or equal to qualifier', () => {
-      expect(c.matches(10)).toBe(true)
-      expect(c.matches(15)).toBe(true)
+      expect(criteria.matches(10)).toBe(true)
+      expect(criteria.matches(15)).toBe(true)
       expect(floatC.matches(10.5)).toBe(true)
       expect(floatC.matches(20)).toBe(true)
       expect(negFloatC.matches(-10.5)).toBe(true)
@@ -195,7 +195,7 @@ describe('Number Criteria', () => {
     })
 
     it('does not match numbers less than qualifier', () => {
-      expect(c.matches(5)).toBe(false)
+      expect(criteria.matches(5)).toBe(false)
       expect(floatC.matches(10.4)).toBe(false)
       expect(negFloatC.matches(-11)).toBe(false)
       expect(largeC.matches(1e18)).toBe(false)
@@ -212,7 +212,7 @@ describe('Number Criteria', () => {
       expect(infC.matches(Infinity)).toBe(true)
       expect(negInfC.matches(Infinity)).toBe(true)
       expect(nanC.matches(Infinity)).toBe(false)
-      expect(c.matches(Infinity)).toBe(true)
+      expect(criteria.matches(Infinity)).toBe(true)
       expect(floatC.matches(Infinity)).toBe(true)
       expect(negFloatC.matches(Infinity)).toBe(true)
       expect(largeC.matches(Infinity)).toBe(true)
@@ -227,7 +227,7 @@ describe('Number Criteria', () => {
       expect(negInfC.matches(-Infinity)).toBe(true)
       expect(infC.matches(-Infinity)).toBe(false)
       expect(nanC.matches(-Infinity)).toBe(false)
-      expect(c.matches(-Infinity)).toBe(false)
+      expect(criteria.matches(-Infinity)).toBe(false)
       expect(floatC.matches(-Infinity)).toBe(false)
       expect(negFloatC.matches(-Infinity)).toBe(false)
       expect(largeC.matches(-Infinity)).toBe(false)
@@ -240,7 +240,7 @@ describe('Number Criteria', () => {
 
     it('does not match NaN for any qualifier', () => {
       expect(nanC.matches(NaN)).toBe(false)
-      expect(c.matches(NaN)).toBe(false)
+      expect(criteria.matches(NaN)).toBe(false)
       expect(floatC.matches(NaN)).toBe(false)
       expect(negFloatC.matches(NaN)).toBe(false)
       expect(largeC.matches(NaN)).toBe(false)
@@ -256,7 +256,7 @@ describe('Number Criteria', () => {
 
     it('does not match null for any qualifier', () => {
       expect(nullC.matches(null)).toBe(false)
-      expect(c.matches(null)).toBe(false)
+      expect(criteria.matches(null)).toBe(false)
       expect(floatC.matches(null)).toBe(false)
       expect(negFloatC.matches(null)).toBe(false)
       expect(largeC.matches(null)).toBe(false)
@@ -272,7 +272,7 @@ describe('Number Criteria', () => {
   })
 
   describe('Comparitor: At Most', () => {
-    const c = new NumberCriteria({ compare: NumberCriteria.Comparison.AtMost, qualifier: 10 })
+    const criteria = new NumberCriteria({ compare: NumberCriteria.Comparison.AtMost, qualifier: 10 })
     const nanC = new NumberCriteria({ compare: NumberCriteria.Comparison.AtMost, qualifier: NaN })
     const infC = new NumberCriteria({ compare: NumberCriteria.Comparison.AtMost, qualifier: Infinity })
     const negInfC = new NumberCriteria({ compare: NumberCriteria.Comparison.AtMost, qualifier: -Infinity })
@@ -287,8 +287,8 @@ describe('Number Criteria', () => {
     const nullC = new NumberCriteria({ compare: NumberCriteria.Comparison.AtMost, qualifier: null })
 
     it('matches numbers less than or equal to qualifier', () => {
-      expect(c.matches(10)).toBe(true)
-      expect(c.matches(5)).toBe(true)
+      expect(criteria.matches(10)).toBe(true)
+      expect(criteria.matches(5)).toBe(true)
       expect(floatC.matches(10.5)).toBe(true)
       expect(floatC.matches(0)).toBe(true)
       expect(negFloatC.matches(-10.5)).toBe(true)
@@ -309,7 +309,7 @@ describe('Number Criteria', () => {
     })
 
     it('does not match numbers greater than qualifier', () => {
-      expect(c.matches(15)).toBe(false)
+      expect(criteria.matches(15)).toBe(false)
       expect(floatC.matches(10.6)).toBe(false)
       expect(negFloatC.matches(-10)).toBe(false)
       expect(largeC.matches(1e20)).toBe(false)
@@ -326,7 +326,7 @@ describe('Number Criteria', () => {
       expect(negInfC.matches(-Infinity)).toBe(true)
       expect(infC.matches(-Infinity)).toBe(true)
       expect(nanC.matches(-Infinity)).toBe(false)
-      expect(c.matches(-Infinity)).toBe(true)
+      expect(criteria.matches(-Infinity)).toBe(true)
       expect(floatC.matches(-Infinity)).toBe(true)
       expect(negFloatC.matches(-Infinity)).toBe(true)
       expect(largeC.matches(-Infinity)).toBe(true)
@@ -341,7 +341,7 @@ describe('Number Criteria', () => {
       expect(infC.matches(Infinity)).toBe(true)
       expect(negInfC.matches(Infinity)).toBe(false)
       expect(nanC.matches(Infinity)).toBe(false)
-      expect(c.matches(Infinity)).toBe(false)
+      expect(criteria.matches(Infinity)).toBe(false)
       expect(floatC.matches(Infinity)).toBe(false)
       expect(negFloatC.matches(Infinity)).toBe(false)
       expect(largeC.matches(Infinity)).toBe(false)
@@ -354,7 +354,7 @@ describe('Number Criteria', () => {
 
     it('does not match NaN for any qualifier', () => {
       expect(nanC.matches(NaN)).toBe(false)
-      expect(c.matches(NaN)).toBe(false)
+      expect(criteria.matches(NaN)).toBe(false)
       expect(floatC.matches(NaN)).toBe(false)
       expect(negFloatC.matches(NaN)).toBe(false)
       expect(largeC.matches(NaN)).toBe(false)
@@ -370,7 +370,7 @@ describe('Number Criteria', () => {
 
     it('does not match null for any qualifier', () => {
       expect(nullC.matches(null)).toBe(false)
-      expect(c.matches(null)).toBe(false)
+      expect(criteria.matches(null)).toBe(false)
       expect(floatC.matches(null)).toBe(false)
       expect(negFloatC.matches(null)).toBe(false)
       expect(largeC.matches(null)).toBe(false)

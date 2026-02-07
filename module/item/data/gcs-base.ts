@@ -110,7 +110,7 @@ abstract class GcsBaseItemModel<Schema extends GcsBaseItemSchema = GcsBaseItemSc
     return (
       this.parent.actor?.items.contents
         .filter(item => (item.system as GcsBaseItemModel).containedBy === this.parent.id)
-        .sort((a, b) => a.sort - b.sort) || []
+        .sort((left, right) => left.sort - right.sort) || []
     )
   }
 
@@ -163,13 +163,13 @@ abstract class GcsBaseItemModel<Schema extends GcsBaseItemSchema = GcsBaseItemSc
   /* ---------------------------------------- */
 
   get children(): Item.Implementation[] {
-    return this.contents.filter(e => this.metadata.childTypes.includes(e.type))
+    return this.contents.filter(item => this.metadata.childTypes.includes(item.type))
   }
 
   /* ---------------------------------------- */
 
   get modifiers(): Item.Implementation[] {
-    return this.contents.filter(e => this.metadata.modifierTypes.includes(e.type))
+    return this.contents.filter(item => this.metadata.modifierTypes.includes(item.type))
   }
 
   /* ---------------------------------------- */

@@ -24,10 +24,10 @@ class Scope {
 
   assign(name: string, value: unknown): void {
     if (this.vars.has(name)) {
-      const e = this.vars.get(name)!
+      const entry = this.vars.get(name)!
 
-      if (e.kind === 'const') throw new Error(`Cannot assign to const '${name}'`)
-      e.value = value
+      if (entry.kind === 'const') throw new Error(`Cannot assign to const '${name}'`)
+      entry.value = value
 
       return
     }
