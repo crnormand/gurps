@@ -168,7 +168,7 @@ class RefreshItemsChatProcessor extends ChatProcessor {
     ui.notifications.info('Starting Item refresh...')
 
     for (const actor of game.actors.contents) {
-      console.log('Executeing postImport() on ' + actor.name)
+      console.log('Executing postImport() on ' + actor.name)
       await actor.postImport()
     }
 
