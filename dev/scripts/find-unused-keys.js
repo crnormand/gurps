@@ -126,8 +126,8 @@ keys.forEach(key => {
   }
 
   if (!found) {
-    let pattern = new RegExp(`\`(${escapedKey})+?\``)
-    let line = lines.find(line => line.match(pattern) !== null)
+    const pattern = new RegExp(`\\\`(${escapedKey})+?\\\``)
+    const line = lines.find(line => line.match(pattern) !== null)
 
     if (line) {
       found = true

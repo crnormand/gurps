@@ -44,7 +44,7 @@
     "dev": "npm run clean && npm run watch",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "gen:actor-methods": "node dev-utilities/generate-actor-methods.mjs",
+    "gen:actor-methods": "node dev/scripts/generate-actor-methods.mjs",
     "handlebars": "handlebars",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

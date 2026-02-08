@@ -149,11 +149,30 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
   {
-    ignores: ['dist/', 'node_modules/', 'lib/', 'dev-utilities/', 'build/', 'scripts/'],
+    ignores: ['dist/', 'node_modules/', 'lib/', 'src/lib/', 'build/', 'scripts/'],
   },
   {
     languageOptions: {
       globals: foundryGlobals,
+    },
+  },
+  {
+    files: ['dev/scripts/**/*.{js,mjs,cjs}', 'build/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        URL: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
+      },
+    },
+  },
+  {
+    files: ['**/*.cjs'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
   {

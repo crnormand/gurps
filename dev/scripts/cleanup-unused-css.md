@@ -79,7 +79,7 @@ This document outlines the **182 unused CSS selectors** detected by PurgeCSS ana
 - `.npc-sheet-grid-container` and `#portrait .img-display` - Legacy NPC grid layout
 - `.npc-input-nt`, `.npc-input-img` - NPC input form elements
 
-### Compiled from SCSS:
+### Compiled from SCSS
 
 - `body.theme-light`, `body.theme-dark` - Journal entry theme switches (may be unused or dynamic)
 - `section.window-content article.journal-entry-page` - Journal page styling (may be unused)
@@ -111,14 +111,14 @@ These may have hidden runtime usage via JavaScript:
 
 1. **Phase 1:** Remove debug and clearly deprecated UI blocks (combat view, HUD tooltip, boilerplate utilities)
 2. **Phase 2:** Search codebase for any remaining JS references to blocked selectors
-3. **Phase 3:** Re-run `node dev-utilities/find-unused-css.mjs` to verify reductions
+3. **Phase 3:** Re-run `node dev/scripts/find-unused-css.mjs` to verify reductions
 4. **Phase 4:** Consider merging modern SCSS partials and removing old .css files entirely
 
 ## Re-running Analysis
 
 ```bash
 # Run full analysis
-node dev-utilities/find-unused-css.mjs
+node dev/scripts/find-unused-css.mjs
 
 # Compare against safelist (update safelist in find-unused-css.mjs if needed)
 # and re-run to verify cleanup
@@ -133,5 +133,5 @@ node dev-utilities/find-unused-css.mjs
 
 ---
 
-**Generated:** 2025-12-30 by `dev-utilities/find-unused-css.mjs`
+**Generated:** 2025-12-30 by `dev/scripts/find-unused-css.mjs`
 **Reference:** `examples/unused-css-report.txt`

@@ -4,10 +4,11 @@ import fs from 'fs'
 
 let args = process.argv.slice(2)
 
-const file1 = fs.readFileSync(args[0], 'utf8')
+const firstFilePath = args[0]
+const secondFilePath = args[1]
 
-let object1 = JSON.parse(fs.readFileSync(args[0], 'utf8'))
-let object2 = JSON.parse(fs.readFileSync(args[1], 'utf8'))
+const firstJson = JSON.parse(fs.readFileSync(firstFilePath, 'utf8'))
+const secondJson = JSON.parse(fs.readFileSync(secondFilePath, 'utf8'))
 
 // Recursively walk the keys in object1 and collect the fully qualified keys in a variable
 function walk(obj, prefix, keys) {
@@ -20,29 +21,29 @@ function walk(obj, prefix, keys) {
   }
 }
 
-let keys1 = []
-let keys2 = []
+const firstKeys = []
+const secondKeys = []
 
-walk(object1, '', keys1)
-walk(object2, '', keys2)
-
-console.log('------------')
-console.log(`keys in [${args[1]}] that are missing in [${args[0]}]`)
-let missingInFile1 = keys2.filter(key => !keys1.includes(key)).sort()
-
-missingInFile1.forEach(it => console.log(`  ${it}`))
+walk(firstJson, '', firstKeys)
+walk(secondJson, '', secondKeys)
 
 console.log('------------')
-console.log(`keys in [${args[0]}] that are missing in [${args[1]}]`)
-let missingInFile2 = keys1.filter(key => !keys2.includes(key)).sort()
+console.log(`keys in [${secondFilePath}] that are missing in [${firstFilePath}]`)
+const missingInSecond = secondKeys.filter(key => !firstKeys.includes(key)).sort()
 
-missingInFile2.forEach(it => console.log(`  ${it}`))
+missingInSecond.forEach(key => console.log(`  ${key}`))
 
 console.log('------------')
-console.log(`values in [${args[0]}] that are the same in [${args[1]}]`)
-let sameKeys = Object.entries(object1)
-  .filter(([k, _]) => keys2.includes(k))
-  .filter(([k, v]) => object2[k] === v)
+console.log(`keys in [${firstFilePath}] that are missing in [${secondFilePath}]`)
+const missingInFirst = firstKeys.filter(key => !secondKeys.includes(key)).sort()
+
+missingInFirst.forEach(key => console.log(`  ${key}`))
+
+console.log('------------')
+console.log(`values in [${firstFilePath}] that are the same in [${secondFilePath}]`)
+const sameKeys = Object.entries(firstJson)
+  .filter(([key, _value]) => secondKeys.includes(key))
+  .filter(([key, value]) => secondJson[key] === value)
   .sort()
 
 sameKeys.forEach(([k, v]) => console.log(`  ${k}: ${v}`))

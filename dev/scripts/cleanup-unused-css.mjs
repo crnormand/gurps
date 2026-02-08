@@ -8,7 +8,7 @@
  * - styles/css_boilerplate.css (generic boilerplate utilities)
  * - styles/npc-input.css (legacy NPC form)
  *
- * Run: node dev-utilities/cleanup-unused-css.mjs [--dry-run]
+ * Run: node dev/static/cleanup-unused-css.mjs [--dry-run]
  */
 
 import fs from 'node:fs'
@@ -22,7 +22,6 @@ const removed = { total: 0, byFile: {} }
  */
 function removeBlock(filePath, patterns) {
   let content = fs.readFileSync(filePath, 'utf8')
-  const original = content
   let fileRemoved = 0
 
   patterns.forEach(({ pattern, description, isRegex = false }) => {
@@ -179,7 +178,7 @@ removeBlock('styles/npc-input.css', [
 // ============================================================================
 console.log('\nProcessing: styles/simple.css (legacy classic sheet & combat view)')
 console.log('  ⚠  NOTE: simple.css has 100+ unused selectors; manual review recommended')
-console.log('  → See dev-utilities/cleanup-unused-css.md for detailed list')
+console.log('  → See dev/static/cleanup-unused-css.md for detailed list')
 
 // Summary
 console.log(`\n${'='.repeat(60)}`)
@@ -196,7 +195,7 @@ if (dryRun) {
   console.log('Run without --dry-run to apply changes.')
 } else {
   console.log('\n✓ Cleanup complete! Re-run analysis:')
-  console.log('  node dev-utilities/find-unused-css.mjs')
+  console.log('  node dev/static/find-unused-css.mjs')
 }
 
 console.log(`${'='.repeat(60)}\n`)

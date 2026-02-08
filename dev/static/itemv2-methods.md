@@ -115,6 +115,6 @@ This document lists the members (instance methods, accessors, and static members
 - Many accessors rely on the typed item system models (`BaseItemModel`, `TraitModel`, `SkillModel`, `SpellModel`, `EquipmentModel`) and on `metadata.embedded` to manage pseudo-documents.
 - `getItemAttacks` was redesigned to return full attack models rather than the previous component wrappers.
 
-If you'd like, I can also append short TypeScript signatures and example usage for each member, or add these entries to the existing `/dev-utilities/items-methods.md` file for cross-reference.
+If you'd like, I can also append short TypeScript signatures and example usage for each member, or add these entries to the existing `dev/static/items-methods.md` file for cross-reference.
 
 File generated from `module/item/gurps-item.ts`.

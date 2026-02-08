@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Tiny script to regenerate dev-utilities/actor-methods.md by scanning class methods in
+// Tiny script to regenerate dev/static/actor-methods.md by scanning class methods in
 // module/actor/actor.js (GurpsActor) and module/actor/gurps-actor.ts (GurpsActorV2).
 // No external parser dependency; uses a light brace scan and regex on member signatures.
 
@@ -60,9 +60,9 @@ function extractMethodsFromClassBody(body) {
         let sigStart = tokenStart
 
         // backtrack to previous newline to capture clean signature
-        for (let j = i - 1; j >= 0; j--) {
-          if (body[j] === '\n') {
-            sigStart = j + 1
+        for (let signatureEnd = i - 1; signatureEnd >= 0; signatureEnd--) {
+          if (body[signatureEnd] === '\n') {
+            sigStart = signatureEnd + 1
             break
           }
         }
@@ -71,9 +71,9 @@ function extractMethodsFromClassBody(body) {
 
         // Only consider signatures that look like method/get/set declarations (contain '(' )
         if (signature.includes('(')) {
-          const m = parseSignature(signature)
+          const parsedSignature = parseSignature(signature)
 
-          if (m) methods.push({ ...m, raw: signature })
+          if (parsedSignature) methods.push({ ...parsedSignature, raw: signature })
         }
       }
 
@@ -187,7 +187,7 @@ async function generate() {
     }
   }
 
-  const outPath = path.join(repoRoot, 'dev-utilities/actor-methods.md')
+  const outPath = path.join(repoRoot, 'dev/static/actor-methods.md')
 
   await fs.writeFile(outPath, sections.join('\n'), 'utf8')
   console.log(`Wrote ${outPath}`)

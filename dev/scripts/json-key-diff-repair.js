@@ -10,14 +10,14 @@ import fs from 'fs'
 // that are not in lang/en.json, and add keys that are in lang/en.json but not in the input file.
 // It will also remove keys that have the same value in both files.
 
-let args = process.argv.slice(2)
+const args = process.argv.slice(2)
 
 const targetFile = args[0]
 const fix = args[1] === 'fix'
 const enFile = './lang/en.json'
 
-let en_json = JSON.parse(fs.readFileSync(enFile, 'utf8'))
-let object2 = JSON.parse(fs.readFileSync(targetFile, 'utf8'))
+const enJson = JSON.parse(fs.readFileSync(enFile, 'utf8'))
+const targetJson = JSON.parse(fs.readFileSync(targetFile, 'utf8'))
 
 // Recursively walk the keys in object1 and collect the fully qualified keys in a variable
 function walk(obj, prefix, keys) {
@@ -30,15 +30,15 @@ function walk(obj, prefix, keys) {
   }
 }
 
-let en_keys = []
-let keys2 = []
+const enKeys = []
+const targetKeys = []
 
-walk(en_json, '', en_keys)
-walk(object2, '', keys2)
+walk(enJson, '', enKeys)
+walk(targetJson, '', targetKeys)
 
 console.log('------------')
 console.log(`keys in [${targetFile}] that are missing in [${enFile}]`)
-let missingInFile1 = keys2.filter(key => !en_keys.includes(key)).sort()
+const missingInFile1 = targetKeys.filter(key => !enKeys.includes(key)).sort()
 
 missingInFile1.forEach(it => console.log(`  ${it}`))
 
@@ -46,7 +46,7 @@ missingInFile1.forEach(it => console.log(`  ${it}`))
 if (fix) {
   missingInFile1.forEach(it => {
     let parts = it.split('.')
-    let obj = object2
+    let obj = targetJson
 
     for (let i = 0; i < parts.length - 1; i++) {
       obj = obj[parts[i]]
@@ -55,12 +55,12 @@ if (fix) {
     delete obj[parts[parts.length - 1]]
   })
   // overwrite targetFile
-  fs.writeFileSync(targetFile, JSON.stringify(object2, null, 2))
+  fs.writeFileSync(targetFile, JSON.stringify(targetJson, null, 2))
 }
 
 console.log('------------')
 console.log(`keys in [${enFile}] that are missing in [${targetFile}]`)
-let missingInFile2 = en_keys.filter(key => !keys2.includes(key)).sort()
+const missingInFile2 = enKeys.filter(key => !targetKeys.includes(key)).sort()
 
 missingInFile2.forEach(it => console.log(`  ${it}`))
 
@@ -68,14 +68,14 @@ if (fix) {
   // Add missingInFile2 entries to object2.
   missingInFile2.forEach(it => {
     let parts = it.split('.')
-    let obj = en_json
+    let obj = enJson
 
     for (let i = 0; i < parts.length - 1; i++) {
       obj = obj[parts[i]]
     }
 
     let value = obj[parts[parts.length - 1]]
-    let obj2 = object2
+    let obj2 = targetJson
 
     for (let i = 0; i < parts.length - 1; i++) {
       if (!obj2[parts[i]]) {
@@ -88,14 +88,14 @@ if (fix) {
     obj2[parts[parts.length - 1]] = value
   })
   // Overwrite targetFile.
-  fs.writeFileSync(targetFile, JSON.stringify(object2, null, 2))
+  fs.writeFileSync(targetFile, JSON.stringify(targetJson, null, 2))
 }
 
 console.log('------------')
 console.log(`values in [${enFile}] that are the same in [${targetFile}]`)
-let sameKeys = Object.entries(en_json)
-  .filter(([k, _]) => keys2.includes(k))
-  .filter(([k, v]) => object2[k] === v)
+const sameKeys = Object.entries(enJson)
+  .filter(([key, _value]) => targetKeys.includes(key))
+  .filter(([key, value]) => targetJson[key] === value)
   .sort()
 
 sameKeys.forEach(([k, v]) => console.log(`  ${k}: ${v}`))
@@ -104,7 +104,7 @@ if (fix) {
   // Remove sameKeys entries from object2.
   sameKeys.forEach(([k, v]) => {
     let parts = k.split('.')
-    let obj = object2
+    let obj = targetJson
 
     for (let i = 0; i < parts.length - 1; i++) {
       obj = obj[parts[i]]
@@ -113,7 +113,7 @@ if (fix) {
     delete obj[parts[parts.length - 1]]
   })
   // Overwrite targetFile
-  fs.writeFileSync(targetFile, JSON.stringify(object2, null, 2))
+  fs.writeFileSync(targetFile, JSON.stringify(targetJson, null, 2))
 }
 
 console.log('------------')

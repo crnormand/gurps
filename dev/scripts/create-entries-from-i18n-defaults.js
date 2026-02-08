@@ -21,10 +21,10 @@ let regexJS = /i18n\((?:\r?\n)?\s*['"`](?<tag>.+?)['"`],(?:\r?\n)?\s*['"`](?<tex
 
 {
   const matches = contents.matchAll(regexJS)
-  let m = [...matches]
+  const matchEntries = [...matches]
 
-  m.forEach(e => {
-    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+  matchEntries.forEach(match => {
+    entries.add(`"${match.groups.tag}": "${match.groups.text}",`)
     //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
   })
 }
@@ -33,10 +33,10 @@ let regexHB = /\{\{i18n(?:\r?\n)?\s+['"`](?<tag>.+?)['"`](?:\r?\n)?\s+['"`](?<te
 
 {
   const matches = contents.matchAll(regexHB)
-  let m = [...matches]
+  const matchEntries = [...matches]
 
-  m.forEach(e => {
-    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+  matchEntries.forEach(match => {
+    entries.add(`"${match.groups.tag}": "${match.groups.text}",`)
     //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
   })
 }
@@ -46,10 +46,10 @@ let regexHBf =
 
 {
   const matches = contents.matchAll(regexHBf)
-  let m = [...matches]
+  const matchEntries = [...matches]
 
-  m.forEach(e => {
-    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+  matchEntries.forEach(match => {
+    entries.add(`"${match.groups.tag}": "${match.groups.text}",`)
     //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
   })
 }

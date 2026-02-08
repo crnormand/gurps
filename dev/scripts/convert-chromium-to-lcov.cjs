@@ -23,7 +23,6 @@ function convertEntryToLCOV(entry) {
   }
 
   const lines = entry.text.split('\n')
-  const lineHits = new Array(lines.length).fill(0)
 
   const mapPath = jsPath + '.map'
 
@@ -72,9 +71,9 @@ function convertEntryToLCOV(entry) {
   const lcov = [`SF:${sourcePath}`]
 
   for (const [key, count] of tsHits.entries()) {
-    const [, line] = key.split(':')
+    const [, lineNumber] = key.split(':')
 
-    lcov.push(`DA:${line},${count}`)
+    lcov.push(`DA:${lineNumber},${count}`)
   }
 
   lcov.push('end_of_record')

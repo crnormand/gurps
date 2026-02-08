@@ -75,7 +75,7 @@ async function run() {
     }
   }
 
-  const total = report.reduce((acc, r) => acc + r.rejected.length, 0)
+  const total = report.reduce((totalRejected, entry) => totalRejected + entry.rejected.length, 0)
 
   console.log(`\nTotal unused selectors detected: ${total}`)
 }
