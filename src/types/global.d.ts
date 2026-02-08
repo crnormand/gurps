@@ -1,7 +1,7 @@
-import { BaseAction } from 'module/action/base-action.ts'
-import { CharacterModel } from 'module/actor/data/character.ts'
+import { BaseAction } from 'src/module/action/base-action.ts'
+import { CharacterModel } from 'src/module/actor/data/character.ts'
 import { GurpsActorV2 } from 'module/actor/gurps-actor.ts'
-import { ActorV1Model } from 'module/actor/legacy/actorv1-interface.ts'
+import { ActorV1Model } from 'src/module/actor/legacy/actorv1-interface.ts'
 import { GurpsCombatant } from 'module/combat/combatant.ts'
 import { DamageChat } from 'module/damage/damagechat.js'
 import { GurpsActiveEffect } from 'module/effects/active-effect.js'
@@ -18,7 +18,7 @@ import { GurpsToken } from 'module/token/gurps-token.ts'
 
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
-import { GurpsActor } from './module/actor/actor.js'
+import { GurpsActor } from './src/module/actor/actor.ts'
 
 export {}
 
