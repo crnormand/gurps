@@ -139,7 +139,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     sortedEffects.forEach(effect => {
       let posture = effect.posture ? ' *' : ''
 
-      html += `<tr><td>${effect.id}</td><td>'${game.i18n.localize(effect.name)}'${posture}</td></tr>`
+      html += `<tr><td>${effect.id}</td><td>'${game.i18n.localize(effect.label ?? effect.name)}'${posture}</td></tr>`
     })
     html += `<tr><td></td><td>* => ${game.i18n.localize('GURPS.modifierPosture')}</td></tr>`
 
