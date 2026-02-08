@@ -28,8 +28,8 @@
     "verified": "13.351"
   },
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
-  "scripts": ["scripts/jquery.tinycolorpicker.js"],
-  "styles": ["gurps.css"],
+  "scripts": ["lib/jquery.tinycolorpicker.js"],
+  "styles": ["styles/gurps.css"],
   "languages": [
     {
       "lang": "en",
