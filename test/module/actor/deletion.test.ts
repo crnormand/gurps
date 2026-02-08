@@ -1,4 +1,4 @@
-import { collectDeletions, type EntryData } from '../../../module/actor/deletion.ts'
+import { collectDeletions, type EntryData } from '@module/actor/deletion.js'
 
 describe('collectDeletions', () => {
   test('returns single item for flat data', () => {

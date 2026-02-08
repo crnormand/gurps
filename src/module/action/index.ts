@@ -1,4 +1,4 @@
-import { GurpsModule } from '@types/gurps-module.ts'
+import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { MeleeAttackModel } from './melee-attack.js'
 import { RangedAttackModel } from './ranged-attack.js'

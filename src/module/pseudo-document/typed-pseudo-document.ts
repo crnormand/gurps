@@ -1,4 +1,4 @@
-import { DataModel, Document, fields } from '../types/foundry/index.js'
+import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
 
 import { PseudoDocument, PseudoDocumentSchema } from './pseudo-document.js'
 

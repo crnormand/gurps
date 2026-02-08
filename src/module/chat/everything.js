@@ -1,7 +1,7 @@
 'use strict'
 
-import { parselink } from '../../lib/parselink.js'
-import { isNiceDiceEnabled, splitArgs } from '../../lib/utilities.js'
+import { parselink } from '@util/parselink.js'
+import { isNiceDiceEnabled, splitArgs } from '@util/utilities.js'
 
 import ChatProcessor from './chat-processor.js'
 

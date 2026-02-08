@@ -1,6 +1,6 @@
 'use strict'
 
-import { wait } from '../../lib/utilities.js'
+import { wait } from '@util/utilities.js'
 
 import ChatProcessor from './chat-processor.js'
 

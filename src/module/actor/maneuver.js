@@ -1,4 +1,4 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '@util/miscellaneous-settings.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'

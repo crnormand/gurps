@@ -1,4 +1,4 @@
-import { fields, TypeDataModel } from '../../types/foundry/index.js'
+import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 
 type ActorMetadata = Readonly<{
   /** The expected `type` value */

@@ -1,4 +1,4 @@
-import { GurpsModule } from '@types/gurps-module.ts'
+import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { GurpsToken } from './gurps-token.js'
 import { GurpsTokenHUDV2 } from './token-hud.js'

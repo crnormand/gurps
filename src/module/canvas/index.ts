@@ -1,6 +1,6 @@
-import { GurpsModule } from '@types/gurps-module.ts'
+import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { GurpsRuler } from './ruler.ts'
+import { GurpsRuler } from './ruler.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Canvas Module')

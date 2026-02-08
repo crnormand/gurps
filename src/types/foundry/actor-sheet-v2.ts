@@ -5,7 +5,7 @@
 // and fvtt-types' Mixin utility type tries to resolve all generic parameters through this chain.
 // Note: HandlebarsApplicationMixin(ApplicationV2) works fine - it's specifically the ActorSheetV2 depth.
 
-import { Application } from './application.ts'
+import { Application } from './application.js'
 
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]

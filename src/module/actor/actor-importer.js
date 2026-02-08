@@ -1,9 +1,10 @@
-import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
-import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
+import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
+import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '@util/utilities.js'
+
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
 import { SmartImporter } from '../smart-importer.js'
-import { calculateEncumbranceLevels, readXmlText } from '../utilities/import-utilities.js'
+import { calculateEncumbranceLevels, readXmlText } from '../util/import-utilities.ts'
 
 import {
   Advantage,

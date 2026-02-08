@@ -1,7 +1,7 @@
 'use strict'
 
-import { digitsAndDecimalOnly, digitsAndNegOnly } from '../../lib/jquery-helper.js'
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import { digitsAndDecimalOnly, digitsAndNegOnly } from '@util/jquery-helper.js'
+import * as Settings from '@util/miscellaneous-settings.js'
 import {
   displayMod,
   generateUniqueId,
@@ -10,7 +10,8 @@ import {
   objectToArray,
   parseFloatFrom,
   parseIntFrom,
-} from '../../lib/utilities.js'
+} from '@util/utilities.js'
+
 import { TokenActions } from '../token-actions.js'
 
 import { CompositeDamageCalculator } from './damagecalculator.js'

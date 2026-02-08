@@ -1,7 +1,6 @@
 'use strict'
 
-import * as Settings from '../lib/miscellaneous-settings.js'
-
+import * as Settings from './miscellaneous-settings.js'
 import { SizeAndSpeedRangeTable } from './size-speed-range-table.js'
 
 /*

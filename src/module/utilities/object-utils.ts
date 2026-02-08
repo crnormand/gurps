@@ -1,1 +1,1 @@
-export * from '../../util/object-utils.js'
+../../util/object-utils.ts

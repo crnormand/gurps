@@ -1,4 +1,4 @@
-import { fields } from '../types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
 
 /* ---------------------------------------- */
 

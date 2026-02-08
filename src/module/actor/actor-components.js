@@ -6,8 +6,8 @@
  * to think really hard about potentially moving the class back to actor.js.
  */
 
-import { simpleHash } from '../../lib/simple-hash.js'
-import { arraysEqual, compareColleges, convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
+import { simpleHash } from '@util/simple-hash.js'
+import { arraysEqual, compareColleges, convertRollStringToArrayOfInt, extractP } from '@util/utilities.js'
 
 /**
  * ### Base Actor Component

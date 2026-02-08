@@ -1,5 +1,6 @@
-import { DataModel, fields } from '../../types/foundry/index.js'
-import { convertRangeTextToArray } from '../../utilities/text-utilties.js'
+import { DataModel, fields } from '@gurps-types/foundry/index.js'
+
+import { convertRangeTextToArray } from '../../util/text-utilties.ts'
 
 class HitLocationEntryV2 extends DataModel<HitLocationSchemaV2> {
   static override defineSchema(): HitLocationSchemaV2 {

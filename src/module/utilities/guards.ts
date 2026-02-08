@@ -1,1 +1,1 @@
-export * from '../../util/guards.js'
+../../util/guards.ts

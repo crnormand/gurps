@@ -14,7 +14,7 @@
       "@lib/*": ["lib/*"],
       "@module/*": ["module/*"],
       "@rules/*": ["rules/*"],
-      "@types/*": ["types/*"],
+      "@gurps-types/*": ["types/*"],
       "@util/*": ["util/*"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     "types": [
@@ -23,7 +23,7 @@
       "fvtt-types"
     ] /* Specify type package names to be included without being referenced in a source file. */,
     "resolveJsonModule": true /* Enable importing .json files. */,
-    "allowImportingTsExtensions": true /* Allow imports to include TypeScript file extensions. */,
+    "allowImportingTsExtensions": false /* Disallow `.ts` specifiers; emit stays valid. */,
     "rewriteRelativeImportExtensions": true /* Rewrite '.ts' extensions to '.js' in relative import paths. */,
 
     /* JavaScript Support */

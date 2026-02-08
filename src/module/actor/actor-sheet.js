@@ -1,12 +1,13 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { parselink } from '../../lib/parselink.js'
-import { atou, isEmptyObject, zeroFill } from '../../lib/utilities.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { parselink } from '@util/parselink.js'
+import { atou, isEmptyObject, zeroFill } from '@util/utilities.js'
+
+import * as CI from '../../rules/conditional-injury.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
-import * as CI from '../injury/domain/ConditionalInjury.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { GgaContextMenuV2 } from '../ui/context-menu.js'
 

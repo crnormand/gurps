@@ -1,11 +1,11 @@
-import * as Settings from '../../../lib/miscellaneous-settings.js'
 import {
   ActorSheetV2Configuration,
   ActorSheetV2RenderContext,
   ActorSheetV2RenderOptions,
   DeepPartial,
   HandlebarsTemplatePart,
-} from '../../types/foundry/actor-sheet-v2.js'
+} from '@gurps-types/foundry/actor-sheet-v2.js'
+import * as Settings from '@util/miscellaneous-settings.js'
 
 import { GurpsActorModernSheet, ModernSheetContext } from './sheet.js'
 

@@ -1,10 +1,9 @@
-
+import { fields } from '@gurps-types/foundry/index.js'
 import { parselink } from '@util/parselink.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
-import { fields } from '../types/foundry/index.js'
 
 import { BaseAction, BaseActionSchema } from './base-action.js'
 

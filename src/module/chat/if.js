@@ -1,6 +1,6 @@
 'use strict'
 
-import { parselink } from '../../lib/parselink.js'
+import { parselink } from '@util/parselink.js'
 
 import ChatProcessor from './chat-processor.js'
 

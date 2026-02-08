@@ -1,1 +1,1 @@
-export * from '../../util/i18nFallback.js'
+../../util/i18nFallback.ts

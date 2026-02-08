@@ -1,5 +1,6 @@
-import { arrayToObject } from '../../../lib/utilities.js'
-import { defineGetterProperties } from '../../utilities/object-utils.js'
+import { arrayToObject } from '@util/utilities.js'
+
+import { defineGetterProperties } from '../../util/object-utils.ts'
 import { CharacterModel } from '../data/character.js'
 import { NoteV2 } from '../data/note.js'
 

@@ -1,4 +1,4 @@
-import { shouldUpdateName, shouldUpdateField } from '../../module/actor/modern/inline-edit-handler.ts'
+import { shouldUpdateName, shouldUpdateField } from '@module/actor/modern/inline-edit-handler.js'
 
 describe('shouldUpdateName', () => {
   test('returns true when name is different', () => {

@@ -1,4 +1,4 @@
-import { fields, DataModel } from '../../types/foundry/index.js'
+import { fields, DataModel } from '@gurps-types/foundry/index.js'
 
 enum LengthUnit {
   FeetAndInches = 'ft_in',

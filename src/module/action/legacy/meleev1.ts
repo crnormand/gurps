@@ -1,5 +1,6 @@
-import { Melee } from '../../actor/actor-components.js'
-import { defineGetterProperties } from '../../utilities/object-utils.js'
+import { Melee } from '@module/actor/actor-components.js'
+import { defineGetterProperties } from '@module/util/object-utils.js'
+
 import { MeleeAttackModel } from '../index.js'
 
 class MeleeV1 {

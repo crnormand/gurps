@@ -1,4 +1,4 @@
-import { DataModel, fields } from '../../types/foundry/index.js'
+import { DataModel, fields } from '@gurps-types/foundry/index.js'
 
 abstract class ItemComponent<Schema extends ItemComponentSchema = ItemComponentSchema> extends DataModel<Schema> {
   static override defineSchema(): ItemComponentSchema {

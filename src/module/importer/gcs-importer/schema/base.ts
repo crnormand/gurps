@@ -1,6 +1,6 @@
+import { DataModel, fields } from '@gurps-types/foundry/index.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
-import { DataModel, fields } from '../../../types/foundry/index.js'
 
 const sourcedIdSchema = () => {
   return {

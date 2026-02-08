@@ -1,4 +1,4 @@
-import { fields } from '../types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
 
 // define an object with two fields: title and icon.
 type GurpsSettingsConfig = {

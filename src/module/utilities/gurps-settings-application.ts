@@ -1,1 +1,1 @@
-export * from '../../util/gurps-settings-application.js'
+../../util/gurps-settings-application.ts

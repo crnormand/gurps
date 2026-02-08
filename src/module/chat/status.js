@@ -1,6 +1,6 @@
 'use strict'
 
-import { locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
+import { locateToken, makeRegexPatternFrom } from '@util/utilities.js'
 
 import ChatProcessor from './chat-processor.js'
 

@@ -1,13 +1,13 @@
 'use strict'
 
-import * as Settings from '../lib/miscellaneous-settings.js'
 import { Advantage, Encumbrance, Equipment, Melee, Note, Ranged, Skill } from '../module/actor/actor-components.js'
 import { GurpsActorV2 } from '../module/actor/gurps-actor.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
-import getUserInput from '../module/utilities/get-user-input.js'
 
+import getUserInput from './get-user-input.js'
 import { translate } from './i18n.js'
 import { digitsAndDecimalOnly, digitsOnly } from './jquery-helper.js'
+import * as Settings from './miscellaneous-settings.js'
 import { sanitize } from './utilities.js'
 
 Hooks.once('init', async function () {

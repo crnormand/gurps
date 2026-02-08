@@ -1,4 +1,4 @@
-import { fields } from '../../../types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
 
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsEquipmentModifier } from './equipment-modifier.js'

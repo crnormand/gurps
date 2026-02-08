@@ -1,10 +1,11 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { parselink } from '../../lib/parselink.js'
-import { recurselist, sanitize } from '../../lib/utilities.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { parselink } from '@util/parselink.js'
+import { recurselist, sanitize } from '@util/utilities.js'
+
 import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'
-import { gurpslink } from '../utilities/gurpslink.js'
+import { gurpslink } from '../util/gurpslink.ts'
 
 import Maneuvers from './maneuver.js'
 

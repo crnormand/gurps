@@ -1,1 +1,1 @@
-export * from '../../util/import-utilities.js'
+../../util/import-utilities.ts

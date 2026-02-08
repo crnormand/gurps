@@ -1,3 +1,4 @@
+import { DataModel } from '@gurps-types/foundry/index.js'
 import {
   MeleeAttackComponentSchema,
   MeleeAttackSchema,
@@ -15,8 +16,7 @@ import { TraitComponentSchema, TraitSchema } from '@module/item/data/trait.js'
 
 // TODO: get rid of when this is migrated
 import * as HitLocations from '../../hitlocation/hitlocation.js'
-import { DataModel } from '../../types/foundry/index.js'
-import { createDataIsOfType } from '../helpers.ts'
+import { createDataIsOfType } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
 import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'

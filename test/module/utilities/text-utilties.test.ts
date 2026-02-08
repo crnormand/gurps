@@ -1,4 +1,4 @@
-import { convertRangeTextToArray } from '../../../module/utilities/text-utilties.ts'
+import { convertRangeTextToArray } from '@module/util/text-utilties.ts'
 
 describe('convertRangeTextToArray', () => {
   test('parses a single inclusive range', () => {

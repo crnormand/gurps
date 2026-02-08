@@ -3,7 +3,7 @@
 import * as Settings from '@util/miscellaneous-settings.js'
 import { parselink } from '@util/parselink.js'
 
-import { gurpslink } from '../module/utilities/gurpslink.js'
+import { gurpslink } from './util/gurpslink.ts'
 
 import ChatProcessor from './chat/chat-processor.js'
 import GurpsWiring from './gurps-wiring.js'

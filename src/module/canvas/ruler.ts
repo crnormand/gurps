@@ -1,4 +1,5 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+
 import { Length, LengthUnit } from '../data/common/index.js'
 
 class GurpsRuler extends foundry.canvas.interaction.Ruler {

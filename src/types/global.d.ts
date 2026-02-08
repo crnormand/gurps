@@ -1,5 +1,5 @@
-import { BaseAction } from '@module/action/base-action.js'
-import { DamageChat } from '@module/damage/damagechat.js'
+import type { BaseAction } from '@module/action/base-action.js'
+import type { DamageChat } from '@module/damage/damagechat.js'
 
 export {}
 

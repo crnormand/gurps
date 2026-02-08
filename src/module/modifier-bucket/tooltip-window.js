@@ -2,7 +2,7 @@ import * as Settings from '@util/miscellaneous-settings.js'
 import { parselink } from '@util/parselink.js'
 import { displayMod, horiz } from '@util/utilities.js'
 
-import { gurpslink } from '../../module/utilities/gurpslink.js'
+import { gurpslink } from '../util/gurpslink.ts'
 import GurpsWiring from '../gurps-wiring.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 /**

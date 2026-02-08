@@ -1,4 +1,5 @@
-import { GurpsModule } from '../../types/gurps-module.ts'
+import type { GurpsModule } from '@gurps-types/gurps-module.js'
+
 import { CharacterModel } from '../actor/data/character.js'
 
 import { importerPrompt } from './importer-prompt.js'

@@ -1,6 +1,6 @@
 import { Length, LengthUnit } from '../data/common/length.js'
 
-import { tokenMoveColors } from './constants.ts'
+import { tokenMoveColors } from './constants.js'
 
 class GurpsTokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
   /**

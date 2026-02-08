@@ -1,7 +1,8 @@
 'use strict'
 
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { objectToArray, zeroFill } from '../../lib/utilities.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { objectToArray, zeroFill } from '@util/utilities.js'
+
 import { HitLocationEntry } from '../actor/actor-components.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { TokenActions } from '../token-actions.js'

@@ -5,12 +5,12 @@ import Maneuvers from '../module/actor/maneuver.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import { ImportSettings } from '../module/importer/index.js'
 import { TokenActions } from '../module/token-actions.js'
-import { multiplyDice } from '../module/utilities/damage-utils.js'
-import { gurpslink } from '../module/utilities/gurpslink.js'
-import { i18nFallback } from '../module/utilities/i18nFallback.js'
-import { extractOtfs } from '../module/utilities/otf.js'
+import { multiplyDice } from '../module/util/damage-utils.ts'
+import { gurpslink } from '../module/util/gurpslink.ts'
+import { i18nFallback } from '../module/util/i18nFallback.ts'
 
 import * as Settings from './miscellaneous-settings.js'
+import { extractOtfs } from './otf.js'
 import { parseDecimalNumber } from './parse-decimal-number/parse-decimal-number.js'
 import {
   getComparison,

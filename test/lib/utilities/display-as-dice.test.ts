@@ -1,4 +1,4 @@
-import { displayAsDice } from '../../../lib/utilities.js'
+import { displayAsDice } from '@util/utilities.js'
 
 describe('displayAsDice', () => {
   let system: any

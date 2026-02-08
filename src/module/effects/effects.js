@@ -1,4 +1,5 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+
 import { MOVE_NONE, MOVE_ONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
 
 export class StatusEffect {

@@ -1,5 +1,6 @@
-import { diceToFormula } from '../../lib/utilities.js'
-import { addDice, getDiceData, getDicePlusAdds } from '../utilities/damage-utils.js'
+import { diceToFormula } from '@util/utilities.js'
+
+import { addDice, getDiceData, getDicePlusAdds } from '../util/damage-utils.ts'
 
 const effects = {
   unaffected: {

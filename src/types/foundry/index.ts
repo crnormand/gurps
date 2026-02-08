@@ -1,8 +1,8 @@
-export { Application } from './application.ts'
-export { fields } from './data-fields.ts'
-export { DataModel } from './data-model.ts'
-export { Document } from './document.ts'
-export { TypeDataModel } from './type-data-model.ts'
+export { Application } from './application.js'
+export { fields } from './data-fields.js'
+export { DataModel } from './data-model.js'
+export { Document } from './document.js'
+export { TypeDataModel } from './type-data-model.js'
 
 export type {
   ActorSheetV2ActionHandler,
@@ -14,4 +14,4 @@ export type {
   HandlebarsActorSheetV2Instance,
   HandlebarsTemplatePart,
   HeaderControlsEntry,
-} from './actor-sheet-v2.ts'
+} from './actor-sheet-v2.js'

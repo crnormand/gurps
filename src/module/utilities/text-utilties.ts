@@ -1,1 +1,1 @@
-export * from '../../util/text-utilties.js'
+../../util/text-utilties.ts

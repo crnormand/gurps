@@ -1,4 +1,4 @@
-import { GurpsModule } from '@types/gurps-module.ts'
+import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import ApplyDamageDialog from './applydamage.js'
 import { DamageTable } from './damage-tables.js'

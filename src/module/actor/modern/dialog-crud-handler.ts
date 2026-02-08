@@ -1,4 +1,4 @@
-import { getGame, isHTMLElement } from '../../utilities/guards.js'
+import { getGame, isHTMLElement } from '../../util/guards.ts'
 
 import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.js'
 

@@ -2,7 +2,7 @@ import { parselink } from '@util/parselink.js'
 import { atou } from '@util/utilities.js'
 
 import { GgaContextMenuV2 } from './ui/context-menu.js'
-import { multiplyDice } from './utilities/damage-utils.js'
+import { multiplyDice } from './util/damage-utils.ts'
 
 export default class GurpsWiring {
   static hookupAllEvents(html) {

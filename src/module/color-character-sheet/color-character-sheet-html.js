@@ -4,8 +4,9 @@
  * ~Stevil
  */
 
-import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
-import { objectToArray } from '../../lib/utilities.js'
+import { SYSTEM_NAME } from '@util/miscellaneous-settings.js'
+import { objectToArray } from '@util/utilities.js'
+
 import {
   SETTING_COLOR_CHARACTER_SHEET_DATA,
   SETTING_DEFAULT_COLOR_BACKGROUND,

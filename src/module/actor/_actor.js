@@ -1,7 +1,7 @@
 'use strict'
 
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { COSTS_REGEX, parselink } from '@util/parselink.js'
 import {
   arrayToObject,
   generateUniqueId,
@@ -10,14 +10,15 @@ import {
   recurselist,
   splitArgs,
   zeroFill,
-} from '../../lib/utilities.js'
+} from '@util/utilities.js'
+
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { GurpsItem } from '../item.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
-import { multiplyDice } from '../utilities/damage-utils.js'
+import { multiplyDice } from '../util/damage-utils.ts'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'

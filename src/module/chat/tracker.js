@@ -1,4 +1,4 @@
-import { zeroFill } from '../../lib/utilities.js'
+import { zeroFill } from '@util/utilities.js'
 
 import ChatProcessor from './chat-processor.js'
 

@@ -4,7 +4,7 @@
  * ~Stevil
  */
 
-import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
+import { SYSTEM_NAME } from '@util/miscellaneous-settings.js'
 
 import ColorCharacterSheetSettings from './color-character-sheet-html.js'
 

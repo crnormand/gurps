@@ -1,9 +1,10 @@
 'use strict'
 
-import { generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
+import { generateUniqueId, isNiceDiceEnabled } from '@util/utilities.js'
+
 import { ChatProcessors } from '../../module/chat.js'
-import { isValidDiceTerm } from '../utilities/damage-utils.js'
-import selectTarget from '../utilities/select-target.js'
+import { isValidDiceTerm } from '../util/damage-utils.ts'
+import selectTarget from '../util/select-target.ts'
 
 import ChatProcessor from './chat-processor.js'
 import { SlamCalculator } from './slam-calc.js'

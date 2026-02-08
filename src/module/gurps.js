@@ -1,9 +1,12 @@
 // Import Modules
+import { allowOtfExec } from '@util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@util/change-log.js'
+import { GGADebugger } from '@util/debugger.js'
 import HitFatPoints from '@util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@util/i18n.js'
 import Initiative from '@util/initiative.js'
 import JQueryHelpers from '@util/jquery-helper.js'
+import { ClearLastActor, SetLastActor } from '@util/last-actor.js'
 import { Migration } from '@util/migration.js'
 import * as Settings from '@util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@util/moustachewax.js'
@@ -26,8 +29,6 @@ import {
   wait,
   zeroFill,
 } from '@util/utilities.js'
-
-import { GGADebugger } from '../utils/debugger.js'
 
 import { Action } from './action/index.js'
 // import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
@@ -54,6 +55,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 import { Combat } from './combat/index.js'
 import { calculateRoFModifier } from './combat/utilities.js'
 import { CombatTracker } from './combat-tracker/index.js'
+import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
@@ -65,7 +67,6 @@ import TriggerHappySupport from './effects/triggerhappy.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
-import GurpsConditionalInjury from './injury/foundry/conditional-injury.js'
 import { EquipmentModel } from './item/data/equipment.js'
 import { SkillModel } from './item/data/skill.js'
 import { SpellModel } from './item/data/spell.js'
@@ -81,11 +82,9 @@ import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { UI } from './ui/index.js'
-import { allowOtfExec } from './utilities/allow-otf-exec.js'
-import { multiplyDice } from './utilities/damage-utils.js'
-import { gurpslink } from './utilities/gurpslink.js'
-import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
-import { getTokenForActor } from './utilities/token.js'
+import { multiplyDice } from './util/damage-utils.ts'
+import { gurpslink } from './util/gurpslink.ts'
+import { getTokenForActor } from './util/token.ts'
 
 export let GURPS = undefined
 

@@ -1,8 +1,9 @@
 'use strict'
 
-import { NpcInput } from '../../lib/npc-input.js'
-import { parselink } from '../../lib/parselink.js'
-import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '../../lib/utilities.js'
+import { NpcInput } from '@util/npc-input.js'
+import { parselink } from '@util/parselink.js'
+import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '@util/utilities.js'
+
 import { ChatProcessors } from '../../module/chat.js'
 import { ActorImporter } from '../actor/actor-importer.js'
 import Maneuvers from '../actor/maneuver.js'

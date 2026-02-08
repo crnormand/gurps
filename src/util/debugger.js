@@ -1,4 +1,4 @@
-import * as Settings from '../lib/miscellaneous-settings.js'
+import * as Settings from './miscellaneous-settings.js'
 
 globalThis._patchedFuncs = {}
 

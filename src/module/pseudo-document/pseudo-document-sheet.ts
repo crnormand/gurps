@@ -1,6 +1,6 @@
+import { Application } from '@gurps-types/foundry/index.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
-import { Application } from '../types/foundry/index.js'
 
 import { PseudoDocument } from './pseudo-document.js'
 
