@@ -1,4 +1,5 @@
-import { arrayToObject } from '../../../lib/utilities.js'
+import { arrayToObject } from '@util/utilities.js'
+
 import { defineGetterProperties } from '../../utilities/object-utils.js'
 import { EquipmentModel } from '../data/equipment.js'
 import { GurpsItemV2 } from '../gurps-item.js'

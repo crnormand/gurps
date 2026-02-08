@@ -1,7 +1,8 @@
 'use strict'
 
-import * as Settings from '../lib/miscellaneous-settings.js'
-import { parselink } from '../lib/parselink.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { parselink } from '@util/parselink.js'
+
 import { gurpslink } from '../module/utilities/gurpslink.js'
 
 import ChatProcessor from './chat/chat-processor.js'

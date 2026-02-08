@@ -1,14 +1,15 @@
 'use strict'
 
-import { ImportSettings } from '../module/importer/index.js'
 import { MoveModes } from '../module/actor/gurps-actor.js'
 import Maneuvers from '../module/actor/maneuver.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
+import { ImportSettings } from '../module/importer/index.js'
 import { TokenActions } from '../module/token-actions.js'
 import { multiplyDice } from '../module/utilities/damage-utils.js'
 import { gurpslink } from '../module/utilities/gurpslink.js'
-import { extractOtfs } from '../module/utilities/otf.js'
 import { i18nFallback } from '../module/utilities/i18nFallback.js'
+import { extractOtfs } from '../module/utilities/otf.js'
+
 import * as Settings from './miscellaneous-settings.js'
 import { parseDecimalNumber } from './parse-decimal-number/parse-decimal-number.js'
 import {
@@ -28,14 +29,18 @@ export function findTracker(data, trackerName) {
   if (!!data && !!data.additionalresources?.tracker) {
     // find the tracker with name
     let tracker = Object.values(data.additionalresources?.tracker).find(it => it.name === trackerName)
-    if (!!tracker) {
+
+    if (tracker) {
       let found = Object.keys(data.additionalresources.tracker).find(
         it => data.additionalresources.tracker[it].name === trackerName
       )
+
       tracker.key = found
+
       return tracker
     }
   }
+
   return null
 }
 
@@ -46,11 +51,13 @@ export default function () {
   // If you need to add Handlebars helpers, here are a few useful examples:
   Handlebars.registerHelper('concat', function () {
     var outStr = ''
+
     for (var arg in arguments) {
       if (typeof arguments[arg] != 'object') {
         outStr += arguments[arg]
       }
     }
+
     return outStr
   })
 
@@ -63,31 +70,38 @@ export default function () {
 
     if (options.includes(move.mode)) return options
     options.push(move.mode)
+
     return options
   })
 
   Handlebars.registerHelper('damageTypeOptions', function (type) {
     let options = Object.values(GURPS.DamageTables.translationTable)
+
     if (options.includes(type)) return options
     options.push(type)
+
     return options
   })
 
   Handlebars.registerHelper('sum', function (...args) {
     const arr = []
+
     for (const arg of args) {
       if (parseInt(arg)) arr.push(arg)
     }
+
     return arr.reduce((a, b) => a + b, 0)
   })
 
   // Add "@index to {{times}} function
   Handlebars.registerHelper('times', function (n, content) {
     let result = ''
+
     for (let i = 0; i < n; i++) {
       content.data.index = i + 1
       result += content.fn(i)
     }
+
     return result
   })
 
@@ -95,11 +109,13 @@ export default function () {
     if (quantity == 1) return word
 
     if (word.slice(-1) == 's' || word.slice(-1) == 'x') return `${word}es`
+
     return `${word}s`
   })
 
   Handlebars.registerHelper('chooseplural', function (quantity, single, plural) {
     if (quantity == 1) return single
+
     return plural
   })
 
@@ -113,6 +129,7 @@ export default function () {
 
   Handlebars.registerHelper('percent', function (value, max) {
     if (!max || max === 0) return 0
+
     return Math.max(0, Math.min(100, Math.round((value / max) * 100)))
   })
 
@@ -125,6 +142,7 @@ export default function () {
     if (currentHP > -3 * maxHP) return 4
     if (currentHP > -4 * maxHP) return 5
     if (currentHP > -5 * maxHP) return 6
+
     return 7
   })
 
@@ -132,6 +150,7 @@ export default function () {
     if (!maxHP || maxHP <= 0) return 0
     if (currentHP >= maxHP) return 0
     if (currentHP <= 0) return 100
+
     return Math.round((1 - currentHP / maxHP) * 100)
   })
 
@@ -143,6 +162,7 @@ export default function () {
     if (value == null) return false
     if (value == '0') return true
     if (value == '') return false
+
     return !isNaN(parseInt(value)) // Used to allow "numbers" like '12F' or '11U' for fencing/unwieldy parry
   })
 
@@ -160,6 +180,7 @@ export default function () {
 
   Handlebars.registerHelper('toNumber', function (value) {
     if (typeof value == 'string') return parseDecimalNumber(value)
+
     return value
   })
 
@@ -187,10 +208,13 @@ export default function () {
 
   Handlebars.registerHelper('replace', function () {
     let format = arguments[0]
+
     for (let index = 1; index < arguments.length; index++) {
       let value = arguments[index]
+
       format = format.replace(`$${index}`, arguments[index])
     }
+
     return format
   })
 
@@ -201,28 +225,33 @@ export default function () {
   Handlebars.registerHelper('printIfNe', function (value, compareTo, format, _default = '') {
     if (value === compareTo) return _default
     let result = format.replace('*', value)
+
     return result
   })
 
   Handlebars.registerHelper('objToString', function (str) {
     let o = GURPS.objToString(str)
+
     console.log(o)
+
     return o
   })
 
   Handlebars.registerHelper('simpleRating', function (lvl) {
     if (!lvl) return 'UNKNOWN'
     let l = parseInt(lvl)
+
     if (l < 10) return 'Poor'
     if (l <= 11) return 'Fair'
     if (l <= 13) return 'Good'
     if (l <= 15) return 'Great'
     if (l <= 18) return 'Super'
+
     return 'Epic'
   })
 
   Handlebars.registerHelper('notEmpty', function (obj) {
-    return !!obj ? Object.values(obj).length > 0 : false
+    return obj ? Object.values(obj).length > 0 : false
   })
 
   Handlebars.registerHelper('empty', function (obj) {
@@ -230,14 +259,16 @@ export default function () {
   })
 
   Handlebars.registerHelper('hasNoChildren', function (contains, collapsed) {
-    let c1 = !!contains ? Object.values(contains).length == 0 : true
-    let c2 = !!collapsed ? Object.values(collapsed).length == 0 : true
+    let c1 = contains ? Object.values(contains).length == 0 : true
+    let c2 = collapsed ? Object.values(collapsed).length == 0 : true
+
     return c1 && c2
   })
 
   Handlebars.registerHelper('length', function (obj) {
     if (foundry.utils.getType(obj) === 'Object') return Object.values(obj).length
     if (foundry.utils.getType(obj) === 'Array') return obj.length
+
     return 0
   })
 
@@ -245,8 +276,10 @@ export default function () {
   Handlebars.registerHelper('gurpslink', function (str /*, root, clrdmods = false */) {
     // this is a stupid trick to 'unescape' HTML entities, like converting '&uuml;' to 'ü'
     var template = document.createElement('textarea')
+
     template.innerHTML = str
     str = template.childNodes[0]?.nodeValue || str // hack may not work, so default back to original string
+
     return new Handlebars.SafeString(gurpslink(str))
   })
 
@@ -254,12 +287,14 @@ export default function () {
   // Same as gurpslink, but converts \n to <br> for large text values (notes)
   Handlebars.registerHelper('gurpslinkbr', function (str, markdown = false /*, root, clrdmods = false*/) {
     const text = gurpslink(str /*, root == true || clrdmods == true*/)
+
     return text.replace(/\\n|\r?\n/g, '<br/>')
   })
 
   Handlebars.registerHelper('extractOtfs', function (...args) {
     const texts = args.slice(0, -1).filter(text => text)
     const combined = texts.join(' ')
+
     if (!combined) return []
 
     return extractOtfs(combined)
@@ -271,9 +306,11 @@ export default function () {
 
   Handlebars.registerHelper('listeqt', function (context, options) {
     var data
+
     if (options.data) data = Handlebars.createFrame(options.data)
 
     let ans = GURPS.listeqtrecurse(context, options, 0, data)
+
     return ans
   })
 
@@ -289,13 +326,16 @@ export default function () {
    */
   Handlebars.registerHelper('flatlist', function (context) {
     let data = {}
+
     flatlist(context, 0, '', data, false)
+
     return data
   })
 
   // Provides the same information as flatlist, but may check equipped status (based on system setting)
   Handlebars.registerHelper('attackflatlist', function (context) {
     let data = {}
+
     flatlist(
       context,
       0,
@@ -304,12 +344,14 @@ export default function () {
       false,
       game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED) ? this.actor : null
     )
+
     return data
   })
 
   // Translate dynamic keys in Moustache templates
   Handlebars.registerHelper('localizeKey', function (key) {
     const localizedString = game.i18n.localize(key.toString())
+
     return new Handlebars.SafeString(localizedString)
   })
 
@@ -319,9 +361,11 @@ export default function () {
     for (let key in context) {
       let item = context[key]
       let display = true
+
       if (actorToCheckEquipment) {
         // if we have been given an actor, then check to see if the melee or ranged item is equipped in the inventory
         let checked = false
+
         recurselist(actorToCheckEquipment.system.equipment?.carried ?? [], e => {
           // check
           if (item.name.startsWith(e.name)) {
@@ -334,15 +378,18 @@ export default function () {
             if (item.name.startsWith(e.name)) display = false
           })
       }
+
       if (display) {
         let newKey = parentkey + key
 
         let newItem = { indent: level }
+
         for (let propertyKey in item) {
           if (!['contains', 'collapsed', 'indent'].includes(propertyKey)) {
             newItem[propertyKey] = item[propertyKey]
           }
         }
+
         newItem['hasCollapsed'] = !!item?.collapsed && Object.values(item?.collapsed).length > 0
         newItem['hasContains'] = !!item?.contains && Object.values(item?.contains).length > 0
         newItem['isCollapsed'] = isCollapsed
@@ -357,10 +404,12 @@ export default function () {
 
   Handlebars.registerHelper('listattack', function (src, key, options) {
     var data
+
     if (options.data) data = Handlebars.createFrame(options.data)
 
     let context = src[key]
     let ans = GURPS.listeqtrecurse(context, options, 0, data, '', src)
+
     return ans
   })
 
@@ -369,11 +418,14 @@ export default function () {
     if (!roll) {
       // get hitlocation table name
       let tableName = data?.additionalresources?.bodyplan
+
       if (!tableName) tableName = 'humanoid'
       let table = HitLocations.hitlocationDictionary[tableName]
+
       if (!table) table = HitLocations.hitlocationDictionary['humanoid']
       roll = table[loc]?.roll
     }
+
     return roll
   })
 
@@ -381,27 +433,34 @@ export default function () {
     if (!penalty) {
       // get hitlocation table name
       let tableName = data?.additionalresources?.bodyplan
+
       if (!tableName) tableName = 'humanoid'
       let table = HitLocations.hitlocationDictionary[tableName]
+
       if (!table) table = HitLocations.hitlocationDictionary['humanoid']
       penalty = table[loc]?.penalty
     }
+
     return penalty
   })
 
   Handlebars.registerHelper('fractionalize', function (value, digits) {
     if (typeof value == 'number') {
       let wholeNumber = Math.floor(value)
+
       if (wholeNumber === value) {
         return value
       }
 
       let fraction = value - wholeNumber
       let wholeNumberText = wholeNumber === 0 ? '' : `${wholeNumber}`
+
       if (fraction === 1 / 3) return `${wholeNumberText} 1/3`.trim()
       if (fraction === 2 / 3) return `${wholeNumberText} 2/3`.trim()
+
       return parseFloat(value.toFixed(digits))
     }
+
     return value
   })
 
@@ -424,16 +483,20 @@ export default function () {
   Handlebars.registerHelper('isWoundModAdjForLocation', function (calc) {
     if (calc.isWoundModifierAdjustedForLocation) {
       let location = calc.effectiveWoundModifiers[calc.damageType]
+
       return !!location && location.changed === 'hitlocation'
     }
+
     return false
   })
 
   Handlebars.registerHelper('isWoundModAdjForInjuryTol', function (calc) {
     if (calc.isWoundModifierAdjustedForInjuryTolerance) {
       let location = calc.effectiveWoundModifiers[calc.damageType]
+
       return !!location && location.changed === 'injury-tolerance'
     }
+
     return false
   })
 
@@ -461,8 +524,10 @@ export default function () {
         index++
         entry = objects[`${index}`]
       }
+
       return results
     }
+
     return []
   })
 
@@ -480,11 +545,13 @@ export default function () {
 
   Handlebars.registerHelper('listAllPostures', function () {
     const postures = GURPS.StatusEffect.getAllPostures()
+
     return postures
   })
 
   Handlebars.registerHelper('getPosture', function (name) {
     const postures = GURPS.StatusEffect.getAllPostures()
+
     return (
       postures[name] ?? {
         id: 'standing',
@@ -505,14 +572,17 @@ export default function () {
         .filter(e => !!e)
         .includes(data?.actor?.id)
     }
+
     return false
   })
 
   // Allows handling of multiple page refs, e.g."B101,MA150"
   Handlebars.registerHelper('pdflink', function (link) {
     let txt = link
+
     if (Array.isArray(link)) txt = link.join(',')
-    return !!txt
+
+    return txt
       ? txt
           .split(',')
           .map((/** @type {string} */ l) => gurpslink(`[PDF:${l}]`))
@@ -524,12 +594,14 @@ export default function () {
   Handlebars.registerHelper('pdflinkext', function (obj) {
     if (!obj) return ''
     let txt = obj.pageref
+
     if (Array.isArray(txt)) txt = txt.join(',')
     if (!txt) return ''
+
     return txt
       .split(',')
       .map((/** @type {string} */ l) => {
-        if (!!obj.externallink) return `<a href="${obj.externallink}">*Link</a>`
+        if (obj.externallink) return `<a href="${obj.externallink}">*Link</a>`
         else if (l.match(/https?:\/\//i)) {
           return `<a href="${l}">*Link</a>`
         } else return gurpslink(`[PDF:${l}]`)
@@ -543,12 +615,13 @@ export default function () {
       .trim()
       .replace(',', '')
       .replace(/^(-?\d+(?:\.\d+)*?) +.*/, '$1')
+
     // @ts-ignore
     return +(Math.round(temp + 'e+2') + 'e-2')
   })
 
   Handlebars.registerHelper('toLocaleString', function (number) {
-    return !!number ? number.toLocaleString() : '' // Add data protection
+    return number ? number.toLocaleString() : '' // Add data protection
   })
 
   /**
@@ -562,22 +635,27 @@ export default function () {
 
     let showPlus = options.hash?.showPlus === undefined ? true : options.hash?.showPlus || options.data?.root?.showPlus
     const number = parseInt(text)
+
     if (!isNaN(number)) {
       if (number === 0) return showPlus ? '+0' : '0'
       if (number < 0) return text.toString().replace(hyphen, '&minus;')
       if (showPlus && text.toString()[0] !== '+') return `+${text}`
+
       return text.toString()
     } else return '' // null or undefined
   })
 
   Handlebars.registerHelper('modifierColor', function (value) {
     const number = parseInt(value)
+
     if (isNaN(number) || number === 0) return ''
+
     return number > 0 ? 'var(--ms-advantage)' : 'var(--ms-disadvantage)'
   })
 
   Handlebars.registerHelper('invoke', function (object, options) {
     let name = options.hash?.method
+
     return object[name]()
   })
 
@@ -586,7 +664,9 @@ export default function () {
       num = parseFloat(num.toString())
 
       let places = options.hash?.number ?? 1
+
       num = num.toFixed(places).toString()
+
       if (options.hash?.removeZeros) {
         while (num.toString().endsWith('0')) num = num.substr(0, num.length - 1)
         if (num.toString().endsWith('.')) num = num.substr(0, num.length - 1)
@@ -595,12 +675,13 @@ export default function () {
       if (parseFloat(num) < 0) return num.toString().replace('-', '&minus;')
 
       if (options.hash?.forceSign && num.toString()[0] !== '+') return `+${num}`
+
       return num.toString()
     } else return '' // null or undefined
   })
 
   Handlebars.registerHelper('optionSetStyle', function (boolean) {
-    return !!boolean ? 'buttonpulsatingred' : 'buttongrey'
+    return boolean ? 'buttonpulsatingred' : 'buttongrey'
   })
 
   /**
@@ -611,10 +692,12 @@ export default function () {
       let tracker = data.additionalresources.tracker
       // find the tracker with trackerName
       let found = Object.keys(tracker).find(it => tracker[it].name === trackerName)
-      if (!!found) {
+
+      if (found) {
         return found
       }
     }
+
     return null
   })
 
@@ -629,6 +712,7 @@ export default function () {
   Handlebars.registerHelper('threshold-of', function (thresholds, max, value) {
     // return the index of the threshold that the value falls into
     let result = null
+
     thresholds.some(
       function (
         /** @type {{ operator: string; comparison: string; value: number; }} */ threshold,
@@ -637,9 +721,11 @@ export default function () {
         let op = getOperation(threshold.operator)
         let comparison = getComparison(threshold.comparison)
         let testValue = op(max, threshold.value)
+
         return comparison(value, testValue) ? ((result = index), true) : false
       }
     )
+
     return result
   })
 
@@ -652,6 +738,7 @@ export default function () {
       let op = getOperation(threshold.operator)
       let comparison = getComparison(threshold.comparison)
       let testValue = op(max, threshold.value)
+
       return comparison(value, testValue)
     })
 
@@ -667,6 +754,7 @@ export default function () {
       let op = getOperation(threshold.operator)
       let comparison = getComparison(threshold.comparison)
       let testValue = op(max, threshold.value)
+
       return comparison(value, testValue)
     })
 
@@ -678,6 +766,7 @@ export default function () {
    */
   Handlebars.registerHelper('thresholdBreakpoints', function (tracker) {
     let results = []
+
     tracker.thresholds.forEach(threshold => {
       let op = getOperation(threshold.operator)
       let temp = op(tracker.max, threshold.value)
@@ -688,11 +777,13 @@ export default function () {
         threshold: threshold,
       })
     })
+
     return results
   })
 
   Handlebars.registerHelper('truthy', function (value) {
     console.log('GURPS | Truthy check on value:', value)
+
     return !!value
   })
 
@@ -701,6 +792,7 @@ export default function () {
    */
   Handlebars.registerHelper('controlBreakpoints', function (tracker) {
     let results = []
+
     tracker.thresholds.forEach(threshold => {
       let op = getOperation(threshold.operator)
       let temp = op(tracker.max, threshold.value)
@@ -714,12 +806,14 @@ export default function () {
         abbreviation: threshold.abbreviation,
       })
     })
+
     return results
   })
 
   Handlebars.registerHelper('include-if', function (condition, iftrue, iffalse) {
     if (arguments.length == 3) iffalse = ''
-    return !!condition ? iftrue : iffalse
+
+    return condition ? iftrue : iffalse
   })
 
   Handlebars.registerHelper('select-if', function (value, expected) {
@@ -727,21 +821,22 @@ export default function () {
   })
 
   Handlebars.registerHelper('disabled', function (value) {
-    return !!value ? 'disabled' : ''
+    return value ? 'disabled' : ''
   })
 
   Handlebars.registerHelper('gmod', function (value) {
-    return !!value ? 'gmod' : ''
+    return value ? 'gmod' : ''
   })
 
   Handlebars.registerHelper('pointsClass', function (points) {
     if (points > 0) return 'ms-col-points-positive'
     if (points < 0) return 'ms-col-points-negative'
+
     return ''
   })
 
   Handlebars.registerHelper('rollable', function (value) {
-    return !!value ? 'rollable' : ''
+    return value ? 'rollable' : ''
   })
 
   Handlebars.registerHelper('isUserCreated', function (obj) {
@@ -755,7 +850,9 @@ export default function () {
   Handlebars.registerHelper('isFoundryGlobalItem', function (obj, doc) {
     let item
     const actor = doc.data?.root?.document
+
     item = actor?.items?.get(obj.itemid)
+
     return game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_FOUNDRY_GLOBAL_ITEMS) && !!item?.system.globalid
   })
 
@@ -767,7 +864,8 @@ export default function () {
     // Find parent item using fromItem
     const actor = doc.data?.root?.document
     let parentItem = actor?.items?.get(obj.fromItem)
-    return !!parentItem
+
+    return parentItem
       ? new Handlebars.SafeString(
           game.i18n.format('GURPS.parentItemTooltip', { name: parentItem.name, ['type']: parentItem.type })
         )
@@ -778,8 +876,10 @@ export default function () {
     // Find global item using globalid
     const actor = doc.data?.root?.document
     let item = actor?.items?.get(obj.itemid)
-    if (!!item?.system.globalid) item = game.items.find(it => it.id === item.system.globalid.split('.').pop())
-    return !!item
+
+    if (item?.system.globalid) item = game.items.find(it => it.id === item.system.globalid.split('.').pop())
+
+    return item
       ? new Handlebars.SafeString(
           game.i18n.format('GURPS.parentItemTooltip', { name: item.name, ['type']: `game ${item.type}` })
         )
@@ -795,6 +895,7 @@ export default function () {
     if (!!obj.img && obj.img !== 'icons/svg/item-bag.svg') return obj.img
     const actor = doc.data?.root?.document
     const item = actor?.items.get(obj.itemid)
+
     return item?.img
   })
 
@@ -802,12 +903,14 @@ export default function () {
     const show = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_ITEM_IMAGE)
     const actor = doc.data?.root?.document
     const item = actor?.items.get(obj.itemid)
+
     return !!show[item?.type] && !!item?.img
   })
 
   Handlebars.registerHelper('getItemImage', function (obj, doc) {
     const actor = doc.data?.root?.document
     const item = actor?.items.get(obj.itemid)
+
     return item?.img
   })
 
@@ -821,7 +924,9 @@ export default function () {
 
   Handlebars.registerHelper('DRTooltip', function (obj) {
     const actor = obj.data?.root?.document
+
     if (!actor) return ''
+
     return actor.getDRTooltip(obj.data.key)
   })
 
@@ -831,8 +936,10 @@ export default function () {
 
   Handlebars.registerHelper('modifierTagClass', function (modifier) {
     const value = parseInt(modifier, 10)
+
     if (value > 0) return 'ms-tag-positive'
     if (value < 0) return 'ms-tag-negative'
+
     return ''
   })
 
@@ -881,9 +988,11 @@ export default function () {
 
   Handlebars.registerHelper('effectTagClass', function (effect) {
     if (!effect?.statuses) return ''
+
     for (const status of effect.statuses) {
       if (badEffectStatuses.has(status)) return 'ms-effect-bad'
     }
+
     return ''
   })
 
@@ -914,6 +1023,7 @@ ${content}
       </div>
     </div>
 `
+
     return new Handlebars.SafeString(template)
   })
 
@@ -928,6 +1038,7 @@ ${content}
     let damageType =
       calc.damageType !== 'dmg' && calc.damageType !== 'injury' && calc.damageType !== 'none' ? calc.damageType : ''
     let damageModifier = calc.damageModifier || ''
+
     return [armorDivisor, damageType, damageModifier].join(' ').trim()
   })
 
@@ -936,22 +1047,24 @@ ${content}
    * Made this part eslint compatible...
    * ~Stevil
    */
-  // eslint-disable-next-line no-undef
+   
   Handlebars.registerHelper('switch', function (value, options) {
     this.switch_value = value
     this.switch_break = false
+
     return options.fn(this)
   })
 
-  // eslint-disable-next-line no-undef
+   
   Handlebars.registerHelper('case', function (value, options) {
     if (value === this.switch_value) {
       this.switch_break = true
+
       return options.fn(this)
     }
   })
 
-  // eslint-disable-next-line no-undef
+   
   Handlebars.registerHelper('default', function (value, options) {
     if (this.switch_break == false) {
       return value
@@ -964,6 +1077,7 @@ ${content}
 
   Handlebars.registerHelper('getMoveIcon', function (value, options) {
     const icons = TokenActions.getManeuverIcons(value.name)
+
     return new Handlebars.SafeString(icons)
   })
 
@@ -992,6 +1106,7 @@ ${content}
       .map(x => parseInt(x, 16) / 255)
     const [R, G, B] = rgb.map(c => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
     const L = 0.2126 * R + 0.7152 * G + 0.0722 * B
+
     return L > 0.179 ? '#000000' : '#ffffff'
   })
 
@@ -1063,6 +1178,7 @@ ${content}
 
   templates.forEach(filename => {
     let name = filename.substr(filename.lastIndexOf('/') + 1).replace(/(.*)\.hbs/, '$1')
+
     fetch(filename)
       .then(it => it.text())
       .then(async text => {

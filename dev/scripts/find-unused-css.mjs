@@ -1,13 +1,16 @@
-import { PurgeCSS } from 'purgecss'
-import fs from 'node:fs'
 import { execSync } from 'node:child_process'
+import fs from 'node:fs'
+
+import { PurgeCSS } from 'purgecss'
 
 async function ensureBuiltCss() {
   const out = 'dist/gurps.css'
+
   if (!fs.existsSync(out)) {
     console.log('dist/gurps.css missing; building styles...')
     execSync('npm run build:styles', { stdio: 'inherit' })
   }
+
   return out
 }
 
@@ -66,12 +69,14 @@ async function run() {
   for (const { file, rejected } of report) {
     if (!rejected.length) continue
     console.log(`\nCSS File: ${file}`)
+
     for (const sel of rejected) {
       console.log(`  - ${sel}`)
     }
   }
 
   const total = report.reduce((acc, r) => acc + r.rejected.length, 0)
+
   console.log(`\nTotal unused selectors detected: ${total}`)
 }
 

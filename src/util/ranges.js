@@ -1,6 +1,7 @@
 'use strict'
 
 import * as Settings from '../lib/miscellaneous-settings.js'
+
 import { SizeAndSpeedRangeTable } from './size-speed-range-table.js'
 
 /*
@@ -87,8 +88,10 @@ export class GurpsRange {
         penalty: r[i + 1],
         desc: `${r[i]} yds`,
       }
+
       basicSetRanges.push(d)
     }
+
     return basicSetRanges
   }
 
@@ -125,11 +128,13 @@ export class GurpsRange {
         description: game.i18n.localize('GURPS.modifierRangeMHExtremeDesc'),
       },
     ]
+
     return monsterHunter2Ranges
   }
 
   static get penaltiesPerTenRanges() {
     const penaltiesPerTenRanges = []
+
     for (let i = 0; i < 50; i++) {
       penaltiesPerTenRanges.push({
         moddesc: game.i18n.format('GURPS.modifierRange', { range: (i + 1) * 10 }),
@@ -138,12 +143,14 @@ export class GurpsRange {
         desc: `${(i + 1) * 10} yds`,
       })
     }
+
     return penaltiesPerTenRanges
   }
 
   _buildModifiers() {
     /** @type {import('../module/modifier-bucket/bucket-app.js').Modifier[]} */
     let m = []
+
     this.ranges.forEach(band => {
       if (band.penalty != 0) GURPS.ModifierBucket.addModifier(band.penalty, band.moddesc, m)
     })
@@ -152,6 +159,7 @@ export class GurpsRange {
 
   async update() {
     let currentValue = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY)
+
     console.debug(currentValue)
 
     switch (currentValue) {
@@ -163,6 +171,7 @@ export class GurpsRange {
         this.ranges = GurpsRange.penaltiesPerTenRanges
         break
       }
+
       default: {
         this.ranges = GurpsRange.monsterHunter2Ranges
         break
@@ -172,7 +181,7 @@ export class GurpsRange {
     this._buildModifiers()
 
     // update modifier bucket
-    if (!!GURPS.ModifierBucket) GURPS.ModifierBucket.refresh()
+    if (GURPS.ModifierBucket) GURPS.ModifierBucket.refresh()
 
     // FYI update all actors
     for (const actor of game.actors.contents) {

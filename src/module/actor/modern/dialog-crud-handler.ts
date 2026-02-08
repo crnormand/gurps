@@ -1,6 +1,6 @@
-import { getGame, isHTMLElement } from '../../utilities/guards.ts'
+import { getGame, isHTMLElement } from '../../utilities/guards.js'
 
-import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.ts'
+import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.js'
 
 export function bindEquipmentCrudActions(
   html: HTMLElement,

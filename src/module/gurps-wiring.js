@@ -1,5 +1,5 @@
-import { parselink } from '../lib/parselink.js'
-import { atou } from '../lib/utilities.js'
+import { parselink } from '@util/parselink.js'
+import { atou } from '@util/utilities.js'
 
 import { GgaContextMenuV2 } from './ui/context-menu.js'
 import { multiplyDice } from './utilities/damage-utils.js'

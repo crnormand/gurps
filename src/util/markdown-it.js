@@ -1,10 +1,13 @@
-/*! markdown-it 11.0.1 https://github.com//markdown-it/markdown-it @license MIT */ ;(function (f) {
+/*! markdown-it 11.0.1 https://github.com//markdown-it/markdown-it @license MIT */ ;
+
+(function (f) {
   if (typeof exports === 'object' && typeof module !== 'undefined') {
     module.exports = f()
   } else if (typeof define === 'function' && define.amd) {
     define([], f)
   } else {
     var g
+
     if (typeof window !== 'undefined') {
       g = window
     } else if (typeof global !== 'undefined') {
@@ -14,26 +17,33 @@
     } else {
       g = this
     }
+
     g.markdownit = f()
   }
 })(function () {
   var define, module, exports
+
   return (function () {
     function r(e, n, t) {
       function o(i, f) {
         if (!n[i]) {
           if (!e[i]) {
             var c = 'function' == typeof require && require
+
             if (!f && c) return c(i, !0)
             if (u) return u(i, !0)
             var a = new Error("Cannot find module '" + i + "'")
+
             throw ((a.code = 'MODULE_NOT_FOUND'), a)
           }
+
           var p = (n[i] = { exports: {} })
+
           e[i][0].call(
             p.exports,
             function (r) {
               var n = e[i][1][r]
+
               return o(n || r)
             },
             p,
@@ -44,11 +54,15 @@
             t
           )
         }
+
         return n[i].exports
       }
+
       for (var u = 'function' == typeof require && require, i = 0; i < t.length; i++) o(t[i])
+
       return o
     }
+
     return r
   })()(
     {
@@ -240,30 +254,38 @@
             if (c >= 0xd800 && c <= 0xdfff) {
               return false
             }
+
             // never used
             if (c >= 0xfdd0 && c <= 0xfdef) {
               return false
             }
+
             if ((c & 0xffff) === 0xffff || (c & 0xffff) === 0xfffe) {
               return false
             }
+
             // control codes
             if (c >= 0x00 && c <= 0x08) {
               return false
             }
+
             if (c === 0x0b) {
               return false
             }
+
             if (c >= 0x0e && c <= 0x1f) {
               return false
             }
+
             if (c >= 0x7f && c <= 0x9f) {
               return false
             }
+
             // out of range
             if (c > 0x10ffff) {
               return false
             }
+
             return true
           }
 
@@ -276,6 +298,7 @@
 
               return String.fromCharCode(surrogate1, surrogate2)
             }
+
             return String.fromCharCode(c)
           }
 
@@ -315,6 +338,7 @@
             if (str.indexOf('\\') < 0) {
               return str
             }
+
             return str.replace(UNESCAPE_MD_RE, '$1')
           }
 
@@ -327,6 +351,7 @@
               if (escaped) {
                 return escaped
               }
+
               return replaceEntityPattern(match, entity)
             })
           }
@@ -350,6 +375,7 @@
             if (HTML_ESCAPE_TEST_RE.test(str)) {
               return str.replace(HTML_ESCAPE_REPLACE_RE, replaceUnsafeChar)
             }
+
             return str
           }
 
@@ -369,6 +395,7 @@
               case 0x20:
                 return true
             }
+
             return false
           }
 
@@ -377,6 +404,7 @@
             if (code >= 0x2000 && code <= 0x200a) {
               return true
             }
+
             switch (code) {
               case 0x09: // \t
               case 0x0a: // \n
@@ -391,12 +419,13 @@
               case 0x3000:
                 return true
             }
+
             return false
           }
 
           ////////////////////////////////////////////////////////////////////////////////
 
-          /*eslint-disable max-len*/
+           
           var UNICODE_PUNCT_RE = require('uc.micro/categories/P/regex')
 
           // Currently without astral characters support.
@@ -565,17 +594,22 @@
 
             if (str.charCodeAt(pos) === 0x3c /* < */) {
               pos++
+
               while (pos < max) {
                 code = str.charCodeAt(pos)
+
                 if (code === 0x0a /* \n */) {
                   return result
                 }
+
                 if (code === 0x3e /* > */) {
                   result.pos = pos + 1
                   result.str = unescapeAll(str.slice(start + 1, pos))
                   result.ok = true
+
                   return result
                 }
+
                 if (code === 0x5c /* \ */ && pos + 1 < max) {
                   pos += 2
                   continue
@@ -591,6 +625,7 @@
             // this should be ... } else { ... branch
 
             level = 0
+
             while (pos < max) {
               code = str.charCodeAt(pos)
 
@@ -616,6 +651,7 @@
                 if (level === 0) {
                   break
                 }
+
                 level--
               }
 
@@ -625,6 +661,7 @@
             if (start === pos) {
               return result
             }
+
             if (level !== 0) {
               return result
             }
@@ -633,6 +670,7 @@
             result.lines = lines
             result.pos = pos
             result.ok = true
+
             return result
           }
         },
@@ -661,8 +699,10 @@
 
             while (state.pos < max) {
               marker = state.src.charCodeAt(state.pos)
+
               if (marker === 0x5d /* ] */) {
                 level--
+
                 if (level === 0) {
                   found = true
                   break
@@ -671,12 +711,14 @@
 
               prevPos = state.pos
               state.md.inline.skipToken(state)
+
               if (marker === 0x5b /* [ */) {
                 if (prevPos === state.pos - 1) {
                   // increase level if we find text `[`, which is not a part of any token
                   level++
                 } else if (disableNested) {
                   state.pos = oldPos
+
                   return -1
                 }
               }
@@ -733,16 +775,19 @@
 
             while (pos < max) {
               code = str.charCodeAt(pos)
+
               if (code === marker) {
                 result.pos = pos + 1
                 result.lines = lines
                 result.str = unescapeAll(str.slice(start + 1, pos))
                 result.ok = true
+
                 return result
               } else if (code === 0x0a) {
                 lines++
               } else if (code === 0x5c /* \ */ && pos + 1 < max) {
                 pos++
+
                 if (str.charCodeAt(pos) === 0x0a) {
                   lines++
                 }
@@ -1128,6 +1173,7 @@
            **/
           MarkdownIt.prototype.set = function (options) {
             utils.assign(this.options, options)
+
             return this
           }
 
@@ -1148,6 +1194,7 @@
             if (utils.isString(presets)) {
               presetName = presets
               presets = config[presetName]
+
               if (!presets) {
                 throw new Error('Wrong `markdown-it` preset "' + presetName + '", check name')
               }
@@ -1166,11 +1213,13 @@
                 if (presets.components[name].rules) {
                   self[name].ruler.enableOnly(presets.components[name].rules)
                 }
+
                 if (presets.components[name].rules2) {
                   self[name].ruler2.enableOnly(presets.components[name].rules2)
                 }
               })
             }
+
             return this
           }
 
@@ -1242,6 +1291,7 @@
             if (missed.length && !ignoreInvalid) {
               throw new Error('MarkdownIt. Failed to disable unknown rule(s): ' + missed)
             }
+
             return this
           }
 
@@ -1263,7 +1313,9 @@
            **/
           MarkdownIt.prototype.use = function (plugin /*, params, ... */) {
             var args = [this].concat(Array.prototype.slice.call(arguments, 1))
+
             plugin.apply(plugin, args)
+
             return this
           }
 
@@ -1416,6 +1468,7 @@
 
             while (line < endLine) {
               state.line = line = state.skipEmptyLines(line)
+
               if (line >= endLine) {
                 break
               }
@@ -1442,6 +1495,7 @@
 
               for (i = 0; i < len; i++) {
                 ok = rules[i](state, line, endLine, false)
+
                 if (ok) {
                   break
                 }
@@ -1649,6 +1703,7 @@
 
             if (typeof cache[pos] !== 'undefined') {
               state.pos = cache[pos]
+
               return
             }
 
@@ -1684,6 +1739,7 @@
             if (!ok) {
               state.pos++
             }
+
             cache[pos] = state.pos
           }
 
@@ -1708,6 +1764,7 @@
               if (state.level < maxNesting) {
                 for (i = 0; i < len; i++) {
                   ok = rules[i](state, false)
+
                   if (ok) {
                     break
                   }
@@ -1718,6 +1775,7 @@
                 if (state.pos >= end) {
                   break
                 }
+
                 continue
               }
 
@@ -2037,6 +2095,7 @@
           default_rules.hardbreak = function (tokens, idx, options /*, env */) {
             return options.xhtmlOut ? '<br />\n' : '<br>\n'
           }
+
           default_rules.softbreak = function (tokens, idx, options /*, env */) {
             return options.breaks ? (options.xhtmlOut ? '<br />\n' : '<br>\n') : '\n'
           }
@@ -2048,6 +2107,7 @@
           default_rules.html_block = function (tokens, idx /*, options, env */) {
             return tokens[idx].content
           }
+
           default_rules.html_inline = function (tokens, idx /*, options, env */) {
             return tokens[idx].content
           }
@@ -2318,6 +2378,7 @@
                 return i
               }
             }
+
             return -1
           }
 
@@ -2543,13 +2604,16 @@
                 if (ignoreInvalid) {
                   return
                 }
+
                 throw new Error('Rules manager: invalid rule name ' + name)
               }
+
               this.__rules__[idx].enabled = true
               result.push(name)
             }, this)
 
             this.__cache__ = null
+
             return result
           }
 
@@ -2602,13 +2666,16 @@
                 if (ignoreInvalid) {
                   return
                 }
+
                 throw new Error('Rules manager: invalid rule name ' + name)
               }
+
               this.__rules__[idx].enabled = false
               result.push(name)
             }, this)
 
             this.__cache__ = null
+
             return result
           }
 
@@ -2861,6 +2928,7 @@
 
               // Case 3: another tag found.
               terminate = false
+
               for (i = 0, l = terminatorRules.length; i < l; i++) {
                 if (terminatorRules[i](state, nextLine, endLine, true)) {
                   terminate = true
@@ -2923,6 +2991,7 @@
               state.sCount[i + startLine] = oldSCount[i]
               state.bsCount[i + startLine] = oldBSCount[i]
             }
+
             state.blkIndent = oldIndent
 
             return true
@@ -2956,6 +3025,7 @@
                 last = nextLine
                 continue
               }
+
               break
             }
 
@@ -3032,6 +3102,7 @@
 
             for (;;) {
               nextLine++
+
               if (nextLine >= endLine) {
                 // unclosed block should be autoclosed by end of document.
                 // also block seems to be autoclosed by end of parent
@@ -3122,6 +3193,7 @@
             // count heading level
             level = 1
             ch = state.src.charCodeAt(++pos)
+
             while (ch === 0x23 /* # */ && pos < max && level <= 6) {
               level++
               ch = state.src.charCodeAt(++pos)
@@ -3139,6 +3211,7 @@
 
             max = state.skipSpacesBack(max, pos)
             tmp = state.skipCharsBack(max, 0x23, pos) // #
+
             if (tmp > pos && isSpace(state.src.charCodeAt(tmp - 1))) {
               max = tmp
             }
@@ -3193,11 +3266,14 @@
             // markers can be mixed with spaces, but there should be at least 3 of them
 
             cnt = 1
+
             while (pos < max) {
               ch = state.src.charCodeAt(pos++)
+
               if (ch !== marker && !isSpace(ch)) {
                 return false
               }
+
               if (ch === marker) {
                 cnt++
               }
@@ -3300,6 +3376,7 @@
                   if (lineText.length !== 0) {
                     nextLine++
                   }
+
                   break
                 }
               }
@@ -3381,12 +3458,14 @@
 
               // Some tags can terminate paragraph without empty line.
               terminate = false
+
               for (i = 0, l = terminatorRules.length; i < l; i++) {
                 if (terminatorRules[i](state, nextLine, endLine, true)) {
                   terminate = true
                   break
                 }
               }
+
               if (terminate) {
                 break
               }
@@ -3437,6 +3516,7 @@
             max = state.eMarks[startLine]
 
             marker = state.src.charCodeAt(pos++)
+
             // Check bullet
             if (marker !== 0x2a /* * */ && marker !== 0x2d /* - */ && marker !== 0x2b /* + */) {
               return -1
@@ -3507,6 +3587,7 @@
                 return -1
               }
             }
+
             return pos
           }
 
@@ -3622,6 +3703,7 @@
 
             if (isOrdered) {
               token = state.push('ordered_list_open', 'ol', 1)
+
               if (markerValue !== 1) {
                 token.attrs = [['start', markerValue]]
               }
@@ -3722,6 +3804,7 @@
               if (!state.tight || prevEmptyEnd) {
                 tight = false
               }
+
               // Item become loose if finish with empty line,
               // but we should filter last element, because it means list finish
               prevEmptyEnd = state.line - startLine > 1 && state.isEmpty(state.line - 1)
@@ -3757,12 +3840,14 @@
 
               // fail if terminating block found
               terminate = false
+
               for (i = 0, l = terminatorRules.length; i < l; i++) {
                 if (terminatorRules[i](state, nextLine, endLine, true)) {
                   terminate = true
                   break
                 }
               }
+
               if (terminate) {
                 break
               }
@@ -3770,11 +3855,13 @@
               // fail if list has another type
               if (isOrdered) {
                 posAfterMarker = skipOrderedListMarker(state, nextLine)
+
                 if (posAfterMarker < 0) {
                   break
                 }
               } else {
                 posAfterMarker = skipBulletListMarker(state, nextLine)
+
                 if (posAfterMarker < 0) {
                   break
                 }
@@ -3791,6 +3878,7 @@
             } else {
               token = state.push('bullet_list_close', 'ul', -1)
             }
+
             token.markup = String.fromCharCode(markerCharCode)
 
             listLines[1] = nextLine
@@ -3843,12 +3931,14 @@
 
               // Some tags can terminate paragraph without empty line.
               terminate = false
+
               for (i = 0, l = terminatorRules.length; i < l; i++) {
                 if (terminatorRules[i](state, nextLine, endLine, true)) {
                   terminate = true
                   break
                 }
               }
+
               if (terminate) {
                 break
               }
@@ -3920,9 +4010,11 @@
                 if (pos + 1 === max) {
                   return false
                 }
+
                 if (state.src.charCodeAt(pos + 1) !== 0x3a /* : */) {
                   return false
                 }
+
                 break
               }
             }
@@ -3949,12 +4041,14 @@
 
               // Some tags can terminate paragraph without empty line.
               terminate = false
+
               for (i = 0, l = terminatorRules.length; i < l; i++) {
                 if (terminatorRules[i](state, nextLine, endLine, true)) {
                   terminate = true
                   break
                 }
               }
+
               if (terminate) {
                 break
               }
@@ -3965,6 +4059,7 @@
 
             for (pos = 1; pos < max; pos++) {
               ch = str.charCodeAt(pos)
+
               if (ch === 0x5b /* [ */) {
                 return false
               } else if (ch === 0x5d /* ] */) {
@@ -3974,6 +4069,7 @@
                 lines++
               } else if (ch === 0x5c /* \ */) {
                 pos++
+
                 if (pos < max && str.charCodeAt(pos) === 0x0a) {
                   lines++
                 }
@@ -3988,6 +4084,7 @@
             //         ^^^ skip optional whitespace here
             for (pos = labelEnd + 2; pos < max; pos++) {
               ch = str.charCodeAt(pos)
+
               if (ch === 0x0a) {
                 lines++
               } else if (isSpace(ch)) {
@@ -4000,11 +4097,13 @@
             // [label]:   destination   'title'
             //            ^^^^^^^^^^^ parse this
             res = state.md.helpers.parseLinkDestination(str, pos, max)
+
             if (!res.ok) {
               return false
             }
 
             href = state.md.normalizeLink(res.str)
+
             if (!state.md.validateLink(href)) {
               return false
             }
@@ -4019,8 +4118,10 @@
             // [label]:   destination   'title'
             //                       ^^^ skipping those spaces
             start = pos
+
             for (; pos < max; pos++) {
               ch = str.charCodeAt(pos)
+
               if (ch === 0x0a) {
                 lines++
               } else if (isSpace(ch)) {
@@ -4033,6 +4134,7 @@
             // [label]:   destination   'title'
             //                          ^^^^^^^ parse this
             res = state.md.helpers.parseLinkTitle(str, pos, max)
+
             if (pos < max && start !== pos && res.ok) {
               title = res.str
               pos = res.pos
@@ -4046,9 +4148,11 @@
             // skip trailing spaces until the rest of the line
             while (pos < max) {
               ch = str.charCodeAt(pos)
+
               if (!isSpace(ch)) {
                 break
               }
+
               pos++
             }
 
@@ -4059,11 +4163,14 @@
                 title = ''
                 pos = destEndPos
                 lines = destEndLineNo
+
                 while (pos < max) {
                   ch = str.charCodeAt(pos)
+
                   if (!isSpace(ch)) {
                     break
                   }
+
                   pos++
                 }
               }
@@ -4075,6 +4182,7 @@
             }
 
             label = normalizeReference(str.slice(1, labelEnd))
+
             if (!label) {
               // CommonMark 0.20 disallows empty labels
               return false
@@ -4089,6 +4197,7 @@
             if (typeof state.env.references === 'undefined') {
               state.env.references = {}
             }
+
             if (typeof state.env.references[label] === 'undefined') {
               state.env.references[label] = { title: title, href: href }
             }
@@ -4096,6 +4205,7 @@
             state.parentType = oldParentType
 
             state.line = startLine + lines + 1
+
             return true
           }
         },
@@ -4178,6 +4288,7 @@
                   } else {
                     offset++
                   }
+
                   continue
                 } else {
                   indent_found = true
@@ -4188,6 +4299,7 @@
                 if (ch !== 0x0a) {
                   pos++
                 }
+
                 this.bMarks.push(start)
                 this.eMarks.push(pos)
                 this.tShift.push(indent)
@@ -4215,6 +4327,7 @@
           //
           StateBlock.prototype.push = function (type, tag, nesting) {
             var token = new Token(type, tag, nesting)
+
             token.block = true
 
             if (nesting < 0) this.level-- // closing tag
@@ -4222,6 +4335,7 @@
             if (nesting > 0) this.level++ // opening tag
 
             this.tokens.push(token)
+
             return token
           }
 
@@ -4235,6 +4349,7 @@
                 break
               }
             }
+
             return from
           }
 
@@ -4244,10 +4359,12 @@
 
             for (var max = this.src.length; pos < max; pos++) {
               ch = this.src.charCodeAt(pos)
+
               if (!isSpace(ch)) {
                 break
               }
             }
+
             return pos
           }
 
@@ -4262,6 +4379,7 @@
                 return pos + 1
               }
             }
+
             return pos
           }
 
@@ -4272,6 +4390,7 @@
                 break
               }
             }
+
             return pos
           }
 
@@ -4286,6 +4405,7 @@
                 return pos + 1
               }
             }
+
             return pos
           }
 
@@ -4445,11 +4565,13 @@
             // basically, this is the equivalent of /^[-:|][-:|\s]*$/ regexp
 
             pos = state.bMarks[nextLine] + state.tShift[nextLine]
+
             if (pos >= state.eMarks[nextLine]) {
               return false
             }
 
             ch = state.src.charCodeAt(pos++)
+
             if (ch !== 0x7c /* | */ && ch !== 0x2d /* - */ && ch !== 0x3a /* : */) {
               return false
             }
@@ -4468,8 +4590,10 @@
 
             columns = lineText.split('|')
             aligns = []
+
             for (i = 0; i < columns.length; i++) {
               t = columns[i].trim()
+
               if (!t) {
                 // allow empty columns before and after table, but not in between columns;
                 // e.g. allow ` |---| `, disallow ` ---||--- `
@@ -4483,6 +4607,7 @@
               if (!/^:?-+:?$/.test(t)) {
                 return false
               }
+
               if (t.charCodeAt(t.length - 1) === 0x3a /* : */) {
                 aligns.push(t.charCodeAt(0) === 0x3a /* : */ ? 'center' : 'right')
               } else if (t.charCodeAt(0) === 0x3a /* : */) {
@@ -4493,17 +4618,21 @@
             }
 
             lineText = getLine(state, startLine).trim()
+
             if (lineText.indexOf('|') === -1) {
               return false
             }
+
             if (state.sCount[startLine] - state.blkIndent >= 4) {
               return false
             }
+
             columns = escapedSplit(lineText.replace(/^\||\|$/g, ''))
 
             // header row will define an amount of columns in the entire table,
             // and align row shouldn't be smaller than that (the rest of the rows can)
             columnCount = columns.length
+
             if (columnCount > aligns.length) {
               return false
             }
@@ -4524,6 +4653,7 @@
             for (i = 0; i < columns.length; i++) {
               token = state.push('th_open', 'th', 1)
               token.map = [startLine, startLine + 1]
+
               if (aligns[i]) {
                 token.attrs = [['style', 'text-align:' + aligns[i]]]
               }
@@ -4548,18 +4678,23 @@
               }
 
               lineText = getLine(state, nextLine).trim()
+
               if (lineText.indexOf('|') === -1) {
                 break
               }
+
               if (state.sCount[nextLine] - state.blkIndent >= 4) {
                 break
               }
+
               columns = escapedSplit(lineText.replace(/^\||\|$/g, ''))
 
               token = state.push('tr_open', 'tr', 1)
+
               for (i = 0; i < columnCount; i++) {
                 token = state.push('td_open', 'td', 1)
                 token.map = [nextLine, nextLine + 1]
+
                 if (aligns[i]) {
                   token.attrs = [['style', 'text-align:' + aligns[i]]]
                 }
@@ -4571,13 +4706,16 @@
 
                 token = state.push('td_close', 'td', -1)
               }
+
               token = state.push('tr_close', 'tr', -1)
             }
+
             token = state.push('tbody_close', 'tbody', -1)
             token = state.push('table_close', 'table', -1)
 
             tableLines[1] = tbodyLines[1] = nextLine
             state.line = nextLine
+
             return true
           }
         },
@@ -4616,6 +4754,7 @@
             // Parse inlines
             for (i = 0, l = tokens.length; i < l; i++) {
               tok = tokens[i]
+
               if (tok.type === 'inline') {
                 state.md.inline.parse(tok.content, state.md, state.env, tok.children)
               }
@@ -4637,6 +4776,7 @@
           function isLinkOpen(str) {
             return /^<a[>\s]/i.test(str)
           }
+
           function isLinkClose(str) {
             return /^<\/a\s*>/i.test(str)
           }
@@ -4682,9 +4822,11 @@
                 // Skip content of markdown links
                 if (currentToken.type === 'link_close') {
                   i--
+
                   while (tokens[i].level !== currentToken.level && tokens[i].type !== 'link_open') {
                     i--
                   }
+
                   continue
                 }
 
@@ -4693,10 +4835,12 @@
                   if (isLinkOpen(currentToken.content) && htmlLinkLevel > 0) {
                     htmlLinkLevel--
                   }
+
                   if (isLinkClose(currentToken.content)) {
                     htmlLinkLevel++
                   }
                 }
+
                 if (htmlLinkLevel > 0) {
                   continue
                 }
@@ -4713,6 +4857,7 @@
                   for (ln = 0; ln < links.length; ln++) {
                     url = links[ln].url
                     fullUrl = state.md.normalizeLink(url)
+
                     if (!state.md.validateLink(fullUrl)) {
                       continue
                     }
@@ -4760,6 +4905,7 @@
 
                     lastPos = links[ln].lastIndex
                   }
+
                   if (lastPos < text.length) {
                     token = new state.Token('text', '', 0)
                     token.content = text.slice(lastPos)
@@ -4972,6 +5118,7 @@
                   break
                 }
               }
+
               stack.length = j + 1
 
               if (token.type !== 'text') {
@@ -4986,6 +5133,7 @@
               OUTER: while (pos < max) {
                 QUOTE_RE.lastIndex = pos
                 t = QUOTE_RE.exec(text)
+
                 if (!t) {
                   break
                 }
@@ -5074,6 +5222,7 @@
                   if (isSingle) {
                     token.content = replaceAt(token.content, t.index, APOSTROPHE)
                   }
+
                   continue
                 }
 
@@ -5081,9 +5230,11 @@
                   // this could be a closing quote, rewind the stack to get a match
                   for (j = stack.length - 1; j >= 0; j--) {
                     item = stack[j]
+
                     if (stack[j].level < thisLevel) {
                       break
                     }
+
                     if (item.single === isSingle && stack[j].level === thisLevel) {
                       item = stack[j]
 
@@ -5102,6 +5253,7 @@
                       tokens[item.token].content = replaceAt(tokens[item.token].content, item.pos, openQuote)
 
                       pos += closeQuote.length - 1
+
                       if (item.token === i) {
                         pos += openQuote.length - 1
                       }
@@ -5206,6 +5358,7 @@
 
               url = linkMatch[0].slice(1, -1)
               fullUrl = state.md.normalizeLink(url)
+
               if (!state.md.validateLink(fullUrl)) {
                 return false
               }
@@ -5225,6 +5378,7 @@
               }
 
               state.pos += linkMatch[0].length
+
               return true
             }
 
@@ -5233,6 +5387,7 @@
 
               url = emailMatch[0].slice(1, -1)
               fullUrl = state.md.normalizeLink('mailto:' + url)
+
               if (!state.md.validateLink(fullUrl)) {
                 return false
               }
@@ -5252,6 +5407,7 @@
               }
 
               state.pos += emailMatch[0].length
+
               return true
             }
 
@@ -5308,7 +5464,9 @@
                     .replace(/\n/g, ' ')
                     .replace(/^ (.+) $/, '$1')
                 }
+
                 state.pos = matchEnd
+
                 return true
               }
             }
@@ -5316,7 +5474,9 @@
             if (!silent) {
               state.pending += marker
             }
+
             state.pos += marker.length
+
             return true
           }
         },
@@ -5610,22 +5770,28 @@
 
               if (ch === 0x23 /* # */) {
                 match = state.src.slice(pos).match(DIGITAL_RE)
+
                 if (match) {
                   if (!silent) {
                     code = match[1][0].toLowerCase() === 'x' ? parseInt(match[1].slice(1), 16) : parseInt(match[1], 10)
                     state.pending += isValidEntityCode(code) ? fromCodePoint(code) : fromCodePoint(0xfffd)
                   }
+
                   state.pos += match[0].length
+
                   return true
                 }
               } else {
                 match = state.src.slice(pos).match(NAMED_RE)
+
                 if (match) {
                   if (has(entities, match[1])) {
                     if (!silent) {
                       state.pending += entities[match[1]]
                     }
+
                     state.pos += match[0].length
+
                     return true
                   }
                 }
@@ -5635,7 +5801,9 @@
             if (!silent) {
               state.pending += '&'
             }
+
             state.pos++
+
             return true
           }
         },
@@ -5677,7 +5845,9 @@
                 if (!silent) {
                   state.pending += state.src[pos]
                 }
+
                 state.pos += 2
+
                 return true
               }
 
@@ -5687,16 +5857,20 @@
                 }
 
                 pos++
+
                 // skip leading whitespaces from next line
                 while (pos < max) {
                   ch = state.src.charCodeAt(pos)
+
                   if (!isSpace(ch)) {
                     break
                   }
+
                   pos++
                 }
 
                 state.pos = pos
+
                 return true
               }
             }
@@ -5704,7 +5878,9 @@
             if (!silent) {
               state.pending += '\\'
             }
+
             state.pos++
+
             return true
           }
         },
@@ -5721,6 +5897,7 @@
           function isLetter(ch) {
             /*eslint no-bitwise:0*/
             var lc = ch | 0x20 // to lower case
+
             return lc >= 0x61 /* a */ && lc <= 0x7a /* z */
           }
 
@@ -5737,17 +5914,20 @@
 
             // Check start
             max = state.posMax
+
             if (state.src.charCodeAt(pos) !== 0x3c /* < */ || pos + 2 >= max) {
               return false
             }
 
             // Quick fail on second char
             ch = state.src.charCodeAt(pos + 1)
+
             if (ch !== 0x21 /* ! */ && ch !== 0x3f /* ? */ && ch !== 0x2f /* / */ && !isLetter(ch)) {
               return false
             }
 
             match = state.src.slice(pos).match(HTML_TAG_RE)
+
             if (!match) {
               return false
             }
@@ -5756,7 +5936,9 @@
               token = state.push('html_inline', '', 0)
               token.content = state.src.slice(pos, pos + match[0].length)
             }
+
             state.pos += match[0].length
+
             return true
           }
         },
@@ -5792,6 +5974,7 @@
             if (state.src.charCodeAt(state.pos) !== 0x21 /* ! */) {
               return false
             }
+
             if (state.src.charCodeAt(state.pos + 1) !== 0x5b /* [ */) {
               return false
             }
@@ -5805,6 +5988,7 @@
             }
 
             pos = labelEnd + 1
+
             if (pos < max && state.src.charCodeAt(pos) === 0x28 /* ( */) {
               //
               // Inline link
@@ -5813,12 +5997,15 @@
               // [link](  <href>  "title"  )
               //        ^^ skipping these spaces
               pos++
+
               for (; pos < max; pos++) {
                 code = state.src.charCodeAt(pos)
+
                 if (!isSpace(code) && code !== 0x0a) {
                   break
                 }
               }
+
               if (pos >= max) {
                 return false
               }
@@ -5827,8 +6014,10 @@
               //          ^^^^^^ parsing link destination
               start = pos
               res = state.md.helpers.parseLinkDestination(state.src, pos, state.posMax)
+
               if (res.ok) {
                 href = state.md.normalizeLink(res.str)
+
                 if (state.md.validateLink(href)) {
                   pos = res.pos
                 } else {
@@ -5839,8 +6028,10 @@
               // [link](  <href>  "title"  )
               //                ^^ skipping these spaces
               start = pos
+
               for (; pos < max; pos++) {
                 code = state.src.charCodeAt(pos)
+
                 if (!isSpace(code) && code !== 0x0a) {
                   break
                 }
@@ -5849,6 +6040,7 @@
               // [link](  <href>  "title"  )
               //                  ^^^^^^^ parsing link title
               res = state.md.helpers.parseLinkTitle(state.src, pos, state.posMax)
+
               if (pos < max && start !== pos && res.ok) {
                 title = res.str
                 pos = res.pos
@@ -5857,6 +6049,7 @@
                 //                         ^^ skipping these spaces
                 for (; pos < max; pos++) {
                   code = state.src.charCodeAt(pos)
+
                   if (!isSpace(code) && code !== 0x0a) {
                     break
                   }
@@ -5867,8 +6060,10 @@
 
               if (pos >= max || state.src.charCodeAt(pos) !== 0x29 /* ) */) {
                 state.pos = oldPos
+
                 return false
               }
+
               pos++
             } else {
               //
@@ -5881,6 +6076,7 @@
               if (pos < max && state.src.charCodeAt(pos) === 0x5b /* [ */) {
                 start = pos + 1
                 pos = state.md.helpers.parseLinkLabel(state, pos)
+
                 if (pos >= 0) {
                   label = state.src.slice(start, pos++)
                 } else {
@@ -5897,10 +6093,13 @@
               }
 
               ref = state.env.references[normalizeReference(label)]
+
               if (!ref) {
                 state.pos = oldPos
+
                 return false
               }
+
               href = ref.href
               title = ref.title
             }
@@ -5929,6 +6128,7 @@
 
             state.pos = pos
             state.posMax = max
+
             return true
           }
         },
@@ -5973,6 +6173,7 @@
             }
 
             pos = labelEnd + 1
+
             if (pos < max && state.src.charCodeAt(pos) === 0x28 /* ( */) {
               //
               // Inline link
@@ -5984,12 +6185,15 @@
               // [link](  <href>  "title"  )
               //        ^^ skipping these spaces
               pos++
+
               for (; pos < max; pos++) {
                 code = state.src.charCodeAt(pos)
+
                 if (!isSpace(code) && code !== 0x0a) {
                   break
                 }
               }
+
               if (pos >= max) {
                 return false
               }
@@ -5998,8 +6202,10 @@
               //          ^^^^^^ parsing link destination
               start = pos
               res = state.md.helpers.parseLinkDestination(state.src, pos, state.posMax)
+
               if (res.ok) {
                 href = state.md.normalizeLink(res.str)
+
                 if (state.md.validateLink(href)) {
                   pos = res.pos
                 } else {
@@ -6010,8 +6216,10 @@
               // [link](  <href>  "title"  )
               //                ^^ skipping these spaces
               start = pos
+
               for (; pos < max; pos++) {
                 code = state.src.charCodeAt(pos)
+
                 if (!isSpace(code) && code !== 0x0a) {
                   break
                 }
@@ -6020,6 +6228,7 @@
               // [link](  <href>  "title"  )
               //                  ^^^^^^^ parsing link title
               res = state.md.helpers.parseLinkTitle(state.src, pos, state.posMax)
+
               if (pos < max && start !== pos && res.ok) {
                 title = res.str
                 pos = res.pos
@@ -6028,6 +6237,7 @@
                 //                         ^^ skipping these spaces
                 for (; pos < max; pos++) {
                   code = state.src.charCodeAt(pos)
+
                   if (!isSpace(code) && code !== 0x0a) {
                     break
                   }
@@ -6040,6 +6250,7 @@
                 // parsing a valid shortcut link failed, fallback to reference
                 parseReference = true
               }
+
               pos++
             }
 
@@ -6054,6 +6265,7 @@
               if (pos < max && state.src.charCodeAt(pos) === 0x5b /* [ */) {
                 start = pos + 1
                 pos = state.md.helpers.parseLinkLabel(state, pos)
+
                 if (pos >= 0) {
                   label = state.src.slice(start, pos++)
                 } else {
@@ -6070,10 +6282,13 @@
               }
 
               ref = state.env.references[normalizeReference(label)]
+
               if (!ref) {
                 state.pos = oldPos
+
                 return false
               }
+
               href = ref.href
               title = ref.title
             }
@@ -6088,6 +6303,7 @@
 
               token = state.push('link_open', 'a', 1)
               token.attrs = attrs = [['href', href]]
+
               if (title) {
                 attrs.push(['title', title])
               }
@@ -6099,6 +6315,7 @@
 
             state.pos = pos
             state.posMax = max
+
             return true
           }
         },
@@ -6150,6 +6367,7 @@
             }
 
             state.pos = pos
+
             return true
           }
         },
@@ -6194,10 +6412,12 @@
           //
           StateInline.prototype.pushPending = function () {
             var token = new Token('text', '', 0)
+
             token.content = this.pending
             token.level = this.pendingLevel
             this.tokens.push(token)
             this.pending = ''
+
             return token
           }
 
@@ -6231,6 +6451,7 @@
             this.pendingLevel = this.level
             this.tokens.push(token)
             this.tokens_meta.push(token_meta)
+
             return token
           }
 
@@ -6733,6 +6954,7 @@ module.exports = function text(state, silent) {
                 return i
               }
             }
+
             return -1
           }
 
@@ -6773,9 +6995,11 @@ module.exports = function text(state, silent) {
           Token.prototype.attrGet = function attrGet(name) {
             var idx = this.attrIndex(name),
               value = null
+
             if (idx >= 0) {
               value = this.attrs[idx][1]
             }
+
             return value
           }
 
@@ -8959,15 +9183,19 @@ module.exports = function text(state, silent) {
           function _class(obj) {
             return Object.prototype.toString.call(obj)
           }
+
           function isString(obj) {
             return _class(obj) === '[object String]'
           }
+
           function isObject(obj) {
             return _class(obj) === '[object Object]'
           }
+
           function isRegExp(obj) {
             return _class(obj) === '[object RegExp]'
           }
+
           function isFunction(obj) {
             return _class(obj) === '[object Function]'
           }
@@ -9002,9 +9230,11 @@ module.exports = function text(state, silent) {
                     'i'
                   )
                 }
+
                 if (self.re.http.test(tail)) {
                   return tail.match(self.re.http)[0].length
                 }
+
                 return 0
               },
             },
@@ -9039,11 +9269,14 @@ module.exports = function text(state, silent) {
                   if (pos >= 3 && text[pos - 3] === ':') {
                     return 0
                   }
+
                   if (pos >= 3 && text[pos - 3] === '/') {
                     return 0
                   }
+
                   return tail.match(self.re.no_http)[0].length
                 }
+
                 return 0
               },
             },
@@ -9054,15 +9287,17 @@ module.exports = function text(state, silent) {
                 if (!self.re.mailto) {
                   self.re.mailto = new RegExp('^' + self.re.src_email_name + '@' + self.re.src_host_strict, 'i')
                 }
+
                 if (self.re.mailto.test(tail)) {
                   return tail.match(self.re.mailto)[0].length
                 }
+
                 return 0
               },
             },
           }
 
-          /*eslint-disable max-len*/
+           
 
           // RE pattern for 2-character tlds (autogenerated by ./support/tlds_2char_gen.js)
           var tlds_2ch_src_re =
@@ -9071,7 +9306,7 @@ module.exports = function text(state, silent) {
           // DON'T try to make PRs with changes. Extend TLDs with LinkifyIt.tlds() instead
           var tlds_default = 'biz|com|edu|gov|net|org|pro|web|xxx|aero|asia|coop|info|museum|name|shop|рф'.split('|')
 
-          /*eslint-enable max-len*/
+           
 
           ////////////////////////////////////////////////////////////////////////////////
 
@@ -9087,6 +9322,7 @@ module.exports = function text(state, silent) {
               if (re.test(tail)) {
                 return tail.match(re)[0].length
               }
+
               return 0
             }
           }
@@ -9111,6 +9347,7 @@ module.exports = function text(state, silent) {
             if (!self.__tlds_replaced__) {
               tlds.push(tlds_2ch_src_re)
             }
+
             tlds.push(re.src_xn)
 
             re.src_tlds = tlds.join('|')
@@ -9170,6 +9407,7 @@ module.exports = function text(state, silent) {
 
               if (isString(val)) {
                 aliases.push(name)
+
                 return
               }
 
@@ -9206,6 +9444,7 @@ module.exports = function text(state, silent) {
               })
               .map(escapeRE)
               .join('|')
+
             // (?!_) cause 1.5x slowdown
             self.re.schema_test = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'i')
             self.re.schema_search = RegExp('(^|(?!_)(?:[><\uff5c]|' + re.src_ZPCc + '))(' + slist + ')', 'ig')
@@ -9357,6 +9596,7 @@ module.exports = function text(state, silent) {
           LinkifyIt.prototype.add = function add(schema, definition) {
             this.__schemas__[schema] = definition
             compile(this)
+
             return this
           }
 
@@ -9368,6 +9608,7 @@ module.exports = function text(state, silent) {
            **/
           LinkifyIt.prototype.set = function set(options) {
             this.__opts__ = assign(this.__opts__, options)
+
             return this
           }
 
@@ -9391,8 +9632,10 @@ module.exports = function text(state, silent) {
             if (this.re.schema_test.test(text)) {
               re = this.re.schema_search
               re.lastIndex = 0
+
               while ((m = re.exec(text)) !== null) {
                 len = this.testSchemaAt(text, m[2], re.lastIndex)
+
                 if (len) {
                   this.__schema__ = m[2]
                   this.__index__ = m.index + m[1].length
@@ -9405,6 +9648,7 @@ module.exports = function text(state, silent) {
             if (this.__opts__.fuzzyLink && this.__compiled__['http:']) {
               // guess schemaless links
               tld_pos = text.search(this.re.host_fuzzy_test)
+
               if (tld_pos >= 0) {
                 // if tld is located after found link - no need to check fuzzy pattern
                 if (this.__index__ < 0 || tld_pos < this.__index__) {
@@ -9426,6 +9670,7 @@ module.exports = function text(state, silent) {
             if (this.__opts__.fuzzyEmail && this.__compiled__['mailto:']) {
               // guess schemaless emails
               at_pos = text.indexOf('@')
+
               if (at_pos >= 0) {
                 // We can't skip this check, because this cases are possible:
                 // 192.168.1.1@gmail.com, my.in@example.com
@@ -9474,6 +9719,7 @@ module.exports = function text(state, silent) {
             if (!this.__compiled__[schema.toLowerCase()]) {
               return 0
             }
+
             return this.__compiled__[schema.toLowerCase()].validate(text, pos, this)
           }
 
@@ -9543,6 +9789,7 @@ module.exports = function text(state, silent) {
               this.__tlds__ = list.slice()
               this.__tlds_replaced__ = true
               compile(this)
+
               return this
             }
 
@@ -9555,6 +9802,7 @@ module.exports = function text(state, silent) {
               .reverse()
 
             compile(this)
+
             return this
           }
 
@@ -9793,7 +10041,7 @@ module.exports = function text(state, silent) {
         function (require, module, exports) {
           'use strict'
 
-          /* eslint-disable no-bitwise */
+           
 
           var decodeCache = {}
 
@@ -9801,6 +10049,7 @@ module.exports = function text(state, silent) {
             var i,
               ch,
               cache = decodeCache[exclude]
+
             if (cache) {
               return cache
             }
@@ -9934,6 +10183,7 @@ module.exports = function text(state, silent) {
             var i,
               ch,
               cache = encodeCache[exclude]
+
             if (cache) {
               return cache
             }
@@ -10004,12 +10254,14 @@ module.exports = function text(state, silent) {
               if (code >= 0xd800 && code <= 0xdfff) {
                 if (code >= 0xd800 && code <= 0xdbff && i + 1 < l) {
                   nextCode = string.charCodeAt(i + 1)
+
                   if (nextCode >= 0xdc00 && nextCode <= 0xdfff) {
                     result += encodeURIComponent(string[i] + string[i + 1])
                     i++
                     continue
                   }
                 }
+
                 result += '%EF%BF%BD'
                 continue
               }
@@ -10148,7 +10400,7 @@ module.exports = function text(state, silent) {
             hostnamePartPattern = /^[+a-z0-9A-Z_-]{0,63}$/,
             hostnamePartStart = /^([+a-z0-9A-Z_-]{0,63})(.*)$/,
             // protocols that can allow "unsafe" and "unwise" chars.
-            /* eslint-disable no-script-url */
+             
             // protocols that never have a hostname.
             hostlessProtocol = {
               javascript: true,
@@ -10167,7 +10419,7 @@ module.exports = function text(state, silent) {
               'gopher:': true,
               'file:': true,
             }
-          /* eslint-enable no-script-url */
+           
 
           function urlParse(url, slashesDenoteHost) {
             if (url && url instanceof Url) {
@@ -10175,7 +10427,9 @@ module.exports = function text(state, silent) {
             }
 
             var u = new Url()
+
             u.parse(url, slashesDenoteHost)
+
             return u
           }
 
@@ -10194,16 +10448,20 @@ module.exports = function text(state, silent) {
             if (!slashesDenoteHost && url.split('#').length === 1) {
               // Try fast path regexp
               var simplePath = simplePathPattern.exec(rest)
+
               if (simplePath) {
                 this.pathname = simplePath[1]
+
                 if (simplePath[2]) {
                   this.search = simplePath[2]
                 }
+
                 return this
               }
             }
 
             var proto = protocolPattern.exec(rest)
+
             if (proto) {
               proto = proto[0]
               lowerProto = proto.toLowerCase()
@@ -10217,6 +10475,7 @@ module.exports = function text(state, silent) {
             // how the browser resolves relative URLs.
             if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
               slashes = rest.substr(0, 2) === '//'
+
               if (slashes && !(proto && hostlessProtocol[proto])) {
                 rest = rest.substr(2)
                 this.slashes = true
@@ -10241,8 +10500,10 @@ module.exports = function text(state, silent) {
 
               // find the first instance of any hostEndingChars
               var hostEnd = -1
+
               for (i = 0; i < hostEndingChars.length; i++) {
                 hec = rest.indexOf(hostEndingChars[i])
+
                 if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) {
                   hostEnd = hec
                 }
@@ -10251,6 +10512,7 @@ module.exports = function text(state, silent) {
               // at this point, either we have an explicit point where the
               // auth portion cannot go past, or the last @ char is the decider.
               var auth, atSign
+
               if (hostEnd === -1) {
                 // atSign can be anywhere.
                 atSign = rest.lastIndexOf('@')
@@ -10270,12 +10532,15 @@ module.exports = function text(state, silent) {
 
               // the host is the remaining to the left of the first non-host char
               hostEnd = -1
+
               for (i = 0; i < nonHostChars.length; i++) {
                 hec = rest.indexOf(nonHostChars[i])
+
                 if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) {
                   hostEnd = hec
                 }
               }
+
               // if we still have not hit it, then the entire thing is a host.
               if (hostEnd === -1) {
                 hostEnd = rest.length
@@ -10284,7 +10549,9 @@ module.exports = function text(state, silent) {
               if (rest[hostEnd - 1] === ':') {
                 hostEnd--
               }
+
               var host = rest.slice(0, hostEnd)
+
               rest = rest.slice(hostEnd)
 
               // pull out port.
@@ -10301,13 +10568,17 @@ module.exports = function text(state, silent) {
               // validate a little.
               if (!ipv6Hostname) {
                 var hostparts = this.hostname.split(/\./)
+
                 for (i = 0, l = hostparts.length; i < l; i++) {
                   var part = hostparts[i]
+
                   if (!part) {
                     continue
                   }
+
                   if (!part.match(hostnamePartPattern)) {
                     var newpart = ''
+
                     for (var j = 0, k = part.length; j < k; j++) {
                       if (part.charCodeAt(j) > 127) {
                         // we replace non-ASCII char with a temporary placeholder
@@ -10318,18 +10589,22 @@ module.exports = function text(state, silent) {
                         newpart += part[j]
                       }
                     }
+
                     // we test again with ASCII char only
                     if (!newpart.match(hostnamePartPattern)) {
                       var validParts = hostparts.slice(0, i)
                       var notHost = hostparts.slice(i + 1)
                       var bit = part.match(hostnamePartStart)
+
                       if (bit) {
                         validParts.push(bit[1])
                         notHost.unshift(bit[2])
                       }
+
                       if (notHost.length) {
                         rest = notHost.join('.') + rest
                       }
+
                       this.hostname = validParts.join('.')
                       break
                     }
@@ -10350,19 +10625,24 @@ module.exports = function text(state, silent) {
 
             // chop off from the tail first.
             var hash = rest.indexOf('#')
+
             if (hash !== -1) {
               // got a fragment string.
               this.hash = rest.substr(hash)
               rest = rest.slice(0, hash)
             }
+
             var qm = rest.indexOf('?')
+
             if (qm !== -1) {
               this.search = rest.substr(qm)
               rest = rest.slice(0, qm)
             }
+
             if (rest) {
               this.pathname = rest
             }
+
             if (slashedProtocol[lowerProto] && this.hostname && !this.pathname) {
               this.pathname = ''
             }
@@ -10372,13 +10652,17 @@ module.exports = function text(state, silent) {
 
           Url.prototype.parseHost = function (host) {
             var port = portPattern.exec(host)
+
             if (port) {
               port = port[0]
+
               if (port !== ':') {
                 this.port = port.substr(1)
               }
+
               host = host.substr(0, host.length - port.length)
             }
+
             if (host) {
               this.hostname = host
             }
@@ -10392,11 +10676,14 @@ module.exports = function text(state, silent) {
         function (require, module, exports) {
           ;(function (global) {
             /*! https://mths.be/punycode v1.4.1 by @mathias */
-            ;(function (root) {
+            ;
+
+(function (root) {
               /** Detect free variables */
               var freeExports = typeof exports == 'object' && exports && !exports.nodeType && exports
               var freeModule = typeof module == 'object' && module && !module.nodeType && module
               var freeGlobal = typeof global == 'object' && global
+
               if (
                 freeGlobal.global === freeGlobal ||
                 freeGlobal.window === freeGlobal ||
@@ -10462,9 +10749,11 @@ module.exports = function text(state, silent) {
               function map(array, fn) {
                 var length = array.length
                 var result = []
+
                 while (length--) {
                   result[length] = fn(array[length])
                 }
+
                 return result
               }
 
@@ -10481,16 +10770,19 @@ module.exports = function text(state, silent) {
               function mapDomain(string, fn) {
                 var parts = string.split('@')
                 var result = ''
+
                 if (parts.length > 1) {
                   // In email addresses, only the domain name should be punycoded. Leave
                   // the local part (i.e. everything up to `@`) intact.
                   result = parts[0] + '@'
                   string = parts[1]
                 }
+
                 // Avoid `split(regex)` for IE8 compatibility. See #17.
                 string = string.replace(regexSeparators, '\x2E')
                 var labels = string.split('.')
                 var encoded = map(labels, fn).join('.')
+
                 return result + encoded
               }
 
@@ -10513,11 +10805,14 @@ module.exports = function text(state, silent) {
                   length = string.length,
                   value,
                   extra
+
                 while (counter < length) {
                   value = string.charCodeAt(counter++)
+
                   if (value >= 0xd800 && value <= 0xdbff && counter < length) {
                     // high surrogate, and there is a next character
                     extra = string.charCodeAt(counter++)
+
                     if ((extra & 0xfc00) == 0xdc00) {
                       // low surrogate
                       output.push(((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000)
@@ -10531,6 +10826,7 @@ module.exports = function text(state, silent) {
                     output.push(value)
                   }
                 }
+
                 return output
               }
 
@@ -10545,12 +10841,15 @@ module.exports = function text(state, silent) {
               function ucs2encode(array) {
                 return map(array, function (value) {
                   var output = ''
+
                   if (value > 0xffff) {
                     value -= 0x10000
                     output += stringFromCharCode(((value >>> 10) & 0x3ff) | 0xd800)
                     value = 0xdc00 | (value & 0x3ff)
                   }
+
                   output += stringFromCharCode(value)
+
                   return output
                 }).join('')
               }
@@ -10568,12 +10867,15 @@ module.exports = function text(state, silent) {
                 if (codePoint - 48 < 10) {
                   return codePoint - 22
                 }
+
                 if (codePoint - 65 < 26) {
                   return codePoint - 65
                 }
+
                 if (codePoint - 97 < 26) {
                   return codePoint - 97
                 }
+
                 return base
               }
 
@@ -10601,11 +10903,14 @@ module.exports = function text(state, silent) {
                */
               function adapt(delta, numPoints, firstTime) {
                 var k = 0
+
                 delta = firstTime ? floor(delta / damp) : delta >> 1
                 delta += floor(delta / numPoints)
+
                 for (; /* no initialization */ delta > (baseMinusTMin * tMax) >> 1; k += base) {
                   delta = floor(delta / baseMinusTMin)
                 }
+
                 return floor(k + ((baseMinusTMin + 1) * delta) / (delta + skew))
               }
 
@@ -10640,6 +10945,7 @@ module.exports = function text(state, silent) {
                 // the first basic code points to the output.
 
                 basic = input.lastIndexOf(delimiter)
+
                 if (basic < 0) {
                   basic = 0
                 }
@@ -10649,6 +10955,7 @@ module.exports = function text(state, silent) {
                   if (input.charCodeAt(j) >= 0x80) {
                     error('not-basic')
                   }
+
                   output.push(input.charCodeAt(j))
                 }
 
@@ -10680,6 +10987,7 @@ module.exports = function text(state, silent) {
                     }
 
                     baseMinusT = base - t
+
                     if (w > floor(maxInt / baseMinusT)) {
                       error('overflow')
                     }
@@ -10747,6 +11055,7 @@ module.exports = function text(state, silent) {
                 // Handle the basic code points
                 for (j = 0; j < inputLength; ++j) {
                   currentValue = input[j]
+
                   if (currentValue < 0x80) {
                     output.push(stringFromCharCode(currentValue))
                   }
@@ -10768,6 +11077,7 @@ module.exports = function text(state, silent) {
                   // larger one:
                   for (m = maxInt, j = 0; j < inputLength; ++j) {
                     currentValue = input[j]
+
                     if (currentValue >= n && currentValue < m) {
                       m = currentValue
                     }
@@ -10776,6 +11086,7 @@ module.exports = function text(state, silent) {
                   // Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
                   // but guard against overflow
                   handledCPCountPlusOne = handledCPCount + 1
+
                   if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
                     error('overflow')
                   }
@@ -10794,9 +11105,11 @@ module.exports = function text(state, silent) {
                       // Represent delta as a generalized variable-length integer
                       for (q = delta, k = base /* no condition */; ; k += base) {
                         t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias
+
                         if (q < t) {
                           break
                         }
+
                         qMinusT = q - t
                         baseMinusT = base - t
                         output.push(stringFromCharCode(digitToBasic(t + (qMinusT % baseMinusT), 0)))
@@ -10813,6 +11126,7 @@ module.exports = function text(state, silent) {
                   ++delta
                   ++n
                 }
+
                 return output.join('')
               }
 

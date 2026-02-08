@@ -1,4 +1,4 @@
-import { GurpsModule } from 'module/gurps-module.js'
+import type { GurpsModule } from '@types/gurps-module.ts'
 
 import { GurpsSidebar } from './sidebar.js'
 

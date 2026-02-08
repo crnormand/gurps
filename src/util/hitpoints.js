@@ -126,6 +126,7 @@ export default class HitFatPoints {
    */
   hpCondition(HP, member) {
     let key = this._getConditionKey(HP, hpConditions)
+
     // @ts-ignore
     return hpConditions[key][member]
   }
@@ -136,6 +137,7 @@ export default class HitFatPoints {
    */
   fpCondition(FP, member) {
     let key = this._getConditionKey(FP, fpConditions)
+
     // @ts-ignore
     return fpConditions[key][member]
   }
@@ -146,12 +148,15 @@ export default class HitFatPoints {
    */
   _getConditionKey(pts, conditions) {
     let found = 'NORMAL'
+
     for (const [key, value] of Object.entries(conditions)) {
       if (!!pts && pts.value > value.breakpoint(pts)) {
         return found
       }
+
       found = key
     }
+
     return found
   }
 
@@ -174,15 +179,19 @@ export default class HitFatPoints {
   _getBreakpoints(conditions, pts, options) {
     /** @type {{breakpoint: number, label: string, style: string}[]} */
     let list = []
+
     for (const [key, value] of Object.entries(conditions)) {
       let currentKey = this._getConditionKey(pts, conditions)
+
       list.push({
         breakpoint: Math.floor(value.breakpoint(pts || 0)),
         label: game.i18n.localize(value.label),
         style: key === currentKey ? 'selected' : '',
       })
     }
+
     list.shift() // throw out the first element ('Normal')
+
     return this._buildOutput(list, options)
   }
 
@@ -208,9 +217,11 @@ export default class HitFatPoints {
    */
   _buildOutput(list, opt) {
     let results = ''
+
     list.forEach(item => {
       results += opt.fn(item)
     })
+
     return results
   }
 

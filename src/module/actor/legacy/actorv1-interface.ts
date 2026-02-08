@@ -1,5 +1,4 @@
-import { TrackerInstance } from 'module/resource-tracker/resource-tracker.js'
-
+import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from '../actor-components.js'

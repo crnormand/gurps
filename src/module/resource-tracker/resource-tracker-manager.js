@@ -1,4 +1,4 @@
-import { arrayToObject, objectToArray } from '../../lib/utilities.js'
+import { arrayToObject, objectToArray } from '@util/utilities.js'
 
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { SETTING_TRACKER_TEMPLATES } from './types.js'

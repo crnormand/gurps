@@ -1,17 +1,21 @@
 'use strict'
+
 import { readDataFile } from './utilities.js'
 
 // iterate through the translations properties, looking for the value. Then return this key.
 function deepSearch(obj, text, path = []) {
   for (const [key, value] of Object.entries(obj)) {
     const newPath = path.concat(key)
+
     if (typeof value === 'object') {
       const result = deepSearch(value, text, newPath)
+
       if (result) return result
     } else if (value === text) {
       return newPath.join('.')
     }
   }
+
   return undefined
 }
 
@@ -19,6 +23,7 @@ function deepSearch(obj, text, path = []) {
 export function i18n_Text(text) {
   // restrict the search to the GURPS namespace.
   const key = deepSearch(game.i18n.translations.GURPS, text)
+
   if (key) return `GURPS.${key}`
 }
 
@@ -40,6 +45,7 @@ export function translate(text) {
 
 let english_json = null
 let reverseMap = null
+
 export async function initialize_i18nHelper() {
   if (!english_json) english_json = await readDataFile('lang/en.json')
 
@@ -53,9 +59,11 @@ export async function initialize_i18nHelper() {
       } else {
         acc[value] = key
       }
+
       return acc
     }, {})
   }
+
   return
 }
 

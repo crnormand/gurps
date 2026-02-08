@@ -1,5 +1,6 @@
-import { arrayToObject, objectToArray } from '../../lib/utilities.js'
-import { GurpsModule } from '../gurps-module.js'
+import { arrayToObject, objectToArray } from '@util/utilities.js'
+
+import { GurpsModule } from '../../types/gurps-module.ts'
 
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'

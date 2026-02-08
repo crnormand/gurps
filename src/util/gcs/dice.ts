@@ -12,11 +12,14 @@ export class GcsDice {
   static fromString(diceString: string): GcsDice {
     const regex = /^(?<count>\d+)d(?<modifier>[+-–]?\d+)?$/
     const match = diceString.match(regex)
+
     if (!match) {
       throw new Error(`Invalid dice string: ${diceString}`)
     }
+
     const count = parseInt(match.groups?.count || '0', 10)
     const modifier = match.groups?.modifier ? parseInt(match.groups.modifier.replace('–', '-'), 10) : 0
+
     return new GcsDice(count, modifier)
   }
 
@@ -54,6 +57,7 @@ export class GcsDice {
 
   difference(other: GcsDice): number {
     const otherNormalized = this.normalizeCount(other)
+
     return this.modifier - otherNormalized.modifier
   }
 
@@ -69,11 +73,13 @@ export class GcsDice {
   normalizeCount(other: GcsDice): GcsDice {
     let otherCount = other.count
     let otherModifier = other.modifier
+
     if (otherCount > this.count) {
       while (otherCount > this.count) {
         otherCount--
         otherModifier += 4
       }
+
       return new GcsDice(otherCount, otherModifier, other.multiplier, other.sides)
     }
 
@@ -82,6 +88,7 @@ export class GcsDice {
         otherCount++
         otherModifier -= 4
       }
+
       return new GcsDice(otherCount, otherModifier, other.multiplier, other.sides)
     }
 
@@ -90,6 +97,7 @@ export class GcsDice {
 
   toString(): string {
     const mod = this.modifier === 0 ? '' : (this.modifier > 0 ? '+' : '') + this.modifier
+
     return this.count + 'd' + mod
   }
 }

@@ -1,8 +1,7 @@
-import { NoteV2Schema } from 'module/actor/data/note.js'
-import { BaseItemModel } from 'module/item/data/base.js'
-import { ItemComponentSchema } from 'module/item/data/component.js'
-import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
-
+import { NoteV2Schema } from '@module/actor/data/note.js'
+import { BaseItemModel } from '@module/item/data/base.js'
+import { ItemComponentSchema } from '@module/item/data/component.js'
+import { TraitComponentSchema, TraitSchema } from '@module/item/data/trait.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
 import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../../action/melee-attack.js'

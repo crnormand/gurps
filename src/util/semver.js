@@ -13,13 +13,16 @@ export class SemanticVersion {
   static fromString(str) {
     if (str.match(this.re)) {
       let result = new this()
+
       result.major = parseInt(RegExp.$1)
       result.minor = parseInt(RegExp.$2)
       result.patch = parseInt(RegExp.$3)
       result.preRelease = RegExp.$4 || ''
       result.buildMetaData = RegExp.$5 || ''
+
       return result
     }
+
     return null
   }
 
@@ -32,6 +35,7 @@ export class SemanticVersion {
     if (this.major === otherVersion.major && this.minor > otherVersion.minor) return true
     if (this.major === otherVersion.major && this.minor === otherVersion.minor && this.patch > otherVersion.patch)
       return true
+
     return false
   }
 
@@ -40,6 +44,7 @@ export class SemanticVersion {
     if (this.major === otherVersion.major && this.minor < otherVersion.minor) return true
     if (this.major === otherVersion.major && this.minor === otherVersion.minor && this.patch < otherVersion.patch)
       return true
+
     return false
   }
 }

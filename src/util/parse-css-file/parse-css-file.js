@@ -13,6 +13,7 @@ export async function readCSSfile() {
   const resp = await fetch(url)
   const cssData = await resp.text()
   const parsedCSS = await parseCss(cssData)
+
   for (const CSSfind of theSettings) {
     cssColors.push(await findSelectorRule(parsedCSS, CSSfind.selector, CSSfind.rule))
   }
@@ -24,7 +25,9 @@ export async function parseCss(text) {
   let rule
   let token
   let style
+
   text = text.replace(/\/\*[\s\S]*?\*\//g, '')
+
   while ((token = tokenizer.exec(text))) {
     style = await parseRule(token[2].trim())
     style.cssText = await stringifyRule(style)
@@ -36,6 +39,7 @@ export async function parseCss(text) {
     rule.cssText = rule.selectorText + ' { ' + rule.style.cssText + ' }'
     rules.push(rule)
   }
+
   return rules
 }
 
@@ -44,31 +48,38 @@ export async function parseRule(css) {
   const tokenizer = /\s*([a-z\-]+)\s*:\s*((?:[^;]*url\(.*?\)[^;]*|[^;]*)*)\s*(?:;|$)/gi
   const obj = {}
   let token
+
   while ((token = tokenizer.exec(css))) {
     obj[token[1].toLowerCase()] = token[2]
   }
+
   return obj
 }
 
 export async function stringifyRule(style) {
   let text = ''
   const keys = Object.keys(style).sort()
+
   for (let i = 0; i < keys.length; i++) {
     text += ' ' + keys[i] + ': ' + style[keys[i]] + ';'
   }
+
   return text.substring(1)
 }
 
 export async function findSelectorRule(parsedCSS, selector, rule) {
   let selectorText = ''
+
   for (const parsedCSSLine of parsedCSS) {
     selectorText = parsedCSSLine.selectorText
     const findSelectorText = selectorText.split(', ')
     const matchSelector = selector.toLowerCase()
+
     if (jQuery.inArray(matchSelector, findSelectorText) >= 0) {
       return processFoundRule(rule, parsedCSSLine.style[rule.toLowerCase()])
     }
   }
+
   return false
 }
 
@@ -77,12 +88,14 @@ export async function processFoundRule(rule, foundRule) {
     // looking for color data
     const colornames = await getColorArr('names')
     const colorhexs = await getColorArr('hexs')
+
     if (foundRule.toLowerCase().indexOf('rgb(') >= 0) {
       // convert rgb to hex
       foundRule = foundRule.replace(/;/g, '')
       foundRule = foundRule.replace(/!important/g, '')
       foundRule = foundRule.trim()
       const result = foundRule.match(/\d+/g)
+
       foundRule = '#' + (await hex(result[0])) + (await hex(result[1])) + (await hex(result[2]))
     } else if (foundRule.toLowerCase().indexOf('#') >= 0) {
       // conver hex to only hex
@@ -94,23 +107,28 @@ export async function processFoundRule(rule, foundRule) {
       foundRule = foundRule.replace(/!important/g, '')
       foundRule = foundRule.trim()
       let result = null
+
       $.each(colornames, function (index, value) {
         if (result == null && value.toLowerCase() === foundRule.toLowerCase()) {
           result = index
+
           return false
         }
       })
       foundRule = '#' + colorhexs[result]
     }
   }
+
   if (foundRule === undefined) {
     foundRule = false
   }
+
   return foundRule
 }
 
 export async function hex(x) {
   const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
+
   return isNaN(x) ? '00' : digits[(x - (x % 16)) / 16] + digits[x % 16]
 }
 
@@ -267,6 +285,7 @@ export async function getColorArr(x) {
       'YellowGreen',
     ]
   }
+
   if (x === 'hexs') {
     return [
       'f0f8ff',

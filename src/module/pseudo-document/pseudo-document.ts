@@ -2,8 +2,8 @@ import { AnyObject } from 'fvtt-types/utils'
 
 import { type ModelCollection } from '../data/model-collection.js'
 import { type BaseItemModel } from '../item/data/base.js'
-import { DataModel, Document, fields } from '../types/foundry/index.ts'
-import { isObject } from '../utilities/guards.ts'
+import { DataModel, Document, fields } from '../types/foundry/index.js'
+import { isObject } from '../utilities/guards.js'
 
 import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 

@@ -21,18 +21,23 @@ const FILES = [
 function extractClassBody(source, className) {
   const classRegex = new RegExp(`class\\s+${className}\\b[^{]*{`, 'm')
   const match = source.match(classRegex)
+
   if (!match) return null
   const start = match.index + match[0].length
   // Walk forward to find the matching closing '}' at depth 0
   let depth = 1
+
   for (let i = start; i < source.length; i++) {
     const ch = source[i]
+
     if (ch === '{') depth++
     else if (ch === '}') depth--
+
     if (depth === 0) {
       return source.slice(start, i)
     }
   }
+
   return null
 }
 
@@ -45,12 +50,15 @@ function extractMethodsFromClassBody(body) {
   // Walk the body and capture member signatures preceding a top-level '{'
   let depth = 0
   let tokenStart = 0
+
   for (let i = 0; i < body.length; i++) {
     const ch = body[i]
+
     if (ch === '{') {
       if (depth === 0) {
         // Signature is from last newline/semicolon up to i
         let sigStart = tokenStart
+
         // backtrack to previous newline to capture clean signature
         for (let j = i - 1; j >= 0; j--) {
           if (body[j] === '\n') {
@@ -58,13 +66,17 @@ function extractMethodsFromClassBody(body) {
             break
           }
         }
+
         const signature = body.slice(sigStart, i).trim()
+
         // Only consider signatures that look like method/get/set declarations (contain '(' )
         if (signature.includes('(')) {
           const m = parseSignature(signature)
+
           if (m) methods.push({ ...m, raw: signature })
         }
       }
+
       depth++
     } else if (ch === '}') {
       depth--
@@ -73,6 +85,7 @@ function extractMethodsFromClassBody(body) {
       tokenStart = i + 1
     }
   }
+
   return dedupe(methods)
 }
 
@@ -84,8 +97,10 @@ function parseSignature(sig) {
   const re =
     /^(?:(public|private|protected)\s+)?(?:(override)\s+)?(?:(async)\s+)?(?:(static)\s+)?(?:(get|set)\s+)?(#?[A-Za-z_][A-Za-z0-9_]*)\s*\(/
   const m = s.match(re)
+
   if (!m) return null
   const [, vis, override, asyncKw, staticKw, accessor, name] = m
+
   return {
     name,
     kind: accessor ? accessor : 'method',
@@ -102,27 +117,33 @@ function parseSignature(sig) {
 
 function dedupe(list) {
   const seen = new Set()
+
   return list.filter(m => {
     const key = `${m.kind}:${m.name}:${m.modifiers.static ? 'S' : ''}:${m.modifiers.async ? 'A' : ''}:${m.modifiers.override ? 'O' : ''}`
+
     if (seen.has(key)) return false
     seen.add(key)
+
     return true
   })
 }
 
 function formatMethod(m) {
   const tags = []
+
   if (m.modifiers.static) tags.push('static')
   if (m.modifiers.async) tags.push('async')
   if (m.modifiers.override) tags.push('override')
   if (m.modifiers.private) tags.push('private')
   if (m.kind === 'get' || m.kind === 'set') tags.push(m.kind)
   const tagStr = tags.length ? ` — [${tags.join(', ')}]` : ''
+
   return `- ${m.name}()${tagStr}`
 }
 
 async function generate() {
   const sections = []
+
   sections.push('# Actor Class API Surface (auto-generated)')
   sections.push('')
   sections.push(`- Generated on: ${new Date().toISOString()}`)
@@ -131,11 +152,13 @@ async function generate() {
   for (const { file, className } of FILES) {
     const source = await fs.readFile(file, 'utf8')
     const body = extractClassBody(source, className)
+
     if (!body) {
       sections.push(`## ${className}`)
       sections.push('> Could not locate class body.')
       continue
     }
+
     const methods = extractMethodsFromClassBody(body)
     // Group by kind for readability
     const getters = methods.filter(m => m.kind === 'get').sort((a, b) => a.name.localeCompare(b.name))
@@ -144,16 +167,19 @@ async function generate() {
 
     sections.push(`## ${className} (${path.relative(repoRoot, file)})`)
     sections.push('')
+
     if (getters.length) {
       sections.push('### Getters')
       sections.push(...getters.map(formatMethod))
       sections.push('')
     }
+
     if (setters.length) {
       sections.push('### Setters')
       sections.push(...setters.map(formatMethod))
       sections.push('')
     }
+
     if (normal.length) {
       sections.push('### Methods')
       sections.push(...normal.map(formatMethod))
@@ -162,6 +188,7 @@ async function generate() {
   }
 
   const outPath = path.join(repoRoot, 'dev-utilities/actor-methods.md')
+
   await fs.writeFile(outPath, sections.join('\n'), 'utf8')
   console.log(`Wrote ${outPath}`)
 }

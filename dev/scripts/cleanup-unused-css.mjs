@@ -35,6 +35,7 @@ function removeBlock(filePath, patterns) {
       } else {
         content = content.split(pattern).join('')
       }
+
       fileRemoved++
       console.log(`  ✓ Removed: ${description}`)
     }
@@ -183,11 +184,13 @@ console.log('  → See dev-utilities/cleanup-unused-css.md for detailed list')
 // Summary
 console.log(`\n${'='.repeat(60)}`)
 console.log(`Summary: ${removed.total} block(s) processed`)
+
 if (Object.keys(removed.byFile).length > 0) {
   Object.entries(removed.byFile).forEach(([file, count]) => {
     console.log(`  ${file}: ${count} block(s)`)
   })
 }
+
 if (dryRun) {
   console.log('\n✓ Dry run complete. No files modified.')
   console.log('Run without --dry-run to apply changes.')
@@ -195,4 +198,5 @@ if (dryRun) {
   console.log('\n✓ Cleanup complete! Re-run analysis:')
   console.log('  node dev-utilities/find-unused-css.mjs')
 }
+
 console.log(`${'='.repeat(60)}\n`)

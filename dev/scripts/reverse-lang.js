@@ -13,6 +13,7 @@ import fs from 'fs'
 import path from 'path'
 
 let dir = path.resolve(process.env._)
+
 dir = dir.substring(0, dir.lastIndexOf('/')).substring(0, dir.lastIndexOf('/'))
 // console.log(dir)
 
@@ -21,7 +22,9 @@ let lang = JSON.parse(fs.readFileSync(path.join(dir, '../lang/en.json'), 'utf8')
 
 // create a json object with keys equal to the values of the lang object, and values equal to the keys of the lang object
 let reverseLang = {}
+
 for (let key in lang) {
   reverseLang[lang[key]] = key
 }
+
 console.log(reverseLang)

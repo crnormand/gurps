@@ -1,10 +1,13 @@
-;(function (f) {
+;
+
+(function (f) {
   if (typeof exports === 'object' && typeof module !== 'undefined') {
     module.exports = f()
   } else if (typeof define === 'function' && define.amd) {
     define([], f)
   } else {
     var g
+
     if (typeof window !== 'undefined') {
       g = window
     } else if (typeof global !== 'undefined') {
@@ -14,26 +17,33 @@
     } else {
       g = this
     }
+
     g.XRegExp = f()
   }
 })(function () {
   var define, module, exports
+
   return (function () {
     function r(e, n, t) {
       function o(i, f) {
         if (!n[i]) {
           if (!e[i]) {
             var c = 'function' == typeof require && require
+
             if (!f && c) return c(i, !0)
             if (u) return u(i, !0)
             var a = new Error("Cannot find module '" + i + "'")
+
             throw ((a.code = 'MODULE_NOT_FOUND'), a)
           }
+
           var p = (n[i] = { exports: {} })
+
           e[i][0].call(
             p.exports,
             function (r) {
               var n = e[i][1][r]
+
               return o(n || r)
             },
             p,
@@ -44,11 +54,15 @@
             t
           )
         }
+
         return n[i].exports
       }
+
       for (var u = 'function' == typeof require && require, i = 0; i < t.length; i++) o(t[i])
+
       return o
     }
+
     return r
   })()(
     {
@@ -121,6 +135,7 @@
 
             function asXRegExp(value, addFlagX) {
               var flags = addFlagX ? 'x' : ''
+
               return XRegExp.isRegExp(value)
                 ? value[REGEX_DATA] && value[REGEX_DATA].captureNames // Don't recompile, to preserve capture names
                   ? value // Recompile as XRegExp
@@ -134,11 +149,13 @@
 
             function reduceToSubpatternsObject(subpatterns, interpolated, subpatternIndex) {
               subpatterns['subpattern'.concat(subpatternIndex)] = interpolated
+
               return subpatterns
             }
 
             function embedSubpatternAfter(raw, subpatternIndex, rawLiterals) {
               var hasSubpattern = subpatternIndex < rawLiterals.length - 1
+
               return raw + (hasSubpattern ? '{{subpattern'.concat(subpatternIndex, '}}') : '')
             }
             /**
@@ -187,6 +204,7 @@
                 var pattern = (0, _map['default'])((_context2 = literals.raw))
                   .call(_context2, embedSubpatternAfter)
                   .join('')
+
                 return XRegExp.build(pattern, subpatterns, flags)
               }
             }
@@ -237,6 +255,7 @@
                   // subpatterns provided as native regexes, it dies on octals and adds the property
                   // used to hold extended regex instance data, for simplicity.
                   var sub = asXRegExp(subs[p], addFlagX)
+
                   data[p] = {
                     // Deanchoring allows embedding independently useful anchored regexes. If you
                     // really need to keep your anchors, double them (i.e., `^^...$$`).
@@ -297,6 +316,7 @@
 
                     return match
                   })
+
                   return (0, _concat['default'])((_context3 = ''.concat(intro))).call(
                     _context3,
                     rewrittenSubpattern,
@@ -321,6 +341,7 @@
 
                 return $0
               })
+
               return XRegExp(output, flags)
             }
           }
@@ -459,6 +480,7 @@
               var sticky = (0, _indexOf['default'])(flags).call(flags, 'y') !== -1 // Flag `y` is handled manually
 
               var basicFlags = flags.replace(/y/g, '')
+
               left = XRegExp(left, basicFlags)
               right = XRegExp(right, basicFlags)
               var esc
@@ -613,6 +635,7 @@
                     } else {
                       if (unbalanced === 'skip') {
                         var outerStartDelimLength = XRegExp.exec(str, left, outerStart, 'sticky')[0].length
+
                         delimEnd = outerStart + (outerStartDelimLength || 1)
                       } else {
                         delimEnd = outerStart + 1
@@ -625,6 +648,7 @@
 
                     var delimSide = rightMatch ? 'right' : 'left'
                     var errorPos = rightMatch ? delimStart : outerStart
+
                     throw new Error(
                       (0, _concat['default'])(
                         (_context3 = 'Unbalanced '.concat(delimSide, ' delimiter found in string at position '))
@@ -693,6 +717,7 @@
 
           function _createForOfIteratorHelper(o, allowArrayLike) {
             var it = (typeof _Symbol !== 'undefined' && _getIteratorMethod(o)) || o['@@iterator']
+
             if (!it) {
               if (
                 _Array$isArray(o) ||
@@ -701,11 +726,14 @@
               ) {
                 if (it) o = it
                 var i = 0
+
                 var F = function F() {}
+
                 return {
                   s: F,
                   n: function n() {
                     if (i >= o.length) return { done: true }
+
                     return { done: false, value: o[i++] }
                   },
                   e: function e(_e) {
@@ -714,20 +742,25 @@
                   f: F,
                 }
               }
+
               throw new TypeError(
                 'Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
               )
             }
+
             var normalCompletion = true,
               didErr = false,
               err
+
             return {
               s: function s() {
                 it = it.call(o)
               },
               n: function n() {
                 var step = it.next()
+
                 normalCompletion = step.done
+
                 return step
               },
               e: function e(_e2) {
@@ -746,9 +779,11 @@
 
           function _unsupportedIterableToArray(o, minLen) {
             var _context4
+
             if (!o) return
             if (typeof o === 'string') return _arrayLikeToArray(o, minLen)
             var n = _sliceInstanceProperty((_context4 = Object.prototype.toString.call(o))).call(_context4, 8, -1)
+
             if (n === 'Object' && o.constructor) n = o.constructor.name
             if (n === 'Map' || n === 'Set') return _Array$from(o)
             if (n === 'Arguments' || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))
@@ -757,9 +792,11 @@
 
           function _arrayLikeToArray(arr, len) {
             if (len == null || len > arr.length) len = arr.length
+
             for (var i = 0, arr2 = new Array(len); i < len; i++) {
               arr2[i] = arr[i]
             }
+
             return arr2
           }
 
@@ -799,12 +836,14 @@
 
             function charCode(chr) {
               var esc = /^\\[xu](.+)/.exec(chr)
+
               return esc ? dec(esc[1]) : chr.charCodeAt(chr[0] === '\\' ? 1 : 0)
             } // Inverts a list of ordered BMP characters and ranges
 
             function invertBmp(range) {
               var output = ''
               var lastEnd = -1
+
               ;(0, _forEach['default'])(XRegExp).call(
                 XRegExp,
                 range,
@@ -837,6 +876,7 @@
 
             function cacheInvertedBmp(slug) {
               var prop = 'b!'
+
               return unicode[slug][prop] || (unicode[slug][prop] = invertBmp(unicode[slug].bmp))
             } // Combines and optionally negates BMP and astral data
 
@@ -874,6 +914,7 @@
 
             function cacheAstral(slug, isNegated) {
               var prop = isNegated ? 'a!' : 'a='
+
               return unicode[slug][prop] || (unicode[slug][prop] = buildAstral(slug, isNegated))
             } // ==--------------------------==
             // Core functionality
@@ -1023,6 +1064,7 @@
                   }
 
                   var normalizedName = normalize(item.name)
+
                   unicode[normalizedName] = item
 
                   if (typePrefix) {
@@ -1031,6 +1073,7 @@
 
                   if (item.alias) {
                     var normalizedAlias = normalize(item.alias)
+
                     unicode[normalizedAlias] = item
 
                     if (typePrefix) {
@@ -1071,6 +1114,7 @@
 
             XRegExp._getUnicodeProperty = function (name) {
               var slug = normalize(name)
+
               return unicode[slug]
             }
           }
@@ -1307,6 +1351,7 @@
           ;(0, _unicodeProperties['default'])(_xregexp['default'])
           ;(0, _unicodeScripts['default'])(_xregexp['default'])
           var _default = _xregexp['default']
+
           exports['default'] = _default
           module.exports = exports.default
         },
@@ -1366,6 +1411,7 @@
 
           function _createForOfIteratorHelper(o, allowArrayLike) {
             var it = (typeof _Symbol !== 'undefined' && _getIteratorMethod(o)) || o['@@iterator']
+
             if (!it) {
               if (
                 _Array$isArray(o) ||
@@ -1374,11 +1420,14 @@
               ) {
                 if (it) o = it
                 var i = 0
+
                 var F = function F() {}
+
                 return {
                   s: F,
                   n: function n() {
                     if (i >= o.length) return { done: true }
+
                     return { done: false, value: o[i++] }
                   },
                   e: function e(_e) {
@@ -1387,20 +1436,25 @@
                   f: F,
                 }
               }
+
               throw new TypeError(
                 'Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
               )
             }
+
             var normalCompletion = true,
               didErr = false,
               err
+
             return {
               s: function s() {
                 it = it.call(o)
               },
               n: function n() {
                 var step = it.next()
+
                 normalCompletion = step.done
+
                 return step
               },
               e: function e(_e2) {
@@ -1419,9 +1473,11 @@
 
           function _unsupportedIterableToArray(o, minLen) {
             var _context9
+
             if (!o) return
             if (typeof o === 'string') return _arrayLikeToArray(o, minLen)
             var n = _sliceInstanceProperty2((_context9 = Object.prototype.toString.call(o))).call(_context9, 8, -1)
+
             if (n === 'Object' && o.constructor) n = o.constructor.name
             if (n === 'Map' || n === 'Set') return _Array$from(o)
             if (n === 'Arguments' || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))
@@ -1430,9 +1486,11 @@
 
           function _arrayLikeToArray(arr, len) {
             if (len == null || len > arr.length) len = arr.length
+
             for (var i = 0, arr2 = new Array(len); i < len; i++) {
               arr2[i] = arr[i]
             }
+
             return arr2
           }
 
@@ -1575,6 +1633,7 @@
                   .call(_context)
                   .join('')
               : xFlags
+
             return regex
           }
           /**
@@ -1620,6 +1679,7 @@
             var flagsToRemove = ''
             var xregexpSource = null
             var xregexpFlags = null
+
             options = options || {}
 
             if (options.removeG) {
@@ -1673,6 +1733,7 @@
               xregexpFlags,
               options.isInternalOnly
             )
+
             return regex
           }
           /**
@@ -1776,6 +1837,7 @@
               (0, _indexOf['default'])(flags).call(flags, 'x') !== -1 // Ignore any leading whitespace, line comments, and inline comments
                 ? /^(?:\s|#[^#\n]*|\(\?#[^)]*\))*(?:[?*+]|{\d+(?:,\d*)?})/ // Ignore any leading inline comments
                 : /^(?:\(\?#[^)]*\))*(?:[?*+]|{\d+(?:,\d*)?})/
+
             return regex.test((0, _slice['default'])(pattern).call(pattern, pos))
           }
           /**
@@ -1844,6 +1906,7 @@
               } // Allow duplicate flags within the mode modifier
 
               flags = clipDuplicates(flags + $1)
+
               return ''
             }) // Throw on unknown native or nonnative flags
 
@@ -1884,6 +1947,7 @@
               ;(0, _forEach['default'])(XRegExp).call(XRegExp, value, /[^\s,]+/, function (match) {
                 options[match] = true
               })
+
               return options
             }
 
@@ -2093,6 +2157,7 @@
             }
 
             var generated = patternCache[pattern][flags]
+
             return augment(
               new RegExp(generated.pattern, (0, _flags['default'])(generated)),
               generated.captures,
@@ -2192,6 +2257,7 @@
               try {
                 for (_iterator2.s(); !(_step2 = _iterator2.n()).done; ) {
                   var flag = _step2.value
+
                   registerFlag(flag)
                 }
               } catch (err) {
@@ -2318,6 +2384,7 @@
             var addY = false
             var fakeY = false
             var match
+
             addY = hasNativeY && !!(sticky || (regex.sticky && sticky !== false))
 
             if (addY) {
@@ -2343,6 +2410,7 @@
                 removeY: sticky === false,
                 isInternalOnly: true,
               }))
+
             pos = pos || 0
             r2.lastIndex = pos // Fixed `exec` required for `lastIndex` fix, named backreferences, etc.
 
@@ -2516,6 +2584,7 @@
           XRegExp.match = function (str, regex, scope) {
             var global = (regex.global && scope !== 'one') || scope === 'all'
             var cacheKey = (global ? 'g' : '') + (regex.sticky ? 'y' : '') || 'noGY'
+
             regex[REGEX_DATA] = regex[REGEX_DATA] || {} // Shares cached copies with `XRegExp.exec`/`replace`
 
             var r2 =
@@ -2589,6 +2658,7 @@
                     isNamedBackref && XRegExp.isInstalled('namespacing')
                       ? match.groups[item.backref]
                       : match[item.backref]
+
                   matches.push(backrefValue || '')
                 } else {
                   matches.push(match[0])
@@ -2601,6 +2671,7 @@
               try {
                 for (_iterator3.s(); !(_step3 = _iterator3.n()).done; ) {
                   var value = _step3.value
+
                   ;(0, _forEach['default'])(XRegExp).call(XRegExp, value, item.regex, addMatch)
                 }
               } catch (err) {
@@ -2726,6 +2797,7 @@
             try {
               for (_iterator4.s(); !(_step4 = _iterator4.n()).done; ) {
                 var r = _step4.value
+
                 str = XRegExp.replace(str, r[0], r[1], r[2])
               }
             } catch (err) {
@@ -2903,6 +2975,7 @@
             }
 
             var separator = conjunction === 'none' ? '' : '|'
+
             return XRegExp(output.join(separator), flags)
           } // ==--------------------------==
           // Fixed/extended native methods
@@ -3009,6 +3082,7 @@
               var result = String.prototype.match.apply(this, arguments) // Fixes IE bug
 
               regex.lastIndex = 0
+
               return result
             }
 
@@ -3246,6 +3320,7 @@
             }
 
             separator.lastIndex = origLastIndex
+
             return output.length > limit ? (0, _slice['default'])(output).call(output, 0, limit) : output
           } // ==--------------------------==
           // Built-in syntax/flag tokens
@@ -3414,6 +3489,7 @@
 
               this.captureNames.push(match[1])
               this.hasNamedCapture = true
+
               return '('
             },
             {
@@ -3433,6 +3509,7 @@
               }
 
               this.captureNames.push(null)
+
               return '('
             },
             {
@@ -3441,6 +3518,7 @@
             }
           )
           var _default = XRegExp
+
           exports['default'] = _default
           module.exports = exports.default
         },
@@ -3833,6 +3911,7 @@
 
           module.exports = function (it) {
             var own = it.concat
+
             return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.concat) ? concat : own
           }
         },
@@ -3858,6 +3937,7 @@
 
           module.exports = function (it) {
             var own = it.indexOf
+
             return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.indexOf) ? indexOf : own
           }
         },
@@ -3871,6 +3951,7 @@
 
           module.exports = function (it) {
             var own = it.map
+
             return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.map) ? map : own
           }
         },
@@ -3884,6 +3965,7 @@
 
           module.exports = function (it) {
             var own = it.reduce
+
             return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.reduce) ? reduce : own
           }
         },
@@ -3897,6 +3979,7 @@
 
           module.exports = function (it) {
             var own = it.slice
+
             return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.slice) ? slice : own
           }
         },
@@ -3910,6 +3993,7 @@
 
           module.exports = function (it) {
             var own = it.sort
+
             return it === ArrayPrototype || (it instanceof Array && own === ArrayPrototype.sort) ? sort : own
           }
         },
@@ -4056,6 +4140,7 @@
       60: [
         function (require, module, exports) {
           var parent = require('../../es/symbol')
+
           require('../../modules/esnext.symbol.async-dispose')
           require('../../modules/esnext.symbol.dispose')
           require('../../modules/esnext.symbol.matcher')
@@ -4085,6 +4170,7 @@
             if (typeof it != 'function') {
               throw TypeError(String(it) + ' is not a function')
             }
+
             return it
           }
         },
@@ -4098,6 +4184,7 @@
             if (!isObject(it) && it !== null) {
               throw TypeError("Can't set " + String(it) + ' as a prototype')
             }
+
             return it
           }
         },
@@ -4119,6 +4206,7 @@
             if (!isObject(it)) {
               throw TypeError(String(it) + ' is not an object')
             }
+
             return it
           }
         },
@@ -4127,6 +4215,7 @@
       65: [
         function (require, module, exports) {
           'use strict'
+
           var $forEach = require('../internals/array-iteration').forEach
           var arrayMethodIsStrict = require('../internals/array-method-is-strict')
 
@@ -4146,6 +4235,7 @@
       66: [
         function (require, module, exports) {
           'use strict'
+
           var bind = require('../internals/function-bind-context')
           var toObject = require('../internals/to-object')
           var callWithSafeIterationClosing = require('../internals/call-with-safe-iteration-closing')
@@ -4165,12 +4255,15 @@
             var iteratorMethod = getIteratorMethod(O)
             var index = 0
             var length, result, step, iterator, next, value
+
             if (mapping) mapfn = bind(mapfn, argumentsLength > 2 ? arguments[2] : undefined, 2)
+
             // if the target is not iterable or it's an array with the default iterator - use a simple case
             if (iteratorMethod != undefined && !(C == Array && isArrayIteratorMethod(iteratorMethod))) {
               iterator = iteratorMethod.call(O)
               next = iterator.next
               result = new C()
+
               for (; !(step = next.call(iterator)).done; index++) {
                 value = mapping ? callWithSafeIterationClosing(iterator, mapfn, [step.value, index], true) : step.value
                 createProperty(result, index, value)
@@ -4178,12 +4271,15 @@
             } else {
               length = toLength(O.length)
               result = new C(length)
+
               for (; length > index; index++) {
                 value = mapping ? mapfn(O[index], index) : O[index]
                 createProperty(result, index, value)
               }
             }
+
             result.length = index
+
             return result
           }
         },
@@ -4210,12 +4306,13 @@
               var length = toLength(O.length)
               var index = toAbsoluteIndex(fromIndex, length)
               var value
+
               // Array#includes uses SameValueZero equality algorithm
-              // eslint-disable-next-line no-self-compare -- NaN check
+               
               if (IS_INCLUDES && el != el)
                 while (length > index) {
                   value = O[index++]
-                  // eslint-disable-next-line no-self-compare -- NaN check
+                   
                   if (value != value) return true
                   // Array#indexOf ignores holes, Array#includes - not
                 }
@@ -4223,6 +4320,7 @@
                 for (; length > index; index++) {
                   if ((IS_INCLUDES || index in O) && O[index] === el) return IS_INCLUDES || index || 0
                 }
+
               return !IS_INCLUDES && -1
             }
           }
@@ -4257,6 +4355,7 @@
             var IS_FIND_INDEX = TYPE == 6
             var IS_FILTER_REJECT = TYPE == 7
             var NO_HOLES = TYPE == 5 || IS_FIND_INDEX
+
             return function ($this, callbackfn, that, specificCreate) {
               var O = toObject($this)
               var self = IndexedObject(O)
@@ -4266,10 +4365,12 @@
               var create = specificCreate || arraySpeciesCreate
               var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_REJECT ? create($this, 0) : undefined
               var value, result
+
               for (; length > index; index++)
                 if (NO_HOLES || index in self) {
                   value = self[index]
                   result = boundFunction(value, index, O)
+
                   if (TYPE) {
                     if (IS_MAP)
                       target[index] = result // map
@@ -4293,6 +4394,7 @@
                       }
                   }
                 }
+
               return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : target
             }
           }
@@ -4349,9 +4451,11 @@
               !fails(function () {
                 var array = []
                 var constructor = (array.constructor = {})
+
                 constructor[SPECIES] = function () {
                   return { foo: 1 }
                 }
+
                 return array[METHOD_NAME](Boolean).foo !== 1
               })
             )
@@ -4362,14 +4466,16 @@
       70: [
         function (require, module, exports) {
           'use strict'
+
           var fails = require('../internals/fails')
 
           module.exports = function (METHOD_NAME, argument) {
             var method = [][METHOD_NAME]
+
             return (
               !!method &&
               fails(function () {
-                // eslint-disable-next-line no-useless-call,no-throw-literal -- required for testing
+                 
                 method.call(
                   null,
                   argument ||
@@ -4400,6 +4506,7 @@
               var length = toLength(O.length)
               var index = IS_RIGHT ? length - 1 : 0
               var i = IS_RIGHT ? -1 : 1
+
               if (argumentsLength < 2)
                 while (true) {
                   if (index in self) {
@@ -4407,15 +4514,19 @@
                     index += i
                     break
                   }
+
                   index += i
+
                   if (IS_RIGHT ? index < 0 : length <= index) {
                     throw TypeError('Reduce of empty array with no initial value')
                   }
                 }
+
               for (; IS_RIGHT ? index >= 0 : length > index; index += i)
                 if (index in self) {
                   memo = callbackfn(memo, self[index], index, O)
                 }
+
               return memo
             }
           }
@@ -4444,6 +4555,7 @@
           var mergeSort = function (array, comparefn) {
             var length = array.length
             var middle = floor(length / 2)
+
             return length < 8
               ? insertionSort(array, comparefn)
               : merge(
@@ -4461,11 +4573,14 @@
             while (i < length) {
               j = i
               element = array[i]
+
               while (j && comparefn(array[j - 1], element) > 0) {
                 array[j] = array[--j]
               }
+
               if (j !== i++) array[j] = element
             }
+
             return array
           }
 
@@ -4483,6 +4598,7 @@
                 result.push(lindex < llength ? left[lindex++] : right[rindex++])
               }
             }
+
             return result
           }
 
@@ -4502,8 +4618,10 @@
           // https://tc39.es/ecma262/#sec-arrayspeciescreate
           module.exports = function (originalArray) {
             var C
+
             if (isArray(originalArray)) {
               C = originalArray.constructor
+
               // cross-realm fallback
               if (typeof C == 'function' && (C === Array || isArray(C.prototype))) C = undefined
               else if (isObject(C)) {
@@ -4511,6 +4629,7 @@
                 if (C === null) C = undefined
               }
             }
+
             return C === undefined ? Array : C
           }
         },
@@ -4562,10 +4681,12 @@
                 SAFE_CLOSING = true
               },
             }
+
             iteratorWithReturn[ITERATOR] = function () {
               return this
             }
-            // eslint-disable-next-line es/no-array-from, no-throw-literal -- required for testing
+
+            // eslint-disable-next-line es/no-array-from -- required for testing
             Array.from(iteratorWithReturn, function () {
               throw 2
             })
@@ -4576,8 +4697,10 @@
           module.exports = function (exec, SKIP_CLOSING) {
             if (!SKIP_CLOSING && !SAFE_CLOSING) return false
             var ITERATION_SUPPORT = false
+
             try {
               var object = {}
+
               object[ITERATOR] = function () {
                 return {
                   next: function () {
@@ -4585,10 +4708,12 @@
                   },
                 }
               }
+
               exec(object)
             } catch (error) {
               /* empty */
             }
+
             return ITERATION_SUPPORT
           }
         },
@@ -4633,6 +4758,7 @@
             ? classofRaw
             : function (it) {
                 var O, tag, result
+
                 return it === undefined
                   ? 'Undefined'
                   : it === null
@@ -4663,7 +4789,9 @@
             function F() {
               /* empty */
             }
+
             F.prototype.constructor = null
+
             // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
             return Object.getPrototypeOf(new F()) !== F.prototype
           })
@@ -4673,6 +4801,7 @@
       80: [
         function (require, module, exports) {
           'use strict'
+
           var IteratorPrototype = require('../internals/iterators-core').IteratorPrototype
           var create = require('../internals/object-create')
           var createPropertyDescriptor = require('../internals/create-property-descriptor')
@@ -4685,9 +4814,11 @@
 
           module.exports = function (IteratorConstructor, NAME, next) {
             var TO_STRING_TAG = NAME + ' Iterator'
+
             IteratorConstructor.prototype = create(IteratorPrototype, { next: createPropertyDescriptor(1, next) })
             setToStringTag(IteratorConstructor, TO_STRING_TAG, false, true)
             Iterators[TO_STRING_TAG] = returnThis
+
             return IteratorConstructor
           }
         },
@@ -4711,6 +4842,7 @@
               }
             : function (object, key, value) {
                 object[key] = value
+
                 return object
               }
         },
@@ -4736,12 +4868,14 @@
       83: [
         function (require, module, exports) {
           'use strict'
+
           var toPropertyKey = require('../internals/to-property-key')
           var definePropertyModule = require('../internals/object-define-property')
           var createPropertyDescriptor = require('../internals/create-property-descriptor')
 
           module.exports = function (object, key, value) {
             var propertyKey = toPropertyKey(key)
+
             if (propertyKey in object) definePropertyModule.f(object, propertyKey, createPropertyDescriptor(0, value))
             else object[propertyKey] = value
           }
@@ -4755,6 +4889,7 @@
       84: [
         function (require, module, exports) {
           'use strict'
+
           var $ = require('../internals/export')
           var createIteratorConstructor = require('../internals/create-iterator-constructor')
           var getPrototypeOf = require('../internals/object-get-prototype-of')
@@ -4784,6 +4919,7 @@
             var getIterationMethod = function (KIND) {
               if (KIND === DEFAULT && defaultIterator) return defaultIterator
               if (!BUGGY_SAFARI_ITERATORS && KIND in IterablePrototype) return IterablePrototype[KIND]
+
               switch (KIND) {
                 case KEYS:
                   return function keys() {
@@ -4798,6 +4934,7 @@
                     return new IteratorConstructor(this, KIND)
                   }
               }
+
               return function () {
                 return new IteratorConstructor(this)
               }
@@ -4815,6 +4952,7 @@
             // fix native
             if (anyNativeIterator) {
               CurrentIteratorPrototype = getPrototypeOf(anyNativeIterator.call(new Iterable()))
+
               if (IteratorPrototype !== Object.prototype && CurrentIteratorPrototype.next) {
                 if (!IS_PURE && getPrototypeOf(CurrentIteratorPrototype) !== IteratorPrototype) {
                   if (setPrototypeOf) {
@@ -4823,6 +4961,7 @@
                     createNonEnumerableProperty(CurrentIteratorPrototype, ITERATOR, returnThis)
                   }
                 }
+
                 // Set @@toStringTag to native iterators
                 setToStringTag(CurrentIteratorPrototype, TO_STRING_TAG, true, true)
                 if (IS_PURE) Iterators[TO_STRING_TAG] = returnThis
@@ -4832,6 +4971,7 @@
             // fix Array.prototype.{ values, @@iterator }.name in V8 / FF
             if (DEFAULT == VALUES && nativeIterator && nativeIterator.name !== VALUES) {
               INCORRECT_VALUES_NAME = true
+
               defaultIterator = function values() {
                 return nativeIterator.call(this)
               }
@@ -4841,6 +4981,7 @@
             if ((!IS_PURE || FORCED) && IterablePrototype[ITERATOR] !== defaultIterator) {
               createNonEnumerableProperty(IterablePrototype, ITERATOR, defaultIterator)
             }
+
             Iterators[NAME] = defaultIterator
 
             // export additional methods
@@ -4885,6 +5026,7 @@
 
           module.exports = function (NAME) {
             var Symbol = path.Symbol || (path.Symbol = {})
+
             if (!has(Symbol, NAME))
               defineProperty(Symbol, NAME, {
                 value: wrappedWellKnownSymbolModule.f(NAME),
@@ -5022,6 +5164,7 @@
             version = match[0] < 4 ? 1 : match[0] + match[1]
           } else if (userAgent) {
             match = userAgent.match(/Edge\/(\d+)/)
+
             if (!match || match[1] >= 74) {
               match = userAgent.match(/Chrome\/(\d+)/)
               if (match) version = match[1]
@@ -5070,6 +5213,7 @@
       97: [
         function (require, module, exports) {
           'use strict'
+
           var global = require('../internals/global')
           var getOwnPropertyDescriptor = require('../internals/object-get-own-property-descriptor').f
           var isForced = require('../internals/is-forced')
@@ -5089,11 +5233,15 @@
                   case 2:
                     return new NativeConstructor(a, b)
                 }
+
                 return new NativeConstructor(a, b, c)
               }
+
               return NativeConstructor.apply(this, arguments)
             }
+
             Wrapper.prototype = NativeConstructor.prototype
+
             return Wrapper
           }
 
@@ -5162,11 +5310,14 @@
 
               if (PROTO) {
                 VIRTUAL_PROTOTYPE = TARGET + 'Prototype'
+
                 if (!has(path, VIRTUAL_PROTOTYPE)) {
                   createNonEnumerableProperty(path, VIRTUAL_PROTOTYPE, {})
                 }
+
                 // export virtual prototype methods
                 path[VIRTUAL_PROTOTYPE][key] = sourceProperty
+
                 // export real prototype methods
                 if (options.real && targetPrototype && !targetPrototype[key]) {
                   createNonEnumerableProperty(targetPrototype, key, sourceProperty)
@@ -5205,6 +5356,7 @@
           module.exports = function (fn, that, length) {
             aFunction(fn)
             if (that === undefined) return fn
+
             switch (length) {
               case 0:
                 return function () {
@@ -5223,6 +5375,7 @@
                   return fn.call(that, a, b, c)
                 }
             }
+
             return function (/* ...args */) {
               return fn.apply(that, arguments)
             }
@@ -5274,10 +5427,10 @@
                 // eslint-disable-next-line es/no-global-this -- safe
                 check(typeof globalThis == 'object' && globalThis) ||
                 check(typeof window == 'object' && window) ||
-                // eslint-disable-next-line no-restricted-globals -- safe
+                 
                 check(typeof self == 'object' && self) ||
                 check(typeof global == 'object' && global) ||
-                // eslint-disable-next-line no-new-func -- fallback
+                 
                 (function () {
                   return this
                 })() ||
@@ -5405,9 +5558,11 @@
           var getterFor = function (TYPE) {
             return function (it) {
               var state
+
               if (!isObject(it) || (state = get(it)).type !== TYPE) {
                 throw TypeError('Incompatible receiver, ' + TYPE + ' required')
               }
+
               return state
             }
           }
@@ -5417,30 +5572,39 @@
             var wmget = store.get
             var wmhas = store.has
             var wmset = store.set
+
             set = function (it, metadata) {
               if (wmhas.call(store, it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED)
               metadata.facade = it
               wmset.call(store, it, metadata)
+
               return metadata
             }
+
             get = function (it) {
               return wmget.call(store, it) || {}
             }
+
             has = function (it) {
               return wmhas.call(store, it)
             }
           } else {
             var STATE = sharedKey('state')
+
             hiddenKeys[STATE] = true
+
             set = function (it, metadata) {
               if (objectHas(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED)
               metadata.facade = it
               createNonEnumerableProperty(it, STATE, metadata)
+
               return metadata
             }
+
             get = function (it) {
               return objectHas(it, STATE) ? it[STATE] : {}
             }
+
             has = function (it) {
               return objectHas(it, STATE)
             }
@@ -5503,6 +5667,7 @@
 
           var isForced = function (feature, detection) {
             var value = data[normalize(feature)]
+
             return value == POLYFILL
               ? true
               : value == NATIVE
@@ -5549,6 +5714,7 @@
               }
             : function (it) {
                 var $Symbol = getBuiltIn('Symbol')
+
                 return typeof $Symbol == 'function' && Object(it) instanceof $Symbol
               }
         },
@@ -5560,6 +5726,7 @@
 
           module.exports = function (iterator) {
             var returnMethod = iterator['return']
+
             if (returnMethod !== undefined) {
               return anObject(returnMethod.call(iterator)).value
             }
@@ -5570,6 +5737,7 @@
       117: [
         function (require, module, exports) {
           'use strict'
+
           var fails = require('../internals/fails')
           var getPrototypeOf = require('../internals/object-get-prototype-of')
           var createNonEnumerableProperty = require('../internals/create-non-enumerable-property')
@@ -5591,6 +5759,7 @@
           /* eslint-disable es/no-array-prototype-keys -- safe */
           if ([].keys) {
             arrayIterator = [].keys()
+
             // Safari 8 has buggy iterators w/o `next`
             if (!('next' in arrayIterator)) BUGGY_SAFARI_ITERATORS = true
             else {
@@ -5604,6 +5773,7 @@
             IteratorPrototype == undefined ||
             fails(function () {
               var test = {}
+
               // FF44- legacy iterators case
               return IteratorPrototype[ITERATOR].call(test) !== test
             })
@@ -5647,6 +5817,7 @@
             !!Object.getOwnPropertySymbols &&
             !fails(function () {
               var symbol = Symbol()
+
               // Chrome 38 Symbol has incorrect toString conversion
               // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
               return (
@@ -5686,6 +5857,7 @@
           module.exports = FORCED
             ? function parseInt(string, radix) {
                 var S = trim(toString(string))
+
                 return $parseInt(S, radix >>> 0 || (hex.test(S) ? 16 : 10))
               }
             : $parseInt
@@ -5727,7 +5899,9 @@
             activeXDocument.write(scriptTag(''))
             activeXDocument.close()
             var temp = activeXDocument.parentWindow.Object
+
             activeXDocument = null // avoid memory leak
+
             return temp
           }
 
@@ -5737,6 +5911,7 @@
             var iframe = documentCreateElement('iframe')
             var JS = 'java' + SCRIPT + ':'
             var iframeDocument
+
             if (iframe.style) {
               iframe.style.display = 'none'
               html.appendChild(iframe)
@@ -5746,6 +5921,7 @@
               iframeDocument.open()
               iframeDocument.write(scriptTag('document.F=Object'))
               iframeDocument.close()
+
               return iframeDocument.F
             }
           }
@@ -5756,18 +5932,22 @@
           // variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
           // avoid IE GC bug
           var activeXDocument
+
           var NullProtoObject = function () {
             try {
               activeXDocument = new ActiveXObject('htmlfile')
             } catch (error) {
               /* ignore */
             }
+
             NullProtoObject =
               document.domain && activeXDocument
                 ? NullProtoObjectViaActiveX(activeXDocument) // old IE
                 : NullProtoObjectViaIFrame() || NullProtoObjectViaActiveX(activeXDocument) // WSH
             var length = enumBugKeys.length
+
             while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]]
+
             return NullProtoObject()
           }
 
@@ -5779,6 +5959,7 @@
             Object.create ||
             function create(O, Properties) {
               var result
+
               if (O !== null) {
                 EmptyConstructor[PROTOTYPE] = anObject(O)
                 result = new EmptyConstructor()
@@ -5786,6 +5967,7 @@
                 // add "__proto__" for Object.getPrototypeOf polyfill
                 result[IE_PROTO] = O
               } else result = NullProtoObject()
+
               return Properties === undefined ? result : defineProperties(result, Properties)
             }
         },
@@ -5817,7 +5999,9 @@
                 var length = keys.length
                 var index = 0
                 var key
+
                 while (length > index) definePropertyModule.f(O, (key = keys[index++]), Properties[key])
+
                 return O
               }
         },
@@ -5846,14 +6030,17 @@
                 anObject(O)
                 P = toPropertyKey(P)
                 anObject(Attributes)
+
                 if (IE8_DOM_DEFINE)
                   try {
                     return $defineProperty(O, P, Attributes)
                   } catch (error) {
                     /* empty */
                   }
+
                 if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported')
                 if ('value' in Attributes) O[P] = Attributes.value
+
                 return O
               }
         },
@@ -5884,12 +6071,14 @@
             : function getOwnPropertyDescriptor(O, P) {
                 O = toIndexedObject(O)
                 P = toPropertyKey(P)
+
                 if (IE8_DOM_DEFINE)
                   try {
                     return $getOwnPropertyDescriptor(O, P)
                   } catch (error) {
                     /* empty */
                   }
+
                 if (has(O, P)) return createPropertyDescriptor(!propertyIsEnumerableModule.f.call(O, P), O[P])
               }
         },
@@ -5974,9 +6163,11 @@
             : function (O) {
                 O = toObject(O)
                 if (has(O, IE_PROTO)) return O[IE_PROTO]
+
                 if (typeof O.constructor == 'function' && O instanceof O.constructor) {
                   return O.constructor.prototype
                 }
+
                 return O instanceof Object ? ObjectPrototype : null
               }
         },
@@ -5999,12 +6190,15 @@
             var i = 0
             var result = []
             var key
+
             for (key in O) !has(hiddenKeys, key) && has(O, key) && result.push(key)
+
             // Don't enum bug & hidden keys
             while (names.length > i)
               if (has(O, (key = names[i++]))) {
                 ~indexOf(result, key) || result.push(key)
               }
+
             return result
           }
         },
@@ -6034,6 +6228,7 @@
       132: [
         function (require, module, exports) {
           'use strict'
+
           var $propertyIsEnumerable = {}.propertyIsEnumerable
           // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
           var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor
@@ -6046,6 +6241,7 @@
           exports.f = NASHORN_BUG
             ? function propertyIsEnumerable(V) {
                 var descriptor = getOwnPropertyDescriptor(this, V)
+
                 return !!descriptor && descriptor.enumerable
               }
             : $propertyIsEnumerable
@@ -6054,7 +6250,7 @@
       ],
       133: [
         function (require, module, exports) {
-          /* eslint-disable no-proto -- safe */
+           
           var anObject = require('../internals/an-object')
           var aPossiblePrototype = require('../internals/a-possible-prototype')
 
@@ -6069,6 +6265,7 @@
                   var CORRECT_SETTER = false
                   var test = {}
                   var setter
+
                   try {
                     // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
                     setter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set
@@ -6077,11 +6274,13 @@
                   } catch (error) {
                     /* empty */
                   }
+
                   return function setPrototypeOf(O, proto) {
                     anObject(O)
                     aPossiblePrototype(proto)
                     if (CORRECT_SETTER) setter.call(O, proto)
                     else O.__proto__ = proto
+
                     return O
                   }
                 })()
@@ -6092,6 +6291,7 @@
       134: [
         function (require, module, exports) {
           'use strict'
+
           var TO_STRING_TAG_SUPPORT = require('../internals/to-string-tag-support')
           var classof = require('../internals/classof')
 
@@ -6113,6 +6313,7 @@
           // https://tc39.es/ecma262/#sec-ordinarytoprimitive
           module.exports = function (input, pref) {
             var fn, val
+
             if (pref === 'string' && typeof (fn = input.toString) == 'function' && !isObject((val = fn.call(input))))
               return val
             if (typeof (fn = input.valueOf) == 'function' && !isObject((val = fn.call(input)))) return val
@@ -6143,6 +6344,7 @@
       138: [
         function (require, module, exports) {
           'use strict'
+
           var anObject = require('../internals/an-object')
 
           // `RegExp.prototype.flags` getter implementation
@@ -6150,12 +6352,14 @@
           module.exports = function () {
             var that = anObject(this)
             var result = ''
+
             if (that.global) result += 'g'
             if (that.ignoreCase) result += 'i'
             if (that.multiline) result += 'm'
             if (that.dotAll) result += 's'
             if (that.unicode) result += 'u'
             if (that.sticky) result += 'y'
+
             return result
           }
         },
@@ -6167,6 +6371,7 @@
           // https://tc39.es/ecma262/#sec-requireobjectcoercible
           module.exports = function (it) {
             if (it == undefined) throw TypeError("Can't call method on " + it)
+
             return it
           }
         },
@@ -6183,6 +6388,7 @@
             } catch (error) {
               global[key] = value
             }
+
             return value
           }
         },
@@ -6202,9 +6408,11 @@
           module.exports = function (it, TAG, STATIC, SET_METHOD) {
             if (it) {
               var target = STATIC ? it : it.prototype
+
               if (!has(target, TO_STRING_TAG)) {
                 defineProperty(target, TO_STRING_TAG, { configurable: true, value: TAG })
               }
+
               if (SET_METHOD && !TO_STRING_TAG_SUPPORT) {
                 createNonEnumerableProperty(target, 'toString', toString)
               }
@@ -6273,8 +6481,10 @@
               var position = toInteger(pos)
               var size = S.length
               var first, second
+
               if (position < 0 || position >= size) return CONVERT_TO_STRING ? '' : undefined
               first = S.charCodeAt(position)
+
               return first < 0xd800 ||
                 first > 0xdbff ||
                 position + 1 === size ||
@@ -6314,8 +6524,10 @@
           var createMethod = function (TYPE) {
             return function ($this) {
               var string = toString(requireObjectCoercible($this))
+
               if (TYPE & 1) string = string.replace(ltrim, '')
               if (TYPE & 2) string = string.replace(rtrim, '')
+
               return string
             }
           }
@@ -6350,6 +6562,7 @@
           // If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
           module.exports = function (index, length) {
             var integer = toInteger(index)
+
             return integer < 0 ? max(integer + length, 0) : min(integer, length)
           }
         },
@@ -6421,13 +6634,16 @@
             if (!isObject(input) || isSymbol(input)) return input
             var exoticToPrim = input[TO_PRIMITIVE]
             var result
+
             if (exoticToPrim !== undefined) {
               if (pref === undefined) pref = 'default'
               result = exoticToPrim.call(input, pref)
               if (!isObject(result) || isSymbol(result)) return result
               throw TypeError("Can't convert object to primitive value")
             }
+
             if (pref === undefined) pref = 'number'
+
             return ordinaryToPrimitive(input, pref)
           }
         },
@@ -6447,6 +6663,7 @@
           // https://tc39.es/ecma262/#sec-topropertykey
           module.exports = function (argument) {
             var key = toPrimitive(argument, 'string')
+
             return isSymbol(key) ? key : String(key)
           }
         },
@@ -6471,6 +6688,7 @@
 
           module.exports = function (argument) {
             if (isSymbol(argument)) throw TypeError('Cannot convert a Symbol value to a string')
+
             return String(argument)
           }
         },
@@ -6528,6 +6746,7 @@
                 WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name)
               }
             }
+
             return WellKnownSymbolsStore[name]
           }
         },
@@ -6552,6 +6771,7 @@
       161: [
         function (require, module, exports) {
           'use strict'
+
           var $ = require('../internals/export')
           var fails = require('../internals/fails')
           var isArray = require('../internals/is-array')
@@ -6575,7 +6795,9 @@
             V8_VERSION >= 51 ||
             !fails(function () {
               var array = []
+
               array[IS_CONCAT_SPREADABLE] = false
+
               return array.concat()[0] !== array
             })
 
@@ -6584,6 +6806,7 @@
           var isConcatSpreadable = function (O) {
             if (!isObject(O)) return false
             var spreadable = O[IS_CONCAT_SPREADABLE]
+
             return spreadable !== undefined ? !!spreadable : isArray(O)
           }
 
@@ -6595,14 +6818,16 @@
           $(
             { target: 'Array', proto: true, forced: FORCED },
             {
-              // eslint-disable-next-line no-unused-vars -- required for `.length`
+               
               concat: function concat(arg) {
                 var O = toObject(this)
                 var A = arraySpeciesCreate(O, 0)
                 var n = 0
                 var i, k, length, len, E
+
                 for (i = -1, length = arguments.length; i < length; i++) {
                   E = i === -1 ? O : arguments[i]
+
                   if (isConcatSpreadable(E)) {
                     len = toLength(E.length)
                     if (n + len > MAX_SAFE_INTEGER) throw TypeError(MAXIMUM_ALLOWED_INDEX_EXCEEDED)
@@ -6612,7 +6837,9 @@
                     createProperty(A, n++, E)
                   }
                 }
+
                 A.length = n
+
                 return A
               },
             }
@@ -6635,6 +6862,7 @@
       162: [
         function (require, module, exports) {
           'use strict'
+
           var $ = require('../internals/export')
           var forEach = require('../internals/array-for-each')
 
@@ -6675,6 +6903,7 @@
       164: [
         function (require, module, exports) {
           'use strict'
+
           /* eslint-disable es/no-array-prototype-indexof -- required for testing */
           var $ = require('../internals/export')
           var $indexOf = require('../internals/array-includes').indexOf
@@ -6720,6 +6949,7 @@
       166: [
         function (require, module, exports) {
           'use strict'
+
           var toIndexedObject = require('../internals/to-indexed-object')
           var addToUnscopables = require('../internals/add-to-unscopables')
           var Iterators = require('../internals/iterators')
@@ -6758,12 +6988,16 @@
               var target = state.target
               var kind = state.kind
               var index = state.index++
+
               if (!target || index >= target.length) {
                 state.target = undefined
+
                 return { value: undefined, done: true }
               }
+
               if (kind == 'keys') return { value: index, done: false }
               if (kind == 'values') return { value: target[index], done: false }
+
               return { value: [index, target[index]], done: false }
             },
             'values'
@@ -6790,6 +7024,7 @@
       167: [
         function (require, module, exports) {
           'use strict'
+
           var $ = require('../internals/export')
           var $map = require('../internals/array-iteration').map
           var arrayMethodHasSpeciesSupport = require('../internals/array-method-has-species-support')
@@ -6817,6 +7052,7 @@
       168: [
         function (require, module, exports) {
           'use strict'
+
           var $ = require('../internals/export')
           var $reduce = require('../internals/array-reduce').left
           var arrayMethodIsStrict = require('../internals/array-method-is-strict')
@@ -6850,6 +7086,7 @@
       169: [
         function (require, module, exports) {
           'use strict'
+
           var $ = require('../internals/export')
           var isObject = require('../internals/is-object')
           var isArray = require('../internals/is-array')
@@ -6879,8 +7116,10 @@
                 var fin = toAbsoluteIndex(end === undefined ? length : end, length)
                 // inline `ArraySpeciesCreate` for usage native `Array#slice` where it's possible
                 var Constructor, result, n
+
                 if (isArray(O)) {
                   Constructor = O.constructor
+
                   // cross-realm fallback
                   if (typeof Constructor == 'function' && (Constructor === Array || isArray(Constructor.prototype))) {
                     Constructor = undefined
@@ -6888,13 +7127,16 @@
                     Constructor = Constructor[SPECIES]
                     if (Constructor === null) Constructor = undefined
                   }
+
                   if (Constructor === Array || Constructor === undefined) {
                     return nativeSlice.call(O, k, fin)
                   }
                 }
+
                 result = new (Constructor === undefined ? Array : Constructor)(max(fin - k, 0))
                 for (n = 0; k < fin; k++, n++) if (k in O) createProperty(result, n, O[k])
                 result.length = n
+
                 return result
               },
             }
@@ -6915,6 +7157,7 @@
       170: [
         function (require, module, exports) {
           'use strict'
+
           var $ = require('../internals/export')
           var aFunction = require('../internals/a-function')
           var toObject = require('../internals/to-object')
@@ -6995,6 +7238,7 @@
               if (y === undefined) return -1
               if (x === undefined) return 1
               if (comparefn !== undefined) return +comparefn(x, y) || 0
+
               return toString(x) > toString(y) ? 1 : -1
             }
           }
@@ -7135,6 +7379,7 @@
       179: [
         function (require, module, exports) {
           'use strict'
+
           var charAt = require('../internals/string-multibyte').charAt
           var toString = require('../internals/to-string')
           var InternalStateModule = require('../internals/internal-state')
@@ -7163,9 +7408,11 @@
               var string = state.string
               var index = state.index
               var point
+
               if (index >= string.length) return { value: undefined, done: true }
               point = charAt(string, index)
               state.index += point.length
+
               return { value: point, done: false }
             }
           )
@@ -7226,6 +7473,7 @@
       185: [
         function (require, module, exports) {
           'use strict'
+
           var $ = require('../internals/export')
           var global = require('../internals/global')
           var getBuiltIn = require('../internals/get-built-in')
@@ -7302,8 +7550,10 @@
             })
               ? function (O, P, Attributes) {
                   var ObjectPrototypeDescriptor = nativeGetOwnPropertyDescriptor(ObjectPrototype, P)
+
                   if (ObjectPrototypeDescriptor) delete ObjectPrototype[P]
                   nativeDefineProperty(O, P, Attributes)
+
                   if (ObjectPrototypeDescriptor && O !== ObjectPrototype) {
                     nativeDefineProperty(ObjectPrototype, P, ObjectPrototypeDescriptor)
                   }
@@ -7312,12 +7562,14 @@
 
           var wrap = function (tag, description) {
             var symbol = (AllSymbols[tag] = nativeObjectCreate($Symbol[PROTOTYPE]))
+
             setInternalState(symbol, {
               type: SYMBOL,
               tag: tag,
               description: description,
             })
             if (!DESCRIPTORS) symbol.description = description
+
             return symbol
           }
 
@@ -7325,7 +7577,9 @@
             if (O === ObjectPrototype) $defineProperty(ObjectPrototypeSymbols, P, Attributes)
             anObject(O)
             var key = toPropertyKey(P)
+
             anObject(Attributes)
+
             if (has(AllSymbols, key)) {
               if (!Attributes.enumerable) {
                 if (!has(O, HIDDEN)) nativeDefineProperty(O, HIDDEN, createPropertyDescriptor(1, {}))
@@ -7334,8 +7588,10 @@
                 if (has(O, HIDDEN) && O[HIDDEN][key]) O[HIDDEN][key] = false
                 Attributes = nativeObjectCreate(Attributes, { enumerable: createPropertyDescriptor(0, false) })
               }
+
               return setSymbolDescriptor(O, key, Attributes)
             }
+
             return nativeDefineProperty(O, key, Attributes)
           }
 
@@ -7343,9 +7599,11 @@
             anObject(O)
             var properties = toIndexedObject(Properties)
             var keys = objectKeys(properties).concat($getOwnPropertySymbols(properties))
+
             $forEach(keys, function (key) {
               if (!DESCRIPTORS || $propertyIsEnumerable.call(properties, key)) $defineProperty(O, key, properties[key])
             })
+
             return O
           }
 
@@ -7358,7 +7616,9 @@
           var $propertyIsEnumerable = function propertyIsEnumerable(V) {
             var P = toPropertyKey(V)
             var enumerable = nativePropertyIsEnumerable.call(this, P)
+
             if (this === ObjectPrototype && has(AllSymbols, P) && !has(ObjectPrototypeSymbols, P)) return false
+
             return enumerable || !has(this, P) || !has(AllSymbols, P) || (has(this, HIDDEN) && this[HIDDEN][P])
               ? enumerable
               : true
@@ -7367,20 +7627,25 @@
           var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(O, P) {
             var it = toIndexedObject(O)
             var key = toPropertyKey(P)
+
             if (it === ObjectPrototype && has(AllSymbols, key) && !has(ObjectPrototypeSymbols, key)) return
             var descriptor = nativeGetOwnPropertyDescriptor(it, key)
+
             if (descriptor && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key])) {
               descriptor.enumerable = true
             }
+
             return descriptor
           }
 
           var $getOwnPropertyNames = function getOwnPropertyNames(O) {
             var names = nativeGetOwnPropertyNames(toIndexedObject(O))
             var result = []
+
             $forEach(names, function (key) {
               if (!has(AllSymbols, key) && !has(hiddenKeys, key)) result.push(key)
             })
+
             return result
           }
 
@@ -7388,11 +7653,13 @@
             var IS_OBJECT_PROTOTYPE = O === ObjectPrototype
             var names = nativeGetOwnPropertyNames(IS_OBJECT_PROTOTYPE ? ObjectPrototypeSymbols : toIndexedObject(O))
             var result = []
+
             $forEach(names, function (key) {
               if (has(AllSymbols, key) && (!IS_OBJECT_PROTOTYPE || has(ObjectPrototype, key))) {
                 result.push(AllSymbols[key])
               }
             })
+
             return result
           }
 
@@ -7403,13 +7670,16 @@
               if (this instanceof $Symbol) throw TypeError('Symbol is not a constructor')
               var description = !arguments.length || arguments[0] === undefined ? undefined : $toString(arguments[0])
               var tag = uid(description)
+
               var setter = function (value) {
                 if (this === ObjectPrototype) setter.call(ObjectPrototypeSymbols, value)
                 if (has(this, HIDDEN) && has(this[HIDDEN], tag)) this[HIDDEN][tag] = false
                 setSymbolDescriptor(this, tag, createPropertyDescriptor(1, value))
               }
+
               if (DESCRIPTORS && USE_SETTER)
                 setSymbolDescriptor(ObjectPrototype, tag, { configurable: true, set: setter })
+
               return wrap(tag, description)
             }
 
@@ -7439,6 +7709,7 @@
                   return getInternalState(this).description
                 },
               })
+
               if (!IS_PURE) {
                 redefine(ObjectPrototype, 'propertyIsEnumerable', $propertyIsEnumerable, { unsafe: true })
               }
@@ -7463,10 +7734,13 @@
               // https://tc39.es/ecma262/#sec-symbol.for
               for: function (key) {
                 var string = $toString(key)
+
                 if (has(StringToSymbolRegistry, string)) return StringToSymbolRegistry[string]
                 var symbol = $Symbol(string)
+
                 StringToSymbolRegistry[string] = symbol
                 SymbolToStringRegistry[symbol] = string
+
                 return symbol
               },
               // `Symbol.keyFor` method
@@ -7538,6 +7812,7 @@
               !NATIVE_SYMBOL ||
               fails(function () {
                 var symbol = $Symbol()
+
                 // MS Edge converts symbol values to JSON as {}
                 return (
                   $stringify([symbol]) != '[null]' ||
@@ -7551,20 +7826,24 @@
             $(
               { target: 'JSON', stat: true, forced: FORCED_JSON_STRINGIFY },
               {
-                // eslint-disable-next-line no-unused-vars -- required for `.length`
+                 
                 stringify: function stringify(it, replacer, space) {
                   var args = [it]
                   var index = 1
                   var $replacer
+
                   while (arguments.length > index) args.push(arguments[index++])
                   $replacer = replacer
                   if ((!isObject(replacer) && it === undefined) || isSymbol(it)) return // IE8 returns string on undefined
+
                   if (!isArray(replacer))
                     replacer = function (key, value) {
                       if (typeof $replacer == 'function') value = $replacer.call(this, key, value)
                       if (!isSymbol(value)) return value
                     }
+
                   args[1] = replacer
+
                   return $stringify.apply(null, args)
                 },
               }
@@ -7576,6 +7855,7 @@
           if (!$Symbol[PROTOTYPE][TO_PRIMITIVE]) {
             createNonEnumerableProperty($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf)
           }
+
           // `Symbol.prototype[@@toStringTag]` property
           // https://tc39.es/ecma262/#sec-symbol.prototype-@@tostringtag
           setToStringTag($Symbol, SYMBOL)
@@ -7797,9 +8077,11 @@
           for (var COLLECTION_NAME in DOMIterables) {
             var Collection = global[COLLECTION_NAME]
             var CollectionPrototype = Collection && Collection.prototype
+
             if (CollectionPrototype && classof(CollectionPrototype) !== TO_STRING_TAG) {
               createNonEnumerableProperty(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME)
             }
+
             Iterators[COLLECTION_NAME] = Iterators.Array
           }
         },
@@ -7863,6 +8145,7 @@
 
           module.exports = function (it) {
             var own = it.forEach
+
             return it === ArrayPrototype ||
               (it instanceof Array && own === ArrayPrototype.forEach) ||
               // eslint-disable-next-line no-prototype-builtins -- safe
@@ -7942,6 +8225,7 @@
       217: [
         function (require, module, exports) {
           var parent = require('../../es/symbol')
+
           require('../../modules/web.dom-collections.iterator')
 
           module.exports = parent

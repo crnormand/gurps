@@ -5,9 +5,9 @@ import {
   ActorSheetV2RenderOptions,
   DeepPartial,
   HandlebarsTemplatePart,
-} from '../../types/foundry/actor-sheet-v2.ts'
+} from '../../types/foundry/actor-sheet-v2.js'
 
-import { GurpsActorModernSheet, ModernSheetContext } from './sheet.ts'
+import { GurpsActorModernSheet, ModernSheetContext } from './sheet.js'
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
 

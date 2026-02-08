@@ -1,4 +1,4 @@
-import { isHTMLElement } from '../../utilities/guards.ts'
+import { isHTMLElement } from '../../utilities/guards.js'
 
 export function bindDropdownToggle(html: HTMLElement, config: DropdownConfig): void {
   const { dropdownSelector, toggleSelector, optionSelector, onSelect } = config

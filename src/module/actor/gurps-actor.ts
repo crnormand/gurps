@@ -1,9 +1,6 @@
-import { EquipmentV1 } from 'module/item/legacy/equipment-adapter.js'
-
-import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
-
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
+import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { COSTS_REGEX, parselink } from '@util/parselink.js'
 import {
   arrayToObject,
   generateUniqueId,
@@ -12,7 +9,9 @@ import {
   recurselist,
   splitArgs,
   zeroFill,
-} from '../../lib/utilities.js'
+} from '@util/utilities.js'
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
+
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { ModelCollection } from '../data/model-collection.js'
@@ -23,7 +22,7 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { TokenActions } from '../token-actions.js'
-import { fields } from '../types/foundry/data-fields.ts'
+import { fields } from '../types/foundry/data-fields.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { parseItemKey } from '../utilities/object-utils.js'
 

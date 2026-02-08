@@ -1,4 +1,4 @@
-import { generateUniqueId } from '../../lib/utilities.js'
+import { generateUniqueId } from '@util/utilities.js'
 
 export const commaSeparatedNumbers = /^\d*([ ,0-9.+-])*$/
 

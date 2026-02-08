@@ -27,6 +27,7 @@ export class Migration {
 
   static run() {
     const migration = new Migration()
+
     migration.runMigrations()
   }
 
@@ -45,6 +46,7 @@ export class Migration {
   async showConfirmationDialogIfAutoAddIsTrue() {
     if (this.migrationVersion.isHigherThan(this.currentVersion)) {
       const taggedModifiers = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+
       if (!taggedModifiers) {
         return
       }
@@ -64,6 +66,7 @@ export class Migration {
     for (const message of chatMessages) {
       if (!message.flags?.gurps?.transfer) {
         const transfer = message.flags.transfer
+
         await message.update({ 'flags.gurps.transfer': JSON.parse(transfer) })
       } else {
         console.log(`Already migrated: ${message.id}:`, message.flags)

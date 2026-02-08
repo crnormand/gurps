@@ -1,4 +1,4 @@
-import { atou } from '../lib/utilities.js'
+import { atou } from '@util/utilities.js'
 
 import GurpsWiring from './gurps-wiring.js'
 

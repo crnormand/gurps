@@ -22,17 +22,20 @@ function walk(obj, prefix, keys) {
 
 let keys1 = []
 let keys2 = []
+
 walk(object1, '', keys1)
 walk(object2, '', keys2)
 
 console.log('------------')
 console.log(`keys in [${args[1]}] that are missing in [${args[0]}]`)
 let missingInFile1 = keys2.filter(key => !keys1.includes(key)).sort()
+
 missingInFile1.forEach(it => console.log(`  ${it}`))
 
 console.log('------------')
 console.log(`keys in [${args[0]}] that are missing in [${args[1]}]`)
 let missingInFile2 = keys1.filter(key => !keys2.includes(key)).sort()
+
 missingInFile2.forEach(it => console.log(`  ${it}`))
 
 console.log('------------')
@@ -41,5 +44,6 @@ let sameKeys = Object.entries(object1)
   .filter(([k, _]) => keys2.includes(k))
   .filter(([k, v]) => object2[k] === v)
   .sort()
+
 sameKeys.forEach(([k, v]) => console.log(`  ${k}: ${v}`))
 console.log('------------')

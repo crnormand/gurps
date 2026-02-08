@@ -1,16 +1,16 @@
 // Import Modules
-import { ChangeLogWindow } from '../lib/change-log.js'
-import HitFatPoints from '../lib/hitpoints.js'
-import { initialize_i18nHelper, translate } from '../lib/i18n.js'
-import Initiative from '../lib/initiative.js'
-import JQueryHelpers from '../lib/jquery-helper.js'
-import { Migration } from '../lib/migration.js'
-import * as Settings from '../lib/miscellaneous-settings.js'
-import MoustacheWax, { findTracker } from '../lib/moustachewax.js'
-import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
-import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
-import { GurpsRange, setupRanges } from '../lib/ranges.js'
-import { SemanticVersion } from '../lib/semver.js'
+import { ChangeLogWindow } from '@util/change-log.js'
+import HitFatPoints from '@util/hitpoints.js'
+import { initialize_i18nHelper, translate } from '@util/i18n.js'
+import Initiative from '@util/initiative.js'
+import JQueryHelpers from '@util/jquery-helper.js'
+import { Migration } from '@util/migration.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import MoustacheWax, { findTracker } from '@util/moustachewax.js'
+import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
+import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@util/parselink.js'
+import { GurpsRange, setupRanges } from '@util/ranges.js'
+import { SemanticVersion } from '@util/semver.js'
 import {
   arrayToObject,
   atou,
@@ -25,7 +25,8 @@ import {
   utoa,
   wait,
   zeroFill,
-} from '../lib/utilities.js'
+} from '@util/utilities.js'
+
 import { GGADebugger } from '../utils/debugger.js'
 
 import { Action } from './action/index.js'

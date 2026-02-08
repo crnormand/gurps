@@ -1,7 +1,8 @@
+
+import { parselink } from '@util/parselink.js'
+import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { parselink } from '../../lib/parselink.js'
-import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 import { fields } from '../types/foundry/index.js'
 
@@ -9,6 +10,7 @@ import { BaseAction, BaseActionSchema } from './base-action.js'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
+  declare mel: MeleeAttackComponent
   static override defineSchema(): MeleeAttackSchema {
     return Object.assign(super.defineSchema(), meleeAttackSchema())
   }
@@ -195,6 +197,13 @@ type MeleeAttackComponentSchema = ItemComponentSchema & ReturnType<typeof meleeA
 /* ---------------------------------------- */
 
 class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
+  declare name: string
+  declare otf: string
+  declare import: number
+  declare parry: string
+  declare parrybonus: number
+  declare block: string
+  declare blockbonus: number
   static override defineSchema(): MeleeAttackComponentSchema {
     return {
       ...super.defineSchema(),

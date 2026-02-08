@@ -1,8 +1,7 @@
-import { MeleeAttackModel } from 'module/action/melee-attack.js'
-import { RangedAttackModel } from 'module/action/ranged-attack.js'
-import { EquipmentModel } from 'module/item/data/equipment.js'
-import { TaggedModifiersSettings } from 'module/tagged-modifiers/index.js'
-
+import { MeleeAttackModel } from '@module/action/melee-attack.js'
+import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { EquipmentModel } from '@module/item/data/equipment.js'
+import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import * as Settings from '../../../lib/miscellaneous-settings.js'

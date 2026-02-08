@@ -1,4 +1,5 @@
 import { HitLocation } from '../module/hitlocation/hitlocation.js'
+
 import { d6ify, sanitize, utoa } from './utilities.js'
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].
@@ -78,8 +79,9 @@ const _httpLink = {
     let action = {
       orig: match.input,
       type: 'href',
-      label: !!args.overridetxt ? args.overridetxt : match.input,
+      label: args.overridetxt ? args.overridetxt : match.input,
     }
+
     return {
       text: `<a href="${match.input}">${args.overridetxt || match.input}</a>`,
       action: action,
@@ -117,11 +119,12 @@ const _modifier = {
     let mod = match.groups.signednum
     let sign = mod[0]
     let desc = match.groups.modtext.trim()
+
     if (!desc) desc = args.htmldesc || '' // htmldesc is for things like ACC columns, or to hitlocations, where the mod's description is really the column name
     let spantext = mod + ' ' + desc
     let def = null
 
-    if (!!match.groups.othermods) {
+    if (match.groups.othermods) {
       def = parselink(match.groups.othermods.slice(1).trim()) // remove the leading &
       if (def.action?.type == 'modifier') spantext += ' & ' + def.action.spantext
       else def = {}
@@ -173,11 +176,12 @@ const _marginMod = {
     let spantext = desc
     let def = null
 
-    if (!!match.groups.othermods) {
+    if (match.groups.othermods) {
       def = parselink(match.groups.othermods.slice(1).trim()) // remove the leading &
       if (def.action?.type == 'modifier') spantext += ' & ' + def.action.spantext
       else def = {}
     }
+
     let action = {
       orig: match.input,
       spantext: spantext,
@@ -186,6 +190,7 @@ const _marginMod = {
       desc: desc.trim(),
       next: def?.action,
     }
+
     return {
       text: gmspan(args.overridetxt, spantext, action, sign == '+', args.clrdmods),
       action: action,
@@ -251,9 +256,11 @@ const _advLevelMod = {
       mod: mod,
       desc: desc,
     }
+
     if (!args.overridetext) {
       args.overridetext = ''
     }
+
     return {
       text: gmspan(args.overridetxt, spantext, action, sign == '+', args.clrdmods),
       action: action,
@@ -292,6 +299,7 @@ const _iftest = {
       name: match.groups.keyword,
       equation: match.groups.expression,
     }
+
     return {
       text: match.input,
       action: action,
@@ -329,6 +337,7 @@ const _foundryLink = {
       link: match.groups.link,
       id: match.groups.id,
     }
+
     return {
       text: gspan(match.groups.overridetext, match.input, action),
       action: action,
@@ -437,6 +446,7 @@ const _controlroll = {
       blindroll: args.blindroll,
       sourceId: args.sourceId,
     }
+
     return {
       text: gspan(args.overridetxt, match.input, action, blindrollText(args.blindroll)),
       action: action,
@@ -471,6 +481,7 @@ const _checkExists = {
       prefix: match.groups.type,
       name: match.groups.name,
     }
+
     return {
       text: gspan(args.overridetxt, match.input, action),
       action: action,
@@ -526,7 +537,8 @@ const _attribute = {
     // Look for "targeted" attribute rolls, like ST12.
     var target
     let targetMatch = attr.match(/^(?<attrname>[a-zA-Z ]+)(?<target>\d+)/)
-    if (!!targetMatch) {
+
+    if (targetMatch) {
       attr = targetMatch.groups.attrname
       target = targetMatch.groups.target // ST26
     }
@@ -534,6 +546,7 @@ const _attribute = {
     let attrkey = attr.toUpperCase()
 
     let path = PARSELINK_MAPPINGS[attrkey] // fright check has a space
+
     if (!path) {
       targetMatch = attr.split(' ') // but most others do not
       attr = targetMatch[0]
@@ -543,21 +556,23 @@ const _attribute = {
       match.groups.desc = targetMatch.join(' ')
     }
 
-    if (!!path) {
+    if (path) {
       let opt =
         match.groups.desc.trim().match(/(?<attr>[^\?]*)(\? *"(?<truetext>[^"]*)")?( *[,:] *"(?<falsetext>[^"]*)")?/) ||
         [] // desc (searching for true/false options)
       let desc = opt.groups.attr.trim()
       let spantext = attr
-      if (!!target) spantext += target
+
+      if (target) spantext += target
 
       let melee
-      if (!!match.groups.object) {
+
+      if (match.groups.object) {
         melee = match.groups.object.slice(1).trim()
         spantext += ':' + melee
       }
 
-      if (!!match.groups.mod) {
+      if (match.groups.mod) {
         // If there is a +-mod, then the comment is the desc of the modifier
         spantext += ' ' + match.groups.mod + ' ' + desc
       } else {
@@ -565,7 +580,8 @@ const _attribute = {
       }
 
       let def = null
-      if (!!match.groups.remainder) {
+
+      if (match.groups.remainder) {
         def = parselink(match.groups.remainder.slice(1).trim() /*, args.htmldesc, args.clrdmods */)
         if (def?.action?.type == 'skill-spell' || def?.action?.type == 'attribute')
           spantext += ' | ' + def.action.spantext
@@ -580,16 +596,17 @@ const _attribute = {
         attrkey: attrkey,
         name: attrkey,
         path: path,
-        desc: !!desc ? desc : undefined,
+        desc: desc ? desc : undefined,
         mod: match.groups.mod,
         blindroll: args.blindroll,
         next: def?.action,
         truetext: opt.groups?.truetext,
         falsetext: opt.groups?.falsetext,
         target: target,
-        melee: !!melee ? melee : undefined,
+        melee: melee ? melee : undefined,
         sourceId: args.sourceId,
       }
+
       return {
         text: gspan(args.overridetxt, spantext, action, blindrollText(args.blindroll)),
         action: action,
@@ -652,7 +669,8 @@ const _skillSpell = {
     let floatingLabel
     let floatingType
     let matches = comment.match(/(\((Based|Base|B): ?[^\)]+\))/gi)
-    if (!!matches) {
+
+    if (matches) {
       floatingLabel = comment.replace(/.*\((Based|Base|B): ?([^\)]+)\).*/gi, '$2')
 
       comment = comment
@@ -662,6 +680,7 @@ const _skillSpell = {
 
       // floatingAttribute must be an attribute
       let attribute = parselink(floatingLabel)
+
       if (attribute?.action?.type === 'attribute' || attribute?.action?.type === 'mapped') {
         floatingAttribute = attribute.action.path
         floatingType = attribute.action.type
@@ -669,9 +688,12 @@ const _skillSpell = {
         floatingLabel = undefined
       }
     }
+
     var costs
+
     matches = comment.match(/\* ?(Costs?|Per) (\d+) ?[\w\(\)]+/i)
-    if (!!matches) {
+
+    if (matches) {
       costs = matches[0]
       spantext += ' ' + costs
       comment = comment
@@ -684,38 +706,44 @@ const _skillSpell = {
 
     // TODO If the comment doesn't match the pattern, this next line will fail.
     moddesc = matches[1].trim()
-    if (!!modifierText) {
+
+    if (modifierText) {
       // If there is a +-mod, then the comment is the desc of the modifier
       spantext += ' ' + modifierText
-      if (!!moddesc) spantext += ' ' + moddesc
+      if (moddesc) spantext += ' ' + moddesc
     } else {
       // since I couldn't parse the margin with the initial regex, lets check for it in the description
       let mrg = moddesc.match(/^([+-])@margin(.*)/i)
-      if (!!mrg) {
+
+      if (mrg) {
         let sign = mrg[1]
+
         modifierText = sign + '@margin'
         moddesc = modifierText + ' ' + mrg[2].trim()
         spantext += ' ' + moddesc
       }
     }
 
-    if (!!floatingAttribute) {
+    if (floatingAttribute) {
       spantext += ` (Based:${floatingLabel})`
     }
 
     if (!modifierText && !!moddesc) spantext += ' ' + moddesc // just a regular comment
 
     let def = null
-    if (!!remainder) {
+
+    if (remainder) {
       def = parselink(remainder.slice(1).trim())
       if (def?.action?.type == 'skill-spell' || def?.action?.type == 'attribute')
         spantext += ' | ' + def.action.spantext
       else def = {}
     }
+
     let target = name.match(/(.*)=(\d+)/) // Targeted rolls 'Skill=12'
     let isSpell = !!match.groups.type.match(/^SP/i)
     let isSkill = !!match.groups.type.match(/^SK/i)
     let prefix = blindrollText(args.blindroll) + '<b>S:</b>'
+
     if (isSpell) prefix = blindrollText(args.blindroll) + '<b>Sp:</b>'
     if (isSkill) prefix = blindrollText(args.blindroll) + '<b>Sk:</b>'
     let action = {
@@ -723,8 +751,8 @@ const _skillSpell = {
       type: 'skill-spell',
       isSpellOnly: isSpell,
       isSkillOnly: isSkill,
-      name: !!target ? target[1] : name,
-      target: !!target ? target[2] : undefined,
+      name: target ? target[1] : name,
+      target: target ? target[2] : undefined,
       mod: modifierText,
       desc: moddesc,
       blindroll: args.blindroll,
@@ -782,32 +810,41 @@ const _attackDamage = {
     let moddesc = ''
     let matches = comment.match(/\* ?(Costs?|Per) (\d+) ?[\w\(\)]+/i)
     var costs
-    if (!!matches) {
+
+    if (matches) {
       costs = matches.input
       comment = comment
         .replace(/\* ?(Costs?|Per) (\d+) ?[\w\(\)]+/gi, '')
         .replace('  ', ' ')
         .trim()
     }
+
     matches = comment.match(/^\(.*\)$/) // Merge '(XXX)' into name
-    if (!!matches) {
+
+    if (matches) {
       name += ' ' + comment
       comment = ''
     }
+
     let spantext = name // What we show in the highlighted span (yellow)
-    if (!!modifier) {
+
+    if (modifier) {
       // If there is a +-mod, then the comment is the desc of the modifier
       spantext += modifier
-      if (!!comment) {
+
+      if (comment) {
         spantext += ' ' + comment
         moddesc = comment
       }
+
       comment = ''
     } else {
       // since I couldn't parse the margin with the initial regex, lets check for it in the description
       let mrg = comment.match(/^([+-])@margin(.*)/i)
-      if (!!mrg) {
+
+      if (mrg) {
         let sign = mrg[1]
+
         modifier = sign + '@margin'
         moddesc = modifier + ' ' + mrg[2].trim()
         spantext += ' ' + moddesc
@@ -815,13 +852,14 @@ const _attackDamage = {
       }
     }
 
-    if (!!costs) spantext += ' ' + costs
+    if (costs) spantext += ' ' + costs
     let isMelee = !!args.str.match(/^[AMDPB]/i)
     let isRanged = !!args.str.match(/^[ARD]/i)
     let type = 'attack'
-    if (!!args.str.match(/^D/i)) type = 'attackdamage'
-    if (!!args.str.match(/^P/i)) type = 'weapon-parry'
-    if (!!args.str.match(/^B/i)) type = 'weapon-block'
+
+    if (args.str.match(/^D/i)) type = 'attackdamage'
+    if (args.str.match(/^P/i)) type = 'weapon-parry'
+    if (args.str.match(/^B/i)) type = 'weapon-block'
     let action = {
       orig: match.input,
       type: type,
@@ -834,6 +872,7 @@ const _attackDamage = {
       isRanged: isRanged,
       sourceId: args.sourceId,
     }
+
     return {
       text: gspan(
         args.overridetxt,
@@ -882,6 +921,7 @@ function stripQuotes(name) {
   } else if (name[0] === "'" && name[name.length - 1] === "'") {
     name = name.slice(1, -1)
   }
+
   return name
 }
 
@@ -916,14 +956,17 @@ export function parselink(input /*, htmldesc, clrdmods = false*/) {
   setSourceId(args)
 
   let dam = parseForRollOrDamage(args.str, args.overridetxt)
-  if (!!dam) {
+
+  if (dam) {
     dam.action.blindroll = args.blindroll
     dam.action.sourceId = args.sourceId
+
     return dam
   }
 
   for (const f of parseFunctions) {
     let matches, result
+
     if ((matches = args.str.match(f.regex))) {
       if ((result = f.parse(matches, args))) return result
     }
@@ -933,6 +976,7 @@ export function parselink(input /*, htmldesc, clrdmods = false*/) {
 
   function setSourceId(args) {
     let m = args.str.match(/^@(?<actorid>[^@]+)@(?<text>[\s\S]*)/)
+
     if (m) {
       args.sourceId = m.groups.actorid
       args.str = m.groups.text.trim()
@@ -941,6 +985,7 @@ export function parselink(input /*, htmldesc, clrdmods = false*/) {
 
   function setBlindRoll(args) {
     args.blindroll = false
+
     if (args.str[0] === '!') {
       args.blindroll = true
       args.str = args.str.slice(1).trim()
@@ -949,11 +994,13 @@ export function parselink(input /*, htmldesc, clrdmods = false*/) {
 
   function setOverrideText(args) {
     let match = args.str.match(/^"(?<overridetext>[^"]*)"(?<text>[\s\S]*)/)
+
     if (match) {
       args.overridetxt = match.groups?.overridetext
       args.str = match.groups?.text.trim()
     } else {
       match = args.str.match(/^'(?<overridetext>[^']*)'(?<text>[\s\S]*)/)
+
       if (match) {
         args.overridetxt = match.groups?.overridetext
         args.str = match.groups?.text.trim()
@@ -973,30 +1020,36 @@ export function parseForRollOrDamage(str, overridetxt) {
   // Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
   str = str.toString() // convert possible array to single string
   let a = str.match(DAMAGE_REGEX)
-  if (!!a) {
+
+  if (a) {
     const D = a.groups.D || '' // Can now support non-variable damage '2 cut' or '2x3(1) imp'
-    const other = !!a.groups.other ? a.groups.other.trim() : ''
+    const other = a.groups.other ? a.groups.other.trim() : ''
     let [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
     let dmap = GURPS.DamageTables.translate(actualType.toLowerCase())
+
     if (!dmap) {
       dmap = GURPS.DamageTables.translate(extDamageType?.toLowerCase())
-      if (!!dmap) {
+
+      if (dmap) {
         actualType = extDamageType
         extDamageType = undefined
       }
     }
+
     const woundingModifier = GURPS.DamageTables.woundModifiers[dmap]
     const [adds, multiplier, divisor, bang] = _getFormulaComponents(a.groups)
 
     var next
+
     if (a.groups.follow) {
       next = parseForRollOrDamage(a.groups.follow.substring(1).trim()) // remove ',')
-      if (!!next) next = next.action
+      if (next) next = next.action
     }
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
       let dice = D === 'd' ? d6ify(D) : D
+
       if (!dice) return undefined // if no damage type and no dice, not a roll, ex: [70]
       let action = {
         orig: str,
@@ -1009,6 +1062,7 @@ export function parseForRollOrDamage(str, overridetxt) {
         accumulate: !!a.groups.accum,
         next: next,
       }
+
       return {
         text: gspan(overridetxt, str, action),
         action: action,
@@ -1019,13 +1073,14 @@ export function parseForRollOrDamage(str, overridetxt) {
         orig: str,
         type: 'damage',
         formula: a.groups.roll + D + adds + multiplier + divisor + bang,
-        damagetype: !!dmap ? dmap : actualType,
+        damagetype: dmap ? dmap : actualType,
         extdamagetype: extDamageType,
         costs: a.groups.costs,
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
         next: next,
       }
+
       return {
         text: gspan(overridetxt, str, action),
         action: action,
@@ -1034,9 +1089,10 @@ export function parseForRollOrDamage(str, overridetxt) {
   }
 
   a = str.match(DERIVED_DAMAGE_REGEX) // SW+1
-  if (!!a) {
+
+  if (a) {
     const basic = a.groups.att
-    const other = !!a.groups.other ? a.groups.other.trim() : ''
+    const other = a.groups.other ? a.groups.other.trim() : ''
     const [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
     const dmap = GURPS.DamageTables.translate(actualType.toLowerCase())
     const woundingModifier = GURPS.DamageTables.woundModifiers[dmap]
@@ -1054,6 +1110,7 @@ export function parseForRollOrDamage(str, overridetxt) {
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
       }
+
       return {
         text: gspan(overridetxt, str, action),
         action: action,
@@ -1070,12 +1127,14 @@ export function parseForRollOrDamage(str, overridetxt) {
         hitlocation: hitLocation,
         accumulate: !!a.groups.accum,
       }
+
       return {
         text: gspan(overridetxt, str, action),
         action: action,
       }
     }
   }
+
   return undefined
 }
 
@@ -1085,30 +1144,37 @@ export function parseForRollOrDamage(str, overridetxt) {
 function _parseOtherForTypeModiferAndLocation(other) {
   // change the regex from /(w+)(.*)/ to /([A-Za-z0-9_+-]+)(.*)/ to make sure we recognize pi-, pi+ and pi++
   const dmgTypeMatch = other.match(/([A-Za-z0-9_]+[+-]?\+?)(.*)/)
-  const actualType = !!dmgTypeMatch ? dmgTypeMatch[1] : other // only take the first word as damage type
+  const actualType = dmgTypeMatch ? dmgTypeMatch[1] : other // only take the first word as damage type
 
   // parse for hitlocation and damge modifier (extDamageType)
   let extDamageType = undefined
   let hitLocation = undefined
-  if (!!dmgTypeMatch)
+
+  if (dmgTypeMatch)
     if (dmgTypeMatch[2].includes('@')) {
       const [type, loc] = dmgTypeMatch[2].trim().split('@')
-      extDamageType = !!type.trim() ? type.trim() : undefined
-      hitLocation = !!loc.trim() ? HitLocation.translate(loc.trim()) : undefined
-    } else extDamageType = !!dmgTypeMatch[2].trim() ? dmgTypeMatch[2].trim() : undefined // 'ex' or 'inc' or more likely, undefined
+
+      extDamageType = type.trim() ? type.trim() : undefined
+      hitLocation = loc.trim() ? HitLocation.translate(loc.trim()) : undefined
+    } else extDamageType = dmgTypeMatch[2].trim() ? dmgTypeMatch[2].trim() : undefined // 'ex' or 'inc' or more likely, undefined
+
   return [actualType, extDamageType, hitLocation]
 }
 
 function _getFormulaComponents(groups) {
   let adds = (groups.adds || '').replace('–', '-')
   let m = groups.other.match(/([+-]@margin)/i)
+
   if (!adds && !!m) {
     adds = m[1]
   }
+
   let multiplier = groups.mult || ''
+
   if (!!multiplier && 'Xx×'.includes(multiplier[0])) multiplier = '*' + multiplier.substr(1) // Must convert to '*' for Foundry.
   const divisor = groups.div || ''
   const bang = groups.min || ''
+
   return [adds, multiplier, divisor, bang]
 }
 
@@ -1120,13 +1186,14 @@ function _getFormulaComponents(groups) {
  * @param {boolean} clrdmods
  */
 function gmspan(overridetxt, str, action, plus, clrdmods) {
-  if (!!overridetxt) {
+  if (overridetxt) {
     str = overridetxt
     action.overridetxt = overridetxt
   }
 
   // If the action is an Advantage level modifier, then we need to create the action object to match the expected values.
   const advantageLevel = /\((?<mod>[+-]A:.+)\)/
+
   if (action.desc.match(advantageLevel)) {
     // expect(result.action).toEqual({
     //   orig: '+A:"Night Vision"',
@@ -1137,28 +1204,33 @@ function gmspan(overridetxt, str, action, plus, clrdmods) {
     // })
     // expect(result.text).toEqual(expect.stringContaining(`data-otf='+A:"Night Vision"'>+A:"Night Vision" </span>`))
     const m = action.desc.match(advantageLevel)
+
     action.orig = m.groups.mod
     action.spantext = action.orig
     action.mod = action.orig
     action.desc = ''
   }
 
-  let a = !!action
+  let a = action
     ? " data-action='" +
       utoa(JSON.stringify(action)) +
       "' data-otf='" +
-      (!!action.blindroll ? '!' : '') +
+      (action.blindroll ? '!' : '') +
       action.orig +
       "'"
     : ''
+
   if (action.type === 'modifier') {
     if (str.startsWith('-')) str = '&minus;' + str.slice(1) // \u2212
   }
+
   let s = `<span class='gga-app glinkmod'${a}>${str}`
+
   if (clrdmods) {
     if (plus) s = `<span class='gga-app glinkmodplus'${a}>${str}`
     else s = `<span class='gga-app glinkmodminus'${a}>${str}`
   }
+
   return s + '</span>'
 }
 
@@ -1170,22 +1242,25 @@ function gmspan(overridetxt, str, action, plus, clrdmods) {
  * @param {string | undefined} [comment]
  */
 export function gspan(overridetxt, str, action, prefix, comment) {
-  if (!!overridetxt) {
+  if (overridetxt) {
     str = overridetxt
     prefix = ''
     comment = ''
     action.overridetxt = overridetxt
   }
+
   let s = "<span class='gga-app gurpslink'"
-  if (!!action)
+
+  if (action)
     s +=
       " data-action='" +
       utoa(JSON.stringify(action)) +
       "' data-otf='" +
-      (!!action.blindroll ? '!' : '') +
+      (action.blindroll ? '!' : '') +
       action.orig +
       "'"
-  s += '>' + (!!prefix ? prefix : '') + str.trim() + '</span>'
-  if (!!comment) s += ' ' + comment
+  s += '>' + (prefix ? prefix : '') + str.trim() + '</span>'
+  if (comment) s += ' ' + comment
+
   return s
 }

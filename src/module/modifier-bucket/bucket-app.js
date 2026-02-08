@@ -1,6 +1,7 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { parselink } from '../../lib/parselink.js'
-import { displayMod, generateUniqueId } from '../../lib/utilities.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { parselink } from '@util/parselink.js'
+import { displayMod, generateUniqueId } from '@util/utilities.js'
+
 import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
 

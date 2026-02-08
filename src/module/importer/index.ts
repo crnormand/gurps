@@ -1,5 +1,5 @@
+import { GurpsModule } from '../../types/gurps-module.ts'
 import { CharacterModel } from '../actor/data/character.js'
-import { GurpsModule } from '../gurps-module.js'
 
 import { importerPrompt } from './importer-prompt.js'
 import { migrate } from './migrate.js'

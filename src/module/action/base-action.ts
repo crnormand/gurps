@@ -1,5 +1,4 @@
-import { GurpsItemV2 } from 'module/item/gurps-item.js'
-
+import { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
@@ -10,6 +9,7 @@ class BaseAction<
   Schema extends BaseActionSchema = BaseActionSchema,
   Parent extends DataModel.Any = DataModel.Any,
 > extends TypedPseudoDocument<Schema, Parent> {
+  declare parent: Parent
   static override defineSchema(): BaseActionSchema {
     return Object.assign(super.defineSchema(), baseActionSchema())
   }

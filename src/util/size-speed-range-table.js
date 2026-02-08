@@ -17,7 +17,7 @@ export class SizeAndSpeedRangeTable {
 
   // pass in distance in yards, get back the furthest distance that has the same modifier
   ceil(yards) {
-    return this._table.ceil(measure)
+    return this._table.ceil(yards)
   }
 }
 
@@ -48,6 +48,7 @@ export default class RepeatingSequenceConverter {
     let exponent = Math.floor(index / this._pattern.length)
     let other = Math.pow(this._base, exponent)
     let j = this._pattern[i] * other
+
     return j
   }
 
@@ -57,6 +58,7 @@ export default class RepeatingSequenceConverter {
     let val = value / Math.pow(this._base, loops) // 3 / 1 = 3
 
     let arrayValue = this._smallestTableValueGreaterThanOrEqualTo(val)
+
     return this._pattern.indexOf(arrayValue) + loops * this._pattern.length
   }
 
@@ -66,6 +68,7 @@ export default class RepeatingSequenceConverter {
     if (value < 0) throw 'must be non-negative'
     let index = 0
     let temp = 0
+
     do {
       temp = this.indexToValue(index++)
     } while (temp < value)
@@ -79,9 +82,11 @@ export default class RepeatingSequenceConverter {
 
   _numberOfLoops(value) {
     let loops = 0
+
     while (value > this._lastElementOf(this._pattern) * Math.pow(this._base, loops)) {
       loops++
     }
+
     return loops
   }
 

@@ -12,6 +12,7 @@ import fs from 'fs'
 import path from 'path'
 
 let rootPath = process.argv.slice(2)
+
 console.log(rootPath)
 
 const ignore = [
@@ -53,12 +54,14 @@ let object = JSON.parse(fs.readFileSync('lang/en.json', 'utf8'))
 const flattenObject = (obj, parent, res = {}) => {
   for (let key in obj) {
     let propName = parent ? parent + '.' + key : key
+
     if (typeof obj[key] == 'object') {
       flattenObject(obj[key], propName, res)
     } else {
       res[propName] = obj[key]
     }
   }
+
   return res
 }
 
@@ -71,6 +74,7 @@ keys = keys.filter(key => {
   for (let i = 0; i < ignore.length; i++) {
     if (key.match(ignore[i]) !== null) return false
   }
+
   return true
 })
 
@@ -78,6 +82,7 @@ keys = keys.filter(key => {
 console.log('Keys that do not match expected pattern')
 console.log('=======================================')
 let regex = /^(GURPS\.|TYPES\.)[A-Za-z0-9. _\-\+,\*\/]+$/g
+
 keys.forEach(key => {
   if (!key.match(regex)) console.log(key)
 })
@@ -85,12 +90,15 @@ keys.forEach(key => {
 // get all text from all files
 const files = rootPath.flatMap(it => getAllFiles(it))
 const lines = []
+
 files.forEach(it => {
   let contents = fs.readFileSync(it, 'utf8')
+
   contents.split('\n').forEach(line => lines.push(line))
 })
 
 let notFound = []
+
 keys.forEach(key => {
   let found = false
 
@@ -103,14 +111,16 @@ keys.forEach(key => {
 
   let pattern = new RegExp(`"(${escapedKey})+?"`)
   let line = lines.find(line => line.match(pattern) !== null)
-  if (!!line) {
+
+  if (line) {
     found = true
   }
 
   if (!found) {
     let pattern = new RegExp(`'(${escapedKey})+?'`)
     let line = lines.find(line => line.match(pattern) !== null)
-    if (!!line) {
+
+    if (line) {
       found = true
     }
   }
@@ -118,7 +128,8 @@ keys.forEach(key => {
   if (!found) {
     let pattern = new RegExp(`\`(${escapedKey})+?\``)
     let line = lines.find(line => line.match(pattern) !== null)
-    if (!!line) {
+
+    if (line) {
       found = true
     }
   }

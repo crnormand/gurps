@@ -1,4 +1,4 @@
-import { GurpsModule } from '../gurps-module.ts'
+import { GurpsModule } from '../../types/gurps-module.ts'
 
 import { addManeuverListeners } from './maneuver-menu.js'
 import { renderCombatTracker } from './render-combat-tracker.ts'

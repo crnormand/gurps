@@ -5,6 +5,7 @@ import { Advantage, Encumbrance, Equipment, Melee, Note, Ranged, Skill } from '.
 import { GurpsActorV2 } from '../module/actor/gurps-actor.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import getUserInput from '../module/utilities/get-user-input.js'
+
 import { translate } from './i18n.js'
 import { digitsAndDecimalOnly, digitsOnly } from './jquery-helper.js'
 import { sanitize } from './utilities.js'
@@ -68,6 +69,7 @@ export class NpcInput extends FormApplication {
   constructor(actor, options = {}) {
     super(options)
     let m = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MOOK_DEFAULT)
+
     this.mook = m || new Mook()
     this.testing = true
   }
@@ -86,9 +88,11 @@ export class NpcInput extends FormApplication {
   }
   getData(options) {
     let data = super.getData(options)
+
     data.mook = this.mook
     data.mode = this.testing ? 'Test Mook' : 'Create Mook'
     data.displaybuttons = true
+
     return data
   }
 
@@ -105,6 +109,7 @@ export class NpcInput extends FormApplication {
     html.find('input[type=text]').on('change paste keyup', event => {
       const element = event.currentTarget
       const key = element.dataset.key
+
       if (key) {
         this.mook[key] = element.value
         this.setTesting()
@@ -114,6 +119,7 @@ export class NpcInput extends FormApplication {
     html.find('textarea').on('change', event => {
       const element = event.currentTarget
       const key = element.dataset.key
+
       if (key) {
         this.mook[key] = element.value
         this.setTesting()
@@ -133,6 +139,7 @@ export class NpcInput extends FormApplication {
     this.createButton = html.find('#npc-input-create')[0]
 
     const frame = html[0]?.querySelector('.ms-mook-generator')
+
     if (frame)
       frame.addEventListener('drop', event => {
         event.preventDefault()
@@ -149,6 +156,7 @@ export class NpcInput extends FormApplication {
       let tmp = ''
       let tmp2 = ''
       let notes = element.notes || ''
+
       switch (key) {
         case 'skills':
         case 'spells': {
@@ -189,7 +197,9 @@ export class NpcInput extends FormApplication {
           break
         }
       }
+
       let orig = this.mook[key]
+
       tmp = orig + (orig ? '\n' : '') + tmp
       tmp += tmp2
       if (notes) tmp += '\n# ' + notes.split('\n').join('\n# ').replaceAll(';', ',')
@@ -199,6 +209,7 @@ export class NpcInput extends FormApplication {
         this.mook.notes += ' [' + data.otf + ']'
       }
     }
+
     this.setTesting()
     this.render(true)
   }
@@ -215,23 +226,27 @@ export class NpcInput extends FormApplication {
     })
 
     if (statblock.length < 3) statblock = EX[parseInt(statblock)]
-    if (!!statblock) this.parseStatBlock(statblock)
+    if (statblock) this.parseStatBlock(statblock)
     this.render(true)
   }
 
   async createMook(ev) {
     ev.preventDefault()
+
     if (this.testing) {
       let err = this.check()
-      if (!!err) ui.notifications.warn('Unable to create Mook: ' + err)
+
+      if (err) ui.notifications.warn('Unable to create Mook: ' + err)
       else this.setTesting(false)
     } else {
       let data = { name: this.mook.name, type: 'character' }
       let a = await GurpsActorV2.create(data, { renderSheet: false })
+
       await this.populate(a)
       await a.setFlag('core', 'sheetClass', 'gurps.GurpsActorNpcModernSheet')
       a.sheet.render(true)
     }
+
     this.render(true)
   }
 
@@ -256,30 +271,34 @@ export class NpcInput extends FormApplication {
     data.basicmove.value = parseInt(m.move)
     data.basicspeed.value = m.speed
     data.frightcheck = m.will
-    if (!!m.check) data.frightcheck = m.check // Imported "fright check"
+    if (m.check) data.frightcheck = m.check // Imported "fright check"
 
     data.hearing = m.per
     data.tastesmell = m.per
     data.touch = m.per
     data.vision = m.per
-    if (!!m.parry) data.parry = parseInt(m.parry)
-    if (!!m.block) data.block = parseInt(m.block)
+    if (m.parry) data.parry = parseInt(m.parry)
+    if (m.block) data.block = parseInt(m.block)
 
     let ns = {}
     let nt = new Note(m.notes.trim())
+
     GURPS.put(ns, nt)
 
     // Since we removed the default hitlocations from template.json, we need to create at least one entry for the mook
     // But to maintain a similar look, we will just recreate the humanoid locations.
     let hls = {}
+
     for (const [key, value] of Object.entries(HitLocations.hitlocationDictionary.humanoid)) {
       let loc = { ...value, ...{ where: key } }
+
       if (key == HitLocations.HitLocation.TORSO) loc.import = m.dr
       GURPS.put(hls, loc)
     }
 
     let es = {}
     let e = new Encumbrance()
+
     e.level = 0
     e.current = true
     e.key = 'enc0'
@@ -289,36 +308,45 @@ export class NpcInput extends FormApplication {
     GURPS.put(es, e)
 
     let melee = {}
+
     m.a_melee.forEach(me => GURPS.put(melee, me))
 
     let ranged = {}
+
     m.a_ranged.forEach(r => GURPS.put(ranged, r))
 
     let ts = {}
+
     ts.title = m.title
     let dt = new Date().toString().split(' ').splice(1, 3).join(' ')
+
     ts.createdon = dt
-    if (!!m.sm) ts.sizemod = m.sm[0] == '-' ? m.sm : m.sm[0] == '+' ? '' : '+' + m.sm
+    if (m.sm) ts.sizemod = m.sm[0] == '-' ? m.sm : m.sm[0] == '+' ? '' : '+' + m.sm
     ts.appearance = m.desc
     ts.height = m.height
     ts.weight = m.weight
     ts.age = m.age
 
     let skills = {}
+
     m.a_skills.forEach(s => GURPS.put(skills, s))
 
     let spells = {}
+
     m.a_spells.forEach(s => GURPS.put(spells, s))
 
     let ads = {}
+
     m.a_traits.forEach(a => GURPS.put(ads, a))
 
     let eqt = {}
+
     m.a_equipment.forEach(e => GURPS.put(eqt, e))
 
     let dmg = m.damage || m.dmg || ''
     let thrst = dmg.split('/')[0]
     let swng = dmg.split('/')[1]
+
     if (!swng && !!thrst) {
       swng = thrst
       thrst = ''
@@ -367,6 +395,7 @@ export class NpcInput extends FormApplication {
 
   check() {
     let e = ''
+
     if (!this.mook.name) e = ', No Name'
     this.sanit('melee')
     this.sanit('ranged')
@@ -381,14 +410,17 @@ export class NpcInput extends FormApplication {
     if (this.checkRanged()) e += ', Error in Ranged'
     if (this.checkSpells()) e += ', Error in Spells'
     if (this.checkEquipment()) e += ', Error in Equipment'
+
     return e.substr(2)
   }
 
   // return an array of string representing each line
   prep(text, delim) {
     var ans
-    if (!!delim) ans = this.parseDelimLines(text, delim)
+
+    if (delim) ans = this.parseDelimLines(text, delim)
     else ans = text.split('\n')
+
     return ans.map(e => this.cleanLine(e)).filter(e => e.length > 0)
   }
 
@@ -398,8 +430,10 @@ export class NpcInput extends FormApplication {
     let i = 0
     let line = ''
     let d = 0
+
     while (i < str.length) {
       let c = str[i++]
+
       if ((c == delim && d == 0) || c == '\n') {
         arr.push(line)
         line = ''
@@ -409,7 +443,9 @@ export class NpcInput extends FormApplication {
         if (c == ')') d--
       }
     }
-    if (!!line) arr.push(line)
+
+    if (line) arr.push(line)
+
     return arr
   }
 
@@ -417,23 +453,30 @@ export class NpcInput extends FormApplication {
     const m = this.mook
     let txt = ''
     let arr = []
+
     this.prep(m.skills, ';').forEach(e => {
       if (e.includes(ERR)) return
       txt += '\n' + e
+
       if (e.startsWith(COMMENT_CHAR)) {
         if (arr.length > 0) this.addToNotes(arr, e.substr(1), ' ')
+
         return
       }
+
       const i = e.lastIndexOf('-')
+
       if (i < 1) return (txt += `\n${ERR} missing '-'`)
       const n = e.substring(0, i).trim()
       const v = e.substr(i + 1).trim()
+
       if (!v) return (txt += `\n${ERR} missing skill level`)
       if (isNaN(v)) return (txt += `\n${ERR} "${v}" is not a number`)
       arr.push(new Skill(n, v))
     })
     m.skills = txt.substr(1)
     m.a_skills = arr
+
     return txt.includes(ERR)
   }
 
@@ -441,23 +484,30 @@ export class NpcInput extends FormApplication {
     const m = this.mook
     let txt = ''
     let arr = []
+
     this.prep(m.spells, ';').forEach(e => {
       if (e.includes(ERR)) return
       txt += '\n' + e
+
       if (e.startsWith(COMMENT_CHAR)) {
         if (arr.length > 0) this.addToNotes(arr, e.substr(1), ' ')
+
         return
       }
+
       const i = e.lastIndexOf('-')
+
       if (i < 1) return (txt += `\n${ERR} missing '-'`)
       const n = e.substring(0, i).trim()
       const v = e.substr(i + 1).trim()
+
       if (!v) return (txt += `\n${ERR} missing spell level`)
       if (isNaN(v)) return (txt += `\n${ERR} "${v}" is not a number`)
       arr.push(new Skill(n, v))
     })
     m.spell = txt.substr(1)
     m.a_spells = arr
+
     return txt.includes(ERR)
   }
 
@@ -472,18 +522,23 @@ export class NpcInput extends FormApplication {
     const m = this.mook
     let txt = ''
     let arr = []
+
     this.prep(m.melee).forEach(e => {
       if (e.includes(ERR)) return
       txt += '\n' + e
+
       if (e.startsWith(COMMENT_CHAR)) {
         if (arr.length > 0) this.addToNotes(arr, e.substr(1), ' ')
+
         return
       }
+
       var me, remain
       let parse = e.replace(
         /(.*) ?\((\d+)\) (\d+)d(\d*)([-+]\d+)?([xX\*]\d+)?(\([.\d]+\))?(!)? ?(\w+\+?\+?)(.*)$/g,
         '$1~$2~$3~$4~$5~$6~$7~$8~$9~$10'
       )
+
       if (e != parse) {
         parse = parse.split('~')
         me = new Melee(
@@ -499,12 +554,16 @@ export class NpcInput extends FormApplication {
         me = new Melee(parse[0].trim(), parse[1], parse[2])
         remain = parse[3].trim()
       }
-      if (!!remain) {
+
+      if (remain) {
         let ext = remain.replace(/ +/g, ' ').split(' ')
+
         if (ext.length % 2 != 0) return (txt += `\n${ERR} unable to parse "${remain}"`)
+
         for (let i = 0; i < ext.length; i += 2) {
           let s = ext[i] + ext[i + 1]
           let found = false
+
           pats.forEach(p => {
             if (s.match(new RegExp(p.regex))) {
               me[p.var] = ext[i + 1]
@@ -514,10 +573,12 @@ export class NpcInput extends FormApplication {
           if (!found) return (txt += `\n${ERR} unknown pattern "${ext[i]} ${ext[i + 1]}"`)
         }
       }
+
       arr.push(me)
     })
     m.melee = txt.substr(1)
     m.a_melee = arr
+
     return txt.includes(ERR)
   }
 
@@ -537,19 +598,24 @@ export class NpcInput extends FormApplication {
     const m = this.mook
     let txt = ''
     let arr = []
+
     this.prep(m.ranged).forEach(e => {
       if (e.includes(ERR)) return
       txt += '\n' + e
+
       if (e.startsWith(COMMENT_CHAR)) {
         if (arr.length > 0) this.addToNotes(arr, e.substr(1), ' ')
+
         return
       }
+
       let parse = e.replace(
         /(.*) ?\((\d+)\) (\d+)d(\d*)([-+]\d+)?([xX\*]\d+)?(\([.\d]+\))?(!)?:? ?([\w-+]+)(.*)/g,
         '$1~$2~$3~$4~$5~$6~$7~$8~$9~$10'
       )
 
       var r, remain
+
       if (e != parse) {
         parse = parse.split('~')
         r = new Ranged(
@@ -565,12 +631,16 @@ export class NpcInput extends FormApplication {
         r = new Ranged(parse[0].trim(), parse[1], parse[2])
         remain = parse[3].trim()
       }
-      if (!!remain) {
+
+      if (remain) {
         let ext = remain.trim().replace(/ +/g, ' ').split(' ')
+
         if (ext.length % 2 != 0) return (txt += `\n${ERR} unable to parse for `)
+
         for (let i = 0; i < ext.length; i += 2) {
           let s = ext[i] + ext[i + 1]
           let found = false
+
           pats.forEach(p => {
             if (s.match(new RegExp(p.regex))) {
               r[p.var] = ext[i + 1]
@@ -580,18 +650,21 @@ export class NpcInput extends FormApplication {
           if (!found) return (txt += `\n${ERR} unknown pattern "${ext[i]} ${ext[i + 1]}"`)
         }
       }
+
       r.checkRange()
       arr.push(r)
     })
     m.ranged = txt.substr(1)
     m.a_ranged = arr
+
     return txt.includes(ERR)
   }
 
   addToNotes(arr, note, delim) {
     if (arr.length == 0) return
     let n = arr[arr.length - 1].notes
-    if (!!n) n += delim + note
+
+    if (n) n += delim + note
     else n = note
     arr[arr.length - 1].notes = n
   }
@@ -600,16 +673,21 @@ export class NpcInput extends FormApplication {
     const m = this.mook
     let txt = ''
     let arr = []
+
     this.prep(m.traits, ';').forEach(e => {
       txt += '\n' + e
+
       if (e.startsWith(COMMENT_CHAR)) {
         if (arr.length > 0) this.addToNotes(arr, e.substr(1), '\n')
+
         return
       }
+
       arr.push(new Advantage(e))
     })
     m.traits = txt.substr(1)
     m.a_traits = arr
+
     return false
   }
 
@@ -617,37 +695,48 @@ export class NpcInput extends FormApplication {
     const m = this.mook
     let txt = ''
     let arr = []
+
     this.prep(m.equipment).forEach(e => {
       if (e.includes(ERR)) return
       txt += '\n' + e
+
       if (e.startsWith(COMMENT_CHAR)) {
         this.addToNotes(arr, e.substr(1), '\n')
+
         return
       }
+
       let a = e.split(';')
+
       if (a.length != 4) {
         return (txt += `\n${ERR} Expecting <name>; <qty>; $<cost>; <weight> lb\n`)
       } else {
         let eqt = new Equipment(a[0])
+
         eqt.count = parseInt(a[1])
         eqt.equipped = true
         eqt.carried = true
         let n = a[2].match(/ *\$ *([\?\d]+)/)
+
         if (n) eqt.cost = n[1]
         else {
           return (txt += `\n${ERR} Unable to find '$ <cost>'\n`)
         }
+
         n = a[3].match(/ *([\?\d.]+) * lbs?/)
+
         if (n) eqt.weight = n[1]
         else {
           return (txt += `\n${ERR} Unable to find '<weight> lb'\n`)
         }
+
         Equipment.calc(eqt)
         arr.push(eqt)
       }
     })
     m.equipment = txt.substr(1)
     m.a_equipment = arr
+
     return txt.includes(ERR)
   }
 
@@ -656,6 +745,7 @@ export class NpcInput extends FormApplication {
     txt = txt.replace(/\t/g, '; ') // replace tabs with '; '
     txt = txt.replace(/ +/g, ' ') // remove multiple spaces in a row
     txt = txt.replace(/[^ -~\n]+/g, '') // remove remaining non-ascii
+
     return this.cleanLine(txt) // trim and remove leading and trailing periods.
   }
 
@@ -664,6 +754,7 @@ export class NpcInput extends FormApplication {
     this.statblk = this.preparePastedText(txt)
     this.savedStatBlock = this.statblk
     console.log(this.statblk)
+
     try {
       this.resetMook()
       this.checkForNameNotes()
@@ -697,43 +788,53 @@ export class NpcInput extends FormApplication {
     // read lines looking for (\d+) and any lines following that do NOT have (\d+)
     if (oldformat) return [attblk, currentline, this.nextToken()]
     var nextline
+
     ;[attblk, nextline] = this.nextTokenPrim(attblk, '\n', false, true)
+
     while (!!nextline && (nextline.match(/[Ss]hots.*\(\d+\)/) || !nextline.match(/\(\d+\)/))) {
       // If the new line doesn't contain a skill level "(\d+)" that isn't part of [Ss]hots assume it is still from the previous attack
       currentline += ' ' + nextline
       ;[attblk, nextline] = this.nextTokenPrim(attblk, '\n', false, true)
     }
+
     return [attblk, currentline, nextline]
   }
 
   findInLine(line, regex) {
     let re = new RegExp(regex)
     let m = line.match(re)
-    if (!!m) line = line.replace(re, '')
+
+    if (m) line = line.replace(re, '')
+
     return [line, m]
   }
 
   parseEquipment() {
     if (!this.peek('Equipment')) return
     let line = this.nextline() // Skip equipment line
+
     line = this.nextline()
-    while (!!line) {
+
+    while (line) {
       var m
       let cost = '?'
       let weight = '?'
       let qty = 1
       let name = ''
+
       ;[line, m] = this.findInLine(line, /\$([\.\d]+)[ ,\.]*/)
-      if (!!m) cost = m[1]
+      if (m) cost = m[1]
       ;[line, m] = this.findInLine(line, /([\.\d]+) ?lbs?[ ,\.]*/)
-      if (!!m) weight = m[1]
+      if (m) weight = m[1]
       ;[line, m] = this.findInLine(line, /^ *(\d+)/)
-      if (!!m) qty = m[1]
+      if (m) qty = m[1]
       ;[line, m] = this.findInLine(line, /^([^(\.])+\((\d+)\)/)
-      if (!!m) {
+
+      if (m) {
         qty = m[2]
         name = m[1]
       }
+
       line = line.replace(/\[[ \W]+/g, '') //clean up runs of non-word chars in brackets
       name += this.cleanLine(line)
       name = name.replace(';', ',')
@@ -748,22 +849,27 @@ export class NpcInput extends FormApplication {
     if (this.peek(start)) this.nextToken(start)
     let goUntil = this.peek(end)
     let line = this.nextline()
+
     if (!line) return
     line = this.cleanLine(line)
     let s = ''
+
     //    while (!!line && (line.match(/[^-]+-\d+/) || (!!goUntil && !line.startsWith(end)))) {
     while (!!line && line.match(/[^-]+-\d+/) && !line.startsWith(end)) {
       s += '\n' + this.cleanLine(line)
       line = this.nextToken('\n', false, true)
     }
+
     //if (!s) this.appendToNotes(`?? No ${start} matching pattern '${path}-lvl' found`);
     s = this.cleanLine(s)
     let delim = ';'
+
     if (s.includes(delim)) s = s.replace(/\n/g, ' ')
     // If has delims, then remove newlines
     else delim = '\n' // No ";", so assume one per line
     var l
-    while (!!s) {
+
+    while (s) {
       ;[s, l] = this.nextTokenPrim(s, delim, false, true) // Start it off reading the first line
 
       // Remove skill type, rsl and points  Broadsword (A) DX+2 [8]-16
@@ -772,29 +878,35 @@ export class NpcInput extends FormApplication {
       l = l.replace(/ ?\[ *-?\d+ *\],?\.? ?/g, ' ')
       l = this.cleanLine(l)
       let m = l.match(/([^-]+ *- *\d+)(.*)/)
+
       if (m) {
         this.mook[path] += '\n' + m[1]
-        if (!!m[2]) this.mook[path] += '\n' + COMMENT_CHAR + m[2]
-      } else if (!!l) this.mook[path] += '\n' + COMMENT_CHAR + `Unknown ${start} pattern ${l}`
+        if (m[2]) this.mook[path] += '\n' + COMMENT_CHAR + m[2]
+      } else if (l) this.mook[path] += '\n' + COMMENT_CHAR + `Unknown ${start} pattern ${l}`
     }
-    if (!!line) this.pushToken(line)
+
+    if (line) this.pushToken(line)
   }
 
   parseTraits() {
     let n = this.peekskipto('Advantages/Disadvantages')
+
     n += this.peekskipto('Advantages')
     n += this.peekskipto('Traits')
-    if (!!n) this.appendToNotes(ERR + ' Skipped before Traits: ' + n, '\n')
+    if (n) this.appendToNotes(ERR + ' Skipped before Traits: ' + n, '\n')
     this.trim()
     let trblk = this.nextToken('Skills', 'Spells', true)
+
     if (!trblk) return this.appendToNotes(ERR + " Looking for Traits block, unable to find 'Skills'") // Basically always need "Skills" or "Spells"
     let traits = ''
+
     if (trblk.includes(';')) trblk = trblk.replace(/\n/g, ' ')
     // if it contains ";", then remove newlines
     else {
       // no ";", maybe using commas?
       if (trblk.split(',').length > 2) trblk = trblk.replace(/,/g, ';') // Assume comma separated
     }
+
     trblk = trblk.replace(/disadvantages/gi, ';')
     trblk = trblk.replace(/perks/gi, ';')
     trblk = trblk.replace(/quirks/gi, ';')
@@ -802,7 +914,8 @@ export class NpcInput extends FormApplication {
     this.prep(trblk, ';').forEach(t => {
       t = t.replace(/\( *(\d+) *or less *\)/g, '($1)') // Compress some forms of CR rolls
       let m = t.match(/(.*)\((\d+)\)/)
-      if (!!m) traits += `\n[CR: ${m[2]} ${m[1].trim()}]`
+
+      if (m) traits += `\n[CR: ${m[2]} ${m[1].trim()}]`
       // Convert CR roll into OtF
       else {
         if (t != 'and') traits += '\n' + t
@@ -826,89 +939,107 @@ export class NpcInput extends FormApplication {
       { regex: ' ?[Rr]ange ([0-9/]+) *,?', var: 'range' },
     ]
     var attblk
+
     if (oldformat) {
       attblk = this.statblk
       if (!attblk) return
     } else {
       attblk = this.nextToken('Traits:', 'Advantages/Disadvantages:') // Look for either as start of ads/disads
+
       if (!attblk) {
         if (this.peek('Skills:')) attblk = this.nextToken('Skills:', 'junk')
         else if (!this.peek('\nWeapons:')) this.mook.melee = COMMENT_CHAR + 'No attacks found' // If Weapons aren't listedt later, show error.
       }
     }
+
     if (!attblk) return
     attblk = this.cleanLine(attblk)
     // assume a line is an attack if it contains '(n)'
     let line, nextline
+
     ;[attblk, line] = this.nextTokenPrim(attblk, '\n', false, true) // Start it off reading the first line
     ;[attblk, line, nextline] = this.gatherAttackLines(attblk, line, oldformat) // collect up any more lines.
 
-    while (!!line) {
+    while (line) {
       save = line
       line = this.cleanLine(line)
       var name, lvl, dmg, save
+
       ;[line, name] = this.nextTokenPrim(line, '(', false)
+
       if (!name) {
         this.mook.melee += `${COMMENT_CHAR}Unrecognized attack: "${save}" `
         ;[attblk, line, nextline] = this.gatherAttackLines(attblk, nextline, oldformat) // collect up any more lines.
         continue
       }
+
       name = name.trim()
       ;[line, lvl] = this.nextTokenPrim(line, ')', '):')
+
       if (!lvl || isNaN(lvl)) {
         this.mook.melee += `${COMMENT_CHAR}No level or level is not a number "${save}"`
         ;[attblk, line, nextline] = this.gatherAttackLines(attblk, nextline, oldformat) // collect up any more lines.
         continue
       }
+
       //[line, dmg] = this.nextTokenPrim(line, ".", ",", true);		// find up to . or , or end of string
       ;[line, dmg] = this.nextTokenV2Prim(line, ['.', ',', ';'], true)
       let savedmg1 = dmg
       let note = ''
+
       ;[dmg, note] = this.mapDmg(line, dmg)
       if (!!dmg && !!note) note = '\n' + COMMENT_CHAR + this.cleanLine(note)
+
       if (!dmg) {
         // If not dmg formula, try one more time.
         ;[line, dmg] = this.nextTokenPrim(line, '.', ',', true) // find up to . or , or end of string
         let savedmg2 = dmg
+
         ;[dmg, note] = this.mapDmg(line, dmg)
         if (!dmg) {
           line = savedmg1 + ' ' + savedmg2 + ' ' + note // Nope, couldn't find anything, so reset the line
           note = ''
-        } else if (!!note) note = '\n' + COMMENT_CHAR + this.cleanLine(note)
+        } else if (note) note = '\n' + COMMENT_CHAR + this.cleanLine(note)
       }
+
       let regex = /.*[Rr]each (?<reach>[^\.]+)/g
       let result = regex.exec(line)
       let extra = ''
       let final = ''
-      if (!!result?.groups?.reach) {
+
+      if (result?.groups?.reach) {
         // If it has Reach, it is definitely melee
         extra = ' reach ' + result.groups.reach.replace(/ /g, '')
         line = this.cleanLine(line.replace(/[Rr]each [^\.]+/, ''))
-        if (!!line) note += '\n' + COMMENT_CHAR + line
+        if (line) note += '\n' + COMMENT_CHAR + line
         final = '\n' + name + ' (' + lvl + ') ' + dmg + extra
         this.mook.melee += final + note
       } else {
         let ranged = []
+
         rpats.forEach(p => {
           let re = new RegExp(p.regex)
           let match = line.match(re)
-          if (!!match) {
+
+          if (match) {
             line = line.replace(re, '').trim()
-            if (!!match[1]) ranged.push(p.var + ' ' + match[1])
+            if (match[1]) ranged.push(p.var + ' ' + match[1])
           }
         })
+
         if (ranged.length > 0) {
           extra = ranged.join(' ')
           final = '\n' + name + ' (' + lvl + ') ' + dmg + ' ' + extra
-          if (!!line) note += '\n' + COMMENT_CHAR + line
+          if (line) note += '\n' + COMMENT_CHAR + line
           this.mook.ranged += final + note
         } else {
           // but it may not have either, in which case we treat as melee
           final = '\n' + name + ' (' + lvl + ') ' + dmg + extra
-          if (!!line) note += '\n' + COMMENT_CHAR + line
+          if (line) note += '\n' + COMMENT_CHAR + line
           this.mook.melee += final + note
         }
       }
+
       ;[attblk, line, nextline] = this.gatherAttackLines(attblk, nextline, oldformat) // collect up any more lines.
     }
   }
@@ -917,12 +1048,15 @@ export class NpcInput extends FormApplication {
     if (!dmg) return ['', '']
     dmg = dmg.trim().toLowerCase()
     let p = GURPS.DamageTables.parseDmg(dmg)
+
     if (p == dmg) return ['', line]
     let a = p.split('~')
     let roll = a[0] + 'd' + a[1] + a[2] + a[3] + a[4]
     let types = a[5].trim().split(' ')
     let m = GURPS.DamageTables.translate(types[0])
+
     if (!m) return ['', `Unrecognized damage type "${types[0]}" for "${line}"`]
+
     return [roll + ' ' + m, types.slice(1).join(' ')]
   }
 
@@ -934,12 +1068,14 @@ export class NpcInput extends FormApplication {
   checkForNameNotes() {
     this.trim()
     let line = this.nextline()
+
     if (!line) return
     let curregex = /ST.*\d+.*HP.*\d+/
     let oldregex = /ST.*\d+.*DX.*\d+/
     let forumregex = /^ST:? +\d?\d/
 
     let first = true
+
     while (!!line && !line.match(curregex) && !line.match(oldregex) && !line.match(forumregex)) {
       // Assume we haven't started the stat block yet
       // if the first line has 2 or fewer spaces, assume that it is a name.   Just guessing here
@@ -948,22 +1084,28 @@ export class NpcInput extends FormApplication {
       line = this.nextline()
       first = false
     }
-    if (!!this.mook.notes) this.mook.notes += '\n\n'
+
+    if (this.mook.notes) this.mook.notes += '\n\n'
     this.pushToken(line)
   }
 
   parseFinalNotes() {
     let postProcessWeapons = this.stealahead('\nWeapons:')
+
     this.trim()
     let t = this.nextToken()
-    if (!!t) {
+
+    if (t) {
       if (t == 'Class:') {
         this.appendToNotes(t + ' ' + this.nextline(), '\n')
+
         return this.parseFinalNotes()
       }
+
       if (t == 'Notes:') this.appendToNotes(this.statblk)
       else this.appendToNotes(t + ' ' + this.statblk)
     }
+
     this.mook.notes = this.mook.notes.trim()
     this.statblk = postProcessWeapons
   }
@@ -979,6 +1121,7 @@ export class NpcInput extends FormApplication {
     if (a == 'Traits:' || a == 'Advantages/Disadvantages:') return false
     if (a.match(/\w+:/) || !!GURPS.attributepaths[a]) return true
     if (a.match(/\[\d+\],?/)) return true // points costs [20]     accept this to parse, to skip over it
+
     return POSSIBLE_ATTRIBUTE_KEYS.hasOwnProperty(a.toLowerCase())
   }
 
@@ -986,13 +1129,16 @@ export class NpcInput extends FormApplication {
   getAttrib(t) {
     if (t.match(/\[\d+\],?/)) return false // points costs [20]			// Don't count this as "any"
     let a = t.replace(/[^A-Za-z]/g, '') // remove anything but letters
+
     // Special case is attributes are listed as "basic speed" or "fright check"
-    if (!!POSSIBLE_ATTRIBUTE_KEYS[a.toLowerCase()]) return ''
+    if (POSSIBLE_ATTRIBUTE_KEYS[a.toLowerCase()]) return ''
+
     return a
   }
 
   storeAttrib(attrib, value) {
     let val = value.replace(/[,;\.]$/g, '') // try to clean up the value by stripping crap off the end
+
     attrib
       .toLowerCase()
       .split('/')
@@ -1002,14 +1148,19 @@ export class NpcInput extends FormApplication {
 
   parseAttrs() {
     var attr, val, saved
+
     this.trim()
     let unknowns = []
+
     unknowns.push([]) // Each line will have its own array of unparsed keys
     let line = this.nextline()
+
     saved = line
     let any = false
+
     do {
       ;[line, attr] = this.nextPrim(line)
+
       if (!line && !attr) {
         if (!any) break
         line = this.nextline()
@@ -1018,19 +1169,26 @@ export class NpcInput extends FormApplication {
         any = false
         unknowns.push([])
       }
+
       while (this.isAttribute(attr)) {
         // Something we recognize
         let goodattr = this.getAttrib(attr) // An actual attribute
+
         if (goodattr !== false) any = true // Anything except "false" means "keep looking"
-        if (!!goodattr) {
+
+        if (goodattr) {
           ;[line, val] = this.nextPrim(line)
+
           if (!line && !val) {
             line = this.nextline()
             ;[line, val] = this.nextPrim(line)
           }
+
           this.storeAttrib(goodattr, val)
         }
+
         ;[line, attr] = this.nextPrim(line)
+
         if (!line && !attr) {
           if (!any) break
           line = this.nextline()
@@ -1040,16 +1198,19 @@ export class NpcInput extends FormApplication {
           unknowns.push([])
         }
       }
+
       if ('Traits:' == attr) break
-      if (!!attr) unknowns.slice(-1)[0].push(attr)
+      if (attr) unknowns.slice(-1)[0].push(attr)
     } while (true)
+
     unknowns.pop() // The last line didn't have any attributes, so not really errors.
     this.pushToken(saved) // We didn't use this line, so put it back
     let a = unknowns
       .map(a => a.join(' '))
       .join(' ')
       .trim() // collapse all unknowns into a string
-    if (!!a) {
+
+    if (a) {
       // we parsed some things that did not work.
       this.appendToNotes(ERR + ' ' + a, '\n')
     }
@@ -1057,9 +1218,12 @@ export class NpcInput extends FormApplication {
 
   stealahead(str) {
     let i = this.statblk.indexOf(str)
+
     if (i < 0) return ''
     let s = this.statblk.substr(i + str.length + 1)
+
     this.statblk = this.statblk.substring(0, 1)
+
     return s
   }
 
@@ -1077,19 +1241,25 @@ export class NpcInput extends FormApplication {
 
   nextToken(d1 = ' ', d2 = '\n', all = false) {
     let [s, t] = this.nextTokenPrim(this.statblk, d1, d2, all)
+
     this.statblk = s
+
     return t
   }
 
   nextline() {
     let [s, t] = this.nextlinePrim(this.statblk)
+
     this.statblk = s
+
     return t
   }
 
   next(delim = ' ') {
     let [s, t] = this.nextPrim(this.statblk, delim)
+
     this.statblk = s
+
     return t
   }
 
@@ -1106,22 +1276,30 @@ export class NpcInput extends FormApplication {
     if (!str) return [str, undefined]
     let i = str.indexOf(d1)
     let j = str.indexOf(d2)
+
     if (i >= 0 && j >= 0) {
       if (j <= i) {
         d1 = d2 //
         i = j // Crappy hack to be able to search for 2 delims
       }
+
       let t = str.substring(0, i)
+
       return [str.substr(i + d1.length).trim(), t]
     }
+
     if (i >= 0) {
       let t = str.substring(0, i)
+
       return [str.substr(i + d1.length).trim(), t]
     }
+
     if (j >= 0) {
       let t = str.substring(0, j)
+
       return [str.substr(j + d2.length).trim(), t]
     }
+
     return all ? ['', str] : [str, undefined]
   }
 
@@ -1129,16 +1307,20 @@ export class NpcInput extends FormApplication {
     if (!str) return [str, undefined]
     let best = Number.MAX_SAFE_INTEGER
     let bestIndex = -1
+
     for (let index = 0; index < arr.length; index++) {
       let d = arr[index]
       let cur = str.indexOf(d)
+
       if (cur >= 0 && cur < best) {
         best = cur
         bestIndex = index
       }
     }
+
     if (bestIndex >= 0) {
       let t = str.substring(0, best)
+
       return [str.substr(best + arr[bestIndex].length).trim(), t]
     } else {
       return all ? ['', str] : [str, undefined]
@@ -1147,11 +1329,14 @@ export class NpcInput extends FormApplication {
 
   cleanLine(line) {
     let start = line
+
     if (!line) return line
     let pat = '*,.:' // things that just clutter up the line
+
     if (pat.includes(line[0])) line = line.substr(1)
     if (pat.includes(line[line.length - 1])) line = line.substring(0, line.length - 1)
     line = line.trim()
+
     return start == line ? line : this.cleanLine(line)
   }
 }
@@ -1173,7 +1358,9 @@ export class NpcInputDefaultEditor extends NpcInput {
 
   getData(options) {
     let data = super.getData(options)
+
     data.displaybuttons = false
+
     return data
   }
 

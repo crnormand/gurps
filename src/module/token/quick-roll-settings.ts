@@ -1,6 +1,6 @@
+import * as Settings from '@util/miscellaneous-settings.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
-import * as Settings from '../../lib/miscellaneous-settings.js'
 
 class QuickRollSettings extends foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.api.ApplicationV2

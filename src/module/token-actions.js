@@ -1,5 +1,5 @@
-import * as Settings from '../lib/miscellaneous-settings.js'
-import { recurselist } from '../lib/utilities.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { recurselist } from '@util/utilities.js'
 
 import Maneuvers, {
   MOVE_FULL,

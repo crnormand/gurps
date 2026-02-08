@@ -1,5 +1,5 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import { arrayToObject, objectToArray } from '../../lib/utilities.js'
+import * as Settings from '@util/miscellaneous-settings.js'
+import { arrayToObject, objectToArray } from '@util/utilities.js'
 
 export default class ModifierBucketJournals extends FormApplication {
   static getJournalIds() {

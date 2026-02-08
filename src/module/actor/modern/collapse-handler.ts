@@ -1,4 +1,4 @@
-import { isHTMLElement } from '../../utilities/guards.ts'
+import { isHTMLElement } from '../../utilities/guards.js'
 
 export function bindContainerCollapse(html: HTMLElement, actorId: string, config: ContainerCollapseConfig): void {
   const { tableSelector, rowSelector, excludeSelectors = [] } = config

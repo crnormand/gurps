@@ -13,6 +13,7 @@ import fs from 'fs'
 import path from 'path'
 
 let rootPath = process.argv.slice(2)
+
 console.log(rootPath)
 
 /**
@@ -43,6 +44,7 @@ const files = rootPath.flatMap(it => getAllFiles(it))
 
 // get the list of unique tags
 let tags = new Set()
+
 files.forEach(it => {
   let contents = fs.readFileSync(it, 'utf8')
   let lines = contents.split('\n')
@@ -105,10 +107,12 @@ files.forEach(it => {
 // read the tags from en.json
 let object = JSON.parse(fs.readFileSync('lang/en.json', 'utf8'))
 let keys = Object.keys(object)
+
 tags = Array.from(tags).sort()
 
 // tags include strings like "GURPS.some.key" or "GURPS.some.key.subkey"; I need code that can search object like this: object['GURPS']['some']['key']
 let orphans = []
+
 for (let tag of tags) {
   let parts = tag.split('.')
   let current = object

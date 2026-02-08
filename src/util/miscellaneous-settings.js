@@ -4,6 +4,7 @@ import { ItemImageSettings } from '../module/actor/actor-sheet.js'
 import { TaggedModifierSettings } from '../module/actor/effect-modifier-popout.js'
 import ModifierBucketJournals from '../module/modifier-bucket/select-journals.js'
 import { QuickRollSettings } from '../module/token/quick-roll-settings.js'
+
 import Initiative from './initiative.js'
 import { SemanticVersion } from './semver.js'
 
@@ -622,12 +623,15 @@ export function initializeSettings() {
       onChange: value => {
         if (value === false) {
           const taggedModifiers = game.settings.get(SYSTEM_NAME, SETTING_USE_TAGGED_MODIFIERS)
+
           if (taggedModifiers && taggedModifiers.autoAdd) {
             game.settings.set(SYSTEM_NAME, SETTING_SHOW_CONFIRMATION_ROLL_DIALOG, true) // revert to true
             const message = `Show Confirmation Roll Dialog cannot be disabled when "Use Tagged Modifiers" is set to autoAdd.`
+
             ui.notifications.error(message)
           }
         }
+
         console.log(`Show Confirmation Roll Dialog : ${value}`)
       },
     })
@@ -758,6 +762,7 @@ export function initializeSettings() {
       }),
       onChange: /** @param {TaggedModifiersSettings} value */ async function (value) {
         console.log(`Tagged Modifiers configuration : ${JSON.stringify(value)}`)
+
         if (value.autoAdd) {
           // Automatically set the "show-confirmation-roll-dialog" to true if autoAdd is enabled.
           game.settings.set(SYSTEM_NAME, SETTING_SHOW_CONFIRMATION_ROLL_DIALOG, true)

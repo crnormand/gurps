@@ -3,15 +3,15 @@ import {
   MeleeAttackSchema,
   RangedAttackComponentSchema,
   RangedAttackSchema,
-} from 'module/action/index.js'
-import { CharacterSchema } from 'module/actor/data/character.js'
-import { HitLocationSchemaV2 } from 'module/actor/data/hit-location-entry.js'
-import { BaseItemModel } from 'module/item/data/base.js'
-import { ItemComponentSchema } from 'module/item/data/component.js'
-import { EquipmentSchema, EquipmentComponentSchema } from 'module/item/data/equipment.js'
-import { SkillSchema, SkillComponentSchema } from 'module/item/data/skill.js'
-import { SpellComponentSchema, SpellSchema } from 'module/item/data/spell.js'
-import { TraitComponentSchema, TraitSchema } from 'module/item/data/trait.js'
+} from '@module/action/index.js'
+import { CharacterSchema } from '@module/actor/data/character.js'
+import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
+import { BaseItemModel } from '@module/item/data/base.js'
+import { ItemComponentSchema } from '@module/item/data/component.js'
+import { EquipmentSchema, EquipmentComponentSchema } from '@module/item/data/equipment.js'
+import { SkillSchema, SkillComponentSchema } from '@module/item/data/skill.js'
+import { SpellComponentSchema, SpellSchema } from '@module/item/data/spell.js'
+import { TraitComponentSchema, TraitSchema } from '@module/item/data/trait.js'
 
 // TODO: get rid of when this is migrated
 import * as HitLocations from '../../hitlocation/hitlocation.js'

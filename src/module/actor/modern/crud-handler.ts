@@ -1,4 +1,4 @@
-import { getGame, isHTMLElement } from '../../utilities/guards.ts'
+import { getGame, isHTMLElement } from '../../utilities/guards.js'
 
 export type EntityWithItemId = EntityComponentBase & { itemid?: string }
 type GurpsItemWithEditingActor = Item.Implementation & {

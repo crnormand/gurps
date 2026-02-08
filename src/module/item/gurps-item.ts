@@ -1,4 +1,5 @@
-import { recurselist } from '../../lib/utilities.js'
+import { recurselist } from '@util/utilities.js'
+
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { IContainable } from '../data/mixins/containable.js'
 import { ModelCollection } from '../data/model-collection.js'

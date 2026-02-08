@@ -4,7 +4,9 @@
 export function displayMod(mod) {
   if (!mod) mod = '0'
   let n = mod.toString().trim()
+
   if (!n.startsWith('-') && !n.startsWith('+')) n = '+' + n
+
   return n
 }
 
@@ -20,8 +22,10 @@ export function makeSelect(array) {
 
   /** @type {string[]} */
   let current = []
+
   for (let i = 1; i < array.length; i++) {
     let line = array[i]
+
     if (line[0] == '*') {
       current = []
       groups.push({ group: line.substr(1), options: current })
@@ -29,6 +33,7 @@ export function makeSelect(array) {
       current.push(line)
     }
   }
+
   return ans
 }
 
@@ -48,6 +53,7 @@ export function horiz(text, size = 10) {
  */
 export function xmlTextToJson(text) {
   var xml = new DOMParser().parseFromString(text, 'application/xml')
+
   return xmlToJson(xml)
 }
 
@@ -63,11 +69,14 @@ export function xmlToJson(xml) {
 
   if (xml.nodeType == Node.ELEMENT_NODE) {
     let element = /** @type {Element} */ (/** @type {unknown} */ (xml))
+
     // do attributes
     if (element.attributes.length > 0) {
       obj['@attributes'] = {}
+
       for (var j = 0; j < element.attributes.length; j++) {
         var attribute = element.attributes.item(j)
+
         if (attribute) obj['@attributes'][attribute.nodeName] = attribute?.nodeValue
       }
     }
@@ -86,13 +95,16 @@ export function xmlToJson(xml) {
       } else {
         if (typeof obj[nodeName].push == 'undefined') {
           var old = obj[nodeName]
+
           obj[nodeName] = []
           obj[nodeName].push(old)
         }
+
         obj[nodeName].push(xmlToJson(item))
       }
     }
   }
+
   return obj
 }
 
@@ -103,6 +115,7 @@ export function xmlToJson(xml) {
  */
 export function d6ify(str, flavor = null) {
   let w = str.replace(/d([^6])/g, `d6${flavor || ''}$1`) // Find 'd's without a 6 behind it, and add it.
+
   return w.replace(/d$/g, `d6${flavor || ''}`) // and do the same for the end of the line.
 }
 
@@ -112,9 +125,11 @@ export function d6ify(str, flavor = null) {
 export function isNiceDiceEnabled() {
   // Is Dice So Nice enabled ?
   let niceDice = false
+
   try {
     niceDice = !!game.settings.get('dice-so-nice', 'settings') // no longer have the enabled flag
   } catch {}
+
   return niceDice
 }
 
@@ -127,6 +142,7 @@ export function isNiceDiceEnabled() {
  */
 export function parseIntFrom(value, defaultValue = 0) {
   const result = parseInt(value)
+
   return isNaN(result) ? defaultValue : result
 }
 
@@ -139,6 +155,7 @@ export function parseIntFrom(value, defaultValue = 0) {
  */
 export function parseFloatFrom(value, defaultValue = 0) {
   const result = parseFloat(value)
+
   return isNaN(result) ? defaultValue : result
 }
 
@@ -168,6 +185,7 @@ export function isEmpty(value) {
  */
 export function isEmptyObject(value) {
   if (!value) return true
+
   return Object.keys(value).length === 0
 }
 
@@ -178,9 +196,11 @@ export function isEmptyObject(value) {
  */
 export function zeroFill(number, width = 5) {
   width -= number.toString().length
+
   if (width > 0) {
     return new Array(width + (/\./.test(number.toString()) ? 2 : 1)).join('0') + number
   }
+
   return number + '' // always return a string
 }
 
@@ -190,10 +210,12 @@ export function zeroFill(number, width = 5) {
  */
 export function extractP(string) {
   let v = ''
-  if (!!string) {
+
+  if (string) {
     let s = string.split('\n')
+
     for (let b of s) {
-      if (!!b) {
+      if (b) {
         if (b.startsWith('@@@@')) {
           b = b.substr(4)
           v += atou(b) + '\n'
@@ -201,6 +223,7 @@ export function extractP(string) {
       }
     }
   }
+
   // Maybe a temporary fix? There are junk characters at the start and end of
   // this string after decoding. Example: ";p&gt;Heavy Mail Hauberk↵/p>↵"
   return v
@@ -228,6 +251,7 @@ export function convertRollStringToArrayOfInt(text) {
   }
 
   let results = []
+
   for (let i = range[0]; i <= range[range.length - 1]; i++) results.push(i)
 
   return results
@@ -240,7 +264,7 @@ export function convertRollStringToArrayOfInt(text) {
  * @param {number} depth
  */
 export function recurselist(list, fn, parentkey = '', depth = 0) {
-  if (!!list)
+  if (list)
     for (const [key, value] of Object.entries(list)) {
       if (fn(value, parentkey + key, depth) !== false) {
         recurselist(value.contains, fn, parentkey + key + '.contains.', depth + 1)
@@ -256,7 +280,7 @@ export function recurselist(list, fn, parentkey = '', depth = 0) {
  * @param {number} depth
  */
 export async function aRecurselist(list, pm, parentkey = '', depth = 0) {
-  if (!!list)
+  if (list)
     for (const [key, value] of Object.entries(list)) {
       if ((await pm(value, parentkey + key, depth)) !== false) {
         await aRecurselist(value.contains, pm, parentkey + key + '.contains.', depth + 1)
@@ -273,16 +297,21 @@ export async function aRecurselist(list, pm, parentkey = '', depth = 0) {
  */
 export function flattenContainedList(list) {
   const result = []
+
   const traverse = items => {
     for (const key in items) {
       const item = items[key]
+
       result.push(item)
+
       if (item.contains) {
         traverse(item.contains)
       }
     }
   }
+
   traverse(list)
+
   return result
 }
 
@@ -320,9 +349,11 @@ export function utoa(data) {
  */
 export function arrayToObject(array, indexLength = 4) {
   let data = /** @type {{[key: string]: string}} */ ({})
+
   array.forEach((item, index) => {
     data[zeroFill(index, indexLength)] = item
   })
+
   return data
 }
 
@@ -414,10 +445,13 @@ export function getComparison(symbol) {
 // Function to read a json data file from inside this system.
 export async function readDataFile(filename) {
   const response = await fetch(`systems/gurps/${filename}`)
+
   if (!response.ok) {
     throw new Error(`Failed to fetch data file: ${response.statusText}`)
   }
+
   const data = await response.json()
+
   return data
 }
 
@@ -430,18 +464,21 @@ export function splitArgs(str) {
   var dq = str.indexOf('"')
   var sq = str.indexOf("'")
   var numsq = str.length - str.replace("'", '').length
+
   if (sq >= 0 && numsq > 1) if (dq == -1 || sq < dq) regexp = /[^\s']+|'([^']*)'/gi
   var answer = []
 
   do {
     //Each call to exec returns the next regex match as an array
     var match = regexp.exec(str)
+
     if (match != null) {
       //Index 1 in the array is the captured group if it exists
       //Index 0 is the matched text, which we use if no captured group exists
       answer.push(match[1] ? match[1] : match[0])
     }
   } while (match != null)
+
   return answer
 }
 
@@ -463,10 +500,12 @@ export function diceToFormula(dice, flavor, minimum = false) {
 export function makeRegexPatternFrom(text, end = true, start = true) {
   // defaults to exact match
   let pattern = text.split('*').join('.*?').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+
   pattern = pattern.replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/\+/g, '\\+')
   pattern = pattern.replace(/\^/g, '\\^')
   let s = start ? '^' : ''
   let e = end ? '$' : ''
+
   return s + pattern.trim() + e
 }
 
@@ -480,7 +519,8 @@ export function locateToken(identifier) {
   /** @type {Token[]} */ let matches = []
 
   let tokens = canvas.tokens?.placeables
-  if (!!tokens) {
+
+  if (tokens) {
     // try token IDs first
     matches = tokens.filter(it => it.id.match(pattern))
 
@@ -561,6 +601,7 @@ export function makeElementDraggable(element, type, cssClass, payload, dragImage
         type: type,
         payload: payload,
       }
+
       return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
     }
   })
@@ -577,16 +618,19 @@ export function arrayBuffertoBase64(buffer) {
 
 const DOUBLE_QUOTE = '"'
 const SINGLE_QUOTE = "'"
+
 /**
  * Returns the attack name quoted appropriately, depending on whether it contains double quotes.
  * @param {{ name: string, mode?: (string|null) }} item
  * @returns {string}
  */
 export function quotedAttackName(item) {
-  let name = !!item.mode ? item.name + ' (' + item.mode + ')' : item.name
+  let name = item.mode ? item.name + ' (' + item.mode + ')' : item.name
+
   if (name.includes(DOUBLE_QUOTE)) {
     // use single quotes
     name = name.replace(/'/g, "\\'") // Escape single quotes
+
     return SINGLE_QUOTE + name + SINGLE_QUOTE
   }
 
@@ -602,9 +646,11 @@ export function quotedAttackName(item) {
  */
 export const arraysEqual = (arr1, arr2) => {
   if (arr1.length !== arr2.length) return false
+
   for (let i = 0; i < arr1.length; i++) {
     if (arr1[i] !== arr2[i]) return false
   }
+
   return true
 }
 
@@ -622,9 +668,11 @@ export const compareColleges = (a, b) => {
   if (!Array.isArray(a)) {
     a = a.split(',')
   }
+
   if (!Array.isArray(b)) {
     b = b.split(',')
   }
+
   return arraysEqual(a, b)
 }
 
@@ -634,6 +682,7 @@ export const escapeHtml = text => {
 
 export const stripBracketContents = text => {
   if (!text) return ''
+
   return text
     .replace(/\[[^\]]*\]/g, '')
     .replace(/ +/g, ' ')
@@ -650,6 +699,7 @@ export const displayAsDice = (value, system) => {
   if (!value && value !== 0) return ''
   // If value is a derived dice expression, convert it to d6 format.
   const lowerValue = value.toString().toLowerCase().trim()
+
   if (!!system && system.thrust && system.swing && lowerValue.match(/^(sw|thr)/)) {
     const matches = lowerValue.match(/^(?<type>sw|thr)(?<modifier>[+-]\d+)?(?<remainder>.*)$/)
     const deriveddamage = matches.groups.type === 'sw' ? system.swing : system.thrust
@@ -665,7 +715,9 @@ export const displayAsDice = (value, system) => {
     const formulaOther = matches.groups.remainder
     const finalAdd = parseInt(dfAdd) + parseInt(formulaAdd)
     const signal = finalAdd === 0 ? '' : finalAdd > 0 ? '+' : '-'
+
     return `${dice}d${signal}${finalAdd !== 0 ? Math.abs(finalAdd) : ''}${formulaOther}`
   }
+
   return value.toString()
 }
