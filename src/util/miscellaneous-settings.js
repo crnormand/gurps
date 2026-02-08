@@ -225,7 +225,7 @@ export function initializeSettings() {
       config: true,
       type: Boolean,
       default: false,
-      onChange: value => {
+      onChange: _value => {
         for (const actor of game.actors.contents) {
           if (actor.permission >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)
             if (actor.sheet)
@@ -404,7 +404,7 @@ export function initializeSettings() {
         TenPenalties: game.i18n.localize('GURPS.settingRangeStrategyTenPenalties'),
       },
       default: 'Standard',
-      onChange: value => GURPS.rangeObject.update(),
+      onChange: _value => GURPS.rangeObject.update(),
     })
 
     game.settings.register(SYSTEM_NAME, SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE, {
@@ -425,7 +425,7 @@ export function initializeSettings() {
       config: true,
       type: String,
       default: Initiative.defaultFormula(),
-      onChange: value => GURPS.setInitiativeFormula(true),
+      onChange: _value => GURPS.setInitiativeFormula(true),
     })
 
     // Damage calculation options ----
@@ -437,7 +437,7 @@ export function initializeSettings() {
       config: true,
       type: Boolean,
       default: false,
-      onChange: value => GURPS.ConditionalInjury.update(),
+      onChange: _value => GURPS.ConditionalInjury.update(),
     })
 
     // Status Effects Configuration ----
@@ -487,7 +487,7 @@ export function initializeSettings() {
       onChange: value => {
         console.log(`${SETTING_MANEUVER_VISIBILITY}: ${value}`)
         // Re-draw token effects immediately
-        game.scenes.active.tokens.forEach(e => e.object.drawEffects())
+        game.scenes.active.tokens.forEach(tokenDocument => tokenDocument.object.drawEffects())
       },
     })
 
@@ -506,7 +506,7 @@ export function initializeSettings() {
       onChange: value => {
         console.log(`${SETTING_MANEUVER_DETAIL}: ${value}`)
         // Re-draw token effects immediately
-        game.scenes.active.tokens.forEach(e => e.object.drawEffects())
+        game.scenes.active.tokens.forEach(tokenDocument => tokenDocument.object.drawEffects())
       },
     })
 

@@ -46,7 +46,7 @@ export class GurpsRange {
     const basicSetRanges = []
 
     // Yes, I should be able to do this programatically... but my brain hurts right now, so there.
-    const r = [
+    const rangeAndPenalty = [
       2,
       0,
       3,
@@ -81,15 +81,15 @@ export class GurpsRange {
       -15,
     ]
 
-    for (let i = 0; i < r.length; i = i + 2) {
-      let d = {
-        moddesc: game.i18n.format('GURPS.modifierRange', { range: r[i] }),
-        max: r[i],
-        penalty: r[i + 1],
-        desc: `${r[i]} yds`,
+    for (let i = 0; i < rangeAndPenalty.length; i = i + 2) {
+      let rangeBand = {
+        moddesc: game.i18n.format('GURPS.modifierRange', { range: rangeAndPenalty[i] }),
+        max: rangeAndPenalty[i],
+        penalty: rangeAndPenalty[i + 1],
+        desc: `${rangeAndPenalty[i]} yds`,
       }
 
-      basicSetRanges.push(d)
+      basicSetRanges.push(rangeBand)
     }
 
     return basicSetRanges
@@ -149,12 +149,12 @@ export class GurpsRange {
 
   _buildModifiers() {
     /** @type {import('../module/modifier-bucket/bucket-app.js').Modifier[]} */
-    let m = []
+    let modifiers = []
 
     this.ranges.forEach(band => {
-      if (band.penalty != 0) GURPS.ModifierBucket.addModifier(band.penalty, band.moddesc, m)
+      if (band.penalty != 0) GURPS.ModifierBucket.addModifier(band.penalty, band.moddesc, modifiers)
     })
-    this.modifiers = m.map(e => e.mod + ' ' + e.desc)
+    this.modifiers = modifiers.map(modifier => modifier.mod + ' ' + modifier.desc)
   }
 
   async update() {

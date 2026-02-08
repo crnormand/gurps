@@ -22,9 +22,9 @@ import { d6ify, sanitize, utoa } from './utilities.js'
   (\(-?[\.\d]+\))? == (-.#)
 */
 
-export const COSTS_REGEX = /.*\* ?(?<verb>(cost|per|costs))? (?<cost>\d+) ?(?<type>[ \w\(\)]+)/i
+export const COSTS_REGEX = /.*\* ?(?<verb>(cost|per|costs))? (?<cost>\d+) ?(?<type>[ \w()]+)/i
 export const DAMAGE_REGEX =
-  /^(?<accum>\+)?(?<roll>\d+)(?<D>d\d*)?(?<adds>[\–\-+]@?\w+)?(?<mult>[×x\*]\d+\.?\d*)? ?(?<div>\(-?[\.\d]+\))?(?<min>!)? ?(?<other>[^\*]*?)(?<costs>\*(costs|per)? \d+ ?[\w\(\) ]+)?(?<follow>,.*)?$/i
+  /^(?<accum>\+)?(?<roll>\d+)(?<D>d\d*)?(?<adds>[-+–]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+)?(?<follow>,.*)?$/i
 export const DMG_INDEX_DICE = 1
 export const DMG_INDEX_D = 2
 export const DMG_INDEX_ADDS = 3
@@ -35,7 +35,7 @@ export const DMG_INDEX_TYPE = 7
 export const DMG_INDEX_COST = 8
 
 export const DERIVED_DAMAGE_REGEX =
-  /^(?<accum>\+)?(?<att>swing|thrust|sw|thr)\s*(?<adds>[\–\-+]@?\w+)?(?<mult>[×x\*]\d+\.?\d*)? ?(?<div>\(-?[\.\d]+\))?(?<min>!)? ?(?<other>[^\*]*?)(?<costs>\*(costs|per)? \d+ ?[\w\(\) ]+])?(?<follow>,.*)?$/i
+  /^(?<accum>\+)?(?<att>swing|thrust|sw|thr)\s*(?<adds>[-+–]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+])?(?<follow>,.*)?$/i
 export const DMG_INDEX_BASICDAMAGE = 1
 
 export const PARSELINK_MAPPINGS = {
@@ -101,7 +101,7 @@ const _modifier = {
    *  • mod-value = positive-integer | "@margin"
    *  • mod-description = ( text - "&" ) -- Any string that does not contain the '&' character.
    */
-  regex: /^(?<signednum>[\+-]\d+)(?<modtext>[^&]*)(?<othermods>&.*)?/,
+  regex: /^(?<signednum>[+-]\d+)(?<modtext>[^&]*)(?<othermods>&.*)?/,
 
   /**
    * @returns {
@@ -279,7 +279,7 @@ const _iftest = {
    *  • comparison = "=" | "<" | ">" | "<=" | ">="
    *  • expression = comparison [ sign ] number
    */
-  regex: /^@(?<keyword>margin|isCritSuccess|IsCritFailure) *(?<expression>(=|<|>|<=|>=) *[+-]?[\d\.]+)?$/i,
+  regex: /^@(?<keyword>margin|isCritSuccess|IsCritFailure) *(?<expression>(=|<|>|<=|>=) *[+-]?[\d.]+)?$/i,
 
   /**
    * @returns {
@@ -317,7 +317,7 @@ const _foundryLink = {
    *  • id = id-char { id-char }
    *  • text = ( text - "}" ) -- Any string that does not contain the '}' character.
    */
-  regex: /^(?<link>JournalEntry|JournalEntryPage|Actor|RollTable|Item)\[(?<id>[\.\w]+)\](?<overridetext>{.*})/,
+  regex: /^(?<link>JournalEntry|JournalEntryPage|Actor|RollTable|Item)\[(?<id>[.\w]+)\](?<overridetext>{.*})/,
 
   /**
    * @returns {
@@ -330,7 +330,7 @@ const _foundryLink = {
    *  }
    * }
    */
-  parse: (match, args) => {
+  parse: (match, _args) => {
     let action = {
       type: 'dragdrop',
       orig: match.input,
@@ -507,7 +507,7 @@ const _attribute = {
    *  • desc = ( text - "|" ) -- Any string that does not contain the '|' character.
    */
   regex:
-    /^(?<attrname>[A-Za-z][A-Za-z ]*[A-Za-z][0-9]*)(?<object>:[A-Za-z \*]+)? ?(?<mod>[+-](\d+|@margin|a:\S+|a:"[^"]*"|a:'[^']*'))? ?(?<desc>[^\|]*)(?<remainder>\|.*)?$/,
+    /^(?<attrname>[A-Za-z][A-Za-z ]*[A-Za-z][0-9]*)(?<object>:[A-Za-z *]+)? ?(?<mod>[+-](\d+|@margin|a:\S+|a:"[^"]*"|a:'[^']*'))? ?(?<desc>[^|]*)(?<remainder>\|.*)?$/,
 
   /**
    * @returns {
@@ -558,7 +558,7 @@ const _attribute = {
 
     if (path) {
       let opt =
-        match.groups.desc.trim().match(/(?<attr>[^\?]*)(\? *"(?<truetext>[^"]*)")?( *[,:] *"(?<falsetext>[^"]*)")?/) ||
+        match.groups.desc.trim().match(/(?<attr>[^?]*)(\? *"(?<truetext>[^"]*)")?( *[,:] *"(?<falsetext>[^"]*)")?/) ||
         [] // desc (searching for true/false options)
       let desc = opt.groups.attr.trim()
       let spantext = attr
@@ -628,7 +628,7 @@ const _skillSpell = {
    * • desc = ( text - "|" ) -- Any string that does not contain the '|' character.
    */
   regex:
-    /^(?<type>S:|Sp:|Sk:)(?<name>"[^"]+"|'[^']+'|(?<!["'])[^|]+?(?= ?[+-](\d+|@margin))|(?<!["'])[^ ]+) ?(?<mod>[+-](\d+|@margin))? ?(?<desc>[^\|]*)(?<remainder>\|.*)?$/i,
+    /^(?<type>S:|Sp:|Sk:)(?<name>"[^"]+"|'[^']+'|(?<!["'])[^|]+?(?= ?[+-](\d+|@margin))|(?<!["'])[^ ]+) ?(?<mod>[+-](\d+|@margin))? ?(?<desc>[^|]*)(?<remainder>\|.*)?$/i,
 
   /**
    * @returns {
@@ -668,13 +668,13 @@ const _skillSpell = {
     let floatingAttribute
     let floatingLabel
     let floatingType
-    let matches = comment.match(/(\((Based|Base|B): ?[^\)]+\))/gi)
+    let matches = comment.match(/(\((Based|Base|B): ?[^)]+\))/gi)
 
     if (matches) {
-      floatingLabel = comment.replace(/.*\((Based|Base|B): ?([^\)]+)\).*/gi, '$2')
+      floatingLabel = comment.replace(/.*\((Based|Base|B): ?([^)]+)\).*/gi, '$2')
 
       comment = comment
-        .replace(/(\((Based|Base|B): ?[^\)]+\))/g, '')
+        .replace(/(\((Based|Base|B): ?[^)]+\))/g, '')
         .replace('  ', ' ')
         .trim()
 
@@ -691,18 +691,18 @@ const _skillSpell = {
 
     var costs
 
-    matches = comment.match(/\* ?(Costs?|Per) (\d+) ?[\w\(\)]+/i)
+    matches = comment.match(/\* ?(Costs?|Per) (\d+) ?[\w()]+/i)
 
     if (matches) {
       costs = matches[0]
       spantext += ' ' + costs
       comment = comment
-        .replace(/\* ?(Costs?|Per) (\d+) ?[\w\(\)]+/gi, '')
+        .replace(/\* ?(Costs?|Per) (\d+) ?[\w()]+/gi, '')
         .replace('  ', ' ')
         .trim()
     }
 
-    matches = comment.match(/([^\?]*)(\? *"([^"]*)")?( *[,:] *"([^"]*)")?/) || [] // desc
+    matches = comment.match(/([^?]*)(\? *"([^"]*)")?( *[,:] *"([^"]*)")?/) || [] // desc
 
     // TODO If the comment doesn't match the pattern, this next line will fail.
     moddesc = matches[1].trim()
@@ -808,13 +808,13 @@ const _attackDamage = {
     let modifier = match.groups?.modifier
 
     let moddesc = ''
-    let matches = comment.match(/\* ?(Costs?|Per) (\d+) ?[\w\(\)]+/i)
+    let matches = comment.match(/\* ?(Costs?|Per) (\d+) ?[\w()]+/i)
     var costs
 
     if (matches) {
       costs = matches.input
       comment = comment
-        .replace(/\* ?(Costs?|Per) (\d+) ?[\w\(\)]+/gi, '')
+        .replace(/\* ?(Costs?|Per) (\d+) ?[\w()]+/gi, '')
         .replace('  ', ' ')
         .trim()
     }
@@ -964,22 +964,22 @@ export function parselink(input /*, htmldesc, clrdmods = false*/) {
     return dam
   }
 
-  for (const f of parseFunctions) {
+  for (const parseFunction of parseFunctions) {
     let matches, result
 
-    if ((matches = args.str.match(f.regex))) {
-      if ((result = f.parse(matches, args))) return result
+    if ((matches = args.str.match(parseFunction.regex))) {
+      if ((result = parseFunction.parse(matches, args))) return result
     }
   }
 
   return { text: args.str }
 
   function setSourceId(args) {
-    let m = args.str.match(/^@(?<actorid>[^@]+)@(?<text>[\s\S]*)/)
+    let sourceIdMatch = args.str.match(/^@(?<actorid>[^@]+)@(?<text>[\s\S]*)/)
 
-    if (m) {
-      args.sourceId = m.groups.actorid
-      args.str = m.groups.text.trim()
+    if (sourceIdMatch) {
+      args.sourceId = sourceIdMatch.groups.actorid
+      args.str = sourceIdMatch.groups.text.trim()
     }
   }
 
@@ -1019,11 +1019,11 @@ export function parseForRollOrDamage(str, overridetxt) {
   // Supports:  2d+1x3(5), 4dX2(0.5), etc
   // Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
   str = str.toString() // convert possible array to single string
-  let a = str.match(DAMAGE_REGEX)
+  let damageMatch = str.match(DAMAGE_REGEX)
 
-  if (a) {
-    const D = a.groups.D || '' // Can now support non-variable damage '2 cut' or '2x3(1) imp'
-    const other = a.groups.other ? a.groups.other.trim() : ''
+  if (damageMatch) {
+    const diceOrDieMarker = damageMatch.groups.D || '' // Can now support non-variable damage '2 cut' or '2x3(1) imp'
+    const other = damageMatch.groups.other ? damageMatch.groups.other.trim() : ''
     let [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
     let dmap = GURPS.DamageTables.translate(actualType.toLowerCase())
 
@@ -1037,29 +1037,29 @@ export function parseForRollOrDamage(str, overridetxt) {
     }
 
     const woundingModifier = GURPS.DamageTables.woundModifiers[dmap]
-    const [adds, multiplier, divisor, bang] = _getFormulaComponents(a.groups)
+    const [adds, multiplier, divisor, bang] = _getFormulaComponents(damageMatch.groups)
 
     var next
 
-    if (a.groups.follow) {
-      next = parseForRollOrDamage(a.groups.follow.substring(1).trim()) // remove ',')
+    if (damageMatch.groups.follow) {
+      next = parseForRollOrDamage(damageMatch.groups.follow.substring(1).trim()) // remove ',')
       if (next) next = next.action
     }
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
-      let dice = D === 'd' ? d6ify(D) : D
+      let dice = diceOrDieMarker === 'd' ? d6ify(diceOrDieMarker) : diceOrDieMarker
 
       if (!dice) return undefined // if no damage type and no dice, not a roll, ex: [70]
       let action = {
         orig: str,
         type: 'roll',
-        displayformula: a.groups.roll + D + adds + multiplier + bang,
-        formula: a.groups.roll + dice + adds + multiplier + bang,
+        displayformula: damageMatch.groups.roll + diceOrDieMarker + adds + multiplier + bang,
+        formula: damageMatch.groups.roll + dice + adds + multiplier + bang,
         desc: other, // Action description
-        costs: a.groups.cost,
+        costs: damageMatch.groups.cost,
         hitlocation: hitLocation,
-        accumulate: !!a.groups.accum,
+        accumulate: !!damageMatch.groups.accum,
         next: next,
       }
 
@@ -1072,12 +1072,12 @@ export function parseForRollOrDamage(str, overridetxt) {
       let action = {
         orig: str,
         type: 'damage',
-        formula: a.groups.roll + D + adds + multiplier + divisor + bang,
+        formula: damageMatch.groups.roll + diceOrDieMarker + adds + multiplier + divisor + bang,
         damagetype: dmap ? dmap : actualType,
         extdamagetype: extDamageType,
-        costs: a.groups.costs,
+        costs: damageMatch.groups.costs,
         hitlocation: hitLocation,
-        accumulate: !!a.groups.accum,
+        accumulate: !!damageMatch.groups.accum,
         next: next,
       }
 
@@ -1088,15 +1088,15 @@ export function parseForRollOrDamage(str, overridetxt) {
     }
   }
 
-  a = str.match(DERIVED_DAMAGE_REGEX) // SW+1
+  const derivedDamageMatch = str.match(DERIVED_DAMAGE_REGEX) // SW+1
 
-  if (a) {
-    const basic = a.groups.att
-    const other = a.groups.other ? a.groups.other.trim() : ''
+  if (derivedDamageMatch) {
+    const basic = derivedDamageMatch.groups.att
+    const other = derivedDamageMatch.groups.other ? derivedDamageMatch.groups.other.trim() : ''
     const [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
     const dmap = GURPS.DamageTables.translate(actualType.toLowerCase())
     const woundingModifier = GURPS.DamageTables.woundModifiers[dmap]
-    const [adds, multiplier, divisor, bang] = _getFormulaComponents(a.groups)
+    const [adds, multiplier, divisor, bang] = _getFormulaComponents(derivedDamageMatch.groups)
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
@@ -1106,9 +1106,9 @@ export function parseForRollOrDamage(str, overridetxt) {
         derivedformula: basic,
         formula: adds + multiplier + bang,
         desc: other,
-        costs: a.groups.costs,
+        costs: derivedDamageMatch.groups.costs,
         hitlocation: hitLocation,
-        accumulate: !!a.groups.accum,
+        accumulate: !!derivedDamageMatch.groups.accum,
       }
 
       return {
@@ -1123,9 +1123,9 @@ export function parseForRollOrDamage(str, overridetxt) {
         formula: adds + multiplier + divisor + bang,
         damagetype: actualType,
         extdamagetype: extDamageType,
-        costs: a.groups.costs,
+        costs: derivedDamageMatch.groups.costs,
         hitlocation: hitLocation,
-        accumulate: !!a.groups.accum,
+        accumulate: !!derivedDamageMatch.groups.accum,
       }
 
       return {
@@ -1163,10 +1163,10 @@ function _parseOtherForTypeModiferAndLocation(other) {
 
 function _getFormulaComponents(groups) {
   let adds = (groups.adds || '').replace('–', '-')
-  let m = groups.other.match(/([+-]@margin)/i)
+  let marginMatch = groups.other.match(/([+-]@margin)/i)
 
-  if (!adds && !!m) {
-    adds = m[1]
+  if (!adds && !!marginMatch) {
+    adds = marginMatch[1]
   }
 
   let multiplier = groups.mult || ''
@@ -1203,15 +1203,15 @@ function gmspan(overridetxt, str, action, plus, clrdmods) {
     //   desc: '',
     // })
     // expect(result.text).toEqual(expect.stringContaining(`data-otf='+A:"Night Vision"'>+A:"Night Vision" </span>`))
-    const m = action.desc.match(advantageLevel)
+    const advantageLevelMatch = action.desc.match(advantageLevel)
 
-    action.orig = m.groups.mod
+    action.orig = advantageLevelMatch.groups.mod
     action.spantext = action.orig
     action.mod = action.orig
     action.desc = ''
   }
 
-  let a = action
+  let actionAttributes = action
     ? " data-action='" +
       utoa(JSON.stringify(action)) +
       "' data-otf='" +
@@ -1224,14 +1224,14 @@ function gmspan(overridetxt, str, action, plus, clrdmods) {
     if (str.startsWith('-')) str = '&minus;' + str.slice(1) // \u2212
   }
 
-  let s = `<span class='gga-app glinkmod'${a}>${str}`
+  let spanMarkup = `<span class='gga-app glinkmod'${actionAttributes}>${str}`
 
   if (clrdmods) {
-    if (plus) s = `<span class='gga-app glinkmodplus'${a}>${str}`
-    else s = `<span class='gga-app glinkmodminus'${a}>${str}`
+    if (plus) spanMarkup = `<span class='gga-app glinkmodplus'${actionAttributes}>${str}`
+    else spanMarkup = `<span class='gga-app glinkmodminus'${actionAttributes}>${str}`
   }
 
-  return s + '</span>'
+  return spanMarkup + '</span>'
 }
 
 /**
@@ -1249,18 +1249,18 @@ export function gspan(overridetxt, str, action, prefix, comment) {
     action.overridetxt = overridetxt
   }
 
-  let s = "<span class='gga-app gurpslink'"
+  let spanMarkup = "<span class='gga-app gurpslink'"
 
   if (action)
-    s +=
+    spanMarkup +=
       " data-action='" +
       utoa(JSON.stringify(action)) +
       "' data-otf='" +
       (action.blindroll ? '!' : '') +
       action.orig +
       "'"
-  s += '>' + (prefix ? prefix : '') + str.trim() + '</span>'
-  if (comment) s += ' ' + comment
+  spanMarkup += '>' + (prefix ? prefix : '') + str.trim() + '</span>'
+  if (comment) spanMarkup += ' ' + comment
 
-  return s
+  return spanMarkup
 }

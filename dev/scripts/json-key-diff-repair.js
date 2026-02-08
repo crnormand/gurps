@@ -98,12 +98,12 @@ const sameKeys = Object.entries(enJson)
   .filter(([key, value]) => targetJson[key] === value)
   .sort()
 
-sameKeys.forEach(([k, v]) => console.log(`  ${k}: ${v}`))
+sameKeys.forEach(([key, value]) => console.log(`  ${key}: ${value}`))
 
 if (fix) {
   // Remove sameKeys entries from object2.
-  sameKeys.forEach(([k, v]) => {
-    let parts = k.split('.')
+  sameKeys.forEach(([key, _value]) => {
+    let parts = key.split('.')
     let obj = targetJson
 
     for (let i = 0; i < parts.length - 1; i++) {

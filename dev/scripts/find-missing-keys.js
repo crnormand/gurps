@@ -51,54 +51,54 @@ files.forEach(it => {
 
   // Find any strings that start with 'GURPS.'.
   {
-    let matches = lines.filter(it => it.match(/[\'\"\`]GURPS\.[A-Za-z0-9_. ]+?[\'\"\`]\b/g))
+    let matches = lines.filter(it => it.match(/['"`]GURPS\.[A-Za-z0-9_. ]+?['"`]\b/g))
     // console.log(`GURPS.<key>... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
 
     if (matches.length > 0) {
-      matches = matches.map(it => it.replace(/.*[\'\"\`](GURPS\.[A-Za-z0-9_. ]+?)[\'\"\`]\b.*/, '$1'))
+      matches = matches.map(it => it.replace(/.*['"`](GURPS\.[A-Za-z0-9_. ]+?)['"`]\b.*/, '$1'))
       matches.forEach(it => tags.add(it))
     }
   }
 
   {
-    let matches = lines.filter(it => it.match(/localize\([\'\"\`][A-Za-z0-9_. ]+?[\'\"\`],/g))
+    let matches = lines.filter(it => it.match(/localize\(['"`][A-Za-z0-9_. ]+?['"`],/g))
     // console.log(`localize("<key>"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
 
     if (matches.length > 0) {
-      matches = matches.map(it => it.replace(/.*localize\([\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches = matches.map(it => it.replace(/.*localize\(['"`]([A-Za-z0-9_. ]+?)['"`].*/, '$1'))
       matches.forEach(it => tags.add(it))
     }
   }
 
   // look for patterns like 'localize("<key>",'
   {
-    let matches = lines.filter(it => it.match(/localize\([\'\"\`][A-Za-z0-9_. ]+?[\'\"\`],/g))
+    let matches = lines.filter(it => it.match(/localize\(['"`][A-Za-z0-9_. ]+?['"`],/g))
     // console.log(`localize("<key>"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
 
     if (matches.length > 0) {
-      matches = matches.map(it => it.replace(/.*localize\([\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches = matches.map(it => it.replace(/.*localize\(['"`]([A-Za-z0-9_. ]+?)['"`].*/, '$1'))
       matches.forEach(it => tags.add(it))
     }
   }
 
   // look for patterns like 'format("<key>",'
   {
-    let matches = lines.filter(it => it.match(/format\([\'\"\`][A-Za-z0-9_. ]+?[\'\"\`],/g))
+    let matches = lines.filter(it => it.match(/format\(['"`][A-Za-z0-9_. ]+?['"`],/g))
     // console.log(`format("<key>"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
 
     if (matches.length > 0) {
-      matches = matches.map(it => it.replace(/.*format\([\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches = matches.map(it => it.replace(/.*format\(['"`]([A-Za-z0-9_. ]+?)['"`].*/, '$1'))
       matches.forEach(it => tags.add(it))
     }
   }
 
   // look for patterns like '{{localize "<key>",'
   {
-    let matches = lines.filter(it => it.match(/\{\{localize [\'\"\`][A-Za-z0-9_. ]+?[\'\"\`]/g))
+    let matches = lines.filter(it => it.match(/\{\{localize ['"`][A-Za-z0-9_. ]+?['"`]/g))
     // console.log(`{{localize "key"... :: file: ${it} lines: ${lines.length} matches: ${matches.length}`)
 
     if (matches.length > 0) {
-      matches = matches.map(it => it.replace(/.*\{\{localize [\'\"\`]([A-Za-z0-9_. ]+?)[\'\"\`].*/, '$1'))
+      matches = matches.map(it => it.replace(/.*\{\{localize ['"`]([A-Za-z0-9_. ]+?)['"`].*/, '$1'))
       matches.forEach(it => tags.add(it))
     }
   }
@@ -106,7 +106,6 @@ files.forEach(it => {
 
 // read the tags from en.json
 let object = JSON.parse(fs.readFileSync('lang/en.json', 'utf8'))
-let keys = Object.keys(object)
 
 tags = Array.from(tags).sort()
 

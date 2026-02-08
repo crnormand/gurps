@@ -127,7 +127,6 @@ export default class HitFatPoints {
   hpCondition(HP, member) {
     let key = this._getConditionKey(HP, hpConditions)
 
-    // @ts-ignore
     return hpConditions[key][member]
   }
 
@@ -138,7 +137,6 @@ export default class HitFatPoints {
   fpCondition(FP, member) {
     let key = this._getConditionKey(FP, fpConditions)
 
-    // @ts-ignore
     return fpConditions[key][member]
   }
 

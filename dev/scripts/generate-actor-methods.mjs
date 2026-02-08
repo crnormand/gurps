@@ -91,15 +91,15 @@ function extractMethodsFromClassBody(body) {
 
 function parseSignature(sig) {
   // Normalize whitespace
-  const s = sig.replace(/\s+/g, ' ').trim()
+  const normalizedSignature = sig.replace(/\s+/g, ' ').trim()
   // Match optional modifiers, accessor, and name
   // Supports: public/private/protected, override, async, static, get/set, and private names like #foo
   const re =
     /^(?:(public|private|protected)\s+)?(?:(override)\s+)?(?:(async)\s+)?(?:(static)\s+)?(?:(get|set)\s+)?(#?[A-Za-z_][A-Za-z0-9_]*)\s*\(/
-  const m = s.match(re)
+  const match = normalizedSignature.match(re)
 
-  if (!m) return null
-  const [, vis, override, asyncKw, staticKw, accessor, name] = m
+  if (!match) return null
+  const [, vis, override, asyncKw, staticKw, accessor, name] = match
 
   return {
     name,
@@ -118,8 +118,8 @@ function parseSignature(sig) {
 function dedupe(list) {
   const seen = new Set()
 
-  return list.filter(m => {
-    const key = `${m.kind}:${m.name}:${m.modifiers.static ? 'S' : ''}:${m.modifiers.async ? 'A' : ''}:${m.modifiers.override ? 'O' : ''}`
+  return list.filter(method => {
+    const key = `${method.kind}:${method.name}:${method.modifiers.static ? 'S' : ''}:${method.modifiers.async ? 'A' : ''}:${method.modifiers.override ? 'O' : ''}`
 
     if (seen.has(key)) return false
     seen.add(key)
@@ -128,17 +128,17 @@ function dedupe(list) {
   })
 }
 
-function formatMethod(m) {
+function formatMethod(method) {
   const tags = []
 
-  if (m.modifiers.static) tags.push('static')
-  if (m.modifiers.async) tags.push('async')
-  if (m.modifiers.override) tags.push('override')
-  if (m.modifiers.private) tags.push('private')
-  if (m.kind === 'get' || m.kind === 'set') tags.push(m.kind)
+  if (method.modifiers.static) tags.push('static')
+  if (method.modifiers.async) tags.push('async')
+  if (method.modifiers.override) tags.push('override')
+  if (method.modifiers.private) tags.push('private')
+  if (method.kind === 'get' || method.kind === 'set') tags.push(method.kind)
   const tagStr = tags.length ? ` — [${tags.join(', ')}]` : ''
 
-  return `- ${m.name}()${tagStr}`
+  return `- ${method.name}()${tagStr}`
 }
 
 async function generate() {
@@ -161,9 +161,15 @@ async function generate() {
 
     const methods = extractMethodsFromClassBody(body)
     // Group by kind for readability
-    const getters = methods.filter(m => m.kind === 'get').sort((a, b) => a.name.localeCompare(b.name))
-    const setters = methods.filter(m => m.kind === 'set').sort((a, b) => a.name.localeCompare(b.name))
-    const normal = methods.filter(m => m.kind === 'method').sort((a, b) => a.name.localeCompare(b.name))
+    const getters = methods
+      .filter(method => method.kind === 'get')
+      .sort((left, right) => left.name.localeCompare(right.name))
+    const setters = methods
+      .filter(method => method.kind === 'set')
+      .sort((left, right) => left.name.localeCompare(right.name))
+    const normal = methods
+      .filter(method => method.kind === 'method')
+      .sort((left, right) => left.name.localeCompare(right.name))
 
     sections.push(`## ${className} (${path.relative(repoRoot, file)})`)
     sections.push('')

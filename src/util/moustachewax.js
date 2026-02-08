@@ -13,7 +13,6 @@ import { extractOtfs } from '../module/utilities/otf.js'
 import * as Settings from './miscellaneous-settings.js'
 import { parseDecimalNumber } from './parse-decimal-number/parse-decimal-number.js'
 import {
-  atou,
   getComparison,
   getOperation,
   isArray,
@@ -21,7 +20,6 @@ import {
   quotedAttackName,
   recurselist,
   stripBracketContents,
-  utoa,
   zeroFill,
 } from './utilities.js'
 
@@ -90,14 +88,14 @@ export default function () {
       if (parseInt(arg)) arr.push(arg)
     }
 
-    return arr.reduce((a, b) => a + b, 0)
+    return arr.reduce((sum, value) => sum + value, 0)
   })
 
   // Add "@index to {{times}} function
-  Handlebars.registerHelper('times', function (n, content) {
+  Handlebars.registerHelper('times', function (count, content) {
     let result = ''
 
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < count; i++) {
       content.data.index = i + 1
       result += content.fn(i)
     }
@@ -119,12 +117,12 @@ export default function () {
     return plural
   })
 
-  Handlebars.registerHelper('defined', function (a) {
-    return a != undefined
+  Handlebars.registerHelper('defined', function (value) {
+    return value != undefined
   })
 
-  Handlebars.registerHelper('abs', function (a) {
-    return Math.abs(a)
+  Handlebars.registerHelper('abs', function (value) {
+    return Math.abs(value)
   })
 
   Handlebars.registerHelper('percent', function (value, max) {
@@ -188,7 +186,6 @@ export default function () {
     if (GURPS.DEBUG == false) return
     console.log('GURPS | Current context:')
     console.log('================')
-    // @ts-ignore
     console.log(this)
 
     if (value) {
@@ -210,8 +207,6 @@ export default function () {
     let format = arguments[0]
 
     for (let index = 1; index < arguments.length; index++) {
-      let value = arguments[index]
-
       format = format.replace(`$${index}`, arguments[index])
     }
 
@@ -230,22 +225,22 @@ export default function () {
   })
 
   Handlebars.registerHelper('objToString', function (str) {
-    let o = GURPS.objToString(str)
+    let objectString = GURPS.objToString(str)
 
-    console.log(o)
+    console.log(objectString)
 
-    return o
+    return objectString
   })
 
   Handlebars.registerHelper('simpleRating', function (lvl) {
     if (!lvl) return 'UNKNOWN'
-    let l = parseInt(lvl)
+    let level = parseInt(lvl)
 
-    if (l < 10) return 'Poor'
-    if (l <= 11) return 'Fair'
-    if (l <= 13) return 'Good'
-    if (l <= 15) return 'Great'
-    if (l <= 18) return 'Super'
+    if (level < 10) return 'Poor'
+    if (level <= 11) return 'Fair'
+    if (level <= 13) return 'Good'
+    if (level <= 15) return 'Great'
+    if (level <= 18) return 'Super'
 
     return 'Epic'
   })
@@ -285,7 +280,7 @@ export default function () {
 
   /// NOTE:  To use this, you must use {{{gurpslinkbr sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
   // Same as gurpslink, but converts \n to <br> for large text values (notes)
-  Handlebars.registerHelper('gurpslinkbr', function (str, markdown = false /*, root, clrdmods = false*/) {
+  Handlebars.registerHelper('gurpslinkbr', function (str, _markdown = false /*, root, clrdmods = false*/) {
     const text = gurpslink(str /*, root == true || clrdmods == true*/)
 
     return text.replace(/\\n|\r?\n/g, '<br/>')
@@ -366,16 +361,16 @@ export default function () {
         // if we have been given an actor, then check to see if the melee or ranged item is equipped in the inventory
         let checked = false
 
-        recurselist(actorToCheckEquipment.system.equipment?.carried ?? [], e => {
+        recurselist(actorToCheckEquipment.system.equipment?.carried ?? [], equipmentEntry => {
           // check
-          if (item.name.startsWith(e.name)) {
+          if (item.name.startsWith(equipmentEntry.name)) {
             checked = true
-            if (!e.equipped) display = false
+            if (!equipmentEntry.equipped) display = false
           }
         })
         if (!checked)
-          recurselist(actorToCheckEquipment.system.equipment?.other ?? [], e => {
-            if (item.name.startsWith(e.name)) display = false
+          recurselist(actorToCheckEquipment.system.equipment?.other ?? [], equipmentEntry => {
+            if (item.name.startsWith(equipmentEntry.name)) display = false
           })
       }
 
@@ -507,10 +502,9 @@ export default function () {
     return i18nFallback(key, fallback)
   })
 
-  Handlebars.registerHelper('filter', function (objects, key) {
+  Handlebars.registerHelper('filter', function (objects, _key) {
     // objects - array of object to filter
     // key - property to filter on
-    // @ts-ignore
     if (isArray(objects)) return objects.filter(!isEmpty)
 
     // assume this is an object with numeric keys
@@ -569,7 +563,7 @@ export default function () {
     if (data.actor && !!game.combats.active) {
       return game.combats.active.combatants.contents
         .map(it => it.actor?.id)
-        .filter(e => !!e)
+        .filter(actorId => !!actorId)
         .includes(data?.actor?.id)
     }
 
@@ -585,7 +579,7 @@ export default function () {
     return txt
       ? txt
           .split(',')
-          .map((/** @type {string} */ l) => gurpslink(`[PDF:${l}]`))
+          .map((/** @type {string} */ pageRef) => gurpslink(`[PDF:${pageRef}]`))
           .join(', ')
       : ''
   })
@@ -600,11 +594,11 @@ export default function () {
 
     return txt
       .split(',')
-      .map((/** @type {string} */ l) => {
+      .map((/** @type {string} */ pageRef) => {
         if (obj.externallink) return `<a href="${obj.externallink}">*Link</a>`
-        else if (l.match(/https?:\/\//i)) {
-          return `<a href="${l}">*Link</a>`
-        } else return gurpslink(`[PDF:${l}]`)
+        else if (pageRef.match(/https?:\/\//i)) {
+          return `<a href="${pageRef}">*Link</a>`
+        } else return gurpslink(`[PDF:${pageRef}]`)
       })
       .join(', ')
   })
@@ -616,7 +610,6 @@ export default function () {
       .replace(',', '')
       .replace(/^(-?\d+(?:\.\d+)*?) +.*/, '$1')
 
-    // @ts-ignore
     return +(Math.round(temp + 'e+2') + 'e-2')
   })
 
@@ -716,13 +709,13 @@ export default function () {
     thresholds.some(
       function (
         /** @type {{ operator: string; comparison: string; value: number; }} */ threshold,
-        /** @type {number} */ index
+        /** @type {number} */ _index
       ) {
         let op = getOperation(threshold.operator)
         let comparison = getComparison(threshold.comparison)
         let testValue = op(max, threshold.value)
 
-        return comparison(value, testValue) ? ((result = index), true) : false
+        return comparison(value, testValue) ? ((result = _index), true) : false
       }
     )
 
@@ -734,7 +727,7 @@ export default function () {
    */
   Handlebars.registerHelper('breakpoint-of', function (thresholds, max, value) {
     // return the index of the threshold that the value falls into
-    let matches = thresholds.filter(function (threshold, index) {
+    let matches = thresholds.filter(function (threshold) {
       let op = getOperation(threshold.operator)
       let comparison = getComparison(threshold.comparison)
       let testValue = op(max, threshold.value)
@@ -750,7 +743,7 @@ export default function () {
    */
   Handlebars.registerHelper('breakpointIndex-of', function (thresholds, max, value) {
     // return the index of the threshold that the value falls into
-    let matches = thresholds.filter(function (threshold, index) {
+    let matches = thresholds.filter(function (threshold) {
       let op = getOperation(threshold.operator)
       let comparison = getComparison(threshold.comparison)
       let testValue = op(max, threshold.value)
@@ -1000,7 +993,7 @@ export default function () {
     return multiplyDice(formula, count)
   })
 
-  Handlebars.registerHelper('collapsible-content', function (id, data, group, options) {
+  Handlebars.registerHelper('collapsible-content', function (id, data, group, _options) {
     let title = data[0]
     let type = !!group && group.length > 0 ? `type='radio' name='${group}'` : `type='checkbox'`
     let content = data
@@ -1027,7 +1020,7 @@ ${content}
     return new Handlebars.SafeString(template)
   })
 
-  Handlebars.registerHelper('damageTerm', function (calc, options) {
+  Handlebars.registerHelper('damageTerm', function (calc, _options) {
     let armorDivisor =
       calc.useArmorDivisor && calc.armorDivisor //
         ? calc.armorDivisor == -1
@@ -1047,25 +1040,23 @@ ${content}
    * Made this part eslint compatible...
    * ~Stevil
    */
-   
-  Handlebars.registerHelper('switch', function (value, options) {
+
+  Handlebars.registerHelper('switch', function (value, _options) {
     this.switch_value = value
     this.switch_break = false
 
-    return options.fn(this)
+    return _options.fn(this)
   })
 
-   
-  Handlebars.registerHelper('case', function (value, options) {
+  Handlebars.registerHelper('case', function (value, _options) {
     if (value === this.switch_value) {
       this.switch_break = true
 
-      return options.fn(this)
+      return _options.fn(this)
     }
   })
 
-   
-  Handlebars.registerHelper('default', function (value, options) {
+  Handlebars.registerHelper('default', function (value, _options) {
     if (this.switch_break == false) {
       return value
     }
@@ -1075,7 +1066,7 @@ ${content}
     return prefix + ':' + quotedAttackName(item)
   })
 
-  Handlebars.registerHelper('getMoveIcon', function (value, options) {
+  Handlebars.registerHelper('getMoveIcon', function (value, _options) {
     const icons = TokenActions.getManeuverIcons(value.name)
 
     return new Handlebars.SafeString(icons)
@@ -1103,11 +1094,13 @@ ${content}
     const rgb = backgroundHex
       .replace(/^#/, '')
       .match(/.{2}/g)
-      .map(x => parseInt(x, 16) / 255)
-    const [R, G, B] = rgb.map(c => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
-    const L = 0.2126 * R + 0.7152 * G + 0.0722 * B
+      .map(pair => parseInt(pair, 16) / 255)
+    const [red, green, blue] = rgb.map(channel =>
+      channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+    )
+    const luminescence = 0.2126 * red + 0.7152 * green + 0.0722 * blue
 
-    return L > 0.179 ? '#000000' : '#ffffff'
+    return luminescence > 0.179 ? '#000000' : '#ffffff'
   })
 
   // === register Handlebars partials ===
@@ -1173,8 +1166,6 @@ ${content}
     'systems/gurps/templates/item/sections/skill.hbs',
     'systems/gurps/templates/item/sections/spell.hbs',
   ]
-
-  const rootPath = `systems/${GURPS.SYSTEM_NAME}/templates/`
 
   templates.forEach(filename => {
     let name = filename.substr(filename.lastIndexOf('/') + 1).replace(/(.*)\.hbs/, '$1')

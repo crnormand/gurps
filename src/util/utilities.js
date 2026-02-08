@@ -3,11 +3,11 @@
 // Since this file is in the lib directory, it should not have any Foundry dependencies.
 export function displayMod(mod) {
   if (!mod) mod = '0'
-  let n = mod.toString().trim()
+  let normalized = mod.toString().trim()
 
-  if (!n.startsWith('-') && !n.startsWith('+')) n = '+' + n
+  if (!normalized.startsWith('-') && !normalized.startsWith('+')) normalized = '+' + normalized
 
-  return n
+  return normalized
 }
 
 /**
@@ -41,7 +41,7 @@ export function makeSelect(array) {
 /**
  * @param {string} text
  */
-export function horiz(text, size = 10) {
+export function horiz(text, _size = 10) {
   return `<div class='subtitle'>${text}</div>`
 }
 
@@ -52,7 +52,7 @@ export function horiz(text, size = 10) {
  * @param {string} text
  */
 export function xmlTextToJson(text) {
-  var xml = new DOMParser().parseFromString(text, 'application/xml')
+  var xml = new globalThis.DOMParser().parseFromString(text, 'application/xml')
 
   return xmlToJson(xml)
 }
@@ -67,20 +67,20 @@ export function xmlToJson(xml) {
   /** @type {Record<String, any>} Create the return object */
   var obj = {}
 
-  if (xml.nodeType == Node.ELEMENT_NODE) {
+  if (xml.nodeType == globalThis.Node.ELEMENT_NODE) {
     let element = /** @type {Element} */ (/** @type {unknown} */ (xml))
 
     // do attributes
     if (element.attributes.length > 0) {
       obj['@attributes'] = {}
 
-      for (var j = 0; j < element.attributes.length; j++) {
-        var attribute = element.attributes.item(j)
+      for (var attributeIndex = 0; attributeIndex < element.attributes.length; attributeIndex++) {
+        var attribute = element.attributes.item(attributeIndex)
 
         if (attribute) obj['@attributes'][attribute.nodeName] = attribute?.nodeValue
       }
     }
-  } else if (xml.nodeType == Node.TEXT_NODE) {
+  } else if (xml.nodeType == globalThis.Node.TEXT_NODE) {
     return xml.nodeValue
   }
 
@@ -114,9 +114,9 @@ export function xmlToJson(xml) {
  * @returns {string}
  */
 export function d6ify(str, flavor = null) {
-  let w = str.replace(/d([^6])/g, `d6${flavor || ''}$1`) // Find 'd's without a 6 behind it, and add it.
+  let withD6 = str.replace(/d([^6])/g, `d6${flavor || ''}$1`) // Find 'd's without a 6 behind it, and add it.
 
-  return w.replace(/d$/g, `d6${flavor || ''}`) // and do the same for the end of the line.
+  return withD6.replace(/d$/g, `d6${flavor || ''}`) // and do the same for the end of the line.
 }
 
 /**
@@ -128,7 +128,9 @@ export function isNiceDiceEnabled() {
 
   try {
     niceDice = !!game.settings.get('dice-so-nice', 'settings') // no longer have the enabled flag
-  } catch {}
+  } catch {
+    // ignore
+  }
 
   return niceDice
 }
@@ -209,27 +211,27 @@ export function zeroFill(number, width = 5) {
  * @returns {string}
  */
 export function extractP(string) {
-  let v = ''
+  let extracted = ''
 
   if (string) {
-    let s = string.split('\n')
+    let lines = string.split('\n')
 
-    for (let b of s) {
-      if (b) {
-        if (b.startsWith('@@@@')) {
-          b = b.substr(4)
-          v += atou(b) + '\n'
-        } else v += b + '\n'
+    for (let line of lines) {
+      if (line) {
+        if (line.startsWith('@@@@')) {
+          line = line.substr(4)
+          extracted += atou(line) + '\n'
+        } else extracted += line + '\n'
       }
     }
   }
 
   // Maybe a temporary fix? There are junk characters at the start and end of
   // this string after decoding. Example: ";p&gt;Heavy Mail Hauberk↵/p>↵"
-  return v
+  return extracted
     .replace(/^;p&gt;/, '')
     .replace(/\n$/, '')
-    .replace(/\/p\>$/, '')
+    .replace(/\/p>$/, '')
 }
 
 // Take a string like "", "-", "3", "4-5" and convert it into an array of int.
@@ -325,7 +327,7 @@ export function generateUniqueId() {
  * @returns {string}
  */
 export function atou(b64) {
-  return decodeURIComponent(escape(atob(b64)))
+  return decodeURIComponent(escape(globalThis.atob(b64)))
 }
 
 /**
@@ -334,7 +336,7 @@ export function atou(b64) {
  * @returns {string}
  */
 export function utoa(data) {
-  return btoa(unescape(encodeURIComponent(data)))
+  return globalThis.btoa(unescape(encodeURIComponent(data)))
 }
 
 /**
@@ -396,24 +398,24 @@ export function assert(condition, message) {
  * @returns {(a: number, b: number) => number}
  */
 export function getOperation(operator) {
-  let op = function (/** @type {number} */ a, /** @type {number} */ b) {
-    return a + b
+  let operation = function (/** @type {number} */ left, /** @type {number} */ right) {
+    return left + right
   }
 
   if (operator === '×')
-    op = function (a, b) {
-      return a * b
+    operation = function (left, right) {
+      return left * right
     }
   else if (operator === '÷')
-    op = function (a, b) {
-      return a / b
+    operation = function (left, right) {
+      return left / right
     }
   else if (operator === '−')
-    op = function (a, b) {
-      return a - b
+    operation = function (left, right) {
+      return left - right
     }
 
-  return op
+  return operation
 }
 
 /**
@@ -422,24 +424,24 @@ export function getOperation(operator) {
  * @returns {(a: number, b: number) => boolean}
  */
 export function getComparison(symbol) {
-  let comparison = function (/** @type {number} */ a, /** @type {number} */ b) {
-    return a < b
+  let compare = function (/** @type {number} */ left, /** @type {number} */ right) {
+    return left < right
   }
 
   if (symbol === '>')
-    comparison = function (a, b) {
-      return a > b
+    compare = function (left, right) {
+      return left > right
     }
   else if (symbol === '≥')
-    comparison = function (a, b) {
-      return a >= b
+    compare = function (left, right) {
+      return left >= right
     }
   else if (symbol === '≤')
-    comparison = function (a, b) {
-      return a <= b
+    compare = function (left, right) {
+      return left <= right
     }
 
-  return comparison
+  return compare
 }
 
 // Function to read a json data file from inside this system.
@@ -470,14 +472,14 @@ export function splitArgs(str) {
 
   do {
     //Each call to exec returns the next regex match as an array
-    var match = regexp.exec(str)
+    var matchResult = regexp.exec(str)
 
-    if (match != null) {
+    if (matchResult != null) {
       //Index 1 in the array is the captured group if it exists
       //Index 0 is the matched text, which we use if no captured group exists
-      answer.push(match[1] ? match[1] : match[0])
+      answer.push(matchResult[1] ? matchResult[1] : matchResult[0])
     }
-  } while (match != null)
+  } while (matchResult != null)
 
   return answer
 }
@@ -503,10 +505,10 @@ export function makeRegexPatternFrom(text, end = true, start = true) {
 
   pattern = pattern.replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/\+/g, '\\+')
   pattern = pattern.replace(/\^/g, '\\^')
-  let s = start ? '^' : ''
-  let e = end ? '$' : ''
+  let startAnchor = start ? '^' : ''
+  let endAnchor = end ? '$' : ''
 
-  return s + pattern.trim() + e
+  return startAnchor + pattern.trim() + endAnchor
 }
 
 /**
@@ -613,7 +615,7 @@ export function makeElementDraggable(element, type, cssClass, payload, dragImage
 }
 
 export function arrayBuffertoBase64(buffer) {
-  return new TextDecoder().decode(buffer)
+  return new globalThis.TextDecoder().decode(buffer)
 }
 
 const DOUBLE_QUOTE = '"'
@@ -664,16 +666,16 @@ export const arraysEqual = (arr1, arr2) => {
  * @param {Array|string} b - The second college list to compare.
  * @returns {boolean} Returns true if both inputs represent the same list of colleges; otherwise, returns false.
  */
-export const compareColleges = (a, b) => {
-  if (!Array.isArray(a)) {
-    a = a.split(',')
+export const compareColleges = (left, right) => {
+  if (!Array.isArray(left)) {
+    left = left.split(',')
   }
 
-  if (!Array.isArray(b)) {
-    b = b.split(',')
+  if (!Array.isArray(right)) {
+    right = right.split(',')
   }
 
-  return arraysEqual(a, b)
+  return arraysEqual(left, right)
 }
 
 export const escapeHtml = text => {

@@ -56,15 +56,15 @@ export class ChangeLogWindow extends FormApplication {
     let count = 0 // Max at 5
 
     if (this.lastVersion) {
-      for (let a = 0; a < lines.length; a++) {
-        let line = lines[a]
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        let line = lines[lineIndex]
 
         if (line.match(/([0-9]+\.[0-9]+\.[0-9]+)/)) {
           count++
           const version = SemanticVersion.fromString(RegExp.$1)
 
           if (count > 5 || !version.isHigherThan(this.lastVersion)) {
-            lines = lines.slice(0, a)
+            lines = lines.slice(0, lineIndex)
             break
           }
         }

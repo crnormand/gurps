@@ -47,9 +47,9 @@ export default class RepeatingSequenceConverter {
     let i = index % this._pattern.length
     let exponent = Math.floor(index / this._pattern.length)
     let other = Math.pow(this._base, exponent)
-    let j = this._pattern[i] * other
+    let value = this._pattern[i] * other
 
-    return j
+    return value
   }
 
   valueToIndex(value) {

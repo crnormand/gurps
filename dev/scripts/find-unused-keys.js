@@ -81,7 +81,7 @@ keys = keys.filter(key => {
 // find any keys that do no match -- indicates I've got the wrong regex
 console.log('Keys that do not match expected pattern')
 console.log('=======================================')
-let regex = /^(GURPS\.|TYPES\.)[A-Za-z0-9. _\-\+,\*\/]+$/g
+let regex = /^(GURPS\.|TYPES\.)[A-Za-z0-9. _\-+,*/]+$/g
 
 keys.forEach(key => {
   if (!key.match(regex)) console.log(key)
@@ -104,7 +104,7 @@ keys.forEach(key => {
 
   let escapedKey = key
     .replace(/\./g, '\\.')
-    .replace(/\-/g, '\\-')
+    .replace(/-/g, '\\-')
     .replace(/\+/g, '\\+')
     .replace(/\*/g, '\\*')
     .replace(/\//g, '\\/')
@@ -126,7 +126,7 @@ keys.forEach(key => {
   }
 
   if (!found) {
-    const pattern = new RegExp(`\\\`(${escapedKey})+?\\\``)
+    const pattern = new RegExp(`\`(${escapedKey})+?\``)
     const line = lines.find(line => line.match(pattern) !== null)
 
     if (line) {

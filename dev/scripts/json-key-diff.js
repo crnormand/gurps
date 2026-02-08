@@ -46,5 +46,5 @@ const sameKeys = Object.entries(firstJson)
   .filter(([key, value]) => secondJson[key] === value)
   .sort()
 
-sameKeys.forEach(([k, v]) => console.log(`  ${k}: ${v}`))
+sameKeys.forEach(([key, value]) => console.log(`  ${key}: ${value}`))
 console.log('------------')
