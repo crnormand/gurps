@@ -68,9 +68,9 @@ export class ActorImporter {
       const res = await this.importActorFromExternalProgram(await file.text(), file.name, file.path)
 
       if (res) SmartImporter.setFileForActor(this.actor, file)
-    } catch (e) {
-      ui.notifications?.error(e)
-      throw e
+    } catch (error) {
+      ui.notifications?.error(error)
+      throw error
     }
   }
 
@@ -128,28 +128,28 @@ export class ActorImporter {
    * @param {string | undefined} [importpath]
    */
   async importActorFromGCS(json, importname, importpath, suppressMessage = false) {
-    let r
+    let text
     let msg = []
     let exit = false
     let loadingDialog
     let importResult = false
 
     try {
-      r = JSON.parse(json)
-      this.json = r
+      text = JSON.parse(json)
+      this.json = text
     } catch {
       msg.push(game.i18n.localize('GURPS.importNoJSONDetected'))
       exit = true
     }
 
-    if (r) {
-      if (!r.calc) {
+    if (text) {
+      if (!text.calc) {
         msg.push(game.i18n.localize('GURPS.importOldGCSFile'))
         exit = true
       }
     }
 
-    this.GCSVersion = r.version
+    this.GCSVersion = text.version
 
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
@@ -172,7 +172,7 @@ export class ActorImporter {
       if (exit) return false
     }
 
-    let nm = r['profile']['name']
+    let nm = text['profile']['name']
 
     console.log("Importing '" + nm + "'")
     let starttime = performance.now()
@@ -188,36 +188,45 @@ export class ActorImporter {
 
     try {
       commit = { ...commit, ...{ 'system.additionalresources': ar } }
-      commit = { ...commit, ...(await this.importAttributesFromGCS(r.attributes, r.equipment, r.calc)) }
-      commit = { ...commit, ...(await this.importTraitsFromGCS(r.profile, r.created_date, r.modified_date)) }
+      commit = { ...commit, ...(await this.importAttributesFromGCS(text.attributes, text.equipment, text.calc)) }
+      commit = { ...commit, ...(await this.importTraitsFromGCS(text.profile, text.created_date, text.modified_date)) }
       commit = {
         ...commit,
-        ...this.importSizeFromGCS(commit, r.profile, r.traits || r.advantages || [], r.skills, r.equipment),
+        ...this.importSizeFromGCS(
+          commit,
+          text.profile,
+          text.traits || text.advantages || [],
+          text.skills,
+          text.equipment
+        ),
       }
-      commit = { ...commit, ...(await this.importAdsFromGCS(r.traits || r.advantages || [])) }
-      commit = { ...commit, ...(await this.importSkillsFromGCS(r.skills)) }
-      commit = { ...commit, ...(await this.importSpellsFromGCS(r.spells)) }
-      commit = { ...commit, ...(await this.importEquipmentFromGCS(r.equipment, r.other_equipment)) }
-      commit = { ...commit, ...this.importNotesFromGCS(r.notes) }
+      commit = { ...commit, ...(await this.importAdsFromGCS(text.traits || text.advantages || [])) }
+      commit = { ...commit, ...(await this.importSkillsFromGCS(text.skills)) }
+      commit = { ...commit, ...(await this.importSpellsFromGCS(text.spells)) }
+      commit = { ...commit, ...(await this.importEquipmentFromGCS(text.equipment, text.other_equipment)) }
+      commit = { ...commit, ...this.importNotesFromGCS(text.notes) }
 
       commit = {
         ...commit,
-        ...(await this.importProtectionFromGCS(r.settings.body_type || r.settings.hit_locations)),
+        ...(await this.importProtectionFromGCS(text.settings.body_type || text.settings.hit_locations)),
       }
       commit = {
         ...commit,
         ...this.importPointTotalsFromGCS(
-          r.total_points,
-          r.attributes,
-          r.traits || r.advantages || [],
-          r.skills,
-          r.spells
+          text.total_points,
+          text.attributes,
+          text.traits || text.advantages || [],
+          text.skills,
+          text.spells
         ),
       }
-      commit = { ...commit, ...this.importReactionsFromGCS(r.traits || r.advantages || [], r.skills, r.equipment) }
       commit = {
         ...commit,
-        ...this.importCombatFromGCS(r.traits || r.advantages || [], r.skills, r.spells, r.equipment),
+        ...this.importReactionsFromGCS(text.traits || text.advantages || [], text.skills, text.equipment),
+      }
+      commit = {
+        ...commit,
+        ...this.importCombatFromGCS(text.traits || text.advantages || [], text.skills, text.spells, text.equipment),
       }
     } catch (err) {
       console.log(err.stack)
@@ -271,9 +280,9 @@ export class ActorImporter {
       // For each saved item with global id, lets run their additions
       // if (this.isUsingFoundryItems()) {
       for (let key of ['ads', 'skills', 'spells']) {
-        await aRecurselist(this.actor.system[key], async t => {
-          if (t.itemid) {
-            const i = this.actor.items.get(t.itemid)
+        await aRecurselist(this.actor.system[key], async item => {
+          if (item.itemid) {
+            const i = this.actor.items.get(item.itemid)
 
             if (i.system.globalid) {
               await this.actor._addItemAdditions(i, '')
@@ -348,40 +357,40 @@ export class ActorImporter {
   }
 
   async importActorFromGCA(source, importName, importPath, suppressMessage) {
-    let c, ra // The character json, release attributes
+    let character, ra // The character json, release attributes
     let isFoundryGCA = false
     let isFoundryGCA5 = false
     // need to remove <p> and replace </p> with newlines from "formatted text"
     let origx = GURPS.cleanUpP(source)
     let x = xmlTextToJson(origx)
-    let r = x.root
+    let text = x.root
     let msg = []
     let version = 'unknown'
     let vernum = 1
     let exit = false
 
-    if (!r) {
+    if (!text) {
       if (importName.endsWith('.gca5')) msg.push(game.i18n.localize('GURPS.importCannotImportGCADirectly'))
       if (importName.endsWith('.gca4')) msg.push(game.i18n.localize('GURPS.importCannotImportGCADirectly'))
       else if (!xml.startsWith('<?xml')) msg.push(game.i18n.localize('GURPS.importNoXMLDetected'))
       exit = true
     } else {
       // The character object starts here
-      c = r.character
+      character = text.character
 
-      if (!c) {
+      if (!character) {
         msg.push(game.i18n.localize('GURPS.importNoCharacterFormat'))
         exit = true
       }
 
-      let parsererror = r.parsererror
+      let parsererror = text.parsererror
 
       if (parsererror) {
         msg.push(game.i18n.format('GURPS.importErrorParsingXML', { text: readXmlText(parsererror.div) }))
         exit = true
       }
 
-      ra = r['@attributes']
+      ra = text['@attributes']
       // Sorry for the horrible version checking... it sort of evolved organically
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
       isFoundryGCA5 = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA5')
@@ -392,11 +401,11 @@ export class ActorImporter {
       }
 
       version = ra?.version || ''
-      const v = ra?.version ? ra.version.split('-') : []
+      const ver = ra?.version ? ra.version.split('-') : []
 
       if (isFoundryGCA) {
         if (isFoundryGCA5) {
-          if (v[1]) vernum = parseInt(v[1])
+          if (ver[1]) vernum = parseInt(ver[1])
 
           if (vernum < 12) {
             msg.push(game.i18n.localize('GURPS.importGCA5ImprovedInventoryHandling'))
@@ -406,11 +415,11 @@ export class ActorImporter {
             msg.push(game.i18n.localize('GURPS.importGCA5ImprovedBlock'))
           }
         } else {
-          if (!v[1]) {
+          if (!ver[1]) {
             msg.push(game.i18n.localize('GURPS.importGCANoBodyPlan'))
           }
 
-          if (v[1]) vernum = parseInt(v[1])
+          if (ver[1]) vernum = parseInt(ver[1])
 
           if (vernum < 2) {
             msg.push(game.i18n.localize('GURPS.importGCANoInnateRangedAndParent'))
@@ -476,7 +485,7 @@ export class ActorImporter {
       if (exit) return false // Some errors cannot be forgiven ;-)
     }
 
-    let nm = readXmlText(c.name)
+    let nm = readXmlText(character.name)
 
     console.log("Importing '" + nm + "'")
     let starttime = performance.now()
@@ -498,23 +507,22 @@ export class ActorImporter {
       // if (this.isUsingFoundryItems() || this.actor.items.filter(i => !!i.system.importid).length > 10)
       loadingDialog = await this._showLoadingDialog({ name: nm, generator: 'GCA' })
       // This is going to get ugly, so break out various data into different methods
-      commit = { ...commit, ...(await this.importAttributesFromGCA(c.attributes)) }
-      commit = { ...commit, ...(await this.importSkillsFromGCA(c.abilities?.skilllist)) }
-      commit = { ...commit, ...this.importTraitsfromGCA(c.traits) }
-      commit = { ...commit, ...this.importCombatMeleeFromGCA(c.combat?.meleecombatlist) }
-      commit = { ...commit, ...this.importCombatRangedFromGCA(c.combat?.rangedcombatlist) }
-      commit = { ...commit, ...(await this.importSpellsFromGCA(c.abilities?.spelllist)) }
-      commit = { ...commit, ...this.importLangFromGCA(c.traits?.languagelist) }
-      commit = { ...commit, ...(await this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist)) }
-      commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers, vernum) }
-      commit = { ...commit, ...this.importEncumbranceFromGCA(c.encumbrance) }
-      commit = { ...commit, ...this.importPointTotalsFromGCA(c.pointtotals) }
-      commit = { ...commit, ...this.importNotesFromGCA(c.description, c.notelist) }
-      commit = { ...commit, ...(await this.importEquipmentFromGCA(c.inventorylist)) }
-      commit = { ...commit, ...(await this.importProtectionFromGCA(c.combat?.protectionlist)) }
-    } catch (err) {
-      // Do not return, because we want to see how much actually gets committed.
-      console.log(err.stack)
+      commit = { ...commit, ...(await this.importAttributesFromGCA(character.attributes)) }
+      commit = { ...commit, ...(await this.importSkillsFromGCA(character.abilities?.skilllist)) }
+      commit = { ...commit, ...this.importTraitsfromGCA(character.traits) }
+      commit = { ...commit, ...this.importCombatMeleeFromGCA(character.combat?.meleecombatlist) }
+      commit = { ...commit, ...this.importCombatRangedFromGCA(character.combat?.rangedcombatlist) }
+      commit = { ...commit, ...(await this.importSpellsFromGCA(character.abilities?.spelllist)) }
+      commit = { ...commit, ...this.importLangFromGCA(character.traits?.languagelist) }
+      commit = { ...commit, ...(await this.importAdsFromGCA(character.traits?.adslist, character.traits?.disadslist)) }
+      commit = { ...commit, ...this.importReactionsFromGCA(character.traits?.reactionmodifiers, vernum) }
+      commit = { ...commit, ...this.importEncumbranceFromGCA(character.encumbrance) }
+      commit = { ...commit, ...this.importPointTotalsFromGCA(character.pointtotals) }
+      commit = { ...commit, ...this.importNotesFromGCA(character.description, character.notelist) }
+      commit = { ...commit, ...(await this.importEquipmentFromGCA(character.inventorylist)) }
+      commit = { ...commit, ...(await this.importProtectionFromGCA(character.combat?.protectionlist)) }
+    } catch {
+      // Don't return, because we want to see how much actually gets committed.
     }
 
     console.log('Starting commit')
@@ -538,9 +546,9 @@ export class ActorImporter {
       // For each saved item with global id, lets run their additions
       // if (this.isUsingFoundryItems()) {
       for (let key of ['ads', 'skills', 'spells']) {
-        await aRecurselist(this.actor.system[key], async t => {
-          if (t.itemid) {
-            const i = this.actor.items.get(t.itemid)
+        await aRecurselist(this.actor.system[key], async item => {
+          if (item.itemid) {
+            const i = this.actor.items.get(item.itemid)
 
             if (i.system.globalid) {
               await this.actor._addItemAdditions(i, '')
@@ -598,30 +606,29 @@ export class ActorImporter {
    */
   async importAttributesFromGCA(json) {
     if (!json) return
-    let i = this.intFrom // shortcut to make code smaller -- I reject your attempt to make the code smaller. Why does it need to be smaller?
     let data = this.actor.system
     let att = data.attributes
 
     // attribute.values will be calculated in calculateDerivedValues()
-    att.ST.import = i(json.strength)
-    att.ST.points = i(json.strength_points)
-    att.DX.import = i(json.dexterity)
-    att.DX.points = i(json.dexterity_points)
-    att.IQ.import = i(json.intelligence)
-    att.IQ.points = i(json.intelligence_points)
-    att.HT.import = i(json.health)
-    att.HT.points = i(json.health_points)
-    att.WILL.import = i(json.will)
-    att.WILL.points = i(json.will_points)
-    att.PER.import = i(json.perception)
-    att.PER.points = i(json.perception_points)
+    att.ST.import = this.intFrom(json.strength)
+    att.ST.points = this.intFrom(json.strength_points)
+    att.DX.import = this.intFrom(json.dexterity)
+    att.DX.points = this.intFrom(json.dexterity_points)
+    att.IQ.import = this.intFrom(json.intelligence)
+    att.IQ.points = this.intFrom(json.intelligence_points)
+    att.HT.import = this.intFrom(json.health)
+    att.HT.points = this.intFrom(json.health_points)
+    att.WILL.import = this.intFrom(json.will)
+    att.WILL.points = this.intFrom(json.will_points)
+    att.PER.import = this.intFrom(json.perception)
+    att.PER.points = this.intFrom(json.perception_points)
 
-    data.HP.max = i(json.hitpoints)
-    data.HP.points = i(json.hitpoints_points)
-    data.FP.max = i(json.fatiguepoints)
-    data.FP.points = i(json.fatiguepoints_points)
-    let hp = i(json.hps)
-    let fp = i(json.fps)
+    data.HP.max = this.intFrom(json.hitpoints)
+    data.HP.points = this.intFrom(json.hitpoints_points)
+    data.FP.max = this.intFrom(json.fatiguepoints)
+    data.FP.points = this.intFrom(json.fatiguepoints_points)
+    let hp = this.intFrom(json.hps)
+    let fp = this.intFrom(json.fps)
 
     let overwrite = await this.promptForSaveOrOverwrite(data, hp, fp)
 
@@ -632,28 +639,28 @@ export class ActorImporter {
 
     let lm = {}
 
-    lm.basiclift = readXmlText(json.basiclift)
-    lm.carryonback = readXmlText(json.carryonback)
-    lm.onehandedlift = readXmlText(json.onehandedlift)
-    lm.runningshove = readXmlText(json.runningshove)
-    lm.shiftslightly = readXmlText(json.shiftslightly)
-    lm.shove = readXmlText(json.shove)
-    lm.twohandedlift = readXmlText(json.twohandedlift)
+    lm.basiclift = this.textFrom(json.basiclift)
+    lm.carryonback = this.textFrom(json.carryonback)
+    lm.onehandedlift = this.textFrom(json.onehandedlift)
+    lm.runningshove = this.textFrom(json.runningshove)
+    lm.shiftslightly = this.textFrom(json.shiftslightly)
+    lm.shove = this.textFrom(json.shove)
+    lm.twohandedlift = this.textFrom(json.twohandedlift)
 
-    data.basicmove.value = readXmlText(json.basicmove)
-    data.basicmove.points = i(json.basicmove_points)
+    data.basicmove.value = this.textFrom(json.basicmove)
+    data.basicmove.points = this.intFrom(json.basicmove_points)
     data.basicspeed.value = this.floatFrom(json.basicspeed)
 
-    data.basicspeed.points = i(json.basicspeed_points)
-    data.thrust = readXmlText(json.thrust)
-    data.swing = readXmlText(json.swing)
-    data.currentmove = readXmlText(json.move)
-    data.frightcheck = i(json.frightcheck)
+    data.basicspeed.points = this.intFrom(json.basicspeed_points)
+    data.thrust = this.textFrom(json.thrust)
+    data.swing = this.textFrom(json.swing)
+    data.currentmove = this.textFrom(json.move)
+    data.frightcheck = this.intFrom(json.frightcheck)
 
-    data.hearing = i(json.hearing)
-    data.tastesmell = i(json.tastesmell)
-    data.touch = i(json.touch)
-    data.vision = i(json.vision)
+    data.hearing = this.intFrom(json.hearing)
+    data.tastesmell = this.intFrom(json.tastesmell)
+    data.touch = this.intFrom(json.touch)
+    data.vision = this.intFrom(json.vision)
 
     return {
       'system.attributes': att,
@@ -722,35 +729,35 @@ export class ActorImporter {
     if (!json) return
     let ts = {}
 
-    ts.race = readXmlText(json.race)
-    ts.height = readXmlText(json.height)
-    ts.weight = readXmlText(json.weight)
-    ts.age = readXmlText(json.age)
-    ts.title = readXmlText(json.title)
-    ts.player = readXmlText(json.player)
-    ts.createdon = readXmlText(json.createdon)
-    ts.modifiedon = readXmlText(json.modifiedon)
-    ts.religion = readXmlText(json.religion)
-    ts.birthday = readXmlText(json.birthday)
-    ts.hand = readXmlText(json.hand)
-    ts.sizemod = readXmlText(json.sizemodifier)
-    ts.techlevel = readXmlText(json.tl)
+    ts.race = this.textFrom(json.race)
+    ts.height = this.textFrom(json.height)
+    ts.weight = this.textFrom(json.weight)
+    ts.age = this.textFrom(json.age)
+    ts.title = this.textFrom(json.title)
+    ts.player = this.textFrom(json.player)
+    ts.createdon = this.textFrom(json.createdon)
+    ts.modifiedon = this.textFrom(json.modifiedon)
+    ts.religion = this.textFrom(json.religion)
+    ts.birthday = this.textFrom(json.birthday)
+    ts.hand = this.textFrom(json.hand)
+    ts.sizemod = this.textFrom(json.sizemodifier)
+    ts.techlevel = this.textFrom(json.tl)
     // <appearance type="string">@GENDER, Eyes: @EYES, Hair: @HAIR, Skin: @SKIN</appearance>
-    let a = readXmlText(json.appearance)
+    let appearance = this.textFrom(json.appearance)
 
-    ts.appearance = a
+    ts.appearance = appearance
 
     try {
-      let x = a.indexOf(', Eyes: ')
+      let eyesIndex = appearance.indexOf(', Eyes: ')
 
-      if (x >= 0) {
-        ts.gender = a.substring(0, x)
-        let y = a.indexOf(', Hair: ')
+      if (eyesIndex >= 0) {
+        ts.gender = appearance.substring(0, eyesIndex)
+        let hairIndex = appearance.indexOf(', Hair: ')
 
-        ts.eyes = a.substring(x + 8, y)
-        x = a.indexOf(', Skin: ')
-        ts.hair = a.substring(y + 8, x)
-        ts.skin = a.substr(x + 8)
+        ts.eyes = appearance.substring(eyesIndex + 8, hairIndex)
+        eyesIndex = appearance.indexOf(', Skin: ')
+        ts.hair = appearance.substring(hairIndex + 8, eyesIndex)
+        ts.skin = appearance.substr(eyesIndex + 8)
       }
     } catch {
       console.log('Unable to parse appearance traits for ')
@@ -776,19 +783,17 @@ export class ActorImporter {
     await this.importBaseAdvantagesFromGCA(list, disadsjson)
 
     // Find all Features with globalId
-    // if (this.isUsingFoundryItems()) {
-    await aRecurselist(this.actor.system.ads, async t => {
-      if (t.itemid) {
-        const i = this.actor.items.get(t.itemid)
+    await aRecurselist(this.actor.system.ads, async item => {
+      if (item.itemid) {
+        const i = this.actor.items.get(item.itemid)
 
         if (i?.system.globalid) {
-          if (!(t instanceof Advantage)) t = Advantage.fromObject(t, this.actor)
-          t = await this._processItemFrom(t, 'GCA')
-          list.push(t)
+          if (!(item instanceof Advantage)) item = Advantage.fromObject(item, this.actor)
+          item = await this._processItemFrom(item, 'GCA')
+          list.push(item)
         }
       }
     })
-    // }
 
     return {
       'system.-=ads': null,
@@ -806,21 +811,21 @@ export class ActorImporter {
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key]
-        let a = new Advantage()
+        let advantageJson = json[key]
+        let adv = new Advantage()
 
-        a.name = readXmlText(j.name)
-        a.originalName = readXmlText(j.name)
-        a.points = this.intFrom(j.points)
-        a.setNotes(readXmlText(j.text))
-        a.pageRef(readXmlText(j.pageref) || a.pageref)
-        a.uuid = readXmlText(j.uuid)
-        a.parentuuid = readXmlText(j.parentuuid)
-        let old = this._findElementIn('ads', a.uuid)
+        adv.name = this.textFrom(advantageJson.name)
+        adv.originalName = this.textFrom(advantageJson.name)
+        adv.points = this.intFrom(advantageJson.points)
+        adv.setNotes(this.textFrom(advantageJson.text))
+        adv.pageRef(this.textFrom(advantageJson.pageref) || adv.pageref)
+        adv.uuid = this.textFrom(advantageJson.uuid)
+        adv.parentuuid = this.textFrom(advantageJson.parentuuid)
+        let old = this._findElementIn('ads', adv.uuid)
 
-        this._migrateOtfsAndNotes(old, a, readXmlText(j.vtt_notes))
-        a = await this._processItemFrom(a, 'GCA')
-        datalist.push(a)
+        this._migrateOtfsAndNotes(old, adv, this.textFrom(advantageJson.vtt_notes))
+        adv = await this._processItemFrom(adv, 'GCA')
+        datalist.push(adv)
       }
     }
   }
@@ -836,23 +841,23 @@ export class ActorImporter {
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key]
+        let skillJson = json[key]
         let sk = new Skill()
 
-        sk.name = readXmlText(j.name)
-        sk.originalName = readXmlText(j.name)
-        sk.type = readXmlText(j.type)
-        sk.import = readXmlText(j.level)
+        sk.name = this.textFrom(skillJson.name)
+        sk.originalName = this.textFrom(skillJson.name)
+        sk.type = this.textFrom(skillJson.type)
+        sk.import = this.textFrom(skillJson.level)
         if (sk.level == 0) sk.level = ''
-        sk.points = this.intFrom(j.points)
-        sk.relativelevel = readXmlText(j.relativelevel)
-        sk.setNotes(readXmlText(j.text))
-        if (j.pageref) sk.pageRef(readXmlText(j.pageref))
-        sk.uuid = readXmlText(j.uuid)
-        sk.parentuuid = readXmlText(j.parentuuid)
+        sk.points = this.intFrom(skillJson.points)
+        sk.relativelevel = this.textFrom(skillJson.relativelevel)
+        sk.setNotes(this.textFrom(skillJson.text))
+        if (skillJson.pageref) sk.pageRef(this.textFrom(skillJson.pageref))
+        sk.uuid = this.textFrom(skillJson.uuid)
+        sk.parentuuid = this.textFrom(skillJson.parentuuid)
         let old = this._findElementIn('skills', sk.uuid)
 
-        this._migrateOtfsAndNotes(old, sk, readXmlText(j.vtt_notes))
+        this._migrateOtfsAndNotes(old, sk, this.textFrom(skillJson.vtt_notes))
         sk = await this._processItemFrom(sk, 'GCA')
         temp.push(sk)
       }
@@ -893,14 +898,14 @@ export class ActorImporter {
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key]
+        let spellJson = json[key]
         let sp = new Spell()
 
-        sp.name = readXmlText(j.name)
-        sp.originalName = readXmlText(j.name)
-        sp.class = readXmlText(j.class)
-        sp.college = readXmlText(j.college)
-        let cm = readXmlText(j.costmaintain)
+        sp.name = this.textFrom(spellJson.name)
+        sp.originalName = this.textFrom(spellJson.name)
+        sp.class = this.textFrom(spellJson.class)
+        sp.college = this.textFrom(spellJson.college)
+        let cm = this.textFrom(spellJson.costmaintain)
         let i = cm.indexOf('/')
 
         if (i >= 0) {
@@ -910,17 +915,17 @@ export class ActorImporter {
           sp.cost = cm
         }
 
-        sp.setNotes(readXmlText(j.text))
-        sp.pageRef(readXmlText(j.pageref))
-        sp.duration = readXmlText(j.duration)
-        sp.points = readXmlText(j.points)
-        sp.casttime = readXmlText(j.time)
-        sp.import = readXmlText(j.level)
-        sp.uuid = readXmlText(j.uuid)
-        sp.parentuuid = readXmlText(j.parentuuid)
+        sp.setNotes(this.textFrom(spellJson.text))
+        sp.pageRef(this.textFrom(spellJson.pageref))
+        sp.duration = this.textFrom(spellJson.duration)
+        sp.points = this.textFrom(spellJson.points)
+        sp.casttime = this.textFrom(spellJson.time)
+        sp.import = this.textFrom(spellJson.level)
+        sp.uuid = this.textFrom(spellJson.uuid)
+        sp.parentuuid = this.textFrom(spellJson.parentuuid)
         let old = this._findElementIn('spells', sp.uuid)
 
-        this._migrateOtfsAndNotes(old, sp, readXmlText(j.vtt_notes))
+        this._migrateOtfsAndNotes(old, sp, this.textFrom(spellJson.vtt_notes))
         sp = await this._processItemFrom(sp, 'GCA')
         temp.push(sp)
       }
@@ -958,38 +963,37 @@ export class ActorImporter {
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key]
+        let meleeJson = json[key]
 
-        for (let k2 in j.meleemodelist) {
-          if (k2.startsWith('id-')) {
-            let j2 = j.meleemodelist[k2]
-            let m = new Melee()
+        for (let meleeModeKey in meleeJson.meleemodelist) {
+          if (meleeModeKey.startsWith('id-')) {
+            let meleeModeJson = meleeJson.meleemodelist[meleeModeKey]
+            let melee = new Melee()
 
-            m.name = readXmlText(j.name)
-            m.originalName = readXmlText(j.name)
-            m.st = readXmlText(j.st)
-            m.weight = readXmlText(j.weight)
-            m.techlevel = readXmlText(j.tl)
-            m.cost = readXmlText(j.cost)
+            melee.name = readXmlText(meleeJson.name)
+            melee.originalName = readXmlText(meleeJson.name)
+            melee.st = readXmlText(meleeJson.st)
+            melee.weight = readXmlText(meleeJson.weight)
+            melee.techlevel = readXmlText(meleeJson.tl)
+            melee.cost = readXmlText(meleeJson.cost)
 
             try {
-              m.setNotes(readXmlText(j.text))
+              melee.setNotes(readXmlText(meleeJson.text))
             } catch {
-              console.log(m)
-              console.log(readXmlText(j.text))
+              console.log(melee)
+              console.log(readXmlText(meleeJson.text))
             }
 
-            m.mode = readXmlText(j2.name)
-            m.import = readXmlText(j2.level)
-            m.damage = readXmlText(j2.damage)
-            m.reach = readXmlText(j2.reach)
-            m.parry = readXmlText(j2.parry)
-            m.block = readXmlText(j2.block)
-            let old = this._findElementIn('melee', false, m.name, m.mode)
+            melee.mode = readXmlText(meleeModeJson.name)
+            melee.import = readXmlText(meleeModeJson.level)
+            melee.reach = readXmlText(meleeModeJson.reach)
+            melee.parry = readXmlText(meleeModeJson.parry)
+            melee.block = readXmlText(meleeModeJson.block)
+            let old = this._findElementIn('melee', false, melee.name, melee.mode)
 
-            this._migrateOtfsAndNotes(old, m, readXmlText(j2.vtt_notes))
+            this._migrateOtfsAndNotes(old, melee, readXmlText(meleeModeJson.vtt_notes))
 
-            GURPS.put(melee, m, index++)
+            GURPS.put(melee, melee, index++)
           }
         }
       }
@@ -1012,49 +1016,48 @@ export class ActorImporter {
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key]
+        let rangedJson = json[key]
 
-        for (let k2 in j.rangedmodelist) {
-          if (k2.startsWith('id-')) {
-            let j2 = j.rangedmodelist[k2]
-            let r = new Ranged()
+        for (let rangedModeKey in rangedJson.rangedmodelist) {
+          if (rangedModeKey.startsWith('id-')) {
+            let rangedModeJson = rangedJson.rangedmodelist[rangedModeKey]
+            let ranged = new Ranged()
 
-            r.name = readXmlText(j.name)
-            r.originalName = readXmlText(j.name)
-            r.st = readXmlText(j.st)
-            r.bulk = readXmlText(j.bulk)
-            r.legalityclass = readXmlText(j.lc)
-            r.ammo = readXmlText(j.ammo)
+            ranged.name = readXmlText(rangedJson.name)
+            ranged.originalName = readXmlText(rangedJson.name)
+            ranged.st = readXmlText(rangedJson.st)
+            ranged.bulk = readXmlText(rangedJson.bulk)
+            ranged.legalityclass = readXmlText(rangedJson.lc)
+            ranged.ammo = readXmlText(rangedJson.ammo)
 
             try {
-              r.setNotes(readXmlText(j.text))
+              ranged.setNotes(readXmlText(rangedJson.text))
             } catch {
-              console.log(r)
-              console.log(readXmlText(j.text))
+              console.log(ranged)
+              console.log(readXmlText(rangedJson.text))
             }
 
-            r.mode = readXmlText(j2.name)
-            r.import = readXmlText(j2.level)
-            r.damage = readXmlText(j2.damage)
-            r.acc = readXmlText(j2.acc)
-            let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
+            ranged.mode = readXmlText(rangedModeJson.name)
+            ranged.import = readXmlText(rangedModeJson.level)
+            ranged.acc = readXmlText(rangedModeJson.acc)
+            let match = ranged.acc.trim().match(/(\d+)([+-]\d+)/)
 
-            if (m) {
-              r.acc = m[1]
-              r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
+            if (match) {
+              ranged.acc = match[1]
+              ranged.notes += ' [' + match[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
 
-            r.rof = readXmlText(j2.rof)
-            r.shots = readXmlText(j2.shots)
-            r.rcl = readXmlText(j2.rcl)
-            let rng = readXmlText(j2.range)
+            ranged.rof = readXmlText(rangedModeJson.rof)
+            ranged.shots = readXmlText(rangedModeJson.shots)
+            ranged.rcl = readXmlText(rangedModeJson.rcl)
+            let rng = readXmlText(rangedModeJson.range)
 
-            r.range = rng
-            let old = this._findElementIn('ranged', false, r.name, r.mode)
+            ranged.range = rng
+            let old = this._findElementIn('ranged', false, ranged.name, ranged.mode)
 
-            this._migrateOtfsAndNotes(old, r, readXmlText(j2.vtt_notes))
+            this._migrateOtfsAndNotes(old, ranged, readXmlText(rangedModeJson.vtt_notes))
 
-            GURPS.put(ranged, r, index++)
+            GURPS.put(ranged, ranged, index++)
           }
         }
       }
@@ -1077,36 +1080,37 @@ export class ActorImporter {
     if (descjson) {
       // support for GCA description
 
-      let n = new Note()
+      let note = new Note()
 
-      n.notes = readXmlText(descjson).replace(/\\r/g, '\n')
-      n.imported = true
-      temp.push(n)
+      note.notes = this.textFrom(descjson).replace(/\\r/g, '\n')
+      note.imported = true
+      temp.push(note)
     }
 
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key]
-        let n = /** @type {Note & { imported: boolean, uuid: string, parentuuid: string }} */ (new Note())
+        let noteJson = json[key]
+        let note = /** @type {Note & { imported: boolean, uuid: string, parentuuid: string }} */ (new Note())
 
-        n.notes = readXmlText(j.name)
-        let txt = readXmlText(j.text)
+        //note.setNotes(this.textFrom(j.text));
+        note.notes = this.textFrom(noteJson.name)
+        let txt = this.textFrom(noteJson.text)
 
-        if (txt) n.notes = n.notes + '\n' + txt.replace(/\\r/g, '\n')
-        n.uuid = readXmlText(j.uuid)
-        n.parentuuid = readXmlText(j.parentuuid)
-        n.pageref = readXmlText(j.pageref)
-        let old = this._findElementIn('notes', n.uuid)
+        if (txt) note.notes = note.notes + '\n' + txt.replace(/\\r/g, '\n')
+        note.uuid = this.textFrom(noteJson.uuid)
+        note.parentuuid = this.textFrom(noteJson.parentuuid)
+        note.pageref = this.textFrom(noteJson.pageref)
+        let old = this._findElementIn('notes', note.uuid)
 
-        this._migrateOtfsAndNotes(old, n)
-        temp.push(n)
+        this._migrateOtfsAndNotes(old, note)
+        temp.push(note)
       }
     }
 
     // Save the old User Entered Notes.
-    recurselist(this.actor.system.notes, t => {
-      if (t.save) temp.push(t)
+    recurselist(this.actor.system.notes, item => {
+      if (item.save) temp.push(item)
     })
 
     return {
@@ -1120,7 +1124,6 @@ export class ActorImporter {
    */
   async importEquipmentFromGCA(json) {
     if (!json) return
-    let i = this.intFrom
 
     this.ignoreRender = true
     await this._preImport('GCA', 'equipment')
@@ -1133,35 +1136,35 @@ export class ActorImporter {
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key]
-        let { name, techLevel } = this.parseEquipmentNameAndTL(j)
-        let parentuuid = readXmlText(j.parentuuid)
+        let equipmentJson = json[key]
+        let { name, techLevel } = this.parseEquipmentNameAndTL(this.textFrom, equipmentJson)
+        let parentuuid = this.textFrom(equipmentJson.parentuuid)
         let eqt = new Equipment()
 
         eqt.name = name
-        eqt.originalName = readXmlText(j.name)
-        eqt.count = i(j.count)
-        eqt.originalCount = i(j.count)
-        eqt.cost = parentuuid ? readXmlText(j.cost) : 0
-        eqt.location = readXmlText(j.location)
-        let cstatus = i(j.carried)
+        eqt.originalName = this.textFrom(equipmentJson.name)
+        eqt.count = this.intFrom(equipmentJson.count)
+        eqt.originalCount = this.intFrom(equipmentJson.count)
+        eqt.cost = parentuuid ? this.textFrom(equipmentJson.cost) : 0
+        eqt.location = this.textFrom(equipmentJson.location)
+        let cstatus = this.intFrom(equipmentJson.carried)
 
         eqt.carried = cstatus >= 1
         eqt.equipped = cstatus == 2
         eqt.techlevel = techLevel
-        eqt.legalityclass = readXmlText(j.lc)
-        eqt.categories = readXmlText(j.type)
-        eqt.uses = readXmlText(j.uses)
-        eqt.maxuses = readXmlText(j.maxuses)
-        eqt.uuid = readXmlText(j.uuid)
+        eqt.legalityclass = this.textFrom(equipmentJson.lc)
+        eqt.categories = this.textFrom(equipmentJson.type)
+        eqt.uses = this.textFrom(equipmentJson.uses)
+        eqt.maxuses = this.textFrom(equipmentJson.maxuses)
+        eqt.uuid = this.textFrom(equipmentJson.uuid)
         eqt.parentuuid = parentuuid
-        eqt.setNotes(readXmlText(j.notes))
+        eqt.setNotes(this.textFrom(equipmentJson.notes))
 
         // TODO determine if we need the parentuuid in order to import weight
-        // eqt.weight = !!parentuuid ? readXmlText(j.weightsum) : 0 // GCA sends calculated weight in 'weightsum'
-        eqt.weight = readXmlText(j.weightsum) ?? 0
+        // eqt.weight = !!parentuuid ? this.textFrom(j.weightsum) : 0 // GCA sends calculated weight in 'weightsum'
+        eqt.weight = this.textFrom(equipmentJson.weightsum) ?? 0
 
-        eqt.pageRef(readXmlText(j.pageref))
+        eqt.pageRef(this.textFrom(equipmentJson.pageref))
         let old = this._findElementIn('equipment.carried', eqt.uuid)
 
         if (!old) old = this._findElementIn('equipment.other', eqt.uuid)
@@ -1188,22 +1191,22 @@ export class ActorImporter {
     }
 
     // Save the old User Entered Notes.
-    await aRecurselist(this.actor.system.equipment?.carried, async t => {
-      t.carried = true
+    await aRecurselist(this.actor.system.equipment?.carried, async item => {
+      item.carried = true
 
-      if (t.save) {
-        if (!(t instanceof Equipment)) t = Equipment.fromObject(t, this.actor)
-        t = await this._processItemFrom(t, 'GCA')
-        temp.push(t)
+      if (item.save) {
+        if (!(item instanceof Equipment)) item = Equipment.fromObject(item, this.actor)
+        item = await this._processItemFrom(item, 'GCA')
+        temp.push(item)
       }
     }) // Ensure carried eqt stays in carried
-    await aRecurselist(this.actor.system.equipment?.other, async t => {
-      t.carried = false
+    await aRecurselist(this.actor.system.equipment?.other, async item => {
+      item.carried = false
 
-      if (t.save) {
-        if (!(t instanceof Equipment)) t = Equipment.fromObject(t, this.actor)
-        t = await this._processItemFrom(t, 'GCA')
-        temp.push(t)
+      if (item.save) {
+        if (!(item instanceof Equipment)) item = Equipment.fromObject(item, this.actor)
+        item = await this._processItemFrom(item, 'GCA')
+        temp.push(item)
       }
     })
 
@@ -1227,7 +1230,7 @@ export class ActorImporter {
       let parent = null
 
       if (eqt.parentuuid) {
-        parent = temp.find(e => e.uuid === eqt.parentuuid)
+        parent = temp.find(candidateEquipment => candidateEquipment.uuid === eqt.parentuuid)
         if (parent) GURPS.put(parent.contains, eqt)
         else eqt.parentuuid = '' // Can't find a parent, so put it in the top list
       }
@@ -1262,10 +1265,10 @@ export class ActorImporter {
    *
    * Example: Backpack/TL8+3^
    */
-  parseEquipmentNameAndTL(j) {
+  parseEquipmentNameAndTL(fn, equipmentJson) {
     let name
-    let fullName = readXmlText(j.name)
-    let techLevel = readXmlText(j.tl)
+    let fullName = fn(equipmentJson.name)
+    let techLevel = fn(equipmentJson.tl)
     const localizedTL = game.i18n.localize('GURPS.TL')
     let regex = new RegExp(`.+/[TL|${localizedTL}].+`)
 
@@ -1300,14 +1303,14 @@ export class ActorImporter {
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key]
-        let hl = new HitLocations.HitLocation(readXmlText(j.location))
-        let i = readXmlText(j.dr)
+        let hitLocationJson = json[key]
+        let hl = new HitLocations.HitLocation(this.textFrom(hitLocationJson.location))
+        let i = this.textFrom(hitLocationJson.dr)
 
-        if (i.match(/^\d+ *(\+ *\d+ *)?$/)) i = eval(readXmlText(j.dr)) // supports "0 + 8"
+        if (i.match(/^\d+ *(\+ *\d+ *)?$/)) i = eval(this.textFrom(hitLocationJson.dr)) // supports "0 + 8"
         hl.import = !i ? 0 : i
-        hl.penalty = readXmlText(j.db)
-        hl.setEquipment(readXmlText(j.text))
+        hl.penalty = this.textFrom(hitLocationJson.db)
+        hl.setEquipment(this.textFrom(hitLocationJson.text))
 
         // Some hit location tables have two entries for the same location. The code requires
         // each location to be unique. Append an asterisk to the location name in that case.   Hexapods and ichthyoid
@@ -1334,7 +1337,7 @@ export class ActorImporter {
     // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and
     // potentially other features) will not work. Sometime in the future, we will look at
     // user-entered hit locations.
-    let bodyplan = readXmlText(json.bodyplan)?.toLowerCase() // Was a body plan actually in the import?
+    let bodyplan = this.textFrom(json.bodyplan)?.toLowerCase() // Was a body plan actually in the import?
 
     if (bodyplan === 'snakemen') bodyplan = 'snakeman'
     let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
@@ -1342,21 +1345,21 @@ export class ActorImporter {
     /** @type {HitLocations.HitLocation[]}  */
     let locs = []
 
-    locations.forEach(e => {
-      if (!!table && !!table[e.where]) {
+    locations.forEach(location => {
+      if (!!table && !!table[location.where]) {
         // if e.where already exists in table, don't map
-        locs.push(e)
+        locs.push(location)
       } else {
         // map to new name(s) ... sometimes we map 'Legs' to ['Right Leg', 'Left Leg'], for example.
-        e.locations(false).forEach(l => locs.push(l)) // Map to new names
+        location.locations(false).forEach(loc => locs.push(loc)) // Map to new names
       }
     })
     locations = locs
 
     if (!table) {
       locs = []
-      locations.forEach(e => {
-        e.locations(true).forEach(l => locs.push(l)) // Map to new names, but include original to help match against tables
+      locations.forEach(location => {
+        location.locations(true).forEach(loc => locs.push(loc)) // Map to new names, but include original to help match against tables
       })
       bodyplan = this._getBodyPlan(locs)
       table = HitLocations.hitlocationDictionary[bodyplan]
@@ -1386,20 +1389,20 @@ export class ActorImporter {
       if (results.length > 0) {
         if (results.length > 1) {
           // If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
-          let d = ''
+          let dr = ''
 
           /** @type {string | null} */
           let last = null
 
-          results.forEach(r => {
-            if (r.import != last) {
-              d += '|' + r.import
-              last = r.import
+          results.forEach(result => {
+            if (result.import != last) {
+              dr += '|' + result.import
+              last = result.import
             }
           })
 
-          if (d) d = d.substring(1)
-          results[0].import = d
+          if (dr) dr = dr.substring(1)
+          results[0].import = dr
         }
 
         temp.push(results[0])
@@ -1466,14 +1469,14 @@ export class ActorImporter {
 
     for (let key in json) {
       if (key.startsWith('id-')) {
-        let j = json[key]
-        let n = readXmlText(j.name)
-        let s = readXmlText(j.spoken)
-        let w = readXmlText(j.written)
-        let p = readXmlText(j.points)
-        let l = new Language(n, s, w, p)
+        let data = json[key]
+        let name = this.textFrom(data.name)
+        let spoken = this.textFrom(data.spoken)
+        let written = this.textFrom(data.written)
+        let points = this.textFrom(data.points)
+        let lang = new Language(name, spoken, written, points)
 
-        GURPS.put(langs, l, index++)
+        GURPS.put(langs, lang, index++)
       }
     }
 
@@ -1489,19 +1492,19 @@ export class ActorImporter {
   importReactionsFromGCA(json, vernum) {
     if (!json) return
     let text = readXmlText(json)
-    let a = vernum <= 9 ? text.split(',') : text.split('|')
+    let mods = vernum <= 9 ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
 
-    a.forEach((/** @type {string} */ m) => {
-      if (m) {
-        let t = m.trim()
-        let i = t.indexOf(' ')
-        let mod = t.substring(0, i)
-        let sit = t.substring(i + 1)
-        let r = new Reaction(mod, sit)
+    mods.forEach((/** @type {string} */ modText) => {
+      if (modText) {
+        let text = modText.trim()
+        let i = text.indexOf(' ')
+        let mod = text.substring(0, i)
+        let sit = text.substring(i + 1)
+        let reaction = new Reaction(mod, sit)
 
-        GURPS.put(rs, r, index++)
+        GURPS.put(rs, reaction, index++)
       }
     })
 
@@ -1516,42 +1519,42 @@ export class ActorImporter {
    */
   importEncumbranceFromGCA(json) {
     if (!json) return
-    let es = {}
+    let encumbrances = {}
     let index = 0
     let cm = 0
     let cd = 0
 
     for (let i = 0; i < 5; i++) {
-      let e = new Encumbrance()
+      let encumbrance = new Encumbrance()
 
-      e.level = i
-      let k = 'enc_' + i
-      let c = readXmlText(json[k])
+      encumbrance.level = i
+      let key = 'enc_' + i
+      let text = this.textFrom(json[key])
 
-      e.current = c === '1'
-      k = 'enc' + i
-      e.key = k
-      let k2 = k + '_weight'
+      encumbrance.current = text === '1'
+      key = 'enc' + i
+      encumbrance.key = key
+      let key2 = key + '_weight'
 
-      e.weight = readXmlText(json[k2])
-      k2 = k + '_move'
-      e.move = this.intFrom(json[k2])
-      k2 = k + '_dodge'
-      e.dodge = this.intFrom(json[k2])
+      encumbrance.weight = this.textFrom(json[key2])
+      key2 = key + '_move'
+      encumbrance.move = this.intFrom(json[key2])
+      key2 = key + '_dodge'
+      encumbrance.dodge = this.intFrom(json[key2])
 
-      if (e.current) {
-        cm = e.move
-        cd = e.dodge
+      if (encumbrance.current) {
+        cm = encumbrance.move
+        cd = encumbrance.dodge
       }
 
-      GURPS.put(es, e, index++)
+      GURPS.put(encumbrances, encumbrance, index++)
     }
 
     return {
       'system.currentmove': cm,
       'system.currentdodge': cd,
       'system.-=encumbrance': null,
-      'system.encumbrance': es,
+      'system.encumbrance': encumbrances,
     }
   }
 
@@ -1591,30 +1594,30 @@ export class ActorImporter {
       data.QP = {}
     }
 
-    att.ST.import = atts.find(e => e.attr_id === 'st')?.calc?.value || 0
-    att.ST.points = atts.find(e => e.attr_id === 'st')?.calc?.points || 0
-    att.DX.import = atts.find(e => e.attr_id === 'dx')?.calc?.value || 0
-    att.DX.points = atts.find(e => e.attr_id === 'dx')?.calc?.points || 0
-    att.IQ.import = atts.find(e => e.attr_id === 'iq')?.calc?.value || 0
-    att.IQ.points = atts.find(e => e.attr_id === 'iq')?.calc?.points || 0
-    att.HT.import = atts.find(e => e.attr_id === 'ht')?.calc?.value || 0
-    att.HT.points = atts.find(e => e.attr_id === 'ht')?.calc?.points || 0
-    att.WILL.import = atts.find(e => e.attr_id === 'will')?.calc?.value || 0
-    att.WILL.points = atts.find(e => e.attr_id === 'will')?.calc?.points || 0
-    att.PER.import = atts.find(e => e.attr_id === 'per')?.calc?.value || 0
-    att.PER.points = atts.find(e => e.attr_id === 'per')?.calc?.points || 0
-    att.QN.import = atts.find(e => e.attr_id === 'qn')?.calc?.value || 0
-    att.QN.points = atts.find(e => e.attr_id === 'qn')?.calc?.points || 0
+    att.ST.import = atts.find(attribute => attribute.attr_id === 'st')?.calc?.value || 0
+    att.ST.points = atts.find(attribute => attribute.attr_id === 'st')?.calc?.points || 0
+    att.DX.import = atts.find(attribute => attribute.attr_id === 'dx')?.calc?.value || 0
+    att.DX.points = atts.find(attribute => attribute.attr_id === 'dx')?.calc?.points || 0
+    att.IQ.import = atts.find(attribute => attribute.attr_id === 'iq')?.calc?.value || 0
+    att.IQ.points = atts.find(attribute => attribute.attr_id === 'iq')?.calc?.points || 0
+    att.HT.import = atts.find(attribute => attribute.attr_id === 'ht')?.calc?.value || 0
+    att.HT.points = atts.find(attribute => attribute.attr_id === 'ht')?.calc?.points || 0
+    att.WILL.import = atts.find(attribute => attribute.attr_id === 'will')?.calc?.value || 0
+    att.WILL.points = atts.find(attribute => attribute.attr_id === 'will')?.calc?.points || 0
+    att.PER.import = atts.find(attribute => attribute.attr_id === 'per')?.calc?.value || 0
+    att.PER.points = atts.find(attribute => attribute.attr_id === 'per')?.calc?.points || 0
+    att.QN.import = atts.find(attribute => attribute.attr_id === 'qn')?.calc?.value || 0
+    att.QN.points = atts.find(attribute => attribute.attr_id === 'qn')?.calc?.points || 0
 
-    data.HP.max = atts.find(e => e.attr_id === 'hp')?.calc?.value || 0
-    data.HP.points = atts.find(e => e.attr_id === 'hp')?.calc?.points || 0
-    data.FP.max = atts.find(e => e.attr_id === 'fp')?.calc?.value || 0
-    data.FP.points = atts.find(e => e.attr_id === 'fp')?.calc?.points || 0
-    data.QP.max = atts.find(e => e.attr_id === 'qp')?.calc?.value || 0
-    data.QP.points = atts.find(e => e.attr_id === 'qp')?.calc?.points || 0
-    let hp = atts.find(e => e.attr_id === 'hp')?.calc?.current || 0
-    let fp = atts.find(e => e.attr_id === 'fp')?.calc?.current || 0
-    let qp = atts.find(e => e.attr_id === 'qp')?.calc?.current || 0
+    data.HP.max = atts.find(attribute => attribute.attr_id === 'hp')?.calc?.value || 0
+    data.HP.points = atts.find(attribute => attribute.attr_id === 'hp')?.calc?.points || 0
+    data.FP.max = atts.find(attribute => attribute.attr_id === 'fp')?.calc?.value || 0
+    data.FP.points = atts.find(attribute => attribute.attr_id === 'fp')?.calc?.points || 0
+    data.QP.max = atts.find(attribute => attribute.attr_id === 'qp')?.calc?.value || 0
+    data.QP.points = atts.find(attribute => attribute.attr_id === 'qp')?.calc?.points || 0
+    let hp = atts.find(attribute => attribute.attr_id === 'hp')?.calc?.current || 0
+    let fp = atts.find(attribute => attribute.attr_id === 'fp')?.calc?.current || 0
+    let qp = atts.find(attribute => attribute.attr_id === 'qp')?.calc?.current || 0
 
     let overwrite = await this.promptForSaveOrOverwrite(data, hp, fp)
 
@@ -1639,29 +1642,29 @@ export class ActorImporter {
     lm.shove = (bl_value * 12).toString() + ' ' + bl_unit
     lm.twohandedlift = (bl_value * 8).toString() + ' ' + bl_unit
 
-    let bm = atts.find(e => e.attr_id === 'basic_move')?.calc?.value || 0
+    let bm = atts.find(attribute => attribute.attr_id === 'basic_move')?.calc?.value || 0
 
     data.basicmove.value = bm.toString()
-    data.basicmove.points = atts.find(e => e.attr_id === 'basic_move')?.calc?.points || 0
-    let bs = atts.find(e => e.attr_id === 'basic_speed')?.calc?.value || 0
+    data.basicmove.points = atts.find(attribute => attribute.attr_id === 'basic_move')?.calc?.points || 0
+    let bs = atts.find(attribute => attribute.attr_id === 'basic_speed')?.calc?.value || 0
 
     data.basicspeed.value = bs.toString()
-    data.basicspeed.points = atts.find(e => e.attr_id === 'basic_speed')?.calc?.points || 0
+    data.basicspeed.points = atts.find(attribute => attribute.attr_id === 'basic_speed')?.calc?.points || 0
 
     data.thrust = calc?.thrust
     data.swing = calc?.swing
     data.currentmove = data.basicmove.value
-    data.frightcheck = atts.find(e => e.attr_id === 'fright_check')?.calc?.value || 0
+    data.frightcheck = atts.find(attribute => attribute.attr_id === 'fright_check')?.calc?.value || 0
 
-    data.hearing = atts.find(e => e.attr_id === 'hearing')?.calc?.value || 0
-    data.tastesmell = atts.find(e => e.attr_id === 'taste_smell')?.calc?.value || 0
-    data.touch = atts.find(e => e.attr_id === 'touch')?.calc?.value || 0
-    data.vision = atts.find(e => e.attr_id === 'vision')?.calc?.value || 0
+    data.hearing = atts.find(attribute => attribute.attr_id === 'hearing')?.calc?.value || 0
+    data.tastesmell = atts.find(attribute => attribute.attr_id === 'taste_smell')?.calc?.value || 0
+    data.touch = atts.find(attribute => attribute.attr_id === 'touch')?.calc?.value || 0
+    data.vision = atts.find(attribute => attribute.attr_id === 'vision')?.calc?.value || 0
 
     let total_carried = this.calcTotalCarried(eqp)
     const encumbranceLevels = calculateEncumbranceLevels(bl_value, total_carried, bl_unit, calc)
-    const currentMove = Object.values(encumbranceLevels).find(e => e.current)?.move || 0
-    const currentDodge = Object.values(encumbranceLevels).find(e => e.current)?.dodge || 0
+    const currentMove = Object.values(encumbranceLevels).find(level => level.current)?.move || 0
+    const currentDodge = Object.values(encumbranceLevels).find(level => level.current)?.dodge || 0
 
     return {
       'system.attributes': att,
@@ -1685,40 +1688,40 @@ export class ActorImporter {
     }
   }
 
-  async importTraitsFromGCS(p, cd, md) {
-    if (!p) return
-    let ts = {}
+  async importTraitsFromGCS(profile, cd, md) {
+    if (!profile) return
+    let traits = {}
 
-    ts.race = ''
-    ts.height = p.height || ''
-    ts.weight = p.weight || ''
-    ts.age = p.age || ''
-    ts.title = p.title || ''
-    ts.player = p.player_name || ''
-    ts.createdon =
+    traits.race = ''
+    traits.height = profile.height || ''
+    traits.weight = profile.weight || ''
+    traits.age = profile.age || ''
+    traits.title = profile.title || ''
+    traits.player = profile.player_name || ''
+    traits.createdon =
       new Date(cd).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }).replace(' at', ',') || ''
-    ts.modifiedon =
+    traits.modifiedon =
       new Date(md).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }).replace(' at', ',') || ''
-    // ts.modifiedon = md || ''
-    ts.religion = p.religion || ''
-    ts.birthday = p.birthday || ''
-    ts.hand = p.handedness || ''
-    ts.techlevel = p.tech_level || ''
-    ts.gender = p.gender || ''
-    ts.eyes = p.eyes || ''
-    ts.hair = p.hair || ''
-    ts.skin = p.skin || ''
-    ts.sizemod = p.SM || '+0'
+    // traits.modifiedon = md || ''
+    traits.religion = profile.religion || ''
+    traits.birthday = profile.birthday || ''
+    traits.hand = profile.handedness || ''
+    traits.techlevel = profile.tech_level || ''
+    traits.gender = profile.gender || ''
+    traits.eyes = profile.eyes || ''
+    traits.hair = profile.hair || ''
+    traits.skin = profile.skin || ''
+    traits.sizemod = profile.SM || '+0'
 
-    const r = {
+    const result = {
       'system.-=traits': null,
-      'system.traits': ts,
+      'system.traits': traits,
     }
 
     if (ImportSettings.overwritePortrait) {
-      if (p.portrait) {
+      if (profile.portrait) {
         if (game.user.hasPermission('FILES_UPLOAD')) {
-          r.img = `data:image/png;base64,${p.portrait}.png`
+          result.img = `data:image/png;base64,${profile.portrait}.png`
         } else {
           await ui.notifications.error(
             'You do not have "FILES_UPLOAD" permission, portrait upload has failed. Please ask your GM to import your character, or acquire the correct permissions.'
@@ -1727,7 +1730,7 @@ export class ActorImporter {
       }
     }
 
-    return r
+    return result
   }
 
   async importAdsFromGCS(ads) {
@@ -1740,19 +1743,17 @@ export class ActorImporter {
     }
 
     // Find all adds with globalId
-    // if (this.isUsingFoundryItems()) {
-    await aRecurselist(this.actor.system.ads, async t => {
-      if (t.itemid) {
-        const i = this.actor.items.get(t.itemid)
+    await aRecurselist(this.actor.system.ads, async item => {
+      if (item.itemid) {
+        const i = this.actor.items.get(item.itemid)
 
         if (i?.system.globalid) {
-          if (!(t instanceof Advantage)) t = Advantage.fromObject(t, this.actor)
-          t = await this._processItemFrom(t, 'GCS')
-          temp.push(t)
+          if (!(item instanceof Advantage)) item = Advantage.fromObject(item, this.actor)
+          item = await this._processItemFrom(item, 'GCS')
+          temp.push(item)
         }
       }
     })
-    // }
 
     return {
       'system.-=ads': null,
@@ -1760,54 +1761,51 @@ export class ActorImporter {
     }
   }
 
-  // isUsingFoundryItems() {
-  //   return !!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)
-  // }
-
-  async importAd(i, p) {
+  async importAd(i, parent) {
     const name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
-    let a = new Advantage(name, i.levels)
+    let ad = new Advantage(name, i.levels)
 
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('t') ? 'trait' : 'trait_container'
     }
 
-    a.originalName = i.name
-    a.points = i.calc?.points
-    a.notes = this._resolveNotes(i)
-    a.userdesc = i.userdesc
-    a.cr = i.cr || null
+    ad.originalName = i.name
+    ad.points = i.calc?.points
+    ad.notes = this._resolveNotes(i)
+    ad.userdesc = i.userdesc
+    ad.cr = i.cr || null
 
     if (i.cr) {
-      a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + a.name + ']'
+      ad.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + ad.name + ']'
     }
 
     if (i.modifiers?.length) {
-      for (let j of i.modifiers)
-        if (!j.disabled) a.notes += `${a.notes ? '; ' : ''}${j.name}${j.notes ? ' (' + j.notes + ')' : ''}`
+      for (let modifier of i.modifiers)
+        if (!modifier.disabled)
+          ad.notes += `${ad.notes ? '; ' : ''}${modifier.name}${modifier.notes ? ' (' + modifier.notes + ')' : ''}`
     }
 
     // Not certain if this is needed, or is it a type-o (note vs. notes)
-    if (a.note) a.notes += (a.notes ? '\n' : '') + a.note
+    if (ad.note) ad.notes += (ad.notes ? '\n' : '') + ad.note
 
-    if (a.userdesc) a.notes += (a.notes ? '\n' : '') + a.userdesc
-    a.pageRef(i.reference)
-    a.uuid = i.id
-    a.parentuuid = p
-    a = this._substituteItemReplacements(a, i)
+    if (ad.userdesc) ad.notes += (ad.notes ? '\n' : '') + ad.userdesc
+    ad.pageRef(i.reference)
+    ad.uuid = i.id
+    ad.parentuuid = parent
+    ad = this._substituteItemReplacements(ad, i)
 
-    let old = this._findElementIn('ads', a.uuid)
+    let old = this._findElementIn('ads', ad.uuid)
 
-    this._migrateOtfsAndNotes(old, a, i.vtt_notes)
-    a = await this._processItemFrom(a, 'GCS')
+    this._migrateOtfsAndNotes(old, ad, i.vtt_notes)
+    ad = await this._processItemFrom(ad, 'GCS')
 
     let ch = []
 
     if (i.children?.length) {
-      for (let j of i.children) ch = ch.concat(await this.importAd(j, i.id))
+      for (let childTrait of i.children) ch = ch.concat(await this.importAd(childTrait, i.id))
     }
 
-    return [a].concat(ch)
+    return [ad].concat(ch)
   }
 
   _resolveNotes(i) {
@@ -1825,14 +1823,14 @@ export class ActorImporter {
 
     // Find all skills with globalId
     // if (this.isUsingFoundryItems()) {
-    await aRecurselist(this.actor.system.skills, async t => {
-      if (t.itemid) {
-        const i = this.actor.items.get(t.itemid)
+    await aRecurselist(this.actor.system.skills, async item => {
+      if (item.itemid) {
+        const i = this.actor.items.get(item.itemid)
 
         if (i?.system.globalid) {
-          if (!(t instanceof Skill)) t = Skill.fromObject(t, this.actor)
-          t = await this._processItemFrom(t, 'GCS')
-          temp.push(t)
+          if (!(item instanceof Skill)) item = Skill.fromObject(item, this.actor)
+          item = await this._processItemFrom(item, 'GCS')
+          temp.push(item)
         }
       }
     })
@@ -1844,7 +1842,7 @@ export class ActorImporter {
     }
   }
 
-  async importSk(i, p) {
+  async importSk(i, parent) {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('q') ? 'technique' : i.id.startsWith('s') ? 'skill' : 'skill_container'
     }
@@ -1865,38 +1863,38 @@ export class ActorImporter {
       name += addition + ')'
     }
 
-    let s = new Skill(name, '')
+    let skill = new Skill(name, '')
 
-    s.originalName = name
-    s.pageRef(i.reference || '')
-    s.uuid = i.id
-    s.parentuuid = p
+    skill.originalName = name
+    skill.pageRef(i.reference || '')
+    skill.uuid = i.id
+    skill.parentuuid = parent
 
     if (['skill', 'technique'].includes(i.type)) {
-      s.type = i.type.toUpperCase()
-      s.import = i.calc ? i.calc.level : ''
-      if (s.level == 0) s.level = ''
-      s.points = i.points
-      s.relativelevel = i.calc?.rsl
-      s.notes = this._resolveNotes(i)
+      skill.type = i.type.toUpperCase()
+      skill.import = i.calc ? i.calc.level : ''
+      if (skill.level == 0) skill.level = ''
+      skill.points = i.points
+      skill.relativelevel = i.calc?.rsl
+      skill.notes = this._resolveNotes(i)
     } else {
       // Usually containers
-      s.level = ''
+      skill.level = ''
     }
 
-    s = this._substituteItemReplacements(s, i)
-    let old = this._findElementIn('skills', s.uuid)
+    skill = this._substituteItemReplacements(skill, i)
+    let old = this._findElementIn('skills', skill.uuid)
 
-    this._migrateOtfsAndNotes(old, s, i.vtt_notes)
-    s = await this._processItemFrom(s, 'GCS')
+    this._migrateOtfsAndNotes(old, skill, i.vtt_notes)
+    skill = await this._processItemFrom(skill, 'GCS')
 
     let ch = []
 
     if (i.children?.length) {
-      for (let j of i.children) ch = ch.concat(await this.importSk(j, i.id))
+      for (let childSkill of i.children) ch = ch.concat(await this.importSk(childSkill, i.id))
     }
 
-    return [s].concat(ch)
+    return [skill].concat(ch)
   }
 
   async importSpellsFromGCS(sps) {
@@ -1909,14 +1907,14 @@ export class ActorImporter {
     }
 
     // Find all spells with globalId
-    await aRecurselist(this.actor.system.spells, async t => {
-      if (t.itemid) {
-        const i = this.actor.items.get(t.itemid)
+    await aRecurselist(this.actor.system.spells, async item => {
+      if (item.itemid) {
+        const i = this.actor.items.get(item.itemid)
 
         if (i?.system.globalid) {
-          if (!(t instanceof Spell)) t = Spell.fromObject(t, this.actor)
-          t = await this._processItemFrom(t, 'GCS')
-          temp.push(t)
+          if (!(item instanceof Spell)) item = Spell.fromObject(item, this.actor)
+          item = await this._processItemFrom(item, 'GCS')
+          temp.push(item)
         }
       }
     })
@@ -1927,46 +1925,46 @@ export class ActorImporter {
     }
   }
 
-  async importSp(i, p) {
-    let s = new Spell()
+  async importSp(i, parent) {
+    let spell = new Spell()
 
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('r') ? 'ritual_magic_spell' : i.id.startsWith('p') ? 'spell' : 'spell_container'
     }
 
-    s.name = i.name || 'Spell'
-    s.originalName = i.name
-    s.uuid = i.id
-    s.parentuuid = p
-    s.pageRef(i.reference || '')
+    spell.name = i.name || 'Spell'
+    spell.originalName = i.name
+    spell.uuid = i.id
+    spell.parentuuid = parent
+    spell.pageRef(i.reference || '')
 
     if (['spell', 'ritual_magic_spell'].includes(i.type)) {
-      s.class = i.spell_class || ''
-      s.college = i.college || ''
-      s.cost = i.casting_cost || ''
-      s.maintain = i.maintenance_cost || ''
-      s.difficulty = i.difficulty.toUpperCase()
-      s.relativelevel = i.calc?.rsl
-      s.notes = this._resolveNotes(i)
-      s.duration = i.duration || ''
-      s.points = i.points || ''
-      s.casttime = i.casting_time || ''
-      s.import = i.calc?.level || 0
+      spell.class = i.spell_class || ''
+      spell.college = i.college || ''
+      spell.cost = i.casting_cost || ''
+      spell.maintain = i.maintenance_cost || ''
+      spell.difficulty = i.difficulty.toUpperCase()
+      spell.relativelevel = i.calc?.rsl
+      spell.notes = this._resolveNotes(i)
+      spell.duration = i.duration || ''
+      spell.points = i.points || ''
+      spell.casttime = i.casting_time || ''
+      spell.import = i.calc?.level || 0
     }
 
-    s = this._substituteItemReplacements(s, i)
-    let old = this._findElementIn('spells', s.uuid)
+    spell = this._substituteItemReplacements(spell, i)
+    let old = this._findElementIn('spells', spell.uuid)
 
-    this._migrateOtfsAndNotes(old, s, i.vtt_notes)
-    s = await this._processItemFrom(s, 'GCS')
+    this._migrateOtfsAndNotes(old, spell, i.vtt_notes)
+    spell = await this._processItemFrom(spell, 'GCS')
 
     let ch = []
 
     if (i.children?.length) {
-      for (let j of i.children) ch = ch.concat(await this.importSp(j, i.id))
+      for (let childSpell of i.children) ch = ch.concat(await this.importSp(childSpell, i.id))
     }
 
-    return [s].concat(ch)
+    return [spell].concat(ch)
   }
 
   async importEquipmentFromGCS(eq, oeq) {
@@ -1985,22 +1983,22 @@ export class ActorImporter {
         temp = temp.concat(await this.importEq(i, '', false))
       }
 
-    await aRecurselist(this.actor.system.equipment?.carried, async t => {
-      t.carried = true
+    await aRecurselist(this.actor.system.equipment?.carried, async item => {
+      item.carried = true
 
-      if (t.save) {
-        if (!(t instanceof Equipment)) t = Equipment.fromObject(t, this.actor)
-        t = await this._processItemFrom(t, 'GCS')
-        temp.push(t)
+      if (item.save) {
+        if (!(item instanceof Equipment)) item = Equipment.fromObject(item, this.actor)
+        item = await this._processItemFrom(item, 'GCS')
+        temp.push(item)
       }
     })
-    await aRecurselist(this.actor.system.equipment?.other, async t => {
-      t.carried = false
+    await aRecurselist(this.actor.system.equipment?.other, async item => {
+      item.carried = false
 
-      if (t.save) {
-        if (!(t instanceof Equipment)) t = Equipment.fromObject(t, this.actor)
-        t = await this._processItemFrom(t, 'GCS')
-        temp.push(t)
+      if (item.save) {
+        if (!(item instanceof Equipment)) item = Equipment.fromObject(item, this.actor)
+        item = await this._processItemFrom(item, 'GCS')
+        temp.push(item)
       }
     })
 
@@ -2013,21 +2011,21 @@ export class ActorImporter {
     })
     // }
 
-    temp.forEach(e => {
-      e.contains = {}
-      e.collapsed = {}
+    temp.forEach(equipmentItem => {
+      equipmentItem.contains = {}
+      equipmentItem.collapsed = {}
     })
 
-    for (const e of temp) {
+    for (const equipmentItem of temp) {
       let parent = null
 
-      if (e.parentuuid) {
-        parent = temp.find(f => f.uuid === e.parentuuid)
-        if (parent) GURPS.put(parent.contains, e)
-        else e.parentuuid = ''
+      if (equipmentItem.parentuuid) {
+        parent = temp.find(item => item.uuid === equipmentItem.parentuuid)
+        if (parent) GURPS.put(parent.contains, equipmentItem)
+        else equipmentItem.parentuuid = ''
       }
 
-      await this._updateItemContains(e, parent)
+      await this._updateItemContains(equipmentItem, parent)
     }
 
     let equipment = {
@@ -2052,74 +2050,75 @@ export class ActorImporter {
     }
   }
 
-  async importEq(i, p, carried) {
-    let e = new Equipment()
+  async importEq(i, parent, carried) {
+    let equipment = new Equipment()
 
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('e') ? 'equipment' : 'equipment_container'
     }
 
-    e.name = i.description || 'Equipment'
-    e.originalName = i.description
-    e.originalCount = i.type === 'equipment_container' ? 1 : i.quantity || 0
-    e.count = e.originalCount
-    e.cost =
+    equipment.name = i.description || 'Equipment'
+    equipment.originalName = i.description
+    equipment.originalCount = i.type === 'equipment_container' ? 1 : i.quantity || 0
+    equipment.count = equipment.originalCount
+    equipment.cost =
       (parseFloat(i.calc?.extended_value) / (i.type === 'equipment_container' ? 1 : i.quantity || 1)).toString() || ''
-    e.carried = carried
-    e.equipped = i.equipped
-    e.techlevel = i.tech_level || ''
-    e.legalityclass = i.legality_class || '4'
-    e.categories = i.categories?.join(', ') || ''
-    e.uses = i.uses || 0
-    e.maxuses = i.max_uses || 0
-    e.uuid = i.id
-    e.parentuuid = p
-    e.notes = ''
-    e.notes = this._resolveNotes(i)
+    equipment.carried = carried
+    equipment.equipped = i.equipped
+    equipment.techlevel = i.tech_level || ''
+    equipment.legalityclass = i.legality_class || '4'
+    equipment.categories = i.categories?.join(', ') || ''
+    equipment.uses = i.uses || 0
+    equipment.maxuses = i.max_uses || 0
+    equipment.uuid = i.id
+    equipment.parentuuid = parent
+    equipment.notes = ''
+    equipment.notes = this._resolveNotes(i)
 
     if (i.modifiers?.length) {
-      for (let j of i.modifiers)
-        if (!j.disabled) e.notes += `${e.notes ? '; ' : ''}${j.name}${j.notes ? ' (' + j.notes + ')' : ''}`
+      for (let modifier of i.modifiers)
+        if (!modifier.disabled)
+          equipment.notes += `${equipment.notes ? '; ' : ''}${modifier.name}${modifier.notes ? ' (' + modifier.notes + ')' : ''}`
     }
 
-    if (e.note) e.notes += (e.notes ? '\n' : '') + e.note
-    e.weight =
+    if (equipment.note) equipment.notes += (equipment.notes ? '\n' : '') + equipment.note
+    equipment.weight =
       (parseFloat(i.calc?.extended_weight) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || '0'
-    e.pageRef(i.reference || '')
-    e = this._substituteItemReplacements(e, i)
-    let old = this._findElementIn('equipment.carried', e.uuid)
+    equipment.pageRef(i.reference || '')
+    equipment = this._substituteItemReplacements(equipment, i)
+    let old = this._findElementIn('equipment.carried', equipment.uuid)
 
-    if (!old) old = this._findElementIn('equipment.other', e.uuid)
-    this._migrateOtfsAndNotes(old, e, i.vtt_notes)
+    if (!old) old = this._findElementIn('equipment.other', equipment.uuid)
+    this._migrateOtfsAndNotes(old, equipment, i.vtt_notes)
 
     if (old) {
-      e.name = old.name
-      e.carried = old.carried
-      e.equipped = old.equipped
-      e.parentuuid = old.parentuuid
+      equipment.name = old.name
+      equipment.carried = old.carried
+      equipment.equipped = old.equipped
+      equipment.parentuuid = old.parentuuid
 
       if (old.ignoreImportQty) {
-        e.count = old.count
-        e.uses = old.uses
-        e.maxuses = old.maxuses
-        e.ignoreImportQty = true
+        equipment.count = old.count
+        equipment.uses = old.uses
+        equipment.maxuses = old.maxuses
+        equipment.ignoreImportQty = true
       }
     }
 
     // Process Item here
-    e = await this._processItemFrom(e, 'GCS')
+    equipment = await this._processItemFrom(equipment, 'GCS')
     let ch = []
 
     if (i.children?.length) {
-      for (let j of i.children) ch = ch.concat(await this.importEq(j, i.id, carried))
+      for (let childItem of i.children) ch = ch.concat(await this.importEq(childItem, i.id, carried))
 
-      for (let j of ch) {
-        e.cost -= j.cost * j.count
-        e.weight -= j.weight * j.count
+      for (let childEquipment of ch) {
+        equipment.cost -= childEquipment.cost * childEquipment.count
+        equipment.weight -= childEquipment.weight * childEquipment.count
       }
     }
 
-    return [e].concat(ch)
+    return [equipment].concat(ch)
   }
 
   importNotesFromGCS(notes) {
@@ -2130,8 +2129,8 @@ export class ActorImporter {
       temp = temp.concat(this.importNote(i, ''))
     }
 
-    recurselist(this.actor.system.notes, t => {
-      if (t.save) temp.push(t)
+    recurselist(this.actor.system.notes, item => {
+      if (item.save) temp.push(item)
     })
 
     return {
@@ -2140,30 +2139,30 @@ export class ActorImporter {
     }
   }
 
-  importNote(i, p) {
-    let n = new Note()
+  importNote(i, parent) {
+    let note = new Note()
 
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('n') ? 'note' : 'note_container'
     }
 
-    n.notes = i.markdown ?? i.calc?.resolved_text ?? i.text ?? ''
+    note.notes = i.markdown ?? i.calc?.resolved_text ?? i.text ?? ''
 
-    n.uuid = i.id
-    n.markdown = !!i.markdown
-    n.parentuuid = p
-    n.pageRef(i.reference || '')
-    n = this._substituteItemReplacements(n, i)
-    let old = this._findElementIn('notes', n.uuid)
+    note.uuid = i.id
+    note.markdown = !!i.markdown
+    note.parentuuid = parent
+    note.pageRef(i.reference || '')
+    note = this._substituteItemReplacements(note, i)
+    let old = this._findElementIn('notes', note.uuid)
 
-    this._migrateOtfsAndNotes(old, n)
+    this._migrateOtfsAndNotes(old, note)
     let ch = []
 
     if (i.children?.length) {
-      for (let j of i.children) ch = ch.concat(this.importNote(j, i.id))
+      for (let childNote of i.children) ch = ch.concat(this.importNote(childNote, i.id))
     }
 
-    return [n].concat(ch)
+    return [note].concat(ch)
   }
 
   importSizeFromGCS(commit, profile, ads, skills, equipment) {
@@ -2178,9 +2177,9 @@ export class ActorImporter {
 
     for (let i of all) {
       if (i.features?.length)
-        for (let f of i.features) {
-          if (f.type == 'attribute_bonus' && f.attribute == 'sm')
-            final += f.amount * (i.levels ? parseFloat(i.levels) : 1)
+        for (let feature of i.features) {
+          if (feature.type == 'attribute_bonus' && feature.attribute == 'sm')
+            final += feature.amount * (i.levels ? parseFloat(i.levels) : 1)
         }
     }
 
@@ -2202,25 +2201,25 @@ export class ActorImporter {
     let locations = []
 
     for (let i of hls.locations) {
-      let l = new HitLocations.HitLocation(i.table_name)
+      let location = new HitLocations.HitLocation(i.table_name)
 
-      l.import = i.calc?.dr.all?.toString() || '0'
+      location.import = i.calc?.dr.all?.toString() || '0'
 
       for (let [key, value] of Object.entries(i.calc?.dr))
         if (key != 'all') {
           let damtype = GURPS.DamageTables.damageTypeMap[key]
 
-          if (!l.split) l.split = {}
-          l.split[damtype] = +l.import + value
+          if (!location.split) location.split = {}
+          location.split[damtype] = +location.import + value
         }
 
-      l.penalty = i.hit_penalty?.toString() || '0'
+      location.penalty = i.hit_penalty?.toString() || '0'
 
-      while (locations.filter(it => it.where == l.where).length > 0) {
-        l.where = l.where + '*'
+      while (locations.filter(it => it.where == location.where).length > 0) {
+        location.where = location.where + '*'
       }
 
-      locations.push(l)
+      locations.push(location)
     }
 
     let vitals = locations.filter(value => value.where === HitLocations.HitLocation.VITALS)
@@ -2245,21 +2244,21 @@ export class ActorImporter {
     /** @type {HitLocations.HitLocation[]}  */
     let locs = []
 
-    locations.forEach(e => {
-      if (!!table && !!table[e.where]) {
+    locations.forEach(location => {
+      if (!!table && !!table[location.where]) {
         // if e.where already exists in table, don't map
-        locs.push(e)
+        locs.push(location)
       } else {
         // map to new name(s) ... sometimes we map 'Legs' to ['Right Leg', 'Left Leg'], for example.
-        e.locations(false).forEach(l => locs.push(l)) // Map to new names
+        location.locations(false).forEach(loc => locs.push(loc)) // Map to new names
       }
     })
     locations = locs
 
     if (!table) {
       locs = []
-      locations.forEach(e => {
-        e.locations(true).forEach(l => locs.push(l)) // Map to new names, but include original to help match against tables
+      locations.forEach(location => {
+        location.locations(true).forEach(loc => locs.push(loc)) // Map to new names, but include original to help match against tables
       })
       bodyplan = this._getBodyPlan(locs)
       table = HitLocations.hitlocationDictionary[bodyplan]
@@ -2289,20 +2288,20 @@ export class ActorImporter {
       if (results.length > 0) {
         if (results.length > 1) {
           // If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
-          let d = ''
+          let dr = ''
 
           /** @type {string | null} */
           let last = null
 
-          results.forEach(r => {
-            if (r.import != last) {
-              d += '|' + r.import
-              last = r.import
+          results.forEach(result => {
+            if (result.import != last) {
+              dr += '|' + result.import
+              last = result.import
             }
           })
 
-          if (d) d = d.substring(1)
-          results[0].import = d
+          if (dr) dr = dr.substring(1)
+          results[0].import = dr
         }
 
         temp.push(results[0])
@@ -2389,16 +2388,16 @@ export class ActorImporter {
 
     for (let i of all) {
       if (i.features?.length)
-        for (let f of i.features) {
-          if (f.type == 'reaction_bonus') {
+        for (let feature of i.features) {
+          if (feature.type == 'reaction_bonus') {
             temp_r.push({
-              modifier: f.amount * (f.per_level && !!i.levels ? parseInt(i.levels) : 1),
-              situation: f.situation,
+              modifier: feature.amount * (feature.per_level && !!i.levels ? parseInt(i.levels) : 1),
+              situation: feature.situation,
             })
-          } else if (f.type == 'conditional_modifier') {
+          } else if (feature.type == 'conditional_modifier') {
             temp_c.push({
-              modifier: f.amount * (f.per_level && !!i.levels ? parseInt(i.levels) : 1),
-              situation: f.situation,
+              modifier: feature.amount * (feature.per_level && !!i.levels ? parseInt(i.levels) : 1),
+              situation: feature.situation,
             })
           }
         }
@@ -2408,33 +2407,33 @@ export class ActorImporter {
     let temp_c2 = []
 
     for (let i of temp_r) {
-      let existing_condition = temp_r2.find(e => e.situation == i.situation)
+      let existing_condition = temp_r2.find(condition => condition.situation == i.situation)
 
       if (existing_condition) existing_condition.modifier += i.modifier
       else temp_r2.push(i)
     }
 
     for (let i of temp_c) {
-      let existing_condition = temp_c2.find(e => e.situation == i.situation)
+      let existing_condition = temp_c2.find(condition => condition.situation == i.situation)
 
       if (existing_condition) existing_condition.modifier += i.modifier
       else temp_c2.push(i)
     }
 
     for (let i of temp_r2) {
-      let r = new Reaction()
+      let reaction = new Reaction()
 
-      r.modifier = i.modifier.toString()
-      r.situation = i.situation
-      GURPS.put(rs, r, index_r++)
+      reaction.modifier = i.modifier.toString()
+      reaction.situation = i.situation
+      GURPS.put(rs, reaction, index_r++)
     }
 
     for (let i of temp_c2) {
-      let c = new Modifier()
+      let condMod = new Modifier()
 
-      c.modifier = i.modifier.toString()
-      c.situation = i.situation
-      GURPS.put(cs, c, index_c++)
+      condMod.modifier = i.modifier.toString()
+      condMod.situation = i.situation
+      GURPS.put(cs, condMod, index_c++)
     }
 
     return {
@@ -2446,8 +2445,8 @@ export class ActorImporter {
   }
 
   importCombatFromGCS(ads, skills, spells, equipment) {
-    let melee = {}
-    let ranged = {}
+    let meleeWeapons = {}
+    let rangedWeapons = {}
     let m_index = 0
     let r_index = 0
     let temp = [].concat(ads, skills, spells, equipment)
@@ -2459,66 +2458,64 @@ export class ActorImporter {
 
     for (let i of all) {
       if (i.weapons?.length) {
-        for (let w of i.weapons) {
+        for (let weapon of i.weapons) {
           if (this.GCSVersion === 5) {
-            w.type = w.id.startsWith('w') ? 'melee_weapon' : 'ranged_weapon'
+            weapon.type = weapon.id.startsWith('w') ? 'melee_weapon' : 'ranged_weapon'
           }
 
-          if (w.type == 'melee_weapon') {
-            let m = new Melee()
+          if (weapon.type == 'melee_weapon') {
+            let melee = new Melee()
 
-            m.name = i.name || i.description || ''
-            m.originalName = i.name
-            m.st = w.strength || ''
-            m.weight = i.weight || ''
-            m.techlevel = i.tech_level || ''
-            m.cost = i.value || ''
-            m.notes = i.notes || ''
-            m.pageRef(i.reference || '')
-            m.mode = w.usage || ''
-            m.import = w.calc?.level?.toString() || '0'
-            m.damage = w.calc?.damage || ''
-            m.reach = w.reach || ''
-            m.parry = w.calc?.parry || ''
-            m.block = w.calc?.block || ''
-            m = this._substituteItemReplacements(m, i)
-            let old = this._findElementIn('melee', false, m.name, m.mode)
+            melee.name = i.name || i.description || ''
+            melee.originalName = i.name
+            melee.st = weapon.strength || ''
+            melee.weight = i.weight || ''
+            melee.techlevel = i.tech_level || ''
+            melee.cost = i.value || ''
+            melee.notes = i.notes || ''
+            melee.pageRef(i.reference || '')
+            melee.mode = weapon.usage || ''
+            melee.import = weapon.calc?.level?.toString() || '0'
+            melee.reach = weapon.reach || ''
+            melee.parry = weapon.calc?.parry || ''
+            melee.block = weapon.calc?.block || ''
+            melee = this._substituteItemReplacements(melee, i)
+            let old = this._findElementIn('melee', false, melee.name, melee.mode)
 
-            this._migrateOtfsAndNotes(old, m, i.vtt_notes, w.usage_notes)
+            this._migrateOtfsAndNotes(old, melee, i.vtt_notes, weapon.usage_notes)
 
-            GURPS.put(melee, m, m_index++)
-          } else if (w.type == 'ranged_weapon') {
-            let r = new Ranged()
+            GURPS.put(meleeWeapons, melee, m_index++)
+          } else if (weapon.type == 'ranged_weapon') {
+            let ranged = new Ranged()
 
-            r.name = i.name || i.description || ''
-            r.originalName = i.name
-            r.st = w.strength || ''
-            r.bulk = w.bulk || ''
-            r.legalityclass = i.legality_class || '4'
-            r.ammo = 0
-            r.notes = i.notes || ''
-            r.pageRef(i.reference || '')
-            r.mode = w.usage || ''
-            r.import = w.calc?.level || '0'
-            r.damage = w.calc?.damage || ''
-            r.acc = w.accuracy || ''
-            let m = r.acc.trim().match(/(\d+)([+-]\d+)/)
+            ranged.name = i.name || i.description || ''
+            ranged.originalName = i.name
+            ranged.st = weapon.strength || ''
+            ranged.bulk = weapon.bulk || ''
+            ranged.legalityclass = i.legality_class || '4'
+            ranged.ammo = 0
+            ranged.notes = i.notes || ''
+            ranged.pageRef(i.reference || '')
+            ranged.mode = weapon.usage || ''
+            ranged.import = weapon.calc?.level || '0'
+            ranged.acc = weapon.accuracy || ''
+            let match = ranged.acc.trim().match(/(\d+)([+-]\d+)/)
 
-            if (m) {
-              r.acc = m[1]
-              r.notes += ' [' + m[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
+            if (match) {
+              ranged.acc = match[1]
+              ranged.notes += ' [' + match[2] + ' ' + game.i18n.localize('GURPS.acc') + ']'
             }
 
-            r.rof = w.rate_of_fire || ''
-            r.shots = w.shots || ''
-            r.rcl = w.recoil || ''
-            r.range = w.calc?.range || w.range || ''
-            r = this._substituteItemReplacements(r, i)
-            let old = this._findElementIn('ranged', false, r.name, r.mode)
+            ranged.rof = weapon.rate_of_fire || ''
+            ranged.shots = weapon.shots || ''
+            ranged.rcl = weapon.recoil || ''
+            ranged.range = weapon.calc?.range || weapon.range || ''
+            ranged = this._substituteItemReplacements(ranged, i)
+            let old = this._findElementIn('ranged', false, ranged.name, ranged.mode)
 
-            this._migrateOtfsAndNotes(old, r, i.vtt_notes, w.usage_notes)
+            this._migrateOtfsAndNotes(old, ranged, i.vtt_notes, weapon.usage_notes)
 
-            GURPS.put(ranged, r, r_index++)
+            GURPS.put(rangedWeapons, ranged, r_index++)
           }
         }
       }
@@ -2526,9 +2523,9 @@ export class ActorImporter {
 
     return {
       'system.-=melee': null,
-      'system.melee': melee,
+      'system.melee': meleeWeapons,
       'system.-=ranged': null,
-      'system.ranged': ranged,
+      'system.ranged': rangedWeapons,
     }
   }
 
@@ -2536,9 +2533,9 @@ export class ActorImporter {
   /**
    * @param {{ [key: string]: any }} o
    */
-  intFrom(o) {
-    if (!o) return 0
-    let i = o['#text']
+  intFrom(obj) {
+    if (!obj) return 0
+    let i = obj['#text']
 
     if (!i) return 0
 
@@ -2548,37 +2545,37 @@ export class ActorImporter {
   /**
    * @param {{[key: string] : any}} o
    */
-  floatFrom(o) {
-    if (!o) return 0
-    let f = o['#text'].trim()
+  floatFrom(obj) {
+    if (!obj) return 0
+    let num = obj['#text'].trim()
 
-    if (!f) return 0
+    if (!num) return 0
 
-    return f.includes(',') ? parseDecimalNumber(f, { thousands: '.', decimal: ',' }) : parseDecimalNumber(f)
+    return num.includes(',') ? parseDecimalNumber(num, { thousands: '.', decimal: ',' }) : parseDecimalNumber(num)
   }
 
   calcTotalCarried(eqp) {
-    let t = 0
+    let total = 0
 
-    if (!eqp) return t
+    if (!eqp) return total
 
     for (let i of eqp) {
-      let w = 0
+      let weight = 0
 
-      w += parseFloat(i.weight || '0') * (i.type == 'equipment_container' ? 1 : i.quantity || 0)
-      if (i.children?.length) w += this.calcTotalCarried(i.children)
-      t += w
+      weight += parseFloat(i.weight || '0') * (i.type == 'equipment_container' ? 1 : i.quantity || 0)
+      if (i.children?.length) weight += this.calcTotalCarried(i.children)
+      total += weight
     }
 
-    return t
+    return total
   }
 
   recursiveGet(i) {
     if (!i) return []
     let ch = []
 
-    if (i.children?.length) for (let j of i.children) ch = ch.concat(this.recursiveGet(j))
-    if (i.modifiers?.length) for (let j of i.modifiers) ch = ch.concat(this.recursiveGet(j))
+    if (i.children?.length) for (let child of i.children) ch = ch.concat(this.recursiveGet(child))
+    if (i.modifiers?.length) for (let modifier of i.modifiers) ch = ch.concat(this.recursiveGet(modifier))
     if (!!i.disabled || (i.equipped != null && i.equipped == false)) return []
 
     return [i].concat(ch)
@@ -2596,15 +2593,15 @@ export class ActorImporter {
   _findElementIn(list, uuid, name = '', mode = '') {
     var foundkey
     let foundLength = Number.MAX_VALUE
-    let l = foundry.utils.getProperty(this.actor, 'system.' + list)
+    let listObj = foundry.utils.getProperty(this.actor, 'system.' + list)
 
-    recurselist(l, (e, k, _d) => {
+    recurselist(listObj, (value, key, _d) => {
       if (
-        (uuid && e.uuid == uuid) ||
-        (!!e.name && e.name.startsWith(name) && e.name.length < foundLength && e.mode == mode)
+        (uuid && value.uuid == uuid) ||
+        (!!value.name && value.name.startsWith(name) && value.name.length < foundLength && value.mode == mode)
       ) {
-        foundkey = k
-        foundLength = e.name ? e.name.length : foundLength
+        foundkey = key
+        foundLength = value.name ? value.name.length : foundLength
       }
     })
 
@@ -2619,14 +2616,17 @@ export class ActorImporter {
     if (i.type == 'trait_container' && i.container_type == 'race') race += i.calc?.points
     else if (i.type == 'trait_container' && i.container_type == 'alternative_abilities') ads += i.calc?.points
     else if (i.type == 'trait_container' && !!i.children?.length) {
-      var [a, d] = [0, 0]
+      var [adsNum, disadsNum] = [0, 0]
 
-      for (let j of i.children) [a, d, quirks, race] = this.adPointCount(j, a, d, quirks, race)
+      for (let childTrait of i.children) {
+        ;[adsNum, disadsNum, quirks, race] = this.adPointCount(childTrait, adsNum, disadsNum, quirks, race)
+      }
+
       if (toplevel) {
-        if (a > 0) ads += a
-        else disads += a
-        disads += d
-      } else ads += a + d
+        if (adsNum > 0) ads += adsNum
+        else disads += adsNum
+        disads += disadsNum
+      } else ads += adsNum + disadsNum
     } else if (i.calc?.points == -1) quirks += i.calc?.points
     else if (i.calc?.points > 0) ads += i.calc?.points
     else disads += i.calc?.points
@@ -2645,7 +2645,7 @@ export class ActorImporter {
     }
 
     if ((i.type === 'skill_container' || i.type === 'spell_container') && i.children?.length)
-      for (let j of i.children) skills = this.skPointCount(j, skills)
+      for (let childSkill of i.children) skills = this.skPointCount(childSkill, skills)
     else skills += i.points ?? 0
 
     return skills
@@ -2741,7 +2741,7 @@ export class ActorImporter {
   foldList(flat, target = {}) {
     flat.forEach(obj => {
       if (obj.parentuuid) {
-        const parent = flat.find(o => o.uuid == obj.parentuuid)
+        const parent = flat.find(it => it.uuid == obj.parentuuid)
 
         if (parent) {
           if (!parent.contains) parent.contains = {} // lazy init for older characters

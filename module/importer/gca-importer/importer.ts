@@ -279,7 +279,7 @@ Portrait will not be imported.`
     // Import Basic Thrust and Basic Swing damage
     const st = this.output.attributes?.ST?.import ?? 0
 
-    let basicDamageEntry = this.input.basicdamages.find(e => e.st === st)
+    let basicDamageEntry = this.input.basicdamages.find(damageEntry => damageEntry.st === st)
 
     if (!basicDamageEntry) {
       console.error(`GURPS | Failed to import basic damages: No entry corresponding to ST value "${st}"`)
@@ -380,7 +380,7 @@ Portrait will not be imported.`
         if (lookupName === 'Foot') lookupName = 'Feet'
         if (lookupName === 'Hand') lookupName = 'Hands'
 
-        const bodyLocation = this.input.body?.find(e => e.name === lookupName)
+        const bodyLocation = this.input.body?.find(bodyPart => bodyPart.name === lookupName)
 
         if (!bodyLocation) {
           console.error(
@@ -751,8 +751,8 @@ Portrait will not be imported.`
     const college =
       spell.cat
         ?.split(',')
-        .map(e => e.trim())
-        .filter(e => !e.startsWith('~'))
+        .map(collegeName => collegeName.trim())
+        .filter(collegeName => !collegeName.startsWith('~'))
         .join(', ') ?? ''
 
     return {

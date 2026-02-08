@@ -83,9 +83,9 @@ export class StatusEffect {
     const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
 
     const getTaggedValue = (key, tags) => {
-      const t = tags.map(tag => `#${tag}`).join(' ')
+      const tag = tags.map(tag => `#${tag}`).join(' ')
 
-      return `${key} ${t} @combatmod`
+      return `${key} ${tag} @combatmod`
     }
 
     return {

@@ -289,7 +289,7 @@ describe('GurpsActorV2.moveItem', () => {
     const updates = getUpdates(actor)
 
     // Expect eq1 to be containedBy eq2 and at the end of the embedded array.
-    const movedItem = updates.find((u: any) => u._id === 'eq1')
+    const movedItem = updates.find((update: any) => update._id === 'eq1')
 
     expect(movedItem.system.containedBy).toBe('eq2')
     expect(movedItem.sort).toBe(1)

@@ -15,7 +15,7 @@ class FallbackFolder {
     this.name = name ?? files[0].path.split('/')[0]
   }
   async files(extensions) {
-    return extensions ? this._files.filter(f => extensions.some(ext => f.name.endsWith(ext))) : this._files
+    return extensions ? this._files.filter(file => extensions.some(ext => file.name.endsWith(ext))) : this._files
   }
 }
 
@@ -43,12 +43,13 @@ export class FallbackFileHandler {
 
             let files = Array.from(inputElementObject.files)
 
-            files = extensions.length > 0 ? files.filter(f => extensions.some(ext => f.name.endsWith(ext))) : files
+            files =
+              extensions.length > 0 ? files.filter(file => extensions.some(ext => file.name.endsWith(ext))) : files
 
             if (files.length === 0) {
               reject('no files with the correct extensions were chosen')
             } else {
-              resolve(files.map(f => new FallbackFile(f)))
+              resolve(files.map(file => new FallbackFile(file)))
             }
           },
         },

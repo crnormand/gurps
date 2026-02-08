@@ -118,9 +118,9 @@ export async function doRoll({
 
   if (actor instanceof Actor && action) {
     const actorTokens =
-      canvas.tokens?.placeables.filter(t => {
-        if (t.actor) return t.actor.id === actor.id
-        ui.notifications?.warn(`Token is not linked to an actor [${t.id}]`)
+      canvas.tokens?.placeables.filter(token => {
+        if (token.actor) return token.actor.id === actor.id
+        ui.notifications?.warn(`Token is not linked to an actor [${token.id}]`)
 
         return false
       }) || []
@@ -541,9 +541,9 @@ async function _doRoll({
 
   chatdata['multiples'] = multiples
 
-  for (let m of targetmods) {
-    modifier += m.modint
-    maxtarget = (await GURPS.applyModifierDesc(actor, m.desc)) || maxtarget
+  for (let mod of targetmods) {
+    modifier += mod.modint
+    maxtarget = (await GURPS.applyModifierDesc(actor, mod.desc)) || maxtarget
   }
 
   actor = actor || game.user
@@ -625,12 +625,12 @@ async function _doRoll({
       if (!failure && optionalArgs.obj?.passotf) GURPS.executeOTF(optionalArgs.obj.passotf, optionalArgs.event)
     }
 
-    let r = {}
+    let result = {}
 
-    r['rtotal'] = rtotal
-    r['loaded'] = !!roll.isLoaded
-    r['rolls'] = roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
-    multiples.push(r)
+    result['rtotal'] = rtotal
+    result['loaded'] = !!roll.isLoaded
+    result['rolls'] = roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
+    multiples.push(result)
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
@@ -657,12 +657,12 @@ async function _doRoll({
       }
 
       // ? if (rtotal == 1) thing = thing.replace('points', 'point')
-      let r = {}
+      let result = {}
 
-      r['rtotal'] = rtotal
-      r['loaded'] = !!roll.isLoaded
-      r['rolls'] = roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
-      multiples.push(r)
+      result['rtotal'] = rtotal
+      result['loaded'] = !!roll.isLoaded
+      result['rolls'] = roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
+      multiples.push(result)
     }
 
     chatdata['modifier'] = modifier
@@ -672,7 +672,7 @@ async function _doRoll({
   if (isTargeted) GURPS.setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
 
   // For last, let's consume this action in Token
-  const actorToken = canvas.tokens?.placeables.find(t => t.id === speaker.token)
+  const actorToken = canvas.tokens?.placeables.find(token => token.id === speaker.token)
 
   if (actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
@@ -708,7 +708,7 @@ async function _doRoll({
     isCtrl ||
     (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
   ) {
-    messageData.whisper = ChatMessage.getWhisperRecipients('GM').map(u => u.id)
+    messageData.whisper = ChatMessage.getWhisperRecipients('GM').map(user => user.id)
     messageData.blind = true
   }
 

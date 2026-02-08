@@ -334,7 +334,7 @@ export default class Maneuvers {
    */
   static isManeuverIcon(text) {
     return Object.values(Maneuvers.getAll())
-      .map(m => m.icon)
+      .map(maneuver => maneuver.icon)
       .includes(text)
   }
 
@@ -405,7 +405,7 @@ export default class Maneuvers {
    * @returns {boolean}
    */
   static isActiveEffectManeuver(activeEffect) {
-    return activeEffect.statuses.find(s => s === 'maneuver')
+    return activeEffect.statuses.find(status => status === 'maneuver')
     // return activeEffect.getFlag ? activeEffect.getFlag('core', 'statusId') === MANEUVER : false
   }
 

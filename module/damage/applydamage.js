@@ -54,12 +54,12 @@ export default class ApplyDamageDialog extends Application {
     const gmUser = game.users.find(it => it.isGM && it.active)
 
     this.sourceTokenImg =
-      canvas.tokens.placeables.find(t => t.actor?.id === attacker?.id)?.document.texture.src ||
+      canvas.tokens.placeables.find(token => token.actor?.id === attacker?.id)?.document.texture.src ||
       attacker?.img ||
       gmUser.avatar
 
     this.sourceTokenName =
-      canvas.tokens.placeables.find(t => t.actor?.id === attacker?.id)?.name || attacker?.name || gmUser.name
+      canvas.tokens.placeables.find(token => token.actor?.id === attacker?.id)?.name || attacker?.name || gmUser.name
 
     this.targetTokenImg = actor.token?.texture.src || actor.img
     this.targetTokenName = actor.token?.name || actor.name
@@ -239,7 +239,7 @@ export default class ApplyDamageDialog extends Application {
 
     html
       .find('#adddamagemodifier')
-      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageModifier', t => t))
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageModifier', text => text))
 
     // ==== Tactical Rules ====
     // use armor divisor rules
@@ -575,8 +575,8 @@ export default class ApplyDamageDialog extends Application {
 
     const toggleEffect = async (effect, span, starts = '', label = '') => {
       // Check if effect already exists in Token
-      const effectExists = token.actor.effects.filter(e =>
-        starts ? e._source.statuses[0].startsWith(starts) : e._source.statuses[0] === effect
+      const effectExists = token.actor.effects.filter(tokenEffect =>
+        starts ? tokenEffect._source.statuses[0].startsWith(starts) : tokenEffect._source.statuses[0] === effect
       )
 
       if (!!effectExists.length > 0) {
@@ -604,7 +604,7 @@ export default class ApplyDamageDialog extends Application {
         const applyAt = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
 
         if (applyAt === 'AtNextTurn') {
-          const allShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock'))
+          const allShocks = actions.getNextTurnEffects().find(nextTurnEffect => nextTurnEffect.startsWith('shock'))
 
           if (allShocks) {
             await actions.removeFromNextTurn(allShocks)
@@ -612,7 +612,9 @@ export default class ApplyDamageDialog extends Application {
             span.attr('title', game.i18n.localize('GURPS.addShockEffect'))
             ui.notifications.info(game.i18n.localize('GURPS.removedShockEffect'))
           } else {
-            const otherShocks = actions.getNextTurnEffects().find(e => e.startsWith('shock') && e !== shockEffect)
+            const otherShocks = actions
+              .getNextTurnEffects()
+              .find(nextTurnEffect => nextTurnEffect.startsWith('shock') && nextTurnEffect !== shockEffect)
 
             if (otherShocks) {
               await actions.removeFromNextTurn(otherShocks)

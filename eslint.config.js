@@ -175,6 +175,7 @@ export default tseslint.config(
       import: importPlugin,
     },
     rules: {
+      'id-length': [2, { exceptions: ['i', 'x', 'y', '_'], properties: 'never' }],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

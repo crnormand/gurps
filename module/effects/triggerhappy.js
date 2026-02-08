@@ -54,7 +54,7 @@ export default class TriggerHappySupport {
       return
     }
 
-    let scene = game.scenes.contents.find(s => s.name == sn)
+    let scene = game.scenes.contents.find(scene => scene.name == sn)
 
     if (!scene) {
       ui.notifications.warn('Unable to find scene ' + sn)
@@ -62,9 +62,9 @@ export default class TriggerHappySupport {
       return
     }
 
-    let target = scene.drawings.contents.find(d => d.data.text == tn)
+    let target = scene.drawings.contents.find(drawing => drawing.data.text == tn)
 
-    if (!target) target = scene.tokens.find(t => t.name == tn)
+    if (!target) target = scene.tokens.find(token => token.name == tn)
 
     if (!target) {
       ui.notifications.warn('Unable to find drawing or token ' + tn + ' in scene ' + sn)

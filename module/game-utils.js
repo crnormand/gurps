@@ -7,5 +7,5 @@ export function isCombatActive() {
 }
 
 export function isTokenInActiveCombat(token) {
-  return game.combats.active?.combatants.some(c => c.token?.id === token.id)
+  return game.combats.active?.combatants.some(combatant => combatant.token?.id === token.id)
 }

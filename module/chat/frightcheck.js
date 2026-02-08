@@ -178,7 +178,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
     targetmods = targetmods.filter(it => it != null)
 
-    let totalMod = targetmods.map(it => it.mod).reduce((a, b) => a + b, 0)
+    let totalMod = targetmods.map(it => it.mod).reduce((left, right) => left + right, 0)
     let WILLVar = parseInt(actor.system.frightcheck || actor.system.attributes.WILL.value, 10)
     let finaltarget = totalMod + WILLVar
 
@@ -263,7 +263,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
   _findFrightCheckTable(tblname) {
     let pat = new RegExp(makeRegexPatternFrom(tblname, false), 'i')
-    let tables = game.tables.contents.filter(t => t.name.match(pat))
+    let tables = game.tables.contents.filter(table => table.name.match(pat))
 
     if (tables.length == 0) {
       ui.notifications.error("No table found for '" + tblname + "'")

@@ -92,7 +92,7 @@ class GcsElement<
     }
 
     if (typeof data === 'string') return process(data)
-    if (Array.isArray(data)) return data.map(e => process(e))
+    if (Array.isArray(data)) return data.map(datum => process(datum))
 
     return null
   }

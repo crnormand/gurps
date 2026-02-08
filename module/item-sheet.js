@@ -54,11 +54,11 @@ export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
         name: nm,
       }
 
-      recurselist(this.item.system.melee, (_e, k) => {
-        commit = { ...commit, ...{ ['system.melee.' + k + '.name']: nm } }
+      recurselist(this.item.system.melee, (_, key) => {
+        commit = { ...commit, ...{ ['system.melee.' + key + '.name']: nm } }
       })
-      recurselist(this.item.system.ranged, (_e, k) => {
-        commit = { ...commit, ...{ ['system.ranged.' + k + '.name']: nm } }
+      recurselist(this.item.system.ranged, (_, key) => {
+        commit = { ...commit, ...{ ['system.ranged.' + key + '.name']: nm } }
       })
       await this.item.update(commit)
     })
@@ -66,43 +66,43 @@ export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
 
     html.find('#add-melee').click(async ev => {
       ev.preventDefault()
-      let m = new Melee()
+      let melee = new Melee()
 
-      m.name = this.item.name
-      await this._addToList('melee', m)
+      melee.name = this.item.name
+      await this._addToList('melee', melee)
     })
 
     html.find('.delete.button').click(this._deleteKey.bind(this))
 
     html.find('#add-ranged').click(async ev => {
       ev.preventDefault()
-      let r = new Ranged()
+      let ranged = new Ranged()
 
-      r.name = this.item.name
-      r.legalityclass = 'lc'
-      await this._addToList('ranged', r)
+      ranged.name = this.item.name
+      ranged.legalityclass = 'lc'
+      await this._addToList('ranged', ranged)
     })
 
     html.find('#add-skill').click(async ev => {
       ev.preventDefault()
-      let r = new Skill()
+      let skill = new Skill()
 
-      r.rsl = '-'
-      await this._addToList('skills', r)
+      skill.rsl = '-'
+      await this._addToList('skills', skill)
     })
 
     html.find('#add-spell').click(async ev => {
       ev.preventDefault()
-      let r = new Spell()
+      let spell = new Spell()
 
-      await this._addToList('spells', r)
+      await this._addToList('spells', spell)
     })
 
     html.find('#add-ads').click(async ev => {
       ev.preventDefault()
-      let r = new Advantage()
+      let ad = new Advantage()
 
-      await this._addToList('ads', r)
+      await this._addToList('ads', ad)
     })
 
     html.find('textarea').on('drop', this.dropFoundryLinks)
@@ -114,9 +114,9 @@ export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
         let img = new Image()
 
         img.src = this.item.img
-        const w = 50
-        const h = 50
-        const preview = DragDrop.createDragImage(img, w, h)
+        const width = 50
+        const height = 50
+        const preview = DragDrop.createDragImage(img, width, height)
 
         ev.dataTransfer.setDragImage(preview, 0, 0)
 
@@ -137,26 +137,26 @@ export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
   dropFoundryLinks(ev) {
     if (ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
-    var n
+    var name
 
     if (dragData.type == 'JournalEntry') {
-      n = game.journal.get(dragData.id).name
+      name = game.journal.get(dragData.id).name
     }
 
     if (dragData.type == 'Actor') {
-      n = game.actors.get(dragData.id).name
+      name = game.actors.get(dragData.id).name
     }
 
     if (dragData.type == 'RollTable') {
-      n = game.tables.get(dragData.id).name
+      name = game.tables.get(dragData.id).name
     }
 
     if (dragData.type == 'Item') {
-      n = game.items.get(dragData.id).name
+      name = game.items.get(dragData.id).name
     }
 
-    if (n) {
-      let add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
+    if (name) {
+      let add = ` [${dragData.type}[${dragData.id}]` + '{' + name + '}]'
 
       $(ev.currentTarget).val($(ev.currentTarget).val() + add)
     }

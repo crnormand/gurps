@@ -4,7 +4,7 @@
  * @returns An array of numbers representing the range.
  */
 export function convertRangeTextToArray(rangeText: string): number[] {
-  const ranges = rangeText.split(',').map(r => r.trim())
+  const ranges = rangeText.split(',').map(token => token.trim())
   let result: number[] = []
 
   for (const range of ranges) {
@@ -14,13 +14,13 @@ export function convertRangeTextToArray(rangeText: string): number[] {
   }
 
   result = Array.from(new Set(result))
-  result.sort((a, b) => a - b)
+  result.sort((left, right) => left - right)
 
   return result
 }
 
 function parseRangeToken(token: string): number[] {
-  const parts = token.split('-').map(p => p.trim())
+  const parts = token.split('-').map(part => part.trim())
 
   if (parts.length === 0) return []
   if (parts.length === 1) return isNaN(parseInt(parts[0])) ? [] : [parseInt(parts[0])]

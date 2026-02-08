@@ -114,12 +114,12 @@ export class EffectModifierPopout extends Application {
 
     selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
     selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
-    selfMods.sort((a, b) => {
-      if (a.itemName === b.itemName) {
-        return a.desc.localeCompare(b.desc)
+    selfMods.sort((left, right) => {
+      if (left.itemName === right.itemName) {
+        return left.desc.localeCompare(right.desc)
       }
 
-      return a.itemName.localeCompare(b.itemName)
+      return left.itemName.localeCompare(right.itemName)
     })
     const targetModifiers = this._token
       ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
@@ -160,8 +160,8 @@ export class EffectModifierPopout extends Application {
       }
 
       // Sort the target modifiers by itemId.
-      result.targetmodifiers.sort((a, b) => {
-        return a.itemId.localeCompare(b.itemId)
+      result.targetmodifiers.sort((left, right) => {
+        return left.itemId.localeCompare(right.itemId)
       })
 
       results.push(result)
@@ -327,24 +327,24 @@ export class EffectModifierPopout extends Application {
       if (taggedSettings.checkConditionals) {
         const conditionalMods = foundry.utils.getProperty(actor, 'system.conditionalmods') || {}
 
-        recurselist(conditionalMods, (e, _k, _d) => {
-          const mod = parseInt(e.modifier) || 0
+        recurselist(conditionalMods, (conditionalModifier, _k, _d) => {
+          const mod = parseInt(conditionalModifier.modifier) || 0
           const signal = mod > 0 ? '+' : '-'
           const source = `system.conditionalmods.${_k}`
 
-          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
+          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${conditionalModifier.situation} @${source}`)
         })
       }
 
       if (taggedSettings.checkReactions) {
         const reactionMods = foundry.utils.getProperty(actor, 'system.reactions') || {}
 
-        recurselist(reactionMods, (e, _k, _d) => {
-          const mod = parseInt(e.modifier) || 0
+        recurselist(reactionMods, (reaction, _k, _d) => {
+          const mod = parseInt(reaction.modifier) || 0
           const signal = mod > 0 ? '+' : '-'
           const source = `system.reactions.${_k}`
 
-          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${e.situation} @${source}`)
+          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${reaction.situation} @${source}`)
         })
       }
 
@@ -454,15 +454,16 @@ export class EffectModifierPopout extends Application {
       return
     }
 
-    let t = this.getToken()
+    let token = this.getToken()
 
-    if (t && t.actor) {
-      let umods = t.actor.system.conditions.usermods
+    if (token && token.actor) {
+      let umods = token.actor.system.conditions.usermods
 
       if (umods) {
-        let m = umods.filter(i => !sanitize(i).includes(this.getDescription(text)))
+        let mods = umods.filter(i => !sanitize(i).includes(this.getDescription(text)))
 
-        if (umods.length !== m.length) t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
+        if (umods.length !== mods.length)
+          token.actor.update({ 'system.conditions.usermods': mods }).then(() => this.render(true))
       }
     }
   }
@@ -494,14 +495,14 @@ export class EffectModifierPopout extends Application {
   }
 
   _addUserMod(mod) {
-    let t = this.getToken()
+    let token = this.getToken()
 
-    if (t && t.actor) {
+    if (token && token.actor) {
       mod += ' (' + game.i18n.localize('GURPS.equipmentUserCreated') + ')'
-      let m = t.actor.system.conditions.usermods ? [...t.actor.system.conditions.usermods] : []
+      let mods = token.actor.system.conditions.usermods ? [...token.actor.system.conditions.usermods] : []
 
-      m.push(`${mod} @custom`)
-      t.actor.update({ 'system.conditions.usermods': m }).then(() => this.render(true))
+      mods.push(`${mod} @custom`)
+      token.actor.update({ 'system.conditions.usermods': mods }).then(() => this.render(true))
     } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 

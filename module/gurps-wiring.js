@@ -82,9 +82,9 @@ export default class GurpsWiring {
     let target = link.parentElement
 
     let actor = GURPS.LastActor
-    let users = actor?.getOwners()?.filter(u => !u.isGM) || []
+    let users = actor?.getOwners()?.filter(user => !user.isGM) || []
     let otf = '[PDF:' + text + ']'
-    let names = users.map(u => u.name).join(' ')
+    let names = users.map(user => user.name).join(' ')
 
     let container = target.closest('section.window-content')
 
@@ -181,10 +181,10 @@ export default class GurpsWiring {
   static async _onRightClickGmod(event) {
     event.preventDefault()
     let el = event.currentTarget
-    let n = el.dataset.name
-    let t = el.innerText
+    let name = el.dataset.name
+    let text = el.innerText
 
-    GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, this.actor)
+    GURPS.whisperOtfToOwner(text + ' ' + name, null, event, false, this.actor)
   }
 
   static async _onRightClickOtf(event) {

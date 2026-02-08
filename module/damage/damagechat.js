@@ -230,12 +230,12 @@ export default class DamageChat {
     let temp = result.groups?.adds1 ? result.groups.adds1 : ''
 
     if (!!temp && temp !== '') {
-      let m = temp.match(/([+-])@margin/)
+      let match = temp.match(/([+-])@margin/)
 
-      if (m) {
+      if (match) {
         let mrg = GURPS.lastTargetedRoll?.margin || 0
 
-        if (m[1] == '+') temp = '' + mrg
+        if (match[1] == '+') temp = '' + mrg
         else {
           if (mrg <= 0) temp = '' + mrg
           else temp = '-' + mrg
@@ -276,8 +276,8 @@ export default class DamageChat {
 
     let modifier = 0
 
-    for (let m of targetmods) {
-      modifier += m.modint
+    for (let mod of targetmods) {
+      modifier += mod.modint
     }
 
     let additionalText = ''
@@ -451,7 +451,7 @@ export default class DamageChat {
     if (event?.shiftKey) {
       if (game.user.isGM) {
         messageData.whisper = [game.user.id]
-      } else messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id)
+      } else messageData.whisper = game.users.filter(user => user.isGM).map(user => user.id)
       messageData.blind = true
     }
 
@@ -463,7 +463,7 @@ export default class DamageChat {
 
     if (isNiceDiceEnabled()) {
       /** @type {GurpsRoll[]} */
-      let rolls = draggableData.map(d => d.roll)
+      let rolls = draggableData.map(data => data.roll)
       let throws = []
       /**
        * @type {{ result: any; resultLabel: any; type: string; vectors: never[]; options: {}; }[]}
@@ -475,10 +475,10 @@ export default class DamageChat {
         roll.dice.forEach(die => {
           let type = 'd' + die.faces
 
-          die.results.forEach(s =>
+          die.results.forEach(result =>
             dice.push({
-              result: s.result,
-              resultLabel: s.result,
+              result: result.result,
+              resultLabel: result.result,
               type: type,
               vectors: [],
               options: {},
@@ -565,7 +565,9 @@ export default class DamageChat {
 
     // Get all tokens under the drop point. Use this instead of the quadtree approach because
     // GURPS Token Shapes and Movement manipulates the position of the tokens.
-    let selectedTokens = canvas.tokens.objects.children.filter(t => t.hitArea.contains(x - t.x, y - t.y))
+    let selectedTokens = canvas.tokens.objects.children.filter(token =>
+      token.hitArea.contains(x - token.x, y - token.y)
+    )
 
     if (selectedTokens.length > 1) selectedTokens = await selectTarget(selectedTokens, { single: single })
 

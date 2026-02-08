@@ -45,7 +45,7 @@ class NoteV1 {
 
     defineGetterProperties(this, getterKeys)
 
-    const containedItems: NoteV2[] = this.model.allNotes.filter(n => n.containedBy === this.noteV2.id)
+    const containedItems: NoteV2[] = this.model.allNotes.filter(note => note.containedBy === this.noteV2.id)
 
     this._contains = arrayToObject(
       containedItems?.map(item => new NoteV1(item)),

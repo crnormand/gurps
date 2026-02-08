@@ -25,9 +25,9 @@ export default class GurpsJournalEntry {
       // TODO: Convert to native HTML, not JQuery.
       if (html instanceof HTMLElement) html = $(html)
 
-      let h = html.parent().find('.journal-page-content')
+      let element = html.parent().find('.journal-page-content')
 
-      if (!!h && h.length > 0) {
+      if (!!element && element.length > 0) {
         GurpsWiring.hookupAllEvents(html)
 
         const dropHandler = function (event, app) {

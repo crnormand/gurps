@@ -450,18 +450,18 @@ export class HitLocation {
       return [HitLocation.BRAIN, table[HitLocation.BRAIN]]
     var lbl, entry
     let re = /^([A-Za-z]+) *(\d+)/
-    let m = where.match(re)
+    let match = where.match(re)
 
-    if (m) {
-      let t = parseInt(m[2])
+    if (match) {
+      let location = parseInt(match[2])
 
-      Object.keys(table).forEach(e => {
-        if (e.startsWith(m[1])) {
-          let indexes = convertRollStringToArrayOfInt(e.split(' ')[1])
+      Object.keys(table).forEach(tableKey => {
+        if (tableKey.startsWith(match[1])) {
+          let indexes = convertRollStringToArrayOfInt(tableKey.split(' ')[1])
 
-          if (indexes.includes(t)) {
-            lbl = e
-            entry = table[e]
+          if (indexes.includes(location)) {
+            lbl = tableKey
+            entry = table[tableKey]
           }
         }
       })
@@ -471,9 +471,9 @@ export class HitLocation {
   }
 
   setEquipment(frmttext) {
-    let e = extractP(frmttext)
+    let equipmentText = extractP(frmttext)
 
-    this.equipment = e.trim().replace('\n', ', ')
+    this.equipment = equipmentText.trim().replace('\n', ', ')
   }
 
   /**
@@ -515,11 +515,11 @@ export var getHitLocationTableNames = function () {
   let keys = []
   var last
 
-  Object.keys(hitlocationDictionary).forEach(e => {
-    let t = hitlocationDictionary[e]
+  Object.keys(hitlocationDictionary).forEach(hitLocationTableName => {
+    let table = hitlocationDictionary[hitLocationTableName]
 
-    if (t != last) keys.push(e)
-    last = t
+    if (table != last) keys.push(hitLocationTableName)
+    last = table
   })
 
   return keys
