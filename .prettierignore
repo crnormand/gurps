@@ -1,4 +1,4 @@
 dist/
 node_modules/
 *.hbs
-lib/xregexp-all.js
+src/lib/

@@ -1,7 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
-
 /**
  * These classes use Foundry's own DataModel system for its inbuilt validation and easy translation into useful data.
  * It serves as the back-bone of native GCA5 data handling.

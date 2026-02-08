@@ -1,7 +1,6 @@
 import { Application } from '@gurps-types/foundry/index.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
-
 import { PseudoDocument } from './pseudo-document.js'
 
 namespace PseudoDocumentSheet {

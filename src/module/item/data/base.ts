@@ -9,7 +9,6 @@ import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
-
 import { ItemComponent } from './component.js'
 
 type ItemMetadata = Readonly<{

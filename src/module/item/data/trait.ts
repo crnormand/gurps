@@ -1,7 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
-
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 import { ItemComponent, ItemComponentSchema } from './component.js'
 

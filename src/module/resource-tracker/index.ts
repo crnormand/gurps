@@ -1,7 +1,6 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 import { arrayToObject, objectToArray } from '@util/utilities.js'
 
-
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import { ResourceTrackerTemplate } from './resource-tracker.js'

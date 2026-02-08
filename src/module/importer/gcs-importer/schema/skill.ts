@@ -1,7 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-
 import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
 import { GcsSkillDefault } from './skill-default.js'
 import { GcsWeapon } from './weapon.js'
