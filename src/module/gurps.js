@@ -31,10 +31,11 @@ import {
   zeroFill,
 } from '@util/utilities.js'
 
-import { Action } from './action/index.js'
+import { ActionModule } from './action/index.js'
 import { prepareRemoveKey } from './actor/deletion.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
+import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { Canvas } from './canvas/index.js'
@@ -54,14 +55,18 @@ import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
+import { Features } from './features/index.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
+import { Item } from './item/index.js'
 import { AddImportEquipmentButton } from './item-import.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
+import { Prereqs } from './prereqs/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
+import { Scripting } from './scripting/index.js'
 import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
@@ -98,14 +103,19 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
-    Action,
+    Actor,
+    Action: ActionModule,
     Canvas,
     Combat,
     CombatTracker,
     Damage,
+    Features,
     Importer,
+    Item,
     Pdf,
+    Prereqs,
     ResourceTracker,
+    Scripting,
     Token,
     UI,
   }
