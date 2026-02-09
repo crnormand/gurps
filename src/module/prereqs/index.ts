@@ -1,4 +1,4 @@
-import { GurpsModule } from '../gurps-module.ts'
+import { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { AttributePrereq } from './attribute-prereq.ts'
 import { BasePrereq, PrereqType } from './base-prereq.ts'

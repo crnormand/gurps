@@ -1,6 +1,5 @@
+import { fields } from '@gurps-types/foundry/index.js'
 import { SimpleMerge } from 'fvtt-types/utils'
-
-import { fields } from '../../types/foundry/index.js'
 
 /**
  * A StringField subclass that supports replaceable values.

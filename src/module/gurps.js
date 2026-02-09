@@ -2177,7 +2177,6 @@ if (!globalThis.GURPS) {
     // do this only after we've initialized localize
     GURPS.Maneuvers = Maneuvers
 
-    // Define custom Entity classes
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class

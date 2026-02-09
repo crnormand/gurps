@@ -1,5 +1,6 @@
+import { DataModel } from '@gurps-types/foundry/index.js'
+
 import { GcsAttributeDefinition } from '../actor/data/gcs-character/attribute-definition.ts'
-import { DataModel } from '../types/foundry/index.ts'
 
 const DEFAULT_ATTRIBUTE_IDS = {
   st: 'wZ68WHN0uhJZvSCF',

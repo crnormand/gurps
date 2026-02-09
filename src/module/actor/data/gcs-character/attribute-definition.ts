@@ -1,6 +1,6 @@
-import { ScriptAttribute } from '../../../scripting/interfaces/attribute.ts'
-import { ScriptResolver } from '../../../scripting/resolver.ts'
-import { fields, DataModel } from '../../../types/foundry/index.ts'
+import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { ScriptAttribute } from '@module/scripting/interfaces/attribute.js'
+import { ScriptResolver } from '@module/scripting/resolver.js'
 
 import { GcsAttribute } from './attribute.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'
@@ -202,7 +202,7 @@ const attributeDefinitionSchema = () => {
     // NOTE: This is parsed as JS code, but no type yet exists for this.
     // TODO: Create dedicated JS code type.
     base: new fields.StringField({ required: true, nullable: false }),
-    costPerPoint: new fields.NumberField({ requried: true, nullable: false, initial: 0 }),
+    costPerPoint: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: Should be displayed as a percentage
     costAdjPerSm: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // TODO: Check if required and nullable even works for array fields

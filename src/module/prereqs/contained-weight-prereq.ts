@@ -1,5 +1,5 @@
-import { WeightCriteriaField } from '../data/criteria/weight-criteria.ts'
-import { fields } from '../types/foundry/index.ts'
+import { fields } from '@gurps-types/foundry/index.js'
+import { WeightCriteriaField } from '@module/data/criteria/weight-criteria.js'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 

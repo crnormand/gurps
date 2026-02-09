@@ -1,8 +1,9 @@
+import { fields } from '@gurps-types/foundry/index.js'
+
 import { IPrereqs } from '../data/mixins/prereqs.ts'
 import { GcsBaseItemModel } from '../item/data/gcs-base.ts'
 import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.ts'
 import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.ts'
-import { fields } from '../types/foundry/index.ts'
 
 enum PrereqType {
   List = 'prereqList',

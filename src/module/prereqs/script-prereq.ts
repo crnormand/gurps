@@ -1,4 +1,4 @@
-import { fields } from '../types/foundry/index.ts'
+import { fields } from '@gurps-types/foundry/index.js'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 

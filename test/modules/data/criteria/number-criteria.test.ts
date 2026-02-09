@@ -1,4 +1,4 @@
-import { NumberCriteria } from '../../../../module/data/criteria/number-criteria.ts'
+import { NumberCriteria } from '@module/data/criteria/number-criteria.js'
 
 describe('Number Criteria', () => {
   describe('Comparitor: Any Number', () => {

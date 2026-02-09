@@ -1,8 +1,9 @@
+import { fields } from '@gurps-types/foundry/index.js'
+
 import { IFeatures } from '../data/mixins/features.ts'
 import { GcsBaseItemModel } from '../item/data/gcs-base.ts'
 import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.ts'
 import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.ts'
-import { fields } from '../types/foundry/index.ts'
 
 import { FeatureType } from './types.ts'
 

@@ -1,6 +1,5 @@
+import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
-
-import { fields, DataModel } from '../../types/foundry/index.ts'
 
 enum StringComparison {
   Any = 'any',

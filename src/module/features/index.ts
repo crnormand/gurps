@@ -1,4 +1,4 @@
-import { GurpsModule } from '../gurps-module.ts'
+import { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { AttributeBonus } from './attribute-bonus.ts'
 import { BaseFeature } from './base-feature.ts'

@@ -1,8 +1,8 @@
-import { WeightUnit, WeightField } from '../../data/common/weight.ts'
-import { featuresSchema, IFeatures } from '../../data/mixins/features.ts'
-import { IPrereqs, prereqsSchema } from '../../data/mixins/prereqs.ts'
-import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.ts'
-import { fields } from '../../types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
+import { WeightUnit, WeightField } from '@module/data/common/weight.js'
+import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
+import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
+import { IReplaceable, replaceableSchema } from '@module/data/mixins/replaceable.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 

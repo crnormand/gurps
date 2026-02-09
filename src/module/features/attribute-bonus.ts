@@ -1,5 +1,5 @@
-import { NumberCriteriaField } from '../data/criteria/number-criteria.ts'
-import { fields } from '../types/foundry/index.ts'
+import { fields } from '@gurps-types/foundry/index.js'
+import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 
 import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
 import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
