@@ -40,7 +40,7 @@ const gcsSubTableSchema = () => {
       required: true,
       nullable: true,
       readonly: true,
-      initial: () => foundry.utils.randomID,
+      initial: () => foundry.utils.randomID(),
     }),
     // NOTE: If _owningLocation is null, the location is owned by the top-level table.
     _owningLocation: new fields.StringField({ required: true, nullable: false, readonly: true }),

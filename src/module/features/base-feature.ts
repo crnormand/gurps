@@ -36,8 +36,8 @@ class BaseFeature<Schema extends BaseFeatureSchema> extends TypedPseudoDocument<
 
 const baseFeatureSchema = () => {
   return {
-    amount: new fields.NumberField({ required: true, nullable: false, default: 1 }),
-    perLevel: new fields.BooleanField({ required: true, nullable: false, default: false }),
+    amount: new fields.NumberField({ required: true, nullable: false, initial: 1 }),
+    perLevel: new fields.BooleanField({ required: true, nullable: false, initial: false }),
   }
 }
 

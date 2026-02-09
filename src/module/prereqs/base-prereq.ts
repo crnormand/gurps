@@ -57,9 +57,9 @@ class BasePrereq<Schema extends BasePrereqSchema> extends TypedPseudoDocument<Sc
 
   /* ---------------------------------------- */
 
-  get unsatisifedMessage(): string {
+  get unsatisfiedMessage(): string {
     throw new Error(
-      'Method "unsatisifedMessage" is not implemented in the base class BasePrereq. It must be overridden in subclasses.'
+      'Method "unsatisfiedMessage" is not implemented in the base class BasePrereq. It must be overridden in subclasses.'
     )
   }
 }

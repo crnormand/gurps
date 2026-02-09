@@ -51,7 +51,7 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
 const pointsRecordSchema = () => {
   return {
     when: new fields.StringField({ required: true, nullable: false, initial: () => new Date().toISOString() }),
-    points: new fields.NumberField({ required: true, nullable: false, initia: 0 }),
+    points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     reason: new fields.StringField({ required: true, nullable: false, initial: '' }),
   }
 }
