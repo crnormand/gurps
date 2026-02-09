@@ -1,8 +1,7 @@
 'use strict'
 
-import * as Settings from '../module/util/miscellaneous-settings.js'
-
-import { SizeAndSpeedRangeTable } from './size-speed-range-table.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
+import { SizeAndSpeedRangeTable } from '@rules/size-speed-range-table.js'
 
 /*
   Defines the range strategy used throughout the application. A range strategy

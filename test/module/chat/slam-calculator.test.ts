@@ -1,5 +1,5 @@
 import { SlamCalculator } from '@module/chat/slam-calc.js'
-import { SizeAndSpeedRangeTable } from '@util/size-speed-range-table.js'
+import { SizeAndSpeedRangeTable } from '@rules/size-speed-range-table.js'
 
 describe('SlamCalculator', () => {
   let slamCalculator: SlamCalculator | null = null
