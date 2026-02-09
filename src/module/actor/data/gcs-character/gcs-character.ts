@@ -1,5 +1,6 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
-import { Length } from '@module/data/common/length.js'
+import { LengthField, LengthUnit } from '@module/data/common/length.js'
+import { WeightField, WeightUnit } from '@module/data/common/weight.js'
 import { ResolverCache } from '@module/scripting/types.js'
 
 import { BaseActorModel } from '../base.ts'
@@ -70,9 +71,12 @@ const profileSchema = () => {
     skin: new fields.StringField({ required: true, nullable: false, initial: '' }),
     handedness: new fields.StringField({ required: true, nullable: false, initial: '' }),
     gender: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    height: new fields.EmbeddedDataField(Length, { required: true, nullable: false }),
-    // TODO: Convert to Weight DataModel or special field
-    weight: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    height: new LengthField({
+      required: true,
+      nullable: false,
+      initial: { value: 71, unit: LengthUnit.FeetAndInches },
+    }),
+    weight: new WeightField({ required: true, nulable: false, initial: { value: 180, unit: WeightUnit.Pound } }),
     playerName: new fields.StringField({ required: true, nullable: false, initial: '' }),
     title: new fields.StringField({ required: true, nullable: false, initial: '' }),
     organization: new fields.StringField({ required: true, nullable: false, initial: '' }),
