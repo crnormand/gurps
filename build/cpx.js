@@ -1,8 +1,8 @@
 import cpx from 'cpx2'
 import { existsSync } from 'node:fs'
 
-const staticFolders = ['assets', 'icons', 'lang', 'templates', 'ui']
-const staticFiles = ['changelog.md', 'LICENSE.txt', 'README.md', 'system.json', 'template.json']
+const staticFolders = ['anim', 'assets', 'icons', 'lang', 'templates', 'ui']
+const staticFiles = ['changelog.md', 'LICENSE', 'README.md', 'system.json', 'template.json']
 const outputBase = 'dist'
 
 // Copy vendor-style libraries verbatim (do not run through tsc).
