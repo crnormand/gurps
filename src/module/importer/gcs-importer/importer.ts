@@ -152,7 +152,15 @@ class GcsImporter {
     const importedItems = actor.items.filter(item => {
       const component = item.system.fea ?? item.system.ski ?? item.system.spl ?? item.system.eqt
 
-      return ['GCS', 'GCA'].includes(component?.importFrom)
+      if (!component) {
+        console.warn(
+          'Could not determine Item component for imported item deletion check. Are you using a different Item type?'
+        )
+
+        return false
+      }
+
+      return ['GCS', 'GCA'].includes(component.importFrom)
     })
 
     await actor.deleteEmbeddedDocuments(

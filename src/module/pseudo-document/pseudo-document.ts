@@ -366,4 +366,4 @@ type PseudoDocumentSchema = ReturnType<typeof pseudoDocumentSchema>
 
 /* ---------------------------------------- */
 
-export { PseudoDocument, type PseudoDocumentSchema, type PseudoDocumentMetadata }
+export { PseudoDocument, type PseudoDocumentSchema, type PseudoDocumentMetadata, pseudoDocumentSchema }
