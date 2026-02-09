@@ -1,4 +1,4 @@
-import { GurpsSettingsApplication } from '../util/gurps-settings-application.ts'
+import { GurpsSettingsApplication } from '@module/util/gurps-settings-application.js'
 
 import { MODULE_NAME, SETTING_BASICSET_PDF, SETTING_PDF_OPEN_FIRST } from './types.js'
 

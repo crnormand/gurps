@@ -8,11 +8,11 @@ import type {
   HandlebarsActorSheetV2Constructor,
 } from '@gurps-types/foundry/actor-sheet-v2.js'
 import { Application } from '@gurps-types/foundry/application.js'
-import * as Settings from '@util/miscellaneous-settings.js'
+import { getGame, getUser, isHTMLElement } from '@module/util/guards.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import GurpsWiring from '../../gurps-wiring.js'
 import { ImportSettings } from '../../importer/index.js'
-import { getGame, getUser, isHTMLElement } from '../../util/guards.ts'
 import { ActorImporter } from '../actor-importer.js'
 import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.js'

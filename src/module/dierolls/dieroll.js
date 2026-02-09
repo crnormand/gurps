@@ -1,7 +1,7 @@
-import * as Settings from '@util/miscellaneous-settings.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
+import { getTokenForActor } from '@module/util/token.js'
 
 import { TokenActions } from '../token-actions.js'
-import { getTokenForActor } from '../util/token.ts'
 
 import { computePotentialHits } from './compute-potential-hits.js'
 

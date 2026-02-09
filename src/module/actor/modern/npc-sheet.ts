@@ -5,7 +5,7 @@ import {
   DeepPartial,
   HandlebarsTemplatePart,
 } from '@gurps-types/foundry/actor-sheet-v2.js'
-import * as Settings from '@util/miscellaneous-settings.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import { GurpsActorModernSheet, ModernSheetContext } from './sheet.js'
 

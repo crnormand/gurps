@@ -1,5 +1,5 @@
-import * as Settings from './miscellaneous-settings.js'
-import { SemanticVersion } from './semver.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
+import { SemanticVersion } from '@util/semver.js'
 
 export class Migration {
   constructor() {

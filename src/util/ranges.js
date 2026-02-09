@@ -1,36 +1,37 @@
 'use strict'
 
-import * as Settings from './miscellaneous-settings.js'
+import * as Settings from '../module/util/miscellaneous-settings.js'
+
 import { SizeAndSpeedRangeTable } from './size-speed-range-table.js'
 
 /*
   Defines the range strategy used throughout the application. A range strategy
-  is defined as an ordered (closest range to farthest range) array of range 
+  is defined as an ordered (closest range to farthest range) array of range
   bands. A range band is defined as a structure like this:
 
   {
 	moddesc: <String: text to use in the modifier bucket>,
-	max: <num: number of yards that define the maximum distance of this band>,				
+	max: <num: number of yards that define the maximum distance of this band>,
 	penalty: <num: modifier to use for ranged attacks in this band>,
 	desc: <String: text that describes the range>
   }
 
   Responsibilities:
 
-  - Defines a world setting to set the range strategy. Currently supported: 
+  - Defines a world setting to set the range strategy. Currently supported:
 	  * Standard (Size and Speed/Range Table from Basic).
 	  * Simplified (Range bands from Monster Hunters 2: The Enemy).
 	  * -1 per 10 yards
-   
+
   - On update of the setting, update the modifier bucket and all actors.
 
-  - On start up (a 'ready' hook) set the range bands and modifiers based 
+  - On start up (a 'ready' hook) set the range bands and modifiers based
 	on the current setting value.
-    
-  - Maintains an instance variable (ranges) that contains the current set of 
-	range bands based on the chosen strategy. 
 
-  - Maintains an instance variable (modifiers) that contains an array of 
+  - Maintains an instance variable (ranges) that contains the current set of
+	range bands based on the chosen strategy.
+
+  - Maintains an instance variable (modifiers) that contains an array of
 	modifier text for the modifier bucket.
  */
 

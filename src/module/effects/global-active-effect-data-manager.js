@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from '@util/miscellaneous-settings.js'
+import { SYSTEM_NAME } from '@module/util/miscellaneous-settings.js'
 
 /**
  * This class is responsible for showing the Active Effects Manager control button on the UI.

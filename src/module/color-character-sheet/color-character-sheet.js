@@ -4,7 +4,7 @@
  * ~Stevil
  */
 
-import { SYSTEM_NAME } from '@util/miscellaneous-settings.js'
+import { SYSTEM_NAME } from '@module/util/miscellaneous-settings.js'
 import { objectToArray } from '@util/utilities.js'
 
 import {

@@ -1,4 +1,4 @@
-import * as Settings from '@util/miscellaneous-settings.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
 import { arrayToObject, objectToArray } from '@util/utilities.js'
 
 export default class ModifierBucketJournals extends FormApplication {

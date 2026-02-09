@@ -1,6 +1,5 @@
-import * as Settings from '@util/miscellaneous-settings.js'
-
-import { i18nFallback } from '../util/i18nFallback.ts'
+import { i18nFallback } from '@module/util/i18nFallback.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import DamageChat from './damagechat.js'
 

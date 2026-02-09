@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/data-fields.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
-import * as Settings from '@util/miscellaneous-settings.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '@util/parselink.js'
 import {
   arrayToObject,

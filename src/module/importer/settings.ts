@@ -1,6 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
-
-import { GurpsSettingsApplication } from '../util/gurps-settings-application.ts'
+import { GurpsSettingsApplication } from '@module/util/gurps-settings-application.js'
 
 import {
   MODULE_NAME,

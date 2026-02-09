@@ -1,5 +1,6 @@
 import * as CI from '../rules/conditional-injury.js'
-import * as Settings from '../util/miscellaneous-settings.js'
+
+import * as Settings from './util/miscellaneous-settings.js'
 
 export default class GurpsConditionalInjury {
   constructor() {

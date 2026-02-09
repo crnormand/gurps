@@ -1,12 +1,12 @@
 'use strict'
 
-import { ItemImageSettings } from '../module/actor/actor-sheet.js'
-import { TaggedModifierSettings } from '../module/actor/effect-modifier-popout.js'
-import ModifierBucketJournals from '../module/modifier-bucket/select-journals.js'
-import { QuickRollSettings } from '../module/token/quick-roll-settings.js'
+import { ItemImageSettings } from '@module/actor/actor-sheet.js'
+import { TaggedModifierSettings } from '@module/actor/effect-modifier-popout.js'
+import ModifierBucketJournals from '@module/modifier-bucket/select-journals.js'
+import { QuickRollSettings } from '@module/token/quick-roll-settings.js'
+import { SemanticVersion } from '@util/semver.js'
 
 import Initiative from './initiative.js'
-import { SemanticVersion } from './semver.js'
 
 export const SYSTEM_NAME = 'gurps'
 export const SETTING_MIGRATION_VERSION = 'migration-version'

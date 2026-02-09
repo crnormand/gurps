@@ -1,6 +1,6 @@
 'use strict'
 
-import * as Settings from '@util/miscellaneous-settings.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 
 import ChatProcessor from './chat-processor.js'

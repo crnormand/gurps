@@ -1,4 +1,4 @@
-import * as Settings from '@util/miscellaneous-settings.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
 import { parselink } from '@util/parselink.js'
 import { recurselist, sanitize } from '@util/utilities.js'
 

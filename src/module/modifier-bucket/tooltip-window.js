@@ -1,10 +1,10 @@
-import * as Settings from '@util/miscellaneous-settings.js'
+import * as HitLocations from '@module/hitlocation/hitlocation.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
+import { gurpslink } from '@util/gurpslink.js'
 import { parselink } from '@util/parselink.js'
 import { displayMod, horiz } from '@util/utilities.js'
 
 import GurpsWiring from '../gurps-wiring.js'
-import * as HitLocations from '../hitlocation/hitlocation.js'
-import { gurpslink } from '../util/gurpslink.ts'
 /**
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
  * to the current or other actors.

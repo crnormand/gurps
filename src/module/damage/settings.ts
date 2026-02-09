@@ -1,4 +1,4 @@
-import { GurpsSettingsApplication } from '../util/gurps-settings-application.ts'
+import { GurpsSettingsApplication } from '@module/util/gurps-settings-application.js'
 
 import {
   APPLY_DIVISOR,

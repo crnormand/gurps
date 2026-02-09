@@ -1,7 +1,7 @@
 'use strict'
 
+import * as Settings from '@module/util/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsAndNegOnly } from '@util/jquery-helper.js'
-import * as Settings from '@util/miscellaneous-settings.js'
 import {
   displayMod,
   generateUniqueId,

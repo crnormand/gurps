@@ -1,11 +1,11 @@
 'use strict'
 
-import * as Settings from '@util/miscellaneous-settings.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
+import selectTarget from '@module/util/select-target.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '@util/utilities.js'
 
 import { addBucketToDamage } from '../dierolls/dieroll.js'
 import { DragDropType } from '../drag-drop-types.js'
-import selectTarget from '../util/select-target.ts'
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for

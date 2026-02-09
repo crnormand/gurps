@@ -1,17 +1,12 @@
 'use strict'
 
-import { MoveModes } from '../module/actor/gurps-actor.js'
-import Maneuvers from '../module/actor/maneuver.js'
-import * as HitLocations from '../module/hitlocation/hitlocation.js'
-import { ImportSettings } from '../module/importer/index.js'
-import { TokenActions } from '../module/token-actions.js'
-import { multiplyDice } from '../module/util/damage-utils.ts'
-import { gurpslink } from '../module/util/gurpslink.ts'
-import { i18nFallback } from '../module/util/i18nFallback.ts'
-
-import * as Settings from './miscellaneous-settings.js'
-import { extractOtfs } from './otf.js'
-import { parseDecimalNumber } from './parse-decimal-number/parse-decimal-number.js'
+import { MoveModes } from '@module/actor/gurps-actor.js'
+import Maneuvers from '@module/actor/maneuver.js'
+import * as HitLocations from '@module/hitlocation/hitlocation.js'
+import { ImportSettings } from '@module/importer/index.js'
+import { TokenActions } from '@module/token-actions.js'
+import { extractOtfs } from '@util/otf.js'
+import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import {
   getComparison,
   getOperation,
@@ -21,7 +16,12 @@ import {
   recurselist,
   stripBracketContents,
   zeroFill,
-} from './utilities.js'
+} from '@util/utilities.js'
+
+import { multiplyDice } from './damage-utils.ts'
+import { gurpslink } from './gurpslink.ts'
+import { i18nFallback } from './i18nFallback.ts'
+import * as Settings from './miscellaneous-settings.js'
 
 export function findTracker(data, trackerName) {
   if (!!data && !!data.additionalresources?.tracker) {
