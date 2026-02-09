@@ -2,7 +2,7 @@
  * Multiple tokens are selected -- prompt the user for which tokens to apply some function to.
  */
 export default async function selectTarget(
-  targets: any[],
+  targets: HTMLElement[],
   selectOptions: { selectAll?: boolean; single?: boolean } = { selectAll: false, single: false }
 ): Promise<any[]> {
   const result = await foundry.applications.api.DialogV2.prompt({
@@ -33,32 +33,30 @@ export default async function selectTarget(
       },
     },
     render: (_event: Event, dialog: any) => {
-      // COMPATIBILITY: v12
-      const element = (game.release?.generation ?? 0) >= 13 ? dialog.element : dialog
-
-      const tokenCheckboxes = Array.from(element.querySelectorAll('input[name="tokens"]')) ?? []
+      const tokenCheckboxes: HTMLInputElement[] =
+        Array.from(dialog.element.querySelectorAll('input[name="tokens"]')) ?? []
 
       if (selectOptions.single) {
-        tokenCheckboxes.forEach((token: any) => {
+        tokenCheckboxes.forEach((token: HTMLInputElement) => {
           token.addEventListener('change', () => {
-            tokenCheckboxes.filter((cb: any) => cb !== token).forEach((cb: any) => (cb.checked = false))
+            tokenCheckboxes.filter(checkbox => checkbox !== token).forEach(checkbox => (checkbox.checked = false))
           })
         })
       } else {
-        const allCheckbox = element.querySelector('input[name="all"]')
+        const allCheckbox: HTMLInputElement = dialog.element.querySelector('input[name="all"]')
 
         if (selectOptions.selectAll) {
           allCheckbox.checked = true
-          tokenCheckboxes.forEach((checkbox: any) => (checkbox.checked = true))
+          tokenCheckboxes.forEach(checkbox => (checkbox.checked = true))
         }
 
-        allCheckbox.addEventListener('change', (event: any) =>
-          tokenCheckboxes.forEach((checkbox: any) => (checkbox.checked = event.target.checked))
+        allCheckbox.addEventListener('change', event =>
+          tokenCheckboxes.forEach(checkbox => (checkbox.checked = (event.target as HTMLInputElement).checked))
         )
 
-        tokenCheckboxes.forEach((checkbox: any) => {
-          checkbox.addEventListener('change', (event: any) => {
-            if (!event.target.checked) allCheckbox.checked = false
+        tokenCheckboxes.forEach(checkbox => {
+          checkbox.addEventListener('change', event => {
+            if (!(event.target as HTMLInputElement).checked) allCheckbox.checked = false
           })
         })
       }
