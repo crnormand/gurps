@@ -1,5 +1,7 @@
 'use strict'
 
+// TODO: Detach from FoundryVTT, move to @rules
+
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { objectToArray, zeroFill } from '@util/utilities.js'
 
