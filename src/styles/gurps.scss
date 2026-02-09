@@ -1,16 +1,16 @@
 // This is the root of the stylesheets
-@use './styles/apps.css';
-@use './styles/chat-message.css';
-@use './styles/color-character-sheet.css';
-@use './styles/css_boilerplate.css';
-@use './styles/simple.css';
-@use './styles/simplified.css';
-@use './styles/tinycolorpicker.css';
+@use './apps.css';
+@use './chat-message.css';
+@use './color-character-sheet.css';
+@use './css_boilerplate.css';
+@use './simple.css';
+@use './simplified.css';
+@use './tinycolorpicker.css';
 
-@use 'styles/variables';
-@use 'styles/canvas';
-@use 'styles/sidebar';
-@use 'styles/token-hud';
-@use 'styles/settings';
-@use 'styles/pdf';
-@use 'styles/modern-sheet';
+@use 'variables';
+@use 'canvas';
+@use 'sidebar';
+@use 'token-hud';
+@use 'settings';
+@use 'pdf';
+@use 'modern-sheet';

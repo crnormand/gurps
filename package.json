@@ -40,7 +40,7 @@
     "build": "npm run clean && npm run build:code && npm run build:styles && npm run build:static",
     "build:code": "tsc && tsc-alias -p tsconfig.json",
     "build:static": "node build/cpx.js",
-    "build:styles": "sass --no-source-map --style=compressed src/styles/gurps.scss:dist/styles/gurps.css",
+    "build:styles": "sass --no-source-map src/styles/gurps.scss:dist/styles/gurps.css",
     "clean": "node build/clean.js",
     "dev": "npm run clean && npm run watch",
     "format": "prettier --write .",

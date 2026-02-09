@@ -1,4 +1,4 @@
-import './markdown-it.js'
+import '@lib/markdown-it.js'
 import { SemanticVersion } from './semver.js'
 
 export class ChangeLogWindow extends FormApplication {
