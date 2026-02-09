@@ -1,6 +1,6 @@
 import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './interfaces/index.ts'
 import { ScriptInterpreter } from './interpreter.ts'
-import { ResolverCacheKey, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE } from './types.ts'
+import { ResolverCache, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE } from './types.ts'
 
 class ScriptResolver {
   static MAXIMUM_ALLOWED_DEPTH = 20
@@ -15,7 +15,7 @@ class ScriptResolver {
     this.depth = 0
   }
 
-  get globalResolverCache(): Map<ResolverCacheKey, string> {
+  get globalResolverCache(): ResolverCache {
     if (!game.settings) return new Map()
 
     return game.settings.get(GURPS.SYSTEM_NAME, GLOBAL_RESOLVER_CACHE)
@@ -64,16 +64,23 @@ class ScriptResolver {
         return ''
       }
 
-      let resolverCache: Map<any, string> = this.globalResolverCache
+      let resolverCache = this.globalResolverCache
 
       if (actor && actor.isOfType('gcsCharacter')) {
         resolverCache = actor.system.resolverCache
       }
 
-      const key = { id: selfProvider.id, text: script }
+      const id = selfProvider.id
+      let cacheEntry: Map<string, string>
 
-      if (resolverCache.has(key)) {
-        return resolverCache.get(key) ?? ''
+      if (resolverCache.has(id)) {
+        cacheEntry = resolverCache.get(id) ?? new Map()
+
+        if (cacheEntry && cacheEntry.has(script)) {
+          return cacheEntry.get(script) || ''
+        }
+      } else {
+        cacheEntry = new Map()
       }
 
       // const maxTime = ScriptResolver.MAXIMUM_EXECUTION_TIME_MS
@@ -99,7 +106,8 @@ class ScriptResolver {
       const result = ScriptInterpreter.runScript(script, environment)
 
       if (result.ok) {
-        resolverCache.set(key, String(result.value))
+        cacheEntry.set(script, String(result.value))
+        if (!resolverCache.has(id)) resolverCache.set(id, cacheEntry)
 
         return String(result.value)
       } else {

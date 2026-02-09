@@ -1,5 +1,5 @@
 import { Length } from '../../../data/common/length.js'
-import { ResolverCacheKey } from '../../../scripting/types.ts'
+import { ResolverCache } from '../../../scripting/types.ts'
 import { fields, TypeDataModel } from '../../../types/foundry/index.ts'
 import { BaseActorModel } from '../base.ts'
 
@@ -12,7 +12,7 @@ const GcsCharacterVersion = 5
 /* ---------------------------------------- */
 
 class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
-  resolverCache: Map<ResolverCacheKey, string> = new Map()
+  resolverCache: ResolverCache = new Map()
 
   static override defineSchema(): GcsCharacterSchema {
     return gcsCharacterSchema()

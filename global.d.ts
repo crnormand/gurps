@@ -508,11 +508,12 @@ declare module 'fvtt-types/configuration' {
     'gurps.portrait-hp-tinting': boolean
 
     'gurps.scripting.globalResolverCache': MapField<
-      foundry.data.fields.SchemaField<{
-        id: foundry.data.fields.StringField<{ required: true; nullable: false }>
-        text: foundry.data.fields.StringField<{ required: true; nullable: false }>
-      }>,
       foundry.data.fields.StringField<{ required: true; nullable: false }>,
+      MapField<
+        foundry.data.fields.StringField<{ required: true; nullable: false }>,
+        foundry.data.fields.StringField<{ required: true; nullable: false }>,
+        { required: true; nullable: false }
+      >,
       { required: true; nullable: false }
     >
     'gurps.developerMode': boolean

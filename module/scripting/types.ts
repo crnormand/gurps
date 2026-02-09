@@ -1,9 +1,4 @@
-interface ResolverCacheKey {
-  id: string
-  text: string
-}
-
-/* ---------------------------------------- */
+type ResolverCache = Map<string, Map<string, string>>
 
 interface SelfProvider<T = Record<string, unknown>> {
   id: string
@@ -91,7 +86,7 @@ function asNodeLocContext(value: unknown): NodeLocContext | undefined {
 
 export { GLOBAL_RESOLVER_CACHE, isRecord, asThrownDetails, asNodeLocContext }
 export type {
-  ResolverCacheKey,
+  ResolverCache,
   ScriptEnvironment,
   ScriptErrResult,
   ScriptOkResult,

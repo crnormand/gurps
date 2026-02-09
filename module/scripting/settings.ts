@@ -15,11 +15,12 @@ export function registerSettings(): void {
     scope: 'world',
     config: false,
     type: new MapField(
-      new fields.SchemaField({
-        id: new fields.StringField({ required: true, nullable: false }),
-        text: new fields.StringField({ required: true, nullable: false }),
-      }),
       new fields.StringField({ required: true, nullable: false }),
+      new MapField(
+        new fields.StringField({ required: true, nullable: false }),
+        new fields.StringField({ required: true, nullable: false }),
+        { required: true, nullable: false }
+      ),
       { required: true, nullable: false }
     ),
   })
