@@ -38,7 +38,7 @@
   },
   "scripts": {
     "build": "npm run clean && npm run build:code && npm run build:styles && npm run build:static",
-    "build:code": "tsc && tsc-alias",
+    "build:code": "tsc && tsc-alias -p tsconfig.json",
     "build:static": "node build/cpx.js",
     "build:styles": "sass --no-source-map src/styles/gurps.scss:dist/styles/gurps.css",
     "clean": "node build/clean.js",
@@ -55,7 +55,7 @@
     "typecheck": "tsc --noEmit",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test",
     "watch": "node build/watch.mjs",
-    "watch:code": "tsc-watch",
+    "watch:code": "tsc-watch -p tsconfig.json --onSuccess \"tsc-alias -p tsconfig.json\"",
     "watch:static": "node build/cpx.js --watch",
     "watch:styles": "sass --watch --update src/styles/gurps.scss:dist/styles/gurps.css"
   },
