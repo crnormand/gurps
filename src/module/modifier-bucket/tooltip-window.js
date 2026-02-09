@@ -91,13 +91,13 @@ export default class ModifierBucketEditor extends Application {
     data.tabIndex = this.tabIndex
     data.journals = this.journals
     data.stack = this.bucket.modifierStack
-    data.meleemods = ModifierLiterals.MeleeMods.split('\n')
-    data.rangedmods = ModifierLiterals.RangedMods.split('\n')
-    data.defensemods = ModifierLiterals.DefenseMods.split('\n')
+    data.meleemods = ModifierLiterals.MeleeMods
+    data.rangedmods = ModifierLiterals.RangedMods
+    data.defensemods = ModifierLiterals.DefenseMods
     data.speedrangemods = [game.i18n.localize('GURPS.modifierRangeTitle')].concat(GURPS.rangeObject.modifiers)
     data.actorname = GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
-    data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
-    data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
+    data.othermods1 = ModifierLiterals.OtherMods1
+    data.othermods2 = ModifierLiterals.OtherMods2
     data.cansend = game.user?.isGM || game.user?.hasRole('TRUSTED') || game.user?.hasRole('ASSISTANT')
     data.users = game.users?.filter(user => user.id != game.user.id) || []
     data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
@@ -448,84 +448,91 @@ const ModifierLiterals = {
     return this._HitLocationModifiers
   },
 
-  // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
   get MeleeMods() {
-    return `
-    [+4 ${game.i18n.localize('GURPS.modifiers_.aoaDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaDetermined')}]
-    [+2 ${game.i18n.localize('GURPS.modifiers_.aoaStrong')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaStrong')}]
-    [+2 ${game.i18n.localize('GURPS.modifiers_.committedDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedDetermined')}]
-    [+1 ${game.i18n.localize('GURPS.modifiers_.committedStrong')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedStrong')}]
-    [+4 ${game.i18n.localize('GURPS.modifiers_.telegraphic')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.telegraphic')}]
-    [-4 ${game.i18n.localize('GURPS.modifiers_.moveAndAttack')} *Max:9] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.moveAndAttack')}]
-    [-2 ${game.i18n.localize('GURPS.modifiers_.deceptive')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.deceptive')}]
-    [-2 ${game.i18n.localize('GURPS.modifiers_.defensive')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defensive')}]
-    [-6 ${game.i18n.localize('GURPS.modifiers_.rapidStrike')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.rapidStrike')}]`
+    return [
+      `[+4 ${game.i18n.localize('GURPS.modifiers_.aoaDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaDetermined')}]`,
+      `[+2 ${game.i18n.localize('GURPS.modifiers_.aoaStrong')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaStrong')}]`,
+      `[+2 ${game.i18n.localize('GURPS.modifiers_.committedDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedDetermined')}]`,
+      `[+1 ${game.i18n.localize('GURPS.modifiers_.committedStrong')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedStrong')}]`,
+      `[+4 ${game.i18n.localize('GURPS.modifiers_.telegraphic')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.telegraphic')}]`,
+      `[-4 ${game.i18n.localize('GURPS.modifiers_.moveAndAttack')} *Max:9] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.moveAndAttack')}]`,
+      `[-2 ${game.i18n.localize('GURPS.modifiers_.deceptive')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.deceptive')}]`,
+      `[-2 ${game.i18n.localize('GURPS.modifiers_.defensive')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defensive')}]`,
+      `[-6 ${game.i18n.localize('GURPS.modifiers_.rapidStrike')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.rapidStrike')}]`,
+    ]
   },
 
   get RangedMods() {
     const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
-    return (
-      `[+1 ${game.i18n.localize('GURPS.modifiers_.aim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aim')}]
-      [–2 ${game.i18n.localize('GURPS.modifiers_.popup')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.popup')}]` +
-      (useOnTarget
-        ? `
-${horiz(game.i18n.localize('GURPS.modifiers_.onTargetAiming'))}
-[+2 ${game.i18n.localize('GURPS.modifiers_.aoaRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaRanged')}]
-[+1 ${game.i18n.localize('GURPS.modifiers_.committedRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedRanged')}]
-[+4 ${game.i18n.localize('GURPS.modifiers_.allOutAim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.allOutAim')}]
-[+2 ${game.i18n.localize('GURPS.modifiers_.allOutAimBraced')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.allOutAimBraced')}]
-[+2 ${game.i18n.localize('GURPS.modifiers_.committedAim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAim')}]
-[+1 ${game.i18n.localize('GURPS.modifiers_.committedAimBraced')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAimBraced')}]`
-        : `
-[+1 ${game.i18n.localize('GURPS.modifiers_.aoaRangedDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaRangedDetermined')}]`)
-    )
+    const rangedMods = [
+      `[+1 ${game.i18n.localize('GURPS.modifiers_.aim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aim')}]`,
+      `[–2 ${game.i18n.localize('GURPS.modifiers_.popup')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.popup')}]`,
+      `[+1 ${game.i18n.localize('GURPS.modifiers_.aoaRangedDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaRangedDetermined')}]`,
+    ]
+
+    if (useOnTarget) {
+      rangedMods.push(
+        `${horiz(game.i18n.localize('GURPS.modifiers_.onTargetAiming'))}`,
+        `[+2 ${game.i18n.localize('GURPS.modifiers_.aoaRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaRanged')}]`,
+        `[+1 ${game.i18n.localize('GURPS.modifiers_.committedRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedRanged')}]`,
+        `[+4 ${game.i18n.localize('GURPS.modifiers_.allOutAim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.allOutAim')}]`,
+        `[+2 ${game.i18n.localize('GURPS.modifiers_.allOutAimBraced')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.allOutAimBraced')}]`,
+        `[+2 ${game.i18n.localize('GURPS.modifiers_.committedAim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAim')}]`,
+        `[+1 ${game.i18n.localize('GURPS.modifiers_.committedAimBraced')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAimBraced')}]`
+      )
+    }
+
+    return rangedMods
   },
 
   get DefenseMods() {
     const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
 
-    return `[+2 ${game.i18n.localize('GURPS.modifiers_.aodIncreased')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aodIncreased')}]
-    [+1 ${game.i18n.localize('GURPS.modifiers_.shieldDB')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.shieldDB')}]
-    [+2 ${game.i18n.localize('GURPS.modifiers_.dodgeAcrobatic')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAcrobatic')}]
-    [+3 ${game.i18n.localize('GURPS.modifiers_.dodgeAndDrop')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAndDrop')}]
-    [+3 ${game.i18n.localize('GURPS.modifiers_.dodgeRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeRetreat')}]
-    [+1 ${game.i18n.localize('GURPS.modifiers_.blockRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.blockRetreat')}]
-    [+3 ${game.i18n.localize('GURPS.modifiers_.fencingRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.fencingRetreat')}]
-    [+1 ${game.i18n.localize('GURPS.modifiers_.defensiveDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defensiveDefense')}]
-    ${
-      useOnTarget
-        ? `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAimDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAimDefense')}]`
-        : ''
+    const defenseMods = [
+      `[+2 ${game.i18n.localize('GURPS.modifiers_.aodIncreased')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aodIncreased')}]`,
+      `[+1 ${game.i18n.localize('GURPS.modifiers_.shieldDB')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.shieldDB')}]`,
+      `[+2 ${game.i18n.localize('GURPS.modifiers_.dodgeAcrobatic')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAcrobatic')}]`,
+      `[+3 ${game.i18n.localize('GURPS.modifiers_.dodgeAndDrop')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAndDrop')}]`,
+      `[+3 ${game.i18n.localize('GURPS.modifiers_.dodgeRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeRetreat')}]`,
+      `[+1 ${game.i18n.localize('GURPS.modifiers_.blockRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.blockRetreat')}]`,
+      `[+3 ${game.i18n.localize('GURPS.modifiers_.fencingRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.fencingRetreat')}]`,
+      `[+1 ${game.i18n.localize('GURPS.modifiers_.defensiveDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defensiveDefense')}]`,
+      `[-2 ${game.i18n.localize('GURPS.modifiers_.dodgeAcrobaticFail')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAcrobaticFail')}]`,
+      `[-2 ${game.i18n.localize('GURPS.modifiers_.defenseSide')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defenseSide')}]`,
+      `[-1 ${game.i18n.localize('GURPS.modifiers_.deceptiveDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.deceptiveDefense')}]`,
+      `[–1 ${game.i18n.localize('GURPS.modifiers_.riposte')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.riposte')}]`,
+    ]
+
+    if (useOnTarget) {
+      defenseMods.push(
+        `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAttackRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAttackRanged')}]`,
+        `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAttackRanged')}] [PDF:${game.i18n.localize(
+          'GURPS.modifiers_.pdf.committedAttackRanged'
+        )}]`
+      )
     }
-    ${
-      useOnTarget
-        ? `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAttackRanged')}] [PDF:${game.i18n.localize(
-            'GURPS.modifiers_.pdf.committedAttackRanged'
-          )}]`
-        : ''
-    }
-    [-2 ${game.i18n.localize('GURPS.modifiers_.dodgeAcrobaticFail')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAcrobaticFail')}]
-    [-2 ${game.i18n.localize('GURPS.modifiers_.defenseSide')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defenseSide')}]
-    [-1 ${game.i18n.localize('GURPS.modifiers_.deceptiveDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.deceptiveDefense')}]
-    [–1 ${game.i18n.localize('GURPS.modifiers_.riposte')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.riposte')}]`
+
+    return defenseMods
   },
 
   get OtherMods1() {
-    return `["&nbsp;&nbsp;+1&nbsp;&nbsp;&nbsp;&hairsp;"+1]
-            ["&nbsp;&nbsp;+2&nbsp;&nbsp;&nbsp;&hairsp;"+2]
-            ["&nbsp;&nbsp;+3&nbsp;&nbsp;&nbsp;&hairsp;"+3]
-            ["&nbsp;&nbsp;+4&nbsp;&nbsp;&nbsp;&hairsp;"+4]
-            ["&nbsp;&nbsp;+5&nbsp;&nbsp;&nbsp;&hairsp;"+5]
-            ["&nbsp;&nbsp;&#8211;1&nbsp;&nbsp;&nbsp;"-1]
-            ["&nbsp;&nbsp;&#8211;2&nbsp;&nbsp;&nbsp;"-2]
-            ["&nbsp;&nbsp;&#8211;3&nbsp;&nbsp;&nbsp;"-3]
-            ["&nbsp;&nbsp;&#8211;4&nbsp;&nbsp;&nbsp;"-4]
-            ["&nbsp;&nbsp;&#8211;5&nbsp;&nbsp;&nbsp;"-5]`
+    return [
+      `["&nbsp;&nbsp;+1&nbsp;&nbsp;&nbsp;&hairsp;"+1]`,
+      `["&nbsp;&nbsp;+2&nbsp;&nbsp;&nbsp;&hairsp;"+2]`,
+      `["&nbsp;&nbsp;+3&nbsp;&nbsp;&nbsp;&hairsp;"+3]`,
+      `["&nbsp;&nbsp;+4&nbsp;&nbsp;&nbsp;&hairsp;"+4]`,
+      `["&nbsp;&nbsp;+5&nbsp;&nbsp;&nbsp;&hairsp;"+5]`,
+      `["&nbsp;&nbsp;&#8211;1&nbsp;&nbsp;&nbsp;"-1]`,
+      `["&nbsp;&nbsp;&#8211;2&nbsp;&nbsp;&nbsp;"-2]`,
+      `["&nbsp;&nbsp;&#8211;3&nbsp;&nbsp;&nbsp;"-3]`,
+      `["&nbsp;&nbsp;&#8211;4&nbsp;&nbsp;&nbsp;"-4]`,
+      `["&nbsp;&nbsp;&#8211;5&nbsp;&nbsp;&nbsp;"-5]`,
+    ]
   },
 
   get OtherMods2() {
-    return ''
+    return []
   },
 
   get TaskDifficultyModifiers() {
