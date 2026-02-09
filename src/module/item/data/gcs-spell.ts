@@ -1,7 +1,7 @@
-import { IPrereqs, prereqsSchema } from '../../data/mixins/prereqs.ts'
-import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.ts'
-import { IStudies, studiesSchema } from '../../data/mixins/studies.ts'
-import { fields } from '../../types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
+import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
+import { IReplaceable, replaceableSchema } from '@module/data/mixins/replaceable.js'
+import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 

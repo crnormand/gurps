@@ -1,6 +1,6 @@
-import { DeepPartial, DocumentSheetV2, HandlebarsApplicationMixin, ItemSheet } from '../types/foundry/index.ts'
+import { DeepPartial, DocumentSheetV2, HandlebarsApplicationMixin, ItemSheet } from '@gurps-types/foundry/index.js'
 
-class TestItemSheet extends foundry.applications.api.HandlebarsApplicationMixin(ItemSheet) {
+class TestItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
   static override DEFAULT_OPTIONS: DocumentSheetV2.DefaultOptions = {
     tag: 'form',
     position: { width: 600, height: 400 },

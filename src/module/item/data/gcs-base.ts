@@ -1,8 +1,8 @@
-import { BaseAction } from '../../action/base-action.ts'
-import { CollectionField } from '../../data/fields/collection-field.ts'
-import { IContainable, containableSchema } from '../../data/mixins/containable.ts'
-import { ContainerUtils } from '../../data/mixins/container-utils.ts'
-import { fields, TypeDataModel } from '../../types/foundry/index.ts'
+import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { BaseAction } from '@module/action/base-action.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
+import { IContainable, containableSchema } from '@module/data/mixins/containable.js'
+import { ContainerUtils } from '@module/data/mixins/container-utils.js'
 
 type GcsItemMetadata = Readonly<{
   /** The expected `type` value */

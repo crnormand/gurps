@@ -1,0 +1,1 @@
+export import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin

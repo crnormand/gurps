@@ -1,4 +1,4 @@
-import { StringCriteriaField } from '../data/criteria/string-criteria.ts'
+import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 
 import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
 import { ILeveledAmount, getLeveledAmount, leveledAmountSchema } from './leveled-amount.ts'

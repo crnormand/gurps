@@ -1,6 +1,6 @@
-import { NumberCriteriaField } from '../data/criteria/number-criteria.ts'
-import { StringCriteriaField } from '../data/criteria/string-criteria.ts'
-import { fields } from '../types/foundry/index.ts'
+import { fields } from '@gurps-types/foundry/index.js'
+import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
+import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 

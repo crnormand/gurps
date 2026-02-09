@@ -1,4 +1,4 @@
-import { fields, DataModel } from '../../../types/foundry/index.ts'
+import { fields, DataModel } from '@gurps-types/foundry/index.js'
 
 import { AttributeType, GcsAttributeDefinition } from './attribute-definition.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'

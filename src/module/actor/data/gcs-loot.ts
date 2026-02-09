@@ -1,4 +1,4 @@
-import { fields } from '../../types/foundry/index.ts'
+import { fields } from '@gurps-types/foundry/index.js'
 
 import { BaseActorModel } from './base.ts'
 

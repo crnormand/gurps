@@ -1,6 +1,6 @@
-import { featuresSchema, IFeatures } from '../../data/mixins/features.ts'
-import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.ts'
-import { fields } from '../../types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
+import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
+import { IReplaceable, replaceableSchema } from '@module/data/mixins/replaceable.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 

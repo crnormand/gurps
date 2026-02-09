@@ -1,6 +1,6 @@
-import { defaultAttributes } from '../../../config/attributes.ts'
-import { WeightUnit, LengthUnit } from '../../../data/common/index.ts'
-import { fields } from '../../../types/foundry/index.ts'
+import { fields } from '@gurps-types/foundry/index.js'
+import { defaultAttributes } from '@module/config/attributes.js'
+import { WeightUnit, LengthUnit } from '@module/data/common/index.js'
 
 import { GcsAttributeDefinition } from './attribute-definition.ts'
 import { GcsBody } from './body-type.ts'

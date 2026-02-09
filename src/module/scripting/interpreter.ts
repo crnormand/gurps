@@ -1,6 +1,5 @@
+import { BlockStatement, ModuleDeclaration, parse, Program, Statement, Node, Expression } from '@lib/acorn.mjs'
 import { AnyObject } from 'fvtt-types/utils'
-
-import { BlockStatement, ModuleDeclaration, parse, Program, Statement, Node, Expression } from '../../scripts/acorn.mjs'
 
 import { Scope, VarKind } from './scope.ts'
 import { BreakSignal, ContinueSignal, ReturnSignal } from './signals.ts'

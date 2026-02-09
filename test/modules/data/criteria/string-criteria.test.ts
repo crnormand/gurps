@@ -1,4 +1,4 @@
-import { StringCriteria } from '../../../../module/data/criteria/string-criteria.ts'
+import { StringCriteria } from '@module/data/criteria/string-criteria.js'
 
 describe('String Criteria', () => {
   describe('Comparitor: Any String', () => {

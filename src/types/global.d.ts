@@ -1,4 +1,3 @@
-import type { BaseAction } from '@module/action/base-action.js'
 import type { DamageChat } from '@module/damage/damagechat.js'
 
 export {}
@@ -80,13 +79,6 @@ declare global {
     SJGProductMappings: Record<string, string>
     CONFIG: {
       Action: PseudoDocumentConfig<AnyActionClass>
-      // Action: Record<
-      //   string,
-      //   {
-      //     label: string
-      //     documentClass: typeof BaseAction
-      //   }
-      // >
       Prereq: PseudoDocumentConfig<AnyPrereqClass>
       // HACK: to get rid of later. just used for TypedPseudoDocument.TYPES at the moment
       [key: string]: unknown

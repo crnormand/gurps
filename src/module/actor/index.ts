@@ -1,4 +1,4 @@
-import { GurpsModule } from 'module/gurps-module.js'
+import { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import {
   GurpsActorCombatSheet,

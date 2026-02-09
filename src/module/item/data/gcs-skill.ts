@@ -1,9 +1,9 @@
-import { featuresSchema, IFeatures } from '../../data/mixins/features.ts'
-import { IPrereqs, prereqsSchema } from '../../data/mixins/prereqs.ts'
-import { IReplaceable, replaceableSchema } from '../../data/mixins/replaceable.ts'
-import { IStudies, studiesSchema } from '../../data/mixins/studies.ts'
-import { SkillDefault } from '../../data/skill-default.ts'
-import { fields } from '../../types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
+import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
+import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
+import { IReplaceable, replaceableSchema } from '@module/data/mixins/replaceable.js'
+import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
+import { SkillDefault } from '@module/data/skill-default.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
 

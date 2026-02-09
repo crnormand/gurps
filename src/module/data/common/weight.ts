@@ -1,6 +1,5 @@
+import { DataModel, fields } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
-
-import { DataModel, fields } from '../../types/foundry/index.ts'
 
 enum WeightUnit {
   Pound = 'lb',

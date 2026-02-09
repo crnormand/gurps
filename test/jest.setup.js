@@ -84,7 +84,7 @@ global.foundry = {
   },
   data: {
     fields: {
-      TypedSchemaField: class TypedSchemaField {
+      TypedSchemaField: class {
         constructor(types, options) {
           this.types = types
           this.options = options
@@ -94,41 +94,47 @@ global.foundry = {
           return true
         }
       },
-      TypedObjectField: class TypedObjectField {
+      TypedObjectField: class {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
-      SchemaField: class SchemaField {
+      SchemaField: class {
         constructor(schema, options) {
           this.schema = schema
           this.options = options
         }
       },
-      StringField: class StringField {
+      StringField: class {
         constructor(options) {
           this.options = options
         }
       },
-      NumberField: class NumberField {
+      NumberField: class {
         constructor(options) {
           this.options = options
         }
       },
-      BooleanField: class BooleanField {
+      BooleanField: class {
         constructor(options) {
           this.options = options
         }
       },
-      ArrayField: class ArrayField {
+      ArrayField: class {
         constructor(element, options) {
           this.element = element
           this.options = options
         }
       },
-      ObjectField: class ObjectField {
+      ObjectField: class {
         constructor(options) {
+          this.options = options
+        }
+      },
+      EmbeddedDataField: class {
+        constructor(model, options) {
+          this.model = model
           this.options = options
         }
       },
@@ -293,10 +299,15 @@ global.foundry = {
         }
       },
       ApplicationV2: class {},
+      DocumentSheetV2: class {},
       HandlebarsApplicationMixin: Base => class extends Base {},
     },
     handlebars: {
       renderTemplate: async () => '',
+    },
+    sheets: {
+      ActorSheet: class {},
+      ItemSheet: class {},
     },
     ux: {
       ContextMenu: class {
@@ -464,26 +475,4 @@ global.FormApplication = class FormApplication {
   activateListeners(_html) {}
 
   async _updateObject(_event, _formData) {}
-}
-
-// Mock Foundry VTT ContextMenu class
-global.ContextMenu = class ContextMenu {
-  constructor(element, selector, menuItems, events = {}) {
-    this.element = element
-    this.selector = selector
-    this.menuItems = menuItems
-    this.events = events
-  }
-
-  bind() {
-    return this
-  }
-
-  close(_options = {}) {
-    return this
-  }
-
-  render(_target) {
-    return this
-  }
 }

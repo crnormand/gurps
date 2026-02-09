@@ -1,6 +1,7 @@
-import { Length } from '../../../data/common/length.js'
-import { ResolverCache } from '../../../scripting/types.ts'
-import { fields, TypeDataModel } from '../../../types/foundry/index.ts'
+import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { Length } from '@module/data/common/length.js'
+import { ResolverCache } from '@module/scripting/types.js'
+
 import { BaseActorModel } from '../base.ts'
 
 import { GcsAttributeDefinition } from './attribute-definition.ts'

@@ -1,4 +1,4 @@
-import { DataModel, fields } from '../types/foundry/index.ts'
+import { DataModel, fields } from '@gurps-types/foundry/index.js'
 
 import { NumberCriteriaField } from './criteria/number-criteria.ts'
 
