@@ -178,6 +178,23 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   }
 
   /* ---------------------------------------- */
+
+  // Add two or more Weight values. The resulting Weight value will have the same unit
+  // as the first value provided.
+  static sum(first: Weight, ...others: Weight[]): Weight {
+    const firstValue = first.value / Weight.UNIT_CONVERSIONS[first.unit]
+
+    const newValue = others.reduce(
+      (partialSum, weight) => partialSum + weight.value / Weight.UNIT_CONVERSIONS[weight.unit],
+      firstValue
+    )
+
+    first.value = newValue / Weight.UNIT_CONVERSIONS[first.unit]
+
+    return first
+  }
+
+  /* ---------------------------------------- */
   /*  Instance Methods                        */
   /* ---------------------------------------- */
 

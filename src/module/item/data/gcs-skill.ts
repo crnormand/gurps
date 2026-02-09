@@ -34,6 +34,16 @@ class GcsSkillModel extends GcsBaseItemModel<GcsSkillSchema> implements IFeature
 
   // NOTE: Placeholder
   processPrereqs(): void {}
+
+  /* ---------------------------------------- */
+
+  // NOTE: This is a rather tricky derived property to implement. It should exist in some state
+  // before prerequisites and featues are accounted for, but its value may be
+  // influenced by prerequisites and features
+  get level(): number {
+    // NOTE: Placeholder
+    return 0
+  }
 }
 
 const gcsSkillSchema = () => {

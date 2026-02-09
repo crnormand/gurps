@@ -33,6 +33,20 @@ class GcsTraitModel extends GcsBaseItemModel<GcsTraitSchema> implements IFeature
 
   // NOTE: Placeholder
   processPrereqs(): void {}
+
+  /* ---------------------------------------- */
+
+  // NOTE: Placeholder
+  get currentLevel(): number {
+    return this.canLevel ? this.levels : 0
+  }
+
+  /* ---------------------------------------- */
+
+  // NOTE: Placeholder
+  get notesWithReplacement(): string {
+    return this.localNotes
+  }
 }
 
 const gcsTraitSchema = () => {

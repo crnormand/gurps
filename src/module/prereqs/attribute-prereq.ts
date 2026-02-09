@@ -19,24 +19,28 @@ class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
   override get isSatisfied(): boolean {
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('gcsCharacter')) {
-      console.error('AttributePrereq: No Actor provided or invalid Actor type.')
+    if (!actor || !actor.isOfType('gcsCharacter'))
+      throw new Error('AttributePrereq: No Actor provided or invalid Actor type.')
 
-      return false
+    let totalValue = 0
+
+    const attribute1 = actor.system.attributes[this.which]
+
+    if (!attribute1) throw new Error(`AttributePrereq: Specified attribute not found on actor: ${attribute1}`)
+
+    totalValue += attribute1.max
+
+    if (this.combinedWith) {
+      const attribute2 = actor.system.attributes[this.combinedWith]
+
+      if (!attribute2) throw new Error(`AttributePrereq: Specified attribute not found on actor: ${attribute2}`)
+
+      totalValue += attribute2.max
     }
 
-    // let total = 0
+    const matches = this.qualifier.matches(totalValue)
 
-    const which = actor.system.attributes[this.which]
-
-    if (!which) {
-      console.error(`AttributePrereq: Specified attribute not found on actor: ${which}`)
-
-      return false
-    }
-
-    // NOTE: temporary
-    return true
+    return this.has ? matches : !matches
   }
 }
 

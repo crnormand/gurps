@@ -1,5 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import { WeightUnit, WeightField } from '@module/data/common/weight.js'
+import { WeightUnit, WeightField, Weight } from '@module/data/common/weight.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
 import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
 import { IReplaceable, replaceableSchema } from '@module/data/mixins/replaceable.js'
@@ -33,6 +33,24 @@ class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements 
 
   // NOTE: Placeholder
   processPrereqs(): void {}
+
+  /* ---------------------------------------- */
+
+  get weight(): Weight {
+    // NOTE: Placeholer
+    return this.baseWeight
+  }
+
+  /* ---------------------------------------- */
+
+  get extendedWeight(): Weight {
+    if (!this.isContainer) return this.weight
+
+    return Weight.sum(
+      this.weight,
+      ...this.children.filter(child => child.isOfType('gcsEquipment')).map(child => child.system.weight)
+    )
+  }
 }
 
 const gcsEquipmentSchema = () => {

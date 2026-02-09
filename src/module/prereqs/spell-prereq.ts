@@ -3,6 +3,7 @@ import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
+import { SpellPrereqSubType } from './types.ts'
 
 class SpellPrereq extends BasePrereq<SpellPrereqSchema> {
   static override defineSchema(): SpellPrereqSchema {
@@ -14,6 +15,48 @@ class SpellPrereq extends BasePrereq<SpellPrereqSchema> {
   static override get TYPE(): PrereqType {
     return PrereqType.Spell
   }
+
+  /* ---------------------------------------- */
+
+  override get isSatisfied(): boolean {
+    const actor = this.actor
+
+    if (!actor || !actor.isOfType('gcsCharacter'))
+      throw new Error('SpellPrereq: No Actor provided or invalid Actor type.')
+
+    let matchCount: number
+
+    const spells = actor.itemTypes['gcsSpell'].filter(item => !item.system.isContainer)
+
+    switch (this.subType) {
+      case SpellPrereqSubType.Any:
+        matchCount = spells.length
+        break
+      case SpellPrereqSubType.Name:
+        matchCount = spells.filter(spell => this.qualifier.matches(spell.name)).length
+        break
+      case SpellPrereqSubType.Tag:
+        matchCount = spells.filter(spell => this.qualifier.matches(spell.system.tags)).length
+        break
+      case SpellPrereqSubType.College:
+        matchCount = spells.filter(spell => this.qualifier.matches(spell.system.college)).length
+        break
+      case SpellPrereqSubType.CollegeCount: {
+        const colleges = new Set<string>()
+
+        for (const spell of spells) spell.system.college.forEach(colleges.add, colleges)
+        matchCount = colleges.size
+        break
+      }
+
+      default:
+        matchCount = 0
+    }
+
+    const matches = this.quantity.matches(matchCount)
+
+    return this.has ? matches : !matches
+  }
 }
 
 /* ---------------------------------------- */
@@ -21,7 +64,12 @@ class SpellPrereq extends BasePrereq<SpellPrereqSchema> {
 const spellPrereqSchema = () => {
   return {
     has: new fields.BooleanField({ required: true, nullable: false, initial: true }),
-    subType: new fields.StringField({ required: false, nullable: true }),
+    subType: new fields.StringField({
+      required: false,
+      nullable: true,
+      choices: Object.values(SpellPrereqSubType),
+      initial: SpellPrereqSubType.Name,
+    }),
     qualifier: new StringCriteriaField({ required: true, nullable: false }),
     quantity: new NumberCriteriaField({ required: true, nullable: false }),
   }

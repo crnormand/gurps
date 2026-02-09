@@ -14,6 +14,25 @@ class TraitPrereq extends BasePrereq<TraitPrereqSchema> {
   static override get TYPE(): PrereqType {
     return PrereqType.Trait
   }
+
+  /* ---------------------------------------- */
+
+  override get isSatisfied(): boolean {
+    const actor = this.actor
+
+    if (!actor || !actor.isOfType('gcsCharacter'))
+      throw new Error('TraitPrereq: No Actor provided or invalid Actor type.')
+
+    const hasTrait = actor.items.some(item => {
+      if (!item.isOfType('gcsTrait')) return false
+      if (!this.name.matches(item.name)) return false
+      if (!this.level.matches(item.system.currentLevel)) return false
+
+      return this.notes.matches(item.system.notesWithReplacement)
+    })
+
+    return this.has ? hasTrait : !hasTrait
+  }
 }
 
 /* ---------------------------------------- */

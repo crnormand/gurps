@@ -13,6 +13,25 @@ class SkillPrereq extends BasePrereq<SkillPrereqSchema> {
   static override get TYPE(): PrereqType {
     return PrereqType.Skill
   }
+
+  /* ---------------------------------------- */
+
+  override get isSatisfied(): boolean {
+    const actor = this.actor
+
+    if (!actor || !actor.isOfType('gcsCharacter'))
+      throw new Error('SkillPrereq: No Actor provided or invalid Actor type.')
+
+    const hasSkill = actor.items.some(item => {
+      if (!item.isOfType('gcsSkill')) return false
+      if (!this.name.matches(item.name)) return false
+      if (!this.level.matches(item.system.level)) return false
+
+      return this.specialization.matches(item.system.specialization)
+    })
+
+    return this.has ? hasSkill : !hasSkill
+  }
 }
 
 /* ---------------------------------------- */

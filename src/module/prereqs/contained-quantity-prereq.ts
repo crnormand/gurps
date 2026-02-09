@@ -13,6 +13,24 @@ class ContainedQuantityPrereq extends BasePrereq<ContainedQuantityPrereqSchema> 
   static override get TYPE(): PrereqType {
     return PrereqType.ContainedQuantity
   }
+
+  /* ---------------------------------------- */
+
+  override get isSatisfied(): boolean {
+    const item = this.item
+
+    if (!item || !item.isOfType('gcsEquipment', 'gcsTrait'))
+      throw new Error('ContainedQuantityPrereq: No Item provided or invalid Item type.')
+
+    if (!item.system.isContainer)
+      throw new Error('ContainedQuantityPrereq: Item is not a container, prerequisite is invalid.')
+
+    const count = item.system.children.length
+
+    const matches = this.qualifier.matches(count)
+
+    return this.has ? matches : !matches
+  }
 }
 
 /* ---------------------------------------- */
