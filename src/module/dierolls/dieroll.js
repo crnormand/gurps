@@ -1,9 +1,8 @@
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
+import { computePotentialHits } from '@rules/compute-potential-hits.js'
 
 import { TokenActions } from '../token-actions.js'
-
-import { computePotentialHits } from './compute-potential-hits.js'
 
 export const rollData = target => {
   let targetColor, rollChance
@@ -606,7 +605,7 @@ async function _doRoll({
 
     // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      /** @type {import('./compute-potential-hits.js').WeaponDescriptor} */
+      /** @type {import('../../rules/compute-potential-hits.ts').WeaponDescriptor} */
       const weapon = { recoil: optionalArgs.obj.rcl, rateOfFire: optionalArgs.obj.rof }
       const potentialHits = computePotentialHits(weapon, optionalArgs.shots, margin)
 

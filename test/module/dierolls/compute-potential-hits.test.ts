@@ -1,4 +1,4 @@
-import { computePotentialHits, WeaponDescriptor } from '@module/dierolls/compute-potential-hits.js'
+import { computePotentialHits, WeaponDescriptor } from '@rules/compute-potential-hits.js'
 
 describe('Compute Potential Hits', () => {
   test('caps hits by available shots', () => {
