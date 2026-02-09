@@ -7,16 +7,13 @@ import { BaseAttack } from './base-attack.ts'
 
 class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {
-    return {
-      ...super.defineSchema(),
-      ...rangedAttackSchema(),
-    }
+    return Object.assign(super.defineSchema(), rangedAttackSchema())
   }
 
   /* ---------------------------------------- */
 
   static override get TYPE(): string {
-    return 'rangedAttack'
+    return ActionType.RangedAttack
   }
 
   /* ---------------------------------------- */

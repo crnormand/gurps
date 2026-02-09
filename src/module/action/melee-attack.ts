@@ -12,7 +12,7 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   /* ---------------------------------------- */
 
   static override get TYPE(): string {
-    return 'meleeAttack'
+    return ActionType.MeleeAttack
   }
 
   /* ---------------------------------------- */

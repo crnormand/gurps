@@ -31,6 +31,8 @@ function init() {
 
     CONFIG.Actor.dataModels = {
       characterV2: dataModels.CharacterModel,
+      gcsCharacter: dataModels.GcsCharacterModel,
+      gcsLoot: dataModels.GcsLootModel,
     }
 
     foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)

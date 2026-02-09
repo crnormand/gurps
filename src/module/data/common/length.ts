@@ -1,4 +1,5 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 enum LengthUnit {
   FeetAndInches = 'ft_in',
@@ -119,7 +120,6 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   static from(value: unknown, defaultUnits: LengthUnit, forced: false): Length | null
   static from(value: unknown, defaultUnits: LengthUnit, forced: true): Length
   static from(value: unknown, defaultUnits: LengthUnit, forced: boolean): Length | null
-
   static from(value: unknown, defaultUnits: LengthUnit, forced: boolean = false): Length | null {
     function returnNull() {
       if (forced) return new Length({ value: 0, unit: Length.Unit.Inch })
@@ -135,6 +135,12 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     }
 
     return returnNull()
+  }
+
+  /* ---------------------------------------- */
+
+  static fromInches(value: number): Length {
+    return new Length({ value, unit: Length.Unit.Inch })
   }
 
   /* ---------------------------------------- */
@@ -246,6 +252,61 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     return Length.objectToString({ value: this.value, unit: this.unit })
   }
 }
+
+namespace LengthField {
+  export type Options = fields.EmbeddedDataField.Options<typeof Length>
+
+  /* ---------------------------------------- */
+
+  export type DefaultOptions = fields.EmbeddedDataField.DefaultOptions
+
+  /* ---------------------------------------- */
+
+  export type AssignmentType<Opts extends Options> = fields.EmbeddedDataField.AssignmentType<typeof Length, Opts>
+
+  /* ---------------------------------------- */
+
+  export type InitializedType<Opts extends Options> = fields.EmbeddedDataField.InitializedType<typeof Length, Opts>
+
+  /* ---------------------------------------- */
+
+  export type PersistedType<Opts extends Options> = fields.EmbeddedDataField.PersistedType<typeof Length, Opts>
+}
+
 /* ---------------------------------------- */
 
-export { Length, LengthUnit }
+class LengthField<
+  const Options extends LengthField.Options = LengthField.DefaultOptions,
+  const AssignmentType = LengthField.AssignmentType<Options>,
+  const InitializedType = LengthField.InitializedType<Options>,
+  const PersistedType extends AnyObject | null | undefined = LengthField.PersistedType<Options>,
+> extends fields.EmbeddedDataField<typeof Length, Options, AssignmentType, InitializedType, PersistedType> {
+  constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
+    super(Length, options, context)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _cast(value: unknown): AssignmentType {
+    if (typeof value === 'string' || typeof value === 'number') {
+      // TODO: find some way of replacing the defaultUnit value here. Probably options
+      const length = Length.from(value, LengthUnit.Inch)
+
+      if (length) return length.toObject() as AssignmentType
+    }
+
+    return super._cast(value)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _toInput(config: fields.DataField.ToInputConfig<InitializedType>): HTMLElement | HTMLCollection {
+    const stringConfig: fields.StringField.Options = { ...config }
+
+    return foundry.applications.fields.createTextInput(stringConfig)
+  }
+}
+
+/* ---------------------------------------- */
+
+export { Length, LengthUnit, LengthField }
