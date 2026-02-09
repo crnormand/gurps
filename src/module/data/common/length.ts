@@ -235,6 +235,21 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
     return `${Math.round(data.value * Math.pow(10, Length.ROUNDING_PRECISION)) / Math.pow(10, Length.ROUNDING_PRECISION)} ${Length.UNIT_LABELS[data.unit][0]}`
   }
 
+  // Add two or more Length values. The resulting Length value will have the same unit
+  // as the first value provided.
+  static sum(first: Length, ...others: Length[]): Length {
+    const firstValue = first.value / Length.UNIT_CONVERSIONS[first.unit]
+
+    const newValue = others.reduce(
+      (partialSum, weight) => partialSum + weight.value / Length.UNIT_CONVERSIONS[weight.unit],
+      firstValue
+    )
+
+    first.value = newValue / Length.UNIT_CONVERSIONS[first.unit]
+
+    return first
+  }
+
   /* ---------------------------------------- */
   /*  Instance Methods                        */
   /* ---------------------------------------- */

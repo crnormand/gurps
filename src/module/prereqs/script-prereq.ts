@@ -24,7 +24,7 @@ class ScriptPrereq extends BasePrereq<ScriptPrereqSchema> {
       return false
     }
 
-    // NOTE: temporary
+    // NOTE: Placeholder
     return true
   }
 }

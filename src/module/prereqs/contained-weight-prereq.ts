@@ -13,6 +13,24 @@ class ContainedWeightPrereq extends BasePrereq<ContainedWeightPrereqSchema> {
   static override get TYPE(): PrereqType {
     return PrereqType.ContainedWeight
   }
+
+  /* ---------------------------------------- */
+
+  override get isSatisfied(): boolean {
+    const item = this.item
+
+    if (!item || !item.isOfType('gcsEquipment'))
+      throw new Error('ContainedWeightPrereq: No Item provided or invalid Item type.')
+
+    if (!item.system.isContainer)
+      throw new Error('ContainedWeightPrereq: Item is not a container, prerequisite is invalid.')
+
+    const totalWeight = item.system.extendedWeight
+
+    const matches = this.qualifier.matches(totalWeight)
+
+    return this.has ? matches : !matches
+  }
 }
 
 /* ---------------------------------------- */
