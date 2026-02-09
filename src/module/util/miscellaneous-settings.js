@@ -71,6 +71,8 @@ export const SETTING_ADD_CUMULATIVE_PARRY_PENALTIES = 'add-cumulative-parry-pena
 export const SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE = 'use-size-modifier-difference-in-melee'
 export const SETTING_PORTRAIT_HP_TINTING = 'portrait-hp-tinting'
 
+export const SETTING_DEV_MODE = 'developerMode'
+
 export const VERSION_096 = SemanticVersion.fromString('0.9.6')
 export const VERSION_097 = SemanticVersion.fromString('0.9.7')
 export const VERSION_0104 = SemanticVersion.fromString('0.10.4')
