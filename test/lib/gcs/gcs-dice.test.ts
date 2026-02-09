@@ -1,4 +1,4 @@
-import { GcsDice } from '../../../lib/gcs/dice.ts'
+import { GcsDice } from '@rules/gcs/dice.js'
 
 describe('GcsDice', () => {
   describe('constructor', () => {

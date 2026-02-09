@@ -1,4 +1,4 @@
-import { isPostureOrManeuver } from '../../module/actor/modern/utils/effect.ts'
+import { isPostureOrManeuver } from '@module/actor/modern/utils/effect.js'
 
 const mockEffect = (options: { statuses?: Set<string>; flagType?: string } = {}) =>
   ({

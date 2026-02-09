@@ -1,4 +1,4 @@
-import { buildEntityPath, getDisplayName } from '../../module/actor/modern/crud-handler.ts'
+import { buildEntityPath, getDisplayName } from '@module/actor/modern/crud-handler.js'
 
 beforeAll(() => {
   // @ts-expect-error - mock for testing

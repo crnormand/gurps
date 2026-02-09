@@ -1,4 +1,4 @@
-import { Length } from '../../../../module/data/common/length.ts'
+import { Length } from '@module/data/common/length.js'
 
 describe('Length', () => {
   describe('fromString', () => {

@@ -1,0 +1,18 @@
+<div style='text-align: center; margin: 1.5rem 0'>
+  {{localize 'GURPS.applyTo'}}:
+  <div style='display: flex; flex-direction: column; align-items: flex-start;'>
+    {{#unless single}}
+      <label>
+        <input type='checkbox' name='all' value='all' class='exclusive-checkbox' />
+        <b>{{localize 'GURPS.allTokens'}}</b>
+      </label>
+      <hr />
+    {{/unless}}
+    {{#each tokens}}
+      <label>
+        <input type='checkbox' name='tokens' value='{{this.id}}' class='exclusive-checkbox' />
+        {{this.actor.name}}
+      </label>
+    {{/each}}
+  </div>
+</div>

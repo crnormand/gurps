@@ -1,8 +1,7 @@
 import { jest } from '@jest/globals'
-
-import { CharacterModel } from '../../../module/actor/data/character.js'
-import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
-import { GurpsItemV2 } from '../../../module/item/gurps-item.js'
+import { CharacterModel } from '@module/actor/data/character.js'
+import { GurpsActorV2 } from '@module/actor/gurps-actor.js'
+import { GurpsItemV2 } from '@module/item/gurps-item.js'
 
 describe('GurpsActorV2.moveItem', () => {
   let actor: GurpsActorV2<'characterV2'>
@@ -17,7 +16,7 @@ describe('GurpsActorV2.moveItem', () => {
     global.game = global.game || {}
 
     // Import EquipmentModel
-    EquipmentModel = (await import('../../../module/item/data/equipment.js')).EquipmentModel
+    EquipmentModel = (await import('@module/item/data/equipment.js')).EquipmentModel
 
     // Mock game.settings for updateEqtCountV2
     // @ts-expect-error - game is a partial mock for testing

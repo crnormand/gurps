@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals'
+import { CharacterModel } from '@module/actor/data/character.js'
+import { GurpsActorV2 } from '@module/actor/gurps-actor.js'
+import { TraitModel } from '@module/item/data/trait.js'
+import { GurpsItemV2 } from '@module/item/gurps-item.js'
 
-import { CharacterModel } from '../../../module/actor/data/character.js'
-import { GurpsActorV2 } from '../../../module/actor/gurps-actor.js'
-import { TraitModel } from '../../../module/item/data/trait.js'
-import { GurpsItemV2 } from '../../../module/item/gurps-item.js'
 import { _Collection } from '../../foundry-utils/collection.js'
 
 describe('GurpsActorV2._preUpdate', () => {
