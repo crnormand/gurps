@@ -39,6 +39,7 @@ const gcsSubTableSchema = () => {
       readonly: true,
       initial: () => foundry.utils.randomID(),
     }),
+    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     // NOTE: If _owningLocation is null, the location is owned by the top-level table.
     _owningLocation: new fields.StringField({ required: true, nullable: false, readonly: true }),
   }
@@ -85,6 +86,7 @@ const gcsHitLocationSchema = () => {
       readonly: true,
       initial: () => foundry.utils.randomID(),
     }),
+    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     // NOTE: If _owningTable is null, the location is owned by the top-level table.
     _owningTable: new fields.StringField({ required: true, nullable: true, readonly: true }),
     id: new fields.StringField({ required: true, nullable: false }),

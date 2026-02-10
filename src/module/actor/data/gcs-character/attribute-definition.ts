@@ -183,6 +183,7 @@ const attributeDefinitionSchema = () => {
     // as an alphanumeric (plus _) string of minimum length to ensure there are no duplicate ID keys.
     // Therefore, it should cycle through "a" -> "z", then "aa" etc.
     _id: new fields.StringField({ required: true, nullable: false, readonly: true }),
+    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     order: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     id: new fields.StringField({ required: true, nullable: false, blank: false, initial: 'a' }),
     type: new fields.StringField({

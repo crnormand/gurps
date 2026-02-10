@@ -13,7 +13,16 @@ const GcsCharacterVersion = 5
 
 /* ---------------------------------------- */
 
-class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
+type GcsCharacterBaseData = {
+  attributes: Record<string, GcsAttribute>
+  attributeList: GcsAttribute[]
+  attributeDefinitions: Record<string, GcsAttributeDefinition>
+  attributeDefinitionList: GcsAttributeDefinition[]
+}
+
+/* ---------------------------------------- */
+
+class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterBaseData> {
   resolverCache: ResolverCache = new Map()
 
   static override defineSchema(): GcsCharacterSchema {
@@ -34,15 +43,19 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get attributes(): Record<string, GcsAttribute> {
-    return Object.fromEntries(Object.values(this._attributes).map(attribute => [attribute.id, attribute]))
-  }
+  override prepareBaseData(): void {
+    const attributeList = Object.values(this._attributes)
+    const attributeDefinitionList = Object.values(this.settings._attributes)
 
-  /* ---------------------------------------- */
+    foundry.utils.performIntegerSort(attributeList)
+    foundry.utils.performIntegerSort(attributeDefinitionList)
 
-  get attributeDefinitions(): Record<string, GcsAttributeDefinition> {
-    return Object.fromEntries(
-      Object.values(this.settings._attributes).map(attributeDefinition => [attributeDefinition.id, attributeDefinition])
+    this.attributeList = attributeList
+    this.attributeDefinitionList = attributeDefinitionList
+
+    this.attributes = Object.fromEntries(Object.values(this._attributes).map(attribute => [attribute.id, attribute]))
+    this.attributeDefinitions = Object.fromEntries(
+      Object.values(this.settings._attributes).map(definition => [definition.id, definition])
     )
   }
 }
