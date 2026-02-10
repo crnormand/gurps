@@ -40,7 +40,13 @@ type PseudoDocumentMetadata = {
 class PseudoDocument<
   Schema extends PseudoDocumentSchema = PseudoDocumentSchema,
   Parent extends DataModel.Any = DataModel.Any,
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  ExtraConstructorOptions extends AnyObject = {},
 > extends DataModel<Schema, Parent> {
+  constructor(...args: DataModel.ConstructorArgs<Schema, Parent, ExtraConstructorOptions>) {
+    super(...args)
+  }
+
   /* ---------------------------------------- */
 
   static get metadata(): PseudoDocumentMetadata {
