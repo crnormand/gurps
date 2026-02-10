@@ -1,12 +1,24 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import { WeightUnit, WeightField, Weight } from '@module/data/common/weight.js'
+import { Weight } from '@module/data/common/weight.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
+import { INameable, INameableApplier, nameableSchema } from '@module/data/mixins/nameable.js'
 import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
-import { IReplaceable, replaceableSchema } from '@module/data/mixins/replaceable.js'
+import { ScriptEquipment } from '@module/scripting/adapters/equipment.js'
+import { ScriptResolver } from '@module/scripting/resolver.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
-class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements IFeatures, IPrereqs, IReplaceable {
+class GcsEquipmentModel
+  extends GcsBaseItemModel<GcsEquipmentSchema, INameable.AccesserBaseData>
+  implements IFeatures, IPrereqs, INameableApplier
+{
+  nameWithReplacements: string = ''
+  localNotesWithReplacements: string = ''
+  baseValueWithReplacements: string = ''
+  baseWeightWithReplacements: string = ''
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): GcsEquipmentSchema {
     return gcsEquipmentSchema()
   }
@@ -26,6 +38,35 @@ class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements 
 
   /* ---------------------------------------- */
 
+  override prepareBaseData(): void {
+    this.fillWithNameableKeys(new Map())
+    this.applyNameableKeys()
+  }
+
+  /* ---------------------------------------- */
+
+  fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    existing ??= new Map(Object.entries(this.replacements))
+
+    INameable.extract.call(this, this.parent.name, map, existing)
+    INameable.extract.call(this, this.localNotes, map, existing)
+    INameable.extract.call(this, this.baseValue, map, existing)
+    INameable.extract.call(this, this.baseWeight, map, existing)
+
+    this.nameableReplacements = map
+  }
+
+  /* ---------------------------------------- */
+
+  applyNameableKeys(): void {
+    this.nameWithReplacements = INameable.apply.call(this, this.parent.name)
+    this.localNotesWithReplacements = INameable.apply.call(this, this.localNotes)
+    this.baseValueWithReplacements = INameable.apply.call(this, this.baseValue)
+    this.baseWeightWithReplacements = INameable.apply.call(this, this.baseWeight)
+  }
+
+  /* ---------------------------------------- */
+
   // NOTE: Placeholder
   applyBonuses(): void {}
 
@@ -36,9 +77,16 @@ class GcsEquipmentModel extends GcsBaseItemModel<GcsEquipmentSchema> implements 
 
   /* ---------------------------------------- */
 
+  applyReplacements(): void {}
+
+  /* ---------------------------------------- */
+
   get weight(): Weight {
-    // NOTE: Placeholer
-    return this.baseWeight
+    return ScriptResolver.resolveToWeight(
+      this.actor,
+      ScriptEquipment.newProvider(this),
+      this.baseWeightWithReplacements
+    )
   }
 
   /* ---------------------------------------- */
@@ -58,7 +106,7 @@ const gcsEquipmentSchema = () => {
     ...gcsBaseItemSchema(),
     ...featuresSchema(),
     ...prereqsSchema(),
-    ...replaceableSchema(),
+    ...nameableSchema(),
 
     carried: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     vttNotes: new fields.StringField({ required: true, nullable: false }),
@@ -74,11 +122,7 @@ const gcsEquipmentSchema = () => {
     legalityClass: new fields.StringField({ required: true, nullable: false }),
     tags: new fields.ArrayField(new fields.StringField({ required: true, nullable: false })),
     baseValue: new fields.StringField({ required: true, nullable: false }),
-    baseWeight: new WeightField({
-      required: true,
-      nullable: false,
-      initial: { value: 0, unit: WeightUnit.Pound },
-    }),
+    baseWeight: new fields.StringField({ required: true, nullable: false }),
     maxUses: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     ignoreWeightForSkills: new fields.BooleanField({ required: true, nullable: false }),
   }

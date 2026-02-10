@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { INameableFiller } from '@module/data/mixins/nameable.js'
 
 import { IPrereqs } from '../data/mixins/prereqs.ts'
 import { GcsBaseItemModel } from '../item/data/gcs-base.ts'
@@ -19,7 +20,10 @@ enum PrereqType {
 
 /* ---------------------------------------- */
 
-class BasePrereq<Schema extends BasePrereqSchema> extends TypedPseudoDocument<Schema, GcsBaseItemModel & IPrereqs> {
+class BasePrereq<Schema extends BasePrereqSchema>
+  extends TypedPseudoDocument<Schema, GcsBaseItemModel & IPrereqs>
+  implements INameableFiller
+{
   static override defineSchema(): BasePrereqSchema {
     return Object.assign(super.defineSchema(), basePrereqSchema())
   }
@@ -62,6 +66,12 @@ class BasePrereq<Schema extends BasePrereqSchema> extends TypedPseudoDocument<Sc
       'Method "unsatisfiedMessage" is not implemented in the base class BasePrereq. It must be overridden in subclasses.'
     )
   }
+
+  /* ---------------------------------------- */
+
+  // NOTE: STUB
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {}
 }
 
 /* ---------------------------------------- */

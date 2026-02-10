@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
+import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
 import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
@@ -22,6 +23,18 @@ class WeaponBonus extends BaseFeature<WeaponBonusSchema> implements ILeveledAmou
   get adjustedAmount(): number {
     // NOTE: STUB
     return getLeveledAmount(this)
+  }
+
+  /* ---------------------------------------- */
+
+  override fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    if (this.specialization) INameable.extract.call(this, this.specialization.qualifier ?? '', map, existing)
+
+    if (this.selectionType === WeaponBonusSelectionType.ThisWeapon) {
+      if (this.name) INameable.extract.call(this, this.name.qualifier ?? '', map, existing)
+      if (this.usage) INameable.extract.call(this, this.usage.qualifier ?? '', map, existing)
+      if (this.tags) INameable.extract.call(this, this.tags.qualifier ?? '', map, existing)
+    }
   }
 }
 

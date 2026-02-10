@@ -1,4 +1,6 @@
-import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './interfaces/index.ts'
+import { Weight, WeightUnit } from '@module/data/common/weight.js'
+
+import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './adapters/index.ts'
 import { ScriptInterpreter } from './interpreter.ts'
 import { ResolverCache, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE } from './types.ts'
 
@@ -39,6 +41,36 @@ class ScriptResolver {
       console.error(`Unable to resolve script result to a number, result: "${result}", script: "${script}"`)
 
       return 0
+    }
+
+    return value
+  }
+
+  /* ---------------------------------------- */
+
+  static resolveToWeight(
+    actor: Actor.Implementation | null,
+    selfProvider: SelfProvider<any>,
+    script: string,
+    defaultUnits = WeightUnit.Pound
+  ): Weight {
+    const defaultWeight = Weight.from(0, defaultUnits)!
+
+    script = script.trim()
+    if (script === '') return defaultWeight
+
+    let value = Weight.from(script, defaultUnits)
+
+    if (value !== null) return value
+
+    const result = this.resolveScript(actor, selfProvider, script)
+
+    value = Weight.from(script, defaultUnits)
+
+    if (value === null) {
+      console.error(`Unable to resolve script result to a number, result: "${result}", script: "${script}"`)
+
+      return defaultWeight
     }
 
     return value

@@ -3,6 +3,7 @@ import { BaseAction } from '@module/action/base-action.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { IContainable, containableSchema } from '@module/data/mixins/containable.js'
 import { ContainerUtils } from '@module/data/mixins/container-utils.js'
+import { AnyObject, EmptyObject } from 'fvtt-types/utils'
 
 type GcsItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -34,8 +35,12 @@ type ItemUseOptions = {
 
 /* ---------------------------------------- */
 
-abstract class GcsBaseItemModel<Schema extends GcsBaseItemSchema = GcsBaseItemSchema>
-  extends TypeDataModel<Schema, Item.Implementation>
+abstract class GcsBaseItemModel<
+  Schema extends GcsBaseItemSchema = GcsBaseItemSchema,
+  BaseData extends AnyObject = EmptyObject,
+  DerivedData extends AnyObject = EmptyObject,
+>
+  extends TypeDataModel<Schema, Item.Implementation, BaseData, DerivedData>
   implements IContainable<Item.Implementation>
 {
   /* ---------------------------------------- */

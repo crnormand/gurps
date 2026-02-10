@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
+import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 
@@ -31,6 +32,13 @@ class EquippedEquipmentPrereq extends BasePrereq<EquippedEquipmentPrereqSchema> 
     })
 
     return this.has ? hasEquipment : !hasEquipment
+  }
+
+  /* ---------------------------------------- */
+
+  override fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    INameable.extract.call(this, this.name.qualifier ?? '', map, existing)
+    INameable.extract.call(this, this.tags.qualifier ?? '', map, existing)
   }
 }
 

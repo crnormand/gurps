@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
+import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 import { SpellPrereqSubType } from './types.ts'
@@ -56,6 +57,18 @@ class SpellPrereq extends BasePrereq<SpellPrereqSchema> {
     const matches = this.quantity.matches(matchCount)
 
     return this.has ? matches : !matches
+  }
+
+  /* ---------------------------------------- */
+
+  override fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    if (
+      this.subType === SpellPrereqSubType.Name ||
+      this.subType === SpellPrereqSubType.Tag ||
+      this.subType === SpellPrereqSubType.College
+    ) {
+      INameable.extract.call(this, this.qualifier.qualifier ?? '', map, existing)
+    }
   }
 }
 

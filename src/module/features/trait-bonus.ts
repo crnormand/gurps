@@ -1,4 +1,5 @@
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
+import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
 import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
@@ -19,6 +20,13 @@ class TraitBonus extends BaseFeature<TraitBonusSchema> implements ILeveledAmount
 
   get adjustedAmount(): number {
     return getLeveledAmount(this)
+  }
+
+  /* ---------------------------------------- */
+
+  override fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    if (this.name) INameable.extract.call(this, this.name.qualifier ?? '', map, existing)
+    if (this.tags) INameable.extract.call(this, this.tags.qualifier ?? '', map, existing)
   }
 }
 
