@@ -1,4 +1,3 @@
-import { fields } from '@gurps-types/foundry/index.js'
 import { INameableFiller } from '@module/data/mixins/nameable.js'
 
 import { IFeatures } from '../data/mixins/features.js'
@@ -55,10 +54,7 @@ class BaseFeature<Schema extends BaseFeatureSchema>
 /* ---------------------------------------- */
 
 const baseFeatureSchema = () => {
-  return {
-    amount: new fields.NumberField({ required: true, nullable: false, initial: 1 }),
-    perLevel: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-  }
+  return {}
 }
 
 type BaseFeatureSchema = TypedPseudoDocumentSchema & ReturnType<typeof baseFeatureSchema>
