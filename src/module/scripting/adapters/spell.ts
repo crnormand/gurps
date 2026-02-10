@@ -1,6 +1,6 @@
 import { GcsSpellModel } from '@module/item/data/gcs-spell.js'
 
-import { SelfProvider } from '../types.ts'
+import { SelfProvider } from '../types.js'
 
 class ScriptSpell {
   #item: GcsSpellModel

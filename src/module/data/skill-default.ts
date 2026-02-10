@@ -1,6 +1,6 @@
 import { DataModel, fields } from '@gurps-types/foundry/index.js'
 
-import { NumberCriteriaField } from './criteria/number-criteria.ts'
+import { NumberCriteriaField } from './criteria/number-criteria.js'
 
 class SkillDefault extends DataModel<SkillDefaultSchema> {
   static override defineSchema(): SkillDefaultSchema {

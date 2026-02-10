@@ -1,8 +1,8 @@
 import { Weight, WeightUnit } from '@module/data/common/weight.js'
 
-import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './adapters/index.ts'
-import { ScriptInterpreter } from './interpreter.ts'
-import { ResolverCache, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE } from './types.ts'
+import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './adapters/index.js'
+import { ScriptInterpreter } from './interpreter.js'
+import { ResolverCache, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE } from './types.js'
 
 class ScriptResolver {
   static MAXIMUM_ALLOWED_DEPTH = 20

@@ -3,7 +3,7 @@ import { WeightUnit, WeightField } from '@module/data/common/weight.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
 import { INameable, INameableApplier } from '@module/data/mixins/nameable.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 class GcsEquipmentModifierModel
   extends GcsBaseItemModel<GcsEquipmentModifierSchema, INameable.AccesserBaseData>

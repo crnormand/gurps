@@ -1,8 +1,8 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
-import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
-import { FeatureType } from './types.ts'
+import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.js'
+import { FeatureType } from './types.js'
 
 class DRBonus extends BaseFeature<DRBonusSchema> implements ILeveledAmount {
   static override defineSchema(): DRBonusSchema {

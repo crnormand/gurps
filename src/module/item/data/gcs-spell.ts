@@ -3,7 +3,7 @@ import { INameable, INameableApplier, nameableSchema } from '@module/data/mixins
 import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
 import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 class GcsSpellModel
   extends GcsBaseItemModel<GcsSpellSchema, INameable.AccesserBaseData>

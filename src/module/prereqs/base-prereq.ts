@@ -1,10 +1,10 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { INameableFiller } from '@module/data/mixins/nameable.js'
 
-import { IPrereqs } from '../data/mixins/prereqs.ts'
-import { GcsBaseItemModel } from '../item/data/gcs-base.ts'
-import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.ts'
-import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.ts'
+import { IPrereqs } from '../data/mixins/prereqs.js'
+import { GcsBaseItemModel } from '../item/data/gcs-base.js'
+import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
 
 enum PrereqType {
   List = 'prereqList',

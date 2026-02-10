@@ -1,6 +1,6 @@
-import { BaseFeature } from '../../features/index.ts'
-import { CollectionField } from '../fields/collection-field.ts'
-import { ModelCollection } from '../model-collection.ts'
+import { BaseFeature } from '../../features/index.js'
+import { CollectionField } from '../fields/collection-field.js'
+import { ModelCollection } from '../model-collection.js'
 
 const featuresSchema = () => {
   return {

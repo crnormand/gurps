@@ -1,6 +1,6 @@
-import { GcsCharacterModel } from '../../actor/data/gcs-character/gcs-character.ts'
+import { GcsCharacterModel } from '../../actor/data/gcs-character/gcs-character.js'
 
-import { ScriptAttribute } from './attribute.ts'
+import { ScriptAttribute } from './attribute.js'
 
 class ScriptEntity {
   #character: GcsCharacterModel

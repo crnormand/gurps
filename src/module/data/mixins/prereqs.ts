@@ -1,6 +1,6 @@
-import { BasePrereq } from '../../prereqs/index.ts'
-import { CollectionField } from '../fields/collection-field.ts'
-import { ModelCollection } from '../model-collection.ts'
+import { BasePrereq } from '../../prereqs/index.js'
+import { CollectionField } from '../fields/collection-field.js'
+import { ModelCollection } from '../model-collection.js'
 
 const prereqsSchema = () => {
   return {

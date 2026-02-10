@@ -3,8 +3,8 @@ import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
-import { SpellPrereqSubType } from './types.ts'
+import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.js'
+import { SpellPrereqSubType } from './types.js'
 
 class SpellPrereq extends BasePrereq<SpellPrereqSchema> {
   static override defineSchema(): SpellPrereqSchema {

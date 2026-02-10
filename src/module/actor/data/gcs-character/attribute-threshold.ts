@@ -5,8 +5,8 @@ import {
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
 
-import { GcsCharacterModel } from './gcs-character.ts'
-import { GcsThresholdOp } from './types.ts'
+import { GcsCharacterModel } from './gcs-character.js'
+import { GcsThresholdOp } from './types.js'
 
 class AttributeThreshold extends PseudoDocument<AttributeThresholdSchema, GcsCharacterModel> {
   static OPS = GcsThresholdOp

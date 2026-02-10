@@ -1,5 +1,5 @@
-import { GcsAttribute } from '../../actor/data/gcs-character/attribute.ts'
-import { SelfProvider } from '../types.ts'
+import { GcsAttribute } from '../../actor/data/gcs-character/attribute.js'
+import { SelfProvider } from '../types.js'
 
 class ScriptAttribute {
   #attribute: GcsAttribute

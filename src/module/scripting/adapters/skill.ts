@@ -1,6 +1,6 @@
 import { GcsSkillModel } from '@module/item/data/gcs-skill.js'
 
-import { SelfProvider } from '../types.ts'
+import { SelfProvider } from '../types.js'
 
 class ScriptSkill {
   #item: GcsSkillModel

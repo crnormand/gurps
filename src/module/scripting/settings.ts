@@ -1,10 +1,10 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { MapField } from '../data/fields/map-field.ts'
+import { MapField } from '../data/fields/map-field.js'
 
 // const SETTINGS = 'GURPS.scriptResovler.settings.title'
 
-import { GLOBAL_RESOLVER_CACHE } from './types.ts'
+import { GLOBAL_RESOLVER_CACHE } from './types.js'
 
 export function registerSettings(): void {
   if (!game.settings || !game.i18n)

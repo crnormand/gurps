@@ -1,9 +1,9 @@
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import * as dataModels from './data/index.ts'
-import { GurpsItemV2 } from './gurps-item.ts'
+import * as dataModels from './data/index.js'
+import { GurpsItemV2 } from './gurps-item.js'
 import { GurpsItemSheet } from './item-sheet.js'
-import { TestItemSheet } from './test-item-sheet.ts'
+import { TestItemSheet } from './test-item-sheet.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Actor module.')

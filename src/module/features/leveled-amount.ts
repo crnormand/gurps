@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { Feature, FeatureType } from './index.ts'
+import { Feature, FeatureType } from './index.js'
 
 const leveledAmountSchema = () => {
   return {

@@ -1,5 +1,5 @@
-import { ScriptDice } from './dice.ts'
-import { ScriptMeasure } from './measure.ts'
+import { ScriptDice } from './dice.js'
+import { ScriptMeasure } from './measure.js'
 
 /* ---------------------------------------- */
 

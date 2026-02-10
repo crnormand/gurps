@@ -1,12 +1,12 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { INameableFiller } from '@module/data/mixins/nameable.js'
 
-import { IFeatures } from '../data/mixins/features.ts'
-import { GcsBaseItemModel } from '../item/data/gcs-base.ts'
-import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.ts'
-import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.ts'
+import { IFeatures } from '../data/mixins/features.js'
+import { GcsBaseItemModel } from '../item/data/gcs-base.js'
+import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
 
-import { FeatureType } from './types.ts'
+import { FeatureType } from './types.js'
 
 /* ---------------------------------------- */
 

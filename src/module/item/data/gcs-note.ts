@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 class GcsNoteModel extends GcsBaseItemModel<GcsNoteSchema> {
   static override defineSchema(): GcsNoteSchema {

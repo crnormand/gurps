@@ -5,8 +5,8 @@ import {
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
 
-import { AttributeType, GcsAttributeDefinition } from './attribute-definition.ts'
-import { type GcsCharacterModel } from './gcs-character.ts'
+import { AttributeType, GcsAttributeDefinition } from './attribute-definition.js'
+import { type GcsCharacterModel } from './gcs-character.js'
 
 /* ---------------------------------------- */
 

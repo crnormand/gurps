@@ -71,8 +71,8 @@ import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { UI } from './ui/index.js'
-import { multiplyDice } from './util/damage-utils.ts'
-import { gurpslink } from './util/gurpslink.ts'
+import { multiplyDice } from './util/damage-utils.js'
+import { gurpslink } from './util/gurpslink.js'
 
 export let GURPS = undefined
 

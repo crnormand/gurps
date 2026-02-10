@@ -9,11 +9,11 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor-sheet.js'
-import * as dataModels from './data/index.ts'
-import { GurpsActorV2 } from './gurps-actor.ts'
-import { GurpsActorNpcModernSheet } from './modern/npc-sheet.ts'
-import { GurpsActorModernSheet } from './modern/sheet.ts'
-import { TestActorSheet } from './test-actor-sheet.ts'
+import * as dataModels from './data/index.js'
+import { GurpsActorV2 } from './gurps-actor.js'
+import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
+import { GurpsActorModernSheet } from './modern/sheet.js'
+import { TestActorSheet } from './test-actor-sheet.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Actor module.')

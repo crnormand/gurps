@@ -1,6 +1,6 @@
 import { GcsEquipmentModifierModel } from '@module/item/data/gcs-equipment-modifier.js'
 
-import { SelfProvider } from '../types.ts'
+import { SelfProvider } from '../types.js'
 
 class ScriptEquipmentModifier {
   #item: GcsEquipmentModifierModel

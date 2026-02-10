@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { Study } from '../study.ts'
+import { Study } from '../study.js'
 
 const studiesSchema = () => {
   return {

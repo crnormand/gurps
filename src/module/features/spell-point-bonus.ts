@@ -2,9 +2,9 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
-import { ILeveledAmount, getLeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
-import { FeatureType, SpellMatchType } from './types.ts'
+import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { ILeveledAmount, getLeveledAmount, leveledAmountSchema } from './leveled-amount.js'
+import { FeatureType, SpellMatchType } from './types.js'
 
 class SpellPointBonus extends BaseFeature<SpellPointBonusSchema> implements ILeveledAmount {
   static override defineSchema(): SpellPointBonusSchema {

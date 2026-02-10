@@ -1,6 +1,6 @@
 import { arrayToObject } from '@util/utilities.js'
 
-import { defineGetterProperties } from '../../util/object-utils.ts'
+import { defineGetterProperties } from '../../util/object-utils.js'
 import { GurpsItemV2 } from '../gurps-item.js'
 
 const getterKeys = [

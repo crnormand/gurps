@@ -1,6 +1,6 @@
 import { GcsTraitModifierModel } from '@module/item/data/gcs-trait-modifier.js'
 
-import { SelfProvider } from '../types.ts'
+import { SelfProvider } from '../types.js'
 
 class ScriptTraitModifier {
   #item: GcsTraitModifierModel

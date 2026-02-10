@@ -3,11 +3,11 @@ import { LengthField, LengthUnit } from '@module/data/common/length.js'
 import { WeightField, WeightUnit } from '@module/data/common/weight.js'
 import { ResolverCache } from '@module/scripting/types.js'
 
-import { ActorMetadata, BaseActorModel } from '../base.ts'
+import { ActorMetadata, BaseActorModel } from '../base.js'
 
-import { GcsAttributeDefinition } from './attribute-definition.ts'
-import { GcsAttribute } from './attribute.ts'
-import { sheetSettingsSchema } from './sheet-settings.ts'
+import { GcsAttributeDefinition } from './attribute-definition.js'
+import { GcsAttribute } from './attribute.js'
+import { sheetSettingsSchema } from './sheet-settings.js'
 
 const GcsCharacterVersion = 5
 

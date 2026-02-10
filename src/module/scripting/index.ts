@@ -1,8 +1,8 @@
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { ScriptInterpreter } from './interpreter.ts'
-import { ScriptResolver } from './resolver.ts'
-import { registerSettings } from './settings.ts'
+import { ScriptInterpreter } from './interpreter.js'
+import { ScriptResolver } from './resolver.js'
+import { registerSettings } from './settings.js'
 
 interface ScriptingModule extends GurpsModule {
   interpreter: typeof ScriptInterpreter
