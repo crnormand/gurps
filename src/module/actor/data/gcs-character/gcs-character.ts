@@ -1,4 +1,4 @@
-import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
 import { LengthField, LengthUnit } from '@module/data/common/length.js'
 import { WeightField, WeightUnit } from '@module/data/common/weight.js'
 import { ResolverCache } from '@module/scripting/types.js'
@@ -41,18 +41,6 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
       },
       type: 'gcsCharacter',
     }
-  }
-
-  /* ---------------------------------------- */
-
-  protected override _onCreate(
-    data: TypeDataModel.ParentAssignmentType<GcsCharacterSchema, Actor.Implementation>,
-    options: foundry.abstract.Document.Database.CreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
-    userId: string
-  ): void {
-    super._onCreate(data, options, userId)
-
-    console.log('_onCreate', data, options, userId)
   }
 
   /* ---------------------------------------- */
