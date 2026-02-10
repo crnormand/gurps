@@ -8,7 +8,7 @@ enum StringComparison {
   Contains = 'contains',
   DoesNotContain = 'doesNotContain',
   StartsWith = 'startsWith',
-  DoesNotStartWith = 'DoesNotStartWith',
+  DoesNotStartWith = 'doesNotStartWith',
   EndsWith = 'endsWith',
   DoesNotEndWith = 'doesNotEndWith',
 }
