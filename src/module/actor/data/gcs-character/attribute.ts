@@ -1,17 +1,33 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import {
+  PseudoDocument,
+  PseudoDocumentMetadata,
+  pseudoDocumentSchema,
+} from '@module/pseudo-document/pseudo-document.js'
 
 import { AttributeType, GcsAttributeDefinition } from './attribute-definition.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'
 
 /* ---------------------------------------- */
 
-class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
+class GcsAttribute extends PseudoDocument<GcsAttributeSchema, GcsCharacterModel> {
   private _definition: GcsAttributeDefinition | null = null
 
   /* ---------------------------------------- */
 
   static override defineSchema(): GcsAttributeSchema {
-    return gcsAttributeSchema()
+    return attributeSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocumentMetadata {
+    return {
+      documentName: 'Attribute',
+      label: '',
+      icon: '',
+      embedded: {},
+    }
   }
 
   /* ---------------------------------------- */
@@ -37,7 +53,7 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
   ): DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>> {
     const data: DataModel.CreateData<DataModel.SchemaOf<GcsAttribute>> = {
       _id: def._id,
-      id: def.id,
+      attrId: def.attrId,
       adj: 0,
       damage: null,
     }
@@ -72,6 +88,12 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
     this._definition = definition
 
     return definition
+  }
+
+  /* ---------------------------------------- */
+
+  get sort(): number {
+    return this._definition?.sort || 0
   }
 
   /* ---------------------------------------- */
@@ -111,16 +133,16 @@ class GcsAttribute extends DataModel<GcsAttributeSchema, GcsCharacterModel> {
   }
 }
 
-const gcsAttributeSchema = () => {
+const attributeSchema = () => {
   return {
-    _id: new fields.StringField({ required: true, nullable: false }),
-    id: new fields.StringField({ required: true, nullable: false }),
+    ...pseudoDocumentSchema(),
+    attrId: new fields.StringField({ required: true, nullable: false }),
     adj: new fields.NumberField({ required: true, nullable: false }),
     damage: new fields.NumberField({ required: true, nullable: true }),
   }
 }
 
-type GcsAttributeSchema = ReturnType<typeof gcsAttributeSchema>
+type GcsAttributeSchema = ReturnType<typeof attributeSchema>
 
 /* ---------------------------------------- */
 

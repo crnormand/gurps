@@ -44,8 +44,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
   return {
     [DEFAULT_ATTRIBUTE_IDS.st]: {
       _id: DEFAULT_ATTRIBUTE_IDS.st,
-      order: 0,
-      id: 'st',
+      sort: 0,
+      attrId: 'st',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '10',
@@ -56,8 +56,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.dx]: {
       _id: DEFAULT_ATTRIBUTE_IDS.dx,
-      order: 1,
-      id: 'dx',
+      sort: 1,
+      attrId: 'dx',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '10',
@@ -69,8 +69,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.iq]: {
       _id: DEFAULT_ATTRIBUTE_IDS.iq,
-      order: 2,
-      id: 'iq',
+      sort: 2,
+      attrId: 'iq',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '10',
@@ -82,8 +82,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.ht]: {
       _id: DEFAULT_ATTRIBUTE_IDS.ht,
-      order: 3,
-      id: 'ht',
+      sort: 3,
+      attrId: 'ht',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '10',
@@ -95,8 +95,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.will]: {
       _id: DEFAULT_ATTRIBUTE_IDS.will,
-      order: 4,
-      id: 'will',
+      sort: 4,
+      attrId: 'will',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$iq',
@@ -108,8 +108,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.frightCheck]: {
       _id: DEFAULT_ATTRIBUTE_IDS.frightCheck,
-      order: 5,
-      id: 'fright_check',
+      sort: 5,
+      attrId: 'fright_check',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$will',
@@ -121,8 +121,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.per]: {
       _id: DEFAULT_ATTRIBUTE_IDS.per,
-      order: 6,
-      id: 'per',
+      sort: 6,
+      attrId: 'per',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$iq',
@@ -134,8 +134,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.hearing]: {
       _id: DEFAULT_ATTRIBUTE_IDS.hearing,
-      order: 7,
-      id: 'hearing',
+      sort: 7,
+      attrId: 'hearing',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$per',
@@ -147,8 +147,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.vision]: {
       _id: DEFAULT_ATTRIBUTE_IDS.vision,
-      order: 8,
-      id: 'vision',
+      sort: 8,
+      attrId: 'vision',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$per',
@@ -160,8 +160,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.tasteSmell]: {
       _id: DEFAULT_ATTRIBUTE_IDS.tasteSmell,
-      order: 9,
-      id: 'taste_smell',
+      sort: 9,
+      attrId: 'taste_smell',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$per',
@@ -173,8 +173,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.touch]: {
       _id: DEFAULT_ATTRIBUTE_IDS.touch,
-      order: 10,
-      id: 'touch',
+      sort: 10,
+      attrId: 'touch',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$per',
@@ -186,8 +186,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.basicSpeed]: {
       _id: DEFAULT_ATTRIBUTE_IDS.basicSpeed,
-      order: 11,
-      id: 'basic_speed',
+      sort: 11,
+      attrId: 'basic_speed',
       type: GcsAttributeDefinition.TYPES.Decimal,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '($dx + $ht) / 4',
@@ -199,8 +199,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.basicMove]: {
       _id: DEFAULT_ATTRIBUTE_IDS.basicMove,
-      order: 12,
-      id: 'basic_move',
+      sort: 12,
+      attrId: 'basic_move',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: 'Math.floor($basic_speed)',
@@ -212,8 +212,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.fp]: {
       _id: DEFAULT_ATTRIBUTE_IDS.fp,
-      order: 13,
-      id: 'fp',
+      sort: 13,
+      attrId: 'fp',
       type: GcsAttributeDefinition.TYPES.Pool,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$ht',
@@ -224,7 +224,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       thresholds: {
         [FP_THRESHOLD_IDS.unconscious]: {
           _id: FP_THRESHOLD_IDS.unconscious,
-          order: 0,
+          sort: 0,
           state: 'Unconscious',
           value: '-$fp',
           explanation: '',
@@ -236,7 +236,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [FP_THRESHOLD_IDS.collapse]: {
           _id: FP_THRESHOLD_IDS.collapse,
-          order: 1,
+          sort: 1,
           state: 'Collapse',
           value: '0',
           explanation:
@@ -251,7 +251,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [FP_THRESHOLD_IDS.tired]: {
           _id: FP_THRESHOLD_IDS.tired,
-          order: 2,
+          sort: 2,
           state: 'Tired',
           value: 'Math.ceil($fp / 3) - 1',
           explanation: 'Move, Dodge and ST are halved (B426)',
@@ -263,7 +263,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [FP_THRESHOLD_IDS.tiring]: {
           _id: FP_THRESHOLD_IDS.tiring,
-          order: 3,
+          sort: 3,
           state: 'Tiring',
           value: '$fp - 1',
           explanation: '',
@@ -271,7 +271,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [FP_THRESHOLD_IDS.rested]: {
           _id: FP_THRESHOLD_IDS.rested,
-          order: 4,
+          sort: 4,
           state: 'Rested',
           value: '$fp',
           explanation: '',
@@ -281,8 +281,8 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
     },
     [DEFAULT_ATTRIBUTE_IDS.hp]: {
       _id: DEFAULT_ATTRIBUTE_IDS.hp,
-      order: 14,
-      id: 'hp',
+      sort: 14,
+      attrId: 'hp',
       type: GcsAttributeDefinition.TYPES.Pool,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
       base: '$st',
@@ -293,7 +293,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       thresholds: {
         [HP_THRESHOLD_IDS.dead]: {
           _id: HP_THRESHOLD_IDS.dead,
-          order: 0,
+          sort: 0,
           state: 'Dead',
           value: 'Math.round(-$hp * 5)',
           explanation: '',
@@ -301,7 +301,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [HP_THRESHOLD_IDS.dying4]: {
           _id: HP_THRESHOLD_IDS.dying4,
-          order: 1,
+          sort: 1,
           state: 'Dying #4',
           value: 'Math.round(-$hp * 4)',
           explanation:
@@ -312,7 +312,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [HP_THRESHOLD_IDS.dying3]: {
           _id: HP_THRESHOLD_IDS.dying3,
-          order: 2,
+          sort: 2,
           state: 'Dying #3',
           value: 'Math.round(-$hp * 3)',
           explanation:
@@ -323,7 +323,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [HP_THRESHOLD_IDS.dying2]: {
           _id: HP_THRESHOLD_IDS.dying2,
-          order: 3,
+          sort: 3,
           state: 'Dying #2',
           value: 'Math.round(-$hp * 2)',
           explanation:
@@ -334,7 +334,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [HP_THRESHOLD_IDS.dying1]: {
           _id: HP_THRESHOLD_IDS.dying1,
-          order: 4,
+          sort: 4,
           state: 'Dying #1',
           value: 'Math.round(-$hp * 1)',
           explanation:
@@ -345,7 +345,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [HP_THRESHOLD_IDS.collapse]: {
           _id: HP_THRESHOLD_IDS.collapse,
-          order: 5,
+          sort: 5,
           state: 'Collapse',
           value: '0',
           explanation: '- Roll vs. HT every second to avoid falling unconscious' + '- Move and Dodge are halved (B419)',
@@ -353,7 +353,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [HP_THRESHOLD_IDS.reeling]: {
           _id: HP_THRESHOLD_IDS.reeling,
-          order: 6,
+          sort: 6,
           state: 'Reeling',
           value: 'Math.ceil($hp / 3) - 1',
           explanation: 'Move and Dodge are halved (B419)',
@@ -361,7 +361,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [HP_THRESHOLD_IDS.wounded]: {
           _id: HP_THRESHOLD_IDS.wounded,
-          order: 7,
+          sort: 7,
           state: 'Wounded',
           value: '$hp - 1',
           explanation: '',
@@ -369,7 +369,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
         },
         [HP_THRESHOLD_IDS.healthy]: {
           _id: HP_THRESHOLD_IDS.healthy,
-          order: 8,
+          sort: 8,
           state: 'Healthy',
           value: '$hp',
           explanation: '',

@@ -1,50 +1,20 @@
-import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
+import {
+  PseudoDocument,
+  PseudoDocumentMetadata,
+  pseudoDocumentSchema,
+} from '@module/pseudo-document/pseudo-document.js'
 import { ScriptAttribute } from '@module/scripting/interfaces/attribute.js'
 import { ScriptResolver } from '@module/scripting/resolver.js'
 
+import { AttributeThreshold } from './attribute-threshold.ts'
 import { GcsAttribute } from './attribute.ts'
 import { type GcsCharacterModel } from './gcs-character.ts'
-
-enum AttributeType {
-  Integer = 'integer',
-  IntegerRef = 'integerRef',
-  Decimal = 'decimal',
-  DecimalRef = 'decimalRef',
-  Pool = 'pool',
-  PoolRef = 'poolRef',
-  PrimarySeparator = 'primarySeparator',
-  SecondarySeparator = 'secondarySeparator',
-  PoolSeparator = 'poolSeparator',
-}
+import { AttributeType, GcsAttributeKind, GcsAttributePlacement, GcsThresholdOp } from './types.ts'
 
 /* ---------------------------------------- */
 
-enum GcsAttributePlacement {
-  Automatic = 'automatic',
-  Primary = 'primary',
-  Secondary = 'secondary',
-  Hidden = 'hidden',
-}
-
-/* ---------------------------------------- */
-
-enum GcsAttributeKind {
-  Primary = 'primary',
-  Secondary = 'secondary',
-  Pool = 'pool',
-}
-
-/* ---------------------------------------- */
-
-enum GcsThresholdOp {
-  HalveMove = 'halve_move',
-  HalveDodge = 'halve_dodge',
-  HalveST = 'halve_st',
-}
-
-/* ---------------------------------------- */
-
-class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, GcsCharacterModel> {
+class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinitionSchema, GcsCharacterModel> {
   static TYPES = AttributeType
   static KINDS = GcsAttributeKind
   static PLACEMENTS = GcsAttributePlacement
@@ -54,6 +24,17 @@ class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, Gcs
 
   static override defineSchema(): GcsAttributeDefinitionSchema {
     return attributeDefinitionSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocumentMetadata {
+    return {
+      documentName: 'AttributeDefinition',
+      label: '',
+      icon: '',
+      embedded: { AttributeThreshold: 'thresholds' },
+    }
   }
 
   /* ---------------------------------------- */
@@ -143,37 +124,16 @@ class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, Gcs
 
 /* ---------------------------------------- */
 
-const attributeThresholdSchema = () => {
-  return {
-    _id: new fields.StringField({ required: true, nullable: false, readonly: true }),
-    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
-    order: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    state: new fields.StringField({ required: true, nullable: false }),
-    value: new fields.StringField({ required: true, nullable: false }),
-    explanation: new fields.StringField({ required: true, nullable: false }),
-    // NOTE: STUB. This field is used to store operation names (as strings) which correspond to
-    // halving values like ST, Move, etc. at the given threshold. There may be a better way of
-    // storing this information.
-    ops: new fields.SetField(
-      new fields.StringField({ required: true, nullable: false, choices: Object.values(GcsThresholdOp) }),
-      { required: true, nullable: false }
-    ),
-  }
-}
-
-/* ---------------------------------------- */
-
 // NOTE: AttributeDef should likely be defined as a DataModel rather than a simple schema, as the corresponding
 // GCS object includes accessors fields which a SchemaField does not permit.
 const attributeDefinitionSchema = () => {
   return {
+    ...pseudoDocumentSchema(),
+    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     // NOTE: The .initial value of this field is a temporary placeholder. GCS generates a new ID
     // as an alphanumeric (plus _) string of minimum length to ensure there are no duplicate ID keys.
     // Therefore, it should cycle through "a" -> "z", then "aa" etc.
-    _id: new fields.StringField({ required: true, nullable: false, readonly: true }),
-    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
-    order: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    id: new fields.StringField({ required: true, nullable: false, blank: false, initial: 'a' }),
+    attrId: new fields.StringField({ required: true, nullable: false, blank: false, initial: 'a' }),
     type: new fields.StringField({
       required: true,
       nullable: false,
@@ -196,7 +156,7 @@ const attributeDefinitionSchema = () => {
     costAdjPerSm: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // TODO: Check if required and nullable even works for array fields
     thresholds: new fields.TypedObjectField(
-      new fields.SchemaField(attributeThresholdSchema(), { required: true, nullable: false }),
+      new fields.EmbeddedDataField(AttributeThreshold, { required: true, nullable: false }),
       {
         required: false,
         nullable: true,

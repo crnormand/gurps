@@ -46,4 +46,5 @@ class BaseActorModel<
 
 /* ---------------------------------------- */
 
-export { BaseActorModel, type ActorMetadata }
+export { BaseActorModel }
+export type { ActorMetadata }

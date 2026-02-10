@@ -75,6 +75,15 @@ function init() {
       label: 'Full (GCS)',
       makeDefault: true,
     })
+
+    // NOTE: This sheet is hidden from Users but can be set by invoking
+    // (actor).setFlag("core","sheetClass","gurps.TestActorSheet")
+    // @ts-expect-error: broken typing
+    foundry.documents.collections.Actors.registerSheet('gurps', TestActorSheet, {
+      makeDefault: true,
+      types: ['gcsCharacter'],
+      canConfigure: false,
+    })
   })
 }
 
