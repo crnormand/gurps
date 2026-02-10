@@ -65,7 +65,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: 'Dexterity',
       costPerPoint: 20,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.iq]: {
       _id: DEFAULT_ATTRIBUTE_IDS.iq,
@@ -78,7 +78,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: 'Intelligence',
       costPerPoint: 20,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.ht]: {
       _id: DEFAULT_ATTRIBUTE_IDS.ht,
@@ -91,7 +91,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: 'Health',
       costPerPoint: 10,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.will]: {
       _id: DEFAULT_ATTRIBUTE_IDS.will,
@@ -104,7 +104,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: '',
       costPerPoint: 5,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.frightCheck]: {
       _id: DEFAULT_ATTRIBUTE_IDS.frightCheck,
@@ -117,7 +117,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: '',
       costPerPoint: 2,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.per]: {
       _id: DEFAULT_ATTRIBUTE_IDS.per,
@@ -130,7 +130,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: 'Perception',
       costPerPoint: 5,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.hearing]: {
       _id: DEFAULT_ATTRIBUTE_IDS.hearing,
@@ -143,7 +143,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: '',
       costPerPoint: 2,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.vision]: {
       _id: DEFAULT_ATTRIBUTE_IDS.vision,
@@ -156,7 +156,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: '',
       costPerPoint: 2,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.tasteSmell]: {
       _id: DEFAULT_ATTRIBUTE_IDS.tasteSmell,
@@ -169,7 +169,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: '',
       costPerPoint: 2,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.touch]: {
       _id: DEFAULT_ATTRIBUTE_IDS.touch,
@@ -182,7 +182,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: '',
       costPerPoint: 2,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.basicSpeed]: {
       _id: DEFAULT_ATTRIBUTE_IDS.basicSpeed,
@@ -195,7 +195,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: '',
       costPerPoint: 20,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.basicMove]: {
       _id: DEFAULT_ATTRIBUTE_IDS.basicMove,
@@ -208,7 +208,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: '',
       costPerPoint: 5,
       costAdjPerSm: 0,
-      thresholds: null,
+      _thresholds: null,
     },
     [DEFAULT_ATTRIBUTE_IDS.fp]: {
       _id: DEFAULT_ATTRIBUTE_IDS.fp,
@@ -221,7 +221,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: 'Fatigue Points',
       costPerPoint: 3,
       costAdjPerSm: 0,
-      thresholds: {
+      _thresholds: {
         [FP_THRESHOLD_IDS.unconscious]: {
           _id: FP_THRESHOLD_IDS.unconscious,
           sort: 0,
@@ -290,7 +290,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       fullName: 'Hit Points',
       costPerPoint: 2,
       costAdjPerSm: 10,
-      thresholds: {
+      _thresholds: {
         [HP_THRESHOLD_IDS.dead]: {
           _id: HP_THRESHOLD_IDS.dead,
           sort: 0,

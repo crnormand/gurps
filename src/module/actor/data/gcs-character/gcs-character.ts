@@ -61,6 +61,9 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
     const attributeList = Object.values(this._attributes)
     const attributeDefinitionList = Object.values(this.settings._attributes)
 
+    attributeList.forEach(att => att.prepareBaseData())
+    attributeDefinitionList.forEach(def => def.prepareBaseData())
+
     foundry.utils.performIntegerSort(attributeList)
     foundry.utils.performIntegerSort(attributeDefinitionList)
 
@@ -73,6 +76,16 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
     this.attributeDefinitions = Object.fromEntries(
       Object.values(this.settings._attributes).map(definition => [definition.attrId, definition])
     )
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareDerivedData(): void {
+    const attributeList = Object.values(this._attributes)
+    const attributeDefinitionList = Object.values(this.settings._attributes)
+
+    attributeList.forEach(att => att.prepareDerivedData())
+    attributeDefinitionList.forEach(def => def.prepareDerivedData())
   }
 }
 
