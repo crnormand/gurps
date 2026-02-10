@@ -178,7 +178,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       options ||= {}
       // Disable in-development Actor types if developer mode is off.
       // @ts-expect-error: Improper types
-      options.types = ['character', 'characterV2']
+      options.types = ['character', 'characterV2', 'enemy']
     }
 
     return super.createDialog(data, createOptions, options)

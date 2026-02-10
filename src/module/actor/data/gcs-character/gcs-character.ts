@@ -76,7 +76,7 @@ const profileSchema = () => {
       nullable: false,
       initial: { value: 71, unit: LengthUnit.FeetAndInches },
     }),
-    weight: new WeightField({ required: true, nulable: false, initial: { value: 180, unit: WeightUnit.Pound } }),
+    weight: new WeightField({ required: true, nullable: false, initial: { value: 180, unit: WeightUnit.Pound } }),
     playerName: new fields.StringField({ required: true, nullable: false, initial: '' }),
     title: new fields.StringField({ required: true, nullable: false, initial: '' }),
     organization: new fields.StringField({ required: true, nullable: false, initial: '' }),

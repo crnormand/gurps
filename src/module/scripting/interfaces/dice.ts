@@ -286,7 +286,7 @@ export function roll(spec: string, extraDiceFromModifiers: boolean): number {
 
   if (dice.sides > 1) {
     for (let i = 0; i < rollCount; i++) {
-      result += 1 + randInt(0, dice.sides)
+      result += randInt(1, dice.sides)
     }
   } else if (dice.sides === 1) {
     result = rollCount
