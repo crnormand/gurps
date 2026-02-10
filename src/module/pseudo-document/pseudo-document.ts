@@ -19,7 +19,7 @@ interface PseudoDocumentConstructor {
 }
 
 const hasPseudoDocumentMetadata = (value: unknown): value is PseudoDocumentConstructor =>
-  isObject(value) && 'metadata' in value
+  (isObject(value) || typeof value === 'function') && 'metadata' in value && isObject(value.metadata)
 
 type PseudoDocumentMetadata = {
   /* ---------------------------------------- */
