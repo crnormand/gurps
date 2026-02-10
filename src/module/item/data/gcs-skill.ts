@@ -5,7 +5,7 @@ import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
 import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 import { SkillDefault } from '@module/data/skill-default.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 class GcsSkillModel
   extends GcsBaseItemModel<GcsSkillSchema, INameable.AccesserBaseData>

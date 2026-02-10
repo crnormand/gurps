@@ -3,9 +3,9 @@ import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
-import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
-import { FeatureType, WeaponBonusSelectionType, WeaponSwitchType } from './types.ts'
+import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.js'
+import { FeatureType, WeaponBonusSelectionType, WeaponSwitchType } from './types.js'
 
 class WeaponBonus extends BaseFeature<WeaponBonusSchema> implements ILeveledAmount {
   static override defineSchema(): WeaponBonusSchema {

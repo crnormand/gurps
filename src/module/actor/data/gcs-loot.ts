@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { BaseActorModel } from './base.ts'
+import { BaseActorModel } from './base.js'
 
 const GcsLootVersion = 5
 

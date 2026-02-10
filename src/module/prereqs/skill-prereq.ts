@@ -3,7 +3,7 @@ import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
+import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.js'
 
 class SkillPrereq extends BasePrereq<SkillPrereqSchema> {
   static override defineSchema(): SkillPrereqSchema {

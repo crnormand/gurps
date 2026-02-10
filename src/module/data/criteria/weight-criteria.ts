@@ -1,9 +1,9 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { Weight, WeightField } from '../common/weight.ts'
+import { Weight, WeightField } from '../common/weight.js'
 
-import { NumericComparison } from './number-criteria.ts'
+import { NumericComparison } from './number-criteria.js'
 
 class WeightCriteria extends DataModel<WeightCriteriaSchema> {
   static override defineSchema(): WeightCriteriaSchema {

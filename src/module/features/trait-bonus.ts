@@ -1,9 +1,9 @@
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
-import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
-import { FeatureType } from './types.ts'
+import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.js'
+import { FeatureType } from './types.js'
 
 class TraitBonus extends BaseFeature<TraitBonusSchema> implements ILeveledAmount {
   static override defineSchema(): TraitBonusSchema {

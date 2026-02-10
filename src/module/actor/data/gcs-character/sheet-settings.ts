@@ -3,8 +3,8 @@ import { defaultAttributes } from '@module/config/attributes.js'
 import { defaultBodyType } from '@module/config/body.js'
 import { WeightUnit, LengthUnit } from '@module/data/common/index.js'
 
-import { GcsAttributeDefinition } from './attribute-definition.ts'
-import { GcsBody } from './body.ts'
+import { GcsAttributeDefinition } from './attribute-definition.js'
+import { GcsBody } from './body.js'
 
 enum DamageProgression {
   BasicSet = 'basicSet',

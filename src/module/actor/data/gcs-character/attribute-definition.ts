@@ -7,10 +7,10 @@ import {
 import { ScriptAttribute } from '@module/scripting/adapters/attribute.js'
 import { ScriptResolver } from '@module/scripting/resolver.js'
 
-import { AttributeThreshold } from './attribute-threshold.ts'
-import { GcsAttribute } from './attribute.ts'
-import { type GcsCharacterModel } from './gcs-character.ts'
-import { AttributeType, GcsAttributeKind, GcsAttributePlacement, GcsThresholdOp } from './types.ts'
+import { AttributeThreshold } from './attribute-threshold.js'
+import { GcsAttribute } from './attribute.js'
+import { type GcsCharacterModel } from './gcs-character.js'
+import { AttributeType, GcsAttributeKind, GcsAttributePlacement, GcsThresholdOp } from './types.js'
 
 /* ---------------------------------------- */
 

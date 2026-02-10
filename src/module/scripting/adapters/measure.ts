@@ -1,5 +1,5 @@
-import { Length, LengthUnit } from '../../data/common/length.ts'
-import { Weight, WeightUnit } from '../../data/common/weight.ts'
+import { Length, LengthUnit } from '../../data/common/length.js'
+import { Weight, WeightUnit } from '../../data/common/weight.js'
 
 function verifyLengthUnit(unit: string): unit is LengthUnit {
   return Object.values(Length.Unit).includes(unit as LengthUnit)

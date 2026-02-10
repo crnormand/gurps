@@ -1,8 +1,8 @@
 import { BlockStatement, ModuleDeclaration, parse, Program, Statement, Node, Expression } from '@lib/acorn.mjs'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { Scope, VarKind } from './scope.ts'
-import { BreakSignal, ContinueSignal, ReturnSignal } from './signals.ts'
+import { Scope, VarKind } from './scope.js'
+import { BreakSignal, ContinueSignal, ReturnSignal } from './signals.js'
 import {
   asNodeLocContext,
   asThrownDetails,

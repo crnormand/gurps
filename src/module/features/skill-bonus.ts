@@ -2,9 +2,9 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
-import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
-import { FeatureType, SkillBonusSelectionType } from './types.ts'
+import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.js'
+import { FeatureType, SkillBonusSelectionType } from './types.js'
 
 /* ---------------------------------------- */
 

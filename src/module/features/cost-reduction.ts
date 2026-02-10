@@ -1,7 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
-import { FeatureType } from './types.ts'
+import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { FeatureType } from './types.js'
 
 class CostReduction extends BaseFeature<CostReductionSchema> {
   static override defineSchema(): CostReductionSchema {

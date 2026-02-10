@@ -1,15 +1,15 @@
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { AttributePrereq } from './attribute-prereq.ts'
-import { BasePrereq, PrereqType } from './base-prereq.ts'
-import { ContainedQuantityPrereq } from './contained-quantity-prereq.ts'
-import { ContainedWeightPrereq } from './contained-weight-prereq.ts'
-import { EquippedEquipmentPrereq } from './equipped-equipment-prereq.ts'
-import { PrereqList } from './prereq-list.ts'
-import { ScriptPrereq } from './script-prereq.ts'
-import { SkillPrereq } from './skill-prereq.ts'
-import { SpellPrereq } from './spell-prereq.ts'
-import { TraitPrereq } from './trait-prereq.ts'
+import { AttributePrereq } from './attribute-prereq.js'
+import { BasePrereq, PrereqType } from './base-prereq.js'
+import { ContainedQuantityPrereq } from './contained-quantity-prereq.js'
+import { ContainedWeightPrereq } from './contained-weight-prereq.js'
+import { EquippedEquipmentPrereq } from './equipped-equipment-prereq.js'
+import { PrereqList } from './prereq-list.js'
+import { ScriptPrereq } from './script-prereq.js'
+import { SkillPrereq } from './skill-prereq.js'
+import { SpellPrereq } from './spell-prereq.js'
+import { TraitPrereq } from './trait-prereq.js'
 
 /* ---------------------------------------- */
 

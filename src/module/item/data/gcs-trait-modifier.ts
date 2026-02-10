@@ -2,7 +2,7 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
 import { INameable, INameableAccesser } from '@module/data/mixins/nameable.js'
 
-import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.ts'
+import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 class GcsTraitModifierModel
   extends GcsBaseItemModel<GcsTraitModifierSchema, INameable.AccesserBaseData>
