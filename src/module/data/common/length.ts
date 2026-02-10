@@ -76,7 +76,7 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
 
   /* ---------------------------------------- */
 
-  // Everything is relative to the inch, using GURPS simplified lengths only
+  // Conversion factors to inches (inches per unit), using GURPS simplified lengths only.
   static UNIT_CONVERSIONS: Record<LengthUnit, number> = {
     [Length.Unit.FeetAndInches]: 1,
     [Length.Unit.Inch]: 1,
@@ -238,16 +238,19 @@ class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   // Add two or more Length values. The resulting Length value will have the same unit
   // as the first value provided.
   static sum(first: Length, ...others: Length[]): Length {
-    const firstValue = first.value / Length.UNIT_CONVERSIONS[first.unit]
-
-    const newValue = others.reduce(
-      (partialSum, weight) => partialSum + weight.value / Length.UNIT_CONVERSIONS[weight.unit],
-      firstValue
+    // Convert all values to a common base unit (inches), sum them, then convert back
+    const firstValueInInches = first.value * Length.UNIT_CONVERSIONS[first.unit]
+    const totalInInches = others.reduce(
+      (partialSumInInches, length) => partialSumInInches + length.value * Length.UNIT_CONVERSIONS[length.unit],
+      firstValueInInches
     )
 
-    first.value = newValue / Length.UNIT_CONVERSIONS[first.unit]
+    const resultValue = totalInInches / Length.UNIT_CONVERSIONS[first.unit]
 
-    return first
+    return new Length({
+      value: resultValue,
+      unit: first.unit,
+    })
   }
 
   /* ---------------------------------------- */

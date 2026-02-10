@@ -62,14 +62,14 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
 
   /* ---------------------------------------- */
 
-  // Everything is relative to the pound, using GURPS simplified weights only
+  // Conversion factors to pounds (pounds per unit), using GURPS simplified weights only
   static UNIT_CONVERSIONS: Record<WeightUnit, number> = {
     [Weight.Unit.Pound]: 1,
     [Weight.Unit.PoundAlt]: 1,
     [Weight.Unit.Ounce]: 16,
-    [Weight.Unit.Ton]: 2000,
-    [Weight.Unit.TonAlt]: 2000,
-    [Weight.Unit.Kilogram]: 1 / 2,
+    [Weight.Unit.Ton]: 1 / 2000,
+    [Weight.Unit.TonAlt]: 1 / 2000,
+    [Weight.Unit.Kilogram]: 2,
     [Weight.Unit.Gram]: 500,
   }
 
@@ -182,16 +182,19 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   // Add two or more Weight values. The resulting Weight value will have the same unit
   // as the first value provided.
   static sum(first: Weight, ...others: Weight[]): Weight {
-    const firstValue = first.value / Weight.UNIT_CONVERSIONS[first.unit]
-
-    const newValue = others.reduce(
-      (partialSum, weight) => partialSum + weight.value / Weight.UNIT_CONVERSIONS[weight.unit],
-      firstValue
+    // Convert all values to a common base unit (pounds), sum them, then convert back
+    const firstValueInPounds = first.value * Weight.UNIT_CONVERSIONS[first.unit]
+    const totalInPounds = others.reduce(
+      (partialSumInPounds, length) => partialSumInPounds + length.value * Weight.UNIT_CONVERSIONS[length.unit],
+      firstValueInPounds
     )
 
-    first.value = newValue / Weight.UNIT_CONVERSIONS[first.unit]
+    const resultValue = totalInPounds / Weight.UNIT_CONVERSIONS[first.unit]
 
-    return first
+    return new Weight({
+      value: resultValue,
+      unit: first.unit,
+    })
   }
 
   /* ---------------------------------------- */
