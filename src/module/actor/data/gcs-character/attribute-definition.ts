@@ -145,11 +145,8 @@ class GcsAttributeDefinition extends DataModel<GcsAttributeDefinitionSchema, Gcs
 
 const attributeThresholdSchema = () => {
   return {
-    // State       string         `json:"state"`
-    // Value       string         `json:"value"`
-    // Explanation string         `json:"explanation,omitzero"`
-    // Ops         []threshold.Op `json:"ops,omitzero"`
     _id: new fields.StringField({ required: true, nullable: false, readonly: true }),
+    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     order: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     state: new fields.StringField({ required: true, nullable: false }),
     value: new fields.StringField({ required: true, nullable: false }),
@@ -170,15 +167,6 @@ const attributeThresholdSchema = () => {
 // GCS object includes accessors fields which a SchemaField does not permit.
 const attributeDefinitionSchema = () => {
   return {
-    // DefID               string              `json:"id"`
-    // Type                attribute.Type      `json:"type"`
-    // Placement           attribute.Placement `json:"placement,omitzero"`
-    // Name                string              `json:"name"`
-    // FullName            string              `json:"full_name,omitzero"`
-    // Base                string              `json:"base,omitzero"`
-    // CostPerPoint        fxp.Int             `json:"cost_per_point,omitzero"`
-    // CostAdjPercentPerSM fxp.Int             `json:"cost_adj_percent_per_sm,omitzero"`
-    // Thresholds          []*PoolThreshold    `json:"thresholds,omitzero"`
     // NOTE: The .initial value of this field is a temporary placeholder. GCS generates a new ID
     // as an alphanumeric (plus _) string of minimum length to ensure there are no duplicate ID keys.
     // Therefore, it should cycle through "a" -> "z", then "aa" etc.
@@ -202,7 +190,7 @@ const attributeDefinitionSchema = () => {
     fullName: new fields.StringField({ required: true, nullable: false }),
     // NOTE: This is parsed as JS code, but no type yet exists for this.
     // TODO: Create dedicated JS code type.
-    base: new fields.StringField({ required: true, nullable: false }),
+    base: new fields.JavaScriptField({ required: true, nullable: false }),
     costPerPoint: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: Should be displayed as a percentage
     costAdjPerSm: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
