@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BaseFeature, BaseFeatureSchema } from './base-feature.ts'
 import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.ts'
@@ -19,6 +20,12 @@ class ReactionBonus extends BaseFeature<ReactionBonusSchema> implements ILeveled
 
   get adjustedAmount(): number {
     return getLeveledAmount(this)
+  }
+
+  /* ---------------------------------------- */
+
+  override fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    INameable.extract.call(this, this.situation, map, existing)
   }
 }
 

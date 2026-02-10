@@ -1,12 +1,21 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
+import { INameable, INameableApplier, nameableSchema } from '@module/data/mixins/nameable.js'
 import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
-import { IReplaceable, replaceableSchema } from '@module/data/mixins/replaceable.js'
 import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
-class GcsTraitModel extends GcsBaseItemModel<GcsTraitSchema> implements IFeatures, IPrereqs, IReplaceable, IStudies {
+class GcsTraitModel
+  extends GcsBaseItemModel<GcsTraitSchema, INameable.AccesserBaseData>
+  implements IFeatures, IPrereqs, INameableApplier, IStudies
+{
+  nameWithReplacements: string = ''
+  localNotesWithReplacements: string = ''
+  userDescWithReplacements: string = ''
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): GcsTraitSchema {
     return gcsTraitSchema()
   }
@@ -26,13 +35,30 @@ class GcsTraitModel extends GcsBaseItemModel<GcsTraitSchema> implements IFeature
 
   /* ---------------------------------------- */
 
-  // NOTE: Placeholder
-  applyBonuses(): void {}
+  override prepareBaseData(): void {
+    this.fillWithNameableKeys(new Map())
+    this.applyNameableKeys()
+  }
 
   /* ---------------------------------------- */
 
-  // NOTE: Placeholder
-  processPrereqs(): void {}
+  fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    existing ??= new Map(Object.entries(this.replacements))
+
+    INameable.extract.call(this, this.parent.name, map, existing)
+    INameable.extract.call(this, this.localNotes, map, existing)
+    INameable.extract.call(this, this.userDesc, map, existing)
+
+    this.nameableReplacements = map
+  }
+
+  /* ---------------------------------------- */
+
+  applyNameableKeys(): void {
+    this.nameWithReplacements = INameable.apply.call(this, this.parent.name)
+    this.localNotesWithReplacements = INameable.apply.call(this, this.localNotes)
+    this.userDescWithReplacements = INameable.apply.call(this, this.userDesc)
+  }
 
   /* ---------------------------------------- */
 
@@ -44,9 +70,12 @@ class GcsTraitModel extends GcsBaseItemModel<GcsTraitSchema> implements IFeature
   /* ---------------------------------------- */
 
   // NOTE: Placeholder
-  get notesWithReplacement(): string {
-    return this.localNotes
-  }
+  applyBonuses(): void {}
+
+  /* ---------------------------------------- */
+
+  // NOTE: Placeholder
+  processPrereqs(): void {}
 }
 
 const gcsTraitSchema = () => {
@@ -54,7 +83,7 @@ const gcsTraitSchema = () => {
     ...gcsBaseItemSchema(),
     ...featuresSchema(),
     ...prereqsSchema(),
-    ...replaceableSchema(),
+    ...nameableSchema(),
     ...studiesSchema(),
 
     vttNotes: new fields.StringField({ required: true, nullable: false }),

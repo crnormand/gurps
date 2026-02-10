@@ -4,7 +4,7 @@ import {
   PseudoDocumentMetadata,
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
-import { ScriptAttribute } from '@module/scripting/interfaces/attribute.js'
+import { ScriptAttribute } from '@module/scripting/adapters/attribute.js'
 import { ScriptResolver } from '@module/scripting/resolver.js'
 
 import { AttributeThreshold } from './attribute-threshold.ts'

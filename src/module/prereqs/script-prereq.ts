@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 
@@ -26,6 +27,12 @@ class ScriptPrereq extends BasePrereq<ScriptPrereqSchema> {
 
     // NOTE: Placeholder
     return true
+  }
+
+  /* ---------------------------------------- */
+
+  override fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    INameable.extract.call(this, this.script, map, existing)
   }
 }
 

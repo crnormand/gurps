@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { INameableFiller } from '@module/data/mixins/nameable.js'
 
 import { IFeatures } from '../data/mixins/features.ts'
 import { GcsBaseItemModel } from '../item/data/gcs-base.ts'
@@ -9,7 +10,10 @@ import { FeatureType } from './types.ts'
 
 /* ---------------------------------------- */
 
-class BaseFeature<Schema extends BaseFeatureSchema> extends TypedPseudoDocument<Schema, GcsBaseItemModel & IFeatures> {
+class BaseFeature<Schema extends BaseFeatureSchema>
+  extends TypedPseudoDocument<Schema, GcsBaseItemModel & IFeatures>
+  implements INameableFiller
+{
   static override defineSchema(): BaseFeatureSchema {
     return Object.assign(super.defineSchema(), baseFeatureSchema())
   }
@@ -30,6 +34,22 @@ class BaseFeature<Schema extends BaseFeatureSchema> extends TypedPseudoDocument<
   static override get TYPE(): FeatureType {
     return super.TYPE as FeatureType
   }
+
+  /* ---------------------------------------- */
+
+  get item(): Item.Implementation | null {
+    return this.parent?.item || null
+  }
+
+  /* ---------------------------------------- */
+
+  get actor(): Actor.Implementation | null {
+    return this.parent?.actor || null
+  }
+
+  // NOTE: STUB
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {}
 }
 
 /* ---------------------------------------- */

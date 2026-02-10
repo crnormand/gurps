@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
+import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.ts'
 
@@ -28,10 +29,17 @@ class TraitPrereq extends BasePrereq<TraitPrereqSchema> {
       if (!this.name.matches(item.name)) return false
       if (!this.level.matches(item.system.currentLevel)) return false
 
-      return this.notes.matches(item.system.notesWithReplacement)
+      return this.notes.matches(item.system.localNotesWithReplacements)
     })
 
     return this.has ? hasTrait : !hasTrait
+  }
+
+  /* ---------------------------------------- */
+
+  override fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
+    INameable.extract.call(this, this.name.qualifier ?? '', map, existing)
+    INameable.extract.call(this, this.notes.qualifier ?? '', map, existing)
   }
 }
 

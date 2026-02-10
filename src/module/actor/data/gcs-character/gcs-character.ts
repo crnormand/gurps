@@ -134,7 +134,7 @@ const profileSchema = () => {
 const gcsCharacterSchema = () => {
   return {
     version: new fields.NumberField({ required: true, nullable: false, initial: GcsCharacterVersion }),
-    tid: new fields.DocumentIdField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
+    tid: new fields.StringField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
     totalPoints: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     pointsRecord: new fields.TypedObjectField(new fields.SchemaField(pointsRecordSchema()), {
       required: true,
