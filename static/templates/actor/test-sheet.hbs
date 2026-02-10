@@ -1,0 +1,15 @@
+<div class="flexcol">
+  {{#each system.attributeDefinitionList as |attribute|}}
+    <span>{{attribute.attrId}}</span>
+
+    {{#if attribute.thresholds}}
+    {{#each attribute.thresholds as |threshold|}}
+      <span>{{threshold.state}}</span>
+
+    {{formGroup threshold.schema.fields.value name=(concat threshold.fieldPath "." threshold.id ".value") value=threshold.value localize=true}}
+
+    {{/each}}
+    {{/if}}
+  {{/each}}
+
+</div>

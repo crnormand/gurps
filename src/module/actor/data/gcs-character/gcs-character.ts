@@ -3,7 +3,7 @@ import { LengthField, LengthUnit } from '@module/data/common/length.js'
 import { WeightField, WeightUnit } from '@module/data/common/weight.js'
 import { ResolverCache } from '@module/scripting/types.js'
 
-import { BaseActorModel } from '../base.ts'
+import { ActorMetadata, BaseActorModel } from '../base.ts'
 
 import { GcsAttributeDefinition } from './attribute-definition.ts'
 import { GcsAttribute } from './attribute.ts'
@@ -25,8 +25,22 @@ type GcsCharacterBaseData = {
 class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterBaseData> {
   resolverCache: ResolverCache = new Map()
 
+  /* ---------------------------------------- */
+
   static override defineSchema(): GcsCharacterSchema {
     return gcsCharacterSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): ActorMetadata {
+    return {
+      embedded: {
+        Attribute: 'system._attributes',
+        AttributeDefinition: 'system.settings._attributes',
+      },
+      type: 'gcsCharacter',
+    }
   }
 
   /* ---------------------------------------- */
@@ -53,9 +67,11 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
     this.attributeList = attributeList
     this.attributeDefinitionList = attributeDefinitionList
 
-    this.attributes = Object.fromEntries(Object.values(this._attributes).map(attribute => [attribute.id, attribute]))
+    this.attributes = Object.fromEntries(
+      Object.values(this._attributes).map(attribute => [attribute.attrId, attribute])
+    )
     this.attributeDefinitions = Object.fromEntries(
-      Object.values(this.settings._attributes).map(definition => [definition.id, definition])
+      Object.values(this.settings._attributes).map(definition => [definition.attrId, definition])
     )
   }
 }

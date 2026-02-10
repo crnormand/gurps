@@ -83,7 +83,7 @@ class PseudoDocument<
   /**
    * The document name of this pseudo document.
    */
-  get documentName(): string | null {
+  get documentName(): string {
     return this.metadata.documentName
   }
 
@@ -118,12 +118,9 @@ class PseudoDocument<
   /* ---------------------------------------- */
 
   get fieldPath(): string {
-    const fp = this.schema.fieldPath
-    let path = fp.slice(0, fp.lastIndexOf('element') - 1)
+    let path = (this.parent.constructor as unknown as gurps.MetaDataOwner).metadata.embedded[this.documentName]
 
-    if (this.parent instanceof PseudoDocument) {
-      path = [this.parent.fieldPath, this.parent.id, path].join('.')
-    }
+    if (this.parent instanceof PseudoDocument) path = [this.parent.fieldPath, this.parent.id, path].join('.')
 
     return path
   }

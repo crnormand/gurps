@@ -52,7 +52,7 @@
     "typecheck": "tsc --noEmit",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test",
     "watch": "node build/watch.mjs",
-    "watch:code": "tsc-watch -p tsconfig.json --onSuccess \"tsc-alias -p tsconfig.json\"",
+    "watch:code": "tsc-watch -p tsconfig.json --onSuccess \"tsc-alias -p tsconfig.json\" --onFailure \"tsc-alias -p tsconfig.json\"",
     "watch:static": "node build/cpx.js --watch",
     "watch:styles": "sass --watch --update src/styles/gurps.scss:dist/styles/gurps.css"
   },

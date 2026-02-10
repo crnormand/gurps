@@ -13,6 +13,7 @@ import * as dataModels from './data/index.ts'
 import { GurpsActorV2 } from './gurps-actor.ts'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.ts'
 import { GurpsActorModernSheet } from './modern/sheet.ts'
+import { TestActorSheet } from './test-actor-sheet.ts'
 
 function init() {
   console.log('GURPS | Initializing GURPS Actor module.')
@@ -64,6 +65,15 @@ function init() {
       // Add this sheet last
       label: 'Full (GCS)',
       makeDefault: true,
+    })
+
+    // NOTE: This sheet is hidden from Users but can be set by invoking
+    // (actor).setFlag("core","sheetClass","gurps.TestActorSheet")
+    // @ts-expect-error: broken typing
+    foundry.documents.collections.Actors.registerSheet('gurps', TestActorSheet, {
+      makeDefault: true,
+      types: ['gcsCharacter'],
+      canConfigure: false,
     })
   })
 }

@@ -27,10 +27,13 @@ function init() {
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
+    // NOTE: This sheet is hidden from Users but can be set by invoking
+    // (item).setFlag("core","sheetClass","gurps.TestItemSheet")
     // @ts-expect-error: broken typing
     foundry.documents.collections.Items.registerSheet('gurps', TestItemSheet, {
       makeDefault: true,
       types: ['gcsEquipment'],
+      canConfigure: false,
     })
   })
 }
