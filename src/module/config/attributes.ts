@@ -1,7 +1,11 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
+import { GcsAttributeDefinition } from '@module/actor/data/gcs-character/attribute-definition.js'
 
-import { GcsAttributeDefinition } from '../actor/data/gcs-character/attribute-definition.ts'
-
+// NOTE: These IDs are entirely arbitrary and I'm not convinced they need
+// to be defined. They are defined here solely so that we don't have to run
+// foundry.util.randomID() several times when a character is initialized, but
+// this config will be replaced with a system setting which will override them
+// anyway.
 const DEFAULT_ATTRIBUTE_IDS = {
   st: 'wZ68WHN0uhJZvSCF',
   dx: '0wUa1JDYMjc0txYe',

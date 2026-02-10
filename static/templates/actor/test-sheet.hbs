@@ -1,15 +1,21 @@
-<div class="flexcol">
-  {{#each system.attributeDefinitionList as |attribute|}}
-    <span>{{attribute.attrId}}</span>
+{{#*inline ".location"}}
+<div>
+    <span>{{location.locationId}}</span>
+    {{formGroup location.schema.fields.drBonus name=(concat location.fieldPath "." location.id ".drBonus") value=location.drBonus localize=true}}
 
-    {{#if attribute.thresholds}}
-    {{#each attribute.thresholds as |threshold|}}
-      <span>{{threshold.state}}</span>
-
-    {{formGroup threshold.schema.fields.value name=(concat threshold.fieldPath "." threshold.id ".value") value=threshold.value localize=true}}
-
-    {{/each}}
+    {{#if location.subTable}}
+      <div style="margin-left: 2em;">
+      {{#each location.subTable.locations}}
+        {{> ".location" location=this}}
+      {{/each}}
+      </div>
     {{/if}}
-  {{/each}}
 
+</div>
+{{/inline}}
+
+<div class="flexcol">
+  {{#each system.settings.bodyType.locations}}
+    {{> ".location" location=this}}
+  {{/each}}
 </div>

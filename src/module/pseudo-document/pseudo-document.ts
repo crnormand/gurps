@@ -10,7 +10,13 @@ import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 class PseudoDocument<
   Schema extends PseudoDocument.Schema = PseudoDocument.Schema,
   Parent extends DataModel.Any = DataModel.Any,
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  ExtraConstructorOptions extends AnyObject = {},
 > extends DataModel<Schema, Parent> {
+  constructor(...args: DataModel.ConstructorArgs<Schema, Parent, ExtraConstructorOptions>) {
+    super(...args)
+  }
+
   /* ---------------------------------------- */
 
   static get metadata(): PseudoDocument.Metadata<gurps.Pseudo.Name> {

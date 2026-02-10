@@ -1,9 +1,10 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { defaultAttributes } from '@module/config/attributes.js'
+import { defaultBodyType } from '@module/config/body.js'
 import { WeightUnit, LengthUnit } from '@module/data/common/index.js'
 
 import { GcsAttributeDefinition } from './attribute-definition.ts'
-import { GcsBody } from './body-type.ts'
+import { GcsBody } from './body.ts'
 
 enum DamageProgression {
   BasicSet = 'basicSet',
@@ -60,7 +61,7 @@ const sheetSettingsSchema = () => {
       nullable: false,
       initial: defaultAttributes(),
     }),
-    bodyType: new fields.EmbeddedDataField(GcsBody),
+    bodyType: new fields.EmbeddedDataField(GcsBody, { required: true, nullable: false, initial: defaultBodyType() }),
     damageProgression: new fields.StringField({
       required: true,
       nullable: false,

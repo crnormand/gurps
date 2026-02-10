@@ -38,6 +38,7 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
       embedded: {
         Attribute: 'system._attributes',
         AttributeDefinition: 'system.settings._attributes',
+        Body: 'system.settings.bodyType',
       },
       type: 'gcsCharacter',
     }
@@ -48,12 +49,20 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
   override prepareBaseData(): void {
     const attributeList = Object.values(this._attributes)
     const attributeDefinitionList = Object.values(this.settings._attributes)
+    const hitLocationList = Object.values(this.settings.bodyType._locations)
+    const hitLocationSubTableList = Object.values(this.settings.bodyType._subTables)
 
     attributeList.forEach(att => att.prepareBaseData())
     attributeDefinitionList.forEach(def => def.prepareBaseData())
+    hitLocationList.forEach(location => location.prepareBaseData())
+    hitLocationSubTableList.forEach(table => table.prepareBaseData())
 
+    // TODO: Verify this is working as intended. It should sort the array usign the .order
+    // fields in each element.
     foundry.utils.performIntegerSort(attributeList)
     foundry.utils.performIntegerSort(attributeDefinitionList)
+    foundry.utils.performIntegerSort(hitLocationList)
+    foundry.utils.performIntegerSort(hitLocationSubTableList)
 
     this.attributeList = attributeList
     this.attributeDefinitionList = attributeDefinitionList
@@ -64,6 +73,8 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
     this.attributeDefinitions = Object.fromEntries(
       Object.values(this.settings._attributes).map(definition => [definition.attrId, definition])
     )
+
+    this.settings.bodyType.locations = hitLocationList.filter(location => location._owningTable === null)
   }
 
   /* ---------------------------------------- */
