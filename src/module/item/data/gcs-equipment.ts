@@ -2,14 +2,16 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { Weight } from '@module/data/common/weight.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
 import { INameable, INameableApplier, nameableSchema } from '@module/data/mixins/nameable.js'
-import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
+import { IPrereqs, IPrereqsBaseData, preparePrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
 import { ScriptEquipment } from '@module/scripting/adapters/equipment.js'
 import { ScriptResolver } from '@module/scripting/resolver.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
+type EquipmentBaseData = INameable.AccesserBaseData & IPrereqsBaseData
+
 class GcsEquipmentModel
-  extends GcsBaseItemModel<GcsEquipmentSchema, INameable.AccesserBaseData>
+  extends GcsBaseItemModel<GcsEquipmentSchema, EquipmentBaseData>
   implements IFeatures, IPrereqs, INameableApplier
 {
   nameWithReplacements: string = ''
@@ -27,7 +29,7 @@ class GcsEquipmentModel
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'system.prereqs', Feature: 'system.features' },
+      embedded: { Prereq: 'system._prereqs', Feature: 'system.features' },
       type: 'gcsEquipment',
       invalidActorTypes: [],
       actions: {},
@@ -39,6 +41,8 @@ class GcsEquipmentModel
   /* ---------------------------------------- */
 
   override prepareBaseData(): void {
+    preparePrereqs.call(this)
+
     this.fillWithNameableKeys(new Map())
     this.applyNameableKeys()
   }
@@ -52,6 +56,8 @@ class GcsEquipmentModel
     INameable.extract.call(this, this.localNotes, map, existing)
     INameable.extract.call(this, this.baseValue, map, existing)
     INameable.extract.call(this, this.baseWeight, map, existing)
+
+    this._prereqs.forEach(prereq => prereq.fillWithNameableKeys(map, existing))
 
     this.nameableReplacements = map
   }
