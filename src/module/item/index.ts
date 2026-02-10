@@ -6,7 +6,7 @@ import { GurpsItemSheet } from './item-sheet.js'
 import { TestItemSheet } from './test-item-sheet.js'
 
 function init() {
-  console.log('GURPS | Initializing GURPS Actor module.')
+  console.log('GURPS | Initializing GURPS Item module.')
   Hooks.on('init', () => {
     CONFIG.Item.documentClass = GurpsItemV2
 
