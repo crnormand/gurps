@@ -24,16 +24,13 @@ class GcsSubTable extends DataModel<GcsSubTableSchema, GcsBody, GcsSubTableConst
 
   /* ---------------------------------------- */
 
-  get loations(): GcsHitLocation[] {
+  get locations(): GcsHitLocation[] {
     return Object.values(this.parent._locations).filter(location => location._owningTable === this._id)
   }
 }
 
 const gcsSubTableSchema = () => {
   return {
-    // Name      string         `json:"name,omitzero"`
-    // Roll      *dice.Dice     `json:"roll"`
-    // Locations []*HitLocation `json:"locations,omitzero"`
     // TODO: Replace with dice field
     roll: new fields.StringField({ required: true, nullable: false }),
     _id: new fields.StringField({
@@ -79,16 +76,6 @@ class GcsHitLocation extends DataModel<GcsHitLocationSchema, GcsBody, GcsHitLoca
 
 const gcsHitLocationSchema = () => {
   return {
-    // LocID       string `json:"id"`
-    // ChoiceName  string `json:"choice_name"`
-    // TableName   string `json:"table_name"`
-    // Slots       int    `json:"slots,omitzero"`
-    // HitPenalty  int    `json:"hit_penalty,omitzero"`
-    // DRBonus     int    `json:"dr_bonus,omitzero"`
-    // Description string `json:"description,omitzero"`
-    // Notes       string `json:"notes,omitzero"`
-    // SubTable    *Body  `json:"sub_table,omitzero"`
-
     // NOTE: This _id field is separate form the id field below and is used onyl for relations between locations
     // and sub-tables. The _id values should be unique, whereas id values do not need to be unique. This can
     // be changed if a simpler solution is available.
@@ -96,7 +83,7 @@ const gcsHitLocationSchema = () => {
       required: true,
       nullable: true,
       readonly: true,
-      initial: () => foundry.utils.randomID,
+      initial: () => foundry.utils.randomID(),
     }),
     // NOTE: If _owningTable is null, the location is owned by the top-level table.
     _owningTable: new fields.StringField({ required: true, nullable: true, readonly: true }),
@@ -129,7 +116,6 @@ class GcsBody extends DataModel<GcsBodySchema> {
 
 const gcsBodySchema = () => {
   return {
-    // Name      string         `json:"name,omitzero"`
     // NOTE: name is used only for top-level tables
     name: new fields.StringField({ required: true, nullable: false }),
     roll: new fields.StringField({ required: true, nullable: false }),
