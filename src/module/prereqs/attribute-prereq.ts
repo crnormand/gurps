@@ -26,14 +26,14 @@ class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
 
     const attribute1 = actor.system.attributes[this.which]
 
-    if (!attribute1) throw new Error(`AttributePrereq: Specified attribute not found on actor: ${attribute1}`)
+    if (!attribute1) throw new Error(`AttributePrereq: Specified attribute not found on actor: ${this.which}`)
 
     totalValue += attribute1.max
 
     if (this.combinedWith) {
       const attribute2 = actor.system.attributes[this.combinedWith]
 
-      if (!attribute2) throw new Error(`AttributePrereq: Specified attribute not found on actor: ${attribute2}`)
+      if (!attribute2) throw new Error(`AttributePrereq: Specified attribute not found on actor: ${this.combinedWith}`)
 
       totalValue += attribute2.max
     }
