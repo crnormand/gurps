@@ -43,7 +43,14 @@ class MapField<
   ): MapField.InitializedType<InitializedKeyType, InitializedValueType, Options> {
     const initial = super.getInitialValue(data)
 
-    if (this.required && initial === undefined) return new Map()
+    if (initial === undefined) {
+      return this.required ? new Map() : initial
+    }
+
+    if (initial === null) return initial
+
+    // Avoid wrapping an existing Map instance.
+    if (initial instanceof Map) return initial
 
     return new Map(initial)
   }
@@ -59,7 +66,18 @@ class MapField<
     | (() => MapField.InitializedType<InitializedKeyType, InitializedValueType, Options> | null) {
     if (!value) return value as MapField.InitializedType<InitializedKeyType, InitializedValueType, Options>
 
-    if (value instanceof Map) return value
+    // If already a Map, initialize entries in-place to preserve reference.
+    if (value instanceof Map) {
+      const entries = Array.from(value.entries()) as [unknown, unknown][]
+
+      value.clear()
+
+      for (const [entryKey, entryValue] of entries) {
+        value.set(this.key.initialize(entryKey, model, options), this.value.initialize(entryValue, model, options))
+      }
+
+      return value as MapField.InitializedType<InitializedKeyType, InitializedValueType, Options>
+    }
 
     const arr: [InitializedKeyType, InitializedValueType][] = []
 
@@ -107,7 +125,7 @@ class MapField<
         }
       }
 
-      return arr
+      return new Map(arr)
     } else if (type === 'Set') return new Map(value as Set<[AssignmentKeyType, AssignmentValueType]>)
 
     return value instanceof Array ? new Map(value) : new Map([value as [AssignmentKeyType, AssignmentValueType]])
@@ -119,17 +137,28 @@ class MapField<
     value: MapField.InitializedType<InitializedKeyType, InitializedValueType, Options>,
     options?: fields.DataField.CleanOptions
   ): MapField.InitializedType<InitializedKeyType, InitializedValueType, Options> {
-    const arr: [InitializedKeyType, InitializedValueType][] = Array.from(value ?? []).map(([key, value]) => [
-      this.key.clean(key, { ...options, partial: false }),
-      this.value.clean(value, { ...options, partial: false }),
-    ])
+    if (value === undefined || value === null) return value
 
-    const map = new Map(arr)
+    if (!(value instanceof Map)) {
+      console.error('MapField: Expected a Map instance during cleaning, but received:', value)
 
-    return map
+      return value
+    }
+
+    // Clean entries in-place to preserve the Map reference.
+    const entries = Array.from(value.entries())
+
+    value.clear()
+
+    for (const [entryKey, entryValue] of entries) {
+      value.set(
+        this.key.clean(entryKey, { ...options, partial: false }),
+        this.value.clean(entryValue, { ...options, partial: false })
+      )
+    }
+
+    return value
   }
-
-  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
 
@@ -198,11 +227,12 @@ class MapField<
     difference: AnyMutableObject,
     _options?: DataModel.UpdateOptions
   ): void {
-    // return super._updateDiff(source, key, value, difference, options)
     const current = source[key]
 
     value = foundry.utils.applySpecialKeys(value)
 
+    // NOTE: Foundry extends the Array type, providing the `equals` instance property
+    // which compares Arrays itemwise
     if (
       value === current ||
       [...(value as Map<AssignmentKeyType, AssignmentValueType>)]?.equals([
@@ -276,7 +306,6 @@ namespace MapField {
 
   /* ---------------------------------------- */
 
-  // type DefaultOptions = SimpleMerge<fields.ArrayField.DefaultOptions, {}>
   // NOTE: Currently, there is no difference between this and ArrayField.DefaultOptions
   // so we can get away with just passing through the same type.
   export type DefaultOptions = fields.ArrayField.DefaultOptions
