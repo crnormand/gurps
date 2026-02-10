@@ -1,14 +1,16 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
 import { INameable, INameableApplier, nameableSchema } from '@module/data/mixins/nameable.js'
-import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
+import { IPrereqs, IPrereqsBaseData, preparePrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
 import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 import { SkillDefault } from '@module/data/skill-default.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
+type SkillBaseData = INameable.AccesserBaseData & IPrereqsBaseData
+
 class GcsSkillModel
-  extends GcsBaseItemModel<GcsSkillSchema, INameable.AccesserBaseData>
+  extends GcsBaseItemModel<GcsSkillSchema, SkillBaseData>
   implements IFeatures, IPrereqs, INameableApplier, IStudies
 {
   nameWithReplacements: string = ''
@@ -25,7 +27,7 @@ class GcsSkillModel
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'system.prereqs', Feature: 'system.features' },
+      embedded: { Prereq: 'system._prereqs', Feature: 'system.features' },
       type: 'gcsSkill',
       invalidActorTypes: [],
       actions: {},
@@ -37,6 +39,8 @@ class GcsSkillModel
   /* ---------------------------------------- */
 
   override prepareBaseData(): void {
+    preparePrereqs.call(this)
+
     this.fillWithNameableKeys(new Map())
     this.applyNameableKeys()
   }

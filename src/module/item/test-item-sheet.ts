@@ -30,8 +30,6 @@ class TestItemSheet extends HandlebarsApplicationMixin(ItemSheet) {
       systemFields: this.item.system.schema.fields,
     })
 
-    console.log('context', context)
-
     return context
   }
 }

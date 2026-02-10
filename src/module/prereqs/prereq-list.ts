@@ -1,9 +1,14 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.js'
 
 class PrereqList extends BasePrereq<PrereqListSchema> {
+  children: BasePrereq<any>[] = []
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): PrereqListSchema {
     return Object.assign(super.defineSchema(), prereqListSchema())
   }
@@ -16,8 +21,24 @@ class PrereqList extends BasePrereq<PrereqListSchema> {
 
   /* ---------------------------------------- */
 
-  get children(): BasePrereq<any>[] {
-    return Object.values(this.parent?.prereqs).filter(prereq => prereq.containerId === this._id) ?? []
+  override prepareBaseData(): void {
+    this.children = this.parent?._prereqs?.filter(prereq => prereq.containerId === this._id) ?? []
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Create a child directly under this prereq list.
+   * @param type The type of prereq to create.
+   * @param data Additional data to set on the prereq.
+   * @returns The Prereq ModelCollection instance
+   */
+  async createChild({ type, ...data }: { type: PrereqType } & AnyObject) {
+    return BasePrereq.create(
+      // @ts-expect-error - We know this is correct, but the type system doesn't
+      { _id: foundry.utils.randomID(), type, containerId: this._id, ...data },
+      { parent: this.item }
+    )
   }
 
   /* ---------------------------------------- */

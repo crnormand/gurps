@@ -1,12 +1,14 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { INameable, INameableApplier, nameableSchema } from '@module/data/mixins/nameable.js'
-import { IPrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
+import { IPrereqs, IPrereqsBaseData, preparePrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
 import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
+type SpellBaseData = INameable.AccesserBaseData & IPrereqsBaseData
+
 class GcsSpellModel
-  extends GcsBaseItemModel<GcsSpellSchema, INameable.AccesserBaseData>
+  extends GcsBaseItemModel<GcsSpellSchema, SpellBaseData>
   implements IPrereqs, INameableApplier, IStudies
 {
   nameWithReplacements: string = ''
@@ -32,7 +34,7 @@ class GcsSpellModel
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'system.prereqs' },
+      embedded: { Prereq: 'system._prereqs' },
       type: 'gcsSpell',
       invalidActorTypes: [],
       actions: {},
@@ -44,6 +46,8 @@ class GcsSpellModel
   /* ---------------------------------------- */
 
   override prepareBaseData(): void {
+    preparePrereqs.call(this)
+
     this.fillWithNameableKeys(new Map())
     this.applyNameableKeys()
   }
