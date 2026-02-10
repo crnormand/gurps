@@ -22,6 +22,10 @@ class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinitionSchema
 
   /* ---------------------------------------- */
 
+  thresholds: AttributeThreshold[] = []
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): GcsAttributeDefinitionSchema {
     return attributeDefinitionSchema()
   }
@@ -33,10 +37,29 @@ class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinitionSchema
       documentName: 'AttributeDefinition',
       label: '',
       icon: '',
-      embedded: { AttributeThreshold: 'thresholds' },
+      embedded: { AttributeThreshold: '_thresholds' },
     }
   }
 
+  /* ---------------------------------------- */
+  /*   Data Preparation                       */
+  /* ---------------------------------------- */
+
+  /**
+   * Prepare base data. This method is not called automatically; it is the responsibility
+   * of the parent document to ensure pseudo-documents prepare base and derived data.
+   */
+  override prepareBaseData() {
+    if (this._thresholds) {
+      const thresholds = Object.values(this._thresholds)
+
+      foundry.utils.performIntegerSort(thresholds)
+      this.thresholds = thresholds
+    }
+  }
+
+  /* ---------------------------------------- */
+  /*   Instance Methods                       */
   /* ---------------------------------------- */
 
   baseValue(att: GcsAttribute): number {
@@ -155,7 +178,7 @@ const attributeDefinitionSchema = () => {
     // NOTE: Should be displayed as a percentage
     costAdjPerSm: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // TODO: Check if required and nullable even works for array fields
-    thresholds: new fields.TypedObjectField(
+    _thresholds: new fields.TypedObjectField(
       new fields.EmbeddedDataField(AttributeThreshold, { required: true, nullable: false }),
       {
         required: false,

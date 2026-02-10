@@ -64,6 +64,8 @@ class GcsAttribute extends PseudoDocument<GcsAttributeSchema, GcsCharacterModel>
   }
 
   /* ---------------------------------------- */
+  /*   Instance Methods                       */
+  /* ---------------------------------------- */
 
   protected override _initialize(options?: DataModel.InitializeOptions | undefined): void {
     super._initialize(options)
