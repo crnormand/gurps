@@ -31,6 +31,7 @@ import {
 } from '@util/utilities.js'
 
 import { ActionModule } from './action/index.js'
+import { Action } from './action/index.js'
 import { prepareRemoveKey } from './actor/deletion.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
