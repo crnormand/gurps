@@ -1,9 +1,22 @@
-import type { CharacterModel } from '@module/actor/data/character.js'
+import { CharacterModel, GcsCharacterModel } from '@module/actor/data/index.js'
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import type { ActorV1Model } from '@module/actor/legacy/actorv1-interface.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
+import { MapField } from '@module/data/fields/map-field.js'
 import type GurpsActiveEffect from '@module/effects/active-effect.js'
-import type { EquipmentModel, SkillModel, SpellModel, TraitModel } from '@module/item/data/index.js'
+import type {
+  EquipmentModel,
+  GcsEquipmentModel,
+  GcsEquipmentModifierModel,
+  GcsNoteModel,
+  GcsSkillModel,
+  GcsSpellModel,
+  GcsTraitModel,
+  GcsTraitModifierModel,
+  SkillModel,
+  SpellModel,
+  TraitModel,
+} from '@module/item/data/index.js'
 import type { GurpsItemV2 } from '@module/item/gurps-item.js'
 import type { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
 import type { ResourceTrackerManager } from '@module/resource-tracker/resource-tracker-manager.js'
@@ -52,6 +65,7 @@ declare module 'fvtt-types/configuration' {
       character: ActorV1Model
       characterV2: typeof CharacterModel
       enemy: typeof CharacterModel
+      gcsCharacter: typeof GcsCharacterModel
     }
     Item: {
       equipment: Equipment
@@ -62,6 +76,13 @@ declare module 'fvtt-types/configuration' {
       featureV2: typeof TraitModel
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
+      gcsEquipment: typeof GcsEquipmentModel
+      gcsEquipmentModifier: typeof GcsEquipmentModifierModel
+      gcsTrait: typeof GcsTraitModel
+      gcsTraitModifier: typeof GcsTraitModifierModel
+      gcsSkill: typeof GcsSkillModel
+      gcsSpell: typeof GcsSpellModel
+      gcsNote: typeof GcsNoteModel
     }
   }
 
@@ -119,6 +140,16 @@ declare module 'fvtt-types/configuration' {
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
     'gurps.portrait-hp-tinting': boolean
+    'gurps.scripting.globalResolverCache': MapField<
+      foundry.data.fields.StringField<{ required: true; nullable: false }>,
+      MapField<
+        foundry.data.fields.StringField<{ required: true; nullable: false }>,
+        foundry.data.fields.StringField<{ required: true; nullable: false }>,
+        { required: true; nullable: false }
+      >,
+      { required: true; nullable: false }
+    >
+    'gurps.developerMode': boolean
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

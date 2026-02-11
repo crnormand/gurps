@@ -1,4 +1,3 @@
-import type { BaseAction } from '@module/action/base-action.js'
 import type { DamageChat } from '@module/damage/damagechat.js'
 
 export {}
@@ -10,6 +9,7 @@ declare global {
     LastActor: Actor.Implementation | null
     StatusEffect: {
       lookup(id: string): any
+      getAllPostures(): Record<string, any>
     }
     SavedStatusEffects: typeof CONFIG.statusEffects
     StatusEffectStanding: 'standing'
@@ -52,34 +52,51 @@ declare global {
       ranges: Array<{ modifier: number; max: number; penalty: number }>
     }
     Maneuvers: {
-      get(id: string): { icon?: string; label: string; move: string | null } | undefined
+      get(id: string | null): { icon?: string; label: string; move: string | null } | undefined
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
     DamageChat: typeof DamageChat
     resolveDamageRoll: (
       event: Event,
-      actor: GurpsActor,
+      actor: Actor.Implementation | null,
       otf: string,
       overridetxt: string | null,
       isGM: boolean,
       isOtf?: boolean
     ) => Promise<void>
+
+    whisperOtfToOwner: (
+      otf: string,
+      overridetxt: string | null,
+      event: Event,
+      blindcheck: boolean | GurpsAction,
+      actor: Actor.Implementation | null
+    ) => void
+
+    sendOtfMessage: (content: string, blindroll: boolean, users?: User[] | null) => void
+
     SJGProductMappings: Record<string, string>
     CONFIG: {
-      Action: Record<
-        string,
-        {
-          label: string
-          documentClass: typeof BaseAction
-        }
-      >
+      Action: PseudoDocumentConfig<AnyActionClass>
+      Prereq: PseudoDocumentConfig<AnyPrereqClass>
       // HACK: to get rid of later. just used for TypedPseudoDocument.TYPES at the moment
       [key: string]: unknown
     }
   }
 
   var GURPS: GURPSGlobal
+
+  /* ---------------------------------------- */
+
+  type PseudoDocumentConfig<T = any, S = any> = Record<
+    string,
+    {
+      documentClass: T
+      label?: string
+      sheetClass?: S
+    }
+  >
 
   /* ---------------------------------------- */
 

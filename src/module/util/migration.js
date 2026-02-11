@@ -58,7 +58,6 @@ export class Migration {
   }
 
   async migrateBadDamageChatMessages() {
-    // if (this.migrationVersion.isHigherThan(this.currentVersion)) {
     const chatMessages = game.messages.contents.filter(message =>
       message.content.includes('<div class="damage-chat-message">')
     )
@@ -69,7 +68,7 @@ export class Migration {
 
         await message.update({ 'flags.gurps.transfer': JSON.parse(transfer) })
       } else {
-        console.log(`Already migrated: ${message.id}:`, message.flags)
+        console.debug(`Already migrated: ${message.id}:`, message.flags)
       }
     }
     // }

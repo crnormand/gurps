@@ -1,6 +1,6 @@
 import { CharacterModel } from '@module/actor/data/character.js'
 import { GurpsActorV2 } from '@module/actor/gurps-actor.js'
-import { parseItemKey } from '@module/util/object-utils.ts'
+import { parseItemKey } from '@util/object-utils.js'
 
 describe('GurpsActorV2', () => {
   let actor: GurpsActorV2<'characterV2'>

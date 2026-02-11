@@ -18,9 +18,9 @@ import {
   zeroFill,
 } from '@util/utilities.js'
 
-import { multiplyDice } from './damage-utils.ts'
-import { gurpslink } from './gurpslink.ts'
-import { i18nFallback } from './i18nFallback.ts'
+import { multiplyDice } from './damage-utils.js'
+import { gurpslink } from './gurpslink.js'
+import { i18nFallback } from './i18nFallback.js'
 import * as Settings from './miscellaneous-settings.js'
 
 export function findTracker(data, trackerName) {

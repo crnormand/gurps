@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/data-fields.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { parseItemKey } from '@util/object-utils.js'
 import { COSTS_REGEX, parselink } from '@util/parselink.js'
 import {
   arrayToObject,
@@ -23,8 +24,7 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { TokenActions } from '../token-actions.js'
-import { multiplyDice } from '../util/damage-utils.ts'
-import { parseItemKey } from '../util/object-utils.ts'
+import { multiplyDice } from '../util/damage-utils.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
@@ -154,15 +154,34 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (sheet) {
       await sheet.close()
 
-      // @ts-expect-error: ignore
+      // @ts-expect-error - Foundry VTT internal API not fully typed
       delete this.apps[sheet.appId]
 
-      // @ts-expect-error: ignore
+      // @ts-expect-error - Foundry VTT internal API not fully typed
       await this.setFlag('core', 'sheetClass', newSheet)
 
       this.ignoreRender = false
       this.sheet.render(true)
     }
+  }
+
+  /* ---------------------------------------- */
+
+  static override async createDialog(
+    data?: Actor.CreateDialogData,
+    createOptions?: Actor.Database.DialogCreateOptions,
+    options?: Actor.CreateDialogOptions
+  ): Promise<Actor.Stored | null | undefined> {
+    const isDevMode = game.settings?.get(GURPS.SYSTEM_NAME, 'developerMode') ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      // Disable in-development Actor types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = ['character', 'characterV2', 'enemy']
+    }
+
+    return super.createDialog(data, createOptions, options)
   }
 
   /* ---------------------------------------- */
@@ -793,7 +812,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         if (Object.hasOwn(optionalArgs, 'itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
-          // @ts-expect-error: itemPath may not exist
+          // @ts-expect-error - itemPath is checked via hasOwn but not in type definition
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
 
@@ -912,11 +931,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result = {
             name: item.name,
             uuid: item.uuid,
-            // @ts-expect-error: itemid missing in types
+            // @ts-expect-error - actor component property not in Item type
             itemId: item.itemid,
-            // @ts-expect-error: fromItem missing in types
+            // @ts-expect-error - actor component property not in Item type
             fromItem: item.fromItem,
-            // @ts-expect-error: pageref missing in types
+            // @ts-expect-error - actor component property not in Item type
             pageRef: item.pageref,
           }
         } else {
@@ -1618,9 +1637,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
               if (attack.addToQuickRoll) {
                 let comp = this.findByOriginalName(attack.originalName || attack.name)
 
-                // @ts-expect-error: Possible null return
+                // @ts-expect-error - findEquipmentByName may return empty array
                 if (!comp) comp = this.findEquipmentByName(attack.name)[0] ?? null
-                // @ts-expect-error: itemid missing.
+                // @ts-expect-error - itemid property not in Item type definition
                 const img = this.items.get(comp?.itemid)?.img
                 const symbol = game.i18n!.localize(`GURPS.${key}`)
 
@@ -1669,7 +1688,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
                 // @ts-expect-error: Possible null return
                 if (!comp) comp = this.findEquipmentByName(defense.name)[0]
-                // @ts-expect-error: itemid missing.
+                // @ts-expect-error - itemid property not in Item type definition
                 const img = this.items.get(comp?.itemid)?.img
                 const symbol = game.i18n!.localize(`GURPS.${key}`)
                 let otf = `${key.slice(0, 1)}:"${defense.name}"`
@@ -1960,7 +1979,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /* ---------------------------------------- */
 
   async editItem(path: string, obj: any) {
-    if (this.isNewActorType) {
+    if (this.isOfType('characterV2', 'enemy')) {
       const note = foundry.utils.getProperty(this, path) as NoteV1
       const item = note.noteV2
       const array = foundry.utils.deepClone(this.system._source.allNotes)
@@ -2334,7 +2353,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     } as Item.UpdateData
 
     if (item.type === 'equipmentV2') {
-      // @ts-expect-error: wrong type for _id provided by fvtt-types
+      // @ts-expect-error - equipmentV2 system type not fully typed
       update.system!.eqt = { carried: targetCollection === 'system.equipmentV2.carried' }
     }
 
@@ -3463,14 +3482,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       return
     }
 
-    // @ts-expect-error Ensure globalid is set.
+    // @ts-expect-error - globalid property not in base Item type
     if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
     this.ignoreRender = true
 
     // Process Actor Component, Parent (dropped) Item and Child Items.
 
     // 1. This global item was already dropped?
-    // @ts-expect-error: old item type not registering correctly
+    // @ts-expect-error - globalid property not in base Item type
     const found = this.items.find(it => it.system.globalid === data.system.globalid)
 
     if (found) {
@@ -3549,7 +3568,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       await this.updateEmbeddedDocuments('Item', [
         {
           _id: parentItem!.id,
-          // @ts-expect-error: old item type not registering correctly
+          // @ts-expect-error - globalid property not in base Item type
           'system.globalid': dragData.uuid,
           'system.melee': data.system.melee,
           'system.ranged': data.system.ranged,
@@ -4356,14 +4375,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (
       item.isOfType('equipment') &&
       ImportSettings.ignoreQuantityOnImport &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       !!item.system.eqt.originalCount &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       !isNaN(item.system.eqt.originalCount) &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       item.system.eqt.originalCount !== item.modelV1.eqt.count
     ) {
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       item.system.eqt.ignoreImportQty = true
     }
 
@@ -4376,7 +4395,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     await this.internalUpdate({
       [sysKey]: {
-        // @ts-expect-error: equipment system type not registering correctly
+        // @ts-expect-error - dynamic property access via itemSysKey
         ...item.system[item.itemSysKey],
         uuid: actorComp.uuid,
         parentuuid: actorComp.parentuuid,
@@ -4421,7 +4440,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @returns
    */
   private findByOriginalName(name: string, include = false): Item.Implementation | null {
-    // @ts-expect-error: equipment system type not registering correctly
+    // @ts-expect-error - custom item system property not in base type
     let item = this.items.find(i => i.system.originalName === name)
 
     // @ts-expect-error: equipment system type not registering correctly

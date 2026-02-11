@@ -293,7 +293,6 @@ export class GurpsActorModernSheet extends SheetBase {
 
   static async #onAddEffect(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
-    console.log('#onAddEffect')
     new EffectPicker(this.actor).render(true)
   }
 

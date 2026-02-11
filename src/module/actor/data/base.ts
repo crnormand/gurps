@@ -1,22 +1,20 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { AnyObject, EmptyObject } from 'fvtt-types/utils'
 
 type ActorMetadata = Readonly<{
   /** The expected `type` value */
   type: string
-  /** Actor types that this item cannot be placed on */
-  invalidActorTypes: string[]
-  /** Are there any partials to fill in the Details tab of the item? */
-  detailsPartial?: string[]
   /* Record of document names of pseudo-documents and the path to the collection. */
   embedded: Record<string, string>
 }>
 
 /* ---------------------------------------- */
 
-class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> extends TypeDataModel<
-  Schema,
-  Actor.Implementation
-> {
+class BaseActorModel<
+  Schema extends fields.DataSchema = fields.DataSchema,
+  BaseData extends AnyObject = EmptyObject,
+  DerivedData extends AnyObject = EmptyObject,
+> extends TypeDataModel<Schema, Actor.Implementation, BaseData, DerivedData> {
   /* ---------------------------------------- */
 
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.SystemOfType<SubType>
@@ -34,7 +32,6 @@ class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> exten
     return {
       embedded: {},
       type: 'base',
-      invalidActorTypes: [],
     }
   }
 
@@ -48,3 +45,4 @@ class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> exten
 /* ---------------------------------------- */
 
 export { BaseActorModel }
+export type { ActorMetadata }

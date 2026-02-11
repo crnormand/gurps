@@ -5,7 +5,7 @@ import { recurselist, sanitize } from '@util/utilities.js'
 import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'
-import { gurpslink } from '../util/gurpslink.ts'
+import { gurpslink } from '../util/gurpslink.js'
 
 import Maneuvers from './maneuver.js'
 

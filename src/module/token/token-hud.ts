@@ -23,9 +23,23 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
   ): Promise<foundry.applications.hud.BasePlaceableHUD.RenderContext> {
     const context = await super._prepareContext(options)
 
-    const activeEffects = this.object.actor?.effects.contents ?? []
+    const actor = this.object.actor
 
-    const currentManeuverId = this.object.actor?.system.conditions.maneuver
+    if (!actor) {
+      console.error('TokenHUD has no assigned Actor!')
+
+      return context
+    }
+
+    if (!actor.isOfType('character', 'enemy', 'characterV2')) {
+      console.warn('Actor is of unsupported type, cannot get current Maneuver!')
+
+      return context
+    }
+
+    const activeEffects = actor.effects.contents ?? []
+
+    const currentManeuverId = actor.system.conditions.maneuver
 
     const maneuverIcon = currentManeuverId
       ? (GURPS.Maneuvers.get(currentManeuverId)?.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png')
