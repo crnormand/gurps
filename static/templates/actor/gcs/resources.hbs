@@ -3,7 +3,7 @@
     <div class="form-fields">
       {{formInput field value=value localize=true}}
     </div>
-    <label>{{field.label}}</span>
+    <label>{{field.label}}</label>
   </div>
 {{/inline}}
 
@@ -35,7 +35,7 @@
         {{> ".attributeEntry" field=systemFields.hearing value=systemSource.hearing}}
         {{> ".attributeEntry" field=systemFields.tastesmell value=systemSource.tastesmell}}
         {{> ".attributeEntry" field=systemFields.touch value=systemSource.touch}}
-        {{> ".attributeEntry" field=systemFields.basicspeed.fields.value value=systemSource.basicmove.value}}
+        {{> ".attributeEntry" field=systemFields.basicspeed.fields.value value=systemSource.basicspeed.value}}
         {{> ".attributeEntry" field=systemFields.basicmove.fields.value value=systemSource.basicmove.value}}
       </div>
     </div>
