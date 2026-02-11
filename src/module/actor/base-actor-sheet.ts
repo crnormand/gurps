@@ -75,7 +75,9 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
 
       const html = this.element
 
-      html.addEventListener('click', () => GURPS.SetLastActor(this.actor))
+      if (options.isFirstRender) {
+        html.addEventListener('click', () => GURPS.SetLastActor(this.actor))
+      }
     }
 
     /* ---------------------------------------- */
