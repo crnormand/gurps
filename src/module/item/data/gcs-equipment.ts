@@ -121,8 +121,6 @@ const gcsEquipmentSchema = () => {
     level: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     uses: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     equipped: new fields.BooleanField({ required: true, nullable: false, initial: true }),
-    // NOTE: Not used: Use Item.name instead
-    // name: new fields.StringField({required:true,nullable: false}),
     localNotes: new fields.StringField({ required: true, nullable: false }),
     techLevel: new fields.StringField({ required: true, nullable: false }),
     legalityClass: new fields.StringField({ required: true, nullable: false }),
