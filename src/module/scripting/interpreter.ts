@@ -11,7 +11,7 @@ import {
   ScriptEnvironment,
   ScriptErrResult,
   ScriptResult,
-} from './types.ts'
+} from './types.js'
 
 type FuncValue = {
   __kind: 'function'

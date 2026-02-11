@@ -38,7 +38,7 @@ import {
   WeaponShotDurationBonus,
   WeaponReloadTimeBonus,
   WeaponSwitch,
-} from './weapon-bonus.ts'
+} from './weapon-bonus.js'
 
 /* ---------------------------------------- */
 
