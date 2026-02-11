@@ -5,7 +5,6 @@ import type {
   ActorSheetV2RenderContext,
   HandlebarsTemplatePart,
   HeaderControlsEntry,
-  HandlebarsActorSheetV2Constructor,
 } from '@gurps-types/foundry/actor-sheet-v2.js'
 import { Application } from '@gurps-types/foundry/application.js'
 import { getGame, getUser, isHTMLElement } from '@module/util/guards.js'
@@ -14,6 +13,7 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
 import GurpsWiring from '../../gurps-wiring.js'
 import { ImportSettings } from '../../importer/index.js'
 import { ActorImporter } from '../actor-importer.js'
+import { GurpsBaseActorSheet } from '../base-sheet.ts'
 import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.js'
 import MoveModeEditor from '../move-mode-editor.js'
@@ -53,14 +53,7 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
 
-type GurpsActor = GurpsActorV2<Actor.SubType>
-
-// See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
-const SheetBase = foundry.applications.api.HandlebarsApplicationMixin(
-  foundry.applications.sheets.ActorSheetV2
-) as unknown as HandlebarsActorSheetV2Constructor<GurpsActor>
-
-export class GurpsActorModernSheet extends SheetBase {
+export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'characterV2' | 'enemy'>() {
   static override DEFAULT_OPTIONS: DeepPartial<ActorSheetV2Configuration> = {
     classes: ['gurps', 'sheet', 'actor', 'modern-sheet'],
     tag: 'form',
