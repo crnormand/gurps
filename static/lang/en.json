@@ -39,7 +39,7 @@
             },
             "ST": {
               "import": {
-                "label": "Strenght (ST)"
+                "label": "Strength (ST)"
               }
             },
             "WILL": {
@@ -116,7 +116,7 @@
               "label": "Created On"
             },
             "eyes": {
-              "label": "Eeys"
+              "label": "Eyes"
             },
             "gender": {
               "label": "Gender"

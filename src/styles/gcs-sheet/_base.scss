@@ -87,13 +87,13 @@ body {
       > :is(input, select, textarea) {
         width: 100%;
         box-sizing: border-box;
-        height: var(--gcs-input-heigt);
+        height: var(--gcs-input-height);
         border: none;
-        border-bottom: 0.1rem solid var(--gcs-color-border-input);
+        border-bottom: 0.1rem solid var(--gcs-color-header-bg);
         border-radius: 0;
 
         background-color: var(--gcs-color-input-bg);
-        color: var(--gcs-color-surface-fg);
+        color: var(--gcs-color-input-fg);
       }
     }
   }
