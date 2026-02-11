@@ -74,8 +74,10 @@ namespace INameable {
   }
 
   export function apply(this: INameableApplier, text: string): string {
-    for (const [key, value] of Object.entries(this.nameableReplacements)) {
-      text = text.replaceAll(`@${key}@`, value)
+    if (!text.includes('@')) return text
+
+    for (const key of this.nameableReplacements.keys()) {
+      if (text.includes(`@${key}@`)) text = text.replaceAll(`@${key}@`, this.nameableReplacements.get(key) ?? key)
     }
 
     return text
