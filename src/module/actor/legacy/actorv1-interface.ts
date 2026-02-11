@@ -213,7 +213,7 @@ interface ActorV1Model {
     hair: string
     skin: string
     hand: string
-    sizemod: string
+    sizemod?: string
     techlevel: string
     createdon: string
     modifiedon: string
@@ -254,6 +254,8 @@ interface ActorV1Model {
     qnotes?: string
     bodyplan: string
     tracker: Record<string, TrackerInstance>
+    importname?: string
+    importpath?: string
   }
   conditions: {
     reeling: boolean

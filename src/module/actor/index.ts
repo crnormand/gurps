@@ -11,8 +11,13 @@ import {
 } from './actor-sheet.js'
 import * as dataModels from './data/index.js'
 import { GurpsActorV2 } from './gurps-actor.js'
+import { migrateActorSystem } from './migrate.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
+
+export interface ActorModule extends GurpsModule {
+  migrateActorSystem: typeof migrateActorSystem
+}
 
 function init() {
   console.log('GURPS | Initializing GURPS Actor module.')
@@ -66,6 +71,7 @@ function init() {
   })
 }
 
-export const Actor: GurpsModule = {
+export const Actor: ActorModule = {
   init,
+  migrateActorSystem,
 }
