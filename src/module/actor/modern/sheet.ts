@@ -1,19 +1,12 @@
-import type {
-  DeepPartial,
-  ActorSheetV2Configuration,
-  ActorSheetV2RenderOptions,
-  ActorSheetV2RenderContext,
-  HandlebarsTemplatePart,
-  HeaderControlsEntry,
-} from '@gurps-types/foundry/actor-sheet-v2.js'
 import { Application } from '@gurps-types/foundry/application.js'
 import { getGame, getUser, isHTMLElement } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { DeepPartial } from 'fvtt-types/utils'
 
 import GurpsWiring from '../../gurps-wiring.js'
 import { ImportSettings } from '../../importer/index.js'
 import { ActorImporter } from '../actor-importer.js'
-import { GurpsBaseActorSheet } from '../base-sheet.ts'
+import { GurpsBaseActorSheet } from '../base-actor-sheet.ts'
 import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.js'
 import MoveModeEditor from '../move-mode-editor.js'
@@ -26,6 +19,8 @@ import { entityConfigurations, modifierConfigurations } from './entity-config.js
 import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.js'
 import { isPostureOrManeuver } from './utils/effect.js'
 
+import ActorSheet = gurps.applications.ActorSheet
+
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
 
@@ -37,7 +32,7 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
   }, 0)
 }
 
-export interface ModernSheetContext extends ActorSheetV2RenderContext {
+export interface ModernSheetContext extends ActorSheet.RenderContext {
   system: Actor.SystemOfType<'character' | 'characterV2'>
   effects: ActiveEffect[]
   skillCount: number
@@ -51,10 +46,10 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
   tab?: Application.Tab
 }
 
-type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
+type RenderOptions = ActorSheet.RenderOptions & { isFirstRender: boolean }
 
 export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'characterV2' | 'enemy'>() {
-  static override DEFAULT_OPTIONS: DeepPartial<ActorSheetV2Configuration> = {
+  static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
     classes: ['gurps', 'sheet', 'actor', 'modern-sheet'],
     tag: 'form',
     position: {
@@ -80,7 +75,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
 
   /* ---------------------------------------- */
 
-  static override PARTS: Record<string, HandlebarsTemplatePart> = {
+  static override PARTS: Record<string, gurps.applications.handlebars.TemplatePart> = {
     header: {
       template: 'systems/gurps/templates/actor/modern/header.hbs',
     },
@@ -147,7 +142,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
   protected override async _preparePartContext(
     partId: string,
     context: ModernSheetContext,
-    options: DeepPartial<ActorSheetV2RenderOptions>
+    options: DeepPartial<ActorSheet.RenderOptions>
   ): Promise<ModernSheetContext> {
     await super._preparePartContext(partId, context, options)
 
@@ -156,7 +151,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
     return context
   }
 
-  override _getHeaderControls(): HeaderControlsEntry[] {
+  override _getHeaderControls(): gurps.applications.handlebars.ControlsEntry[] {
     const controls = super._getHeaderControls()
 
     const blockImport = ImportSettings.onlyTrustedUsersCanImport
@@ -172,7 +167,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
     return controls
   }
 
-  protected override async _onRender(context: ActorSheetV2RenderContext, options: RenderOptions): Promise<void> {
+  protected override async _onRender(context: ActorSheet.RenderContext, options: RenderOptions): Promise<void> {
     super._onRender(context, options)
 
     // Add character v1/v2 type guard
