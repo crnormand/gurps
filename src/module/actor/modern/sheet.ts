@@ -1,13 +1,11 @@
 import { Application } from '@gurps-types/foundry/application.js'
-import { getGame, getUser } from '@module/util/guards.js'
+import { getGame, isHTMLElement } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
 import GurpsWiring from '../../gurps-wiring.js'
-import { ImportSettings } from '../../importer/index.js'
-import { ActorImporter } from '../actor-importer.js'
 import { GurpsBaseActorSheet } from '../base-actor-sheet.ts'
 import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.js'
@@ -67,8 +65,7 @@ type RenderOptions = ActorSheet.RenderOptions & { isFirstRender: boolean }
 
 export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'characterV2' | 'enemy'>() {
   static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
-    classes: ['gurps', 'sheet', 'actor', 'modern-sheet'],
-    tag: 'form',
+    classes: ['modern-sheet'],
     position: {
       width: 768,
       height: 816,
@@ -84,7 +81,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
       resetFp: GurpsActorModernSheet.#onResetResource,
       addEffect: GurpsActorModernSheet.#onAddEffect,
       deleteEffect: GurpsActorModernSheet.#onDeleteEffect,
-      importActor: GurpsActorModernSheet.#onImportActor,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
     },
@@ -169,22 +165,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
     if (context.tabs && partId in context.tabs) context.tab = context.tabs[partId]
 
     return context
-  }
-
-  override _getHeaderControls(): gurps.applications.handlebars.ControlsEntry[] {
-    const controls = super._getHeaderControls()
-
-    const blockImport = ImportSettings.onlyTrustedUsersCanImport
-
-    if (!blockImport || getUser().isTrusted) {
-      controls.unshift({
-        icon: 'fas fa-file-import',
-        label: 'Import',
-        action: 'importActor',
-      })
-    }
-
-    return controls
   }
 
   protected override async _onRender(context: ActorSheet.RenderContext, options: RenderOptions): Promise<void> {
@@ -320,16 +300,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
 
     if (confirmed) {
       await effect.delete()
-    }
-  }
-
-  static async #onImportActor(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
-    event.preventDefault()
-
-    if (this.actor.isOfType('characterV2')) {
-      await GURPS.modules.Importer.actorImporterPrompt(this.actor)
-    } else {
-      return new ActorImporter(this.actor).importActor()
     }
   }
 
