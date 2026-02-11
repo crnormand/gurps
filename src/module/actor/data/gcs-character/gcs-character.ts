@@ -151,7 +151,7 @@ const gcsCharacterSchema = () => {
     }),
     createdOn: new fields.StringField({ required: true, nullable: false }),
     modifiedOn: new fields.StringField({ required: true, nullable: false }),
-    // Arbitrary data field
+    // NOTE: Arbitrary data field
     thirdParty: new fields.ObjectField(),
   }
 }

@@ -12,14 +12,6 @@ class SkillDefault extends DataModel<SkillDefaultSchema> {
 
 const skillDefaultSchema = () => {
   return {
-    // DefaultType    string          `json:"type"`
-    // Name           string          `json:"name,omitzero"`
-    // Specialization string          `json:"specialization,omitzero"`
-    // Modifier       fxp.Int         `json:"modifier,omitzero"`
-    // Level          fxp.Int         `json:"level,omitzero"`
-    // AdjLevel       fxp.Int         `json:"adjusted_level,omitzero"`
-    // Points         fxp.Int         `json:"points,omitzero"`
-    // WhenTL         criteria.Number `json:"when_tl,omitzero"`
     type: new fields.StringField({ required: true, nullable: false }),
     name: new fields.StringField({ required: true, nullable: false }),
     specialization: new fields.StringField({ required: true, nullable: false }),

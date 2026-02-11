@@ -261,7 +261,7 @@ const gcsBaseItemSchema = () => {
     // Include containable functionality
     ...containableSchema(),
 
-    tid: new fields.DocumentIdField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
+    tid: new fields.StringField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
     // NOTE: Not currently used in GGA, just for GCS parity
     source: new fields.SchemaField(
       {

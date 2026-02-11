@@ -5,6 +5,8 @@ import { ScriptAttribute } from './attribute.js'
 class ScriptEntity {
   #character: GcsCharacterModel
 
+  // NOTE: This is the full list of fields which this adapter should provide,
+  // though some of the types are incorrect and will need to be updated as the implementation progresses.
   // exists: boolean
   // playerName: string
   // name: string

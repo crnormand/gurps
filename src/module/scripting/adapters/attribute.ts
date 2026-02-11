@@ -4,14 +4,6 @@ import { SelfProvider } from '../types.js'
 class ScriptAttribute {
   #attribute: GcsAttribute
 
-  // id: string
-  // kind: string
-  // name: string
-  // fullName: string
-  // maximum: number
-  // isDecimal: boolean
-  // valueOf: number
-
   static newProvider(attribute: GcsAttribute): SelfProvider<ScriptAttribute> {
     return {
       id: '$' + attribute.id,
