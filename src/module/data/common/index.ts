@@ -1,2 +1,2 @@
-export * from './length.ts'
-export * from './weight.ts'
+export * from './length.js'
+export * from './weight.js'

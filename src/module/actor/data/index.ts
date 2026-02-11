@@ -1,3 +1,3 @@
-export { CharacterModel } from './character.ts'
-export { GcsCharacterModel } from './gcs-character/gcs-character.ts'
-export { GcsLootModel } from './gcs-loot.ts'
+export { CharacterModel } from './character.js'
+export { GcsCharacterModel } from './gcs-character/gcs-character.js'
+export { GcsLootModel } from './gcs-loot.js'
