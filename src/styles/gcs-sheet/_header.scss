@@ -1,0 +1,35 @@
+.gcs-header {
+  display: grid;
+  grid-gap: var(--gcs-section-gap);
+
+  grid-template-areas:
+    'portrait identity miscellaneous points'
+    'portrait description description points';
+
+  .gcs-portrait {
+    grid-area: portrait;
+
+    img {
+      height: 100%;
+      aspect-ratio: 1 / 1;
+
+      object-fit: contain;
+    }
+  }
+
+  .gcs-identity {
+    grid-area: identity;
+  }
+
+  .gcs-description {
+    grid-area: description;
+  }
+
+  .gcs-miscellaneous {
+    grid-area: miscellaneous;
+  }
+
+  .gcs-point-totals {
+    grid-area: points;
+  }
+}

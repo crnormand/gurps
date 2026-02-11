@@ -1,0 +1,58 @@
+@mixin css-variables {
+  /* Layout */
+
+  /* GCS automatically chooses one of these two colours
+   * depending on the background colour of the sheet,
+   * so we're just using these everywhere.
+   */
+  --color-dark-fg: #101010;
+  --color-light-fg: #f0f0f0;
+
+  --gcs-input-heigt: 1rem;
+  --gcs-input-label-width: 4rem;
+  --gcs-section-gap: 0.1rem;
+
+  /* Fonts */
+  --gcs-font-size-header: 1rem;
+  --gcs-font-size-content: 0.875rem;
+
+  /* Color */
+  --gcs-color-surface-bg: #e8e8e8;
+  --gcs-color-surface-fg: var(--color-dark-fg);
+
+  --gcs-color-header-bg: #505050;
+  --gcs-color-header-fg: var(--color-light-fg);
+
+  --gcs-color-banding-bg: #e8e8d8;
+  --gcs-color-banding-fg: var(--color-dark-fg);
+
+  --gcs-color-focus-bg: #006199;
+  --gcs-color-focus-fg: var(--color-light-fg);
+
+  --gcs-color-tooltip-bg: #fff4c6;
+  --gcs-color-tooltip-fg: var(--color-dark-fg);
+
+  --gcs-color-input-bg: #ffffff;
+  --gcs-color-tooltip-fg: var(--color-dark-fg);
+}
+
+@mixin css-variables-dark {
+  /* Color */
+  --gcs-color-surface-bg: #282828;
+  --gcs-color-surface-fg: var(--color-light-fg);
+
+  --gcs-color-header-bg: #404040;
+  --gcs-color-header-fg: var(--color-light-fg);
+
+  --gcs-color-banding-bg: #282820;
+  --gcs-color-banding-fg: var(--color-light-fg);
+
+  --gcs-color-focus-bg: #0080cc;
+  --gcs-color-focus-fg: var(--color-light-fg);
+
+  --gcs-color-tooltip-bg: #fff299;
+  --gcs-color-tooltip-fg: var(--color-light-fg);
+
+  --gcs-color-input-bg: #000000;
+  --gcs-color-tooltip-fg: var(--color-light-fg);
+}
