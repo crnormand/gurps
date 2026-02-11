@@ -1,0 +1,48 @@
+.gcs-resources {
+  display: grid;
+  grid-gap: var(--gcs-section-gap);
+
+  grid-template-areas:
+    'attributes body encumbrance'
+    'attributes body moving';
+
+  .gcs-attributes {
+    grid-area: attributes;
+
+    display: grid;
+    grid-gap: 0.1rem;
+
+    grid-template-areas:
+      'primary secondary'
+      'damage secondary'
+      'pools pools';
+
+    .gcs-primary-attributes {
+      grid-area: primary;
+    }
+
+    .gcs-secondary-attributes {
+      grid-area: secondary;
+    }
+
+    .gcs-basic-damage {
+      grid-area: damage;
+    }
+
+    .gcs-pool-attributes {
+      grid-area: pools;
+    }
+  }
+
+  .gcs-body {
+    grid-area: body;
+  }
+
+  .gcs-encumbrance {
+    grid-area: encumbrance;
+  }
+
+  .gcs-moving {
+    grid-area: moving;
+  }
+}

@@ -8,6 +8,8 @@ declare global {
     SYSTEM_NAME: 'gurps'
     modules: Record<string, GurpsModule>
     LastActor: Actor.Implementation | null
+
+    SetLastActor(actor: Actor.Implementation, token?: TokenDocument.Implementation): void
     StatusEffect: {
       lookup(id: string): any
     }

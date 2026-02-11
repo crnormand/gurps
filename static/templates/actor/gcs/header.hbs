@@ -1,0 +1,69 @@
+<!-- Just a reversed form-group element with more limited options -->
+{{#*inline ".pointTotal"}}
+  <div class="gcs-point-total form-group">
+    <div class="form-fields">
+      {{formInput field value=value localize=true}}
+    </div>
+    <label>{{field.label}}</label>
+  </div>
+{{/inline}}
+
+<section class="gcs-header">
+  <div class="gcs-portrait gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.portrait"}}</div>
+      <img
+        src='{{actor.img}}'
+        data-action='editImage'
+      />
+  </div>
+  <div class="gcs-identity gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.identity"}}</div>
+    <div class="gcs-field-rows gcs-section-content">
+      {{formField fields.name value=actor.name localize=true}}
+      {{formField systemFields.traits.fields.title value=systemSource.traits.title localize=true}}
+    </div>
+  </div>
+  <div class="gcs-miscellaneous gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.miscellaneous"}}</div>
+    <div class="gcs-field-rows gcs-section-content">
+      {{formField systemFields.traits.fields.createdon value=systemSource.traits.createdon localize=true}}
+      {{formField systemFields.traits.fields.modifiedon value=systemSource.traits.modifiedon localize=true}}
+    </div>
+  </div>
+  <div class="gcs-description gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.description"}}</div>
+    <div class="gcs-field-columns gcs-section-content">
+      <div class="gcs-field-rows">
+        {{formField systemFields.traits.fields.gender value=systemSource.traits.gender localize=true}}
+        {{formField systemFields.traits.fields.age value=systemSource.traits.age localize=true}}
+        {{formField systemFields.traits.fields.birthday value=systemSource.traits.birthday localize=true}}
+        {{formField systemFields.traits.fields.religion value=systemSource.traits.religion localize=true}}
+      </div>
+      <div class="gcs-field-rows">
+        {{formField systemFields.traits.fields.height value=systemSource.traits.height localize=true}}
+        {{formField systemFields.traits.fields.weight value=systemSource.traits.weight localize=true}}
+        {{formField systemFields.traits.fields.sizemod value=systemSource.traits.sizemod localize=true}}
+        {{formField systemFields.traits.fields.techlevel value=systemSource.traits.techlevel localize=true}}
+      </div>
+      <div class="gcs-field-rows">
+        {{formField systemFields.traits.fields.hair value=systemSource.traits.hair localize=true}}
+        {{formField systemFields.traits.fields.eyes value=systemSource.traits.eyes localize=true}}
+        {{formField systemFields.traits.fields.skin value=systemSource.traits.skin localize=true}}
+        {{formField systemFields.traits.fields.hand value=systemSource.traits.hand localize=true}}
+      </div>
+    </div>
+  </div>
+  <div class="gcs-point-totals gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.pointTotals" total=systemSource.totalpoints.total}}</div>
+    <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+      {{> ".pointTotal" field=systemFields.totalpoints.fields.unspent value=systemSource.totalpoints.unspent}}
+      {{> ".pointTotal" field=systemFields.totalpoints.fields.race value=systemSource.totalpoints.race}}
+      {{> ".pointTotal" field=systemFields.totalpoints.fields.attributes value=systemSource.totalpoints.attributes}}
+      {{> ".pointTotal" field=systemFields.totalpoints.fields.ads value=systemSource.totalpoints.ads}}
+      {{> ".pointTotal" field=systemFields.totalpoints.fields.disads value=systemSource.totalpoints.disads}}
+      {{> ".pointTotal" field=systemFields.totalpoints.fields.quirks value=systemSource.totalpoints.quirks}}
+      {{> ".pointTotal" field=systemFields.totalpoints.fields.skills value=systemSource.totalpoints.skills}}
+      {{> ".pointTotal" field=systemFields.totalpoints.fields.spells value=systemSource.totalpoints.spells}}
+    </div>
+  </div>
+</section>

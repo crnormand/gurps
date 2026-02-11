@@ -6,11 +6,166 @@
     "acc": "Acc",
     "accForWeapon": "Acc for {weapon}",
     "active": "Active",
-    "activeEffects": "Active Effects",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
-    "actor": {
-      "setting": {}
+    "Actor": {
+      "characterV2": {
+        "FIELDS": {
+          "attributes": {
+            "DX": {
+              "import": {
+                "label": "Dexterity (DX)"
+              }
+            },
+            "HT": {
+              "import": {
+                "label": "Health (HT)"
+              }
+            },
+            "IQ": {
+              "import": {
+                "label": "Intelligence (IQ)"
+              }
+            },
+            "PER": {
+              "import": {
+                "label": "Perception (Per)"
+              }
+            },
+            "QN": {
+              "import": {
+                "label": "Quintessence (QN)"
+              }
+            },
+            "ST": {
+              "import": {
+                "label": "Strength (ST)"
+              }
+            },
+            "WILL": {
+              "import": {
+                "label": "Will"
+              }
+            }
+          },
+          "basicmove": {
+            "value": {
+              "label": "Basic Move"
+            }
+          },
+          "basicspeed": {
+            "value": {
+              "label": "Basic Speed"
+            }
+          },
+          "frightcheck": {
+            "label": "Fright Check"
+          },
+          "hearing": {
+            "label": "Hearing"
+          },
+          "swing": {
+            "label": "Basic Swing"
+          },
+          "tastesmell": {
+            "label": "Taste & Smell"
+          },
+          "thrust": {
+            "label": "Basic Thrust"
+          },
+          "totalpoints": {
+            "ads": {
+              "label": "Advantages"
+            },
+            "attributes": {
+              "label": "Attributes"
+            },
+            "disads": {
+              "label": "Disadvantages"
+            },
+            "quirks": {
+              "label": "Quirks"
+            },
+            "race": {
+              "label": "Ancestry"
+            },
+            "skills": {
+              "label": "Skills"
+            },
+            "spells": {
+              "label": "Spells"
+            },
+            "total": {
+              "label": "Total"
+            },
+            "unspent": {
+              "label": "Unspent"
+            }
+          },
+          "touch": {
+            "label": "Touch"
+          },
+          "traits": {
+            "age": {
+              "label": "Age"
+            },
+            "birthday": {
+              "label": "Birthday"
+            },
+            "createdon": {
+              "label": "Created On"
+            },
+            "eyes": {
+              "label": "Eyes"
+            },
+            "gender": {
+              "label": "Gender"
+            },
+            "hair": {
+              "label": "Hair"
+            },
+            "hand": {
+              "label": "Hand"
+            },
+            "height": {
+              "label": "Height"
+            },
+            "modifiedon": {
+              "label": "Modified On"
+            },
+            "player": {
+              "label": "Player"
+            },
+            "race": {
+              "label": "Ancestry"
+            },
+            "religion": {
+              "label": "Religion"
+            },
+            "sizemod": {
+              "label": "SM"
+            },
+            "skin": {
+              "label": "Skin"
+            },
+            "techlevel": {
+              "label": "TL"
+            },
+            "title": {
+              "label": "Title"
+            },
+            "weight": {
+              "label": "Weight"
+            }
+          },
+          "vision": {
+            "label": "Vision"
+          }
+        }
+      },
+      "gcsSheet": {
+        "portrait": "Portrait"
+      }
     },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",
@@ -1377,6 +1532,19 @@
     "sheet": {
       "gcs": {
         "copyright": "GCS is copyrighted 1998-2024 by Richard A. Wilkes. All rights reserved."
+      },
+      "gcsActorSheet": {
+        "basicDamage": "Basic Damage",
+        "description": "Description",
+        "encumbrance": "Encumbrance, Move & Dodge",
+        "identity": "Identity",
+        "miscellaneous": "Miscellaneous",
+        "moving": "Lifting & Moving Things",
+        "pointTotals": "{total} Points",
+        "poolAttributes": "Point Pool",
+        "portrait": "Portrait",
+        "primaryAttributes": "Primary Attributes",
+        "secondaryAttributes": "Secondary Attributes"
       },
       "personal": {
         "created": "Created",
