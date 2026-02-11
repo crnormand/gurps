@@ -31,6 +31,12 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
 
     /* ---------------------------------------- */
 
+    static systemPath(part: string) {
+      return `systems/gurps/templates/actor/${part}`
+    }
+
+    /* ---------------------------------------- */
+
     override _getHeaderControls(): gurps.applications.handlebars.ControlsEntry[] {
       const controls = super._getHeaderControls()
 
@@ -57,6 +63,25 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
       } else {
         return new ActorImporter(this.actor).importActor()
       }
+    }
+
+    /* ---------------------------------------- */
+
+    protected override async _onRender(
+      context: ActorSheet.RenderContext,
+      options: ActorSheet.RenderOptions
+    ): Promise<void> {
+      super._onRender(context, options)
+
+      const html = this.element
+
+      html.addEventListener('click', () => GURPS.SetLastActor(this.actor))
+    }
+
+    /* ---------------------------------------- */
+
+    override get title(): string {
+      return this.actor.name
     }
   }
 

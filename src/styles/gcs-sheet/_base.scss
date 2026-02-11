@@ -1,0 +1,133 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+/* ---------------------------------------- */
+
+body {
+  @include css-variables;
+
+  &.theme-dark {
+    @include css-variables-dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:not(.theme-light) {
+      @include css-variables-dark;
+    }
+  }
+}
+
+/* ---------------------------------------- */
+
+.application.gcs-sheet {
+  .window-header {
+    @include gcs-header;
+    margin-bottom: var(--gcs-section-gap);
+  }
+
+  .window-content {
+    font-family: 'Roboto', sans-serif;
+    gap: var(--gcs-section-gap);
+  }
+}
+
+.gcs-section {
+  display: grid;
+  grid-template-rows: 0fr auto;
+  border: 0.1rem solid var(--gcs-color-header-bg);
+
+  background-color: var(--gcs-color-surface-bg);
+  color: var(--gcs-color-surface-fg);
+
+  .gcs-section-header {
+    @include gcs-header;
+  }
+
+  .gcs-section-content {
+    padding: 0.5rem;
+    font-size: var(--gcs-font-size-content);
+
+    background-color: var(--gcs-color-surface-bg);
+    color: var(--gcs-color-surface-fg);
+  }
+
+  .gcs-field-columns {
+    display: flex;
+    gap: 0.5rem;
+    align-items: start;
+  }
+
+  .gcs-field-rows {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    grid-auto-rows: auto;
+    column-gap: 0.5rem;
+    row-gap: 0.35rem;
+
+    /* make all columns same overall width so field widths match across columns */
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .form-group {
+    grid-column: 1 / -1; /* span both columns */
+    display: contents; /* but its children participate in the grid */
+
+    > label {
+      grid-column: 1;
+      justify-self: end;
+      white-space: nowrap;
+    }
+
+    > .form-fields {
+      grid-column: 2;
+      min-width: 0;
+
+      /* make the actual control fill the field cell */
+      > :is(input, select, textarea) {
+        width: 100%;
+        box-sizing: border-box;
+        height: var(--gcs-input-heigt);
+        border: none;
+        border-bottom: 0.1rem solid var(--gcs-color-border-input);
+        border-radius: 0;
+
+        background-color: var(--gcs-color-input-bg);
+        color: var(--gcs-color-surface-fg);
+      }
+    }
+  }
+
+  .gcs-field-rows-reverse {
+    grid-template-columns: minmax(0, 1fr) max-content;
+
+    .form-group {
+      > .form-fields {
+        grid-column: 1;
+      }
+
+      > label {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  }
+
+  .gcs-table {
+    margin: 0;
+
+    thead {
+      @include gcs-header;
+    }
+
+    tbody {
+      background-color: var(--gcs-color-surface-bg);
+      color: var(--gcs-color-surface-fg);
+
+      tr:nth-child(even) {
+        background-color: var(--gcs-color-banding-bg);
+        color: var(--gcs-color-banding-fg);
+      }
+    }
+  }
+}
