@@ -65,7 +65,7 @@ class ScriptResolver {
 
     const result = this.resolveScript(actor, selfProvider, script)
 
-    value = Weight.from(script, defaultUnits)
+    value = Weight.from(result, defaultUnits)
 
     if (value === null) {
       console.error(`Unable to resolve script result to a number, result: "${result}", script: "${script}"`)
