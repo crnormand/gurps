@@ -8,7 +8,7 @@
   --color-dark-fg: #101010;
   --color-light-fg: #f0f0f0;
 
-  --gcs-input-heigt: 1rem;
+  --gcs-input-height: 1rem;
   --gcs-input-label-width: 4rem;
   --gcs-section-gap: 0.1rem;
 
@@ -33,7 +33,7 @@
   --gcs-color-tooltip-fg: var(--color-dark-fg);
 
   --gcs-color-input-bg: #ffffff;
-  --gcs-color-tooltip-fg: var(--color-dark-fg);
+  --gcs-color-input-fg: var(--color-dark-fg);
 }
 
 @mixin css-variables-dark {
