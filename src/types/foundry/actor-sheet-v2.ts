@@ -113,4 +113,5 @@ export declare abstract class HandlebarsActorSheetV2Instance<TDocument extends A
   protected _onRender(context: ActorSheetV2RenderContext, options: ActorSheetV2RenderOptions): Promise<void>
   protected _prepareTabs(group: string): Record<string, Application.Tab>
   _getHeaderControls(): HeaderControlsEntry[]
+  get title(): string
 }

@@ -1,0 +1,12 @@
+@mixin gcs-header {
+  padding: 0.25rem;
+  padding-bottom: 0.3rem;
+
+  background-color: var(--gcs-color-header-bg);
+  color: var(--gcs-color-header-fg);
+  font-variant: all-small-caps;
+  font-size: var(--gcs-font-size-header);
+  font-weight: 600;
+  text-align: center;
+  border: none;
+}

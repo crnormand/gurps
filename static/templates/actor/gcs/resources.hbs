@@ -1,0 +1,83 @@
+{{#*inline ".attributeEntry"}}
+  <div class="form-group form-group-inverse">
+    <div class="form-fields">
+      {{formInput field value=value localize=true}}
+    </div>
+    <label>{{field.label}}</span>
+  </div>
+{{/inline}}
+
+<section class="gcs-resources">
+  <div class="gcs-attributes">
+    <div class="gcs-primary-attributes gcs-section">
+      <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.primaryAttributes"}}</div>
+      <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+        {{> ".attributeEntry" field=systemFields.attributes.fields.ST.fields.import value=systemSource.attributes.ST.import}}
+        {{> ".attributeEntry" field=systemFields.attributes.fields.DX.fields.import value=systemSource.attributes.DX.import}}
+        {{> ".attributeEntry" field=systemFields.attributes.fields.IQ.fields.import value=systemSource.attributes.IQ.import}}
+        {{> ".attributeEntry" field=systemFields.attributes.fields.HT.fields.import value=systemSource.attributes.HT.import}}
+      </div>
+    </div>
+    <div class="gcs-basic-damage gcs-section">
+      <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.basicDamage"}}</div>
+      <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+        {{> ".attributeEntry" field=systemFields.thrust value=systemSource.thrust}}
+        {{> ".attributeEntry" field=systemFields.swing value=systemSource.swing}}
+      </div>
+    </div>
+    <div class="gcs-secondary-attributes gcs-section">
+      <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.secondaryAttributes"}}</div>
+      <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+        {{> ".attributeEntry" field=systemFields.attributes.fields.WILL.fields.import value=systemSource.attributes.WILL.import}}
+        {{> ".attributeEntry" field=systemFields.frightcheck value=systemSource.frightcheck}}
+        {{> ".attributeEntry" field=systemFields.attributes.fields.PER.fields.import value=systemSource.attributes.PER.import}}
+        {{> ".attributeEntry" field=systemFields.vision value=systemSource.vision}}
+        {{> ".attributeEntry" field=systemFields.hearing value=systemSource.hearing}}
+        {{> ".attributeEntry" field=systemFields.tastesmell value=systemSource.tastesmell}}
+        {{> ".attributeEntry" field=systemFields.touch value=systemSource.touch}}
+        {{> ".attributeEntry" field=systemFields.basicspeed.fields.value value=systemSource.basicmove.value}}
+        {{> ".attributeEntry" field=systemFields.basicmove.fields.value value=systemSource.basicmove.value}}
+      </div>
+    </div>
+    <div class="gcs-pool-attributes gcs-section">
+      <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.poolAttributes"}}</div>
+      <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+        {{> ".attributeEntry" field=systemFields.attributes.fields.WILL.fields.import value=systemSource.attributes.WILL.import}}
+        {{> ".attributeEntry" field=systemFields.frightcheck value=systemSource.frightcheck}}
+      </div>
+    </div>
+  </div>
+  <div class="gcs-body gcs-section">
+    <div class="gcs-section-header">{{ systemSource.additionalresources.bodyplan }}</div>
+    <table class="gcs-table  gcs-section-content">
+      <thead>
+        <tr>
+          <th>Roll</th>
+          <th>Location</th>
+          <th>Penalty</th>
+          <th>DR</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each systemSource.hitlocationsV2 as |location|}}
+          <tr>
+            <td>{{location.rollText}}</td>
+            <td>{{location.where}}</td>
+            <td>{{location.penalty}}</td>
+            <td>{{location._dr}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <div class="gcs-encumbrance gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.encumbrance"}}</div>
+    <div class="gcs-field-rows  gcs-section-content">
+    </div>
+  </div>
+  <div class="gcs-moving gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.moving"}}</div>
+    <div class="gcs-field-rows  gcs-section-content">
+    </div>
+  </div>
+</section>

@@ -126,7 +126,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return (val ?? fallback) as T
   }
 
-  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
+  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.characterV2')
 
   /* ---------------------------------------- */
   /*  Instance properties                     */
@@ -1808,11 +1808,11 @@ const characterSchema = () => {
       points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     }),
 
-    frightcheck: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.frightcheck' }),
-    hearing: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.hearing' }),
-    tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.tastesmell' }),
-    vision: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.vision' }),
-    touch: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.touch' }),
+    frightcheck: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    hearing: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    vision: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    touch: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     // NOTE: may want to revise this in the future to a custom DiceField or the like
     thrust: new DiceField({ required: true, nullable: false, blank: true, label: 'GURPS.thrust' }),
