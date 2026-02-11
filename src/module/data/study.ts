@@ -1,8 +1,24 @@
-import { DataModel, fields } from '@gurps-types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
+import {
+  PseudoDocument,
+  PseudoDocumentMetadata,
+  pseudoDocumentSchema,
+} from '@module/pseudo-document/pseudo-document.js'
 
-class Study extends DataModel<StudySchema> {
+class Study extends PseudoDocument<StudySchema> {
   static override defineSchema(): StudySchema {
     return studySchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocumentMetadata {
+    return {
+      documentName: 'Study',
+      label: '',
+      icon: '',
+      embedded: {},
+    }
   }
 }
 
@@ -10,9 +26,7 @@ class Study extends DataModel<StudySchema> {
 
 const studySchema = () => {
   return {
-    // Type  study.Type `json:"type"`
-    // Hours fxp.Int    `json:"hours"`
-    // Note  string     `json:"note,omitzero"`
+    ...pseudoDocumentSchema(),
     type: new fields.StringField({ required: true, nullable: false }),
     hours: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     note: new fields.StringField({ required: true, nullable: false }),

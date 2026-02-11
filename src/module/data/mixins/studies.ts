@@ -1,10 +1,12 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
+import { CollectionField } from '../fields/collection-field.js'
+import { ModelCollection } from '../model-collection.js'
 import { Study } from '../study.js'
 
 const studiesSchema = () => {
   return {
-    study: new fields.ArrayField(new fields.EmbeddedDataField(Study)),
+    study: new CollectionField(Study),
     studyHoursNeeded: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
   }
 }
@@ -13,7 +15,7 @@ const studiesSchema = () => {
 
 interface IStudies {
   // List of study entries contained within this item
-  study: Study[]
+  study: ModelCollection<Study>
 
   studyHoursNeeded: number
 }

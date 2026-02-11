@@ -34,7 +34,7 @@ class GcsSpellModel
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'system._prereqs' },
+      embedded: { Prereq: 'system._prereqs', Study: 'system.study' },
       type: 'gcsSpell',
       invalidActorTypes: [],
       actions: {},
