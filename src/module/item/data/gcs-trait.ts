@@ -26,7 +26,7 @@ class GcsTraitModel
 
   static override get metadata(): GcsItemMetadata {
     return {
-      embedded: { Prereq: 'system._prereqs', Feature: 'system.features' },
+      embedded: { Prereq: 'system._prereqs', Feature: 'system.features', Study: 'system.study' },
       type: 'gcsTrait',
       invalidActorTypes: [],
       actions: {},
