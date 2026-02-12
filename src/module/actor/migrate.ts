@@ -2,9 +2,9 @@ import { fields, DataModel } from '@gurps-types/foundry/index.js'
 
 import { ActorV1Model } from './legacy/actorv1-interface.js'
 
-async function migrateActorSystem(
+function migrateActorSystem(
   oldData: ActorV1Model
-): Promise<fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>>> {
+): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> {
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
     attributes: oldData.attributes,
     HP: oldData.HP,
