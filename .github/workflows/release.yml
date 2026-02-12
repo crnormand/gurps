@@ -41,7 +41,7 @@ jobs:
           RELEASE_VERSION: ${{steps.get_version.outputs.version-without-v}}
           RELEASE_TAG: ${{github.event.release.tag_name}}
           GITHUB_REPOSITORY: ${{github.repository}}
-          GITHUB_BRANCH: ${{github.branch}}
+          GITHUB_BRANCH: ${{ github.ref_name }}
 
       # Create a zip file with all files required by the module to add to the release
       - name: Zip fist
@@ -58,7 +58,7 @@ jobs:
         with:
           allowUpdates: true # Set this to false if you want to prevent updating existing releases
           name: ${{ github.event.release.name }}
-          draft: ${{ github.event.release.unpublished }}
+          draft: ${{ github.event.release.draft }}
           prerelease: ${{ github.event.release.prerelease }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: './dist/system.json, ./dist/system.zip'
