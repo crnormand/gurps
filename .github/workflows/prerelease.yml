@@ -64,3 +64,7 @@ jobs:
           artifacts: './dist/system.json, ./dist/system.zip'
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}
+
+      # Note: Prereleases are NOT published to Foundry VTT API
+      # Only full releases are published automatically
+      # To publish a prerelease, promote it to a full release or run manually

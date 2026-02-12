@@ -64,3 +64,17 @@ jobs:
           artifacts: './dist/system.json, ./dist/system.zip'
           tag: ${{ github.event.release.tag_name }}
           body: ${{ github.event.release.body }}
+
+      # Publish release to Foundry VTT Package Release API
+      - name: Publish to Foundry VTT
+        if: ${{ !github.event.release.prerelease && !github.event.release.draft }}
+        run: |
+          node build/foundry-release.js \
+            --version "$RELEASE_VERSION" \
+            --manifest-url "https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/system.json" \
+            --notes-url "https://github.com/$GITHUB_REPOSITORY/releases/tag/$RELEASE_TAG"
+        env:
+          RELEASE_VERSION: ${{ steps.get_version.outputs.version-without-v }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          FVTT_RELEASE_TOKEN: ${{ secrets.FVTT_RELEASE_TOKEN }}
