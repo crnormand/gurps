@@ -57,7 +57,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   static override get metadata(): ActorMetadata {
     return {
-      embedded: { HitLocation: 'system.hitlocationsV2', Note: 'system.allNotes', MoveType: `system.moveV2` },
+      embedded: { HitLocation: 'system.hitlocationsV2', Note: 'system.allNotes', MoveMode: `system.moveV2` },
       type: 'base',
     }
   }
@@ -1175,11 +1175,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   async setMoveDefault(value: string): Promise<void> {
     const move = this.moveV2
 
-    move.forEach(async (moveEntry: MoveModeV2) => {
-      const defaultForMove = moveEntry.mode === value
+    const updates = Object.fromEntries(
+      move.map(moveEntry => [`system.moveV2.${moveEntry.id}.default`, moveEntry.mode === value])
+    )
 
-      await moveEntry.update({ default: defaultForMove })
-    })
+    await this.parent.update(updates)
   }
 
   /* ---------------------------------------- */

@@ -2308,14 +2308,9 @@ export class ActorImporter {
     let prot = {}
     let index = 0
 
-    console.log(temp)
-
     temp.forEach(it => GURPS.put(prot, it, index++))
 
     let overwrite = ImportSettings.overwriteBodyPlan // "ask", "keep", "overwrite"
-
-    console.log(overwrite)
-    console.log(data.lastImport)
 
     if (data.lastImport) {
       if (data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
@@ -2326,8 +2321,6 @@ export class ActorImporter {
       // If we're not overwriting and we have an existing bodyplan, return the empty object.
       if (overwrite !== 'overwrite' && data.additionalresources.bodyplan) return {}
     }
-
-    console.log(prot)
 
     return {
       'system.-=hitlocations': null,
