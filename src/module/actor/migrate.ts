@@ -3,8 +3,10 @@ import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
 import { getNewItemType, migrateItemSystem } from '@module/item/migrate.js'
 
-import { Melee, Ranged } from './actor-components.js'
+import { Melee, Ranged, Note } from './actor-components.js'
+import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
+import { NoteV2 } from './data/note.js'
 
 async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
   if (!game.i18n) {
@@ -277,9 +279,11 @@ function migrateActorSystem(
       damageAccumulators: [],
     },
 
+    hitlocationsV2: {},
+
     // TODO: Change note into an Item or something, really shouldn't have this vestigial
     // non-Foundry items Array present
-    allNotes: [],
+    allNotes: {},
   }
 
   // Check for missing fields or other bad info
@@ -292,7 +296,32 @@ function migrateActorSystem(
   // NOTE: Again, this should be a TypedObjectField instead of an ArrayField.
   // Potentially a candidate for PseudoDocument collection.
   // TODO: Discuss with the team.
-  newData.hitlocationsV2 = []
+  Object.values(oldData.hitlocations).forEach(hitlocation => {
+    const id = foundry.utils.randomID()
+
+    const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = { ...hitlocation, _id: id }
+
+    newData.hitlocationsV2![id] = location
+  })
+
+  const addNote = (data: Note, parentId: string | null) => {
+    const id = foundry.utils.randomID()
+
+    const note: DataModel.CreateData<DataModel.SchemaOf<NoteV2>> = {
+      ...data,
+      containedBy: parentId,
+      markdown: data.notes,
+      _id: id,
+    }
+
+    newData.allNotes![id] = note
+
+    for (const child of Object.values(data.contains) as Note[]) {
+      addNote(child, id)
+    }
+  }
+
+  Object.values(oldData.notes).forEach(note => addNote(note, null))
 
   newData.moveV2 = []
 

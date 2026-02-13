@@ -1960,29 +1960,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /* ---------------------------------------- */
 
   async editItem(path: string, obj: any) {
-    if (this.isNewActorType) {
-      const note = foundry.utils.getProperty(this, path) as NoteV1
-      const item = note.noteV2
-      const array = foundry.utils.deepClone(this.system._source.allNotes)
-      const index = array.findIndex(noteSource => noteSource.id === item.id)
+    if (obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
+    await this.removeModEffectFor(path)
+    await this.internalUpdate({ [path]: obj })
+    const commit = this.applyItemModEffects({}, true)
 
-      if (index !== -1) {
-        array[index] = { ...array[index], ...obj }
-        await this.update({ 'system.allNotes': array } as Actor.UpdateData)
-      }
-    } else {
-      if (obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
-      await this.removeModEffectFor(path)
-      await this.internalUpdate({ [path]: obj })
-      const commit = this.applyItemModEffects({}, true)
+    if (commit) {
+      await this.internalUpdate(commit)
 
-      if (commit) {
-        await this.internalUpdate(commit)
-
-        if (canvas!.tokens!.controlled.length > 0) {
-          // @ts-expect-error - TokenDocument.setFlag parameters not fully typed
-          await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
-        }
+      if (canvas!.tokens!.controlled.length > 0) {
+        // @ts-expect-error - TokenDocument.setFlag parameters not fully typed
+        await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
       }
     }
   }

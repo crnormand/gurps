@@ -1,5 +1,4 @@
 import { DataModel, fields } from '@gurps-types/foundry/index.js'
-import { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
@@ -23,7 +22,7 @@ class BaseAction<
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata {
+  static override get metadata(): PseudoDocumentMetadata<'Action'> {
     return {
       documentName: 'Action',
       label: '',
@@ -32,8 +31,10 @@ class BaseAction<
     }
   }
 
-  get item(): GurpsItemV2 {
-    return this.parent.parent as GurpsItemV2
+  /* ---------------------------------------- */
+
+  get item(): Item.Implementation {
+    return this.parent.parent as Item.Implementation
   }
 
   /* ---------------------------------------- */

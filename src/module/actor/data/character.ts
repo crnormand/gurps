@@ -3,6 +3,7 @@ import { MeleeV1 } from '@module/action/legacy/meleev1.js'
 import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { EquipmentModel } from '@module/item/data/equipment.js'
@@ -33,7 +34,7 @@ import {
 } from '../maneuver.js'
 import { CheckInfo } from '../types.js'
 
-import { BaseActorModel } from './base.js'
+import { ActorMetadata, BaseActorModel } from './base.js'
 import {
   attributeSchema,
   conditionsSchema,
@@ -51,6 +52,15 @@ import { NoteV2 } from './note.js'
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
     return characterSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): ActorMetadata {
+    return {
+      embedded: { HitLocation: 'system.hitlocationsV2', Note: 'system.allNotes' },
+      type: 'base',
+    }
   }
 
   /* ---------------------------------------- */
@@ -103,7 +113,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   get hitlocations() {
     const hitlocations: Record<string, HitLocationEntryV1> = {}
 
-    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
+    this.hitlocationsV2.values().forEach((locationV2, index) => {
       hitlocations[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
     })
 
@@ -1854,10 +1864,7 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
-    hitlocationsV2: new fields.ArrayField(
-      new fields.EmbeddedDataField(HitLocationEntryV2, { required: true, nullable: false }),
-      { required: true, nullable: false }
-    ),
+    hitlocationsV2: new CollectionField(HitLocationEntryV2, { required: true, nullable: false, initial: {} }),
 
     // NOTE: Change from previous schema where these fields were part of the schema. They are now derived properties
     // reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
@@ -1894,10 +1901,7 @@ const characterSchema = () => {
       default: [{ mode: 'GURPS.moveModeGround', basic: 5, enhanced: null, default: true }],
     }),
 
-    allNotes: new fields.ArrayField(new fields.EmbeddedDataField(NoteV2, { required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
+    allNotes: new CollectionField(NoteV2, { required: true, nullable: false, initial: {} }),
 
     // NOTE: the following have been replaced with Items or accessors in the new model, and thus should not be used.
     // They are commented out but this note is kept here for reference.

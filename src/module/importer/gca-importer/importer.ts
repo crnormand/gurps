@@ -370,7 +370,9 @@ Portrait will not be imported.`
     const table = HitLocations.hitlocationDictionary?.[this.input.bodytype ?? 'Humanoid']
 
     this.output.hitlocationsV2 = this.input.hitlocationtable.hitlocationlines.reduce(
-      (acc: DataModel.CreateData<HitLocationSchemaV2>[], location) => {
+      (acc: Record<string, DataModel.CreateData<HitLocationSchemaV2>>, location) => {
+        const id = foundry.utils.randomID()
+
         // Some properties of the hit location are stored not in the hit location table, but in the body table.
         // These are different but related tables. All locations in "hitlocationtable" *should* be in "body".
         // However, different names may be in use. We're accounting for these possibilities.
@@ -403,17 +405,18 @@ Portrait will not be imported.`
         const dr = parseInt(bodyLocation.dr)
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
+          _id: id,
           where: location.location ?? '',
           import: Number.isNaN(dr) ? 0 : dr,
           rollText: roll,
           split: {},
         }
 
-        acc.push(newLocation)
+        acc[id] = newLocation
 
         return acc
       },
-      []
+      {}
     )
   }
 

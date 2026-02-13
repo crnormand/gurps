@@ -32,7 +32,7 @@ class TypedPseudoDocument<
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocumentMetadata<gurps.Pseudo.WithTypes> {
-    return super.metadata
+    return super.metadata as PseudoDocumentMetadata<gurps.Pseudo.WithTypes>
   }
 
   /* ---------------------------------------- */
@@ -82,7 +82,7 @@ class TypedPseudoDocument<
   get typeLabel(): string {
     if (!globalThis.GURPS) return ''
 
-    const config = GURPS.CONFIG.PseudoDocument[this.metadata.documentName]
+    const config = GURPS.CONFIG.PseudoDocument[this.metadata.documentName as gurps.Pseudo.WithTypes]
 
     if (this.type in config) return config[this.type].label
 

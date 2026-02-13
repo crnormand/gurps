@@ -1,11 +1,29 @@
-import { DataModel, fields } from '@gurps-types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
+import {
+  PseudoDocument,
+  PseudoDocumentMetadata,
+  pseudoDocumentSchema,
+} from '@module/pseudo-document/pseudo-document.js'
 
 import { convertRangeTextToArray } from '../../util/text-utilties.ts'
 
-class HitLocationEntryV2 extends DataModel<HitLocationSchemaV2> {
+class HitLocationEntryV2 extends PseudoDocument<HitLocationSchemaV2> {
   static override defineSchema(): HitLocationSchemaV2 {
     return hitLocationSchema()
   }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocumentMetadata<'HitLocation'> {
+    return {
+      documentName: 'HitLocation',
+      label: '',
+      icon: '',
+      embedded: {},
+    }
+  }
+
+  /* ---------------------------------------- */
 
   // NOTE: Made it a lazily evaluated value.
   get roll(): number[] {
@@ -44,6 +62,7 @@ class HitLocationEntryV2 extends DataModel<HitLocationSchemaV2> {
 
 const hitLocationSchema = () => {
   return {
+    ...pseudoDocumentSchema(),
     where: new fields.StringField({ required: true, nullable: false }),
     import: new fields.NumberField({ required: true, nullable: false }),
     penalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),

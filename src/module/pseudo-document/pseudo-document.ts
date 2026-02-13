@@ -14,14 +14,14 @@ interface UpdatableDocument extends Document.Any {
 const isUpdatableDocument = (value: unknown): value is UpdatableDocument =>
   isObject(value) && 'update' in value && typeof value.update === 'function'
 
-interface PseudoDocumentConstructor {
-  metadata: PseudoDocumentMetadata
+interface PseudoDocumentConstructor<Name extends gurps.Pseudo.Name = gurps.Pseudo.Name> {
+  metadata: PseudoDocumentMetadata<Name>
 }
 
 const hasPseudoDocumentMetadata = (value: unknown): value is PseudoDocumentConstructor =>
   isObject(value) && 'metadata' in value
 
-type PseudoDocumentMetadata<Name extends gurps.Pseudo.Name = gurps.Pseudo.Name> = {
+type PseudoDocumentMetadata<Name extends gurps.Pseudo.Name> = {
   /* ---------------------------------------- */
   /* The document name of this pseudo-document. */
   documentName: Name
@@ -43,7 +43,7 @@ class PseudoDocument<
 > extends DataModel<Schema, Parent> {
   /* ---------------------------------------- */
 
-  static get metadata(): PseudoDocumentMetadata {
+  static get metadata(): PseudoDocumentMetadata<gurps.Pseudo.Name> {
     return {
       // @ts-expect-error: This is always overridden
       documentName: null,
@@ -366,4 +366,4 @@ type PseudoDocumentSchema = ReturnType<typeof pseudoDocumentSchema>
 
 /* ---------------------------------------- */
 
-export { PseudoDocument, type PseudoDocumentSchema, type PseudoDocumentMetadata }
+export { PseudoDocument, type PseudoDocumentSchema, type PseudoDocumentMetadata, pseudoDocumentSchema }
