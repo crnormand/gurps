@@ -17,6 +17,8 @@ type ActionClass<Type extends ActionType> = (typeof ActionClasses)[Type]
 function init() {
   console.log('GURPS | Initializing GURPS Action module.')
   // @ts-expect-error: Invalid type
+  GURPS.CONFIG ||= {}
+  // @ts-expect-error: Invalid type
   GURPS.CONFIG.PseudoDocument ||= {}
 
   GURPS.CONFIG.PseudoDocument.Action = {
