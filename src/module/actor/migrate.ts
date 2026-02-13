@@ -312,6 +312,7 @@ function migrateActorSystem(
 
     const note: DataModel.CreateData<DataModel.SchemaOf<NoteV2>> = {
       ...data,
+      text: data.notes,
       containedBy: parentId,
       markdown: data.notes,
       _id: id,
@@ -326,18 +327,18 @@ function migrateActorSystem(
 
   Object.values(oldData.notes).forEach(note => addNote(note, null))
 
-  Object.values(oldData.move).forEach(move => {
+  Object.values(oldData.move).forEach(data => {
     const id = foundry.utils.randomID()
 
-    const data: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
+    const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
       _id: id,
-      mode: move.mode,
-      basic: Number(move.basic),
-      enhanced: move.enhanced ? Number(move.enhanced) : null,
-      default: move.default,
+      mode: data.mode,
+      basic: Number(data.basic),
+      enhanced: data.enhanced ? Number(data.enhanced) : null,
+      default: data.default,
     }
 
-    newData.moveV2![id] = data
+    newData.moveV2![id] = move
   })
 
   return newData
