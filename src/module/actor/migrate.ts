@@ -156,7 +156,8 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
     items,
   }
 
-  const newActor = Actor.create(createData) as unknown as Actor.OfType<'characterV2'>
+  const newActor = (await actor.update(createData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
+  // const newActor = Actor.create(createData) as unknown as Actor.OfType<'characterV2'>
 
   return newActor
 }
