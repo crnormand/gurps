@@ -147,7 +147,8 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
 
   const createData: Actor.CreateData<'characterV2'> = {
     type: 'characterV2',
-    name: actor.name,
+    img: actor.img,
+    name: 'Migrated: ' + actor.name,
     system: migrateActorSystem(actor.system),
     items,
   }
@@ -187,7 +188,10 @@ function migrateActorSystem(
     HP: oldData.HP,
     FP: oldData.FP,
     QP: oldData.QP,
-    dodge: oldData.dodge,
+    // NOTE: dodge for characterV1 is a derived (though persistent) property, and the reported value
+    // may be adversly affected by things like encumbrance. Here, we grab the first entry in encumbrance
+    // to get our best estimate (should be accurate 99% of the time) for the base dodge value.
+    dodge: { value: Object.values(oldData.encumbrance)[0]?.dodge ?? 0 },
     basicmove: {
       value: Number(oldData.basicmove.value),
       points: oldData.basicmove.points,
@@ -247,6 +251,8 @@ function migrateActorSystem(
       modifiedon: oldData.traits.modifiedon,
       player: oldData.traits.player,
     },
+
+    totalpoints: oldData.totalpoints,
 
     conditions: {
       actions: {
