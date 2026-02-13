@@ -74,19 +74,6 @@ declare global {
 
   /* ---------------------------------------- */
 
-  // type PseudoDocumentName = 'Action'
-  //
-  // type PseudoDocumentConfig<T = any, S = any> = Record<string, PseudoDocumentConfigEntry<T, S>>
-  //
-
-  type PseudoDocumentConfigEntry<T = any, S = any> = {
-    documentClass: T
-    label?: string
-    sheetClass?: S
-  }
-
-  /* ---------------------------------------- */
-
   // @deprecated TODO: REMOVE. Legacy
   interface ManeuverData {
     name: string

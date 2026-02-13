@@ -41,7 +41,7 @@ class GcsImporter {
 
   constructor(input: GcsCharacter) {
     this.input = input
-    this.output = { hitlocationsV2: {} }
+    this.output = {}
 
     this.items = []
     this.img = ''
