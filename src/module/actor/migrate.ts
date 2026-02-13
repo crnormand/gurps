@@ -5,8 +5,9 @@ import { getNewItemType, migrateItemSystem } from '@module/item/migrate.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
-import { ActorV1Model } from './legacy/actorv1-interface.js'
+import { MoveModeV2 } from './data/move-mode.js'
 import { NoteV2 } from './data/note.js'
+import { ActorV1Model } from './legacy/actorv1-interface.js'
 
 async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
   if (!game.i18n) {
@@ -281,6 +282,8 @@ function migrateActorSystem(
 
     hitlocationsV2: {},
 
+    moveV2: {},
+
     // TODO: Change note into an Item or something, really shouldn't have this vestigial
     // non-Foundry items Array present
     allNotes: {},
@@ -323,7 +326,19 @@ function migrateActorSystem(
 
   Object.values(oldData.notes).forEach(note => addNote(note, null))
 
-  newData.moveV2 = []
+  Object.values(oldData.move).forEach(move => {
+    const id = foundry.utils.randomID()
+
+    const data: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
+      _id: id,
+      mode: move.mode,
+      basic: Number(move.basic),
+      enhanced: move.enhanced ? Number(move.enhanced) : null,
+      default: move.default,
+    }
+
+    newData.moveV2![id] = data
+  })
 
   return newData
 }

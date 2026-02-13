@@ -41,12 +41,11 @@ import {
   DamageActionSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
-  MoveSchema,
-  moveSchema,
   poolSchema,
   ReactionSchema,
 } from './character-components.js'
 import { HitLocationEntryV2 } from './hit-location-entry.js'
+import { MoveModeV2 } from './move-mode.js'
 import { NoteV2 } from './note.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
@@ -58,7 +57,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   static override get metadata(): ActorMetadata {
     return {
-      embedded: { HitLocation: 'system.hitlocationsV2', Note: 'system.allNotes' },
+      embedded: { HitLocation: 'system.hitlocationsV2', Note: 'system.allNotes', MoveType: `system.moveV2` },
       type: 'base',
     }
   }
@@ -163,7 +162,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  get currentmovemode(): fields.SchemaField.SourceData<MoveSchema> {
+  get currentmovemode(): MoveModeV2 {
     return this.moveV2.find(mv => mv.default)!
   }
 
@@ -300,7 +299,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // @deprecated Legacy collection.
   get move() {
-    return arrayToObject(this.moveV2, 5)
+    return Object.fromEntries(this.moveV2.map((mv, index) => [zeroFill(index, 5), mv]))
   }
 
   /* ---------------------------------------- */
@@ -326,8 +325,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  private isAirMoveMode(mv: fields.SchemaField.SourceData<MoveSchema>): boolean {
-    return mv.mode === 'GURPS.moveModeAir'
+  private isAirMoveMode(mv: MoveModeV2): boolean {
+    return mv.mode === 'GURPS.moveModeAir' || (!!game.i18n && mv.mode === game.i18n.localize('GURPS.moveModeAir'))
   }
 
   /* ---------------------------------------- */
@@ -840,7 +839,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  get currentMoveMode(): fields.SchemaField.SourceData<MoveSchema> | null {
+  get currentMoveMode(): MoveModeV2 | null {
     return this.moveV2.find(enc => enc.default) ?? null
   }
 
@@ -1176,43 +1175,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   async setMoveDefault(value: string): Promise<void> {
     const move = this.moveV2
 
-    move.forEach((moveEntry: fields.SchemaField.SourceData<MoveSchema>) => {
-      moveEntry.default = moveEntry.mode === value
+    move.forEach(async (moveEntry: MoveModeV2) => {
+      const defaultForMove = moveEntry.mode === value
+
+      await moveEntry.update({ default: defaultForMove })
     })
-
-    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
-  }
-
-  /* ---------------------------------------- */
-
-  async addMoveMode({
-    mode,
-    basic,
-    enhanced,
-    isDefault = false,
-  }: {
-    mode: string
-    basic: number
-    enhanced?: number
-    isDefault?: boolean
-  }): Promise<void> {
-    const move = this.moveV2 ?? []
-    const existingMove = move.find(entry => entry.mode === mode)
-
-    if (existingMove) {
-      existingMove.basic = basic ?? existingMove.basic
-      existingMove.enhanced = enhanced ?? existingMove.enhanced
-      existingMove.default = isDefault ?? existingMove.default
-    } else {
-      move.push({
-        mode,
-        basic: basic,
-        enhanced: enhanced ?? basic ?? 0,
-        default: isDefault ?? move.length === 0,
-      })
-    }
-
-    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -1895,11 +1862,7 @@ const characterSchema = () => {
     //  Enhanced Move = (Basic Speed x level; half level x 1.5) For ONE move mode
     //
     // * Tunneling = Underground (1 yard per level)
-    moveV2: new fields.ArrayField(new fields.SchemaField(moveSchema(), { required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-      default: [{ mode: 'GURPS.moveModeGround', basic: 5, enhanced: null, default: true }],
-    }),
+    moveV2: new CollectionField(MoveModeV2, { required: true, nullable: false, initial: {} }),
 
     allNotes: new CollectionField(NoteV2, { required: true, nullable: false, initial: {} }),
 

@@ -1,4 +1,5 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
+import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { ItemComponentSchema } from '@module/item/data/component.js'
@@ -534,15 +535,18 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importMiscValues() {
-    // TODO Implement me.
-    this.output.moveV2 = [
-      {
-        mode: 'GURPS.moveModeGround',
-        basic: this.output.basicmove?.value ?? 5,
-        enhanced: 0,
-        default: true,
-      },
-    ]
+    const id = foundry.utils.randomID()
+
+    const groundMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
+      _id: id,
+      mode: 'GURPS.moveModeGround',
+      basic: this.output.basicmove?.value ?? 5,
+      enhanced: 0,
+      default: true,
+    }
+
+    this.output.moveV2 ||= {}
+    this.output.moveV2[id] = groundMove
   }
 
   /* ---------------------------------------- */

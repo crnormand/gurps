@@ -293,28 +293,39 @@ Portrait will not be imported.`
     this.output.swing = swing
 
     // Import speeds for move modes(based on attributes in GGA)
-    this.output.moveV2 = [
-      {
-        mode: 'GURPS.moveModeGround',
-        default: true,
-        ...this.#importMoveType('Ground Move'),
-      },
-      {
-        mode: 'GURPS.moveModeAir',
-        default: false,
-        ...this.#importMoveType('Air Move'),
-      },
-      {
-        mode: 'GURPS.moveModeWater',
-        default: false,
-        ...this.#importMoveType('Water Move'),
-      },
-      {
-        mode: 'GURPS.moveModeSpace',
-        default: false,
-        ...this.#importMoveType('Space Move'),
-      },
-    ]
+    const groundMove = {
+      _id: foundry.utils.randomID(),
+      mode: 'GURPS.moveModeGround',
+      default: true,
+      ...this.#importMoveType('Ground Move'),
+    }
+
+    const airMove = {
+      _id: foundry.utils.randomID(),
+      mode: 'GURPS.moveModeAir',
+      default: false,
+      ...this.#importMoveType('Air Move'),
+    }
+
+    const waterMove = {
+      _id: foundry.utils.randomID(),
+      mode: 'GURPS.moveModeWater',
+      default: false,
+      ...this.#importMoveType('Water Move'),
+    }
+
+    const spaceMove = {
+      _id: foundry.utils.randomID(),
+      mode: 'GURPS.moveModeSpace',
+      default: false,
+      ...this.#importMoveType('Space Move'),
+    }
+
+    this.output.moveV2 ||= {}
+    this.output.moveV2[groundMove._id] = groundMove
+    this.output.moveV2[airMove._id] = airMove
+    this.output.moveV2[waterMove._id] = waterMove
+    this.output.moveV2[spaceMove._id] = groundMove
   }
 
   /* ---------------------------------------- */

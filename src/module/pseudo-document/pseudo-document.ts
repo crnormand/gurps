@@ -3,7 +3,6 @@ import { isObject } from '@module/util/guards.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { type ModelCollection } from '../data/model-collection.js'
-import { type BaseItemModel } from '../item/data/base.js'
 
 import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 
@@ -257,7 +256,7 @@ class PseudoDocument<
         ? data._id
         : foundry.utils.randomID()
 
-    const fieldPath = (parent.system!.constructor as typeof BaseItemModel).metadata.embedded?.[
+    const fieldPath = (parent.system!.constructor as unknown as gurps.MetaDataOwner).metadata.embedded?.[
       this.metadata.documentName
     ]
 

@@ -2567,18 +2567,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   async setMoveDefault(value: string) {
     if (this.isNewActorType) {
-      const index = parseInt(value)
-
-      if (isNaN(index)) return
-
-      const move: any[] = this.modelV2.moveV2
-
-      for (let i = 0; i < move.length; i++) {
-        move[i].default = index === i
-      }
-
-      // Replace the entire array.
-      await this.update({ 'system.move': move } as Actor.UpdateData)
+      return this.system.setMoveDefault(value)
     } else {
       // Legacy actor type.
       const move = this.modelV1.move
