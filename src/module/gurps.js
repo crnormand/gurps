@@ -58,13 +58,8 @@ import TriggerHappySupport from './effects/triggerhappy.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
-import { EquipmentModel } from './item/data/equipment.js'
-import { SkillModel } from './item/data/skill.js'
-import { SpellModel } from './item/data/spell.js'
-import { TraitModel } from './item/data/trait.js'
-import { GurpsItemV2 } from './item/gurps-item.js'
+import { Item } from './item/index.js'
 import { AddImportEquipmentButton } from './item-import.js'
-import { GurpsItemSheet } from './item-sheet.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
@@ -112,6 +107,7 @@ if (!globalThis.GURPS) {
     CombatTracker,
     Damage,
     Importer,
+    Item,
     Pdf,
     ResourceTracker,
     Token,
@@ -2181,13 +2177,6 @@ if (!globalThis.GURPS) {
     GURPS.Maneuvers = Maneuvers
 
     // Define custom Entity classes
-    CONFIG.Item.documentClass = GurpsItemV2
-    CONFIG.Item.dataModels = {
-      featureV2: TraitModel,
-      skillV2: SkillModel,
-      spellV2: SpellModel,
-      equipmentV2: EquipmentModel,
-    }
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class
@@ -2199,10 +2188,6 @@ if (!globalThis.GURPS) {
     foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
       makeDefault: true,
     })
-
-    // Register sheet application classes
-    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
-    foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
     // @ts-expect-error - Foundry VTT hook callback parameter types not fully typed

@@ -15,7 +15,7 @@ import { migrateActorSystem } from './migrate.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
 
-export interface ActorModule extends GurpsModule {
+interface ActorModule extends GurpsModule {
   migrateActorSystem: typeof migrateActorSystem
 }
 
