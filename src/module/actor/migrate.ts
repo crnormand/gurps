@@ -302,7 +302,11 @@ function migrateActorSystem(
   Object.values(oldData.hitlocations).forEach(hitlocation => {
     const id = foundry.utils.randomID()
 
-    const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = { ...hitlocation, _id: id }
+    const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
+      ...hitlocation,
+      _id: id,
+      rollText: hitlocation.roll,
+    }
 
     newData.hitlocationsV2 ||= {}
     newData.hitlocationsV2[id] = location
