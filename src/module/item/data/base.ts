@@ -1,6 +1,6 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { parselink } from '@util/parselink.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyObject, EmptyObject } from 'fvtt-types/utils'
 
 import { BaseAction } from '../../action/base-action.js'
 import { MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
@@ -41,8 +41,15 @@ type ItemUseOptions = {
 
 /* ---------------------------------------- */
 
+interface ItemBaseData extends AnyObject {
+  melee: MeleeAttackModel[]
+  ranged: RangedAttackModel[]
+}
+
+/* ---------------------------------------- */
+
 abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelSchema>
-  extends TypeDataModel<Schema, Item.Implementation>
+  extends TypeDataModel<Schema, Item.Implementation, ItemBaseData>
   implements IContainable<Item.Implementation>
 {
   /* ---------------------------------------- */
@@ -81,9 +88,6 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   /*  Instance properties                     */
   /* ---------------------------------------- */
 
-  melee: MeleeAttackModel[] = []
-  ranged: RangedAttackModel[] = []
-
   /* ---------------------------------------- */
 
   get item(): Item.Implementation {
@@ -121,7 +125,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   get contents(): Item.Implementation[] {
     return (
       this.parent.actor?.items.contents
-        .filter(item => (item.system as BaseItemModel).containedBy === this.parent.id)
+        .filter(item => item.system.containedBy === this.parent.id)
         .sort((left, right) => left.sort - right.sort) || []
     )
   }
@@ -156,7 +160,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
    * Check if this item is contained by (directly or indirectly) the specified container
    */
   isContainedBy(container: Item.Implementation): boolean {
-    return ContainerUtils.isContainedBy(this, container.system as IContainable<Item.Implementation>)
+    return ContainerUtils.isContainedBy(this, container.system as BaseItemModel)
   }
 
   /**
@@ -172,9 +176,10 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
-  get isContainer(): boolean {
-    return this.contents.length > 0
-  }
+  // NOTE: Currently disabled, now a persistent setting
+  // get isContainer(): boolean {
+  //   return this.contents.length > 0
+  // }
 
   // TODO I'm not sure what this is trying to do.
   get children(): Item.Implementation[] {
@@ -246,6 +251,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   override prepareBaseData(): void {
     super.prepareBaseData()
+    this.melee = this.actions.filter(action => action.type === 'meleeAttack')
+    this.ranged = this.actions.filter(action => action.type === 'rangedAttack')
 
     this.actions.forEach(action => {
       action.prepareBaseData()
@@ -292,8 +299,7 @@ const baseItemModelSchema = () => {
     ...containableSchema(),
 
     // Change from previous schema. Boolean value to indicate if item is container
-    // TODO Can this be derived?
-    // isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
@@ -301,11 +307,13 @@ const baseItemModelSchema = () => {
     actions: new CollectionField(BaseAction),
 
     // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    // NOTE: Disabled for migration. Replaced with Item containment
+    // ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
     // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    // skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
     // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    // spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+
     bonuses: new fields.StringField({ required: true, nullable: false }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
 
