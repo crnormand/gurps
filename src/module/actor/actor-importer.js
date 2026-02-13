@@ -2471,6 +2471,7 @@ export class ActorImporter {
             melee.reach = weapon.reach || ''
             melee.parry = weapon.calc?.parry || ''
             melee.block = weapon.calc?.block || ''
+            melee.damage = weapon.calc?.damage || ''
             melee = this._substituteItemReplacements(melee, i)
             let old = this._findElementIn('melee', false, melee.name, melee.mode)
 
@@ -2491,6 +2492,7 @@ export class ActorImporter {
             ranged.mode = weapon.usage || ''
             ranged.import = weapon.calc?.level || '0'
             ranged.acc = weapon.accuracy || ''
+            ranged.damage = weapon.calc?.damage || ''
             let match = ranged.acc.trim().match(/(\d+)([+-]\d+)/)
 
             if (match) {
