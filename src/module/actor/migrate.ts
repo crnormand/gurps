@@ -2,6 +2,7 @@ import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
 import { getNewItemType, migrateItemSystem } from '@module/item/migrate.js'
+import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
@@ -156,8 +157,8 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
     items,
   }
 
-  const newActor = (await actor.update(createData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
-  // const newActor = Actor.create(createData) as unknown as Actor.OfType<'characterV2'>
+  // const newActor = (await actor.update(createData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
+  const newActor = Actor.create(createData) as unknown as Actor.OfType<'characterV2'>
 
   return newActor
 }
@@ -220,7 +221,7 @@ function migrateActorSystem(
       // instead of an ArrayField so we can updated trackers without
       // replacing the whole array.
       // TODO: Discuss and consider.
-      tracker: Object.values(oldData.additionalresources?.tracker),
+      tracker: {},
       importname: oldData.additionalresources?.importname,
       importpath: oldData.additionalresources?.importpath,
     },
@@ -297,17 +298,17 @@ function migrateActorSystem(
     newData.traits.sizemod = 0
   }
 
-  // NOTE: Again, this should be a TypedObjectField instead of an ArrayField.
-  // Potentially a candidate for PseudoDocument collection.
-  // TODO: Discuss with the team.
+  // Migrate hit locations
   Object.values(oldData.hitlocations).forEach(hitlocation => {
     const id = foundry.utils.randomID()
 
     const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = { ...hitlocation, _id: id }
 
-    newData.hitlocationsV2![id] = location
+    newData.hitlocationsV2 ||= {}
+    newData.hitlocationsV2[id] = location
   })
 
+  // Migrate notes
   const addNote = (data: Note, parentId: string | null) => {
     const id = foundry.utils.randomID()
 
@@ -328,6 +329,7 @@ function migrateActorSystem(
 
   Object.values(oldData.notes).forEach(note => addNote(note, null))
 
+  // Migrate move modes
   Object.values(oldData.move).forEach(data => {
     const id = foundry.utils.randomID()
 
@@ -339,7 +341,23 @@ function migrateActorSystem(
       default: data.default,
     }
 
-    newData.moveV2![id] = move
+    newData.moveV2 ||= {}
+    newData.moveV2[id] = move
+  })
+
+  // Migrate resource trackers
+
+  Object.values(oldData.additionalresources.tracker).forEach(data => {
+    const id = foundry.utils.randomID()
+
+    const tracker: DataModel.CreateData<DataModel.SchemaOf<TrackerInstance>> = {
+      ...data,
+      _id: id,
+    }
+
+    newData.additionalresources ||= {}
+    newData.additionalresources.tracker ||= {}
+    newData.additionalresources.tracker[id] = tracker
   })
 
   return newData

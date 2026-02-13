@@ -57,7 +57,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   static override get metadata(): ActorMetadata {
     return {
-      embedded: { HitLocation: 'system.hitlocationsV2', Note: 'system.allNotes', MoveMode: `system.moveV2` },
+      embedded: {
+        HitLocation: 'system.hitlocationsV2',
+        Note: 'system.allNotes',
+        MoveMode: `system.moveV2`,
+        ResourceTracker: `system.additionalresources.tracker`,
+      },
       type: 'base',
     }
   }
@@ -1140,23 +1145,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   // NOTE: change from previous schema, where path was used instead of index
-  async removeTracker(index: number): Promise<void> {
-    const trackers = this.additionalresources.tracker
+  async removeTracker(id: string): Promise<void> {
+    const tracker = this.additionalresources.tracker.get(id)
 
-    if (index < 0 || index >= trackers.length) return
-    trackers.splice(index, 1)
-    // @ts-expect-error: not sure why the path is not recognised
-    await this.parent.update({ 'system.additionalresources.tracker': trackers })
+    if (!tracker) return
+
+    await tracker.delete()
   }
 
   /* ---------------------------------------- */
 
   async addTracker(): Promise<void> {
-    const trackers = this.additionalresources.tracker ?? []
-
-    trackers.push(new TrackerInstance())
-    // @ts-expect-error: not sure why the path is not recognised
-    await this.parent.update({ 'system.additionalresources.tracker': trackers })
+    await TrackerInstance.create({}, { parent: this.parent })
   }
 
   /* ---------------------------------------- */
@@ -1758,9 +1758,10 @@ const characterSchema = () => {
         qnotes: new fields.StringField({ required: true, nullable: false }),
         // TODO This could be a trait instead.
         bodyplan: new fields.StringField({ required: true, nullable: false }),
-        tracker: new fields.ArrayField(new fields.EmbeddedDataField(TrackerInstance), {
+        tracker: new CollectionField(TrackerInstance, {
           required: true,
           nullable: false,
+          initial: {},
         }),
         importname: new fields.StringField({ required: true, nullable: true }),
         // NOTE: Should be a FilePathField but these do not allow arbitrary file extension.

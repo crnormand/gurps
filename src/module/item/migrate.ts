@@ -47,7 +47,6 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
   const newData: NewDataWrapper<NewItemType> = {
     actions: {},
     containedBy: parentId,
-    open: true,
   }
 
   Object.values(oldData.melee).forEach(action => {

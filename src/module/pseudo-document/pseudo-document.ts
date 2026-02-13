@@ -281,8 +281,10 @@ class PseudoDocument<
    * @returns a promise that resolves to the updated document.
    */
   async delete(
-    operation: Document.Database.DeleteOperation<foundry.abstract.types.DatabaseDeleteOperation<Document.Any>>
+    operation?: Document.Database.DeleteOperation<foundry.abstract.types.DatabaseDeleteOperation<Document.Any>>
   ): Promise<Document.Any | undefined> {
+    operation ??= {}
+
     if (!this.isSource) throw new Error('You cannot delete a non-source pseudo-document!')
     if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
 

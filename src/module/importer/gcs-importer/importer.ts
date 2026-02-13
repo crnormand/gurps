@@ -1001,7 +1001,7 @@ Portrait will not be imported.`
 
   #createStandardTrackers() {
     this.output.additionalresources ||= {}
-    this.output.additionalresources.tracker ||= []
+    this.output.additionalresources.tracker ||= {}
 
     // Placeholder for adding standard trackers to the character.
   }

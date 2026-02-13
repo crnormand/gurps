@@ -14,7 +14,7 @@ declare global {
     }
 
     namespace Pseudo {
-      type Name = 'Action' | 'HitLocation' | 'Note' | 'MoveMode'
+      type Name = 'Action' | 'HitLocation' | 'Note' | 'MoveMode' | 'ResourceTracker'
 
       /* ---------------------------------------- */
 
