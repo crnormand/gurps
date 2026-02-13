@@ -1,1 +1,1 @@
-export { CharacterModel } from './character.ts'
+export { CharacterModel } from './character.js'

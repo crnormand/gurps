@@ -1,4 +1,4 @@
-import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.ts'
+import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 
 export {}
 

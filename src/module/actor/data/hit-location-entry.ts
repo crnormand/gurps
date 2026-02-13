@@ -5,7 +5,7 @@ import {
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
 
-import { convertRangeTextToArray } from '../../util/text-utilties.ts'
+import { convertRangeTextToArray } from '../../util/text-utilties.js'
 
 class HitLocationEntryV2 extends PseudoDocument<HitLocationSchemaV2> {
   static override defineSchema(): HitLocationSchemaV2 {
