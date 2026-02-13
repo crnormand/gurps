@@ -31,7 +31,7 @@ import {
   zeroFill,
 } from '@util/utilities.js'
 
-import { Action } from './action/index.js'
+import { ActionModule } from './action/index.js'
 import { prepareRemoveKey } from './actor/deletion.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
@@ -105,7 +105,7 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
-    Action,
+    Action: ActionModule,
     Actor,
     Canvas,
     Combat,

@@ -21,10 +21,10 @@ interface PseudoDocumentConstructor {
 const hasPseudoDocumentMetadata = (value: unknown): value is PseudoDocumentConstructor =>
   isObject(value) && 'metadata' in value
 
-type PseudoDocumentMetadata = {
+type PseudoDocumentMetadata<Name extends gurps.Pseudo.Name = gurps.Pseudo.Name> = {
   /* ---------------------------------------- */
   /* The document name of this pseudo-document. */
-  documentName: string
+  documentName: Name
   /** The localization string for this pseudo-document */
   label: string
   /** The font-awesome icon for this pseudo-document type */

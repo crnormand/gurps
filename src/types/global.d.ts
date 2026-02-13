@@ -1,4 +1,3 @@
-import type { BaseAction } from '@module/action/base-action.js'
 import type { DamageChat } from '@module/damage/damagechat.js'
 
 export {}
@@ -67,19 +66,24 @@ declare global {
     ) => Promise<void>
     SJGProductMappings: Record<string, string>
     CONFIG: {
-      Action: Record<
-        string,
-        {
-          label: string
-          documentClass: typeof BaseAction
-        }
-      >
-      // HACK: to get rid of later. just used for TypedPseudoDocument.TYPES at the moment
-      [key: string]: unknown
+      PseudoDocument: Record<gurps.Pseudo.WithTypes, Record<string, gurps.Pseudo.ConfigEntry>>
     }
   }
 
   var GURPS: GURPSGlobal
+
+  /* ---------------------------------------- */
+
+  // type PseudoDocumentName = 'Action'
+  //
+  // type PseudoDocumentConfig<T = any, S = any> = Record<string, PseudoDocumentConfigEntry<T, S>>
+  //
+
+  type PseudoDocumentConfigEntry<T = any, S = any> = {
+    documentClass: T
+    label?: string
+    sheetClass?: S
+  }
 
   /* ---------------------------------------- */
 

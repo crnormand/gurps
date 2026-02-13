@@ -5,6 +5,13 @@ import { AnyObject } from 'fvtt-types/utils'
 import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
 
+enum ActionType {
+  MeleeAttack = 'meleeAttack',
+  RangedAttack = 'rangedAttack',
+}
+
+/* ---------------------------------------- */
+
 class BaseAction<
   Schema extends BaseActionSchema = BaseActionSchema,
   Parent extends DataModel.Any = DataModel.Any,
@@ -67,4 +74,4 @@ type BaseActionSchema = TypedPseudoDocumentSchema & ReturnType<typeof baseAction
 
 /* ---------------------------------------- */
 
-export { BaseAction, type BaseActionSchema }
+export { ActionType, BaseAction, type BaseActionSchema }

@@ -1,9 +1,9 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { parselink } from '@util/parselink.js'
-import { AnyObject, EmptyObject } from 'fvtt-types/utils'
+import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseAction } from '../../action/base-action.js'
-import { MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
+import { AnyActionClass, MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
 import { reactionSchema } from '../../actor/data/character-components.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
@@ -251,8 +251,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   override prepareBaseData(): void {
     super.prepareBaseData()
-    this.melee = this.actions.filter(action => action.type === 'meleeAttack')
-    this.ranged = this.actions.filter(action => action.type === 'rangedAttack')
+    this.melee = this.actions.filter(action => action.isOfType('meleeAttack'))
+    this.ranged = this.actions.filter(action => action.isOfType('rangedAttack'))
 
     this.actions.forEach(action => {
       action.prepareBaseData()
@@ -304,7 +304,7 @@ const baseItemModelSchema = () => {
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
-    actions: new CollectionField(BaseAction),
+    actions: new CollectionField(BaseAction as AnyActionClass),
 
     // Change from previous schema. Set of IDs corresponding to subtypes of Item
     // NOTE: Disabled for migration. Replaced with Item containment
