@@ -176,10 +176,9 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
-  // NOTE: Currently disabled, now a persistent setting
-  // get isContainer(): boolean {
-  //   return this.contents.length > 0
-  // }
+  get isContainer(): boolean {
+    return this.contents.length > 0
+  }
 
   // TODO I'm not sure what this is trying to do.
   get children(): Item.Implementation[] {
@@ -299,7 +298,7 @@ const baseItemModelSchema = () => {
     ...containableSchema(),
 
     // Change from previous schema. Boolean value to indicate if item is container
-    isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    // isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 

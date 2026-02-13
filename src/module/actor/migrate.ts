@@ -1,6 +1,65 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
+import { getNewItemType, migrateItemSystem } from '@module/item/migrate.js'
 
 import { ActorV1Model } from './legacy/actorv1-interface.js'
+
+async function migrateActor(actor: Actor.OfType<'character'>): Promise<Actor.OfType<'characterV2'>> {
+  const items: Item.CreateData[] = []
+
+  actor.items.forEach(item => {
+    if (!item.isOfType('equipment', 'feature', 'skill', 'spell')) return
+
+    const parentId = getItemParentId(actor, item)
+    const type = getNewItemType(item.type)
+
+    console.log(item.name, item.type, parentId)
+
+    const system = migrateItemSystem(item.type, item.system as any, parentId)
+
+    items.push({
+      _id: item._id,
+      type,
+      name: item.name,
+      system,
+    })
+  })
+
+  const createData: Actor.CreateData<'characterV2'> = {
+    type: 'characterV2',
+    name: actor.name,
+    system: migrateActorSystem(actor.system),
+    items,
+  }
+
+  const newActor = Actor.create(createData) as unknown as Actor.OfType<'characterV2'>
+
+  return newActor
+}
+
+/* ---------------------------------------- */
+
+function getItemParentId(
+  actor: Actor.OfType<'character'>,
+  item: Item.OfType<'equipment' | 'feature' | 'skill' | 'spell'>
+): string | null {
+  let oldParentId: string | null = null
+
+  if (item.isOfType('equipment')) oldParentId = (item.system as Equipment).eqt.parentuuid
+  else if (item.isOfType('feature')) oldParentId = (item.system as Feature).fea.parentuuid
+  else if (item.isOfType('skill')) oldParentId = (item.system as Skill).ski.parentuuid
+  else if (item.isOfType('spell')) oldParentId = (item.system as Spell).spl.parentuuid
+
+  console.log('Old parent ID for item', item.name, ':', oldParentId)
+
+  if (oldParentId === null) return null
+
+  const newParent = actor.items.find(parent => (parent.system as any).importid === oldParentId)
+
+  return newParent?._id || null
+}
+
+/* ---------------------------------------- */
 
 function migrateActorSystem(
   oldData: ActorV1Model
@@ -116,4 +175,4 @@ function migrateActorSystem(
   return newData
 }
 
-export { migrateActorSystem }
+export { migrateActor }

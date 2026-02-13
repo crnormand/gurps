@@ -1,7 +1,7 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 
-import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.ts'
+import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.js'
 
 type OldItemType = 'equipment' | 'feature' | 'skill' | 'spell'
 
@@ -13,16 +13,29 @@ type CreateDataOf<Model extends DataModel.Any> = fields.SchemaField.CreateData<D
 
 type NewDataWrapper<Type extends NewItemType> = CreateDataOf<Item.SystemOfType<Type>>
 
-function migrateItemSystem(type: OldItemType, oldData: OldItemData) {
+function getNewItemType(oldType: OldItemType): NewItemType {
+  switch (oldType) {
+    case 'equipment':
+      return 'equipmentV2'
+    case 'feature':
+      return 'featureV2'
+    case 'skill':
+      return 'skillV2'
+    case 'spell':
+      return 'spellV2'
+  }
+}
+
+function migrateItemSystem(type: string, oldData: OldItemData, parentId: string | null) {
   switch (type) {
     case 'equipment':
-      return migrateEquipmentSystem(oldData as Equipment)
+      return migrateEquipmentSystem(oldData as Equipment, parentId)
     case 'feature':
-      return migrateTraitSystem(oldData as Feature)
+      return migrateTraitSystem(oldData as Feature, parentId)
     case 'skill':
-      return migrateSkillSystem(oldData as Skill)
+      return migrateSkillSystem(oldData as Skill, parentId)
     case 'spell':
-      return migrateSpellSystem(oldData as Spell)
+      return migrateSpellSystem(oldData as Spell, parentId)
     default:
       throw new Error(`Invalid Item type submitted for migration: ${type}`)
   }
@@ -30,9 +43,11 @@ function migrateItemSystem(type: OldItemType, oldData: OldItemData) {
 
 /* ---------------------------------------- */
 
-function migrateBaseItemSystem(oldData: OldItemData): NewDataWrapper<NewItemType> {
+function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): NewDataWrapper<NewItemType> {
   const newData: NewDataWrapper<NewItemType> = {
     actions: {},
+    containedBy: parentId,
+    open: true,
   }
 
   Object.values(oldData.melee).forEach(action => {
@@ -52,8 +67,8 @@ function migrateBaseItemSystem(oldData: OldItemData): NewDataWrapper<NewItemType
 
 /* ---------------------------------------- */
 
-function migrateEquipmentSystem(oldData: Equipment): NewDataWrapper<'equipmentV2'> {
-  const newData: NewDataWrapper<'equipmentV2'> = migrateBaseItemSystem(oldData)
+function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): NewDataWrapper<'equipmentV2'> {
+  const newData: NewDataWrapper<'equipmentV2'> = migrateBaseItemSystem(oldData, parentId)
 
   newData.eqt = {
     ...oldData.eqt,
@@ -67,8 +82,8 @@ function migrateEquipmentSystem(oldData: Equipment): NewDataWrapper<'equipmentV2
 
 /* ---------------------------------------- */
 
-function migrateTraitSystem(oldData: Feature): NewDataWrapper<'featureV2'> {
-  const newData: NewDataWrapper<'featureV2'> = migrateBaseItemSystem(oldData)
+function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataWrapper<'featureV2'> {
+  const newData: NewDataWrapper<'featureV2'> = migrateBaseItemSystem(oldData, parentId)
 
   newData.fea = {
     ...oldData.fea,
@@ -79,8 +94,8 @@ function migrateTraitSystem(oldData: Feature): NewDataWrapper<'featureV2'> {
 
 /* ---------------------------------------- */
 
-function migrateSkillSystem(oldData: Skill): NewDataWrapper<'skillV2'> {
-  const newData: NewDataWrapper<'skillV2'> = migrateBaseItemSystem(oldData)
+function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWrapper<'skillV2'> {
+  const newData: NewDataWrapper<'skillV2'> = migrateBaseItemSystem(oldData, parentId)
 
   newData.ski = {
     ...oldData.ski,
@@ -93,8 +108,8 @@ function migrateSkillSystem(oldData: Skill): NewDataWrapper<'skillV2'> {
 
 /* ---------------------------------------- */
 
-function migrateSpellSystem(oldData: Spell): NewDataWrapper<'spellV2'> {
-  const newData: NewDataWrapper<'spellV2'> = migrateBaseItemSystem(oldData)
+function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWrapper<'spellV2'> {
+  const newData: NewDataWrapper<'spellV2'> = migrateBaseItemSystem(oldData, parentId)
 
   newData.spl = {
     ...oldData.spl,
@@ -107,4 +122,4 @@ function migrateSpellSystem(oldData: Spell): NewDataWrapper<'spellV2'> {
 
 /* ---------------------------------------- */
 
-export { migrateItemSystem }
+export { migrateItemSystem, getNewItemType }

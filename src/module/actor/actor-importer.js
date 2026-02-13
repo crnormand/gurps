@@ -777,7 +777,6 @@ export class ActorImporter {
    */
   async importAdsFromGCA(adsjson, disadsjson) {
     /** @type {Advantage[]} */
-    if (!!adsjson || !!disadsjson) await this._preImport('GCA', 'feature')
     let list = []
 
     await this.importBaseAdvantagesFromGCA(list, adsjson)
@@ -836,7 +835,6 @@ export class ActorImporter {
    */
   async importSkillsFromGCA(json) {
     if (!json) return
-    await this._preImport('GCA', 'skill')
     let temp = []
 
     for (let key in json) {
@@ -893,7 +891,6 @@ export class ActorImporter {
    */
   async importSpellsFromGCA(json) {
     if (!json) return
-    await this._preImport('GCA', 'spell')
     let temp = []
 
     for (let key in json) {
@@ -1127,7 +1124,6 @@ export class ActorImporter {
     if (!json) return
 
     this.ignoreRender = true
-    await this._preImport('GCA', 'equipment')
 
     /**
      * @type {Equipment[]}
@@ -1737,8 +1733,6 @@ export class ActorImporter {
   async importAdsFromGCS(ads) {
     let temp = []
 
-    if (ads) await this._preImport('GCS', 'feature')
-
     for (let i of ads) {
       temp = temp.concat(await this.importAd(i, ''))
     }
@@ -1814,7 +1808,6 @@ export class ActorImporter {
   }
 
   async importSkillsFromGCS(sks) {
-    await this._preImport('GCS', 'skill')
     if (!sks) return
     let temp = []
 
@@ -1899,7 +1892,6 @@ export class ActorImporter {
   }
 
   async importSpellsFromGCS(sps) {
-    await this._preImport('GCS', 'spell')
     if (!sps) return
     let temp = []
 
@@ -1970,7 +1962,6 @@ export class ActorImporter {
 
   async importEquipmentFromGCS(eq, oeq) {
     this.ignoreRender = true
-    await this._preImport('GCS', 'equipment')
     if (!eq && !oeq) return
     let temp = []
 
