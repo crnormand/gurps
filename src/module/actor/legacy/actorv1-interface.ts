@@ -150,9 +150,10 @@ interface EncumbranceLevel {
   currentmovedisplay: string
 }
 
-interface Modifier {
-  description: string
-  value: number
+interface Reaction {
+  modifier: string
+  modifierTags: string
+  situation: string
 }
 
 interface Trait {
@@ -248,8 +249,8 @@ interface ActorV1Model {
     shove: string
     twohandedlift: string
   }
-  conditionalmods: Record<string, Modifier>
-  reactions: Record<string, Modifier>
+  conditionalmods: Record<string, Reaction>
+  reactions: Record<string, Reaction>
   additionalresources: {
     qnotes?: string
     bodyplan: string

@@ -1,19 +1,38 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
 import { getNewItemType, migrateItemSystem } from '@module/item/migrate.js'
 
+import { Melee, Ranged } from './actor-components.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
 
-async function migrateActor(actor: Actor.OfType<'character'>): Promise<Actor.OfType<'characterV2'>> {
+async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
+  if (!game.i18n) {
+    console.error('GURPS | Cannot migrate actor because game.i18n is not initialized.')
+
+    return
+  }
+
+  if (!actor.isOfType('character')) {
+    console.error(
+      'Attempted to migrate actor that is not of type character. Actor name:',
+      actor.name,
+      'Actor type:',
+      actor.type
+    )
+
+    return
+  }
+
   const items: Item.CreateData[] = []
+
+  const system = actor.system as ActorV1Model
 
   actor.items.forEach(item => {
     if (!item.isOfType('equipment', 'feature', 'skill', 'spell')) return
 
     const parentId = getItemParentId(actor, item)
     const type = getNewItemType(item.type)
-
-    console.log(item.name, item.type, parentId)
 
     const system = migrateItemSystem(item.type, item.system as any, parentId)
 
@@ -24,6 +43,107 @@ async function migrateActor(actor: Actor.OfType<'character'>): Promise<Actor.OfT
       system,
     })
   })
+
+  // ActorV1 has no concept of Reaction and Conditional Modifier ownership by items,
+  // so reactions and conditional modifiers are moved to a single placeholder item.
+  const migrationItem: Item.CreateData<'featureV2'> = {
+    type: 'featureV2',
+    name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
+    system: {
+      containedBy: null,
+      fea: {
+        name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
+        notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
+        points: 0,
+      },
+      reactions: Object.values(system.reactions).map(reaction => {
+        return {
+          modifier: Number(reaction.modifier),
+          situation: reaction.situation,
+          modifierTags: reaction.modifierTags,
+        }
+      }),
+      conditionalmods: Object.values(system.conditionalmods).map(mod => {
+        return {
+          modifier: Number(mod.modifier),
+          situation: mod.situation,
+          modifierTags: mod.modifierTags,
+        }
+      }),
+      actions: {},
+    },
+  }
+
+  Object.values(system.melee).forEach((weapon: Melee) => {
+    const id = foundry.utils.randomID()
+
+    const data: DataModel.CreateData<DataModel.SchemaOf<MeleeAttackModel>> = {
+      _id: id,
+      name: weapon.name,
+      type: 'meleeAttack',
+      mel: {
+        name: weapon.name,
+        import: Number(weapon.import),
+        damage: weapon.damage,
+        st: weapon.st,
+        mode: weapon.mode,
+        notes: weapon.notes,
+        weight: weapon.weight,
+        techlevel: weapon.techlevel,
+        cost: weapon.cost,
+        reach: weapon.reach,
+        parry: weapon.parry,
+        parrybonus: 0,
+        baseParryPenalty: weapon.baseParryPenalty,
+        block: weapon.block,
+        blockbonus: 0,
+        otf: '',
+        itemModifiers: '',
+        modifierTags: weapon.modifierTags,
+        extraAttacks: weapon.extraAttacks,
+        consumeAction: weapon.consumeAction,
+      },
+    }
+
+    migrationItem.system!.actions![id] = data
+  })
+
+  Object.values(system.ranged).forEach((weapon: Ranged) => {
+    const id = foundry.utils.randomID()
+
+    const data: DataModel.CreateData<DataModel.SchemaOf<RangedAttackModel>> = {
+      _id: id,
+      name: weapon.name,
+      type: 'rangedAttack',
+      rng: {
+        name: weapon.name,
+        import: Number(weapon.import),
+        damage: weapon.damage,
+        st: weapon.st,
+        mode: weapon.mode,
+        notes: weapon.notes,
+        bulk: weapon.bulk,
+        legalityclass: weapon.legalityclass,
+        ammo: weapon.ammo,
+        acc: weapon.acc,
+        range: weapon.range,
+        shots: weapon.shots,
+        rcl: weapon.rcl,
+        halfd: weapon.halfd,
+        max: weapon.max,
+        otf: '',
+        itemModifiers: '',
+        modifierTags: weapon.modifierTags,
+        extraAttacks: weapon.extraAttacks,
+        consumeAction: weapon.consumeAction,
+        rate_of_fire: weapon.rof,
+      },
+    }
+
+    migrationItem.system!.actions![id] = data
+  })
+
+  items.push(migrationItem)
 
   const createData: Actor.CreateData<'characterV2'> = {
     type: 'characterV2',
@@ -49,8 +169,6 @@ function getItemParentId(
   else if (item.isOfType('feature')) oldParentId = (item.system as Feature).fea.parentuuid
   else if (item.isOfType('skill')) oldParentId = (item.system as Skill).ski.parentuuid
   else if (item.isOfType('spell')) oldParentId = (item.system as Spell).spl.parentuuid
-
-  console.log('Old parent ID for item', item.name, ':', oldParentId)
 
   if (oldParentId === null) return null
 
