@@ -83,12 +83,10 @@ case "$1" in
             exit 0
         fi
         
-        node "$SCRIPT_DIR/foundry-release.cjs" \
+        if node "$SCRIPT_DIR/foundry-release.cjs" \
             --version "$VERSION" \
             --manifest-url "https://github.com/$REPO/releases/download/$TAG/system.json" \
-            --notes-url "https://github.com/$REPO/releases/tag/$TAG"
-        
-        if [ $? -eq 0 ]; then
+            --notes-url "https://github.com/$REPO/releases/tag/$TAG"; then
             echo -e "${GREEN}✅ Successfully published!${NC}"
         else
             echo -e "${RED}❌ Publication failed!${NC}"
@@ -115,13 +113,11 @@ case "$1" in
         
         # First do a dry run
         echo "Running dry-run first..."
-        node "$SCRIPT_DIR/foundry-release.cjs" \
+        if ! node "$SCRIPT_DIR/foundry-release.cjs" \
             --version "$VERSION" \
             --manifest-url "https://github.com/$REPO/releases/download/$TAG/system.json" \
             --notes-url "https://github.com/$REPO/releases/tag/$TAG" \
-            --dry-run
-        
-        if [ $? -ne 0 ]; then
+            --dry-run; then
             echo -e "${RED}❌ Dry run failed! Fix errors before publishing.${NC}"
             exit 1
         fi
@@ -134,12 +130,10 @@ case "$1" in
             exit 0
         fi
         
-        node "$SCRIPT_DIR/foundry-release.cjs" \
+        if node "$SCRIPT_DIR/foundry-release.cjs" \
             --version "$VERSION" \
             --manifest-url "https://github.com/$REPO/releases/download/$TAG/system.json" \
-            --notes-url "https://github.com/$REPO/releases/tag/$TAG"
-        
-        if [ $? -eq 0 ]; then
+            --notes-url "https://github.com/$REPO/releases/tag/$TAG"; then
             echo -e "${GREEN}✅ Successfully published version $VERSION!${NC}"
         else
             echo -e "${RED}❌ Publication failed!${NC}"
