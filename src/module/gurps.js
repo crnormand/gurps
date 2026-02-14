@@ -31,22 +31,12 @@ import {
   zeroFill,
 } from '@util/utilities.js'
 
-import { Action } from './action/index.js'
-// import { Advantage, Equipment, Skill, Spell } from './actor/actor-components.js'
-import {
-  GurpsActorCombatSheet,
-  GurpsActorEditorSheet,
-  GurpsActorSheet,
-  GurpsActorSheetReduced,
-  GurpsActorSimplifiedSheet,
-  GurpsActorTabSheet,
-  GurpsInventorySheet,
-} from './actor/actor-sheet.js'
+import { ActionModule } from './action/index.js'
 import { prepareRemoveKey } from './actor/deletion.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
+import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
-import { GurpsActorModernSheet, GurpsActorNpcModernSheet } from './actor/modern/index.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
@@ -68,13 +58,8 @@ import TriggerHappySupport from './effects/triggerhappy.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
-import { EquipmentModel } from './item/data/equipment.js'
-import { SkillModel } from './item/data/skill.js'
-import { SpellModel } from './item/data/spell.js'
-import { TraitModel } from './item/data/trait.js'
-import { GurpsItemV2 } from './item/gurps-item.js'
+import { Item } from './item/index.js'
 import { AddImportEquipmentButton } from './item-import.js'
-import { GurpsItemSheet } from './item-sheet.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
@@ -83,8 +68,8 @@ import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { UI } from './ui/index.js'
-import { multiplyDice } from './util/damage-utils.ts'
-import { gurpslink } from './util/gurpslink.ts'
+import { multiplyDice } from './util/damage-utils.js'
+import { gurpslink } from './util/gurpslink.js'
 
 export let GURPS = undefined
 
@@ -115,12 +100,14 @@ if (!globalThis.GURPS) {
 
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
-    Action,
+    Action: ActionModule,
+    Actor,
     Canvas,
     Combat,
     CombatTracker,
     Damage,
     Importer,
+    Item,
     Pdf,
     ResourceTracker,
     Token,
@@ -2190,14 +2177,6 @@ if (!globalThis.GURPS) {
     GURPS.Maneuvers = Maneuvers
 
     // Define custom Entity classes
-    CONFIG.Actor.documentClass = GurpsActorV2
-    CONFIG.Item.documentClass = GurpsItemV2
-    CONFIG.Item.dataModels = {
-      featureV2: TraitModel,
-      skillV2: SkillModel,
-      spellV2: SpellModel,
-      equipmentV2: EquipmentModel,
-    }
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class
@@ -2209,49 +2188,6 @@ if (!globalThis.GURPS) {
     foundry.applications.apps.DocumentSheetConfig.registerSheet(ActiveEffect, 'gurps', GurpsActiveEffectConfig, {
       makeDefault: true,
     })
-
-    // Register sheet application classes
-    foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
-      label: 'Combat',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
-      label: 'Editor',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
-      label: 'Simple',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcModernSheet, {
-      label: 'NPC/mini',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
-      label: 'Inventory Only',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
-      label: 'Tabbed Sheet',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
-      label: 'Modern',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
-      label: 'Reduced Mode',
-      makeDefault: false,
-    })
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
-      // Add this sheet last
-      label: 'Full (GCS)',
-      makeDefault: true,
-    })
-
-    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
-    foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
     // @ts-expect-error - Foundry VTT hook callback parameter types not fully typed
@@ -2303,8 +2239,6 @@ if (!globalThis.GURPS) {
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
       // "ControlLeft", "ControlRight"
     })
-
-    GURPS.ActorSheets = { character: GurpsActorSheet }
 
     Hooks.call('gurpsinit', GURPS)
   })

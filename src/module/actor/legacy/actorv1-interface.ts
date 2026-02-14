@@ -150,9 +150,10 @@ interface EncumbranceLevel {
   currentmovedisplay: string
 }
 
-interface Modifier {
-  description: string
-  value: number
+interface Reaction {
+  modifier: string
+  modifierTags: string
+  situation: string
 }
 
 interface Trait {
@@ -213,7 +214,7 @@ interface ActorV1Model {
     hair: string
     skin: string
     hand: string
-    sizemod: string
+    sizemod?: string
     techlevel: string
     createdon: string
     modifiedon: string
@@ -248,12 +249,14 @@ interface ActorV1Model {
     shove: string
     twohandedlift: string
   }
-  conditionalmods: Record<string, Modifier>
-  reactions: Record<string, Modifier>
+  conditionalmods: Record<string, Reaction>
+  reactions: Record<string, Reaction>
   additionalresources: {
     qnotes?: string
     bodyplan: string
     tracker: Record<string, TrackerInstance>
+    importname?: string
+    importpath?: string
   }
   conditions: {
     reeling: boolean

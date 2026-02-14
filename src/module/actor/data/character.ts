@@ -3,6 +3,7 @@ import { MeleeV1 } from '@module/action/legacy/meleev1.js'
 import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { EquipmentModel } from '@module/item/data/equipment.js'
@@ -33,24 +34,37 @@ import {
 } from '../maneuver.js'
 import { CheckInfo } from '../types.js'
 
-import { BaseActorModel } from './base.js'
+import { ActorMetadata, BaseActorModel } from './base.js'
 import {
   attributeSchema,
   conditionsSchema,
   DamageActionSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
-  MoveSchema,
-  moveSchema,
   poolSchema,
   ReactionSchema,
 } from './character-components.js'
 import { HitLocationEntryV2 } from './hit-location-entry.js'
+import { MoveModeV2 } from './move-mode.js'
 import { NoteV2 } from './note.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
   static override defineSchema(): CharacterSchema {
     return characterSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): ActorMetadata {
+    return {
+      embedded: {
+        HitLocation: 'system.hitlocationsV2',
+        Note: 'system.allNotes',
+        MoveMode: `system.moveV2`,
+        ResourceTracker: `system.additionalresources.tracker`,
+      },
+      type: 'base',
+    }
   }
 
   /* ---------------------------------------- */
@@ -103,7 +117,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   get hitlocations() {
     const hitlocations: Record<string, HitLocationEntryV1> = {}
 
-    this.hitlocationsV2.forEach((locationV2: any, index: number) => {
+    this.hitlocationsV2.values().forEach((locationV2, index) => {
       hitlocations[`${zeroFill(index, 5)}`] = HitLocationEntryV1.createFromV2(locationV2)
     })
 
@@ -153,7 +167,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  get currentmovemode(): fields.SchemaField.SourceData<MoveSchema> {
+  get currentmovemode(): MoveModeV2 {
     return this.moveV2.find(mv => mv.default)!
   }
 
@@ -290,7 +304,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // @deprecated Legacy collection.
   get move() {
-    return arrayToObject(this.moveV2, 5)
+    return Object.fromEntries(this.moveV2.map((mv, index) => [zeroFill(index, 5), mv]))
   }
 
   /* ---------------------------------------- */
@@ -316,8 +330,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  private isAirMoveMode(mv: fields.SchemaField.SourceData<MoveSchema>): boolean {
-    return mv.mode === 'GURPS.moveModeAir'
+  private isAirMoveMode(mv: MoveModeV2): boolean {
+    return mv.mode === 'GURPS.moveModeAir' || (!!game.i18n && mv.mode === game.i18n.localize('GURPS.moveModeAir'))
   }
 
   /* ---------------------------------------- */
@@ -830,7 +844,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  get currentMoveMode(): fields.SchemaField.SourceData<MoveSchema> | null {
+  get currentMoveMode(): MoveModeV2 | null {
     return this.moveV2.find(enc => enc.default) ?? null
   }
 
@@ -1131,23 +1145,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   // NOTE: change from previous schema, where path was used instead of index
-  async removeTracker(index: number): Promise<void> {
-    const trackers = this.additionalresources.tracker
+  async removeTracker(id: string): Promise<void> {
+    const tracker = this.additionalresources.tracker.get(id)
 
-    if (index < 0 || index >= trackers.length) return
-    trackers.splice(index, 1)
-    // @ts-expect-error: not sure why the path is not recognised
-    await this.parent.update({ 'system.additionalresources.tracker': trackers })
+    if (!tracker) return
+
+    await tracker.delete()
   }
 
   /* ---------------------------------------- */
 
   async addTracker(): Promise<void> {
-    const trackers = this.additionalresources.tracker ?? []
-
-    trackers.push(new TrackerInstance())
-    // @ts-expect-error: not sure why the path is not recognised
-    await this.parent.update({ 'system.additionalresources.tracker': trackers })
+    await TrackerInstance.create({}, { parent: this.parent })
   }
 
   /* ---------------------------------------- */
@@ -1166,43 +1175,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   async setMoveDefault(value: string): Promise<void> {
     const move = this.moveV2
 
-    move.forEach((moveEntry: fields.SchemaField.SourceData<MoveSchema>) => {
-      moveEntry.default = moveEntry.mode === value
-    })
+    const updates = Object.fromEntries(
+      move.map(moveEntry => [`system.moveV2.${moveEntry.id}.default`, moveEntry.mode === value])
+    )
 
-    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
-  }
-
-  /* ---------------------------------------- */
-
-  async addMoveMode({
-    mode,
-    basic,
-    enhanced,
-    isDefault = false,
-  }: {
-    mode: string
-    basic: number
-    enhanced?: number
-    isDefault?: boolean
-  }): Promise<void> {
-    const move = this.moveV2 ?? []
-    const existingMove = move.find(entry => entry.mode === mode)
-
-    if (existingMove) {
-      existingMove.basic = basic ?? existingMove.basic
-      existingMove.enhanced = enhanced ?? existingMove.enhanced
-      existingMove.default = isDefault ?? existingMove.default
-    } else {
-      move.push({
-        mode,
-        basic: basic,
-        enhanced: enhanced ?? basic ?? 0,
-        default: isDefault ?? move.length === 0,
-      })
-    }
-
-    await this.parent.update({ 'system.moveV2': move } as Actor.UpdateData)
+    await this.parent.update(updates)
   }
 
   /* ---------------------------------------- */
@@ -1781,9 +1758,10 @@ const characterSchema = () => {
         qnotes: new fields.StringField({ required: true, nullable: false }),
         // TODO This could be a trait instead.
         bodyplan: new fields.StringField({ required: true, nullable: false }),
-        tracker: new fields.ArrayField(new fields.EmbeddedDataField(TrackerInstance), {
+        tracker: new CollectionField(TrackerInstance, {
           required: true,
           nullable: false,
+          initial: {},
         }),
         importname: new fields.StringField({ required: true, nullable: true }),
         // NOTE: Should be a FilePathField but these do not allow arbitrary file extension.
@@ -1854,10 +1832,7 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
-    hitlocationsV2: new fields.ArrayField(
-      new fields.EmbeddedDataField(HitLocationEntryV2, { required: true, nullable: false }),
-      { required: true, nullable: false }
-    ),
+    hitlocationsV2: new CollectionField(HitLocationEntryV2, { required: true, nullable: false, initial: {} }),
 
     // NOTE: Change from previous schema where these fields were part of the schema. They are now derived properties
     // reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
@@ -1888,16 +1863,9 @@ const characterSchema = () => {
     //  Enhanced Move = (Basic Speed x level; half level x 1.5) For ONE move mode
     //
     // * Tunneling = Underground (1 yard per level)
-    moveV2: new fields.ArrayField(new fields.SchemaField(moveSchema(), { required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-      default: [{ mode: 'GURPS.moveModeGround', basic: 5, enhanced: null, default: true }],
-    }),
+    moveV2: new CollectionField(MoveModeV2, { required: true, nullable: false, initial: {} }),
 
-    allNotes: new fields.ArrayField(new fields.EmbeddedDataField(NoteV2, { required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
+    allNotes: new CollectionField(NoteV2, { required: true, nullable: false, initial: {} }),
 
     // NOTE: the following have been replaced with Items or accessors in the new model, and thus should not be used.
     // They are commented out but this note is kept here for reference.

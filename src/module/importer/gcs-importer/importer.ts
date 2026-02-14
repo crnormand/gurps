@@ -1,9 +1,10 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
+import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { ItemComponentSchema } from '@module/item/data/component.js'
 import { TraitComponentSchema, TraitSchema } from '@module/item/data/trait.js'
-import { AnyMutableObject } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../../action/melee-attack.js'
 import { RangedAttackComponentSchema, RangedAttackSchema } from '../../action/ranged-attack.js'
@@ -369,7 +370,9 @@ Portrait will not be imported.`
     this.output.additionalresources.bodyplan = this.input.settings.body_type.name ?? 'Humanoid'
 
     this.output.hitlocationsV2 = this.input.settings.body_type.locations.reduce(
-      (acc: DataModel.CreateData<HitLocationSchemaV2>[], location) => {
+      (acc: Record<string, DataModel.CreateData<HitLocationSchemaV2>>, location) => {
+        const id = foundry.utils.randomID()
+
         const split = { ...(location.calc.dr as Record<string, number>) }
 
         delete split.all // Remove the 'all' key, as it is already present in the 'import' field
@@ -382,6 +385,7 @@ Portrait will not be imported.`
         const role = entry?.role ?? entry?.id
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
+          _id: id,
           where: location.table_name ?? '',
           import: (location.calc.dr as Record<string, number>).all ?? 0,
           penalty: location.hit_penalty ?? 0,
@@ -390,11 +394,11 @@ Portrait will not be imported.`
           role,
         }
 
-        acc.push(newLocation)
+        acc[id] = newLocation
 
         return acc
       },
-      []
+      {}
     )
 
     await this.#promptHitLocationOverwrite()
@@ -409,22 +413,34 @@ Portrait will not be imported.`
     const currentBodyPlan = this.actor.system.additionalresources.bodyplan
 
     // Remove derived values / all values not proper to the hit location on its own.
-    const currentHitLocations = this.actor.system.hitlocationsV2.map(hitLocation => {
-      const location = hitLocation.toObject() as AnyMutableObject
+    const currentHitLocations: Record<string, AnyObject> = Object.fromEntries(
+      this.actor.system.hitlocationsV2.map(hitLocation => {
+        const location = hitLocation.toObject() as AnyMutableObject
 
-      delete location._damageType
-      delete location._dr
-      delete location.drCap
-      delete location.drItem
-      delete location.drMod
+        delete location._damageType
+        delete location._dr
+        delete location.drCap
+        delete location.drItem
+        delete location.drMod
 
-      return location
-    })
+        return [location._id, location]
+      })
+    )
 
-    const statsDifference =
-      currentBodyPlan !== this.output.additionalresources!.bodyplan ||
-      // @ts-expect-error: for some reason, the Array here is not being recognised as one. Type system issue?
-      !currentHitLocations.equals(this.output.hitlocationsV2)
+    const bodyPlansAreEqual = () => {
+      const oldLocations = Object.values(currentHitLocations)
+      const newLocations = Object.values(this.output.hitlocationsV2 ?? {})
+
+      if (oldLocations.length !== newLocations.length) return false
+
+      for (let i = 0; i < oldLocations.length; i++) {
+        if (!foundry.utils.objectsEqual(oldLocations[i], newLocations[i] as AnyObject)) return false
+      }
+
+      return true
+    }
+
+    const statsDifference = currentBodyPlan !== this.output.additionalresources!.bodyplan || !bodyPlansAreEqual()
 
     if (!statsDifference) return
 
@@ -519,15 +535,18 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importMiscValues() {
-    // TODO Implement me.
-    this.output.moveV2 = [
-      {
-        mode: 'GURPS.moveModeGround',
-        basic: this.output.basicmove?.value ?? 5,
-        enhanced: 0,
-        default: true,
-      },
-    ]
+    const id = foundry.utils.randomID()
+
+    const groundMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
+      _id: id,
+      mode: 'GURPS.moveModeGround',
+      basic: this.output.basicmove?.value ?? 5,
+      enhanced: 0,
+      default: true,
+    }
+
+    this.output.moveV2 ||= {}
+    this.output.moveV2[id] = groundMove
   }
 
   /* ---------------------------------------- */
@@ -949,16 +968,16 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importNotes() {
-    this.output.allNotes = []
+    this.output.allNotes = {}
     if (this.input.notes) this.input.notes.forEach(note => this.#importNote(note, null))
   }
 
   /* ---------------------------------------- */
 
   #importNote(gcs_note: GcsNote, containedBy: string | null): void {
-    const id = gcs_note.id ?? foundry.utils.randomID()
+    const id = foundry.utils.randomID()
     const note: DataModel.CreateData<NoteV2Schema> = {
-      id,
+      _id: id,
       open: true,
       containedBy,
       markdown: gcs_note.markdown,
@@ -974,16 +993,15 @@ Portrait will not be imported.`
       this.#importNote(child, id)
     })
 
-    if (Array.isArray(this.output.allNotes)) {
-      this.output.allNotes.push(note)
-    }
+    this.output.allNotes ||= {}
+    this.output.allNotes[id] = note
   }
 
   /* ---------------------------------------- */
 
   #createStandardTrackers() {
     this.output.additionalresources ||= {}
-    this.output.additionalresources.tracker ||= []
+    this.output.additionalresources.tracker ||= {}
 
     // Placeholder for adding standard trackers to the character.
   }

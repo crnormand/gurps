@@ -1,1 +1,1 @@
-export * from '../../util/damage-utils.ts'
+export * from '../../util/damage-utils.js'

@@ -136,19 +136,6 @@ type ReactionSchema = ReturnType<typeof reactionSchema>
 
 /* ---------------------------------------- */
 
-const moveSchema = () => {
-  return {
-    mode: new fields.StringField({ required: true, nullable: false }),
-    basic: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    enhanced: new fields.NumberField({ required: true, nullable: true }),
-    default: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-  }
-}
-
-type MoveSchema = ReturnType<typeof moveSchema>
-
-/* ---------------------------------------- */
-
 // const noteSchema = () => {
 //   return {
 //     id: new fields.StringField({ required: true, nullable: false }),
@@ -181,14 +168,12 @@ export {
   damageActionSchema,
   encumbranceSchema,
   liftingMovingSchema,
-  moveSchema,
   poolSchema,
   reactionSchema,
   // noteSchema,
   type DamageActionSchema,
   type EncumbranceSchema,
   type LiftingMovingSchema,
-  type MoveSchema,
   type ReactionSchema,
   // type NoteSchema,
 }

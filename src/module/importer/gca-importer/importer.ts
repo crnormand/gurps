@@ -293,28 +293,39 @@ Portrait will not be imported.`
     this.output.swing = swing
 
     // Import speeds for move modes(based on attributes in GGA)
-    this.output.moveV2 = [
-      {
-        mode: 'GURPS.moveModeGround',
-        default: true,
-        ...this.#importMoveType('Ground Move'),
-      },
-      {
-        mode: 'GURPS.moveModeAir',
-        default: false,
-        ...this.#importMoveType('Air Move'),
-      },
-      {
-        mode: 'GURPS.moveModeWater',
-        default: false,
-        ...this.#importMoveType('Water Move'),
-      },
-      {
-        mode: 'GURPS.moveModeSpace',
-        default: false,
-        ...this.#importMoveType('Space Move'),
-      },
-    ]
+    const groundMove = {
+      _id: foundry.utils.randomID(),
+      mode: 'GURPS.moveModeGround',
+      default: true,
+      ...this.#importMoveType('Ground Move'),
+    }
+
+    const airMove = {
+      _id: foundry.utils.randomID(),
+      mode: 'GURPS.moveModeAir',
+      default: false,
+      ...this.#importMoveType('Air Move'),
+    }
+
+    const waterMove = {
+      _id: foundry.utils.randomID(),
+      mode: 'GURPS.moveModeWater',
+      default: false,
+      ...this.#importMoveType('Water Move'),
+    }
+
+    const spaceMove = {
+      _id: foundry.utils.randomID(),
+      mode: 'GURPS.moveModeSpace',
+      default: false,
+      ...this.#importMoveType('Space Move'),
+    }
+
+    this.output.moveV2 ||= {}
+    this.output.moveV2[groundMove._id] = groundMove
+    this.output.moveV2[airMove._id] = airMove
+    this.output.moveV2[waterMove._id] = waterMove
+    this.output.moveV2[spaceMove._id] = spaceMove
   }
 
   /* ---------------------------------------- */
@@ -370,7 +381,9 @@ Portrait will not be imported.`
     const table = HitLocations.hitlocationDictionary?.[this.input.bodytype ?? 'Humanoid']
 
     this.output.hitlocationsV2 = this.input.hitlocationtable.hitlocationlines.reduce(
-      (acc: DataModel.CreateData<HitLocationSchemaV2>[], location) => {
+      (acc: Record<string, DataModel.CreateData<HitLocationSchemaV2>>, location) => {
+        const id = foundry.utils.randomID()
+
         // Some properties of the hit location are stored not in the hit location table, but in the body table.
         // These are different but related tables. All locations in "hitlocationtable" *should* be in "body".
         // However, different names may be in use. We're accounting for these possibilities.
@@ -403,17 +416,18 @@ Portrait will not be imported.`
         const dr = parseInt(bodyLocation.dr)
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
+          _id: id,
           where: location.location ?? '',
           import: Number.isNaN(dr) ? 0 : dr,
           rollText: roll,
           split: {},
         }
 
-        acc.push(newLocation)
+        acc[id] = newLocation
 
         return acc
       },
-      []
+      {}
     )
   }
 

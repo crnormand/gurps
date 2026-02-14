@@ -170,8 +170,6 @@ const rangedAttackComponentSchema = () => {
     modifierTags: new fields.StringField({ required: true, nullable: false }),
     extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
-
-    // Added: Missing?
     rate_of_fire: new fields.StringField({ required: true, nullable: false, initial: '' }),
   }
 }

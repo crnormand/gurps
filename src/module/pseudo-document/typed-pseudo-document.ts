@@ -1,9 +1,25 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
 
-import { PseudoDocument, PseudoDocumentSchema } from './pseudo-document.js'
+import { PseudoDocument, PseudoDocumentMetadata, PseudoDocumentSchema } from './pseudo-document.js'
+
+namespace TypedPseudoDocument {
+  export type TypeNames<DocumentName extends gurps.Pseudo.WithTypes> = keyof PseudoDocumentConfig[DocumentName]
+
+  /* ---------------------------------------- */
+
+  export type OfType<Name extends gurps.Pseudo.WithTypes, Type extends TypeNames<Name>> = PseudoDocumentConfig extends {
+    readonly [_ in Name]: { readonly discriminate: 'all' }
+  }
+    ? PseudoDocumentConfig[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
+      ? PseudoDocumentConfig[Name][Type]
+      : never
+    : never
+}
 
 interface TypedPseudoDocumentCreateDialogOptions
   extends foundry.config.ApplicationConfiguration, foundry.applications.api.Dialog.WaitOptions {}
+
+/* ---------------------------------------- */
 
 class TypedPseudoDocument<
   Schema extends TypedPseudoDocumentSchema = TypedPseudoDocumentSchema,
@@ -11,6 +27,21 @@ class TypedPseudoDocument<
 > extends PseudoDocument<Schema, Parent> {
   static override defineSchema() {
     return Object.assign(super.defineSchema(), typedPseudoDocumentSchema(this))
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocumentMetadata<gurps.Pseudo.WithTypes> {
+    return super.metadata as PseudoDocumentMetadata<gurps.Pseudo.WithTypes>
+  }
+
+  /* ---------------------------------------- */
+
+  isOfType<DocumentName extends gurps.Pseudo.WithTypes, SubType extends TypedPseudoDocument.TypeNames<DocumentName>>(
+    ...types: SubType[]
+  ): this is TypedPseudoDocument.OfType<DocumentName, SubType>
+  isOfType(...types: string[]): boolean {
+    return types.includes(this.type)
   }
 
   /* ---------------------------------------- */
@@ -31,13 +62,16 @@ class TypedPseudoDocument<
   static get TYPES(): Record<string, typeof TypedPseudoDocument> {
     if (!globalThis.GURPS) return {}
 
-    return Object.values(
-      GURPS.CONFIG[this.metadata.documentName] as Record<string, { documentClass: typeof TypedPseudoDocument }>
-    ).reduce((acc: Record<string, typeof TypedPseudoDocument>, { documentClass }) => {
-      if (documentClass.TYPE) acc[documentClass.TYPE] = documentClass
+    const types = GURPS.CONFIG.PseudoDocument[this.metadata.documentName]
 
-      return acc
-    }, {})
+    return Object.values(types).reduce(
+      (acc: Record<string, typeof TypedPseudoDocument>, entry: { documentClass: typeof TypedPseudoDocument }) => {
+        if (entry.documentClass.TYPE) acc[entry.documentClass.TYPE] = entry.documentClass
+
+        return acc
+      },
+      {} as Record<string, unknown>
+    )
   }
 
   /* ---------------------------------------- */
@@ -48,7 +82,11 @@ class TypedPseudoDocument<
   get typeLabel(): string {
     if (!globalThis.GURPS) return ''
 
-    return (GURPS.CONFIG[this.metadata.documentName] as any)[this.type].label
+    const config = GURPS.CONFIG.PseudoDocument[this.metadata.documentName as gurps.Pseudo.WithTypes]
+
+    if (this.type in config) return config[this.type].label
+
+    return ''
   }
 
   /* ---------------------------------------- */
@@ -97,7 +135,7 @@ class TypedPseudoDocument<
         },
         {
           // TODO: implement
-          choices: GURPS.CONFIG[this.metadata.documentName],
+          choices: GURPS.CONFIG.PseudoDocument[this.metadata.documentName],
         }
       ).outerHTML,
     }

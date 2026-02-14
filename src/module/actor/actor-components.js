@@ -726,7 +726,7 @@ export class Attack extends Named {
   /**
    * @param {string} [n1]
    * @param {string} [lvl]
-   * @param {string|Array<string>} [dmg]
+   * @param {string} [dmg]
    */
   constructor(n1, lvl, dmg) {
     super(n1)
