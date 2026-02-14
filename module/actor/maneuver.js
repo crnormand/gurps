@@ -208,7 +208,6 @@ const maneuvers = {
     defense: DEFENSE_NONE,
     icon: 'man-aoa-suppress.png',
     label: 'GURPS.maneuverAllOutAttackRanged',
-    introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
   }),
   aoa_double: new Maneuver({
     name: 'aoa_double',
