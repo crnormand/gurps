@@ -169,7 +169,7 @@ Common validation errors:
 2. **Use semantic versioning** for your releases (MAJOR.MINOR.PATCH)
 3. **Keep your token secure** - never commit it to your repository
 4. **Use the automatic workflow** for releases when possible
-5. **Test manifest URLs** ensure they're accessible before publishing
+5. **Test manifest URLs** to ensure they're accessible before publishing
 6. **Update compatibility** information in system.json to keep it accurate
 
 ## References
