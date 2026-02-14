@@ -5,7 +5,7 @@
  * It can be used in GitHub Actions or run manually for local testing.
  *
  * Usage:
- *   node build/foundry-release.js --version 1.0.0 --manifest-url https://... --notes-url https://... [--dry-run]
+ *   node build/foundry-release.cjs --version 1.0.0 --manifest-url https://... --notes-url https://... [--dry-run]
  *
  * Environment Variables:
  *   FVTT_PACKAGE_ID      - The package ID (defaults to "gurps")
@@ -82,7 +82,7 @@ function validate() {
     errors.forEach(error => console.error(`  - ${error}`))
     console.error('\nUsage:')
     console.error(
-      '  node build/foundry-release.js --version 1.0.0 --manifest-url https://... --notes-url https://... [--dry-run]'
+      '  node build/foundry-release.cjs --version 1.0.0 --manifest-url https://... --notes-url https://... [--dry-run]'
     )
     console.error('\nEnvironment variables:')
     console.error('  FVTT_RELEASE_TOKEN (required) - Your Foundry VTT release API token')

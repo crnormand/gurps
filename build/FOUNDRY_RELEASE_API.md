@@ -60,7 +60,7 @@ npm run foundry:release -- \
 ### Using the Script Directly
 
 ```bash
-FVTT_RELEASE_TOKEN="fvttp_your_token_here" node build/foundry-release.js \
+FVTT_RELEASE_TOKEN="fvttp_your_token_here" node build/foundry-release.cjs \
   --version "0.18.12" \
   --manifest-url "https://github.com/crnormand/gurps/releases/download/v0.18.12/system.json" \
   --notes-url "https://github.com/crnormand/gurps/releases/tag/v0.18.12" \
@@ -176,5 +176,5 @@ Common validation errors:
 
 - [Foundry VTT Package Release API Documentation](https://foundryvtt.com/article/package-release-api/)
 - [Semantic Versioning](https://semver.org/)
-- The script: [build/foundry-release.js](./foundry-release.js)
+- The script: [build/foundry-release.cjs](./foundry-release.cjs)
 - Release workflow: [.github/workflows/release.yml](../.github/workflows/release.yml)

@@ -55,7 +55,7 @@ case "$1" in
         echo "Tag: $TAG"
         echo ""
         
-        node "$SCRIPT_DIR/foundry-release.js" \
+        node "$SCRIPT_DIR/foundry-release.cjs" \
             --version "$VERSION" \
             --manifest-url "https://github.com/$REPO/releases/download/$TAG/system.json" \
             --notes-url "https://github.com/$REPO/releases/tag/$TAG" \
@@ -83,7 +83,7 @@ case "$1" in
             exit 0
         fi
         
-        node "$SCRIPT_DIR/foundry-release.js" \
+        node "$SCRIPT_DIR/foundry-release.cjs" \
             --version "$VERSION" \
             --manifest-url "https://github.com/$REPO/releases/download/$TAG/system.json" \
             --notes-url "https://github.com/$REPO/releases/tag/$TAG"
@@ -115,7 +115,7 @@ case "$1" in
         
         # First do a dry run
         echo "Running dry-run first..."
-        node "$SCRIPT_DIR/foundry-release.js" \
+        node "$SCRIPT_DIR/foundry-release.cjs" \
             --version "$VERSION" \
             --manifest-url "https://github.com/$REPO/releases/download/$TAG/system.json" \
             --notes-url "https://github.com/$REPO/releases/tag/$TAG" \
@@ -134,7 +134,7 @@ case "$1" in
             exit 0
         fi
         
-        node "$SCRIPT_DIR/foundry-release.js" \
+        node "$SCRIPT_DIR/foundry-release.cjs" \
             --version "$VERSION" \
             --manifest-url "https://github.com/$REPO/releases/download/$TAG/system.json" \
             --notes-url "https://github.com/$REPO/releases/tag/$TAG"

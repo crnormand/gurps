@@ -69,7 +69,7 @@ jobs:
       - name: Publish to Foundry VTT
         if: ${{ !github.event.release.prerelease && !github.event.release.draft }}
         run: |
-          node build/foundry-release.js \
+          node build/foundry-release.cjs \
             --version "$RELEASE_VERSION" \
             --manifest-url "https://github.com/$GITHUB_REPOSITORY/releases/download/$RELEASE_TAG/system.json" \
             --notes-url "https://github.com/$GITHUB_REPOSITORY/releases/tag/$RELEASE_TAG"
