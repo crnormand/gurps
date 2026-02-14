@@ -29,7 +29,13 @@ class GurpsTokenHUD extends TokenHUD {
       // TODO: revise any to specific type
       maneuvers: Object.entries(GURPS.Maneuvers.getAll()).map(([id, maneuver]: [string, any]) => {
         return {
-          cssClass: activeEffects.some(effect => effect.img === maneuver._data.icon) ? 'active' : '',
+          cssClass: activeEffects.some(effect =>
+            effect.changes.some(
+              change => change.key === 'system.conditions.maneuver' && change.value === maneuver._data.name
+            )
+          )
+            ? 'active'
+            : '',
           src: maneuver._data.icon,
           title: game.i18n?.localize(maneuver._data.label) ?? maneuver._data.label,
           id,
