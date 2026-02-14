@@ -17,7 +17,9 @@
     "watch": "run-p wach:styles watch:code watch:static",
     "watch:code": "tsc-watch",
     "wach:styles": "sass --watch --update --style=expanded gurps.scss:dist/gurps.css",
-    "watch:static": "node build/cpx.js --watch"
+    "watch:static": "node build/cpx.js --watch",
+    "foundry:release": "node build/foundry-release.cjs",
+    "foundry:release:dry-run": "node build/foundry-release.cjs --dry-run"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
