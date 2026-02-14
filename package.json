@@ -41,6 +41,8 @@
     "dev": "npm run clean && npm run watch",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "foundry:release": "node build/foundry-release.cjs",
+    "foundry:release:dry-run": "node build/foundry-release.cjs --dry-run",
     "gen:actor-methods": "node dev/scripts/generate-actor-methods.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
