@@ -96,16 +96,21 @@ function validate() {
 
 // Build the request payload
 function buildPayload() {
+  const compatibility = {
+    minimum: config.compatibility.minimum,
+    verified: config.compatibility.verified,
+  }
+
+  if (config.compatibility.maximum) {
+    compatibility.maximum = config.compatibility.maximum
+  }
+
   const payload = {
     id: config.packageId,
     release: {
       version: config.version,
       manifest: config.manifestUrl,
-      compatibility: {
-        minimum: config.compatibility.minimum,
-        verified: config.compatibility.verified,
-        maximum: config.compatibility.maximum,
-      },
+      compatibility,
     },
   }
 
