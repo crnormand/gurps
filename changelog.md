@@ -2,6 +2,10 @@
 
 ## Release 0.18.14
 
+### Features
+
+- Automate Foundry publishing when creating a new release.
+
 ### Bugfixes
 
 - Feature Correction: All out Attack (Determined) Ranged +1 does not appear in the Modifier Bucket or Manoeuvre options (only the Melee +4 version does) \#2529
