@@ -197,9 +197,9 @@ function migrateActorSystem(
     HP: oldData.HP,
     FP: oldData.FP,
     QP: oldData.QP,
-    // NOTE: dodge for characterV1 is a derived (though persistent) property, and the reported value
-    // may be adversly affected by things like encumbrance. Here, we grab the first entry in encumbrance
-    // to get our best estimate (should be accurate 99% of the time) for the base dodge value.
+
+    // NOTE: This value represents "Basic Dodge", this being Math.floor(Basic Speed) + 3 + Modifiers (e.g. Enchanced
+    // Dodge). It is the base value used to get the Actual Dodge value under encumbrance.
     dodge: { value: Object.values(oldData.encumbrance)[0]?.dodge ?? 0 },
     basicmove: {
       value: Number(oldData.basicmove.value),
