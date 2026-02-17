@@ -284,7 +284,7 @@ Portrait will not be imported.`
   async #promptPointPoolOverwrite() {
     // No need to run this if there is no existing actor
     // or if this is the first import
-    if (!this.actor || !this.actor.system.traits.modifiedon) return
+    if (!this.actor || !this.actor.system.profile.modifiedon) return
 
     const currentHP = this.actor.system.HP.value
     const currentFP = this.actor.system.FP.value
@@ -343,7 +343,7 @@ Portrait will not be imported.`
   #importProfile() {
     const { profile } = this.input
 
-    this.output.traits = {
+    this.output.profile = {
       title: profile.title ?? '',
       height: profile.height ?? '',
       weight: profile.weight ?? '',
@@ -407,7 +407,7 @@ Portrait will not be imported.`
 
   async #promptHitLocationOverwrite() {
     // No need to run this if there is no existing actor or if this is the first import.
-    if (!this.actor || !this.actor.system.traits.modifiedon) return
+    if (!this.actor || !this.actor.system.profile.modifiedon) return
 
     const currentBodyPlan = this.actor.system.bodyplan
 

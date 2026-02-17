@@ -236,7 +236,7 @@ function migrateActorSystem(
       },
     },
 
-    traits: {
+    profile: {
       title: oldData.traits.title,
       race: oldData.traits.race,
       height: oldData.traits.height,
@@ -292,10 +292,10 @@ function migrateActorSystem(
   }
 
   // Check for missing fields or other bad info
-  if (!newData.traits?.sizemod || isNaN(newData.traits.sizemod)) {
+  if (!newData.profile?.sizemod || isNaN(newData.profile.sizemod)) {
     // Should never happen but better than a non-null assertion.
-    newData.traits ||= {}
-    newData.traits.sizemod = 0
+    newData.profile ||= {}
+    newData.profile.sizemod = 0
   }
 
   // Migrate hit locations

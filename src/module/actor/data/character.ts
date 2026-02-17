@@ -384,8 +384,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #applySizeModifierToTargetConditions() {
     // Add the default size modifier to the target conditions
-    if (this.traits.sizemod !== 0) {
-      const sizeModifier = this.traits.sizemod > 0 ? `+${this.traits.sizemod}` : `${this.traits.sizemod}`
+    if (this.profile.sizemod !== 0) {
+      const sizeModifier = this.profile.sizemod > 0 ? `+${this.profile.sizemod}` : `${this.profile.sizemod}`
 
       this.conditions.target?.modifiers?.push(game.i18n?.format('GURPS.modifiersSize', { sm: sizeModifier }) ?? '')
     }
@@ -1790,7 +1790,7 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
-    traits: new fields.SchemaField(
+    profile: new fields.SchemaField(
       {
         title: new fields.StringField({ required: true, nullable: false }),
         race: new fields.StringField({ required: true, nullable: false }),

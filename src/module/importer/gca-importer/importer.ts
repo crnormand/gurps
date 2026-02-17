@@ -351,7 +351,7 @@ Portrait will not be imported.`
     const SM = this.input.traits.attributes.find(attr => attr.symbol === 'SM')
     const TL = this.input.traits.attributes.find(attr => attr.symbol === 'TL')
 
-    this.output.traits = {
+    this.output.profile = {
       title: '',
       height: vitals?.height ?? '',
       weight: vitals?.weight ?? '',
