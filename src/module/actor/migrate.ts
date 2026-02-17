@@ -286,8 +286,6 @@ function migrateActorSystem(
 
     moveV2: {},
 
-    // TODO: Change note into an Item or something, really shouldn't have this vestigial
-    // non-Foundry items Array present
     allNotes: {},
   }
 
