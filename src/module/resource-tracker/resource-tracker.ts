@@ -1,11 +1,29 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import {
+  PseudoDocument,
+  PseudoDocumentMetadata,
+  pseudoDocumentSchema,
+} from '@module/pseudo-document/pseudo-document.js'
 
 /* ---------------------------------------- */
 
-class TrackerInstance extends foundry.abstract.DataModel<ResourceTrackerSchema> {
+class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
   static override defineSchema() {
     return resourceTrackerSchema()
   }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocumentMetadata<'ResourceTracker'> {
+    return {
+      documentName: 'ResourceTracker',
+      label: '',
+      icon: '',
+      embedded: {},
+    }
+  }
+
+  /* ---------------------------------------- */
 
   static fromTemplate(template: ResourceTrackerTemplate, actor: Actor.Implementation): TrackerInstance {
     const tracker = new TrackerInstance(template.tracker.toObject())
@@ -38,6 +56,7 @@ class TrackerInstance extends foundry.abstract.DataModel<ResourceTrackerSchema> 
 
 const resourceTrackerSchema = () => {
   return {
+    ...pseudoDocumentSchema(),
     name: new fields.StringField({ required: true, nullable: false, initial: '' }),
     alias: new fields.StringField({ required: true, nullable: false, initial: '' }),
     pdf: new fields.StringField({ required: true, nullable: false, initial: '' }),

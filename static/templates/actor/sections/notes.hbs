@@ -37,7 +37,7 @@
               <div class='tooltip gga-manual'>
                 {{#if (or this.notes this.markdown)}}
                   {{#if this.title}}<b>{{{gurpslinkbr this.title}}}</b> {{/if}}
-                  {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkmd this.markdown)}}}
+                  {{{ifThen this.notes (gurpslinkbr this.notes) (gurpslinkbr this.markdown)}}}
                 {{/if}}
               </div>
               <div>

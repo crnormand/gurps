@@ -1,5 +1,5 @@
 import { Ranged } from '../../actor/actor-components.js'
-import { defineGetterProperties } from '../../util/object-utils.ts'
+import { defineGetterProperties } from '../../util/object-utils.js'
 import { RangedAttackModel } from '../ranged-attack.js'
 
 class RangedV1 {

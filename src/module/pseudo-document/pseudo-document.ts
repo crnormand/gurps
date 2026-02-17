@@ -3,7 +3,6 @@ import { isObject } from '@module/util/guards.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { type ModelCollection } from '../data/model-collection.js'
-import { type BaseItemModel } from '../item/data/base.js'
 
 import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 
@@ -14,17 +13,17 @@ interface UpdatableDocument extends Document.Any {
 const isUpdatableDocument = (value: unknown): value is UpdatableDocument =>
   isObject(value) && 'update' in value && typeof value.update === 'function'
 
-interface PseudoDocumentConstructor {
-  metadata: PseudoDocumentMetadata
+interface PseudoDocumentConstructor<Name extends gurps.Pseudo.Name = gurps.Pseudo.Name> {
+  metadata: PseudoDocumentMetadata<Name>
 }
 
 const hasPseudoDocumentMetadata = (value: unknown): value is PseudoDocumentConstructor =>
-  isObject(value) && 'metadata' in value
+  (isObject(value) || typeof value === 'function') && 'metadata' in value && isObject(value.metadata)
 
-type PseudoDocumentMetadata = {
+type PseudoDocumentMetadata<Name extends gurps.Pseudo.Name> = {
   /* ---------------------------------------- */
   /* The document name of this pseudo-document. */
-  documentName: string
+  documentName: Name
   /** The localization string for this pseudo-document */
   label: string
   /** The font-awesome icon for this pseudo-document type */
@@ -43,7 +42,7 @@ class PseudoDocument<
 > extends DataModel<Schema, Parent> {
   /* ---------------------------------------- */
 
-  static get metadata(): PseudoDocumentMetadata {
+  static get metadata(): PseudoDocumentMetadata<gurps.Pseudo.Name> {
     return {
       // @ts-expect-error: This is always overridden
       documentName: null,
@@ -257,7 +256,7 @@ class PseudoDocument<
         ? data._id
         : foundry.utils.randomID()
 
-    const fieldPath = (parent.system!.constructor as typeof BaseItemModel).metadata.embedded?.[
+    const fieldPath = (parent.system!.constructor as unknown as gurps.MetaDataOwner).metadata.embedded?.[
       this.metadata.documentName
     ]
 
@@ -282,8 +281,10 @@ class PseudoDocument<
    * @returns a promise that resolves to the updated document.
    */
   async delete(
-    operation: Document.Database.DeleteOperation<foundry.abstract.types.DatabaseDeleteOperation<Document.Any>>
+    operation?: Document.Database.DeleteOperation<foundry.abstract.types.DatabaseDeleteOperation<Document.Any>>
   ): Promise<Document.Any | undefined> {
+    operation ??= {}
+
     if (!this.isSource) throw new Error('You cannot delete a non-source pseudo-document!')
     if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
 
@@ -366,4 +367,4 @@ type PseudoDocumentSchema = ReturnType<typeof pseudoDocumentSchema>
 
 /* ---------------------------------------- */
 
-export { PseudoDocument, type PseudoDocumentSchema, type PseudoDocumentMetadata }
+export { PseudoDocument, type PseudoDocumentSchema, type PseudoDocumentMetadata, pseudoDocumentSchema }

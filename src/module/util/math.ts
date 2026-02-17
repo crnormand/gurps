@@ -1,1 +1,1 @@
-export * from '../../util/math.ts'
+export * from '../../util/math.js'

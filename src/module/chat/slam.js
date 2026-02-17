@@ -4,7 +4,7 @@ import selectTarget from '@module/util/select-target.js'
 import { generateUniqueId, isNiceDiceEnabled } from '@util/utilities.js'
 
 import { ChatProcessors } from '../../module/chat.js'
-import { isValidDiceTerm } from '../util/damage-utils.ts'
+import { isValidDiceTerm } from '../util/damage-utils.js'
 
 import ChatProcessor from './chat-processor.js'
 import { SlamCalculator } from './slam-calc.js'

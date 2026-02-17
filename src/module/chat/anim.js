@@ -23,7 +23,7 @@ function addToLibrary(module) {
   if (game.modules.get(module)) {
     let xhr = new XMLHttpRequest()
 
-    xhr.open('GET', 'systems/gurps/anim/' + module, true)
+    xhr.open('GET', 'systems/gurps/anim/' + module + '.txt', true)
     xhr.responseType = 'text'
 
     xhr.onload = function () {

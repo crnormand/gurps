@@ -3,7 +3,7 @@
 import { digitsAndDecimalOnly, digitsOnly } from '@util/jquery-helper.js'
 import { recurselist } from '@util/utilities.js'
 
-import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components.js'
+import { Advantage, Melee, Ranged, Skill, Spell } from '../actor/actor-components.js'
 
 export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
   /** @override */

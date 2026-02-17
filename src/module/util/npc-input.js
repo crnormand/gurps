@@ -3,7 +3,7 @@
 import { digitsAndDecimalOnly, digitsOnly } from '../../util/jquery-helper.js'
 import { sanitize } from '../../util/utilities.js'
 import { Advantage, Encumbrance, Equipment, Melee, Note, Ranged, Skill } from '../actor/actor-components.js'
-import { GurpsActorV2 } from '../actor/gurps-actor.ts'
+import { GurpsActorV2 } from '../actor/gurps-actor.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 
 import getUserInput from './get-user-input.js'

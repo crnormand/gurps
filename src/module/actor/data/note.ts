@@ -1,4 +1,9 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import {
+  PseudoDocument,
+  PseudoDocumentMetadata,
+  pseudoDocumentSchema,
+} from '@module/pseudo-document/pseudo-document.js'
 
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
@@ -13,9 +18,20 @@ import { CharacterModel } from './character.js'
  * Data model for character notes in GURPS V2 system.
  * Represents a single note that can contain markdown content and be organized hierarchically.
  */
-class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> implements IContainable<NoteV2> {
+class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2> {
   static override defineSchema(): NoteV2Schema {
     return noteV2Schema()
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocumentMetadata<'Note'> {
+    return {
+      documentName: 'Note',
+      label: '',
+      icon: '',
+      embedded: {},
+    }
   }
 
   /* ---------------------------------------- */
@@ -92,16 +108,7 @@ class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> implements IContai
 
     const newValue = !this.open
 
-    // Notes are embedded in the character, so we need to update through the character
-    const character = this.parent! as CharacterModel
-    const noteIndex = character.allNotes.findIndex(note => note.id === this.id)
-
-    if (noteIndex === -1) return
-
-    const notes = foundry.utils.deepClone(character._source.allNotes)
-
-    notes[noteIndex].open = newValue
-    await character.parent.update({ system: { allNotes: notes } })
+    await this.update({ open: newValue })
   }
 
   /* ---------------------------------------- */
@@ -130,7 +137,9 @@ class NoteV2 extends foundry.abstract.DataModel<NoteV2Schema> implements IContai
 
 const noteV2Schema = () => {
   return {
-    id: new fields.StringField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
+    ...containableSchema(),
+    ...pseudoDocumentSchema(),
+
     // NOTE: Change from GCS schema -- Nordlond bestiaries sometimes have a title field.
     title: new fields.StringField({ required: true, nullable: false, initial: '' }),
     text: new fields.StringField({ required: true, nullable: true, initial: null }),
@@ -138,7 +147,6 @@ const noteV2Schema = () => {
     reference: new fields.StringField({ required: true, nullable: false, initial: '' }),
     reference_highlight: new fields.StringField({ required: true, nullable: false, initial: '' }),
     save: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    ...containableSchema(),
     calc: new fields.SchemaField(
       {
         resolved_notes: new fields.StringField({ required: false, nullable: true, initial: null }),

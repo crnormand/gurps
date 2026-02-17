@@ -6,7 +6,6 @@
     "acc": "Acc",
     "accForWeapon": "Acc for {weapon}",
     "active": "Active",
-    "activeEffects": "Active Effects",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
     "actor": {
@@ -847,6 +846,12 @@
     "melee": "Melee",
     "meleeAttack": "Melee Attack",
     "meleeWeapons": "Melee Weapons",
+    "migration": {
+      "migrationItem": {
+        "name": "The Everything Holder",
+        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+      }
+    },
     "minDamageRule": "Min. Damage:",
     "minimum": "Minimum",
     "minimumDamageRule": "* — Minimum damage rule applied.",

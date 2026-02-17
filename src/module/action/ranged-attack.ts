@@ -150,9 +150,13 @@ const rangedAttackComponentSchema = () => {
   return {
     // NOTE: change from previous schema where this was a string
     import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    // NOTE: no longer persistent data, always derived from import value
-    // level: new fields.NumberField({ required: true, nullable: false }),
-    damage: new fields.StringField({ required: true, nullable: false }),
+    // NOTE: Damage is an Array of strings to allow for multiple damage types dealing damage in one
+    // attack, such as "2d-1cut and 1d+2 ctrl". Most of the time, this array has only one element.
+    damage: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
+      required: true,
+      nullable: false,
+      initial: [],
+    }),
     st: new fields.StringField({ required: true, nullable: false }),
     mode: new fields.StringField({ required: true, nullable: false }),
     notes: new fields.StringField({ required: true, nullable: false }),
@@ -170,8 +174,6 @@ const rangedAttackComponentSchema = () => {
     modifierTags: new fields.StringField({ required: true, nullable: false }),
     extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
-
-    // Added: Missing?
     rate_of_fire: new fields.StringField({ required: true, nullable: false, initial: '' }),
   }
 }

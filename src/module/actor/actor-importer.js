@@ -4,7 +4,7 @@ import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '@
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
 import { SmartImporter } from '../smart-importer.js'
-import { calculateEncumbranceLevels, readXmlText } from '../util/import-utilities.ts'
+import { calculateEncumbranceLevels, readXmlText } from '../util/import-utilities.js'
 
 import {
   Advantage,
@@ -777,7 +777,6 @@ export class ActorImporter {
    */
   async importAdsFromGCA(adsjson, disadsjson) {
     /** @type {Advantage[]} */
-    if (!!adsjson || !!disadsjson) await this._preImport('GCA', 'feature')
     let list = []
 
     await this.importBaseAdvantagesFromGCA(list, adsjson)
@@ -836,7 +835,6 @@ export class ActorImporter {
    */
   async importSkillsFromGCA(json) {
     if (!json) return
-    await this._preImport('GCA', 'skill')
     let temp = []
 
     for (let key in json) {
@@ -893,7 +891,6 @@ export class ActorImporter {
    */
   async importSpellsFromGCA(json) {
     if (!json) return
-    await this._preImport('GCA', 'spell')
     let temp = []
 
     for (let key in json) {
@@ -1127,7 +1124,6 @@ export class ActorImporter {
     if (!json) return
 
     this.ignoreRender = true
-    await this._preImport('GCA', 'equipment')
 
     /**
      * @type {Equipment[]}
@@ -1737,8 +1733,6 @@ export class ActorImporter {
   async importAdsFromGCS(ads) {
     let temp = []
 
-    if (ads) await this._preImport('GCS', 'feature')
-
     for (let i of ads) {
       temp = temp.concat(await this.importAd(i, ''))
     }
@@ -1814,7 +1808,6 @@ export class ActorImporter {
   }
 
   async importSkillsFromGCS(sks) {
-    await this._preImport('GCS', 'skill')
     if (!sks) return
     let temp = []
 
@@ -1899,7 +1892,6 @@ export class ActorImporter {
   }
 
   async importSpellsFromGCS(sps) {
-    await this._preImport('GCS', 'spell')
     if (!sps) return
     let temp = []
 
@@ -1970,7 +1962,6 @@ export class ActorImporter {
 
   async importEquipmentFromGCS(eq, oeq) {
     this.ignoreRender = true
-    await this._preImport('GCS', 'equipment')
     if (!eq && !oeq) return
     let temp = []
 
@@ -2322,7 +2313,7 @@ export class ActorImporter {
     let overwrite = ImportSettings.overwriteBodyPlan // "ask", "keep", "overwrite"
 
     if (data.lastImport) {
-      if (!!data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
+      if (data.additionalresources.bodyplan && bodyplan !== data.additionalresources.bodyplan) {
         if (overwrite === 'ask')
           overwrite = await this.askOverwriteBodyPlan(data.additionalresources.bodyplan, bodyplan)
       }
@@ -2480,6 +2471,7 @@ export class ActorImporter {
             melee.reach = weapon.reach || ''
             melee.parry = weapon.calc?.parry || ''
             melee.block = weapon.calc?.block || ''
+            melee.damage = weapon.calc?.damage || ''
             melee = this._substituteItemReplacements(melee, i)
             let old = this._findElementIn('melee', false, melee.name, melee.mode)
 
@@ -2500,6 +2492,7 @@ export class ActorImporter {
             ranged.mode = weapon.usage || ''
             ranged.import = weapon.calc?.level || '0'
             ranged.acc = weapon.accuracy || ''
+            ranged.damage = weapon.calc?.damage || ''
             let match = ranged.acc.trim().match(/(\d+)([+-]\d+)/)
 
             if (match) {

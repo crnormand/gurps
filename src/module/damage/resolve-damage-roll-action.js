@@ -1,5 +1,5 @@
 import GurpsWiring from '../gurps-wiring.js'
-import { multiplyDice } from '../util/damage-utils.ts'
+import { multiplyDice } from '../util/damage-utils.js'
 
 export async function resolveDamageRollAction(event, actor, otf, overridetxt, isGM, isOtf = false) {
   const buttons = []

@@ -23,8 +23,8 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { TokenActions } from '../token-actions.js'
-import { multiplyDice } from '../util/damage-utils.ts'
-import { parseItemKey } from '../util/object-utils.ts'
+import { multiplyDice } from '../util/damage-utils.js'
+import { parseItemKey } from '../util/object-utils.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
@@ -1960,29 +1960,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /* ---------------------------------------- */
 
   async editItem(path: string, obj: any) {
-    if (this.isNewActorType) {
-      const note = foundry.utils.getProperty(this, path) as NoteV1
-      const item = note.noteV2
-      const array = foundry.utils.deepClone(this.system._source.allNotes)
-      const index = array.findIndex(noteSource => noteSource.id === item.id)
+    if (obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
+    await this.removeModEffectFor(path)
+    await this.internalUpdate({ [path]: obj })
+    const commit = this.applyItemModEffects({}, true)
 
-      if (index !== -1) {
-        array[index] = { ...array[index], ...obj }
-        await this.update({ 'system.allNotes': array } as Actor.UpdateData)
-      }
-    } else {
-      if (obj.modifierTags) obj.modifierTags = cleanTags(obj.modifierTags).join(', ')
-      await this.removeModEffectFor(path)
-      await this.internalUpdate({ [path]: obj })
-      const commit = this.applyItemModEffects({}, true)
+    if (commit) {
+      await this.internalUpdate(commit)
 
-      if (commit) {
-        await this.internalUpdate(commit)
-
-        if (canvas!.tokens!.controlled.length > 0) {
-          // @ts-expect-error - TokenDocument.setFlag parameters not fully typed
-          await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
-        }
+      if (canvas!.tokens!.controlled.length > 0) {
+        // @ts-expect-error - TokenDocument.setFlag parameters not fully typed
+        await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
       }
     }
   }
@@ -2579,18 +2567,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   async setMoveDefault(value: string) {
     if (this.isNewActorType) {
-      const index = parseInt(value)
-
-      if (isNaN(index)) return
-
-      const move: any[] = this.modelV2.moveV2
-
-      for (let i = 0; i < move.length; i++) {
-        move[i].default = index === i
-      }
-
-      // Replace the entire array.
-      await this.update({ 'system.move': move } as Actor.UpdateData)
+      return this.system.setMoveDefault(value)
     } else {
       // Legacy actor type.
       const move = this.modelV1.move
