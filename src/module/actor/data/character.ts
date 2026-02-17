@@ -330,8 +330,21 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  /**
+   * Normalize a move mode identifier to its untranslated key form.
+   * This allows legacy data that stored localized strings to be
+   * treated uniformly as the i18n key.
+   */
+  private normalizeMoveModeKey(mode: string): string {
+    if (game?.i18n && mode === game.i18n.localize('GURPS.moveModeAir')) {
+      return 'GURPS.moveModeAir'
+    }
+    return mode
+  }
+
   private isAirMoveMode(mv: MoveModeV2): boolean {
-    return mv.mode === 'GURPS.moveModeAir' || (!!game.i18n && mv.mode === game.i18n.localize('GURPS.moveModeAir'))
+    const normalized = this.normalizeMoveModeKey(mv.mode)
+    return normalized === 'GURPS.moveModeAir'
   }
 
   /* ---------------------------------------- */
