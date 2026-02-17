@@ -94,7 +94,7 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
         st: weapon.st,
         mode: weapon.mode,
         notes: weapon.notes,
-        weight: weapon.weight,
+        weight: parseInt(weapon.weight) || 0,
         techlevel: weapon.techlevel,
         cost: weapon.cost,
         reach: weapon.reach,
