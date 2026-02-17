@@ -149,7 +149,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
   {
-    ignores: ['dist/', 'node_modules/', 'lib/', 'src/lib/', 'build/', 'scripts/'],
+    ignores: ['dist/', 'node_modules/', 'lib/', 'src/lib/', 'build/', 'scripts/', '.history/'],
   },
   {
     languageOptions: {

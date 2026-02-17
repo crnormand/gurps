@@ -339,11 +339,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     if (game?.i18n && mode === game.i18n.localize('GURPS.moveModeAir')) {
       return 'GURPS.moveModeAir'
     }
+
     return mode
   }
 
   private isAirMoveMode(mv: MoveModeV2): boolean {
     const normalized = this.normalizeMoveModeKey(mv.mode)
+
     return normalized === 'GURPS.moveModeAir'
   }
 
