@@ -1,10 +1,12 @@
-.gcs-resources {
+section[data-application-part='resources'] {
   display: grid;
   grid-gap: var(--gcs-section-gap);
 
   grid-template-areas:
     'attributes body encumbrance'
     'attributes body moving';
+  grid-template-columns: 0fr auto auto;
+  grid-template-rows: 0fr 0fr;
 
   .gcs-attributes {
     grid-area: attributes;
