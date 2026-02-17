@@ -4,6 +4,8 @@
 
 ### Features
 
+- Added new revised character and item schema, with automatic migration for existing characters and items.
+
 ## Release 0.18.13 02/05/2026
 
 ### Bugfixes
