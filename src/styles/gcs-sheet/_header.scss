@@ -1,16 +1,18 @@
-.gcs-header {
+section[data-application-part='header'] {
   display: grid;
   grid-gap: var(--gcs-section-gap);
 
   grid-template-areas:
     'portrait identity miscellaneous points'
     'portrait description description points';
+  grid-template-columns: 0fr auto auto 0fr;
 
   .gcs-portrait {
     grid-area: portrait;
+    width: max-content;
 
     img {
-      height: 100%;
+      height: 12.5rem;
       aspect-ratio: 1 / 1;
 
       object-fit: contain;
@@ -31,5 +33,6 @@
 
   .gcs-point-totals {
     grid-area: points;
+    width: 10rem;
   }
 }

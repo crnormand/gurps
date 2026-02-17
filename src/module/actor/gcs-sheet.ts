@@ -20,6 +20,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
   static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
     classes: ['gcs-sheet'],
+    position: {
+      width: 800,
+      height: 800,
+    },
   }
 
   /* ---------------------------------------- */
@@ -31,9 +35,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     resources: {
       template: this.systemPath('gcs/resources.hbs'),
     },
-    // weapons: {
-    //   template: this.systemPath('gcs/weapons.hbs'),
-    // },
+    combat: {
+      template: this.systemPath('gcs/combat.hbs'),
+    },
     // traits: {
     //   template: this.systemPath('gcs/traits.hbs'),
     // },

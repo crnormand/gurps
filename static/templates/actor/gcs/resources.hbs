@@ -7,7 +7,7 @@
   </div>
 {{/inline}}
 
-<section class="gcs-resources">
+<section>
   <div class="gcs-attributes">
     <div class="gcs-primary-attributes gcs-section">
       <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.primaryAttributes"}}</div>
@@ -42,8 +42,6 @@
     <div class="gcs-pool-attributes gcs-section">
       <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.poolAttributes"}}</div>
       <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
-        {{> ".attributeEntry" field=systemFields.attributes.fields.WILL.fields.import value=systemSource.attributes.WILL.import}}
-        {{> ".attributeEntry" field=systemFields.frightcheck value=systemSource.frightcheck}}
       </div>
     </div>
   </div>
@@ -72,12 +70,96 @@
   </div>
   <div class="gcs-encumbrance gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.encumbrance"}}</div>
-    <div class="gcs-field-rows  gcs-section-content">
+    <table class="gcs-table  gcs-section-content">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Level</th>
+          <th>Max Load</th>
+          <th>Move</th>
+          <th>Dodge</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each system.encumbrance as |enc|}}
+          <tr>
+            <td>
+              {{#if enc.current}}
+              <i class="fa-solid fa-weight-hanging"></i>
+              {{/if}}
+            </td>
+            <td>{{localize (concat "GURPS.encumbranceLevel-" enc.level)}}</td>
+            <td>{{ localize "GURPS.Actor.gcsSheet.pound" value=enc.weight }}</td>
+            <td>{{enc.move}}</td>
+            <td>{{enc.dodge}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
     </div>
   </div>
   <div class="gcs-moving gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.moving"}}</div>
-    <div class="gcs-field-rows  gcs-section-content">
+    <table class="gcs-table  gcs-section-content">
+      <tbody>
+        <tr>
+          <td>
+            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.basiclift }}
+          </td>
+          <td>
+            {{localize "GURPS.basicLift"}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.onehandedlift }}
+          </td>
+          <td>
+            {{localize "GURPS.oneHandLift"}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.twohandedlift }}
+          </td>
+          <td>
+            {{localize "GURPS.twoHandLift"}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.shove }}
+          </td>
+          <td>
+            {{localize "GURPS.shoveAndKnockOver"}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.runningshove }}
+          </td>
+          <td>
+            {{localize "GURPS.runningShoveAndKnockOver"}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.shiftslightly }}
+          </td>
+          <td>
+            {{localize "GURPS.shiftSlightly"}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {{localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.carryonback}}
+          </td>
+          <td>
+            {{localize "GURPS.carryOnBack"}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
     </div>
   </div>
 </section>

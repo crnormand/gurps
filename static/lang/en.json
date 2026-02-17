@@ -260,7 +260,8 @@
         }
       },
       "gcsSheet": {
-        "portrait": "Portrait"
+        "portrait": "Portrait",
+        "pound": "{value} lb"
       }
     },
     "addAbbrev": "Abbrev",
