@@ -220,11 +220,6 @@ function migrateActorSystem(
 
     additionalresources: {
       qnotes: oldData.additionalresources?.qnotes,
-      bodyplan: oldData.additionalresources?.bodyplan,
-      // NOTE: Ideally tracker would be a TypedObjectField
-      // instead of an ArrayField so we can updated trackers without
-      // replacing the whole array.
-      // TODO: Discuss and consider.
       tracker: {},
       importname: oldData.additionalresources?.importname,
       importpath: oldData.additionalresources?.importpath,
@@ -286,6 +281,7 @@ function migrateActorSystem(
       damageAccumulators: [],
     },
 
+    bodyplan: oldData.additionalresources?.bodyplan,
     hitlocationsV2: {},
 
     moveV2: {},

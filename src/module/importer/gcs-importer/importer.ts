@@ -366,8 +366,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   async #importHitLocations() {
-    this.output.additionalresources ||= {}
-    this.output.additionalresources.bodyplan = this.input.settings.body_type.name ?? 'Humanoid'
+    this.output.bodyplan = this.input.settings.body_type.name ?? 'Humanoid'
 
     this.output.hitlocationsV2 = this.input.settings.body_type.locations.reduce(
       (acc: Record<string, DataModel.CreateData<HitLocationSchemaV2>>, location) => {
@@ -379,7 +378,7 @@ Portrait will not be imported.`
 
         // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
         // damage and other effects.
-        const tempEntry = hitlocationDictionary![this.output.additionalresources!.bodyplan!.toLowerCase()]
+        const tempEntry = hitlocationDictionary![this.output.bodyplan!.toLowerCase()]
         const entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id)
         // @ts-expect-error: currently untyped. to come back to.
         const role = entry?.role ?? entry?.id
@@ -410,7 +409,7 @@ Portrait will not be imported.`
     // No need to run this if there is no existing actor or if this is the first import.
     if (!this.actor || !this.actor.system.traits.modifiedon) return
 
-    const currentBodyPlan = this.actor.system.additionalresources.bodyplan
+    const currentBodyPlan = this.actor.system.bodyplan
 
     // Remove derived values / all values not proper to the hit location on its own.
     const currentHitLocations: Record<string, AnyObject> = Object.fromEntries(
@@ -440,7 +439,7 @@ Portrait will not be imported.`
       return true
     }
 
-    const statsDifference = currentBodyPlan !== this.output.additionalresources!.bodyplan || !bodyPlansAreEqual()
+    const statsDifference = currentBodyPlan !== this.output.bodyplan || !bodyPlansAreEqual()
 
     if (!statsDifference) return
 
@@ -450,7 +449,7 @@ Portrait will not be imported.`
       return // Automatically overwrite from file.
     else if (automaticOverwrite === 'keep') {
       // Automatically ignore values from file.
-      this.output.additionalresources!.bodyplan = currentBodyPlan
+      this.output.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations
 
       return
@@ -462,7 +461,7 @@ Portrait will not be imported.`
       },
       content: game.i18n!.format('GURPS.importer.promptBodyPlan.content', {
         currentBodyPlan,
-        bodyplan: `${this.output.additionalresources!.bodyplan}`,
+        bodyplan: `${this.output.bodyplan}`,
       }),
       modal: true,
       buttons: [
@@ -481,7 +480,7 @@ Portrait will not be imported.`
     })
 
     if (overwriteOption === 'keep') {
-      this.output.additionalresources!.bodyplan = currentBodyPlan
+      this.output.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations
     }
   }

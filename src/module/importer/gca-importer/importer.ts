@@ -375,8 +375,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importHitLocations() {
-    this.output.additionalresources ||= {}
-    this.output.additionalresources.bodyplan = this.input.bodytype ?? 'Humanoid'
+    this.output.bodyplan = this.input.bodytype ?? 'Humanoid'
 
     const table = HitLocations.hitlocationDictionary?.[this.input.bodytype ?? 'Humanoid']
 

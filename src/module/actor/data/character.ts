@@ -860,7 +860,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   get _hitLocationRolls() {
     return this.hitlocationNames
-    // return HitLocation.getHitLocationRolls(this.additionalresources?.bodyplan)
   }
 
   /* ---------------------------------------- */
@@ -950,7 +949,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       // NOTE: The system only supports adding bonuses to locations in set body plans.
       // This part of the function effectively filters the locations to only those
       // matching an existing body plan.
-      const bodyPlan = this.additionalresources.bodyplan
+      const bodyPlan = this.bodyplan
 
       if (bodyPlan === '') {
         return { changed: false, msg: '', warn: 'No body plan defined for the actor.' }
@@ -1756,8 +1755,6 @@ const characterSchema = () => {
     additionalresources: new fields.SchemaField(
       {
         qnotes: new fields.StringField({ required: true, nullable: false }),
-        // TODO This could be a trait instead.
-        bodyplan: new fields.StringField({ required: true, nullable: false }),
         tracker: new CollectionField(TrackerInstance, {
           required: true,
           nullable: false,
@@ -1832,6 +1829,7 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
+    bodyplan: new fields.StringField({ required: true, nullable: false }),
     hitlocationsV2: new CollectionField(HitLocationEntryV2, { required: true, nullable: false, initial: {} }),
 
     // NOTE: Change from previous schema where these fields were part of the schema. They are now derived properties
