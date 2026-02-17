@@ -81,6 +81,8 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
   Object.values(system.melee).forEach((weapon: Melee) => {
     const id = foundry.utils.randomID()
 
+    const damage = typeof weapon.damage === 'string' ? [weapon.damage] : weapon.damage
+
     const data: DataModel.CreateData<DataModel.SchemaOf<MeleeAttackModel>> = {
       _id: id,
       name: weapon.name,
@@ -88,7 +90,7 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
       mel: {
         name: weapon.name,
         import: Number(weapon.import),
-        damage: weapon.damage,
+        damage,
         st: weapon.st,
         mode: weapon.mode,
         notes: weapon.notes,
@@ -115,6 +117,8 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
   Object.values(system.ranged).forEach((weapon: Ranged) => {
     const id = foundry.utils.randomID()
 
+    const damage = typeof weapon.damage === 'string' ? [weapon.damage] : weapon.damage
+
     const data: DataModel.CreateData<DataModel.SchemaOf<RangedAttackModel>> = {
       _id: id,
       name: weapon.name,
@@ -122,7 +126,7 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
       rng: {
         name: weapon.name,
         import: Number(weapon.import),
-        damage: weapon.damage,
+        damage,
         st: weapon.st,
         mode: weapon.mode,
         notes: weapon.notes,
