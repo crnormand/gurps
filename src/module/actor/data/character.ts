@@ -1727,7 +1727,7 @@ const characterSchema = () => {
     FP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
     QP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
 
-    // NOTE: This value represents "Basic Dodge", this being Math.floor(Basic Speed) + 3 + Modifiers (e.g. Enchanced
+    // NOTE: This value represents "Basic Dodge", this being Math.floor(Basic Speed) + 3 + Modifiers (e.g. Enhanced
     // Dodge). It is the base value used to get the Actual Dodge value under encumbrance.
     dodge: new fields.SchemaField({
       value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
