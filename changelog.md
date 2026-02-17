@@ -9,7 +9,6 @@
 
 ### Bugfixes
 
-
 ## Release 0.18.13 02/05/2026
 
 ### Bugfixes
