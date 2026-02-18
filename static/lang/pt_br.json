@@ -1263,8 +1263,6 @@
     "rt": "CR",
     "runningShoveAndKnockOver": "Encontrão e Derrubar",
     "saveRollforEffect": "Teste de resistência para evitar efeitos.",
-    "selectEnergyPool": "Selecionar Reserva de Energia",
-    "selectEnergyPoolDetail": "Selecione o recurso ao qual aplicar o custo:",
     "selectTargetForDamageWarning": "Arraste o dano para o(s) alvo(s), ou solte na tela para aplicar aos tokens selecionados.",
     "selectTargetForEquipmentWarning": "Solte o equipamento em um único token alvo",
     "selectToken": "Selecionar Miniatura",
