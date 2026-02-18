@@ -25,7 +25,7 @@ async function runMigration() {
     })
 
     console.log('Migrating world items')
-    const items = game.items!.filter(actor => actor.isOfType('equipment', 'feature', 'skill', 'spell'))
+    const items = game.items!.filter(item => item.isOfType('equipment', 'feature', 'skill', 'spell'))
     const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
 
     const length = items.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)
