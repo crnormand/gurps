@@ -1826,10 +1826,12 @@ if (!globalThis.GURPS) {
           <label for="costType">${game.i18n.localize('GURPS.selectEnergyPoolDetail')}
             <select id="costType" name="costType">
               ${Object.entries(costs)
-                .map(
-                  ([value, label]) =>
-                    `<option value="${value}" ${value === defaultCostKey ? 'selected' : ''}>${label}</option>`
-                )
+                .map(([value, label]) => {
+                  const escValue = foundry.utils.escapeHTML(value);
+                  const escLabel = foundry.utils.escapeHTML(label);
+                  const selected = value === defaultCostKey ? ' selected' : '';
+                  return `<option value="${escValue}"${selected}>${escLabel}</option>`;
+                })
                 .join('')}
             </select>
           </label>`,
