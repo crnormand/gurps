@@ -6,11 +6,8 @@
     "acc": "ZG",
     "accForWeapon": "ZG für {weapon}",
     "active": "Aktiv",
-    "activeEffects": "Aktive Effekte",
     "activeEffect": "Aktiver Effekt",
-    "actor": {
-      "setting": {}
-    },
+    "activeEffects": "Aktive Effekte",
     "addAbbrev": "Abkürzung",
     "addAdditionalStackingModifier": "Weiterer Modifikator",
     "addAdjustedForDamageType": "‡ - Angepasst nach Schadensmodifikator",
@@ -846,6 +843,20 @@
     "melee": "Nahkampf",
     "meleeAttack": "Nahkampf Angriff",
     "meleeWeapons": "Nahkampfwaffe",
+    "migration": {
+      "actor": {
+        "progressMessage": "Schauspieler-Migrationen für Version {version} werden angewendet, bitte warten...",
+        "successMessage": "Schauspieler-Migrationen für Version {version} erfolgreich angewendet."
+      },
+      "item": {
+        "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
+        "successMessage": "Objekt-Migrationen für Version {version} erfolgreich angewendet."
+      },
+      "migrationItem": {
+        "name": "Der Alleshalter",
+        "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
+      }
+    },
     "minDamageRule": "Min. Schaden:",
     "minimum": "Minimum",
     "minimumDamageRule": "* — Minimum damage Regel angewandt.",

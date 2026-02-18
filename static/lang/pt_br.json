@@ -8,9 +8,6 @@
     "active": "Ativo",
     "activeEffect": "Efeito Ativo",
     "activeEffects": "Efeitos Ativos",
-    "actor": {
-      "setting": {}
-    },
     "addAbbrev": "Abrev",
     "addAdditionalStackingModifier": "Modificadores adicionais",
     "addAdjustedForDamageType": "‡ - Ajustado devido ao Modificador de Dano",
@@ -846,6 +843,20 @@
     "melee": "Corpo a Corpo",
     "meleeAttack": "Ataque Corpo a Corpo",
     "meleeWeapons": "Armas de Combate Corpo a Corpo",
+    "migration": {
+      "actor": {
+        "progressMessage": "Aplicando migrações de Ator para a versão {version}, por favor aguarde...",
+        "successMessage": "Migrações de Ator aplicadas com sucesso para a versão {version}."
+      },
+      "item": {
+        "progressMessage": "Aplicando migrações de Item para a versão {version}, por favor aguarde...",
+        "successMessage": "Migrações de Item aplicadas com sucesso para a versão {version}."
+      },
+      "migrationItem": {
+        "name": "O Porta-Tudo",
+        "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do personagem. Para mover essas entidades de volta para seus lugares apropriados, por favor reimporte este personagem do GCS ou GCA."
+      }
+    },
     "minDamageRule": "Dano mín.:",
     "minimum": "Mínimo",
     "minimumDamageRule": "* — Regra de dano mínimo aplicada.",

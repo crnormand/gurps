@@ -13,7 +13,7 @@ async function runMigration() {
   const migrationVersion = game.settings!.get(GURPS.SYSTEM_NAME, 'migration-version')
 
   if (foundry.utils.isNewerVersion('1.0.0', migrationVersion)) {
-    const warning = ui.notifications!.warn('GURPS.actor.migration.progressMessage', {
+    const warning = ui.notifications!.warn('GURPS.migration.actor.progressMessage', {
       format: { version: '1.0.0' },
       progress: true,
     })
@@ -33,7 +33,7 @@ async function runMigration() {
     }
 
     ui.notifications!.remove(warning)
-    ui.notifications!.success('GURPS.actor.migration.successMessage', {
+    ui.notifications!.success('GURPS.migration.actor.successMessage', {
       format: { version: '1.0.0' },
       permanent: true,
     })
