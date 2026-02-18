@@ -1814,13 +1814,17 @@ if (!globalThis.GURPS) {
 
         // Unknown cost type: prompt the user for either HP, FP, or a Tracker name.
         // Create a DialogV2 to prompt the user for the cost type as a radio button list.
+        const defaultCostKey = costs[`system.FP.value`] ? 'system.FP.value' : Object.keys(costs)[0]
         const response = await foundry.applications.api.DialogV2.wait({
           window: { title: game.i18n.localize('GURPS.selectEnergyPool') },
           content: `
           <label for="costType">${game.i18n.localize('GURPS.selectEnergyPoolDetail')}
-            <select id="costType" name="costType" value=${costs[`system.FP.value`] ? `system.FP.value` : Object.keys(costs)[0]}>
+            <select id="costType" name="costType">
               ${Object.entries(costs)
-                .map(([value, label]) => `<option value="${value}">${label}</option>`)
+                .map(
+                  ([value, label]) =>
+                    `<option value="${value}" ${value === defaultCostKey ? 'selected' : ''}>${label}</option>`
+                )
                 .join('')}
             </select>
           </label>`,
