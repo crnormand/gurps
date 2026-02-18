@@ -1579,10 +1579,49 @@ if (!globalThis.GURPS) {
         // @ts-ignore
         delta = actor.system[k].value - delta
         await actor.update({ ['system.' + k + '.value']: delta })
-      }
-      if (target.match(/^tr/i)) {
+      } else if (target.match(/^tr/i)) {
         await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
         return null
+      } else {
+        // Build a list of possible costs based on the actor's HP, FP, and Trackers, and prompt the user to select one.
+        const costs = {}
+        if (actor.system.HP) costs[`system.HP.value`] = `${game.i18n.localize('GURPS.HP')} (${actor.system.HP.value})`
+        if (actor.system.FP) costs[`system.FP.value`] = `${game.i18n.localize('GURPS.FP')} (${actor.system.FP.value})`
+        for (const [key, tracker] of Object.entries(actor.system.additionalresources?.tracker ?? {})) {
+          costs[`system.additionalresources.tracker.${key}.value`] = `${tracker.name} (${tracker.value})`
+        }
+
+        // Unknown cost type: prompt the user for either HP, FP, or a Tracker name.
+        // Create a DialogV2 to prompt the user for the cost type as a radio button list.
+        const response = await foundry.applications.api.DialogV2.wait({
+          window: { title: game.i18n.localize('GURPS.selectEnergyPool') },
+          content: `
+          <label for="costType">${game.i18n.localize('GURPS.selectEnergyPoolDetail')}
+            <select id="costType" name="costType" value=${costs[`system.FP.value`] ? `system.FP.value` : Object.keys(costs)[0]}>
+              ${Object.entries(costs)
+                .map(([value, label]) => `<option value="${value}">${label}</option>`)
+                .join('')}
+            </select>
+          </label>`,
+          buttons: [
+            {
+              action: 'ok',
+              label: 'GURPS.ok',
+              callback: (_event, button, _dialog) => {
+                const costType = button.form.elements.costType.value
+                return costType
+              },
+            },
+          ],
+        })
+
+        if (!response) {
+          // Show a warning notification to the users that the cost was not applied.
+          ui.notifications.warn(game.i18n.format('GURPS.costNotApplied', { points: delta }))
+          return null
+        }
+
+        await actor.update({ [response]: foundry.utils.getProperty(actor, response) - delta })
       }
     }
 
