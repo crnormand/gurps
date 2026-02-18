@@ -1827,10 +1827,11 @@ if (!globalThis.GURPS) {
             <select id="costType" name="costType">
               ${Object.entries(costs)
                 .map(([value, label]) => {
-                  const escValue = foundry.utils.escapeHTML(value);
-                  const escLabel = foundry.utils.escapeHTML(label);
-                  const selected = value === defaultCostKey ? ' selected' : '';
-                  return `<option value="${escValue}"${selected}>${escLabel}</option>`;
+                  const escValue = foundry.utils.escapeHTML(value)
+                  const escLabel = foundry.utils.escapeHTML(label)
+                  const selected = value === defaultCostKey ? ' selected' : ''
+
+                  return `<option value="${escValue}"${selected}>${escLabel}</option>`
                 })
                 .join('')}
             </select>
