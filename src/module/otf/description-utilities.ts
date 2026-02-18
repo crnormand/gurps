@@ -1,5 +1,5 @@
-import { COSTS_REGEX } from '../../lib/parselink.js'
-import { zeroFill } from '../../lib/utilities.js'
+import { COSTS_REGEX } from '@util/parselink.js'
+import { zeroFill } from '@util/utilities.js'
 
 /**
  * If the desc contains *Cost ?FP or *Max:9 then perform action
