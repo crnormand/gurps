@@ -1264,8 +1264,6 @@
     "rt": "RT",
     "runningShoveAndKnockOver": "Courir Pousser & Renverser",
     "saveRollforEffect": "Jet de sauvegarde pour éviter les effets.",
-    "selectEnergyPool": "Sélectionner la réserve d'énergie",
-    "selectEnergyPoolDetail": "Sélectionnez la ressource à laquelle appliquer le coût :",
     "selectTargetForDamageWarning": "Déposez les dégâts sur la ou les cibles, ou déposez-les sur la scène pour les appliquer au(x) jeton(s) ciblé(s).",
     "selectTargetForEquipmentWarning": "Déposez l'équipement sur un seul jeton cible",
     "selectToken": "Sélectionner Token",
