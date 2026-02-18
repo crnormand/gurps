@@ -1780,11 +1780,13 @@ if (!globalThis.GURPS) {
    * If the desc contains *Cost ?FP or *Max:9 then perform action
    * @param {GurpsActorV2|User} actor
    * @param {string} desc
+   * @returns {null|number} an overriding MAX value if *Max is found, otherwise null.
    */
   async function applyModifierDesc(actor, desc) {
     if (!desc) return null
     let match = desc.match(COSTS_REGEX)
 
+    // Handle *Costs modifiers.
     if (!!match && !!actor && !actor.isSelf) {
       let delta = parseInt(match.groups.cost)
       let target = match.groups.type
@@ -1796,9 +1798,8 @@ if (!globalThis.GURPS) {
         delta = actor.system[key].value - delta
         await actor.update({ ['system.' + key + '.value']: delta })
       } else if (target.match(/^tr/i)) {
+        // TODO Today this is using the chat command -- I think it should directly update the actor.
         await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
-
-        return null
       } else {
         // Build a list of possible costs based on the actor's HP, FP, and Trackers, and prompt the user to select one.
         const costs = {}
@@ -1817,51 +1818,54 @@ if (!globalThis.GURPS) {
           return null
         }
 
-        // Unknown cost type: prompt the user for either HP, FP, or a Tracker name.
-        // Create a DialogV2 to prompt the user for the cost type using a dropdown (select) input.
-        const defaultCostKey = costs[`system.FP.value`] ? 'system.FP.value' : Object.keys(costs)[0]
-        const response = await foundry.applications.api.DialogV2.wait({
-          window: { title: game.i18n.localize('GURPS.selectEnergyPool') },
-          content: `
-          <label for="costType">${game.i18n.localize('GURPS.selectEnergyPoolDetail')}
-            <select id="costType" name="costType">
-              ${Object.entries(costs)
-                .map(([value, label]) => {
-                  const escValue = foundry.utils.escapeHTML(value)
-                  const escLabel = foundry.utils.escapeHTML(label)
-                  const selected = value === defaultCostKey ? ' selected' : ''
-
-                  return `<option value="${escValue}"${selected}>${escLabel}</option>`
-                })
-                .join('')}
-            </select>
-          </label>`,
-          buttons: [
-            {
-              action: 'ok',
-              label: 'GURPS.ok',
-              callback: (_event, button, _dialog) => {
-                return button.form.elements.costType.value
-              },
-            },
-            {
-              action: 'cancel',
-              label: 'GURPS.cancel',
-              callback: () => {
-                return null
-              },
-            },
-          ],
-        })
-
-        if (!response) {
-          // Show a warning notification to the users that the cost was not applied.
+        // If there are no valid costs, show a warning notification to the users that the cost was not applied.
+        if (Object.keys(costs).length === 0) {
           ui.notifications.warn(game.i18n.format('GURPS.costNotApplied', { points: delta }))
+        } else {
+          // Unknown cost type: prompt the user for either HP, FP, or a Tracker name.
+          // Create a DialogV2 to prompt the user for the cost type using a dropdown (select) input.
+          const defaultCostKey = costs[`system.FP.value`] ? 'system.FP.value' : Object.keys(costs)[0]
+          const response = await foundry.applications.api.DialogV2.wait({
+            window: { title: game.i18n.localize('GURPS.selectEnergyPool') },
+            content: `
+            <label for="costType">${game.i18n.localize('GURPS.selectEnergyPoolDetail')}
+              <select id="costType" name="costType" style="width: fit-content;">
+                ${Object.entries(costs)
+                  .map(([value, label]) => {
+                    const escValue = foundry.utils.escapeHTML(value)
+                    const escLabel = foundry.utils.escapeHTML(label)
+                    const selected = value === defaultCostKey ? ' selected' : ''
 
-          return null
+                    return `<option value="${escValue}"${selected}>${escLabel}</option>`
+                  })
+                  .join('')}
+              </select>
+            </label>`,
+            buttons: [
+              {
+                action: 'ok',
+                label: 'GURPS.ok',
+                callback: (_event, button, _dialog) => {
+                  return button.form.elements.costType.value
+                },
+              },
+              {
+                action: 'cancel',
+                label: 'GURPS.cancel',
+                callback: () => {
+                  return null
+                },
+              },
+            ],
+          })
+
+          if (!response) {
+            // Show a warning notification to the users that the cost was not applied.
+            ui.notifications.warn(game.i18n.format('GURPS.costNotApplied', { points: delta }))
+          } else {
+            await actor.update({ [response]: foundry.utils.getProperty(actor, response) - delta })
+          }
         }
-
-        await actor.update({ [response]: foundry.utils.getProperty(actor, response) - delta })
       }
     }
 
