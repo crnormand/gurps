@@ -1795,9 +1795,7 @@ if (!globalThis.GURPS) {
         // @ts-expect-error - dynamic property access on actor.system
         delta = actor.system[key].value - delta
         await actor.update({ ['system.' + key + '.value']: delta })
-      }
-
-      if (target.match(/^tr/i)) {
+      } else if (target.match(/^tr/i)) {
         await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
 
         return null
@@ -1810,6 +1808,13 @@ if (!globalThis.GURPS) {
 
         for (const [key, tracker] of Object.entries(actor.system.additionalresources?.tracker ?? {})) {
           costs[`system.additionalresources.tracker.${key}.value`] = `${tracker.name} (${tracker.value})`
+        }
+
+        // If there are no valid costs, show a warning notification to the users that the cost was not applied.
+        if (Object.keys(costs).length === 0) {
+          ui.notifications.warn(game.i18n.format('GURPS.costNotApplied', { points: delta }))
+
+          return null
         }
 
         // Unknown cost type: prompt the user for either HP, FP, or a Tracker name.
