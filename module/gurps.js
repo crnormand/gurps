@@ -1597,9 +1597,12 @@ if (!globalThis.GURPS) {
           window: { title: game.i18n.localize('GURPS.selectEnergyPool') },
           content: `
           <label for="costType">${game.i18n.localize('GURPS.selectEnergyPoolDetail')}
-            <select id="costType" name="costType" value=${costs[`system.FP.value`] ? `system.FP.value` : Object.keys(costs)[0]}>
+            <select id="costType" name="costType">
               ${Object.entries(costs)
-                .map(([value, label]) => `<option value="${value}">${label}</option>`)
+                .map(
+                  ([value, label]) =>
+                    `<option value="${value}" ${value === `system.FP.value` ? 'selected' : ''}>${label}</option>`
+                )
                 .join('')}
             </select>
           </label>`,
