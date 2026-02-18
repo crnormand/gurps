@@ -63,11 +63,12 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
   const items: Item.CreateData[] = []
 
   const system = actor.system as ActorV1Model
-  const traits = flattenItemList(system.ads, null)
-  const skills = flattenItemList(system.skills, null)
-  const spells = flattenItemList(system.spells, null)
-  const carriedEquipment = flattenItemList(system.equipment.carried, null)
-  const otherEquipment = flattenItemList(system.equipment.other, null)
+  const traits = system.ads ? flattenItemList(system.ads, null) : []
+  const skills = system.skills ? flattenItemList(system.skills, null) : []
+  const spells = system.spells ? flattenItemList(system.spells, null) : []
+  const carriedEquipment =
+    system.equipment && system.equipment.carried ? flattenItemList(system.equipment.carried, null) : []
+  const otherEquipment = system.equipment && system.equipment.other ? flattenItemList(system.equipment.other, null) : []
 
   traits.forEach(trait => {
     const newTrait = getMigratedItemData(
@@ -436,6 +437,8 @@ function flattenItemList<T>(
   itemList: Record<string, RecursiveItem<T>>,
   parentId: string | null
 ): (T & { _id: string; _parentId: string | null })[] {
+  if (!itemList) return []
+
   const resultList: (T & { _id: string; _parentId: string | null })[] = []
 
   for (const item of Object.values(itemList)) {
