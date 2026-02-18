@@ -72,6 +72,8 @@ export const SETTING_ADD_CUMULATIVE_PARRY_PENALTIES = 'add-cumulative-parry-pena
 export const SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE = 'use-size-modifier-difference-in-melee'
 export const SETTING_PORTRAIT_HP_TINTING = 'portrait-hp-tinting'
 
+export const SETTING_DEV_MODE = 'developerMode'
+
 export const VERSION_096 = SemanticVersion.fromString('0.9.6')
 export const VERSION_097 = SemanticVersion.fromString('0.9.7')
 export const VERSION_0104 = SemanticVersion.fromString('0.10.4')
@@ -80,6 +82,17 @@ export const VERSION_0104 = SemanticVersion.fromString('0.10.4')
 export function initializeSettings() {
   Hooks.once('init', async function () {
     // Game Aid Information Settings ----
+
+    // Dev Mode
+    game.settings.register(SYSTEM_NAME, SETTING_DEV_MODE, {
+      name: '',
+      hint: '',
+      scope: 'world',
+      config: false,
+      type: Boolean,
+      default: false,
+      onChange: value => console.log(`Developer mode is now: ${value ? 'ON' : 'OFF'}`),
+    })
 
     // Show Debug Information for Documents
     game.settings.register(SYSTEM_NAME, SETTING_SHOW_DEBUG_INFO, {

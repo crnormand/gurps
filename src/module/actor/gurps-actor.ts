@@ -167,6 +167,28 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
+  static override async createDialog(
+    data?: Actor.CreateDialogData,
+    createOptions?: Actor.Database.DialogCreateOptions,
+    options?: Actor.CreateDialogOptions
+  ): Promise<Actor.Stored | null | undefined> {
+    const isDevMode = game.settings?.get(GURPS.SYSTEM_NAME, 'developerMode') ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      const allTypes = Actor.TYPES
+      const excludeTypes = ['base', 'character', 'enemy']
+
+      // Disable non-production Actor types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = allTypes.filter(type => !excludeTypes.includes(type))
+    }
+
+    return super.createDialog(data, createOptions, options)
+  }
+
+  /* ---------------------------------------- */
+
   override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
     embeddedName: EmbeddedName,
     id: string,

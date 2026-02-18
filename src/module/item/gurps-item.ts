@@ -152,6 +152,28 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
+  static override async createDialog(
+    data?: Item.CreateDialogData,
+    createOptions?: Item.Database.DialogCreateOptions,
+    options?: Item.CreateDialogOptions
+  ): Promise<Item.Stored | null | undefined> {
+    const isDevMode = game.settings?.get(GURPS.SYSTEM_NAME, 'developerMode') ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      const allTypes = Item.TYPES
+      const excludeTypes = ['base', 'equipment', 'feature', 'skill', 'spell']
+
+      // Disable non-production Item types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = allTypes.filter(type => !excludeTypes.includes(type))
+    }
+
+    return super.createDialog(data, createOptions, options)
+  }
+
+  /* ---------------------------------------- */
+
   override delete(operation?: Item.Database.DeleteOperation & { deleteContents?: boolean }): Promise<this | undefined> {
     return super.delete(operation)
   }
