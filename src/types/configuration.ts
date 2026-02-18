@@ -120,6 +120,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.use-quick-rolls': AnyMutableObject
     'gurps.portrait-hp-tinting': boolean
     'gurps.developerMode': boolean
+    'gurps.migration-version': string
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

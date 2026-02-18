@@ -9,7 +9,10 @@
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
     "actor": {
-      "setting": {}
+      "migration": {
+        "progressMessage": "Applying Actor migrations for version {version}, please wait...",
+        "successMessage": "Successfully applied Actor migrations for version {version}."
+      }
     },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",

@@ -9,6 +9,36 @@ import { MoveModeV2 } from './data/move-mode.js'
 import { NoteV2 } from './data/note.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
 
+async function runMigration() {
+  const migrationVersion = game.settings!.get(GURPS.SYSTEM_NAME, 'migration-version')
+
+  if (foundry.utils.isNewerVersion('1.0.0', migrationVersion)) {
+    const warning = ui.notifications!.warn('GURPS.actor.migration.progressMessage', {
+      format: { version: '1.0.0' },
+      progress: true,
+    })
+
+    console.log('Migrating world actors')
+    const actors = game.actors!.filter(actor => actor.isOfType('character', 'enemy'))
+    const updateStep = 1 / actors.length
+    let updateProgress = 0
+
+    for (const actor of actors) {
+      await migrateActor(actor)
+      updateProgress += updateStep
+      warning.update({ pct: updateProgress })
+    }
+
+    ui.notifications!.remove(warning)
+    ui.notifications!.success('GURPS.actor.migration.successMessage', {
+      format: { version: '1.0.0' },
+      permanent: true,
+    })
+  }
+}
+
+/* ---------------------------------------- */
+
 async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
   if (!game.i18n) {
     console.error('GURPS | Cannot migrate actor because game.i18n is not initialized.')
@@ -199,12 +229,12 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
   const createData: Actor.CreateData<'characterV2'> = {
     type: 'characterV2',
     img: actor.img,
-    name: 'Migrated: ' + actor.name,
+    name: actor.name,
     system: migrateActorSystem(actor.system),
     items,
   }
 
-  const newActor = Actor.create(createData) as unknown as Actor.OfType<'characterV2'>
+  const newActor = (await actor.update(createData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
 
   return newActor
 }
@@ -319,18 +349,20 @@ function migrateActorSystem(
   }
 
   // Migrate hit locations
-  Object.values(oldData.hitlocations).forEach(hitlocation => {
-    const id = foundry.utils.randomID()
+  if (oldData.hitlocations) {
+    Object.values(oldData.hitlocations).forEach(hitlocation => {
+      const id = foundry.utils.randomID()
 
-    const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
-      ...hitlocation,
-      _id: id,
-      rollText: hitlocation.roll,
-    }
+      const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
+        ...hitlocation,
+        _id: id,
+        rollText: hitlocation.roll,
+      }
 
-    newData.hitlocationsV2 ||= {}
-    newData.hitlocationsV2[id] = location
-  })
+      newData.hitlocationsV2 ||= {}
+      newData.hitlocationsV2[id] = location
+    })
+  }
 
   // Migrate notes
   const addNote = (data: Note, parentId: string | null) => {
@@ -351,38 +383,44 @@ function migrateActorSystem(
     }
   }
 
-  Object.values(oldData.notes).forEach(note => addNote(note, null))
+  if (oldData.notes) {
+    Object.values(oldData.notes).forEach(note => addNote(note, null))
+  }
 
   // Migrate move modes
-  Object.values(oldData.move).forEach(data => {
-    const id = foundry.utils.randomID()
+  if (oldData.move) {
+    Object.values(oldData.move).forEach(data => {
+      const id = foundry.utils.randomID()
 
-    const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      _id: id,
-      mode: data.mode,
-      basic: Number(data.basic),
-      enhanced: data.enhanced ? Number(data.enhanced) : null,
-      default: data.default,
-    }
+      const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
+        _id: id,
+        mode: data.mode,
+        basic: Number(data.basic),
+        enhanced: data.enhanced ? Number(data.enhanced) : null,
+        default: data.default,
+      }
 
-    newData.moveV2 ||= {}
-    newData.moveV2[id] = move
-  })
+      newData.moveV2 ||= {}
+      newData.moveV2[id] = move
+    })
+  }
 
   // Migrate resource trackers
 
-  Object.values(oldData.additionalresources.tracker).forEach(data => {
-    const id = foundry.utils.randomID()
+  if (oldData.additionalresources?.tracker) {
+    Object.values(oldData.additionalresources.tracker).forEach(data => {
+      const id = foundry.utils.randomID()
 
-    const tracker: DataModel.CreateData<DataModel.SchemaOf<TrackerInstance>> = {
-      ...data,
-      _id: id,
-    }
+      const tracker: DataModel.CreateData<DataModel.SchemaOf<TrackerInstance>> = {
+        ...data,
+        _id: id,
+      }
 
-    newData.additionalresources ||= {}
-    newData.additionalresources.tracker ||= {}
-    newData.additionalresources.tracker[id] = tracker
-  })
+      newData.additionalresources ||= {}
+      newData.additionalresources.tracker ||= {}
+      newData.additionalresources.tracker[id] = tracker
+    })
+  }
 
   return newData
 }
@@ -410,4 +448,4 @@ function flattenItemList<T>(
   return resultList
 }
 
-export { migrateActor }
+export { migrateActor, runMigration }
