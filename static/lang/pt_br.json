@@ -1107,6 +1107,15 @@
     "number": "Número",
     "ok": "OK",
     "oneHandLift": "Levantar com UMA mão",
+    "otf": {
+      "costNotApplied": "O custo ({points} energia) não foi aplicado a nenhum recurso.",
+      "costNotAppliedNoActor": "O custo ({points} energia) não foi aplicado. Nenhum ator selecionado.",
+      "costNotAppliedNoPools": "Nenhum pool de recursos válido encontrado para aplicar o custo ({points} pontos).",
+      "selectEnergyPool": "Selecionar Reserva de Energia",
+      "selectEnergyPoolDetail": "Selecione o recurso para aplicar o custo:",
+      "resourceNotFound": "Recurso '{resource}' não encontrado neste ator.",
+      "trackerNotFound": "Rastreador '{tracker}' não encontrado neste ator."
+    },
     "OTFormulasEvent": "Fórmulas OTF",
     "otherTab": "Verificações",
     "overridden": "substituído",

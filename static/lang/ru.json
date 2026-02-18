@@ -1112,6 +1112,15 @@
     "number": "Число",
     "ok": "ОК",
     "oneHandLift": "Подъём одной рукой",
+    "otf": {
+      "costNotApplied": "Стоимость ({points} энергии) не была применена ни к одному ресурсу.",
+      "costNotAppliedNoActor": "Стоимость ({points} энергии) не была применена. Актер не выбран.",
+      "costNotAppliedNoPools": "Не найден подходящий пул ресурсов для применения стоимости ({points} очков).",
+      "selectEnergyPool": "Выбрать пул энергии",
+      "selectEnergyPoolDetail": "Выберите ресурс для применения стоимости:",
+      "resourceNotFound": "Ресурс '{resource}' не найден у этого актёра.",
+      "trackerNotFound": "Счётчик '{tracker}' не найден на этом актёре."
+    },
     "OTFormulasEvent": "Формулы OTF",
     "otherTab": "Проверки",
     "overridden": "перезаписан",

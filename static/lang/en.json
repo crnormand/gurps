@@ -1113,6 +1113,15 @@
     "number": "Number",
     "ok": "OK",
     "oneHandLift": "One-Hand Lift",
+    "otf": {
+      "costNotApplied": "The cost ({points} energy) was not applied to any resource.",
+      "costNotAppliedNoActor": "The cost ({points} energy) was not applied. No actor selected.",
+      "costNotAppliedNoPools": "No candid resource pool found to apply the cost ({points} points).",
+      "selectEnergyPool": "Select Energy Pool",
+      "selectEnergyPoolDetail": "Select the resource to apply the cost to:",
+      "resourceNotFound": "Resource '{resource}' not found on this actor.",
+      "trackerNotFound": "Tracker '{tracker}' not found on this actor."
+    },
     "OTFormulasEvent": "OTF Formulas",
     "otherTab": "Checks",
     "overridden": "overridden",

@@ -1,4 +1,5 @@
 // Import Modules
+import { applyModifierDesc } from '@module/otf/description-utilities.ts'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
 import { GGADebugger } from '@module/util/debugger.js'
@@ -12,7 +13,7 @@ import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
 import { getTokenForActor } from '@module/util/token.js'
 import JQueryHelpers from '@util/jquery-helper.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
-import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@util/parselink.js'
+import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@util/parselink.js'
 import { GurpsRange, setupRanges } from '@util/ranges.js'
 import { SemanticVersion } from '@util/semver.js'
 import {
@@ -1775,109 +1776,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.handleRoll = handleRoll
-
-  /**
-   * If the desc contains *Cost ?FP or *Max:9 then perform action
-   * @param {GurpsActorV2|User} actor
-   * @param {string} desc
-   * @returns {null|number} an overriding MAX value if *Max is found, otherwise null.
-   */
-  async function applyModifierDesc(actor, desc) {
-    if (!desc) return null
-    let match = desc.match(COSTS_REGEX)
-
-    // Handle *Costs modifiers.
-    if (!!match && !!actor && !actor.isSelf) {
-      let delta = parseInt(match.groups.cost)
-      let target = match.groups.type
-
-      if (target.match(/^[hf]p/i)) {
-        let key = target.toUpperCase()
-
-        // @ts-expect-error - dynamic property access on actor.system
-        await actor.update({
-          [`system.additionalresources.tracker.${key}.value`]:
-            foundry.utils.getProperty(actor, `system.additionalresources.tracker.${key}.value`) - delta,
-        })
-      } else if (target.match(/^tr/i)) {
-        // TODO Today this is using the chat command -- I think it should directly update the actor.
-        await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
-      } else {
-        // Build a list of possible costs based on the actor's HP, FP, and Trackers, and prompt the user to select one.
-        const costs = {}
-
-        if (actor.system.HP) costs[`system.HP.value`] = `${game.i18n.localize('GURPS.HP')} (${actor.system.HP.value})`
-        if (actor.system.FP) costs[`system.FP.value`] = `${game.i18n.localize('GURPS.FP')} (${actor.system.FP.value})`
-
-        for (const [key, tracker] of Object.entries(actor.system.additionalresources?.tracker ?? {})) {
-          const trackerName = (tracker?.name ?? '').toString().trim()
-          const label = trackerName !== '' ? trackerName : `Tracker ${key}`
-          const value = tracker?.value ?? ''
-          costs[`system.additionalresources.tracker.${key}.value`] = `${label} (${value})`
-        }
-
-        // If there are no valid costs, show a warning notification to the users that the cost was not applied.
-        if (Object.keys(costs).length === 0) {
-          ui.notifications.warn(game.i18n.format('GURPS.costNotApplied', { points: delta }))
-        } else {
-          // If there are no valid costs, show a warning notification to the users that the cost was not applied.
-          if (Object.keys(costs).length === 0) {
-            ui.notifications.warn(game.i18n.format('GURPS.costNotApplied', { points: delta }))
-          } else {
-            // Unknown cost type: prompt the user for either HP, FP, or a Tracker name.
-            // Create a DialogV2 to prompt the user for the cost type using a dropdown (select) input.
-            const defaultCostKey = costs[`system.FP.value`] ? 'system.FP.value' : Object.keys(costs)[0]
-            const response = await foundry.applications.api.DialogV2.wait({
-              window: { title: game.i18n.localize('GURPS.selectEnergyPool') },
-              content: `
-            <label for="costType">${game.i18n.localize('GURPS.selectEnergyPoolDetail')}
-              <select id="costType" name="costType" style="width: fit-content;">
-                ${Object.entries(costs)
-                  .map(([value, label]) => {
-                    const escLabel = foundry.utils.escapeHTML(label)
-                    const selected = value === defaultCostKey ? ' selected' : ''
-
-                    return `<option value="${value}"${selected}>${escLabel}</option>`
-                  })
-                  .join('')}
-              </select>
-            </label>`,
-              buttons: [
-                {
-                  action: 'ok',
-                  label: 'GURPS.ok',
-                  callback: (_event, button, _dialog) => {
-                    return button.form.elements.costType.value
-                  },
-                },
-                {
-                  action: 'cancel',
-                  label: 'GURPS.cancel',
-                  callback: () => {
-                    return null
-                  },
-                },
-              ],
-            })
-
-            if (!response) {
-              ui.notifications.warn(game.i18n.format('GURPS.costNotApplied', { points: delta }))
-            } else {
-              await actor.update({ [response]: foundry.utils.getProperty(actor, response) - delta })
-            }
-          }
-        }
-      }
-    }
-
-    let parse = desc.replace(/.*\*max: ?(\d+).*/gi, '$1')
-
-    if (parse != desc) {
-      return parseInt(parse)
-    }
-
-    return null // indicating no overriding MAX value
-  }
 
   GURPS.applyModifierDesc = applyModifierDesc
 
