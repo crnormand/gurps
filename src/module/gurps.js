@@ -1808,7 +1808,10 @@ if (!globalThis.GURPS) {
         if (actor.system.FP) costs[`system.FP.value`] = `${game.i18n.localize('GURPS.FP')} (${actor.system.FP.value})`
 
         for (const [key, tracker] of Object.entries(actor.system.additionalresources?.tracker ?? {})) {
-          costs[`system.additionalresources.tracker.${key}.value`] = `${tracker.name} (${tracker.value})`
+          const trackerName = (tracker?.name ?? '').toString().trim()
+          const label = trackerName !== '' ? trackerName : `Tracker ${key}`
+          const value = tracker?.value ?? ''
+          costs[`system.additionalresources.tracker.${key}.value`] = `${label} (${value})`
         }
 
         // If there are no valid costs, show a warning notification to the users that the cost was not applied.
