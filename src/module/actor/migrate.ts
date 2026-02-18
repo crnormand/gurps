@@ -17,7 +17,7 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
     return
   }
 
-  if (!actor.isOfType('character')) {
+  if (!actor.isOfType('character', 'enemy')) {
     console.error(
       'Attempted to migrate actor that is not of type character. Actor name:',
       actor.name,

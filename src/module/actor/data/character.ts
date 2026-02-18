@@ -1505,7 +1505,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       game.user?.targets.reduce((acc: string[], target: Token.Implementation) => {
         const actor = target.actor
 
-        if (!actor || !actor.isOfType('character', 'enemy')) return acc
+        if (!actor || !actor.isOfType('character')) return acc
 
         acc.push(
           ...((actor.system as CharacterModel).conditions.target.modifiers?.map(mod => {

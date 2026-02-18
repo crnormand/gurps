@@ -1776,9 +1776,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     event.preventDefault()
 
     switch (this.actor.type) {
+      case 'enemy':
       case 'character':
         return new ActorImporter(this.actor).importActor()
-      case 'enemy':
       case 'characterV2':
         return GURPS.modules.Importer.importerPrompt(this.actor)
       default:

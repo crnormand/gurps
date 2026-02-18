@@ -50,8 +50,8 @@ declare module 'fvtt-types/configuration' {
   interface DataModelConfig {
     Actor: {
       character: ActorV1Model
+      enemy: ActorV1Model
       characterV2: typeof CharacterModel
-      enemy: typeof CharacterModel
     }
     Item: {
       equipment: Equipment

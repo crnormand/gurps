@@ -13,7 +13,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
     super._onCreate(data, options, userId)
     const actor = this.actor
 
-    if (actor && actor.isOfType('characterV2', 'enemy')) {
+    if (actor && actor.isOfType('characterV2')) {
       const maneuverText = actor.system.conditions.maneuver
 
       actor.replaceManeuver(maneuverText ?? 'Do Nothing')
