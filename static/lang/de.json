@@ -6,8 +6,8 @@
     "acc": "ZG",
     "accForWeapon": "ZG für {weapon}",
     "active": "Aktiv",
-    "activeEffect": "Aktiver Effekt",
     "activeEffects": "Aktive Effekte",
+    "activeEffect": "Aktiver Effekt",
     "actor": {
       "setting": {}
     },
