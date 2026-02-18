@@ -3,10 +3,11 @@ import { GurpsModule } from '@gurps-types/gurps-module.js'
 import * as dataModels from './data/index.js'
 import { GurpsItemV2 } from './gurps-item.js'
 import { GurpsItemSheet } from './item-sheet.js'
-import { migrateItemSystem } from './migrate.js'
+import { migrateItem, migrateItemSystem } from './migrate.js'
 
 interface ItemModule extends GurpsModule {
   migrateItemSystem: typeof migrateItemSystem
+  migrateItem: typeof migrateItem
 }
 
 function init() {
@@ -29,4 +30,5 @@ function init() {
 export const Item: ItemModule = {
   init,
   migrateItemSystem,
+  migrateItem,
 }

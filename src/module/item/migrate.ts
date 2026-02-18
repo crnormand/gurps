@@ -13,6 +13,46 @@ type CreateDataOf<Model extends DataModel.Any> = fields.SchemaField.CreateData<D
 
 type NewDataWrapper<Type extends NewItemType> = CreateDataOf<Item.SystemOfType<Type>>
 
+/* ---------------------------------------- */
+
+/**
+ * Migrate an Item from the old system to the new system.
+ * This item should be used only for Items not contained within an Actor, as the Actor migration process
+ * handles embedded Item migration on its own.
+ */
+async function migrateItem(
+  oldItem: Item.OfType<'equipment' | 'feature' | 'skill' | 'spell'>,
+  parentId: string | null
+): Promise<Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'> | void> {
+  const type = getNewItemType(oldItem.type)
+
+  const system = migrateItemSystem(oldItem.type, oldItem.system as any, parentId)
+
+  const newItem = await oldItem.update(
+    {
+      type,
+      system,
+    },
+    { recursive: false }
+  )
+
+  if (!newItem) {
+    console.error(`Failed to migrate Item with id ${oldItem.id}`)
+
+    return
+  }
+
+  if (!newItem.isOfType('equipmentV2', 'featureV2', 'skillV2', 'spellV2')) {
+    console.error(`Migrated Item has invalid type: ${newItem.type}`)
+
+    return
+  }
+
+  return newItem
+}
+
+/* ---------------------------------------- */
+
 function getNewItemType(oldType: OldItemType): NewItemType {
   switch (oldType) {
     case 'equipment':
@@ -25,6 +65,8 @@ function getNewItemType(oldType: OldItemType): NewItemType {
       return 'spellV2'
   }
 }
+
+/* ---------------------------------------- */
 
 function migrateItemSystem(type: string, oldData: OldItemData, parentId: string | null) {
   switch (type) {
@@ -121,4 +163,4 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
 
 /* ---------------------------------------- */
 
-export { migrateItemSystem, getNewItemType }
+export { migrateItemSystem, getNewItemType, migrateItem }
