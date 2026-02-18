@@ -1,7 +1,7 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
-import { getNewItemType, migrateItemSystem } from '@module/item/migrate.js'
+import { getMigratedItemData } from '@module/item/migrate.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
@@ -36,16 +36,12 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
     if (!item.isOfType('equipment', 'feature', 'skill', 'spell')) return
 
     const parentId = getItemParentId(actor, item)
-    const type = getNewItemType(item.type)
 
-    const system = migrateItemSystem(item.type, item.system as any, parentId)
+    const updateData = getMigratedItemData(item, parentId)
 
-    items.push({
-      _id: item._id,
-      type,
-      name: item.name,
-      system,
-    })
+    if (updateData === null) return
+
+    items.push(updateData)
   })
 
   // ActorV1 has no concept of Reaction and Conditional Modifier ownership by items,

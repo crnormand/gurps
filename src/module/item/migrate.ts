@@ -15,26 +15,34 @@ type NewDataWrapper<Type extends NewItemType> = CreateDataOf<Item.SystemOfType<T
 
 /* ---------------------------------------- */
 
+async function migrateItemCompendium(pack: CompendiumCollection<'Item'>) {
+  const items = await pack.getDocuments()
+
+  const updateData = items.map(item => getMigratedItemData(item, null)).filter(element => element !== null)
+
+  await Item.updateDocuments(updateData, { pack: pack.collection, recursive: false })
+}
+
+/* ---------------------------------------- */
+
 /**
  * Migrate an Item from the old system to the new system.
  * This item should be used only for Items not contained within an Actor, as the Actor migration process
  * handles embedded Item migration on its own.
  */
 async function migrateItem(
-  oldItem: Item.OfType<'equipment' | 'feature' | 'skill' | 'spell'>,
-  parentId: string | null
+  oldItem: Item.Implementation,
+  operation: Item.Database.UpdateOperation
 ): Promise<Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'> | void> {
-  const type = getNewItemType(oldItem.type)
+  const updateData = getMigratedItemData(oldItem, null)
 
-  const system = migrateItemSystem(oldItem.type, oldItem.system as any, parentId)
+  if (!updateData) {
+    console.error(`Failed to get migrated Item data for Item with id ${oldItem.id}`)
 
-  const newItem = await oldItem.update(
-    {
-      type,
-      system,
-    },
-    { recursive: false }
-  )
+    return
+  }
+
+  const newItem = await oldItem.update(updateData, { ...operation, recursive: false })
 
   if (!newItem) {
     console.error(`Failed to migrate Item with id ${oldItem.id}`)
@@ -49,6 +57,31 @@ async function migrateItem(
   }
 
   return newItem
+}
+
+/* ---------------------------------------- */
+
+function getMigratedItemData(
+  oldItem: Item.Implementation,
+  parentId: string | null
+): CreateDataOf<Item.OfType<NewItemType>> | null {
+  if (!oldItem.isOfType('equipment', 'feature', 'skill', 'spell')) {
+    console.debug('Item is not of a type that can be migrated, skipping migration.')
+
+    return null
+  }
+
+  const type = getNewItemType(oldItem.type)
+
+  const system = migrateItemSystem(oldItem.type, oldItem.system as any, parentId)
+
+  const updateData = {
+    ...oldItem.toObject(),
+    type,
+    system,
+  }
+
+  return updateData
 }
 
 /* ---------------------------------------- */
@@ -163,4 +196,4 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
 
 /* ---------------------------------------- */
 
-export { migrateItemSystem, getNewItemType, migrateItem }
+export { getNewItemType, migrateItem, getMigratedItemData, migrateItemCompendium }
