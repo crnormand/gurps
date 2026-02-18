@@ -1804,8 +1804,10 @@ if (!globalThis.GURPS) {
       } else {
         // Build a list of possible costs based on the actor's HP, FP, and Trackers, and prompt the user to select one.
         const costs = {}
+
         if (actor.system.HP) costs[`system.HP.value`] = `${game.i18n.localize('GURPS.HP')} (${actor.system.HP.value})`
         if (actor.system.FP) costs[`system.FP.value`] = `${game.i18n.localize('GURPS.FP')} (${actor.system.FP.value})`
+
         for (const [key, tracker] of Object.entries(actor.system.additionalresources?.tracker ?? {})) {
           costs[`system.additionalresources.tracker.${key}.value`] = `${tracker.name} (${tracker.value})`
         }
@@ -1827,8 +1829,7 @@ if (!globalThis.GURPS) {
               action: 'ok',
               label: 'GURPS.ok',
               callback: (_event, button, _dialog) => {
-                const costType = button.form.elements.costType.value
-                return costType
+                return button.form.elements.costType.value
               },
             },
           ],
@@ -1837,6 +1838,7 @@ if (!globalThis.GURPS) {
         if (!response) {
           // Show a warning notification to the users that the cost was not applied.
           ui.notifications.warn(game.i18n.format('GURPS.costNotApplied', { points: delta }))
+
           return null
         }
 
