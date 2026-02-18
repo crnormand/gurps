@@ -1843,6 +1843,13 @@ if (!globalThis.GURPS) {
                 return button.form.elements.costType.value
               },
             },
+            {
+              action: 'cancel',
+              label: 'GURPS.cancel',
+              callback: () => {
+                return null
+              },
+            },
           ],
         })
 
