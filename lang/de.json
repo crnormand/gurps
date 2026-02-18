@@ -1039,6 +1039,14 @@
     "number": "Nummer",
     "ok": "OK",
     "oneHandLift": "Ein-Hand Heben",
+    "otf": {
+      "costNotApplied": "Die Kosten ({points} Energie) wurden auf keine Ressource angewendet.",
+      "costNotAppliedNoActor": "Die Kosten ({points} Energie) wurden nicht angewendet. Kein Akteur ausgewählt.",
+      "costNotAppliedNoPools": "Kein brauchbarer Ressourcenpool gefunden, um die Kosten ({energy} Punkte) anzuwenden.",
+      "selectEnergyPool": "Energiepuffer auswählen",
+      "selectEnergyPoolDetail": "Wählen Sie die Ressource aus, auf die die Kosten angewendet werden sollen:",
+      "trackerNotFound": "Tracker '{tracker}' auf diesem Akteur nicht gefunden."
+    },
     "OTFormulasEvent": "OTF Formeln",
     "otherEquipment": "Weitere Ausrüstung",
     "otherTab": "Prüfungen",

@@ -1039,6 +1039,14 @@
     "number": "Nombre",
     "ok": "OK",
     "oneHandLift": "Porter à une main",
+    "otf": {
+      "costNotApplied": "Le coût ({points} énergie) n'a été appliqué à aucune ressource.",
+      "costNotAppliedNoActor": "Le coût ({points} énergie) n'a pas été appliqué. Aucun acteur sélectionné.",
+      "costNotAppliedNoPools": "Aucun pool de ressources valide trouvé pour appliquer le coût ({energy} points).",
+      "selectEnergyPool": "Sélectionner Réserve d'Énergie",
+      "selectEnergyPoolDetail": "Sélectionnez la ressource pour appliquer le coût:",
+      "trackerNotFound": "Tracker '{tracker}' non trouvé sur cet acteur."
+    },
     "OTFormulasEvent": "Formules OTF",
     "otherEquipment": "Autre Equipment",
     "otherTab": "Vérifications",
@@ -1170,7 +1178,6 @@
     "resourceTemplateTitle": "Modèles de Suivi des Ressources",
     "resourceTracker": "Suivi",
     "resourceTrackerEditor": "Editeur de Suivi des Ressources",
-    "resourceTrackerName": "Compteur {name}",
     "resourceTrackers": "Suivi Ressources",
     "resourceUndefined": "Aucun défini",
     "resourceUpdateTrackerSlot": "Emplacement MaJ Suivi",
