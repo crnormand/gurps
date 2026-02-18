@@ -62,8 +62,8 @@ export const getSizeModifier = (source, target) => {
   let sizeModifier
 
   if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
-    const attackerSM = foundry.utils.getProperty(source.actor, 'system.traits.sizemod') || 0
-    const targetSM = foundry.utils.getProperty(target.actor, 'system.traits.sizemod') || 0
+    const attackerSM = foundry.utils.getProperty(source.actor, 'system.profile.sizemod') || 0
+    const targetSM = foundry.utils.getProperty(target.actor, 'system.profile.sizemod') || 0
     const sizeDiff = targetSM - attackerSM
 
     if (sizeDiff !== 0) {
