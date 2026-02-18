@@ -5,6 +5,7 @@
 ### Features
 
 - Automate Foundry publishing when creating a new release.
+- Prompt user for energy pool to use for `*costs/*per` OTF formulas if listed pool is not found. (E.g, a formula like `[2d burn *per 1 point]` will prompt the user for either `FP`, `HP`, or a resource tracker if "point" is not an attribiute.)
 
 ### Bugfixes
 
