@@ -1237,7 +1237,6 @@
     "resourceTemplateName": "Название ресурса",
     "resourceTemplateTitle": "Шаблоны Счётчика ресурсов",
     "resourceTrackerEditor": "Редактор Счётчика ресурсов",
-    "resourceTrackerName": "Счетчик {name}",
     "resourceTrackers": "Счётчик ресурсов",
     "resourceUndefined": "Не определено",
     "resourceUpdateTrackerSlot": "Обновить слот счётчика",
