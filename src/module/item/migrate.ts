@@ -15,6 +15,47 @@ type NewDataWrapper<Type extends NewItemType> = CreateDataOf<Item.SystemOfType<T
 
 /* ---------------------------------------- */
 
+async function runMigration() {
+  const migrationVersion = game.settings!.get(GURPS.SYSTEM_NAME, 'migration-version')
+
+  if (foundry.utils.isNewerVersion('1.0.0', migrationVersion)) {
+    const warning = ui.notifications!.warn('GURPS.item.migration.progressMessage', {
+      format: { version: '1.0.0' },
+      progress: true,
+    })
+
+    console.log('Migrating world items')
+    const items = game.items!.filter(actor => actor.isOfType('equipment', 'feature', 'skill', 'spell'))
+    const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
+
+    const length = items.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)
+    const updateStep = 1 / length
+    let updateProgress = 0
+
+    for (const item of items) {
+      await migrateItem(item)
+      updateProgress += updateStep
+      warning.update({ pct: updateProgress })
+    }
+
+    for (const pack of packs) {
+      await migrateItemCompendium(pack)
+      updateProgress += pack.index.size * updateStep
+      warning.update({ pct: updateProgress })
+    }
+
+    ui.notifications!.remove(warning)
+    ui.notifications!.success('GURPS.item.migration.successMessage', {
+      format: { version: '1.0.0' },
+      permanent: true,
+    })
+  }
+}
+
+/* ---------------------------------------- */
+
+/* ---------------------------------------- */
+
 async function migrateItemCompendium(pack: CompendiumCollection<'Item'>) {
   const items = await pack.getDocuments()
 
@@ -32,7 +73,7 @@ async function migrateItemCompendium(pack: CompendiumCollection<'Item'>) {
  */
 async function migrateItem(
   oldItem: Item.Implementation,
-  operation: Item.Database.UpdateOperation
+  operation?: Item.Database.UpdateOperation
 ): Promise<Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'> | void> {
   const updateData = getMigratedItemData(oldItem, null)
 
@@ -206,4 +247,4 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
 
 /* ---------------------------------------- */
 
-export { getNewItemType, migrateItem, getMigratedItemData, migrateItemCompendium }
+export { getNewItemType, migrateItem, getMigratedItemData, migrateItemCompendium, runMigration }

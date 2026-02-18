@@ -795,6 +795,12 @@
     "injury": "Injury",
     "invalidUserForDamageWarning": "Only GMs are allowed to Apply Damage.",
     "isFreeAction": "Is a Free Action",
+    "item": {
+      "migration": {
+        "progressMessage": "Applying Item migrations for version {version}, please wait...",
+        "successMessage": "Successfully applied Item migrations for version {version}."
+      }
+    },
     "itemBonusText": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc.",
     "itemFeatures": "Features",
     "itemImport": "Import Equipment Library",
