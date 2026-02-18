@@ -20,13 +20,16 @@ async function runMigration() {
 
     console.log('Migrating world actors')
     const actors = game.actors!.filter(actor => actor.isOfType('character', 'enemy'))
-    const updateStep = 1 / actors.length
-    let updateProgress = 0
 
-    for (const actor of actors) {
-      await migrateActor(actor)
-      updateProgress += updateStep
-      warning.update({ pct: updateProgress })
+    if (actors.length > 0) {
+      const updateStep = 1 / actors.length
+      let updateProgress = 0
+
+      for (const actor of actors) {
+        await migrateActor(actor)
+        updateProgress += updateStep
+        warning.update({ pct: updateProgress })
+      }
     }
 
     ui.notifications!.remove(warning)

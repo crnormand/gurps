@@ -29,19 +29,22 @@ async function runMigration() {
     const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
 
     const length = items.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)
-    const updateStep = 1 / length
-    let updateProgress = 0
 
-    for (const item of items) {
-      await migrateItem(item)
-      updateProgress += updateStep
-      warning.update({ pct: updateProgress })
-    }
+    if (length > 0) {
+      const updateStep = 1 / length
+      let updateProgress = 0
 
-    for (const pack of packs) {
-      await migrateItemCompendium(pack)
-      updateProgress += pack.index.size * updateStep
-      warning.update({ pct: updateProgress })
+      for (const item of items) {
+        await migrateItem(item)
+        updateProgress += updateStep
+        warning.update({ pct: updateProgress })
+      }
+
+      for (const pack of packs) {
+        await migrateItemCompendium(pack)
+        updateProgress += pack.index.size * updateStep
+        warning.update({ pct: updateProgress })
+      }
     }
 
     ui.notifications!.remove(warning)
