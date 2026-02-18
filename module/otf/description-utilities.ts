@@ -29,11 +29,11 @@ async function applyCostsModifier(actor: Actor.Implementation, desc: string): Pr
 
   if (!match) return
 
-  let delta = parseInt(match.groups!.cost)
+  let cost = parseInt(match.groups!.cost)
   let target = match.groups!.type
 
   if (!actor) {
-    ui.notifications!.warn(game.i18n!.format('GURPS.otf.costNotAppliedNoActor', { points: `${delta}` }))
+    ui.notifications!.warn(game.i18n!.format('GURPS.otf.costNotAppliedNoActor', { points: `${cost}` }))
     return
   }
 
@@ -42,19 +42,24 @@ async function applyCostsModifier(actor: Actor.Implementation, desc: string): Pr
     let key = target.toUpperCase()
 
     const resourceValue = foundry.utils.getProperty(actor, `system.${key}.value`) as number
-    await actor.update({ [`system.${key}.value`]: resourceValue - delta })
+    if (resourceValue === undefined || resourceValue === null) {
+      ui.notifications!.warn(game.i18n!.format('GURPS.otf.resourceNotFound', { resource: key }))
+      return
+    }
+
+    await actor.update({ [`system.${key}.value`]: resourceValue - cost })
   } else if (target.match(/^tr\d+/i)) {
     // Match "trNNNN" where NNNN is the tracker number.
     const key = zeroFill(Number(target.replace(/^tr/i, '')), 4)
 
     const trackerValue = foundry.utils.getProperty(actor, `system.additionalresources.tracker.${key}.value`) as number
-    if (!trackerValue) {
+    if (trackerValue === undefined || trackerValue === null) {
       ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: `tr${key}` }))
       return
     }
 
     await actor.update({
-      [`system.additionalresources.tracker.${key}.value`]: trackerValue - delta,
+      [`system.additionalresources.tracker.${key}.value`]: trackerValue - cost,
     })
   } else if (target.match(/^tr\(.+\)/i)) {
     // Format "tr(TRACKER NAME)" where TRACKER NAME is the name of the tracker.
@@ -75,9 +80,18 @@ async function applyCostsModifier(actor: Actor.Implementation, desc: string): Pr
       return
     }
 
+    const trackerCurrentValue = foundry.utils.getProperty(
+      actor,
+      `system.additionalresources.tracker.${tracker.key}.value`
+    ) as number
+
+    if (trackerCurrentValue === undefined || trackerCurrentValue === null) {
+      ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: trackerName }))
+      return
+    }
+
     await actor.update({
-      [`system.additionalresources.tracker.${tracker.key}.value`]:
-        (foundry.utils.getProperty(actor, `system.additionalresources.tracker.${tracker.key}.value`) as number) - delta,
+      [`system.additionalresources.tracker.${tracker.key}.value`]: trackerCurrentValue - cost,
     })
   } else {
     // Build a list of possible resource pools based on the actor's HP, FP, and Trackers. Prompt the user to select one.
@@ -96,7 +110,7 @@ async function applyCostsModifier(actor: Actor.Implementation, desc: string): Pr
 
     // If there are no valid costs, show a warning notification to the users that the cost was not applied.
     if (Object.keys(costs).length === 0) {
-      ui.notifications!.warn(game.i18n!.format('GURPS.otf.costNotAppliedNoPools', { points: `${delta}` }))
+      ui.notifications!.warn(game.i18n!.format('GURPS.otf.costNotAppliedNoPools', { points: `${cost}` }))
       return
     }
 
@@ -105,12 +119,17 @@ async function applyCostsModifier(actor: Actor.Implementation, desc: string): Pr
     const response = await askUserForEnergyPool(costs, defaultCostKey)
 
     if (!response || response === 'cancel') {
-      ui.notifications!.warn(game.i18n!.format('GURPS.otf.costNotApplied', { points: `${delta}` }))
+      ui.notifications!.warn(game.i18n!.format('GURPS.otf.costNotApplied', { points: `${cost}` }))
       return
     }
 
     const resourceValue = foundry.utils.getProperty(actor, response) as number
-    await actor.update({ [response]: resourceValue - delta })
+    if (resourceValue === undefined || resourceValue === null) {
+      ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: response }))
+      return
+    }
+
+    await actor.update({ [response]: resourceValue - cost })
   }
 }
 

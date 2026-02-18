@@ -1042,9 +1042,10 @@
     "otf": {
       "costNotApplied": "Die Kosten ({points} Energie) wurden auf keine Ressource angewendet.",
       "costNotAppliedNoActor": "Die Kosten ({points} Energie) wurden nicht angewendet. Kein Akteur ausgewählt.",
-      "costNotAppliedNoPools": "Kein brauchbarer Ressourcenpool gefunden, um die Kosten ({energy} Punkte) anzuwenden.",
+      "costNotAppliedNoPools": "Kein brauchbarer Ressourcenpool gefunden, um die Kosten ({points} Punkte) anzuwenden.",
       "selectEnergyPool": "Energiepuffer auswählen",
       "selectEnergyPoolDetail": "Wählen Sie die Ressource aus, auf die die Kosten angewendet werden sollen:",
+      "resourceNotFound": "Ressource '{resource}' auf diesem Akteur nicht gefunden.",
       "trackerNotFound": "Tracker '{tracker}' auf diesem Akteur nicht gefunden."
     },
     "OTFormulasEvent": "OTF Formeln",
