@@ -1232,7 +1232,6 @@
     "resourceTemplateName": "Nom Ressource",
     "resourceTemplateTitle": "Modèles de Suivi des Ressources",
     "resourceTrackerEditor": "Editeur de Suivi des Ressources",
-    "resourceTrackerName": "Compteur {name}",
     "resourceTrackers": "Suivi Ressources",
     "resourceUndefined": "Aucun défini",
     "resourceUpdateTrackerSlot": "Emplacement MaJ Suivi",
