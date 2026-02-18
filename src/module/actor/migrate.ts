@@ -1,6 +1,5 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
-import { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
 import { getMigratedItemData } from '@module/item/migrate.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 
@@ -31,17 +30,65 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
   const items: Item.CreateData[] = []
 
   const system = actor.system as ActorV1Model
+  const traits = flattenItemList(system.ads, null)
+  const skills = flattenItemList(system.skills, null)
+  const spells = flattenItemList(system.spells, null)
+  const carriedEquipment = flattenItemList(system.equipment.carried, null)
+  const otherEquipment = flattenItemList(system.equipment.other, null)
 
-  actor.items.forEach(item => {
-    if (!item.isOfType('equipment', 'feature', 'skill', 'spell')) return
+  traits.forEach(trait => {
+    const newTrait = getMigratedItemData(
+      { _id: trait._id, type: 'feature', name: trait.name, system: { fea: trait } } as unknown as Item.Implementation,
+      trait._parentId
+    )
 
-    const parentId = getItemParentId(actor, item)
+    items.push(newTrait as Item.CreateData)
+  })
 
-    const updateData = getMigratedItemData(item, parentId)
+  skills.forEach(skill => {
+    const newSkill = getMigratedItemData(
+      { _id: skill._id, type: 'skill', name: skill.name, system: { ski: skill } } as unknown as Item.Implementation,
+      skill._parentId
+    )
 
-    if (updateData === null) return
+    items.push(newSkill as Item.CreateData)
+  })
 
-    items.push(updateData)
+  spells.forEach(spell => {
+    const newSpell = getMigratedItemData(
+      { _id: spell._id, type: 'spell', name: spell.name, system: { spl: spell } } as unknown as Item.Implementation,
+      spell._parentId
+    )
+
+    items.push(newSpell as Item.CreateData)
+  })
+
+  carriedEquipment.forEach(equipment => {
+    const newEquipment = getMigratedItemData(
+      {
+        _id: equipment._id,
+        type: 'equipment',
+        name: equipment.name,
+        system: { eqt: equipment },
+      } as unknown as Item.Implementation,
+      equipment._parentId
+    )
+
+    items.push(newEquipment as Item.CreateData)
+  })
+
+  otherEquipment.forEach(equipment => {
+    const newEquipment = getMigratedItemData(
+      {
+        _id: equipment._id,
+        type: 'equipment',
+        name: equipment.name,
+        system: { eqt: equipment },
+      } as unknown as Item.Implementation,
+      equipment._parentId
+    )
+
+    items.push(newEquipment as Item.CreateData)
   })
 
   // ActorV1 has no concept of Reaction and Conditional Modifier ownership by items,
@@ -160,26 +207,6 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
   const newActor = Actor.create(createData) as unknown as Actor.OfType<'characterV2'>
 
   return newActor
-}
-
-/* ---------------------------------------- */
-
-function getItemParentId(
-  actor: Actor.OfType<'character'>,
-  item: Item.OfType<'equipment' | 'feature' | 'skill' | 'spell'>
-): string | null {
-  let oldParentId: string | null = null
-
-  if (item.isOfType('equipment')) oldParentId = (item.system as Equipment).eqt.parentuuid
-  else if (item.isOfType('feature')) oldParentId = (item.system as Feature).fea.parentuuid
-  else if (item.isOfType('skill')) oldParentId = (item.system as Skill).ski.parentuuid
-  else if (item.isOfType('spell')) oldParentId = (item.system as Spell).spl.parentuuid
-
-  if (oldParentId === null) return null
-
-  const newParent = actor.items.find(parent => (parent.system as any).importid === oldParentId)
-
-  return newParent?._id || null
 }
 
 /* ---------------------------------------- */
@@ -358,6 +385,29 @@ function migrateActorSystem(
   })
 
   return newData
+}
+
+/* ---------------------------------------- */
+
+type RecursiveItem<T> = T & { contains?: Record<string, RecursiveItem<T>> }
+
+function flattenItemList<T>(
+  itemList: Record<string, RecursiveItem<T>>,
+  parentId: string | null
+): (T & { _id: string; _parentId: string | null })[] {
+  const resultList: (T & { _id: string; _parentId: string | null })[] = []
+
+  for (const item of Object.values(itemList)) {
+    const id = foundry.utils.randomID()
+
+    resultList.push({ ...item, contains: {}, _id: id, _parentId: parentId })
+
+    if (item.contains) {
+      resultList.push(...flattenItemList(item.contains, id))
+    }
+  }
+
+  return resultList
 }
 
 export { migrateActor }

@@ -62,21 +62,23 @@ async function migrateItem(
 /* ---------------------------------------- */
 
 function getMigratedItemData(
-  oldItem: Item.Implementation,
+  oldItem: Item.Implementation | Item.CreateData,
   parentId: string | null
 ): CreateDataOf<Item.OfType<NewItemType>> | null {
-  if (!oldItem.isOfType('equipment', 'feature', 'skill', 'spell')) {
+  const type = getNewItemType(oldItem.type)
+
+  if (type === null) {
     console.debug('Item is not of a type that can be migrated, skipping migration.')
 
     return null
   }
 
-  const type = getNewItemType(oldItem.type)
-
   const system = migrateItemSystem(oldItem.type, oldItem.system as any, parentId)
 
+  const itemData = oldItem instanceof Item ? oldItem.toObject() : oldItem
+
   const updateData = {
-    ...oldItem.toObject(),
+    ...itemData,
     type,
     system,
   }
@@ -86,7 +88,7 @@ function getMigratedItemData(
 
 /* ---------------------------------------- */
 
-function getNewItemType(oldType: OldItemType): NewItemType {
+function getNewItemType(oldType: OldItemType | string): NewItemType | null {
   switch (oldType) {
     case 'equipment':
       return 'equipmentV2'
@@ -96,6 +98,10 @@ function getNewItemType(oldType: OldItemType): NewItemType {
       return 'skillV2'
     case 'spell':
       return 'spellV2'
+    default:
+      console.debug(`Not a valid Item type for migration: ${oldType}`)
+
+      return null
   }
 }
 
@@ -124,17 +130,21 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
     containedBy: parentId,
   }
 
-  Object.values(oldData.melee).forEach(action => {
-    const id = foundry.utils.randomID()
+  if (oldData.melee) {
+    Object.values(oldData.melee).forEach(action => {
+      const id = foundry.utils.randomID()
 
-    newData.actions[id] = action as CreateDataOf<MeleeAttackModel>
-  })
+      newData.actions[id] = action as CreateDataOf<MeleeAttackModel>
+    })
+  }
 
-  Object.values(oldData.ranged).forEach(action => {
-    const id = foundry.utils.randomID()
+  if (oldData.ranged) {
+    Object.values(oldData.ranged).forEach(action => {
+      const id = foundry.utils.randomID()
 
-    newData.actions[id] = action as CreateDataOf<RangedAttackModel>
-  })
+      newData.actions[id] = action as CreateDataOf<RangedAttackModel>
+    })
+  }
 
   return newData
 }
