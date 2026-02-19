@@ -38,6 +38,11 @@ async function applyCostsModifier(actor: Actor.Implementation, desc: string): Pr
     return
   }
 
+  // If a User object was passed instead of an Actor, skip applying costs.
+  // Users have `isSelf === true` and do not expose the Actor `system` data structure.
+  if ((actor as any).isSelf) {
+    return
+  }
   if (target.match(/^[hf]p/i)) {
     // Match "HP" or "FP" (case-insensitive).
     const key = target.toUpperCase()
