@@ -9,17 +9,24 @@ import { watchTargets } from './static-assets.js'
 
 // Copy a whole target root to its destination
 function copyTarget({ src, dest, isFile }) {
-  cpSync(src, dest, isFile ? {} : { recursive: true })
-  console.log(`[watch:static] synced ${src} -> ${dest}`)
+  try {
+    cpSync(src, dest, isFile ? {} : { recursive: true })
+    console.log(`[watch:static] synced ${src} -> ${dest}`)
+  } catch (err) {
+    console.error(`[watch:static] failed to sync ${src} -> ${dest}${isFile ? ' (file)' : ' (tree)'}`, err)
+  }
 }
-
 // Copy a single changed file into the dest tree
 function copyChangedFile(changedPath, { src, dest }) {
   const rel = relative(src, changedPath)
   const destPath = join(dest, rel)
-  mkdirSync(dirname(destPath), { recursive: true })
-  cpSync(changedPath, destPath)
-  console.log(`[watch:static] copied ${changedPath} -> ${destPath}`)
+  try {
+    mkdirSync(dirname(destPath), { recursive: true })
+    cpSync(changedPath, destPath)
+    console.log(`[watch:static] copied ${changedPath} -> ${destPath}`)
+  } catch (err) {
+    console.error(`[watch:static] failed to copy changed file ${changedPath} -> ${destPath}`, err)
+  }
 }
 
 /* ---------------------------------------- */
