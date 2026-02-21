@@ -1,44 +1,20 @@
 import chokidar from 'chokidar'
-import { cpSync, mkdirSync } from 'node:fs'
-import { dirname, join, relative } from 'node:path'
 import { spawn } from 'node:child_process'
 
-import { watchTargets } from './static-assets.js'
+import { staticTargets, syncChangedFile, syncTarget } from './static-assets.js'
 
 /* ---------------------------------------- */
-
-// Copy a whole target root to its destination
-function copyTarget({ src, dest, isFile }) {
-  try {
-    cpSync(src, dest, isFile ? {} : { recursive: true })
-    console.log(`[watch:static] synced ${src} -> ${dest}`)
-  } catch (err) {
-    console.error(`[watch:static] failed to sync ${src} -> ${dest}${isFile ? ' (file)' : ' (tree)'}`, err)
-  }
-}
-// Copy a single changed file into the dest tree
-function copyChangedFile(changedPath, { src, dest }) {
-  const rel = relative(src, changedPath)
-  const destPath = join(dest, rel)
-  try {
-    mkdirSync(dirname(destPath), { recursive: true })
-    cpSync(changedPath, destPath)
-    console.log(`[watch:static] copied ${changedPath} -> ${destPath}`)
-  } catch (err) {
-    console.error(`[watch:static] failed to copy changed file ${changedPath} -> ${destPath}`, err)
-  }
-}
 
 /* ---------------------------------------- */
 
 console.log('[watch:static] initial copy...')
-watchTargets.forEach(copyTarget)
+staticTargets.forEach(target => syncTarget('[watch:static]', target))
 console.log('[watch:static] initial copy done')
 
 /* ---------------------------------------- */
 
 const watcher = chokidar.watch(
-  watchTargets.map(t => t.src),
+  staticTargets.map(t => t.src),
   {
     persistent: true,
     ignoreInitial: true,
@@ -48,10 +24,10 @@ const watcher = chokidar.watch(
 
 // Route a changed path to the appropriate copy helper
 function handleChange(changedPath) {
-  changedPath.normalize() // Ensure consistent path format across platforms
-  const target = watchTargets.find(t => changedPath.startsWith(t.src))
+  changedPath = changedPath.normalize() // Ensure consistent path format across platforms
+  const target = staticTargets.find(t => changedPath.startsWith(t.src))
   if (!target) return
-  target.isFile ? copyTarget(target) : copyChangedFile(changedPath, target)
+  target.isFile ? syncTarget('[watch:static]', target) : syncChangedFile(changedPath, '[watch:static]', target)
 }
 
 watcher
@@ -63,7 +39,7 @@ watcher
   .on('ready', () =>
     console.log(
       '[watch:static] watching',
-      watchTargets.map(t => t.src)
+      staticTargets.map(t => t.src)
     )
   )
 
