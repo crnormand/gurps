@@ -1,24 +1,18 @@
 {
   "description": "GURPS Game Aid",
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "@jridgewell/trace-mapping": "^0.3.31",
     "@types/jest": "^30.0.0",
     "@types/jquery": "^3.5.32",
     "@types/node": "^22.14.1",
-    "autoprefixer": "^10.4.21",
-    "babel-jest": "^30.2.0",
-    "cpx2": "^8.0.0",
+    "chokidar": "^4.0.3",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-import-x": "^4.16.1",
     "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
-    "handlebars": "^4.7.7",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "prettier": "^3.5.3",
-    "purgecss": "^7.0.2",
+    "purgecss": "^8.0.0",
     "sass": "^1.97.1",
     "ts-jest": "^29.3.4",
     "tsc-alias": "^1.8.16",
@@ -30,7 +24,8 @@
   "overrides": {
     "fvtt-types": {
       "tinymce": "8.3.1"
-    }
+    },
+    "minimatch": "^10.2.1"
   },
   "scripts": {
     "build": "npm run clean && npm run build:code && npm run build:styles && npm run build:static",
@@ -52,8 +47,7 @@
     "typecheck": "tsc --noEmit",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test",
     "watch": "node build/watch.mjs",
-    "watch:code": "tsc-watch -p tsconfig.json --onSuccess \"tsc-alias -p tsconfig.json\"",
-    "watch:static": "node build/cpx.js --watch",
+    "watch:code": "tsc-watch -p tsconfig.json --onSuccess \"tsc-alias -p tsconfig.json\" --onFailure \"tsc-alias -p tsconfig.json\"",
     "watch:styles": "sass --watch --update src/styles/gurps.scss:dist/styles/gurps.css"
   },
   "type": "module",
