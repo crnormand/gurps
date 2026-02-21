@@ -1,5 +1,5 @@
 // Import Modules
-import { applyModifierDesc } from '@module/otf/description-utilities.ts'
+import { applyModifierDescription } from '@module/otf/description-utilities.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
 import { GGADebugger } from '@module/util/debugger.js'
@@ -1775,9 +1775,9 @@ if (!globalThis.GURPS) {
     })
   }
 
-  GURPS.handleRoll = handleRoll
+  GURPS.handleRoll = handleRoll 
 
-  GURPS.applyModifierDesc = applyModifierDesc
+  GURPS.applyModifierDesc = applyModifierDescription
 
   /**
    * TODO Move to i18n.js.

@@ -4,15 +4,18 @@ import { zeroFill } from '@util/utilities.js'
 /**
  * If the desc contains *Cost ?FP or *Max:9 then perform action
  * @param {GurpsActor|User} actor
- * @param {string} desc
+ * @param {string} description
  * @returns {null|number} an overriding MAX value if *Max is found, otherwise null.
  */
-export async function applyModifierDesc(actor: Actor.Implementation, desc: string): Promise<number | null> {
-  if (!desc) return null
+export async function applyModifierDescription(
+  actor: Actor.Implementation,
+  description: string
+): Promise<number | null> {
+  if (!description) return null
 
-  await applyCostsModifier(actor, desc)
+  await applyCostsModifier(actor, description)
 
-  return applyMaxModifier(desc)
+  return applyMaxModifier(description)
 }
 
 /**
@@ -22,10 +25,10 @@ export async function applyModifierDesc(actor: Actor.Implementation, desc: strin
  * list of available resources on the actor.
  *
  * @param actor
- * @param desc
+ * @param description
  */
-async function applyCostsModifier(actor: Actor.Implementation, desc: string): Promise<void> {
-  const match = desc.match(COSTS_REGEX)
+async function applyCostsModifier(actor: Actor.Implementation, description: string): Promise<void> {
+  const match = description.match(COSTS_REGEX)
 
   if (!match) return
 
@@ -43,6 +46,7 @@ async function applyCostsModifier(actor: Actor.Implementation, desc: string): Pr
   if ((actor as any).isSelf) {
     return
   }
+
   if (target.match(/^[hf]p/i)) {
     // Match "HP" or "FP" (case-insensitive).
     const key = target.toUpperCase()

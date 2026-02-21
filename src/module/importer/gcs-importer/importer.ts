@@ -1003,6 +1003,8 @@ Portrait will not be imported.`
     this.output.additionalresources.tracker ||= {}
 
     // Placeholder for adding standard trackers to the character.
+
+    // Read all tracker templates from the system settings.
   }
 }
 

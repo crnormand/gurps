@@ -2620,12 +2620,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * @deprecated ActorV1 only.
    */
-  get trackersByName() {
+  get trackersByName(): Record<string, TrackerInstance & { key: string }> {
     // Convert this.system.additionalresources.tracker into an object keyed by tracker.name.
-    const byName: Record<string, TrackerInstance> = {}
+    const byName: Record<string, TrackerInstance & { key: string }> = {}
 
     for (const [_key, value] of Object.entries(this.modelV1.additionalresources.tracker ?? {})) {
-      byName[`${value.name}`] = value
+      byName[`${value.name}`] = { ...value, key: _key } as TrackerInstance & { key: string }
     }
 
     return byName
@@ -4688,18 +4688,25 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   /**
-   * @deprecated Actor v1 only.
+   * Both Actor v1 and v2.
    */
   async addTracker(): Promise<void> {
     this.ignoreRender = true
 
-    const trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
-    const data = GurpsActorV2.addTrackerToDataObject(this.system, trackerData as Record<string, any>)
+    const trackerData = { _id: foundry.utils.randomID(), name: '', value: 0, min: 0, max: 0, points: 0 }
 
-    await this.update({ 'system.additionalresources.-=tracker': null } as Actor.UpdateData) // force Foundry to see the change
-    await this.update({ 'system.additionalresources.tracker': data } as Actor.UpdateData)
+    if (this.isNewActorType) {
+      console.log('Adding tracker to Actor v2', trackerData)
+      await this.update({ [`system.additionalresources.tracker.${trackerData._id}`]: trackerData } as Actor.UpdateData)
+    } else {
+      console.log('Adding tracker to Actor v1', trackerData)
+      const data = GurpsActorV2.addTrackerToDataObject(this.system, trackerData as Record<string, any>)
 
-    this._forceRender()
+      await this.update({ 'system.additionalresources.-=tracker': null } as Actor.UpdateData) // force Foundry to see the change
+      await this.update({ 'system.additionalresources.tracker': data } as Actor.UpdateData)
+    }
+
+    // this._forceRender()
   }
 
   /**

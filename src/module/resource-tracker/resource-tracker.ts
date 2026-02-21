@@ -115,6 +115,7 @@ const resourceTrackerTemplateSchema = () => {
   return {
     tracker: new fields.EmbeddedDataField(TrackerInstance, { required: true, nullable: false }),
     initialValue: new fields.StringField({ required: true, nullable: false }),
+    // @deprecated slot is replaced by autoapply, but we keep it for migration purposes. It will be removed in a future update.
     slot: new fields.BooleanField({ required: true, nullable: true, initial: false }),
     autoapply: new fields.BooleanField({ required: true, nullable: true, initial: false }),
   }

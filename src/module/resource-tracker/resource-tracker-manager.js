@@ -8,8 +8,10 @@ export class ResourceTrackerManager extends FormApplication {
    * @returns {Record<string, ResourceTrackerTemplate>}
    */
   static getDefaultTemplates() {
+    const id = foundry.utils.randomID()
+
     return {
-      '0000': {
+      [id]: {
         tracker: {
           name: game.i18n.localize('GURPS.grapplingControlPoints'),
           alias: game.i18n.localize('GURPS.grapplingCPAbbrev'),
@@ -66,7 +68,8 @@ export class ResourceTrackerManager extends FormApplication {
           ],
         },
         initialValue: 'attributes.ST.value',
-        slot: false,
+        autoapply: false,
+        _id: id,
       },
     }
   }
@@ -143,6 +146,8 @@ export class ResourceTrackerManager extends FormApplication {
         this._templates = []
       }
 
+      const id = foundry.utils.randomID()
+
       this._templates.push({
         tracker: {
           name: '',
@@ -151,14 +156,15 @@ export class ResourceTrackerManager extends FormApplication {
           min: 0,
           value: 0,
         },
-        slot: false,
+        autoapply: false,
         initialValue: '',
+        _id: id,
       })
       this.render(true)
     })
 
     html.find('[name="delete-template"]').click(ev => {
-      let index = $(ev.currentTarget).attr('data')
+      let index = parseInt($(ev.currentTarget).attr('data'))
 
       this._templates.splice(index, 1)
       this.render(true)
