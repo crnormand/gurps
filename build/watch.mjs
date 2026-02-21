@@ -48,6 +48,7 @@ const watcher = chokidar.watch(
 
 // Route a changed path to the appropriate copy helper
 function handleChange(changedPath) {
+  changedPath.normalize() // Ensure consistent path format across platforms
   const target = watchTargets.find(t => changedPath.startsWith(t.src))
   if (!target) return
   target.isFile ? copyTarget(target) : copyChangedFile(changedPath, target)
