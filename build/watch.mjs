@@ -48,6 +48,7 @@ function handleChange(changedPath) {
 
 watcher
   .on('add', handleChange)
+  .on('addDir', handleChange)
   .on('change', handleChange)
   .on('unlink', p => console.log(`[watch:static] source removed: ${p} (dist untouched)`))
   .on('error', err => console.error('[watch:static] error', err))
