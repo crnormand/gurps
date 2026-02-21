@@ -12,7 +12,7 @@
     "chokidar": "^4.0.3",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-import-x": "^4.16.1",
     "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
     "handlebars": "^4.7.7",
     "husky": "^9.1.7",
@@ -30,7 +30,8 @@
   "overrides": {
     "fvtt-types": {
       "tinymce": "8.3.1"
-    }
+    },
+    "minimatch": "^10.2.1"
   },
   "scripts": {
     "build": "npm run clean && npm run build:code && npm run build:styles && npm run build:static",
