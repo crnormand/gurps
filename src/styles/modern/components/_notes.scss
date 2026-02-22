@@ -362,7 +362,7 @@
       span.text {
         display: inline-block;
         font-style: normal;
-        font-weight: 600;
+        font-weight: normal;
         line-height: inherit;
         color: var(--ms-text);
         background-color: var(--ms-accent-light);
@@ -370,6 +370,15 @@
         border-radius: 999px;
         padding: 1px 4px;
         width: 100%;
+        text-align: center;
+        white-space: nowrap;
+        min-width: 16ch;
+
+        .glinkmod {
+          font-weight: inherit;
+          font-size: var(--font-size-10);
+          background: transparent;
+        }
       }
     }
 

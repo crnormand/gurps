@@ -790,17 +790,24 @@ export class GurpsActorModernSheet extends SheetBase {
 
     if (!trackers) return []
 
-    return Object.entries(trackers).map(([key, tracker]) => ({
-      key,
-      id: tracker.id,
-      name: tracker.name,
-      value: tracker.value,
-      condition: tracker.currentThreshold?.condition || null,
-      color: tracker.currentThreshold?.color || null,
-      pdf: tracker.pdf,
-      alias: tracker.alias,
-      min: tracker.min,
-      max: tracker.max,
-    }))
+    // convert from Record<string, Tracker> to array of PreparedTrackerData for easier handling in templates.
+    const preparedData: PreparedTrackerData[] = []
+
+    for (const [key, tracker] of trackers.entries()) {
+      preparedData.push({
+        key,
+        id: tracker.id,
+        name: tracker.name,
+        value: tracker.value,
+        condition: tracker.currentThreshold?.condition || null,
+        color: tracker.currentThreshold?.color || null,
+        pdf: tracker.pdf,
+        alias: tracker.alias,
+        min: tracker.min,
+        max: tracker.max,
+      })
+    }
+
+    return preparedData
   }
 }

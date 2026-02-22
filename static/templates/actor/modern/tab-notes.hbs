@@ -190,7 +190,7 @@
 </div>
 
 {{!-- Trackers --}}
-{{#if system.additionalresources.tracker}}
+{{#if resourceTrackers}}
 <div class='ms-section'>
   <h3 class='ms-section-header'>
     <i class='fas fa-heartbeat'></i>
@@ -198,8 +198,8 @@
     <i class='fas fa-plus ms-add-icon' data-action='addTracker'></i>
   </h3>
   <div class='ms-trackers-list'>
-    {{#each system.additionalresources.tracker}}
-    {{>ms-resource-tracker key=@key}}
+    {{#each resourceTrackers}}
+      {{>ms-resource-tracker key=@key}}
     {{/each}}
   </div>
 </div>
