@@ -23,7 +23,13 @@ import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
 import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
 import { entityConfigurations, modifierConfigurations } from './entity-config.js'
-import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.js'
+import {
+  bindAllInlineEdits,
+  bindAttributeEdit,
+  bindSecondaryStatsEdit,
+  bindPointsEdit,
+  bindAllTrackerEdits,
+} from './inline-edit-handler.js'
 import { isPostureOrManeuver } from './utils/effect.js'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
@@ -194,6 +200,7 @@ export class GurpsActorModernSheet extends SheetBase {
     bindAttributeEdit(html, actor)
     bindSecondaryStatsEdit(html, actor)
     bindPointsEdit(html, actor)
+    bindAllTrackerEdits(html, actor)
 
     // Bind resource reset handlers - note: these are now handled by actions system
     // but keeping for complex multi-resource configs

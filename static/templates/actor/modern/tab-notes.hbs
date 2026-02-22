@@ -199,12 +199,7 @@
   </h3>
   <div class='ms-trackers-list'>
     {{#each system.additionalresources.tracker}}
-    {{>resource-tracker
-        label=name
-        resource=this
-        name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
-        editable=true
-      }}
+    {{>ms-resource-tracker key=@key}}
     {{/each}}
   </div>
 </div>

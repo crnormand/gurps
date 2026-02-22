@@ -1,0 +1,44 @@
+<div class='ms-tracker' data-gurps-resource='system.additionalresources.tracker.{{id}}'>
+  <div class='ms-tracker-header'>
+    <label class='name'>
+      {{#if name}}
+        {{localize name}}
+      {{else}}
+        {{localize 'GURPS.resource'}}[{{@index}}]
+      {{/if}}
+    </label>
+    <div class='actions'>
+      <i class='fas fa-pen-to-square ms-action-btn' data-action='editTracker' data-key='{{id}}'
+        title='{{localize 'GURPS.edit'}}'></i>
+      <i class='fas fa-trash ms-delete' data-action='deleteTracker' data-key='{{id}}'
+        title='{{localize 'GURPS.delete'}}'></i>
+    </div>
+  </div>
+
+  <div class='ms-spinner'>
+    <button data-action='decreaseResource' data-key='{{id}}'>
+      <i class='fas fa-minus'></i>
+    </button>
+
+    <div class='ms-tracker-value'>
+      <div class='ms-tracker-display'>{{value}}</div>
+      <input type="number" class="ms-tracker-input" name="system.additionalresources.tracker.{{id}}.value"
+        value="{{value}}">
+    </div>
+
+    <button data-action='increaseResource' data-key='{{id}}'>
+      <i class='fas fa-plus'></i>
+    </button>
+
+    <button data-action='resetTracker' data-key='{{id}}'>
+      <i class='fas fa-rotate-left'></i>
+    </button>
+  </div>
+
+  <div class='ms-tracker-footer'>
+    <div class='ms-tracker-pdf'>{{#if pdf}}{{{pdflink pdf}}}{{/if}}</div>
+    <div class='ms-tracker-alias'>{{#if alias}}{{alias}}{{/if}}</div>
+    <div class='ms-tracker-minmax'>{{min}}/{{max}}</div>
+  </div>
+
+</div>

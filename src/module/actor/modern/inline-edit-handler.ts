@@ -81,6 +81,11 @@ const inlineEditConfigs: InlineEditConfigInternal[] = [
     inputSelector: '.ms-resource-input',
   },
   {
+    displaySelector: '.ms-tracker-display',
+    containerSelector: '.ms-tracker-value',
+    inputSelector: '.ms-tracker-input',
+  },
+  {
     displaySelector: '.ms-name-display',
     containerSelector: '.ms-name-container',
     inputSelector: '.ms-name-input',
@@ -378,6 +383,77 @@ export function bindPointsEdit(html: HTMLElement, actor: Actor.Implementation): 
 
         if (!isHTMLElement(item)) return
         item.classList.remove(editingClass)
+        const fieldPath = inputElement.name
+
+        inputElement.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
+        inputElement.blur()
+      }
+    })
+  })
+}
+
+export function bindAllTrackerEdits(html: HTMLElement, actor: Actor.Implementation): void {
+  const trackerSelector = '.ms-tracker-value'
+  const inputSelector = '.ms-tracker-input'
+  const editingClass = 'editing'
+
+  const trackers = html.querySelectorAll<HTMLElement>(trackerSelector)
+
+  trackers.forEach(tracker => {
+    tracker.addEventListener('click', (event: MouseEvent) => {
+      const trackerElement = event.currentTarget
+
+      if (!isHTMLElement(trackerElement)) return
+      if (trackerElement.classList.contains(editingClass)) return
+
+      trackerElement.classList.add(editingClass)
+      const input = trackerElement.querySelector(inputSelector)
+
+      if (isHTMLInputElement(input)) {
+        input.focus()
+        input.select()
+      }
+    })
+  })
+
+  const inputs = html.querySelectorAll<HTMLInputElement>(inputSelector)
+
+  inputs.forEach(input => {
+    input.addEventListener('blur', (event: FocusEvent) => {
+      const inputElement = event.currentTarget
+
+      if (!isHTMLInputElement(inputElement)) return
+      const tracker = inputElement.closest(trackerSelector)
+
+      if (!isHTMLElement(tracker)) return
+      tracker.classList.remove(editingClass)
+
+      const fieldPath = inputElement.name
+      const newValue = parseInt(inputElement.value, 10)
+      const currentValue = foundry.utils.getProperty(actor, fieldPath) as number
+
+      if (!isNaN(newValue) && newValue !== currentValue) {
+        actor.update({ [fieldPath]: newValue })
+      }
+    })
+
+    input.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault()
+        const inputElement = event.currentTarget
+
+        if (isHTMLInputElement(inputElement)) inputElement.blur()
+      }
+
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        const inputElement = event.currentTarget
+
+        if (!isHTMLInputElement(inputElement)) return
+        const tracker = inputElement.closest(trackerSelector)
+
+        if (!isHTMLElement(tracker)) return
+        tracker.classList.remove(editingClass)
         const fieldPath = inputElement.name
 
         inputElement.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')

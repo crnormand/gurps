@@ -1227,6 +1227,11 @@
     },
     "resolveDiceRoll": "What Did You Roll?",
     "resource": "Resource",
+    "resourceTracker": {
+      "increment": "+1",
+      "decrement": "-1",
+      "reset": "Reset"
+    },
     "resourceCopyTemplate": "Copy Template",
     "resourceCurrentValue": "Current Value",
     "resourceDamageTracker": "Damage Tracker (damage adds to value).",

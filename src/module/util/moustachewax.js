@@ -1124,6 +1124,7 @@ ${content}
     'systems/gurps/templates/actor/modern/partials/data-table.hbs',
     'systems/gurps/templates/actor/modern/partials/attack-table.hbs',
     'systems/gurps/templates/actor/modern/partials/resource-bar.hbs',
+    'systems/gurps/templates/actor/modern/partials/ms-resource-tracker.hbs',
     'systems/gurps/templates/actor/modern/partials/attribute-badge.hbs',
     'systems/gurps/templates/actor/modern/partials/traits-table.hbs',
     'systems/gurps/templates/actor/modern/partials/modifiers-table.hbs',
