@@ -25,7 +25,7 @@
     "fvtt-types": {
       "tinymce": "8.3.1"
     },
-    "minimatch": "^10.2.1"
+    "minimatch": "^10.2.2"
   },
   "scripts": {
     "build": "npm run clean && npm run build:code && npm run build:styles && npm run build:static",

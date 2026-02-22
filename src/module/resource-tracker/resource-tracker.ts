@@ -4,6 +4,7 @@ import {
   PseudoDocumentMetadata,
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
+import { getComparison, getOperation } from '@util/utilities.js'
 
 /* ---------------------------------------- */
 
@@ -49,6 +50,43 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
     const data = template.tracker.toObject()
 
     return this.updateSource(foundry.utils.mergeObject(initialData, data))
+  }
+
+  get currentThreshold(): ResourceTrackerThreshold | null {
+    const threshold = this.thresholds[this.#indexOfThreshold()]
+
+    return threshold || null
+  }
+
+  /**
+   * @returns the index of the threshold that matches the current value of the resource.
+   */
+  #indexOfThreshold(): number {
+    if (this.breakpoints) {
+      // return the index of the threshold that the value falls into
+      const matches = this.thresholds.filter(threshold => {
+        const op = getOperation(threshold.operator)
+        const comparison = getComparison(threshold.comparison)
+        const testValue = op(this.max, threshold.value)
+
+        return comparison(this.value, testValue)
+      })
+
+      return matches.length ? this.thresholds.lastIndexOf(matches.pop()!) : -1
+    } else {
+      // return the index of the threshold that the value falls into
+      let result = null
+
+      this.thresholds.some((threshold, _index) => {
+        const op = getOperation(threshold.operator)
+        const comparison = getComparison(threshold.comparison)
+        const testValue = op(this.max, threshold.value)
+
+        return comparison(this.value, testValue) ? ((result = _index), true) : false
+      })
+
+      return result ?? -1
+    }
   }
 }
 

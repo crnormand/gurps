@@ -35,6 +35,20 @@
     </button>
   </div>
 
+  <div class='ms-tracker-condition'>
+    <span class='text' {{#if color}} style='background-color: {{color}}; color: {{contrastColor color}}' {{/if}}>
+      {{#if condition}}{{{gurpslink condition}}}{{else}}&nbsp;{{/if}}
+      {{!-- <span class="tooltiptext">
+        <div style="display: grid; grid-template-columns: min-content min-content auto;">
+          {{#each (thresholdBreakpoints ../this)}}
+            <div class="field condensed noedit">{{threshold.comparison}}</div>
+            <div class="field condensed noedit">{{breakpoint}}</div>
+            <div class="label">{{threshold.condition}}</div>
+          {{/each}}
+        </div>
+      </span> --}}
+  </div>
+
   <div class='ms-tracker-footer'>
     <div class='ms-tracker-pdf'>{{#if pdf}}{{{pdflink pdf}}}{{/if}}</div>
     <div class='ms-tracker-alias'>{{#if alias}}{{alias}}{{/if}}</div>

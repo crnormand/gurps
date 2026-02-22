@@ -354,6 +354,25 @@
       }
     }
 
+    .ms-tracker-condition {
+      font-size: var(--ms-font-xs);
+      color: var(--ms-text-muted);
+      font-style: italic;
+
+      span.text {
+        display: inline-block;
+        font-style: normal;
+        font-weight: 600;
+        line-height: inherit;
+        color: var(--ms-text);
+        background-color: var(--ms-accent-light);
+        border-color: var(--ms-border);
+        border-radius: 999px;
+        padding: 1px 4px;
+        width: 100%;
+      }
+    }
+
     .ms-tracker-footer {
       display: flex;
       flex: 1 1 auto;

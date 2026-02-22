@@ -54,7 +54,21 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
   showHPTinting: boolean
   // Uses getter's union return type since it varies between v1/v2 actor models
   moveMode: GurpsActorV2<Actor.SubType>['currentMoveMode']
+  resourceTrackers: PreparedTrackerData[]
   tab?: Application.Tab
+}
+
+type PreparedTrackerData = {
+  key: string
+  id: string
+  name: string
+  value: number
+  condition: string | null
+  color: string | null
+  pdf: string
+  alias: string
+  min: number
+  max: number
 }
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
@@ -152,6 +166,7 @@ export class GurpsActorModernSheet extends SheetBase {
         Object.keys(actorSystem?.reactions ?? {}).length + Object.keys(actorSystem?.conditionalmods ?? {}).length,
       showHPTinting: getGame().settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
       moveMode: this.actor.currentMoveMode,
+      resourceTrackers: this.prepareTrackerData(this.actor),
     }
 
     return context
@@ -768,5 +783,24 @@ export class GurpsActorModernSheet extends SheetBase {
         target.value = newText
       }
     }
+  }
+
+  prepareTrackerData(actor: Actor.Implementation): PreparedTrackerData[] {
+    const trackers = (actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
+
+    if (!trackers) return []
+
+    return Object.entries(trackers).map(([key, tracker]) => ({
+      key,
+      id: tracker.id,
+      name: tracker.name,
+      value: tracker.value,
+      condition: tracker.currentThreshold?.condition || null,
+      color: tracker.currentThreshold?.color || null,
+      pdf: tracker.pdf,
+      alias: tracker.alias,
+      min: tracker.min,
+      max: tracker.max,
+    }))
   }
 }
