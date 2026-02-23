@@ -4,19 +4,11 @@ import { MoveModes } from '@module/actor/gurps-actor.js'
 import Maneuvers from '@module/actor/maneuver.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { ImportSettings } from '@module/importer/index.js'
+import { ComparisonFunctions, OperatorFunctions } from '@module/resource-tracker/resource-tracker.js'
 import { TokenActions } from '@module/token-actions.js'
 import { extractOtfs } from '@util/otf.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
-import {
-  getComparison,
-  getOperation,
-  isArray,
-  isEmpty,
-  quotedAttackName,
-  recurselist,
-  stripBracketContents,
-  zeroFill,
-} from '@util/utilities.js'
+import { isArray, isEmpty, quotedAttackName, recurselist, stripBracketContents, zeroFill } from '@util/utilities.js'
 
 import { multiplyDice } from './damage-utils.js'
 import { gurpslink } from './gurpslink.js'
@@ -721,6 +713,14 @@ export default function () {
 
     return result
   })
+
+  function getOperation(operator) {
+    return OperatorFunctions[operator]
+  }
+
+  function getComparison(comparison) {
+    return ComparisonFunctions[comparison]
+  }
 
   /**
    * Unlike the 'threshold-of' method above, this returns the *last* threshold whose condition matches.
