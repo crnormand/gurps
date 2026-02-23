@@ -2202,11 +2202,6 @@ if (!globalThis.GURPS) {
       AddMultipleImportButton(html)
     })
 
-    // Hooks.on('renderCompendiumDirectory', (app, html) => {
-    //   // Add the import equipment button to the Compendiums tab.
-    //   AddImportEquipmentButton(html)
-    // })
-
     // TODO Move to a new 'bucket' module?
     Hooks.on('renderChatLog', (app, html) => {
       html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
