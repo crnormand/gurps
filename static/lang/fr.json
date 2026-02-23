@@ -678,6 +678,7 @@
     "importEmptyDirectory": "Le répertoire est vide. Aucun fichier ne sera importé.",
     "importer": {
       "actor": {
+        "button": "Importer",
         "description": "Sélectionnez un fichier GCS 5 ou GCA 5.",
         "note": "Cette importation écrasera les données pour : <strong>{name}</strong>.",
         "source": "Données source",
@@ -690,8 +691,9 @@
         "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
       },
       "item": {
-        "button": "Importer le Compendium GCS",
+        "button": "Importer",
         "description": "Sélectionnez un fichier de bibliothèque GCS 5 (.adq, .skl, .spl, .eqp).",
+        "sidebarButton": "Importer le Compendium GCS",
         "source": "Données source",
         "successMessage": "Recueil \"{name}\" importé avec succès ({num} éléments importés).",
         "title": "Importer des éléments du Compendium GCS"

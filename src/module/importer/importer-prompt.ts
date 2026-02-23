@@ -48,7 +48,7 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
 
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
-            const extension = file.name.split('.')[1]
+            const extension = file.name.slice(file.name.lastIndexOf('.') + 1)
 
             switch (extension) {
               case 'gcs': {
@@ -116,7 +116,7 @@ async function itemImporterPrompt() {
 
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
-            const extension = file.name.split('.')[1]
+            const extension = file.name.slice(file.name.lastIndexOf('.') + 1)
             const name = file.name.slice(0, file.name.lastIndexOf('.'))
 
             switch (extension) {
