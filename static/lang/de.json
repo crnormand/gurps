@@ -677,10 +677,11 @@
     "importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Verzeichnis ist leer. Es werden keine Dateien importiert.",
     "importer": {
-      "actorPrompt": {
+      "actor": {
         "description": "Wählen Sie eine GCS 5- oder GCA 5-Datei aus.",
         "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
         "source": "Quelldaten",
+        "successMessage": "Charakter \"{name}\" wurde erfolgreich importiert.",
         "title": "Charakterdaten für {name} importieren",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
       },
@@ -688,10 +689,11 @@
       "error": {
         "noFilesSelected": "Keine Dateien für den Import ausgewählt."
       },
-      "itemPrompt": {
+      "item": {
         "button": "GCS-Kompendium importieren",
         "description": "Wählen Sie eine GCS 5-Bibliotheksdatei aus (.adq, .skl, .spl, .eqp).",
         "source": "Quelldaten",
+        "successMessage": "Kompendium \"{name}\" wurde erfolgreich importiert ({num} Elemente importiert).",
         "title": "GCS-Kompendium-Elemente importieren"
       },
       "promptBodyPlan": {

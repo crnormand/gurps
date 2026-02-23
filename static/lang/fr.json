@@ -677,10 +677,11 @@
     "importCurrentVersions": "Versions Actuelles: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Le répertoire est vide. Aucun fichier ne sera importé.",
     "importer": {
-      "actorPrompt": {
+      "actor": {
         "description": "Sélectionnez un fichier GCS 5 ou GCA 5.",
         "note": "Cette importation écrasera les données pour : <strong>{name}</strong>.",
         "source": "Données source",
+        "successMessage": "Personnage \"{name}\" importé avec succès.",
         "title": "Importer les données du personnage pour {name}",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
       },
@@ -688,10 +689,11 @@
       "error": {
         "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
       },
-      "itemPrompt": {
+      "item": {
         "button": "Importer le Compendium GCS",
         "description": "Sélectionnez un fichier de bibliothèque GCS 5 (.adq, .skl, .spl, .eqp).",
         "source": "Données source",
+        "successMessage": "Recueil \"{name}\" importé avec succès ({num} éléments importés).",
         "title": "Importer des éléments du Compendium GCS"
       },
       "promptBodyPlan": {

@@ -682,10 +682,11 @@
     "importCurrentVersions": "Текущие версии: '{GCAVersion}' и '{GCSVersion}'.",
     "importEmptyDirectory": "Каталог пуст. Файлы не будут импортированы.",
     "importer": {
-      "actorPrompt": {
+      "actor": {
         "description": "Выберите файл GCS 5 или GCA 5.",
         "note": "Этот импорт перезапишет данные для: <strong>{name}</strong>.",
         "source": "Исходные данные",
+        "successMessage": "Персонаж \"{name}\" успешно импортирован.",
         "title": "Импортировать данные персонажа для {name}",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Внимание</strong>: Это действие нельзя отменить!"
       },
@@ -693,10 +694,11 @@
       "error": {
         "noFilesSelected": "Файлы для импорта не выбраны."
       },
-      "itemPrompt": {
+      "item": {
         "button": "Импортировать компендий GCS",
         "description": "Выберите файл библиотеки GCS 5 (.adq, .skl, .spl, .eqp).",
         "source": "Исходные данные",
+        "successMessage": "Компендий \"{name}\" успешно импортирован (импортировано элементов: {num}).",
         "title": "Импортировать элементы компендия GCS"
       },
       "promptBodyPlan": {

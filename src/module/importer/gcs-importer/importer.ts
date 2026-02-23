@@ -70,19 +70,10 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
   /* ---------------------------------------- */
 
-  // constructor(options: { input: GcsCharacter; mode: 'character' })
-  // constructor(options: { input: AnyGcsItemCollection; mode: 'itemCompendium' })
   constructor(options: { input: GcsImporterInputType<Mode>; mode: Mode }) {
     this._mode = options.mode
     this.input = options.input
     this.output = {}
-
-    // if (options.mode === 'character') {
-    //   this.inputActor = options.input as GcsCharacter
-    //   this.outputActor = {}
-    // } else if (options.mode === 'itemCompendium') {
-    //   this.inputCollection = options.input as AnyGcsItemCollection
-    // }
 
     this.items = []
     this.img = ''
@@ -173,6 +164,8 @@ class GcsImporter<Mode extends GcsImporterMode> {
     if (!actor) {
       throw new Error('Failed to create GURPS actor during import.')
     }
+
+    ui.notifications?.info(game.i18n!.format('GURPS.importer.actor.successMessage', { name }))
 
     return actor
   }
@@ -277,6 +270,10 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
     await foundry.documents.Item.createDocuments(itemsToCreate, { pack: pack.metadata.id })
     await foundry.documents.Item.updateDocuments(itemsToUpdate, { pack: pack.metadata.id })
+
+    ui.notifications?.info(
+      game.i18n!.format('GURPS.importer.item.successMessage', { name: this.input.name, num: `${pack.size}` })
+    )
 
     return pack
   }
