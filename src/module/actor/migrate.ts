@@ -96,8 +96,6 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
 
 /* ---------------------------------------- */
 
-/* ---------------------------------------- */
-
 function getMigratedActorData(
   oldActor: Actor.Implementation | Actor.CreateData
 ): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.OfType<'characterV2'>>> | null {
