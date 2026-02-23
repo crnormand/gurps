@@ -677,17 +677,21 @@
     "importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Directory is empty. No files will be imported.",
     "importer": {
-      "defaultName": "Imported Character",
-      "error": {
-        "noFilesSelected": "No files selected for import."
-      },
-      "prompt": {
+      "actorPrompt": {
         "description": "Select a GCS 5 or GCA 5 file.",
         "note": "This import will overwrite the data for: <strong>{name}</strong>.",
         "source": "Source Data",
         "title": "Import Character Data for {name}",
-        "titleItem": "Import Item Compendium Data",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
+      },
+      "defaultName": "Imported Character",
+      "error": {
+        "noFilesSelected": "No files selected for import."
+      },
+      "itemPrompt": {
+        "description": "Select a GCS 5 file.",
+        "source": "Source Data",
+        "title": "Import Item Compendium Data"
       },
       "promptBodyPlan": {
         "content": "<p>Do you want to <strong>Keep</strong> the current body plan (<strong>{currentBodyPlan}</strong>), or <strong>Overwrite</strong> it with the body plan from the import file (<strong>{bodyplan}</strong>)?</p>",

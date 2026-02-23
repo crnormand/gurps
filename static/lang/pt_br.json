@@ -677,16 +677,21 @@
     "importCurrentVersions": "Versões Atualizadas: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Diretório está vazio. Nenhum arquivo será importado.",
     "importer": {
+      "actorPrompt": {
+        "description": "Selecione um arquivo GCS 5 ou GCA 5.",
+        "note": "Esta importação substituirá os dados de: <strong>{name}</strong>.",
+        "source": "Dados de origem",
+        "title": "Importar dados do personagem para {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+      },
       "defaultName": "Personagem Importado",
       "error": {
         "noFilesSelected": "Nenhum arquivo selecionado para importação."
       },
-      "prompt": {
-        "description": "Selecione um arquivo GCS 5 ou GCA 5.",
-        "note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
+      "itemPrompt": {
+        "description": "Selecione um arquivo GCS 5.",
         "source": "Dados de origem",
-        "title": "Importar dados do personagem para {name}",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+        "title": "Importar dados do compêndio de itens"
       },
       "promptBodyPlan": {
         "content": "<p>Você deseja <strong>Manter</strong> o plano corporal atual (<strong>{currentBodyPlan}</strong>), ou <strong>Sobrescrever</strong> com o plano corporal do arquivo de importação (<strong>{bodyplan}</strong>)?</p>",

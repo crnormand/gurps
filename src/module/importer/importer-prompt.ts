@@ -14,18 +14,18 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
 
   return new foundry.applications.api.DialogV2({
     window: {
-      title: game.i18n.format('GURPS.importer.prompt.title', { name }),
+      title: game.i18n.format('GURPS.importer.actorPrompt.title', { name }),
     },
     position: { width: 400, height: 'auto' },
     content: await foundry.applications.handlebars.renderTemplate(
       'systems/gurps/templates/importer/import-prompt.hbs',
       {
-        description: game.i18n.localize('GURPS.importer.prompt.description'),
-        source: game.i18n.localize('GURPS.importer.prompt.source'),
-        note: game.i18n.format('GURPS.importer.prompt.note', {
+        description: game.i18n.localize('GURPS.importer.actorPrompt.description'),
+        source: game.i18n.localize('GURPS.importer.actorPrompt.source'),
+        note: game.i18n.format('GURPS.importer.actorPrompt.note', {
           name,
         }),
-        warning: game.i18n.localize('GURPS.importer.prompt.warning'),
+        warning: game.i18n.localize('GURPS.importer.actorPrompt.warning'),
       }
     ),
     buttons: [
@@ -86,14 +86,14 @@ async function itemImporterPrompt() {
 
   return new foundry.applications.api.DialogV2({
     window: {
-      title: game.i18n.localize('GURPS.importer.prompt.titleItem'),
+      title: game.i18n.localize('GURPS.importer.itemPrompt.title'),
     },
     position: { width: 400, height: 'auto' },
     content: await foundry.applications.handlebars.renderTemplate(
       'systems/gurps/templates/importer/import-prompt.hbs',
       {
-        description: game.i18n.localize('GURPS.importer.prompt.description'),
-        source: game.i18n.localize('GURPS.importer.prompt.source'),
+        description: game.i18n.localize('GURPS.importer.itemPrompt.description'),
+        source: game.i18n.localize('GURPS.importer.itemPrompt.source'),
       }
     ),
     buttons: [

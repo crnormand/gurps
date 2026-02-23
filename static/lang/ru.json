@@ -682,16 +682,21 @@
     "importCurrentVersions": "Текущие версии: '{GCAVersion}' и '{GCSVersion}'.",
     "importEmptyDirectory": "Каталог пуст. Файлы не будут импортированы.",
     "importer": {
-      "defaultName": "Импортированный персонаж",
-      "error": {
-        "noFilesSelected": "Файлы для импорта не выбраны."
-      },
-      "prompt": {
+      "actorPrompt": {
         "description": "Выберите файл GCS 5 или GCA 5.",
         "note": "Этот импорт перезапишет данные для: <strong>{name}</strong>.",
         "source": "Исходные данные",
         "title": "Импортировать данные персонажа для {name}",
         "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Внимание</strong>: Это действие нельзя отменить!"
+      },
+      "defaultName": "Импортированный персонаж",
+      "error": {
+        "noFilesSelected": "Файлы для импорта не выбраны."
+      },
+      "itemPrompt": {
+        "description": "Выберите файл GCS 5.",
+        "source": "Исходные данные",
+        "title": "Импортировать данные компендиума предметов"
       },
       "promptBodyPlan": {
         "content": "<p>Вы хотите <strong>Оставить</strong> текущую форму тела (<strong>{currentBodyPlan}</strong>), или <strong>Перезаписать</strong> её формой тела из импортируемого файла (<strong>{bodyplan}</strong>)?</p>",
