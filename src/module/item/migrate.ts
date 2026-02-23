@@ -16,6 +16,8 @@ type NewDataWrapper<Type extends NewItemType> = CreateDataOf<Item.SystemOfType<T
 /* ---------------------------------------- */
 
 async function runMigration() {
+  if (!game.user || !game.user.isGM) return
+
   const migrationVersion = game.settings!.get(GURPS.SYSTEM_NAME, 'migration-version')
 
   if (foundry.utils.isNewerVersion('1.0.0', migrationVersion)) {
