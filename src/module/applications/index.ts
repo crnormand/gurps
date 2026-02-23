@@ -1,6 +1,6 @@
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { GurpsCompendiumDirectory } from './compendium-directory.ts'
+import { GurpsCompendiumDirectory } from './compendium-directory.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Applications module.')

@@ -2,10 +2,10 @@ import { GcaImporter } from './gca-importer/importer.js'
 import { GCA5 } from './gca-importer/schema.js'
 import { GcsImporter } from './gcs-importer/importer.js'
 import { GcsCharacter } from './gcs-importer/schema/character.js'
-import { GcsEquipmentCollection } from './gcs-importer/schema/equipment.ts'
-import { GcsSkillCollection } from './gcs-importer/schema/skill.ts'
-import { GcsSpellCollection } from './gcs-importer/schema/spell.ts'
-import { GcsTraitCollection } from './gcs-importer/schema/trait.ts'
+import { GcsEquipmentCollection } from './gcs-importer/schema/equipment.js'
+import { GcsSkillCollection } from './gcs-importer/schema/skill.js'
+import { GcsSpellCollection } from './gcs-importer/schema/spell.js'
+import { GcsTraitCollection } from './gcs-importer/schema/trait.js'
 
 async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
   if (!game.i18n) throw Error('GURPS | game.i18n not available when trying to import GCS character!')
