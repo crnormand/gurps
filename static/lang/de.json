@@ -689,9 +689,10 @@
         "noFilesSelected": "Keine Dateien für den Import ausgewählt."
       },
       "itemPrompt": {
-        "description": "Wählen Sie eine GCS 5-Datei aus.",
+        "button": "GCS-Kompendium importieren",
+        "description": "Wählen Sie eine GCS 5-Bibliotheksdatei aus (.adq, .skl, .spl, .eqp).",
         "source": "Quelldaten",
-        "title": "Gegenstand-Kompendiumsdaten importieren"
+        "title": "GCS-Kompendium-Elemente importieren"
       },
       "promptBodyPlan": {
         "content": "<p>Möchten Sie den aktuellen Körperplan <strong>beibehalten</strong> (<strong>{currentBodyPlan}</strong>) oder ihn mit dem Körperplan aus der Importdatei <strong>überschreiben</strong> (<strong>{bodyplan}</strong>)?</p>",

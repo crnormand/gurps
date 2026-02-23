@@ -694,9 +694,10 @@
         "noFilesSelected": "Файлы для импорта не выбраны."
       },
       "itemPrompt": {
-        "description": "Выберите файл GCS 5.",
+        "button": "Импортировать компендий GCS",
+        "description": "Выберите файл библиотеки GCS 5 (.adq, .skl, .spl, .eqp).",
         "source": "Исходные данные",
-        "title": "Импортировать данные компендиума предметов"
+        "title": "Импортировать элементы компендия GCS"
       },
       "promptBodyPlan": {
         "content": "<p>Вы хотите <strong>Оставить</strong> текущую форму тела (<strong>{currentBodyPlan}</strong>), или <strong>Перезаписать</strong> её формой тела из импортируемого файла (<strong>{bodyplan}</strong>)?</p>",

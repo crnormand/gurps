@@ -689,9 +689,10 @@
         "noFilesSelected": "No files selected for import."
       },
       "itemPrompt": {
-        "description": "Select a GCS 5 file.",
+        "button": "Import GCS Compendium",
+        "description": "Select a GCS 5 library file (.adq, .skl, .spl, .eqp).",
         "source": "Source Data",
-        "title": "Import Item Compendium Data"
+        "title": "Import GCS Compendium Items"
       },
       "promptBodyPlan": {
         "content": "<p>Do you want to <strong>Keep</strong> the current body plan (<strong>{currentBodyPlan}</strong>), or <strong>Overwrite</strong> it with the body plan from the import file (<strong>{bodyplan}</strong>)?</p>",
@@ -802,7 +803,6 @@
     "isFreeAction": "Is a Free Action",
     "itemBonusText": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc.",
     "itemFeatures": "Features",
-    "itemImport": "Import Item Library",
     "itemModifiersText": "Enter Modifier Effect (one per line) using format: <modifier> <#tag> [<#tag>...].<br>Examples: -1 to DX #DX #combat, +2 Per #resting, -1 to all DX-based rolls #disease #combat.",
     "knockback": "Knockback, {amount} {unit}",
     "knockbackCheck": "{name}: roll {dx}, {acrobatics}, or {judo} or fall!",
