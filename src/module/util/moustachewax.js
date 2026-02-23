@@ -1087,8 +1087,11 @@ ${content}
   /**
    * Used to produce a foreground color which automatically contrasts against a provided
    * background color, using WCAG relative luminescence.
+   *
    * @prop backgroundHex - Provided background color.
-   * @returns hex value - Either black or white.
+   * @returns hex value - Either "system black" or "system white". These values were copied from the CSS variables to
+   *  ensure they match the actual colors used in the sheet. If the system colors are changed, these values should be
+   *  updated to match.
    */
   Handlebars.registerHelper('contrastColor', function (backgroundHex) {
     const rgb = backgroundHex
@@ -1100,7 +1103,30 @@ ${content}
     )
     const luminescence = 0.2126 * red + 0.7152 * green + 0.0722 * blue
 
-    return luminescence > 0.179 ? '#000000' : '#ffffff'
+    const darkColor = '#1c1a17'
+    const lightColor = '#f8f6f2'
+
+    return luminescence > 0.179 ? darkColor : lightColor
+  })
+
+  Handlebars.registerHelper('trackerTooltip', function (tracker, _options) {
+    if (!tracker) return ''
+
+    let thresholds = ''
+
+    for (let threshold of tracker.thresholds) {
+      thresholds += `
+        <label>${threshold.comparison}</label>
+        <label>${threshold.value}</label>
+        <label>${threshold.condition}</label>`
+    }
+
+    // Its important to use the double quotes (") for the HTML attributes, as we use single quotes (') for the
+    // Handlebars template, and the SafeString will be injected directly into the HTML. If we used double
+    // quotes for the attributes, it would break the HTML structure when injected.
+    let tooltip = `<div class="tracker-tooltip">${thresholds}</div>`
+
+    return new Handlebars.SafeString(tooltip)
   })
 
   // === register Handlebars partials ===

@@ -392,58 +392,6 @@ export function assert(condition, message) {
   }
 }
 
-/**
- * Utility function to map math symbol to their corresponding functions.
- * @param {string} operator
- * @returns {(a: number, b: number) => number}
- */
-export function getOperation(operator) {
-  let operation = function (/** @type {number} */ left, /** @type {number} */ right) {
-    return left + right
-  }
-
-  if (operator === '×')
-    operation = function (left, right) {
-      return left * right
-    }
-  else if (operator === '÷')
-    operation = function (left, right) {
-      return left / right
-    }
-  else if (operator === '−')
-    operation = function (left, right) {
-      return left - right
-    }
-
-  return operation
-}
-
-/**
- * Utility function to map comparison symbols (like '>') to the appropriate boolean function.
- * @param {string} symbol
- * @returns {(a: number, b: number) => boolean}
- */
-export function getComparison(symbol) {
-  let compare = function (/** @type {number} */ left, /** @type {number} */ right) {
-    return left < right
-  }
-
-  if (symbol === '>')
-    compare = function (left, right) {
-      return left > right
-    }
-  else if (symbol === '≥')
-    compare = function (left, right) {
-      return left >= right
-    }
-  else if (symbol === '≤')
-    compare = function (left, right) {
-      return left <= right
-    }
-
-  return compare
-}
-
 // Function to read a json data file from inside this system.
 export async function readDataFile(filename) {
   const response = await fetch(`systems/gurps/${filename}`)

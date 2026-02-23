@@ -1,3 +1,4 @@
+import { ComparisonFunctions, OperatorFunctions } from '@module/resource-tracker/resource-tracker.js'
 import * as utilities from '@util/utilities.js'
 import { displayMod, makeSelect } from '@util/utilities.js'
 
@@ -180,18 +181,18 @@ describe('utilities', () => {
 
   describe('getOperation', () => {
     test('should return correct operation function', () => {
-      expect(utilities.getOperation('+')(1, 2)).toBe(3)
-      expect(utilities.getOperation('×')(2, 3)).toBe(6)
-      expect(utilities.getOperation('÷')(6, 2)).toBe(3)
-      expect(utilities.getOperation('−')(5, 3)).toBe(2)
+      expect(OperatorFunctions['+'](1, 2)).toBe(3)
+      expect(OperatorFunctions['×'](2, 3)).toBe(6)
+      expect(OperatorFunctions['÷'](6, 2)).toBe(3)
+      expect(OperatorFunctions['-'](5, 3)).toBe(2)
     })
   })
 
   describe('getComparison', () => {
     test('should return correct comparison function', () => {
-      expect(utilities.getComparison('>')(3, 2)).toBe(true)
-      expect(utilities.getComparison('≥')(3, 3)).toBe(true)
-      expect(utilities.getComparison('≤')(2, 3)).toBe(true)
+      expect(ComparisonFunctions['>'](3, 2)).toBe(true)
+      expect(ComparisonFunctions['≥'](3, 3)).toBe(true)
+      expect(ComparisonFunctions['≤'](2, 3)).toBe(true)
     })
   })
 

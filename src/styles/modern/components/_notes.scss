@@ -279,6 +279,8 @@
         align-items: center;
         justify-content: center;
         gap: var(--ms-space-4);
+        display: flex;
+        font-size: var(--ms-font-xs);
       }
     }
 
@@ -301,38 +303,6 @@
       }
     }
 
-    .ms-tracker-display {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      color: var(--ms-text);
-      font-size: var(--ms-font-md);
-      font-weight: var(--ms-weight-bold);
-      @include tabular-nums;
-      padding: 0 var(--ms-space-2);
-      min-width: 3ch;
-      text-align: center;
-    }
-
-    .ms-tracker-input {
-      position: absolute;
-      top: -1px;
-      left: -3px;
-      width: calc(100% + 6px);
-      height: calc(100% + 2px);
-      text-align: center;
-      font-size: var(--ms-font-md);
-      font-weight: var(--ms-weight-bold);
-      @include tabular-nums;
-      padding: 0 var(--ms-space-2);
-      border: 1px solid var(--ms-accent);
-      border-radius: var(--ms-radius-sm);
-      background: var(--ms-bg-card);
-      opacity: 0;
-      box-sizing: border-box;
-    }
-
     .ms-spinner {
       display: inline-flex;
       flex-direction: row;
@@ -351,6 +321,40 @@
         transition: background 0.15s, color 0.15s;
         line-height: initial;
         font-size: var(--ms-font-xs);
+      }
+
+      .ms-tracker-value {
+        .ms-tracker-display {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          color: var(--ms-text);
+          font-size: var(--ms-font-md);
+          font-weight: var(--ms-weight-bold);
+          @include tabular-nums;
+          padding: 0 var(--ms-space-2);
+          min-width: 3ch;
+          text-align: center;
+        }
+
+        .ms-tracker-input {
+          position: absolute;
+          top: -1px;
+          left: -3px;
+          width: calc(100% + 6px);
+          height: calc(100% + 2px);
+          text-align: center;
+          font-size: var(--ms-font-md);
+          font-weight: var(--ms-weight-bold);
+          @include tabular-nums;
+          padding: 0 var(--ms-space-2);
+          border: 1px solid var(--ms-accent);
+          border-radius: var(--ms-radius-sm);
+          background: var(--ms-bg-card);
+          opacity: 0;
+          box-sizing: border-box;
+        }
       }
     }
 
@@ -382,6 +386,7 @@
       }
     }
 
+
     .ms-tracker-footer {
       display: flex;
       flex: 1 1 auto;
@@ -411,6 +416,13 @@
       color: var(--ms-text);
     }
   }
+}
+
+aside div.tracker-tooltip {
+  display: grid;
+  gap: var(--ms-space-2);
+  grid-template-columns: min-content min-content auto;
+  font-size: var(--ms-font-xs);
 }
 
 .ms-quicknotes {

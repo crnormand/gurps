@@ -4,7 +4,37 @@ import {
   PseudoDocumentMetadata,
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
-import { getComparison, getOperation } from '@util/utilities.js'
+
+export const PLUS = '+'
+export const MINUS = '-'
+export const MULTIPLY = '×'
+export const DIVIDE = '÷'
+
+export const LT = '<'
+export const LTE = '≤'
+export const EQ = '='
+export const GTE = '≥'
+export const GT = '>'
+
+type TrackerOperators = typeof PLUS | typeof MINUS | typeof MULTIPLY | typeof DIVIDE
+type TrackerComparisons = typeof LT | typeof LTE | typeof EQ | typeof GTE | typeof GT
+type binomialFunction = (left: number, right: number) => number
+type comparisonFunction = (left: number, right: number) => boolean
+
+export const OperatorFunctions: Record<TrackerOperators, binomialFunction> = {
+  [PLUS]: (left: number, right: number) => left + right,
+  [MINUS]: (left: number, right: number) => left - right,
+  [MULTIPLY]: (left: number, right: number) => left * right,
+  [DIVIDE]: (left: number, right: number) => left / right,
+} as const
+
+export const ComparisonFunctions: Record<TrackerComparisons, comparisonFunction> = {
+  [LT]: (left: number, right: number) => left < right,
+  [LTE]: (left: number, right: number) => left <= right,
+  [EQ]: (left: number, right: number) => left === right,
+  [GTE]: (left: number, right: number) => left >= right,
+  [GT]: (left: number, right: number) => left > right,
+} as const
 
 /* ---------------------------------------- */
 
@@ -58,6 +88,62 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
     return threshold || null
   }
 
+  get thresholdDescriptors(): { value: number; condition: string }[] {
+    const results = []
+
+    // Make a copy of the thresholds array.
+    const thresholds = [...this.thresholds]
+
+    if (this.isAccumulator) {
+      results.push({ value: 0, condition: thresholds.shift()?.condition ?? '' })
+
+      for (const threshold of thresholds) {
+        results.push({
+          value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
+          condition: threshold.condition,
+        })
+      }
+    } else {
+      if (this.breakpoints) {
+        results.push({ value: this.max, condition: thresholds.shift()?.condition ?? '' })
+
+        for (const threshold of thresholds) {
+          results.push({
+            value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
+            condition: threshold.condition,
+          })
+        }
+      } else {
+        results.push({ value: this.max, condition: thresholds.shift()?.condition ?? '' })
+
+        for (const threshold of thresholds) {
+          results.push({
+            value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
+            condition: threshold.condition,
+          })
+        }
+      }
+    }
+
+    return results
+
+    function getOperator(threshold: ResourceTrackerThreshold) {
+      return OperatorFunctions[threshold.operator as TrackerOperators]
+    }
+  }
+
+  /**
+   * A better name for this attribute.
+   *
+   * An accumulator is a resource that starts at 0 and increases, like a damage tracker. A non-accumulator is a
+   * resource that starts at its max value and decreases, like a health tracker. This is technically separate from
+   * whether the tracker is a damage type or not, but in practice all damage trackers are accumulators and all
+   * non-accumulators are not damage trackers, so we can use this as a proxy.
+   */
+  get isAccumulator() {
+    return this.isDamageTracker
+  }
+
   /**
    * @returns the index of the threshold that matches the current value of the resource.
    */
@@ -65,8 +151,8 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
     if (this.breakpoints) {
       // return the index of the threshold that the value falls into
       const matches = this.thresholds.filter(threshold => {
-        const op = getOperation(threshold.operator)
-        const comparison = getComparison(threshold.comparison)
+        const op = OperatorFunctions[threshold.operator as TrackerOperators]
+        const comparison = ComparisonFunctions[threshold.comparison as TrackerComparisons]
         const testValue = op(this.max, threshold.value)
 
         return comparison(this.value, testValue)
@@ -75,11 +161,11 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
       return matches.length ? this.thresholds.lastIndexOf(matches.pop()!) : -1
     } else {
       // return the index of the threshold that the value falls into
-      let result = null
+      let result: number | null = null
 
       this.thresholds.some((threshold, _index) => {
-        const op = getOperation(threshold.operator)
-        const comparison = getComparison(threshold.comparison)
+        const op = OperatorFunctions[threshold.operator as TrackerOperators]
+        const comparison = ComparisonFunctions[threshold.comparison as TrackerComparisons]
         const testValue = op(this.max, threshold.value)
 
         return comparison(this.value, testValue) ? ((result = _index), true) : false
@@ -130,6 +216,7 @@ class ResourceTrackerThreshold extends foundry.abstract.DataModel<ResourceTracke
 const resourceTrackerThresholdSchema = () => {
   return {
     comparison: new fields.StringField({ required: true, nullable: false }),
+
     operator: new fields.StringField({ required: true, nullable: false }),
     value: new fields.NumberField({ required: true, nullable: false }),
     condition: new fields.StringField({ required: true, nullable: false }),

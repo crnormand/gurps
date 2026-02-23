@@ -58,17 +58,26 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
   tab?: Application.Tab
 }
 
+type TrackerThreshold = {
+  comparison: string
+  operator: string
+  value: number
+  condition: string
+  color: string
+}
+
 type PreparedTrackerData = {
   key: string
   id: string
   name: string
   value: number
-  condition: string | null
+  condition: string
   color: string | null
   pdf: string
   alias: string
   min: number
   max: number
+  thresholds: TrackerThreshold[]
 }
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
@@ -296,6 +305,9 @@ export class GurpsActorModernSheet extends SheetBase {
     html.querySelectorAll<HTMLElement>('.rollable').forEach(element => {
       element.addEventListener('click', this.#onClickRoll.bind(this))
     })
+
+    // Bind tooltip positioning for resource tracker conditions
+    // this.#bindTooltipPositioning(html)
   }
 
   static async #onResetResource(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
@@ -793,19 +805,32 @@ export class GurpsActorModernSheet extends SheetBase {
     // convert from Record<string, Tracker> to array of PreparedTrackerData for easier handling in templates.
     const preparedData: PreparedTrackerData[] = []
 
+    let index = 0
+
     for (const [key, tracker] of trackers.entries()) {
       preparedData.push({
         key,
         id: tracker.id,
-        name: tracker.name,
+        name: tracker.name ? game.i18n!.localize(tracker.name) : `${game.i18n!.localize('GURPS.resource')}[${index}]`,
         value: tracker.value,
-        condition: tracker.currentThreshold?.condition || null,
+        condition: tracker.currentThreshold?.condition || '',
         color: tracker.currentThreshold?.color || null,
-        pdf: tracker.pdf,
-        alias: tracker.alias,
+        pdf: tracker.pdf || '',
+        alias: tracker.alias || '',
         min: tracker.min,
         max: tracker.max,
+        thresholds: tracker.thresholds.map(
+          threshold =>
+            ({
+              comparison: threshold.comparison,
+              operator: threshold.operator,
+              value: threshold.value,
+              condition: threshold.condition,
+              color: threshold.color,
+            }) as TrackerThreshold
+        ),
       })
+      index++
     }
 
     return preparedData

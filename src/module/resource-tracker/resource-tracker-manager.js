@@ -1,6 +1,7 @@
 import { arrayToObject, objectToArray } from '@util/utilities.js'
 
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
+import { GTE, LT, MULTIPLY } from './resource-tracker.ts'
 import { SETTING_TRACKER_TEMPLATES } from './types.js'
 
 export class ResourceTrackerManager extends FormApplication {
@@ -24,43 +25,43 @@ export class ResourceTrackerManager extends FormApplication {
           breakpoints: true,
           thresholds: [
             {
-              comparison: '<',
-              operator: '×',
+              comparison: LT,
+              operator: MULTIPLY,
               value: 0.1,
               condition: game.i18n.localize('GURPS.grapplingUnrestrained'),
               color: '#90ee90',
             },
             {
-              comparison: '≥',
-              operator: '×',
+              comparison: GTE,
+              operator: MULTIPLY,
               value: 0.1,
               condition: game.i18n.localize('GURPS.grapplingGrabbed'),
               color: '#eeee30',
             },
             {
-              comparison: '≥',
-              operator: '×',
+              comparison: GTE,
+              operator: MULTIPLY,
               value: 0.5,
               condition: game.i18n.localize('GURPS.grapplingGrappled'),
               color: '#eeaa30',
             },
             {
-              comparison: '≥',
-              operator: '×',
+              comparison: GTE,
+              operator: MULTIPLY,
               value: 1.0,
               condition: game.i18n.localize('GURPS.grapplingRestrained'),
               color: '#ee5000',
             },
             {
-              comparison: '≥',
-              operator: '×',
+              comparison: GTE,
+              operator: MULTIPLY,
               value: 1.5,
               condition: game.i18n.localize('GURPS.grapplingControlled'),
               color: '#ee0000',
             },
             {
-              comparison: '≥',
-              operator: '×',
+              comparison: GTE,
+              operator: MULTIPLY,
               value: 2.0,
               condition: game.i18n.localize('GURPS.grapplingPinned'),
               color: '#900000',
