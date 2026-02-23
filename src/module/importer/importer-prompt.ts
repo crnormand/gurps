@@ -117,13 +117,14 @@ async function itemImporterPrompt() {
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
             const extension = file.name.split('.')[1]
+            const name = file.name.slice(0, file.name.lastIndexOf('.'))
 
             switch (extension) {
               case 'adq': {
                 const collection = GcsTraitCollection.fromImportData({
                   ...JSON.parse(text),
                   type: 'trait',
-                  name: file.name.split('.')[0],
+                  name,
                 }) as GcsTraitCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
 
@@ -134,7 +135,7 @@ async function itemImporterPrompt() {
                 const collection = GcsSkillCollection.fromImportData({
                   ...JSON.parse(text),
                   type: 'skill',
-                  name: file.name.split('.')[0],
+                  name,
                 }) as GcsSkillCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
 
@@ -145,7 +146,7 @@ async function itemImporterPrompt() {
                 const collection = GcsSpellCollection.fromImportData({
                   ...JSON.parse(text),
                   type: 'spell',
-                  name: file.name.split('.')[0],
+                  name,
                 }) as GcsSpellCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
 
@@ -156,7 +157,7 @@ async function itemImporterPrompt() {
                 const collection = GcsEquipmentCollection.fromImportData({
                   ...JSON.parse(text),
                   type: 'equipment',
-                  name: file.name.split('.')[0],
+                  name,
                 }) as GcsEquipmentCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
 
