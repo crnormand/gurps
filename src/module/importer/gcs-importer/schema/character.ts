@@ -108,13 +108,15 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
-  // get allNotes(): GcsNote[] {
-  //   const notes = this.notes ?? []
-  //   for (const note of notes) {
-  //     notes.push(...note.allChildItems)
-  //   }
-  //   return notes
-  // }
+  get allNotes(): GcsNote[] {
+    const notes = this.notes ?? []
+
+    for (const note of notes) {
+      notes.push(...note.allChildItems)
+    }
+
+    return notes
+  }
 
   /* ---------------------------------------- */
 

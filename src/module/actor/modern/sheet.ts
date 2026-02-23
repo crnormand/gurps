@@ -319,7 +319,7 @@ export class GurpsActorModernSheet extends SheetBase {
     event.preventDefault()
 
     if (this.actor.isOfType('characterV2')) {
-      await GURPS.modules.Importer.importerPrompt(this.actor)
+      await GURPS.modules.Importer.actorImporterPrompt(this.actor)
     } else {
       return new ActorImporter(this.actor).importActor()
     }

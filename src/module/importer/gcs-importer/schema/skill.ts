@@ -1,7 +1,14 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
+import {
+  GcsCollection,
+  GcsCollectionSchema,
+  gcsCollectionSchema,
+  GcsItem,
+  sourcedIdSchema,
+  SourcedIdSchema,
+} from './base.js'
 import { GcsSkillDefault } from './skill-default.js'
 import { GcsWeapon } from './weapon.js'
 
@@ -104,4 +111,12 @@ type SkillModel = SourcedIdSchema & ReturnType<typeof skillData>
 
 /* ---------------------------------------- */
 
-export { GcsSkill, skillData }
+class GcsSkillCollection extends GcsCollection<typeof GcsSkill> {
+  static override defineSchema(): GcsCollectionSchema<typeof GcsSkill> {
+    return gcsCollectionSchema(GcsSkill)
+  }
+}
+
+/* ---------------------------------------- */
+
+export { GcsSkill, skillData, GcsSkillCollection }

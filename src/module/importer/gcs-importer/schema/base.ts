@@ -21,7 +21,7 @@ class GcsElement<
   static fromImportData<Schema extends fields.DataSchema>(
     importData: Partial<Schema> & AnyObject,
     parent: null | GcsElement = null
-  ): GcsElement<Schema> {
+  ) {
     const createData: DataModel.CreateData<Schema> = this.importSchema(importData, this.defineSchema() as Schema)
 
     return new this(createData as DataModel.CreateData<Schema>, { parent })
@@ -210,9 +210,34 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
       this.metadata.weaponClass?.fromImportData(weaponData, this)
     )
   }
-
-  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */
-export { GcsElement, GcsItem, sourcedIdSchema, type SourcedIdSchema }
+
+class GcsCollection<
+  T extends DataModel.AnyConstructor,
+  Schema extends GcsCollectionSchema<T> = GcsCollectionSchema<T>,
+> extends GcsElement<Schema> {}
+
+const gcsCollectionSchema = <T extends DataModel.AnyConstructor>(type: T) => {
+  return {
+    name: new fields.StringField({ required: true, nullable: false }),
+    type: new fields.StringField({ required: true, nullable: false }),
+    version: new fields.NumberField({ required: true, nullable: false }),
+    rows: new fields.ArrayField(new fields.EmbeddedDataField(type), { required: true, nullable: false }),
+  }
+}
+
+type GcsCollectionSchema<T extends DataModel.AnyConstructor> = ReturnType<typeof gcsCollectionSchema<T>>
+
+/* ---------------------------------------- */
+
+export {
+  GcsElement,
+  GcsItem,
+  sourcedIdSchema,
+  type SourcedIdSchema,
+  GcsCollection,
+  gcsCollectionSchema,
+  type GcsCollectionSchema,
+}

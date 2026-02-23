@@ -37,6 +37,7 @@ import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
+import { Applications } from './applications/index.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import AddChatHooks from './chat.js'
@@ -59,7 +60,6 @@ import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
 import { Item } from './item/index.js'
-import { AddImportEquipmentButton } from './item-import.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
@@ -102,6 +102,7 @@ if (!globalThis.GURPS) {
   GURPS.modules = {
     Action: ActionModule,
     Actor,
+    Applications,
     Canvas,
     Combat,
     CombatTracker,
@@ -2201,10 +2202,10 @@ if (!globalThis.GURPS) {
       AddMultipleImportButton(html)
     })
 
-    Hooks.on('renderCompendiumDirectory', (app, html) => {
-      // Add the import equipment button to the Compendiums tab.
-      AddImportEquipmentButton(html)
-    })
+    // Hooks.on('renderCompendiumDirectory', (app, html) => {
+    //   // Add the import equipment button to the Compendiums tab.
+    //   AddImportEquipmentButton(html)
+    // })
 
     // TODO Move to a new 'bucket' module?
     Hooks.on('renderChatLog', (app, html) => {

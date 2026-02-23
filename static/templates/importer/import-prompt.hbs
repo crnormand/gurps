@@ -3,5 +3,9 @@
   <label for='data' style='white-space: nowrap;'>{{source}}:</label>
   <input type='file' name='data' accept='.gcs,.gca5' />
 </div>
-<p>{{{note}}}</p>
-<div>{{{warning}}}</div>
+{{#if note}}
+  <p>{{{note}}}</p>
+{{/if}}
+{{#if warning}}
+  <div>{{{warning}}}</div>
+{{/if}}

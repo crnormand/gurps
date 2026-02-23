@@ -1780,7 +1780,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       case 'character':
         return new ActorImporter(this.actor).importActor()
       case 'characterV2':
-        return GURPS.modules.Importer.importerPrompt(this.actor)
+        return GURPS.modules.Importer.actorImporterPrompt(this.actor)
       default:
         throw new Error(`Invalid actor type for import: ${this.actor.type}`)
     }

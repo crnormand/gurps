@@ -1,6 +1,13 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
+import {
+  GcsCollection,
+  GcsCollectionSchema,
+  gcsCollectionSchema,
+  GcsItem,
+  sourcedIdSchema,
+  SourcedIdSchema,
+} from './base.js'
 import { GcsEquipmentModifier } from './equipment-modifier.js'
 import { GcsWeapon } from './weapon.js'
 
@@ -130,4 +137,12 @@ type EquipmentModel = SourcedIdSchema & ReturnType<typeof equipmentData>
 
 /* ---------------------------------------- */
 
-export { GcsEquipment, equipmentData }
+class GcsEquipmentCollection extends GcsCollection<typeof GcsEquipment> {
+  static override defineSchema(): GcsCollectionSchema<typeof GcsEquipment> {
+    return gcsCollectionSchema(GcsEquipment)
+  }
+}
+
+/* ---------------------------------------- */
+
+export { GcsEquipment, equipmentData, GcsEquipmentCollection }

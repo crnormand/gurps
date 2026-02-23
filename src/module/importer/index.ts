@@ -2,7 +2,7 @@ import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { CharacterModel } from '../actor/data/character.js'
 
-import { importerPrompt } from './importer-prompt.js'
+import { actorImporterPrompt, itemImporterPrompt } from './importer-prompt.js'
 import { migrate } from './migrate.js'
 import { initializeGameSettings } from './settings.js'
 import {
@@ -19,7 +19,8 @@ import {
 } from './types.js'
 
 interface ImporterModule extends GurpsModule {
-  importerPrompt: typeof importerPrompt
+  actorImporterPrompt: typeof actorImporterPrompt
+  itemImporterPrompt: typeof itemImporterPrompt
 }
 
 function init() {
@@ -35,7 +36,8 @@ function init() {
 const Importer: ImporterModule = {
   init,
   migrate,
-  importerPrompt,
+  actorImporterPrompt,
+  itemImporterPrompt,
 }
 
 /**

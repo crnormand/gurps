@@ -1,6 +1,13 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
+import {
+  GcsCollection,
+  GcsCollectionSchema,
+  gcsCollectionSchema,
+  GcsItem,
+  sourcedIdSchema,
+  SourcedIdSchema,
+} from './base.js'
 import { GcsWeapon } from './weapon.js'
 
 class GcsSpell extends GcsItem<SpellModel> {
@@ -136,4 +143,12 @@ type SpellModel = SourcedIdSchema & ReturnType<typeof spellData>
 
 /* ---------------------------------------- */
 
-export { GcsSpell, spellData }
+class GcsSpellCollection extends GcsCollection<typeof GcsSpell> {
+  static override defineSchema(): GcsCollectionSchema<typeof GcsSpell> {
+    return gcsCollectionSchema(GcsSpell)
+  }
+}
+
+/* ---------------------------------------- */
+
+export { GcsSpell, spellData, GcsSpellCollection }
