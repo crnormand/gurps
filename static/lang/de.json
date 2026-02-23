@@ -1260,7 +1260,7 @@
     "rollTotal": "Gewürfelt ({rolls}) = {rtotal}.",
     "rollVs": "Wurf gegen",
     "rsl": "RSL",
-"rt": "RA",
+    "rt": "RA",
     "runningShoveAndKnockOver": "Schieben & Umstoßen (Rennend)",
     "saveRollforEffect": "Wurf speichern, um Effekte zu vermeiden.",
     "selectTargetForDamageWarning": "Ziehe den Schaden auf das Ziel oder ziehe ihn auf die Karte, um ihn auf das ausgewählte Token anzuwenden.",

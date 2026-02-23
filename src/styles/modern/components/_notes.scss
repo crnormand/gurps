@@ -318,7 +318,9 @@
         cursor: pointer;
         padding: var(--ms-space-1);
         border-radius: var(--ms-radius);
-        transition: background 0.15s, color 0.15s;
+        transition:
+          background 0.15s,
+          color 0.15s;
         line-height: initial;
         font-size: var(--ms-font-xs);
       }
@@ -386,7 +388,6 @@
       }
     }
 
-
     .ms-tracker-footer {
       display: flex;
       flex: 1 1 auto;
@@ -397,9 +398,6 @@
       color: var(--ms-text-muted);
     }
   }
-
-
-
 
   .tracked-resource {
     flex: 0 1;
@@ -442,8 +440,8 @@ aside div.tracker-tooltip {
   cursor: text;
   padding: var(--ms-space-3);
 
-  >.glinkmod,
-  >.gurpslink {
+  > .glinkmod,
+  > .gurpslink {
     color: var(--ms-accent);
     cursor: pointer;
     font-weight: bold;

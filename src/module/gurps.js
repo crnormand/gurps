@@ -1775,7 +1775,7 @@ if (!globalThis.GURPS) {
     })
   }
 
-  GURPS.handleRoll = handleRoll 
+  GURPS.handleRoll = handleRoll
 
   GURPS.applyModifierDesc = applyModifierDescription
 
