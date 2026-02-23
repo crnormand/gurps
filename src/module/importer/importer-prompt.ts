@@ -60,7 +60,17 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
 
             switch (extension) {
               case 'gcs': {
-                const char = GcsCharacter.fromImportData(JSON.parse(text)) as GcsCharacter
+                let jsonObject: AnyObject = {}
+
+                try {
+                  jsonObject = JSON.parse(text)
+                } catch {
+                  console.error('GURPS | Failed to parse JSON from file.')
+
+                  return
+                }
+
+                const char = GcsCharacter.fromImportData(jsonObject) as GcsCharacter
                 const importedActor = await GcsImporter.importCharacter(char, actor)
 
                 console.debug('Imported data:', importedActor)
