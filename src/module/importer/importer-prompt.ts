@@ -23,10 +23,9 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
       'systems/gurps/templates/importer/import-prompt.hbs',
       {
         description: game.i18n.localize('GURPS.importer.actor.description'),
+        fileTypes: ['.gcs', '.gca5'].join(','),
+        note: game.i18n.format('GURPS.importer.actor.note', { name }),
         source: game.i18n.localize('GURPS.importer.actor.source'),
-        note: game.i18n.format('GURPS.importer.actor.note', {
-          name,
-        }),
         warning: game.i18n.localize('GURPS.importer.actor.warning'),
       }
     ),
@@ -102,6 +101,7 @@ async function itemImporterPrompt() {
       'systems/gurps/templates/importer/import-prompt.hbs',
       {
         description: game.i18n.localize('GURPS.importer.item.description'),
+        fileTypes: ['.adj', '.skl', '.spl', '.eqp'].join(','),
         source: game.i18n.localize('GURPS.importer.item.source'),
       }
     ),
