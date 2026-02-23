@@ -159,7 +159,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
   /* ---------------------------------------- */
 
-  async #importItemCompendium(): Promise<void> {
+  async #importItemCompendium(): Promise<foundry.documents.collections.CompendiumCollection<'Item'>> {
     if (!this._isMode(GcsImporterMode.ItemCompendium))
       return Promise.reject(new Error('GcsImporter: Invalid mode for item compendium import.'))
 
@@ -199,6 +199,8 @@ class GcsImporter<Mode extends GcsImporterMode> {
     })
 
     await foundry.documents.Item.createDocuments(this.items, { pack: pack.metadata.id })
+
+    return pack
   }
 
   /* ---------------------------------------- */
