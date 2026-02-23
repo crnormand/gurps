@@ -18,11 +18,11 @@ class GcsElement<
 > extends DataModel<Schema, Parent> {
   container: null | GcsElement<any> = null
 
-  static fromImportData<Schema extends fields.DataSchema>(
-    importData: Partial<Schema> & AnyObject,
-    parent: null | GcsElement = null
-  ) {
-    const createData: DataModel.CreateData<Schema> = this.importSchema(importData, this.defineSchema() as Schema)
+  static fromImportData<Schema extends fields.DataSchema>(importData: AnyObject, parent: null | GcsElement = null) {
+    const createData: DataModel.CreateData<Schema> = this.importSchema(
+      importData as Partial<Schema> & AnyObject,
+      this.defineSchema() as Schema
+    )
 
     return new this(createData as DataModel.CreateData<Schema>, { parent })
   }

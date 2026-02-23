@@ -219,14 +219,19 @@ class GcsImporter<Mode extends GcsImporterMode> {
     if (!this._isMode(GcsImporterMode.ItemCompendium))
       return Promise.reject(new Error('GcsImporter: Invalid mode for item compendium import.'))
 
-    if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Trait))
+    if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Trait)) {
       this.input.rows.forEach((trait, index) => this.#importTrait(trait, index))
-    else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Skill))
+    } else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Skill)) {
       this.input.rows.forEach((skill, index) => this.#importSkill(skill, index))
-    else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Spell))
+    } else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Spell)) {
       this.input.rows.forEach((spell, index) => this.#importSpell(spell, index))
-    else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Equipment))
+    } else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Equipment)) {
       this.input.rows.forEach((equipment, index) => this.#importEquipment(equipment, index, true))
+    } else {
+      ui.notifications?.error?.('GcsImporter: Unsupported item collection type for compendium import.')
+
+      return Promise.reject(new Error('GcsImporter: Unsupported item collection type for compendium import.'))
+    }
 
     const name = this.input.name.replace(/ /g, '_')
 
@@ -272,7 +277,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     await foundry.documents.Item.updateDocuments(itemsToUpdate, { pack: pack.metadata.id })
 
     ui.notifications?.info(
-      game.i18n!.format('GURPS.importer.item.successMessage', { name: this.input.name, num: `${pack.size}` })
+      game.i18n!.format('GURPS.importer.item.successMessage', { name: this.input.name, num: `${this.items.length}` })
     )
 
     return pack

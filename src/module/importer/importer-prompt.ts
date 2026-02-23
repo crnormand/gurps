@@ -1,3 +1,5 @@
+import { AnyObject } from 'fvtt-types/utils'
+
 import { GcaImporter } from './gca-importer/importer.js'
 import { GCA5 } from './gca-importer/schema.js'
 import { GcsImporter } from './gcs-importer/importer.js'
@@ -48,7 +50,14 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
 
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
-            const extension = file.name.slice(file.name.lastIndexOf('.') + 1)
+
+            const lastDotIndex = file.name.lastIndexOf('.')
+
+            if (lastDotIndex < 0) {
+              throw new Error('GURPS | Selected file has no extension.')
+            }
+
+            const extension = file.name.slice(lastDotIndex + 1)
 
             switch (extension) {
               case 'gcs': {
@@ -116,13 +125,29 @@ async function itemImporterPrompt() {
 
             const file = files[0]
             const text = await GURPS.readTextFromFile(file)
-            const extension = file.name.slice(file.name.lastIndexOf('.') + 1)
-            const name = file.name.slice(0, file.name.lastIndexOf('.'))
+            const lastDotIndex = file.name.lastIndexOf('.')
+
+            if (lastDotIndex < 0) {
+              throw new Error('GURPS | Selected file has no extension.')
+            }
+
+            const extension = file.name.slice(lastDotIndex + 1)
+            const name = file.name.slice(0, lastDotIndex)
+
+            let jsonObject: AnyObject = {}
+
+            try {
+              jsonObject = JSON.parse(text)
+            } catch (error) {
+              console.error('GURPS | Failed to parse JSON from file:', error)
+
+              return
+            }
 
             switch (extension) {
               case 'adq': {
                 const collection = GcsTraitCollection.fromImportData({
-                  ...JSON.parse(text),
+                  ...jsonObject,
                   type: 'trait',
                   name,
                 }) as GcsTraitCollection
@@ -133,7 +158,7 @@ async function itemImporterPrompt() {
               }
               case 'skl': {
                 const collection = GcsSkillCollection.fromImportData({
-                  ...JSON.parse(text),
+                  ...jsonObject,
                   type: 'skill',
                   name,
                 }) as GcsSkillCollection
@@ -144,7 +169,7 @@ async function itemImporterPrompt() {
               }
               case 'spl': {
                 const collection = GcsSpellCollection.fromImportData({
-                  ...JSON.parse(text),
+                  ...jsonObject,
                   type: 'spell',
                   name,
                 }) as GcsSpellCollection
@@ -155,7 +180,7 @@ async function itemImporterPrompt() {
               }
               case 'eqp': {
                 const collection = GcsEquipmentCollection.fromImportData({
-                  ...JSON.parse(text),
+                  ...jsonObject,
                   type: 'equipment',
                   name,
                 }) as GcsEquipmentCollection
