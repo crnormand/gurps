@@ -57,8 +57,6 @@ async function runMigration() {
 
 /* ---------------------------------------- */
 
-/* ---------------------------------------- */
-
 async function migrateItemCompendium(pack: CompendiumCollection<'Item'>) {
   const items = await pack.getDocuments()
 

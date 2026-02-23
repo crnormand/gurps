@@ -20,14 +20,23 @@ async function runMigration() {
 
     console.log('Migrating world actors')
     const actors = game.actors!.filter(actor => actor.isOfType('character', 'enemy'))
+    const packs = game.packs!.filter(pack => pack.documentName === 'Actor') as CompendiumCollection<'Actor'>[]
 
-    if (actors.length > 0) {
-      const updateStep = 1 / actors.length
+    const length = actors.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)
+
+    if (length > 0) {
+      const updateStep = 1 / length
       let updateProgress = 0
 
       for (const actor of actors) {
         await migrateActor(actor)
         updateProgress += updateStep
+        warning.update({ pct: updateProgress })
+      }
+
+      for (const pack of packs) {
+        await migrateActorCompendium(pack)
+        updateProgress += pack.index.size * updateStep
         warning.update({ pct: updateProgress })
       }
     }
@@ -42,13 +51,17 @@ async function runMigration() {
 
 /* ---------------------------------------- */
 
+async function migrateActorCompendium(pack: CompendiumCollection<'Actor'>) {
+  const actors = await pack.getDocuments()
+
+  const updateData = actors.map(actor => getMigratedActorData(actor)).filter(element => element !== null)
+
+  await Actor.updateDocuments(updateData, { pack: pack.collection, recursive: false })
+}
+
+/* ---------------------------------------- */
+
 async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
-  if (!game.i18n) {
-    console.error('GURPS | Cannot migrate actor because game.i18n is not initialized.')
-
-    return
-  }
-
   if (!actor.isOfType('character', 'enemy')) {
     console.error(
       'Attempted to migrate actor that is not of type character. Actor name:',
@@ -60,9 +73,52 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
     return
   }
 
+  const updateData = getMigratedActorData(actor)
+
+  if (!updateData) {
+    console.error('Failed to get migrated data for actor. Actor name:', actor.name)
+
+    return
+  }
+
+  const newActor = (await actor.update(updateData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
+
+  if (!newActor) {
+    console.error('Failed to update actor with migrated data. Actor name:', actor.name)
+
+    return
+  }
+
+  return newActor
+}
+
+/* ---------------------------------------- */
+
+/* ---------------------------------------- */
+
+function getMigratedActorData(
+  oldActor: Actor.Implementation | Actor.CreateData
+): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.OfType<'characterV2'>>> | null {
+  if (!game.i18n) {
+    console.error('GURPS | Cannot migrate actor because game.i18n is not initialized.')
+
+    return null
+  }
+
+  if (!['character', 'enemy'].includes(oldActor.type)) {
+    console.error(
+      'Attempted to migrate actor that is not of type character. Actor name:',
+      oldActor.name,
+      'Actor type:',
+      oldActor.type
+    )
+
+    return null
+  }
+
   const items: Item.CreateData[] = []
 
-  const system = actor.system as ActorV1Model
+  const system = oldActor.system as ActorV1Model
   const traits = system.ads ? flattenItemList(system.ads, null) : []
   const skills = system.skills ? flattenItemList(system.skills, null) : []
   const spells = system.spells ? flattenItemList(system.spells, null) : []
@@ -230,17 +286,16 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
 
   items.push(migrationItem)
 
-  const createData: Actor.CreateData<'characterV2'> = {
+  const updateData: Actor.CreateData<'characterV2'> = {
+    _id: oldActor._id,
     type: 'characterV2',
-    img: actor.img,
-    name: actor.name,
-    system: migrateActorSystem(actor.system),
+    img: oldActor.img,
+    name: oldActor.name,
+    system: migrateActorSystem(oldActor.system as ActorV1Model),
     items,
   }
 
-  const newActor = (await actor.update(createData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
-
-  return newActor
+  return updateData
 }
 
 /* ---------------------------------------- */
