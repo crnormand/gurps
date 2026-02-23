@@ -31,7 +31,7 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
     buttons: [
       {
         action: 'import',
-        label: 'Import',
+        label: game.i18n.localize('GURPS.importer.actor.button'),
         icon: 'fa-solid fa-file-import',
         default: true,
         callback: async (_1, button, _2) => {
@@ -99,7 +99,7 @@ async function itemImporterPrompt() {
     buttons: [
       {
         action: 'import',
-        label: 'Import',
+        label: game.i18n.localize('GURPS.importer.item.button'),
         icon: 'fa-solid fa-file-import',
         default: true,
         callback: async (_1, button, _2) => {
