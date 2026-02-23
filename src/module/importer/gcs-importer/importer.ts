@@ -181,7 +181,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
         break
       case 'equipment':
         ;(this.input as unknown as GcsCollection<typeof GcsEquipment>).rows.forEach((equipment, index) =>
-          this.#importEquipment(equipment, index, false)
+          this.#importEquipment(equipment, index, true)
         )
         break
       default:

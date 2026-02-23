@@ -155,7 +155,7 @@ async function itemImporterPrompt() {
               case 'eqp': {
                 const collection = GcsEquipmentCollection.fromImportData({
                   ...JSON.parse(text),
-                  type: 'trait',
+                  type: 'equipment',
                   name: file.name.split('.')[0],
                 }) as GcsEquipmentCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
