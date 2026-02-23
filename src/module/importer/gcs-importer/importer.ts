@@ -32,7 +32,27 @@ enum GcsImporterMode {
   ItemCompendium = 'itemCompendium',
 }
 
+enum GcsItemCollectionType {
+  Trait = 'trait',
+  Skill = 'skill',
+  Spell = 'spell',
+  Equipment = 'equipment',
+}
+
+const _GcsItemConstructorMap = {
+  [GcsItemCollectionType.Trait]: GcsTrait,
+  [GcsItemCollectionType.Skill]: GcsSkill,
+  [GcsItemCollectionType.Spell]: GcsSpell,
+  [GcsItemCollectionType.Equipment]: GcsEquipment,
+}
+
+/* ---------------------------------------- */
+
+type GcsItemCollectionOfType<Type extends GcsItemCollectionType> = GcsCollection<(typeof _GcsItemConstructorMap)[Type]>
+
 type GcsImporterInputType<Mode extends GcsImporterMode> = Mode extends 'character' ? GcsCharacter : AnyGcsItemCollection
+
+/* ---------------------------------------- */
 
 /**
  * GCS Importer class for importing GCS characters into the system.
@@ -159,20 +179,36 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
   /* ---------------------------------------- */
 
+  #itemDataIsOfType<SubType extends 'featureV2' | 'skillV2' | 'spellV2' | 'equipmentV2'>(
+    data: { type: string },
+    ...types: SubType[]
+  ): data is Item.CreateData<SubType> & {
+    system: DataModel.CreateData<DataModel.SchemaOf<Item.SystemOfType<SubType>>>
+  }
+  #itemDataIsOfType(data: { type: string }, ...types: string[]): boolean {
+    return types.includes(data.type)
+  }
+
+  /* ---------------------------------------- */
+
+  #itemCollectionIsOfType<Type extends GcsItemCollectionType>(
+    collection: GcsCollection,
+    type: Type
+  ): collection is GcsItemCollectionOfType<Type>
+  #itemCollectionIsOfType(collection: GcsCollection, type: string): boolean {
+    return collection.type === type
+  }
+
+  /* ---------------------------------------- */
+
   #existingItemId(itemData: Item.CreateData, existingIds: { _id: string | null; importid: string }[]): string | null {
     const getImportId = (data: Item.CreateData) => {
-      switch (data.type) {
-        case 'featureV2':
-          return (data as unknown as Item.OfType<'featureV2'>).system?.fea?.importid
-        case 'skillV2':
-          return (data as unknown as Item.OfType<'skillV2'>).system?.ski?.importid
-        case 'spellV2':
-          return (data as unknown as Item.OfType<'spellV2'>).system?.spl?.importid
-        case 'equipmentV2':
-          return (data as unknown as Item.OfType<'equipmentV2'>).system?.eqt?.importid
-        default:
-          return null
-      }
+      if (this.#itemDataIsOfType(data, 'featureV2')) return data.system?.fea?.importid
+      if (this.#itemDataIsOfType(data, 'skillV2')) return data.system?.ski?.importid
+      if (this.#itemDataIsOfType(data, 'spellV2')) return data.system?.spl?.importid
+      if (this.#itemDataIsOfType(data, 'equipmentV2')) return data.system?.eqt?.importid
+
+      return null
     }
 
     const id = getImportId(itemData)
@@ -190,30 +226,14 @@ class GcsImporter<Mode extends GcsImporterMode> {
     if (!this._isMode(GcsImporterMode.ItemCompendium))
       return Promise.reject(new Error('GcsImporter: Invalid mode for item compendium import.'))
 
-    switch (this.input.type) {
-      case 'trait':
-        ;(this.input as unknown as GcsCollection<typeof GcsTrait>).rows.forEach((trait, index) =>
-          this.#importTrait(trait, index)
-        )
-        break
-      case 'skill':
-        ;(this.input as unknown as GcsCollection<typeof GcsSkill>).rows.forEach((skill, index) =>
-          this.#importSkill(skill, index)
-        )
-        break
-      case 'spell':
-        ;(this.input as unknown as GcsCollection<typeof GcsSpell>).rows.forEach((spell, index) =>
-          this.#importSpell(spell, index)
-        )
-        break
-      case 'equipment':
-        ;(this.input as unknown as GcsCollection<typeof GcsEquipment>).rows.forEach((equipment, index) =>
-          this.#importEquipment(equipment, index, true)
-        )
-        break
-      default:
-        console.error(`GURPS | Unrecognized item type in compendium import: ${(this.input as any).type}`)
-    }
+    if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Trait))
+      this.input.rows.forEach((trait, index) => this.#importTrait(trait, index))
+    else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Skill))
+      this.input.rows.forEach((skill, index) => this.#importSkill(skill, index))
+    else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Spell))
+      this.input.rows.forEach((spell, index) => this.#importSpell(spell, index))
+    else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Equipment))
+      this.input.rows.forEach((equipment, index) => this.#importEquipment(equipment, index, true))
 
     const name = this.input.name.replace(/ /g, '_')
 

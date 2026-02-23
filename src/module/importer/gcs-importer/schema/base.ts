@@ -215,7 +215,7 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
 /* ---------------------------------------- */
 
 class GcsCollection<
-  T extends DataModel.AnyConstructor,
+  T extends DataModel.AnyConstructor = DataModel.AnyConstructor,
   Schema extends GcsCollectionSchema<T> = GcsCollectionSchema<T>,
 > extends GcsElement<Schema> {}
 
