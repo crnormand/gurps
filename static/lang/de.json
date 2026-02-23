@@ -845,8 +845,8 @@
     "meleeWeapons": "Nahkampfwaffe",
     "migration": {
       "actor": {
-        "progressMessage": "Schauspieler-Migrationen für Version {version} werden angewendet, bitte warten...",
-        "successMessage": "Schauspieler-Migrationen für Version {version} erfolgreich angewendet."
+        "progressMessage": "Charakter-Migrationen für Version {version} werden angewendet, bitte warten...",
+        "successMessage": "Charakter-Migrationen für Version {version} erfolgreich angewendet."
       },
       "item": {
         "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
