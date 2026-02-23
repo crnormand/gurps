@@ -54,7 +54,6 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   override async toggleEnabled(enabled: boolean | null = null): Promise<this['parent'] | undefined> {
     const currentEnabled = this.equipped
 
-    // NOTE: do I really need to assert Item.UpdateData here?
     return this.parent.update({
       system: { eqt: { equipped: enabled === null ? !currentEnabled : enabled } },
     } as Item.UpdateData)

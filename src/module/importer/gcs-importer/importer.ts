@@ -159,7 +159,34 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
   /* ---------------------------------------- */
 
-  async #importItemCompendium(): Promise<foundry.documents.collections.CompendiumCollection<'Item'>> {
+  #existingItemId(itemData: Item.CreateData, existingIds: { _id: string | null; importid: string }[]): string | null {
+    const getImportId = (data: Item.CreateData) => {
+      switch (data.type) {
+        case 'featureV2':
+          return (data as unknown as Item.OfType<'featureV2'>).system?.fea?.importid
+        case 'skillV2':
+          return (data as unknown as Item.OfType<'skillV2'>).system?.ski?.importid
+        case 'spellV2':
+          return (data as unknown as Item.OfType<'spellV2'>).system?.spl?.importid
+        case 'equipmentV2':
+          return (data as unknown as Item.OfType<'equipmentV2'>).system?.eqt?.importid
+        default:
+          return null
+      }
+    }
+
+    const id = getImportId(itemData)
+
+    if (!id) return null
+
+    const existingId = existingIds.find(existing => existing.importid === id)?._id ?? null
+
+    return existingId || null
+  }
+
+  /* ---------------------------------------- */
+
+  async #importItemCompendium(): Promise<foundry.documents.collections.CompendiumCollection<'Item'> | null> {
     if (!this._isMode(GcsImporterMode.ItemCompendium))
       return Promise.reject(new Error('GcsImporter: Invalid mode for item compendium import.'))
 
@@ -190,15 +217,46 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
     const name = this.input.name.replace(/ /g, '_')
 
-    const pack = await foundry.documents.collections.CompendiumCollection.createCompendium({
-      type: 'Item',
-      label: this.input.name,
-      // @ts-expect-error: this type is valid but fvtt-types thinks otherwise
-      packageType: 'world',
-      name,
-    })
+    if (!game.packs) {
+      console.error("GURPS | Foundry game.packs is undefined. Can't import compendium.")
 
-    await foundry.documents.Item.createDocuments(this.items, { pack: pack.metadata.id })
+      return null
+    }
+
+    let pack = game.packs.get(`world.${name}`) as foundry.documents.collections.CompendiumCollection<'Item'> | undefined
+
+    const existingItems: { _id: string | null; importid: string }[] = pack
+      ? (await pack.getDocuments()).map(item => {
+          return { _id: item._id || null, importid: item.system.component.importid || '' }
+        })
+      : []
+
+    const itemsToCreate: Item.CreateData[] = []
+    const itemsToUpdate: Item.CreateData[] = []
+
+    for (const itemData of this.items) {
+      const existingId = this.#existingItemId(itemData, existingItems)
+
+      if (!existingId) {
+        itemsToCreate.push(itemData)
+      } else {
+        itemData._id = existingId
+        itemsToUpdate.push(itemData)
+      }
+    }
+
+    if (!pack) {
+      pack = await foundry.documents.collections.CompendiumCollection.createCompendium({
+        type: 'Item',
+        label: this.input.name,
+        // @ts-expect-error: this type is valid but fvtt-types thinks otherwise
+        packageType: 'world',
+        name,
+      })
+    }
+
+    await foundry.documents.Item.createDocuments(itemsToCreate, { pack: pack.metadata.id })
+    await foundry.documents.Item.updateDocuments(itemsToUpdate, { pack: pack.metadata.id })
 
     return pack
   }
