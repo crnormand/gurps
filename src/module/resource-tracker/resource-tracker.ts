@@ -105,7 +105,7 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
     // Make a copy of the thresholds array.
     const thresholds = [...this.thresholds]
 
-    if (this.isAccumulator) {
+    if (this.isAccumulator || this.isDamageTracker) {
       results.push({ value: 0, condition: thresholds.shift()?.condition ?? '' })
 
       for (const threshold of thresholds) {
@@ -141,18 +141,6 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
     function getOperator(threshold: ResourceTrackerThreshold) {
       return OperatorFunctions[threshold.operator as TrackerOperators]
     }
-  }
-
-  /**
-   * A better name for this attribute.
-   *
-   * An accumulator is a resource that starts at 0 and increases, like a damage tracker. A non-accumulator is a
-   * resource that starts at its max value and decreases, like a health tracker. This is technically separate from
-   * whether the tracker is a damage type or not, but in practice all damage trackers are accumulators and all
-   * non-accumulators are not damage trackers, so we can use this as a proxy.
-   */
-  get isAccumulator() {
-    return this.isDamageTracker
   }
 
   /**
@@ -197,9 +185,13 @@ const resourceTrackerSchema = () => {
     pdf: new fields.StringField({ required: true, nullable: false, initial: '' }),
     max: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     min: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    isMaxEnforced: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    isMinEnforced: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     isDamageType: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    // @deprecated isDamageTracker is replaced by isAccumulator, but we keep it for migration purposes. It will be removed in a future update.
     isDamageTracker: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    isAccumulator: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     breakpoints: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     thresholds: new fields.ArrayField(
       new fields.EmbeddedDataField(ResourceTrackerThreshold, { required: true, nullable: false }),

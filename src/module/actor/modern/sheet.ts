@@ -8,6 +8,7 @@ import type {
   HandlebarsActorSheetV2Constructor,
 } from '@gurps-types/foundry/actor-sheet-v2.js'
 import { Application } from '@gurps-types/foundry/application.js'
+import { ResourceTracker } from '@module/resource-tracker/index.js'
 import { ThresholdDescriptor } from '@module/resource-tracker/resource-tracker.js'
 import { getGame, getUser, isHTMLElement } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
@@ -83,7 +84,6 @@ type PreparedTrackerData = {
 }
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
-
 type GurpsActor = GurpsActorV2<Actor.SubType>
 
 // See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
@@ -113,6 +113,11 @@ export class GurpsActorModernSheet extends SheetBase {
       importActor: GurpsActorModernSheet.#onImportActor,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
+      editTracker: GurpsActorModernSheet.#onEditTracker,
+      deleteTracker: GurpsActorModernSheet.#onDeleteTracker,
+      decreaseTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
+      increaseTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
+      resetTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
     },
   }
 
@@ -177,7 +182,7 @@ export class GurpsActorModernSheet extends SheetBase {
         Object.keys(actorSystem?.reactions ?? {}).length + Object.keys(actorSystem?.conditionalmods ?? {}).length,
       showHPTinting: getGame().settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
       moveMode: this.actor.currentMoveMode,
-      resourceTrackers: this.prepareTrackerData(this.actor),
+      resourceTrackers: this.prepareTrackerData(),
     }
 
     return context
@@ -309,7 +314,7 @@ export class GurpsActorModernSheet extends SheetBase {
     })
 
     // Bind tooltip positioning for resource tracker conditions
-    // this.#bindTooltipPositioning(html)
+    // this.#bindResourceTrackerActions(html)
   }
 
   static async #onResetResource(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
@@ -799,8 +804,8 @@ export class GurpsActorModernSheet extends SheetBase {
     }
   }
 
-  prepareTrackerData(actor: Actor.Implementation): PreparedTrackerData[] {
-    const trackers = (actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
+  prepareTrackerData(): PreparedTrackerData[] {
+    const trackers = (this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
 
     if (!trackers) return []
 
@@ -839,5 +844,65 @@ export class GurpsActorModernSheet extends SheetBase {
     }
 
     return preparedData
+  }
+
+  static async #onUpdateTrackerValue(
+    this: GurpsActorModernSheet,
+    event: PointerEvent,
+    target: HTMLElement
+  ): Promise<void> {
+    event.preventDefault()
+    const trackerKey = target.dataset.key
+
+    if (!trackerKey) return
+
+    const trackers = (this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
+    const tracker = trackers?.get(trackerKey)
+
+    if (!tracker) return
+
+    let newValue: number
+
+    if (target.dataset.action === 'decreaseTracker') {
+      newValue = tracker.isMinEnforced ? Math.max(tracker.value - 1, tracker.min) : tracker.value - 1
+    } else if (target.dataset.action === 'increaseTracker') {
+      newValue = tracker.isMaxEnforced ? Math.min(tracker.value + 1, tracker.max) : tracker.value + 1
+    } else if (target.dataset.action === 'resetTracker') {
+      newValue = tracker.isAccumulator || tracker.isDamageTracker ? 0 : tracker.max
+    } else {
+      return
+    }
+
+    tracker.update({ value: newValue })
+  }
+
+  static async #onEditTracker(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event.preventDefault()
+    const trackerKey = target.dataset.key
+
+    if (!trackerKey) return
+
+    const trackers = (this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
+    const tracker = trackers?.get(trackerKey)
+
+    if (!tracker) return
+
+    const trackerModule: typeof ResourceTracker = GURPS.modules.ResourceTracker as typeof ResourceTracker
+
+    trackerModule.updateResourceTracker(this.actor, tracker)
+  }
+
+  static async #onDeleteTracker(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event.preventDefault()
+    const trackerKey = target.dataset.key
+
+    if (!trackerKey) return
+
+    const trackers = (this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
+    const tracker = trackers?.get(trackerKey)
+
+    if (!tracker) return
+
+    await tracker.delete()
   }
 }

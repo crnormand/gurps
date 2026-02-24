@@ -284,25 +284,6 @@
       }
     }
 
-    .ms-tracker-value {
-      display: inline-block;
-      position: relative;
-      margin-right: var(--ms-space-2);
-      flex: 1;
-      max-width: 6ch;
-      cursor: pointer;
-
-      &.editing {
-        .ms-tracker-display {
-          visibility: hidden;
-        }
-
-        .ms-tracker-input {
-          opacity: 1;
-        }
-      }
-    }
-
     .ms-spinner {
       display: inline-flex;
       flex-direction: row;
@@ -326,6 +307,23 @@
       }
 
       .ms-tracker-value {
+        display: inline-block;
+        position: relative;
+        margin-right: var(--ms-space-2);
+        flex: 1;
+        max-width: 6ch;
+        cursor: pointer;
+
+        &.editing {
+          .ms-tracker-display {
+            visibility: hidden;
+          }
+
+          .ms-tracker-input {
+            opacity: 1;
+          }
+        }
+
         .ms-tracker-display {
           display: flex;
           align-items: center;
@@ -370,11 +368,12 @@
         font-style: normal;
         font-weight: normal;
         line-height: inherit;
+        min-height: calc(2px + 1.5em);
         color: var(--ms-text);
         background-color: var(--ms-accent-light);
         border-color: var(--ms-border);
-        border-radius: 999px;
-        padding: 1px 4px;
+        border-radius: var(--ms-radius-pill);
+        padding: var(--ms-space-1) var(--ms-space-2);
         width: 100%;
         text-align: center;
         white-space: nowrap;
@@ -382,7 +381,7 @@
 
         .glinkmod {
           font-weight: inherit;
-          font-size: var(--font-size-10);
+          font-size: var(--ms-font-xs);
           background: transparent;
         }
       }
@@ -419,7 +418,7 @@
 aside div.tracker-tooltip {
   display: grid;
   gap: var(--ms-space-2);
-  grid-template-columns: min-content min-content auto;
+  grid-template-columns: min-content auto;
   font-size: var(--ms-font-xs);
 }
 
@@ -440,8 +439,8 @@ aside div.tracker-tooltip {
   cursor: text;
   padding: var(--ms-space-3);
 
-  > .glinkmod,
-  > .gurpslink {
+  >.glinkmod,
+  >.gurpslink {
     color: var(--ms-accent);
     cursor: pointer;
     font-weight: bold;

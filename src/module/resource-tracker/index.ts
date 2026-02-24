@@ -3,7 +3,10 @@ import type { GurpsModule } from '@gurps-types/gurps-module.js'
 import { migrate } from './migration.ts'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import { TrackerInstance } from './resource-tracker.ts'
 import { initializeSettings } from './settings.ts'
+import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.ts'
+import { updateResourceTracker } from './ui/update-resource-tracker.ts'
 
 function init() {
   console.log('GURPS | Initializing GURPS Resource Tracker Module')
@@ -55,6 +58,8 @@ function init() {
 interface ResourceTrackerModule extends GurpsModule {
   TemplateManager: typeof ResourceTrackerManager
   TrackerEditor: typeof ResourceTrackerEditor
+  TrackerEditorV2: typeof ResourceTrackerEditorV2
+  updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance, trackerId?: string): Promise<void>
 }
 
 export const ResourceTracker: ResourceTrackerModule = {
@@ -62,4 +67,6 @@ export const ResourceTracker: ResourceTrackerModule = {
   migrate,
   TemplateManager: ResourceTrackerManager,
   TrackerEditor: ResourceTrackerEditor,
+  TrackerEditorV2: ResourceTrackerEditorV2,
+  updateResourceTracker,
 }

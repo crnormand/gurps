@@ -28,6 +28,7 @@ function convertOldSettings(
     const newTemplate = new ResourceTrackerTemplate({
       tracker: {
         ...oldTemplate.tracker,
+        isAccumulator: oldTemplate.tracker.isDamageTracker ?? false,
       },
       initialValue: oldTemplate.initialValue,
       autoapply: !!oldTemplate.slot,
