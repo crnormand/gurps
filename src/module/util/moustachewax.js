@@ -1114,11 +1114,11 @@ ${content}
 
     let thresholds = ''
 
-    for (let threshold of tracker.thresholds) {
+    for (let descriptor of tracker.descriptors) {
       thresholds += `
-        <label>${threshold.comparison}</label>
-        <label>${threshold.value}</label>
-        <label>${threshold.condition}</label>`
+        <label></label>
+        <label>${descriptor.value}</label>
+        <label>${descriptor.condition}</label>`
     }
 
     // Its important to use the double quotes (") for the HTML attributes, as we use single quotes (') for the

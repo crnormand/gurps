@@ -5,36 +5,41 @@ import {
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
 
-export const PLUS = '+'
-export const MINUS = '-'
-export const MULTIPLY = '×'
-export const DIVIDE = '÷'
+const PLUS = '+'
+const MINUS = '-'
+const MULTIPLY = '×'
+const DIVIDE = '÷'
 
-export const LT = '<'
-export const LTE = '≤'
-export const EQ = '='
-export const GTE = '≥'
-export const GT = '>'
+const LT = '<'
+const LTE = '≤'
+const EQ = '='
+const GTE = '≥'
+const GT = '>'
 
 type TrackerOperators = typeof PLUS | typeof MINUS | typeof MULTIPLY | typeof DIVIDE
 type TrackerComparisons = typeof LT | typeof LTE | typeof EQ | typeof GTE | typeof GT
 type binomialFunction = (left: number, right: number) => number
 type comparisonFunction = (left: number, right: number) => boolean
 
-export const OperatorFunctions: Record<TrackerOperators, binomialFunction> = {
+const OperatorFunctions: Record<TrackerOperators, binomialFunction> = {
   [PLUS]: (left: number, right: number) => left + right,
   [MINUS]: (left: number, right: number) => left - right,
   [MULTIPLY]: (left: number, right: number) => left * right,
   [DIVIDE]: (left: number, right: number) => left / right,
 } as const
 
-export const ComparisonFunctions: Record<TrackerComparisons, comparisonFunction> = {
+const ComparisonFunctions: Record<TrackerComparisons, comparisonFunction> = {
   [LT]: (left: number, right: number) => left < right,
   [LTE]: (left: number, right: number) => left <= right,
   [EQ]: (left: number, right: number) => left === right,
   [GTE]: (left: number, right: number) => left >= right,
   [GT]: (left: number, right: number) => left > right,
 } as const
+
+type ThresholdDescriptor = {
+  value: number
+  condition: string
+}
 
 /* ---------------------------------------- */
 
@@ -88,8 +93,8 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
     return threshold || null
   }
 
-  get thresholdDescriptors(): { value: number; condition: string }[] {
-    const results = []
+  get thresholdDescriptors(): ThresholdDescriptor[] {
+    const results: ThresholdDescriptor[] = []
 
     // Make a copy of the thresholds array.
     const thresholds = [...this.thresholds]
@@ -251,6 +256,18 @@ type ResourceTrackerTemplateSchema = ReturnType<typeof resourceTrackerTemplateSc
 /* ---------------------------------------- */
 
 export {
+  PLUS,
+  MINUS,
+  MULTIPLY,
+  DIVIDE,
+  LT,
+  LTE,
+  EQ,
+  GTE,
+  GT,
+  OperatorFunctions,
+  ComparisonFunctions,
+  type ThresholdDescriptor,
   TrackerInstance,
   ResourceTrackerThreshold,
   ResourceTrackerTemplate,

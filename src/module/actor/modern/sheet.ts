@@ -8,6 +8,7 @@ import type {
   HandlebarsActorSheetV2Constructor,
 } from '@gurps-types/foundry/actor-sheet-v2.js'
 import { Application } from '@gurps-types/foundry/application.js'
+import { ThresholdDescriptor } from '@module/resource-tracker/resource-tracker.js'
 import { getGame, getUser, isHTMLElement } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
@@ -78,6 +79,7 @@ type PreparedTrackerData = {
   min: number
   max: number
   thresholds: TrackerThreshold[]
+  descriptors: ThresholdDescriptor[]
 }
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
@@ -829,6 +831,7 @@ export class GurpsActorModernSheet extends SheetBase {
               color: threshold.color,
             }) as TrackerThreshold
         ),
+        descriptors: tracker.thresholdDescriptors || [],
       })
       index++
     }
