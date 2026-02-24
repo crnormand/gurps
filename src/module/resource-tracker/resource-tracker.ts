@@ -5,35 +5,41 @@ import {
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
 
-const PLUS = '+'
-const MINUS = '-'
-const MULTIPLY = '×'
-const DIVIDE = '÷'
+const TrackerOperators = {
+  PLUS: '+',
+  MINUS: '\u002D',
+  UNICODE_MINUS_SIGN: '\u2212',
+  MULTIPLY: '×',
+  DIVIDE: '÷',
+} as const
 
-const LT = '<'
-const LTE = '≤'
-const EQ = '='
-const GTE = '≥'
-const GT = '>'
+const TrackerComparators = {
+  LT: '<',
+  LTE: '≤',
+  EQ: '=',
+  GTE: '≥',
+  GT: '>',
+} as const
 
-type TrackerOperators = typeof PLUS | typeof MINUS | typeof MULTIPLY | typeof DIVIDE
-type TrackerComparisons = typeof LT | typeof LTE | typeof EQ | typeof GTE | typeof GT
+type TrackerOperators = (typeof TrackerOperators)[keyof typeof TrackerOperators]
+type TrackerComparisons = (typeof TrackerComparators)[keyof typeof TrackerComparators]
 type binomialFunction = (left: number, right: number) => number
 type comparisonFunction = (left: number, right: number) => boolean
 
 const OperatorFunctions: Record<TrackerOperators, binomialFunction> = {
-  [PLUS]: (left: number, right: number) => left + right,
-  [MINUS]: (left: number, right: number) => left - right,
-  [MULTIPLY]: (left: number, right: number) => left * right,
-  [DIVIDE]: (left: number, right: number) => left / right,
+  [TrackerOperators.PLUS]: (left: number, right: number) => left + right,
+  [TrackerOperators.MINUS]: (left: number, right: number) => left - right,
+  [TrackerOperators.UNICODE_MINUS_SIGN]: (left: number, right: number) => left - right,
+  [TrackerOperators.MULTIPLY]: (left: number, right: number) => left * right,
+  [TrackerOperators.DIVIDE]: (left: number, right: number) => left / right,
 } as const
 
 const ComparisonFunctions: Record<TrackerComparisons, comparisonFunction> = {
-  [LT]: (left: number, right: number) => left < right,
-  [LTE]: (left: number, right: number) => left <= right,
-  [EQ]: (left: number, right: number) => left === right,
-  [GTE]: (left: number, right: number) => left >= right,
-  [GT]: (left: number, right: number) => left > right,
+  [TrackerComparators.LT]: (left: number, right: number) => left < right,
+  [TrackerComparators.LTE]: (left: number, right: number) => left <= right,
+  [TrackerComparators.EQ]: (left: number, right: number) => left === right,
+  [TrackerComparators.GTE]: (left: number, right: number) => left >= right,
+  [TrackerComparators.GT]: (left: number, right: number) => left > right,
 } as const
 
 type ThresholdDescriptor = {
@@ -256,15 +262,8 @@ type ResourceTrackerTemplateSchema = ReturnType<typeof resourceTrackerTemplateSc
 /* ---------------------------------------- */
 
 export {
-  PLUS,
-  MINUS,
-  MULTIPLY,
-  DIVIDE,
-  LT,
-  LTE,
-  EQ,
-  GTE,
-  GT,
+  TrackerOperators,
+  TrackerComparators,
   OperatorFunctions,
   ComparisonFunctions,
   type ThresholdDescriptor,

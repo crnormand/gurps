@@ -804,15 +804,17 @@ export class GurpsActorModernSheet extends SheetBase {
 
     if (!trackers) return []
 
-    // convert from Record<string, Tracker> to array of PreparedTrackerData for easier handling in templates.
+    // Convert from Record<string, Tracker> to array of PreparedTrackerData for easier handling in templates.
     const preparedData: PreparedTrackerData[] = []
 
     let index = 0
 
     for (const [key, tracker] of trackers.entries()) {
+      const trackerId = String(tracker.id ?? key)
+
       preparedData.push({
         key,
-        id: tracker.id,
+        id: trackerId,
         name: tracker.name ? game.i18n!.localize(tracker.name) : `${game.i18n!.localize('GURPS.resource')}[${index}]`,
         value: tracker.value,
         condition: tracker.currentThreshold?.condition || '',

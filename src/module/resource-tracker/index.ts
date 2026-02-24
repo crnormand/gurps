@@ -10,6 +10,7 @@ function init() {
 
   Hooks.once('ready', async function () {
     await initializeSettings()
+    await migrate()
 
     // get all aliases defined in the resource tracker templates and register them as damage types
     const resourceTrackers = ResourceTrackerManager.getAllTemplates()

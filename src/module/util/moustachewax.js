@@ -1115,10 +1115,13 @@ ${content}
     let thresholds = ''
 
     for (let descriptor of tracker.descriptors) {
+      const value = foundry.utils.escapeHTML(String(descriptor.value ?? ''))
+      const condition = foundry.utils.escapeHTML(String(descriptor.condition ?? ''))
+
       thresholds += `
         <label></label>
-        <label>${descriptor.value}</label>
-        <label>${descriptor.condition}</label>`
+        <label>${value}</label>
+        <label>${condition}</label>`
     }
 
     // Its important to use the double quotes (") for the HTML attributes, as we use single quotes (') for the

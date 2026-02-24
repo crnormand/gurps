@@ -1,11 +1,8 @@
 import {
   ComparisonFunctions,
-  GT,
-  GTE,
-  LT,
-  LTE,
-  MULTIPLY,
   OperatorFunctions,
+  TrackerComparators,
+  TrackerOperators,
   ResourceTrackerThreshold,
   TrackerInstance,
 } from '@module/resource-tracker/resource-tracker.js'
@@ -84,43 +81,43 @@ describe('TrackerInstance getters', () => {
 
       const t1 = new ResourceTrackerThreshold()
 
-      t1.comparison = LT
-      t1.operator = MULTIPLY
+      t1.comparison = TrackerComparators.LT
+      t1.operator = TrackerOperators.MULTIPLY
       t1.value = 0.1
       t1.condition = 'Unrestrained'
 
       const t2 = new ResourceTrackerThreshold()
 
-      t2.comparison = GTE
-      t2.operator = MULTIPLY
+      t2.comparison = TrackerComparators.GTE
+      t2.operator = TrackerOperators.MULTIPLY
       t2.value = 0.1
       t2.condition = 'Grabbed'
 
       const t3 = new ResourceTrackerThreshold()
 
-      t3.comparison = GTE
-      t3.operator = MULTIPLY
+      t3.comparison = TrackerComparators.GTE
+      t3.operator = TrackerOperators.MULTIPLY
       t3.value = 0.5
       t3.condition = 'Grappled'
 
       const t4 = new ResourceTrackerThreshold()
 
-      t4.comparison = GTE
-      t4.operator = MULTIPLY
+      t4.comparison = TrackerComparators.GTE
+      t4.operator = TrackerOperators.MULTIPLY
       t4.value = 1.0
       t4.condition = 'Restrained'
 
       const t5 = new ResourceTrackerThreshold()
 
-      t5.comparison = GTE
-      t5.operator = MULTIPLY
+      t5.comparison = TrackerComparators.GTE
+      t5.operator = TrackerOperators.MULTIPLY
       t5.value = 1.5
       t5.condition = 'Controlled'
 
       const t6 = new ResourceTrackerThreshold()
 
-      t6.comparison = GTE
-      t6.operator = MULTIPLY
+      t6.comparison = TrackerComparators.GTE
+      t6.operator = TrackerOperators.MULTIPLY
       t6.value = 2.0
       t6.condition = 'Pinned'
 
@@ -147,64 +144,64 @@ describe('TrackerInstance getters', () => {
       // Let's emulate a health tracker with thresholds at 1/3, 0, -1 x HP, -2 x HP, etc...
       const t1 = new ResourceTrackerThreshold()
 
-      t1.comparison = GT
-      t1.operator = MULTIPLY
+      t1.comparison = TrackerComparators.GT
+      t1.operator = TrackerOperators.MULTIPLY
       t1.value = 1 / 3
       t1.condition = 'Healthy'
 
       const t2 = new ResourceTrackerThreshold()
 
-      t2.comparison = LTE
-      t2.operator = MULTIPLY
+      t2.comparison = TrackerComparators.LTE
+      t2.operator = TrackerOperators.MULTIPLY
       t2.value = 1 / 3
       t2.condition = 'Reeling'
 
       const t3 = new ResourceTrackerThreshold()
 
-      t3.comparison = LTE
-      t3.operator = MULTIPLY
+      t3.comparison = TrackerComparators.LTE
+      t3.operator = TrackerOperators.MULTIPLY
       t3.value = 0
       t3.condition = 'Danger of Collapse'
 
       const t4 = new ResourceTrackerThreshold()
 
-      t4.comparison = LTE
-      t4.operator = MULTIPLY
+      t4.comparison = TrackerComparators.LTE
+      t4.operator = TrackerOperators.MULTIPLY
       t4.value = -1
       t4.condition = 'Death Check 1'
 
       const t5 = new ResourceTrackerThreshold()
 
-      t5.comparison = LTE
-      t5.operator = MULTIPLY
+      t5.comparison = TrackerComparators.LTE
+      t5.operator = TrackerOperators.MULTIPLY
       t5.value = -2
       t5.condition = 'Death Check 2'
 
       const t6 = new ResourceTrackerThreshold()
 
-      t6.comparison = LTE
-      t6.operator = MULTIPLY
+      t6.comparison = TrackerComparators.LTE
+      t6.operator = TrackerOperators.MULTIPLY
       t6.value = -3
       t6.condition = 'Death Check 3'
 
       const t7 = new ResourceTrackerThreshold()
 
-      t7.comparison = LTE
-      t7.operator = MULTIPLY
+      t7.comparison = TrackerComparators.LTE
+      t7.operator = TrackerOperators.MULTIPLY
       t7.value = -4
       t7.condition = 'Death Check 4'
 
       const t8 = new ResourceTrackerThreshold()
 
-      t8.comparison = LTE
-      t8.operator = MULTIPLY
+      t8.comparison = TrackerComparators.LTE
+      t8.operator = TrackerOperators.MULTIPLY
       t8.value = -5
       t8.condition = 'Dead'
 
       const t9 = new ResourceTrackerThreshold()
 
-      t9.comparison = LT
-      t9.operator = MULTIPLY
+      t9.comparison = TrackerComparators.LT
+      t9.operator = TrackerOperators.MULTIPLY
       t9.value = -10
       t9.condition = 'Destroyed'
 
@@ -231,6 +228,7 @@ describe('TrackerInstance getters', () => {
       expect(OperatorFunctions['×'](2, 3)).toBe(6)
       expect(OperatorFunctions['÷'](6, 2)).toBe(3)
       expect(OperatorFunctions['-'](5, 3)).toBe(2)
+      expect(OperatorFunctions['−'](5, 3)).toBe(2)
     })
   })
 
