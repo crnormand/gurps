@@ -262,11 +262,11 @@ class PseudoDocument<
    */
   static async createDialog<Schema extends PseudoDocument.Schema = PseudoDocument.Schema>(
     data: DataModel.CreateData<Schema>,
-    operation: { parent: Document.Any }
+    { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
   ) {
     const content = await foundry.applications.handlebars.renderTemplate(
       this.CREATE_TEMPLATE,
-      this._prepareCreateDialogContext(operation.parent)
+      this._prepareCreateDialogContext(parent)
     )
 
     const result = await foundry.applications.api.DialogV2.input<foundry.applications.api.DialogV2.InputConfig>({
@@ -282,7 +282,7 @@ class PseudoDocument<
 
     if (!result) return null
 
-    return this.create({ ...data, ...result }, operation)
+    return this.create({ ...data, ...result }, { parent, ...operation })
   }
 
   /* ---------------------------------------- */
@@ -292,7 +292,7 @@ class PseudoDocument<
    * @param parent - The parent DataModel of the pseudo-document being created.
    * @returns The prepared create dialog context.
    */
-  protected static _prepareCreateDialogContext(_parent: Document.Any): AnyObject {
+  protected static _prepareCreateDialogContext(_parent?: Document.Any | null): AnyObject {
     return {
       fields: this.schema.fields,
     }
