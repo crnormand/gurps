@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Действие",
+    "HitLocation": "Место попадания",
+    "MoveMode": "Режим передвижения",
+    "ResourceTracker": "Трекер ресурсов"
+  },
   "GURPS": {
     "abbrevPoints": "Очк",
     "abbrevRef": "Ссыл",

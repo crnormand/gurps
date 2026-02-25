@@ -41,7 +41,7 @@ class PseudoDocument<
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.PSEUDO']
+  static override LOCALIZATION_PREFIXES: string[] = ['DOCUMENT']
 
   /* -------------------------------------------------- */
 
@@ -221,7 +221,7 @@ class PseudoDocument<
 
   /**
    * Create a new instance of this pseudo-document.
-   * @returns a promise that resolves to the updated document.
+   * @returns a promise that resolves to the created pseudo-document instance, or `undefined` if it cannot be retrieved.
    */
   static async create<T extends typeof PseudoDocument>(
     data: fields.SchemaField.CreateData<PseudoDocument.Schema>,
@@ -271,13 +271,12 @@ class PseudoDocument<
    * @param data - The data used for the creation.
    * @param operation - The context of the operation.
    * @param operation.parent - The parent of this document.
-   * @param options - Options for the creation dialog.
    * @returns A promise that resolves to the updated document.
    */
-  static async createDialog<Schema extends PseudoDocument.Schema = PseudoDocument.Schema>(
-    data: DataModel.CreateData<Schema>,
+  static async createDialog<T extends typeof PseudoDocument>(
+    data: DataModel.CreateData<PseudoDocument.Schema>,
     { parent, ...operation }: Partial<gurps.Pseudo.CreateOperation>
-  ) {
+  ): Promise<InstanceType<T> | undefined> {
     const content = await foundry.applications.handlebars.renderTemplate(
       this.CREATE_TEMPLATE,
       this._prepareCreateDialogContext(parent)
@@ -287,14 +286,14 @@ class PseudoDocument<
       content,
       window: {
         title: game.i18n?.format('DOCUMENT.New', {
-          type: game.i18n.localize(`GURPS.PSEUDO.${this.metadata.documentName}`),
+          type: game.i18n.localize(`DOCUMENT.${this.metadata.documentName}`),
         }),
         icon: this.metadata.icon,
       },
       render: (event, dialog) => this._createDialogRenderCallback(event, dialog),
     })
 
-    if (!result) return null
+    if (!result) return
 
     return this.create({ ...data, ...result }, { parent, ...operation })
   }

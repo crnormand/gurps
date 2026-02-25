@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Aktion",
+    "HitLocation": "Trefferzone",
+    "MoveMode": "Bewegungsmodus",
+    "ResourceTracker": "Ressourcen-Tracker"
+  },
   "GURPS": {
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",
