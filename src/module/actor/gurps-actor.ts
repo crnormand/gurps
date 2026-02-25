@@ -172,7 +172,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     createOptions?: Actor.Database.DialogCreateOptions,
     options?: Actor.CreateDialogOptions
   ): Promise<Actor.Stored | null | undefined> {
-    const isDevMode = game.settings?.get(GURPS.SYSTEM_NAME, 'developerMode') ?? false
+    const isDevMode = GURPS.modules.Dev?.settings.enableNonProductionDocumentTypes ?? false
 
     if (!isDevMode) {
       options ||= {}

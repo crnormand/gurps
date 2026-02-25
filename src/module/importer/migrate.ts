@@ -1,3 +1,5 @@
+import { migrateSettings } from '@module/util/migrate-settings.js'
+
 import {
   AUTOMATICALLY_SET_IGNORE_QTY,
   DISPLAY_PRESERVE_QTY_FLAG,
@@ -75,37 +77,5 @@ const legacyMigrations = new Map<string, MigrationHandler>([
  * Migrate legacy GCS Importer settings to new settings, and remove the legacy settings.
  */
 export async function migrate(): Promise<void> {
-  const storage = game.settings?.storage.get('world') as foundry.documents.collections.WorldSettings
-
-  if (!storage) return
-
-  const namespacePrefix = `${GURPS.SYSTEM_NAME}.`
-  const migrations: Promise<void>[] = []
-  const deletions: string[] = []
-
-  for (const entry of storage.contents) {
-    if (!entry.key.startsWith(namespacePrefix)) continue
-
-    const legacyKey = entry.key.slice(namespacePrefix.length)
-    const handler = legacyMigrations.get(legacyKey)
-
-    if (!handler) continue
-
-    migrations.push(handler(entry.value).then(() => undefined))
-    deletions.push(entry.id)
-  }
-
-  if (migrations.length === 0) return
-
-  await Promise.all(migrations)
-
-  for (const key of deletions) {
-    // Remove migrated legacy settings so the migration only runs once.
-    const settingToDelete = storage.get(key)
-
-    if (settingToDelete) {
-      await settingToDelete.delete()
-      console.debug(`GURPS | Deleting migrated legacy setting: ${key}`)
-    }
-  }
+  return migrateSettings(legacyMigrations)
 }

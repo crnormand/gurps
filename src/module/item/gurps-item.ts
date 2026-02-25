@@ -157,7 +157,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     createOptions?: Item.Database.DialogCreateOptions,
     options?: Item.CreateDialogOptions
   ): Promise<Item.Stored | null | undefined> {
-    const isDevMode = game.settings?.get(GURPS.SYSTEM_NAME, 'developerMode') ?? false
+    const isDevMode = GURPS.modules.Dev?.settings.enableNonProductionDocumentTypes ?? false
 
     if (!isDevMode) {
       options ||= {}
