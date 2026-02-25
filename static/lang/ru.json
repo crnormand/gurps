@@ -1614,6 +1614,10 @@
     "youDoNotHavePermission": "У вас нет разрешения на это."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Атака врукопашную",
+      "rangedAttack": "Дальняя атака"
+    },
     "Actor": {
       "character": "Персонаж",
       "characterV2": "Персонаж (v2)",

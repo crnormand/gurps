@@ -1607,6 +1607,10 @@
     "youDoNotHavePermission": "Du hast keine Berechtigung dies zu tun"
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Nahkampfangriff",
+      "rangedAttack": "Fernkampfangriff"
+    },
     "Actor": {
       "character": "Charakter (v1)",
       "characterV2": "Charakter (v2)",

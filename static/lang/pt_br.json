@@ -1608,6 +1608,10 @@
     "youDoNotHavePermission": "Você não tem permissão para fazer isso."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Ataque Corpo a Corpo",
+      "rangedAttack": "Ataque à Distância"
+    },
     "Actor": {
       "character": "Personagem (v1)",
       "characterV2": "Personagem (v2)",

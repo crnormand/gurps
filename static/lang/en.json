@@ -1608,6 +1608,10 @@
     "youDoNotHavePermission": "You do not have permission to do that."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Melee Attack",
+      "rangedAttack": "Ranged Attack"
+    },
     "Actor": {
       "character": "Character (v1)",
       "characterV2": "Character (v2)",
