@@ -15,7 +15,7 @@ class PseudoDocument<
 
   static get metadata(): PseudoDocument.Metadata<gurps.Pseudo.Name> {
     return {
-      // @ts-expect-error: This is always overridden
+      // @ts-expect-error: This should always be overridden
       documentName: null,
       label: '',
       icon: '',
@@ -374,16 +374,16 @@ class PseudoDocument<
 
   /**
    * Allow for subclasses to configure the CRUD workflow.
-   * @param {"create"|"update"|"delete"} _action     The operation.
-   * @param {Document.Any} _document    The parent document.
-   * @param {object} _update                         The data used for the update.
-   * @param {object} _operation                      The context of the operation.
+   * @param action - The operation.
+   * @param document - The parent document.
+   * @param update - The data used for the update.
+   * @param operation - The context of the operation.
    */
   static _configureUpdates(
     _action: 'create' | 'update' | 'delete',
     _document: Document.Any,
-    _update: object,
-    _operation: object
+    _update: AnyObject,
+    _operation: Document.Database.UpdateOperation<foundry.abstract.types.DatabaseUpdateOperation>
   ) {}
 }
 
