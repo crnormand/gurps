@@ -5,28 +5,44 @@ export {}
 declare global {
   interface GURPSGlobal {
     SYSTEM_NAME: 'gurps'
+
     modules: Record<string, GurpsModule>
+
     LastActor: Actor.Implementation | null
+
     StatusEffect: {
       lookup(id: string): any
     }
+
     SavedStatusEffects: typeof CONFIG.statusEffects
+
     StatusEffectStanding: 'standing'
+
     StatusEffectStandingLabel: 'GURPS.status.Standing'
+
     decode<T = unknown>(actor: GurpsActor, path: string): T
+
     put<T>(list: Record<string, T>, obj: T, index?: number = -1): string
+
     parselink(input: string): { text: string; action?: GurpsAction }
+
     removeKey(actor: GurpsActor, key: string): void
+
     insertBeforeKey(actor: Actor.Implementation, path: string, newobj: AnyObject): Promise<void>
+
     findAdDisad(actor: Actor.Implementation, adName: string): Feature['fea'] | undefined
+
     readTextFromFile(file: File): Promise<string>
+
     performAction(
       action: GurpsAction,
       actor: Actor | GurpsActor | null,
       event?: Event | null,
       targets?: string[]
     ): Promise<any>
+
     stopActions: boolean
+
     ModifierBucket: {
       setTempRangeMod(mod: number): void
       addTempRangeMod(): void
@@ -36,6 +52,7 @@ declare global {
       refreshPosition(): void
       render(): Promise<void>
     }
+
     DamageTables: {
       translate(damageType: string): string
       woundModifiers: Record<
@@ -44,18 +61,23 @@ declare global {
       >
       damageTypeMap: Record<string, string>
     }
+
     SSRT: {
       getModifier(yards: number): number
     }
+
     rangeObject: {
       ranges: Array<{ modifier: number; max: number; penalty: number }>
     }
+
     Maneuvers: {
       get(id: string): { icon?: string; label: string; move: string | null } | undefined
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
+
     DamageChat: typeof DamageChat
+
     resolveDamageRoll: (
       event: Event,
       actor: GurpsActor,
@@ -64,7 +86,11 @@ declare global {
       isGM: boolean,
       isOtf?: boolean
     ) => Promise<void>
+
     SJGProductMappings: Record<string, string>
+
+    /* ---------------------------------------- */
+
     CONFIG: {
       PseudoDocument: Record<gurps.Pseudo.WithTypes, Record<string, gurps.Pseudo.ConfigEntry>>
     }
