@@ -13,7 +13,126 @@ type CreateDataOf<Model extends DataModel.Any> = fields.SchemaField.CreateData<D
 
 type NewDataWrapper<Type extends NewItemType> = CreateDataOf<Item.SystemOfType<Type>>
 
-function getNewItemType(oldType: OldItemType): NewItemType {
+/* ---------------------------------------- */
+
+async function runMigration() {
+  if (!game.user || !game.user.isGM) return
+
+  const migrationVersion = game.settings!.get(GURPS.SYSTEM_NAME, 'migration-version')
+
+  if (foundry.utils.isNewerVersion('1.0.0', migrationVersion)) {
+    const warning = ui.notifications!.warn('GURPS.migration.item.progressMessage', {
+      format: { version: '1.0.0' },
+      progress: true,
+    })
+
+    console.log('Migrating world items')
+    const items = game.items!.filter(item => item.isOfType('equipment', 'feature', 'skill', 'spell'))
+    const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
+
+    const length = items.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)
+
+    if (length > 0) {
+      const updateStep = 1 / length
+      let updateProgress = 0
+
+      for (const item of items) {
+        await migrateItem(item)
+        updateProgress += updateStep
+        warning.update({ pct: updateProgress })
+      }
+
+      for (const pack of packs) {
+        await migrateItemCompendium(pack)
+        updateProgress += pack.index.size * updateStep
+        warning.update({ pct: updateProgress })
+      }
+    }
+
+    ui.notifications!.remove(warning)
+    ui.notifications!.success('GURPS.migration.item.successMessage', {
+      format: { version: '1.0.0' },
+      permanent: true,
+    })
+  }
+}
+
+/* ---------------------------------------- */
+
+async function migrateItemCompendium(pack: CompendiumCollection<'Item'>) {
+  const items = await pack.getDocuments()
+
+  const updateData = items.map(item => getMigratedItemData(item, null)).filter(element => element !== null)
+
+  await Item.updateDocuments(updateData, { pack: pack.collection, recursive: false })
+}
+
+/* ---------------------------------------- */
+
+/**
+ * Migrate an Item from the old system to the new system.
+ * This item should be used only for Items not contained within an Actor, as the Actor migration process
+ * handles embedded Item migration on its own.
+ */
+async function migrateItem(
+  oldItem: Item.Implementation,
+  operation?: Item.Database.UpdateOperation
+): Promise<Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'> | void> {
+  const updateData = getMigratedItemData(oldItem, null)
+
+  if (!updateData) {
+    console.error(`Failed to get migrated Item data for Item with id ${oldItem.id}`)
+
+    return
+  }
+
+  const newItem = await oldItem.update(updateData, { ...operation, recursive: false })
+
+  if (!newItem) {
+    console.error(`Failed to migrate Item with id ${oldItem.id}`)
+
+    return
+  }
+
+  if (!newItem.isOfType('equipmentV2', 'featureV2', 'skillV2', 'spellV2')) {
+    console.error(`Migrated Item has invalid type: ${newItem.type}`)
+
+    return
+  }
+
+  return newItem
+}
+
+/* ---------------------------------------- */
+
+function getMigratedItemData(
+  oldItem: Item.Implementation | Item.CreateData,
+  parentId: string | null
+): CreateDataOf<Item.OfType<NewItemType>> | null {
+  const type = getNewItemType(oldItem.type)
+
+  if (type === null) {
+    console.debug('Item is not of a type that can be migrated, skipping migration.')
+
+    return null
+  }
+
+  const system = migrateItemSystem(oldItem.type, oldItem.system as any, parentId)
+
+  const itemData = oldItem instanceof Item ? oldItem.toObject() : oldItem
+
+  const updateData = {
+    ...itemData,
+    type,
+    system,
+  }
+
+  return updateData
+}
+
+/* ---------------------------------------- */
+
+function getNewItemType(oldType: OldItemType | string): NewItemType | null {
   switch (oldType) {
     case 'equipment':
       return 'equipmentV2'
@@ -23,8 +142,14 @@ function getNewItemType(oldType: OldItemType): NewItemType {
       return 'skillV2'
     case 'spell':
       return 'spellV2'
+    default:
+      console.debug(`Not a valid Item type for migration: ${oldType}`)
+
+      return null
   }
 }
+
+/* ---------------------------------------- */
 
 function migrateItemSystem(type: string, oldData: OldItemData, parentId: string | null) {
   switch (type) {
@@ -49,17 +174,21 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
     containedBy: parentId,
   }
 
-  Object.values(oldData.melee).forEach(action => {
-    const id = foundry.utils.randomID()
+  if (oldData.melee) {
+    Object.values(oldData.melee).forEach(action => {
+      const id = foundry.utils.randomID()
 
-    newData.actions[id] = action as CreateDataOf<MeleeAttackModel>
-  })
+      newData.actions[id] = action as CreateDataOf<MeleeAttackModel>
+    })
+  }
 
-  Object.values(oldData.ranged).forEach(action => {
-    const id = foundry.utils.randomID()
+  if (oldData.ranged) {
+    Object.values(oldData.ranged).forEach(action => {
+      const id = foundry.utils.randomID()
 
-    newData.actions[id] = action as CreateDataOf<RangedAttackModel>
-  })
+      newData.actions[id] = action as CreateDataOf<RangedAttackModel>
+    })
+  }
 
   return newData
 }
@@ -121,4 +250,4 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
 
 /* ---------------------------------------- */
 
-export { migrateItemSystem, getNewItemType }
+export { getNewItemType, migrateItem, getMigratedItemData, migrateItemCompendium, runMigration }

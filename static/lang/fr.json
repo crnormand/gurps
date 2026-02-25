@@ -8,9 +8,6 @@
     "active": "Actif",
     "activeEffect": "Effet Actif",
     "activeEffects": "Effets Actifs",
-    "actor": {
-      "setting": {}
-    },
     "addAbbrev": "Abrev",
     "addAdditionalStackingModifier": "Modificateur Additionel",
     "addAdjustedForDamageType": "‡ - Ajusté pour le Modificateur de Dégâts",
@@ -846,6 +843,20 @@
     "melee": "Mêlée",
     "meleeAttack": "Attaque de Mêlée",
     "meleeWeapons": "Armes de Mêlée",
+    "migration": {
+      "actor": {
+        "progressMessage": "Application des migrations d'Acteur pour la version {version}, veuillez patienter...",
+        "successMessage": "Migrations d'Acteur appliquées avec succès pour la version {version}."
+      },
+      "item": {
+        "progressMessage": "Application des migrations d'Objet pour la version {version}, veuillez patienter...",
+        "successMessage": "Migrations d'Objet appliquées avec succès pour la version {version}."
+      },
+      "migrationItem": {
+        "name": "Le Porte-Tout",
+        "notes": "Ceci est un objet temporaire utilisé pour contenir toutes les Réactions, Modificateurs Conditionnels et Armes après la migration du personnage. Pour déplacer ces éléments à leur place appropriée, veuillez réimporter ce personnage depuis GCS ou GCA."
+      }
+    },
     "minDamageRule": "Dégâts min.:",
     "minimum": "Minimum",
     "minimumDamageRule": "* — Règle de dégâts minimums appliquée.",

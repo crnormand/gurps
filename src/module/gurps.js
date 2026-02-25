@@ -1,7 +1,6 @@
 // Import Modules
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
-import { GGADebugger } from '@module/util/debugger.js'
 import HitFatPoints from '@module/util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
 import Initiative from '@module/util/initiative.js'
@@ -49,6 +48,7 @@ import { CombatTracker } from './combat-tracker/index.js'
 import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
+import { Dev } from './dev/index.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import GurpsActiveEffect from './effects/active-effect.js'
@@ -106,6 +106,7 @@ if (!globalThis.GURPS) {
     Combat,
     CombatTracker,
     Damage,
+    Dev,
     Importer,
     Item,
     Pdf,
@@ -2163,7 +2164,6 @@ if (!globalThis.GURPS) {
     // GurpsActiveEffect.init()
 
     // Add Debugger info
-    GGADebugger.init()
 
     // Modifier Bucket must be defined after hit locations
     GURPS.ModifierBucket = new ModifierBucket()

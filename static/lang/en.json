@@ -8,9 +8,6 @@
     "active": "Active",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
-    "actor": {
-      "setting": {}
-    },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",
     "addAdjustedForDamageType": "‡ - Adjusted for Damage Modifier",
@@ -847,6 +844,14 @@
     "meleeAttack": "Melee Attack",
     "meleeWeapons": "Melee Weapons",
     "migration": {
+      "actor": {
+        "progressMessage": "Applying Actor migrations for version {version}, please wait...",
+        "successMessage": "Successfully applied Actor migrations for version {version}."
+      },
+      "item": {
+        "progressMessage": "Applying Item migrations for version {version}, please wait...",
+        "successMessage": "Successfully applied Item migrations for version {version}."
+      },
       "migrationItem": {
         "name": "The Everything Holder",
         "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
@@ -1600,7 +1605,7 @@
     "yard": "yard",
     "yards": "yards",
     "years": "years",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "youDoNotHavePermission": "You do not have permission to do that."
   },
   "TYPES": {
     "Actor": {

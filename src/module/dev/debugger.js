@@ -1,5 +1,3 @@
-import * as Settings from './miscellaneous-settings.js'
-
 globalThis._patchedFuncs = {}
 
 // Copied from Monks Little Details module
@@ -26,7 +24,7 @@ export let patchFunc = (prop, func, type = 'WRAPPER') => {
 
 export class GGADebugger {
   static init() {
-    if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_DEBUG_INFO)) return
+    if (!GURPS.modules.Dev.settings.showDebugInfo) return
     patchFunc('DocumentSheet.prototype._createDocumentIdLink', async function (wrapped, ...args) {
       wrapped(...args)
       let [html] = args

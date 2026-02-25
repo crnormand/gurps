@@ -1,7 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
-import { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
-import { getNewItemType, migrateItemSystem } from '@module/item/migrate.js'
+import { getMigratedItemData } from '@module/item/migrate.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
@@ -10,14 +9,62 @@ import { MoveModeV2 } from './data/move-mode.js'
 import { NoteV2 } from './data/note.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
 
-async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
-  if (!game.i18n) {
-    console.error('GURPS | Cannot migrate actor because game.i18n is not initialized.')
+async function runMigration() {
+  if (!game.user || !game.user.isGM) return
 
-    return
+  const migrationVersion = game.settings!.get(GURPS.SYSTEM_NAME, 'migration-version')
+
+  if (foundry.utils.isNewerVersion('1.0.0', migrationVersion)) {
+    const warning = ui.notifications!.warn('GURPS.migration.actor.progressMessage', {
+      format: { version: '1.0.0' },
+      progress: true,
+    })
+
+    console.log('Migrating world actors')
+    const actors = game.actors!.filter(actor => !actor.isNewActorType)
+    const packs = game.packs!.filter(pack => pack.documentName === 'Actor') as CompendiumCollection<'Actor'>[]
+
+    const length = actors.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)
+
+    if (length > 0) {
+      const updateStep = 1 / length
+      let updateProgress = 0
+
+      for (const actor of actors) {
+        await migrateActor(actor)
+        updateProgress += updateStep
+        warning.update({ pct: updateProgress })
+      }
+
+      for (const pack of packs) {
+        await migrateActorCompendium(pack)
+        updateProgress += pack.index.size * updateStep
+        warning.update({ pct: updateProgress })
+      }
+    }
+
+    ui.notifications!.remove(warning)
+    ui.notifications!.success('GURPS.migration.actor.successMessage', {
+      format: { version: '1.0.0' },
+      permanent: true,
+    })
   }
+}
 
-  if (!actor.isOfType('character')) {
+/* ---------------------------------------- */
+
+async function migrateActorCompendium(pack: CompendiumCollection<'Actor'>) {
+  const actors = await pack.getDocuments()
+
+  const updateData = actors.map(actor => getMigratedActorData(actor)).filter(element => element !== null)
+
+  await Actor.updateDocuments(updateData, { pack: pack.collection, recursive: false })
+}
+
+/* ---------------------------------------- */
+
+async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
+  if (!actor.isOfType('character', 'enemy')) {
     console.error(
       'Attempted to migrate actor that is not of type character. Actor name:',
       actor.name,
@@ -28,24 +75,110 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
     return
   }
 
+  const updateData = getMigratedActorData(actor)
+
+  if (!updateData) {
+    console.error('Failed to get migrated data for actor. Actor name:', actor.name)
+
+    return
+  }
+
+  const newActor = (await actor.update(updateData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
+
+  if (!newActor) {
+    console.error('Failed to update actor with migrated data. Actor name:', actor.name)
+
+    return
+  }
+
+  return newActor
+}
+
+/* ---------------------------------------- */
+
+function getMigratedActorData(
+  oldActor: Actor.Implementation | Actor.CreateData
+): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.OfType<'characterV2'>>> | null {
+  if (!game.i18n) {
+    console.error('GURPS | Cannot migrate actor because game.i18n is not initialized.')
+
+    return null
+  }
+
+  if (!['character', 'enemy'].includes(oldActor.type)) {
+    console.error(
+      'Attempted to migrate actor that is not of type character. Actor name:',
+      oldActor.name,
+      'Actor type:',
+      oldActor.type
+    )
+
+    return null
+  }
+
   const items: Item.CreateData[] = []
 
-  const system = actor.system as ActorV1Model
+  const system = oldActor.system as ActorV1Model
+  const traits = system.ads ? flattenItemList(system.ads, null) : []
+  const skills = system.skills ? flattenItemList(system.skills, null) : []
+  const spells = system.spells ? flattenItemList(system.spells, null) : []
+  const carriedEquipment =
+    system.equipment && system.equipment.carried ? flattenItemList(system.equipment.carried, null) : []
+  const otherEquipment = system.equipment && system.equipment.other ? flattenItemList(system.equipment.other, null) : []
 
-  actor.items.forEach(item => {
-    if (!item.isOfType('equipment', 'feature', 'skill', 'spell')) return
+  traits.forEach(trait => {
+    const newTrait = getMigratedItemData(
+      { _id: trait._id, type: 'feature', name: trait.name, system: { fea: trait } } as unknown as Item.Implementation,
+      trait._parentId
+    )
 
-    const parentId = getItemParentId(actor, item)
-    const type = getNewItemType(item.type)
+    items.push(newTrait as Item.CreateData)
+  })
 
-    const system = migrateItemSystem(item.type, item.system as any, parentId)
+  skills.forEach(skill => {
+    const newSkill = getMigratedItemData(
+      { _id: skill._id, type: 'skill', name: skill.name, system: { ski: skill } } as unknown as Item.Implementation,
+      skill._parentId
+    )
 
-    items.push({
-      _id: item._id,
-      type,
-      name: item.name,
-      system,
-    })
+    items.push(newSkill as Item.CreateData)
+  })
+
+  spells.forEach(spell => {
+    const newSpell = getMigratedItemData(
+      { _id: spell._id, type: 'spell', name: spell.name, system: { spl: spell } } as unknown as Item.Implementation,
+      spell._parentId
+    )
+
+    items.push(newSpell as Item.CreateData)
+  })
+
+  carriedEquipment.forEach(equipment => {
+    const newEquipment = getMigratedItemData(
+      {
+        _id: equipment._id,
+        type: 'equipment',
+        name: equipment.name,
+        system: { eqt: equipment },
+      } as unknown as Item.Implementation,
+      equipment._parentId
+    )
+
+    items.push(newEquipment as Item.CreateData)
+  })
+
+  otherEquipment.forEach(equipment => {
+    const newEquipment = getMigratedItemData(
+      {
+        _id: equipment._id,
+        type: 'equipment',
+        name: equipment.name,
+        system: { eqt: equipment },
+      } as unknown as Item.Implementation,
+      equipment._parentId
+    )
+
+    items.push(newEquipment as Item.CreateData)
   })
 
   // ActorV1 has no concept of Reaction and Conditional Modifier ownership by items,
@@ -153,37 +286,16 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
 
   items.push(migrationItem)
 
-  const createData: Actor.CreateData<'characterV2'> = {
+  const updateData: Actor.CreateData<'characterV2'> = {
+    _id: oldActor._id,
     type: 'characterV2',
-    img: actor.img,
-    name: 'Migrated: ' + actor.name,
-    system: migrateActorSystem(actor.system),
+    img: oldActor.img,
+    name: oldActor.name,
+    system: migrateActorSystem(oldActor.system as ActorV1Model),
     items,
   }
 
-  const newActor = Actor.create(createData) as unknown as Actor.OfType<'characterV2'>
-
-  return newActor
-}
-
-/* ---------------------------------------- */
-
-function getItemParentId(
-  actor: Actor.OfType<'character'>,
-  item: Item.OfType<'equipment' | 'feature' | 'skill' | 'spell'>
-): string | null {
-  let oldParentId: string | null = null
-
-  if (item.isOfType('equipment')) oldParentId = (item.system as Equipment).eqt.parentuuid
-  else if (item.isOfType('feature')) oldParentId = (item.system as Feature).fea.parentuuid
-  else if (item.isOfType('skill')) oldParentId = (item.system as Skill).ski.parentuuid
-  else if (item.isOfType('spell')) oldParentId = (item.system as Spell).spl.parentuuid
-
-  if (oldParentId === null) return null
-
-  const newParent = actor.items.find(parent => (parent.system as any).importid === oldParentId)
-
-  return newParent?._id || null
+  return updateData
 }
 
 /* ---------------------------------------- */
@@ -296,18 +408,20 @@ function migrateActorSystem(
   }
 
   // Migrate hit locations
-  Object.values(oldData.hitlocations).forEach(hitlocation => {
-    const id = foundry.utils.randomID()
+  if (oldData.hitlocations) {
+    Object.values(oldData.hitlocations).forEach(hitlocation => {
+      const id = foundry.utils.randomID()
 
-    const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
-      ...hitlocation,
-      _id: id,
-      rollText: hitlocation.roll,
-    }
+      const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
+        ...hitlocation,
+        _id: id,
+        rollText: hitlocation.roll,
+      }
 
-    newData.hitlocationsV2 ||= {}
-    newData.hitlocationsV2[id] = location
-  })
+      newData.hitlocationsV2 ||= {}
+      newData.hitlocationsV2[id] = location
+    })
+  }
 
   // Migrate notes
   const addNote = (data: Note, parentId: string | null) => {
@@ -328,40 +442,71 @@ function migrateActorSystem(
     }
   }
 
-  Object.values(oldData.notes).forEach(note => addNote(note, null))
+  if (oldData.notes) {
+    Object.values(oldData.notes).forEach(note => addNote(note, null))
+  }
 
   // Migrate move modes
-  Object.values(oldData.move).forEach(data => {
-    const id = foundry.utils.randomID()
+  if (oldData.move) {
+    Object.values(oldData.move).forEach(data => {
+      const id = foundry.utils.randomID()
 
-    const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      _id: id,
-      mode: data.mode,
-      basic: Number(data.basic),
-      enhanced: data.enhanced ? Number(data.enhanced) : null,
-      default: data.default,
-    }
+      const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
+        _id: id,
+        mode: data.mode,
+        basic: Number(data.basic),
+        enhanced: data.enhanced ? Number(data.enhanced) : null,
+        default: data.default,
+      }
 
-    newData.moveV2 ||= {}
-    newData.moveV2[id] = move
-  })
+      newData.moveV2 ||= {}
+      newData.moveV2[id] = move
+    })
+  }
 
   // Migrate resource trackers
 
-  Object.values(oldData.additionalresources.tracker).forEach(data => {
-    const id = foundry.utils.randomID()
+  if (oldData.additionalresources?.tracker) {
+    Object.values(oldData.additionalresources.tracker).forEach(data => {
+      const id = foundry.utils.randomID()
 
-    const tracker: DataModel.CreateData<DataModel.SchemaOf<TrackerInstance>> = {
-      ...data,
-      _id: id,
-    }
+      const tracker: DataModel.CreateData<DataModel.SchemaOf<TrackerInstance>> = {
+        ...data,
+        _id: id,
+      }
 
-    newData.additionalresources ||= {}
-    newData.additionalresources.tracker ||= {}
-    newData.additionalresources.tracker[id] = tracker
-  })
+      newData.additionalresources ||= {}
+      newData.additionalresources.tracker ||= {}
+      newData.additionalresources.tracker[id] = tracker
+    })
+  }
 
   return newData
 }
 
-export { migrateActor }
+/* ---------------------------------------- */
+
+type RecursiveItem<T> = T & { contains?: Record<string, RecursiveItem<T>> }
+
+function flattenItemList<T>(
+  itemList: Record<string, RecursiveItem<T>>,
+  parentId: string | null
+): (T & { _id: string; _parentId: string | null })[] {
+  if (!itemList) return []
+
+  const resultList: (T & { _id: string; _parentId: string | null })[] = []
+
+  for (const item of Object.values(itemList)) {
+    const id = foundry.utils.randomID()
+
+    resultList.push({ ...item, contains: {}, _id: id, _parentId: parentId })
+
+    if (item.contains) {
+      resultList.push(...flattenItemList(item.contains, id))
+    }
+  }
+
+  return resultList
+}
+
+export { migrateActor, runMigration }

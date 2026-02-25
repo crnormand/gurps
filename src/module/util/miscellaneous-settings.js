@@ -54,7 +54,6 @@ export const SETTING_PORTRAIT_PATH = 'portrait-path'
 export const SETTING_CTRL_KEY = 'ctrl-key'
 export const SETTING_USE_ON_TARGET = 'use-on-target'
 // export const SETTING_USE_FOUNDRY_ITEMS = 'use-foundry-items'
-export const SETTING_SHOW_DEBUG_INFO = 'show-debug-info'
 export const SETTING_SHOW_FOUNDRY_GLOBAL_ITEMS = 'show-foundry-global-items'
 export const SETTING_SHOW_ITEM_IMAGE = 'show-item-image'
 
@@ -80,18 +79,6 @@ export const VERSION_0104 = SemanticVersion.fromString('0.10.4')
 export function initializeSettings() {
   Hooks.once('init', async function () {
     // Game Aid Information Settings ----
-
-    // Show Debug Information for Documents
-    game.settings.register(SYSTEM_NAME, SETTING_SHOW_DEBUG_INFO, {
-      name: game.i18n.localize('GURPS.settingShowDebugInfo'),
-      hint: game.i18n.localize('GURPS.settingHintShowDebugInfo'),
-      scope: 'client',
-      config: true,
-      type: Boolean,
-      default: true,
-      requiresReload: true,
-      onChange: value => console.log(`Show Debug Info for Documents: ${value}`),
-    })
 
     // Keep track of the last version number
     game.settings.register(SYSTEM_NAME, SETTING_CHANGELOG_VERSION, {

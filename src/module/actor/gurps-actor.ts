@@ -84,7 +84,7 @@ interface EquipmentDropData {
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> implements ActorV1Interface {
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
-    return this.system as Actor.SystemOfType<'characterV2' | 'enemy'>
+    return this.system as Actor.SystemOfType<'characterV2'>
   }
 
   // Narrowed view of this.system for characterV1 logic.
@@ -93,8 +93,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   // Common guard for new actor subtypes.
-  private get isNewActorType(): boolean {
-    return this.isOfType('characterV2', 'enemy')
+  get isNewActorType(): boolean {
+    return this.isOfType('characterV2')
   }
 
   // Item subtype guard helpers
@@ -163,6 +163,28 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       this.ignoreRender = false
       this.sheet.render(true)
     }
+  }
+
+  /* ---------------------------------------- */
+
+  static override async createDialog(
+    data?: Actor.CreateDialogData,
+    createOptions?: Actor.Database.DialogCreateOptions,
+    options?: Actor.CreateDialogOptions
+  ): Promise<Actor.Stored | null | undefined> {
+    const isDevMode = GURPS.modules.Dev?.settings.enableNonProductionDocumentTypes ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      const allTypes = Actor.TYPES
+      const excludeTypes = ['base', 'character', 'enemy']
+
+      // Disable non-production Actor types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = allTypes.filter(type => !excludeTypes.includes(type))
+    }
+
+    return super.createDialog(data, createOptions, options)
   }
 
   /* ---------------------------------------- */
@@ -1087,7 +1109,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       isCombatant,
     }
 
-    if (!isCombatActive || !isCombatant || !this.isOfType('characterV2', 'enemy')) return result
+    if (!isCombatActive || !isCombatant || !this.isNewActorType) return result
 
     const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
     const checkForTargetSettings = this.getSetting(Settings.SETTING_ALLOW_TARGETED_ROLLS, 'Allow')
@@ -1484,7 +1506,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /* ---------------------------------------- */
 
   async updateEqtCountV2(id: string, count: number) {
-    if (!this.isOfType('characterV2', 'enemy')) return null
+    if (!this.isNewActorType) return null
 
     const equipment = this.modelV2.allEquipmentV2.find(equipmentItem => equipmentItem.id === id)
     const updateData: Record<string, any> = { _id: id, system: { eqt: { count } } }

@@ -6,6 +6,7 @@
 
 - Automate Foundry publishing when creating a new release.
 - Added new revised character and item schema, with automatic migration for existing characters and items.
+- Added direct import support for characters from GCA 5.
 
 ### Bugfixes
 

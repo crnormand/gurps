@@ -50,8 +50,8 @@ declare module 'fvtt-types/configuration' {
   interface DataModelConfig {
     Actor: {
       character: ActorV1Model
+      enemy: ActorV1Model
       characterV2: typeof CharacterModel
-      enemy: typeof CharacterModel
     }
     Item: {
       equipment: Equipment
@@ -83,7 +83,10 @@ declare module 'fvtt-types/configuration' {
   /* ---------------------------------------- */
 
   interface SettingConfig {
+    /** Bucket */
     'gurps.bucket-position': 'left' | 'right'
+
+    /** Damage */
     'gurps.damage.apply-divisor': foundry.data.fields.BooleanField
     'gurps.damage.blunt-trauma': foundry.data.fields.BooleanField
     'gurps.damage.body-hits': foundry.data.fields.BooleanField
@@ -93,6 +96,8 @@ declare module 'fvtt-types/configuration' {
     'gurps.damage.only-gms-open-add': foundry.data.fields.BooleanField
     'gurps.damage.simple-add': foundry.data.fields.BooleanField
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
+
+    /** Importer */
     'gurps.importer.auto-ignore-qty': foundry.data.fields.BooleanField
     'gurps.importer.display-preserve-qty-flag': foundry.data.fields.BooleanField
     'gurps.importer.import-extended-values-gcs': foundry.data.fields.BooleanField
@@ -109,16 +114,27 @@ declare module 'fvtt-types/configuration' {
     'gurps.importer.overwrite-name': foundry.data.fields.BooleanField
     'gurps.importer.overwrite-portraits': foundry.data.fields.BooleanField<{ initial: true }>
     'gurps.importer.use-browser-importer': foundry.data.fields.BooleanField
-    'gurps.modify-dice-plus-adds': boolean
+
+    /** PDF */
     'gurps.pdf.basicset': 'Combined' | 'Separate'
     'gurps.pdf.open-first': boolean
-    'gurps.portrait-path': 'global' | 'world'
-    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
+
+    /** Resource Tracker */
     'gurps.resource-tracker.manager': new (options?: any) => ResourceTrackerManager
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
+
+    /** Developer */
+    'gurps.dev.enableNonProductionDocumentTypes': foundry.data.fields.BooleanField
+    'gurps.dev.showDebugInfo': foundry.data.fields.BooleanField
+
+    /** Unsorted */
+    'gurps.modify-dice-plus-adds': boolean
+    'gurps.portrait-path': 'global' | 'world'
+    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
     'gurps.portrait-hp-tinting': boolean
+    'gurps.migration-version': string
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

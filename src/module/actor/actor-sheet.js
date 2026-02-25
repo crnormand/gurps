@@ -1776,9 +1776,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     event.preventDefault()
 
     switch (this.actor.type) {
+      case 'enemy':
       case 'character':
         return new ActorImporter(this.actor).importActor()
-      case 'enemy':
       case 'characterV2':
         return GURPS.modules.Importer.importerPrompt(this.actor)
       default:
@@ -2124,7 +2124,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     html.find('#body-plan').change(async event => {
       let bodyplan = event.currentTarget.value
 
-      if (bodyplan !== this.actor.system.additionalresources.bodyplan) {
+      if (bodyplan !== this.actor.system.bodyplan) {
         let hitlocationTable = hitlocationDictionary[bodyplan]
 
         if (!hitlocationTable) {
@@ -2147,7 +2147,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
           this.actor.ignoreRender = true
           await this.actor.update({
             'system.-=hitlocations': null,
-            'system.additionalresources.bodyplan': bodyplan,
+            'system.bodyplan': bodyplan,
           })
           await this.actor.update({ 'system.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
           this.actor.ignoreRender = false
