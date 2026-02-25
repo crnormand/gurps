@@ -23,10 +23,14 @@ class PseudoDocument<
     }
   }
 
+  protected get static() {
+    return this.constructor as typeof PseudoDocument
+  }
+
   /* ---------------------------------------- */
 
   get metadata() {
-    return (this.constructor as typeof PseudoDocument).metadata
+    return this.static.metadata
   }
 
   /* ---------------------------------------- */
@@ -82,9 +86,9 @@ class PseudoDocument<
   /**
    * The parent document of this pseudo-document.
    */
-  get document(): Document.Any {
-    const findDocument = (model: DataModel.Any): Document.Any => {
-      if (model instanceof Document) return model
+  get document(): gurps.Pseudo.ParentDocument {
+    const findDocument = (model: DataModel.Any): gurps.Pseudo.ParentDocument => {
+      if (model instanceof Document) return model as gurps.Pseudo.ParentDocument
 
       return findDocument(model.parent)
     }
@@ -219,20 +223,20 @@ class PseudoDocument<
    * Create a new instance of this pseudo-document.
    * @returns a promise that resolves to the updated document.
    */
-  static async create(
+  static async create<T extends typeof PseudoDocument>(
     data: fields.SchemaField.CreateData<PseudoDocument.Schema>,
-    { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
-  ): Promise<Document.Any | undefined> {
+    { parent, renderSheet = true, ...operation }: Partial<gurps.Pseudo.CreateOperation>
+  ): Promise<InstanceType<T> | undefined> {
     if (!parent) {
       throw new Error('A parent document must be specified for the creation of a pseudo-document!')
     }
 
-    const id =
+    const id: string =
       operation.keepId && foundry.data.validators.isValidId((data._id as string | undefined) ?? '')
-        ? data._id
+        ? (data._id as string)
         : foundry.utils.randomID()
 
-    const fieldPath = (parent.system!.constructor as unknown as gurps.MetadataOwner).metadata.embedded?.[
+    const fieldPath = (parent.system?.constructor as unknown as gurps.MetadataOwner).metadata.embedded?.[
       this.metadata.documentName
     ]
 
@@ -246,8 +250,18 @@ class PseudoDocument<
 
     this._configureUpdates('create', parent, update, operation)
 
-    // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
-    return parent.update(update, operation)
+    await parent.update(update, operation)
+
+    // HACK: There is really no cleaner way to define this.
+    const pseudo = (
+      parent as {
+        getEmbeddedDocument(name: string, id: string, options: object): InstanceType<T> | undefined
+      }
+    ).getEmbeddedDocument(this.metadata.documentName, id, {})
+
+    if (renderSheet && pseudo) pseudo.sheet?.render({ force: true })
+
+    return pseudo
   }
 
   /* ---------------------------------------- */
@@ -262,7 +276,7 @@ class PseudoDocument<
    */
   static async createDialog<Schema extends PseudoDocument.Schema = PseudoDocument.Schema>(
     data: DataModel.CreateData<Schema>,
-    { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
+    { parent, ...operation }: Partial<gurps.Pseudo.CreateOperation>
   ) {
     const content = await foundry.applications.handlebars.renderTemplate(
       this.CREATE_TEMPLATE,
@@ -334,15 +348,20 @@ class PseudoDocument<
 
   /**
    * Duplicate this pseudo-document.
-   * @returns {Promise<Document>}    A promise that resolves to the updated document.
+   * @returns - A duplicate of this pseudo-document. The duplicate will not be saved to the document until the parent
+   * document is updated.
    */
-  async duplicate(): Promise<Document.Any | undefined> {
+  async duplicate(): Promise<this> {
     if (!this.isSource) throw new Error('You cannot duplicate a non-source pseudo-document!')
     const activityData = foundry.utils.mergeObject(this.toObject(), {
       name: game.i18n?.format('DOCUMENT.CopyOf', { name: 'name' in this ? (this.name as string) : '' }),
     })
 
-    return (this.constructor as typeof PseudoDocument).create(activityData, { parent: this.document })
+    const result = await this.static.create(activityData, { parent: this.document })
+
+    if (!result) throw new Error('Failed to duplicate pseudo-document!')
+
+    return result as this
   }
 
   /* ---------------------------------------- */

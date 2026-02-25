@@ -1,4 +1,9 @@
-import type { DamageChat } from '@module/damage/damagechat.js'
+import { GurpsActor } from '@module/actor/_actor.js'
+import DamageChat from '@module/damage/damagechat.js'
+import { Feature } from '@module/item/legacy/itemv1-interface.js'
+import { AnyObject } from 'fvtt-types/utils'
+
+import { GurpsModule } from './gurps-module.js'
 
 export {}
 
@@ -22,7 +27,7 @@ declare global {
 
     decode<T = unknown>(actor: GurpsActor, path: string): T
 
-    put<T>(list: Record<string, T>, obj: T, index?: number = -1): string
+    put<T = unknown>(list: Record<string, T>, obj: T, index?: number): string
 
     parselink(input: string): { text: string; action?: GurpsAction }
 
@@ -92,7 +97,7 @@ declare global {
     /* ---------------------------------------- */
 
     CONFIG: {
-      PseudoDocument: Record<gurps.Pseudo.WithTypes, Record<string, gurps.Pseudo.ConfigEntry>>
+      PseudoDocument: PseudoDocumentConfig.Types
     }
   }
 

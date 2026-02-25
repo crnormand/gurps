@@ -189,11 +189,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
+  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor'>>(
     embeddedName: EmbeddedName,
     id: string,
     options?: foundry.abstract.Document.GetEmbeddedDocumentOptions
-  ): Actor.Embedded.DocumentFor<EmbeddedName> | undefined {
+  ): gurps.Pseudo.EmbeddedDocument<'Actor', EmbeddedName> {
     const { invalid = false, strict = true } = options ?? {}
 
     if (this.isNewActorType) {
@@ -203,16 +203,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         const path = systemEmbeds[embeddedName]
         const document = foundry.utils.getProperty(this, path) as any
 
-        return (
-          document.get(id, {
-            invalid,
-            strict,
-          }) ?? null
-        )
+        return (document.get(id, { invalid, strict }) ?? undefined) as any
       }
     }
 
-    return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+    return super.getEmbeddedDocument(embeddedName as Actor.Embedded.CollectionName, id, { invalid, strict }) as any
   }
 
   /* ---------------------------------------- */

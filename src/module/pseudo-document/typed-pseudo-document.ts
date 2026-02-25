@@ -6,6 +6,7 @@ import { PseudoDocument } from './pseudo-document.js'
 
 /* ---------------------------------------- */
 
+// @ts-expect-error - Polymorphic static create return type is incompatible with base class signature, this is a TS limitation
 class TypedPseudoDocument<
   Schema extends TypedPseudoDocument.Schema = TypedPseudoDocument.Schema,
   Parent extends DataModel.Any = DataModel.Any,
@@ -42,22 +43,22 @@ class TypedPseudoDocument<
   static get TYPES(): Record<string, typeof TypedPseudoDocument> {
     if (!globalThis.GURPS) return {}
 
-    const types = GURPS.CONFIG.PseudoDocument[this.metadata.documentName]
+    return Object.values(this.documentConfig).reduce(
+      (acc, entry) => {
+        const cls = (entry as { documentClass: typeof TypedPseudoDocument }).documentClass
 
-    return Object.values(types).reduce(
-      (acc: Record<string, typeof TypedPseudoDocument>, entry: { documentClass: typeof TypedPseudoDocument }) => {
-        if (entry.documentClass.TYPE) acc[entry.documentClass.TYPE] = entry.documentClass
+        if (cls.TYPE) acc[cls.TYPE] = cls
 
         return acc
       },
-      {} as Record<string, unknown>
+      {} as Record<string, typeof TypedPseudoDocument>
     )
   }
 
   /* ---------------------------------------- */
 
-  static get documentConfig() {
-    return GURPS.CONFIG.PseudoDocument[this.metadata.documentName]
+  static get documentConfig(): PseudoDocumentConfig.Types[gurps.Pseudo.WithTypes & typeof this.metadata.documentName] {
+    return GURPS.CONFIG.PseudoDocument[this.metadata.documentName] as any
   }
 
   /* ---------------------------------------- */
@@ -71,26 +72,14 @@ class TypedPseudoDocument<
 
   /* ---------------------------------------- */
 
-  /**
-   * The localized label for this typed pseudodocument's type.
-   */
-  get typeLabel(): string {
-    if (!globalThis.GURPS) return ''
-
-    const config = GURPS.CONFIG.PseudoDocument[this.metadata.documentName as gurps.Pseudo.WithTypes]
-
-    if (this.type in config) return config[this.type].label
-
-    return ''
-  }
-
-  /* ---------------------------------------- */
-
-  static override async create<Schema extends TypedPseudoDocument.Schema = TypedPseudoDocument.Schema>(
-    data: DataModel.CreateData<Schema>,
-    { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
-  ): Promise<Document.Any | undefined> {
-    const createData = foundry.utils.deepClone(data) as DataModel.CreateData<Schema> & { type?: string }
+  static override async create<T extends typeof TypedPseudoDocument>(
+    this: T,
+    data: fields.SchemaField.CreateData<TypedPseudoDocument.Schema>,
+    options: Partial<gurps.Pseudo.CreateOperation>
+  ): Promise<InstanceType<T> | undefined> {
+    const createData = foundry.utils.deepClone(data) as fields.SchemaField.CreateData<TypedPseudoDocument.Schema> & {
+      type?: string
+    }
 
     if (!createData.type) createData.type = Object.keys(this.TYPES)[0]
 
@@ -100,7 +89,7 @@ class TypedPseudoDocument<
       )
     }
 
-    return super.create(createData as DataModel.CreateData<TypedPseudoDocument.Schema>, { parent, ...operation })
+    return super.create(createData, options) as Promise<InstanceType<T> | undefined>
   }
 
   /* ---------------------------------------- */
@@ -134,15 +123,18 @@ namespace TypedPseudoDocument {
 
   /* ---------------------------------------- */
 
-  export type TypeNames<DocumentName extends gurps.Pseudo.WithTypes> = keyof PseudoDocumentConfig[DocumentName]
+  export type TypeNames<DocumentName extends gurps.Pseudo.WithTypes> = keyof PseudoDocumentConfig.Types[DocumentName]
 
   /* ---------------------------------------- */
 
-  export type OfType<Name extends gurps.Pseudo.WithTypes, Type extends TypeNames<Name>> = PseudoDocumentConfig extends {
+  export type OfType<
+    Name extends gurps.Pseudo.WithTypes,
+    Type extends TypeNames<Name>,
+  > = PseudoDocumentConfig.Types extends {
     readonly [_ in Name]: { readonly discriminate: 'all' }
   }
-    ? PseudoDocumentConfig[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
-      ? PseudoDocumentConfig[Name][Type]
+    ? PseudoDocumentConfig.Types[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
+      ? PseudoDocumentConfig.Types[Name][Type]
       : never
     : never
 
