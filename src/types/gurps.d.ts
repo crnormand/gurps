@@ -3,6 +3,8 @@ import { RangedAttackModel } from '@module/action/ranged-attack.ts'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
+import DamageChat from '@module/damage/damagechat.js'
+import { Feature } from '@module/item/legacy/itemv1-interface.ts'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -63,7 +65,7 @@ declare global {
         /** Human-readable label. */
         label: string
         /** Default image used by documents of this type. */
-        defaultImage: string
+        defaultImage?: string
         /** Item types that can hold this pseudo-document type. If empty or undefined, any item type can hold it. */
         itemTypes?: Set<Item.SubType>
         /** The pseudo-document class. */
@@ -136,5 +138,129 @@ declare global {
         rangedAttack: gurps.Pseudo.ConfigEntry<typeof RangedAttackModel>
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * GurpsUtils is a store of top-level utility functions and properties which are used throughout the codebase. It is
+   * accessible via the global GURPS object and serves as a central location for any helper functions or properties
+   * which don't belong to a specific module or class.
+   *
+   * Some of these functions are legacy and may be deprecated in the future as the codebase is refactored, but for now
+   * they are still included here to provide type safety and autocompletion for existing code which relies on them.
+   *
+   * TODO: Find a new home for some of these functions as the codebase is refactored and modularized, rather than having
+   * them all in one interface which is not organized by module or functionality.
+   */
+  interface GurpsUtils {
+    /* ---------------------------------------- */
+
+    LastActor: Actor.Implementation | null
+
+    /* ---------------------------------------- */
+
+    StatusEffect: {
+      lookup(id: string): any
+    }
+
+    /* ---------------------------------------- */
+
+    SavedStatusEffects: typeof CONFIG.statusEffects
+
+    /* ---------------------------------------- */
+
+    StatusEffectStanding: 'standing'
+
+    /* ---------------------------------------- */
+
+    StatusEffectStandingLabel: 'GURPS.status.Standing'
+
+    /* ---------------------------------------- */
+
+    decode<T = unknown>(actor: Actor.Implementation, path: string): T
+
+    /* ---------------------------------------- */
+
+    put<T = unknown>(list: Record<string, T>, obj: T, index?: number): string
+
+    /* ---------------------------------------- */
+
+    parselink(input: string): { text: string; action?: GurpsAction }
+
+    /* ---------------------------------------- */
+
+    removeKey(actor: Actor.Implementation, key: string): void
+
+    /* ---------------------------------------- */
+
+    insertBeforeKey(actor: Actor.Implementation, path: string, newobj: AnyObject): Promise<void>
+
+    /* ---------------------------------------- */
+
+    findAdDisad(actor: Actor.Implementation, adName: string): Feature['fea'] | undefined
+
+    /* ---------------------------------------- */
+
+    readTextFromFile(file: File): Promise<string>
+
+    /* ---------------------------------------- */
+
+    performAction(
+      action: GurpsAction,
+      actor: Actor | Actor.Implementation | null,
+      event?: Event | null,
+      targets?: string[]
+    ): Promise<any>
+
+    stopActions: boolean
+
+    ModifierBucket: {
+      setTempRangeMod(mod: number): void
+      addTempRangeMod(): void
+      addModifier(mod: string, label: string, options?: { situation?: string }, tagged?: boolean): void
+      currentSum(): number
+      clear(): Promise<void>
+      refreshPosition(): void
+      render(): Promise<void>
+    }
+
+    DamageTables: {
+      translate(damageType: string): string
+      woundModifiers: Record<
+        string,
+        { label?: string; icon?: string; color?: string; multiplier?: number; resource?: boolean }
+      >
+      damageTypeMap: Record<string, string>
+    }
+
+    SSRT: {
+      getModifier(yards: number): number
+    }
+
+    rangeObject: {
+      ranges: Array<{ modifier: number; max: number; penalty: number }>
+    }
+
+    Maneuvers: {
+      get(id: string): { icon?: string; label: string; move: string | null } | undefined
+      getAll(): Record<string, { id: string; icon: string; label: string }>
+    }
+    ApplyDamageDialog: new (actor: Actor.Implementation, damageData: DamageData[], options?: object) => Application
+
+    DamageChat: typeof DamageChat
+
+    resolveDamageRoll: (
+      event: Event,
+      actor: Actor.Implementation,
+      otf: string,
+      overridetxt: string | null,
+      isGM: boolean,
+      isOtf?: boolean
+    ) => Promise<void>
+
+    SJGProductMappings: Record<string, string>
+
+    /* ---------------------------------------- */
   }
 }

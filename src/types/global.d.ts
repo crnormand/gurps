@@ -1,98 +1,38 @@
-import { GurpsActor } from '@module/actor/_actor.js'
-import DamageChat from '@module/damage/damagechat.js'
-import { Feature } from '@module/item/legacy/itemv1-interface.js'
-import { AnyObject } from 'fvtt-types/utils'
-
-import { GurpsModule } from './gurps-module.js'
+import { ActionModule as ModuleAction } from '@module/action/index.js'
+import { Actor as ModuleActor } from '@module/actor/index.js'
+import { Canvas as ModuleCanvas } from '@module/canvas/index.js'
+import { Combat as ModuleCombat } from '@module/combat/index.js'
+import { CombatTracker as ModuleCombatTracker } from '@module/combat-tracker/index.js'
+import { Damage as ModuleDamage } from '@module/damage/index.js'
+import { Importer as ModuleImporter } from '@module/importer/index.js'
+import { Item as ModuleItem } from '@module/item/index.js'
+import { Pdf as ModulePdf } from '@module/pdf/index.js'
+import { ResourceTracker as ModuleResourceTracker } from '@module/resource-tracker/index.js'
+import { Token as ModuleToken } from '@module/token/index.js'
+import { UI as ModuleUI } from '@module/ui/index.js'
 
 export {}
 
 declare global {
-  interface GURPSGlobal {
+  interface GurpsGlobal extends GurpsUtils {
     SYSTEM_NAME: 'gurps'
 
-    modules: Record<string, GurpsModule>
+    /* ---------------------------------------- */
 
-    LastActor: Actor.Implementation | null
-
-    StatusEffect: {
-      lookup(id: string): any
+    modules: {
+      Action: typeof ModuleAction
+      Actor: typeof ModuleActor
+      Canvas: typeof ModuleCanvas
+      Combat: typeof ModuleCombat
+      CombatTracker: typeof ModuleCombatTracker
+      Damage: typeof ModuleDamage
+      Importer: typeof ModuleImporter
+      Item: typeof ModuleItem
+      Pdf: typeof ModulePdf
+      ResourceTracker: typeof ModuleResourceTracker
+      Token: typeof ModuleToken
+      UI: typeof ModuleUI
     }
-
-    SavedStatusEffects: typeof CONFIG.statusEffects
-
-    StatusEffectStanding: 'standing'
-
-    StatusEffectStandingLabel: 'GURPS.status.Standing'
-
-    decode<T = unknown>(actor: GurpsActor, path: string): T
-
-    put<T = unknown>(list: Record<string, T>, obj: T, index?: number): string
-
-    parselink(input: string): { text: string; action?: GurpsAction }
-
-    removeKey(actor: GurpsActor, key: string): void
-
-    insertBeforeKey(actor: Actor.Implementation, path: string, newobj: AnyObject): Promise<void>
-
-    findAdDisad(actor: Actor.Implementation, adName: string): Feature['fea'] | undefined
-
-    readTextFromFile(file: File): Promise<string>
-
-    performAction(
-      action: GurpsAction,
-      actor: Actor | GurpsActor | null,
-      event?: Event | null,
-      targets?: string[]
-    ): Promise<any>
-
-    stopActions: boolean
-
-    ModifierBucket: {
-      setTempRangeMod(mod: number): void
-      addTempRangeMod(): void
-      addModifier(mod: string, label: string, options?: { situation?: string }, tagged?: boolean): void
-      currentSum(): number
-      clear(): Promise<void>
-      refreshPosition(): void
-      render(): Promise<void>
-    }
-
-    DamageTables: {
-      translate(damageType: string): string
-      woundModifiers: Record<
-        string,
-        { label?: string; icon?: string; color?: string; multiplier?: number; resource?: boolean }
-      >
-      damageTypeMap: Record<string, string>
-    }
-
-    SSRT: {
-      getModifier(yards: number): number
-    }
-
-    rangeObject: {
-      ranges: Array<{ modifier: number; max: number; penalty: number }>
-    }
-
-    Maneuvers: {
-      get(id: string): { icon?: string; label: string; move: string | null } | undefined
-      getAll(): Record<string, { id: string; icon: string; label: string }>
-    }
-    ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
-
-    DamageChat: typeof DamageChat
-
-    resolveDamageRoll: (
-      event: Event,
-      actor: GurpsActor,
-      otf: string,
-      overridetxt: string | null,
-      isGM: boolean,
-      isOtf?: boolean
-    ) => Promise<void>
-
-    SJGProductMappings: Record<string, string>
 
     /* ---------------------------------------- */
 
@@ -101,7 +41,7 @@ declare global {
     }
   }
 
-  var GURPS: GURPSGlobal
+  var GURPS: GurpsGlobal
 
   /* ---------------------------------------- */
 

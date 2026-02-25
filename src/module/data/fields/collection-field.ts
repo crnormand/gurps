@@ -22,7 +22,7 @@ class LazyTypedSchemaField<
 /* ---------------------------------------- */
 
 namespace CollectionField {
-  export type Types<Model extends typeof PseudoDocument> = {
+  export type Types<Model extends typeof TypedPseudoDocument> = {
     [type: string]: Model
   }
 
