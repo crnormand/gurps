@@ -1109,7 +1109,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       isCombatant,
     }
 
-    if (!isCombatActive || !isCombatant || !this.isOfType('characterV2')) return result
+    if (!isCombatActive || !isCombatant || !this.isNewActorType) return result
 
     const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
     const checkForTargetSettings = this.getSetting(Settings.SETTING_ALLOW_TARGETED_ROLLS, 'Allow')
@@ -1506,7 +1506,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /* ---------------------------------------- */
 
   async updateEqtCountV2(id: string, count: number) {
-    if (!this.isOfType('characterV2')) return null
+    if (!this.isNewActorType) return null
 
     const equipment = this.modelV2.allEquipmentV2.find(equipmentItem => equipmentItem.id === id)
     const updateData: Record<string, any> = { _id: id, system: { eqt: { count } } }
