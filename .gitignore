@@ -1,3 +1,6 @@
+# Local AI assistant files
+.claude/
+
 # IDE
 .idea/
 .vs/
