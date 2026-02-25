@@ -47,6 +47,9 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
    * Prepare the level of this skill based on an OTF formula.
    */
   #prepareLevelsFromOtf(): void {
+    // Do not prepare levels if the item is not owned
+    if (!this.item.isOwned) return
+
     let otf = this.component.otf
 
     if (otf === '') {
