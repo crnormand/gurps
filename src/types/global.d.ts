@@ -37,6 +37,11 @@ declare global {
     /* ---------------------------------------- */
 
     CONFIG: {
+      /**
+       * Holds the types and configurations for pseudo-documents, which are not actual Foundry documents but are used to
+       * manage complex data structures within the system. Each entry defines a type of pseudo-document, its label for
+       * localization, and the class that implements its behavior.
+       */
       PseudoDocument: PseudoDocumentConfig.Types
     }
   }

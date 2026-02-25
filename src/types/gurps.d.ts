@@ -40,10 +40,20 @@ declare global {
      * any), and label
      */
     namespace Pseudo {
+      /**
+       * Holds the names of all declared pseudo-document types, which are used as keys in the {@link
+       * PseudoDocumentConfig.Embeds} configuration object and for PseudoDocument instance
+       * and static methods to ensure type safety and autocompletion when working with pseudo-documents.
+       */
       type Name = 'Action' | 'HitLocation' | 'Note' | 'MoveMode' | 'ResourceTracker'
 
       /* ---------------------------------------- */
 
+      /**
+       * Holds the names of all declared pseudo-document types which are "typed", meaning they extends
+       * the class TypedPseudoDocument and have a "type" property which causes different types to resolve
+       * to different classes.
+       */
       type WithTypes = 'Action'
 
       /* ---------------------------------------- */
@@ -74,6 +84,12 @@ declare global {
 
       /* ---------------------------------------- */
 
+      /**
+       * This is a sort of hacky helper type which infers the default embedded collection name for a given parent
+       * document type. This is used specifically for the default embedded collection names of Actors and Items, used
+       * in the type {@link EmbeddedCollectionName} below.
+       *
+       */
       type DefaultEmbeddedCollectionName<Type extends foundry.abstract.Document.Type> = {
         Actor: Actor.Embedded.CollectionName
         Item: Item.Embedded.CollectionName
@@ -81,12 +97,23 @@ declare global {
 
       /* ---------------------------------------- */
 
+      /**
+       * Returns the valid embedded collection names for a given parent document type, which can be either the default
+       * embedded document types provided by Foundry (e.g. "ActiveEffect", "Item") or any additional pseudo-document
+       * collection names defined in the {@link PseudoDocumentConfig.Embeds} configuration object for that parent
+       * document type.
+       */
       type EmbeddedCollectionName<Type extends foundry.abstract.Document.Type> =
         | DefaultEmbeddedCollectionName<Type>
         | (Type extends keyof PseudoDocumentConfig.Embeds ? keyof PseudoDocumentConfig.Embeds[Type] : never)
 
       /* ---------------------------------------- */
 
+      /**
+       * The return type when accessing an embedded document on a parent document, which can be either a default
+       * embedded document type provided by Foundry (e.g. ActiveEffect, Item) or a pseudo-document type defined in the
+       * {@link PseudoDocumentConfig.Embeds} configuration object for that parent document type.
+       */
       type EmbeddedDocument<
         Type extends foundry.abstract.Document.Type,
         EmbeddedName extends EmbeddedCollectionName<Type>,
@@ -101,6 +128,12 @@ declare global {
 
       /* ---------------------------------------- */
 
+      /**
+       * Slight override of Foundry's DatabaseCreateOperation type which requires a "parent" property of the appropriate
+       * parent document type when creating new pseudo-documents. This ensures that when creating a new pseudo-document,
+       * the parent document is always provided and correctly typed, which is necessary for the pseudo-document to be
+       * properly associated with its parent and for the correct embedded collection to be used.
+       */
       interface CreateOperation extends foundry.abstract.types.DatabaseCreateOperation {
         parent: Pseudo.ParentDocument
       }
@@ -132,6 +165,11 @@ declare global {
 
     /* ---------------------------------------- */
 
+    /**
+     * This is the configuration for Typed Pseudo-Documents, which are pseudo-documents that resolve to multiple
+     * different classes based on a `type` property, but share a common parent document type and embedded collection
+     * name. Each entry is keyed by the `TYPE` static property of the corresponding class.
+     */
     interface Types {
       Action: {
         meleeAttack: gurps.Pseudo.ConfigEntry<typeof MeleeAttackModel>
