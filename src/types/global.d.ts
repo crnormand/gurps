@@ -4,6 +4,7 @@ import { Canvas as ModuleCanvas } from '@module/canvas/index.js'
 import { Combat as ModuleCombat } from '@module/combat/index.js'
 import { CombatTracker as ModuleCombatTracker } from '@module/combat-tracker/index.js'
 import { Damage as ModuleDamage } from '@module/damage/index.js'
+import { Dev as ModuleDev } from '@module/dev/index.js'
 import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
 import { Pdf as ModulePdf } from '@module/pdf/index.js'
@@ -26,6 +27,7 @@ declare global {
       Combat: typeof ModuleCombat
       CombatTracker: typeof ModuleCombatTracker
       Damage: typeof ModuleDamage
+      Dev: typeof ModuleDev
       Importer: typeof ModuleImporter
       Item: typeof ModuleItem
       Pdf: typeof ModulePdf
