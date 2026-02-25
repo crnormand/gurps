@@ -6,7 +6,7 @@ import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
 
-import { BaseAction, BaseActionSchema } from './base-action.js'
+import { BaseAction } from './base-action.js'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class RangedAttackModel extends BaseAction<RangedAttackSchema> {
@@ -145,7 +145,7 @@ const rangedAttackSchema = () => {
   }
 }
 
-type RangedAttackSchema = BaseActionSchema & ReturnType<typeof rangedAttackSchema>
+type RangedAttackSchema = BaseAction.Schema & ReturnType<typeof rangedAttackSchema>
 
 /* ---------------------------------------- */
 

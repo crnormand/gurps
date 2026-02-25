@@ -31,7 +31,7 @@ class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> exten
   static get metadata(): ActorMetadata {
     return {
       embedded: {},
-      type: 'base',
+      type: 'base', // NOTE: This should be overridden by subclasses, but it serves as a fallback for the base class.
     }
   }
 

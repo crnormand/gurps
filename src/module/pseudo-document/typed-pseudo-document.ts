@@ -1,28 +1,13 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
+import { systemPath } from '@module/util/misc.js'
+import { AnyObject } from 'fvtt-types/utils'
 
-import { PseudoDocument, PseudoDocumentMetadata, PseudoDocumentSchema } from './pseudo-document.js'
-
-namespace TypedPseudoDocument {
-  export type TypeNames<DocumentName extends gurps.Pseudo.WithTypes> = keyof PseudoDocumentConfig[DocumentName]
-
-  /* ---------------------------------------- */
-
-  export type OfType<Name extends gurps.Pseudo.WithTypes, Type extends TypeNames<Name>> = PseudoDocumentConfig extends {
-    readonly [_ in Name]: { readonly discriminate: 'all' }
-  }
-    ? PseudoDocumentConfig[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
-      ? PseudoDocumentConfig[Name][Type]
-      : never
-    : never
-}
-
-interface TypedPseudoDocumentCreateDialogOptions
-  extends foundry.config.ApplicationConfiguration, foundry.applications.api.Dialog.WaitOptions {}
+import { PseudoDocument } from './pseudo-document.js'
 
 /* ---------------------------------------- */
 
 class TypedPseudoDocument<
-  Schema extends TypedPseudoDocumentSchema = TypedPseudoDocumentSchema,
+  Schema extends TypedPseudoDocument.Schema = TypedPseudoDocument.Schema,
   Parent extends DataModel.Any = DataModel.Any,
 > extends PseudoDocument<Schema, Parent> {
   static override defineSchema() {
@@ -31,17 +16,8 @@ class TypedPseudoDocument<
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata<gurps.Pseudo.WithTypes> {
-    return super.metadata as PseudoDocumentMetadata<gurps.Pseudo.WithTypes>
-  }
-
-  /* ---------------------------------------- */
-
-  isOfType<DocumentName extends gurps.Pseudo.WithTypes, SubType extends TypedPseudoDocument.TypeNames<DocumentName>>(
-    ...types: SubType[]
-  ): this is TypedPseudoDocument.OfType<DocumentName, SubType>
-  isOfType(...types: string[]): boolean {
-    return types.includes(this.type)
+  static override get metadata(): PseudoDocument.Metadata<gurps.Pseudo.WithTypes> {
+    return super.metadata as PseudoDocument.Metadata<gurps.Pseudo.WithTypes>
   }
 
   /* ---------------------------------------- */
@@ -53,6 +29,10 @@ class TypedPseudoDocument<
   static get TYPE(): string {
     return ''
   }
+
+  /* ---------------------------------------- */
+
+  static override CREATE_TEMPLATE = systemPath('templates/pseudo-document/typed-create-dialog.hbs')
 
   /* ---------------------------------------- */
 
@@ -76,6 +56,21 @@ class TypedPseudoDocument<
 
   /* ---------------------------------------- */
 
+  static get documentConfig() {
+    return GURPS.CONFIG.PseudoDocument[this.metadata.documentName]
+  }
+
+  /* ---------------------------------------- */
+
+  isOfType<DocumentName extends gurps.Pseudo.WithTypes, SubType extends TypedPseudoDocument.TypeNames<DocumentName>>(
+    ...types: SubType[]
+  ): this is TypedPseudoDocument.OfType<DocumentName, SubType>
+  isOfType(...types: string[]): boolean {
+    return types.includes(this.type)
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * The localized label for this typed pseudodocument's type.
    */
@@ -91,7 +86,7 @@ class TypedPseudoDocument<
 
   /* ---------------------------------------- */
 
-  static override async create<Schema extends TypedPseudoDocumentSchema = TypedPseudoDocumentSchema>(
+  static override async create<Schema extends TypedPseudoDocument.Schema = TypedPseudoDocument.Schema>(
     data: DataModel.CreateData<Schema>,
     { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
   ): Promise<Document.Any | undefined> {
@@ -105,51 +100,23 @@ class TypedPseudoDocument<
       )
     }
 
-    return super.create(createData as DataModel.CreateData<TypedPseudoDocumentSchema>, { parent, ...operation })
+    return super.create(createData as DataModel.CreateData<TypedPseudoDocument.Schema>, { parent, ...operation })
   }
 
   /* ---------------------------------------- */
 
-  /**
-   * Create a new instance of this pseudo-document with a prompt to choose the type.
-   * @param {object} [data]                                     The data used for the creation.
-   * @param {object} createOptions                              The context of the operation.
-   * @param {foundry.abstract.Document} createOptions.parent    The parent of this document.
-   * @param {TypedPseudoDocumentCreateDialogOptions} [options={}]
-   * @returns {Promise<foundry.abstract.Document>}              A promise that resolves to the updated document.
-   */
-  static async createDialog<Schema extends TypedPseudoDocumentSchema = TypedPseudoDocumentSchema>(
-    data: DataModel.CreateData<Schema>,
-    createOptions: { parent: Document.Any },
-    options: TypedPseudoDocumentCreateDialogOptions
-  ): Promise<Document.Any | undefined> {
-    const defaultOptions: Partial<TypedPseudoDocumentCreateDialogOptions> = {
-      window: {
-        title: game.i18n?.format('DOCUMENT.Create', { type: game.i18n.localize(this.metadata.label) }),
-        icon: this.metadata.icon,
-      },
-      content: this.schema.fields.type.toFormGroup(
-        {
-          label: 'DOCUMENT.FIELDS.type.label',
-          localize: true,
-        },
-        {
-          // TODO: implement
-          choices: GURPS.CONFIG.PseudoDocument[this.metadata.documentName],
-        }
-      ).outerHTML,
-    }
-
-    // TODO: implement, fix type
-    const inputData = await foundry.applications.api.DialogV2.input(
-      foundry.utils.mergeObject(defaultOptions, options) as any
+  protected static override _prepareCreateDialogContext(_parent: Document.Any): AnyObject {
+    const typeOptions: { value: string; label: string }[] = Object.entries(this.documentConfig).map(
+      ([value, { label }]: [string, { label: string }]) => ({
+        value,
+        label,
+      })
     )
 
-    if (!inputData) return
-
-    foundry.utils.mergeObject(data, inputData)
-
-    return this.create(data, createOptions)
+    return {
+      typeOptions,
+      fields: this.schema.fields,
+    }
   }
 }
 
@@ -161,8 +128,29 @@ const typedPseudoDocumentSchema = (self: { TYPES: Record<string, unknown> }) => 
   }
 }
 
-type TypedPseudoDocumentSchema = PseudoDocumentSchema & ReturnType<typeof typedPseudoDocumentSchema>
+namespace TypedPseudoDocument {
+  export interface CreateDialogOptions
+    extends foundry.config.ApplicationConfiguration, foundry.applications.api.Dialog.WaitOptions {}
+
+  /* ---------------------------------------- */
+
+  export type TypeNames<DocumentName extends gurps.Pseudo.WithTypes> = keyof PseudoDocumentConfig[DocumentName]
+
+  /* ---------------------------------------- */
+
+  export type OfType<Name extends gurps.Pseudo.WithTypes, Type extends TypeNames<Name>> = PseudoDocumentConfig extends {
+    readonly [_ in Name]: { readonly discriminate: 'all' }
+  }
+    ? PseudoDocumentConfig[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
+      ? PseudoDocumentConfig[Name][Type]
+      : never
+    : never
+
+  /* ---------------------------------------- */
+
+  export type Schema = PseudoDocument.Schema & ReturnType<typeof typedPseudoDocumentSchema>
+}
 
 /* ---------------------------------------- */
 
-export { TypedPseudoDocument, type TypedPseudoDocumentSchema }
+export { TypedPseudoDocument }

@@ -23,12 +23,10 @@ function init() {
 
   GURPS.CONFIG.PseudoDocument.Action = {
     meleeAttack: {
-      // TODO: localize
       label: 'Melee Attack',
       documentClass: MeleeAttackModel,
     },
     rangedAttack: {
-      // TODO: localize
       label: 'Ranged Attack',
       documentClass: RangedAttackModel,
     },
