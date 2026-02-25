@@ -93,7 +93,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   // Common guard for new actor subtypes.
-  private get isNewActorType(): boolean {
+  get isNewActorType(): boolean {
     return this.isOfType('characterV2')
   }
 

@@ -318,7 +318,7 @@ export class GurpsActorModernSheet extends SheetBase {
   static async #onImportActor(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
 
-    if (this.actor.isOfType('characterV2')) {
+    if (this.actor.isNewActorType) {
       await GURPS.modules.Importer.importerPrompt(this.actor)
     } else {
       return new ActorImporter(this.actor).importActor()

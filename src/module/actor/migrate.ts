@@ -21,7 +21,7 @@ async function runMigration() {
     })
 
     console.log('Migrating world actors')
-    const actors = game.actors!.filter(actor => actor.isOfType('character', 'enemy'))
+    const actors = game.actors!.filter(actor => !actor.isNewActorType)
     const packs = game.packs!.filter(pack => pack.documentName === 'Actor') as CompendiumCollection<'Actor'>[]
 
     const length = actors.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)
