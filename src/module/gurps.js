@@ -37,7 +37,6 @@ import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
 import { AddMultipleImportButton } from './actor/multiple-import-app.js'
-import { Applications } from './applications/index.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import AddChatHooks from './chat.js'
@@ -46,6 +45,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 import { Combat } from './combat/index.js'
 import { calculateRoFModifier } from './combat/utilities.js'
 import { CombatTracker } from './combat-tracker/index.js'
+import { Compendium } from './compendium/index.ts'
 import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
@@ -102,10 +102,10 @@ if (!globalThis.GURPS) {
   GURPS.modules = {
     Action: ActionModule,
     Actor,
-    Applications,
     Canvas,
     Combat,
     CombatTracker,
+    Compendium,
     Damage,
     Dev,
     Importer,
