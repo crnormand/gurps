@@ -352,6 +352,14 @@ declare global {
 
     /* ---------------------------------------- */
 
+    SetLastActor(actor: Actor.Implementation, tokenDocument?: TokenDocument.Implementation): void
+
+    /* ---------------------------------------- */
+
+    ClearLastActor(actor: Actor.Implementation): void
+
+    /* ---------------------------------------- */
+
     StatusEffect: {
       lookup(id: string): any
     }
