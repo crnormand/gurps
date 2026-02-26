@@ -760,7 +760,11 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importItem(item: AnyGcsItem, _carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
-    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = { actions: {} }
+    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {
+      actions: {},
+      _reactions: {},
+      _conditionalmods: {},
+    }
 
     system.itemModifiers = ''
     system.open = true
@@ -788,29 +792,44 @@ Portrait will not be imported.`
 
     const level = item instanceof GcsTrait ? (item.levels ?? 0) : 1
 
-    system.reactions = item.features
-      ?.filter(feature => feature.type === 'reaction_bonus')
-      .map(feature => {
-        const amount = feature.per_level ? Number(feature.amount) * level : Number(feature.amount)
+    system._reactions = Object.fromEntries(
+      item.features
+        ?.filter(feature => feature.type === 'reaction_bonus')
+        .map(feature => {
+          const _id = foundry.utils.randomID()
 
-        return {
-          modifier: amount,
-          situation: String(feature.situation),
-          modifierTags: '',
-        }
-      })
+          const amount = feature.per_level ? Number(feature.amount) * level : Number(feature.amount)
 
-    system.conditionalmods = item.features
-      ?.filter(feature => feature.type === 'conditional_modifier')
-      .map(feature => {
-        const amount = feature.per_level ? Number(feature.amount) * level : Number(feature.amount)
+          return [
+            _id,
+            {
+              _id,
+              modifier: amount,
+              situation: String(feature.situation),
+              modifierTags: '',
+            },
+          ]
+        })
+    )
 
-        return {
-          modifier: amount,
-          situation: String(feature.situation),
-          modifierTags: '',
-        }
-      })
+    system._conditionalmods = Object.fromEntries(
+      item.features
+        ?.filter(feature => feature.type === 'conditional_modifier')
+        .map(feature => {
+          const _id = foundry.utils.randomID()
+          const amount = feature.per_level ? Number(feature.amount) * level : Number(feature.amount)
+
+          return [
+            _id,
+            {
+              _id,
+              modifier: amount,
+              situation: String(feature.situation),
+              modifierTags: '',
+            },
+          ]
+        })
+    )
 
     return system
   }

@@ -171,6 +171,8 @@ function migrateItemSystem(type: string, oldData: OldItemData, parentId: string 
 function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): NewDataWrapper<NewItemType> {
   const newData: NewDataWrapper<NewItemType> = {
     actions: {},
+    _reactions: {},
+    _conditionalmods: {},
     containedBy: parentId,
   }
 

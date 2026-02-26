@@ -472,7 +472,12 @@ Portrait will not be imported.`
     item: GCATrait,
     containedBy: string | null = null
   ): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
-    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = { actions: {}, containedBy }
+    const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {
+      actions: {},
+      _reactions: {},
+      _conditionalmods: {},
+      containedBy,
+    }
 
     if (item.attackmodes) {
       system.actions = item.attackmodes

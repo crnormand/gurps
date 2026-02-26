@@ -3,13 +3,14 @@ import { BaseAction } from '@module/action/base-action.js'
 import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { ActionType, AnyActionClass, MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
-import { reactionSchema } from '../../actor/data/character-components.js'
+import { BaseAction } from '../../action/base-action.js'
+import { AnyActionClass, MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
 import { ItemComponent } from './component.js'
+import { ConditionalModifier, ReactionModifier } from './conditional-modifier.ts'
 
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -63,7 +64,10 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   static get metadata(): ItemMetadata {
     return {
-      embedded: {},
+      embedded: {
+        ReactionModifier: 'system._reactions',
+        ConditionalModifier: 'system._conditionalmods',
+      },
       type: 'base',
       invalidActorTypes: [],
       actions: {},
@@ -98,6 +102,42 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   get actor(): Actor.Implementation | null {
     return this.parent.actor || null
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Return the consolidated list of conditional modifiers provided by this item, combining any modifiers with the same
+   * situation by summing their modifier values. This allows for multiple conditional modifiers to be applied to an item
+   * without needing to manually combine them into a single modifier.
+   */
+  get conditionalmods(): ConditionalModifier[] {
+    return this._conditionalmods.values().reduce((acc: ConditionalModifier[], condmod) => {
+      const existingMod = acc.find(mod => mod.situation === condmod.situation)
+
+      if (existingMod) existingMod.modifier += condmod.modifier
+      else acc.push(condmod)
+
+      return acc
+    }, [])
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Return the consolidated list of reaction modifiers provided by this item, combining any modifiers with the same
+   * situation by summing their modifier values. This allows for multiple reaction modifiers to be applied to an item
+   * without needing to manually combine them into a single modifier.
+   */
+  get reactions(): ReactionModifier[] {
+    return this._reactions.values().reduce((acc: ReactionModifier[], reaction) => {
+      const existingMod = acc.find(mod => mod.situation === reaction.situation)
+
+      if (existingMod) existingMod.modifier += reaction.modifier
+      else acc.push(reaction)
+
+      return acc
+    }, [])
   }
 
   /* ---------------------------------------- */
@@ -176,17 +216,23 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
-  get isContainer(): boolean {
-    return this.contents.length > 0
-  }
-
-  // TODO I'm not sure what this is trying to do.
+  /**
+   * Return the contained items of this container, filtered by the allowed child types defined in the system metadata. This is used to
+   * determine which items should be displayed as children in the UI, and which items should be considered modifiers.
+   * For example, Trait Containers (of type "featureV2") should store child traits as children, but trait modifiers
+   * (when implemented) should be stored as modifiers.
+   */
   get children(): Item.Implementation[] {
     return this.contents.filter(contentItem => this.metadata.childTypes.includes(contentItem.type))
   }
 
   /* ---------------------------------------- */
 
+  /**
+   * Return the contained items of this container, filtered by the allowed modifier types defined in the system
+   * metadata. This is used to determine which items should be displayed as modifiers in the UI, and which items should
+   * be considered children.
+   */
   get modifiers(): Item.Implementation[] {
     return this.contents.filter(contentItem => this.metadata.modifierTypes.includes(contentItem.type))
   }
@@ -294,38 +340,39 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
 const baseItemModelSchema = () => {
   return {
-    // Include containable functionality
+    /** Include containable functionality */
     ...containableSchema(),
 
-    // Change from previous schema. Boolean value to indicate if item is container
-    // isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-
-    disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-
-    // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
+    /** The ModelCollection for an Item's Actions, which includes Melee and Ranged Attacks. */
     actions: new CollectionField(BaseAction as AnyActionClass),
 
-    // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    // NOTE: Disabled for migration. Replaced with Item containment
-    // ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-    // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    // skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-    // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    // spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
+    /**
+     * Is this Item a container that can hold other items? This should be toggleable in the UI for any Item,
+     * and allows for empty containers Items, which the previous accessor value based on the presence of contained
+     * Items did not.
+     */
+    isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
+    /** Is this Item active? This determined whether bonuses provided by the Item are applied to the Actor. */
+    disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+    /** An OTF field listing bonuses applied by the Item. */
     bonuses: new fields.StringField({ required: true, nullable: false }),
+
+    /** An OTF field listing modifiers applied by the Item. */
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
 
+    /** Should this Item show up in the quick roll menu in the combat tracker? */
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
+
+    /** Which modifier tags should automatically apply to this Item? */
     modifierTags: new fields.StringField({ required: true, nullable: false }),
-    reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
-    conditionalmods: new fields.ArrayField(
-      new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
-      { required: true, nullable: false }
-    ),
+
+    /** Reaction Bonuses applied by this Item. */
+    _reactions: new CollectionField(ReactionModifier),
+
+    /** Conditional Modifiers applied by this Item. */
+    _conditionalmods: new CollectionField(ConditionalModifier),
   }
 }
 

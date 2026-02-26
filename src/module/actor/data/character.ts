@@ -6,6 +6,7 @@ import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
+import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { EquipmentModel } from '@module/item/data/equipment.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
 import { SkillV1 } from '@module/item/legacy/skill-adapter.js'
@@ -42,7 +43,6 @@ import {
   EncumbranceSchema,
   LiftingMovingSchema,
   poolSchema,
-  ReactionSchema,
 } from './character-components.js'
 import { HitLocationEntryV2 } from './hit-location-entry.js'
 import { MoveModeV2 } from './move-mode.js'
@@ -94,8 +94,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   rangedV2: RangedAttackModel[] = []
 
   // Reactions & Conditional modifiers
-  reactions: fields.SchemaField.SourceData<ReactionSchema>[] = []
-  conditionalmods: fields.SchemaField.SourceData<ReactionSchema>[] = []
+  reactions: ReactionModifier[] = []
+  conditionalmods: ConditionalModifier[] = []
 
   /* ---------------------------------------- */
 
@@ -351,15 +351,25 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  getReactionsAndModifiers(
-    key: 'reactions' | 'conditionalmods'
-  ): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
-    return this.parent.items.reduce((acc: any[], item) => {
-      acc.push(...((item.system as Item.SystemOfType<'featureV2'>)[key] ?? []))
+  getReactionsAndModifiers(key: 'reactions'): ReactionModifier[]
+  getReactionsAndModifiers(key: 'conditionalmods'): ConditionalModifier[]
+  getReactionsAndModifiers(key: 'reactions' | 'conditionalmods'): ReactionModifier[] | ConditionalModifier[] {
+    return this.parent.items.reduce((acc: (ReactionModifier | ConditionalModifier)[], item) => {
+      console.log(item.name)
+
+      for (const newMod of item.system[key]) {
+        console.warn(newMod.situation)
+        const existingMod = acc.find(mod => mod.situation === newMod.situation)
+
+        if (existingMod) existingMod.modifier += newMod.modifier
+        else acc.push(newMod)
+      }
 
       return acc
     }, [])
   }
+
+  /* ---------------------------------------- */
 
   protected _globalBonuses: AnyObject[] = []
 
@@ -1847,19 +1857,6 @@ const characterSchema = () => {
 
     bodyplan: new fields.StringField({ required: true, nullable: false }),
     hitlocationsV2: new CollectionField(HitLocationEntryV2, { required: true, nullable: false, initial: {} }),
-
-    // NOTE: Change from previous schema where these fields were part of the schema. They are now derived properties
-    // reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
-    //   required: true,
-    //   nullable: false,
-    // }),
-    // conditionalmods: new fields.ArrayField(
-    //   new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
-    //   {
-    //     required: true,
-    //     nullable: false,
-    //   }
-    // ),
 
     conditions: new fields.SchemaField(conditionsSchema(), { required: true, nullable: false }),
 

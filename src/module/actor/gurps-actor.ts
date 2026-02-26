@@ -28,7 +28,7 @@ import { parseItemKey } from '../util/object-utils.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
-import { DamageActionSchema, ReactionSchema } from './data/character-components.js'
+import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { collectDeletions } from './deletion.js'
 import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
@@ -95,11 +95,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   // Common guard for new actor subtypes.
   get isNewActorType(): boolean {
     return this.isOfType('characterV2')
-  }
-
-  // Item subtype guard helpers
-  private isFeatureV2(item: Item.Implementation): item is Item.OfType<'featureV2'> {
-    return item.isOfType('featureV2')
   }
 
   // Settings getter with default fallback
@@ -252,17 +247,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   /* ---------------------------------------- */
-
-  getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
-    const out: foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] = []
-
-    for (const item of this.items) {
-      if (!this.isFeatureV2(item as Item.Implementation)) continue
-      out.push(...(item.system[key] ?? []))
-    }
-
-    return out
-  }
 
   /**
    * NOTE: Both character and characterV2.

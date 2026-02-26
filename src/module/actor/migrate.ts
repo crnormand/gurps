@@ -1,5 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData } from '@module/item/migrate.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 
@@ -193,23 +194,37 @@ function getMigratedActorData(
         notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
         points: 0,
       },
-      reactions: Object.values(system.reactions).map(reaction => {
-        return {
-          modifier: Number(reaction.modifier),
-          situation: reaction.situation,
-          modifierTags: reaction.modifierTags,
-        }
-      }),
-      conditionalmods: Object.values(system.conditionalmods).map(mod => {
-        return {
-          modifier: Number(mod.modifier),
-          situation: mod.situation,
-          modifierTags: mod.modifierTags,
-        }
-      }),
+      _reactions: {},
+      _conditionalmods: {},
       actions: {},
     },
   }
+
+  Object.values(system.reactions).forEach(mod => {
+    const _id = foundry.utils.randomID()
+
+    const data: DataModel.CreateData<DataModel.SchemaOf<ReactionModifier>> = {
+      _id,
+      modifier: Number(mod.modifier),
+      situation: mod.situation,
+      modifierTags: mod.modifierTags,
+    }
+
+    migrationItem.system!._reactions![_id] = data
+  })
+
+  Object.values(system.conditionalmods).forEach(mod => {
+    const _id = foundry.utils.randomID()
+
+    const data: DataModel.CreateData<DataModel.SchemaOf<ConditionalModifier>> = {
+      _id,
+      modifier: Number(mod.modifier),
+      situation: mod.situation,
+      modifierTags: mod.modifierTags,
+    }
+
+    migrationItem.system!._conditionalmods![_id] = data
+  })
 
   Object.values(system.melee).forEach((weapon: Melee) => {
     const id = foundry.utils.randomID()
