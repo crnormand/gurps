@@ -1,9 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import {
-  PseudoDocument,
-  PseudoDocumentMetadata,
-  pseudoDocumentSchema,
-} from '@module/pseudo-document/pseudo-document.js'
+import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 /* ---------------------------------------- */
@@ -17,10 +13,9 @@ class GcsSubTable extends PseudoDocument<GcsSubTableSchema, GcsBody, GcsSubTable
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata {
+  static override get metadata(): PseudoDocument.Metadata<'LocationSubTable'> {
     return {
       documentName: 'LocationSubTable',
-      label: '',
       icon: '',
       embedded: {},
     }
@@ -32,7 +27,7 @@ class GcsSubTable extends PseudoDocument<GcsSubTableSchema, GcsBody, GcsSubTable
    * Remove the false `_id` field of GcsBody from the fieldPath
    */
   override get fieldPath(): string {
-    let path = (this.parent.constructor as unknown as gurps.MetaDataOwner).metadata.embedded[this.documentName]
+    let path = (this.parent.constructor as unknown as gurps.MetadataOwner).metadata.embedded[this.documentName]
 
     if (this.parent instanceof PseudoDocument) path = [this.parent.fieldPath, path].join('.')
 
@@ -82,10 +77,9 @@ class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, GcsBody, GcsHi
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata {
+  static override get metadata(): PseudoDocument.Metadata<'HitLocation'> {
     return {
       documentName: 'HitLocation',
-      label: '',
       icon: '',
       embedded: {},
     }
@@ -97,7 +91,7 @@ class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, GcsBody, GcsHi
    * Remove the false `_id` field of GcsBody from the fieldPath
    */
   override get fieldPath(): string {
-    let path = (this.parent.constructor as unknown as gurps.MetaDataOwner).metadata.embedded[this.documentName]
+    let path = (this.parent.constructor as unknown as gurps.MetadataOwner).metadata.embedded[this.documentName]
 
     if (this.parent instanceof PseudoDocument) path = [this.parent.fieldPath, path].join('.')
 
@@ -156,10 +150,9 @@ class GcsBody extends PseudoDocument<GcsBodySchema> {
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata {
+  static override get metadata(): PseudoDocument.Metadata<'Body'> {
     return {
       documentName: 'Body',
-      label: '',
       icon: '',
       embedded: {
         HitLocation: '_locations',

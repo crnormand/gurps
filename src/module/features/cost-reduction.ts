@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { BaseFeature } from './base-feature.js'
 import { FeatureType } from './types.js'
 
 class CostReduction extends BaseFeature<CostReductionSchema> {
@@ -24,7 +24,7 @@ const costReductionSchema = () => {
   }
 }
 
-type CostReductionSchema = BaseFeatureSchema & ReturnType<typeof costReductionSchema>
+type CostReductionSchema = BaseFeature.Schema & ReturnType<typeof costReductionSchema>
 
 /* ---------------------------------------- */
 

@@ -1,7 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { BaseFeature } from './base-feature.js'
 import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.js'
 import { FeatureType } from './types.js'
 
@@ -38,7 +38,7 @@ const conditionalModifierSchema = () => {
   }
 }
 
-type ConditionalModifierSchema = BaseFeatureSchema & ReturnType<typeof conditionalModifierSchema>
+type ConditionalModifierSchema = BaseFeature.Schema & ReturnType<typeof conditionalModifierSchema>
 
 /* ---------------------------------------- */
 

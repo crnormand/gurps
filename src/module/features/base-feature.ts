@@ -1,28 +1,27 @@
 import { INameableFiller } from '@module/data/mixins/nameable.js'
+import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 
 import { IFeatures } from '../data/mixins/features.js'
 import { GcsBaseItemModel } from '../item/data/gcs-base.js'
-import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
-import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
+import { TypedPseudoDocument } from '../pseudo-document/typed-pseudo-document.js'
 
 import { FeatureType } from './types.js'
 
 /* ---------------------------------------- */
 
-class BaseFeature<Schema extends BaseFeatureSchema>
-  extends TypedPseudoDocument<Schema, GcsBaseItemModel & IFeatures>
+class BaseFeature<Schema extends BaseFeature.Schema>
+  extends TypedPseudoDocument<'Feature', Schema, GcsBaseItemModel & IFeatures>
   implements INameableFiller
 {
-  static override defineSchema(): BaseFeatureSchema {
+  static override defineSchema(): BaseFeature.Schema {
     return Object.assign(super.defineSchema(), baseFeatureSchema())
   }
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata {
+  static override get metadata(): PseudoDocument.Metadata<'Feature'> {
     return {
       documentName: 'Feature',
-      label: '',
       icon: '',
       embedded: {},
     }
@@ -57,8 +56,12 @@ const baseFeatureSchema = () => {
   return {}
 }
 
-type BaseFeatureSchema = TypedPseudoDocumentSchema & ReturnType<typeof baseFeatureSchema>
+/* ---------------------------------------- */
+
+namespace BaseFeature {
+  export type Schema = TypedPseudoDocument.Schema & ReturnType<typeof baseFeatureSchema>
+}
 
 /* ---------------------------------------- */
 
-export { BaseFeature, baseFeatureSchema, type BaseFeatureSchema }
+export { BaseFeature, baseFeatureSchema }

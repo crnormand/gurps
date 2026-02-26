@@ -1196,7 +1196,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // @deprecated -- Use GurpsActorV2.setMoveDefault instead.
   async setMoveDefault(value: string): Promise<void> {
     const move = this.moveV2
 

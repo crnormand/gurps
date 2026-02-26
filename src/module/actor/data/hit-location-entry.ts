@@ -1,6 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
-
 import { convertRangeTextToArray } from '@util/text-utilties.js'
 
 class HitLocationEntryV2 extends PseudoDocument<HitLocationSchemaV2> {

@@ -1,9 +1,5 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
-import {
-  PseudoDocument,
-  PseudoDocumentMetadata,
-  pseudoDocumentSchema,
-} from '@module/pseudo-document/pseudo-document.js'
+import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
 import { AttributeType, GcsAttributeDefinition } from './attribute-definition.js'
 import { type GcsCharacterModel } from './gcs-character.js'
@@ -21,10 +17,9 @@ class GcsAttribute extends PseudoDocument<GcsAttributeSchema, GcsCharacterModel>
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata {
+  static override get metadata(): PseudoDocument.Metadata<'Attribute'> {
     return {
       documentName: 'Attribute',
-      label: '',
       icon: '',
       embedded: {},
     }

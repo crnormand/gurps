@@ -1,7 +1,7 @@
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { BaseFeature } from './base-feature.js'
 import { ILeveledAmount, getLeveledAmount, leveledAmountSchema } from './leveled-amount.js'
 import { FeatureType } from './types.js'
 
@@ -41,7 +41,7 @@ const skillPointBonusSchema = () => {
   }
 }
 
-type SkillPointBonusSchema = BaseFeatureSchema & ReturnType<typeof skillPointBonusSchema>
+type SkillPointBonusSchema = BaseFeature.Schema & ReturnType<typeof skillPointBonusSchema>
 
 /* ---------------------------------------- */
 

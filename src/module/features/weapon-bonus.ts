@@ -3,7 +3,7 @@ import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { BaseFeature } from './base-feature.js'
 import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.js'
 import { FeatureType, WeaponBonusSelectionType, WeaponSwitchType } from './types.js'
 
@@ -66,7 +66,7 @@ const weaponBonusSchema = () => {
   }
 }
 
-type WeaponBonusSchema = BaseFeatureSchema & ReturnType<typeof weaponBonusSchema>
+type WeaponBonusSchema = BaseFeature.Schema & ReturnType<typeof weaponBonusSchema>
 
 /* ---------------------------------------- */
 

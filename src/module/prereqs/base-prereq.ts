@@ -3,37 +3,24 @@ import { INameableFiller } from '@module/data/mixins/nameable.js'
 
 import { IPrereqs } from '../data/mixins/prereqs.js'
 import { GcsBaseItemModel } from '../item/data/gcs-base.js'
-import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
-import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
-
-enum PrereqType {
-  List = 'prereqList',
-  Trait = 'traitPrereq',
-  Attribute = 'attributePrereq',
-  ContainedQuantity = 'containedQuantityPrereq',
-  ContainedWeight = 'containedWeightPrereq',
-  EquippedEquipment = 'equippedEquipment',
-  Skill = 'skillPrereq',
-  Spell = 'spellPrereq',
-  Script = 'scriptPrereq',
-}
+import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument } from '../pseudo-document/typed-pseudo-document.js'
 
 /* ---------------------------------------- */
 
-class BasePrereq<Schema extends BasePrereqSchema>
-  extends TypedPseudoDocument<Schema, GcsBaseItemModel & IPrereqs>
+class BasePrereq<Schema extends BasePrereq.Schema>
+  extends TypedPseudoDocument<'Prereq', Schema, GcsBaseItemModel & IPrereqs>
   implements INameableFiller
 {
-  static override defineSchema(): BasePrereqSchema {
+  static override defineSchema(): BasePrereq.Schema {
     return Object.assign(super.defineSchema(), basePrereqSchema())
   }
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata {
+  static override get metadata(): PseudoDocument.Metadata<'Prereq'> {
     return {
       documentName: 'Prereq',
-      label: '',
       icon: '',
       embedded: {},
     }
@@ -82,8 +69,10 @@ const basePrereqSchema = () => {
   }
 }
 
-type BasePrereqSchema = TypedPseudoDocumentSchema & ReturnType<typeof basePrereqSchema>
+namespace BasePrereq {
+  export type Schema = TypedPseudoDocument.Schema & ReturnType<typeof basePrereqSchema>
+}
 
 /* ---------------------------------------- */
 
-export { BasePrereq, basePrereqSchema, type BasePrereqSchema, PrereqType }
+export { BasePrereq, basePrereqSchema }

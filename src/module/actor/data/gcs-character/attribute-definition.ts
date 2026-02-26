@@ -1,9 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import {
-  PseudoDocument,
-  PseudoDocumentMetadata,
-  pseudoDocumentSchema,
-} from '@module/pseudo-document/pseudo-document.js'
+import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 import { ScriptAttribute } from '@module/scripting/adapters/attribute.js'
 import { ScriptResolver } from '@module/scripting/resolver.js'
 
@@ -32,10 +28,9 @@ class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinitionSchema
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata {
+  static override get metadata(): PseudoDocument.Metadata<'AttributeDefinition'> {
     return {
       documentName: 'AttributeDefinition',
-      label: '',
       icon: '',
       embedded: { AttributeThreshold: '_thresholds' },
     }

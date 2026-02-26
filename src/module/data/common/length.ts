@@ -319,7 +319,8 @@ class LengthField<
   /* ---------------------------------------- */
 
   protected override _toInput(config: fields.DataField.ToInputConfig<InitializedType>): HTMLElement | HTMLCollection {
-    const stringConfig: fields.StringField.Options = { ...config }
+    const required = config.required === null ? undefined : config.required
+    const stringConfig: fields.StringField.Options = { ...config, required }
 
     return foundry.applications.fields.createTextInput(stringConfig)
   }

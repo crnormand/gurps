@@ -105,7 +105,7 @@ class PseudoDocument<
   /* ---------------------------------------- */
 
   get fieldPath(): string {
-    let path = (this.parent.constructor as unknown as gurps.MetaDataOwner).metadata.embedded[this.documentName]
+    let path = (this.parent.constructor as unknown as gurps.MetadataOwner).metadata.embedded[this.documentName]
 
     if (this.parent instanceof PseudoDocument) path = [this.parent.fieldPath, this.parent.id, path].join('.')
 

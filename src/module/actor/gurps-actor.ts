@@ -2565,8 +2565,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * NOTE: Both character and characterV2.
    */
   async setMoveDefault(value: string) {
-    if (this.isNewActorType) {
-      return this.system.setMoveDefault(value)
+    if (this.isOfType('characterV2')) {
+      return (this.system as Actor.SystemOfType<'characterV2'>).setMoveDefault(value)
     } else {
       // Legacy actor type.
       const move = this.modelV1.move

@@ -1,7 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { BaseFeature } from './base-feature.js'
 import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.js'
 import { FeatureType } from './types.js'
 
@@ -35,7 +35,7 @@ const attributeBonusSchema = () => {
   }
 }
 
-type AttributeBonusSchema = BaseFeatureSchema & ReturnType<typeof attributeBonusSchema>
+type AttributeBonusSchema = BaseFeature.Schema & ReturnType<typeof attributeBonusSchema>
 
 /* ---------------------------------------- */
 

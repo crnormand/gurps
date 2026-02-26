@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { BaseFeature } from './base-feature.js'
 import { FeatureType } from './types.js'
 
 class ContainedWeightReduction extends BaseFeature<ContainedWeightReductionSchema> {
@@ -24,7 +24,7 @@ const containedWeightReductionSchema = () => {
   }
 }
 
-type ContainedWeightReductionSchema = BaseFeatureSchema & ReturnType<typeof containedWeightReductionSchema>
+type ContainedWeightReductionSchema = BaseFeature.Schema & ReturnType<typeof containedWeightReductionSchema>
 
 /* ---------------------------------------- */
 

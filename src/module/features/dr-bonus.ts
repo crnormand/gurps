@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { BaseFeature } from './base-feature.js'
 import { getLeveledAmount, ILeveledAmount, leveledAmountSchema } from './leveled-amount.js'
 import { FeatureType } from './types.js'
 
@@ -35,7 +35,7 @@ const drBonusSchema = () => {
   }
 }
 
-type DRBonusSchema = BaseFeatureSchema & ReturnType<typeof drBonusSchema>
+type DRBonusSchema = BaseFeature.Schema & ReturnType<typeof drBonusSchema>
 
 /* ---------------------------------------- */
 

@@ -100,43 +100,99 @@ function init() {
   Hooks.on('init', () => {
     // @ts-expect-error: Invalid type
     GURPS.CONFIG ||= {}
+    // @ts-expect-error: Invalid type
+    GURPS.CONFIG.PseudoDocument ||= {}
 
-    GURPS.CONFIG.Feature = {
-      [FeatureType.AttributeBonus]: { documentClass: AttributeBonus },
-      [FeatureType.ConditionalModifier]: { documentClass: ConditionalModifier },
-      [FeatureType.DRBonus]: { documentClass: DRBonus },
-      [FeatureType.ReactionBonus]: { documentClass: ReactionBonus },
-      [FeatureType.SkillBonus]: { documentClass: SkillBonus },
-      [FeatureType.SkillPointBonus]: { documentClass: SkillPointBonus },
-      [FeatureType.SpellBonus]: { documentClass: SpellBonus },
-      [FeatureType.SpellPointBonus]: { documentClass: SpellPointBonus },
-      [FeatureType.TraitBonus]: { documentClass: TraitBonus },
-      [FeatureType.WeaponBonus]: { documentClass: WeaponBonus },
-      [FeatureType.WeaponAccBonus]: { documentClass: WeaponAccBonus },
-      [FeatureType.WeaponScopeAccBonus]: { documentClass: WeaponScopeAccBonus },
-      [FeatureType.WeaponDRDivisorBonus]: { documentClass: WeaponDRDivisorBonus },
-      [FeatureType.WeaponEffectiveSTBonus]: { documentClass: WeaponEffectiveSTBonus },
-      [FeatureType.WeaponMinSTBonus]: { documentClass: WeaponMinSTBonus },
-      [FeatureType.WeaponMinReachBonus]: { documentClass: WeaponMinReachBonus },
-      [FeatureType.WeaponMaxReachBonus]: { documentClass: WeaponMaxReachBonus },
-      [FeatureType.WeaponHalfDamageRangeBonus]: { documentClass: WeaponHalfDamageRangeBonus },
-      [FeatureType.WeaponMinRangeBonus]: { documentClass: WeaponMinRangeBonus },
-      [FeatureType.WeaponMaxRangeBonus]: { documentClass: WeaponMaxRangeBonus },
-      [FeatureType.WeaponRecoilBonus]: { documentClass: WeaponRecoilBonus },
-      [FeatureType.WeaponBulkBonus]: { documentClass: WeaponBulkBonus },
-      [FeatureType.WeaponParryBonus]: { documentClass: WeaponParryBonus },
-      [FeatureType.WeaponBlockBonus]: { documentClass: WeaponBlockBonus },
-      [FeatureType.WeaponRofMode1ShotsBonus]: { documentClass: WeaponRofMode1ShotsBonus },
-      [FeatureType.WeaponRofMode1SecondaryBonus]: { documentClass: WeaponRofMode1SecondaryBonus },
-      [FeatureType.WeaponRofMode2ShotsBonus]: { documentClass: WeaponRofMode2ShotsBonus },
-      [FeatureType.WeaponRofMode2SecondaryBonus]: { documentClass: WeaponRofMode2SecondaryBonus },
-      [FeatureType.WeaponNonChamberShotsBonus]: { documentClass: WeaponNonChamberShotsBonus },
-      [FeatureType.WeaponChamberShotsBonus]: { documentClass: WeaponChamberShotsBonus },
-      [FeatureType.WeaponShotDurationBonus]: { documentClass: WeaponShotDurationBonus },
-      [FeatureType.WeaponReloadTimeBonus]: { documentClass: WeaponReloadTimeBonus },
-      [FeatureType.WeaponSwitch]: { documentClass: WeaponSwitch },
-      [FeatureType.CostReduction]: { documentClass: CostReduction },
-      [FeatureType.ContainedWeightReduction]: { documentClass: ContainedWeightReduction },
+    GURPS.CONFIG.PseudoDocument.Feature = {
+      [FeatureType.AttributeBonus]: { documentClass: AttributeBonus, label: 'TYPES.Feature.attributeBonus' },
+      [FeatureType.ConditionalModifier]: {
+        documentClass: ConditionalModifier,
+        label: 'TYPES.Feature.conditionalModifier',
+      },
+      [FeatureType.DRBonus]: { documentClass: DRBonus, label: 'TYPES.Feature.dRBonus' },
+      [FeatureType.ReactionBonus]: { documentClass: ReactionBonus, label: 'TYPES.Feature.reactionBonus' },
+      [FeatureType.SkillBonus]: { documentClass: SkillBonus, label: 'TYPES.Feature.skillBonus' },
+      [FeatureType.SkillPointBonus]: { documentClass: SkillPointBonus, label: 'TYPES.Feature.skillPointBonus' },
+      [FeatureType.SpellBonus]: { documentClass: SpellBonus, label: 'TYPES.Feature.spellBonus' },
+      [FeatureType.SpellPointBonus]: { documentClass: SpellPointBonus, label: 'TYPES.Feature.spellPointBonus' },
+      [FeatureType.TraitBonus]: { documentClass: TraitBonus, label: 'TYPES.Feature.traitBonus' },
+      [FeatureType.WeaponBonus]: { documentClass: WeaponBonus, label: 'TYPES.Feature.weaponBonus' },
+      [FeatureType.WeaponAccBonus]: { documentClass: WeaponAccBonus, label: 'TYPES.Feature.weaponAccBonus' },
+      [FeatureType.WeaponScopeAccBonus]: {
+        documentClass: WeaponScopeAccBonus,
+        label: 'TYPES.Feature.weaponScopeAccBonus',
+      },
+      [FeatureType.WeaponDRDivisorBonus]: {
+        documentClass: WeaponDRDivisorBonus,
+        label: 'TYPES.Feature.weaponDRDivisorBonus',
+      },
+      [FeatureType.WeaponEffectiveSTBonus]: {
+        documentClass: WeaponEffectiveSTBonus,
+        label: 'TYPES.Feature.weaponEffectiveSTBonus',
+      },
+      [FeatureType.WeaponMinSTBonus]: { documentClass: WeaponMinSTBonus, label: 'TYPES.Feature.weaponMinSTBonus' },
+      [FeatureType.WeaponMinReachBonus]: {
+        documentClass: WeaponMinReachBonus,
+        label: 'TYPES.Feature.weaponMinReachBonus',
+      },
+      [FeatureType.WeaponMaxReachBonus]: {
+        documentClass: WeaponMaxReachBonus,
+        label: 'TYPES.Feature.weaponMaxReachBonus',
+      },
+      [FeatureType.WeaponHalfDamageRangeBonus]: {
+        documentClass: WeaponHalfDamageRangeBonus,
+        label: 'TYPES.Feature.weaponHalfDamageRangeBonus',
+      },
+      [FeatureType.WeaponMinRangeBonus]: {
+        documentClass: WeaponMinRangeBonus,
+        label: 'TYPES.Feature.weaponMinRangeBonus',
+      },
+      [FeatureType.WeaponMaxRangeBonus]: {
+        documentClass: WeaponMaxRangeBonus,
+        label: 'TYPES.Feature.weaponMaxRangeBonus',
+      },
+      [FeatureType.WeaponRecoilBonus]: { documentClass: WeaponRecoilBonus, label: 'TYPES.Feature.weaponRecoilBonus' },
+      [FeatureType.WeaponBulkBonus]: { documentClass: WeaponBulkBonus, label: 'TYPES.Feature.weaponBulkBonus' },
+      [FeatureType.WeaponParryBonus]: { documentClass: WeaponParryBonus, label: 'TYPES.Feature.weaponParryBonus' },
+      [FeatureType.WeaponBlockBonus]: { documentClass: WeaponBlockBonus, label: 'TYPES.Feature.weaponBlockBonus' },
+      [FeatureType.WeaponRofMode1ShotsBonus]: {
+        documentClass: WeaponRofMode1ShotsBonus,
+        label: 'TYPES.Feature.weaponRofMode1ShotsBonus',
+      },
+      [FeatureType.WeaponRofMode1SecondaryBonus]: {
+        documentClass: WeaponRofMode1SecondaryBonus,
+        label: 'TYPES.Feature.weaponRofMode1SecondaryBonus',
+      },
+      [FeatureType.WeaponRofMode2ShotsBonus]: {
+        documentClass: WeaponRofMode2ShotsBonus,
+        label: 'TYPES.Feature.weaponRofMode2ShotsBonus',
+      },
+      [FeatureType.WeaponRofMode2SecondaryBonus]: {
+        documentClass: WeaponRofMode2SecondaryBonus,
+        label: 'TYPES.Feature.weaponRofMode2SecondaryBonus',
+      },
+      [FeatureType.WeaponNonChamberShotsBonus]: {
+        documentClass: WeaponNonChamberShotsBonus,
+        label: 'TYPES.Feature.weaponNonChamberShotsBonus',
+      },
+      [FeatureType.WeaponChamberShotsBonus]: {
+        documentClass: WeaponChamberShotsBonus,
+        label: 'TYPES.Feature.weaponChamberShotsBonus',
+      },
+      [FeatureType.WeaponShotDurationBonus]: {
+        documentClass: WeaponShotDurationBonus,
+        label: 'TYPES.Feature.weaponShotDurationBonus',
+      },
+      [FeatureType.WeaponReloadTimeBonus]: {
+        documentClass: WeaponReloadTimeBonus,
+        label: 'TYPES.Feature.weaponReloadTimeBonus',
+      },
+      [FeatureType.WeaponSwitch]: { documentClass: WeaponSwitch, label: 'TYPES.Feature.weaponSwitch' },
+      [FeatureType.CostReduction]: { documentClass: CostReduction, label: 'TYPES.Feature.costReduction' },
+      [FeatureType.ContainedWeightReduction]: {
+        documentClass: ContainedWeightReduction,
+        label: 'TYPES.Feature.containedWeightReduction',
+      },
     }
   })
 }

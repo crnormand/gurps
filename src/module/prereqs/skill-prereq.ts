@@ -3,7 +3,9 @@ import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.js'
+import { BasePrereq } from './base-prereq.js'
+import { PrereqType } from './types.ts'
+
 
 class SkillPrereq extends BasePrereq<SkillPrereqSchema> {
   static override defineSchema(): SkillPrereqSchema {
@@ -53,7 +55,7 @@ const skillPrereqSchema = () => {
   }
 }
 
-type SkillPrereqSchema = BasePrereqSchema & ReturnType<typeof skillPrereqSchema>
+type SkillPrereqSchema = BasePrereq.Schema & ReturnType<typeof skillPrereqSchema>
 
 /* ---------------------------------------- */
 

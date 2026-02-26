@@ -65,7 +65,6 @@ declare module 'fvtt-types/configuration' {
       character: ActorV1Model
       enemy: ActorV1Model
       characterV2: typeof CharacterModel
-      enemy: typeof CharacterModel
       gcsCharacter: typeof GcsCharacterModel
     }
     Item: {
@@ -149,14 +148,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.dev.enableNonProductionDocumentTypes': foundry.data.fields.BooleanField
     'gurps.dev.showDebugInfo': foundry.data.fields.BooleanField
 
-    /** Unsorted */
-    'gurps.modify-dice-plus-adds': boolean
-    'gurps.portrait-path': 'global' | 'world'
-    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
-    'gurps.show-confirmation-roll-dialog': boolean
-    'gurps.use-quick-rolls': AnyMutableObject
-    'gurps.portrait-hp-tinting': boolean
-    'gurps.migration-version': string
+    /** Scripting */
     'gurps.scripting.globalResolverCache': MapField<
       foundry.data.fields.StringField<{ required: true; nullable: false }>,
       MapField<
@@ -166,6 +158,15 @@ declare module 'fvtt-types/configuration' {
       >,
       { required: true; nullable: false }
     >
+
+    /** Unsorted */
+    'gurps.modify-dice-plus-adds': boolean
+    'gurps.portrait-path': 'global' | 'world'
+    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
+    'gurps.show-confirmation-roll-dialog': boolean
+    'gurps.use-quick-rolls': AnyMutableObject
+    'gurps.portrait-hp-tinting': boolean
+    'gurps.migration-version': string
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

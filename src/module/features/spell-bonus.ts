@@ -2,7 +2,7 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BaseFeature, BaseFeatureSchema } from './base-feature.js'
+import { BaseFeature } from './base-feature.js'
 import { ILeveledAmount, getLeveledAmount, leveledAmountSchema } from './leveled-amount.js'
 import { FeatureType, SpellMatchType } from './types.js'
 
@@ -47,7 +47,7 @@ const spellBonusSchema = () => {
   }
 }
 
-type SpellBonusSchema = BaseFeatureSchema & ReturnType<typeof spellBonusSchema>
+type SpellBonusSchema = BaseFeature.Schema & ReturnType<typeof spellBonusSchema>
 
 /* ---------------------------------------- */
 

@@ -2,7 +2,8 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
-import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.js'
+import { BasePrereq } from './base-prereq.js'
+import { PrereqType } from './types.ts'
 
 class EquippedEquipmentPrereq extends BasePrereq<EquippedEquipmentPrereqSchema> {
   static override defineSchema(): EquippedEquipmentPrereqSchema {
@@ -52,7 +53,7 @@ const equippedEquipmentPrereqSchema = () => {
   }
 }
 
-type EquippedEquipmentPrereqSchema = BasePrereqSchema & ReturnType<typeof equippedEquipmentPrereqSchema>
+type EquippedEquipmentPrereqSchema = BasePrereq.Schema & ReturnType<typeof equippedEquipmentPrereqSchema>
 
 /* ---------------------------------------- */
 

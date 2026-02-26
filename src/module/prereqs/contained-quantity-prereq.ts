@@ -1,7 +1,8 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 
-import { BasePrereq, BasePrereqSchema, PrereqType } from './base-prereq.js'
+import { BasePrereq } from './base-prereq.js'
+import { PrereqType } from './types.ts'
 
 class ContainedQuantityPrereq extends BasePrereq<ContainedQuantityPrereqSchema> {
   static override defineSchema(): ContainedQuantityPrereqSchema {
@@ -42,7 +43,7 @@ const containedQuantityPrereqSchema = () => {
   }
 }
 
-type ContainedQuantityPrereqSchema = BasePrereqSchema & ReturnType<typeof containedQuantityPrereqSchema>
+type ContainedQuantityPrereqSchema = BasePrereq.Schema & ReturnType<typeof containedQuantityPrereqSchema>
 
 /* ---------------------------------------- */
 
