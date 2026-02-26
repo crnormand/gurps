@@ -14,7 +14,7 @@ export class Migration {
      *
      * All migrations should be idempotent (i.e. they should be able to run multiple times without causing issues):
      *
-     * - If a migration is not needed, it should resolve to falsae.
+     * - If a migration is not needed, it should resolve to false.
      * - If a migration is needed, it should perform the migration and resolve to true.
      * - If a migration fails, it should log the error and continue with the next migration.
      * - If a migration is successful, it should log the success message.
