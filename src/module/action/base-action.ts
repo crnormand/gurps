@@ -1,5 +1,4 @@
 import { DataModel, fields } from '@gurps-types/foundry/index.js'
-import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { type PseudoDocument } from '../pseudo-document/pseudo-document.js'

@@ -1,10 +1,8 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
-import { BaseAction } from '@module/action/base-action.js'
+import { ActionType, AnyActionClass, BaseAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAction } from '../../action/base-action.js'
-import { AnyActionClass, MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'

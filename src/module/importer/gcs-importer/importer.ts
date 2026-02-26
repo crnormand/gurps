@@ -171,18 +171,6 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
   /* ---------------------------------------- */
 
-  #itemDataIsOfType<SubType extends 'featureV2' | 'skillV2' | 'spellV2' | 'equipmentV2'>(
-    data: { type: string },
-    ...types: SubType[]
-  ): data is Item.CreateData<SubType> & {
-    system: DataModel.CreateData<DataModel.SchemaOf<Item.SystemOfType<SubType>>>
-  }
-  #itemDataIsOfType(data: { type: string }, ...types: string[]): boolean {
-    return types.includes(data.type)
-  }
-
-  /* ---------------------------------------- */
-
   #itemCollectionIsOfType<Type extends GcsItemCollectionType>(
     collection: GcsCollection,
     type: Type
@@ -194,16 +182,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
   /* ---------------------------------------- */
 
   #existingItemId(itemData: Item.CreateData, existingIds: { _id: string | null; importid: string }[]): string | null {
-    const getImportId = (data: Item.CreateData) => {
-      if (this.#itemDataIsOfType(data, 'featureV2')) return data.system?.fea?.importid
-      if (this.#itemDataIsOfType(data, 'skillV2')) return data.system?.ski?.importid
-      if (this.#itemDataIsOfType(data, 'spellV2')) return data.system?.spl?.importid
-      if (this.#itemDataIsOfType(data, 'equipmentV2')) return data.system?.eqt?.importid
-
-      return null
-    }
-
-    const id = getImportId(itemData)
+    const id = itemData.system?.importid
 
     if (!id) return null
 
@@ -244,7 +223,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
     const existingItems: { _id: string | null; importid: string }[] = pack
       ? (await pack.getDocuments()).map(item => {
-          return { _id: item._id || null, importid: item.system.component.importid || '' }
+          return { _id: item._id || null, importid: item.system.importid || '' }
         })
       : []
 
@@ -288,7 +267,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     if (savedEquipmentCounts.size > 0) {
       for (const itemData of this.items) {
         if (createDataIsOfType(itemData, 'equipmentV2')) {
-          const system = itemData.system
+          const system = itemData.system as DataModel.CreateData<EquipmentSchema>
 
           if (system && system.importid && savedEquipmentCounts.has(system.importid)) {
             system.count = savedEquipmentCounts.get(system.importid)!.quantity
@@ -876,6 +855,51 @@ Portrait will not be imported.`
 
   /* ---------------------------------------- */
 
+  #importWeaponDefaults(weapon: GcsWeapon): string {
+    if (!weapon.defaults) return ''
+
+    const otfList: string[] = []
+
+    for (const defaultData of weapon.defaults) {
+      const modifier = defaultData.modifier
+        ? defaultData.modifier > -1
+          ? `+${defaultData.modifier}`
+          : `${defaultData.modifier}`
+        : ''
+
+      if (defaultData.type === 'skill') {
+        otfList.push(
+          `S:"${defaultData.name}` +
+            (defaultData.specialization ? `*(${defaultData.specialization})` : '') +
+            '"' +
+            modifier
+        )
+      } else if (
+        [
+          '10',
+          'st',
+          'dx',
+          'iq',
+          'ht',
+          'per',
+          'will',
+          'vision',
+          'hearing',
+          'taste_smell',
+          'touch',
+          'parry',
+          'block',
+        ].includes(defaultData.type)
+      ) {
+        otfList.push(defaultData.type.replace('_', ' ') + modifier)
+      }
+    }
+
+    return otfList.join('|')
+  }
+
+  /* ---------------------------------------- */
+
   #importMeleeWeapon(weapon: GcsWeapon): DataModel.CreateData<MeleeAttackSchema> {
     const name = weapon.usage ?? ''
     const type = 'meleeAttack'
@@ -920,7 +944,6 @@ Portrait will not be imported.`
       name,
       type,
       _id,
-      mode: weapon.usage || '',
       notes: weapon.usage_notes || '',
       import: weapon.calc?.level || 0,
       damage: weapon.calc?.damage || '',
