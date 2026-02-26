@@ -38,7 +38,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
     if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_CONVERT_RANGED) === false) return
 
     const range = this.range
-    // Match the range format, e.g., "x2", "x20", "x30"
+    // Match the range format, e.g., "×2", "x20", "X30"
     const matchSingle = range.match(/^\s*[×xX]([\d.]+)\s*$/)
     const matchMultiple = range.match(/^\s*[×xX]([\d.]+)\s*-\s*[×xX]([\d.]+)\s*$/)
 
