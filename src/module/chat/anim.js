@@ -34,7 +34,7 @@ function addToLibrary(module) {
           list = list.map(text => text.replace(/,width=/, ',W:'))
           list = list.map(text => `modules/${module}/${text}`)
           list = list.filter(text => fileWidth(text).width > 0)
-          console.log(`Loaded ${list.length} ${module} records`)
+          console.log(`Anim | Loaded ${list.length} ${module} records`)
           ANIM_LIBRARY = [...ANIM_LIBRARY, ...list]
         }
       }
@@ -53,7 +53,6 @@ function fileWidth(entry) {
 
   if (match) return { file: entry.split(',')[0], width: +match[1] }
 
-  //  console.log("Unknown format: " + entry)
   return { file: entry, width: 1 }
 }
 
@@ -200,7 +199,6 @@ export class AnimChatProcessor extends ChatProcessor {
         canvas.fxmaster.playVideo(effectData)
       }
 
-      //console.log(GURPS.objToString(effectData))
       if (count > 0) await wait(effectData.delay)
     }
   }
@@ -213,8 +211,6 @@ export class AnimChatProcessor extends ChatProcessor {
 
   async awaitClick(line) {
     if (line.match(/@\d+,\d+/)) {
-      console.log('Duplicate request for click: ' + line)
-
       return
     }
 
@@ -249,7 +245,7 @@ export class AnimChatProcessor extends ChatProcessor {
       return
     } catch (error) {
       GURPS.IgnoreTokenSelect = false
-      console.log(error)
+      console.error(error)
     }
 
     return new Promise(resolve => {

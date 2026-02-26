@@ -161,8 +161,6 @@ export class GurpsRange {
   async update() {
     let currentValue = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY)
 
-    console.debug(currentValue)
-
     switch (currentValue) {
       case 'Standard': {
         this.ranges = GurpsRange.basicSetRanges

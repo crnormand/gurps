@@ -2256,7 +2256,9 @@ if (!globalThis.GURPS) {
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
     let previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
 
-    console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
+    if (foundry.utils.isNewerVersion(GURPS.currentVersion, previousVersionString)) {
+      console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
+    }
 
     // Run any needed migrations.
     Migration.run()
