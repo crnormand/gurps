@@ -87,7 +87,7 @@ class BaseAction<
 
     // If the OTF does not return an action, we cannot set the level.
     if (!action.action) {
-      console.warn(`GURPS | RangedAttackModel: OTF "${otf}" did not return a valid action.`)
+      console.warn(`GURPS | ${this.documentName}: OTF "${otf}" did not return a valid action.`)
 
       return
     }
