@@ -1,9 +1,9 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { BaseAction } from '@module/action/base-action.js'
 import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAction } from '../../action/base-action.js'
-import { AnyActionClass, MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
+import { ActionType, AnyActionClass, MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
 import { reactionSchema } from '../../actor/data/character-components.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
@@ -250,8 +250,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   override prepareBaseData(): void {
     super.prepareBaseData()
-    this.melee = this.actions.filter(action => action.isOfType('meleeAttack'))
-    this.ranged = this.actions.filter(action => action.isOfType('rangedAttack'))
+    this.melee = this.actions.filter(action => action.isOfType(ActionType.MeleeAttack))
+    this.ranged = this.actions.filter(action => action.isOfType(ActionType.RangedAttack))
 
     this.actions.forEach(action => {
       action.prepareBaseData()

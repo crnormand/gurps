@@ -14,8 +14,7 @@ enum ActionType {
 class BaseAction<
   Schema extends BaseAction.Schema = BaseAction.Schema,
   Parent extends DataModel.Any = DataModel.Any,
-> extends TypedPseudoDocument<Schema, Parent> {
-  declare parent: Parent
+> extends TypedPseudoDocument<'Action', Schema, Parent> {
   static override defineSchema(): BaseAction.Schema {
     return Object.assign(super.defineSchema(), baseActionSchema())
   }
@@ -78,4 +77,4 @@ namespace BaseAction {
 
 /* ---------------------------------------- */
 
-export { ActionType, BaseAction }
+export { BaseAction }

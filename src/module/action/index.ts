@@ -1,8 +1,8 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { ActionType } from './base-action.js'
 import { MeleeAttackModel } from './melee-attack.js'
 import { RangedAttackModel } from './ranged-attack.js'
+import { ActionType } from './types.ts'
 
 /* ---------------------------------------- */
 
@@ -26,11 +26,11 @@ function init() {
   GURPS.CONFIG.PseudoDocument ||= {}
 
   GURPS.CONFIG.PseudoDocument.Action = {
-    meleeAttack: {
+    [ActionType.MeleeAttack]: {
       label: 'TYPES.Action.meleeAttack',
       documentClass: MeleeAttackModel,
     },
-    rangedAttack: {
+    [ActionType.RangedAttack]: {
       label: 'TYPES.Action.rangedAttack',
       documentClass: RangedAttackModel,
     },
@@ -45,5 +45,5 @@ export const ActionModule: GurpsModule = {
 
 export * from './melee-attack.js'
 export * from './ranged-attack.js'
-export { ActionClasses }
+export { ActionClasses, ActionType }
 export type { Action, ActionClass, AnyAction, AnyActionClass }

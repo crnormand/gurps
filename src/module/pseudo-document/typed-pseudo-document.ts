@@ -2,17 +2,20 @@ import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
 import { systemPath } from '@module/util/misc.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { PseudoDocument } from './pseudo-document.js'
+import { PseudoDocument, pseudoDocumentSchema } from './pseudo-document.js'
 
 /* ---------------------------------------- */
 
 // @ts-expect-error - Polymorphic static create return type is incompatible with base class signature, this is a TS limitation
 class TypedPseudoDocument<
+  TName extends gurps.Pseudo.WithTypes = gurps.Pseudo.WithTypes,
   Schema extends TypedPseudoDocument.Schema = TypedPseudoDocument.Schema,
   Parent extends DataModel.Any = DataModel.Any,
 > extends PseudoDocument<Schema, Parent> {
-  static override defineSchema() {
-    return Object.assign(super.defineSchema(), typedPseudoDocumentSchema(this))
+  declare readonly _documentName: TName
+
+  static override defineSchema(): TypedPseudoDocument.Schema {
+    return typedPseudoDocumentSchema(this)
   }
 
   /* ---------------------------------------- */
@@ -63,23 +66,23 @@ class TypedPseudoDocument<
 
   /* ---------------------------------------- */
 
-  isOfType<DocumentName extends gurps.Pseudo.WithTypes, SubType extends TypedPseudoDocument.TypeNames<DocumentName>>(
+  isOfType<SubType extends TypedPseudoDocument.TypeNames<TName>>(
     ...types: SubType[]
-  ): this is TypedPseudoDocument.OfType<DocumentName, SubType>
+  ): this is TypedPseudoDocument.OfType<TName, SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type)
   }
 
   /* ---------------------------------------- */
 
-  static override async create<T extends typeof TypedPseudoDocument>(
-    this: T,
-    data: fields.SchemaField.CreateData<TypedPseudoDocument.Schema>,
+  static override async create<
+    T extends typeof TypedPseudoDocument,
+    Schema extends TypedPseudoDocument.Schema = TypedPseudoDocument.Schema,
+  >(
+    data: fields.SchemaField.CreateData<Schema> & AnyObject,
     options: Partial<gurps.Pseudo.CreateOperation>
   ): Promise<InstanceType<T> | undefined> {
-    const createData = foundry.utils.deepClone(data) as fields.SchemaField.CreateData<TypedPseudoDocument.Schema> & {
-      type?: string
-    }
+    const createData = foundry.utils.deepClone(data) as fields.SchemaField.CreateData<Schema> & { type?: string }
 
     if (!createData.type) createData.type = Object.keys(this.TYPES)[0]
 
@@ -89,7 +92,7 @@ class TypedPseudoDocument<
       )
     }
 
-    return super.create(createData, options) as Promise<InstanceType<T> | undefined>
+    return super.create(createData as AnyObject, options) as Promise<InstanceType<T> | undefined>
   }
 
   /* ---------------------------------------- */
@@ -111,9 +114,13 @@ class TypedPseudoDocument<
 
 /* ---------------------------------------- */
 
-const typedPseudoDocumentSchema = (self: { TYPES: Record<string, unknown> }) => {
+const typedPseudoDocumentSchema = (document: DataModel.AnyConstructor) => {
   return {
-    type: new fields.DocumentTypeField(self as unknown as Document.AnyConstructor, { required: true, nullable: false }),
+    ...pseudoDocumentSchema(),
+    type: new fields.DocumentTypeField(document as unknown as Document.AnyConstructor, {
+      required: true,
+      nullable: false,
+    }),
   }
 }
 
@@ -134,7 +141,7 @@ namespace TypedPseudoDocument {
     readonly [_ in Name]: { readonly discriminate: 'all' }
   }
     ? PseudoDocumentConfig.Types[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
-      ? PseudoDocumentConfig.Types[Name][Type]
+      ? PseudoDocumentConfig.Types[Name][Type]['documentClass']
       : never
     : never
 
