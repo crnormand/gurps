@@ -10,7 +10,11 @@ import { GcsSpellCollection } from './gcs-importer/schema/spell.js'
 import { GcsTraitCollection } from './gcs-importer/schema/trait.js'
 
 async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
-  if (!game.i18n) throw Error('GURPS | game.i18n not available when trying to import GCS character!')
+  if (!game.i18n) {
+    ui.notifications?.error('GURPS | Cannot open import dialog: game.i18n not available.')
+
+    return
+  }
 
   const name = actor ? actor.name : game.i18n.localize('TYPES.Actor.characterV2')
 
@@ -53,7 +57,9 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
             const lastDotIndex = file.name.lastIndexOf('.')
 
             if (lastDotIndex < 0) {
-              throw new Error('GURPS | Selected file has no extension.')
+              ui.notifications?.error('GURPS | Selected file has no extension. Please select a valid GCS or GCA5 file.')
+
+              return
             }
 
             const extension = file.name.slice(lastDotIndex + 1)
@@ -89,7 +95,9 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
               }
 
               default:
-                throw new Error(`GURPS | Unrecognized file type for character import: ${extension}`)
+                ui.notifications?.error('GURPS | Unrecognized file type. Please select a valid GCS or GCA5 file.')
+
+                return
             }
 
             console.debug(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
@@ -103,7 +111,11 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
 /* ---------------------------------------- */
 
 async function itemImporterPrompt() {
-  if (!game.i18n) throw Error('GURPS | game.i18n not available when trying to import GCS Compendium!')
+  if (!game.i18n) {
+    ui.notifications?.error('GURPS | Cannot open import dialog: game.i18n not available.')
+
+    return
+  }
 
   return new foundry.applications.api.DialogV2({
     window: {
@@ -141,7 +153,9 @@ async function itemImporterPrompt() {
             const lastDotIndex = file.name.lastIndexOf('.')
 
             if (lastDotIndex < 0) {
-              throw new Error('GURPS | Selected file has no extension.')
+              ui.notifications?.error('GURPS | Selected file has no extension. Please select a valid file.')
+
+              return
             }
 
             const extension = file.name.slice(lastDotIndex + 1)
@@ -205,7 +219,9 @@ async function itemImporterPrompt() {
               }
 
               default:
-                throw new Error(`GURPS | Unrecognized file type for compendium import: ${extension}`)
+                ui.notifications?.error('GURPS | Unrecognized file type. Please select a valid file.')
+
+                return
             }
 
             console.debug(`Took ${Math.round(performance.now() - startTime)}ms to import.`)
