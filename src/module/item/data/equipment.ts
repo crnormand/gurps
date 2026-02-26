@@ -2,7 +2,6 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
-import { ItemComponent, ItemComponentSchema } from './component.js'
 
 class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   static override defineSchema(): EquipmentSchema {
@@ -27,26 +26,8 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   /* ---------------------------------------- */
 
-  get component(): EquipmentComponent {
-    return this.eqt
-  }
-
-  /* ---------------------------------------- */
-
   override get enabled(): boolean {
     return this.equipped && this.carried
-  }
-
-  /* ---------------------------------------- */
-
-  get equipped(): boolean {
-    return this.component.equipped
-  }
-
-  /* ---------------------------------------- */
-
-  get carried(): boolean {
-    return this.component.carried
   }
 
   /* ---------------------------------------- */
@@ -54,9 +35,7 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   override async toggleEnabled(enabled: boolean | null = null): Promise<this['parent'] | undefined> {
     const currentEnabled = this.equipped
 
-    return this.parent.update({
-      system: { eqt: { equipped: enabled === null ? !currentEnabled : enabled } },
-    } as Item.UpdateData)
+    return this.parent.update({ system: { equipped: enabled === null ? !currentEnabled : enabled } })
   }
 
   /* ---------------------------------------- */
@@ -64,18 +43,9 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   /* ---------------------------------------- */
 
   override getGlobalBonuses(): AnyObject[] {
-    if (!this.component.equipped) return []
+    if (!this.equipped) return []
 
     return super.getGlobalBonuses()
-  }
-}
-
-class EquipmentComponent extends ItemComponent<EquipmentComponentSchema> {
-  static override defineSchema(): EquipmentComponentSchema {
-    return {
-      ...super.defineSchema(),
-      ...equipmentComponentSchema(),
-    }
   }
 }
 
@@ -83,7 +53,57 @@ class EquipmentComponent extends ItemComponent<EquipmentComponentSchema> {
 
 const equipmentSchema = () => {
   return {
-    eqt: new fields.EmbeddedDataField(EquipmentComponent, { required: true, nullable: false }),
+    /** The quantity of this item. */
+    count: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    /** The weight of one unit of this item. */
+    weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    /** The value of one unit of this item. */
+    cost: new fields.NumberField({ required: true, nullable: false }),
+
+    /** The stored location of this item, e.g. "Backpack", "Belt Pouch", etc. */
+    location: new fields.StringField({ required: true, nullable: false }),
+
+    /** Whether this item is currently being carried by the character. */
+    carried: new fields.BooleanField({ required: true, nullable: false }),
+
+    /** Whether this item is currently equipped by the character. */
+    equipped: new fields.BooleanField({ required: true, nullable: false }),
+
+    /** The Tech Level of this item, e.g. "TL10", "TL12^" */
+    techlevel: new fields.StringField({ required: true, nullable: false }),
+
+    /** A comma-separated list of this item's categories, e.g. "Weapon, Ranged, Thrown" */
+    categories: new fields.StringField({ required: true, nullable: false }),
+
+    /** The Legality Class of this item, generally numeric. */
+    legalityclass: new fields.StringField({ required: true, nullable: false }),
+
+    /** The summed cost of all units of this item and any contained items. */
+    costsum: new fields.NumberField({ required: true, nullable: false }),
+
+    /** The summed weight of all units of this item and any contained items. */
+    weightsum: new fields.StringField({ required: true, nullable: false }),
+
+    /** The remaining uses of this item, if any. Used for things like ammunition, sips of a potion, etc. */
+    uses: new fields.NumberField({ required: true, nullable: false }),
+
+    /** The maximum uses of this item, if any. Used for things like ammunition, sips of a potion, etc. */
+    maxuses: new fields.NumberField({ required: true, nullable: false }),
+
+    /**
+     * The original imported quantity of this item, which is used by the Character importer to check whether to
+     * override item quantity on re-import
+     * */
+    originalCount: new fields.StringField({ required: true, nullable: false }),
+
+    /** Whether the importer should ignore changes to quantity for this item on re-import. */
+    ignoreImportQty: new fields.BooleanField({ required: true, nullable: false }),
+
+    /** NOTE: This field does not appear to be used anywhere. */
+
+    // lastUpdate: new fields.StringField({ required: false, nullable: true }),
   }
 }
 
@@ -91,32 +111,4 @@ type EquipmentSchema = BaseItemModelSchema & ReturnType<typeof equipmentSchema>
 
 /* ---------------------------------------- */
 
-// Change from previous schema. "last_import" is not present as it is never used.
-const equipmentComponentSchema = () => {
-  return {
-    count: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    cost: new fields.NumberField({ required: true, nullable: false }),
-    location: new fields.StringField({ required: true, nullable: false }),
-    carried: new fields.BooleanField({ required: true, nullable: false }),
-    equipped: new fields.BooleanField({ required: true, nullable: false }),
-    techlevel: new fields.StringField({ required: true, nullable: false }),
-    categories: new fields.StringField({ required: true, nullable: false }),
-    legalityclass: new fields.StringField({ required: true, nullable: false }),
-    costsum: new fields.NumberField({ required: true, nullable: false }),
-    weightsum: new fields.StringField({ required: true, nullable: false }),
-    // NOTE: Change from previous schema, where this was a string
-    uses: new fields.NumberField({ required: true, nullable: false }),
-    // NOTE: Change from previous schema, where this was a string
-    maxuses: new fields.NumberField({ required: true, nullable: false }),
-    originalCount: new fields.StringField({ required: true, nullable: false }),
-    ignoreImportQty: new fields.BooleanField({ required: true, nullable: false }),
-    lastUpdate: new fields.StringField({ required: false, nullable: true }),
-  }
-}
-
-type EquipmentComponentSchema = ItemComponentSchema & ReturnType<typeof equipmentComponentSchema>
-
-/* ---------------------------------------- */
-
-export { EquipmentModel, type EquipmentSchema, type EquipmentComponentSchema, EquipmentComponent }
+export { EquipmentModel, type EquipmentSchema }

@@ -2401,12 +2401,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async #splitEquipment(srckey: string, targetkey: string): Promise<boolean> {
     const sourceItem = (foundry.utils.getProperty(this, srckey) as Item.OfType<'equipmentV2'>) ?? null
 
-    if (!sourceItem || !sourceItem.eqt || sourceItem.eqt.count <= 1) return false // Nothing to split
+    if (!sourceItem || !sourceItem.system || sourceItem.system.count <= 1) return false // Nothing to split
 
     const count = (await this.promptEquipmentQuantity(sourceItem.name, game.i18n!.localize('GURPS.splitQuantity'))) ?? 0
 
     if (count <= 0) return true // Didn't want to split.
-    if (count >= sourceItem.eqt.count) return false // Not a split, but a move.
+    if (count >= sourceItem.system.count) return false // Not a split, but a move.
 
     // Could be a list such as 'system.equipment.other' or an item such as 'system.equipment.other.1'.
     // If it ends in '.other' or '.carried', parent is null.
@@ -2420,7 +2420,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     await this.#createEquipment(sourceItem.toObject(false), count, parent)
 
     // Update src equipment count (sourceItem.eqt.count - count)
-    await this.updateEqtCountV2(sourceItem.id!, sourceItem.eqt.count - count)
+    await this.updateEqtCountV2(sourceItem.id!, sourceItem.system.count - count)
 
     return true
   }
@@ -2478,7 +2478,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     if (merge === 'merge') {
       // Update the target item's count.
-      await this.updateEqtCountV2(targetItem.id!, targetItem.system.eqt.count + item.system.eqt.count)
+      await this.updateEqtCountV2(targetItem.id!, targetItem.system.count + item.system.count)
       // Delete the source item.
       await this.deleteItem(item)
 
@@ -4399,10 +4399,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @returns
    */
   private findByOriginalName(name: string, include = false): Item.Implementation | null {
-    // @ts-expect-error: equipment system type not registering correctly
     let item = this.items.find(i => i.system.originalName === name)
 
-    // @ts-expect-error: equipment system type not registering correctly
     if (!item) item = this.items.find(i => i.system.name === name)
     if (item) return item as Item.Implementation
 

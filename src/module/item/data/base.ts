@@ -9,7 +9,6 @@ import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
-import { ItemComponent } from './component.js'
 import { ConditionalModifier, ReactionModifier } from './conditional-modifier.ts'
 
 type ItemMetadata = Readonly<{
@@ -139,10 +138,6 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       return acc
     }, [])
   }
-
-  /* ---------------------------------------- */
-
-  abstract get component(): ItemComponent
 
   /* ---------------------------------------- */
   /*  IContainable Interface Implementation   */
@@ -373,6 +368,58 @@ const baseItemModelSchema = () => {
 
     /** Conditional Modifiers applied by this Item. */
     _conditionalmods: new CollectionField(ConditionalModifier),
+
+    /** NOTE: The below fields have been migrated from the now non-existent ItemComponent model. */
+
+    /**
+     * The name of this Item. This is occasionally used when the displayed name and Document name do not align
+     * TODO: Evaluate whether this field should be kept.
+     */
+    name: new fields.StringField({ required: true, nullable: false }),
+
+    /** Item notes, displayed under the Item name on the charcter sheet */
+    notes: new fields.StringField({ required: true, nullable: false }),
+
+    /** The GURPS book page regarding this item, used for looking up rules related to the item. */
+    pageref: new fields.StringField({ required: true, nullable: false }),
+
+    /** VTT-specific notes about this item, not visible in external programs but useful for storing OTF and the like. */
+    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+
+    /** The OTF to run when running an OTF check against this item, such as for a skill or attribute check. */
+    checkotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when using this item, such as for an attack or active skill. */
+    duringotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when the check OTF succeeds, such as a skill roll succeeding. */
+    passotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when the check OTF fails, such as a skill roll failing. */
+    failotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** Whether to consume a combat action when using this item. */
+    consumeAction: new fields.BooleanField({ required: true, nullable: false }),
+
+    /** The GCS-imported ID of this item, used for tracking items imported from GCS and matching them on re-import. */
+    importid: new fields.StringField({ required: true, nullable: false, initial: '' }),
+
+    /** The external program from which this item originated, if any. May be "GCS" or "GCA". */
+    importFrom: new fields.StringField({ required: true, nullable: false, initial: '' }),
+
+    /**
+     * The imported original name of this item, used for tracking items imported from GCS/GCA and matching them on
+     * re-import. This is not necessarily unique, so it should be used in conjunction with the `importid` field for
+     * matching.
+     * TODO: Evaluate whether this field is necessary, or if the `importid` field is sufficient for tracking imported
+     * items. If it is not necessary, it should be removed to avoid confusion.
+     * */
+    originalName: new fields.StringField({ required: true, nullable: false }),
+
+    /** NOTE: The below fields are apparently unused but temporarily remain here for documentation purposes. */
+
+    // uuid: new fields.StringField({ required: true, nullable: false }),
+    // parentuuid: new fields.StringField({ required: true, nullable: false }),
   }
 }
 

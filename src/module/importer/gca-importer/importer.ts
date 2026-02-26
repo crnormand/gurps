@@ -1,18 +1,12 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
-import {
-  MeleeAttackComponentSchema,
-  MeleeAttackSchema,
-  RangedAttackComponentSchema,
-  RangedAttackSchema,
-} from '@module/action/index.js'
+import { MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
 import { BaseItemModel } from '@module/item/data/base.js'
-import { ItemComponentSchema } from '@module/item/data/component.js'
-import { EquipmentSchema, EquipmentComponentSchema } from '@module/item/data/equipment.js'
-import { SkillSchema, SkillComponentSchema } from '@module/item/data/skill.js'
-import { SpellComponentSchema, SpellSchema } from '@module/item/data/spell.js'
-import { TraitComponentSchema, TraitSchema } from '@module/item/data/trait.js'
+import { EquipmentSchema } from '@module/item/data/equipment.js'
+import { SkillSchema } from '@module/item/data/skill.js'
+import { SpellSchema } from '@module/item/data/spell.js'
+import { TraitSchema } from '@module/item/data/trait.js'
 
 // TODO: get rid of when this is migrated
 import * as HitLocations from '../../hitlocation/hitlocation.js'
@@ -119,12 +113,12 @@ class GcaImporter {
     if (savedEquipmentCounts.size > 0) {
       for (const itemData of this.items) {
         if (createDataIsOfType(itemData, 'equipmentV2')) {
-          const eqt = itemData.system?.eqt
+          const system = itemData.system
 
-          if (eqt && eqt.importid && savedEquipmentCounts.has(eqt.importid)) {
-            eqt.count = savedEquipmentCounts.get(eqt.importid)!.quantity
-            eqt.uses = savedEquipmentCounts.get(eqt.importid)!.uses
-            eqt.ignoreImportQty = true
+          if (system && system.importid && savedEquipmentCounts.has(system.importid)) {
+            system.count = savedEquipmentCounts.get(system.importid)!.quantity
+            system.uses = savedEquipmentCounts.get(system.importid)!.uses
+            system.ignoreImportQty = true
           }
         }
       }
@@ -144,9 +138,7 @@ class GcaImporter {
    */
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
-      const component = item.system.fea ?? item.system.ski ?? item.system.spl ?? item.system.eqt
-
-      return ['GCS', 'GCA'].includes(component?.importFrom)
+      return ['GCS', 'GCA'].includes(item.system?.importFrom)
     })
 
     await actor.deleteEmbeddedDocuments(
@@ -161,10 +153,10 @@ class GcaImporter {
     const savedEquipmentCounts = new Map<string, { quantity: number; uses: number }>()
 
     items.forEach(item => {
-      const eqt = item.system.eqt
+      const system = item.system
 
-      if (eqt && eqt.importFrom === 'GCA' && eqt.ignoreImportQty && eqt.importid) {
-        savedEquipmentCounts.set(eqt.importid, { quantity: eqt.count, uses: eqt.uses })
+      if (system && system.importFrom === 'GCA' && system.ignoreImportQty && system.importid) {
+        savedEquipmentCounts.set(system.importid, { quantity: system.count, uses: system.uses })
       }
     })
 
@@ -473,6 +465,11 @@ Portrait will not be imported.`
     containedBy: string | null = null
   ): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {
+      name: item.name ?? '',
+      notes: item.ref?.notes ?? '',
+      pageref: item.ref?.page ?? '',
+      vtt_notes: item.ref?.vttnotes ?? '',
+      importFrom: 'GCA',
       actions: {},
       _reactions: {},
       _conditionalmods: {},
@@ -481,7 +478,7 @@ Portrait will not be imported.`
 
     if (item.attackmodes) {
       system.actions = item.attackmodes
-        .map((action: GCAAttackMode) => this.#importWeapon(action, item))
+        .map((action: GCAAttackMode) => this.#importWeapon(action))
         .reduce(
           (
             acc: Record<string, DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>>,
@@ -507,25 +504,26 @@ Portrait will not be imported.`
 
   /* ---------------------------------------- */
 
-  #importWeapon(weapon: GCAAttackMode, item: GCATrait): DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema> {
-    if (weapon.reach !== null) return this.#importMeleeWeapon(weapon, item)
+  #importWeapon(weapon: GCAAttackMode): DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema> {
+    if (weapon.reach !== null) return this.#importMeleeWeapon(weapon)
 
-    return this.#importRangedWeapon(weapon, item)
+    return this.#importRangedWeapon(weapon)
   }
 
   /* ---------------------------------------- */
 
-  #importMeleeWeapon(weapon: GCAAttackMode, item: GCATrait): DataModel.CreateData<MeleeAttackSchema> {
+  #importMeleeWeapon(weapon: GCAAttackMode): DataModel.CreateData<MeleeAttackSchema> {
     const name = weapon.name ?? ''
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
     const damage = `${weapon.chardamage} ${weapon.chardamtype}`
 
-    const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
-      name: item.name,
+    return {
+      name,
+      type,
+      _id,
       notes: weapon.notes ?? '',
-      pageref: '',
       mode: weapon.name ?? '',
       import: weapon.charskillscore ?? 0,
       damage,
@@ -534,26 +532,20 @@ Portrait will not be imported.`
       parry: weapon.charparry ?? '',
       block: weapon.charblockscore ?? '',
     }
-
-    return {
-      name,
-      type,
-      _id,
-      mel: component,
-    }
   }
 
-  #importRangedWeapon(weapon: GCAAttackMode, item: GCATrait): DataModel.CreateData<RangedAttackSchema> {
+  #importRangedWeapon(weapon: GCAAttackMode): DataModel.CreateData<RangedAttackSchema> {
     const name = weapon.name ?? ''
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 
     const damage = `${weapon.chardamage} ${weapon.chardamtype}`
 
-    const component: DataModel.CreateData<RangedAttackComponentSchema> = {
-      name: item.name ?? '',
+    return {
+      name,
+      type,
+      _id,
       notes: weapon.notes ?? '',
-      pageref: '',
       mode: weapon.name ?? '',
       import: weapon.charskillscore ?? 0,
       damage,
@@ -563,13 +555,6 @@ Portrait will not be imported.`
       shots: weapon.charshots ?? '',
       rcl: weapon.charrcl ?? '',
       halfd: weapon.charrangehalfdam ?? '',
-    }
-
-    return {
-      name,
-      type,
-      _id,
-      rng: component,
     }
   }
 
@@ -593,11 +578,18 @@ Portrait will not be imported.`
     let name = trait.name ?? 'Trait'
     const crRegex = /\[\s*CR: (\d{1,2})\s*\]/i
 
-    const system: DataModel.CreateData<TraitSchema> = this.#importItem(trait, containedBy)
-    const component: DataModel.CreateData<TraitComponentSchema> = this.#importTraitComponent(trait)
+    const isLeveled = trait.calcs.cost?.includes('/') ?? false
+
+    const system: DataModel.CreateData<TraitSchema> = {
+      ...this.#importItem(trait, containedBy),
+      cr: 0,
+      level: isLeveled ? (trait.level ?? 0) : null,
+      userdesc: trait.ref?.description ?? '',
+      points: trait.points ?? 0,
+    }
 
     if (crRegex.test(name)) {
-      component.cr = parseInt(name.match(crRegex)?.[1] ?? '0')
+      system.cr = parseInt(name.match(crRegex)?.[1] ?? '0')
       name = name.replace(crRegex, '').trim()
     }
 
@@ -616,10 +608,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      system: {
-        ...system,
-        fea: component,
-      },
+      system,
     }
 
     this.items.push(item)
@@ -633,8 +622,14 @@ Portrait will not be imported.`
     // TODO: localize
     const name = skill.name ?? 'Skill'
 
-    const system: DataModel.CreateData<SkillSchema> = this.#importItem(skill, containedBy)
-    const component: DataModel.CreateData<SkillComponentSchema> = this.#importSkillComponent(skill)
+    const system: DataModel.CreateData<SkillSchema> = {
+      ...this.#importItem(skill, containedBy),
+
+      points: skill.points ?? 0,
+      difficulty: skill.type ?? '',
+      relativelevel: `${skill.stepoff}${skill.step}`,
+      import: skill.level ?? 0,
+    }
 
     skill.getChildren(this.input.traits.skills)?.forEach((child: GCATrait) => this.#importSkill(child, _id))
 
@@ -642,10 +637,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      system: {
-        ...system,
-        ski: component,
-      },
+      system,
     }
 
     this.items.push(item)
@@ -659,93 +651,6 @@ Portrait will not be imported.`
     // TODO: localize
     const name = spell.name ?? 'Spell'
 
-    const system: DataModel.CreateData<SpellSchema> = this.#importItem(spell, containedBy)
-    const component: DataModel.CreateData<SpellComponentSchema> = this.#importSpellComponent(spell)
-
-    spell.getChildren(this.input.traits.spells)?.forEach((child: GCATrait) => this.#importSpell(child, _id))
-
-    const item: Item.CreateData = {
-      _id,
-      type,
-      name,
-      system: {
-        ...system,
-        spl: component,
-      },
-    }
-
-    this.items.push(item)
-  }
-
-  /* ---------------------------------------- */
-
-  #importEquipment(equipment: GCATrait, containedBy: string | null = null): void {
-    const type = 'equipmentV2'
-    const _id = foundry.utils.randomID()
-    const name = equipment.name ?? 'Equipment'
-
-    const system: DataModel.CreateData<EquipmentSchema> = this.#importItem(equipment, containedBy)
-    const component: DataModel.CreateData<EquipmentComponentSchema> = this.#importEquipmentComponent(equipment)
-
-    equipment.getChildren(this.input.traits.equipment)?.forEach((child: GCATrait) => this.#importEquipment(child, _id))
-
-    const item: Item.CreateData = {
-      _id,
-      type,
-      name,
-      system: {
-        ...system,
-        eqt: component,
-      },
-    }
-
-    this.items.push(item)
-  }
-
-  /* ---------------------------------------- */
-
-  #importBaseComponent(item: GCATrait): DataModel.CreateData<ItemComponentSchema> {
-    const component: DataModel.CreateData<ItemComponentSchema> = {
-      name: item.name ?? '',
-      notes: item.ref?.notes ?? '',
-      pageref: item.ref?.page ?? '',
-      vtt_notes: item.ref?.vttnotes ?? '',
-      importFrom: 'GCA',
-    }
-
-    return component
-  }
-
-  /* ---------------------------------------- */
-
-  #importTraitComponent(trait: GCATrait): DataModel.CreateData<TraitComponentSchema> {
-    // If the cost includes a separator "/", the Trait is treated as leveled by GCA.
-    const isLeveled = trait.calcs.cost?.includes('/') ?? false
-
-    return {
-      ...this.#importBaseComponent(trait),
-      cr: 0,
-      level: isLeveled ? (trait.level ?? 0) : null,
-      userdesc: trait.ref?.description ?? '',
-      points: trait.points ?? 0,
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  #importSkillComponent(skill: GCATrait): DataModel.CreateData<SkillComponentSchema> {
-    return {
-      ...this.#importBaseComponent(skill),
-      points: skill.points ?? 0,
-      type: skill.type ?? '',
-      relativelevel: `${skill.stepoff}${skill.step}`,
-      import: skill.level ?? 0,
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  #importSpellComponent(spell: GCATrait): DataModel.CreateData<SpellComponentSchema> {
     let spellClass = ''
     let spellResist = ''
 
@@ -773,8 +678,8 @@ Portrait will not be imported.`
         .filter(collegeName => !collegeName.startsWith('~'))
         .join(', ') ?? ''
 
-    return {
-      ...this.#importBaseComponent(spell),
+    const system: DataModel.CreateData<SpellSchema> = {
+      ...this.#importItem(spell, containedBy),
       points: spell.points ?? 0,
       difficulty: spell.type ?? '',
       relativelevel: `${spell.stepoff}${spell.step}`,
@@ -787,13 +692,28 @@ Portrait will not be imported.`
       resist: spellResist,
       casttime: spell.ref?.time ?? '',
     }
+
+    spell.getChildren(this.input.traits.spells)?.forEach((child: GCATrait) => this.#importSpell(child, _id))
+
+    const item: Item.CreateData = {
+      _id,
+      type,
+      name,
+      system,
+    }
+
+    this.items.push(item)
   }
 
   /* ---------------------------------------- */
 
-  #importEquipmentComponent(equipment: GCATrait): DataModel.CreateData<EquipmentComponentSchema> {
-    return {
-      ...this.#importBaseComponent(equipment),
+  #importEquipment(equipment: GCATrait, containedBy: string | null = null): void {
+    const type = 'equipmentV2'
+    const _id = foundry.utils.randomID()
+    const name = equipment.name ?? 'Equipment'
+
+    const system: DataModel.CreateData<EquipmentSchema> = {
+      ...this.#importItem(equipment, containedBy),
       count: equipment.count ?? 1,
       weight: parseFloat(equipment.calcs.postformulaweight ?? '0') || 0,
       cost: parseFloat(equipment.calcs.postformulacost ?? '0') || 0,
@@ -807,6 +727,17 @@ Portrait will not be imported.`
       uses: 0,
       maxuses: 0,
     }
+
+    equipment.getChildren(this.input.traits.equipment)?.forEach((child: GCATrait) => this.#importEquipment(child, _id))
+
+    const item: Item.CreateData = {
+      _id,
+      type,
+      name,
+      system,
+    }
+
+    this.items.push(item)
   }
 }
 

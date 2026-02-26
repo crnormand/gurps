@@ -7,7 +7,6 @@ import { CollectionField } from '@module/data/fields/collection-field.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
-import { EquipmentModel } from '@module/item/data/equipment.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
 import { SkillV1 } from '@module/item/legacy/skill-adapter.js'
 import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
@@ -261,13 +260,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   get allEquipmentCarried() {
-    return this.allEquipmentV2.filter(item => (item.system as EquipmentModel).eqt.carried === true)
+    return this.allEquipmentV2.filter(item => item.system.carried === true)
   }
 
   /* ---------------------------------------- */
 
   get allEquipmentOther() {
-    return this.allEquipmentV2.filter(item => (item.system as EquipmentModel).eqt.carried === false)
+    return this.allEquipmentV2.filter(item => item.system.carried === false)
   }
 
   /* ---------------------------------------- */
@@ -505,25 +504,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const onlyCountEquipped = this.getSetting(Settings.SETTING_CHECK_EQUIPPED, false)
 
     const carriedItems = onlyCountEquipped
-      ? this.allEquipmentCarried.filter(item => item.system.component.equipped)
+      ? this.allEquipmentCarried.filter(item => item.system.equipped)
       : this.allEquipmentCarried
 
     this.eqtsummary = {
-      eqtcost: roundTo(
-        carriedItems.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
-      ),
-      eqtlbs: roundTo(
-        carriedItems.reduce((acc, item) => acc + item.system.component.weight * item.system.component.count, 0)
-      ),
-      othercost: roundTo(
-        this.allEquipmentOther.reduce((acc, item) => acc + item.system.component.cost * item.system.component.count, 0)
-      ),
-      otherlbs: roundTo(
-        this.allEquipmentOther.reduce(
-          (acc, item) => acc + item.system.component.weight * item.system.component.count,
-          0
-        )
-      ),
+      eqtcost: roundTo(carriedItems.reduce((acc, item) => acc + item.system.cost * item.system.count, 0)),
+      eqtlbs: roundTo(carriedItems.reduce((acc, item) => acc + item.system.weight * item.system.count, 0)),
+      othercost: roundTo(this.allEquipmentOther.reduce((acc, item) => acc + item.system.cost * item.system.count, 0)),
+      otherlbs: roundTo(this.allEquipmentOther.reduce((acc, item) => acc + item.system.weight * item.system.count, 0)),
     }
   }
 
@@ -670,8 +658,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     })
 
     this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-      if (!attack.component.parry) return acc
-      const newParry = parseInt(attack.component.parry)
+      if (!attack.parry) return acc
+      const newParry = parseInt(attack.parry)
 
       if (newParry > acc) acc = newParry
 
@@ -679,8 +667,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }, 0)
 
     this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-      if (!attack.component.block) return acc
-      const newblock = parseInt(attack.component.block)
+      if (!attack.block) return acc
+      const newblock = parseInt(attack.block)
 
       if (newblock > acc) acc = newblock
 
@@ -703,7 +691,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       for (const attack of (item as Item.Implementation).getItemAttacks()) {
         if ((item.system as BaseItemModel).itemModifiers === '') continue
 
-        for (const modifier of attack.component.itemModifiers.split('\n').map(line => line.trim())) {
+        for (const modifier of attack.itemModifiers.split('\n').map(line => line.trim())) {
           const modifierDescription = `${modifier} ${item.id}`
 
           if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
@@ -1300,14 +1288,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
               return acc
             }, [])
             .map(attack => {
-              const otfName = attack.component.mode ? `${attack.name} (${attack.component.mode})` : attack.name
+              const otfName = attack.mode ? `${attack.name} (${attack.mode})` : attack.name
 
               return {
                 img: attack.img ?? '',
                 symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
                 label: attack.name ?? '',
-                value: attack.component.import,
-                mode: attack.component.mode,
+                value: attack.import,
+                mode: attack.mode,
                 otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
                 isOTF: true,
                 otfDamage: `D:"${otfName}"`,
@@ -1330,26 +1318,26 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
           const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
           const img = attack.img
-          const otfName = attack.component.mode ? `"${attack.name} (${attack.component.mode})"` : `"${attack.name}"`
+          const otfName = attack.mode ? `"${attack.name} (${attack.mode})"` : `"${attack.name}"`
 
-          if (!isNaN(parseInt(attack.component.parry)))
+          if (!isNaN(parseInt(attack.parry)))
             acc.push({
               symbol,
               img: img ?? '',
               label: attack.name ?? '',
-              value: attack.component.parry,
-              mode: attack.component.mode,
+              value: attack.parry,
+              mode: attack.mode,
               otf: `P:${otfName}`,
               isOTF: true,
             })
 
-          if (!isNaN(parseInt(attack.component.block)))
+          if (!isNaN(parseInt(attack.block)))
             acc.push({
               symbol,
               img: img ?? '',
               label: attack.name ?? '',
-              value: attack.component.block,
-              mode: attack.component.mode,
+              value: attack.block,
+              mode: attack.mode,
               otf: `B:${otfName}`,
               isOTF: true,
             })
@@ -1370,16 +1358,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             let value = 0
 
             if ((item as Item.Implementation).isOfType('skillV2'))
-              value = (item as Item.OfType<'skillV2'>).system.component.import
+              value = (item as Item.OfType<'skillV2'>).system.import
             if ((item as Item.Implementation).isOfType('spellV2'))
-              value = (item as Item.OfType<'spellV2'>).system.component.import
+              value = (item as Item.OfType<'spellV2'>).system.import
 
             checks.push({
               symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
               img: item.img ?? '',
               label: item.name,
               value,
-              notes: item.system.component.notes,
+              notes: item.system.notes,
               otf: `${type}:"${item.name}"`,
               isOTF: false,
             })
@@ -1493,7 +1481,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         refTags = taggedSettings.allAttackRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
       }
 
-      const attackMods = attack?.component?.modifierTags ?? []
+      const attackMods = attack?.modifierTags ?? []
 
       modifierTags = [...allRollTags, ...attackMods, ...refTags]
       itemRef = attack?.name ?? ''
@@ -1596,7 +1584,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         const weapon = this.parent
           // @ts-expect-error: Not sure why this isn't resolving correctly.
           .getItemAttacks({ attackType })
-          .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.component.mode === mode))
+          .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.mode === mode))
 
         if (weapon)
           return {
@@ -1621,7 +1609,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         mode = action.name.match(/\((.+?)\)/)?.[1]
         const weapon = this.parent
           .getItemAttacks({ attackType: 'melee' })
-          .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.component.mode === mode))
+          .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.mode === mode))
 
         if (weapon)
           return {
@@ -1649,7 +1637,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             uuid: item.uuid,
             itemId: item.id,
             fromItem: item.id,
-            pageRef: item.system.component.pageref,
+            pageRef: item.system.pageref,
           }
         else
           return {

@@ -63,7 +63,7 @@ class SkillV1 {
   }
 
   get consumeAction(): boolean {
-    return this.skillV2.ski!.consumeAction
+    return this.skillV2.system.consumeAction
   }
 
   get contains(): Record<string, SkillV1> {
@@ -83,7 +83,7 @@ class SkillV1 {
   }
 
   get import(): number {
-    return this.skillV2.ski?.import ?? 0
+    return this.skillV2.system?.import ?? 0
   }
 
   get itemInfo(): {
@@ -107,7 +107,7 @@ class SkillV1 {
   }
 
   get level(): number | null {
-    return this.skillV2.ski?.level ?? null
+    return this.skillV2.system?.level ?? null
   }
 
   get modifierTags(): string {
@@ -115,15 +115,15 @@ class SkillV1 {
   }
 
   get name(): string {
-    const techlevel = this.skillV2.ski?.techlevel ? '/TL' + this.skillV2.ski.techlevel : ''
-    const specialization = this.skillV2.ski?.specialization ? ' (' + this.skillV2.ski.specialization + ')' : ''
+    const techlevel = this.skillV2.system?.techlevel ? '/TL' + this.skillV2.system.techlevel : ''
+    const specialization = this.skillV2.system?.specialization ? ' (' + this.skillV2.system.specialization + ')' : ''
 
     return `${this.skillV2.name}${techlevel}${specialization}`
   }
 
   get notes(): string {
-    const vttNotes = this.skillV2.system.ski?.vtt_notes
-    const notes = this.skillV2.ski?.notes
+    const vttNotes = this.skillV2.system.vtt_notes
+    const notes = this.skillV2.system?.notes
 
     return [notes, vttNotes]
       .filter(it => !!it)
@@ -132,23 +132,23 @@ class SkillV1 {
   }
 
   get originalName(): string {
-    return this.skillV2.ski?.originalName ?? this.skillV2.name
+    return this.skillV2.system.originalName ?? this.skillV2.name
   }
 
   get pageref(): string {
-    return this.skillV2.ski?.pageref ?? ''
+    return this.skillV2.system?.pageref ?? ''
   }
 
   get parentuuid(): string | null {
-    return this.skillV2.ski?.parentuuid ?? null
+    return this.skillV2.system.container?._id ?? null
   }
 
   get points(): number {
-    return this.skillV2.ski?.points ?? 0
+    return this.skillV2.system?.points ?? 0
   }
 
   get relativelevel(): string {
-    return this.skillV2.ski?.relativelevel ?? ''
+    return this.skillV2.system?.relativelevel ?? ''
   }
 
   get type(): string {

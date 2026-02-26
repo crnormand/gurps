@@ -4,9 +4,16 @@ import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
-import { ItemComponent, ItemComponentSchema } from './component.js'
 
 class SpellModel extends BaseItemModel<SpellSchema> {
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  level: number = 0
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): SpellSchema {
     return {
       ...super.defineSchema(),
@@ -28,12 +35,6 @@ class SpellModel extends BaseItemModel<SpellSchema> {
   }
 
   /* ---------------------------------------- */
-
-  get component(): SpellComponent {
-    return this.spl
-  }
-
-  /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
@@ -46,10 +47,10 @@ class SpellModel extends BaseItemModel<SpellSchema> {
    * Prepare the level of this skill based on an OTF formula.
    */
   #prepareLevelsFromOtf(): void {
-    let otf = this.component.otf
+    let otf = this.otf
 
     if (otf === '') {
-      this.component.level = this.component.import
+      this.level = this.import
 
       return
     }
@@ -59,8 +60,8 @@ class SpellModel extends BaseItemModel<SpellSchema> {
 
     // If the OTF is just a number, Set the level directly
     if (otf.match(/^\d+$/)) {
-      this.component.import = parseInt(otf)
-      this.component.level = this.component.import
+      this.import = parseInt(otf)
+      this.level = this.import
 
       return
     }
@@ -76,7 +77,7 @@ class SpellModel extends BaseItemModel<SpellSchema> {
     GURPS.performAction(action.action, this.actor).then(
       (result: boolean | { target: number; thing: any } | undefined) => {
         if (result && typeof result === 'object') {
-          this.component.level = result.target
+          this.level = result.target
         }
       }
     )
@@ -90,42 +91,59 @@ class SpellModel extends BaseItemModel<SpellSchema> {
     for (const bonus of bonuses) {
       // Skills are affected by their base attribute changes
       if (bonus.type === 'attribute') {
-        if (this.component.relativelevel.toUpperCase().startsWith((bonus.attrkey as string).toUpperCase())) {
-          this.component.level += bonus.mod as number
+        if (this.relativelevel.toUpperCase().startsWith((bonus.attrkey as string).toUpperCase())) {
+          this.level += bonus.mod as number
         }
       }
 
       if (bonus.type === 'skill-spell' && bonus.isRanged) {
-        if (this.component.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
-          this.component.level += bonus.mod as number
+        if (this.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
+          this.level += bonus.mod as number
         }
       }
     }
   }
-}
-
-/* ---------------------------------------- */
-
-class SpellComponent extends ItemComponent<SpellComponentSchema> {
-  static override defineSchema(): SpellComponentSchema {
-    return {
-      ...super.defineSchema(),
-      ...spellComponentSchema(),
-    }
-  }
-
-  /* ---------------------------------------- */
-  /*  Derived Values                          */
-  /* ---------------------------------------- */
-
-  level: number = 0
 }
 
 /* ---------------------------------------- */
 
 const spellSchema = () => {
   return {
-    spl: new fields.EmbeddedDataField(SpellComponent, { required: true, nullable: false }),
+    /** The total points spent on this spell */
+    points: new fields.NumberField({ required: true, nullable: false }),
+
+    /** The imported "original" level of this spell, which may be used for reference or as a fallback if OTF parsing fails. */
+    import: new fields.NumberField({ required: true, nullable: false }),
+
+    /** The spell class of this spell, */
+    class: new fields.StringField({ required: true, nullable: false }),
+
+    /** A comma-separated list of colleges this spell belongs to. */
+    college: new fields.StringField({ required: true, nullable: false }),
+
+    /** The casting cost of this spell */
+    cost: new fields.StringField({ required: true, nullable: false }),
+
+    /** The maintenance cost of this spell */
+    maintain: new fields.StringField({ required: true, nullable: false }),
+
+    /** The duration of this spell's effects */
+    duration: new fields.StringField({ required: true, nullable: false }),
+
+    /** The resist roll for this spell, if any */
+    resist: new fields.StringField({ required: true, nullable: false }),
+
+    /** The casting time of this spell, if any */
+    casttime: new fields.StringField({ required: true, nullable: false }),
+
+    /** The Skill Difficulty of this spell, e.g. "IQ/H". */
+    difficulty: new fields.StringField({ required: true, nullable: false }),
+
+    /** The level of this spell relative to its controlling attriute, e.g. "IQ-2" */
+    relativelevel: new fields.StringField({ required: true, nullable: false }),
+
+    /** Any OTF formulas associated witht this spell. */
+    otf: new fields.StringField({ required: true, nullable: false }),
   }
 }
 
@@ -133,28 +151,4 @@ type SpellSchema = BaseItemModelSchema & ReturnType<typeof spellSchema>
 
 /* ---------------------------------------- */
 
-const spellComponentSchema = () => {
-  return {
-    points: new fields.NumberField({ required: true, nullable: false }),
-    // NOTE: change from previous schema where this was a string
-    import: new fields.NumberField({ required: true, nullable: false }),
-    // NOTE: no longer persistent data, always derived from import value
-    // level: new fields.NumberField({ required: true, nullable: false }),
-    class: new fields.StringField({ required: true, nullable: false }),
-    college: new fields.StringField({ required: true, nullable: false }),
-    cost: new fields.StringField({ required: true, nullable: false }),
-    maintain: new fields.StringField({ required: true, nullable: false }),
-    duration: new fields.StringField({ required: true, nullable: false }),
-    resist: new fields.StringField({ required: true, nullable: false }),
-    casttime: new fields.StringField({ required: true, nullable: false }),
-    difficulty: new fields.StringField({ required: true, nullable: false }),
-    relativelevel: new fields.StringField({ required: true, nullable: false }),
-    otf: new fields.StringField({ required: true, nullable: false }),
-  }
-}
-
-type SpellComponentSchema = ItemComponentSchema & ReturnType<typeof spellComponentSchema>
-
-/* ---------------------------------------- */
-
-export { SpellModel, SpellComponent, type SpellSchema, type SpellComponentSchema }
+export { SpellModel, type SpellSchema }

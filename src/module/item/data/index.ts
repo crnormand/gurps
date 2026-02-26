@@ -1,5 +1,4 @@
 export * from './base.js'
-export * from './component.js'
 export * from './equipment.js'
 export * from './skill.js'
 export * from './spell.js'
