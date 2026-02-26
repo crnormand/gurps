@@ -109,9 +109,10 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
   /* ---------------------------------------- */
 
   get allNotes(): GcsNote[] {
-    const notes = this.notes ?? []
+    const notes = []
 
-    for (const note of notes) {
+    for (const note of this.notes ?? []) {
+      notes.push(note)
       notes.push(...note.allChildItems)
     }
 
