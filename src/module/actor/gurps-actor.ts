@@ -18,7 +18,6 @@ import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { ModelCollection } from '../data/model-collection.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
-import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
@@ -40,7 +39,6 @@ import {
   MoveMode,
 } from './legacy/actorv1-interface.js'
 import { HitLocationEntryV1 } from './legacy/hit-location-entryv1.js'
-import { NoteV1 } from './legacy/note-adapter.js'
 import Maneuvers, {
   MOVE_HALF,
   MOVE_NONE,
@@ -1488,12 +1486,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (!this.isNewActorType) return null
 
     const equipment = this.modelV2.allEquipmentV2.find(equipmentItem => equipmentItem.id === id)
-    const updateData: Record<string, any> = { _id: id, system: { eqt: { count } } }
+    const updateData: Record<string, any> = { _id: id, system: { count } }
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
     // set ignoreImportQty to true.
     if (ImportSettings.ignoreQuantityOnImport) {
-      updateData.system.eqt.ignoreImportQty = true
+      updateData.system.ignoreImportQty = true
     }
 
     if (equipment) {
@@ -2098,8 +2096,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const { _id: _omit, ...itemData } = foundry.utils.duplicate(eqt) as Record<string, any>
 
     itemData.system.containedBy = parent?.id ?? null
-    itemData.system.eqt.count = count
-    itemData.system.eqt.carried = true // Default to carried when transferring.
+    itemData.system.count = count
+    itemData.system.carried = true // Default to carried when transferring.
     await this.createEmbeddedDocuments('Item', [itemData as Item.CreateData], { parent: this })
   }
 
@@ -2324,7 +2322,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     if (item.type === 'equipmentV2') {
       // @ts-expect-error: wrong type for _id provided by fvtt-types
-      update.system!.eqt = { carried: targetCollection === 'system.equipmentV2.carried' }
+      update.system!.carried = targetCollection === 'system.equipmentV2.carried'
     }
 
     updates.push(update)
