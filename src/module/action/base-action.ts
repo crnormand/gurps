@@ -5,8 +5,8 @@ import { AnyObject } from 'fvtt-types/utils'
 import { type PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '../pseudo-document/typed-pseudo-document.js'
 
-import { BaseAttackComponent } from './component.ts'
-import { ActionType } from './types.ts'
+import { BaseAttackComponent } from './component.js'
+import { ActionType } from './types.js'
 
 /* ---------------------------------------- */
 
