@@ -6,7 +6,6 @@ import { INameable } from '@module/data/mixins/nameable.js'
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType } from './types.ts'
 
-
 class SkillPrereq extends BasePrereq<SkillPrereqSchema> {
   static override defineSchema(): SkillPrereqSchema {
     return Object.assign(super.defineSchema(), skillPrereqSchema())

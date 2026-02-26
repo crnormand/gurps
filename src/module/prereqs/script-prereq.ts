@@ -4,7 +4,6 @@ import { INameable } from '@module/data/mixins/nameable.js'
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType } from './types.ts'
 
-
 class ScriptPrereq extends BasePrereq<ScriptPrereqSchema> {
   static override defineSchema(): ScriptPrereqSchema {
     return Object.assign(super.defineSchema(), scriptPrereqSchema())
