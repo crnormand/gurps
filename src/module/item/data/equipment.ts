@@ -60,7 +60,7 @@ const equipmentSchema = () => {
     weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The value of one unit of this item. */
-    cost: new fields.NumberField({ required: true, nullable: false }),
+    cost: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The stored location of this item, e.g. "Backpack", "Belt Pouch", etc. */
     location: new fields.StringField({ required: true, nullable: false }),
@@ -81,16 +81,16 @@ const equipmentSchema = () => {
     legalityclass: new fields.StringField({ required: true, nullable: false }),
 
     /** The summed cost of all units of this item and any contained items. */
-    costsum: new fields.NumberField({ required: true, nullable: false }),
+    costsum: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The summed weight of all units of this item and any contained items. */
     weightsum: new fields.StringField({ required: true, nullable: false }),
 
     /** The remaining uses of this item, if any. Used for things like ammunition, sips of a potion, etc. */
-    uses: new fields.NumberField({ required: true, nullable: false }),
+    uses: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The maximum uses of this item, if any. Used for things like ammunition, sips of a potion, etc. */
-    maxuses: new fields.NumberField({ required: true, nullable: false }),
+    maxuses: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /**
      * The original imported quantity of this item, which is used by the Character importer to check whether to

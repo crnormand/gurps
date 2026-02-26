@@ -47,13 +47,13 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 const traitSchema = () => {
   return {
     /** The level of the trait, which may be null if the trait is not leveled */
-    level: new fields.NumberField({ required: true, nullable: true }),
+    level: new fields.NumberField({ required: true, nullable: true, initial: null }),
 
     /** The user description of this trait */
     userdesc: new fields.StringField({ required: true, nullable: false }),
 
     /** The total points spent on this trait */
-    points: new fields.NumberField({ required: true, nullable: false }),
+    points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The Control Roll value for this trait, which may be null if not applicable */
     cr: new fields.NumberField({ required: true, nullable: true, initial: null }),

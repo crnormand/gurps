@@ -4868,13 +4868,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /*  CRUD Operations                                                                            */
   /* =========================================================================================== */
 
-  override async _preUpdate(changes: Actor.UpdateData, _options: AnyObject, _user: User): Promise<void> {
+  protected override async _preUpdate(
+    changed: Actor.UpdateData,
+    options: Actor.Database.PreUpdateOptions,
+    user: User.Implementation
+  ): Promise<boolean | void> {
+    super._preUpdate(changed, options, user)
+
     if (this.isNewActorType) {
-      this.#translateLegacyHitlocationData(changes)
-      this.#translateLegacyEncumbranceData(changes)
-      await this.#translateAdsData(changes)
-      this.#translateMoveData(changes)
-      this.#translateNoteData(changes)
+      this.#translateLegacyHitlocationData(changed)
+      this.#translateLegacyEncumbranceData(changed)
+      await this.#translateAdsData(changed)
+      this.#translateMoveData(changed)
+      this.#translateNoteData(changed)
     }
   }
 

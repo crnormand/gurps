@@ -110,10 +110,10 @@ class SpellModel extends BaseItemModel<SpellSchema> {
 const spellSchema = () => {
   return {
     /** The total points spent on this spell */
-    points: new fields.NumberField({ required: true, nullable: false }),
+    points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The imported "original" level of this spell, which may be used for reference or as a fallback if OTF parsing fails. */
-    import: new fields.NumberField({ required: true, nullable: false }),
+    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The spell class of this spell, */
     class: new fields.StringField({ required: true, nullable: false }),

@@ -112,10 +112,10 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 const skillSchema = () => {
   return {
     /** The total points spent on this skill */
-    points: new fields.NumberField({ required: true, nullable: false }),
+    points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The imported "original" level of this skill, which may be used for reference or as a fallback if OTF parsing fails. */
-    import: new fields.NumberField({ required: true, nullable: false }),
+    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The specialization of this skill, if any. */
     specialization: new fields.StringField({ required: true, nullable: true, initial: null }),

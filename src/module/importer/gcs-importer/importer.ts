@@ -547,9 +547,10 @@ Portrait will not be imported.`
         // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
         // damage and other effects.
         const tempEntry = hitlocationDictionary![this.output.bodyplan!.toLowerCase()]
-        const entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id)
-        // @ts-expect-error: currently untyped. to come back to.
-        const role = entry?.role ?? entry?.id
+        const entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id) as
+          | { id?: string; role?: string }
+          | undefined
+        const role = entry?.role ?? entry?.id ?? ''
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
@@ -580,7 +581,7 @@ Portrait will not be imported.`
     const currentBodyPlan = this.actor.system.bodyplan
 
     // Remove derived values / all values not proper to the hit location on its own.
-    const currentHitLocations: Record<string, AnyObject> = Object.fromEntries(
+    const currentHitLocations: Record<string, AnyMutableObject> = Object.fromEntries(
       this.actor.system.hitlocationsV2.map(hitLocation => {
         const location = hitLocation.toObject() as AnyMutableObject
 
@@ -594,9 +595,22 @@ Portrait will not be imported.`
       })
     )
 
+    const currentHitLocationNullifiers = Object.fromEntries(
+      this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+    )
+
     const bodyPlansAreEqual = () => {
       const oldLocations = Object.values(currentHitLocations)
+
       const newLocations = Object.values(this.output.hitlocationsV2 ?? {})
+
+      for (const location of oldLocations) {
+        if (location) delete location._id
+      }
+
+      for (const location of newLocations) {
+        if (location) delete location._id
+      }
 
       if (oldLocations.length !== newLocations.length) return false
 
@@ -609,13 +623,23 @@ Portrait will not be imported.`
 
     const statsDifference = currentBodyPlan !== this.output.bodyplan || !bodyPlansAreEqual()
 
-    if (!statsDifference) return
+    // If there is no difference between hit location tables, keep the old ones.
+    if (!statsDifference) {
+      this.output.hitlocationsV2 = currentHitLocations
+
+      return
+    }
 
     const automaticOverwrite = ImportSettings.overwriteBodyPlan
 
-    if (automaticOverwrite === 'overwrite')
+    if (automaticOverwrite === 'overwrite') {
+      this.output.hitlocationsV2 = {
+        ...this.output.hitlocationsV2,
+        ...currentHitLocationNullifiers,
+      }
+
       return // Automatically overwrite from file.
-    else if (automaticOverwrite === 'keep') {
+    } else if (automaticOverwrite === 'keep') {
       // Automatically ignore values from file.
       this.output.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations
@@ -650,6 +674,11 @@ Portrait will not be imported.`
     if (overwriteOption === 'keep') {
       this.output.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations
+    } else {
+      this.output.hitlocationsV2 = {
+        ...this.output.hitlocationsV2,
+        ...currentHitLocationNullifiers,
+      }
     }
   }
 

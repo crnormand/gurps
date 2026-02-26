@@ -1,4 +1,4 @@
-import { fields } from '@gurps-types/foundry/index.js'
+import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { MeleeV1 } from '@module/action/legacy/meleev1.js'
 import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
@@ -64,6 +64,22 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       },
       type: 'base',
     }
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _preUpdate(
+    changes: DeepPartial<TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>>,
+    options: foundry.abstract.Document.Database.PreUpdateOptions<foundry.abstract.types.DatabaseUpdateOperation>,
+    user: User.Implementation
+  ): Promise<boolean | void> {
+    // Change the "modifiedon" field to the time of last update. Necessary for some import functionality
+    // which verifies that this filed has a value.
+    changes.system ||= {}
+    changes.system.profile ||= {}
+    changes.system.profile.modifiedon = new Date().toISOString()
+
+    return super._preUpdate(changes, options, user)
   }
 
   /* ---------------------------------------- */
@@ -354,10 +370,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   getReactionsAndModifiers(key: 'conditionalmods'): ConditionalModifier[]
   getReactionsAndModifiers(key: 'reactions' | 'conditionalmods'): ReactionModifier[] | ConditionalModifier[] {
     return this.parent.items.reduce((acc: (ReactionModifier | ConditionalModifier)[], item) => {
-      console.log(item.name)
-
       for (const newMod of item.system[key]) {
-        console.warn(newMod.situation)
         const existingMod = acc.find(mod => mod.situation === newMod.situation)
 
         if (existingMod) existingMod.modifier += newMod.modifier
@@ -1844,7 +1857,11 @@ const characterSchema = () => {
     ),
 
     bodyplan: new fields.StringField({ required: true, nullable: false }),
-    hitlocationsV2: new CollectionField(HitLocationEntryV2, { required: true, nullable: false, initial: {} }),
+    hitlocationsV2: new CollectionField(HitLocationEntryV2, {
+      required: true,
+      nullable: false,
+      initial: {},
+    }),
 
     conditions: new fields.SchemaField(conditionsSchema(), { required: true, nullable: false }),
 

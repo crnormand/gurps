@@ -115,8 +115,8 @@ describe('GurpsActorV2.moveItem', () => {
           type: item.type,
           sort: item.sort,
           system: {
+            ...item.system,
             containedBy: item.system.containedBy,
-            eqt: { ...item.system.eqt },
           },
         }
       }
@@ -359,7 +359,7 @@ describe('GurpsActorV2.moveItem', () => {
 
   it('splits count when moving to another container', async () => {
     // Set up the source item with a count of 5
-    actor.system.allEquipmentV2[0].system.eqt.count = 5
+    actor.system.allEquipmentV2[0].system.count = 5
 
     setEquipmentQuantity(actor, 2)
     setDropPosition(actor, 'inside')
@@ -409,7 +409,7 @@ describe('GurpsActorV2.moveItem', () => {
   it('does not split if user cancels the quantity prompt', async () => {
     setDropPosition(actor, 'inside')
 
-    actor.system.allEquipmentV2[0].system.eqt.count = 5
+    actor.system.allEquipmentV2[0].system.count = 5
 
     // Mock promptEquipmentQuantity to return null (user cancelled)
     jest.spyOn(actor as any, 'promptEquipmentQuantity').mockResolvedValue(null)
@@ -423,7 +423,7 @@ describe('GurpsActorV2.moveItem', () => {
   })
 
   it('does not split if quantity is zero or negative', async () => {
-    actor.system.allEquipmentV2[0].system.eqt.count = 5
+    actor.system.allEquipmentV2[0].system.count = 5
 
     setDropPosition(actor, 'inside')
     setEquipmentQuantity(actor, 0)
@@ -439,7 +439,7 @@ describe('GurpsActorV2.moveItem', () => {
   it('does not split if item has count of 1 or less', async () => {
     setDropPosition(actor, 'inside')
 
-    actor.system.allEquipmentV2[0].system.eqt.count = 1
+    actor.system.allEquipmentV2[0].system.count = 1
 
     const promptSpy = jest.spyOn(actor as any, 'promptEquipmentQuantity')
     const createSpy = jest.spyOn(actor, 'createEmbeddedDocuments')
@@ -451,7 +451,7 @@ describe('GurpsActorV2.moveItem', () => {
   })
 
   it('performs move instead of split if quantity equals or exceeds source count', async () => {
-    actor.system.allEquipmentV2[0].system.eqt.count = 5
+    actor.system.allEquipmentV2[0].system.count = 5
 
     setDropPosition(actor, 'inside')
     setEquipmentQuantity(actor, 5)

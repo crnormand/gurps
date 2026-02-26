@@ -7,9 +7,9 @@ import { EquipmentSchema } from '@module/item/data/equipment.js'
 import { SkillSchema } from '@module/item/data/skill.js'
 import { SpellSchema } from '@module/item/data/spell.js'
 import { TraitSchema } from '@module/item/data/trait.js'
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
-// TODO: get rid of when this is migrated
-import * as HitLocations from '../../hitlocation/hitlocation.js'
+import { HitLocation, hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { createDataIsOfType } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
@@ -64,7 +64,7 @@ class GcaImporter {
     this.#importPortrait()
     this.#importAttributes()
     this.#importProfile()
-    this.#importHitLocations()
+    await this.#importHitLocations()
     this.#importItems()
     this.#importPointTotals()
     this.#importMiscValues()
@@ -366,10 +366,10 @@ Portrait will not be imported.`
 
   /* ---------------------------------------- */
 
-  #importHitLocations() {
+  async #importHitLocations() {
     this.output.bodyplan = this.input.bodytype ?? 'Humanoid'
 
-    const table = HitLocations.hitlocationDictionary?.[this.input.bodytype ?? 'Humanoid']
+    const table = hitlocationDictionary?.[this.input.bodytype ?? 'Humanoid']
 
     this.output.hitlocationsV2 = this.input.hitlocationtable.hitlocationlines.reduce(
       (acc: Record<string, DataModel.CreateData<HitLocationSchemaV2>>, location) => {
@@ -397,7 +397,7 @@ Portrait will not be imported.`
         let roll = ''
 
         if (table) {
-          const [_, standardEntry] = HitLocations.HitLocation.findTableEntry(table, bodyLocation.name)
+          const [_, standardEntry] = HitLocation.findTableEntry(table, bodyLocation.name)
 
           if (standardEntry) {
             roll = standardEntry.roll
@@ -406,12 +406,22 @@ Portrait will not be imported.`
 
         const dr = parseInt(bodyLocation.dr)
 
+        // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
+        // damage and other effects.
+        const tempEntry = hitlocationDictionary![this.output.bodyplan!.toLowerCase()]
+        const entry = Object.values(tempEntry).find((entry: any) => entry.id === location.location) as
+          | { id?: string; role?: string }
+          | undefined
+        const role = entry?.role ?? entry?.id ?? ''
+
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
           where: location.location ?? '',
           import: Number.isNaN(dr) ? 0 : dr,
           rollText: roll,
+          penalty: Number(location.penalty) || 0,
           split: {},
+          role,
         }
 
         acc[id] = newLocation
@@ -420,6 +430,118 @@ Portrait will not be imported.`
       },
       {}
     )
+
+    await this.#promptHitLocationOverwrite()
+  }
+
+  /* ---------------------------------------- */
+
+  async #promptHitLocationOverwrite() {
+    // No need to run this if there is no existing actor or if this is the first import.
+    if (!this.actor || !this.actor.system.profile.modifiedon) return
+
+    const currentBodyPlan = this.actor.system.bodyplan
+
+    // Remove derived values / all values not proper to the hit location on its own.
+    const currentHitLocations: Record<string, AnyMutableObject> = Object.fromEntries(
+      this.actor.system.hitlocationsV2.map(hitLocation => {
+        const location = hitLocation.toObject() as AnyMutableObject
+
+        delete location._damageType
+        delete location._dr
+        delete location.drCap
+        delete location.drItem
+        delete location.drMod
+
+        return [location._id, location]
+      })
+    )
+
+    const currentHitLocationNullifiers = Object.fromEntries(
+      this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+    )
+
+    const bodyPlansAreEqual = () => {
+      const oldLocations = Object.values(currentHitLocations)
+
+      const newLocations = Object.values(this.output.hitlocationsV2 ?? {})
+
+      for (const location of oldLocations) {
+        if (location) delete location._id
+      }
+
+      for (const location of newLocations) {
+        if (location) delete location._id
+      }
+
+      if (oldLocations.length !== newLocations.length) return false
+
+      for (let i = 0; i < oldLocations.length; i++) {
+        if (!foundry.utils.objectsEqual(oldLocations[i], newLocations[i] as AnyObject)) return false
+      }
+
+      return true
+    }
+
+    const statsDifference = currentBodyPlan !== this.output.bodyplan || !bodyPlansAreEqual()
+
+    // If there is no difference between hit location tables, keep the old ones.
+    if (!statsDifference) {
+      this.output.hitlocationsV2 = currentHitLocations
+
+      return
+    }
+
+    const automaticOverwrite = ImportSettings.overwriteBodyPlan
+
+    if (automaticOverwrite === 'overwrite') {
+      this.output.hitlocationsV2 = {
+        ...this.output.hitlocationsV2,
+        ...currentHitLocationNullifiers,
+      }
+
+      return // Automatically overwrite from file.
+    } else if (automaticOverwrite === 'keep') {
+      // Automatically ignore values from file.
+      this.output.bodyplan = currentBodyPlan
+      this.output.hitlocationsV2 = currentHitLocations
+
+      return
+    }
+
+    const overwriteOption: 'keep' | 'overwrite' | null = await foundry.applications.api.DialogV2.wait({
+      window: {
+        title: game.i18n!.localize('GURPS.importer.promptBodyPlan.title'),
+      },
+      content: game.i18n!.format('GURPS.importer.promptBodyPlan.content', {
+        currentBodyPlan,
+        bodyplan: `${this.output.bodyplan}`,
+      }),
+      modal: true,
+      buttons: [
+        {
+          action: 'keep',
+          label: game.i18n!.localize('GURPS.dialog.keep'),
+          icon: 'far fa-square',
+          default: true,
+        },
+        {
+          action: 'overwrite',
+          label: game.i18n!.localize('GURPS.dialog.overwrite'),
+          icon: 'fas fa-edit',
+        },
+      ],
+    })
+
+    if (overwriteOption === 'keep') {
+      this.output.bodyplan = currentBodyPlan
+      this.output.hitlocationsV2 = currentHitLocations
+    } else {
+      this.output.hitlocationsV2 = {
+        ...this.output.hitlocationsV2,
+        ...currentHitLocationNullifiers,
+      }
+    }
   }
 
   /* ---------------------------------------- */
