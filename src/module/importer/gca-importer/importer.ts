@@ -639,7 +639,7 @@ Portrait will not be imported.`
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
-    const damage = `${weapon.chardamage} ${weapon.chardamtype}`
+    const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
 
     return {
       name,
@@ -661,7 +661,7 @@ Portrait will not be imported.`
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 
-    const damage = `${weapon.chardamage} ${weapon.chardamtype}`
+    const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
 
     return {
       name,
