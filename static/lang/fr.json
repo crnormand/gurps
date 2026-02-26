@@ -677,16 +677,26 @@
     "importCurrentVersions": "Versions Actuelles: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Le répertoire est vide. Aucun fichier ne sera importé.",
     "importer": {
+      "actor": {
+        "button": "Importer",
+        "description": "Sélectionnez un fichier GCS 5 ou GCA 5.",
+        "note": "Cette importation écrasera les données pour : <strong>{name}</strong>.",
+        "source": "Données source",
+        "successMessage": "Personnage \"{name}\" importé avec succès.",
+        "title": "Importer les données du personnage pour {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
+      },
       "defaultName": "Personnage importé",
       "error": {
         "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
       },
-      "prompt": {
-        "description": "Sélectionnez un fichier GCS 5 ou GCA 5.",
-        "note": "Cet import écrasera les données pour : <strong>{name}</strong>.",
+      "item": {
+        "button": "Importer",
+        "description": "Sélectionnez un fichier de bibliothèque GCS 5 (.adq, .skl, .spl, .eqp).",
+        "sidebarButton": "Importer le Compendium GCS",
         "source": "Données source",
-        "title": "Importer les données du personnage pour {name}",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
+        "successMessage": "Recueil \"{name}\" importé avec succès ({num} éléments importés).",
+        "title": "Importer des éléments du Compendium GCS"
       },
       "promptBodyPlan": {
         "content": "<p>Voulez-vous <strong>Conserver</strong> le plan corporel actuel (<strong>{currentBodyPlan}</strong>), ou <strong>Écraser</strong> avec le plan corporel du fichier d'importation (<strong>{bodyplan}</strong>)?</p>",

@@ -1,10 +1,9 @@
-import { MeleeAttackModel } from '@module/action/melee-attack.ts'
-import { RangedAttackModel } from '@module/action/ranged-attack.ts'
+import { ActionType, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
 import DamageChat from '@module/damage/damagechat.js'
-import { Feature } from '@module/item/legacy/itemv1-interface.ts'
+import { Feature } from '@module/item/legacy/itemv1-interface.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -172,8 +171,8 @@ declare global {
      */
     interface Types {
       Action: {
-        meleeAttack: gurps.Pseudo.ConfigEntry<typeof MeleeAttackModel>
-        rangedAttack: gurps.Pseudo.ConfigEntry<typeof RangedAttackModel>
+        [ActionType.MeleeAttack]: gurps.Pseudo.ConfigEntry<typeof MeleeAttackModel>
+        [ActionType.RangedAttack]: gurps.Pseudo.ConfigEntry<typeof RangedAttackModel>
       }
     }
   }

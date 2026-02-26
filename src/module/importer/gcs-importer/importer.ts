@@ -17,30 +17,62 @@ import { SpellComponentSchema, SpellSchema } from '../../item/data/spell.js'
 import { createDataIsOfType } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
+import { GcsCollection } from './schema/base.js'
 import { GcsCharacter } from './schema/character.js'
 import { GcsEquipment } from './schema/equipment.js'
-import { AnyGcsItem } from './schema/index.js'
+import { AnyGcsItem, AnyGcsItemCollection } from './schema/index.js'
 import { GcsNote } from './schema/note.js'
 import { GcsSkill } from './schema/skill.js'
 import { GcsSpell } from './schema/spell.js'
 import { GcsTrait } from './schema/trait.js'
 import { GcsWeapon } from './schema/weapon.js'
 
+enum GcsImporterMode {
+  Character = 'character',
+  ItemCompendium = 'itemCompendium',
+}
+
+enum GcsItemCollectionType {
+  Trait = 'trait',
+  Skill = 'skill',
+  Spell = 'spell',
+  Equipment = 'equipment',
+}
+
+const _GcsItemConstructorMap = {
+  [GcsItemCollectionType.Trait]: GcsTrait,
+  [GcsItemCollectionType.Skill]: GcsSkill,
+  [GcsItemCollectionType.Spell]: GcsSpell,
+  [GcsItemCollectionType.Equipment]: GcsEquipment,
+}
+
+/* ---------------------------------------- */
+
+type GcsItemCollectionOfType<Type extends GcsItemCollectionType> = GcsCollection<(typeof _GcsItemConstructorMap)[Type]>
+
+type GcsImporterInputType<Mode extends GcsImporterMode> = Mode extends 'character' ? GcsCharacter : AnyGcsItemCollection
+
+/* ---------------------------------------- */
+
 /**
  * GCS Importer class for importing GCS characters into the system.
  * This class handles the conversion of GCS character data into the format used by the GURPS system.
  */
-class GcsImporter {
+class GcsImporter<Mode extends GcsImporterMode> {
+  _mode: Mode
+  input: GcsImporterInputType<Mode>
   actor?: Actor.OfType<'characterV2'>
-  input: GcsCharacter
-  output: DataModel.CreateData<CharacterSchema>
+  // declare inputActor: GcsCharacter
+  // declare inputCollection: AnyGcsItemCollection
+  output: DataModel.CreateData<CharacterSchema> = {}
   items: Item.CreateData[]
   img: string
 
   /* ---------------------------------------- */
 
-  constructor(input: GcsCharacter) {
-    this.input = input
+  constructor(options: { input: GcsImporterInputType<Mode>; mode: Mode }) {
+    this._mode = options.mode
+    this.input = options.input
     this.output = {}
 
     this.items = []
@@ -57,12 +89,28 @@ class GcsImporter {
     input: GcsCharacter,
     actor?: Actor.OfType<'characterV2'>
   ): Promise<Actor.OfType<'characterV2'>> {
-    return await new GcsImporter(input).#importCharacter(actor)
+    return await new GcsImporter({ input, mode: GcsImporterMode.Character }).#importCharacter(actor)
+  }
+
+  /* ---------------------------------------- */
+
+  static async importItemCompendium(input: AnyGcsItemCollection) {
+    return await new GcsImporter({ input, mode: GcsImporterMode.ItemCompendium }).#importItemCompendium()
+  }
+
+  /* ---------------------------------------- */
+
+  _isMode<T extends GcsImporterMode>(mode: T): this is { _mode: T; input: GcsImporterInputType<T> }
+  _isMode(mode: string): boolean {
+    return this._mode === mode
   }
 
   /* ---------------------------------------- */
 
   async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<Actor.OfType<'characterV2'>> {
+    if (!this._isMode(GcsImporterMode.Character))
+      return Promise.reject(new Error('GcsImporter: Invalid mode for character import.'))
+
     const _id = actor ? actor._id : foundry.utils.randomID()
     const type = 'characterV2'
 
@@ -117,7 +165,122 @@ class GcsImporter {
       throw new Error('Failed to create GURPS actor during import.')
     }
 
+    ui.notifications?.info(game.i18n!.format('GURPS.importer.actor.successMessage', { name }))
+
     return actor
+  }
+
+  /* ---------------------------------------- */
+
+  #itemDataIsOfType<SubType extends 'featureV2' | 'skillV2' | 'spellV2' | 'equipmentV2'>(
+    data: { type: string },
+    ...types: SubType[]
+  ): data is Item.CreateData<SubType> & {
+    system: DataModel.CreateData<DataModel.SchemaOf<Item.SystemOfType<SubType>>>
+  }
+  #itemDataIsOfType(data: { type: string }, ...types: string[]): boolean {
+    return types.includes(data.type)
+  }
+
+  /* ---------------------------------------- */
+
+  #itemCollectionIsOfType<Type extends GcsItemCollectionType>(
+    collection: GcsCollection,
+    type: Type
+  ): collection is GcsItemCollectionOfType<Type>
+  #itemCollectionIsOfType(collection: GcsCollection, type: string): boolean {
+    return collection.type === type
+  }
+
+  /* ---------------------------------------- */
+
+  #existingItemId(itemData: Item.CreateData, existingIds: { _id: string | null; importid: string }[]): string | null {
+    const getImportId = (data: Item.CreateData) => {
+      if (this.#itemDataIsOfType(data, 'featureV2')) return data.system?.fea?.importid
+      if (this.#itemDataIsOfType(data, 'skillV2')) return data.system?.ski?.importid
+      if (this.#itemDataIsOfType(data, 'spellV2')) return data.system?.spl?.importid
+      if (this.#itemDataIsOfType(data, 'equipmentV2')) return data.system?.eqt?.importid
+
+      return null
+    }
+
+    const id = getImportId(itemData)
+
+    if (!id) return null
+
+    const existingId = existingIds.find(existing => existing.importid === id)?._id ?? null
+
+    return existingId || null
+  }
+
+  /* ---------------------------------------- */
+
+  async #importItemCompendium(): Promise<foundry.documents.collections.CompendiumCollection<'Item'> | null> {
+    if (!this._isMode(GcsImporterMode.ItemCompendium))
+      return Promise.reject(new Error('GcsImporter: Invalid mode for item compendium import.'))
+
+    if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Trait)) {
+      this.input.rows.forEach((trait, index) => this.#importTrait(trait, index))
+    } else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Skill)) {
+      this.input.rows.forEach((skill, index) => this.#importSkill(skill, index))
+    } else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Spell)) {
+      this.input.rows.forEach((spell, index) => this.#importSpell(spell, index))
+    } else if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Equipment)) {
+      this.input.rows.forEach((equipment, index) => this.#importEquipment(equipment, index, true))
+    } else {
+      ui.notifications?.error?.('GcsImporter: Unsupported item collection type for compendium import.')
+
+      return Promise.reject(new Error('GcsImporter: Unsupported item collection type for compendium import.'))
+    }
+
+    const name = this.input.name.replace(/ /g, '_')
+
+    if (!game.packs) {
+      console.error("GURPS | Foundry game.packs is undefined. Can't import compendium.")
+
+      return null
+    }
+
+    let pack = game.packs.get(`world.${name}`) as foundry.documents.collections.CompendiumCollection<'Item'> | undefined
+
+    const existingItems: { _id: string | null; importid: string }[] = pack
+      ? (await pack.getDocuments()).map(item => {
+          return { _id: item._id || null, importid: item.system.component.importid || '' }
+        })
+      : []
+
+    const itemsToCreate: Item.CreateData[] = []
+    const itemsToUpdate: Item.CreateData[] = []
+
+    for (const itemData of this.items) {
+      const existingId = this.#existingItemId(itemData, existingItems)
+
+      if (!existingId) {
+        itemsToCreate.push(itemData)
+      } else {
+        itemData._id = existingId
+        itemsToUpdate.push(itemData)
+      }
+    }
+
+    if (!pack) {
+      pack = await foundry.documents.collections.CompendiumCollection.createCompendium({
+        type: 'Item',
+        label: this.input.name,
+        // @ts-expect-error: this type is valid but fvtt-types thinks otherwise
+        packageType: 'world',
+        name,
+      })
+    }
+
+    await foundry.documents.Item.createDocuments(itemsToCreate, { pack: pack.metadata.id })
+    await foundry.documents.Item.updateDocuments(itemsToUpdate, { pack: pack.metadata.id })
+
+    ui.notifications?.info(
+      game.i18n!.format('GURPS.importer.item.successMessage', { name: this.input.name, num: `${this.items.length}` })
+    )
+
+    return pack
   }
 
   /* ---------------------------------------- */
@@ -181,6 +344,8 @@ class GcsImporter {
   /* ---------------------------------------- */
 
   #importPortrait() {
+    if (!this._isMode(GcsImporterMode.Character)) return
+
     if (this.actor) {
       // If actor exists, assume we're keeping the current portrait unless otherwise specified
       this.img = this.actor.img ?? ''
@@ -209,6 +374,8 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   async #importAttributes() {
+    if (!this._isMode(GcsImporterMode.Character)) return
+
     this.output.attributes = { ST: {}, DX: {}, IQ: {}, HT: {}, WILL: {}, PER: {}, QN: {} }
 
     for (const key of ['ST', 'DX', 'IQ', 'HT', 'QN', 'WILL', 'PER'] as const) {
@@ -341,6 +508,8 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importProfile() {
+    if (!this._isMode(GcsImporterMode.Character)) return
+
     const { profile } = this.input
 
     this.output.profile = {
@@ -366,6 +535,8 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   async #importHitLocations() {
+    if (!this._isMode(GcsImporterMode.Character)) return
+
     this.output.bodyplan = this.input.settings.body_type.name ?? 'Humanoid'
 
     this.output.hitlocationsV2 = this.input.settings.body_type.locations.reduce(
@@ -488,6 +659,8 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importItems() {
+    if (!this._isMode(GcsImporterMode.Character)) return
+
     this.input.traits?.forEach((trait, index) => this.#importTrait(trait, index))
     this.input.skills?.forEach((skill, index) => this.#importSkill(skill, index))
     this.input.spells?.forEach((spell, index) => this.#importSpell(spell, index))
@@ -498,6 +671,8 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importPointTotals() {
+    if (!this._isMode(GcsImporterMode.Character)) return
+
     this.output.totalpoints = {
       attributes: 0,
       race: 0,
@@ -650,13 +825,63 @@ Portrait will not be imported.`
 
   /* ---------------------------------------- */
 
+  #importWeaponDefaults(weapon: GcsWeapon): string {
+    if (!weapon.defaults) return ''
+
+    const otfList: string[] = []
+
+    for (const defaultData of weapon.defaults) {
+      const modifier = defaultData.modifier
+        ? defaultData.modifier > -1
+          ? `+${defaultData.modifier}`
+          : `${defaultData.modifier}`
+        : ''
+
+      if (defaultData.type === 'skill') {
+        otfList.push(
+          `S:"${defaultData.name}` +
+            (defaultData.specialization ? `*(${defaultData.specialization})` : '') +
+            '"' +
+            modifier
+        )
+      } else if (
+        [
+          '10',
+          'st',
+          'dx',
+          'iq',
+          'ht',
+          'per',
+          'will',
+          'vision',
+          'hearing',
+          'taste_smell',
+          'touch',
+          'parry',
+          'block',
+        ].includes(defaultData.type)
+      ) {
+        otfList.push(defaultData.type.replace('_', ' ') + modifier)
+      }
+    }
+
+    return otfList.join('|')
+  }
+
+  /* ---------------------------------------- */
+
   #importMeleeWeapon(weapon: GcsWeapon, item: AnyGcsItem): DataModel.CreateData<MeleeAttackSchema> {
     const name = weapon.usage ?? ''
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
-    const parrybonus = this.input.calc.parry_bonus ?? 0
-    const blockbonus = this.input.calc.parry_bonus ?? 0
+    let parrybonus = 0
+    let blockbonus = 0
+
+    if (this._isMode(GcsImporterMode.Character)) {
+      parrybonus = this.input.calc.parry_bonus ?? 0
+      blockbonus = this.input.calc.parry_bonus ?? 0
+    }
 
     const component: DataModel.CreateData<MeleeAttackComponentSchema> = {
       name: item.name || '',
@@ -671,6 +896,7 @@ Portrait will not be imported.`
       parrybonus,
       block: weapon.calc?.block || weapon.block,
       blockbonus,
+      otf: this.#importWeaponDefaults(weapon),
     }
 
     return {
@@ -705,6 +931,7 @@ Portrait will not be imported.`
       halfd,
       rate_of_fire: weapon.calc?.rate_of_fire || weapon.rate_of_fire,
       bulk: weapon.calc?.bulk || weapon.bulk || '0',
+      otf: this.#importWeaponDefaults(weapon),
     }
 
     return {
@@ -967,6 +1194,8 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importNotes() {
+    if (!this._isMode(GcsImporterMode.Character)) return
+
     this.output.allNotes = {}
     if (this.input.notes) this.input.notes.forEach(note => this.#importNote(note, null))
   }

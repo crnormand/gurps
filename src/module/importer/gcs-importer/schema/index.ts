@@ -1,8 +1,10 @@
-import { GcsEquipment } from './equipment.js'
-import { GcsSkill } from './skill.js'
-import { GcsSpell } from './spell.js'
-import { GcsTrait } from './trait.js'
+import { GcsEquipment, GcsEquipmentCollection } from './equipment.js'
+import { GcsSkill, GcsSkillCollection } from './skill.js'
+import { GcsSpell, GcsSpellCollection } from './spell.js'
+import { GcsTrait, GcsTraitCollection } from './trait.js'
 
 type AnyGcsItem = GcsTrait | GcsSkill | GcsEquipment | GcsSpell
 
-export { type AnyGcsItem }
+type AnyGcsItemCollection = GcsTraitCollection | GcsSkillCollection | GcsEquipmentCollection | GcsSpellCollection
+
+export type { AnyGcsItem, AnyGcsItemCollection }

@@ -45,6 +45,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 import { Combat } from './combat/index.js'
 import { calculateRoFModifier } from './combat/utilities.js'
 import { CombatTracker } from './combat-tracker/index.js'
+import { Compendium } from './compendium/index.js'
 import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
@@ -59,7 +60,6 @@ import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
 import { Item } from './item/index.js'
-import { AddImportEquipmentButton } from './item-import.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
@@ -105,6 +105,7 @@ if (!globalThis.GURPS) {
     Canvas,
     Combat,
     CombatTracker,
+    Compendium,
     Damage,
     Dev,
     Importer,
@@ -2199,11 +2200,6 @@ if (!globalThis.GURPS) {
     Hooks.on('renderActorDirectory', (app, html) => {
       // Add the Import Multiple Actors button to the Actors tab.
       AddMultipleImportButton(html)
-    })
-
-    Hooks.on('renderCompendiumDirectory', (app, html) => {
-      // Add the import equipment button to the Compendiums tab.
-      AddImportEquipmentButton(html)
     })
 
     // TODO Move to a new 'bucket' module?

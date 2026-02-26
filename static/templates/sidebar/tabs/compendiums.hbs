@@ -1,0 +1,32 @@
+<header class="directory-header flexcol">
+
+    {{!-- Header Actions --}}
+    <div class="header-actions action-buttons flexrow">
+        {{#if user.isGM}}
+        <button type="button" class="create-entry" data-action="createEntry">
+            <i class="{{ sidebarIcon }}" inert></i>
+            <span>{{ localize "SIDEBAR.ACTIONS.CREATE.Compendium" }}</span>
+        </button>
+        <button type="button" class="create-folder" data-action="createFolder">
+            <i class="{{ folderIcon }}" inert></i>
+            <span>{{ localize "SIDEBAR.ACTIONS.CREATE.Folder" }}</span>
+        </button>
+        <button type="button" class="import-items" data-action="importItems">
+            <i class="fa-solid fa-file-import" inert></i>
+            <span>{{ localize "GURPS.importer.item.sidebarButton" }}</span>
+        </button>
+        {{/if}}
+    </div>
+
+    {{!-- Search & Sort --}}
+    <search>
+        <button type="button" class="inline-control filter icon fa-solid {{ ifThen filtersActive "fa-filter-list" "fa-filter" }}"
+                data-action="filter" data-tooltip aria-label="{{ localize "COMPENDIUM.FilterDocuments" }}"></button>
+        <input type="search" name="search" autocomplete="off" placeholder="{{ searchMode.placeholder }}"
+               aria-label="{{ searchMode.placeholder }}">
+        <button type="button" class="inline-control toggle-sort icon {{ sortMode.icon }}" data-action="toggleSort"
+                data-tooltip aria-label="{{ localize sortMode.label }}"></button>
+        <button type="button" class="inline-control collapse-all icon fa-duotone fa-folder-tree"
+                data-action="collapseFolders" data-tooltip aria-label="{{ localize "FOLDER.Collapse" }}"></button>
+    </search>
+</header>
