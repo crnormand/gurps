@@ -1,9 +1,9 @@
-import { ActionType, MeleeAttackModel, RangedAttackModel } from '@module/action/index.ts'
+import { ActionType, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
 import DamageChat from '@module/damage/damagechat.js'
-import { Feature } from '@module/item/legacy/itemv1-interface.ts'
+import { Feature } from '@module/item/legacy/itemv1-interface.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { AnyObject } from 'fvtt-types/utils'
 

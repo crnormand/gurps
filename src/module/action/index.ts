@@ -2,7 +2,7 @@ import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { MeleeAttackModel } from './melee-attack.js'
 import { RangedAttackModel } from './ranged-attack.js'
-import { ActionType } from './types.ts'
+import { ActionType } from './types.js'
 
 /* ---------------------------------------- */
 

@@ -45,7 +45,7 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 import { Combat } from './combat/index.js'
 import { calculateRoFModifier } from './combat/utilities.js'
 import { CombatTracker } from './combat-tracker/index.js'
-import { Compendium } from './compendium/index.ts'
+import { Compendium } from './compendium/index.js'
 import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'

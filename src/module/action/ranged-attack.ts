@@ -4,7 +4,7 @@ import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseAction } from './base-action.js'
-import { BaseAttackComponent, BaseAttackComponentSchema } from './component.ts'
+import { BaseAttackComponent, BaseAttackComponentSchema } from './component.js'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class RangedAttackModel extends BaseAction<RangedAttackSchema> {
