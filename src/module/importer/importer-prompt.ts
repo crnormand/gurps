@@ -111,7 +111,7 @@ async function itemImporterPrompt() {
       'systems/gurps/templates/importer/import-prompt.hbs',
       {
         description: game.i18n.localize('GURPS.importer.item.description'),
-        fileTypes: ['.adj', '.skl', '.spl', '.eqp'].join(','),
+        fileTypes: ['.adq', '.skl', '.spl', '.eqp'].join(','),
         source: game.i18n.localize('GURPS.importer.item.source'),
       }
     ),
@@ -150,7 +150,9 @@ async function itemImporterPrompt() {
               jsonObject = JSON.parse(text)
             } catch (error) {
               console.error('GURPS | Failed to parse JSON from file:', error)
-
+              ui.notifications?.error(
+                'GURPS | Failed to parse JSON from file. The file may be invalid or corrupted.'
+              )
               return
             }
 
