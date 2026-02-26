@@ -154,7 +154,6 @@ async function itemImporterPrompt() {
             } catch (error) {
               console.error('GURPS | Failed to parse JSON from file:', error)
               ui.notifications?.error('GURPS | Failed to parse JSON from file. The file may be invalid or corrupted.')
-
               return
             }
 

@@ -1,12 +1,10 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
-import { parselink } from '@util/parselink.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
-
 import { BaseAction } from './base-action.js'
+import { BaseAttackComponent, BaseAttackComponentSchema } from './component.ts'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class RangedAttackModel extends BaseAction<RangedAttackSchema> {
@@ -32,62 +30,6 @@ class RangedAttackModel extends BaseAction<RangedAttackSchema> {
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
-  /* ---------------------------------------- */
-
-  override prepareBaseData(): void {
-    super.prepareBaseData()
-    this.#prepareLevelsFromOtf()
-  }
-
-  /* ---------------------------------------- */
-
-  /**
-   * Prepare the level of this skill based on an OTF formula.
-   */
-  #prepareLevelsFromOtf(): void {
-    // Do not prepare levels if the item is not owned
-    if (!this.item.isOwned) return
-
-    let otf = this.component.otf
-
-    if (otf === '') {
-      this.component.level = this.component.import
-
-      return
-    }
-
-    // Remove extraneous brackets
-    otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
-
-    // If the OTF is just a number, Set the level directly
-    if (otf.match(/^\d+$/)) {
-      this.component.import = parseInt(otf)
-      this.component.level = this.component.import
-
-      return
-    }
-
-    // If the OTF is not a number, parse it using the OTF parser.
-    const action = parselink(otf)
-
-    // If the OTF does not return an action, we cannot set the level.
-    if (!action.action) {
-      console.warn(`GURPS | RangedAttackModel: OTF "${otf}" did not return a valid action.`)
-
-      return
-    }
-
-    action.action.calcOnly = true
-    // TODO: verify that target is of type "number" (or replace this whole thing)
-    GURPS.performAction(action.action, this.actor).then(
-      (result: boolean | { target: number; thing: any } | undefined) => {
-        if (result && typeof result === 'object') {
-          this.component.level = result.target
-        }
-      }
-    )
-  }
-
   /* ---------------------------------------- */
 
   override prepareDerivedData(): void {
@@ -151,18 +93,6 @@ type RangedAttackSchema = BaseAction.Schema & ReturnType<typeof rangedAttackSche
 
 const rangedAttackComponentSchema = () => {
   return {
-    // NOTE: change from previous schema where this was a string
-    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    // NOTE: Damage is an Array of strings to allow for multiple damage types dealing damage in one
-    // attack, such as "2d-1cut and 1d+2 ctrl". Most of the time, this array has only one element.
-    damage: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-      initial: [],
-    }),
-    st: new fields.StringField({ required: true, nullable: false }),
-    mode: new fields.StringField({ required: true, nullable: false }),
-    notes: new fields.StringField({ required: true, nullable: false }),
     bulk: new fields.StringField({ required: true, nullable: false }),
     legalityclass: new fields.StringField({ required: true, nullable: false }),
     ammo: new fields.StringField({ required: true, nullable: false }),
@@ -172,23 +102,15 @@ const rangedAttackComponentSchema = () => {
     rcl: new fields.StringField({ required: true, nullable: false }),
     halfd: new fields.StringField({ required: true, nullable: false }),
     max: new fields.StringField({ required: true, nullable: false }),
-    otf: new fields.StringField({ required: true, nullable: false }),
-    itemModifiers: new fields.StringField({ required: true, nullable: false }),
-    modifierTags: new fields.StringField({ required: true, nullable: false }),
-    extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     rate_of_fire: new fields.StringField({ required: true, nullable: false, initial: '' }),
   }
 }
 
-type RangedAttackComponentSchema = ItemComponentSchema & ReturnType<typeof rangedAttackComponentSchema>
+type RangedAttackComponentSchema = BaseAttackComponentSchema & ReturnType<typeof rangedAttackComponentSchema>
 
 /* ---------------------------------------- */
 
-class RangedAttackComponent extends ItemComponent<RangedAttackComponentSchema> {
-  declare name: string
-  declare otf: string
-  declare import: number
+class RangedAttackComponent extends BaseAttackComponent<RangedAttackComponentSchema> {
   declare range: string
   static override defineSchema(): RangedAttackComponentSchema {
     return {
@@ -196,12 +118,6 @@ class RangedAttackComponent extends ItemComponent<RangedAttackComponentSchema> {
       ...rangedAttackComponentSchema(),
     }
   }
-
-  /* ---------------------------------------- */
-  /*  Derived Values                          */
-  /* ---------------------------------------- */
-
-  level: number = 0
 }
 
 /* ---------------------------------------- */

@@ -1,11 +1,9 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import { parselink } from '@util/parselink.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
-
 import { BaseAction } from './base-action.js'
+import { BaseAttackComponent, BaseAttackComponentSchema } from './component.ts'
 
 // TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
 class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
@@ -32,84 +30,36 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
 
   override prepareBaseData(): void {
     super.prepareBaseData()
+    this.#prepareDefenses()
   }
 
   /* ---------------------------------------- */
 
-  override prepareDerivedData(): void {
-    super.prepareDerivedData()
-    this.#prepareLevelsFromOtf()
-  }
-
-  /* ---------------------------------------- */
-
-  /**
-   * Prepare the level of this skill based on an OTF formula.
-   */
-  #prepareLevelsFromOtf(): void {
-    // Do not prepare levels if the item is not owned
+  #prepareDefenses(): void {
+    // Do not prepare defenses if the item is not owned
     if (!this.item.isOwned) return
 
-    let otf = this.component.otf
+    // If parry is a number, its value will be re-calculated using the parry
+    // bonus and the current level.
+    // NOTE: Change from previous method where parry itself could store a
+    // value with a leading [+-] to indicate a bonus.
+    if (!isNaN(parseInt(this.component.parry))) {
+      const parryLevel = parseInt(this.component.parry)
+      const parrySuffix = this.component.parry.replace(parryLevel.toString(), '').trim()
 
-    if (otf === '') {
-      this.component.level = this.component.import
-
-      return
+      this.component.parry = `${3 + Math.floor(this.component.level / 2) + this.component.parrybonus}${parrySuffix}`
     }
 
-    // Remove extraneous brackets
-    otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
+    // If block is a number, its value will be re-calculated using the block
+    // bonus and the current level.
+    // NOTE: Change from previous method where block itself could store a
+    // value with a leading [+-] to indicate a bonus.
+    if (!isNaN(parseInt(this.component.block))) {
+      const blockLevel = parseInt(this.component.block)
+      const blockSuffix = this.component.block.replace(blockLevel.toString(), '').trim()
 
-    // If the OTF is just a number, Set the level directly
-    if (otf.match(/^\d+$/)) {
-      this.component.import = parseInt(otf)
-      this.component.level = this.component.import
-
-      return
+      this.component.block = `${3 + Math.floor(this.component.level / 2) + this.component.blockbonus}${blockSuffix}`
     }
-
-    // If the OTF is not a number, parse it using the OTF parser.
-    const action = parselink(otf)
-
-    // If the OTF does not return an action, we cannot set the level.
-    if (!action.action) {
-      console.warn(`GURPS | MeleeAttackModel: OTF "${otf}" did not return a valid action.`)
-
-      return
-    }
-
-    action.action.calcOnly = true
-    // TODO: verify that target is of type "number" (or replace this whole thing)
-    GURPS.performAction(action.action, this.actor).then(
-      (result: boolean | { target: number; thing: any } | undefined) => {
-        if (result && typeof result === 'object') {
-          this.component.level = result.target
-        }
-
-        // If parry is a number, its value will be re-calculated using the parry
-        // bonus and the current level.
-        // NOTE: Change from previous method where parry itself could store a
-        // value with a leading [+-] to indicate a bonus.
-        if (!isNaN(parseInt(this.component.parry))) {
-          const parryLevel = parseInt(this.component.parry)
-          const parrySuffix = this.component.parry.replace(parryLevel.toString(), '').trim()
-
-          this.component.parry = `${3 + Math.floor(this.component.level / 2) + this.component.parrybonus}${parrySuffix}`
-        }
-
-        // If block is a number, its value will be re-calculated using the block
-        // bonus and the current level.
-        // NOTE: Change from previous method where block itself could store a
-        // value with a leading [+-] to indicate a bonus.
-        if (!isNaN(parseInt(this.component.block))) {
-          const blockLevel = parseInt(this.component.block)
-          const blockSuffix = this.component.block.replace(blockLevel.toString(), '').trim()
-
-          this.component.block = `${3 + Math.floor(this.component.level / 2) + this.component.blockbonus}${blockSuffix}`
-        }
-      }
-    )
   }
 
   /* ---------------------------------------- */
@@ -169,18 +119,6 @@ type MeleeAttackSchema = BaseAction.Schema & ReturnType<typeof meleeAttackSchema
 
 const meleeAttackComponentSchema = () => {
   return {
-    // NOTE: change from previous schema where this was a string
-    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    // NOTE: Damage is an Array of strings to allow for multiple damage types dealing damage in one
-    // attack, such as "2d-1cut and 1d+2 ctrl". Most of the time, this array has only one element.
-    damage: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-      initial: [],
-    }),
-    st: new fields.StringField({ required: true, nullable: false }),
-    mode: new fields.StringField({ required: true, nullable: false }),
-    notes: new fields.StringField({ required: true, nullable: false }),
     weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     techlevel: new fields.StringField({ required: true, nullable: false, initial: '' }),
     cost: new fields.StringField({ required: true, nullable: false }),
@@ -190,22 +128,14 @@ const meleeAttackComponentSchema = () => {
     baseParryPenalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     block: new fields.StringField({ required: true, nullable: false }),
     blockbonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    otf: new fields.StringField({ required: true, nullable: false }),
-    itemModifiers: new fields.StringField({ required: true, nullable: false }),
-    modifierTags: new fields.StringField({ required: true, nullable: false }),
-    extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
   }
 }
 
-type MeleeAttackComponentSchema = ItemComponentSchema & ReturnType<typeof meleeAttackComponentSchema>
+type MeleeAttackComponentSchema = BaseAttackComponentSchema & ReturnType<typeof meleeAttackComponentSchema>
 
 /* ---------------------------------------- */
 
-class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
-  declare name: string
-  declare otf: string
-  declare import: number
+class MeleeAttackComponent extends BaseAttackComponent<MeleeAttackComponentSchema> {
   declare parry: string
   declare parrybonus: number
   declare block: string
@@ -216,12 +146,6 @@ class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
       ...meleeAttackComponentSchema(),
     }
   }
-
-  /* ---------------------------------------- */
-  /*  Derived Values                          */
-  /* ---------------------------------------- */
-
-  level: number = 0
 }
 
 /* ---------------------------------------- */
