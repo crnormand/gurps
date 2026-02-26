@@ -1,50 +1,21 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
-import { isObject } from '@module/util/guards.js'
+import { hasMetadata, isUpdatableDocument } from '@module/util/guards.js'
+import { systemPath } from '@module/util/misc.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { type ModelCollection } from '../data/model-collection.js'
 
 import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 
-interface UpdatableDocument extends Document.Any {
-  update(data: AnyObject, options?: AnyObject): Promise<this>
-}
-
-const isUpdatableDocument = (value: unknown): value is UpdatableDocument =>
-  isObject(value) && 'update' in value && typeof value.update === 'function'
-
-interface PseudoDocumentConstructor<Name extends gurps.Pseudo.Name = gurps.Pseudo.Name> {
-  metadata: PseudoDocumentMetadata<Name>
-}
-
-const hasPseudoDocumentMetadata = (value: unknown): value is PseudoDocumentConstructor =>
-  (isObject(value) || typeof value === 'function') && 'metadata' in value && isObject(value.metadata)
-
-type PseudoDocumentMetadata<Name extends gurps.Pseudo.Name> = {
-  /* ---------------------------------------- */
-  /* The document name of this pseudo-document. */
-  documentName: Name
-  /** The localization string for this pseudo-document */
-  label: string
-  /** The font-awesome icon for this pseudo-document type */
-  icon: string
-  /* Record of document names of pseudo-documents and the path to the collection. */
-  embedded: Record<string, string>
-  /* The class used to render this pseudo-document. */
-  sheetClass?: typeof PseudoDocumentSheet
-}
-
-/* ---------------------------------------- */
-
 class PseudoDocument<
-  Schema extends PseudoDocumentSchema = PseudoDocumentSchema,
+  Schema extends PseudoDocument.Schema = PseudoDocument.Schema,
   Parent extends DataModel.Any = DataModel.Any,
 > extends DataModel<Schema, Parent> {
   /* ---------------------------------------- */
 
-  static get metadata(): PseudoDocumentMetadata<gurps.Pseudo.Name> {
+  static get metadata(): PseudoDocument.Metadata<gurps.Pseudo.Name> {
     return {
-      // @ts-expect-error: This is always overridden
+      // @ts-expect-error: This should always be overridden
       documentName: null,
       label: '',
       icon: '',
@@ -52,21 +23,32 @@ class PseudoDocument<
     }
   }
 
-  /* ---------------------------------------- */
-
-  get metadata() {
-    return (this.constructor as typeof PseudoDocument).metadata
+  protected get static() {
+    return this.constructor as typeof PseudoDocument
   }
 
   /* ---------------------------------------- */
 
-  static override defineSchema(): PseudoDocumentSchema {
+  get metadata() {
+    return this.static.metadata
+  }
+
+  /* ---------------------------------------- */
+
+  static override defineSchema(): PseudoDocument.Schema {
     return pseudoDocumentSchema()
   }
 
   /* ---------------------------------------- */
 
   static override LOCALIZATION_PREFIXES: string[] = ['DOCUMENT']
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Template for {@link createDialog}.
+   */
+  static CREATE_TEMPLATE = systemPath('templates/pseudo-document/base-create-dialog.hbs')
 
   /* ---------------------------------------- */
 
@@ -104,9 +86,9 @@ class PseudoDocument<
   /**
    * The parent document of this pseudo-document.
    */
-  get document(): Document.Any {
-    const findDocument = (model: DataModel.Any): Document.Any => {
-      if (model instanceof Document) return model
+  get document(): gurps.Pseudo.ParentDocument {
+    const findDocument = (model: DataModel.Any): gurps.Pseudo.ParentDocument => {
+      if (model instanceof Document) return model as gurps.Pseudo.ParentDocument
 
       return findDocument(model.parent)
     }
@@ -212,8 +194,6 @@ class PseudoDocument<
   }
 
   /* ---------------------------------------- */
-  /*   CRUD Handlers                          */
-  /* ---------------------------------------- */
 
   /**
    * Does this pseudo-document exist in the document's source?
@@ -221,7 +201,7 @@ class PseudoDocument<
   get isSource() {
     const docName = this.documentName
 
-    if (!hasPseudoDocumentMetadata(this.parent.constructor)) return false
+    if (!hasMetadata(this.parent.constructor)) return false
 
     const fieldPath = docName ? this.parent.constructor.metadata.embedded[docName] : undefined
 
@@ -241,22 +221,22 @@ class PseudoDocument<
 
   /**
    * Create a new instance of this pseudo-document.
-   * @returns a promise that resolves to the updated document.
+   * @returns a promise that resolves to the created pseudo-document instance, or `undefined` if it cannot be retrieved.
    */
-  static async create(
-    data: fields.SchemaField.CreateData<PseudoDocumentSchema>,
-    { parent, ...operation }: Partial<foundry.abstract.types.DatabaseCreateOperation>
-  ): Promise<Document.Any | undefined> {
+  static async create<T extends typeof PseudoDocument>(
+    data: fields.SchemaField.CreateData<PseudoDocument.Schema>,
+    { parent, renderSheet = true, ...operation }: Partial<gurps.Pseudo.CreateOperation>
+  ): Promise<InstanceType<T> | undefined> {
     if (!parent) {
       throw new Error('A parent document must be specified for the creation of a pseudo-document!')
     }
 
-    const id =
+    const id: string =
       operation.keepId && foundry.data.validators.isValidId((data._id as string | undefined) ?? '')
-        ? data._id
+        ? (data._id as string)
         : foundry.utils.randomID()
 
-    const fieldPath = (parent.system!.constructor as unknown as gurps.MetaDataOwner).metadata.embedded?.[
+    const fieldPath = (parent.system?.constructor as unknown as gurps.MetadataOwner).metadata.embedded?.[
       this.metadata.documentName
     ]
 
@@ -270,9 +250,74 @@ class PseudoDocument<
 
     this._configureUpdates('create', parent, update, operation)
 
-    // @ts-expect-error: TODO: define the Document types better so this doesn't resolve to "never"
-    return parent.update(update, operation)
+    await parent.update(update, operation)
+
+    // HACK: There is really no cleaner way to define this.
+    const pseudo = (
+      parent as {
+        getEmbeddedDocument(name: string, id: string, options: object): InstanceType<T> | undefined
+      }
+    ).getEmbeddedDocument(this.metadata.documentName, id, {})
+
+    if (renderSheet && pseudo) pseudo.sheet?.render({ force: true })
+
+    return pseudo
   }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Create a new instance of this pseudo-document with a prompt to choose the name.
+   * @param data - The data used for the creation.
+   * @param operation - The context of the operation.
+   * @param operation.parent - The parent of this document.
+   * @returns A promise that resolves to the updated document.
+   */
+  static async createDialog<T extends typeof PseudoDocument>(
+    data: DataModel.CreateData<PseudoDocument.Schema>,
+    { parent, ...operation }: Partial<gurps.Pseudo.CreateOperation>
+  ): Promise<InstanceType<T> | undefined> {
+    const content = await foundry.applications.handlebars.renderTemplate(
+      this.CREATE_TEMPLATE,
+      this._prepareCreateDialogContext(parent)
+    )
+
+    const result = await foundry.applications.api.DialogV2.input<foundry.applications.api.DialogV2.InputConfig>({
+      content,
+      window: {
+        title: game.i18n?.format('DOCUMENT.New', {
+          type: game.i18n.localize(`DOCUMENT.${this.metadata.documentName}`),
+        }),
+        icon: this.metadata.icon,
+      },
+      render: (event, dialog) => this._createDialogRenderCallback(event, dialog),
+    })
+
+    if (!result) return
+
+    return this.create({ ...data, ...result }, { parent, ...operation })
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Prepares context for use with {@link CREATE_TEMPLATE}.
+   * @param parent - The parent DataModel of the pseudo-document being created.
+   * @returns The prepared create dialog context.
+   */
+  protected static _prepareCreateDialogContext(_parent?: Document.Any | null): AnyObject {
+    return {
+      fields: this.schema.fields,
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Render callback for dynamic handling of the create dialog. This can be used to, for example, dynamically populate
+   * the choices for a select field based on the parent document.
+   */
+  protected static _createDialogRenderCallback(_event: Event, _dialog: foundry.applications.api.DialogV2): void {}
 
   /* ---------------------------------------- */
 
@@ -291,7 +336,7 @@ class PseudoDocument<
     Object.assign(operation, { pseudo: { operation: 'delete', type: this.documentName, uuid: this.uuid } })
     const update = { [`${this.fieldPath}.-=${this.id}`]: null }
 
-    if (hasPseudoDocumentMetadata(this.constructor)) {
+    if (hasMetadata(this.constructor)) {
       PseudoDocument._configureUpdates('delete', this.document, update, operation)
     }
 
@@ -302,15 +347,20 @@ class PseudoDocument<
 
   /**
    * Duplicate this pseudo-document.
-   * @returns {Promise<Document>}    A promise that resolves to the updated document.
+   * @returns - A duplicate of this pseudo-document. The duplicate will not be saved to the document until the parent
+   * document is updated.
    */
-  async duplicate(): Promise<Document.Any | undefined> {
+  async duplicate(): Promise<this> {
     if (!this.isSource) throw new Error('You cannot duplicate a non-source pseudo-document!')
     const activityData = foundry.utils.mergeObject(this.toObject(), {
       name: game.i18n?.format('DOCUMENT.CopyOf', { name: 'name' in this ? (this.name as string) : '' }),
     })
 
-    return (this.constructor as typeof PseudoDocument).create(activityData, { parent: this.document })
+    const result = await this.static.create(activityData, { parent: this.document })
+
+    if (!result) throw new Error('Failed to duplicate pseudo-document!')
+
+    return result as this
   }
 
   /* ---------------------------------------- */
@@ -324,14 +374,14 @@ class PseudoDocument<
   async update(
     change: AnyObject = {},
     operation: Document.Database.UpdateOperation<foundry.abstract.types.DatabaseUpdateOperation> = {}
-  ): Promise<UpdatableDocument> {
+  ): Promise<gurps.UpdatableDocument> {
     if (!this.isSource) throw new Error('You cannot update a non-source pseudo-document!')
     if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
 
     const path = [this.fieldPath, this.id].join('.')
     const update = { [path]: change }
 
-    if (hasPseudoDocumentMetadata(this.constructor)) {
+    if (hasMetadata(this.constructor)) {
       PseudoDocument._configureUpdates('update', this.document, update, operation)
     }
 
@@ -342,16 +392,16 @@ class PseudoDocument<
 
   /**
    * Allow for subclasses to configure the CRUD workflow.
-   * @param {"create"|"update"|"delete"} _action     The operation.
-   * @param {Document.Any} _document    The parent document.
-   * @param {object} _update                         The data used for the update.
-   * @param {object} _operation                      The context of the operation.
+   * @param action - The operation.
+   * @param document - The parent document.
+   * @param update - The data used for the update.
+   * @param operation - The context of the operation.
    */
   static _configureUpdates(
     _action: 'create' | 'update' | 'delete',
     _document: Document.Any,
-    _update: object,
-    _operation: object
+    _update: AnyObject,
+    _operation: Document.Database.UpdateOperation<foundry.abstract.types.DatabaseUpdateOperation>
   ) {}
 }
 
@@ -363,8 +413,25 @@ const pseudoDocumentSchema = () => {
   }
 }
 
-type PseudoDocumentSchema = ReturnType<typeof pseudoDocumentSchema>
+/* ---------------------------------------- */
+
+namespace PseudoDocument {
+  export type Metadata<Name extends gurps.Pseudo.Name> = {
+    /* The document name of this pseudo-document. */
+    documentName: Name
+    /** The font-awesome icon for this pseudo-document type */
+    icon: string
+    /* Record of document names of pseudo-documents and the path to the collection. */
+    embedded: Record<string, string>
+    /* The class used to render this pseudo-document. */
+    sheetClass?: typeof PseudoDocumentSheet
+  }
+
+  /* ---------------------------------------- */
+
+  export type Schema = ReturnType<typeof pseudoDocumentSchema>
+}
 
 /* ---------------------------------------- */
 
-export { PseudoDocument, type PseudoDocumentSchema, type PseudoDocumentMetadata, pseudoDocumentSchema }
+export { PseudoDocument, pseudoDocumentSchema }

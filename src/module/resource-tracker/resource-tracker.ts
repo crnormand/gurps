@@ -1,9 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import {
-  PseudoDocument,
-  PseudoDocumentMetadata,
-  pseudoDocumentSchema,
-} from '@module/pseudo-document/pseudo-document.js'
+import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
 /* ---------------------------------------- */
 
@@ -14,10 +10,9 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata<'ResourceTracker'> {
+  static override get metadata(): PseudoDocument.Metadata<'ResourceTracker'> {
     return {
       documentName: 'ResourceTracker',
-      label: '',
       icon: '',
       embedded: {},
     }

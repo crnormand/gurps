@@ -1,9 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import {
-  PseudoDocument,
-  PseudoDocumentMetadata,
-  pseudoDocumentSchema,
-} from '@module/pseudo-document/pseudo-document.js'
+import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
@@ -25,10 +21,9 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata<'Note'> {
+  static override get metadata(): PseudoDocument.Metadata<'Note'> {
     return {
       documentName: 'Note',
-      label: '',
       icon: '',
       embedded: {},
     }

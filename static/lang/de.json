@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Aktion",
+    "HitLocation": "Trefferzone",
+    "MoveMode": "Bewegungsmodus",
+    "ResourceTracker": "Ressourcen-Tracker"
+  },
   "GURPS": {
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",
@@ -1607,6 +1613,10 @@
     "youDoNotHavePermission": "Du hast keine Berechtigung dies zu tun"
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Nahkampfangriff",
+      "rangedAttack": "Fernkampfangriff"
+    },
     "Actor": {
       "character": "Charakter (v1)",
       "characterV2": "Charakter (v2)",

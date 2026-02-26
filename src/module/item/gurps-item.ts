@@ -129,25 +129,23 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
+  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Item'>>(
     embeddedName: EmbeddedName,
     id: string,
-    { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
-  ): Item.Embedded.DocumentFor<EmbeddedName> | undefined {
-    const systemEmbeds = this.modelV2?.metadata.embedded ?? {}
+    options?: foundry.abstract.Document.GetEmbeddedDocumentOptions
+  ): gurps.Pseudo.EmbeddedDocument<'Item', EmbeddedName> {
+    const { invalid = false, strict = true } = options ?? {}
+
+    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
 
     if (embeddedName in systemEmbeds) {
       const path = systemEmbeds[embeddedName]
+      const document = foundry.utils.getProperty(this, path) as any
 
-      return (
-        (foundry.utils.getProperty(this, path) as ModelCollection<any>).get(id, {
-          invalid,
-          strict,
-        }) ?? undefined
-      )
+      return (document.get(id, { invalid, strict }) ?? undefined) as any
     }
 
-    return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+    return super.getEmbeddedDocument(embeddedName as Item.Embedded.CollectionName, id, { invalid, strict }) as any
   }
 
   /* ---------------------------------------- */

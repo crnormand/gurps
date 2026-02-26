@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Action",
+    "HitLocation": "Localisation des coups",
+    "MoveMode": "Mode de déplacement",
+    "ResourceTracker": "Suivi des ressources"
+  },
   "GURPS": {
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
@@ -1608,6 +1614,10 @@
     "youDoNotHavePermission": "Vous n'avez pas les autorisations pour faire cela."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Attaque de mêlée",
+      "rangedAttack": "Attaque à distance"
+    },
     "Actor": {
       "character": "Personnage (v1)",
       "characterV2": "Personnage (v2)",

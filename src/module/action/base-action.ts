@@ -1,8 +1,8 @@
 import { DataModel, fields } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
-import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
+import { type PseudoDocument } from '../pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument } from '../pseudo-document/typed-pseudo-document.js'
 
 enum ActionType {
   MeleeAttack = 'meleeAttack',
@@ -12,20 +12,19 @@ enum ActionType {
 /* ---------------------------------------- */
 
 class BaseAction<
-  Schema extends BaseActionSchema = BaseActionSchema,
+  Schema extends BaseAction.Schema = BaseAction.Schema,
   Parent extends DataModel.Any = DataModel.Any,
 > extends TypedPseudoDocument<Schema, Parent> {
   declare parent: Parent
-  static override defineSchema(): BaseActionSchema {
+  static override defineSchema(): BaseAction.Schema {
     return Object.assign(super.defineSchema(), baseActionSchema())
   }
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata<'Action'> {
+  static override get metadata(): PseudoDocument.Metadata<'Action'> {
     return {
       documentName: 'Action',
-      label: '',
       icon: '',
       embedded: {},
     }
@@ -71,8 +70,12 @@ const baseActionSchema = () => {
   }
 }
 
-type BaseActionSchema = TypedPseudoDocumentSchema & ReturnType<typeof baseActionSchema>
+/* ---------------------------------------- */
+
+namespace BaseAction {
+  export type Schema = TypedPseudoDocument.Schema & ReturnType<typeof baseActionSchema>
+}
 
 /* ---------------------------------------- */
 
-export { ActionType, BaseAction, type BaseActionSchema }
+export { ActionType, BaseAction }
