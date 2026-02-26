@@ -66,7 +66,9 @@ async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
                   jsonObject = JSON.parse(text)
                 } catch {
                   console.error('GURPS | Failed to parse JSON from file.')
-
+                  ui.notifications?.error(
+                    'GURPS | Failed to import character: the selected file could not be parsed. It may be invalid or corrupted.'
+                  )
                   return
                 }
 
