@@ -9,6 +9,8 @@ import { Migration } from '@module/util/migration.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
 import { getTokenForActor } from '@module/util/token.js'
+import { multiplyDice } from '@util/damage-utils.js'
+import { gurpslink } from '@util/gurpslink.js'
 import JQueryHelpers from '@util/jquery-helper.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@util/parselink.js'
@@ -71,8 +73,6 @@ import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { UI } from './ui/index.js'
-import { multiplyDice } from './util/damage-utils.js'
-import { gurpslink } from './util/gurpslink.js'
 
 export let GURPS = undefined
 

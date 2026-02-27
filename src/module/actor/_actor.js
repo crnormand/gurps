@@ -1,6 +1,7 @@
 'use strict'
 
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { multiplyDice } from '@util/damage-utils.js'
 import { COSTS_REGEX, parselink } from '@util/parselink.js'
 import {
   arrayToObject,
@@ -18,7 +19,6 @@ import { HitLocation } from '../hitlocation/hitlocation.js'
 import { GurpsItem } from '../item.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
-import { multiplyDice } from '../util/damage-utils.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
