@@ -44,7 +44,14 @@ declare global {
        * PseudoDocumentConfig.Embeds} configuration object and for PseudoDocument instance
        * and static methods to ensure type safety and autocompletion when working with pseudo-documents.
        */
-      type Name = 'Action' | 'HitLocation' | 'Note' | 'MoveMode' | 'ResourceTracker'
+      type Name =
+        | 'Action'
+        | 'HitLocation'
+        | 'Note'
+        | 'MoveMode'
+        | 'ResourceTracker'
+        | 'ConditionalModifier'
+        | 'ReactionModifier'
 
       /* ---------------------------------------- */
 

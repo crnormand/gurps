@@ -171,7 +171,11 @@ function migrateItemSystem(type: string, oldData: OldItemData, parentId: string 
 function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): NewDataWrapper<NewItemType> {
   const newData: NewDataWrapper<NewItemType> = {
     actions: {},
+    _reactions: {},
+    _conditionalmods: {},
     containedBy: parentId,
+    points: 0, // Placeholder value
+    import: 0, // Placeholder value
   }
 
   if (oldData.melee) {
@@ -196,10 +200,10 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
 /* ---------------------------------------- */
 
 function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): NewDataWrapper<'equipmentV2'> {
-  const newData: NewDataWrapper<'equipmentV2'> = migrateBaseItemSystem(oldData, parentId)
-
-  newData.eqt = {
+  const newData: NewDataWrapper<'equipmentV2'> = {
+    ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.eqt,
+    isContainer: Boolean(oldData.eqt.contains && Object.keys(oldData.eqt.contains).length > 0),
     weightsum: String(oldData.eqt.weightsum),
     uses: Number(oldData.eqt.uses),
     maxuses: Number(oldData.eqt.maxuses),
@@ -211,10 +215,10 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
 /* ---------------------------------------- */
 
 function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataWrapper<'featureV2'> {
-  const newData: NewDataWrapper<'featureV2'> = migrateBaseItemSystem(oldData, parentId)
-
-  newData.fea = {
+  const newData: NewDataWrapper<'featureV2'> = {
+    ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.fea,
+    isContainer: Boolean(oldData.fea.contains && Object.keys(oldData.fea.contains).length > 0),
   }
 
   return newData
@@ -223,10 +227,10 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
 /* ---------------------------------------- */
 
 function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWrapper<'skillV2'> {
-  const newData: NewDataWrapper<'skillV2'> = migrateBaseItemSystem(oldData, parentId)
-
-  newData.ski = {
+  const newData: NewDataWrapper<'skillV2'> = {
+    ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.ski,
+    isContainer: Boolean(oldData.ski.contains && Object.keys(oldData.ski.contains).length > 0),
     import: Number(oldData.ski.import),
     relativelevel: String(oldData.ski.relativelevel),
   }
@@ -237,10 +241,10 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
 /* ---------------------------------------- */
 
 function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWrapper<'spellV2'> {
-  const newData: NewDataWrapper<'spellV2'> = migrateBaseItemSystem(oldData, parentId)
-
-  newData.spl = {
+  const newData: NewDataWrapper<'spellV2'> = {
+    ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.spl,
+    isContainer: Boolean(oldData.spl.contains && Object.keys(oldData.spl.contains).length > 0),
     import: Number(oldData.spl.import),
     relativelevel: String(oldData.spl.relativelevel),
   }

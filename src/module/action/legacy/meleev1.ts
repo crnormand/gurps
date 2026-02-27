@@ -20,15 +20,15 @@ class MeleeV1 {
   }
 
   get baseParryPenalty() {
-    return this.meleeV2.mel.baseParryPenalty
+    return this.meleeV2.baseParryPenalty
   }
 
   get block() {
-    return this.meleeV2.mel.block
+    return this.meleeV2.block
   }
 
   get consumeAction() {
-    return this.meleeV2.mel.consumeAction
+    return this.meleeV2.consumeAction
   }
 
   get contains() {
@@ -37,43 +37,43 @@ class MeleeV1 {
   }
 
   get cost() {
-    return this.meleeV2.mel.cost
+    return this.meleeV2.cost
   }
 
   get damage() {
-    return this.meleeV2.mel.damage
+    return this.meleeV2.damage
   }
 
   get extraAttacks() {
-    return this.meleeV2.mel.extraAttacks
+    return this.meleeV2.extraAttacks
   }
 
   get import() {
-    return this.meleeV2.mel.import
+    return this.meleeV2.import
   }
 
   get itemModifiers() {
-    return this.meleeV2.mel.itemModifiers
+    return this.meleeV2.itemModifiers
   }
 
   get level() {
-    return this.meleeV2.mel.level
+    return this.meleeV2.level
   }
 
   get mode() {
-    return this.meleeV2.mel.mode
+    return this.meleeV2.mode
   }
 
   get modifierTags() {
-    return this.meleeV2.mel.modifierTags
+    return this.meleeV2.modifierTags
   }
 
   get name() {
-    return this.meleeV2.mel.name
+    return this.meleeV2.name
   }
 
   get notes() {
-    return this.meleeV2.mel.notes
+    return this.meleeV2.notes
   }
 
   get originalName() {
@@ -81,7 +81,7 @@ class MeleeV1 {
   }
 
   get pageref() {
-    return this.meleeV2.mel.pageref
+    return ''
   }
 
   get parentuuid() {
@@ -89,23 +89,23 @@ class MeleeV1 {
   }
 
   get parry() {
-    return this.meleeV2.mel.parry
+    return this.meleeV2.parry
   }
 
   get parryBonus() {
-    return this.meleeV2.mel.parrybonus
+    return this.meleeV2.parrybonus
   }
 
   get reach() {
-    return this.meleeV2.mel.reach
+    return this.meleeV2.reach
   }
 
   get st() {
-    return this.meleeV2.mel.st
+    return this.meleeV2.st
   }
 
   get techlevel() {
-    return this.meleeV2.mel.techlevel
+    return ''
   }
 
   get uuid() {
@@ -113,7 +113,7 @@ class MeleeV1 {
   }
 
   get weight() {
-    return this.meleeV2.mel.weight
+    return ''
   }
 }
 

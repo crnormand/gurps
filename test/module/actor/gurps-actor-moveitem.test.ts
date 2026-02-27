@@ -44,23 +44,21 @@ describe('GurpsActorV2.moveItem', () => {
 
     equipmentData = {
       containedBy: null,
-      eqt: {
-        carried: true,
-        equipped: false,
-        count: 1,
-        weight: 0,
-        cost: 0,
-        location: '',
-        techlevel: '',
-        categories: '',
-        legalityclass: '',
-        costsum: 0,
-        weightsum: '',
-        uses: 0,
-        maxuses: 0,
-        originalCount: '',
-        ignoreImportQty: false,
-      },
+      carried: true,
+      equipped: false,
+      count: 1,
+      weight: 0,
+      cost: 0,
+      location: '',
+      techlevel: '',
+      categories: '',
+      legalityclass: '',
+      costsum: 0,
+      weightsum: '',
+      uses: 0,
+      maxuses: 0,
+      originalCount: '',
+      ignoreImportQty: false,
     }
 
     // Create test equipment items
@@ -109,14 +107,17 @@ describe('GurpsActorV2.moveItem', () => {
       // Add toObject method for splitting functionality
       // @ts-expect-error: adding mock method
       item.toObject = () => {
+        // Exclude `parent` to avoid circular reference when duplicating.
+        const { parent: _parent, ...systemData } = { ...item.system }
+
         return {
           _id: item._id,
           name: item.name,
           type: item.type,
           sort: item.sort,
           system: {
+            ...systemData,
             containedBy: item.system.containedBy,
-            eqt: { ...item.system.eqt },
           },
         }
       }
@@ -209,9 +210,7 @@ describe('GurpsActorV2.moveItem', () => {
       sort: 0,
       system: new EquipmentModel({
         ...equipmentData,
-        eqt: {
-          carried: false, // Add to "Other" (i.e., not carried).
-        },
+        carried: false, // Add to "Other" (i.e., not carried).
       }),
     })
 
@@ -228,7 +227,7 @@ describe('GurpsActorV2.moveItem', () => {
         expect.objectContaining({
           _id: 'eq4',
           system: expect.objectContaining({
-            eqt: { carried: true },
+            carried: true,
           }),
         }),
       ]),
@@ -247,7 +246,7 @@ describe('GurpsActorV2.moveItem', () => {
         expect.objectContaining({
           _id: 'eq1',
           system: expect.objectContaining({
-            eqt: expect.objectContaining({ carried: false }),
+            carried: false,
           }),
         }),
       ]),
@@ -318,9 +317,7 @@ describe('GurpsActorV2.moveItem', () => {
       system: new EquipmentModel({
         ...equipmentData,
         containedBy: null,
-        eqt: {
-          carried: false,
-        },
+        carried: false,
       }),
     })
 
@@ -359,7 +356,7 @@ describe('GurpsActorV2.moveItem', () => {
 
   it('splits count when moving to another container', async () => {
     // Set up the source item with a count of 5
-    actor.system.allEquipmentV2[0].system.eqt.count = 5
+    actor.system.allEquipmentV2[0].system.count = 5
 
     setEquipmentQuantity(actor, 2)
     setDropPosition(actor, 'inside')
@@ -386,10 +383,8 @@ describe('GurpsActorV2.moveItem', () => {
           type: 'equipmentV2',
           system: expect.objectContaining({
             containedBy: 'eq2', // Inside the backpack
-            eqt: expect.objectContaining({
-              count: 2, // The split quantity
-              carried: true,
-            }),
+            count: 2, // The split quantity
+            carried: true,
           }),
         }),
       ]),
@@ -400,7 +395,7 @@ describe('GurpsActorV2.moveItem', () => {
     const updateCalls = (actor.updateEmbeddedDocuments as jest.Mock).mock.calls
     const countUpdateCall = updateCalls.find(
       (call: any) =>
-        call[0] === 'Item' && call[1].some((update: any) => update._id === 'eq1' && update.system?.eqt?.count === 3)
+        call[0] === 'Item' && call[1].some((update: any) => update._id === 'eq1' && update.system?.count === 3)
     )
 
     expect(countUpdateCall).toBeDefined()
@@ -409,7 +404,7 @@ describe('GurpsActorV2.moveItem', () => {
   it('does not split if user cancels the quantity prompt', async () => {
     setDropPosition(actor, 'inside')
 
-    actor.system.allEquipmentV2[0].system.eqt.count = 5
+    actor.system.allEquipmentV2[0].system.count = 5
 
     // Mock promptEquipmentQuantity to return null (user cancelled)
     jest.spyOn(actor as any, 'promptEquipmentQuantity').mockResolvedValue(null)
@@ -423,7 +418,7 @@ describe('GurpsActorV2.moveItem', () => {
   })
 
   it('does not split if quantity is zero or negative', async () => {
-    actor.system.allEquipmentV2[0].system.eqt.count = 5
+    actor.system.allEquipmentV2[0].system.count = 5
 
     setDropPosition(actor, 'inside')
     setEquipmentQuantity(actor, 0)
@@ -439,7 +434,7 @@ describe('GurpsActorV2.moveItem', () => {
   it('does not split if item has count of 1 or less', async () => {
     setDropPosition(actor, 'inside')
 
-    actor.system.allEquipmentV2[0].system.eqt.count = 1
+    actor.system.allEquipmentV2[0].system.count = 1
 
     const promptSpy = jest.spyOn(actor as any, 'promptEquipmentQuantity')
     const createSpy = jest.spyOn(actor, 'createEmbeddedDocuments')
@@ -451,7 +446,7 @@ describe('GurpsActorV2.moveItem', () => {
   })
 
   it('performs move instead of split if quantity equals or exceeds source count', async () => {
-    actor.system.allEquipmentV2[0].system.eqt.count = 5
+    actor.system.allEquipmentV2[0].system.count = 5
 
     setDropPosition(actor, 'inside')
     setEquipmentQuantity(actor, 5)

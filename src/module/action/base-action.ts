@@ -1,12 +1,8 @@
 import { DataModel, fields } from '@gurps-types/foundry/index.js'
-import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { type PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '../pseudo-document/typed-pseudo-document.js'
-
-import { BaseAttackComponent } from './component.js'
-import { ActionType } from './types.js'
 
 /* ---------------------------------------- */
 
@@ -40,69 +36,6 @@ class BaseAction<
     return this.item.parent
   }
 
-  /* ---------------------------------------- */
-  /*  Data Preparation                        */
-  /* ---------------------------------------- */
-
-  override prepareBaseData(): void {
-    super.prepareBaseData()
-    this.#prepareLevelsFromOtf()
-  }
-
-  /* ---------------------------------------- */
-
-  /**
-   * Prepare the level of this skill based on an OTF formula.
-   */
-  #prepareLevelsFromOtf(): void {
-    // Do not prepare levels if the item is not owned
-    if (!this.item.isOwned) return
-
-    const hasComponent = (obj: unknown): obj is { component: BaseAttackComponent } =>
-      this.isOfType(ActionType.MeleeAttack, ActionType.RangedAttack)
-
-    if (!hasComponent(this)) return
-
-    let otf = this.component.otf
-
-    if (otf === '') {
-      this.component.level = this.component.import
-
-      return
-    }
-
-    // Remove extraneous brackets
-    otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
-
-    // If the OTF is just a number, Set the level directly
-    if (otf.match(/^\d+$/)) {
-      this.component.import = parseInt(otf)
-      this.component.level = this.component.import
-
-      return
-    }
-
-    // If the OTF is not a number, parse it using the OTF parser.
-    const action = parselink(otf)
-
-    // If the OTF does not return an action, we cannot set the level.
-    if (!action.action) {
-      console.warn(`GURPS | ${this.documentName}: OTF "${otf}" did not return a valid action.`)
-
-      return
-    }
-
-    action.action.calcOnly = true
-    // TODO: verify that target is of type "number" (or replace this whole thing)
-    GURPS.performAction(action.action, this.actor).then(
-      (result: boolean | { target: number; thing: any } | undefined) => {
-        if (result && typeof result === 'object') {
-          this.component.level = result.target
-        }
-      }
-    )
-  }
-
   prepareSheetContext(): this {
     return this
   }
@@ -116,14 +49,27 @@ class BaseAction<
 
 const baseActionSchema = () => {
   return {
+    /** The name of the action. */
     name: new fields.StringField({ initial: undefined }),
+
+    /** Any images associated with this action. */
     img: new fields.FilePathField({ initial: undefined, categories: ['IMAGE'], base64: false }),
+
+    /** The sort value of this action, used to determine its order in the list of actions. */
     sort: new fields.IntegerSortField(),
 
-    // Added to allow disabling from containing Trait.
-    containedBy: new fields.StringField({ required: true, nullable: false }),
-    // Added to support QuickRoll menu.
+    /** Should this Action show up in the quick roll menu in the combat tracker? */
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+    /** Whether this Action is disabled. Disabled Actions are not shown in the UI. */
+    disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+    /**
+     * A reference to the Item which contains this Action. This has been deprecated and replaed with the `item`
+     * accessor. This field was previously used to disable an Action from the Item, but this is now handled by the
+     * "disabled" field above.
+     */
+    // containedBy: new fields.StringField({ required: true, nullable: false }),
   }
 }
 
@@ -135,4 +81,4 @@ namespace BaseAction {
 
 /* ---------------------------------------- */
 
-export { BaseAction }
+export { BaseAction, baseActionSchema }

@@ -1,5 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData } from '@module/item/migrate.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 
@@ -188,28 +189,40 @@ function getMigratedActorData(
     name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
     system: {
       containedBy: null,
-      fea: {
-        name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
-        notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
-        points: 0,
-      },
-      reactions: Object.values(system.reactions).map(reaction => {
-        return {
-          modifier: Number(reaction.modifier),
-          situation: reaction.situation,
-          modifierTags: reaction.modifierTags,
-        }
-      }),
-      conditionalmods: Object.values(system.conditionalmods).map(mod => {
-        return {
-          modifier: Number(mod.modifier),
-          situation: mod.situation,
-          modifierTags: mod.modifierTags,
-        }
-      }),
+      name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
+      notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
+      points: 0,
+      _reactions: {},
+      _conditionalmods: {},
       actions: {},
     },
   }
+
+  Object.values(system.reactions).forEach(mod => {
+    const _id = foundry.utils.randomID()
+
+    const data: DataModel.CreateData<DataModel.SchemaOf<ReactionModifier>> = {
+      _id,
+      modifier: Number(mod.modifier),
+      situation: mod.situation,
+      modifierTags: mod.modifierTags,
+    }
+
+    migrationItem.system!._reactions![_id] = data
+  })
+
+  Object.values(system.conditionalmods).forEach(mod => {
+    const _id = foundry.utils.randomID()
+
+    const data: DataModel.CreateData<DataModel.SchemaOf<ConditionalModifier>> = {
+      _id,
+      modifier: Number(mod.modifier),
+      situation: mod.situation,
+      modifierTags: mod.modifierTags,
+    }
+
+    migrationItem.system!._conditionalmods![_id] = data
+  })
 
   Object.values(system.melee).forEach((weapon: Melee) => {
     const id = foundry.utils.randomID()
@@ -220,28 +233,23 @@ function getMigratedActorData(
       _id: id,
       name: weapon.name,
       type: 'meleeAttack',
-      mel: {
-        name: weapon.name,
-        import: Number(weapon.import),
-        damage,
-        st: weapon.st,
-        mode: weapon.mode,
-        notes: weapon.notes,
-        weight: parseInt(weapon.weight) || 0,
-        techlevel: weapon.techlevel,
-        cost: weapon.cost,
-        reach: weapon.reach,
-        parry: weapon.parry,
-        parrybonus: 0,
-        baseParryPenalty: weapon.baseParryPenalty,
-        block: weapon.block,
-        blockbonus: 0,
-        otf: '',
-        itemModifiers: '',
-        modifierTags: weapon.modifierTags,
-        extraAttacks: weapon.extraAttacks,
-        consumeAction: weapon.consumeAction,
-      },
+      import: Number(weapon.import),
+      damage,
+      st: weapon.st,
+      mode: weapon.mode,
+      notes: weapon.notes,
+      cost: weapon.cost,
+      reach: weapon.reach,
+      parry: weapon.parry,
+      parrybonus: 0,
+      baseParryPenalty: weapon.baseParryPenalty,
+      block: weapon.block,
+      blockbonus: 0,
+      otf: '',
+      itemModifiers: '',
+      modifierTags: weapon.modifierTags,
+      extraAttacks: weapon.extraAttacks,
+      consumeAction: weapon.consumeAction,
     }
 
     migrationItem.system!.actions![id] = data
@@ -256,29 +264,26 @@ function getMigratedActorData(
       _id: id,
       name: weapon.name,
       type: 'rangedAttack',
-      rng: {
-        name: weapon.name,
-        import: Number(weapon.import),
-        damage,
-        st: weapon.st,
-        mode: weapon.mode,
-        notes: weapon.notes,
-        bulk: weapon.bulk,
-        legalityclass: weapon.legalityclass,
-        ammo: weapon.ammo,
-        acc: weapon.acc,
-        range: weapon.range,
-        shots: weapon.shots,
-        rcl: weapon.rcl,
-        halfd: weapon.halfd,
-        max: weapon.max,
-        otf: '',
-        itemModifiers: '',
-        modifierTags: weapon.modifierTags,
-        extraAttacks: weapon.extraAttacks,
-        consumeAction: weapon.consumeAction,
-        rate_of_fire: weapon.rof,
-      },
+      import: Number(weapon.import),
+      damage,
+      st: weapon.st,
+      mode: weapon.mode,
+      notes: weapon.notes,
+      bulk: weapon.bulk,
+      legalityclass: weapon.legalityclass,
+      ammo: weapon.ammo,
+      acc: weapon.acc,
+      range: weapon.range,
+      shots: weapon.shots,
+      rcl: weapon.rcl,
+      halfd: weapon.halfd,
+      max: weapon.max,
+      otf: '',
+      itemModifiers: '',
+      modifierTags: weapon.modifierTags,
+      extraAttacks: weapon.extraAttacks,
+      consumeAction: weapon.consumeAction,
+      rateOfFire: weapon.rof,
     }
 
     migrationItem.system!.actions![id] = data

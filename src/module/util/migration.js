@@ -14,8 +14,8 @@ export class Migration {
      *
      * All migrations should be idempotent (i.e. they should be able to run multiple times without causing issues):
      *
-     * - If a migration is not needed, it should return early.
-     * - If a migration is needed, it should perform the migration and return a promise.
+     * - If a migration is not needed, it should resolve to false.
+     * - If a migration is needed, it should perform the migration and resolve to true.
      * - If a migration fails, it should log the error and continue with the next migration.
      * - If a migration is successful, it should log the success message.
      */
@@ -34,8 +34,8 @@ export class Migration {
   runMigrations() {
     for (const migration of this.migrations) {
       migration()
-        .then(() => {
-          console.log(`Migration ${migration.name} completed successfully.`)
+        .then(migrationPerformed => {
+          if (migrationPerformed) console.log(`Migration ${migration.name} completed successfully.`)
         })
         .catch(error => {
           console.error(`Migration ${migration.name} failed:`, error)
@@ -48,12 +48,14 @@ export class Migration {
       const taggedModifiers = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
 
       if (!taggedModifiers) {
-        return
+        return false
       }
 
       if (taggedModifiers.autoAdd) {
         game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG, true)
       }
+
+      return true
     }
   }
 
@@ -63,15 +65,17 @@ export class Migration {
       message.content.includes('<div class="damage-chat-message">')
     )
 
+    let migrationPerformed = false
+
     for (const message of chatMessages) {
       if (!message.flags?.gurps?.transfer) {
         const transfer = message.flags.transfer
 
         await message.update({ 'flags.gurps.transfer': JSON.parse(transfer) })
-      } else {
-        console.log(`Already migrated: ${message.id}:`, message.flags)
+        migrationPerformed = true
       }
     }
-    // }
+
+    return migrationPerformed
   }
 }

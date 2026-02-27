@@ -4,9 +4,15 @@ import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
-import { ItemComponent, ItemComponentSchema } from './component.js'
 
 class SkillModel extends BaseItemModel<SkillSchema> {
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  level: number = 0
+
+  /* ---------------------------------------- */
   static override defineSchema(): SkillSchema {
     return {
       ...super.defineSchema(),
@@ -21,38 +27,11 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       embedded: {},
       type: 'skillV2',
       invalidActorTypes: [],
-      actions: {
-        // level: this.#rollLevel,
-      },
+      actions: {},
       childTypes: ['skillV2'],
       modifierTypes: [],
     }
   }
-
-  /* ---------------------------------------- */
-
-  get component(): SkillComponent {
-    return this.ski
-  }
-
-  /* ---------------------------------------- */
-
-  // static async #rollLevel(this: SkillModel, options: ItemUseOptions): Promise<void> {
-  //   const target = this.component.level
-  //   const modifiers: GurpsBaseRoll.RollModifier[] = GURPS.ModifierBucket.modifierStack.modifierList.map((mod: any) => {
-  //     return {
-  //       comment: mod.desc,
-  //       value: mod.modint,
-  //     }
-  //   })
-  //   const actorId = this.actor?.id
-  //   const itemId = this.parent.id
-  //
-  //   console.log(target, modifiers, actorId, itemId)
-  //
-  //   const roll = new SuccessRoll('3d6', { target, modifiers, actorId, itemId })
-  //   await roll.toMessage()
-  // }
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
@@ -69,10 +48,10 @@ class SkillModel extends BaseItemModel<SkillSchema> {
    * Prepare the level of this skill based on an OTF formula.
    */
   #prepareLevelsFromOtf(): void {
-    let otf = this.component.otf
+    let otf = this.otf
 
     if (otf === '') {
-      this.component.level = this.component.import
+      this.level = this.import
 
       return
     }
@@ -82,8 +61,8 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
     // If the OTF is just a number, Set the level directly
     if (otf.match(/^\d+$/)) {
-      this.component.import = parseInt(otf)
-      this.component.level = this.component.import
+      this.import = parseInt(otf)
+      this.level = this.import
 
       return
     }
@@ -99,7 +78,7 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     GURPS.performAction(action.action, this.actor).then(
       (result: boolean | { target: number; thing: any } | undefined) => {
         if (result && typeof result === 'object') {
-          this.component.level = result.target
+          this.level = result.target
         }
       }
     )
@@ -114,14 +93,14 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     for (const bonus of bonuses) {
       // Skills are affected by their base attribute changes
       if (bonus.type === 'attribute') {
-        if (this.component.relativelevel.toUpperCase().startsWith((bonus.attrkey as string).toUpperCase())) {
-          this.component.level += bonus.mod as number
+        if (this.relativelevel.toUpperCase().startsWith((bonus.attrkey as string).toUpperCase())) {
+          this.level += bonus.mod as number
         }
       }
 
       if (bonus.type === 'skill-spell' && bonus.isRanged) {
-        if (this.component.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
-          this.component.level += bonus.mod as number
+        if (this.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
+          this.level += bonus.mod as number
         }
       }
     }
@@ -132,7 +111,26 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
 const skillSchema = () => {
   return {
-    ski: new fields.EmbeddedDataField(SkillComponent, { required: true, nullable: false }),
+    /** The total points spent on this skill */
+    points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    /** The imported "original" level of this skill, which may be used for reference or as a fallback if OTF parsing fails. */
+    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    /** The specialization of this skill, if any. */
+    specialization: new fields.StringField({ required: true, nullable: true, initial: null }),
+
+    /** The tech level of this skill, if any. */
+    techlevel: new fields.StringField({ required: true, nullable: true, initial: null }),
+
+    /** The Skill Difficulty of this skill, e.g. "DX/A". */
+    difficulty: new fields.StringField({ required: true, nullable: false }),
+
+    /** The level of this skill relative to its controlling attriute, e.g. "DX+1" */
+    relativelevel: new fields.StringField({ required: true, nullable: false }),
+
+    /** Any OTF formulas associated witht this skill. */
+    otf: new fields.StringField({ required: true, nullable: false }),
   }
 }
 
@@ -140,40 +138,4 @@ type SkillSchema = BaseItemModelSchema & ReturnType<typeof skillSchema>
 
 /* ---------------------------------------- */
 
-class SkillComponent extends ItemComponent<SkillComponentSchema> {
-  static override defineSchema(): SkillComponentSchema {
-    return {
-      ...super.defineSchema(),
-      ...skillComponentSchema(),
-    }
-  }
-
-  /* ---------------------------------------- */
-  /*  Derived Values                          */
-  /* ---------------------------------------- */
-
-  level: number = 0
-}
-
-/* ---------------------------------------- */
-
-const skillComponentSchema = () => {
-  return {
-    points: new fields.NumberField({ required: true, nullable: false }),
-    // NOTE: change from previous schema where this was a string
-    import: new fields.NumberField({ required: true, nullable: false }),
-    // NOTE: no longer persistent data, always derived from import value
-    // level: new fields.NumberField({ required: true, nullable: false }),
-    type: new fields.StringField({ required: true, nullable: false }),
-    relativelevel: new fields.StringField({ required: true, nullable: false }),
-    otf: new fields.StringField({ required: true, nullable: false }),
-    specialization: new fields.StringField({ required: true, nullable: true, initial: null }),
-    techlevel: new fields.StringField({ required: true, nullable: true, initial: null }),
-  }
-}
-
-type SkillComponentSchema = ItemComponentSchema & ReturnType<typeof skillComponentSchema>
-
-/* ---------------------------------------- */
-
-export { SkillModel, type SkillSchema, type SkillComponentSchema, SkillComponent }
+export { SkillModel, type SkillSchema }

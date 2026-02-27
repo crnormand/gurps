@@ -1,5 +1,6 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
+import { BaseAction } from './base-action.js'
 import { MeleeAttackModel } from './melee-attack.js'
 import { RangedAttackModel } from './ranged-attack.js'
 import { ActionType } from './types.js'
@@ -45,5 +46,5 @@ export const ActionModule: GurpsModule = {
 
 export * from './melee-attack.js'
 export * from './ranged-attack.js'
-export { ActionClasses, ActionType }
+export { ActionClasses, ActionType, BaseAction, MeleeAttackModel, RangedAttackModel }
 export type { Action, ActionClass, AnyAction, AnyActionClass }
