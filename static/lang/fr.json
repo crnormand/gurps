@@ -11,6 +11,94 @@
     "abbrevReference": "Ref",
     "acc": "Préc",
     "accForWeapon": "Préc pour {weapon}",
+    "Action": {
+      "BaseAction": {
+        "FIELDS": {
+          "addToQuickRoll": "Ajouter au jet rapide",
+          "disabled": "Désactivé",
+          "name": "Nom"
+        }
+      },
+      "BaseAttack": {
+        "FIELDS": {
+          "consumeAction": "Consommer une action",
+          "damage": "Dégâts",
+          "extraAttacks": "Attaques supplémentaires",
+          "import": "Niveau de base",
+          "itemModifiers": "Modificateurs d'objet",
+          "mode": "Mode",
+          "modifierTags": "Tags de modificateur",
+          "notes": "Notes",
+          "otf": "Formule OTF",
+          "st": "ST"
+        }
+      },
+      "MeleeAttack": {
+        "blockDisabled": "Non",
+        "FIELDS": {
+          "baseParryPenalty": "Pénalité de parade de base",
+          "block": {
+            "canBlock": "Peut bloquer",
+            "modifier": "Modificateur"
+          },
+          "parry": {
+            "canParry": "Peut parer",
+            "fencing": "Escrime",
+            "modifier": "Modificateur",
+            "unbalanced": "Déséquilibré"
+          },
+          "reach": {
+            "changeRequiresReady": "Changement nécessite Prêt",
+            "closeCombat": "Combat rapproché",
+            "max": "Max",
+            "min": "Min"
+          }
+        },
+        "parryDisabled": "Non"
+      },
+      "RangedAttack": {
+        "jet": "Jet",
+        "FIELDS": {
+          "acc": {
+            "base": "Base",
+            "jet": "Jet",
+            "scope": "Lunette"
+          },
+          "ammo": "Munitions",
+          "bulk": {
+            "giant": "Géant",
+            "normal": "Normal",
+            "retractingStock": "Crosse rétractable"
+          },
+          "range": {
+            "halfDamage": "1/2D",
+            "inMiles": "En miles",
+            "max": "Max",
+            "min": "Min",
+            "musclePowered": "Propulsé par les muscles"
+          },
+          "rateOfFire": {
+            "fullAutoOnly": "Automatique uniquement",
+            "highCyclicControlledBursts": "Rafales contrôlées à haute cadence",
+            "jet": "Jet",
+            "secondaryProjectiles": "Projectiles secondaires",
+            "shotsPerAttack": "Tirs/Attaque"
+          },
+          "recoil": {
+            "shot": "Tir",
+            "slug": "Slug"
+          },
+          "shots": {
+            "count": "Quantité",
+            "duration": "Durée (s)",
+            "inChamber": "En chambre",
+            "reloadTime": "Temps de rechargement",
+            "reloadTimeIsPerShot": "Par tir",
+            "thrown": "Lancé"
+          }
+        }
+      }
+    },
     "active": "Actif",
     "activeEffect": "Effet Actif",
     "activeEffects": "Effets Actifs",

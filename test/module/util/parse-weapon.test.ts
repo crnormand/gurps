@@ -198,7 +198,7 @@ describe('parseRecoil', () => {
 /* ---------------------------------------- */
 
 describe('parseShots', () => {
-  const defaults = { count: 0, inChamber: 0, duration: 0, reloadTime: 0, realodTimeIsPerShot: false, thrown: false }
+  const defaults = { count: 0, inChamber: 0, duration: 0, reloadTime: 0, reloadTimeIsPerShot: false, thrown: false }
 
   test.each([
     ['FP', { ...defaults }],
@@ -237,7 +237,7 @@ describe('parseShots', () => {
   })
 
   test('15(3i) → count with per-shot reload time', () => {
-    expect(parseShots('15(3i)')).toEqual({ ...defaults, count: 15, reloadTime: 3, realodTimeIsPerShot: true })
+    expect(parseShots('15(3i)')).toEqual({ ...defaults, count: 15, reloadTime: 3, reloadTimeIsPerShot: true })
   })
 
   test('15+1(4) → count, in-chamber, and reload time', () => {
@@ -250,7 +250,7 @@ describe('parseShots', () => {
       count: 30,
       duration: 10,
       reloadTime: 3,
-      realodTimeIsPerShot: true,
+      reloadTimeIsPerShot: true,
     })
   })
 })

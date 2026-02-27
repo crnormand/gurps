@@ -12,19 +12,90 @@
     "acc": "Acc",
     "accForWeapon": "Acc for {weapon}",
     "Action": {
+      "BaseAction": {
+        "FIELDS": {
+          "addToQuickRoll": "Add to Quick Roll",
+          "disabled": "Disabled",
+          "name": "Name"
+        }
+      },
+      "BaseAttack": {
+        "FIELDS": {
+          "consumeAction": "Consume Action",
+          "damage": "Damage",
+          "extraAttacks": "Extra Attacks",
+          "import": "Base Level",
+          "itemModifiers": "Item Modifiers",
+          "mode": "Mode",
+          "modifierTags": "Modifier Tags",
+          "notes": "Notes",
+          "otf": "OTF Formula",
+          "st": "ST"
+        }
+      },
       "MeleeAttack": {
         "blockDisabled": "No",
         "FIELDS": {
+          "baseParryPenalty": "Base Parry Penalty",
+          "block": {
+            "canBlock": "Can Block",
+            "modifier": "Modifier"
+          },
           "parry": {
-            "canParry": "Can Parry?",
+            "canParry": "Can Parry",
             "fencing": "Fencing",
             "modifier": "Modifier",
             "unbalanced": "Unbalanced"
+          },
+          "reach": {
+            "changeRequiresReady": "Change Requires Ready",
+            "closeCombat": "Close Combat",
+            "max": "Max",
+            "min": "Min"
           }
         },
         "parryDisabled": "No"
       },
-      "rangedAttack": {
+      "RangedAttack": {
+        "FIELDS": {
+          "acc": {
+            "base": "Base",
+            "jet": "Jet",
+            "scope": "Scope"
+          },
+          "ammo": "Ammo",
+          "bulk": {
+            "giant": "Giant",
+            "normal": "Normal",
+            "retractingStock": "Retracting Stock"
+          },
+          "range": {
+            "halfDamage": "1/2D",
+            "inMiles": "In Miles",
+            "max": "Max",
+            "min": "Min",
+            "musclePowered": "Muscle-Powered"
+          },
+          "rateOfFire": {
+            "fullAutoOnly": "Full-Auto Only",
+            "highCyclicControlledBursts": "High-Cyclic Controlled Bursts",
+            "jet": "Jet",
+            "secondaryProjectiles": "Secondary Projectiles",
+            "shotsPerAttack": "Shots/Attack"
+          },
+          "recoil": {
+            "shot": "Shot",
+            "slug": "Slug"
+          },
+          "shots": {
+            "count": "Count",
+            "duration": "Duration (s)",
+            "inChamber": "In Chamber",
+            "reloadTime": "Reload Time",
+            "reloadTimeIsPerShot": "Per Shot",
+            "thrown": "Thrown"
+          }
+        },
         "jet": "Jet"
       }
     },
