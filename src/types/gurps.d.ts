@@ -3,18 +3,18 @@ import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
 import DamageChat from '@module/damage/damagechat.js'
-import { AttributeBonus } from '@module/features/attribute-bonus.ts'
-import { ConditionalModifier } from '@module/features/conditional-modifier.ts'
-import { ContainedWeightReduction } from '@module/features/contained-weight-reduction.ts'
-import { CostReduction } from '@module/features/cost-reduction.ts'
-import { DRBonus } from '@module/features/dr-bonus.ts'
-import { FeatureType } from '@module/features/index.ts'
-import { ReactionBonus } from '@module/features/reaction-bonus.ts'
-import { SkillBonus } from '@module/features/skill-bonus.ts'
-import { SkillPointBonus } from '@module/features/skill-point-bonus.ts'
-import { SpellBonus } from '@module/features/spell-bonus.ts'
-import { SpellPointBonus } from '@module/features/spell-point-bonus.ts'
-import { TraitBonus } from '@module/features/trait-bonus.ts'
+import { AttributeBonus } from '@module/features/attribute-bonus.js'
+import { ConditionalModifier } from '@module/features/conditional-modifier.js'
+import { ContainedWeightReduction } from '@module/features/contained-weight-reduction.js'
+import { CostReduction } from '@module/features/cost-reduction.js'
+import { DRBonus } from '@module/features/dr-bonus.js'
+import { FeatureType } from '@module/features/index.js'
+import { ReactionBonus } from '@module/features/reaction-bonus.js'
+import { SkillBonus } from '@module/features/skill-bonus.js'
+import { SkillPointBonus } from '@module/features/skill-point-bonus.js'
+import { SpellBonus } from '@module/features/spell-bonus.js'
+import { SpellPointBonus } from '@module/features/spell-point-bonus.js'
+import { TraitBonus } from '@module/features/trait-bonus.js'
 import {
   WeaponBonus,
   WeaponAccBonus,
@@ -40,9 +40,9 @@ import {
   WeaponShotDurationBonus,
   WeaponReloadTimeBonus,
   WeaponSwitch,
-} from '@module/features/weapon-bonus.ts'
-import { Feature } from '@module/item/legacy/itemv1-interface.ts'
-import { AttributePrereq } from '@module/prereqs/attribute-prereq.ts'
+} from '@module/features/weapon-bonus.js'
+import { Feature } from '@module/item/legacy/itemv1-interface.js'
+import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
   ContainedQuantityPrereq,
   ContainedWeightPrereq,
@@ -53,7 +53,7 @@ import {
   SkillPrereq,
   SpellPrereq,
   TraitPrereq,
-} from '@module/prereqs/index.ts'
+} from '@module/prereqs/index.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { AnyObject } from 'fvtt-types/utils'
 

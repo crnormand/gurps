@@ -3,7 +3,7 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAttack } from './base-attack.ts'
+import { BaseAttack } from './base-attack.js'
 
 class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {

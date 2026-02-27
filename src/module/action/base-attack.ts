@@ -1,7 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { parselink } from '@util/parselink.js'
 
-import { BaseAction } from './base-action.ts'
+import { BaseAction } from './base-action.js'
 
 class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends BaseAction<Schema> {
   static override defineSchema(): BaseAttack.Schema {

@@ -10,7 +10,7 @@ import { ScriptPrereq } from './script-prereq.js'
 import { SkillPrereq } from './skill-prereq.js'
 import { SpellPrereq } from './spell-prereq.js'
 import { TraitPrereq } from './trait-prereq.js'
-import { PrereqType } from './types.ts'
+import { PrereqType } from './types.js'
 
 /* ---------------------------------------- */
 

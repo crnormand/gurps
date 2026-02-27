@@ -2,7 +2,7 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAttack } from './base-attack.ts'
+import { BaseAttack } from './base-attack.js'
 
 class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   static override defineSchema(): MeleeAttackSchema {

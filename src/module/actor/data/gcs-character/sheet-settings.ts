@@ -5,7 +5,7 @@ import { WeightUnit, LengthUnit } from '@module/data/common/index.js'
 
 import { GcsAttributeDefinition } from './attribute-definition.js'
 import { GcsBody } from './body.js'
-import { CollectionField } from '@module/data/fields/collection-field.ts'
+import { CollectionField } from '@module/data/fields/collection-field.js'
 
 enum DamageProgression {
   BasicSet = 'basicSet',

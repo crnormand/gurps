@@ -2,7 +2,7 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BasePrereq } from './base-prereq.js'
-import { PrereqType } from './types.ts'
+import { PrereqType } from './types.js'
 
 class ScriptPrereq extends BasePrereq<ScriptPrereqSchema> {
   static override defineSchema(): ScriptPrereqSchema {

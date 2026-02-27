@@ -7,7 +7,7 @@ import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
-import { ConditionalModifier, ReactionModifier } from './conditional-modifier.ts'
+import { ConditionalModifier, ReactionModifier } from './conditional-modifier.js'
 
 type ItemMetadata = Readonly<{
   /** The expected `type` value */

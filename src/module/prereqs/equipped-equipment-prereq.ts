@@ -3,7 +3,7 @@ import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BasePrereq } from './base-prereq.js'
-import { PrereqType } from './types.ts'
+import { PrereqType } from './types.js'
 
 class EquippedEquipmentPrereq extends BasePrereq<EquippedEquipmentPrereqSchema> {
   static override defineSchema(): EquippedEquipmentPrereqSchema {

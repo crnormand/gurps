@@ -2,7 +2,7 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { WeightCriteriaField } from '@module/data/criteria/weight-criteria.js'
 
 import { BasePrereq } from './base-prereq.js'
-import { PrereqType } from './types.ts'
+import { PrereqType } from './types.js'
 
 class ContainedWeightPrereq extends BasePrereq<ContainedWeightPrereqSchema> {
   static override defineSchema(): ContainedWeightPrereqSchema {
