@@ -1,19 +1,18 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { MeleeAttackSchema } from '@module/action/melee-attack.js'
+import { RangedAttackSchema, RateOfFireModeSchema } from '@module/action/ranged-attack.js'
 
-import { MeleeAttackSchema } from './melee-attack.js'
-import { RangedAttackSchema, RateOfFireModeSchema } from './ranged-attack.js'
+type Reach = NonNullable<fields.SchemaField.CreateData<MeleeAttackSchema>['reach']>
+type Parry = NonNullable<fields.SchemaField.CreateData<MeleeAttackSchema>['parry']>
+type Block = NonNullable<fields.SchemaField.CreateData<MeleeAttackSchema>['block']>
 
-type Reach = fields.SchemaField.CreateData<MeleeAttackSchema>['reach']
-type Parry = fields.SchemaField.CreateData<MeleeAttackSchema>['parry']
-type Block = fields.SchemaField.CreateData<MeleeAttackSchema>['block']
-
-type Accuracy = fields.SchemaField.CreateData<RangedAttackSchema>['acc']
-type Bulk = fields.SchemaField.CreateData<RangedAttackSchema>['bulk']
-type Range = fields.SchemaField.CreateData<RangedAttackSchema>['range']
-type Recoil = fields.SchemaField.CreateData<RangedAttackSchema>['recoil']
-type Shots = fields.SchemaField.CreateData<RangedAttackSchema>['shots']
-type RateOfFire = fields.SchemaField.CreateData<RangedAttackSchema>['rateOfFire']
-type RateOfFireMode = fields.SchemaField.CreateData<RateOfFireModeSchema>
+type Accuracy = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['acc']>
+type Bulk = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['bulk']>
+type Range = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['range']>
+type Recoil = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['recoil']>
+type Shots = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['shots']>
+type RateOfFire = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['rateOfFire']>
+type RateOfFireMode = NonNullable<fields.SchemaField.CreateData<RateOfFireModeSchema>>
 
 /**
  * Helper functions for the actions module.

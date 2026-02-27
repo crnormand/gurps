@@ -23,8 +23,8 @@ interface Equipment {
     originalCount: string
     ignoreImportQty: boolean
   }
-  melee: Record<string, unknown>
-  ranged: Record<string, unknown>
+  melee: Record<string, MeleeAttack>
+  ranged: Record<string, RangedAttack>
   ads: Record<string, unknown>
   skills: Record<string, unknown>
   spells: Record<string, unknown>
@@ -39,6 +39,10 @@ interface Equipment {
   addToQuickRoll: boolean
   modifierTags: string
 }
+
+interface MeleeAttack {}
+
+interface RangedAttack {}
 
 interface Feature {
   fea: {
