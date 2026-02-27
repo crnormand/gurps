@@ -1,7 +1,18 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
-import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
+import {
+  parseReach,
+  parseParry,
+  parseBlock,
+  parseRecoil,
+  parseAccuracy,
+  parseBulk,
+  parseRange,
+  parseRateOfFire,
+  parseShots,
+} from '@module/util/parse-weapon.js'
 
-import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.js'
+import { Equipment, Feature, MeleeAtk, RangedAtk, Skill, Spell } from './legacy/itemv1-interface.js'
 
 type OldItemType = 'equipment' | 'feature' | 'skill' | 'spell'
 
@@ -179,16 +190,16 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
   }
 
   if (oldData.melee) {
-    Object.values(oldData.melee).forEach(action => {
-      const id = foundry.utils.randomID()
+    ;(Object.values(oldData.melee) as MeleeAtk[]).forEach(action => {
+      const _id = foundry.utils.randomID()
 
       newData.actions![id] = action as CreateDataOf<MeleeAttackModel>
     })
   }
 
   if (oldData.ranged) {
-    Object.values(oldData.ranged).forEach(action => {
-      const id = foundry.utils.randomID()
+    ;(Object.values(oldData.ranged) as RangedAtk[]).forEach(action => {
+      const _id = foundry.utils.randomID()
 
       newData.actions![id] = action as CreateDataOf<RangedAttackModel>
     })
