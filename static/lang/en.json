@@ -11,6 +11,23 @@
     "abbrevReference": "Ref",
     "acc": "Acc",
     "accForWeapon": "Acc for {weapon}",
+    "Action": {
+      "MeleeAttack": {
+        "blockDisabled": "No",
+        "FIELDS": {
+          "parry": {
+            "canParry": "Can Parry?",
+            "fencing": "Fencing",
+            "modifier": "Modifier",
+            "unbalanced": "Unbalanced"
+          }
+        },
+        "parryDisabled": "No"
+      },
+      "rangedAttack": {
+        "jet": "Jet"
+      }
+    },
     "active": "Active",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
