@@ -174,6 +174,7 @@ const defaultBodyType = (): fields.SchemaField.CreateData<GcsBody.Schema> => {
   ]
 
   return {
+    _id: foundry.utils.randomID(),
     name: 'Humanoid',
     roll: '3d',
     _locations: Object.fromEntries(

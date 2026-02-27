@@ -42,7 +42,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: 'Dexterity',
       costPerPoint: 20,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 2,
@@ -54,7 +53,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: 'Intelligence',
       costPerPoint: 20,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 3,
@@ -66,7 +64,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: 'Health',
       costPerPoint: 10,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 4,
@@ -78,7 +75,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: '',
       costPerPoint: 5,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 5,
@@ -90,7 +86,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: '',
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 6,
@@ -102,7 +97,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: 'Perception',
       costPerPoint: 5,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 7,
@@ -114,7 +108,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: '',
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 8,
@@ -126,7 +119,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: '',
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 9,
@@ -138,7 +130,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: '',
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 10,
@@ -150,7 +141,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: '',
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 11,
@@ -162,7 +152,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: '',
       costPerPoint: 20,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 12,
@@ -174,7 +163,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       fullName: '',
       costPerPoint: 5,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: null,
     }),
     withId({
       sort: 13,
