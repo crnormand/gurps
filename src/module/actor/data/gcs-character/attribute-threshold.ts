@@ -1,10 +1,9 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
-import { GcsCharacterModel } from './gcs-character.js'
 import { GcsThresholdOp } from './types.js'
 
-class AttributeThreshold extends PseudoDocument<AttributeThresholdSchema, GcsCharacterModel> {
+class AttributeThreshold extends PseudoDocument<AttributeThresholdSchema> {
   static OPS = GcsThresholdOp
 
   /* ---------------------------------------- */

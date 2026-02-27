@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 import { ScriptAttribute } from '@module/scripting/adapters/attribute.js'
 import { ScriptResolver } from '@module/scripting/resolver.js'
@@ -10,7 +11,7 @@ import { AttributeType, GcsAttributeKind, GcsAttributePlacement, GcsThresholdOp 
 
 /* ---------------------------------------- */
 
-class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinitionSchema, GcsCharacterModel> {
+class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinition.Schema, GcsCharacterModel> {
   static TYPES = AttributeType
   static KINDS = GcsAttributeKind
   static PLACEMENTS = GcsAttributePlacement
@@ -22,7 +23,7 @@ class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinitionSchema
 
   /* ---------------------------------------- */
 
-  static override defineSchema(): GcsAttributeDefinitionSchema {
+  static override defineSchema(): GcsAttributeDefinition.Schema {
     return attributeDefinitionSchema()
   }
 
@@ -171,19 +172,17 @@ const attributeDefinitionSchema = () => {
     base: new fields.JavaScriptField({ required: true, nullable: false }),
     costPerPoint: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: Should be displayed as a percentage
-    costAdjPerSm: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    costAdjustmentPerSizeMod: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // TODO: Check if required and nullable even works for array fields
-    _thresholds: new fields.TypedObjectField(
-      new fields.EmbeddedDataField(AttributeThreshold, { required: true, nullable: false }),
-      {
-        required: false,
-        nullable: true,
-      }
-    ),
+    _thresholds: new CollectionField(AttributeThreshold, { required: false }),
   }
 }
 
-type GcsAttributeDefinitionSchema = ReturnType<typeof attributeDefinitionSchema>
+/* ---------------------------------------- */
+
+namespace GcsAttributeDefinition {
+  export type Schema = ReturnType<typeof attributeDefinitionSchema>
+}
 
 /* ---------------------------------------- */
 

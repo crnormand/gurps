@@ -1,4 +1,5 @@
-import { fields } from '@gurps-types/foundry/index.js'
+import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -8,7 +9,8 @@ interface GcsSubTableConstructorOptions extends AnyObject {
   owningLocation: string
 }
 
-class GcsSubTable extends PseudoDocument<GcsSubTableSchema, GcsBody, GcsSubTableConstructorOptions> {
+/** The parent type is DataModel.Any to avoid circular dependencies with GcsBody */
+class GcsSubTable extends PseudoDocument<GcsSubTableSchema, DataModel.Any, GcsSubTableConstructorOptions> {
   locations: GcsHitLocation[] = []
 
   /* ---------------------------------------- */
@@ -41,6 +43,12 @@ class GcsSubTable extends PseudoDocument<GcsSubTableSchema, GcsBody, GcsSubTable
   }
 
   /* ---------------------------------------- */
+
+  get root(): GcsBody {
+    return this.parent as GcsBody
+  }
+
+  /* ---------------------------------------- */
   /*   Data Preparation                       */
   /* ---------------------------------------- */
 
@@ -49,7 +57,7 @@ class GcsSubTable extends PseudoDocument<GcsSubTableSchema, GcsBody, GcsSubTable
    * of the parent document to ensure pseudo-documents prepare base and derived data.
    */
   override prepareBaseData() {
-    this.locations = Object.values(this.parent._locations).filter(location => location._owningTable === this._id)
+    this.locations = Object.values(this.root._locations).filter(location => location._owningTable === this._id)
   }
 }
 
@@ -72,7 +80,8 @@ interface GcsHitLocationConstructorOptions extends AnyObject {
   owningTable: string | null
 }
 
-class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, GcsBody, GcsHitLocationConstructorOptions> {
+/** The parent type is DataModel.Any to avoid circular dependencies with GcsBody */
+class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, DataModel.Any, GcsHitLocationConstructorOptions> {
   subTable: GcsSubTable | null = null
 
   /* ---------------------------------------- */
@@ -105,6 +114,12 @@ class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, GcsBody, GcsHi
   }
 
   /* ---------------------------------------- */
+
+  get root(): GcsBody {
+    return this.parent as GcsBody
+  }
+
+  /* ---------------------------------------- */
   /*   Data Preparation                       */
   /* ---------------------------------------- */
 
@@ -113,8 +128,10 @@ class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, GcsBody, GcsHi
    * of the parent document to ensure pseudo-documents prepare base and derived data.
    */
   override prepareBaseData() {
-    this.subTable =
-      Object.values(this.parent._subTables).find(subTable => subTable._owningLocation === this._id) || null
+    if (this.root._subTables) {
+      this.subTable =
+        Object.values(this.root._subTables).find(subTable => subTable._owningLocation === this._id) || null
+    }
   }
 }
 
@@ -139,12 +156,12 @@ type GcsHitLocationSchema = ReturnType<typeof gcsHitLocationSchema>
 
 /* ---------------------------------------- */
 
-class GcsBody extends PseudoDocument<GcsBodySchema> {
+class GcsBody extends PseudoDocument<GcsBody.Schema> {
   locations: GcsHitLocation[] = []
 
   /* ---------------------------------------- */
 
-  static override defineSchema(): GcsBodySchema {
+  static override defineSchema(): GcsBody.Schema {
     return gcsBodySchema()
   }
 
@@ -172,18 +189,16 @@ const gcsBodySchema = () => {
     // NOTE: To avoid recursive DataModel errors, all locations are defined at the top-level table.
     // Sub-locations are assigned to subTable by ID. Locations are arranged in terms of position in the locations Array,
     // using the owningTable property in the location table
-    _locations: new fields.TypedObjectField(new fields.EmbeddedDataField(GcsHitLocation), {
-      required: true,
-      nullable: false,
-    }),
-    _subTables: new fields.TypedObjectField(new fields.EmbeddedDataField(GcsSubTable), {
-      required: true,
-      nullable: false,
-    }),
+    _locations: new CollectionField(GcsHitLocation),
+    _subTables: new CollectionField(GcsSubTable, { required: false }),
   }
 }
 
-type GcsBodySchema = ReturnType<typeof gcsBodySchema>
+/* ---------------------------------------- */
+
+namespace GcsBody {
+  export type Schema = ReturnType<typeof gcsBodySchema>
+}
 
 /* ---------------------------------------- */
 

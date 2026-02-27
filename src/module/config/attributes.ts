@@ -1,53 +1,9 @@
-import { DataModel } from '@gurps-types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
 import { GcsAttributeDefinition } from '@module/actor/data/gcs-character/attribute-definition.js'
 
-// NOTE: These IDs are entirely arbitrary and I'm not convinced they need
-// to be defined. They are defined here solely so that we don't have to run
-// foundry.util.randomID() several times when a character is initialized, but
-// this config will be replaced with a system setting which will override them
-// anyway.
-const DEFAULT_ATTRIBUTE_IDS = {
-  st: 'wZ68WHN0uhJZvSCF',
-  dx: '0wUa1JDYMjc0txYe',
-  iq: '8eI5bzXxPqfbPLGP',
-  ht: 'MlBNaEt4iigzA1rd',
-  will: 'HRkHUpBfVpbrquR8',
-  frightCheck: 'ABkaEHY7xDj915PI',
-  per: 'rTHwfwWzeUqfpRnb',
-  hearing: 'i9tghVfs6f7TO3Ph',
-  vision: 'b2IVkRbqsTEMOIPR',
-  tasteSmell: 'qLYzv2LMGhQWgAlF',
-  touch: 'DyaOmYn1kJOneief',
-  basicSpeed: 'GrqRcBoitbn9B4oc',
-  basicMove: 'wZHlvCYD9h8MeVW2',
-  fp: 'VPdAQJQ8PeC55EfR',
-  hp: '1SRQfQ6FvUGgSF8T',
-}
-
-const HP_THRESHOLD_IDS = {
-  healthy: 'hSFJCW2VNsQH2rLL',
-  wounded: 'uJHn6UJwoQR8gPIY',
-  reeling: 'lSwkxI2I7ZGMtgIa',
-  collapse: '3wSwjb8OkyMx5T6r',
-  dying1: 'CrWisd7BRLeiDSqp',
-  dying2: 'JctKmZEZJqJpVmw1',
-  dying3: '9MyZ4FvaSPN2nizJ',
-  dying4: 'YYlG8Hor7AflzKSz',
-  dead: 'vPyLXiMZuJyKBsgY',
-}
-
-const FP_THRESHOLD_IDS = {
-  rested: 'S2qoUQgpJWwpYZVo',
-  tiring: 'lzwgrLETMcQKhGXG',
-  tired: 'foifZ4AEW21SlUXX',
-  collapse: 'DRd1RLYrGVdL0M5z',
-  unconscious: 'FP4NcZYCcjPK0Sjx',
-}
-
-const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.SchemaOf<GcsAttributeDefinition>>> => {
-  return {
-    [DEFAULT_ATTRIBUTE_IDS.st]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.st,
+const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefinition.Schema>[] => {
+  return [
+    {
       sort: 0,
       attrId: 'st',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -56,10 +12,9 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'ST',
       fullName: 'Strength',
       costPerPoint: 10,
-      costAdjPerSm: 10,
+      costAdjustmentPerSizeMod: 10,
     },
-    [DEFAULT_ATTRIBUTE_IDS.dx]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.dx,
+    {
       sort: 1,
       attrId: 'dx',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -68,11 +23,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'DX',
       fullName: 'Dexterity',
       costPerPoint: 20,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.iq]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.iq,
+    {
       sort: 2,
       attrId: 'iq',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -81,11 +35,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'IQ',
       fullName: 'Intelligence',
       costPerPoint: 20,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.ht]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.ht,
+    {
       sort: 3,
       attrId: 'ht',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -94,11 +47,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'HT',
       fullName: 'Health',
       costPerPoint: 10,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.will]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.will,
+    {
       sort: 4,
       attrId: 'will',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -107,11 +59,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Will',
       fullName: '',
       costPerPoint: 5,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.frightCheck]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.frightCheck,
+    {
       sort: 5,
       attrId: 'fright_check',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -120,11 +71,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Fright Check',
       fullName: '',
       costPerPoint: 2,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.per]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.per,
+    {
       sort: 6,
       attrId: 'per',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -133,11 +83,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Per',
       fullName: 'Perception',
       costPerPoint: 5,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.hearing]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.hearing,
+    {
       sort: 7,
       attrId: 'hearing',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -146,11 +95,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Hearing',
       fullName: '',
       costPerPoint: 2,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.vision]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.vision,
+    {
       sort: 8,
       attrId: 'vision',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -159,11 +107,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Vision',
       fullName: '',
       costPerPoint: 2,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.tasteSmell]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.tasteSmell,
+    {
       sort: 9,
       attrId: 'taste_smell',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -172,11 +119,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Taste & Smell',
       fullName: '',
       costPerPoint: 2,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.touch]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.touch,
+    {
       sort: 10,
       attrId: 'touch',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -185,11 +131,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Touch',
       fullName: '',
       costPerPoint: 2,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.basicSpeed]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.basicSpeed,
+    {
       sort: 11,
       attrId: 'basic_speed',
       type: GcsAttributeDefinition.TYPES.Decimal,
@@ -198,11 +143,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Basic Speed',
       fullName: '',
       costPerPoint: 20,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.basicMove]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.basicMove,
+    {
       sort: 12,
       attrId: 'basic_move',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -211,11 +155,10 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'Basic Move',
       fullName: '',
       costPerPoint: 5,
-      costAdjPerSm: 0,
+      costAdjustmentPerSizeMod: 0,
       _thresholds: null,
     },
-    [DEFAULT_ATTRIBUTE_IDS.fp]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.fp,
+    {
       sort: 13,
       attrId: 'fp',
       type: GcsAttributeDefinition.TYPES.Pool,
@@ -224,10 +167,9 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'fp',
       fullName: 'Fatigue Points',
       costPerPoint: 3,
-      costAdjPerSm: 0,
-      _thresholds: {
-        [FP_THRESHOLD_IDS.unconscious]: {
-          _id: FP_THRESHOLD_IDS.unconscious,
+      costAdjustmentPerSizeMod: 0,
+      _thresholds: [
+        {
           sort: 0,
           state: 'Unconscious',
           value: '-$fp',
@@ -238,8 +180,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
             GcsAttributeDefinition.OPS.HalveST,
           ],
         },
-        [FP_THRESHOLD_IDS.collapse]: {
-          _id: FP_THRESHOLD_IDS.collapse,
+        {
           sort: 1,
           state: 'Collapse',
           value: '0',
@@ -253,8 +194,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
             GcsAttributeDefinition.OPS.HalveST,
           ],
         },
-        [FP_THRESHOLD_IDS.tired]: {
-          _id: FP_THRESHOLD_IDS.tired,
+        {
           sort: 2,
           state: 'Tired',
           value: 'Math.ceil($fp / 3) - 1',
@@ -265,26 +205,23 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
             GcsAttributeDefinition.OPS.HalveST,
           ],
         },
-        [FP_THRESHOLD_IDS.tiring]: {
-          _id: FP_THRESHOLD_IDS.tiring,
+        {
           sort: 3,
           state: 'Tiring',
           value: '$fp - 1',
           explanation: '',
           ops: [],
         },
-        [FP_THRESHOLD_IDS.rested]: {
-          _id: FP_THRESHOLD_IDS.rested,
+        {
           sort: 4,
           state: 'Rested',
           value: '$fp',
           explanation: '',
           ops: [],
         },
-      },
+      ],
     },
-    [DEFAULT_ATTRIBUTE_IDS.hp]: {
-      _id: DEFAULT_ATTRIBUTE_IDS.hp,
+    {
       sort: 14,
       attrId: 'hp',
       type: GcsAttributeDefinition.TYPES.Pool,
@@ -293,18 +230,16 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
       name: 'hp',
       fullName: 'Hit Points',
       costPerPoint: 2,
-      costAdjPerSm: 10,
-      _thresholds: {
-        [HP_THRESHOLD_IDS.dead]: {
-          _id: HP_THRESHOLD_IDS.dead,
+      costAdjustmentPerSizeMod: 10,
+      _thresholds: [
+        {
           sort: 0,
           state: 'Dead',
           value: 'Math.round(-$hp * 5)',
           explanation: '',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         },
-        [HP_THRESHOLD_IDS.dying4]: {
-          _id: HP_THRESHOLD_IDS.dying4,
+        {
           sort: 1,
           state: 'Dying #4',
           value: 'Math.round(-$hp * 4)',
@@ -314,8 +249,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
             '- Move and Dodge are halved (B419)\n',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         },
-        [HP_THRESHOLD_IDS.dying3]: {
-          _id: HP_THRESHOLD_IDS.dying3,
+        {
           sort: 2,
           state: 'Dying #3',
           value: 'Math.round(-$hp * 3)',
@@ -325,8 +259,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
             '- Move and Dodge are halved (B419)\n',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         },
-        [HP_THRESHOLD_IDS.dying2]: {
-          _id: HP_THRESHOLD_IDS.dying2,
+        {
           sort: 3,
           state: 'Dying #2',
           value: 'Math.round(-$hp * 2)',
@@ -336,8 +269,7 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
             '- Move and Dodge are halved (B419)\n',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         },
-        [HP_THRESHOLD_IDS.dying1]: {
-          _id: HP_THRESHOLD_IDS.dying1,
+        {
           sort: 4,
           state: 'Dying #1',
           value: 'Math.round(-$hp * 1)',
@@ -347,41 +279,37 @@ const defaultAttributes = (): Record<string, DataModel.CreateData<DataModel.Sche
             '- Move and Dodge are halved (B419)\n',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         },
-        [HP_THRESHOLD_IDS.collapse]: {
-          _id: HP_THRESHOLD_IDS.collapse,
+        {
           sort: 5,
           state: 'Collapse',
           value: '0',
           explanation: '- Roll vs. HT every second to avoid falling unconscious' + '- Move and Dodge are halved (B419)',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         },
-        [HP_THRESHOLD_IDS.reeling]: {
-          _id: HP_THRESHOLD_IDS.reeling,
+        {
           sort: 6,
           state: 'Reeling',
           value: 'Math.ceil($hp / 3) - 1',
           explanation: 'Move and Dodge are halved (B419)',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         },
-        [HP_THRESHOLD_IDS.wounded]: {
-          _id: HP_THRESHOLD_IDS.wounded,
+        {
           sort: 7,
           state: 'Wounded',
           value: '$hp - 1',
           explanation: '',
           ops: [],
         },
-        [HP_THRESHOLD_IDS.healthy]: {
-          _id: HP_THRESHOLD_IDS.healthy,
+        {
           sort: 8,
           state: 'Healthy',
           value: '$hp',
           explanation: '',
           ops: [],
         },
-      },
+      ],
     },
-  }
+  ]
 }
 
 /* ---------------------------------------- */

@@ -43,7 +43,9 @@ namespace CollectionField {
   export type AssignmentType<
     Model extends DataModel.ConcreteConstructor,
     Options extends CollectionField.Options<AnyObject>,
-  > = fields.TypedObjectField.AssignmentType<Element<Model>, Options>
+  > =
+    | fields.TypedObjectField.AssignmentType<Element<Model>, Options>
+    | fields.ArrayField.AssignmentType<fields.DataField.AssignmentTypeFor<Element<Model>>, Options>
 
   /* ---------------------------------------- */
 
@@ -81,6 +83,25 @@ class CollectionField<
 
   /* ---------------------------------------- */
 
+  /**
+   * Normalize array input to an ID-keyed object so the source stores stable keys.
+   * Without this, array items get index keys ("0", "1", ...) that never match
+   * the PseudoDocument's own `_id`, and new IDs are generated on every clean().
+   */
+  protected override _cast(value: unknown): AssignmentType {
+    if (Array.isArray(value)) {
+      const obj: Record<string, AnyObject> = {}
+      for (const item of value as AnyObject[]) {
+        const id = (item?._id as string | undefined) ?? foundry.utils.randomID()
+        obj[id] = { ...(item as AnyObject), _id: id }
+      }
+      return super._cast(obj)
+    }
+    return super._cast(value)
+  }
+
+  /* ---------------------------------------- */
+
   override initialize(
     value: PersistedType,
     model: DataModel.Any,
@@ -90,9 +111,9 @@ class CollectionField<
     const collection = new ModelCollection()
 
     // @ts-expect-error: types haven't quite caught up
-    for (const [id, model] of Object.entries(init)) {
+    for (const [, model] of Object.entries(init)) {
       if (model instanceof PseudoDocument) {
-        collection.set(id, model)
+        collection.set(model.id, model)
       } else {
         // @ts-expect-error: types haven't quite caught up
         collection.setInvalid(model)
