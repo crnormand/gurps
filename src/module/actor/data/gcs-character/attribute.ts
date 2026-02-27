@@ -2,11 +2,10 @@ import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
 import { AttributeType, GcsAttributeDefinition } from './attribute-definition.js'
-import { type GcsCharacterModel } from './gcs-character.js'
 
 /* ---------------------------------------- */
 
-class GcsAttribute extends PseudoDocument<GcsAttributeSchema, GcsCharacterModel> {
+class GcsAttribute extends PseudoDocument<GcsAttributeSchema> {
   private _definition: GcsAttributeDefinition | null = null
 
   /* ---------------------------------------- */
@@ -78,7 +77,7 @@ class GcsAttribute extends PseudoDocument<GcsAttributeSchema, GcsCharacterModel>
   get definition(): GcsAttributeDefinition | null {
     if (this._definition) return this._definition
 
-    const definition = this.actor?.system?.settings?._attributes?.[this._id]
+    const definition = this.actor?.system?.settings?._attributes?.get(this._id)
 
     if (!definition) return null
 

@@ -6,12 +6,11 @@ import { ScriptResolver } from '@module/scripting/resolver.js'
 
 import { AttributeThreshold } from './attribute-threshold.js'
 import { GcsAttribute } from './attribute.js'
-import { type GcsCharacterModel } from './gcs-character.js'
 import { AttributeType, GcsAttributeKind, GcsAttributePlacement, GcsThresholdOp } from './types.js'
 
 /* ---------------------------------------- */
 
-class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinition.Schema, GcsCharacterModel> {
+class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinition.Schema> {
   static TYPES = AttributeType
   static KINDS = GcsAttributeKind
   static PLACEMENTS = GcsAttributePlacement

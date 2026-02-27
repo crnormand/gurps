@@ -337,7 +337,7 @@ const baseItemModelSchema = () => {
     ...containableSchema(),
 
     /** The ModelCollection for an Item's Actions, which includes Melee and Ranged Attacks. */
-    actions: new CollectionField(BaseAction as AnyActionClass),
+    actions: new CollectionField(BaseAction as AnyActionClass, { required: true, nullable: false }),
 
     /**
      * Is this Item a container that can hold other items? This should be toggleable in the UI for any Item,

@@ -5,6 +5,7 @@ import { WeightUnit, LengthUnit } from '@module/data/common/index.js'
 
 import { GcsAttributeDefinition } from './attribute-definition.js'
 import { GcsBody } from './body.js'
+import { CollectionField } from '@module/data/fields/collection-field.ts'
 
 enum DamageProgression {
   BasicSet = 'basicSet',
@@ -56,7 +57,7 @@ const sheetSettingsSchema = () => {
     // redundant, the latter GCS ID is user-editable and poses potential issues with duplicate IDs and could force
     // issues wherein the field by which attributes are keyed is changed, forcing a replacement of the whole object
     // rather than changing of a single property.
-    _attributes: new fields.TypedObjectField(new fields.EmbeddedDataField(GcsAttributeDefinition), {
+    _attributes: new CollectionField(GcsAttributeDefinition, {
       required: true,
       nullable: false,
       initial: defaultAttributes(),

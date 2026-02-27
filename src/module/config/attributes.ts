@@ -1,9 +1,27 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { GcsAttributeDefinition } from '@module/actor/data/gcs-character/attribute-definition.js'
+import { AttributeThreshold } from '@module/actor/data/gcs-character/attribute-threshold.js'
 
-const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefinition.Schema>[] => {
-  return [
-    {
+type AttrData = fields.DataField.AssignmentTypeFor<fields.EmbeddedDataField<typeof GcsAttributeDefinition>>
+type ThresholdData = fields.DataField.AssignmentTypeFor<fields.EmbeddedDataField<typeof AttributeThreshold>>
+
+const withId = (data: Omit<AttrData, '_id'>): [string, AttrData] => {
+  const _id = foundry.utils.randomID()
+
+  return [_id, { ...data, _id } as AttrData]
+}
+
+const withThresholdId = (data: Omit<ThresholdData, '_id'>): [string, ThresholdData] => {
+  const _id = foundry.utils.randomID()
+
+  return [_id, { ...data, _id } as ThresholdData]
+}
+
+/* ---------------------------------------- */
+
+const defaultAttributes = (): Record<string, AttrData> => {
+  return Object.fromEntries([
+    withId({
       sort: 0,
       attrId: 'st',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -13,8 +31,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       fullName: 'Strength',
       costPerPoint: 10,
       costAdjustmentPerSizeMod: 10,
-    },
-    {
+    }),
+    withId({
       sort: 1,
       attrId: 'dx',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -25,8 +43,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 20,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 2,
       attrId: 'iq',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -37,8 +55,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 20,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 3,
       attrId: 'ht',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -49,8 +67,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 10,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 4,
       attrId: 'will',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -61,8 +79,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 5,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 5,
       attrId: 'fright_check',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -73,8 +91,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 6,
       attrId: 'per',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -85,8 +103,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 5,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 7,
       attrId: 'hearing',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -97,8 +115,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 8,
       attrId: 'vision',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -109,8 +127,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 9,
       attrId: 'taste_smell',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -121,8 +139,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 10,
       attrId: 'touch',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -133,8 +151,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 11,
       attrId: 'basic_speed',
       type: GcsAttributeDefinition.TYPES.Decimal,
@@ -145,8 +163,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 20,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 12,
       attrId: 'basic_move',
       type: GcsAttributeDefinition.TYPES.Integer,
@@ -157,8 +175,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       costPerPoint: 5,
       costAdjustmentPerSizeMod: 0,
       _thresholds: null,
-    },
-    {
+    }),
+    withId({
       sort: 13,
       attrId: 'fp',
       type: GcsAttributeDefinition.TYPES.Pool,
@@ -168,8 +186,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       fullName: 'Fatigue Points',
       costPerPoint: 3,
       costAdjustmentPerSizeMod: 0,
-      _thresholds: [
-        {
+      _thresholds: Object.fromEntries([
+        withThresholdId({
           sort: 0,
           state: 'Unconscious',
           value: '-$fp',
@@ -179,8 +197,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
             GcsAttributeDefinition.OPS.HalveDodge,
             GcsAttributeDefinition.OPS.HalveST,
           ],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 1,
           state: 'Collapse',
           value: '0',
@@ -193,8 +211,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
             GcsAttributeDefinition.OPS.HalveDodge,
             GcsAttributeDefinition.OPS.HalveST,
           ],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 2,
           state: 'Tired',
           value: 'Math.ceil($fp / 3) - 1',
@@ -204,24 +222,24 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
             GcsAttributeDefinition.OPS.HalveDodge,
             GcsAttributeDefinition.OPS.HalveST,
           ],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 3,
           state: 'Tiring',
           value: '$fp - 1',
           explanation: '',
           ops: [],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 4,
           state: 'Rested',
           value: '$fp',
           explanation: '',
           ops: [],
-        },
-      ],
-    },
-    {
+        }),
+      ]),
+    }),
+    withId({
       sort: 14,
       attrId: 'hp',
       type: GcsAttributeDefinition.TYPES.Pool,
@@ -231,15 +249,15 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
       fullName: 'Hit Points',
       costPerPoint: 2,
       costAdjustmentPerSizeMod: 10,
-      _thresholds: [
-        {
+      _thresholds: Object.fromEntries([
+        withThresholdId({
           sort: 0,
           state: 'Dead',
           value: 'Math.round(-$hp * 5)',
           explanation: '',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 1,
           state: 'Dying #4',
           value: 'Math.round(-$hp * 4)',
@@ -248,8 +266,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
             '- Roll vs. HT-4 every second to avoid falling unconscious\n' +
             '- Move and Dodge are halved (B419)\n',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 2,
           state: 'Dying #3',
           value: 'Math.round(-$hp * 3)',
@@ -258,8 +276,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
             '- Roll vs. HT-3 every second to avoid falling unconscious\n' +
             '- Move and Dodge are halved (B419)\n',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 3,
           state: 'Dying #2',
           value: 'Math.round(-$hp * 2)',
@@ -268,8 +286,8 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
             '- Roll vs. HT-2 every second to avoid falling unconscious\n' +
             '- Move and Dodge are halved (B419)\n',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 4,
           state: 'Dying #1',
           value: 'Math.round(-$hp * 1)',
@@ -278,38 +296,38 @@ const defaultAttributes = (): fields.SchemaField.CreateData<GcsAttributeDefiniti
             '- Roll vs. HT-1 every second to avoid falling unconscious\n' +
             '- Move and Dodge are halved (B419)\n',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 5,
           state: 'Collapse',
           value: '0',
           explanation: '- Roll vs. HT every second to avoid falling unconscious' + '- Move and Dodge are halved (B419)',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 6,
           state: 'Reeling',
           value: 'Math.ceil($hp / 3) - 1',
           explanation: 'Move and Dodge are halved (B419)',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 7,
           state: 'Wounded',
           value: '$hp - 1',
           explanation: '',
           ops: [],
-        },
-        {
+        }),
+        withThresholdId({
           sort: 8,
           state: 'Healthy',
           value: '$hp',
           explanation: '',
           ops: [],
-        },
-      ],
-    },
-  ]
+        }),
+      ]),
+    }),
+  ])
 }
 
 /* ---------------------------------------- */

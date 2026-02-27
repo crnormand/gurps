@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { LengthField, LengthUnit } from '@module/data/common/length.js'
 import { WeightField, WeightUnit } from '@module/data/common/weight.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
 import { ResolverCache } from '@module/scripting/types.js'
 
 import { ActorMetadata, BaseActorModel } from '../base.js'
@@ -47,10 +48,10 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
   /* ---------------------------------------- */
 
   override prepareBaseData(): void {
-    const attributeList = Object.values(this._attributes)
-    const attributeDefinitionList = Object.values(this.settings._attributes)
-    const hitLocationList = Object.values(this.settings.bodyType._locations)
-    const hitLocationSubTableList = Object.values(this.settings.bodyType._subTables)
+    const attributeList = Array.from(this._attributes.values() ?? [])
+    const attributeDefinitionList = Array.from(this.settings._attributes?.values() ?? [])
+    const hitLocationList = Array.from(this.settings.bodyType._locations?.values() ?? [])
+    const hitLocationSubTableList = Array.from(this.settings.bodyType._subTables?.values() ?? [])
 
     attributeList.forEach(att => att.prepareBaseData())
     attributeDefinitionList.forEach(def => def.prepareBaseData())
@@ -143,7 +144,7 @@ const gcsCharacterSchema = () => {
     }),
     profile: new fields.SchemaField(profileSchema(), { required: true, nullable: false }),
     settings: new fields.SchemaField(sheetSettingsSchema()),
-    _attributes: new fields.TypedObjectField(new fields.EmbeddedDataField(GcsAttribute), {
+    _attributes: new CollectionField(GcsAttribute, {
       required: true,
       nullable: false,
       initial: (data: any) =>
