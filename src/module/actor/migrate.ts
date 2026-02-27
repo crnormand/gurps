@@ -1,7 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
-import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
-import { getMigratedItemData } from '@module/item/migrate.js'
+import { getMigratedItemData, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrate.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
@@ -226,68 +225,19 @@ function getMigratedActorData(
   })
 
   Object.values(system.melee).forEach((weapon: Melee) => {
-    const id = foundry.utils.randomID()
+    const _id = foundry.utils.randomID()
 
-    const damage = typeof weapon.damage === 'string' ? [weapon.damage] : weapon.damage
+    const newMelee = migrateMeleeWeapon(weapon, _id)
 
-    const data: DataModel.CreateData<DataModel.SchemaOf<MeleeAttackModel>> = {
-      _id: id,
-      name: weapon.name,
-      type: 'meleeAttack',
-      import: Number(weapon.import),
-      damage,
-      st: weapon.st,
-      mode: weapon.mode,
-      notes: weapon.notes,
-      cost: weapon.cost,
-      reach: weapon.reach,
-      parry: weapon.parry,
-      parrybonus: 0,
-      baseParryPenalty: weapon.baseParryPenalty,
-      block: weapon.block,
-      blockbonus: 0,
-      otf: '',
-      itemModifiers: '',
-      modifierTags: weapon.modifierTags,
-      extraAttacks: weapon.extraAttacks,
-      consumeAction: weapon.consumeAction,
-    }
-
-    migrationItemSystem!.actions![id] = data
+    migrationItem.system!.actions![_id] = newMelee
   })
 
   Object.values(system.ranged).forEach((weapon: Ranged) => {
-    const id = foundry.utils.randomID()
+    const _id = foundry.utils.randomID()
 
-    const damage = typeof weapon.damage === 'string' ? [weapon.damage] : weapon.damage
+    const newRanged = migrateRangedWeapon(weapon, _id)
 
-    const data: DataModel.CreateData<DataModel.SchemaOf<RangedAttackModel>> = {
-      _id: id,
-      name: weapon.name,
-      type: 'rangedAttack',
-      import: Number(weapon.import),
-      damage,
-      st: weapon.st,
-      mode: weapon.mode,
-      notes: weapon.notes,
-      bulk: weapon.bulk,
-      legalityclass: weapon.legalityclass,
-      ammo: weapon.ammo,
-      acc: weapon.acc,
-      range: weapon.range,
-      shots: weapon.shots,
-      rcl: weapon.rcl,
-      halfd: weapon.halfd,
-      max: weapon.max,
-      otf: '',
-      itemModifiers: '',
-      modifierTags: weapon.modifierTags,
-      extraAttacks: weapon.extraAttacks,
-      consumeAction: weapon.consumeAction,
-      rateOfFire: weapon.rof,
-    }
-
-    migrationItemSystem!.actions![id] = data
+    migrationItem.system!.actions![_id] = newRanged
   })
 
   migrationItem.system = migrationItemSystem

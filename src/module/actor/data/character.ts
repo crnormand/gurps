@@ -672,7 +672,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
       if (!attack.parry) return acc
-      const newParry = parseInt(attack.parry)
+      const newParry = attack.parryLevel ?? 0
 
       if (newParry > acc) acc = newParry
 
@@ -681,7 +681,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
       if (!attack.block) return acc
-      const newblock = parseInt(attack.block)
+      const newblock = attack.blockLevel ?? 0
 
       if (newblock > acc) acc = newblock
 
@@ -1332,23 +1332,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           const img = attack.img
           const otfName = attack.mode ? `"${attack.name} (${attack.mode})"` : `"${attack.name}"`
 
-          if (!isNaN(parseInt(attack.parry)))
+          if (attack.parry.canParry)
             acc.push({
               symbol,
               img: img ?? '',
               label: attack.name ?? '',
-              value: attack.parry,
+              value: attack.parryLevel,
               mode: attack.mode,
               otf: `P:${otfName}`,
               isOTF: true,
             })
 
-          if (!isNaN(parseInt(attack.block)))
+          if (attack.block.canBlock)
             acc.push({
               symbol,
               img: img ?? '',
               label: attack.name ?? '',
-              value: attack.block,
+              value: attack.blockLevel,
               mode: attack.mode,
               otf: `B:${otfName}`,
               isOTF: true,

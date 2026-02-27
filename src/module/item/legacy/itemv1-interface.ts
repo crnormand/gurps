@@ -1,3 +1,5 @@
+import { Melee, Ranged } from '@module/actor/actor-components.js'
+
 interface Equipment {
   eqt: {
     name: string
@@ -23,8 +25,8 @@ interface Equipment {
     originalCount: string
     ignoreImportQty: boolean
   }
-  melee: Record<string, MeleeAtk>
-  ranged: Record<string, RangedAtk>
+  melee: Record<string, Melee>
+  ranged: Record<string, Ranged>
   ads: Record<string, unknown>
   skills: Record<string, unknown>
   spells: Record<string, unknown>

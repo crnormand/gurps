@@ -200,11 +200,11 @@ const rangedAttackSchema = () => {
     /** The accuracy modifier for this attack */
     acc: new fields.SchemaField({
       /** The base accuracy modifier for this attack */
-      base: new fields.NumberField({ required: true, nullable: false }),
+      base: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
       /** The scope modifier for this attack, which is added to the base accuracy modifier to determine the final accuracy modifier. */
-      scope: new fields.NumberField({ required: true, nullable: false }),
+      scope: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
       /** Is this attack a jet attack? */
-      jet: new fields.BooleanField({ required: true, nullable: false }),
+      jet: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     }),
 
     /** The current ammo count for this attack */
