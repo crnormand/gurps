@@ -3,6 +3,17 @@ import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { TraitSchema } from '@module/item/data/trait.js'
+import {
+  parseAccuracy,
+  parseBlock,
+  parseBulk,
+  parseParry,
+  parseRange,
+  parseRateOfFire,
+  parseReach,
+  parseRecoil,
+  parseShots,
+} from '@module/util/parse-weapon.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackSchema } from '../../action/melee-attack.js'
@@ -908,12 +919,13 @@ Portrait will not be imported.`
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
-    let parrybonus = 0
-    let blockbonus = 0
+    const parry = parseParry(weapon.calc?.parry || weapon.parry || '')
+
+    const block = parseBlock(weapon.calc?.block || weapon.block || '')
 
     if (this._isMode(GcsImporterMode.Character)) {
-      parrybonus = this.input.calc.parry_bonus ?? 0
-      blockbonus = this.input.calc.parry_bonus ?? 0
+      parry.modifier = this.input.calc.parry_bonus ?? 0
+      block.modifier = this.input.calc.parry_bonus ?? 0
     }
 
     return {
@@ -925,11 +937,9 @@ Portrait will not be imported.`
       import: weapon.calc?.level || 0,
       damage: [weapon.calc?.damage || ''],
       st: weapon.calc?.strength || weapon.strength,
-      reach: weapon.calc?.reach || weapon.reach,
-      parry: weapon.calc?.parry || weapon.parry,
-      parrybonus,
-      block: weapon.calc?.block || weapon.block,
-      blockbonus,
+      reach: parseReach(weapon.calc?.reach || weapon.reach || ''),
+      parry,
+      block,
       otf: this.#importWeaponDefaults(weapon),
     }
   }
@@ -941,8 +951,6 @@ Portrait will not be imported.`
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 
-    const halfd = weapon.range?.includes('/') ? weapon.range.split('/')[0] : '0'
-
     return {
       name,
       type,
@@ -951,13 +959,12 @@ Portrait will not be imported.`
       import: weapon.calc?.level || 0,
       damage: [weapon.calc?.damage || ''],
       st: weapon.calc?.strength || weapon.strength,
-      acc: weapon.calc?.accuracy || weapon.accuracy,
-      shots: weapon.calc?.shots || weapon.shots,
-      range: weapon.calc?.range || weapon.range,
-      rcl: weapon.calc?.recoil || weapon.recoil,
-      halfd,
-      rateOfFire: weapon.calc?.rate_of_fire || weapon.rate_of_fire,
-      bulk: weapon.calc?.bulk || weapon.bulk || '0',
+      acc: parseAccuracy(weapon.calc?.accuracy || weapon.accuracy || ''),
+      shots: parseShots(weapon.calc?.shots || weapon.shots || ''),
+      range: parseRange(weapon.calc?.range || weapon.range || ''),
+      recoil: parseRecoil(weapon.calc?.recoil || weapon.recoil || ''),
+      rateOfFire: parseRateOfFire(weapon.calc?.rate_of_fire || weapon.rate_of_fire || ''),
+      bulk: parseBulk(weapon.calc?.bulk || weapon.bulk || '0'),
       otf: this.#importWeaponDefaults(weapon),
     }
   }

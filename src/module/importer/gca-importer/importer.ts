@@ -7,6 +7,15 @@ import { EquipmentSchema } from '@module/item/data/equipment.js'
 import { SkillSchema } from '@module/item/data/skill.js'
 import { SpellSchema } from '@module/item/data/spell.js'
 import { TraitSchema } from '@module/item/data/trait.js'
+import {
+  parseReach,
+  parseBlock,
+  parseAccuracy,
+  parseRange,
+  parseShots,
+  parseRecoil,
+  parseParry,
+} from '@module/util/parse-weapon.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { HitLocation, hitlocationDictionary } from '../../hitlocation/hitlocation.js'
@@ -643,18 +652,25 @@ Portrait will not be imported.`
 
     const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
 
+    const level = weapon.charskillscore ?? 0
+
+    const block = parseBlock(weapon.charblockscore ?? '')
+    const blockLevelDifference = level / 2 + 3
+
+    block.modifier = (block.modifier ?? 0) - blockLevelDifference
+
     return {
       name,
       type,
       _id,
       notes: weapon.notes ?? '',
       mode: weapon.name ?? '',
-      import: weapon.charskillscore ?? 0,
+      import: level,
       damage,
       st: weapon.charminst ?? '',
-      reach: weapon.charreach ?? '',
-      parry: weapon.charparry ?? '',
-      block: weapon.charblockscore ?? '',
+      reach: parseReach(weapon.charreach ?? ''),
+      parry: parseParry(weapon.parry ?? ''),
+      block,
     }
   }
 
@@ -674,11 +690,10 @@ Portrait will not be imported.`
       import: weapon.charskillscore ?? 0,
       damage,
       st: weapon.charminst ?? '',
-      acc: weapon.characc ?? '',
-      range: weapon.charrangemax ?? '',
-      shots: weapon.charshots ?? '',
-      rcl: weapon.charrcl ?? '',
-      halfd: weapon.charrangehalfdam ?? '',
+      acc: parseAccuracy(weapon.characc ?? ''),
+      range: parseRange(`${weapon.charrangehalfdam}/${weapon.charrangemax}`),
+      shots: parseShots(weapon.charshots ?? ''),
+      recoil: parseRecoil(weapon.charrcl ?? ''),
     }
   }
 
