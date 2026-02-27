@@ -1,5 +1,5 @@
-import { DamageTable } from '../../module/damage/damage-tables.js'
-import { extractOtfs } from '../../util/otf.js'
+import { DamageTable } from '@module/damage/damage-tables.js'
+import { extractOtfs } from '@util/otf.js'
 
 beforeAll(() => {
   globalThis.GURPS = {} as any
