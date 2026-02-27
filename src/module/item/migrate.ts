@@ -1,5 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
+import { Melee, Ranged } from '@module/actor/actor-components.js'
 import {
   parseReach,
   parseParry,
@@ -12,7 +13,7 @@ import {
   parseShots,
 } from '@module/util/parse-weapon.js'
 
-import { Equipment, Feature, MeleeAtk, RangedAtk, Skill, Spell } from './legacy/itemv1-interface.js'
+import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.js'
 
 type OldItemType = 'equipment' | 'feature' | 'skill' | 'spell'
 
@@ -37,7 +38,7 @@ async function runMigration() {
       progress: true,
     })
 
-    console.log('Migrating world items')
+    console.log('GURPS | Migrating world items')
     const items = game.items!.filter(item => item.isOfType('equipment', 'feature', 'skill', 'spell'))
     const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
 
@@ -190,22 +191,79 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
   }
 
   if (oldData.melee) {
-    ;(Object.values(oldData.melee) as MeleeAtk[]).forEach(action => {
+    ;(Object.values(oldData.melee) as Melee[]).forEach(action => {
       const _id = foundry.utils.randomID()
+      const newMelee = migrateMeleeWeapon(action, _id)
 
-      newData.actions![id] = action as CreateDataOf<MeleeAttackModel>
+      newData.actions[_id] = newMelee
     })
   }
 
   if (oldData.ranged) {
-    ;(Object.values(oldData.ranged) as RangedAtk[]).forEach(action => {
+    ;(Object.values(oldData.ranged) as Ranged[]).forEach(action => {
       const _id = foundry.utils.randomID()
+      const newRanged = migrateRangedWeapon(action, _id)
 
-      newData.actions![id] = action as CreateDataOf<RangedAttackModel>
+      newData.actions[_id] = newRanged
     })
   }
 
   return newData
+}
+
+/* ---------------------------------------- */
+
+function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.CreateData<MeleeAttackSchema> {
+  const damage = typeof oldMelee.damage === 'string' ? [oldMelee.damage] : oldMelee.damage
+
+  const newMelee: fields.SchemaField.CreateData<MeleeAttackSchema> = {
+    _id,
+    type: ActionType.MeleeAttack,
+    import: Number(oldMelee.import),
+    damage,
+    consumeAction: oldMelee.consumeAction,
+    extraAttacks: Number(oldMelee.extraAttacks),
+    itemModifiers: '',
+    mode: String(oldMelee.mode),
+    notes: String(oldMelee.notes),
+    otf: String(oldMelee.otf),
+    st: String(oldMelee.st),
+    reach: parseReach(oldMelee.reach),
+    parry: parseParry(oldMelee.parry),
+    baseParryPenalty: Number(oldMelee.baseParryPenalty),
+    block: parseBlock(oldMelee.block),
+  }
+
+  return newMelee
+}
+
+/* ---------------------------------------- */
+
+function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField.CreateData<RangedAttackSchema> {
+  const damage = typeof oldRanged.damage === 'string' ? [oldRanged.damage] : oldRanged.damage
+
+  const newRanged: fields.SchemaField.CreateData<RangedAttackSchema> = {
+    _id,
+    type: ActionType.RangedAttack,
+    import: Number(oldRanged.import),
+    damage,
+    consumeAction: oldRanged.consumeAction,
+    extraAttacks: Number(oldRanged.extraAttacks),
+    itemModifiers: '',
+    mode: String(oldRanged.mode),
+    notes: String(oldRanged.notes),
+    otf: String(oldRanged.otf),
+    st: String(oldRanged.st),
+    acc: parseAccuracy(oldRanged.acc),
+    ammo: Number(oldRanged.ammo),
+    bulk: parseBulk(oldRanged.bulk),
+    range: parseRange(oldRanged.range),
+    rateOfFire: parseRateOfFire(oldRanged.rof),
+    recoil: parseRecoil(oldRanged.rcl),
+    shots: parseShots(oldRanged.shots),
+  }
+
+  return newRanged
 }
 
 /* ---------------------------------------- */
@@ -265,4 +323,16 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
 
 /* ---------------------------------------- */
 
-export { getNewItemType, migrateItem, getMigratedItemData, migrateItemCompendium, runMigration }
+export {
+  getNewItemType,
+  migrateItem,
+  getMigratedItemData,
+  migrateItemCompendium,
+  runMigration,
+  migrateEquipmentSystem,
+  migrateTraitSystem,
+  migrateSkillSystem,
+  migrateSpellSystem,
+  migrateMeleeWeapon,
+  migrateRangedWeapon,
+}

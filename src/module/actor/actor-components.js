@@ -736,6 +736,7 @@ export class Attack extends Named {
     this.mode = ''
     this.level = ''
     this.modifierTags = ''
+    this.otf = ''
     this.extraAttacks = 0
     this.consumeAction = true
 

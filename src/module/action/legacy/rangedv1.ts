@@ -49,7 +49,7 @@ class RangedV1 {
   }
 
   get halfd() {
-    return this.rangedV2.halfd
+    return this.rangedV2.range.halfDamage
   }
 
   get import() {
@@ -60,16 +60,17 @@ class RangedV1 {
     return this.rangedV2.itemModifiers
   }
 
-  get legalityclass() {
-    return this.rangedV2.legalityclass
-  }
+  // not used
+  // get legalityclass() {
+  //   return this.rangedV2.legalityclass
+  // }
 
   get level() {
     return this.rangedV2.level
   }
 
   get max() {
-    return this.rangedV2.max
+    return this.rangedV2.range.max
   }
 
   get mode() {
@@ -105,7 +106,7 @@ class RangedV1 {
   }
 
   get rcl() {
-    return this.rangedV2.rcl
+    return this.rangedV2.recoil.shot
   }
 
   get rof() {

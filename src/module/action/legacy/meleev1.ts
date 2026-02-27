@@ -36,9 +36,10 @@ class MeleeV1 {
     return []
   }
 
-  get cost() {
-    return this.meleeV2.cost
-  }
+  // not sure what cost is supposed to do
+  // get cost() {
+  //   return this.meleeV2.cost
+  // }
 
   get damage() {
     return this.meleeV2.damage
@@ -93,7 +94,7 @@ class MeleeV1 {
   }
 
   get parryBonus() {
-    return this.meleeV2.parrybonus
+    return this.meleeV2.parry.modifier
   }
 
   get reach() {
