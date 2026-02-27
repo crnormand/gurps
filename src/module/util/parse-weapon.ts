@@ -204,7 +204,7 @@ function parseRecoil(text: string): Recoil {
 /* ---------------------------------------- */
 
 function parseShots(text: string): Shots {
-  const shots: Shots = { count: 0, inChamber: 0, duration: 0, reloadTime: 0, realodTimeIsPerShot: false, thrown: false }
+  const shots: Shots = { count: 0, inChamber: 0, duration: 0, reloadTime: 0, reloadTimeIsPerShot: false, thrown: false }
 
   text = text.trim().toLowerCase().replaceAll(' ', '').replaceAll(',', '')
 
@@ -229,7 +229,7 @@ function parseShots(text: string): Shots {
 
   if (text.startsWith('(')) {
     shots.reloadTime = extractNumber(text.slice(1))
-    shots.realodTimeIsPerShot = text.includes('i')
+    shots.reloadTimeIsPerShot = text.includes('i')
   }
 
   return shots
