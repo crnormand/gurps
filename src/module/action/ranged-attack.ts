@@ -4,6 +4,7 @@ import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseAttack } from './base-attack.js'
+import { ActionType } from './types.js'
 
 class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {

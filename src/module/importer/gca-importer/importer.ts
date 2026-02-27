@@ -138,7 +138,9 @@ class GcaImporter {
    */
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
-      return ['GCS', 'GCA'].includes(item.system?.importFrom)
+      const system = item.system as { importFrom: string }
+
+      return ['GCS', 'GCA'].includes(system?.importFrom)
     })
 
     await actor.deleteEmbeddedDocuments(

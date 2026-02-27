@@ -2,10 +2,10 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { defaultAttributes } from '@module/config/attributes.js'
 import { defaultBodyType } from '@module/config/body.js'
 import { WeightUnit, LengthUnit } from '@module/data/common/index.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
 
 import { GcsAttributeDefinition } from './attribute-definition.js'
 import { GcsBody } from './body.js'
-import { CollectionField } from '@module/data/fields/collection-field.js'
 
 enum DamageProgression {
   BasicSet = 'basicSet',

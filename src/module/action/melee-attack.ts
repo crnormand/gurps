@@ -3,6 +3,7 @@ import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseAttack } from './base-attack.js'
+import { ActionType } from './types.js'
 
 class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   static override defineSchema(): MeleeAttackSchema {

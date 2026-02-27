@@ -370,7 +370,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   getReactionsAndModifiers(key: 'conditionalmods'): ConditionalModifier[]
   getReactionsAndModifiers(key: 'reactions' | 'conditionalmods'): ReactionModifier[] | ConditionalModifier[] {
     return this.parent.items.reduce((acc: (ReactionModifier | ConditionalModifier)[], item) => {
-      for (const newMod of item.system[key]) {
+      for (const newMod of item.system[key] ?? []) {
         const existingMod = acc.find(mod => mod.situation === newMod.situation)
 
         if (existingMod) existingMod.modifier += newMod.modifier

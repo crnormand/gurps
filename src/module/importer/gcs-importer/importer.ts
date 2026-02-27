@@ -182,7 +182,8 @@ class GcsImporter<Mode extends GcsImporterMode> {
   /* ---------------------------------------- */
 
   #existingItemId(itemData: Item.CreateData, existingIds: { _id: string | null; importid: string }[]): string | null {
-    const id = itemData.system?.importid
+    const system = itemData.system as AnyObject
+    const id = system?.importid
 
     if (!id) return null
 
@@ -292,7 +293,9 @@ class GcsImporter<Mode extends GcsImporterMode> {
    */
   async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
     const importedItems = actor.items.filter(item => {
-      return ['GCS', 'GCA'].includes(item.system?.importFrom)
+      const system = item.system as { importFrom: string }
+
+      return ['GCS', 'GCA'].includes(system?.importFrom)
     })
 
     await actor.deleteEmbeddedDocuments(

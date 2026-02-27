@@ -362,10 +362,10 @@ const baseItemModelSchema = () => {
     modifierTags: new fields.StringField({ required: true, nullable: false }),
 
     /** Reaction Bonuses applied by this Item. */
-    _reactions: new CollectionField(ReactionModifier),
+    _reactions: new CollectionField(ReactionModifier, { required: true, nullable: false }),
 
     /** Conditional Modifiers applied by this Item. */
-    _conditionalmods: new CollectionField(ConditionalModifier),
+    _conditionalmods: new CollectionField(ConditionalModifier, { required: true, nullable: false }),
 
     /** NOTE: The below fields have been migrated from the now non-existent ItemComponent model. */
 

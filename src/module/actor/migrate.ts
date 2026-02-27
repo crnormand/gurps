@@ -187,15 +187,16 @@ function getMigratedActorData(
   const migrationItem: Item.CreateData<'featureV2'> = {
     type: 'featureV2',
     name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
-    system: {
-      containedBy: null,
-      name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
-      notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
-      points: 0,
-      _reactions: {},
-      _conditionalmods: {},
-      actions: {},
-    },
+  }
+
+  const migrationItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<'featureV2'>>> = {
+    containedBy: null,
+    name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
+    notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
+    points: 0,
+    _reactions: {},
+    _conditionalmods: {},
+    actions: {},
   }
 
   Object.values(system.reactions).forEach(mod => {
@@ -208,7 +209,7 @@ function getMigratedActorData(
       modifierTags: mod.modifierTags,
     }
 
-    migrationItem.system!._reactions![_id] = data
+    migrationItemSystem!._reactions![_id] = data
   })
 
   Object.values(system.conditionalmods).forEach(mod => {
@@ -221,7 +222,7 @@ function getMigratedActorData(
       modifierTags: mod.modifierTags,
     }
 
-    migrationItem.system!._conditionalmods![_id] = data
+    migrationItemSystem!._conditionalmods![_id] = data
   })
 
   Object.values(system.melee).forEach((weapon: Melee) => {
@@ -252,7 +253,7 @@ function getMigratedActorData(
       consumeAction: weapon.consumeAction,
     }
 
-    migrationItem.system!.actions![id] = data
+    migrationItemSystem!.actions![id] = data
   })
 
   Object.values(system.ranged).forEach((weapon: Ranged) => {
@@ -286,8 +287,10 @@ function getMigratedActorData(
       rateOfFire: weapon.rof,
     }
 
-    migrationItem.system!.actions![id] = data
+    migrationItemSystem!.actions![id] = data
   })
+
+  migrationItem.system = migrationItemSystem
 
   items.push(migrationItem)
 
