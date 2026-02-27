@@ -39,7 +39,7 @@ function parseParry(text: string): Parry {
 
   text = text.trim().toLowerCase()
 
-  if (!negativeStrings('GURPS.Action.MeleeWeapon.parryDisabled').includes(text)) {
+  if (!negativeStrings('GURPS.Action.MeleeAttack.parryDisabled').includes(text)) {
     parry.canParry = true
     parry.fencing = text.includes('f')
     parry.unbalanced = text.includes('u')
@@ -54,7 +54,9 @@ function parseParry(text: string): Parry {
 function parseBlock(text: string): Block {
   const block: Block = { canBlock: false, modifier: 0 }
 
-  if (!negativeStrings('GURPS.Action.MeleeWeapon.blockDisabled').includes(text)) {
+  text = text.trim().toLowerCase()
+
+  if (!negativeStrings('GURPS.Action.MeleeAttack.blockDisabled').includes(text)) {
     block.canBlock = true
     block.modifier = extractNumber(text)
   }
@@ -102,8 +104,8 @@ function parseAccuracy(text: string): Accuracy {
 
   if (
     text.includes('jet') ||
-    text.includes('GURPS.Action.RangedWeapon.jet'.toLocaleLowerCase()) ||
-    text.includes(game.i18n?.localize('GURPS.Action.RangedWeapon.jet').toLocaleLowerCase() ?? 'jet')
+    text.includes('GURPS.Action.RangedAttack.jet'.toLocaleLowerCase()) ||
+    text.includes(game.i18n?.localize('GURPS.Action.RangedAttack.jet').toLocaleLowerCase() ?? 'jet')
   ) {
     accuracy.jet = true
   } else {
@@ -248,8 +250,8 @@ function parseRateOfFire(text: string): RateOfFire {
 
   if (
     text.includes('jet') ||
-    text.includes('GURPS.Action.RangedWeapon.jet'.toLocaleLowerCase()) ||
-    text.includes(game.i18n?.localize('GURPS.Action.RangedWeapon.jet').toLocaleLowerCase() ?? 'jet')
+    text.includes('GURPS.Action.RangedAttack.jet'.toLocaleLowerCase()) ||
+    text.includes(game.i18n?.localize('GURPS.Action.RangedAttack.jet').toLocaleLowerCase() ?? 'jet')
   ) {
     rof.jet = true
 
@@ -278,7 +280,7 @@ function parseWeaponRateOfFireMode(text: string): RateOfFireMode {
   }
 
   text = text.trim().toLowerCase().replaceAll(' ', '')
-  text.replaceAll('.', 'x')
+  text = text.replaceAll('.', 'x')
 
   mode.fullAutoOnly = text.includes('!')
   text = text.replaceAll('!', '')
@@ -305,13 +307,13 @@ function parseWeaponRateOfFireMode(text: string): RateOfFireMode {
 /* ---------------------------------------- */
 
 export {
-  parseParry,
-  parseBlock,
-  parseReach,
   parseAccuracy,
+  parseBlock,
   parseBulk,
+  parseParry,
   parseRange,
+  parseRateOfFire,
+  parseReach,
   parseRecoil,
   parseShots,
-  parseRateOfFire,
 }

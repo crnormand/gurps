@@ -36,6 +36,28 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
       }
     }
 
+    // Noramalize the reach value to ensure min cannot be bigger than max and only valid reach values
+    // can pass through for each.
+    if ('reach' in source && typeof source.reach === 'object' && source.reach !== null) {
+      if (
+        'min' in source.reach &&
+        typeof source.reach.min === 'number' &&
+        'max' in source.reach &&
+        typeof source.reach.max === 'number'
+      ) {
+        source.reach.min = Math.max(source.reach.min, 0)
+        source.reach.max = Math.max(source.reach.max, 0)
+
+        if (source.reach.min === 0 && source.reach.max !== 0) {
+          source.reach.min = 1
+        } else if (source.reach.min !== 0 && source.reach.max === 0) {
+          source.reach.max = source.reach.min
+        }
+
+        source.reach.max = Math.max(Number(source.reach.min), Number(source.reach.max))
+      }
+    }
+
     return source
   }
 
@@ -109,6 +131,7 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
 
         // Recalculate parry and block levels after applying the bonus to the attack level
         this.#prepareDefenses()
+        this.#prepareDisplayValues()
       }
 
       if (bonus.type === 'attack' && bonus.isMelee) {
@@ -135,7 +158,7 @@ const meleeAttackSchema = () => {
       /** The maximum reach of this attack, in yards. */
       max: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
       /** Can this attack be made in close combat (i.e. against an adjacent target)? */
-      closeCombat: new fields.BooleanField({ required: true, nullable: false, initial: true }),
+      closeCombat: new fields.BooleanField({ required: true, nullable: false, initial: false }),
       /** Does this attack require a ready maneuver to change range? */
       changeRequiresReady: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     }),

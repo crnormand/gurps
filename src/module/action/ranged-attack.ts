@@ -106,7 +106,9 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
     }
 
     if (this.shots.reloadTime > 0) {
-      this.shotsText += `(${this.shots.reloadTime.toString() + this.shots.reloadTimeIsPerShot ? 'i' : ''}s`
+      const perShotSuffix = this.shots.reloadTimeIsPerShot ? 'i' : ''
+
+      this.shotsText += `(${this.shots.reloadTime.toString()}${perShotSuffix})`
     }
   }
 

@@ -649,7 +649,7 @@ Portrait will not be imported.`
     const level = weapon.charskillscore ?? 0
 
     const block = parseBlock(weapon.charblockscore ?? '')
-    const blockLevelDifference = level / 2 + 3
+    const blockLevelDifference = Math.floor(level / 2) + 3
 
     block.modifier = (block.modifier ?? 0) - blockLevelDifference
 
@@ -657,14 +657,17 @@ Portrait will not be imported.`
       name,
       type,
       _id,
-      notes: weapon.notes ?? '',
-      mode: weapon.name ?? '',
-      import: level,
-      damage,
-      st: weapon.charminst ?? '',
-      reach: parseReach(weapon.charreach ?? ''),
-      parry: parseParry(weapon.parry ?? ''),
+      baseParryPenalty: -4,
       block,
+      damage,
+      import: level,
+      itemModifiers: '',
+      mode: weapon.name ?? '',
+      modifierTags: '',
+      notes: weapon.notes ?? '',
+      parry: parseParry(weapon.parry ?? ''),
+      reach: parseReach(weapon.charreach ?? ''),
+      st: weapon.charminst ?? '',
     }
   }
 
@@ -679,15 +682,17 @@ Portrait will not be imported.`
       name,
       type,
       _id,
-      notes: weapon.notes ?? '',
-      mode: weapon.name ?? '',
-      import: weapon.charskillscore ?? 0,
-      damage,
-      st: weapon.charminst ?? '',
       acc: parseAccuracy(weapon.characc ?? ''),
+      damage,
+      import: weapon.charskillscore ?? 0,
+      itemModifiers: '',
+      mode: weapon.name ?? '',
+      modifierTags: '',
+      notes: weapon.notes ?? '',
       range: parseRange(`${weapon.charrangehalfdam}/${weapon.charrangemax}`),
-      shots: parseShots(weapon.charshots ?? ''),
       recoil: parseRecoil(weapon.charrcl ?? ''),
+      shots: parseShots(weapon.charshots ?? ''),
+      st: weapon.charminst ?? '',
     }
   }
 
