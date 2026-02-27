@@ -152,6 +152,9 @@ const meleeAttackSchema = () => {
       modifier: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     }),
 
+    /** The penalty to this attack's parry level for multiple parries in a given turn. */
+    baseParryPenalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
     /** The block value of this attack */
     block: new fields.SchemaField({
       /** Can this attack block at all? */
