@@ -5,6 +5,8 @@ import {
   pseudoDocumentSchema,
 } from '@module/pseudo-document/pseudo-document.js'
 
+import { IResourceTrackerTemplate, IResourceTrackerThreshold, IThresholdDescriptor, IResourceTracker } from './types.js'
+
 const TrackerOperators = {
   PLUS: '+',
   MINUS: '\u002D',
@@ -42,23 +44,18 @@ const ComparisonFunctions: Record<TrackerComparisons, comparisonFunction> = {
   [TrackerComparators.GT]: (left: number, right: number) => left > right,
 } as const
 
-type ThresholdDescriptor = {
-  value: number
-  condition: string
-}
-
 /* ---------------------------------------- */
 
-class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
+class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements IResourceTracker {
   static override defineSchema() {
     return resourceTrackerSchema()
   }
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata<'ResourceTracker'> {
+  static override get metadata(): PseudoDocumentMetadata<'TrackerInstance'> {
     return {
-      documentName: 'ResourceTracker',
+      documentName: 'TrackerInstance',
       label: '',
       icon: '',
       embedded: {},
@@ -99,13 +96,13 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
     return threshold || null
   }
 
-  get thresholdDescriptors(): ThresholdDescriptor[] {
-    const results: ThresholdDescriptor[] = []
+  get thresholdDescriptors(): IThresholdDescriptor[] {
+    const results: IThresholdDescriptor[] = []
 
     // Make a copy of the thresholds array.
     const thresholds = [...this.thresholds]
 
-    if (this.isAccumulator || this.isDamageTracker) {
+    if (this.isAccumulator) {
       results.push({ value: 0, condition: thresholds.shift()?.condition ?? '' })
 
       for (const threshold of thresholds) {
@@ -115,7 +112,7 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
         })
       }
     } else {
-      if (this.breakpoints) {
+      if (this.useBreakpoints) {
         results.push({ value: this.max, condition: thresholds.shift()?.condition ?? '' })
 
         for (const threshold of thresholds) {
@@ -147,7 +144,7 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> {
    * @returns the index of the threshold that matches the current value of the resource.
    */
   #indexOfThreshold(): number {
-    if (this.breakpoints) {
+    if (this.useBreakpoints) {
       // return the index of the threshold that the value falls into
       const matches = this.thresholds.filter(threshold => {
         const op = OperatorFunctions[threshold.operator as TrackerOperators]
@@ -181,18 +178,16 @@ const resourceTrackerSchema = () => {
   return {
     ...pseudoDocumentSchema(),
     name: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    alias: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    pdf: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     max: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     min: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    alias: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    pdf: new fields.StringField({ required: true, nullable: false, initial: '' }),
     isMaxEnforced: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     isMinEnforced: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     isDamageType: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    // @deprecated isDamageTracker is replaced by isAccumulator, but we keep it for migration purposes. It will be removed in a future update.
-    isDamageTracker: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     isAccumulator: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    breakpoints: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    useBreakpoints: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     thresholds: new fields.ArrayField(
       new fields.EmbeddedDataField(ResourceTrackerThreshold, { required: true, nullable: false }),
       {
@@ -208,7 +203,10 @@ type ResourceTrackerSchema = ReturnType<typeof resourceTrackerSchema>
 
 /* ---------------------------------------- */
 
-class ResourceTrackerThreshold extends foundry.abstract.DataModel<ResourceTrackerThresholdSchema> {
+class ResourceTrackerThreshold
+  extends foundry.abstract.DataModel<ResourceTrackerThresholdSchema>
+  implements IResourceTrackerThreshold
+{
   static override defineSchema() {
     return resourceTrackerThresholdSchema()
   }
@@ -231,9 +229,20 @@ type ResourceTrackerThresholdSchema = ReturnType<typeof resourceTrackerThreshold
 
 /* ---------------------------------------- */
 
-class ResourceTrackerTemplate extends foundry.abstract.DataModel<ResourceTrackerTemplateSchema> {
+class ResourceTrackerTemplate
+  extends foundry.abstract.DataModel<ResourceTrackerTemplateSchema>
+  implements IResourceTrackerTemplate
+{
   static override defineSchema() {
     return resourceTrackerTemplateSchema()
+  }
+
+  get name(): string {
+    return this.tracker.name
+  }
+
+  get id(): string {
+    return this.tracker._id
   }
 }
 
@@ -243,8 +252,6 @@ const resourceTrackerTemplateSchema = () => {
   return {
     tracker: new fields.EmbeddedDataField(TrackerInstance, { required: true, nullable: false }),
     initialValue: new fields.StringField({ required: true, nullable: false }),
-    // @deprecated slot is replaced by autoapply, but we keep it for migration purposes. It will be removed in a future update.
-    slot: new fields.BooleanField({ required: true, nullable: true, initial: false }),
     autoapply: new fields.BooleanField({ required: true, nullable: true, initial: false }),
   }
 }
@@ -258,7 +265,6 @@ export {
   TrackerComparators,
   OperatorFunctions,
   ComparisonFunctions,
-  type ThresholdDescriptor,
   TrackerInstance,
   ResourceTrackerThreshold,
   ResourceTrackerTemplate,

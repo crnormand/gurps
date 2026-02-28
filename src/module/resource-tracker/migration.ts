@@ -29,6 +29,7 @@ function convertOldSettings(
       tracker: {
         ...oldTemplate.tracker,
         isAccumulator: oldTemplate.tracker.isDamageTracker ?? false,
+        useBreakpoints: oldTemplate.tracker.breakpoints ?? false,
       },
       initialValue: oldTemplate.initialValue,
       autoapply: !!oldTemplate.slot,

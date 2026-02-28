@@ -1228,9 +1228,15 @@
     "resolveDiceRoll": "What Did You Roll?",
     "resource": "Resource",
     "resourceTracker": {
-      "increment": "+1",
-      "decrement": "-1",
-      "reset": "Reset"
+      "editor": {
+        "clear": "Clear Tracker configuration",
+        "clone": "Clone a Template"
+      },
+      "viewer": {
+        "increment": "+1",
+        "decrement": "-1",
+        "reset": "Reset"
+      }
     },
     "resourceCopyTemplate": "Copy Template",
     "resourceCurrentValue": "Current Value",

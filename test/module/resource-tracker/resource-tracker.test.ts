@@ -28,7 +28,7 @@ const tracker = (overrides: Partial<Record<string, unknown>> = {}): TrackerInsta
   new TrackerInstance({
     max: 0,
     value: 0,
-    breakpoints: false,
+    useBreakpoints: false,
     thresholds: [],
     ...overrides,
   })
@@ -48,7 +48,7 @@ describe('TrackerInstance getters', () => {
       const firstMatch = threshold({ value: 7, condition: 'First Match', color: '#111111' })
       const laterMatch = threshold({ value: 10, condition: 'Later Match', color: '#222222' })
       const instance = tracker({
-        breakpoints: false,
+        useBreakpoints: false,
         value: 6,
         thresholds: [firstMatch, laterMatch],
       })
@@ -61,7 +61,7 @@ describe('TrackerInstance getters', () => {
       const firstMatch = threshold({ value: 7, condition: 'First Match', color: '#111111' })
       const lastMatch = threshold({ value: 10, condition: 'Last Match', color: '#333333' })
       const instance = tracker({
-        breakpoints: true,
+        useBreakpoints: true,
         value: 6,
         thresholds: [firstMatch, lastMatch],
       })
@@ -76,8 +76,8 @@ describe('TrackerInstance getters', () => {
       const instance = tracker()
 
       instance.max = 100
-      instance.isDamageTracker = true
-      instance.breakpoints = true
+      instance.isAccumulator = true
+      instance.useBreakpoints = true
 
       const t1 = new ResourceTrackerThreshold()
 
@@ -138,8 +138,8 @@ describe('TrackerInstance getters', () => {
       const instance = tracker()
 
       instance.max = 100
-      instance.isDamageTracker = false
-      instance.breakpoints = false
+      instance.isAccumulator = false
+      instance.useBreakpoints = false
 
       // Let's emulate a health tracker with thresholds at 1/3, 0, -1 x HP, -2 x HP, etc...
       const t1 = new ResourceTrackerThreshold()

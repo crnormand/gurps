@@ -64,7 +64,7 @@ import { AddImportEquipmentButton } from './item-import.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
-import { ResourceTracker } from './resource-tracker/index.js'
+import { ResourceTrackerModule } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
@@ -110,7 +110,7 @@ if (!globalThis.GURPS) {
     Importer,
     Item,
     Pdf,
-    ResourceTracker,
+    ResourceTracker: ResourceTrackerModule,
     Token,
     UI,
   }

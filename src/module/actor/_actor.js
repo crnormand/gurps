@@ -16,7 +16,6 @@ import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { GurpsItem } from '../item.js'
-import { ResourceTracker } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../util/damage-utils.js'
 
@@ -1315,7 +1314,7 @@ export class GurpsActor extends Actor {
     const currentTrackers = GurpsActor.getTrackersAsArray(this.system)
 
     /** @type {ResourceTrackerTemplate[]} */
-    const newTrackers = ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
+    const newTrackers = GURPS.modules.ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
 
     // If no new trackers were added, nothing to do.
     if (newTrackers.length === 0) return

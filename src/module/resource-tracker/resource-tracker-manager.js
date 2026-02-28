@@ -1,8 +1,8 @@
 import { arrayToObject, objectToArray } from '@util/utilities.js'
 
-import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { TrackerComparators, TrackerOperators } from './resource-tracker.ts'
 import { SETTING_TRACKER_TEMPLATES } from './types.js'
+import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.ts'
 
 export class ResourceTrackerManager extends FormApplication {
   /**
@@ -110,7 +110,6 @@ export class ResourceTrackerManager extends FormApplication {
   constructor(options = {}) {
     super(options)
 
-    /** @type {import('./types.js').ResourceTrackerTemplate[]} */
     this._templates = ResourceTrackerManager.getAllTemplates()
   }
 
@@ -173,13 +172,13 @@ export class ResourceTrackerManager extends FormApplication {
 
     html.find('[name="name"]').click(async ev => {
       let index = parseInt($(ev.currentTarget).attr('data'))
-      let dialog = new ResourceTrackerEditor(JSON.parse(JSON.stringify(this._templates[index].tracker)))
-      let defaultClose = dialog.close
 
-      let tracker = await new Promise(resolve => {
-        dialog._updateTracker = () => {
+      let resolveTracker = () => {}
+
+      let dialog = new ResourceTrackerEditorV2(JSON.parse(JSON.stringify(this._templates[index].tracker)), {
+        onUpdate: editedTracker => {
           // validate that the new tracker's name and alias are unique
-          let newTracker = dialog._tracker
+          let newTracker = editedTracker
           let match = this._templates
             .filter((_, i) => i !== index)
             .some(
@@ -212,14 +211,19 @@ export class ResourceTrackerManager extends FormApplication {
               )
           }
 
-          resolve(dialog._tracker)
-        }
+          resolveTracker(newTracker)
+        },
+      })
+      let defaultClose = dialog.close
+
+      let tracker = await new Promise(resolve => {
+        resolveTracker = resolve
 
         dialog.close = () => {
           resolve(this._templates[index].tracker)
         }
 
-        dialog.render(true)
+        dialog.render({ force: true })
       })
 
       dialog.close = defaultClose

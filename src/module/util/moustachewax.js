@@ -10,6 +10,7 @@ import { extractOtfs } from '@util/otf.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import { isArray, isEmpty, quotedAttackName, recurselist, stripBracketContents, zeroFill } from '@util/utilities.js'
 
+import { constrastColor } from './constrast-color.js'
 import { multiplyDice } from './damage-utils.js'
 import { gurpslink } from './gurpslink.js'
 import { i18nFallback } from './i18nFallback.js'
@@ -1084,6 +1085,22 @@ ${content}
     console.log(text)
   })
 
+  Handlebars.registerHelper('tracker-style', function (color, _options) {
+    const contrastColor = constrastColor(color)
+    const id = _options.hash.id
+
+    return `
+      <style>
+        #${id}.ms-tracker-condition .text {
+          background-color: ${color};
+          color: ${contrastColor};
+        }
+        .theme-dark #${id}.ms-tracker-condition .text {
+          background-color: ${contrastColor};
+          color: ${color};
+        }
+      </style>`
+  })
   /**
    * Used to produce a foreground color which automatically contrasts against a provided
    * background color, using WCAG relative luminescence.
@@ -1094,19 +1111,7 @@ ${content}
    *  updated to match.
    */
   Handlebars.registerHelper('contrastColor', function (backgroundHex) {
-    const rgb = backgroundHex
-      .replace(/^#/, '')
-      .match(/.{2}/g)
-      .map(pair => parseInt(pair, 16) / 255)
-    const [red, green, blue] = rgb.map(channel =>
-      channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
-    )
-    const luminescence = 0.2126 * red + 0.7152 * green + 0.0722 * blue
-
-    const darkColor = '#1c1a17'
-    const lightColor = '#f8f6f2'
-
-    return luminescence > 0.179 ? darkColor : lightColor
+    return constrastColor(backgroundHex)
   })
 
   Handlebars.registerHelper('trackerTooltip', function (tracker, _options) {
@@ -1119,7 +1124,6 @@ ${content}
       const condition = foundry.utils.escapeHTML(String(descriptor.condition ?? ''))
 
       thresholds += `
-        <label></label>
         <label>${value}</label>
         <label>${condition}</label>`
     }

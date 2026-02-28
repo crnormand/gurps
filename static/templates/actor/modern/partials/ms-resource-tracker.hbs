@@ -11,7 +11,7 @@
   </div>
 
   <div class='ms-spinner'>
-    <button data-action='decreaseTracker' data-key='{{id}}'>
+    <button data-action='decreaseTracker' data-key='{{id}}' title='{{localize "GURPS.resourceTracker.viewer.decrement"}}'>
       <i class='fas fa-minus'></i>
     </button>
 
@@ -21,11 +21,11 @@
         value="{{value}}">
     </div>
 
-    <button data-action='increaseTracker' data-key='{{id}}'>
+    <button data-action='increaseTracker' data-key='{{id}}' title='{{localize "GURPS.resourceTracker.viewer.increment"}}'>
       <i class='fas fa-plus'></i>
     </button>
 
-    <button data-action='resetTracker' data-key='{{id}}'>
+    <button data-action='resetTracker' data-key='{{id}}' title='{{localize "GURPS.resourceTracker.viewer.reset"}}'>
       <i class='fas fa-rotate-left'></i>
     </button>
   </div>
@@ -34,16 +34,7 @@
     {{#if color}}
       {{!-- Inline style is necessary to apply the dynamic color value. The contrast helper is used to determine the
           appropriate text color based on the background color. --}}
-      <style>
-        #{{id}}.ms-tracker-condition .text {
-          background-color: {{color}};
-          color: {{contrastColor color}};
-        }
-        .theme-dark #{{id}}.ms-tracker-condition .text {
-          background-color: {{contrastColor color}};
-          color: {{color}};
-        }
-      </style>
+      {{{tracker-style color id=id}}}
     {{/if}}
 
     <span class='text' data-tooltip-html='{{{trackerTooltip this}}}'

@@ -8,8 +8,7 @@ import type {
   HandlebarsActorSheetV2Constructor,
 } from '@gurps-types/foundry/actor-sheet-v2.js'
 import { Application } from '@gurps-types/foundry/application.js'
-import { ResourceTracker } from '@module/resource-tracker/index.js'
-import { ThresholdDescriptor } from '@module/resource-tracker/resource-tracker.js'
+import { IThresholdDescriptor } from '@module/resource-tracker/index.js'
 import { getGame, getUser, isHTMLElement } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
@@ -60,27 +59,24 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
   tab?: Application.Tab
 }
 
-type TrackerThreshold = {
-  comparison: string
-  operator: string
-  value: number
-  condition: string
-  color: string
-}
-
 type PreparedTrackerData = {
-  key: string
   id: string
   name: string
   value: number
+  min: number
+  max: number
   condition: string
   color: string | null
   pdf: string
   alias: string
-  min: number
-  max: number
-  thresholds: TrackerThreshold[]
-  descriptors: ThresholdDescriptor[]
+  thresholds: {
+    comparison: string
+    operator: string
+    value: number
+    condition: string
+    color: string | null
+  }[]
+  descriptors: IThresholdDescriptor[]
 }
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
@@ -818,7 +814,6 @@ export class GurpsActorModernSheet extends SheetBase {
       const trackerId = String(tracker.id ?? key)
 
       preparedData.push({
-        key,
         id: trackerId,
         name: tracker.name ? game.i18n!.localize(tracker.name) : `${game.i18n!.localize('GURPS.resource')}[${index}]`,
         value: tracker.value,
@@ -828,16 +823,13 @@ export class GurpsActorModernSheet extends SheetBase {
         alias: tracker.alias || '',
         min: tracker.min,
         max: tracker.max,
-        thresholds: tracker.thresholds.map(
-          threshold =>
-            ({
-              comparison: threshold.comparison,
-              operator: threshold.operator,
-              value: threshold.value,
-              condition: threshold.condition,
-              color: threshold.color,
-            }) as TrackerThreshold
-        ),
+        thresholds: tracker.thresholds.map(threshold => ({
+          comparison: threshold.comparison,
+          operator: threshold.operator,
+          value: threshold.value,
+          condition: threshold.condition,
+          color: threshold.color,
+        })),
         descriptors: tracker.thresholdDescriptors || [],
       })
       index++
@@ -868,7 +860,7 @@ export class GurpsActorModernSheet extends SheetBase {
     } else if (target.dataset.action === 'increaseTracker') {
       newValue = tracker.isMaxEnforced ? Math.min(tracker.value + 1, tracker.max) : tracker.value + 1
     } else if (target.dataset.action === 'resetTracker') {
-      newValue = tracker.isAccumulator || tracker.isDamageTracker ? 0 : tracker.max
+      newValue = tracker.isAccumulator ? 0 : tracker.max
     } else {
       return
     }
@@ -887,9 +879,7 @@ export class GurpsActorModernSheet extends SheetBase {
 
     if (!tracker) return
 
-    const trackerModule: typeof ResourceTracker = GURPS.modules.ResourceTracker as typeof ResourceTracker
-
-    trackerModule.updateResourceTracker(this.actor, tracker)
+    GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
   }
 
   static async #onDeleteTracker(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {

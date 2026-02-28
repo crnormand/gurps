@@ -8,7 +8,6 @@ import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
-import { ResourceTracker } from '../resource-tracker/index.js'
 import { GgaContextMenuV2 } from '../ui/context-menu.js'
 
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
@@ -1164,7 +1163,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     // TODO: Refactor -- call a method on ResourceTracker Manager to delete the tracker, or return the template
     // to apply. This function would simply update the tracker with the new data (whether it was edited
     // or a template was applied).
-    let templates = ResourceTracker.TemplateManager.getAllTemplates()
+    let templates = GURPS.modules.ResourceTracker.TemplateManager.getAllTemplates()
 
     if (!templates || templates.length == 0) templates = null
 
@@ -1216,7 +1215,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
   async _editTracker(path) {
     let tracker = foundry.utils.getProperty(this.actor.system, path)
-    let dialog = new ResourceTracker.TrackerEditor(JSON.parse(JSON.stringify(tracker)))
+    let dialog = new GURPS.modules.ResourceTracker.TrackerEditor(JSON.parse(JSON.stringify(tracker)))
 
     dialog._updateTracker = async () => {
       let update = {}

@@ -62,7 +62,7 @@ interface ResourceTrackerModule extends GurpsModule {
   updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance, trackerId?: string): Promise<void>
 }
 
-export const ResourceTracker: ResourceTrackerModule = {
+export const ResourceTrackerModule: ResourceTrackerModule = {
   init,
   migrate,
   TemplateManager: ResourceTrackerManager,
@@ -70,3 +70,10 @@ export const ResourceTracker: ResourceTrackerModule = {
   TrackerEditorV2: ResourceTrackerEditorV2,
   updateResourceTracker,
 }
+
+export type {
+  IResourceTrackerThreshold,
+  IResourceTracker,
+  IResourceTrackerTemplate,
+  IThresholdDescriptor,
+} from './types.js'

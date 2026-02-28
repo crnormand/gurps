@@ -20,7 +20,6 @@ import { HitLocation } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
 import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
-import { ResourceTracker } from '../resource-tracker/index.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../util/damage-utils.js'
@@ -2766,7 +2765,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const currentTrackers: TrackerInstance[] = GurpsActorV2.getTrackersAsArray(this.system)
 
     const newTrackers: ResourceTrackerTemplate[] =
-      ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
+      GURPS.modules.ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
 
     // If no new trackers were added, nothing to do.
     if (newTrackers.length === 0) return

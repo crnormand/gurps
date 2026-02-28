@@ -1,0 +1,107 @@
+<div class='ms-tracker-editor ms-section'>
+  <header class='ms-header'>
+    <input type='text' value='{{tracker.name}}' class='ms-name-input' data-field='tracker.name' />
+    <label for='clear-button'><button id='clear-button' type='button' class='ms-button ms-delete-button'
+        data-action='clearTracker'>
+        <i class='fas fa-eraser'></i>
+      </button>{{localize 'GURPS.resourceTracker.editor.clear'}}</label>
+    <label for='clone-button'><button id='clone-button' type='button' class='ms-button ms-reset-button'
+        data-action='cloneTracker'>
+        <i class='fas fa-copy'></i>
+      </button>{{localize 'GURPS.resourceTracker.editor.clone'}}</label>
+  </header>
+
+  <section class='text-attributes'>
+    <label for='min'><input id='min' type='number' value='{{tracker.min}}' class='tracker-input'
+        data-field="tracker.min" />
+      {{localize 'GURPS.minimum'}}
+    </label>
+    <label for='max'><input id='max' type='number' value='{{tracker.max}}' class='tracker-input'
+        data-field="tracker.max" />
+      {{localize 'GURPS.maximum'}}
+    </label>
+    <label for='current'><input id='current' type='number' value='{{tracker.value}}' class='tracker-input'
+        data-field="tracker.value" />
+      {{localize 'GURPS.current'}}
+    </label>
+    <label for='pdf'><input id='pdf' type='text' value='{{tracker.pdf}}' class='tracker-input'
+        data-field="tracker.pdf" />
+      {{localize 'GURPS.reference'}}
+    </label>
+    <label for='alias'><input id='alias' type='text' value='{{tracker.alias}}' class='tracker-input'
+        data-field="tracker.alias" />
+      {{localize 'GURPS.alias'}}
+    </label>
+  </section>
+
+  <section class='checkbox-attributes'>
+    <label for='useBreakpoints'>
+      <input type='checkbox' id='useBreakpoints' name='useBreakpoints' {{checked tracker.useBreakpoints}}
+        data-field='tracker.useBreakpoints' />
+      {{localize 'GURPS.resourceUseBreakpoints'}}
+    </label>
+    <label for='enforce-minimum'>
+      <input type='checkbox' id='enforce-minimum' name='enforce-minimum' {{checked tracker.isMinEnforced}}
+        data-field='tracker.isMinEnforced' />
+      {{localize 'GURPS.resourceEnforceMinimum'}}
+    </label>
+    <label for='enforce-maximum'>
+      <input type='checkbox' id='enforce-maximum' name='enforce-maximum' {{checked tracker.isMaxEnforced}}
+        data-field='tracker.isMaxEnforced' />
+      {{localize 'GURPS.resourceEnforceMaximum'}}
+    </label>
+    <label for='isAccumulator'>
+      <input type='checkbox' id='isAccumulator' name='isAccumulator' {{checked tracker.isAccumulator}}
+        data-field='tracker.isAccumulator' />
+      {{localize 'GURPS.resourceIsAccumulator'}}
+    </label>
+    <label for='damage-type'>
+      <input type='checkbox' id='damage-type' name='damage-type' {{checked tracker.isDamageType}}
+        data-field='tracker.isDamageType' />
+      {{localize 'GURPS.resourceDamageType'}}
+    </label>
+  </section>
+
+  <section class='thresholds'>
+    <h3 class='section-header'>{{localize 'GURPS.resourceTracker.editor.thresholds'}}</h3>
+    <div class='threshold-list'>
+      <div class='current-value-header'>{{localize 'GURPS.resourceCurrentValue'}}</div>
+      <div class='header'>{{localize 'GURPS.condition'}}</div>
+      <div class='header'>{{localize 'GURPS.color'}}</div>
+      <div class="header"></div>
+
+      {{#each tracker.thresholds}}
+        <div class='current-value'>
+          <select data='{{@index}}' name='comparison' style='font-size: 120%;'>
+            <option value='>' {{select-if comparison '>'}}>&gt;</option>
+            <option value='≥' {{select-if comparison '≥'}}>&ge;</option>
+            <option value='<' {{select-if comparison '<'}}>&lt;</option>
+            <option value='≤' {{select-if comparison '≤'}}>&le;</option>
+          </select>
+          <select name='operator' data='{{@index}}'>
+            <option value='+' {{select-if operator '+'}}>{{localize 'GURPS.max'}} &plus;</option>
+            <option value='−' {{select-if operator '−'}}>{{localize 'GURPS.max'}} &minus;</option>
+            <option value='×' {{select-if operator '×'}}>{{localize 'GURPS.max'}} &times;</option>
+            <option value='÷' {{select-if operator '÷'}}>{{localize 'GURPS.max'}} &divide;</option>
+          </select>
+          <input type='text' name='value' data='{{@index}}' value='{{value}}' />
+        </div>
+        <input type='text' name='condition' data='{{@index}}' value='{{condition}}' />
+        <input type='color' name='color' data='{{@index}}' value='{{color}}' />
+        <i class='fas fa-trash ms-action-btn ms-delete' data-action='deleteThreshold' data-key='{{@index}}'
+          title='{{localize 'GURPS.delete'}}'></i>
+      {{/each}}
+    </div>
+    <footer>
+      <div class="ms-add-row">
+        <span class="ms-add-btn" data-action="addThreshold"><i
+            class="fas fa-plus"></i>{{localize 'GURPS.threshold'}}</span>
+      </div>
+    </footer>
+  </section>
+
+  <footer class='ms-footer'>
+    <button type='button' class='ms-button ms-save-button'>{{localize 'GURPS.saveChanges'}}</button>
+    <button type='button' class='ms-button ms-cancel-button'>{{localize 'GURPS.cancel'}}</button>
+  </footer>
+</div>

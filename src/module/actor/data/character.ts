@@ -61,7 +61,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         HitLocation: 'system.hitlocationsV2',
         Note: 'system.allNotes',
         MoveMode: `system.moveV2`,
-        ResourceTracker: `system.additionalresources.tracker`,
+        TrackerInstance: `system.additionalresources.tracker`,
       },
       type: 'base',
     }
