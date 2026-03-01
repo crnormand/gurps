@@ -51,6 +51,8 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
       clearTracker: ResourceTrackerEditorV2.#onClearTracker,
       cloneTracker: ResourceTrackerEditorV2.#onCloneTracker,
       deleteThreshold: ResourceTrackerEditorV2.#onDeleteThreshold,
+      clearColor: ResourceTrackerEditorV2.#onClearColor,
+      setColor: ResourceTrackerEditorV2.#onSetColor,
       addThreshold: ResourceTrackerEditorV2.#onAddThreshold,
     },
   }
@@ -143,6 +145,33 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
     await this.render({ force: true })
   }
 
+  static async #onClearColor(this: ResourceTrackerEditorV2, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event.preventDefault()
+
+    const key = target.dataset.key
+    const index = Number.parseInt(key ?? '-1', 10)
+
+    if (!Array.isArray(this.#tracker.thresholds) || index < 0 || index >= this.#tracker.thresholds.length) return
+
+    this.#tracker.thresholds[index]!.color = null
+
+    await this.render({ force: true })
+  }
+
+  static async #onSetColor(this: ResourceTrackerEditorV2, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event.preventDefault()
+
+    const key = target.dataset.key
+    const index = Number.parseInt(key ?? '-1', 10)
+
+    if (!Array.isArray(this.#tracker.thresholds) || index < 0 || index >= this.#tracker.thresholds.length) return
+
+    // Set a default color (white) when enabling the color picker
+    this.#tracker.thresholds[index]!.color = '#ffffff'
+
+    await this.render({ force: true })
+  }
+
   static async #onAddThreshold(this: ResourceTrackerEditorV2, _event: PointerEvent): Promise<void> {
     if (!Array.isArray(this.#tracker.thresholds)) this.#tracker.thresholds = []
 
@@ -151,7 +180,7 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
       operator: TrackerOperators.MULTIPLY,
       value: 1,
       condition: game.i18n!.localize('GURPS.normal'),
-      color: '#000000',
+      color: null,
     } as TrackerInstance['thresholds'][number])
 
     await this.render({ force: true })

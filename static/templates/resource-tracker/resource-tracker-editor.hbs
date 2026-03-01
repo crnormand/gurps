@@ -77,7 +77,8 @@
   <div class='ms-content'>
     <section class='thresholds ms-section'>
       <h3 class='section-header'><i class="fa-solid fa-temperature-list"></i>
-        {{localize 'GURPS.resourceTracker.editor.thresholds'}}</h3>
+        {{localize 'GURPS.resourceTracker.editor.thresholds'}}
+      </h3>
       <div class='threshold-list'>
         <div class='ms-table-header'>{{localize 'GURPS.resourceCurrentValue'}}</div>
         <div class='ms-table-header'>{{localize 'GURPS.condition'}}</div>
@@ -101,7 +102,17 @@
             <input type='text' name='value' data='{{@index}}' value='{{value}}' />
           </div>
           <input type='text' name='condition' data='{{@index}}' value='{{condition}}' />
-          <input type='color' name='color' data='{{@index}}' value='{{color}}' />
+          <div class='color-input-group'>
+            {{#if color}}
+              <input type='color' name='color' data='{{@index}}' value='{{color}}' />
+              <i class='fas fa-multiply ms-action-btn' data-action='clearColor' data-key='{{@index}}'
+                data-tooltip='{{localize "GURPS.resourceTracker.editor.clearColor"}}'></i>
+            {{else}}
+              <span class='color-none'>{{localize "GURPS.resourceTracker.editor.noColor"}}</span>
+              <i class='fas fa-palette ms-action-btn' data-action='setColor' data-key='{{@index}}'
+                data-tooltip='{{localize "GURPS.resourceTracker.editor.setColor"}}'></i>
+            {{/if}}
+          </div>
           <i class='fas fa-trash ms-action-btn ms-delete' data-action='deleteThreshold' data-key='{{@index}}'
             title='{{localize 'GURPS.delete'}}'></i>
         {{/each}}
@@ -116,7 +127,9 @@
   </div>
 
   <footer class='ms-footer'>
-    <button type='button' class='ms-button ms-cancel-button'><i class="fa-solid fa-ban"></i>{{localize 'GURPS.cancel'}}</button>
-    <button type='button' class='ms-button ms-save-button'><i class="fa-solid fa-floppy-disk"></i>{{localize 'GURPS.update'}}</button>
+    <button type='button' class='ms-button ms-cancel-button'><i
+        class="fa-solid fa-ban"></i>{{localize 'GURPS.cancel'}}</button>
+    <button type='button' class='ms-button ms-save-button'><i
+        class="fa-solid fa-floppy-disk"></i>{{localize 'GURPS.update'}}</button>
   </footer>
 </div>

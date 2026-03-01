@@ -221,7 +221,7 @@ const resourceTrackerThresholdSchema = () => {
     operator: new fields.StringField({ required: true, nullable: false }),
     value: new fields.NumberField({ required: true, nullable: false }),
     condition: new fields.StringField({ required: true, nullable: false }),
-    color: new fields.StringField({ required: true, nullable: false }),
+    color: new fields.StringField({ required: true, nullable: true, initial: null }),
   }
 }
 
