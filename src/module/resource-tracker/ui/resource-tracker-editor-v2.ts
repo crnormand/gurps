@@ -33,11 +33,11 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
     id: 'resource-tracker-editor-v2',
     tag: 'form',
     position: {
-      width: 400,
+      width: 500,
       height: 'auto',
     },
     window: {
-      title: game.i18n?.localize('GURPS.resourceTracker.editor.title') ?? '',
+      title: 'GURPS.resourceTracker.editor.title',
       resizable: true,
     },
     form: {

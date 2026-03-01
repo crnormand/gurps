@@ -4,15 +4,16 @@
 
   .ms-header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 16px;
+    gap: var(--ms-space-6);
+    margin-bottom: var(--ms-space-6);
 
     .ms-name-input {
-      font-size: var(--ms-font-lg);
+      font-size: var(--ms-font-xl);
       font-weight: var(--ms-weight-semibold);
+      flex-basis: 100%;
       border: none;
       background: transparent;
       color: var(--ms-text-primary);
@@ -24,9 +25,93 @@
     label {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--ms-space-2);
       font-size: var(--ms-font-sm);
       color: var(--ms-text-muted);
+    }
+  }
+
+  .ms-content {
+    display: flex;
+    gap: var(--ms-gap);
+    margin: 0 var(--ms-gap);
+
+    section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--ms-space-4);
+      justify-content: space-between;
+
+      h3 {
+        font-size: var(--ms-font-lg);
+        padding-bottom: var(--ms-space-3);
+        border-bottom: 1px solid var(--ms-border-light);
+        font-weight: var(--ms-weight-semibold);
+        color: var(--ms-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+
+        i {
+          color: var(--ms-accent);
+        }
+      }
+    }
+
+    .ms-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--ms-space-1);
+
+      label {
+        font-size: var(--ms-font-xs);
+        color: var(--ms-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      input {
+        width: 100%;
+      }
+    }
+
+    .threshold-list {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: var(--ms-space-2) var(--ms-space-6);
+      font-size: var(--ms-font-xs);
+      align-items: center;
+
+      .ms-table-header {
+        font-size: var(--ms-font-sm);
+        color: var(--ms-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border-bottom: 1px solid var(--ms-border-light);
+        text-align: center;
+      }
+
+      .current-value {
+        display: inline-grid;
+        grid-template-columns: auto auto auto auto;
+        gap: var(--ms-space-1);
+
+        input {
+          max-width: 4rem;
+        }
+      }
+    }
+  }
+
+  .ms-footer {
+    display: flex;
+    flex-direction: row;
+    gap: var(--ms-gap);
+    margin-bottom: var(--ms-space-6);
+
+    button {
+      flex: 1;
+      text-transform: uppercase;
     }
   }
 }

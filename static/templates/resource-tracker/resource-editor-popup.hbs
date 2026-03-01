@@ -13,7 +13,7 @@
           <input class='current gcs-input' type='text' value='{{tracker.value}}' data-dtype='Number' />
           <div class='label'>{{localize 'GURPS.current'}}</div>
           <input class='alias gcs-input' type='text' value='{{tracker.alias}}' />
-          <div class='label'>{{localize 'GURPS.resourceTemplateAlias'}}</div>
+          <div class='label'>{{localize 'GURPS.resourceTracker.editor.alias'}}</div>
         </div>
 
         <div class='inputs' style='margin: 0;'>
@@ -25,7 +25,7 @@
                 {{checked tracker.isMinimumEnforced}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
               />
-              {{localize 'GURPS.resourceEnforceMinimum'}}
+              {{localize 'GURPS.resourceTracker.editor.enforceMin'}}
             </label>
           </div>
           <div style='grid-column: 1 / span 2; white-space: normal'>
@@ -36,7 +36,7 @@
                 {{checked tracker.isMaximumEnforced}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
               />
-              {{localize 'GURPS.resourceEnforceMaximum'}}
+              {{localize 'GURPS.resourceTracker.editor.enforceMax'}}
             </label>
           </div>
           <div style='grid-column: 1 / span 2; white-space: normal'>

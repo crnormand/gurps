@@ -1116,9 +1116,9 @@
       "costNotApplied": "The cost ({points} energy) was not applied to any resource.",
       "costNotAppliedNoActor": "The cost ({points} energy) was not applied. No actor selected.",
       "costNotAppliedNoPools": "No valid resource pool found to apply the cost ({points} points).",
+      "resourceNotFound": "Resource '{resource}' not found on this actor.",
       "selectEnergyPool": "Select Energy Pool",
       "selectEnergyPoolDetail": "Select the resource to apply the cost to:",
-      "resourceNotFound": "Resource '{resource}' not found on this actor.",
       "trackerNotFound": "Tracker '{tracker}' not found on this actor."
     },
     "OTFormulasEvent": "OTF Formulas",
@@ -1227,28 +1227,14 @@
     },
     "resolveDiceRoll": "What Did You Roll?",
     "resource": "Resource",
-    "resourceTracker": {
-      "editor": {
-        "clear": "Clear Tracker configuration",
-        "clone": "Clone a Template"
-      },
-      "viewer": {
-        "increment": "+1",
-        "decrement": "-1",
-        "reset": "Reset"
-      }
-    },
     "resourceCopyTemplate": "Copy Template",
     "resourceCurrentValue": "Current Value",
     "resourceDamageTracker": "Damage Tracker (damage adds to value).",
     "resourceDamageType": "Use as Damage Type",
     "resourceDeleteTracker": "Delete Tracker",
     "resourceEditTracker": "Edit Tracker",
-    "resourceEnforceMaximum": "Enforce Maximum",
-    "resourceEnforceMinimum": "Enforce Minimum",
     "resourceInvalidAlias": "Invalid alias [{alias}].<br/>Only alphabet and number characters, plus ('+', '_', and '-'), are allowed.",
     "resourcesModsTab": "Resources and Modifiers",
-    "resourceTemplateAlias": "Alias",
     "resourceTemplateButton": "View and Edit Trackers",
     "resourceTemplateClickToAdd": "Click the '+' button to add a template.",
     "resourceTemplateHint": "Use this to create, reuse, and automatically apply Resource Trackers to character sheets.",
@@ -1256,6 +1242,27 @@
     "resourceTemplateManager": "Resource Tracker Manager",
     "resourceTemplateName": "Template Name",
     "resourceTemplateTitle": "Resource Tracker Templates",
+    "resourceTracker": {
+      "editor": {
+        "alias": "Alias",
+        "clear": "Clear Tracker Configuration",
+        "clone": "Clone a Template",
+        "enforceMax": "Enforce Maximum",
+        "enforceMin": "Enforce Minimum",
+        "isAccumulator": "Is Accumulator",
+        "maximum": "Maximum",
+        "minimum": "Minimum",
+        "threshold": "Threshold",
+        "thresholds": "Thresholds",
+        "title": "Resource Tracker Editor",
+        "useBreakpoints": "Use Breakpoints"
+      },
+      "viewer": {
+        "decrement": "-1",
+        "increment": "+1",
+        "reset": "Reset"
+      }
+    },
     "resourceTrackerEditor": "Resource Tracker Editor",
     "resourceTrackers": "Resource Trackers",
     "resourceUndefined": "None Defined",
