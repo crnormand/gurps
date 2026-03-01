@@ -23,7 +23,6 @@ function convertOldSettings(
 
   const newTemplates: Record<string, ResourceTrackerTemplate> = {}
 
-  // Copy each field of oldTemplates to newTemplates, converting "slot" to "autoapply" if needed
   for (const oldTemplate of objectToArray(oldTemplates)) {
     const newTemplate = new ResourceTrackerTemplate({
       tracker: {
@@ -34,6 +33,21 @@ function convertOldSettings(
       initialValue: oldTemplate.initialValue,
       autoapply: !!oldTemplate.slot,
     })
+
+    // remove old slot field if it exists
+    if ('slot' in newTemplate) {
+      delete (newTemplate as Record<string, unknown>).slot
+    }
+
+    // remove old isDamageTracker field if it exists
+    if ('isDamageTracker' in newTemplate.tracker) {
+      delete (newTemplate.tracker as Record<string, unknown>).isDamageTracker
+    }
+
+    // remove old breakpoints field if it exists
+    if ('breakpoints' in newTemplate.tracker) {
+      delete (newTemplate.tracker as Record<string, unknown>).breakpoints
+    }
 
     newTemplates[oldTemplate.tracker.name] = newTemplate
   }

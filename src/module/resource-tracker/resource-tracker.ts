@@ -240,19 +240,16 @@ class ResourceTrackerTemplate
   get name(): string {
     return this.tracker.name
   }
-
-  get id(): string {
-    return this.tracker._id
-  }
 }
 
 /* ---------------------------------------- */
 
 const resourceTrackerTemplateSchema = () => {
   return {
+    id: new fields.StringField({ required: true, nullable: false }),
     tracker: new fields.EmbeddedDataField(TrackerInstance, { required: true, nullable: false }),
-    initialValue: new fields.StringField({ required: true, nullable: false }),
-    autoapply: new fields.BooleanField({ required: true, nullable: true, initial: false }),
+    initialValue: new fields.StringField({ required: true, nullable: true, initial: null }),
+    autoapply: new fields.BooleanField({ required: true, nullable: false, initial: false }),
   }
 }
 

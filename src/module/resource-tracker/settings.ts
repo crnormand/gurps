@@ -1,4 +1,4 @@
-import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import { ResourceTrackerManager } from './resource-tracker-manager.ts'
 import { SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.ts'
 
 export async function initializeSettings() {
@@ -19,8 +19,6 @@ export async function initializeSettings() {
     scope: 'world',
     config: false,
     type: Object as any,
-    // Copy the old settings to the new one.
-    // TODO Reset to this when the setting is removed: `ResourceTrackerManager.getDefaultTemplates()`
     default: ResourceTrackerManager.getDefaultTemplates(),
     onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
   })

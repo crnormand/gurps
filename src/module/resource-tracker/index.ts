@@ -2,7 +2,7 @@ import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { migrate } from './migration.ts'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
-import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import { ResourceTrackerManager } from './resource-tracker-manager.ts'
 import { TrackerInstance } from './resource-tracker.ts'
 import { initializeSettings } from './settings.ts'
 import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.ts'
@@ -16,7 +16,7 @@ function init() {
     await migrate()
 
     // get all aliases defined in the resource tracker templates and register them as damage types
-    const resourceTrackers = ResourceTrackerManager.getAllTemplates()
+    const resourceTrackers = Object.values(ResourceTrackerManager.getAllTemplatesMap())
       .filter(it => !!it.tracker.isDamageType)
       .filter(it => !!it.tracker.alias)
       .map(it => it.tracker)

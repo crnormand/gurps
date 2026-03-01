@@ -2,11 +2,12 @@ import { DeepPartial } from 'fvtt-types/utils'
 
 import { ResourceTrackerManager } from '../resource-tracker-manager.js'
 import { TrackerInstance } from '../resource-tracker.js'
-import { TrackerComparators, TrackerOperators } from '../resource-tracker.ts'
-import { IResourceTracker, IResourceTrackerTemplate } from '../types.ts'
+import { TrackerComparators, TrackerOperators } from '../resource-tracker.js'
+import { IResourceTracker, IResourceTrackerTemplateMap } from '../types.js'
 
 type ResourceTrackerEditorV2Options = DeepPartial<foundry.applications.api.ApplicationV2.Configuration> & {
   onUpdate?: (trackerData: IResourceTracker) => Promise<void> | void
+  onCancel?: () => void
 }
 
 type ResourceTrackerContext = foundry.applications.api.ApplicationV2.RenderContext & {
@@ -18,14 +19,17 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
 ) {
   #tracker!: IResourceTracker
   #onUpdate?: (trackerData: IResourceTracker) => Promise<void> | void
+  #onCancel?: () => void
+  #didSave = false
 
   constructor(tracker: IResourceTracker, options: ResourceTrackerEditorV2Options = {}) {
-    const { onUpdate, ...appOptions } = options
+    const { onUpdate, onCancel, ...appOptions } = options
 
     super(appOptions)
 
     this.#tracker = tracker
     this.#onUpdate = onUpdate
+    this.#onCancel = onCancel
   }
 
   static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
@@ -81,6 +85,14 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
     this.#bindFooterActions()
   }
 
+  override _onClose(options: any): void {
+    super._onClose(options)
+
+    if (!this.#didSave) {
+      this.#onCancel?.()
+    }
+  }
+
   static async #onClearTracker(this: ResourceTrackerEditorV2, _event: PointerEvent): Promise<void> {
     this.#tracker.value = 0
     this.#tracker.max = 0
@@ -102,12 +114,12 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
    * tracker with the selected template's data.
    */
   static async #onCloneTracker(this: ResourceTrackerEditorV2, _event: PointerEvent): Promise<void> {
-    const templates = ResourceTrackerManager.getAllTemplates()
+    const templates = ResourceTrackerManager.getAllTemplatesMap()
     const selectedId = await selectTemplate(templates)
 
     if (!selectedId) return
 
-    const selectedTemplate = templates.find(template => (template._id ?? template.id) === selectedId)
+    const selectedTemplate = templates[selectedId]
 
     if (!selectedTemplate || !selectedTemplate.tracker) return
 
@@ -148,21 +160,10 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
   async _updateTracker(_html?: HTMLElement): Promise<void> {
     // If an onUpdate callback was provided, call it with the current tracker data. This allows the parent component to
     // decide what to do with the updated tracker data (e.g. save it to a document, update multiple documents, etc...).
-    // If no onUpdate callback was provided, we'll attempt to call an update method on the tracker itself (if it
-    // exists), which allows for some flexibility in how the tracker data is persisted without tightly coupling this
-    // editor to a specific data model or persistence strategy.
     if (this.#onUpdate) {
       await this.#onUpdate(this.#tracker)
 
       return
-    }
-
-    const mutableTracker = this.#tracker as unknown as {
-      update?: (changes: Partial<TrackerInstance>) => Promise<unknown>
-    }
-
-    if (typeof mutableTracker.update === 'function') {
-      await mutableTracker.update(this.#tracker as Partial<TrackerInstance>)
     }
   }
 
@@ -224,6 +225,8 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
 
     root.querySelector('.ms-save-button')?.addEventListener('click', async () => {
       await this._updateTracker(root)
+
+      this.#didSave = true
       await this.close()
     })
 
@@ -243,17 +246,24 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
   }
 }
 
-async function selectTemplate(templates: IResourceTrackerTemplate[]): Promise<string | null> {
-  if (!templates.length) return null
+async function selectTemplate(templates: IResourceTrackerTemplateMap): Promise<string | null> {
+  const templateEntries = Object.entries(templates)
 
-  const templateOptions = templates
-    .filter(template => !!template.id)
-    .map(template => {
+  if (!templateEntries.length) return null
+
+  const templateOptions = templateEntries
+    .map(([key, template]) => {
+      // const id = template.id || key
+      const id = key
+
+      if (!id) return null
+
       return {
-        id: template.id,
-        label: template.name ?? template.tracker?.name ?? template.id,
-      } as { id: string; label: string }
+        id,
+        label: template.name ?? template.tracker?.name ?? id,
+      }
     })
+    .filter((option): option is { id: string; label: string } => option !== null)
 
   if (!templateOptions.length) return null
 

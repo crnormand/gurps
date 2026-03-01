@@ -364,11 +364,13 @@
       font-style: italic;
 
       span.text {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         font-style: normal;
-        font-weight: normal;
+        font-weight: var(--ms-weight-semibold);
         line-height: inherit;
-        min-height: calc(2px + 1.5em);
+        min-height: calc(2px + 1.5rem);
         color: var(--ms-text);
         background-color: var(--ms-accent-light);
         border-color: var(--ms-border);
@@ -382,7 +384,6 @@
         .glinkmod {
           font-weight: inherit;
           font-size: var(--ms-font-xs);
-          background: transparent;
         }
       }
     }
@@ -439,8 +440,8 @@ aside div.tracker-tooltip {
   cursor: text;
   padding: var(--ms-space-3);
 
-  > .glinkmod,
-  > .gurpslink {
+  >.glinkmod,
+  >.gurpslink {
     color: var(--ms-accent);
     cursor: pointer;
     font-weight: bold;

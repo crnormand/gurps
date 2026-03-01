@@ -6,8 +6,8 @@ import type GurpsActiveEffect from '@module/effects/active-effect.js'
 import type { EquipmentModel, SkillModel, SpellModel, TraitModel } from '@module/item/data/index.js'
 import type { GurpsItemV2 } from '@module/item/gurps-item.js'
 import type { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
+import { IResourceTrackerTemplate } from '@module/resource-tracker/index.js'
 import type { ResourceTrackerManager } from '@module/resource-tracker/resource-tracker-manager.js'
-import type { ResourceTrackerTemplate } from '@module/resource-tracker/resource-tracker.js'
 import type { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import type { GurpsToken } from '@module/token/gurps-token.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -115,7 +115,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.portrait-path': 'global' | 'world'
     'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
     'gurps.resource-tracker.manager': new (options?: any) => ResourceTrackerManager
-    'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
+    'gurps.resource-tracker.templates': Record<string, IResourceTrackerTemplate>
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
     'gurps.portrait-hp-tinting': boolean
@@ -158,7 +158,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.overwrite-portraitsk': boolean
     'gurps.pdf-open-first': boolean
     'gurps.show-the-math': boolean
-    'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
+    'gurps.tracker-templates': new (options?: any) => Record<string, IResourceTrackerTemplate>
     'gurps.use-browser-importer': boolean
     'gurps.use-size-modifier-difference-in-melee': boolean
     'gurps.automatic-encumbrance': boolean

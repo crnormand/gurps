@@ -1,7 +1,3 @@
-// TODO New setting names:
-// - SETTING_TRACKER_DEFAULT_EDITOR ('tracker-manager') becomes 'tracker.manager'
-// - SETTING_TRACKER_TEMPLATES ('tracker-templates') becomes 'tracker.templates'
-
 // README: By Convention, settings should be prefixed with the module name.
 const SettingPrefix = 'resource-tracker'
 
@@ -34,10 +30,14 @@ export interface IResourceTracker {
 }
 
 export interface IResourceTrackerTemplate {
-  id: string
-  name: string
   tracker: IResourceTracker
+  autoapply: boolean
+  initialValue: string | null
+  name: string
+  id: string
 }
+
+export type IResourceTrackerTemplateMap = Record<string, IResourceTrackerTemplate>
 
 export interface IThresholdDescriptor {
   value: number

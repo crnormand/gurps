@@ -22,7 +22,7 @@
             <!-- tracker.name -->
             <input
               name='name'
-              data='{{@index}}'
+              data='{{@key}}'
               class='gcs-input clickable'
               type='text'
               readonly
@@ -30,16 +30,16 @@
               placeholder='{{localize "GURPS.clickToEdit"}}'
             />
             <!-- tracker.alias -->
-            <input name='alias' data='{{@index}}' class='gcs-input' type='text' readonly value='{{tracker.alias}}' />
+            <input name='alias' data='{{@key}}' class='gcs-input' type='text' readonly value='{{tracker.alias}}' />
 
             <!-- slot -->
-            <input name='autoapply' type='checkbox' data='{{@index}}' {{checked autoapply}} />
+            <input name='autoapply' type='checkbox' data='{{@key}}' {{checked autoapply}} />
 
             <!-- initialValue -->
-            <input name='initial-value' data='{{@index}}' class='gcs-input' type='text' value='{{initialValue}}' />
+            <input name='initial-value' data='{{@key}}' class='gcs-input' type='text' value='{{initialValue}}' />
 
             <div class='vertical-center'>
-              <a name='delete-template' data='{{@index}}' class='button icon'><i class='fas fa-trash'></i></a>
+              <a name='delete-template' data='{{@key}}' class='button icon'><i class='fas fa-trash'></i></a>
             </div>
           {{/each}}
         </div>
