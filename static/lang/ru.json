@@ -846,6 +846,12 @@
     "melee": "Ближний бой",
     "meleeAttack": "Атака в ближнем бою",
     "meleeWeapons": "Контактное оружие",
+    "migration": {
+      "migrationItem": {
+        "name": "The Everything Holder",
+        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+      }
+    },
     "minDamageRule": "Мин. урон:",
     "minimum": "Минимальный",
     "minimumDamageRule": "* — Применено правило минимального урона.",
@@ -1110,9 +1116,9 @@
       "costNotApplied": "Стоимость ({points} энергии) не была применена ни к одному ресурсу.",
       "costNotAppliedNoActor": "Стоимость ({points} энергии) не была применена. Актер не выбран.",
       "costNotAppliedNoPools": "Не найден подходящий пул ресурсов для применения стоимости ({points} очков).",
+      "resourceNotFound": "Ресурс '{resource}' не найден у этого актёра.",
       "selectEnergyPool": "Выбрать пул энергии",
       "selectEnergyPoolDetail": "Выберите ресурс для применения стоимости:",
-      "resourceNotFound": "Ресурс '{resource}' не найден у этого актёра.",
       "trackerNotFound": "Счётчик '{tracker}' не найден на этом актёре."
     },
     "OTFormulasEvent": "Формулы OTF",
@@ -1236,6 +1242,30 @@
     "resourceTemplateManager": "Менеджер счётчика ресурсов",
     "resourceTemplateName": "Название ресурса",
     "resourceTemplateTitle": "Шаблоны Счётчика ресурсов",
+    "resourceTracker": {
+      "editor": {
+        "alias": "Alias",
+        "clear": "Clear Tracker Configuration",
+        "clearColor": "Clear Color",
+        "clone": "Clone a Template",
+        "enforceMax": "Enforce Maximum",
+        "enforceMin": "Enforce Minimum",
+        "isAccumulator": "Is Accumulator",
+        "maximum": "Maximum",
+        "minimum": "Minimum",
+        "noColor": "(none)",
+        "setColor": "Set Color",
+        "threshold": "Threshold",
+        "thresholds": "Thresholds",
+        "title": "Resource Tracker Editor",
+        "useBreakpoints": "Use Breakpoints"
+      },
+      "viewer": {
+        "decrement": "-1",
+        "increment": "+1",
+        "reset": "Reset"
+      }
+    },
     "resourceTrackerEditor": "Редактор Счётчика ресурсов",
     "resourceTrackers": "Счётчик ресурсов",
     "resourceUndefined": "Не определено",
@@ -1508,6 +1538,7 @@
       "Fall": "Падает",
       "Fly": "Полёт",
       "Grapple": "Схвачен",
+      "Healthy": "Healthy",
       "Kneel": "На колене",
       "MildPain": "Лёгкая боль",
       "ModeratePain2": "Средняя боль (-2)",
@@ -1517,6 +1548,7 @@
       "Poison": "Отравление",
       "Prone": "Лежит",
       "Reeling": "Измотан",
+      "Rested": "Rested",
       "Retching": "Рвота",
       "SeverePain4": "Серьёзная боль (-4)",
       "SeverePain5": "Серьёзная боль (-5)",
@@ -1530,10 +1562,8 @@
       "Suffocate": "Удушье",
       "TerriblePain": "Ужасная боль",
       "Tipsy": "Поддатость",
-      "Wait": "Ожидание",
-      "Healthy": "Healthy",
-      "Rested": "Rested",
-      "Tired": "Tired"
+      "Tired": "Tired",
+      "Wait": "Ожидание"
     },
     "step": "Шаг",
     "stepOrTwo": "Шаг или два",
@@ -1603,36 +1633,6 @@
     "yard": "ярд",
     "yards": "ярды",
     "years": "лет",
-    "migration": {
-      "migrationItem": {
-        "name": "The Everything Holder",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
-      }
-    },
-    "resourceTracker": {
-      "editor": {
-        "alias": "Alias",
-        "clear": "Clear Tracker Configuration",
-        "clearColor": "Clear Color",
-        "clone": "Clone a Template",
-        "enforceMax": "Enforce Maximum",
-        "enforceMin": "Enforce Minimum",
-        "isAccumulator": "Is Accumulator",
-        "maximum": "Maximum",
-        "minimum": "Minimum",
-        "noColor": "(none)",
-        "setColor": "Set Color",
-        "threshold": "Threshold",
-        "thresholds": "Thresholds",
-        "title": "Resource Tracker Editor",
-        "useBreakpoints": "Use Breakpoints"
-      },
-      "viewer": {
-        "decrement": "-1",
-        "increment": "+1",
-        "reset": "Reset"
-      }
-    },
     "youDoNotHavePermssion": "You do not have permission to do that."
   },
   "TYPES": {

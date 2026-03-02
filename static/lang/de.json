@@ -6,8 +6,8 @@
     "acc": "ZG",
     "accForWeapon": "ZG für {weapon}",
     "active": "Aktiv",
-    "activeEffects": "Aktive Effekte",
     "activeEffect": "Aktiver Effekt",
+    "activeEffects": "Aktive Effekte",
     "actor": {
       "setting": {}
     },
@@ -846,6 +846,12 @@
     "melee": "Nahkampf",
     "meleeAttack": "Nahkampf Angriff",
     "meleeWeapons": "Nahkampfwaffe",
+    "migration": {
+      "migrationItem": {
+        "name": "The Everything Holder",
+        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+      }
+    },
     "minDamageRule": "Min. Schaden:",
     "minimum": "Minimum",
     "minimumDamageRule": "* — Minimum damage Regel angewandt.",
@@ -1110,9 +1116,9 @@
       "costNotApplied": "Die Kosten ({points} Energie) wurden auf keine Ressource angewendet.",
       "costNotAppliedNoActor": "Die Kosten ({points} Energie) wurden nicht angewendet. Kein Akteur ausgewählt.",
       "costNotAppliedNoPools": "Kein brauchbarer Ressourcenpool gefunden, um die Kosten ({points} Punkte) anzuwenden.",
+      "resourceNotFound": "Ressource '{resource}' auf diesem Akteur nicht gefunden.",
       "selectEnergyPool": "Energiepuffer auswählen",
       "selectEnergyPoolDetail": "Wählen Sie die Ressource aus, auf die die Kosten angewendet werden sollen:",
-      "resourceNotFound": "Ressource '{resource}' auf diesem Akteur nicht gefunden.",
       "trackerNotFound": "Tracker '{tracker}' auf diesem Akteur nicht gefunden."
     },
     "OTFormulasEvent": "OTF Formeln",
@@ -1236,6 +1242,30 @@
     "resourceTemplateManager": "Ressourcen Anzeigen Verwaltung",
     "resourceTemplateName": "Ressourcen Name",
     "resourceTemplateTitle": "Ressourcen Anzeigen Vorlagen",
+    "resourceTracker": {
+      "editor": {
+        "alias": "Alias",
+        "clear": "Clear Tracker Configuration",
+        "clearColor": "Clear Color",
+        "clone": "Clone a Template",
+        "enforceMax": "Enforce Maximum",
+        "enforceMin": "Enforce Minimum",
+        "isAccumulator": "Is Accumulator",
+        "maximum": "Maximum",
+        "minimum": "Minimum",
+        "noColor": "(none)",
+        "setColor": "Set Color",
+        "threshold": "Threshold",
+        "thresholds": "Thresholds",
+        "title": "Resource Tracker Editor",
+        "useBreakpoints": "Use Breakpoints"
+      },
+      "viewer": {
+        "decrement": "-1",
+        "increment": "+1",
+        "reset": "Reset"
+      }
+    },
     "resourceTrackerEditor": "Ressourcen Anzeigen Editor",
     "resourceTrackers": "Ressourcen Anzeige",
     "resourceUndefined": "Nicht definiert",
@@ -1507,6 +1537,7 @@
       "Fall": "Fallend",
       "Fly": "Fliegend",
       "Grapple": "Ergriffen",
+      "Healthy": "Healthy",
       "Kneel": "Kniend",
       "MildPain": "Leichte Schmerzen",
       "ModeratePain2": "Mäßige Schmerzen (-2)",
@@ -1516,6 +1547,7 @@
       "Poison": "Vergiftet",
       "Prone": "Liegend",
       "Reeling": "Schwankend",
+      "Rested": "Rested",
       "Retching": "Würgend",
       "SeverePain4": "Starke Schmerzen (-4)",
       "SeverePain5": "Starke Schmerzen (-5)",
@@ -1529,10 +1561,8 @@
       "Suffocate": "Erstickend",
       "TerriblePain": "Furchtbare Schmerzen",
       "Tipsy": "Angetrunken",
-      "Wait": "Wartend",
-      "Healthy": "Healthy",
-      "Rested": "Rested",
-      "Tired": "Tired"
+      "Tired": "Tired",
+      "Wait": "Wartend"
     },
     "step": "Schritt",
     "stepOrTwo": "Schritt oder zwei",
@@ -1601,36 +1631,6 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "migration": {
-      "migrationItem": {
-        "name": "The Everything Holder",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
-      }
-    },
-    "resourceTracker": {
-      "editor": {
-        "alias": "Alias",
-        "clear": "Clear Tracker Configuration",
-        "clearColor": "Clear Color",
-        "clone": "Clone a Template",
-        "enforceMax": "Enforce Maximum",
-        "enforceMin": "Enforce Minimum",
-        "isAccumulator": "Is Accumulator",
-        "maximum": "Maximum",
-        "minimum": "Minimum",
-        "noColor": "(none)",
-        "setColor": "Set Color",
-        "threshold": "Threshold",
-        "thresholds": "Thresholds",
-        "title": "Resource Tracker Editor",
-        "useBreakpoints": "Use Breakpoints"
-      },
-      "viewer": {
-        "decrement": "-1",
-        "increment": "+1",
-        "reset": "Reset"
-      }
-    },
     "years": "years",
     "youDoNotHavePermssion": "You do not have permission to do that."
   },
