@@ -3,20 +3,18 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAttack } from './base-attack.ts'
+import { BaseAttack } from './base-attack.js'
+import { ActionType } from './types.js'
 
 class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
   static override defineSchema(): RangedAttackSchema {
-    return {
-      ...super.defineSchema(),
-      ...rangedAttackSchema(),
-    }
+    return Object.assign(super.defineSchema(), rangedAttackSchema())
   }
 
   /* ---------------------------------------- */
 
   static override get TYPE(): string {
-    return 'rangedAttack'
+    return ActionType.RangedAttack
   }
 
   /* ---------------------------------------- */

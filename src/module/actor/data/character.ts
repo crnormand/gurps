@@ -14,8 +14,8 @@ import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { multiplyDice } from '@module/util/damage-utils.js'
-import { roundTo } from '@module/util/math.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { roundTo } from '@util/math.js'
 import { COSTS_REGEX } from '@util/parselink.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '@util/utilities.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
@@ -370,7 +370,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   getReactionsAndModifiers(key: 'conditionalmods'): ConditionalModifier[]
   getReactionsAndModifiers(key: 'reactions' | 'conditionalmods'): ReactionModifier[] | ConditionalModifier[] {
     return this.parent.items.reduce((acc: (ReactionModifier | ConditionalModifier)[], item) => {
-      for (const newMod of item.system[key]) {
+      for (const newMod of item.system[key] ?? []) {
         const existingMod = acc.find(mod => mod.situation === newMod.situation)
 
         if (existingMod) existingMod.modifier += newMod.modifier
@@ -1196,7 +1196,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // @deprecated -- Use GurpsActorV2.setMoveDefault instead.
   async setMoveDefault(value: string): Promise<void> {
     const move = this.moveV2
 

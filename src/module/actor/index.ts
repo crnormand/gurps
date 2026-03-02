@@ -16,6 +16,7 @@ import { GurpsActorV2 } from './gurps-actor.js'
 import { migrateActor, runMigration } from './migrate.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
+import { TestActorSheet } from './test-actor-sheet.js'
 
 interface ActorModule extends GurpsModule {
   migrateActor: typeof migrateActor
@@ -31,6 +32,8 @@ function init() {
 
     CONFIG.Actor.dataModels = {
       characterV2: dataModels.CharacterModel,
+      gcsCharacter: dataModels.GcsCharacterModel,
+      gcsLoot: dataModels.GcsLootModel,
     }
 
     foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
@@ -72,6 +75,15 @@ function init() {
       // Add this sheet last
       label: 'Full (GCS)',
       makeDefault: true,
+    })
+
+    // NOTE: This sheet is hidden from Users but can be set by invoking
+    // (actor).setFlag("core","sheetClass","gurps.TestActorSheet")
+    // @ts-expect-error: broken typing
+    foundry.documents.collections.Actors.registerSheet('gurps', TestActorSheet, {
+      makeDefault: true,
+      types: ['gcsCharacter'],
+      canConfigure: false,
     })
   })
 }

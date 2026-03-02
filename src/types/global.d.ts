@@ -52,6 +52,17 @@ declare global {
 
   /* ---------------------------------------- */
 
+  type PseudoDocumentConfig<T = any, S = any> = Record<
+    string,
+    {
+      documentClass: T
+      label?: string
+      sheetClass?: S
+    }
+  >
+
+  /* ---------------------------------------- */
+
   // @deprecated TODO: REMOVE. Legacy
   interface ManeuverData {
     name: string

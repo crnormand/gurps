@@ -182,7 +182,7 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
     Object.values(oldData.melee).forEach(action => {
       const id = foundry.utils.randomID()
 
-      newData.actions[id] = action as CreateDataOf<MeleeAttackModel>
+      newData.actions![id] = action as CreateDataOf<MeleeAttackModel>
     })
   }
 
@@ -190,7 +190,7 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
     Object.values(oldData.ranged).forEach(action => {
       const id = foundry.utils.randomID()
 
-      newData.actions[id] = action as CreateDataOf<RangedAttackModel>
+      newData.actions![id] = action as CreateDataOf<RangedAttackModel>
     })
   }
 

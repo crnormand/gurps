@@ -13,6 +13,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
   implements ItemV1Interface, IContainable<GurpsItemV2>
 {
+  /* ---------------------------------------- */
+
   // Narrowed view of this.system for GurpsItemV2 logic.
   get modelV2(): BaseItemModel {
     return this.system as Item.SystemOfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
@@ -155,7 +157,19 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     if (!isDevMode) {
       options ||= {}
       const allTypes = Item.TYPES
-      const excludeTypes = ['base', 'equipment', 'feature', 'skill', 'spell']
+      const excludeTypes = [
+        'base',
+        'equipment',
+        'feature',
+        'skill',
+        'spell',
+        'gcsTrait',
+        'gcsSkill',
+        'gcsSpell',
+        'gcsEquipment',
+        'gcsTraitModifier',
+        'gcsEquipmentModifier',
+      ]
 
       // Disable non-production Item types if developer mode is off.
       // @ts-expect-error: Improper types

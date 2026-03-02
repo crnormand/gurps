@@ -3,7 +3,57 @@ import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
 import DamageChat from '@module/damage/damagechat.js'
+import { AttributeBonus } from '@module/features/attribute-bonus.js'
+import { ConditionalModifier } from '@module/features/conditional-modifier.js'
+import { ContainedWeightReduction } from '@module/features/contained-weight-reduction.js'
+import { CostReduction } from '@module/features/cost-reduction.js'
+import { DRBonus } from '@module/features/dr-bonus.js'
+import { FeatureType } from '@module/features/index.js'
+import { ReactionBonus } from '@module/features/reaction-bonus.js'
+import { SkillBonus } from '@module/features/skill-bonus.js'
+import { SkillPointBonus } from '@module/features/skill-point-bonus.js'
+import { SpellBonus } from '@module/features/spell-bonus.js'
+import { SpellPointBonus } from '@module/features/spell-point-bonus.js'
+import { TraitBonus } from '@module/features/trait-bonus.js'
+import {
+  WeaponBonus,
+  WeaponAccBonus,
+  WeaponScopeAccBonus,
+  WeaponDRDivisorBonus,
+  WeaponEffectiveSTBonus,
+  WeaponMinSTBonus,
+  WeaponMinReachBonus,
+  WeaponMaxReachBonus,
+  WeaponHalfDamageRangeBonus,
+  WeaponMinRangeBonus,
+  WeaponMaxRangeBonus,
+  WeaponRecoilBonus,
+  WeaponBulkBonus,
+  WeaponParryBonus,
+  WeaponBlockBonus,
+  WeaponRofMode1ShotsBonus,
+  WeaponRofMode1SecondaryBonus,
+  WeaponRofMode2ShotsBonus,
+  WeaponRofMode2SecondaryBonus,
+  WeaponNonChamberShotsBonus,
+  WeaponChamberShotsBonus,
+  WeaponShotDurationBonus,
+  WeaponReloadTimeBonus,
+  WeaponSwitch,
+} from '@module/features/weapon-bonus.js'
 import { Feature } from '@module/item/legacy/itemv1-interface.js'
+import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
+import {
+  ContainedQuantityPrereq,
+  ContainedWeightPrereq,
+  EquippedEquipmentPrereq,
+  PrereqList,
+  PrereqType,
+  ScriptPrereq,
+  SkillPrereq,
+  SpellPrereq,
+  TraitPrereq,
+} from '@module/prereqs/index.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -46,12 +96,20 @@ declare global {
        */
       type Name =
         | 'Action'
-        | 'HitLocation'
-        | 'Note'
-        | 'MoveMode'
-        | 'ResourceTracker'
+        | 'Attribute'
+        | 'AttributeDefinition'
+        | 'AttributeThreshold'
+        | 'Body'
         | 'ConditionalModifier'
+        | 'Feature'
+        | 'HitLocation'
+        | 'LocationSubTable'
+        | 'MoveMode'
+        | 'Note'
+        | 'Prereq'
         | 'ReactionModifier'
+        | 'ResourceTracker'
+        | 'Study'
 
       /* ---------------------------------------- */
 
@@ -60,7 +118,7 @@ declare global {
        * the class TypedPseudoDocument and have a "type" property which causes different types to resolve
        * to different classes.
        */
-      type WithTypes = 'Action'
+      type WithTypes = 'Action' | 'Feature' | 'Prereq'
 
       /* ---------------------------------------- */
 
@@ -180,6 +238,54 @@ declare global {
       Action: {
         [ActionType.MeleeAttack]: gurps.Pseudo.ConfigEntry<typeof MeleeAttackModel>
         [ActionType.RangedAttack]: gurps.Pseudo.ConfigEntry<typeof RangedAttackModel>
+      }
+      Feature: {
+        [FeatureType.AttributeBonus]: gurps.Pseudo.ConfigEntry<typeof AttributeBonus>
+        [FeatureType.ConditionalModifier]: gurps.Pseudo.ConfigEntry<typeof ConditionalModifier>
+        [FeatureType.DRBonus]: gurps.Pseudo.ConfigEntry<typeof DRBonus>
+        [FeatureType.ReactionBonus]: gurps.Pseudo.ConfigEntry<typeof ReactionBonus>
+        [FeatureType.SkillBonus]: gurps.Pseudo.ConfigEntry<typeof SkillBonus>
+        [FeatureType.SkillPointBonus]: gurps.Pseudo.ConfigEntry<typeof SkillPointBonus>
+        [FeatureType.SpellBonus]: gurps.Pseudo.ConfigEntry<typeof SpellBonus>
+        [FeatureType.SpellPointBonus]: gurps.Pseudo.ConfigEntry<typeof SpellPointBonus>
+        [FeatureType.TraitBonus]: gurps.Pseudo.ConfigEntry<typeof TraitBonus>
+        [FeatureType.WeaponBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponBonus>
+        [FeatureType.WeaponAccBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponAccBonus>
+        [FeatureType.WeaponScopeAccBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponScopeAccBonus>
+        [FeatureType.WeaponDRDivisorBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponDRDivisorBonus>
+        [FeatureType.WeaponEffectiveSTBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponEffectiveSTBonus>
+        [FeatureType.WeaponMinSTBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponMinSTBonus>
+        [FeatureType.WeaponMinReachBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponMinReachBonus>
+        [FeatureType.WeaponMaxReachBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponMaxReachBonus>
+        [FeatureType.WeaponHalfDamageRangeBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponHalfDamageRangeBonus>
+        [FeatureType.WeaponMinRangeBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponMinRangeBonus>
+        [FeatureType.WeaponMaxRangeBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponMaxRangeBonus>
+        [FeatureType.WeaponRecoilBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponRecoilBonus>
+        [FeatureType.WeaponBulkBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponBulkBonus>
+        [FeatureType.WeaponParryBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponParryBonus>
+        [FeatureType.WeaponBlockBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponBlockBonus>
+        [FeatureType.WeaponRofMode1ShotsBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponRofMode1ShotsBonus>
+        [FeatureType.WeaponRofMode1SecondaryBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponRofMode1SecondaryBonus>
+        [FeatureType.WeaponRofMode2ShotsBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponRofMode2ShotsBonus>
+        [FeatureType.WeaponRofMode2SecondaryBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponRofMode2SecondaryBonus>
+        [FeatureType.WeaponNonChamberShotsBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponNonChamberShotsBonus>
+        [FeatureType.WeaponChamberShotsBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponChamberShotsBonus>
+        [FeatureType.WeaponShotDurationBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponShotDurationBonus>
+        [FeatureType.WeaponReloadTimeBonus]: gurps.Pseudo.ConfigEntry<typeof WeaponReloadTimeBonus>
+        [FeatureType.WeaponSwitch]: gurps.Pseudo.ConfigEntry<typeof WeaponSwitch>
+        [FeatureType.CostReduction]: gurps.Pseudo.ConfigEntry<typeof CostReduction>
+        [FeatureType.ContainedWeightReduction]: gurps.Pseudo.ConfigEntry<typeof ContainedWeightReduction>
+      }
+      Prereq: {
+        [PrereqType.List]: gurps.Pseudo.ConfigEntry<typeof PrereqList>
+        [PrereqType.Trait]: gurps.Pseudo.ConfigEntry<typeof TraitPrereq>
+        [PrereqType.Attribute]: gurps.Pseudo.ConfigEntry<typeof AttributePrereq>
+        [PrereqType.ContainedQuantity]: gurps.Pseudo.ConfigEntry<typeof ContainedQuantityPrereq>
+        [PrereqType.ContainedWeight]: gurps.Pseudo.ConfigEntry<typeof ContainedWeightPrereq>
+        [PrereqType.EquippedEquipment]: gurps.Pseudo.ConfigEntry<typeof EquippedEquipmentPrereq>
+        [PrereqType.Skill]: gurps.Pseudo.ConfigEntry<typeof SkillPrereq>
+        [PrereqType.Spell]: gurps.Pseudo.ConfigEntry<typeof SpellPrereq>
+        [PrereqType.Script]: gurps.Pseudo.ConfigEntry<typeof ScriptPrereq>
       }
     }
   }

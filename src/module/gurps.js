@@ -56,6 +56,7 @@ import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
+import { Features } from './features/index.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
@@ -63,7 +64,9 @@ import { Item } from './item/index.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
+import { Prereqs } from './prereqs/index.js'
 import { ResourceTracker } from './resource-tracker/index.js'
+import { Scripting } from './scripting/index.js'
 import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
@@ -108,10 +111,13 @@ if (!globalThis.GURPS) {
     Compendium,
     Damage,
     Dev,
+    Features,
     Importer,
     Item,
     Pdf,
+    Prereqs,
     ResourceTracker,
+    Scripting,
     Token,
     UI,
   }
@@ -2177,7 +2183,6 @@ if (!globalThis.GURPS) {
     // do this only after we've initialized localize
     GURPS.Maneuvers = Maneuvers
 
-    // Define custom Entity classes
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class

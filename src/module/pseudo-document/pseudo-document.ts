@@ -10,7 +10,13 @@ import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 class PseudoDocument<
   Schema extends PseudoDocument.Schema = PseudoDocument.Schema,
   Parent extends DataModel.Any = DataModel.Any,
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  ExtraConstructorOptions extends AnyObject = {},
 > extends DataModel<Schema, Parent> {
+  constructor(...args: DataModel.ConstructorArgs<Schema, Parent, ExtraConstructorOptions>) {
+    super(...args)
+  }
+
   /* ---------------------------------------- */
 
   static get metadata(): PseudoDocument.Metadata<gurps.Pseudo.Name> {
@@ -64,7 +70,7 @@ class PseudoDocument<
   /**
    * The document name of this pseudo document.
    */
-  get documentName(): string | null {
+  get documentName(): string {
     return this.metadata.documentName
   }
 
@@ -99,12 +105,9 @@ class PseudoDocument<
   /* ---------------------------------------- */
 
   get fieldPath(): string {
-    const fp = this.schema.fieldPath
-    let path = fp.slice(0, fp.lastIndexOf('element') - 1)
+    let path = (this.parent.constructor as unknown as gurps.MetadataOwner).metadata.embedded[this.documentName]
 
-    if (this.parent instanceof PseudoDocument) {
-      path = [this.parent.fieldPath, this.parent.id, path].join('.')
-    }
+    if (this.parent instanceof PseudoDocument) path = [this.parent.fieldPath, this.parent.id, path].join('.')
 
     return path
   }
@@ -122,7 +125,7 @@ class PseudoDocument<
   }
 
   /* ---------------------------------------- */
-  /*   Data preparation                       */
+  /*   Data Preparation                       */
   /* ---------------------------------------- */
 
   /**

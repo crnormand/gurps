@@ -7,7 +7,7 @@ import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
-import { ConditionalModifier, ReactionModifier } from './conditional-modifier.ts'
+import { ConditionalModifier, ReactionModifier } from './conditional-modifier.js'
 
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -337,7 +337,7 @@ const baseItemModelSchema = () => {
     ...containableSchema(),
 
     /** The ModelCollection for an Item's Actions, which includes Melee and Ranged Attacks. */
-    actions: new CollectionField(BaseAction as AnyActionClass),
+    actions: new CollectionField(BaseAction as AnyActionClass, { required: true, nullable: false }),
 
     /**
      * Is this Item a container that can hold other items? This should be toggleable in the UI for any Item,
@@ -362,10 +362,10 @@ const baseItemModelSchema = () => {
     modifierTags: new fields.StringField({ required: true, nullable: false }),
 
     /** Reaction Bonuses applied by this Item. */
-    _reactions: new CollectionField(ReactionModifier),
+    _reactions: new CollectionField(ReactionModifier, { required: true, nullable: false }),
 
     /** Conditional Modifiers applied by this Item. */
-    _conditionalmods: new CollectionField(ConditionalModifier),
+    _conditionalmods: new CollectionField(ConditionalModifier, { required: true, nullable: false }),
 
     /** NOTE: The below fields have been migrated from the now non-existent ItemComponent model. */
 
