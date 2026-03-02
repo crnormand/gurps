@@ -77,3 +77,5 @@ export type {
   IResourceTrackerTemplate,
   IThresholdDescriptor,
 } from './types.js'
+
+export type { ResourceTrackerSchema } from './resource-tracker.ts'

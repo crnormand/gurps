@@ -1,7 +1,7 @@
 <div class='ms-hp-fp-row'>
-  <div class='ms-resource ms-hp'>
+  <div class='ms-resource ms-hp' data-tooltip='{{{hp-thresholds system.HP.max}}}'>
     {{#if system.conditions.reeling}}<span class='ms-condition-badge' title='{{localize "GURPS.HP.reeling"}}'>R</span>{{/if}}
-    <div class='ms-resource-display' data-edit-target='hp' title='{{localize "GURPS.attributesHPNAME"}}'>
+    <div class='ms-resource-display' data-edit-target='hp'>
       <div class='ms-resource-bar'>
         <div class='ms-resource-fill' style='width: {{percent system.HP.value system.HP.max}}%;'></div>
       </div>
@@ -16,9 +16,9 @@
       <i class='fas fa-rotate-left'></i>
     </button>
   </div>
-  <div class='ms-resource ms-fp'>
+  <div class='ms-resource ms-fp' data-tooltip='{{{fp-thresholds system.FP.max}}}'>
     {{#if system.conditions.exhausted}}<span class='ms-condition-badge' title='{{localize "GURPS.FP.tired"}}'>T</span>{{/if}}
-    <div class='ms-resource-display' data-edit-target='fp' title='{{localize "GURPS.attributesFPNAME"}}'>
+    <div class='ms-resource-display' data-edit-target='fp'>
       <div class='ms-resource-bar'>
         <div class='ms-resource-fill' style='width: {{percent system.FP.value system.FP.max}}%;'></div>
       </div>

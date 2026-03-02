@@ -11,7 +11,8 @@
   </div>
 
   <div class='ms-spinner'>
-    <button data-action='decreaseTracker' data-key='{{id}}' title='{{localize "GURPS.resourceTracker.viewer.decrement"}}'>
+    <button data-action='decreaseTracker' data-key='{{id}}'
+      title='{{localize "GURPS.resourceTracker.viewer.decrement"}}'>
       <i class='fas fa-minus'></i>
     </button>
 
@@ -21,7 +22,8 @@
         value="{{value}}">
     </div>
 
-    <button data-action='increaseTracker' data-key='{{id}}' title='{{localize "GURPS.resourceTracker.viewer.increment"}}'>
+    <button data-action='increaseTracker' data-key='{{id}}'
+      title='{{localize "GURPS.resourceTracker.viewer.increment"}}'>
       <i class='fas fa-plus'></i>
     </button>
 
@@ -30,15 +32,14 @@
     </button>
   </div>
 
-  <div id="{{id}}" class='ms-tracker-condition'>
-    {{#if color}}
-      {{!-- Inline style is necessary to apply the dynamic color value. The contrast helper is used to determine the
+  {{#if color}}
+    {{!-- Inline style is necessary to apply the dynamic color value. The contrast helper is used to determine the
           appropriate text color based on the background color. --}}
-      {{{tracker-style color id=id}}}
-    {{/if}}
+    {{{tracker-style color id=(concat "ID-" id)}}}
+  {{/if}}
+  <div id="ID-{{id}}" class='ms-tracker-condition'>
 
-    <span class='text' data-tooltip-html='{{{trackerTooltip this}}}'
-    >{{{gurpslink condition}}}</span>
+    <span class='text' data-tooltip-html='{{{trackerTooltip this}}}'>{{{gurpslink condition}}}</span>
   </div>
 
   <div class='ms-tracker-footer'>

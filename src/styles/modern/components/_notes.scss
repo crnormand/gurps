@@ -421,6 +421,14 @@ aside div.tracker-tooltip {
   gap: var(--ms-space-2);
   grid-template-columns: min-content auto;
   font-size: var(--ms-font-xs);
+
+  .title {
+    font-weight: var(--ms-weight-bold);
+    width: 100%;
+    text-align: center;
+    grid-column: span 2;
+    text-transform: uppercase;
+  }
 }
 
 .ms-quicknotes {
@@ -440,8 +448,8 @@ aside div.tracker-tooltip {
   cursor: text;
   padding: var(--ms-space-3);
 
-  > .glinkmod,
-  > .gurpslink {
+  >.glinkmod,
+  >.gurpslink {
     color: var(--ms-accent);
     cursor: pointer;
     font-weight: bold;

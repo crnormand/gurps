@@ -60,12 +60,12 @@ const hpConditions = {
 const fpConditions = {
   NORMAL: {
     breakpoint: _ => Number.MAX_SAFE_INTEGER,
-    label: 'GURPS.normal',
+    label: 'GURPS.Healthy',
     style: 'normal',
   },
   REELING: {
     breakpoint: FP => Math.ceil(FP.max / 3) - 1,
-    label: 'GURPS.status.tired',
+    label: 'GURPS.status.Tired',
     style: 'tired',
   },
   COLLAPSE: {

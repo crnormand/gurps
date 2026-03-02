@@ -26,6 +26,7 @@ export interface IResourceTracker {
   isMaxEnforced: boolean
   isMinEnforced: boolean
   useBreakpoints: boolean
+  initialValue: string | null
   thresholds: IResourceTrackerThreshold[]
 }
 

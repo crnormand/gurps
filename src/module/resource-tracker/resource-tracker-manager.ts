@@ -27,6 +27,7 @@ export class ResourceTrackerManager extends FormApplication {
           isMaxEnforced: false,
           isMinEnforced: false,
           useBreakpoints: true,
+          initialValue: 'attributes.ST.value',
           thresholds: [
             {
               comparison: TrackerComparators.LT,
@@ -147,10 +148,11 @@ export class ResourceTrackerManager extends FormApplication {
           isMaxEnforced: false,
           isMinEnforced: false,
           useBreakpoints: false,
+          initialValue: null,
           thresholds: [],
         },
         autoapply: false,
-        initialValue: '',
+        initialValue: null,
         name: '',
         id,
       }

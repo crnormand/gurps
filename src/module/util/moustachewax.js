@@ -145,6 +145,47 @@ export default function () {
     return Math.round((1 - currentHP / maxHP) * 100)
   })
 
+  Handlebars.registerHelper('hp-thresholds', function (maxHP) {
+    if (!maxHP || maxHP <= 0) return ''
+
+    let thresholds = `
+      <label class="title">${game.i18n.localize('GURPS.attributesHPNAME')}</label>
+      <label>${maxHP}</label><label>${game.i18n.localize('GURPS.status.Healthy')}</label>
+      <label>${Math.floor(maxHP / 3)}</label><label>${game.i18n.localize('GURPS.status.Reeling')}</label>
+      <label>0</label><label>${game.i18n.localize('GURPS.collapse')}</label>
+      <label>${-maxHP}</label><label>${game.i18n.localize('GURPS.check1')}</label>
+      <label>${-2 * maxHP}</label><label>${game.i18n.localize('GURPS.check2')}</label>
+      <label>${-3 * maxHP}</label><label>${game.i18n.localize('GURPS.check3')}</label>
+      <label>${-4 * maxHP}</label><label>${game.i18n.localize('GURPS.check4')}</label>
+      <label>${-5 * maxHP}</label><label>${game.i18n.localize('GURPS.dead')}</label>
+      <label>${-10 * maxHP}</label><label>${game.i18n.localize('GURPS.destroyed')}</label>
+  `
+    // Its important to use the double quotes (") for the HTML attributes, as we use single quotes (') for the
+    // Handlebars template, and the SafeString will be injected directly into the HTML. If we used double
+    // quotes for the attributes, it would break the HTML structure when injected.
+    let tooltip = `<div class="tracker-tooltip">${thresholds}</div>`
+
+    return new Handlebars.SafeString(tooltip)
+  })
+
+  Handlebars.registerHelper('fp-thresholds', function (maxFP) {
+    if (!maxFP || maxFP <= 0) return ''
+
+    let thresholds = `
+      <label class="title">${game.i18n.localize('GURPS.attributesFPNAME')}</label>
+      <label>${maxFP}</label><label>${game.i18n.localize('GURPS.status.Rested')}</label>
+      <label>${Math.floor(maxFP / 3)}</label><label>${game.i18n.localize('GURPS.status.Tired')}</label>
+      <label>0</label><label>${game.i18n.localize('GURPS.collapse')}</label>
+      <label>${-maxFP}</label><label>${game.i18n.localize('GURPS.unconscious')}</label>
+  `
+    // Its important to use the double quotes (") for the HTML attributes, as we use single quotes (') for the
+    // Handlebars template, and the SafeString will be injected directly into the HTML. If we used double
+    // quotes for the attributes, it would break the HTML structure when injected.
+    let tooltip = `<div class="tracker-tooltip">${thresholds}</div>`
+
+    return new Handlebars.SafeString(tooltip)
+  })
+
   Handlebars.registerHelper('isNegative', function (value) {
     return value < 0
   })

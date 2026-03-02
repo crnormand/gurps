@@ -4,6 +4,8 @@ import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { ItemComponentSchema } from '@module/item/data/component.js'
 import { TraitComponentSchema, TraitSchema } from '@module/item/data/trait.js'
+import { ResourceTrackerSchema, IResourceTrackerTemplate } from '@module/resource-tracker/index.js'
+import { ResourceTrackerManager } from '@module/resource-tracker/resource-tracker-manager.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackComponentSchema, MeleeAttackSchema } from '../../action/melee-attack.js'
@@ -1002,9 +1004,23 @@ Portrait will not be imported.`
     this.output.additionalresources ||= {}
     this.output.additionalresources.tracker ||= {}
 
-    // Placeholder for adding standard trackers to the character.
+    const templates: IResourceTrackerTemplate[] = this.actor
+      ? ResourceTrackerManager.getMissingRequiredTemplates(
+          this.actor.system.additionalresources?.tracker.contents ?? []
+        )
+      : Object.values(ResourceTrackerManager.getAllTemplatesMap()).filter(template => template.autoapply)
 
-    // Read all tracker templates from the system settings.
+    templates.forEach(template => {
+      const id = foundry.utils.randomID()
+
+      const trackerData: DataModel.CreateData<ResourceTrackerSchema> = {
+        ...template.tracker,
+        initialValue: template.initialValue,
+        _id: id,
+      }
+
+      this.output.additionalresources!.tracker![id] = trackerData
+    })
   }
 }
 

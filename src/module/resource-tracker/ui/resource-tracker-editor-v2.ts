@@ -125,6 +125,8 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
 
     if (!selectedTemplate || !selectedTemplate.tracker) return
 
+    selectedTemplate.tracker.initialValue = selectedTemplate.initialValue
+
     Object.assign(this.#tracker, foundry.utils.deepClone(selectedTemplate.tracker))
 
     await this.render({ force: true })
@@ -244,7 +246,11 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
           value = Number.parseFloat(target.value)
         }
 
-        ;(this.#tracker.thresholds[index] as unknown as Record<string, unknown>)[key] = value
+        const threshold = this.#tracker.thresholds[index] as unknown as Record<string, unknown>
+
+        threshold[key] = value
+
+        this.render({ force: true })
       })
     })
   }
@@ -272,6 +278,7 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
     const key = path.replace('tracker.', '')
 
     tracker[key] = value
+    this.render({ force: true })
   }
 }
 

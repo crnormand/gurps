@@ -82,6 +82,31 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
     return tracker
   }
 
+  override async prepareDerivedData() {
+    super.prepareDerivedData()
+
+    // If tracker has an initialValue term, we need to evaluate it and set the tracker's value accordingly.
+    if (this.initialValue) {
+      // First try to parse initialValue as a number.
+      let value = parseInt(this.initialValue)
+
+      if (isNaN(value)) {
+        // If parsing failed, try to use initialValue as a path to another value on the actor.
+        const foundValue = foundry.utils.getProperty(this.parent, this.initialValue)
+
+        value = typeof foundValue === 'number' ? foundValue : this.value
+      }
+
+      const updates: Partial<TrackerInstance> = {}
+
+      updates.max = value
+      updates.value = this.isAccumulator ? this.min : value
+      updates.initialValue = null
+
+      await this.update(updates)
+    }
+  }
+
   // TODO: verify this works
   async applyTemplate(template: ResourceTrackerTemplate) {
     const initialData = new fields.SchemaField(resourceTrackerSchema()).getInitialValue()
@@ -188,6 +213,7 @@ const resourceTrackerSchema = () => {
     isDamageType: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     isAccumulator: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     useBreakpoints: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    initialValue: new fields.StringField({ required: true, nullable: true, initial: null }),
     thresholds: new fields.ArrayField(
       new fields.EmbeddedDataField(ResourceTrackerThreshold, { required: true, nullable: false }),
       {
