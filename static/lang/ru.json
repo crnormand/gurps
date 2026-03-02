@@ -323,7 +323,6 @@
     "CR9": "Кб: 9 (Часто сопротивляется)",
     "crippling": "Калечащее ранение, ",
     "current": "Текущий",
-    "currentdodge": "Уклонение",
     "damage": "Урон",
     "damageAbbrevburn": "обж",
     "damageAbbrevcor": "рзед",
@@ -385,7 +384,6 @@
     "Dice": "Кубики",
     "diceAddDamageRule": "Правило кубиков+добавок:",
     "disable": "Отключить",
-    "disadvantage": "Недостаток",
     "dmg": {
       "add": {
         "abbrev": "Сокр.",
@@ -463,9 +461,6 @@
       }
     },
     "dodge": "Уклон.",
-    "dragrulerFly": "Летать",
-    "dragrulerSprint": "Спринт",
-    "dragrulerWalk": "Ходьба",
     "dragSameContainer": "Невозможно добавить объект в этот контейнер, так как он уже находится внутри него.",
     "dropBefore": "Перед целью",
     "dropInside": "Внутри цели",
@@ -1232,11 +1227,8 @@
     "resourceDamageType": "Использовать как тип урона",
     "resourceDeleteTracker": "Удалить счётчик",
     "resourceEditTracker": "Редактировать счётчик",
-    "resourceEnforceMaximum": "Применить максимум",
-    "resourceEnforceMinimum": "Применить минимум",
     "resourceInvalidAlias": "Недопустимый алиас [{alias}].<br/>Разрешены только буквы и цифры, а также ('+', '_', и '-').",
     "resourcesModsTab": "Ресурсы и Модификаторы",
-    "resourceTemplateAlias": "Алиас",
     "resourceTemplateButton": "Посмотреть и изменить счётчик",
     "resourceTemplateClickToAdd": "Нажмите кнопку '+' сверху, чтобы добавить шаблон",
     "resourceTemplateHint": "Используйте это для создания, использования и автоматического наложения Счётчика ресурсов на листы персонажей.",
@@ -1538,8 +1530,10 @@
       "Suffocate": "Удушье",
       "TerriblePain": "Ужасная боль",
       "Tipsy": "Поддатость",
-      "tired": "Утомлен",
-      "Wait": "Ожидание"
+      "Wait": "Ожидание",
+      "Healthy": "Healthy",
+      "Rested": "Rested",
+      "Tired": "Tired"
     },
     "step": "Шаг",
     "stepOrTwo": "Шаг или два",
@@ -1609,7 +1603,37 @@
     "yard": "ярд",
     "yards": "ярды",
     "years": "лет",
-    "youDoNotHavePermission": "У вас нет разрешения на это."
+    "migration": {
+      "migrationItem": {
+        "name": "The Everything Holder",
+        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+      }
+    },
+    "resourceTracker": {
+      "editor": {
+        "alias": "Alias",
+        "clear": "Clear Tracker Configuration",
+        "clearColor": "Clear Color",
+        "clone": "Clone a Template",
+        "enforceMax": "Enforce Maximum",
+        "enforceMin": "Enforce Minimum",
+        "isAccumulator": "Is Accumulator",
+        "maximum": "Maximum",
+        "minimum": "Minimum",
+        "noColor": "(none)",
+        "setColor": "Set Color",
+        "threshold": "Threshold",
+        "thresholds": "Thresholds",
+        "title": "Resource Tracker Editor",
+        "useBreakpoints": "Use Breakpoints"
+      },
+      "viewer": {
+        "decrement": "-1",
+        "increment": "+1",
+        "reset": "Reset"
+      }
+    },
+    "youDoNotHavePermssion": "You do not have permission to do that."
   },
   "TYPES": {
     "Actor": {

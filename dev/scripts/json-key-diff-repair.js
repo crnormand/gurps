@@ -14,7 +14,7 @@ const args = process.argv.slice(2)
 
 const targetFile = args[0]
 const fix = args[1] === 'fix'
-const enFile = './lang/en.json'
+const enFile = './static/lang/en.json'
 
 const enJson = JSON.parse(fs.readFileSync(enFile, 'utf8'))
 const targetJson = JSON.parse(fs.readFileSync(targetFile, 'utf8'))

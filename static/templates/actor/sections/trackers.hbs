@@ -7,10 +7,11 @@
   </div>
   <div id='tracker-scroller'>
     {{#each system.additionalresources.tracker}}
+      {{debug @key}}
       {{>resource-tracker
           label=name
           resource=this
-          name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
+          name=(concat 'additionalresources.tracker.' id)
           editable=true
         }}
     {{/each}}

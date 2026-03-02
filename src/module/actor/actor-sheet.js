@@ -1155,77 +1155,23 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
    *
    * @param {*} ev
    */
-  async editTracker(ev) {
-    ev.preventDefault()
+  async editTracker(event) {
+    event.preventDefault()
 
-    let path = $(ev.currentTarget).closest('[data-gurps-resource]').attr('data-gurps-resource')
+    const target = event.currentTarget.closest('[data-gurps-resource]')
+    const pathAndKey = target.dataset.gurpsResource
 
-    // TODO: Refactor -- call a method on ResourceTracker Manager to delete the tracker, or return the template
-    // to apply. This function would simply update the tracker with the new data (whether it was edited
-    // or a template was applied).
-    let templates = GURPS.modules.ResourceTracker.TemplateManager.getAllTemplates()
+    if (!pathAndKey) return
 
-    if (!templates || templates.length == 0) templates = null
+    const path = pathAndKey.split('.').slice(0, -1).join('.')
+    const key = pathAndKey.split('.').slice(-1)[0]
 
-    let selectTracker = async function (html) {
-      let name = html.find('select option:selected').text().trim()
-      let template = templates.find(template => template.tracker.name === name)
+    const trackers = foundry.utils.getProperty(this.actor, `system.${path}`)
+    const tracker = trackers.get(key)
 
-      await this.actor.applyTrackerTemplate(path, template)
-    }
+    if (!tracker) return
 
-    // show dialog asking if they want to apply a standard tracker, or edit this tracker
-    let buttons = {
-      edit: {
-        icon: '<i class="fas fa-edit"></i>',
-        label: game.i18n.localize('GURPS.resourceEditTracker'),
-        callback: () => this._editTracker(path),
-      },
-      remove: {
-        icon: '<i class="fas fa-trash"></i>',
-        label: game.i18n.localize('GURPS.resourceDeleteTracker'),
-        callback: async () => await this.actor.removeTracker(path),
-      },
-    }
-
-    if (templates) {
-      buttons.apply = {
-        icon: '<i class="far fa-copy"></i>',
-        label: game.i18n.localize('GURPS.resourceCopyTemplate'),
-        callback: selectTracker.bind(this),
-      }
-    }
-
-    let dialog = new Dialog(
-      {
-        title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
-        content: await foundry.applications.handlebars.renderTemplate(
-          'systems/gurps/templates/actor/update-tracker.hbs',
-          { templates: templates }
-        ),
-        buttons: buttons,
-        default: 'edit',
-        templates: templates,
-      },
-      { width: 600 }
-    )
-
-    dialog.render(true)
-  }
-
-  async _editTracker(path) {
-    let tracker = foundry.utils.getProperty(this.actor.system, path)
-    let dialog = new GURPS.modules.ResourceTracker.TrackerEditor(JSON.parse(JSON.stringify(tracker)))
-
-    dialog._updateTracker = async () => {
-      let update = {}
-
-      update[`system.${path}`] = dialog._tracker
-      this.actor.update(update)
-      dialog.close()
-    }
-
-    dialog.render(true)
+    GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
   }
 
   async _showActiveEffectsListPopup(ev) {

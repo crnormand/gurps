@@ -1227,11 +1227,8 @@
     "resourceDamageType": "Utiliser en tant que Type de Dégâts",
     "resourceDeleteTracker": "Effacer Suivi",
     "resourceEditTracker": "Modifier Suivi",
-    "resourceEnforceMaximum": "Imposer Maximum",
-    "resourceEnforceMinimum": "Imposer Minimum",
     "resourceInvalidAlias": "Alias invalide [{alias}].<br/>Seul l'alphanumérique, et ('+', '_', and '-'), sont autorisés.",
     "resourcesModsTab": "Ressources et Modificateurs",
-    "resourceTemplateAlias": "Alias",
     "resourceTemplateButton": "Voir et Modifier Suivis",
     "resourceTemplateClickToAdd": "Cliquer sur le bouton '+' ci-dessus pour ajouter un modèle.",
     "resourceTemplateHint": "Utilisez ceci pour créer, réutiliser et automatiquement appliquer le Suivi des Ressources aux feuilles de personnage.",
@@ -1532,8 +1529,10 @@
       "Suffocate": "Suffoque",
       "TerriblePain": "Douleur Terrible",
       "Tipsy": "Pompette",
-      "tired": "Fatigué",
-      "Wait": "En Attente"
+      "Wait": "En Attente",
+      "Healthy": "Healthy",
+      "Rested": "Rested",
+      "Tired": "Tired"
     },
     "step": "Pas",
     "stepOrTwo": "Un ou deux pas",
@@ -1603,7 +1602,37 @@
     "yard": "mètre",
     "yards": "mètres",
     "years": "années",
-    "youDoNotHavePermission": "Vous n'avez pas les autorisations pour faire cela."
+    "migration": {
+      "migrationItem": {
+        "name": "The Everything Holder",
+        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+      }
+    },
+    "resourceTracker": {
+      "editor": {
+        "alias": "Alias",
+        "clear": "Clear Tracker Configuration",
+        "clearColor": "Clear Color",
+        "clone": "Clone a Template",
+        "enforceMax": "Enforce Maximum",
+        "enforceMin": "Enforce Minimum",
+        "isAccumulator": "Is Accumulator",
+        "maximum": "Maximum",
+        "minimum": "Minimum",
+        "noColor": "(none)",
+        "setColor": "Set Color",
+        "threshold": "Threshold",
+        "thresholds": "Thresholds",
+        "title": "Resource Tracker Editor",
+        "useBreakpoints": "Use Breakpoints"
+      },
+      "viewer": {
+        "decrement": "-1",
+        "increment": "+1",
+        "reset": "Reset"
+      }
+    },
+    "youDoNotHavePermssion": "You do not have permission to do that."
   },
   "TYPES": {
     "Actor": {
