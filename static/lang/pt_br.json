@@ -494,7 +494,7 @@
       "postures": "Posturas",
       "search": "Buscar efeitos...",
       "senses": "Sentidos",
-      "status": "Status",
+      "status": "Estado",
       "title": "Adicionar Efeito",
       "utility": "Utilitário"
     },
@@ -848,8 +848,8 @@
     "meleeWeapons": "Armas de Combate Corpo a Corpo",
     "migration": {
       "migrationItem": {
-        "name": "The Everything Holder",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+        "name": "Contêiner Geral Temporário",
+        "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do Personagem. Para mover essas entidades de volta aos seus locais corretos, reimporte este Personagem do GCS ou GCA."
       }
     },
     "minDamageRule": "Dano mín.:",
@@ -1244,26 +1244,26 @@
     "resourceTemplateTitle": "Modelos de Controle de Recursos",
     "resourceTracker": {
       "editor": {
-        "alias": "Alias",
-        "clear": "Clear Tracker Configuration",
-        "clearColor": "Clear Color",
-        "clone": "Clone a Template",
-        "enforceMax": "Enforce Maximum",
-        "enforceMin": "Enforce Minimum",
-        "isAccumulator": "Is Accumulator",
-        "maximum": "Maximum",
-        "minimum": "Minimum",
-        "noColor": "(none)",
-        "setColor": "Set Color",
-        "threshold": "Threshold",
-        "thresholds": "Thresholds",
-        "title": "Resource Tracker Editor",
-        "useBreakpoints": "Use Breakpoints"
+        "alias": "Apelido",
+        "clear": "Limpar Configuração do Controle",
+        "clearColor": "Limpar Cor",
+        "clone": "Clonar um Modelo",
+        "enforceMax": "Impor Máximo",
+        "enforceMin": "Impor Mínimo",
+        "isAccumulator": "É Acumulador",
+        "maximum": "Máximo",
+        "minimum": "Mínimo",
+        "noColor": "(nenhuma)",
+        "setColor": "Definir Cor",
+        "threshold": "Limiar",
+        "thresholds": "Limiares",
+        "title": "Editor de Controle de Recursos",
+        "useBreakpoints": "Usar Pontos de Interrupção"
       },
       "viewer": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Reset"
+        "reset": "Redefinir"
       }
     },
     "resourceTrackerEditor": "Editar Controle de Recursos",
@@ -1537,7 +1537,7 @@
       "Fall": "Caindo",
       "Fly": "Voando",
       "Grapple": "Agarrado(a)",
-      "Healthy": "Healthy",
+      "Healthy": "Saudável",
       "Kneel": "Ajoelhado(a)",
       "MildPain": "Dor Leve",
       "ModeratePain2": "Dor Moderada (-2)",
@@ -1547,7 +1547,7 @@
       "Poison": "Envenenado(a)",
       "Prone": "Deitado",
       "Reeling": "Cambaleando",
-      "Rested": "Rested",
+      "Rested": "Descansado(a)",
       "Retching": "Vomitando",
       "SeverePain4": "Dor Severa (-4)",
       "SeverePain5": "Dor Severa (-5)",
@@ -1561,7 +1561,7 @@
       "Suffocate": "Sufocando",
       "TerriblePain": "Dor Terrível",
       "Tipsy": "Embriagado(a)",
-      "Tired": "Tired",
+      "Tired": "Cansado(a)",
       "Wait": "Aguardando"
     },
     "step": "Passo",
@@ -1632,7 +1632,7 @@
     "yard": "jarda",
     "yards": "jardas",
     "years": "anos",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "youDoNotHavePermssion": "Você não tem permissão para fazer isso."
   },
   "TYPES": {
     "Actor": {

@@ -848,8 +848,8 @@
     "meleeWeapons": "Nahkampfwaffe",
     "migration": {
       "migrationItem": {
-        "name": "The Everything Holder",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+        "name": "Temporärer Sammelbehälter",
+        "notes": "Dies ist ein temporärer Gegenstand, der nach der Charaktermigration alle Reaktionen, bedingten Modifikatoren und Waffen enthält. Um diese Elemente wieder an ihre richtigen Stellen zu verschieben, importiere diesen Charakter bitte erneut aus GCS oder GCA."
       }
     },
     "minDamageRule": "Min. Schaden:",
@@ -907,7 +907,7 @@
     "modifierImpossible": "Unmöglich",
     "modifierJournalManager": "Modifier Bucket Notizbucheinträge",
     "modifierJournals": "Modifier Bucket Liste der Notizbucheinträge",
-    "modifierLightDeepTwilight": "Deep twilight / candlelight",
+    "modifierLightDeepTwilight": "Tiefe Dämmerung / Kerzenlicht",
     "modifierLightDim": "Großes Feuer / Sonnenauf- / Untergang",
     "modifierLightFullMoon": "Vollmond",
     "modifierLightHalfMoon": "Halbmond",
@@ -915,7 +915,7 @@
     "modifierLightNone": "Völlige Finsternis",
     "modifierLightQuarterMoon": "Viertel Mond",
     "modifierLightStarlight": "Sternenlicht",
-    "modifierLightStarlightClouds": "Starlight through clouds",
+    "modifierLightStarlightClouds": "Sternenlicht durch Wolken",
     "modifierLightTwilight": "Dämmerung / Gaslicht / Taschenlampe",
     "modifierOthers": "Andere Modifikatoren",
     "modifierPosition": "Bucket: Ändere Position",
@@ -1245,25 +1245,25 @@
     "resourceTracker": {
       "editor": {
         "alias": "Alias",
-        "clear": "Clear Tracker Configuration",
-        "clearColor": "Clear Color",
-        "clone": "Clone a Template",
-        "enforceMax": "Enforce Maximum",
-        "enforceMin": "Enforce Minimum",
-        "isAccumulator": "Is Accumulator",
+        "clear": "Tracker-Konfiguration zurücksetzen",
+        "clearColor": "Farbe löschen",
+        "clone": "Vorlage klonen",
+        "enforceMax": "Maximum erzwingen",
+        "enforceMin": "Minimum erzwingen",
+        "isAccumulator": "Ist Akkumulator",
         "maximum": "Maximum",
         "minimum": "Minimum",
-        "noColor": "(none)",
-        "setColor": "Set Color",
-        "threshold": "Threshold",
-        "thresholds": "Thresholds",
-        "title": "Resource Tracker Editor",
-        "useBreakpoints": "Use Breakpoints"
+        "noColor": "(keine)",
+        "setColor": "Farbe festlegen",
+        "threshold": "Schwellenwert",
+        "thresholds": "Schwellenwerte",
+        "title": "Ressourcen-Tracker-Editor",
+        "useBreakpoints": "Schwellenwerte verwenden"
       },
       "viewer": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Reset"
+        "reset": "Zurücksetzen"
       }
     },
     "resourceTrackerEditor": "Ressourcen Anzeigen Editor",
@@ -1389,7 +1389,7 @@
     "settings": {
       "physicalDiceTooltip": "z.B.: 1,2,3 oder 6"
     },
-    "settingSheetDetail": "Quick Sheet",
+    "settingSheetDetail": "Schnellbogen",
     "settingShowChatReeling": "Zeige Schwankend-/Ermüdet-Status im Chat",
     "settingShowConfirmationRollDialog": "Zeige Bestätigungsdialog für Würfel",
     "settingShowDebugInfo": "Dokument Debug Info anzeigen",
@@ -1537,7 +1537,7 @@
       "Fall": "Fallend",
       "Fly": "Fliegend",
       "Grapple": "Ergriffen",
-      "Healthy": "Healthy",
+      "Healthy": "Gesund",
       "Kneel": "Kniend",
       "MildPain": "Leichte Schmerzen",
       "ModeratePain2": "Mäßige Schmerzen (-2)",
@@ -1547,7 +1547,7 @@
       "Poison": "Vergiftet",
       "Prone": "Liegend",
       "Reeling": "Schwankend",
-      "Rested": "Rested",
+      "Rested": "Ausgeruht",
       "Retching": "Würgend",
       "SeverePain4": "Starke Schmerzen (-4)",
       "SeverePain5": "Starke Schmerzen (-5)",
@@ -1557,11 +1557,11 @@
       "Sprint": "Sprintend",
       "Standing": "Stehend",
       "Stealth": "Schleichend",
-      "StunnedMental": "Mental Stun",
+      "StunnedMental": "Geistig benommen",
       "Suffocate": "Erstickend",
       "TerriblePain": "Furchtbare Schmerzen",
       "Tipsy": "Angetrunken",
-      "Tired": "Tired",
+      "Tired": "Müde",
       "Wait": "Wartend"
     },
     "step": "Schritt",
@@ -1631,8 +1631,8 @@
     "written": "Geschrieben",
     "yard": "Yard",
     "yards": "Yards",
-    "years": "years",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "years": "Jahre",
+    "youDoNotHavePermssion": "Du hast keine Berechtigung, das zu tun."
   },
   "TYPES": {
     "Actor": {

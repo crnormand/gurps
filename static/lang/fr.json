@@ -168,7 +168,7 @@
     "chatHelpShow": "Show various values from tokens in the scene<hr>parameters:\n&lt;Attributes (primary and secondary)&gt;\n&lt;Skill names&gt;\nparry\nblock\nwill\nfright\nper\nvision\nhearing\ntaste\nsmell\nmove\nspeed<hr>examples:\n/show HP FP IQ\n/show Stealth PER\n/show per move speed\n/show vision hearing",
     "chatHelpSound": "Jouer un son en arrière-plan<hr>parameters:\nw: secondes d'attente avant début du son\nv: volume\n&lt;full path filename&gt;<hr>examples:\n/sound w2.5 /path/filename\n/sound v0.6 /path/filename\n/sound w3 v2 /path/filename",
     "chatHelpStatus": "Définit le statut du token<hr>parameters:\ntoggle|t: bascule le statut\non|+|set: active le statut\noff|-|unset: désactive le statut\nclear: retire tout statut\n@self / :nom du token\nlist: afficher tous les noms de statut\n{JSON data}: optionnel 'duration.combat' data<hr>examples:\n/st on prone Bog\n/st - shock1 @self\n/st list",
-    "chatHelpTracker": "Modify the Resource Tracker<hr>command format:\n/tr0-3\n/tracker0-3\n/resource0-3\n/rt0-3\n/tr(name)\n/tracker(name)\n/resource(name)\n/rt(name)<hr>parameters:\n&lt;formula&gt;\nreset: reset Tracker to starting value<hr>examples:\n/tr0 +1\n/tr0 -2\n/tracker1 =20\n/tr(arrows) +1\n/resource(rounds) reset",
+    "chatHelpTracker": "Modifier le Suivi des Ressources<hr>format de commande:\n/tr0-3\n/tracker0-3\n/resource0-3\n/rt0-3\n/tr(name)\n/tracker(name)\n/resource(name)\n/rt(name)<hr>paramètres:\n&lt;formula&gt;\nreset: réinitialise le suivi à la valeur de départ<hr>exemples:\n/tr0 +1\n/tr0 -2\n/tracker1 =20\n/tr(arrows) +1\n/resource(rounds) reset",
     "chatHelpUses": "Modifie la colonne du nombre d'utilisations d'équipement<hr>parameters:\n&lt;formula&gt;\n&lt;equipment&gt;\no:&lt;equipment&gt;: only search 'other' list\nreset: set USES to MAX_USES<hr>examples:\n/uses +1 equipment\n/uses -2 equipment\n/uses =20 equipment\n/uses +1 o:equipment\n/uses reset equipment",
     "chatHelpW": "Chuchoter aux joueurs ou propriétaires des tokens sélectionnés<hr>parameters:\n&lt;[player names]&gt;\n@: Chuchoter aux joueurs ou propriétaires des tokens sélectionnés\n<hr>examples:\n/w [Chris] msg sent to Player Chris\n/w @ msg sent to owners of selected tokens",
     "chatHelpWait": "Attendre X millisecondes avant d'exécuter le command chat suivante<hr>parameters:\nX: le nombre de millisecondes à attendre\n<hr>examples:\n/wait 500",
@@ -349,7 +349,7 @@
     "damageTypeFatigue": "Fatigue",
     "damageTypeHuge Piercing": "Enorme Perforation",
     "damageTypeImpaling": "Empalement",
-    "damageTypeInjury": "Injury",
+    "damageTypeInjury": "Blessure",
     "damageTypeLarge Piercing": "Grande Perforation",
     "damageTypePiercing": "Perforation",
     "damageTypeSmall Piercing": "Petite Perforation",
@@ -363,7 +363,7 @@
     "defenseTab": "Défenses",
     "delete": "Supprimer",
     "description": "Description",
-    "descriptionAge": "Age",
+    "descriptionAge": "Âge",
     "descriptionAppearance": "Apparence",
     "descriptionBirthday": "Date de Naissance",
     "descriptionBodyPlan": "Type",
@@ -848,8 +848,8 @@
     "meleeWeapons": "Armes de Mêlée",
     "migration": {
       "migrationItem": {
-        "name": "The Everything Holder",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+        "name": "Conteneur universel temporaire",
+        "notes": "Il s'agit d'un objet temporaire utilisé pour stocker toutes les Réactions, tous les Modificateurs conditionnels et toutes les Armes après la migration du personnage. Pour remettre ces éléments à leur place, veuillez réimporter ce personnage depuis GCS ou GCA."
       }
     },
     "minDamageRule": "Dégâts min.:",
@@ -1163,7 +1163,7 @@
     "pdfKnockdownStun": "B420",
     "pdfLPT": "B142",
     "pdfMajorWound": "B420",
-    "pdfPageReference": "Page Ref",
+    "pdfPageReference": "Réf. page",
     "pdfPostureCrawling": "B551",
     "pdfPostureCrouching": "B551",
     "pdfPostureKneeling": "B551",
@@ -1187,7 +1187,7 @@
     "pointsRace": "Race",
     "pointsSkills": "Compétences",
     "pointsSpells": "Sorts",
-    "pointsTotal": "Total Points",
+    "pointsTotal": "Total de points",
     "pointsUnspent": "Restants",
     "publicRollAsDefault": "Jet Public par défaut",
     "quantity": "Quantité",
@@ -1245,25 +1245,25 @@
     "resourceTracker": {
       "editor": {
         "alias": "Alias",
-        "clear": "Clear Tracker Configuration",
-        "clearColor": "Clear Color",
-        "clone": "Clone a Template",
-        "enforceMax": "Enforce Maximum",
-        "enforceMin": "Enforce Minimum",
-        "isAccumulator": "Is Accumulator",
+        "clear": "Effacer la configuration du suivi",
+        "clearColor": "Effacer la couleur",
+        "clone": "Cloner un modèle",
+        "enforceMax": "Appliquer le maximum",
+        "enforceMin": "Appliquer le minimum",
+        "isAccumulator": "Est un accumulateur",
         "maximum": "Maximum",
         "minimum": "Minimum",
-        "noColor": "(none)",
-        "setColor": "Set Color",
-        "threshold": "Threshold",
-        "thresholds": "Thresholds",
-        "title": "Resource Tracker Editor",
-        "useBreakpoints": "Use Breakpoints"
+        "noColor": "(aucune)",
+        "setColor": "Définir la couleur",
+        "threshold": "Seuil",
+        "thresholds": "Seuils",
+        "title": "Éditeur de Suivi des Ressources",
+        "useBreakpoints": "Utiliser des seuils"
       },
       "viewer": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Reset"
+        "reset": "Réinitialiser"
       }
     },
     "resourceTrackerEditor": "Editeur de Suivi des Ressources",
@@ -1498,7 +1498,7 @@
     "splitDrValue": "Valeur RD",
     "splitQuantity": "Diviser la Quantité",
     "spoken": "Parlé",
-    "statsTab": "Stats",
+    "statsTab": "Statistiques",
     "status": {
       "Agony": "Agonie",
       "Bad-1": "-1 Difficulté Abstraite de Base",
@@ -1537,7 +1537,7 @@
       "Fall": "Chute",
       "Fly": "Vole",
       "Grapple": "Aggripé",
-      "Healthy": "Healthy",
+      "Healthy": "En bonne santé",
       "Kneel": "Agenouillé",
       "MildPain": "Douleur Bénigne",
       "ModeratePain2": "Douleur Modérée (-2)",
@@ -1547,7 +1547,7 @@
       "Poison": "Empoisonné",
       "Prone": "Allongé",
       "Reeling": "Chancelant",
-      "Rested": "Rested",
+      "Rested": "Reposé",
       "Retching": "Haut-le-coeur",
       "SeverePain4": "Douleur Sévère (-4)",
       "SeverePain5": "Douleur Sévère (-5)",
@@ -1561,7 +1561,7 @@
       "Suffocate": "Suffoque",
       "TerriblePain": "Douleur Terrible",
       "Tipsy": "Pompette",
-      "Tired": "Tired",
+      "Tired": "Fatigué",
       "Wait": "En Attente"
     },
     "step": "Pas",
@@ -1632,7 +1632,7 @@
     "yard": "mètre",
     "yards": "mètres",
     "years": "années",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "youDoNotHavePermssion": "Vous n'avez pas la permission de faire cela."
   },
   "TYPES": {
     "Actor": {

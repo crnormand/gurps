@@ -18,7 +18,7 @@
     "addAdjustedForInjuryTolerance": "† - С учётом Устойчивости к ранениям",
     "addAdvantage": "Добавить преимущество",
     "adDisad": "Преимущество/Недостаток",
-    "adDisadQuirkPerk": "Преимущество/Недостаток/Бзик/Перек",
+    "adDisadQuirkPerk": "Преимущество/Недостаток/Бзик/Перк",
     "additionalModifier": "Дополнительный модификатор",
     "addMeleeAttack": "Добавить ближнюю атаку",
     "addproneEffect": "Добавить эффект Лежит на цель.",
@@ -135,7 +135,7 @@
     "bonuses": "Бонусы",
     "bulk": "Разм",
     "cancel": "Отмена",
-    "cannotDragNonFoundryEqt": "Вы не можете перетащить не-Fоundry снаряжение к другому персонажу.",
+    "cannotDragNonFoundryEqt": "Вы не можете перетащить не-Foundry снаряжение к другому персонажу.",
     "cannotDropItemAlreadyExists": "У вас уже есть этот предмет.",
     "carryOnBack": "Нести на спине",
     "changelog": {
@@ -309,7 +309,7 @@
       }
     },
     "ControlRoll": "Бросок контроля",
-    "copyright": "GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html",
+    "copyright": "GURPS — товарный знак Steve Jackson Games, а его правила и иллюстрации защищены авторским правом Steve Jackson Games. Все права принадлежат Steve Jackson Games. Этот игровой модуль является оригинальной разработкой Chris Normand/Nose66 и распространяется бесплатно (не для перепродажи) в соответствии с разрешениями, указанными на http://www.sjgames.com/general/online_policy.html",
     "CR0": "Кб: N/A (Не могу сопротивляться)",
     "CR10": "Кб: 10 (нестандартный)",
     "CR11": "Кб: 11 (нестандартный)",
@@ -848,8 +848,8 @@
     "meleeWeapons": "Контактное оружие",
     "migration": {
       "migrationItem": {
-        "name": "The Everything Holder",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+        "name": "Всеобщий Держатель",
+        "notes": "Это временный предмет, используемый для хранения всех Реакций, Условных Модификаторов и Оружия после миграции персонажа. Чтобы переместить эти сущности на их надлежащие места, пожалуйста, переимпортируйте этого персонажа из GCS или GCA."
       }
     },
     "minDamageRule": "Мин. урон:",
@@ -1244,26 +1244,26 @@
     "resourceTemplateTitle": "Шаблоны Счётчика ресурсов",
     "resourceTracker": {
       "editor": {
-        "alias": "Alias",
-        "clear": "Clear Tracker Configuration",
-        "clearColor": "Clear Color",
-        "clone": "Clone a Template",
-        "enforceMax": "Enforce Maximum",
-        "enforceMin": "Enforce Minimum",
-        "isAccumulator": "Is Accumulator",
-        "maximum": "Maximum",
-        "minimum": "Minimum",
-        "noColor": "(none)",
-        "setColor": "Set Color",
-        "threshold": "Threshold",
-        "thresholds": "Thresholds",
-        "title": "Resource Tracker Editor",
-        "useBreakpoints": "Use Breakpoints"
+        "alias": "Алиас",
+        "clear": "Очистить конфигурацию счётчика",
+        "clearColor": "Очистить цвет",
+        "clone": "Клонировать шаблон",
+        "enforceMax": "Ограничить максимум",
+        "enforceMin": "Ограничить минимум",
+        "isAccumulator": "Это накопитель",
+        "maximum": "Максимум",
+        "minimum": "Минимум",
+        "noColor": "(нет)",
+        "setColor": "Установить цвет",
+        "threshold": "Порог",
+        "thresholds": "Пороги",
+        "title": "Редактор счётчика ресурсов",
+        "useBreakpoints": "Использовать контрольные точки"
       },
       "viewer": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Reset"
+        "reset": "Сброс"
       }
     },
     "resourceTrackerEditor": "Редактор Счётчика ресурсов",
@@ -1499,7 +1499,7 @@
     "splitDrValue": "Значение СП",
     "splitQuantity": "Разделить количество",
     "spoken": "Устный",
-    "statsTab": "Stats",
+    "statsTab": "Характеристики",
     "status": {
       "Agony": "Агония",
       "Bad-1": "-1 Основная абстрактная сложность",
@@ -1538,7 +1538,7 @@
       "Fall": "Падает",
       "Fly": "Полёт",
       "Grapple": "Схвачен",
-      "Healthy": "Healthy",
+      "Healthy": "Здоров",
       "Kneel": "На колене",
       "MildPain": "Лёгкая боль",
       "ModeratePain2": "Средняя боль (-2)",
@@ -1548,7 +1548,7 @@
       "Poison": "Отравление",
       "Prone": "Лежит",
       "Reeling": "Измотан",
-      "Rested": "Rested",
+      "Rested": "Отдохнувший",
       "Retching": "Рвота",
       "SeverePain4": "Серьёзная боль (-4)",
       "SeverePain5": "Серьёзная боль (-5)",
@@ -1562,7 +1562,7 @@
       "Suffocate": "Удушье",
       "TerriblePain": "Ужасная боль",
       "Tipsy": "Поддатость",
-      "Tired": "Tired",
+      "Tired": "Утомлен",
       "Wait": "Ожидание"
     },
     "step": "Шаг",
@@ -1633,7 +1633,7 @@
     "yard": "ярд",
     "yards": "ярды",
     "years": "лет",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "youDoNotHavePermssion": "У вас нет разрешения на это."
   },
   "TYPES": {
     "Actor": {
