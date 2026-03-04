@@ -39,7 +39,7 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
       }
     }
 
-    // Noramalize the reach value to ensure min cannot be bigger than max and only valid reach values
+    // Normalize the reach value to ensure min cannot be bigger than max and only valid reach values
     // can pass through for each.
     if ('reach' in source && typeof source.reach === 'object' && source.reach !== null) {
       if (
