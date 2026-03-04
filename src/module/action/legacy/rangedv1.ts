@@ -17,7 +17,7 @@ class RangedV1 {
 
   // Generate getters for each of the ranged attack properties. Delegate to the underlying RangedAttackModel.
   get acc() {
-    return this.rangedV2.acc
+    return this.rangedV2.accText
   }
 
   get addToQuickRoll() {
@@ -29,7 +29,7 @@ class RangedV1 {
   }
 
   get bulk() {
-    return this.rangedV2.bulk
+    return this.rangedV2.bulkText
   }
 
   get consumeAction() {
@@ -59,11 +59,6 @@ class RangedV1 {
   get itemModifiers() {
     return this.rangedV2.itemModifiers
   }
-
-  // not used
-  // get legalityclass() {
-  //   return this.rangedV2.legalityclass
-  // }
 
   get level() {
     return this.rangedV2.level
@@ -102,7 +97,7 @@ class RangedV1 {
   }
 
   get range() {
-    return this.rangedV2.range
+    return this.rangedV2.rangeText
   }
 
   get rcl() {
@@ -110,7 +105,7 @@ class RangedV1 {
   }
 
   get rof() {
-    return this.rangedV2.rateOfFire
+    return this.rangedV2.rofText
   }
 
   get shots() {
