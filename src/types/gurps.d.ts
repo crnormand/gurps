@@ -65,8 +65,9 @@ import {
   HandlebarsActorSheetV2Constructor,
   HandlebarsActorSheetV2Instance,
   HandlebarsTemplatePart,
-  HandlebarsControlsEntry,
+  HeaderControlsEntry,
 } from './foundry/actor-sheet-v2.js'
+import { Application as ApplicationV2 } from './foundry/application.js'
 
 export {}
 
@@ -96,6 +97,18 @@ declare global {
     /* ---------------------------------------- */
 
     namespace applications {
+      namespace api {
+        export type Application = ApplicationV2
+
+        /* ---------------------------------------- */
+
+        namespace Application {
+          export type ControlsEntry = HeaderControlsEntry
+        }
+      }
+
+      /* ---------------------------------------- */
+
       namespace ActorSheet {
         export type Configuration = ActorSheetV2Configuration
 
@@ -115,7 +128,6 @@ declare global {
 
       namespace handlebars {
         export type TemplatePart = HandlebarsTemplatePart
-        export type ControlsEntry = HandlebarsControlsEntry
       }
     }
 
