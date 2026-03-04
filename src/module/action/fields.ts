@@ -343,7 +343,7 @@ export class WeaponRecoilField<
 
 const weaponShotsSchema = () => {
   return {
-    /** The number of shots carried in the megazine (or other implement) of this weapon, as appropriate */
+    /** The number of shots carried in the magazine (or other implement) of this weapon, as appropriate */
     count: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     /** The number of shots currently loaded in the weapon's chamber (if any) */
     inChamber: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
