@@ -7,15 +7,7 @@ import { EquipmentSchema } from '@module/item/data/equipment.js'
 import { SkillSchema } from '@module/item/data/skill.js'
 import { SpellSchema } from '@module/item/data/spell.js'
 import { TraitSchema } from '@module/item/data/trait.js'
-import {
-  parseReach,
-  parseBlock,
-  parseAccuracy,
-  parseRange,
-  parseShots,
-  parseRecoil,
-  parseParry,
-} from '@module/util/parse-weapon.js'
+import { parseBlock } from '@module/util/parse-weapon.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { HitLocation, hitlocationDictionary } from '../../hitlocation/hitlocation.js'
@@ -650,6 +642,9 @@ Portrait will not be imported.`
     const level = weapon.charskillscore ?? 0
 
     const block = parseBlock(weapon.charblockscore ?? '')
+    // The GCA block value is the pre-calculated block value. We're getting
+    // the expected block value given 0 block modifier to see if the weapon
+    // has any block bonus.
     const blockLevelDifference = Math.floor(level / 2) + 3
 
     block.modifier = (block.modifier ?? 0) - blockLevelDifference
@@ -666,8 +661,8 @@ Portrait will not be imported.`
       mode: weapon.name ?? '',
       modifierTags: '',
       notes: weapon.notes ?? '',
-      parry: parseParry(weapon.parry ?? ''),
-      reach: parseReach(weapon.charreach ?? ''),
+      parry: weapon.parry ?? '',
+      reach: weapon.charreach ?? '',
       st: weapon.charminst ?? '',
     }
   }
@@ -683,16 +678,16 @@ Portrait will not be imported.`
       name,
       type,
       _id,
-      acc: parseAccuracy(weapon.characc ?? ''),
+      acc: weapon.characc ?? '',
       damage,
       import: weapon.charskillscore ?? 0,
       itemModifiers: '',
       mode: weapon.name ?? '',
       modifierTags: '',
       notes: weapon.notes ?? '',
-      range: parseRange(`${weapon.charrangehalfdam}/${weapon.charrangemax}`),
-      recoil: parseRecoil(weapon.charrcl ?? ''),
-      shots: parseShots(weapon.charshots ?? ''),
+      range: `${weapon.charrangehalfdam}/${weapon.charrangemax}`,
+      recoil: weapon.charrcl ?? '',
+      shots: weapon.charshots ?? '',
       st: weapon.charminst ?? '',
     }
   }

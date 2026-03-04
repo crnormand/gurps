@@ -1,18 +1,28 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import { MeleeAttackSchema } from '@module/action/melee-attack.js'
-import { RangedAttackSchema, RateOfFireModeSchema } from '@module/action/ranged-attack.js'
+import {
+  WeaponAccSchema,
+  WeaponBlockSchema,
+  WeaponBulkSchema,
+  WeaponParrySchema,
+  WeaponRangeSchema,
+  WeaponRateOfFireModeSchema,
+  WeaponRateOfFireSchema,
+  WeaponReachSchema,
+  WeaponRecoilSchema,
+  WeaponShotsSchema,
+} from '@module/action/fields.js'
 
-type Reach = NonNullable<fields.SchemaField.CreateData<MeleeAttackSchema>['reach']>
-type Parry = NonNullable<fields.SchemaField.CreateData<MeleeAttackSchema>['parry']>
-type Block = NonNullable<fields.SchemaField.CreateData<MeleeAttackSchema>['block']>
+type Reach = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponReachSchema>>
+type Parry = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponParrySchema>>
+type Block = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponBlockSchema>>
 
-type Accuracy = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['acc']>
-type Bulk = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['bulk']>
-type Range = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['range']>
-type Recoil = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['recoil']>
-type Shots = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['shots']>
-type RateOfFire = NonNullable<fields.SchemaField.CreateData<RangedAttackSchema>['rateOfFire']>
-type RateOfFireMode = NonNullable<fields.SchemaField.CreateData<RateOfFireModeSchema>>
+type Acc = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponAccSchema>>
+type Bulk = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponBulkSchema>>
+type Range = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponRangeSchema>>
+type Recoil = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponRecoilSchema>>
+type Shots = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponShotsSchema>>
+type RateOfFire = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponRateOfFireSchema>>
+type RateOfFireMode = NonNullable<fields.SchemaField.Internal.InitializedType<WeaponRateOfFireModeSchema>>
 
 /**
  * Helper functions for the actions module.
@@ -97,8 +107,8 @@ function parseReach(text: string): Reach {
 
 /* ---------------------------------------- */
 
-function parseAccuracy(text: string): Accuracy {
-  const accuracy: Accuracy = { base: 0, scope: 0, jet: false }
+function parseAcc(text: string): Acc {
+  const accuracy: Acc = { base: 0, scope: 0, jet: false }
 
   text = text.trim().toLowerCase().replaceAll(' ', '')
 
@@ -306,14 +316,4 @@ function parseWeaponRateOfFireMode(text: string): RateOfFireMode {
 
 /* ---------------------------------------- */
 
-export {
-  parseAccuracy,
-  parseBlock,
-  parseBulk,
-  parseParry,
-  parseRange,
-  parseRateOfFire,
-  parseReach,
-  parseRecoil,
-  parseShots,
-}
+export { parseAcc, parseBlock, parseBulk, parseParry, parseRange, parseRateOfFire, parseReach, parseRecoil, parseShots }
