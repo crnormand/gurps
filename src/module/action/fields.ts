@@ -32,14 +32,17 @@ export type WeaponReachSchema = ReturnType<typeof weaponReachSchema>
 
 export class WeaponReachField<
   Options extends fields.SchemaField.Options<WeaponReachSchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponReachSchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponReachSchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponReachSchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponReachSchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(value: unknown): fields.SchemaField.Internal.AssignmentType<WeaponReachSchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseReach(value)
 
     return super._cast(value)
@@ -67,14 +70,17 @@ export type WeaponParrySchema = ReturnType<typeof weaponParrySchema>
 
 export class WeaponParryField<
   Options extends fields.SchemaField.Options<WeaponParrySchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponParrySchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponParrySchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponParrySchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponParrySchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(value: unknown): fields.SchemaField.Internal.AssignmentType<WeaponParrySchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseParry(value)
 
     return super._cast(value)
@@ -98,14 +104,17 @@ export type WeaponBlockSchema = ReturnType<typeof weaponBlockSchema>
 
 export class WeaponBlockField<
   Options extends fields.SchemaField.Options<WeaponBlockSchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponBlockSchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponBlockSchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponBlockSchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponBlockSchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(value: unknown): fields.SchemaField.Internal.AssignmentType<WeaponBlockSchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseBlock(value)
 
     return super._cast(value)
@@ -130,14 +139,17 @@ export type WeaponAccSchema = ReturnType<typeof weaponAccSchema>
 
 export class WeaponAccField<
   Options extends fields.SchemaField.Options<WeaponAccSchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponAccSchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponAccSchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponAccSchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponAccSchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(value: unknown): fields.SchemaField.Internal.AssignmentType<WeaponAccSchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseAccuracy(value)
 
     return super._cast(value)
@@ -163,14 +175,17 @@ export type WeaponBulkSchema = ReturnType<typeof weaponBulkSchema>
 
 export class WeaponBulkField<
   Options extends fields.SchemaField.Options<WeaponBulkSchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponBulkSchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponBulkSchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponBulkSchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponBulkSchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(value: unknown): fields.SchemaField.Internal.AssignmentType<WeaponBulkSchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseBulk(value)
 
     return super._cast(value)
@@ -200,14 +215,17 @@ export type WeaponRangeSchema = ReturnType<typeof weaponRangeSchema>
 
 export class WeaponRangeField<
   Options extends fields.SchemaField.Options<WeaponRangeSchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponRangeSchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponRangeSchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponRangeSchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponRangeSchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(value: unknown): fields.SchemaField.Internal.AssignmentType<WeaponRangeSchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseRange(value)
 
     return super._cast(value)
@@ -270,16 +288,17 @@ export type WeaponRateOfFireSchema = ReturnType<typeof weaponRateOfFireSchema>
 
 export class WeaponRateOfFireField<
   Options extends fields.SchemaField.Options<WeaponRateOfFireSchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponRateOfFireSchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponRateOfFireSchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponRateOfFireSchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponRateOfFireSchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(
-    value: unknown
-  ): fields.SchemaField.Internal.AssignmentType<WeaponRateOfFireSchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseRateOfFire(value)
 
     return super._cast(value)
@@ -303,14 +322,17 @@ export type WeaponRecoilSchema = ReturnType<typeof weaponRecoilSchema>
 
 export class WeaponRecoilField<
   Options extends fields.SchemaField.Options<WeaponRecoilSchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponRecoilSchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponRecoilSchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponRecoilSchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponRecoilSchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(value: unknown): fields.SchemaField.Internal.AssignmentType<WeaponRecoilSchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseRecoil(value)
 
     return super._cast(value)
@@ -342,14 +364,17 @@ export type WeaponShotsSchema = ReturnType<typeof weaponShotsSchema>
 
 export class WeaponShotsField<
   Options extends fields.SchemaField.Options<WeaponShotsSchema> = fields.SchemaField.DefaultOptions,
-> extends fields.SchemaField<WeaponShotsSchema, Options> {
+  AssignmentType =
+    | fields.SchemaField.Internal.AssignmentType<WeaponShotsSchema, Options>
+    | fields.StringField.AssignmentType<Options>,
+> extends fields.SchemaField<WeaponShotsSchema, Options, AssignmentType> {
   constructor(options?: Options, context?: fields.DataField.ConstructionContext) {
     super(weaponShotsSchema(), options, context)
   }
 
   /* ---------------------------------------- */
 
-  protected override _cast(value: unknown): fields.SchemaField.Internal.AssignmentType<WeaponShotsSchema, Options> {
+  protected override _cast(value: unknown): AssignmentType {
     if (typeof value === 'string') value = parseShots(value)
 
     return super._cast(value)
