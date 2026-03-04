@@ -673,6 +673,10 @@ Portrait will not be imported.`
 
     const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
 
+    const halfDamageRange = weapon.charrangehalfdam ?? ''
+    const maxRange = weapon.charrangemax ?? ''
+    const range = halfDamageRange && maxRange ? `${halfDamageRange}/${maxRange}` : halfDamageRange || maxRange || ''
+
     return {
       name,
       type,
@@ -684,7 +688,7 @@ Portrait will not be imported.`
       mode: weapon.name ?? '',
       modifierTags: '',
       notes: weapon.notes ?? '',
-      range: `${weapon.charrangehalfdam}/${weapon.charrangemax}`,
+      range,
       recoil: weapon.charrcl ?? '',
       shots: weapon.charshots ?? '',
       st: weapon.charminst ?? '',
