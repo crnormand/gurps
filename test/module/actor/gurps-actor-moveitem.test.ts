@@ -154,7 +154,7 @@ describe('GurpsActorV2.moveItem', () => {
 
   it('throws error when moving between incompatible collections', async () => {
     await expect(actor.moveItem('system.equipmentV2.carried.0', 'system.ads.0')).rejects.toThrow(
-      /Cannot reorder items between different collections/
+      'Cannot reorder items between different collections: system.equipmentV2.carried and system.adsV2'
     )
   })
 
