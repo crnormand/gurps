@@ -1,11 +1,11 @@
 'use strict'
 
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { gurpslink } from '@util/gurpslink.js'
 import { parselink } from '@util/parselink.js'
 
 import ChatProcessor from './chat/chat-processor.js'
 import GurpsWiring from './gurps-wiring.js'
-import { gurpslink } from './util/gurpslink.js'
 
 /**
  *  This holds functions for all things chat related
