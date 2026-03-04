@@ -1,5 +1,5 @@
 import {
-  parseAccuracy,
+  parseAcc,
   parseBlock,
   parseBulk,
   parseParry,
@@ -104,13 +104,13 @@ describe('parseReach', () => {
 
 /* ---------------------------------------- */
 
-describe('parseAccuracy', () => {
+describe('parseAcc', () => {
   test.each([
     ['jet', { base: 0, scope: 0, jet: true }],
     ['Jet', { base: 0, scope: 0, jet: true }],
     ['JET', { base: 0, scope: 0, jet: true }],
   ])('"%s" → jet accuracy', (text, expected) => {
-    expect(parseAccuracy(text)).toEqual(expected)
+    expect(parseAcc(text)).toEqual(expected)
   })
 
   test.each([
@@ -120,7 +120,7 @@ describe('parseAccuracy', () => {
     ['3+1', { base: 3, scope: 1, jet: false }],
     ['4+2', { base: 4, scope: 2, jet: false }],
   ])('"%s" → base/scope accuracy', (text, expected) => {
-    expect(parseAccuracy(text)).toEqual(expected)
+    expect(parseAcc(text)).toEqual(expected)
   })
 })
 

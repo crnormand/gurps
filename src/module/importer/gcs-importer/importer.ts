@@ -3,17 +3,7 @@ import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { TraitSchema } from '@module/item/data/trait.js'
-import {
-  parseAccuracy,
-  parseBlock,
-  parseBulk,
-  parseParry,
-  parseRange,
-  parseRateOfFire,
-  parseReach,
-  parseRecoil,
-  parseShots,
-} from '@module/util/parse-weapon.js'
+import { parseBlock, parseParry } from '@module/util/parse-weapon.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackSchema } from '../../action/melee-attack.js'
@@ -917,9 +907,12 @@ Portrait will not be imported.`
 
     const block = parseBlock(weapon.calc?.block || weapon.block || '')
 
+    // If we are importing a character instead of an Item Compendium,
+    // we can apply parry bonuses from the character to the weapon's
+    // parry and block values.
     if (this._isMode(GcsImporterMode.Character)) {
-      parry.modifier = this.input.calc.parry_bonus ?? 0
-      block.modifier = this.input.calc.parry_bonus ?? 0
+      parry.modifier += this.input.calc.parry_bonus ?? 0
+      block.modifier += this.input.calc.parry_bonus ?? 0
     }
 
     return {
@@ -936,7 +929,7 @@ Portrait will not be imported.`
       notes: weapon.usage_notes || '',
       otf: this.#importWeaponDefaults(weapon),
       parry,
-      reach: parseReach(weapon.calc?.reach || weapon.reach || ''),
+      reach: weapon.calc?.reach || weapon.reach || '',
       st: weapon.calc?.strength || weapon.strength,
     }
   }
@@ -952,18 +945,18 @@ Portrait will not be imported.`
       name,
       type,
       _id,
-      acc: parseAccuracy(weapon.calc?.accuracy || weapon.accuracy || ''),
-      bulk: parseBulk(weapon.calc?.bulk || weapon.bulk || '0'),
+      acc: weapon.calc?.accuracy || weapon.accuracy || '',
+      bulk: weapon.calc?.bulk || weapon.bulk || '0',
       damage: [weapon.calc?.damage || ''],
       import: weapon.calc?.level || 0,
       itemModifiers: '',
       modifierTags: '',
       notes: weapon.usage_notes || '',
       otf: this.#importWeaponDefaults(weapon),
-      range: parseRange(weapon.calc?.range || weapon.range || ''),
-      rateOfFire: parseRateOfFire(weapon.calc?.rate_of_fire || weapon.rate_of_fire || ''),
-      recoil: parseRecoil(weapon.calc?.recoil || weapon.recoil || ''),
-      shots: parseShots(weapon.calc?.shots || weapon.shots || ''),
+      range: weapon.calc?.range || weapon.range || '',
+      rateOfFire: weapon.calc?.rate_of_fire || weapon.rate_of_fire || '',
+      recoil: weapon.calc?.recoil || weapon.recoil || '',
+      shots: weapon.calc?.shots || weapon.shots || '',
       st: weapon.calc?.strength || weapon.strength,
     }
   }

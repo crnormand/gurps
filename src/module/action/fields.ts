@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import {
-  parseAccuracy,
+  parseAcc,
   parseBlock,
   parseBulk,
   parseParry,
@@ -150,7 +150,7 @@ export class WeaponAccField<
   /* ---------------------------------------- */
 
   protected override _cast(value: unknown): AssignmentType {
-    if (typeof value === 'string') value = parseAccuracy(value)
+    if (typeof value === 'string') value = parseAcc(value)
 
     return super._cast(value)
   }
