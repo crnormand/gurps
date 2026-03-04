@@ -1,4 +1,5 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { AnyObject, EmptyObject } from 'fvtt-types/utils'
 
 type ActorMetadata = Readonly<{
   /** The expected `type` value */
@@ -11,10 +12,11 @@ type ActorMetadata = Readonly<{
 
 /* ---------------------------------------- */
 
-class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> extends TypeDataModel<
-  Schema,
-  Actor.Implementation
-> {
+class BaseActorModel<
+  Schema extends fields.DataSchema = fields.DataSchema,
+  BaseData extends AnyObject = EmptyObject,
+  DerivedData extends AnyObject = EmptyObject,
+> extends TypeDataModel<Schema, Actor.Implementation, BaseData, DerivedData> {
   /* ---------------------------------------- */
 
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.SystemOfType<SubType>
@@ -31,7 +33,7 @@ class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> exten
   static get metadata(): ActorMetadata {
     return {
       embedded: {},
-      type: 'base',
+      type: 'base', // NOTE: This should be overridden by subclasses, but it serves as a fallback for the base class.
     }
   }
 
@@ -44,4 +46,5 @@ class BaseActorModel<Schema extends fields.DataSchema = fields.DataSchema> exten
 
 /* ---------------------------------------- */
 
-export { BaseActorModel, type ActorMetadata }
+export { BaseActorModel }
+export type { ActorMetadata }

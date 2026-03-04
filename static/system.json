@@ -68,19 +68,28 @@
   },
   "documentTypes": {
     "Actor": {
-      "characterV2": {},
       "character": {},
-      "enemy": {}
+      "characterV2": {},
+      "enemy": {},
+      "gcsCharacter": {},
+      "gcsLoot": {}
     },
     "Item": {
-      "featureV2": {},
-      "skillV2": {},
-      "spellV2": {},
+      "equipment": {},
       "equipmentV2": {},
       "feature": {},
+      "featureV2": {},
+      "gcsEquipment": {},
+      "gcsEquipmentModifier": {},
+      "gcsNote": {},
+      "gcsSkill": {},
+      "gcsSpell": {},
+      "gcsTrait": {},
+      "gcsTraitModifier": {},
       "skill": {},
+      "skillV2": {},
       "spell": {},
-      "equipment": {}
+      "spellV2": {}
     }
   },
   "media": [

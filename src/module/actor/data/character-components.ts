@@ -123,45 +123,6 @@ const conditionsSchema = () => {
 
 /* ---------------------------------------- */
 
-const reactionSchema = () => {
-  return {
-    // NOTE: change from previous schema, where "modifier" was a string
-    modifier: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    situation: new fields.StringField({ required: true, nullable: false }),
-    modifierTags: new fields.StringField({ required: true, nullable: false }),
-  }
-}
-
-type ReactionSchema = ReturnType<typeof reactionSchema>
-
-/* ---------------------------------------- */
-
-// const noteSchema = () => {
-//   return {
-//     id: new fields.StringField({ required: true, nullable: false }),
-//     markdown: new fields.StringField({ required: true, nullable: false }),
-//     // NOTE: Change from GCS schema: children is derived, not stored.
-//     // children: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
-//     //   required: true,
-//     //   nullable: false,
-//     // }),
-//     reference: new fields.StringField({ required: true, nullable: false }),
-//     reference_highlight: new fields.StringField({ required: true, nullable: false }),
-//     open: new fields.BooleanField({ required: true, nullable: true, initial: true }),
-//     containedBy: new fields.StringField({ required: true, nullable: true, initial: null }),
-//     calc: new fields.SchemaField(
-//       {
-//         resolved_notes: new fields.StringField({ required: false, nullable: true }),
-//       },
-//       { required: false, nullable: true }
-//     ),
-//   }
-// }
-
-// type NoteSchema = ReturnType<typeof noteSchema>
-
-/* ---------------------------------------- */
-
 export {
   attributeSchema,
   conditionsSchema,
@@ -169,11 +130,7 @@ export {
   encumbranceSchema,
   liftingMovingSchema,
   poolSchema,
-  reactionSchema,
-  // noteSchema,
   type DamageActionSchema,
   type EncumbranceSchema,
   type LiftingMovingSchema,
-  type ReactionSchema,
-  // type NoteSchema,
 }

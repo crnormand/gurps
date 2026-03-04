@@ -6,16 +6,15 @@ import { ModelCollection } from '../data/model-collection.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 
 import { BaseItemModel } from './data/base.js'
-import { EquipmentComponent, EquipmentModel } from './data/equipment.js'
-import { SkillComponent, SkillModel } from './data/skill.js'
-import { SpellComponent, SpellModel } from './data/spell.js'
-import { TraitComponent, TraitModel } from './data/trait.js'
+import { EquipmentModel } from './data/equipment.js'
 import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
   implements ItemV1Interface, IContainable<GurpsItemV2>
 {
+  /* ---------------------------------------- */
+
   // Narrowed view of this.system for GurpsItemV2 logic.
   get modelV2(): BaseItemModel {
     return this.system as Item.SystemOfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
@@ -39,8 +38,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Item.SubType)
   }
-
-  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /*  IContainable Interface Implementation   */
@@ -124,30 +121,62 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   /* ---------------------------------------- */
 
   get notes(): string | null {
-    return this.modelV2.component?.notes ?? null
+    return this.modelV2.notes ?? null
   }
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends Item.Embedded.CollectionName>(
+  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Item'>>(
     embeddedName: EmbeddedName,
     id: string,
-    { invalid, strict }: foundry.abstract.Document.GetEmbeddedDocumentOptions
-  ): Item.Embedded.DocumentFor<EmbeddedName> | undefined {
-    const systemEmbeds = this.modelV2?.metadata.embedded ?? {}
+    options?: foundry.abstract.Document.GetEmbeddedDocumentOptions
+  ): gurps.Pseudo.EmbeddedDocument<'Item', EmbeddedName> {
+    const { invalid = false, strict = true } = options ?? {}
+
+    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
 
     if (embeddedName in systemEmbeds) {
       const path = systemEmbeds[embeddedName]
+      const document = foundry.utils.getProperty(this, path) as any
 
-      return (
-        (foundry.utils.getProperty(this, path) as ModelCollection<any>).get(id, {
-          invalid,
-          strict,
-        }) ?? undefined
-      )
+      return (document.get(id, { invalid, strict }) ?? undefined) as any
     }
 
-    return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+    return super.getEmbeddedDocument(embeddedName as Item.Embedded.CollectionName, id, { invalid, strict }) as any
+  }
+
+  /* ---------------------------------------- */
+
+  static override async createDialog(
+    data?: Item.CreateDialogData,
+    createOptions?: Item.Database.DialogCreateOptions,
+    options?: Item.CreateDialogOptions
+  ): Promise<Item.Stored | null | undefined> {
+    const isDevMode = GURPS.modules.Dev?.settings.enableNonProductionDocumentTypes ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      const allTypes = Item.TYPES
+      const excludeTypes = [
+        'base',
+        'equipment',
+        'feature',
+        'skill',
+        'spell',
+        'gcsTrait',
+        'gcsSkill',
+        'gcsSpell',
+        'gcsEquipment',
+        'gcsTraitModifier',
+        'gcsEquipmentModifier',
+      ]
+
+      // Disable non-production Item types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = allTypes.filter(type => !excludeTypes.includes(type))
+    }
+
+    return super.createDialog(data, createOptions, options)
   }
 
   /* ---------------------------------------- */
@@ -309,47 +338,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   get addToQuickRoll(): boolean {
     // if (!(this.system instanceof TraitModel)) return false
     return this.modelV2.addToQuickRoll
-  }
-
-  get component(): TraitComponent | SkillComponent | SpellComponent | EquipmentComponent | null {
-    if (this.type === 'featureV2') return this.fea
-    if (this.type === 'skillV2') return this.ski
-    if (this.type === 'spellV2') return this.spl
-    if (this.type === 'equipmentV2') return this.eqt
-
-    return null
-  }
-
-  /* ---------------------------------------- */
-
-  get fea(): TraitComponent | null {
-    if (!(this.system instanceof TraitModel)) return null
-
-    return this.system.fea
-  }
-
-  /* ---------------------------------------- */
-
-  get ski(): SkillComponent | null {
-    if (!(this.system instanceof SkillModel)) return null
-
-    return this.system.ski
-  }
-
-  /* ---------------------------------------- */
-
-  get spl(): SpellComponent | null {
-    if (!(this.system instanceof SpellModel)) return null
-
-    return this.system.spl
-  }
-
-  /* ---------------------------------------- */
-
-  get eqt(): EquipmentComponent | null {
-    if (!(this.system instanceof EquipmentModel)) return null
-
-    return this.system.eqt
   }
 
   /* ---------------------------------------- */

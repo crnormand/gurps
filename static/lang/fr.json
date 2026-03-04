@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Action",
+    "HitLocation": "Localisation des coups",
+    "MoveMode": "Mode de déplacement",
+    "ResourceTracker": "Suivi des ressources"
+  },
   "GURPS": {
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
@@ -8,9 +14,6 @@
     "active": "Actif",
     "activeEffect": "Effet Actif",
     "activeEffects": "Effets Actifs",
-    "actor": {
-      "setting": {}
-    },
     "addAbbrev": "Abrev",
     "addAdditionalStackingModifier": "Modificateur Additionel",
     "addAdjustedForDamageType": "‡ - Ajusté pour le Modificateur de Dégâts",
@@ -674,16 +677,26 @@
     "importCurrentVersions": "Versions Actuelles: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Le répertoire est vide. Aucun fichier ne sera importé.",
     "importer": {
+      "actor": {
+        "button": "Importer",
+        "description": "Sélectionnez un fichier GCS 5 ou GCA 5.",
+        "note": "Cette importation écrasera les données pour : <strong>{name}</strong>.",
+        "source": "Données source",
+        "successMessage": "Personnage \"{name}\" importé avec succès.",
+        "title": "Importer les données du personnage pour {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
+      },
       "defaultName": "Personnage importé",
       "error": {
         "noFilesSelected": "Aucun fichier sélectionné pour l'importation."
       },
-      "prompt": {
-        "description": "Sélectionnez un fichier GCS 5 ou GCA 5.",
-        "note": "Cet import écrasera les données pour : <strong>{name}</strong>.",
+      "item": {
+        "button": "Importer",
+        "description": "Sélectionnez un fichier de bibliothèque GCS 5 (.adq, .skl, .spl, .eqp).",
+        "sidebarButton": "Importer le Compendium GCS",
         "source": "Données source",
-        "title": "Importer les données du personnage pour {name}",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Remarque</strong> : Cette action est irréversible !"
+        "successMessage": "Recueil \"{name}\" importé avec succès ({num} éléments importés).",
+        "title": "Importer des éléments du Compendium GCS"
       },
       "promptBodyPlan": {
         "content": "<p>Voulez-vous <strong>Conserver</strong> le plan corporel actuel (<strong>{currentBodyPlan}</strong>), ou <strong>Écraser</strong> avec le plan corporel du fichier d'importation (<strong>{bodyplan}</strong>)?</p>",
@@ -847,9 +860,17 @@
     "meleeAttack": "Attaque de Mêlée",
     "meleeWeapons": "Armes de Mêlée",
     "migration": {
+      "actor": {
+        "progressMessage": "Application des migrations d'Acteur pour la version {version}, veuillez patienter...",
+        "successMessage": "Migrations d'Acteur appliquées avec succès pour la version {version}."
+      },
+      "item": {
+        "progressMessage": "Application des migrations d'Objet pour la version {version}, veuillez patienter...",
+        "successMessage": "Migrations d'Objet appliquées avec succès pour la version {version}."
+      },
       "migrationItem": {
-        "name": "Conteneur universel temporaire",
-        "notes": "Il s'agit d'un objet temporaire utilisé pour stocker toutes les Réactions, tous les Modificateurs conditionnels et toutes les Armes après la migration du personnage. Pour remettre ces éléments à leur place, veuillez réimporter ce personnage depuis GCS ou GCA."
+        "name": "Le Porte-Tout",
+        "notes": "Ceci est un objet temporaire utilisé pour contenir toutes les Réactions, Modificateurs Conditionnels et Armes après la migration du personnage. Pour déplacer ces éléments à leur place appropriée, veuillez réimporter ce personnage depuis GCS ou GCA."
       }
     },
     "minDamageRule": "Dégâts min.:",
@@ -1635,6 +1656,10 @@
     "youDoNotHavePermssion": "Vous n'avez pas la permission de faire cela."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Attaque de mêlée",
+      "rangedAttack": "Attaque à distance"
+    },
     "Actor": {
       "character": "Personnage (v1)",
       "characterV2": "Personnage (v2)",

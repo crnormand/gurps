@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Действие",
+    "HitLocation": "Место попадания",
+    "MoveMode": "Режим передвижения",
+    "ResourceTracker": "Трекер ресурсов"
+  },
   "GURPS": {
     "abbrevPoints": "Очк",
     "abbrevRef": "Ссыл",
@@ -8,9 +14,6 @@
     "active": "Активный",
     "activeEffect": "Активный эффект",
     "activeEffects": "Активные эффекты",
-    "actor": {
-      "setting": {}
-    },
     "addAbbrev": "Сокращение",
     "addAdditionalStackingModifier": "Дополнительный модификатор",
     "addAdjustedForDamageType": "‡ - С учётом модификатора урона",
@@ -323,6 +326,7 @@
     "CR9": "Кб: 9 (Часто сопротивляется)",
     "crippling": "Калечащее ранение, ",
     "current": "Текущий",
+    "currentdodge": "Уклонение",
     "damage": "Урон",
     "damageAbbrevburn": "обж",
     "damageAbbrevcor": "рзед",
@@ -384,6 +388,7 @@
     "Dice": "Кубики",
     "diceAddDamageRule": "Правило кубиков+добавок:",
     "disable": "Отключить",
+    "disadvantage": "Недостаток",
     "dmg": {
       "add": {
         "abbrev": "Сокр.",
@@ -461,6 +466,9 @@
       }
     },
     "dodge": "Уклон.",
+    "dragrulerFly": "Летать",
+    "dragrulerSprint": "Спринт",
+    "dragrulerWalk": "Ходьба",
     "dragSameContainer": "Невозможно добавить объект в этот контейнер, так как он уже находится внутри него.",
     "dropBefore": "Перед целью",
     "dropInside": "Внутри цели",
@@ -674,16 +682,26 @@
     "importCurrentVersions": "Текущие версии: '{GCAVersion}' и '{GCSVersion}'.",
     "importEmptyDirectory": "Каталог пуст. Файлы не будут импортированы.",
     "importer": {
+      "actor": {
+        "button": "Импорт",
+        "description": "Выберите файл GCS 5 или GCA 5.",
+        "note": "Этот импорт перезапишет данные для: <strong>{name}</strong>.",
+        "source": "Исходные данные",
+        "successMessage": "Персонаж \"{name}\" успешно импортирован.",
+        "title": "Импортировать данные персонажа для {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Внимание</strong>: Это действие нельзя отменить!"
+      },
       "defaultName": "Импортированный персонаж",
       "error": {
         "noFilesSelected": "Файлы для импорта не выбраны."
       },
-      "prompt": {
-        "description": "Выберите файл GCS 5 или GCA 5.",
-        "note": "Этот импорт перезапишет данные для: <strong>{name}</strong>.",
+      "item": {
+        "button": "Импорт",
+        "description": "Выберите файл библиотеки GCS 5 (.adq, .skl, .spl, .eqp).",
+        "sidebarButton": "Импортировать компендий GCS",
         "source": "Исходные данные",
-        "title": "Импортировать данные персонажа для {name}",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Внимание</strong>: Это действие нельзя отменить!"
+        "successMessage": "Компендий \"{name}\" успешно импортирован (импортировано элементов: {num}).",
+        "title": "Импортировать элементы компендия GCS"
       },
       "promptBodyPlan": {
         "content": "<p>Вы хотите <strong>Оставить</strong> текущую форму тела (<strong>{currentBodyPlan}</strong>), или <strong>Перезаписать</strong> её формой тела из импортируемого файла (<strong>{bodyplan}</strong>)?</p>",
@@ -847,9 +865,17 @@
     "meleeAttack": "Атака в ближнем бою",
     "meleeWeapons": "Контактное оружие",
     "migration": {
+      "actor": {
+        "progressMessage": "Применяются миграции актёра для версии {version}, пожалуйста, подождите...",
+        "successMessage": "Миграции актёра для версии {version} успешно применены."
+      },
+      "item": {
+        "progressMessage": "Применяются миграции предмета для версии {version}, пожалуйста, подождите...",
+        "successMessage": "Миграции предмета для версии {version} успешно применены."
+      },
       "migrationItem": {
-        "name": "Всеобщий Держатель",
-        "notes": "Это временный предмет, используемый для хранения всех Реакций, Условных Модификаторов и Оружия после миграции персонажа. Чтобы переместить эти сущности на их надлежащие места, пожалуйста, переимпортируйте этого персонажа из GCS или GCA."
+        "name": "Универсальный держатель",
+        "notes": "Это временный предмет, используемый для хранения всех реакций, условных модификаторов и оружия после миграции персонажа. Чтобы вернуть эти элементы на их места, пожалуйста, повторно импортируйте этого персонажа из GCS или GCA."
       }
     },
     "minDamageRule": "Мин. урон:",
@@ -1636,6 +1662,10 @@
     "youDoNotHavePermssion": "У вас нет разрешения на это."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Атака врукопашную",
+      "rangedAttack": "Дальняя атака"
+    },
     "Actor": {
       "character": "Персонаж",
       "characterV2": "Персонаж (v2)",

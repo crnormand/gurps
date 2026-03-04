@@ -1,15 +1,11 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import { parselink } from '@util/parselink.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { ItemComponent, ItemComponentSchema } from '../item/data/component.js'
+import { BaseAttack } from './base-attack.js'
+import { ActionType } from './types.js'
 
-import { BaseAction, BaseActionSchema } from './base-action.js'
-
-// TODO There is significant overlap between Melee and Ranged attacks; consider a shared base class.
-class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
-  declare mel: MeleeAttackComponent
+class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   static override defineSchema(): MeleeAttackSchema {
     return Object.assign(super.defineSchema(), meleeAttackSchema())
   }
@@ -17,13 +13,7 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
   /* ---------------------------------------- */
 
   static override get TYPE(): string {
-    return 'meleeAttack'
-  }
-
-  /* ---------------------------------------- */
-
-  get component(): MeleeAttackComponent {
-    return this.mel
+    return ActionType.MeleeAttack
   }
 
   /* ---------------------------------------- */
@@ -32,81 +22,36 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
 
   override prepareBaseData(): void {
     super.prepareBaseData()
+    this.#prepareDefenses()
   }
 
   /* ---------------------------------------- */
 
-  override prepareDerivedData(): void {
-    super.prepareDerivedData()
-    this.#prepareLevelsFromOtf()
-  }
+  #prepareDefenses(): void {
+    // Do not prepare defenses if the item is not owned
+    if (!this.item.isOwned) return
 
-  /* ---------------------------------------- */
+    // If parry is a number, its value will be re-calculated using the parry
+    // bonus and the current level.
+    // NOTE: Change from previous method where parry itself could store a
+    // value with a leading [+-] to indicate a bonus.
+    if (!isNaN(parseInt(this.parry))) {
+      const parryLevel = parseInt(this.parry)
+      const parrySuffix = this.parry.replace(parryLevel.toString(), '').trim()
 
-  /**
-   * Prepare the level of this skill based on an OTF formula.
-   */
-  #prepareLevelsFromOtf(): void {
-    let otf = this.component.otf
-
-    if (otf === '') {
-      this.component.level = this.component.import
-
-      return
+      this.parry = `${3 + Math.floor(this.level / 2) + this.parrybonus}${parrySuffix}`
     }
 
-    // Remove extraneous brackets
-    otf = otf.match(/^\s*\[(.*)\]\s*$/)?.[1].trim() ?? otf
+    // If block is a number, its value will be re-calculated using the block
+    // bonus and the current level.
+    // NOTE: Change from previous method where block itself could store a
+    // value with a leading [+-] to indicate a bonus.
+    if (!isNaN(parseInt(this.block))) {
+      const blockLevel = parseInt(this.block)
+      const blockSuffix = this.block.replace(blockLevel.toString(), '').trim()
 
-    // If the OTF is just a number, Set the level directly
-    if (otf.match(/^\d+$/)) {
-      this.component.import = parseInt(otf)
-      this.component.level = this.component.import
-
-      return
+      this.block = `${3 + Math.floor(this.level / 2) + this.blockbonus}${blockSuffix}`
     }
-
-    // If the OTF is not a number, parse it using the OTF parser.
-    const action = parselink(otf)
-
-    // If the OTF does not return an action, we cannot set the level.
-    if (!action.action) {
-      console.warn(`GURPS | MeleeAttackModel: OTF "${otf}" did not return a valid action.`)
-
-      return
-    }
-
-    action.action.calcOnly = true
-    // TODO: verify that target is of type "number" (or replace this whole thing)
-    GURPS.performAction(action.action, this.actor).then(
-      (result: boolean | { target: number; thing: any } | undefined) => {
-        if (result && typeof result === 'object') {
-          this.component.level = result.target
-        }
-
-        // If parry is a number, its value will be re-calculated using the parry
-        // bonus and the current level.
-        // NOTE: Change from previous method where parry itself could store a
-        // value with a leading [+-] to indicate a bonus.
-        if (!isNaN(parseInt(this.component.parry))) {
-          const parryLevel = parseInt(this.component.parry)
-          const parrySuffix = this.component.parry.replace(parryLevel.toString(), '').trim()
-
-          this.component.parry = `${3 + Math.floor(this.component.level / 2) + this.component.parrybonus}${parrySuffix}`
-        }
-
-        // If block is a number, its value will be re-calculated using the block
-        // bonus and the current level.
-        // NOTE: Change from previous method where block itself could store a
-        // value with a leading [+-] to indicate a bonus.
-        if (!isNaN(parseInt(this.component.block))) {
-          const blockLevel = parseInt(this.component.block)
-          const blockSuffix = this.component.block.replace(blockLevel.toString(), '').trim()
-
-          this.component.block = `${3 + Math.floor(this.component.level / 2) + this.component.blockbonus}${blockSuffix}`
-        }
-      }
-    )
   }
 
   /* ---------------------------------------- */
@@ -115,36 +60,36 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
     for (const bonus of bonuses) {
       // All melee attacks are affected by DX
       if (bonus.type === 'attribute' && bonus.attrkey === 'DX') {
-        this.component.level += bonus.mod as number
+        this.level += bonus.mod as number
 
         // Add to parry if it is a number
-        if (!isNaN(parseInt(this.component.parry))) {
+        if (!isNaN(parseInt(this.parry))) {
           // Handle parry with a suffix such as "F"
-          const parryLevel = parseInt(this.component.parry)
-          const parrySuffix = this.component.parry.replace(parryLevel.toString(), '').trim()
+          const parryLevel = parseInt(this.parry)
+          const parrySuffix = this.parry.replace(parryLevel.toString(), '').trim()
 
-          this.component.parry = `${3 + Math.floor(this.component.level / 2)}${parrySuffix}`
+          this.parry = `${3 + Math.floor(this.level / 2)}${parrySuffix}`
         }
 
-        if (!isNaN(parseInt(this.component.block))) {
-          this.component.block = `${3 + Math.floor(this.component.level / 2)}`
+        if (!isNaN(parseInt(this.block))) {
+          this.block = `${3 + Math.floor(this.level / 2)}`
         }
       }
 
       if (bonus.type === 'attack' && bonus.isMelee) {
-        if (this.component.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
-          this.component.level += bonus.mod as number
+        if (this.name && this.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
+          this.level += bonus.mod as number
 
           // Handle parry with a suffix such as "F"
-          if (!isNaN(parseInt(this.component.parry))) {
-            const parryLevel = parseInt(this.component.parry)
-            const parrySuffix = this.component.parry.replace(parryLevel.toString(), '').trim()
+          if (!isNaN(parseInt(this.parry))) {
+            const parryLevel = parseInt(this.parry)
+            const parrySuffix = this.parry.replace(parryLevel.toString(), '').trim()
 
-            this.component.parry = `${3 + Math.floor(this.component.level / 2)}${parrySuffix}`
+            this.parry = `${3 + Math.floor(this.level / 2)}${parrySuffix}`
           }
 
-          if (!isNaN(parseInt(this.component.block))) {
-            this.component.block = `${3 + Math.floor(this.component.level / 2)}`
+          if (!isNaN(parseInt(this.block))) {
+            this.block = `${3 + Math.floor(this.level / 2)}`
           }
         }
       }
@@ -156,71 +101,37 @@ class MeleeAttackModel extends BaseAction<MeleeAttackSchema> {
 
 const meleeAttackSchema = () => {
   return {
-    mel: new fields.EmbeddedDataField(MeleeAttackComponent, { required: true, nullable: false }),
-  }
-}
-
-type MeleeAttackSchema = BaseActionSchema & ReturnType<typeof meleeAttackSchema>
-
-/* ---------------------------------------- */
-
-const meleeAttackComponentSchema = () => {
-  return {
-    // NOTE: change from previous schema where this was a string
-    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    // NOTE: Damage is an Array of strings to allow for multiple damage types dealing damage in one
-    // attack, such as "2d-1cut and 1d+2 ctrl". Most of the time, this array has only one element.
-    damage: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-      initial: [],
-    }),
-    st: new fields.StringField({ required: true, nullable: false }),
-    mode: new fields.StringField({ required: true, nullable: false }),
-    notes: new fields.StringField({ required: true, nullable: false }),
-    weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    techlevel: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    cost: new fields.StringField({ required: true, nullable: false }),
+    /** The reach of this attack, e.g. "C", "C,1", "1,2", etc. */
     reach: new fields.StringField({ required: true, nullable: false }),
+
+    /** The parry value of this attack, e.g. "3", "3F",  etc. */
     parry: new fields.StringField({ required: true, nullable: false }),
+
+    /** The parry bonus of this attack, which is added to the base parry value to determine the final parry value. */
     parrybonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    /** The parry penalty of this attack, which is added to the base parry value to determine the final parry value. */
     baseParryPenalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    /** The block value of this attack, e.g. "3",  etc. */
     block: new fields.StringField({ required: true, nullable: false }),
+
+    /** The block bonus of this attack, which is added to the base block value to determine the final block value. */
     blockbonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    otf: new fields.StringField({ required: true, nullable: false }),
-    itemModifiers: new fields.StringField({ required: true, nullable: false }),
-    modifierTags: new fields.StringField({ required: true, nullable: false }),
-    extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
+
+    /**
+     * NOTE: These fields seem inappropriate for attacks and appear to be vestigial. They have been commented out but
+     * left here temporarily for documentation purposes.
+     */
+
+    // weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    // techlevel: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    // cost: new fields.StringField({ required: true, nullable: false }),
   }
 }
 
-type MeleeAttackComponentSchema = ItemComponentSchema & ReturnType<typeof meleeAttackComponentSchema>
+type MeleeAttackSchema = BaseAttack.Schema & ReturnType<typeof meleeAttackSchema>
 
 /* ---------------------------------------- */
 
-class MeleeAttackComponent extends ItemComponent<MeleeAttackComponentSchema> {
-  declare name: string
-  declare otf: string
-  declare import: number
-  declare parry: string
-  declare parrybonus: number
-  declare block: string
-  declare blockbonus: number
-  static override defineSchema(): MeleeAttackComponentSchema {
-    return {
-      ...super.defineSchema(),
-      ...meleeAttackComponentSchema(),
-    }
-  }
-
-  /* ---------------------------------------- */
-  /*  Derived Values                          */
-  /* ---------------------------------------- */
-
-  level: number = 0
-}
-
-/* ---------------------------------------- */
-
-export { MeleeAttackModel, type MeleeAttackSchema, MeleeAttackComponent, type MeleeAttackComponentSchema }
+export { MeleeAttackModel, type MeleeAttackSchema }

@@ -3,57 +3,57 @@
   <input type='text' form='none' value='{{actor.name}}' class='ms-name-input' data-field='name' />
 </div>
 {{#if compact}}
-  {{#if system.traits.title}}<div class='ms-title'>{{system.traits.title}}</div>{{/if}}
+  {{#if system.profile.title}}<div class='ms-title'>{{system.profile.title}}</div>{{/if}}
 {{/if}}
 <div class='ms-tagline'>
-  {{#if system.traits.race}}
+  {{#if system.profile.race}}
     <span class='ms-tag ms-tag-race'>
-      <span class='ms-tag-display'>{{system.traits.race}}</span>
+      <span class='ms-tag-display'>{{system.profile.race}}</span>
       <input
         type='text'
         form='none'
-        value='{{system.traits.race}}'
+        value='{{system.profile.race}}'
         class='ms-tag-input'
-        data-field='system.traits.race'
+        data-field='system.profile.race'
         placeholder='{{localize "GURPS.pointsRace"}}'
       />
     </span>
   {{/if}}
-  {{#if system.traits.gender}}
+  {{#if system.profile.gender}}
     <span class='ms-tag ms-tag-gender'>
-      <span class='ms-tag-display'>{{system.traits.gender}}</span>
+      <span class='ms-tag-display'>{{system.profile.gender}}</span>
       <input
         type='text'
         form='none'
-        value='{{system.traits.gender}}'
+        value='{{system.profile.gender}}'
         class='ms-tag-input'
-        data-field='system.traits.gender'
+        data-field='system.profile.gender'
         placeholder='{{localize "GURPS.descriptionGender"}}'
       />
     </span>
   {{/if}}
-  {{#if system.traits.age}}
+  {{#if system.profile.age}}
     <span class='ms-tag ms-tag-age'>
-      <span class='ms-tag-display'>{{system.traits.age}} {{localize 'GURPS.years'}}</span>
+      <span class='ms-tag-display'>{{system.profile.age}} {{localize 'GURPS.years'}}</span>
       <input
         type='text'
         form='none'
-        value='{{system.traits.age}}'
+        value='{{system.profile.age}}'
         class='ms-tag-input'
-        data-field='system.traits.age'
+        data-field='system.profile.age'
         placeholder='{{localize "GURPS.descriptionAge"}}'
       />
     </span>
   {{/if}}
-  {{#if system.traits.techlevel}}
+  {{#if system.profile.techlevel}}
     <span class='ms-tag ms-tag-tl'>
-      <span class='ms-tag-display'>TL{{system.traits.techlevel}}</span>
+      <span class='ms-tag-display'>TL{{system.profile.techlevel}}</span>
       <input
         type='text'
         form='none'
-        value='{{system.traits.techlevel}}'
+        value='{{system.profile.techlevel}}'
         class='ms-tag-input'
-        data-field='system.traits.techlevel'
+        data-field='system.profile.techlevel'
         placeholder='{{localize "GURPS.TL"}}'
       />
     </span>

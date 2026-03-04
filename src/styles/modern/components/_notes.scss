@@ -398,22 +398,6 @@
       color: var(--ms-text-muted);
     }
   }
-
-  .tracked-resource {
-    flex: 0 1;
-    background: var(--ms-bg-card);
-    border: 1px solid var(--ms-border);
-    border-radius: var(--ms-radius);
-    padding: var(--ms-space-4);
-
-    .header {
-      background: var(--ms-accent);
-    }
-
-    button i {
-      color: var(--ms-text);
-    }
-  }
 }
 
 aside div.tracker-tooltip {

@@ -1,31 +1,24 @@
 import { DataModel, fields } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { PseudoDocumentMetadata } from '../pseudo-document/pseudo-document.js'
-import { TypedPseudoDocument, TypedPseudoDocumentSchema } from '../pseudo-document/typed-pseudo-document.js'
-
-enum ActionType {
-  MeleeAttack = 'meleeAttack',
-  RangedAttack = 'rangedAttack',
-}
+import { type PseudoDocument } from '../pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument } from '../pseudo-document/typed-pseudo-document.js'
 
 /* ---------------------------------------- */
 
 class BaseAction<
-  Schema extends BaseActionSchema = BaseActionSchema,
+  Schema extends BaseAction.Schema = BaseAction.Schema,
   Parent extends DataModel.Any = DataModel.Any,
-> extends TypedPseudoDocument<Schema, Parent> {
-  declare parent: Parent
-  static override defineSchema(): BaseActionSchema {
+> extends TypedPseudoDocument<'Action', Schema, Parent> {
+  static override defineSchema(): BaseAction.Schema {
     return Object.assign(super.defineSchema(), baseActionSchema())
   }
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata<'Action'> {
+  static override get metadata(): PseudoDocument.Metadata<'Action'> {
     return {
       documentName: 'Action',
-      label: '',
       icon: '',
       embedded: {},
     }
@@ -43,10 +36,6 @@ class BaseAction<
     return this.item.parent
   }
 
-  /* ---------------------------------------- */
-  /*  Data Preparation                        */
-  /* ---------------------------------------- */
-
   prepareSheetContext(): this {
     return this
   }
@@ -60,19 +49,36 @@ class BaseAction<
 
 const baseActionSchema = () => {
   return {
+    /** The name of the action. */
     name: new fields.StringField({ initial: undefined }),
+
+    /** Any images associated with this action. */
     img: new fields.FilePathField({ initial: undefined, categories: ['IMAGE'], base64: false }),
+
+    /** The sort value of this action, used to determine its order in the list of actions. */
     sort: new fields.IntegerSortField(),
 
-    // Added to allow disabling from containing Trait.
-    containedBy: new fields.StringField({ required: true, nullable: false }),
-    // Added to support QuickRoll menu.
+    /** Should this Action show up in the quick roll menu in the combat tracker? */
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+    /** Whether this Action is disabled. Disabled Actions are not shown in the UI. */
+    disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+    /**
+     * A reference to the Item which contains this Action. This has been deprecated and replaed with the `item`
+     * accessor. This field was previously used to disable an Action from the Item, but this is now handled by the
+     * "disabled" field above.
+     */
+    // containedBy: new fields.StringField({ required: true, nullable: false }),
   }
 }
 
-type BaseActionSchema = TypedPseudoDocumentSchema & ReturnType<typeof baseActionSchema>
+/* ---------------------------------------- */
+
+namespace BaseAction {
+  export type Schema = TypedPseudoDocument.Schema & ReturnType<typeof baseActionSchema>
+}
 
 /* ---------------------------------------- */
 
-export { ActionType, BaseAction, type BaseActionSchema }
+export { BaseAction, baseActionSchema }

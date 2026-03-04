@@ -1,6 +1,6 @@
+import { defineGetterProperties } from '@util/object-utils.js'
 import { arrayToObject } from '@util/utilities.js'
 
-import { defineGetterProperties } from '../../util/object-utils.js'
 import { GurpsItemV2 } from '../gurps-item.js'
 
 // Make selected prototype getters enumerable own properties so Object.values() includes them.
@@ -64,7 +64,7 @@ class TraitV1 {
   }
 
   get cr(): number | null {
-    return this.traitV2.fea!.cr
+    return this.traitV2.system.cr
   }
 
   get disabled(): boolean {
@@ -105,7 +105,7 @@ class TraitV1 {
   }
 
   get level(): number | null {
-    return this.traitV2.fea!.level ?? null
+    return this.traitV2.system.level ?? null
   }
 
   get modifierTags(): string {
@@ -119,8 +119,8 @@ class TraitV1 {
   get notes(): string {
     const notes = [
       this.cr ? `[${game.i18n!.localize('GURPS.CR' + this.cr)}: ${this.traitV2.name}]` : '',
-      this.traitV2.fea!.notes ?? '',
-      this.traitV2.fea!.vtt_notes ?? '',
+      this.traitV2.system.notes ?? '',
+      this.traitV2.system.vtt_notes ?? '',
     ]
       .filter(it => it)
       .join('<br>')
@@ -134,7 +134,7 @@ class TraitV1 {
   }
 
   get pageref(): string {
-    return this.traitV2.fea!.pageref
+    return this.traitV2.system.pageref
   }
 
   get parentuuid(): string | null {
@@ -142,7 +142,7 @@ class TraitV1 {
   }
 
   get points(): number {
-    return this.traitV2.fea!.points
+    return this.traitV2.system.points
   }
 
   get uuid(): string {

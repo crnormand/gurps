@@ -1,6 +1,6 @@
+import { defineGetterProperties } from '@util/object-utils.js'
 import { arrayToObject } from '@util/utilities.js'
 
-import { defineGetterProperties } from '../../util/object-utils.js'
 import { GurpsItemV2 } from '../gurps-item.js'
 
 const getterKeys = [
@@ -65,7 +65,7 @@ class SpellV1 {
   }
 
   get casttime(): string | null {
-    return this.spellV2.spl?.casttime ?? null
+    return this.spellV2.system?.casttime ?? null
   }
 
   get collapsed(): Record<string, SpellV1> {
@@ -73,11 +73,11 @@ class SpellV1 {
   }
 
   get college(): string | null {
-    return this.spellV2.spl?.college ?? null
+    return this.spellV2.system?.college ?? null
   }
 
   get consumeAction(): boolean {
-    return this.spellV2.spl?.consumeAction ?? false
+    return this.spellV2.system?.consumeAction ?? false
   }
 
   get contains(): Record<string, SpellV1> {
@@ -85,15 +85,15 @@ class SpellV1 {
   }
 
   get cost(): string | null {
-    return this.spellV2.spl?.cost ?? null
+    return this.spellV2.system?.cost ?? null
   }
 
   get difficulty(): string | null {
-    return this.spellV2.spl?.difficulty ?? null
+    return this.spellV2.system?.difficulty ?? null
   }
 
   get duration(): string | null {
-    return this.spellV2.spl?.duration ?? null
+    return this.spellV2.system?.duration ?? null
   }
 
   get fromItem(): string | null {
@@ -109,7 +109,7 @@ class SpellV1 {
   }
 
   get import(): number {
-    return this.spellV2.spl?.import ?? 0
+    return this.spellV2.system?.import ?? 0
   }
 
   get itemInfo(): {
@@ -133,11 +133,11 @@ class SpellV1 {
   }
 
   get level(): number | null {
-    return this.spellV2.spl?.level ?? null
+    return this.spellV2.system?.level ?? null
   }
 
   get maintain(): string | null {
-    return this.spellV2.spl?.maintain ?? null
+    return this.spellV2.system?.maintain ?? null
   }
 
   get modifierTags(): string {
@@ -149,8 +149,8 @@ class SpellV1 {
   }
 
   get notes(): string {
-    const vttNotes = this.spellV2.system.spl?.vtt_notes
-    const notes = this.spellV2.system.spl?.notes
+    const vttNotes = this.spellV2.system.vtt_notes
+    const notes = this.spellV2.system.notes
 
     return [notes, vttNotes]
       .filter(it => !!it)
@@ -163,7 +163,7 @@ class SpellV1 {
   }
 
   get pageref(): string | null {
-    return this.spellV2.spl?.pageref ?? null
+    return this.spellV2.system?.pageref ?? null
   }
 
   get parentuuid(): string | null {
@@ -171,15 +171,15 @@ class SpellV1 {
   }
 
   get points(): number {
-    return this.spellV2.spl?.points ?? 0
+    return this.spellV2.system.points ?? 0
   }
 
   get relativelevel(): string {
-    return this.spellV2.spl?.relativelevel ?? ''
+    return this.spellV2.system?.relativelevel ?? ''
   }
 
   get resist(): string | null {
-    return this.spellV2.spl?.resist ?? null
+    return this.spellV2.system?.resist ?? null
   }
 
   get uuid(): string {

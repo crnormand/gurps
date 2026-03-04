@@ -80,6 +80,7 @@ type PreparedTrackerData = {
 }
 
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
+
 type GurpsActor = GurpsActorV2<Actor.SubType>
 
 // See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
@@ -308,9 +309,6 @@ export class GurpsActorModernSheet extends SheetBase {
     html.querySelectorAll<HTMLElement>('.rollable').forEach(element => {
       element.addEventListener('click', this.#onClickRoll.bind(this))
     })
-
-    // Bind tooltip positioning for resource tracker conditions
-    // this.#bindResourceTrackerActions(html)
   }
 
   static async #onResetResource(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
@@ -330,7 +328,6 @@ export class GurpsActorModernSheet extends SheetBase {
 
   static async #onAddEffect(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
-    console.log('#onAddEffect')
     new EffectPicker(this.actor).render(true)
   }
 
@@ -356,7 +353,7 @@ export class GurpsActorModernSheet extends SheetBase {
     event.preventDefault()
 
     if (this.actor.isOfType('characterV2')) {
-      await GURPS.modules.Importer.importerPrompt(this.actor)
+      await GURPS.modules.Importer.actorImporterPrompt(this.actor)
     } else {
       return new ActorImporter(this.actor).importActor()
     }

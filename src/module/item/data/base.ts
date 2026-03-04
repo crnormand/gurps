@@ -1,15 +1,13 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { ActionType, AnyActionClass, BaseAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { BaseAction } from '../../action/base-action.js'
-import { AnyActionClass, MeleeAttackModel, RangedAttackModel } from '../../action/index.js'
-import { reactionSchema } from '../../actor/data/character-components.js'
 import { CollectionField } from '../../data/fields/collection-field.js'
 import { IContainable, containableSchema } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
-import { ItemComponent } from './component.js'
+import { ConditionalModifier, ReactionModifier } from './conditional-modifier.js'
 
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
@@ -22,7 +20,7 @@ type ItemMetadata = Readonly<{
   embedded: Record<string, string>
   /** Record of actions the item can perform */
   actions: Record<string, (...args: any[]) => any>
-  /** A set of Item subtypes that this item cna contain as children */
+  /** A set of Item subtypes that this item can contain as children */
   childTypes: string[]
   /** A set of Item subtypes that this item can contain as modifiers */
   modifierTypes: string[]
@@ -63,7 +61,10 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   static get metadata(): ItemMetadata {
     return {
-      embedded: {},
+      embedded: {
+        ReactionModifier: 'system._reactions',
+        ConditionalModifier: 'system._conditionalmods',
+      },
       type: 'base',
       invalidActorTypes: [],
       actions: {},
@@ -102,7 +103,39 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
-  abstract get component(): ItemComponent
+  /**
+   * Return the consolidated list of conditional modifiers provided by this item, combining any modifiers with the same
+   * situation by summing their modifier values. This allows for multiple conditional modifiers to be applied to an item
+   * without needing to manually combine them into a single modifier.
+   */
+  get conditionalmods(): ConditionalModifier[] {
+    return this._conditionalmods.values().reduce((acc: ConditionalModifier[], condmod) => {
+      const existingMod = acc.find(mod => mod.situation === condmod.situation)
+
+      if (existingMod) existingMod.modifier += condmod.modifier
+      else acc.push(condmod)
+
+      return acc
+    }, [])
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Return the consolidated list of reaction modifiers provided by this item, combining any modifiers with the same
+   * situation by summing their modifier values. This allows for multiple reaction modifiers to be applied to an item
+   * without needing to manually combine them into a single modifier.
+   */
+  get reactions(): ReactionModifier[] {
+    return this._reactions.values().reduce((acc: ReactionModifier[], reaction) => {
+      const existingMod = acc.find(mod => mod.situation === reaction.situation)
+
+      if (existingMod) existingMod.modifier += reaction.modifier
+      else acc.push(reaction)
+
+      return acc
+    }, [])
+  }
 
   /* ---------------------------------------- */
   /*  IContainable Interface Implementation   */
@@ -176,17 +209,23 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
-  get isContainer(): boolean {
-    return this.contents.length > 0
-  }
-
-  // TODO I'm not sure what this is trying to do.
+  /**
+   * Return the contained items of this container, filtered by the allowed child types defined in the system metadata. This is used to
+   * determine which items should be displayed as children in the UI, and which items should be considered modifiers.
+   * For example, Trait Containers (of type "featureV2") should store child traits as children, but trait modifiers
+   * (when implemented) should be stored as modifiers.
+   */
   get children(): Item.Implementation[] {
     return this.contents.filter(contentItem => this.metadata.childTypes.includes(contentItem.type))
   }
 
   /* ---------------------------------------- */
 
+  /**
+   * Return the contained items of this container, filtered by the allowed modifier types defined in the system
+   * metadata. This is used to determine which items should be displayed as modifiers in the UI, and which items should
+   * be considered children.
+   */
   get modifiers(): Item.Implementation[] {
     return this.contents.filter(contentItem => this.metadata.modifierTypes.includes(contentItem.type))
   }
@@ -250,8 +289,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   override prepareBaseData(): void {
     super.prepareBaseData()
-    this.melee = this.actions.filter(action => action.isOfType('meleeAttack'))
-    this.ranged = this.actions.filter(action => action.isOfType('rangedAttack'))
+    this.melee = this.actions.filter(action => action.isOfType(ActionType.MeleeAttack))
+    this.ranged = this.actions.filter(action => action.isOfType(ActionType.RangedAttack))
 
     this.actions.forEach(action => {
       action.prepareBaseData()
@@ -294,38 +333,91 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 // It is NOT used for any weapon types, so we're not making all schemas extend from it
 const baseItemModelSchema = () => {
   return {
-    // Include containable functionality
+    /** Include containable functionality */
     ...containableSchema(),
 
-    // Change from previous schema. Boolean value to indicate if item is container
-    // isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    /** The ModelCollection for an Item's Actions, which includes Melee and Ranged Attacks. */
+    actions: new CollectionField(BaseAction as AnyActionClass, { required: true, nullable: false }),
 
+    /**
+     * Is this Item a container that can hold other items? This should be toggleable in the UI for any Item,
+     * and allows for empty containers Items, which the previous accessor value based on the presence of contained
+     * Items did not.
+     */
+    isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+    /** Is this Item active? This determined whether bonuses provided by the Item are applied to the Actor. */
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
-    // Change from previous schema. Actions are consolidated, then split into melee and ranged when instantiated
-    actions: new CollectionField(BaseAction as AnyActionClass),
-
-    // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    // NOTE: Disabled for migration. Replaced with Item containment
-    // ads: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-    // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    // skills: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-    // Change from previous schema. Set of IDs corresponding to subtypes of Item
-    // spells: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
-
+    /** An OTF field listing bonuses applied by the Item. */
     bonuses: new fields.StringField({ required: true, nullable: false }),
+
+    /** An OTF field listing modifiers applied by the Item. */
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
 
+    /** Should this Item show up in the quick roll menu in the combat tracker? */
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
+
+    /** Which modifier tags should automatically apply to this Item? */
     modifierTags: new fields.StringField({ required: true, nullable: false }),
-    reactions: new fields.ArrayField(new fields.SchemaField(reactionSchema(), { required: true, nullable: false }), {
-      required: true,
-      nullable: false,
-    }),
-    conditionalmods: new fields.ArrayField(
-      new fields.SchemaField(reactionSchema(), { required: true, nullable: false }),
-      { required: true, nullable: false }
-    ),
+
+    /** Reaction Bonuses applied by this Item. */
+    _reactions: new CollectionField(ReactionModifier, { required: true, nullable: false }),
+
+    /** Conditional Modifiers applied by this Item. */
+    _conditionalmods: new CollectionField(ConditionalModifier, { required: true, nullable: false }),
+
+    /** NOTE: The below fields have been migrated from the now non-existent ItemComponent model. */
+
+    /**
+     * The name of this Item. This is occasionally used when the displayed name and Document name do not align
+     * TODO: Evaluate whether this field should be kept.
+     */
+    name: new fields.StringField({ required: true, nullable: false }),
+
+    /** Item notes, displayed under the Item name on the charcter sheet */
+    notes: new fields.StringField({ required: true, nullable: false }),
+
+    /** The GURPS book page regarding this item, used for looking up rules related to the item. */
+    pageref: new fields.StringField({ required: true, nullable: false }),
+
+    /** VTT-specific notes about this item, not visible in external programs but useful for storing OTF and the like. */
+    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+
+    /** The OTF to run when running an OTF check against this item, such as for a skill or attribute check. */
+    checkotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when using this item, such as for an attack or active skill. */
+    duringotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when the check OTF succeeds, such as a skill roll succeeding. */
+    passotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when the check OTF fails, such as a skill roll failing. */
+    failotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** Whether to consume a combat action when using this item. */
+    consumeAction: new fields.BooleanField({ required: true, nullable: false }),
+
+    /** The GCS-imported ID of this item, used for tracking items imported from GCS and matching them on re-import. */
+    importid: new fields.StringField({ required: true, nullable: false, initial: '' }),
+
+    /** The external program from which this item originated, if any. May be "GCS" or "GCA". */
+    importFrom: new fields.StringField({ required: true, nullable: false, initial: '' }),
+
+    /**
+     * The imported original name of this item, used for tracking items imported from GCS/GCA and matching them on
+     * re-import. This is not necessarily unique, so it should be used in conjunction with the `importid` field for
+     * matching.
+     * TODO: Evaluate whether this field is necessary, or if the `importid` field is sufficient for tracking imported
+     * items. If it is not necessary, it should be removed to avoid confusion.
+     * */
+    originalName: new fields.StringField({ required: true, nullable: false }),
+
+    /** NOTE: The below fields are apparently unused but temporarily remain here for documentation purposes. */
+
+    // uuid: new fields.StringField({ required: true, nullable: false }),
+    // parentuuid: new fields.StringField({ required: true, nullable: false }),
   }
 }
 

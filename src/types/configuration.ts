@@ -1,13 +1,26 @@
-import type { CharacterModel } from '@module/actor/data/character.js'
+import { CharacterModel, GcsCharacterModel } from '@module/actor/data/index.js'
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import type { ActorV1Model } from '@module/actor/legacy/actorv1-interface.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
+import { MapField } from '@module/data/fields/map-field.js'
 import type GurpsActiveEffect from '@module/effects/active-effect.js'
-import type { EquipmentModel, SkillModel, SpellModel, TraitModel } from '@module/item/data/index.js'
+import type {
+  EquipmentModel,
+  GcsEquipmentModel,
+  GcsEquipmentModifierModel,
+  GcsNoteModel,
+  GcsSkillModel,
+  GcsSpellModel,
+  GcsTraitModel,
+  GcsTraitModifierModel,
+  SkillModel,
+  SpellModel,
+  TraitModel,
+} from '@module/item/data/index.js'
 import type { GurpsItemV2 } from '@module/item/gurps-item.js'
 import type { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
-import { IResourceTrackerTemplate } from '@module/resource-tracker/index.js'
 import type { ResourceTrackerManager } from '@module/resource-tracker/resource-tracker-manager.js'
+import { IResourceTrackerTemplate } from '@module/resource-tracker/types.js'
 import type { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import type { GurpsToken } from '@module/token/gurps-token.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -50,8 +63,9 @@ declare module 'fvtt-types/configuration' {
   interface DataModelConfig {
     Actor: {
       character: ActorV1Model
+      enemy: ActorV1Model
       characterV2: typeof CharacterModel
-      enemy: typeof CharacterModel
+      gcsCharacter: typeof GcsCharacterModel
     }
     Item: {
       equipment: Equipment
@@ -62,6 +76,13 @@ declare module 'fvtt-types/configuration' {
       featureV2: typeof TraitModel
       skillV2: typeof SkillModel
       spellV2: typeof SpellModel
+      gcsEquipment: typeof GcsEquipmentModel
+      gcsEquipmentModifier: typeof GcsEquipmentModifierModel
+      gcsTrait: typeof GcsTraitModel
+      gcsTraitModifier: typeof GcsTraitModifierModel
+      gcsSkill: typeof GcsSkillModel
+      gcsSpell: typeof GcsSpellModel
+      gcsNote: typeof GcsNoteModel
     }
   }
 
@@ -83,7 +104,10 @@ declare module 'fvtt-types/configuration' {
   /* ---------------------------------------- */
 
   interface SettingConfig {
+    /** Bucket */
     'gurps.bucket-position': 'left' | 'right'
+
+    /** Damage */
     'gurps.damage.apply-divisor': foundry.data.fields.BooleanField
     'gurps.damage.blunt-trauma': foundry.data.fields.BooleanField
     'gurps.damage.body-hits': foundry.data.fields.BooleanField
@@ -93,6 +117,8 @@ declare module 'fvtt-types/configuration' {
     'gurps.damage.only-gms-open-add': foundry.data.fields.BooleanField
     'gurps.damage.simple-add': foundry.data.fields.BooleanField
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
+
+    /** Importer */
     'gurps.importer.auto-ignore-qty': foundry.data.fields.BooleanField
     'gurps.importer.display-preserve-qty-flag': foundry.data.fields.BooleanField
     'gurps.importer.import-extended-values-gcs': foundry.data.fields.BooleanField
@@ -109,16 +135,38 @@ declare module 'fvtt-types/configuration' {
     'gurps.importer.overwrite-name': foundry.data.fields.BooleanField
     'gurps.importer.overwrite-portraits': foundry.data.fields.BooleanField<{ initial: true }>
     'gurps.importer.use-browser-importer': foundry.data.fields.BooleanField
-    'gurps.modify-dice-plus-adds': boolean
+
+    /** PDF */
     'gurps.pdf.basicset': 'Combined' | 'Separate'
     'gurps.pdf.open-first': boolean
-    'gurps.portrait-path': 'global' | 'world'
-    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
+
+    /** Resource Tracker */
     'gurps.resource-tracker.manager': new (options?: any) => ResourceTrackerManager
     'gurps.resource-tracker.templates': Record<string, IResourceTrackerTemplate>
+
+    /** Developer */
+    'gurps.dev.enableNonProductionDocumentTypes': foundry.data.fields.BooleanField
+    'gurps.dev.showDebugInfo': foundry.data.fields.BooleanField
+
+    /** Scripting */
+    'gurps.scripting.globalResolverCache': MapField<
+      foundry.data.fields.StringField<{ required: true; nullable: false }>,
+      MapField<
+        foundry.data.fields.StringField<{ required: true; nullable: false }>,
+        foundry.data.fields.StringField<{ required: true; nullable: false }>,
+        { required: true; nullable: false }
+      >,
+      { required: true; nullable: false }
+    >
+
+    /** Unsorted */
+    'gurps.modify-dice-plus-adds': boolean
+    'gurps.portrait-path': 'global' | 'world'
+    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
     'gurps.portrait-hp-tinting': boolean
+    'gurps.migration-version': string
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

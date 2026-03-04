@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Action",
+    "HitLocation": "Hit Location",
+    "MoveMode": "Move Mode",
+    "ResourceTracker": "Resource Tracker"
+  },
   "GURPS": {
     "abbrevPoints": "Pts",
     "abbrevRef": "Ref",
@@ -8,9 +14,6 @@
     "active": "Active",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
-    "actor": {
-      "setting": {}
-    },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",
     "addAdjustedForDamageType": "‡ - Adjusted for Damage Modifier",
@@ -674,16 +677,26 @@
     "importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Directory is empty. No files will be imported.",
     "importer": {
+      "actor": {
+        "button": "Import",
+        "description": "Select a GCS 5 or GCA 5 file.",
+        "note": "This import will overwrite the data for: <strong>{name}</strong>.",
+        "source": "Source Data",
+        "successMessage": "Character \"{name}\" imported successfully.",
+        "title": "Import Character Data for {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
+      },
       "defaultName": "Imported Character",
       "error": {
         "noFilesSelected": "No files selected for import."
       },
-      "prompt": {
-        "description": "Select a GCS 5 or GCA 5 file.",
-        "note": "This import will overwrite the data for: <strong>{name}</strong>.",
+      "item": {
+        "button": "Import",
+        "description": "Select a GCS 5 library file (.adq, .skl, .spl, .eqp).",
+        "sidebarButton": "Import GCS Compendium",
         "source": "Source Data",
-        "title": "Import Character Data for {name}",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Note</strong>: This action cannot be undone!"
+        "successMessage": "Compendium \"{name}\" imported successfully ({num} items imported).",
+        "title": "Import GCS Compendium Items"
       },
       "promptBodyPlan": {
         "content": "<p>Do you want to <strong>Keep</strong> the current body plan (<strong>{currentBodyPlan}</strong>), or <strong>Overwrite</strong> it with the body plan from the import file (<strong>{bodyplan}</strong>)?</p>",
@@ -794,7 +807,6 @@
     "isFreeAction": "Is a Free Action",
     "itemBonusText": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc.",
     "itemFeatures": "Features",
-    "itemImport": "Import Equipment Library",
     "itemModifiersText": "Enter Modifier Effect (one per line) using format: <modifier> <#tag> [<#tag>...].<br>Examples: -1 to DX #DX #combat, +2 Per #resting, -1 to all DX-based rolls #disease #combat.",
     "knockback": "Knockback, {amount} {unit}",
     "knockbackCheck": "{name}: roll {dx}, {acrobatics}, or {judo} or fall!",
@@ -847,6 +859,14 @@
     "meleeAttack": "Melee Attack",
     "meleeWeapons": "Melee Weapons",
     "migration": {
+      "actor": {
+        "progressMessage": "Applying Actor migrations for version {version}, please wait...",
+        "successMessage": "Successfully applied Actor migrations for version {version}."
+      },
+      "item": {
+        "progressMessage": "Applying Item migrations for version {version}, please wait...",
+        "successMessage": "Successfully applied Item migrations for version {version}."
+      },
       "migrationItem": {
         "name": "The Everything Holder",
         "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
@@ -1635,6 +1655,10 @@
     "youDoNotHavePermssion": "You do not have permission to do that."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Melee Attack",
+      "rangedAttack": "Ranged Attack"
+    },
     "Actor": {
       "character": "Character (v1)",
       "characterV2": "Character (v2)",

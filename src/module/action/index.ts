@@ -1,8 +1,11 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { ActionType } from './base-action.js'
+import { BaseAction } from './base-action.js'
 import { MeleeAttackModel } from './melee-attack.js'
 import { RangedAttackModel } from './ranged-attack.js'
+import { ActionType } from './types.js'
+
+/* ---------------------------------------- */
 
 const ActionClasses = {
   [ActionType.MeleeAttack]: MeleeAttackModel,
@@ -14,6 +17,8 @@ type Action<Type extends ActionType> = InstanceType<(typeof ActionClasses)[Type]
 type AnyActionClass = (typeof ActionClasses)[ActionType]
 type ActionClass<Type extends ActionType> = (typeof ActionClasses)[Type]
 
+/* ---------------------------------------- */
+
 function init() {
   console.log('GURPS | Initializing GURPS Action module.')
   // @ts-expect-error: Invalid type
@@ -22,18 +27,18 @@ function init() {
   GURPS.CONFIG.PseudoDocument ||= {}
 
   GURPS.CONFIG.PseudoDocument.Action = {
-    meleeAttack: {
-      // TODO: localize
-      label: 'Melee Attack',
+    [ActionType.MeleeAttack]: {
+      label: 'TYPES.Action.meleeAttack',
       documentClass: MeleeAttackModel,
     },
-    rangedAttack: {
-      // TODO: localize
-      label: 'Ranged Attack',
+    [ActionType.RangedAttack]: {
+      label: 'TYPES.Action.rangedAttack',
       documentClass: RangedAttackModel,
     },
   }
 }
+
+/* ---------------------------------------- */
 
 export const ActionModule: GurpsModule = {
   init,
@@ -41,5 +46,5 @@ export const ActionModule: GurpsModule = {
 
 export * from './melee-attack.js'
 export * from './ranged-attack.js'
-export { ActionClasses }
+export { ActionClasses, ActionType, BaseAction, MeleeAttackModel, RangedAttackModel }
 export type { Action, ActionClass, AnyAction, AnyActionClass }

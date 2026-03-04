@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/data-fields.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { parseItemKey } from '@util/object-utils.js'
 import { COSTS_REGEX, parselink } from '@util/parselink.js'
 import {
   arrayToObject,
@@ -18,16 +19,14 @@ import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { ModelCollection } from '../data/model-collection.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
-import { TraitV1 } from '../item/legacy/trait-adapter.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../util/damage-utils.js'
-import { parseItemKey } from '../util/object-utils.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
-import { DamageActionSchema, ReactionSchema } from './data/character-components.js'
+import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { collectDeletions } from './deletion.js'
 import { cleanTags, getRangedModifier } from './effect-modifier-popout.js'
@@ -39,7 +38,6 @@ import {
   MoveMode,
 } from './legacy/actorv1-interface.js'
 import { HitLocationEntryV1 } from './legacy/hit-location-entryv1.js'
-import { NoteV1 } from './legacy/note-adapter.js'
 import Maneuvers, {
   MOVE_HALF,
   MOVE_NONE,
@@ -83,7 +81,7 @@ interface EquipmentDropData {
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> implements ActorV1Interface {
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
-    return this.system as Actor.SystemOfType<'characterV2' | 'enemy'>
+    return this.system as Actor.SystemOfType<'characterV2'>
   }
 
   // Narrowed view of this.system for characterV1 logic.
@@ -92,13 +90,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   // Common guard for new actor subtypes.
-  private get isNewActorType(): boolean {
-    return this.isOfType('characterV2', 'enemy')
-  }
-
-  // Item subtype guard helpers
-  private isFeatureV2(item: Item.Implementation): item is Item.OfType<'featureV2'> {
-    return item.isOfType('featureV2')
+  get isNewActorType(): boolean {
+    return this.isOfType('characterV2')
   }
 
   // Settings getter with default fallback
@@ -153,10 +146,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (sheet) {
       await sheet.close()
 
-      // @ts-expect-error: ignore
+      // @ts-expect-error - Foundry VTT internal API not fully typed
       delete this.apps[sheet.appId]
 
-      // @ts-expect-error: ignore
+      // @ts-expect-error - Foundry VTT internal API not fully typed
       await this.setFlag('core', 'sheetClass', newSheet)
 
       this.ignoreRender = false
@@ -166,11 +159,33 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
+  static override async createDialog(
+    data?: Actor.CreateDialogData,
+    createOptions?: Actor.Database.DialogCreateOptions,
+    options?: Actor.CreateDialogOptions
+  ): Promise<Actor.Stored | null | undefined> {
+    const isDevMode = GURPS.modules.Dev?.settings.enableNonProductionDocumentTypes ?? false
+
+    if (!isDevMode) {
+      options ||= {}
+      const allTypes = Actor.TYPES
+      const excludeTypes = ['base', 'character', 'enemy', 'gcsCharacter', 'gcsLoot']
+
+      // Disable non-production Actor types if developer mode is off.
+      // @ts-expect-error: Improper types
+      options.types = allTypes.filter(type => !excludeTypes.includes(type))
+    }
+
+    return super.createDialog(data, createOptions, options)
+  }
+
+  /* ---------------------------------------- */
+
+  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor'>>(
     embeddedName: EmbeddedName,
     id: string,
     options?: foundry.abstract.Document.GetEmbeddedDocumentOptions
-  ): Actor.Embedded.DocumentFor<EmbeddedName> | undefined {
+  ): gurps.Pseudo.EmbeddedDocument<'Actor', EmbeddedName> {
     const { invalid = false, strict = true } = options ?? {}
 
     if (this.isNewActorType) {
@@ -180,16 +195,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         const path = systemEmbeds[embeddedName]
         const document = foundry.utils.getProperty(this, path) as any
 
-        return (
-          document.get(id, {
-            invalid,
-            strict,
-          }) ?? null
-        )
+        return (document.get(id, { invalid, strict }) ?? undefined) as any
       }
     }
 
-    return super.getEmbeddedDocument(embeddedName, id, { invalid, strict })
+    return super.getEmbeddedDocument(embeddedName as Actor.Embedded.CollectionName, id, { invalid, strict }) as any
   }
 
   /* ---------------------------------------- */
@@ -234,17 +244,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   /* ---------------------------------------- */
-
-  getItemReactions(key: 'reactions' | 'conditionalmods'): foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] {
-    const out: foundry.data.fields.SchemaField.SourceData<ReactionSchema>[] = []
-
-    for (const item of this.items) {
-      if (!this.isFeatureV2(item as Item.Implementation)) continue
-      out.push(...(item.system[key] ?? []))
-    }
-
-    return out
-  }
 
   /**
    * NOTE: Both character and characterV2.
@@ -792,7 +791,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         if (Object.hasOwn(optionalArgs, 'itemPath')) {
           // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
-          // @ts-expect-error: itemPath may not exist
+          // @ts-expect-error - itemPath is checked via hasOwn but not in type definition
           canApply = canApply && (userMod.includes(optionalArgs.itemPath) || !userMod.includes('@system'))
         }
 
@@ -911,11 +910,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
           result = {
             name: item.name,
             uuid: item.uuid,
-            // @ts-expect-error: itemid missing in types
+            // @ts-expect-error - actor component property not in Item type
             itemId: item.itemid,
-            // @ts-expect-error: fromItem missing in types
+            // @ts-expect-error - actor component property not in Item type
             fromItem: item.fromItem,
-            // @ts-expect-error: pageref missing in types
+            // @ts-expect-error - actor component property not in Item type
             pageRef: item.pageref,
           }
         } else {
@@ -1086,7 +1085,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       isCombatant,
     }
 
-    if (!isCombatActive || !isCombatant || !this.isOfType('characterV2', 'enemy')) return result
+    if (!isCombatActive || !isCombatant || !this.isNewActorType) return result
 
     const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
     const checkForTargetSettings = this.getSetting(Settings.SETTING_ALLOW_TARGETED_ROLLS, 'Allow')
@@ -1483,15 +1482,15 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /* ---------------------------------------- */
 
   async updateEqtCountV2(id: string, count: number) {
-    if (!this.isOfType('characterV2', 'enemy')) return null
+    if (!this.isNewActorType) return null
 
     const equipment = this.modelV2.allEquipmentV2.find(equipmentItem => equipmentItem.id === id)
-    const updateData: Record<string, any> = { _id: id, system: { eqt: { count } } }
+    const updateData: Record<string, any> = { _id: id, system: { count } }
 
     // If modifying the quantity of an item should automatically force imports to ignore the imported quantity,
     // set ignoreImportQty to true.
     if (ImportSettings.ignoreQuantityOnImport) {
-      updateData.system.eqt.ignoreImportQty = true
+      updateData.system.ignoreImportQty = true
     }
 
     if (equipment) {
@@ -1617,9 +1616,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
               if (attack.addToQuickRoll) {
                 let comp = this.findByOriginalName(attack.originalName || attack.name)
 
-                // @ts-expect-error: Possible null return
+                // @ts-expect-error - findEquipmentByName may return empty array
                 if (!comp) comp = this.findEquipmentByName(attack.name)[0] ?? null
-                // @ts-expect-error: itemid missing.
+                // @ts-expect-error - itemid property not in Item type definition
                 const img = this.items.get(comp?.itemid)?.img
                 const symbol = game.i18n!.localize(`GURPS.${key}`)
 
@@ -1668,7 +1667,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
                 // @ts-expect-error: Possible null return
                 if (!comp) comp = this.findEquipmentByName(defense.name)[0]
-                // @ts-expect-error: itemid missing.
+                // @ts-expect-error - itemid property not in Item type definition
                 const img = this.items.get(comp?.itemid)?.img
                 const symbol = game.i18n!.localize(`GURPS.${key}`)
                 let otf = `${key.slice(0, 1)}:"${defense.name}"`
@@ -2096,8 +2095,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const { _id: _omit, ...itemData } = foundry.utils.duplicate(eqt) as Record<string, any>
 
     itemData.system.containedBy = parent?.id ?? null
-    itemData.system.eqt.count = count
-    itemData.system.eqt.carried = true // Default to carried when transferring.
+    itemData.system.count = count
+    itemData.system.carried = true // Default to carried when transferring.
     await this.createEmbeddedDocuments('Item', [itemData as Item.CreateData], { parent: this })
   }
 
@@ -2322,7 +2321,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     if (item.type === 'equipmentV2') {
       // @ts-expect-error: wrong type for _id provided by fvtt-types
-      update.system!.eqt = { carried: targetCollection === 'system.equipmentV2.carried' }
+      update.system!.carried = targetCollection === 'system.equipmentV2.carried'
     }
 
     updates.push(update)
@@ -2399,12 +2398,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async #splitEquipment(srckey: string, targetkey: string): Promise<boolean> {
     const sourceItem = (foundry.utils.getProperty(this, srckey) as Item.OfType<'equipmentV2'>) ?? null
 
-    if (!sourceItem || !sourceItem.eqt || sourceItem.eqt.count <= 1) return false // Nothing to split
+    if (!sourceItem || !sourceItem.system || sourceItem.system.count <= 1) return false // Nothing to split
 
     const count = (await this.promptEquipmentQuantity(sourceItem.name, game.i18n!.localize('GURPS.splitQuantity'))) ?? 0
 
     if (count <= 0) return true // Didn't want to split.
-    if (count >= sourceItem.eqt.count) return false // Not a split, but a move.
+    if (count >= sourceItem.system.count) return false // Not a split, but a move.
 
     // Could be a list such as 'system.equipment.other' or an item such as 'system.equipment.other.1'.
     // If it ends in '.other' or '.carried', parent is null.
@@ -2418,7 +2417,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     await this.#createEquipment(sourceItem.toObject(false), count, parent)
 
     // Update src equipment count (sourceItem.eqt.count - count)
-    await this.updateEqtCountV2(sourceItem.id!, sourceItem.eqt.count - count)
+    await this.updateEqtCountV2(sourceItem.id!, sourceItem.system.count - count)
 
     return true
   }
@@ -2476,7 +2475,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     if (merge === 'merge') {
       // Update the target item's count.
-      await this.updateEqtCountV2(targetItem.id!, targetItem.system.eqt.count + item.system.eqt.count)
+      await this.updateEqtCountV2(targetItem.id!, targetItem.system.count + item.system.count)
       // Delete the source item.
       await this.deleteItem(item)
 
@@ -2565,8 +2564,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * NOTE: Both character and characterV2.
    */
   async setMoveDefault(value: string) {
-    if (this.isNewActorType) {
-      return this.system.setMoveDefault(value)
+    if (this.isOfType('characterV2')) {
+      return (this.system as Actor.SystemOfType<'characterV2'>).setMoveDefault(value)
     } else {
       // Legacy actor type.
       const move = this.modelV1.move
@@ -2619,12 +2618,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * @deprecated ActorV1 only.
    */
-  get trackersByName(): Record<string, TrackerInstance & { key: string }> {
+  get trackersByName() {
     // Convert this.system.additionalresources.tracker into an object keyed by tracker.name.
-    const byName: Record<string, TrackerInstance & { key: string }> = {}
+    const byName: Record<string, TrackerInstance> = {}
 
     for (const [_key, value] of Object.entries(this.modelV1.additionalresources.tracker ?? {})) {
-      byName[`${value.name}`] = { ...value, key: _key } as TrackerInstance & { key: string }
+      byName[`${value.name}`] = value
     }
 
     return byName
@@ -3439,14 +3438,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       return
     }
 
-    // @ts-expect-error Ensure globalid is set.
+    // @ts-expect-error - globalid property not in base Item type
     if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
     this.ignoreRender = true
 
     // Process Actor Component, Parent (dropped) Item and Child Items.
 
     // 1. This global item was already dropped?
-    // @ts-expect-error: old item type not registering correctly
+    // @ts-expect-error - globalid property not in base Item type
     const found = this.items.find(it => it.system.globalid === data.system.globalid)
 
     if (found) {
@@ -3525,7 +3524,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       await this.updateEmbeddedDocuments('Item', [
         {
           _id: parentItem!.id,
-          // @ts-expect-error: old item type not registering correctly
+          // @ts-expect-error - globalid property not in base Item type
           'system.globalid': dragData.uuid,
           'system.melee': data.system.melee,
           'system.ranged': data.system.ranged,
@@ -4332,14 +4331,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (
       item.isOfType('equipment') &&
       ImportSettings.ignoreQuantityOnImport &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       !!item.system.eqt.originalCount &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       !isNaN(item.system.eqt.originalCount) &&
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       item.system.eqt.originalCount !== item.modelV1.eqt.count
     ) {
-      // @ts-expect-error: equipment system type not registering correctly
+      // @ts-expect-error - equipment system eqt property not fully typed
       item.system.eqt.ignoreImportQty = true
     }
 
@@ -4352,7 +4351,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     await this.internalUpdate({
       [sysKey]: {
-        // @ts-expect-error: equipment system type not registering correctly
+        // @ts-expect-error - dynamic property access via itemSysKey
         ...item.system[item.itemSysKey],
         uuid: actorComp.uuid,
         parentuuid: actorComp.parentuuid,
@@ -4397,10 +4396,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @returns
    */
   private findByOriginalName(name: string, include = false): Item.Implementation | null {
-    // @ts-expect-error: equipment system type not registering correctly
     let item = this.items.find(i => i.system.originalName === name)
 
-    // @ts-expect-error: equipment system type not registering correctly
     if (!item) item = this.items.find(i => i.system.name === name)
     if (item) return item as Item.Implementation
 
@@ -4687,25 +4684,18 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   /**
-   * Both Actor v1 and v2.
+   * @deprecated Actor v1 only.
    */
   async addTracker(): Promise<void> {
     this.ignoreRender = true
 
-    const trackerData = { _id: foundry.utils.randomID(), name: '', value: 0, min: 0, max: 0, points: 0 }
+    const trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
+    const data = GurpsActorV2.addTrackerToDataObject(this.system, trackerData as Record<string, any>)
 
-    if (this.isNewActorType) {
-      console.log('Adding tracker to Actor v2', trackerData)
-      await this.update({ [`system.additionalresources.tracker.${trackerData._id}`]: trackerData } as Actor.UpdateData)
-    } else {
-      console.log('Adding tracker to Actor v1', trackerData)
-      const data = GurpsActorV2.addTrackerToDataObject(this.system, trackerData as Record<string, any>)
+    await this.update({ 'system.additionalresources.-=tracker': null } as Actor.UpdateData) // force Foundry to see the change
+    await this.update({ 'system.additionalresources.tracker': data } as Actor.UpdateData)
 
-      await this.update({ 'system.additionalresources.-=tracker': null } as Actor.UpdateData) // force Foundry to see the change
-      await this.update({ 'system.additionalresources.tracker': data } as Actor.UpdateData)
-    }
-
-    // this._forceRender()
+    this._forceRender()
   }
 
   /**
@@ -4875,75 +4865,15 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /*  CRUD Operations                                                                            */
   /* =========================================================================================== */
 
-  override async _preUpdate(changes: Actor.UpdateData, _options: AnyObject, _user: User): Promise<void> {
+  protected override async _preUpdate(
+    changed: Actor.UpdateData,
+    options: Actor.Database.PreUpdateOptions,
+    user: User.Implementation
+  ): Promise<boolean | void> {
+    super._preUpdate(changed, options, user)
+
     if (this.isNewActorType) {
-      this.#translateLegacyHitlocationData(changes)
-      this.#translateLegacyEncumbranceData(changes)
-      await this.#translateAdsData(changes)
-      this.#translateMoveData(changes)
-      this.#translateNoteData(changes)
-    }
-  }
-
-  /**
-   * Translate legacy HitLocation data like "system.hitlocations.00003.import" to "system.hitlocationsV2.3.import".
-   */
-  #translateLegacyHitlocationData(data: any) {
-    if (!data.system || typeof data.system !== 'object') return
-    if (!('hitlocations' in data.system) && !('-=hitlocations' in data.system)) return
-
-    // Check for deletion pattern: { system: { '-=hitLocations': null } }
-    const deleteKey = '-=hitlocations' in data.system
-
-    if (deleteKey) {
-      delete data.system['-=hitlocations']
-      data.system.hitlocationsV2 = []
-    }
-
-    // Check for individual element updates: { system: { notes: { '00000': { title': 'New Title' } } } }
-    const changeKey = 'hitlocations' in data.system && typeof data.system.hitlocations === 'object'
-
-    if (changeKey) {
-      const hitlocationsV2: any[] = foundry.utils.deepClone(this.modelV2._source.hitlocationsV2) ?? []
-      const keys = Object.keys(foundry.utils.flattenObject(data as object))
-      const changes = keys.filter(it => it.startsWith('system.hitlocations.'))
-      const processedChanges: string[] = []
-
-      for (const change of changes) {
-        // If change ends in a number like '000123', we're updating the whole object; if it ends in a property name,
-        // we're updating a property of the object.
-        const [_, index, ___, property] = parseItemKey(change)
-        const pathToObject = property ? change.replace(new RegExp(`\\.${property}$`), '') : change
-
-        if (processedChanges.includes(pathToObject)) {
-          delete data[change]
-          continue
-        }
-
-        // Does the hitlocation already exist?
-        const hitlocationV1 = foundry.utils.getProperty(this, pathToObject) as HitLocationEntryV1
-
-        if (hitlocationV1) {
-          // Existing hitlocation.
-          const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
-
-          HitLocationEntryV1.updateV2(hitlocationsV2[index!], newData)
-          delete data[change]
-          processedChanges.push(pathToObject)
-        } else {
-          // New hitlocation.
-          const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
-          const location = {} as HitLocationEntryV2
-
-          HitLocationEntryV1.updateV2(location, newData)
-          hitlocationsV2.push(location)
-          delete data[change]
-          processedChanges.push(pathToObject)
-        }
-      }
-
-      data.system.hitlocationsV2 = hitlocationsV2
-      delete data.system.hitlocations
+      this.#translateLegacyEncumbranceData(changed)
     }
   }
 
@@ -4965,237 +4895,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
         delete data[key as keyof typeof data]
       })
-  }
-
-  /*
-   * Translate legacy Advantages/Disadvantages data from "system.ads" to Item updates.
-   *
-   * We are either deleting the entire array or inserting the entire array. Updates are handled directly in the Item.
-   */
-  async #translateAdsData(data: any) {
-    if (!data.system || typeof data.system !== 'object') return
-    if (!('ads' in data.system) && !('-=ads' in data.system)) return
-
-    // Check for deletion pattern: { system: { '-=ads': null } }
-    const deleteKey = '-=ads' in data.system
-
-    if (deleteKey) {
-      const featureIds = this.items.filter(item => item.type === 'featureV2').map(item => item.id!)
-
-      await this.deleteEmbeddedDocuments('Item', featureIds)
-
-      delete data.system['-=ads']
-    }
-
-    // Check for insertion/update: { system: { ads: {...} } }
-    const changeKey = 'ads' in data.system && typeof data.system.ads === 'object'
-
-    if (changeKey) {
-      const toUpdate: Record<string, any>[] = []
-      const toCreate: Record<string, any>[] = []
-
-      // const array = this.items.filter(item => item.type === 'featureV2')
-      const keys = Object.keys(foundry.utils.flattenObject(data as object))
-      const changes = keys.filter(it => it.startsWith('system.ads.'))
-
-      const processedChanges: string[] = []
-
-      for (const change of changes) {
-        const [_, __, ___, property] = parseItemKey(change)
-        const pathToObject = property ? change.replace(new RegExp(`\\.${property}$`), '') : change
-
-        if (processedChanges.includes(pathToObject)) {
-          delete data[change]
-          continue
-        }
-
-        const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
-
-        // Does the ad already exist?
-        const adsv1 = foundry.utils.getProperty(this, pathToObject) as TraitV1
-
-        if (adsv1 && adsv1.traitV2) {
-          // Existing ad.
-          const updateData: Record<string, any> = TraitV1.getUpdateData(newData, adsv1)
-
-          toUpdate.push({ _id: adsv1.traitV2._id, ...updateData })
-
-          // foundry.utils.deleteProperty(data, pathToObject)
-          processedChanges.push(pathToObject)
-        } else {
-          // New ad.
-          const updateData: Record<string, any> = TraitV1.getUpdateData(newData)
-
-          toCreate.push(updateData)
-
-          // foundry.utils.deleteProperty(data, pathToObject)
-          processedChanges.push(pathToObject)
-        }
-      }
-
-      if (toCreate.length > 0) {
-        toCreate.forEach((it, index) => {
-          if (it.system?.containedBy === null) {
-            const length = this.items
-              .filter(item => item.type === 'featureV2')
-              .filter(ad => (ad as Item.OfType<'featureV2'>).containedBy === null).length
-
-            it.sort = length + index
-          }
-        })
-
-        await this.createEmbeddedDocuments('Item', toCreate as Item.CreateData[])
-      }
-
-      if (toUpdate.length > 0) await this.updateEmbeddedDocuments('Item', toUpdate as Item.UpdateData[])
-
-      delete data.system.ads
-    }
-  }
-
-  /**
-   * system.-=move: null
-   * system.move:[
-   *  {
-   *    mode:"GURPS.moveModeGround",
-   *    basic:7,
-   *    enhanced:0,
-   *    default:true
-   *  },
-   *  {
-   *    mode:"other"
-   *    basic:0,
-   *    enhanced:null,
-   *    default:false
-   * }]
-   * @param data
-   * @returns
-   */
-  #translateMoveData(data: any) {
-    if (!data.system || typeof data.system !== 'object') return
-    if (!('move' in data.system) && !('-=move' in data.system)) return
-
-    // Check for deletion pattern: { system: { '-=move': null } }
-    const deleteKey = '-=move' in data.system
-
-    if (deleteKey) {
-      data.system.moveV2 = []
-      delete data.system['-=move']
-    }
-
-    const changeKey = 'move' in data.system && typeof data.system.move === 'object'
-
-    if (changeKey) {
-      const array: any[] = foundry.utils.deepClone(this.modelV2._source.moveV2) ?? []
-
-      // Get the list of property keys of system.move -- these are indices into system.moveV2.
-      const keys = Object.keys(data.system.move).sort()
-
-      for (const key of keys) {
-        const index = parseInt(key)
-        const moveV1 = foundry.utils.getProperty(data, `system.move.${key}`) as any
-
-        if (array.length <= index) {
-          const moveV2 = {}
-
-          this.#updateMove2V2FromLegacyMove(moveV2, moveV1)
-          // insert at the correct index
-          array.splice(index, 0, moveV2)
-        } else {
-          this.#updateMove2V2FromLegacyMove(array[index], moveV1)
-        }
-
-        delete data.system.move[key]
-      }
-
-      data.system.moveV2 = array
-      delete data.system.move
-    }
-  }
-
-  #updateMove2V2FromLegacyMove(moveV2: any, changes: any) {
-    const keys = Object.keys(changes)
-
-    for (const key of keys) {
-      switch (key) {
-        case 'basic':
-        case 'enhanced':
-        case 'mode':
-        case 'default':
-          moveV2[key] = changes[key]
-          break
-        default:
-          console.warn(`Unknown move property in legacy data: ${key}`)
-          break
-      }
-    }
-  }
-
-  /**
-   * system.notes.00000.contains.00000
-   *
-   * @param data
-   * @returns
-   */
-  #translateNoteData(data: any) {
-    if (!data.system || typeof data.system !== 'object') return
-    if (!('notes' in data.system) && !('-=notes' in data.system)) return
-
-    // Check for deletion pattern: { system: { '-=notes': null } }
-    const deleteKey = '-=notes' in data.system
-
-    if (deleteKey) {
-      data.system.allNotes = []
-      delete data.system['-=notes']
-    }
-
-    // Check for individual element updates: { system: { notes: { '00000': { title': 'New Title' } } } }
-    const changeKey = 'notes' in data.system && typeof data.system.notes === 'object'
-
-    if (changeKey) {
-      const array: any[] = foundry.utils.deepClone(this.modelV2._source.allNotes) ?? []
-      const keys = Object.keys(foundry.utils.flattenObject(data as object))
-      const changes = keys.filter(it => it.startsWith('system.notes.'))
-
-      const processedChanges: string[] = []
-
-      for (const change of changes) {
-        // If change ends in a number like '000123', we're updating the whole object; if it ends in a property name,
-        // we're updating a property of the object.
-        const [_, __, ___, property] = parseItemKey(change)
-        const pathToObject = property ? change.replace(new RegExp(`\\.${property}$`), '') : change
-
-        if (processedChanges.includes(pathToObject)) {
-          delete data[change]
-          continue
-        }
-
-        // Does the note already exist?
-        const notev1 = foundry.utils.getProperty(this, pathToObject) as NoteV1
-
-        if (notev1) {
-          // Existing note.
-          const arrIndex = array.findIndex(it => it.id === notev1.noteV2.id)
-          const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
-
-          NoteV1.updateNoteV2(array[arrIndex], newData)
-          delete data[change]
-          processedChanges.push(pathToObject)
-        } else {
-          // New note.
-          const newData = foundry.utils.getProperty(data, pathToObject) as AnyObject
-          const notev2: any = {}
-
-          NoteV1.updateNoteV2(notev2, newData)
-          array.push(notev2)
-          delete data[change]
-          processedChanges.push(pathToObject)
-        }
-      }
-
-      data.system.allNotes = array
-      delete data.system.notes
-    }
   }
 }
 

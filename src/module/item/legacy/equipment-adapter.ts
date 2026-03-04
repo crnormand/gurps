@@ -1,6 +1,6 @@
+import { defineGetterProperties } from '@util/object-utils.js'
 import { arrayToObject } from '@util/utilities.js'
 
-import { defineGetterProperties } from '../../util/object-utils.js'
 import { EquipmentModel } from '../data/equipment.js'
 import { GurpsItemV2 } from '../gurps-item.js'
 
@@ -65,11 +65,11 @@ class EquipmentV1 {
   }
 
   get carried(): boolean {
-    return this.equipmentV2.eqt!.carried
+    return this.equipmentV2.system.carried
   }
 
   get categories(): string {
-    return this.equipmentV2.eqt!.categories
+    return this.equipmentV2.system.categories
   }
 
   get collapsed(): Record<string, EquipmentV1> {
@@ -81,23 +81,23 @@ class EquipmentV1 {
   }
 
   get cost(): number {
-    return this.equipmentV2.eqt!.cost
+    return this.equipmentV2.system.cost
   }
 
   get costsum(): number {
-    return this.equipmentV2.eqt!.costsum
+    return this.equipmentV2.system.costsum
   }
 
   get count(): number {
-    return this.equipmentV2.eqt!.count
+    return this.equipmentV2.system.count
   }
 
   get equipped(): boolean {
-    return this.equipmentV2.eqt!.equipped
+    return this.equipmentV2.system.equipped
   }
 
   get ignoreImportQty(): boolean {
-    return this.equipmentV2.eqt!.ignoreImportQty
+    return this.equipmentV2.system.ignoreImportQty
   }
 
   get itemInfo(): {
@@ -121,15 +121,15 @@ class EquipmentV1 {
   }
 
   get legalityclass(): string {
-    return this.equipmentV2.eqt!.legalityclass
+    return this.equipmentV2.system.legalityclass
   }
 
   get location(): string {
-    return this.equipmentV2.eqt!.location
+    return this.equipmentV2.system.location
   }
 
   get maxuses(): number | null {
-    return this.equipmentV2.eqt!.maxuses
+    return this.equipmentV2.system.maxuses
   }
 
   get modifierTags(): string {
@@ -141,7 +141,7 @@ class EquipmentV1 {
   }
 
   get notes(): string {
-    const notes = [this.equipmentV2.eqt!.notes ?? '', this.equipmentV2.eqt!.vtt_notes ?? '']
+    const notes = [this.equipmentV2.system.notes ?? '', this.equipmentV2.system.vtt_notes ?? '']
       .filter(it => it)
       .join('<br>')
       .trim()
@@ -150,7 +150,7 @@ class EquipmentV1 {
   }
 
   get originalCount(): string {
-    return this.equipmentV2.eqt!.originalCount ?? ''
+    return this.equipmentV2.system.originalCount ?? ''
   }
 
   get originalName(): string {
@@ -158,19 +158,19 @@ class EquipmentV1 {
   }
 
   get pageref(): string {
-    return this.equipmentV2.eqt!.pageref ?? ''
+    return this.equipmentV2.system.pageref ?? ''
   }
 
   get parentuuid(): string | null {
-    return this.equipmentV2.eqt!.parentuuid ?? null
+    return this.equipmentV2.system.container?._id ?? null
   }
 
   get techlevel(): string {
-    return this.equipmentV2.eqt!.techlevel
+    return this.equipmentV2.system.techlevel
   }
 
   get uses(): number | null {
-    return this.equipmentV2.eqt!.uses
+    return this.equipmentV2.system.uses
   }
 
   get uuid(): string {
@@ -178,11 +178,11 @@ class EquipmentV1 {
   }
 
   get weight(): number {
-    return this.equipmentV2.eqt!.weight
+    return this.equipmentV2.system.weight
   }
 
   get weightsum(): string {
-    return this.equipmentV2.eqt!.weightsum
+    return this.equipmentV2.system.weightsum
   }
 
   toggleOpen(expandOnly: boolean = false) {

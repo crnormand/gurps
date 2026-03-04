@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Aktion",
+    "HitLocation": "Trefferzone",
+    "MoveMode": "Bewegungsmodus",
+    "ResourceTracker": "Ressourcen-Tracker"
+  },
   "GURPS": {
     "abbrevPoints": "Pkt",
     "abbrevRef": "Ref",
@@ -8,9 +14,6 @@
     "active": "Aktiv",
     "activeEffect": "Aktiver Effekt",
     "activeEffects": "Aktive Effekte",
-    "actor": {
-      "setting": {}
-    },
     "addAbbrev": "Abkürzung",
     "addAdditionalStackingModifier": "Weiterer Modifikator",
     "addAdjustedForDamageType": "‡ - Angepasst nach Schadensmodifikator",
@@ -674,16 +677,26 @@
     "importCurrentVersions": "Aktuelle Versionen: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Verzeichnis ist leer. Es werden keine Dateien importiert.",
     "importer": {
+      "actor": {
+        "button": "Importieren",
+        "description": "Wählen Sie eine GCS 5- oder GCA 5-Datei aus.",
+        "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
+        "source": "Quelldaten",
+        "successMessage": "Charakter \"{name}\" wurde erfolgreich importiert.",
+        "title": "Charakterdaten für {name} importieren",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
+      },
       "defaultName": "Importierter Charakter",
       "error": {
         "noFilesSelected": "Keine Dateien für den Import ausgewählt."
       },
-      "prompt": {
-        "description": "Wählen Sie eine GCS 5- oder GCA 5-Datei aus.",
-        "note": "Dieser Import überschreibt die Daten für: <strong>{name}</strong>.",
+      "item": {
+        "button": "Importieren",
+        "description": "Wählen Sie eine GCS 5-Bibliotheksdatei aus (.adq, .skl, .spl, .eqp).",
+        "sidebarButton": "GCS-Kompendium importieren",
         "source": "Quelldaten",
-        "title": "Charakterdaten für {name} importieren",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Hinweis</strong>: Diese Aktion kann nicht rückgängig gemacht werden!"
+        "successMessage": "Kompendium \"{name}\" wurde erfolgreich importiert ({num} Elemente importiert).",
+        "title": "GCS-Kompendium-Elemente importieren"
       },
       "promptBodyPlan": {
         "content": "<p>Möchten Sie den aktuellen Körperplan <strong>beibehalten</strong> (<strong>{currentBodyPlan}</strong>) oder ihn mit dem Körperplan aus der Importdatei <strong>überschreiben</strong> (<strong>{bodyplan}</strong>)?</p>",
@@ -847,9 +860,17 @@
     "meleeAttack": "Nahkampf Angriff",
     "meleeWeapons": "Nahkampfwaffe",
     "migration": {
+      "actor": {
+        "progressMessage": "Charakter-Migrationen für Version {version} werden angewendet, bitte warten...",
+        "successMessage": "Charakter-Migrationen für Version {version} erfolgreich angewendet."
+      },
+      "item": {
+        "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
+        "successMessage": "Objekt-Migrationen für Version {version} erfolgreich angewendet."
+      },
       "migrationItem": {
-        "name": "Temporärer Sammelbehälter",
-        "notes": "Dies ist ein temporärer Gegenstand, der nach der Charaktermigration alle Reaktionen, bedingten Modifikatoren und Waffen enthält. Um diese Elemente wieder an ihre richtigen Stellen zu verschieben, importiere diesen Charakter bitte erneut aus GCS oder GCA."
+        "name": "Der Alleshalter",
+        "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
       }
     },
     "minDamageRule": "Min. Schaden:",
@@ -1635,6 +1656,10 @@
     "youDoNotHavePermssion": "Du hast keine Berechtigung, das zu tun."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Nahkampfangriff",
+      "rangedAttack": "Fernkampfangriff"
+    },
     "Actor": {
       "character": "Charakter (v1)",
       "characterV2": "Charakter (v2)",

@@ -22,7 +22,7 @@ class LazyTypedSchemaField<
 /* ---------------------------------------- */
 
 namespace CollectionField {
-  export type Types<Model extends typeof PseudoDocument> = {
+  export type Types<Model extends typeof TypedPseudoDocument> = {
     [type: string]: Model
   }
 
@@ -36,7 +36,7 @@ namespace CollectionField {
 
   export type Element<Model extends DataModel.ConcreteConstructor> = Model extends typeof TypedPseudoDocument
     ? LazyTypedSchemaField<CollectionField.Types<Model>>
-    : fields.EmbeddedDataField<typeof PseudoDocument>
+    : fields.EmbeddedDataField<Model>
 
   /* ---------------------------------------- */
 

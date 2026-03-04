@@ -1,12 +1,12 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { migrate } from './migration.ts'
+import { migrate } from './migration.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
-import { ResourceTrackerManager } from './resource-tracker-manager.ts'
-import { TrackerInstance } from './resource-tracker.ts'
-import { initializeSettings } from './settings.ts'
-import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.ts'
-import { updateResourceTracker } from './ui/update-resource-tracker.ts'
+import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import { TrackerInstance } from './resource-tracker.js'
+import { initializeSettings } from './settings.js'
+import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.js'
+import { updateResourceTracker } from './ui/update-resource-tracker.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Resource Tracker Module')
@@ -78,4 +78,4 @@ export type {
   IThresholdDescriptor,
 } from './types.js'
 
-export type { ResourceTrackerSchema } from './resource-tracker.ts'
+export type { ResourceTrackerSchema } from './resource-tracker.js'

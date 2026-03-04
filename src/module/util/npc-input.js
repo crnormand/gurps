@@ -374,7 +374,7 @@ export class NpcInput extends FormApplication {
       'system.encumbrance': encumbranceMap,
       'system.melee': meleeMap,
       'system.ranged': rangedMap,
-      'system.traits': traitSheet,
+      'system.profile': traitSheet,
       'system.skills': skillsMap,
       'system.spells': spellsMap,
       'system.ads': advantages,

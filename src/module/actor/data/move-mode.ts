@@ -1,9 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import {
-  PseudoDocument,
-  PseudoDocumentMetadata,
-  pseudoDocumentSchema,
-} from '@module/pseudo-document/pseudo-document.js'
+import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
 class MoveModeV2 extends PseudoDocument<MoveSchema> {
   static override defineSchema(): MoveSchema {
@@ -12,10 +8,9 @@ class MoveModeV2 extends PseudoDocument<MoveSchema> {
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata<'MoveMode'> {
+  static override get metadata(): PseudoDocument.Metadata<'MoveMode'> {
     return {
       documentName: 'MoveMode',
-      label: '',
       icon: '',
       embedded: {},
     }

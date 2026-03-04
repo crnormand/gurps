@@ -1,9 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import {
-  PseudoDocument,
-  PseudoDocumentMetadata,
-  pseudoDocumentSchema,
-} from '@module/pseudo-document/pseudo-document.js'
+import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
 import { IResourceTrackerTemplate, IResourceTrackerThreshold, IThresholdDescriptor, IResourceTracker } from './types.js'
 
@@ -53,10 +49,9 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
 
   /* ---------------------------------------- */
 
-  static override get metadata(): PseudoDocumentMetadata<'TrackerInstance'> {
+  static override get metadata(): PseudoDocument.Metadata<'ResourceTracker'> {
     return {
-      documentName: 'TrackerInstance',
-      label: '',
+      documentName: 'ResourceTracker',
       icon: '',
       embedded: {},
     }
@@ -107,7 +102,6 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
     }
   }
 
-  // TODO: verify this works
   async applyTemplate(template: ResourceTrackerTemplate) {
     const initialData = new fields.SchemaField(resourceTrackerSchema()).getInitialValue()
     const data = template.tracker.toObject()

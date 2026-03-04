@@ -9,14 +9,20 @@ import {
   GurpsActorTabSheet,
   GurpsInventorySheet,
 } from './actor-sheet.js'
+import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import * as dataModels from './data/index.js'
+import { MoveModeV2 } from './data/move-mode.js'
 import { GurpsActorV2 } from './gurps-actor.js'
-import { migrateActor } from './migrate.js'
+import { migrateActor, runMigration } from './migrate.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
+import { TestActorSheet } from './test-actor-sheet.js'
 
 interface ActorModule extends GurpsModule {
   migrateActor: typeof migrateActor
+  migrate: typeof runMigration
+  HitLocationEntry: typeof HitLocationEntryV2
+  MoveMode: typeof MoveModeV2
 }
 
 function init() {
@@ -26,6 +32,8 @@ function init() {
 
     CONFIG.Actor.dataModels = {
       characterV2: dataModels.CharacterModel,
+      gcsCharacter: dataModels.GcsCharacterModel,
+      gcsLoot: dataModels.GcsLootModel,
     }
 
     foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
@@ -68,10 +76,22 @@ function init() {
       label: 'Full (GCS)',
       makeDefault: true,
     })
+
+    // NOTE: This sheet is hidden from Users but can be set by invoking
+    // (actor).setFlag("core","sheetClass","gurps.TestActorSheet")
+    // @ts-expect-error: broken typing
+    foundry.documents.collections.Actors.registerSheet('gurps', TestActorSheet, {
+      makeDefault: true,
+      types: ['gcsCharacter'],
+      canConfigure: false,
+    })
   })
 }
 
 export const Actor: ActorModule = {
   init,
   migrateActor,
+  migrate: runMigration,
+  HitLocationEntry: HitLocationEntryV2,
+  MoveMode: MoveModeV2,
 }

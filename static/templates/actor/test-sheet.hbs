@@ -1,0 +1,21 @@
+{{#*inline ".location"}}
+<div>
+    <span>{{location.locationId}}</span>
+    {{formGroup location.schema.fields.drBonus name=(concat location.fieldPath "." location.id ".drBonus") value=location.drBonus localize=true}}
+
+    {{#if location.subTable}}
+      <div style="margin-left: 2em;">
+      {{#each location.subTable.locations}}
+        {{> ".location" location=this}}
+      {{/each}}
+      </div>
+    {{/if}}
+
+</div>
+{{/inline}}
+
+<div class="flexcol">
+  {{#each system.settings.bodyType.locations}}
+    {{> ".location" location=this}}
+  {{/each}}
+</div>

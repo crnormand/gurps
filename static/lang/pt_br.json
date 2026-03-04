@@ -1,4 +1,10 @@
 {
+  "DOCUMENT": {
+    "Action": "Ação",
+    "HitLocation": "Localização do Golpe",
+    "MoveMode": "Modo de Movimento",
+    "ResourceTracker": "Rastreador de Recursos"
+  },
   "GURPS": {
     "abbrevPoints": "Ptos",
     "abbrevRef": "Ref",
@@ -8,9 +14,6 @@
     "active": "Ativo",
     "activeEffect": "Efeito Ativo",
     "activeEffects": "Efeitos Ativos",
-    "actor": {
-      "setting": {}
-    },
     "addAbbrev": "Abrev",
     "addAdditionalStackingModifier": "Modificadores adicionais",
     "addAdjustedForDamageType": "‡ - Ajustado devido ao Modificador de Dano",
@@ -674,16 +677,26 @@
     "importCurrentVersions": "Versões Atualizadas: '{GCAVersion}' & '{GCSVersion}'.",
     "importEmptyDirectory": "Diretório está vazio. Nenhum arquivo será importado.",
     "importer": {
+      "actor": {
+        "button": "Importar",
+        "description": "Selecione um arquivo GCS 5 ou GCA 5.",
+        "note": "Esta importação substituirá os dados de: <strong>{name}</strong>.",
+        "source": "Dados de origem",
+        "successMessage": "Personagem \"{name}\" importado com sucesso.",
+        "title": "Importar dados do personagem para {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+      },
       "defaultName": "Personagem Importado",
       "error": {
         "noFilesSelected": "Nenhum arquivo selecionado para importação."
       },
-      "prompt": {
-        "description": "Selecione um arquivo GCS 5 ou GCA 5.",
-        "note": "Esta importação irá sobrescrever os dados de: <strong>{name}</strong>.",
+      "item": {
+        "button": "Importar",
+        "description": "Selecione um arquivo de biblioteca GCS 5 (.adq, .skl, .spl, .eqp).",
+        "sidebarButton": "Importar Compêndio GCS",
         "source": "Dados de origem",
-        "title": "Importar dados do personagem para {name}",
-        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Atenção</strong>: Esta ação não pode ser desfeita!"
+        "successMessage": "Compêndio \"{name}\" importado com sucesso ({num} itens importados).",
+        "title": "Importar Itens do Compêndio GCS"
       },
       "promptBodyPlan": {
         "content": "<p>Você deseja <strong>Manter</strong> o plano corporal atual (<strong>{currentBodyPlan}</strong>), ou <strong>Sobrescrever</strong> com o plano corporal do arquivo de importação (<strong>{bodyplan}</strong>)?</p>",
@@ -847,9 +860,17 @@
     "meleeAttack": "Ataque Corpo a Corpo",
     "meleeWeapons": "Armas de Combate Corpo a Corpo",
     "migration": {
+      "actor": {
+        "progressMessage": "Aplicando migrações de Ator para a versão {version}, por favor aguarde...",
+        "successMessage": "Migrações de Ator aplicadas com sucesso para a versão {version}."
+      },
+      "item": {
+        "progressMessage": "Aplicando migrações de Item para a versão {version}, por favor aguarde...",
+        "successMessage": "Migrações de Item aplicadas com sucesso para a versão {version}."
+      },
       "migrationItem": {
-        "name": "Contêiner Geral Temporário",
-        "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do Personagem. Para mover essas entidades de volta aos seus locais corretos, reimporte este Personagem do GCS ou GCA."
+        "name": "O Porta-Tudo",
+        "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do personagem. Para mover essas entidades de volta para seus lugares apropriados, por favor reimporte este personagem do GCS ou GCA."
       }
     },
     "minDamageRule": "Dano mín.:",
@@ -1635,6 +1656,10 @@
     "youDoNotHavePermssion": "Você não tem permissão para fazer isso."
   },
   "TYPES": {
+    "Action": {
+      "meleeAttack": "Ataque Corpo a Corpo",
+      "rangedAttack": "Ataque à Distância"
+    },
     "Actor": {
       "character": "Personagem (v1)",
       "characterV2": "Personagem (v2)",

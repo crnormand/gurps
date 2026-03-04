@@ -2,12 +2,11 @@
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
-import { GGADebugger } from '@module/util/debugger.js'
 import HitFatPoints from '@module/util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
 import Initiative from '@module/util/initiative.js'
 import { ClearLastActor, SetLastActor } from '@module/util/last-actor.js'
-import { Migration } from '@module/util/migration.js'
+import { Migration } from '@module/util/migration/migration.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
 import { getTokenForActor } from '@module/util/token.js'
@@ -47,24 +46,28 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 import { Combat } from './combat/index.js'
 import { calculateRoFModifier } from './combat/utilities.js'
 import { CombatTracker } from './combat-tracker/index.js'
+import { Compendium } from './compendium/index.js'
 import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
+import { Dev } from './dev/index.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import { GlobalActiveEffectDataControl } from './effects/global-active-effect-data-manager.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
+import { Features } from './features/index.js'
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
 import { Item } from './item/index.js'
-import { AddImportEquipmentButton } from './item-import.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
+import { Prereqs } from './prereqs/index.js'
 import { ResourceTrackerModule } from './resource-tracker/index.js'
+import { Scripting } from './scripting/index.js'
 import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
@@ -106,11 +109,16 @@ if (!globalThis.GURPS) {
     Canvas,
     Combat,
     CombatTracker,
+    Compendium,
     Damage,
+    Dev,
+    Features,
     Importer,
     Item,
     Pdf,
+    Prereqs,
     ResourceTracker: ResourceTrackerModule,
+    Scripting,
     Token,
     UI,
   }
@@ -2124,10 +2132,6 @@ if (!globalThis.GURPS) {
     HitLocation.init()
 
     RegisterChatProcessors()
-    // GurpsActiveEffect.init()
-
-    // Add Debugger info
-    GGADebugger.init()
 
     // Modifier Bucket must be defined after hit locations
     GURPS.ModifierBucket = new ModifierBucket()
@@ -2140,7 +2144,6 @@ if (!globalThis.GURPS) {
     // do this only after we've initialized localize
     GURPS.Maneuvers = Maneuvers
 
-    // Define custom Entity classes
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
     // add custom ActiveEffectConfig sheet class
@@ -2163,11 +2166,6 @@ if (!globalThis.GURPS) {
     Hooks.on('renderActorDirectory', (app, html) => {
       // Add the Import Multiple Actors button to the Actors tab.
       AddMultipleImportButton(html)
-    })
-
-    Hooks.on('renderCompendiumDirectory', (app, html) => {
-      // Add the import equipment button to the Compendiums tab.
-      AddImportEquipmentButton(html)
     })
 
     // TODO Move to a new 'bucket' module?
@@ -2224,7 +2222,9 @@ if (!globalThis.GURPS) {
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
     let previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
 
-    console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
+    if (foundry.utils.isNewerVersion(GURPS.currentVersion, previousVersionString)) {
+      console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
+    }
 
     // Run any needed migrations.
     Migration.run()

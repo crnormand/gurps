@@ -1,5 +1,6 @@
+import { defineGetterProperties } from '@util/object-utils.js'
+
 import { Ranged } from '../../actor/actor-components.js'
-import { defineGetterProperties } from '../../util/object-utils.js'
 import { RangedAttackModel } from '../ranged-attack.js'
 
 class RangedV1 {
@@ -16,7 +17,7 @@ class RangedV1 {
 
   // Generate getters for each of the ranged attack properties. Delegate to the underlying RangedAttackModel.
   get acc() {
-    return this.rangedV2.rng.acc
+    return this.rangedV2.acc
   }
 
   get addToQuickRoll() {
@@ -24,75 +25,75 @@ class RangedV1 {
   }
 
   get ammo() {
-    return this.rangedV2.rng.ammo
+    return this.rangedV2.ammo
   }
 
   get bulk() {
-    return this.rangedV2.rng.bulk
+    return this.rangedV2.bulk
   }
 
   get consumeAction() {
-    return this.rangedV2.rng.consumeAction
+    return this.rangedV2.consumeAction
   }
 
   get contains() {
-    return [] // this.rangedV2.rng.contains
+    return [] // this.rangedV2.contains
   }
 
   get damage() {
-    return this.rangedV2.rng.damage
+    return this.rangedV2.damage
   }
 
   get extraAttacks() {
-    return this.rangedV2.rng.extraAttacks
+    return this.rangedV2.extraAttacks
   }
 
   get halfd() {
-    return this.rangedV2.rng.halfd
+    return this.rangedV2.halfd
   }
 
   get import() {
-    return this.rangedV2.rng.import
+    return this.rangedV2.import
   }
 
   get itemModifiers() {
-    return this.rangedV2.rng.itemModifiers
+    return this.rangedV2.itemModifiers
   }
 
   get legalityclass() {
-    return this.rangedV2.rng.legalityclass
+    return this.rangedV2.legalityclass
   }
 
   get level() {
-    return this.rangedV2.rng.level
+    return this.rangedV2.level
   }
 
   get max() {
-    return this.rangedV2.rng.max
+    return this.rangedV2.max
   }
 
   get mode() {
-    return this.rangedV2.rng.mode
+    return this.rangedV2.mode
   }
 
   get modifierTags() {
-    return this.rangedV2.rng.modifierTags
+    return this.rangedV2.modifierTags
   }
 
   get name() {
-    return this.rangedV2.rng.name
+    return this.rangedV2.name
   }
 
   get notes() {
-    return this.rangedV2.rng.notes
+    return this.rangedV2.notes
   }
 
   get originalName() {
-    return this.rangedV2.rng.name
+    return this.rangedV2.name
   }
 
   get pageref() {
-    return this.rangedV2.rng.pageref
+    return ''
   }
 
   get parentuuid() {
@@ -100,23 +101,23 @@ class RangedV1 {
   }
 
   get range() {
-    return this.rangedV2.rng.range
+    return this.rangedV2.range
   }
 
   get rcl() {
-    return this.rangedV2.rng.rcl
+    return this.rangedV2.rcl
   }
 
   get rof() {
-    return this.rangedV2.rng.rate_of_fire
+    return this.rangedV2.rateOfFire
   }
 
   get shots() {
-    return this.rangedV2.rng.shots
+    return this.rangedV2.shots
   }
 
   get st() {
-    return this.rangedV2.rng.st
+    return this.rangedV2.st
   }
 
   get uuid() {
