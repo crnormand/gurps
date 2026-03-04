@@ -37,7 +37,7 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
 
     /* ---------------------------------------- */
 
-    override _getHeaderControls(): gurps.applications.handlebars.ControlsEntry[] {
+    override _getHeaderControls(): gurps.applications.api.Application.ControlsEntry[] {
       const controls = super._getHeaderControls()
 
       const blockImport = ImportSettings.onlyTrustedUsersCanImport
