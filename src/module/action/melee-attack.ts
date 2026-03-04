@@ -3,6 +3,7 @@ import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { BaseAttack } from './base-attack.js'
+import { WeaponBlockField, WeaponParryField, WeaponReachField } from './fields.js'
 import { ActionType } from './types.js'
 
 class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
@@ -154,39 +155,16 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
 const meleeAttackSchema = () => {
   return {
     /** The reach of this attack */
-    reach: new fields.SchemaField({
-      /** The minimum reach of this attack, in yards. */
-      min: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-      /** The maximum reach of this attack, in yards. */
-      max: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-      /** Can this attack be made in close combat (i.e. against an adjacent target)? */
-      closeCombat: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-      /** Does this attack require a ready maneuver to change range? */
-      changeRequiresReady: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    }),
+    reach: new WeaponReachField(),
 
     /** The parry value of this attack */
-    parry: new fields.SchemaField({
-      /** Can this attack parry at all? */
-      canParry: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-      /** Is this weapon treated as a fencing weapon for parry purposes? */
-      fencing: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-      /** Is this weapon unbalanced for parry purposes?  */
-      unbalanced: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-      /** What is the parry modifier for this attack, which is added to the base parry value to determine the final parry value. */
-      modifier: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    }),
+    parry: new WeaponParryField(),
 
     /** The penalty to this attack's parry level for multiple parries in a given turn. */
     baseParryPenalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The block value of this attack */
-    block: new fields.SchemaField({
-      /** Can this attack block at all? */
-      canBlock: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-      /** The block modifier for this attack, which is added to the base block value to determine the final block value. */
-      modifier: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    }),
+    block: new WeaponBlockField(),
 
     /**
      * NOTE: These fields seem inappropriate for attacks and appear to be vestigial. They have been commented out but
