@@ -880,7 +880,6 @@ export class Ranged extends Attack {
     this.rcl = ''
     this.halfd = ''
     this.max = ''
-    this.otf = ''
   }
   checkRange() {
     if (this.halfd) this.range = this.halfd
