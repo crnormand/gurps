@@ -764,7 +764,6 @@ export class Melee extends Attack {
     this.parry = ''
     this.block = ''
     this.baseParryPenalty = -4
-    this.otf = ''
   }
   static fromObject(data, actor) {
     let melee
