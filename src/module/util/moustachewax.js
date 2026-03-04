@@ -5,6 +5,8 @@ import Maneuvers from '@module/actor/maneuver.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { ImportSettings } from '@module/importer/index.js'
 import { TokenActions } from '@module/token-actions.js'
+import { multiplyDice } from '@util/damage-utils.js'
+import { gurpslink } from '@util/gurpslink.js'
 import { extractOtfs } from '@util/otf.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import {
@@ -18,8 +20,6 @@ import {
   zeroFill,
 } from '@util/utilities.js'
 
-import { multiplyDice } from './damage-utils.js'
-import { gurpslink } from './gurpslink.js'
 import { i18nFallback } from './i18nFallback.js'
 import * as Settings from './miscellaneous-settings.js'
 
