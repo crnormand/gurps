@@ -1,11 +1,10 @@
+import { ResourceTrackerThreshold, TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import {
   ComparisonFunctions,
   OperatorFunctions,
   TrackerComparators,
   TrackerOperators,
-  ResourceTrackerThreshold,
-  TrackerInstance,
-} from '@module/resource-tracker/resource-tracker.js'
+} from '@module/resource-tracker/types.js'
 
 type ThresholdInput = {
   comparison: string

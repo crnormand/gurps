@@ -1,16 +1,11 @@
-import { TrackerComparators, TrackerOperators } from './resource-tracker.ts'
-import {
-  IResourceTracker,
-  IResourceTrackerTemplate,
-  IResourceTrackerTemplateMap,
-  SETTING_TRACKER_TEMPLATES,
-} from './types.ts'
+import { TrackerComparators, TrackerOperators } from './types.ts'
+import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from './types.ts'
 import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.ts'
 
 export class ResourceTrackerManager extends FormApplication {
-  _templates: IResourceTrackerTemplateMap
+  _templates: Record<string, IResourceTrackerTemplate>
 
-  static getDefaultTemplates(): IResourceTrackerTemplateMap {
+  static getDefaultTemplates(): Record<string, IResourceTrackerTemplate> {
     const id = foundry.utils.randomID()
 
     return {
@@ -81,9 +76,9 @@ export class ResourceTrackerManager extends FormApplication {
     }
   }
 
-  static getAllTemplatesMap(): IResourceTrackerTemplateMap {
+  static getAllTemplatesMap(): Record<string, IResourceTrackerTemplate> {
     const settings = game.settings?.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES) as
-      | IResourceTrackerTemplateMap
+      | Record<string, IResourceTrackerTemplate>
       | undefined
 
     return settings ?? {}

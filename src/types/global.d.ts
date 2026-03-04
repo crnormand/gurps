@@ -8,7 +8,7 @@ import { Dev as ModuleDev } from '@module/dev/index.js'
 import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
 import { Pdf as ModulePdf } from '@module/pdf/index.js'
-import { ResourceTracker as ModuleResourceTracker } from '@module/resource-tracker/index.js'
+import { ResourceTrackerModule as ModuleResourceTracker } from '@module/resource-tracker/index.js'
 import { Token as ModuleToken } from '@module/token/index.js'
 import { UI as ModuleUI } from '@module/ui/index.js'
 

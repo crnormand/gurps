@@ -2,8 +2,7 @@ import { DeepPartial } from 'fvtt-types/utils'
 
 import { ResourceTrackerManager } from '../resource-tracker-manager.js'
 import { TrackerInstance } from '../resource-tracker.js'
-import { TrackerComparators, TrackerOperators } from '../resource-tracker.js'
-import { IResourceTracker, IResourceTrackerTemplateMap } from '../types.js'
+import { IResourceTracker, IResourceTrackerTemplate, TrackerComparators, TrackerOperators } from '../types.js'
 
 type ResourceTrackerEditorV2Options = DeepPartial<foundry.applications.api.ApplicationV2.Configuration> & {
   onUpdate?: (trackerData: IResourceTracker) => Promise<void> | void
@@ -282,7 +281,7 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
   }
 }
 
-async function selectTemplate(templates: IResourceTrackerTemplateMap): Promise<string | null> {
+async function selectTemplate(templates: Record<string, IResourceTrackerTemplate>): Promise<string | null> {
   const templateEntries = Object.entries(templates)
 
   if (!templateEntries.length) return null

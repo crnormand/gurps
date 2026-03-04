@@ -5,6 +5,7 @@ import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import { TrackerInstance } from './resource-tracker.js'
 import { initializeSettings } from './settings.js'
+import { IResourceTracker, IResourceTrackerTemplate } from './types.js'
 import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.js'
 import { updateResourceTracker } from './ui/update-resource-tracker.js'
 
@@ -16,7 +17,9 @@ function init() {
     await migrate()
 
     // get all aliases defined in the resource tracker templates and register them as damage types
-    const resourceTrackers = Object.values(ResourceTrackerManager.getAllTemplatesMap())
+    const resourceTrackers = Object.values(
+      ResourceTrackerManager.getAllTemplatesMap() as Record<string, IResourceTrackerTemplate>
+    )
       .filter(it => !!it.tracker.isDamageType)
       .filter(it => !!it.tracker.alias)
       .map(it => it.tracker)
@@ -60,6 +63,8 @@ interface ResourceTrackerModule extends GurpsModule {
   TrackerEditor: typeof ResourceTrackerEditor
   TrackerEditorV2: typeof ResourceTrackerEditorV2
   updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance, trackerId?: string): Promise<void>
+  getAllTemplatesMap(): Record<string, IResourceTrackerTemplate>
+  getMissingRequiredTemplates(currentTrackers: IResourceTracker[]): IResourceTrackerTemplate[]
 }
 
 export const ResourceTrackerModule: ResourceTrackerModule = {
@@ -69,6 +74,8 @@ export const ResourceTrackerModule: ResourceTrackerModule = {
   TrackerEditor: ResourceTrackerEditor,
   TrackerEditorV2: ResourceTrackerEditorV2,
   updateResourceTracker,
+  getAllTemplatesMap: ResourceTrackerManager.getAllTemplatesMap,
+  getMissingRequiredTemplates: ResourceTrackerManager.getMissingRequiredTemplates,
 }
 
 export type {
@@ -78,4 +85,8 @@ export type {
   IThresholdDescriptor,
 } from './types.js'
 
+export { ResourceTrackerManager } from './resource-tracker-manager.js'
 export type { ResourceTrackerSchema } from './resource-tracker.js'
+export { TrackerInstance } from './resource-tracker.js'
+export { OperatorFunctions } from './types.js'
+export { ComparisonFunctions } from './types.js'

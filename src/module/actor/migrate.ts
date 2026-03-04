@@ -2,7 +2,7 @@ import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData } from '@module/item/migrate.js'
-import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
+import { TrackerInstance } from '@module/resource-tracker/index.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'

@@ -1,4 +1,4 @@
-import { ComparisonFunctions, OperatorFunctions } from '@module/resource-tracker/resource-tracker.js'
+import { ComparisonFunctions, OperatorFunctions } from '@module/resource-tracker/index.js'
 import * as utilities from '@util/utilities.js'
 import { displayMod, makeSelect } from '@util/utilities.js'
 

@@ -1,6 +1,9 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
-import { IResourceTrackerTemplate, ResourceTrackerSchema } from '@module/resource-tracker/index.js'
-import { ResourceTrackerManager } from '@module/resource-tracker/resource-tracker-manager.js'
+import {
+  IResourceTrackerTemplate,
+  ResourceTrackerModule,
+  ResourceTrackerSchema,
+} from '@module/resource-tracker/index.js'
 
 type TypedItemCreateData<SubType extends Item.SubType> = Item.CreateData<SubType> & {
   // @ts-expect-error: the type system doesn't like this because it doesn't extend some empty object but it does in fact work.
@@ -23,10 +26,10 @@ export function createStandardTrackers(importer: { output: any; actor?: any }) {
   importer.output.additionalresources.tracker ||= {}
 
   const templates: IResourceTrackerTemplate[] = importer.actor
-    ? ResourceTrackerManager.getMissingRequiredTemplates(
+    ? ResourceTrackerModule.getMissingRequiredTemplates(
         importer.actor.system.additionalresources?.tracker.contents ?? []
       )
-    : Object.values(ResourceTrackerManager.getAllTemplatesMap()).filter(template => template.autoapply)
+    : Object.values(ResourceTrackerModule.getAllTemplatesMap()).filter(template => template.autoapply)
 
   templates.forEach(template => {
     const id = foundry.utils.randomID()

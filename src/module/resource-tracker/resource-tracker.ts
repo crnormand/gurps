@@ -1,44 +1,16 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
-import { IResourceTrackerTemplate, IResourceTrackerThreshold, IThresholdDescriptor, IResourceTracker } from './types.js'
-
-const TrackerOperators = {
-  PLUS: '+',
-  MINUS: '\u002D',
-  UNICODE_MINUS_SIGN: '\u2212',
-  MULTIPLY: '×',
-  DIVIDE: '÷',
-} as const
-
-const TrackerComparators = {
-  LT: '<',
-  LTE: '≤',
-  EQ: '=',
-  GTE: '≥',
-  GT: '>',
-} as const
-
-type TrackerOperators = (typeof TrackerOperators)[keyof typeof TrackerOperators]
-type TrackerComparisons = (typeof TrackerComparators)[keyof typeof TrackerComparators]
-type binomialFunction = (left: number, right: number) => number
-type comparisonFunction = (left: number, right: number) => boolean
-
-const OperatorFunctions: Record<TrackerOperators, binomialFunction> = {
-  [TrackerOperators.PLUS]: (left: number, right: number) => left + right,
-  [TrackerOperators.MINUS]: (left: number, right: number) => left - right,
-  [TrackerOperators.UNICODE_MINUS_SIGN]: (left: number, right: number) => left - right,
-  [TrackerOperators.MULTIPLY]: (left: number, right: number) => left * right,
-  [TrackerOperators.DIVIDE]: (left: number, right: number) => left / right,
-} as const
-
-const ComparisonFunctions: Record<TrackerComparisons, comparisonFunction> = {
-  [TrackerComparators.LT]: (left: number, right: number) => left < right,
-  [TrackerComparators.LTE]: (left: number, right: number) => left <= right,
-  [TrackerComparators.EQ]: (left: number, right: number) => left === right,
-  [TrackerComparators.GTE]: (left: number, right: number) => left >= right,
-  [TrackerComparators.GT]: (left: number, right: number) => left > right,
-} as const
+import {
+  IResourceTrackerTemplate,
+  IResourceTrackerThreshold,
+  IThresholdDescriptor,
+  IResourceTracker,
+  OperatorFunctions,
+  ComparisonFunctions,
+  TrackerOperators,
+  TrackerComparisons,
+} from './types.js'
 
 /* ---------------------------------------- */
 
@@ -278,10 +250,6 @@ type ResourceTrackerTemplateSchema = ReturnType<typeof resourceTrackerTemplateSc
 /* ---------------------------------------- */
 
 export {
-  TrackerOperators,
-  TrackerComparators,
-  OperatorFunctions,
-  ComparisonFunctions,
   TrackerInstance,
   ResourceTrackerThreshold,
   ResourceTrackerTemplate,

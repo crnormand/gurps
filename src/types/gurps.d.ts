@@ -54,7 +54,7 @@ import {
   SpellPrereq,
   TraitPrereq,
 } from '@module/prereqs/index.js'
-import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
+import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 export {}
