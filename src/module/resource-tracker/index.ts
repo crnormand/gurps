@@ -88,5 +88,4 @@ export type {
 export { ResourceTrackerManager } from './resource-tracker-manager.js'
 export type { ResourceTrackerSchema } from './resource-tracker.js'
 export { TrackerInstance } from './resource-tracker.js'
-export { OperatorFunctions } from './types.js'
-export { ComparisonFunctions } from './types.js'
+export { OperatorFunctions, ComparisonFunctions } from './types.js'
