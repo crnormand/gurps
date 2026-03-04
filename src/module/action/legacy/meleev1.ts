@@ -90,7 +90,7 @@ class MeleeV1 {
   }
 
   get parry() {
-    return this.meleeV2.parry
+    return this.meleeV2.parryText
   }
 
   get parryBonus() {
@@ -98,7 +98,7 @@ class MeleeV1 {
   }
 
   get reach() {
-    return this.meleeV2.reach
+    return this.meleeV2.reachText
   }
 
   get st() {
