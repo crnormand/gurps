@@ -1,17 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
 import { Melee, Ranged } from '@module/actor/actor-components.js'
-import {
-  parseReach,
-  parseParry,
-  parseBlock,
-  parseRecoil,
-  parseAccuracy,
-  parseBulk,
-  parseRange,
-  parseRateOfFire,
-  parseShots,
-} from '@module/util/parse-weapon.js'
 
 import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.js'
 
@@ -224,7 +213,7 @@ function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.Cr
     _id,
     type: ActionType.MeleeAttack,
     baseParryPenalty: Number(oldMelee.baseParryPenalty),
-    block: parseBlock(oldMelee.block),
+    block: oldMelee.block,
     consumeAction: oldMelee.consumeAction,
     damage,
     extraAttacks: Number(oldMelee.extraAttacks),
@@ -234,8 +223,8 @@ function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.Cr
     modifierTags: oldMelee.modifierTags,
     notes: oldMelee.notes,
     otf: oldMelee.otf,
-    parry: parseParry(oldMelee.parry),
-    reach: parseReach(oldMelee.reach),
+    parry: oldMelee.parry,
+    reach: oldMelee.reach,
     st: oldMelee.st,
   }
 
@@ -250,9 +239,9 @@ function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField
   const newRanged: fields.SchemaField.CreateData<RangedAttackSchema> = {
     _id,
     type: ActionType.RangedAttack,
-    acc: parseAccuracy(oldRanged.acc),
+    acc: oldRanged.acc,
     ammo: Number(oldRanged.ammo),
-    bulk: parseBulk(oldRanged.bulk),
+    bulk: oldRanged.bulk,
     consumeAction: oldRanged.consumeAction,
     damage,
     extraAttacks: Number(oldRanged.extraAttacks),
@@ -262,10 +251,10 @@ function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField
     modifierTags: oldRanged.modifierTags,
     notes: oldRanged.notes,
     otf: oldRanged.otf,
-    range: parseRange(oldRanged.range),
-    rateOfFire: parseRateOfFire(oldRanged.rof),
-    recoil: parseRecoil(oldRanged.rcl),
-    shots: parseShots(oldRanged.shots),
+    range: oldRanged.range,
+    rateOfFire: oldRanged.rof,
+    recoil: oldRanged.rcl,
+    shots: oldRanged.shots,
     st: oldRanged.st,
   }
 
