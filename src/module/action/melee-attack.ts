@@ -30,9 +30,11 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
     // If parrying is disabled, the other parry fields are also reset to their default values.
     if ('parry' in source && typeof source.parry === 'object' && source.parry !== null) {
       if ('canParry' in source.parry && typeof source.parry.canParry === 'boolean' && !source.parry.canParry) {
-        ;(source.parry as AnyMutableObject).fencing = false
-        ;(source.parry as AnyMutableObject).unbalanced = false
-        ;(source.parry as AnyMutableObject).modifier = 0
+        const parry = source.parry as AnyMutableObject
+
+        parry.fencing = false
+        parry.unbalanced = false
+        parry.modifier = 0
       }
     }
 

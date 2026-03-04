@@ -191,7 +191,9 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
   }
 
   if (oldData.melee) {
-    ;(Object.values(oldData.melee) as Melee[]).forEach(action => {
+    const melee = Object.values(oldData.melee) as Melee[]
+
+    melee.forEach(action => {
       const _id = foundry.utils.randomID()
       const newMelee = migrateMeleeWeapon(action, _id)
 
@@ -200,7 +202,9 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
   }
 
   if (oldData.ranged) {
-    ;(Object.values(oldData.ranged) as Ranged[]).forEach(action => {
+    const ranged = Object.values(oldData.ranged) as Ranged[]
+
+    ranged.forEach(action => {
       const _id = foundry.utils.randomID()
       const newRanged = migrateRangedWeapon(action, _id)
 
