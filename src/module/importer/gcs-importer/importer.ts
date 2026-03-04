@@ -3,9 +3,6 @@ import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { TraitSchema } from '@module/item/data/trait.js'
-import { ResourceTrackerManager } from '@module/resource-tracker/resource-tracker-manager.js'
-import { ResourceTrackerSchema } from '@module/resource-tracker/resource-tracker.js'
-import { IResourceTrackerTemplate } from '@module/resource-tracker/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackSchema } from '../../action/melee-attack.js'
@@ -16,7 +13,7 @@ import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { EquipmentSchema } from '../../item/data/equipment.js'
 import { SkillSchema } from '../../item/data/skill.js'
 import { SpellSchema } from '../../item/data/spell.js'
-import { createDataIsOfType } from '../helpers.js'
+import { createDataIsOfType, createStandardTrackers } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
 import { GcsCollection } from './schema/base.js'
@@ -130,7 +127,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     this.#importPointTotals()
     this.#importMiscValues()
     this.#importNotes()
-    this.#createStandardTrackers()
+    createStandardTrackers(this)
 
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
@@ -1158,31 +1155,6 @@ Portrait will not be imported.`
 
     this.output.allNotes ||= {}
     this.output.allNotes[id] = note
-  }
-
-  /* ---------------------------------------- */
-
-  #createStandardTrackers() {
-    this.output.additionalresources ||= {}
-    this.output.additionalresources.tracker ||= {}
-
-    const templates: IResourceTrackerTemplate[] = this.actor
-      ? ResourceTrackerManager.getMissingRequiredTemplates(
-          this.actor.system.additionalresources?.tracker.contents ?? []
-        )
-      : Object.values(ResourceTrackerManager.getAllTemplatesMap()).filter(template => template.autoapply)
-
-    templates.forEach(template => {
-      const id = foundry.utils.randomID()
-
-      const trackerData: DataModel.CreateData<ResourceTrackerSchema> = {
-        ...template.tracker,
-        initialValue: template.initialValue,
-        _id: id,
-      }
-
-      this.output.additionalresources!.tracker![id] = trackerData
-    })
   }
 }
 
