@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { NON_PRODUCTION_DOCUMENT_TYPES, SHOW_DEBUG_INFO } from './types.ts'
+import { NON_PRODUCTION_DOCUMENT_TYPES, SHOW_DEBUG_INFO } from './types.js'
 
 export function registerSettings() {
   if (!game.settings || !game.i18n)
