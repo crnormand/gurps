@@ -1652,7 +1652,7 @@
     "yard": "yard",
     "yards": "yards",
     "years": "years",
-    "youDoNotHavePermssion": "You do not have permission to do that."
+    "youDoNotHavePermission": "You do not have permission to do that."
   },
   "TYPES": {
     "Action": {
