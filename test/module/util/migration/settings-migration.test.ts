@@ -369,6 +369,163 @@ describe('migrateLegacySettings', () => {
     })
   })
 
+  describe('in-place migrations (newName === oldName)', () => {
+    it('transforms the value without deleting the old setting', async () => {
+      const setting = createMockSetting('gurps.mySetting', 'old value', 'id-1')
+
+      mockStorage.contents = [setting]
+
+      const migrations: SettingMigration[] = [
+        {
+          oldName: 'mySetting',
+          newName: 'mySetting', // same key — in-place
+          migrateValue: (value: unknown) => (value as string).toUpperCase(),
+        },
+      ]
+
+      await migrateLegacySettings('gurps', migrations)
+
+      expect(globalMock.game.settings!.set).toHaveBeenCalledWith('gurps', 'mySetting', 'OLD VALUE')
+      expect(setting.delete).not.toHaveBeenCalled()
+    })
+
+    it('counts in-place successes in the summary log', async () => {
+      const setting = createMockSetting('gurps.mySetting', 'value', 'id-1')
+
+      mockStorage.contents = [setting]
+
+      const migrations: SettingMigration[] = [
+        {
+          oldName: 'mySetting',
+          newName: 'mySetting',
+          migrateValue: (value: unknown) => value,
+        },
+      ]
+
+      await migrateLegacySettings('gurps', migrations)
+
+      // In-place success must be reflected in successCount, not silently dropped.
+      expect(consoleLogSpy).toHaveBeenCalledWith('GURPS | Successfully migrated 1 legacy setting(s)')
+      expect(consoleWarnSpy).not.toHaveBeenCalled()
+    })
+
+    it('does not delete the setting and logs oldKey as the error label when migration fails', async () => {
+      const setting = createMockSetting('gurps.mySetting', 'value', 'id-1')
+
+      mockStorage.contents = [setting]
+
+      const migrations: SettingMigration[] = [
+        {
+          oldName: 'mySetting',
+          newName: 'mySetting',
+          migrateValue: () => {
+            throw new Error('Transform error')
+          },
+        },
+      ]
+
+      await migrateLegacySettings('gurps', migrations)
+
+      expect(setting.delete).not.toHaveBeenCalled()
+      // Error label must be the full setting key, not undefined (there is no deleteId to look up).
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'GURPS | Migration failed for setting: gurps.mySetting',
+        expect.any(Error)
+      )
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'GURPS | Settings migration completed with 1 failure(s) and 0 success(es)'
+      )
+    })
+
+    it('counts mixed in-place and renamed successes together', async () => {
+      const inPlace = createMockSetting('gurps.inPlace', 'value1', 'id-1')
+      const renamed = createMockSetting('gurps.oldName', 'value2', 'id-2')
+
+      mockStorage.contents = [inPlace, renamed]
+
+      const migrations: SettingMigration[] = [
+        { oldName: 'inPlace', newName: 'inPlace', migrateValue: (value: unknown) => value },
+        { oldName: 'oldName', newName: 'newName', migrateValue: (value: unknown) => value },
+      ]
+
+      await migrateLegacySettings('gurps', migrations)
+
+      expect(inPlace.delete).not.toHaveBeenCalled()
+      expect(renamed.delete).toHaveBeenCalled()
+      expect(consoleLogSpy).toHaveBeenCalledWith('GURPS | Successfully migrated 2 legacy setting(s)')
+    })
+  })
+
+  describe('index alignment with mixed in-place and renamed entries', () => {
+    it('correctly maps results to entries when an in-place entry precedes a failing renamed entry', async () => {
+      // Arrange: [in-place success, renamed fail, renamed success]
+      // Old bug: deletionIds only held renamed ids, so results[0] (in-place) mapped to
+      // deletionIds[0] which was setting2's id — causing the wrong entry to be deleted/skipped.
+      const inPlace = createMockSetting('gurps.setting1', 'v1', 'id-1')
+      const renamedFail = createMockSetting('gurps.setting2', 'v2', 'id-2')
+      const renamedSuccess = createMockSetting('gurps.setting3', 'v3', 'id-3')
+
+      mockStorage.contents = [inPlace, renamedFail, renamedSuccess]
+
+      const migrations: SettingMigration[] = [
+        { oldName: 'setting1', newName: 'setting1', migrateValue: (value: unknown) => value },
+        {
+          oldName: 'setting2',
+          newName: 'newSetting2',
+          migrateValue: () => {
+            throw new Error('fail')
+          },
+        },
+        { oldName: 'setting3', newName: 'newSetting3', migrateValue: (value: unknown) => value },
+      ]
+
+      await migrateLegacySettings('gurps', migrations)
+
+      // in-place: never deleted (no deleteId)
+      expect(inPlace.delete).not.toHaveBeenCalled()
+      // failed renamed: must NOT be deleted so it can be retried
+      expect(renamedFail.delete).not.toHaveBeenCalled()
+      // successful renamed: must be deleted
+      expect(renamedSuccess.delete).toHaveBeenCalled()
+
+      // 2 succeeded (in-place + renamed), 1 failed
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'GURPS | Settings migration completed with 1 failure(s) and 2 success(es)'
+      )
+      // Error must point at the setting that actually failed, not the succeeding one
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'GURPS | Migration failed for setting: gurps.setting2',
+        expect.any(Error)
+      )
+    })
+
+    it('correctly handles a failing in-place entry followed by a succeeding renamed entry', async () => {
+      const inPlaceFail = createMockSetting('gurps.setting1', 'v1', 'id-1')
+      const renamedSuccess = createMockSetting('gurps.setting2', 'v2', 'id-2')
+
+      mockStorage.contents = [inPlaceFail, renamedSuccess]
+
+      const migrations: SettingMigration[] = [
+        {
+          oldName: 'setting1',
+          newName: 'setting1',
+          migrateValue: () => {
+            throw new Error('fail')
+          },
+        },
+        { oldName: 'setting2', newName: 'newSetting2', migrateValue: (value: unknown) => value },
+      ]
+
+      await migrateLegacySettings('gurps', migrations)
+
+      expect(inPlaceFail.delete).not.toHaveBeenCalled()
+      expect(renamedSuccess.delete).toHaveBeenCalled()
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'GURPS | Settings migration completed with 1 failure(s) and 1 success(es)'
+      )
+    })
+  })
+
   describe('edge cases', () => {
     it('returns early when storage is unavailable', async () => {
       globalMock.game.settings = {

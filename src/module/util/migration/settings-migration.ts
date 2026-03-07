@@ -39,10 +39,15 @@ export async function migrateLegacySettings(namespacePrefix: string, migrations:
     return
   }
 
-  const migrationActions: Promise<void>[] = []
-  const deletionIds: string[] = []
-  const migrationDetails: Array<{ oldKey: string; newName: string }> = []
+  interface MigrationEntry {
+    promise: Promise<void>
+    oldKey: string
+    newName: string
+    /** The setting id to delete after migration, or null for in-place key migrations. */
+    deleteId: string | null
+  }
 
+  const entries: MigrationEntry[] = []
   const prefixDot = namespacePrefix + '.'
 
   for (const entry of storage.contents.filter((entry: foundry.documents.Setting) => entry.key.startsWith(prefixDot))) {
@@ -54,52 +59,50 @@ export async function migrateLegacySettings(namespacePrefix: string, migrations:
 
     // Transform the value and save to new setting.
     // Using Promise.resolve().then() to ensure synchronous errors are caught
-    const migrationPromise = Promise.resolve()
+    const promise = Promise.resolve()
       .then(() => migration.migrateValue(entry.value))
       .then(newValue => (game.settings as any)!.set(namespacePrefix, migration.newName, newValue))
 
-    migrationActions.push(migrationPromise)
-    migrationDetails.push({ oldKey: entry.key, newName: migration.newName })
-
     // Only delete the old setting if the new setting key is different. This allows for in-place value transformations
     // without key changes, while still ensuring that migrated settings are cleaned up.
-    if (migration.newName !== migration.oldName) deletionIds.push(entry.id)
+    entries.push({
+      promise,
+      oldKey: entry.key,
+      newName: migration.newName,
+      deleteId: migration.newName !== migration.oldName ? entry.id : null,
+    })
   }
 
-  if (migrationActions.length === 0) return
+  if (entries.length === 0) return
 
-  console.log(
-    `GURPS | Starting migration of ${migrationActions.length} legacy setting(s) (namespace: ${namespacePrefix})`
-  )
+  console.log(`GURPS | Starting migration of ${entries.length} legacy setting(s) (namespace: ${namespacePrefix})`)
 
   // Wait for all migration actions to complete before deleting old settings.
-  const results = await Promise.allSettled(migrationActions)
+  const results = await Promise.allSettled(entries.map(entry => entry.promise))
 
-  // Check for failed migrations and remove them from deletion list.
-  const failedIndices: number[] = []
+  // Check for failed migrations so we can skip their deletions and count outcomes.
+  const failedIndices = new Set<number>()
 
   for (const [index, result] of results.entries()) {
+    const { oldKey, newName, deleteId } = entries[index]
+
     if (result.status === 'rejected') {
-      const settingId = deletionIds[index]
-      const setting = storage.get(settingId)
+      // Prefer the stored key for the error label; fall back to the deleteId or oldKey.
+      const label = deleteId ? (storage.get(deleteId)?.key ?? deleteId) : oldKey
 
-      console.error(`GURPS | Migration failed for setting: ${setting?.key ?? settingId}`, result.reason)
-      failedIndices.push(index)
+      console.error(`GURPS | Migration failed for setting: ${label}`, result.reason)
+      failedIndices.add(index)
     } else {
-      const detail = migrationDetails[index]
-
-      console.log(`GURPS | Migrated setting: ${detail.oldKey} → ${namespacePrefix}.${detail.newName}`)
+      console.log(`GURPS | Migrated setting: ${oldKey} → ${namespacePrefix}.${newName}`)
     }
   }
 
-  // Remove failed migrations from deletion list (so they can be retried on next launch)
-  for (const index of failedIndices.reverse()) {
-    deletionIds.splice(index, 1)
-  }
-
   // Remove migrated legacy settings so the migration only runs once.
-  for (const key of deletionIds) {
-    const settingToDelete = storage.get(key)
+  // Skip entries that failed (so they can be retried on next launch) or have no deleteId (in-place migrations).
+  for (const [index, { deleteId }] of entries.entries()) {
+    if (!deleteId || failedIndices.has(index)) continue
+
+    const settingToDelete = storage.get(deleteId)
 
     if (settingToDelete) {
       await settingToDelete.delete()
@@ -108,8 +111,8 @@ export async function migrateLegacySettings(namespacePrefix: string, migrations:
   }
 
   // Log summary
-  const successCount = deletionIds.length
-  const failedCount = failedIndices.length
+  const failedCount = failedIndices.size
+  const successCount = results.length - failedCount
 
   if (failedCount > 0)
     console.warn(`GURPS | Settings migration completed with ${failedCount} failure(s) and ${successCount} success(es)`)
