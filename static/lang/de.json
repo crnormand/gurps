@@ -1653,7 +1653,7 @@
     "yard": "Yard",
     "yards": "Yards",
     "years": "Jahre",
-    "youDoNotHavePermssion": "Du hast keine Berechtigung, das zu tun."
+    "youDoNotHavePermission": "Du hast keine Berechtigung, das zu tun."
   },
   "TYPES": {
     "Action": {

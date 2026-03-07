@@ -1653,7 +1653,7 @@
     "yard": "jarda",
     "yards": "jardas",
     "years": "anos",
-    "youDoNotHavePermssion": "Você não tem permissão para fazer isso."
+    "youDoNotHavePermission": "Você não tem permissão para fazer isso."
   },
   "TYPES": {
     "Action": {

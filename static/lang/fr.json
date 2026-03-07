@@ -1653,7 +1653,7 @@
     "yard": "mètre",
     "yards": "mètres",
     "years": "années",
-    "youDoNotHavePermssion": "Vous n'avez pas la permission de faire cela."
+    "youDoNotHavePermission": "Vous n'avez pas la permission de faire cela."
   },
   "TYPES": {
     "Action": {

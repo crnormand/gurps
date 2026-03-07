@@ -1659,7 +1659,7 @@
     "yard": "ярд",
     "yards": "ярды",
     "years": "лет",
-    "youDoNotHavePermssion": "У вас нет разрешения на это."
+    "youDoNotHavePermission": "У вас нет разрешения на это."
   },
   "TYPES": {
     "Action": {
