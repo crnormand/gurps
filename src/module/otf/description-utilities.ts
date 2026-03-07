@@ -117,12 +117,27 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
     if (system.HP) costs[`system.HP.value`] = `${game.i18n!.localize('GURPS.HP')} (${system.HP.value})`
     if (system.FP) costs[`system.FP.value`] = `${game.i18n!.localize('GURPS.FP')} (${system.FP.value})`
 
-    for (const [key, tracker] of Object.entries((system.additionalresources?.tracker ?? {}) as Record<string, any>)) {
-      const trackerName = (tracker?.name ?? '').toString().trim()
-      const label = trackerName !== '' ? trackerName : `Tracker ${key}`
-      const value = tracker?.value ?? ''
+    const trackerCollection = system.additionalresources?.tracker
 
-      costs[`system.additionalresources.tracker.${key}.value`] = `${label} (${value})`
+    if (trackerCollection && typeof (trackerCollection as any).entries === 'function') {
+      // v2-style tracker collection
+      for (const [key, tracker] of (trackerCollection as any).entries()) {
+        const trackerName = (tracker?.name ?? '').toString().trim()
+        const label = trackerName !== '' ? trackerName : `Tracker ${key}`
+        const value = tracker?.value ?? ''
+
+        costs[`system.additionalresources.tracker.${key}.value`] = `${label} (${value})`
+      }
+    } else {
+      // Fallback for plain-object tracker storage
+      const trackerObject = (trackerCollection ?? {}) as Record<string, any>
+      for (const [key, tracker] of Object.entries(trackerObject)) {
+        const trackerName = (tracker?.name ?? '').toString().trim()
+        const label = trackerName !== '' ? trackerName : `Tracker ${key}`
+        const value = tracker?.value ?? ''
+
+        costs[`system.additionalresources.tracker.${key}.value`] = `${label} (${value})`
+      }
     }
 
     // If there are no valid costs, show a warning notification to the users that the cost was not applied.
