@@ -78,12 +78,7 @@ export const ResourceTrackerModule: ResourceTrackerModule = {
   getMissingRequiredTemplates: ResourceTrackerManager.getMissingRequiredTemplates,
 }
 
-export type {
-  IResourceTrackerThreshold,
-  IResourceTracker,
-  IResourceTrackerTemplate,
-  IThresholdDescriptor,
-} from './types.js'
+export type { IResourceTrackerThreshold, IResourceTracker, IResourceTrackerTemplate } from './types.js'
 
 export { ResourceTrackerManager } from './resource-tracker-manager.js'
 export type { ResourceTrackerSchema } from './resource-tracker.js'

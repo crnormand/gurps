@@ -11,7 +11,6 @@ export async function updateResourceTracker(actor: Actor.Implementation, tracker
   const dialog = new GURPS.modules.ResourceTracker.TrackerEditorV2(trackerData, {
     onUpdate: async (editedTracker: IResourceTracker): Promise<void> => {
       await tracker.update(editedTracker as any)
-      await actor.render()
     },
   } as TrackerEditorOptions)
 

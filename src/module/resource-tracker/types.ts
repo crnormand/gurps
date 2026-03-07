@@ -38,10 +38,7 @@ export interface IResourceTrackerTemplate {
   id: string
 }
 
-export interface IThresholdDescriptor {
-  value: number
-  condition: string
-}
+
 
 export const TrackerOperators = {
   PLUS: '+',

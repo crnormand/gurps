@@ -8,9 +8,10 @@ import type {
   HandlebarsActorSheetV2Constructor,
 } from '@gurps-types/foundry/actor-sheet-v2.js'
 import { Application } from '@gurps-types/foundry/application.js'
-import { IThresholdDescriptor } from '@module/resource-tracker/index.js'
 import { getGame, getUser, isHTMLElement } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { getFPThresholds } from '@rules/injury/fatigue-points.js'
+import { getHPThresholds, IThresholdDescriptor } from '@rules/injury/hit-points.js'
 
 import GurpsWiring from '../../gurps-wiring.js'
 import { ImportSettings } from '../../importer/index.js'
@@ -56,6 +57,8 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
   // Uses getter's union return type since it varies between v1/v2 actor models
   moveMode: GurpsActorV2<Actor.SubType>['currentMoveMode']
   resourceTrackers: PreparedTrackerData[]
+  hpThresholds: IThresholdDescriptor[]
+  fpThresholds: IThresholdDescriptor[]
   tab?: Application.Tab
 }
 
@@ -180,6 +183,8 @@ export class GurpsActorModernSheet extends SheetBase {
       showHPTinting: getGame().settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
       moveMode: this.actor.currentMoveMode,
       resourceTrackers: this.prepareTrackerData(),
+      hpThresholds: getHPThresholds(actorSystem.HP.max),
+      fpThresholds: getFPThresholds(actorSystem.FP.max),
     }
 
     return context

@@ -1,10 +1,10 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
+import { IThresholdDescriptor } from '@rules/injury/hit-points.js'
 
 import {
   IResourceTrackerTemplate,
   IResourceTrackerThreshold,
-  IThresholdDescriptor,
   IResourceTracker,
   OperatorFunctions,
   ComparisonFunctions,
@@ -49,7 +49,7 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
     return tracker
   }
 
-  override async prepareDerivedData() {
+  override prepareDerivedData() {
     super.prepareDerivedData()
 
     // If tracker has an initialValue term, we need to evaluate it and set the tracker's value accordingly.
@@ -70,7 +70,7 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
       updates.value = this.isAccumulator ? this.min : value
       updates.initialValue = null
 
-      await this.update(updates)
+      this.update(updates)
     }
   }
 
