@@ -1,6 +1,6 @@
-import { TrackerComparators, TrackerOperators } from './types.ts'
-import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from './types.ts'
-import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.ts'
+import { TrackerComparators, TrackerOperators } from './types.js'
+import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from './types.js'
+import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.js'
 
 export class ResourceTrackerManager extends FormApplication {
   _templates: Record<string, IResourceTrackerTemplate>

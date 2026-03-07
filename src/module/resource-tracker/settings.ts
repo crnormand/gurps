@@ -1,5 +1,5 @@
-import { ResourceTrackerManager } from './resource-tracker-manager.ts'
-import { SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.ts'
+import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import { SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
 
 export async function initializeSettings() {
   if (!game.settings) throw new Error('GURPS | Game settings not found')

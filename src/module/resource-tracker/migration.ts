@@ -1,8 +1,8 @@
 import { migrateLegacySettings, SettingMigration } from '@module/util/migration/settings-migration.js'
 import { objectToArray } from '@util/utilities.js'
 
-import { ResourceTrackerTemplate } from './resource-tracker.ts'
-import { OLD_SETTING_TEMPLATES, SETTING_TRACKER_TEMPLATES } from './types.ts'
+import { ResourceTrackerTemplate } from './resource-tracker.js'
+import { OLD_SETTING_TEMPLATES, SETTING_TRACKER_TEMPLATES } from './types.js'
 
 /**
  * Array of migration configurations for legacy resource tracker settings.
