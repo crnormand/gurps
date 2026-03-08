@@ -20,8 +20,8 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
-  override prepareBaseData(): void {
-    super.prepareBaseData()
+  override prepareDerivedData(): void {
+    super.prepareDerivedData()
     this.#prepareDefenses()
   }
 
