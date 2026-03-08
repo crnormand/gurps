@@ -1,6 +1,6 @@
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
-import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.ts'
+import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
 
 import { TokenActions } from '../token-actions.js'
 
@@ -605,7 +605,7 @@ async function _doRoll({
 
     // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      /** @type {import('../../rules/combat/ranged/missile-weapon-attacks.ts').WeaponDescriptor} */
+      /** @type {import('../../rules/combat/ranged/missile-weapon-attacks.js').WeaponDescriptor} */
       const weapon = { recoil: optionalArgs.obj.rcl, rateOfFire: optionalArgs.obj.rof }
       const potentialHits = MissileWeaponAttacks.computePotentialHits(weapon, optionalArgs.shots, margin)
 
