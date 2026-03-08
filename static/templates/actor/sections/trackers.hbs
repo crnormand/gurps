@@ -10,7 +10,7 @@
       {{>resource-tracker
           label=name
           resource=this
-          name=(concat 'additionalresources.tracker.' id)
+          name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
           editable=true
         }}
     {{/each}}
