@@ -38,8 +38,6 @@ export interface IResourceTrackerTemplate {
   id: string
 }
 
-
-
 export const TrackerOperators = {
   PLUS: '+',
   MINUS: '\u002D',

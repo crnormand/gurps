@@ -1,4 +1,4 @@
-import * as CI from '../rules/conditional-injury.js'
+import * as CI from '../rules/injury/conditional-injury/conditional-injury.js'
 
 import * as Settings from './util/miscellaneous-settings.js'
 

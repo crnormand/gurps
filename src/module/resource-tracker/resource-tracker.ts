@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
-import { IThresholdDescriptor } from '@rules/injury/hit-points.js'
+import { ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
 import {
   IResourceTrackerTemplate,
@@ -87,8 +87,8 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
     return threshold || null
   }
 
-  get thresholdDescriptors(): IThresholdDescriptor[] {
-    const results: IThresholdDescriptor[] = []
+  get thresholdDescriptors(): ThresholdDescriptor[] {
+    const results: ThresholdDescriptor[] = []
 
     // Make a copy of the thresholds array.
     const thresholds = [...this.thresholds]

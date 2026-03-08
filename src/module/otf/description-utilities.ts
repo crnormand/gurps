@@ -131,6 +131,7 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
     } else {
       // Fallback for plain-object tracker storage
       const trackerObject = (trackerCollection ?? {}) as Record<string, any>
+
       for (const [key, tracker] of Object.entries(trackerObject)) {
         const trackerName = (tracker?.name ?? '').toString().trim()
         const label = trackerName !== '' ? trackerName : `Tracker ${key}`

@@ -10,6 +10,7 @@ import { Migration } from '@module/util/migration/migration.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
 import { getTokenForActor } from '@module/util/token.js'
+import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.ts'
 import JQueryHelpers from '@util/jquery-helper.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@util/parselink.js'
@@ -44,7 +45,6 @@ import AddChatHooks from './chat.js'
 import { registerColorPickerSettings } from './color-character-sheet/color-character-sheet-settings.js'
 import { colorGurpsActorSheet } from './color-character-sheet/color-character-sheet.js'
 import { Combat } from './combat/index.js'
-import { calculateRoFModifier } from './combat/utilities.js'
 import { CombatTracker } from './combat-tracker/index.js'
 import { Compendium } from './compendium/index.js'
 import GurpsConditionalInjury from './conditional-injury.js'
@@ -1046,11 +1046,11 @@ if (!globalThis.GURPS) {
           value: parsedRateOfFire,
         })
 
-        const bonusForRoF = calculateRoFModifier(shots)
+        const bonusForNumberOfShots = MissileWeaponAttacks.calculateRoFModifier(shots)
 
-        if (bonusForRoF !== 0)
+        if (bonusForNumberOfShots !== 0)
           GURPS.ModifierBucket.addModifier(
-            bonusForRoF,
+            bonusForNumberOfShots,
             game.i18n.format('GURPS.combat.rof.bonusLabel', { shots }),
             targetmods
           )
