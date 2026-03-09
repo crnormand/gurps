@@ -111,7 +111,7 @@ export class ResourceTrackerManager extends FormApplication {
       minimizable: false,
       width: 520,
       height: 'auto',
-      title: game.i18n?.localize('GURPS.resourceTemplateManager') ?? '',
+      title: game.i18n?.localize('GURPS.resourceTracker.template.title') ?? '',
       closeOnSubmit: true,
     })
   }

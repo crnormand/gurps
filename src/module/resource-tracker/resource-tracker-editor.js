@@ -20,7 +20,7 @@ export class ResourceTrackerEditor extends Application {
       minimizable: false,
       jQuery: true,
       resizable: false,
-      title: game.i18n.localize('GURPS.resourceTracker.editor.title'),
+      title: game.i18n.localize('GURPS.resourceTracker.edit.title'),
     })
   }
 
@@ -53,7 +53,7 @@ export class ResourceTrackerEditor extends Application {
 
       if (/^[A-Za-z0-9_+-]+$/.test(alias)) this._tracker.alias = alias
       else {
-        ui.notifications.warn(game.i18n.format('GURPS.resourceInvalidAlias', { alias: alias }))
+        ui.notifications.warn(game.i18n.format('GURPS.resourceTracker.edit.invalidAlias', { alias: alias }))
         ev.currentTarget.value = this._tracker.alias
       }
     })

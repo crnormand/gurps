@@ -2,11 +2,11 @@
   <header class='ms-header'>
     <input type='text' value='{{tracker.name}}' class='ms-name-input' data-field='tracker.name' />
     <button id='clone-button' type='button' class='ms-button ms-reset-button' data-action='cloneTracker'
-      data-tooltip='{{localize "GURPS.resourceTracker.editor.clone"}}'>
+      data-tooltip='{{localize "GURPS.resourceTracker.edit.clone"}}'>
       <i class='fas fa-copy'></i>
     </button>
     <button id='clear-button' type='button' class='ms-button ms-delete-button' data-action='clearTracker'
-      data-tooltip='{{localize "GURPS.resourceTracker.editor.clear"}}'>
+      data-tooltip='{{localize "GURPS.resourceTracker.edit.clear"}}'>
       <i class='fas fa-eraser'></i>
     </button>
   </header>
@@ -34,7 +34,7 @@
         </label>
       </div>
       <div class='ms-field'>
-        <label for='alias'>{{localize 'GURPS.resourceTracker.editor.alias'}}<input id='alias' type='text'
+        <label for='alias'>{{localize 'GURPS.resourceTracker.edit.alias'}}<input id='alias' type='text'
             value='{{tracker.alias}}' class='tracker-input' data-field="tracker.alias" />
         </label>
       </div>
@@ -42,31 +42,31 @@
 
     <section class='checkbox-attributes ms-section'>
       <div class='ms-field'>
-        <label for='useBreakpoints'>{{localize 'GURPS.resourceTracker.editor.useBreakpoints'}}
+        <label for='useBreakpoints'>{{localize 'GURPS.resourceTracker.edit.useBreakpoints'}}
           <input type='checkbox' id='useBreakpoints' name='useBreakpoints' {{checked tracker.useBreakpoints}}
             data-field='tracker.useBreakpoints' />
         </label>
       </div>
       <div class='ms-field'>
-        <label for='enforce-minimum'>{{localize 'GURPS.resourceTracker.editor.enforceMin'}}
+        <label for='enforce-minimum'>{{localize 'GURPS.resourceTracker.edit.enforceMin'}}
           <input type='checkbox' id='enforce-minimum' name='enforce-minimum' {{checked tracker.isMinEnforced}}
             data-field='tracker.isMinEnforced' />
         </label>
       </div>
       <div class='ms-field'>
-        <label for='enforce-maximum'>{{localize 'GURPS.resourceTracker.editor.enforceMax'}}
+        <label for='enforce-maximum'>{{localize 'GURPS.resourceTracker.edit.enforceMax'}}
           <input type='checkbox' id='enforce-maximum' name='enforce-maximum' {{checked tracker.isMaxEnforced}}
             data-field='tracker.isMaxEnforced' />
         </label>
       </div>
       <div class='ms-field'>
-        <label for='isAccumulator'>{{localize 'GURPS.resourceTracker.editor.isAccumulator'}}
+        <label for='isAccumulator'>{{localize 'GURPS.resourceTracker.edit.isAccumulator'}}
           <input type='checkbox' id='isAccumulator' name='isAccumulator' {{checked tracker.isAccumulator}}
             data-field='tracker.isAccumulator' />
         </label>
       </div>
       <div class='ms-field'>
-        <label for='damage-type'>{{localize 'GURPS.resourceDamageType'}}
+        <label for='damage-type'>{{localize 'GURPS.resourceTracker.edit.damageType'}}
           <input type='checkbox' id='damage-type' name='damage-type' {{checked tracker.isDamageType}}
             data-field='tracker.isDamageType' />
         </label>
@@ -77,10 +77,10 @@
   <div class='ms-content'>
     <section class='thresholds ms-section'>
       <h3 class='section-header'><i class="fa-solid fa-temperature-list"></i>
-        {{localize 'GURPS.resourceTracker.editor.thresholds'}}
+        {{localize 'GURPS.resourceTracker.edit.thresholds'}}
       </h3>
       <div class='threshold-list'>
-        <div class='ms-table-header'>{{localize 'GURPS.resourceCurrentValue'}}</div>
+        <div class='ms-table-header'>{{localize 'GURPS.resourceTracker.current'}}</div>
         <div class='ms-table-header'>{{localize 'GURPS.condition'}}</div>
         <div class='ms-table-header'>{{localize 'GURPS.color'}}</div>
         <div class="ms-table-header"></div>
@@ -106,11 +106,11 @@
             {{#if color}}
               <input type='color' name='color' data='{{@index}}' value='{{color}}' />
               <i class='fas fa-multiply ms-action-btn' data-action='clearColor' data-key='{{@index}}'
-                data-tooltip='{{localize "GURPS.resourceTracker.editor.clearColor"}}'></i>
+                data-tooltip='{{localize "GURPS.resourceTracker.edit.clearColor"}}'></i>
             {{else}}
-              <span class='color-none'>{{localize "GURPS.resourceTracker.editor.noColor"}}</span>
+              <span class='color-none'>{{localize "GURPS.resourceTracker.edit.noColor"}}</span>
               <i class='fas fa-palette ms-action-btn' data-action='setColor' data-key='{{@index}}'
-                data-tooltip='{{localize "GURPS.resourceTracker.editor.setColor"}}'></i>
+                data-tooltip='{{localize "GURPS.resourceTracker.edit.setColor"}}'></i>
             {{/if}}
           </div>
           <i class='fas fa-trash ms-action-btn ms-delete' data-action='deleteThreshold' data-key='{{@index}}'
@@ -120,7 +120,7 @@
       <footer>
         <div class="ms-add-row">
           <span class="ms-add-btn" data-action="addThreshold"><i
-              class="fas fa-plus"></i>{{localize 'GURPS.resourceTracker.editor.threshold'}}</span>
+              class="fas fa-plus"></i>{{localize 'GURPS.resourceTracker.edit.threshold'}}</span>
         </div>
       </footer>
     </section>

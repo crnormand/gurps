@@ -6,16 +6,16 @@ export async function initializeSettings() {
   if (!game.i18n) throw new Error('GURPS | Game i18n not found')
 
   game.settings.registerMenu(GURPS.SYSTEM_NAME, SETTING_TRACKER_EDITOR, {
-    name: game.i18n.localize('GURPS.resourceTemplateManager'),
-    hint: game.i18n.localize('GURPS.resourceTemplateHint'),
-    label: game.i18n.localize('GURPS.resourceTemplateButton'),
+    name: game.i18n.localize('GURPS.resourceTracker.template.title'),
+    hint: game.i18n.localize('GURPS.resourceTracker.template.hint'),
+    label: game.i18n.localize('GURPS.resourceTracker.template.button'),
     type: ResourceTrackerManager,
     restricted: true,
     icon: 'fa-solid fa-square-dashed-circle-plus',
   })
 
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, {
-    name: game.i18n.localize('GURPS.resourceTemplateTitle'),
+    name: game.i18n.localize('GURPS.resourceTracker.template.title'),
     scope: 'world',
     config: false,
     type: Object as any,

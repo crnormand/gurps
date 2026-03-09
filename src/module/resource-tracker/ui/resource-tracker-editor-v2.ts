@@ -40,7 +40,7 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
       height: 'auto',
     },
     window: {
-      title: 'GURPS.resourceTracker.editor.title',
+      title: 'GURPS.resourceTracker.edit.title',
       resizable: true,
     },
     form: {
@@ -213,6 +213,16 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
 
         if (!field) return
 
+        if (target.id === 'alias') {
+          const alias = target.value
+
+          if (!/^[A-Za-z0-9_+-]+$/.test(alias)) {
+            ui.notifications!.warn(game.i18n!.format('GURPS.resourceTracker.edit.invalidAlias', { alias: alias }))
+
+            return
+          }
+        }
+
         let value: unknown = target.value
 
         if (target instanceof HTMLInputElement && target.type === 'checkbox') {
@@ -313,11 +323,11 @@ async function selectTemplate(templates: Record<string, IResourceTrackerTemplate
 
   const result = await foundry.applications.api.DialogV2.prompt({
     window: {
-      title: game.i18n!.localize('GURPS.resourceTemplateManager'),
+      title: game.i18n!.localize('GURPS.resourceTracker.template.title'),
       resizable: true,
     },
     content: `<form><div class="form-group"><label>${foundry.utils.escapeHTML(
-      game.i18n!.localize('GURPS.resourceTemplateManager')
+      game.i18n!.localize('GURPS.resourceTracker.template.title')
     )}</label><select name="template">${optionsHtml}</select></div></form>`,
     ok: {
       callback: (_event: Event, button: HTMLButtonElement) => {

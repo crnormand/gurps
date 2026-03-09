@@ -1247,29 +1247,18 @@
       "title": "Résoudre le jet de dégâts"
     },
     "resolveDiceRoll": "Jet obtenu?",
-    "resourceCopyTemplate": "Copier Modèle",
-    "resourceCurrentValue": "Valeur Actuelle",
-    "resourceDamageTracker": "Suivi des Dégâts (les dégâts s'ajoutent à la valeur).",
-    "resourceDamageType": "Utiliser en tant que Type de Dégâts",
-    "resourceDeleteTracker": "Effacer Suivi",
-    "resourceEditTracker": "Modifier Suivi",
-    "resourceInvalidAlias": "Alias invalide [{alias}].<br/>Seul l'alphanumérique, et ('+', '_', and '-'), sont autorisés.",
     "resourcesModsTab": "Ressources et Modificateurs",
-    "resourceTemplateButton": "Voir et Modifier Suivis",
-    "resourceTemplateClickToAdd": "Cliquer sur le bouton '+' ci-dessus pour ajouter un modèle.",
-    "resourceTemplateHint": "Utilisez ceci pour créer, réutiliser et automatiquement appliquer le Suivi des Ressources aux feuilles de personnage.",
-    "resourceTemplateInitializer": "Initialiser",
-    "resourceTemplateManager": "Gestionnaire du Suivi des Ressources",
-    "resourceTemplateName": "Nom Ressource",
-    "resourceTemplateTitle": "Modèles de Suivi des Ressources",
     "resourceTracker": {
-      "editor": {
+      "current": "Valeur Actuelle",
+      "edit": {
         "alias": "Alias",
         "clear": "Effacer la configuration du suivi",
         "clearColor": "Effacer la couleur",
         "clone": "Cloner un modèle",
+        "damageType": "Utiliser en tant que Type de Dégâts",
         "enforceMax": "Appliquer le maximum",
         "enforceMin": "Appliquer le minimum",
+        "invalidAlias": "Alias invalide [{alias}].<br/>Seul l'alphanumérique, et ('+', '_', and '-'), sont autorisés.",
         "isAccumulator": "Est un accumulateur",
         "maximum": "Maximum",
         "minimum": "Minimum",
@@ -1281,6 +1270,14 @@
         "useBreakpoints": "Utiliser des seuils"
       },
       "placeholder": "Ressource",
+      "template": {
+        "add": "Cliquer sur le bouton '+' ci-dessus pour ajouter un modèle.",
+        "button": "Voir et Modifier Suivis",
+        "hint": "Utilisez ceci pour créer, réutiliser et automatiquement appliquer le Suivi des Ressources aux feuilles de personnage.",
+        "initializer": "Initialiser",
+        "name": "Nom Ressource",
+        "title": "Gestionnaire du Suivi des Ressources"
+      },
       "trackerNotFound": "Suivi des ressources '{key}' introuvable.",
       "undefined": "Aucun défini",
       "view": {

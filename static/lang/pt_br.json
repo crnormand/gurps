@@ -1247,29 +1247,18 @@
       "title": "Resolver Rolagem de Dano"
     },
     "resolveDiceRoll": "Qual Foi a Jogada?",
-    "resourceCopyTemplate": "Copiar Modelo",
-    "resourceCurrentValue": "Valor Atual",
-    "resourceDamageTracker": "Controle de Dano (dano é adicionado ao valor).",
-    "resourceDamageType": "Usar como Tipo de Dano",
-    "resourceDeleteTracker": "Apagar Controle",
-    "resourceEditTracker": "Editar Controle",
-    "resourceInvalidAlias": "Alias inválido: [{alias}].<br/>São permitidos somente caracteres alfanuméricos e '+', '_', and '-'.",
     "resourcesModsTab": "Recursos e Modificadores",
-    "resourceTemplateButton": "Exibir e Editar Controles",
-    "resourceTemplateClickToAdd": "Clique no botão '+', acima, para adicionar um modelo.",
-    "resourceTemplateHint": "Use esta opção para criar, reutilizar e aplicar automaticamente Controles de Recursos a planilhas de personagem.",
-    "resourceTemplateInitializer": "Inicializador",
-    "resourceTemplateManager": "Configurar Controle de Recursos",
-    "resourceTemplateName": "Nome do Modelo",
-    "resourceTemplateTitle": "Modelos de Controle de Recursos",
     "resourceTracker": {
-      "editor": {
+      "current": "Valor Atual",
+      "edit": {
         "alias": "Apelido",
         "clear": "Limpar Configuração do Controle",
         "clearColor": "Limpar Cor",
         "clone": "Clonar um Modelo",
+        "damageType": "Usar como Tipo de Dano",
         "enforceMax": "Impor Máximo",
         "enforceMin": "Impor Mínimo",
+        "invalidAlias": "Alias inválido: [{alias}].<br/>São permitidos somente caracteres alfanuméricos e '+', '_', and '-'.",
         "isAccumulator": "É Acumulador",
         "maximum": "Máximo",
         "minimum": "Mínimo",
@@ -1281,6 +1270,14 @@
         "useBreakpoints": "Usar Pontos de Interrupção"
       },
       "placeholder": "Recurso",
+      "template": {
+        "add": "Clique no botão '+', acima, para adicionar um modelo.",
+        "button": "Exibir e Editar Controles",
+        "hint": "Use esta opção para criar, reutilizar e aplicar automaticamente Controles de Recursos a planilhas de personagem.",
+        "initializer": "Inicializador",
+        "name": "Nome do Modelo",
+        "title": "Configurar Controle de Recursos"
+      },
       "trackerNotFound": "Controle de recurso '{key}' não encontrado.",
       "undefined": "Nenhum Definido",
       "view": {

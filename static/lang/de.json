@@ -1247,29 +1247,18 @@
       "title": "Schadenswurf auflösen"
     },
     "resolveDiceRoll": "Was wurde gewürfelt?",
-    "resourceCopyTemplate": "Kopiere Vorlage",
-    "resourceCurrentValue": "Aktueller Wert",
-    "resourceDamageTracker": "Schadens Anzeige (Schaden erhöht den Wert).",
-    "resourceDamageType": "Benutze als Schadenstyp",
-    "resourceDeleteTracker": "Lösche Anzeige",
-    "resourceEditTracker": "Bearbeite Anzeige",
-    "resourceInvalidAlias": "Unzulässiger Alias [{alias}].<br/>Nur Buchstaben und Zahlen, und ('+', '_', and '-'), sind zulässig.",
     "resourcesModsTab": "Ressourcen und Modifikatoren",
-    "resourceTemplateButton": "Ressourcen Anzeigen zeigen und bearbeiten",
-    "resourceTemplateClickToAdd": "Klicke die '+' Schaltfläche um eine Vorlage hinzuzufügen.",
-    "resourceTemplateHint": "Benutze dies, um Ressourcen Anzeigen zu erstellen, zu verwalten und automatisch in Charakterbögen anzuwenden.",
-    "resourceTemplateInitializer": "Startwert",
-    "resourceTemplateManager": "Ressourcen Anzeigen Verwaltung",
-    "resourceTemplateName": "Ressourcen Name",
-    "resourceTemplateTitle": "Ressourcen Anzeigen Vorlagen",
     "resourceTracker": {
-      "editor": {
+      "current": "Aktueller Wert",
+      "edit": {
         "alias": "Alias",
         "clear": "Tracker-Konfiguration zurücksetzen",
         "clearColor": "Farbe löschen",
         "clone": "Vorlage klonen",
+        "damageType": "Benutze als Schadenstyp",
         "enforceMax": "Maximum erzwingen",
         "enforceMin": "Minimum erzwingen",
+        "invalidAlias": "Unzulässiger Alias [{alias}].<br/>Nur Buchstaben und Zahlen, und ('+', '_', and '-'), sind zulässig.",
         "isAccumulator": "Ist Akkumulator",
         "maximum": "Maximum",
         "minimum": "Minimum",
@@ -1281,6 +1270,14 @@
         "useBreakpoints": "Schwellenwerte verwenden"
       },
       "placeholder": "Ressource",
+      "template": {
+        "add": "Klicke die '+' Schaltfläche um eine Vorlage hinzuzufügen.",
+        "button": "Ressourcen Anzeigen zeigen und bearbeiten",
+        "hint": "Benutze dies, um Ressourcen Anzeigen zu erstellen, zu verwalten und automatisch in Charakterbögen anzuwenden.",
+        "initializer": "Startwert",
+        "name": "Ressourcen Name",
+        "title": "Ressourcen Anzeigen Verwaltung"
+      },
       "trackerNotFound": "Ressourcen-Tracker '{key}' nicht gefunden.",
       "undefined": "Nicht definiert",
       "view": {

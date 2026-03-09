@@ -1246,29 +1246,18 @@
       "title": "Resolve Damage Roll"
     },
     "resolveDiceRoll": "What Did You Roll?",
-    "resourceCopyTemplate": "Copy Template",
-    "resourceCurrentValue": "Current Value",
-    "resourceDamageTracker": "Damage Tracker (damage adds to value).",
-    "resourceDamageType": "Use as Damage Type",
-    "resourceDeleteTracker": "Delete Tracker",
-    "resourceEditTracker": "Edit Tracker",
-    "resourceInvalidAlias": "Invalid alias [{alias}].<br/>Only alphabet and number characters, plus ('+', '_', and '-'), are allowed.",
     "resourcesModsTab": "Resources and Modifiers",
-    "resourceTemplateButton": "View and Edit Trackers",
-    "resourceTemplateClickToAdd": "Click the '+' button to add a template.",
-    "resourceTemplateHint": "Use this to create, reuse, and automatically apply Resource Trackers to character sheets.",
-    "resourceTemplateInitializer": "Initializer",
-    "resourceTemplateManager": "Resource Tracker Manager",
-    "resourceTemplateName": "Template Name",
-    "resourceTemplateTitle": "Resource Tracker Templates",
     "resourceTracker": {
-      "editor": {
+      "current": "Current Value",
+      "edit": {
         "alias": "Alias",
         "clear": "Clear Tracker Configuration",
         "clearColor": "Clear Color",
         "clone": "Clone a Template",
+        "damageType": "Use as Damage Type",
         "enforceMax": "Enforce Maximum",
         "enforceMin": "Enforce Minimum",
+        "invalidAlias": "Invalid alias [{alias}].<br/>Only alphabet and number characters, plus ('+', '_', and '-'), are allowed.",
         "isAccumulator": "Is Accumulator",
         "maximum": "Maximum",
         "minimum": "Minimum",
@@ -1280,6 +1269,14 @@
         "useBreakpoints": "Use Breakpoints"
       },
       "placeholder": "Resource",
+      "template": {
+        "add": "Click the '+' button to add a template.",
+        "button": "View and Edit Trackers",
+        "hint": "Use this to create, reuse, and automatically apply Resource Trackers to character sheets.",
+        "initializer": "Initializer",
+        "name": "Template Name",
+        "title": "Resource Tracker Manager"
+      },
       "trackerNotFound": "Resource tracker '{key}' not found.",
       "undefined": "None Defined",
       "view": {
