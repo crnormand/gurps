@@ -1161,15 +1161,22 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     const target = event.currentTarget.closest('[data-gurps-resource]')
     const pathAndKey = target.dataset.gurpsResource
 
-    if (!pathAndKey) return
+    if (!pathAndKey) {
+      ui.notifications.error(game.i18n.format('GURPS.resourceTracker.trackerNotFound', { key: pathAndKey }))
 
-    const path = pathAndKey.split('.').slice(0, -1).join('.')
+      return
+    }
+
     const key = pathAndKey.split('.').slice(-1)[0]
 
-    const trackers = foundry.utils.getProperty(this.actor, `system.${path}`)
-    const tracker = trackers.get(key)
+    const trackers = this.actor.system.additionalresources.tracker || {}
+    const tracker = trackers[key]
 
-    if (!tracker) return
+    if (!tracker) {
+      ui.notifications.error(game.i18n.format('GURPS.resourceTracker.trackerNotFound', { key: pathAndKey }))
+
+      return
+    }
 
     GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
   }

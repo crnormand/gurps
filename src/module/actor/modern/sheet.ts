@@ -817,7 +817,9 @@ export class GurpsActorModernSheet extends SheetBase {
 
       preparedData.push({
         id: trackerId,
-        name: tracker.name ? game.i18n!.localize(tracker.name) : `${game.i18n!.localize('GURPS.resource')}[${index}]`,
+        name: tracker.name
+          ? game.i18n!.localize(tracker.name)
+          : `${game.i18n!.localize('GURPS.resourceTracker.placeholder')}[${index}]`,
         value: tracker.value,
         condition: tracker.currentThreshold?.condition || '',
         color: tracker.currentThreshold?.color || null,

@@ -1247,7 +1247,6 @@
       "title": "Resolver Rolagem de Dano"
     },
     "resolveDiceRoll": "Qual Foi a Jogada?",
-    "resource": "Recurso",
     "resourceCopyTemplate": "Copiar Modelo",
     "resourceCurrentValue": "Valor Atual",
     "resourceDamageTracker": "Controle de Dano (dano é adicionado ao valor).",
@@ -1281,16 +1280,16 @@
         "title": "Editor de Controle de Recursos",
         "useBreakpoints": "Usar Pontos de Interrupção"
       },
-      "viewer": {
+      "placeholder": "Recurso",
+      "trackerNotFound": "Controle de recurso '{key}' não encontrado.",
+      "undefined": "Nenhum Definido",
+      "view": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Redefinir"
+        "reset": "Redefinir",
+        "title": "Controles de Recursos"
       }
     },
-    "resourceTrackerEditor": "Editar Controle de Recursos",
-    "resourceTrackers": "Controles de Recursos",
-    "resourceUndefined": "Nenhum Definido",
-    "resourceUpdateTrackerSlot": "Atualizar Posição de Controle",
     "rof": "CdT",
     "roll": "Teste",
     "rollableTableName": "Nome da Tabela Rolável a ser usada",

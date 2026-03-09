@@ -32,6 +32,7 @@ function convertOldSettings(
       },
       initialValue: oldTemplate.initialValue,
       autoapply: !!oldTemplate.slot,
+      id: oldTemplate.id,
     })
 
     // remove old slot field if it exists

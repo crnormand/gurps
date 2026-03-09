@@ -1247,7 +1247,6 @@
       "title": "Résoudre le jet de dégâts"
     },
     "resolveDiceRoll": "Jet obtenu?",
-    "resource": "Ressource",
     "resourceCopyTemplate": "Copier Modèle",
     "resourceCurrentValue": "Valeur Actuelle",
     "resourceDamageTracker": "Suivi des Dégâts (les dégâts s'ajoutent à la valeur).",
@@ -1281,16 +1280,16 @@
         "title": "Éditeur de Suivi des Ressources",
         "useBreakpoints": "Utiliser des seuils"
       },
-      "viewer": {
+      "placeholder": "Ressource",
+      "trackerNotFound": "Suivi des ressources '{key}' introuvable.",
+      "undefined": "Aucun défini",
+      "view": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Réinitialiser"
+        "reset": "Réinitialiser",
+        "title": "Suivi Ressources"
       }
     },
-    "resourceTrackerEditor": "Editeur de Suivi des Ressources",
-    "resourceTrackers": "Suivi Ressources",
-    "resourceUndefined": "Aucun défini",
-    "resourceUpdateTrackerSlot": "Emplacement MaJ Suivi",
     "rof": "CdT",
     "roll": "Jet",
     "rollableTableName": "Nom de la Table Aléatoire à utiliser",

@@ -1252,7 +1252,6 @@
       "title": "Разрешить бросок урона"
     },
     "resolveDiceRoll": "Какой у вас бросок?",
-    "resource": "Ресурс",
     "resourceCopyTemplate": "Копировать шаблон",
     "resourceCurrentValue": "Текущее значение",
     "resourceDamageTracker": "Счётчик урона (Урон добавляется к значению).",
@@ -1286,16 +1285,16 @@
         "title": "Редактор счётчика ресурсов",
         "useBreakpoints": "Использовать контрольные точки"
       },
-      "viewer": {
+      "placeholder": "Ресурс",
+      "trackerNotFound": "Счётчик ресурсов '{key}' не найден.",
+      "undefined": "Не определено",
+      "view": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Сброс"
+        "reset": "Сброс",
+        "title": "Счётчик ресурсов"
       }
     },
-    "resourceTrackerEditor": "Редактор Счётчика ресурсов",
-    "resourceTrackers": "Счётчик ресурсов",
-    "resourceUndefined": "Не определено",
-    "resourceUpdateTrackerSlot": "Обновить слот счётчика",
     "rof": "Сс",
     "roll": "Бросок",
     "rollableTableName": "Название таблицы бросков",

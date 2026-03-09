@@ -20,7 +20,7 @@ export class ResourceTrackerEditor extends Application {
       minimizable: false,
       jQuery: true,
       resizable: false,
-      title: game.i18n.localize('GURPS.resourceTrackerEditor'),
+      title: game.i18n.localize('GURPS.resourceTracker.editor.title'),
     })
   }
 

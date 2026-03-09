@@ -1247,7 +1247,6 @@
       "title": "Schadenswurf auflösen"
     },
     "resolveDiceRoll": "Was wurde gewürfelt?",
-    "resource": "Ressource",
     "resourceCopyTemplate": "Kopiere Vorlage",
     "resourceCurrentValue": "Aktueller Wert",
     "resourceDamageTracker": "Schadens Anzeige (Schaden erhöht den Wert).",
@@ -1281,16 +1280,16 @@
         "title": "Ressourcen-Tracker-Editor",
         "useBreakpoints": "Schwellenwerte verwenden"
       },
-      "viewer": {
+      "placeholder": "Ressource",
+      "trackerNotFound": "Ressourcen-Tracker '{key}' nicht gefunden.",
+      "undefined": "Nicht definiert",
+      "view": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Zurücksetzen"
+        "reset": "Zurücksetzen",
+        "title": "Ressourcen Anzeige"
       }
     },
-    "resourceTrackerEditor": "Ressourcen Anzeigen Editor",
-    "resourceTrackers": "Ressourcen Anzeige",
-    "resourceUndefined": "Nicht definiert",
-    "resourceUpdateTrackerSlot": "Aktualisiere Anzeige Platzhalter",
     "rof": "Feuergeschwindigkeit",
     "roll": "Wurf",
     "rollableTableName": "Name der verwendbaren Tabelle",

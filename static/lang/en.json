@@ -1246,7 +1246,6 @@
       "title": "Resolve Damage Roll"
     },
     "resolveDiceRoll": "What Did You Roll?",
-    "resource": "Resource",
     "resourceCopyTemplate": "Copy Template",
     "resourceCurrentValue": "Current Value",
     "resourceDamageTracker": "Damage Tracker (damage adds to value).",
@@ -1280,16 +1279,16 @@
         "title": "Resource Tracker Editor",
         "useBreakpoints": "Use Breakpoints"
       },
-      "viewer": {
+      "placeholder": "Resource",
+      "trackerNotFound": "Resource tracker '{key}' not found.",
+      "undefined": "None Defined",
+      "view": {
         "decrement": "-1",
         "increment": "+1",
-        "reset": "Reset"
+        "reset": "Reset",
+        "title": "Resource Trackers"
       }
     },
-    "resourceTrackerEditor": "Resource Tracker Editor",
-    "resourceTrackers": "Resource Trackers",
-    "resourceUndefined": "None Defined",
-    "resourceUpdateTrackerSlot": "Update Tracker Slot",
     "rof": "RoF",
     "roll": "Roll",
     "rollableTableName": "Name of Rollable Table to use",
