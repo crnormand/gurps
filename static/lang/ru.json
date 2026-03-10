@@ -1274,6 +1274,8 @@
         "title": "Редактор счётчика ресурсов",
         "useBreakpoints": "Использовать контрольные точки"
       },
+      "initializationError": "Ошибка инициализации счётчика ресурсов \"{name}\" -- не удалось установить initialValue ({initialValue}): {error}",
+      "gcsInitialValueUnsupported": "Персонажи GCS пока не поддерживают счётчики ресурсов с начальными значениями. Это может быть добавлено в будущем обновлении. Tracker: \"{name}\", initialValue: {initialValue}",
       "placeholder": "Ресурс",
       "template": {
         "add": "Нажмите кнопку '+' сверху, чтобы добавить шаблон",
@@ -1521,7 +1523,7 @@
     "splitDrValue": "Значение СП",
     "splitQuantity": "Разделить количество",
     "spoken": "Устный",
-    "statsTab": "Характеристики",
+    "statsTab": "Статы",
     "status": {
       "Agony": "Агония",
       "Bad-1": "-1 Основная абстрактная сложность",

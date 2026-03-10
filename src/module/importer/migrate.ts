@@ -103,7 +103,7 @@ const migrations: SettingMigration[] = [
  * Migrate legacy GCS Importer settings to new settings, and remove the legacy settings.
  */
 export async function migrate(): Promise<void> {
-  migrateLegacySettings(GURPS.SYSTEM_NAME, migrations).catch(error => {
+  await migrateLegacySettings(GURPS.SYSTEM_NAME, migrations).catch(error => {
     console.error('GURPS | Settings migration failed', error)
   })
 }

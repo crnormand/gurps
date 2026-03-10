@@ -1269,6 +1269,8 @@
         "title": "Ressourcen-Tracker-Editor",
         "useBreakpoints": "Schwellenwerte verwenden"
       },
+      "initializationError": "Fehler beim Initialisieren des Ressourcen-Trackers \"{name}\" -- initialValue ({initialValue}) konnte nicht gesetzt werden: {error}",
+      "gcsInitialValueUnsupported": "GCS-Charaktere unterstutzen derzeit keine Ressourcen-Tracker mit Anfangswerten. Dies wird moglicherweise in einem zukunftigen Update hinzugefugt. Tracker: \"{name}\", initialValue: {initialValue}",
       "placeholder": "Ressource",
       "template": {
         "add": "Klicke die '+' Schaltfläche um eine Vorlage hinzuzufügen.",
@@ -1406,7 +1408,7 @@
     "settings": {
       "physicalDiceTooltip": "z.B.: 1,2,3 oder 6"
     },
-    "settingSheetDetail": "Schnellbogen",
+    "settingSheetDetail": "Wechselblatt",
     "settingShowChatReeling": "Zeige Schwankend-/Ermüdet-Status im Chat",
     "settingShowConfirmationRollDialog": "Zeige Bestätigungsdialog für Würfel",
     "settingShowDebugInfo": "Dokument Debug Info anzeigen",

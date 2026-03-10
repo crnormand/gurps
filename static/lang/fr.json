@@ -1269,6 +1269,8 @@
         "title": "Éditeur de Suivi des Ressources",
         "useBreakpoints": "Utiliser des seuils"
       },
+      "initializationError": "Erreur lors de l'initialisation du Suivi des Ressources \"{name}\" -- impossible de définir initialValue ({initialValue}) : {error}",
+      "gcsInitialValueUnsupported": "Les personnages GCS ne prennent pas encore en charge les suivis de ressources avec des valeurs initiales. Cela pourrait etre ajoute dans une future mise a jour. Tracker : \"{name}\", initialValue : {initialValue}",
       "placeholder": "Ressource",
       "template": {
         "add": "Cliquer sur le bouton '+' ci-dessus pour ajouter un modèle.",

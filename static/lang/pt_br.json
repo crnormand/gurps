@@ -1269,6 +1269,8 @@
         "title": "Editor de Controle de Recursos",
         "useBreakpoints": "Usar Pontos de Interrupção"
       },
+      "initializationError": "Erro ao inicializar o Controle de Recursos \"{name}\" -- não foi possível definir initialValue ({initialValue}): {error}",
+      "gcsInitialValueUnsupported": "Personagens GCS ainda nao suportam Controles de Recursos com valores iniciais. Isso pode ser adicionado em uma atualizacao futura. Tracker: \"{name}\", initialValue: {initialValue}",
       "placeholder": "Recurso",
       "template": {
         "add": "Clique no botão '+', acima, para adicionar um modelo.",

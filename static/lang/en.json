@@ -1268,6 +1268,8 @@
         "title": "Resource Tracker Editor",
         "useBreakpoints": "Use Breakpoints"
       },
+      "initializationError": "Error initializing Resource Tracker \"{name}\" -- could not set initialValue ({initialValue}): {error}",
+      "gcsInitialValueUnsupported": "GCS Characters do not currently support Resource Trackers with initial values. This may be added in a future update. Tracker: \"{name}\", initialValue: {initialValue}",
       "placeholder": "Resource",
       "template": {
         "add": "Click the '+' button to add a template.",

@@ -812,8 +812,8 @@ export class GurpsActorModernSheet extends SheetBase {
 
     let index = 0
 
-    for (const [key, tracker] of trackers.entries()) {
-      const trackerId = String(tracker.id ?? key)
+    for (const [_key, tracker] of trackers.entries()) {
+      const trackerId = String(tracker.id)
 
       preparedData.push({
         id: trackerId,
