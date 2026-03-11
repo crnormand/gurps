@@ -10,6 +10,7 @@ namespace GurpsActorGcsSheet {
     system: Actor.SystemOfType<'characterV2'>
     systemFields?: foundry.data.fields.SchemaField<CharacterV2Schema>['fields']
     systemSource?: foundry.data.fields.SchemaField.SourceData<CharacterV2Schema>
+    moveModeChoices?: Record<string, string>
   }
 }
 
@@ -38,24 +39,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     combat: {
       template: this.systemPath('gcs/combat.hbs'),
     },
-    // traits: {
-    //   template: this.systemPath('gcs/traits.hbs'),
-    // },
-    // skills: {
-    //   template: this.systemPath('gcs/skills.hbs'),
-    // },
-    // spells: {
-    //   template: this.systemPath('gcs/spells.hbs'),
-    // },
-    // equipment: {
-    //   template: this.systemPath('gcs/equipment.hbs'),
-    // },
-    // notes: {
-    //   template: this.systemPath('gcs/notes.hbs'),
-    // },
-    // footer: {
-    //   template: this.systemPath('gcs/footer.hbs'),
-    // },
   }
 
   /* ---------------------------------------- */
@@ -65,12 +48,15 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
   ): Promise<GurpsActorGcsSheet.RenderContext> {
     const superContext = await super._prepareContext(options)
 
+    const moveModeChoices = Object.fromEntries(this.actor.system.moveV2.map(mode => [mode._id, mode.mode]))
+
     return {
       ...superContext,
       actor: this.actor,
       system: this.actor.system,
       systemFields: this.actor.system.schema.fields,
       systemSource: this.actor.system._source,
+      moveModeChoices,
     }
   }
 }

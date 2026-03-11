@@ -76,6 +76,18 @@ body {
     grid-column: 1 / -1; /* span both columns */
     display: contents; /* but its children participate in the grid */
 
+    /* Re-implement the flexrow and flexcol modifiers which are overridden
+     * by the above display: contents. */
+    &.flexrow {
+      display: flex;
+      flex-direction: row;
+    }
+
+    &.flexcol {
+      display: flex;
+      flex-direction: column;
+    }
+
     > label {
       grid-column: 1;
       justify-self: end;
@@ -90,6 +102,7 @@ body {
       > :is(input, select, textarea) {
         width: 100%;
         box-sizing: border-box;
+        line-height: var(--gcs-input-height);
         height: var(--gcs-input-height);
         border: none;
         border-bottom: 0.1rem solid var(--gcs-color-header-bg);
@@ -97,6 +110,14 @@ body {
 
         background-color: var(--gcs-color-input-bg);
         color: var(--gcs-color-input-fg);
+
+        option {
+          line-height: var(--gcs-input-height);
+          height: var(--gcs-input-height);
+
+          background-color: var(--gcs-color-input-bg);
+          color: var(--gcs-color-input-fg);
+        }
       }
     }
   }
@@ -119,7 +140,8 @@ body {
   .gcs-table {
     margin: 0;
 
-    thead {
+    thead,
+    tfoot {
       @include gcs-header;
     }
 
