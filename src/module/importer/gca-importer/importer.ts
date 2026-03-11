@@ -347,6 +347,7 @@ Portrait will not be imported.`
     this.output.moveV2[airMove._id] = airMove
     this.output.moveV2[waterMove._id] = waterMove
     this.output.moveV2[spaceMove._id] = spaceMove
+    this.output._currentMoveModeId = groundMove._id
   }
 
   /* ---------------------------------------- */
