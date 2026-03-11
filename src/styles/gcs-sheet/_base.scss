@@ -1,6 +1,8 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 /* ---------------------------------------- */
 
 body {
@@ -44,7 +46,7 @@ body {
   }
 
   .gcs-section-content {
-    padding: 0.5rem;
+    padding: 0.3rem;
     font-size: var(--gcs-font-size-content);
 
     background-color: var(--gcs-color-surface-bg);
@@ -58,18 +60,14 @@ body {
   }
 
   .gcs-field-rows {
-    height: fit-content;
-    width: fit-content;
-
     display: grid;
     grid-template-columns: max-content minmax(0, 1fr);
     grid-auto-rows: auto;
     column-gap: 0.5rem;
-    row-gap: 0.35rem;
+    row-gap: 0.2rem;
 
     /* make all columns same overall width so field widths match across columns */
     flex: 1 1 0;
-    min-width: 0;
   }
 
   .form-group {
@@ -107,6 +105,8 @@ body {
         border: none;
         border-bottom: 0.1rem solid var(--gcs-color-header-bg);
         border-radius: 0;
+
+        font-weight: 600;
 
         background-color: var(--gcs-color-input-bg);
         color: var(--gcs-color-input-fg);
@@ -148,7 +148,7 @@ body {
     td,
     th {
       white-space: nowrap;
-      padding: 0.25rem;
+      padding: 0.15rem 0.25rem;
     }
 
     tbody {
