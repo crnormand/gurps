@@ -17,6 +17,9 @@
     "Actor": {
       "characterV2": {
         "FIELDS": {
+          "_currentMoveModeId": {
+            "label": "Move Mode"
+          },
           "attributes": {
             "DX": {
               "import": {
@@ -70,48 +73,7 @@
           "hearing": {
             "label": "Hearing"
           },
-          "swing": {
-            "label": "Basic Swing"
-          },
-          "tastesmell": {
-            "label": "Taste & Smell"
-          },
-          "thrust": {
-            "label": "Basic Thrust"
-          },
-          "totalpoints": {
-            "ads": {
-              "label": "Advantages"
-            },
-            "attributes": {
-              "label": "Attributes"
-            },
-            "disads": {
-              "label": "Disadvantages"
-            },
-            "quirks": {
-              "label": "Quirks"
-            },
-            "race": {
-              "label": "Ancestry"
-            },
-            "skills": {
-              "label": "Skills"
-            },
-            "spells": {
-              "label": "Spells"
-            },
-            "total": {
-              "label": "Total"
-            },
-            "unspent": {
-              "label": "Unspent"
-            }
-          },
-          "touch": {
-            "label": "Touch"
-          },
-          "traits": {
+          "profile": {
             "age": {
               "label": "Age"
             },
@@ -163,6 +125,47 @@
             "weight": {
               "label": "Weight"
             }
+          },
+          "swing": {
+            "label": "Basic Swing"
+          },
+          "tastesmell": {
+            "label": "Taste & Smell"
+          },
+          "thrust": {
+            "label": "Basic Thrust"
+          },
+          "totalpoints": {
+            "ads": {
+              "label": "Advantages"
+            },
+            "attributes": {
+              "label": "Attributes"
+            },
+            "disads": {
+              "label": "Disadvantages"
+            },
+            "quirks": {
+              "label": "Quirks"
+            },
+            "race": {
+              "label": "Ancestry"
+            },
+            "skills": {
+              "label": "Skills"
+            },
+            "spells": {
+              "label": "Spells"
+            },
+            "total": {
+              "label": "Total"
+            },
+            "unspent": {
+              "label": "Unspent"
+            }
+          },
+          "touch": {
+            "label": "Touch"
           },
           "vision": {
             "label": "Vision"

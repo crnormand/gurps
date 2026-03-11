@@ -718,11 +718,11 @@ Portrait will not be imported.`
       mode: 'GURPS.moveModeGround',
       basic: this.output.basicmove?.value ?? 5,
       enhanced: 0,
-      default: true,
     }
 
     this.output.moveV2 ||= {}
     this.output.moveV2[id] = groundMove
+    this.output._currentMoveModeId = id
   }
 
   /* ---------------------------------------- */

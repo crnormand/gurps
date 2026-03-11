@@ -454,6 +454,8 @@ function migrateActorSystem(
     Object.values(oldData.notes).forEach(note => addNote(note, null))
   }
 
+  let currentMoveModeId: string | null = null
+
   // Migrate move modes
   if (oldData.move) {
     Object.values(oldData.move).forEach(data => {
@@ -464,12 +466,15 @@ function migrateActorSystem(
         mode: data.mode,
         basic: Number(data.basic),
         enhanced: data.enhanced ? Number(data.enhanced) : null,
-        default: data.default,
       }
+
+      if (data.default) currentMoveModeId = id
 
       newData.moveV2 ||= {}
       newData.moveV2[id] = move
     })
+
+    newData._currentMoveModeId = currentMoveModeId
   }
 
   // Migrate resource trackers
