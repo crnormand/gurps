@@ -1,8 +1,20 @@
 import { GurpsBaseActorSheet } from './base-actor-sheet.ts'
 
 import ActorSheet = gurps.applications.ActorSheet
+import HitFatPoints from '@module/util/hitpoints.js'
 
 type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>
+
+type PoolEntry = {
+  fields: {
+    numerator: foundry.data.fields.NumberField<any>
+    denominator: foundry.data.fields.NumberField<any>
+  }
+  numerator: number
+  denominator: number
+  name: string
+  state: string
+}
 
 namespace GurpsActorGcsSheet {
   export interface RenderContext extends ActorSheet.RenderContext {
@@ -58,6 +70,23 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       systemSource: this.actor.system._source,
       moveModeChoices,
     }
+  }
+
+  protected async _preparePools(): Promise<PoolEntry[]> {
+    const pools: PoolEntry[] = []
+    const systemFields = this.actor.system.schema.fields
+    const systemSource = this.actor.system._source
+
+    pools.push({
+      fields: {
+        numerator: systemFields.HP.fields.value,
+        denominator: systemFields.HP.fields.max,
+      },
+      numerator: systemSource.HP.value,
+      denominator: systemSource.HP.max,
+      name: 'GURPS.HP',
+      state: HitFatPoints.hpCondition(HP, member),
+    })
   }
 }
 
