@@ -7,15 +7,26 @@
   </div>
 {{/inline}}
 
-{{#*inline ".poolEntry"}}
-  <div class="form-group form-group-inverse">
-    <div class="form-fields">
-      {{formInput fields.numerator value=numerator}}
-      <label>of</label>
-      {{formInput fields.denominator value=denominator}}
+{{#*inline ".poolTooltip"}}
+  <div class="gcs-tooltip gcs-pool-tooltip">
+    {{#each thresholds}}
+    <div class="threshold">
+      <span class="value">{{value}}</span>
+      <span class="condition">{{localize condition}}</span>
     </div>
-    <label>{{name}}</label>
-    <label>{{state}}</label>
+    {{/each}}
+  </div>
+{{/inline}}
+
+{{#*inline ".poolEntry"}}
+  <div class="pool-entry form-group">
+    <div class="form-fields flexrow">
+      {{formInput fields.numerator value=numerator}}
+      <label class="poolSplit">/</label>
+      {{formInput fields.denominator value=denominator}}
+      <label>{{localize name}}</label>
+      <label data-tooltip='{{> '.poolTooltip' thresholds=thresholds}}'>{{localize state}}</label>
+    </div>
   </div>
 {{/inline}}
 
