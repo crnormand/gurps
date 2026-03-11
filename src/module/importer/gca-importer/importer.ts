@@ -2,6 +2,7 @@ import { DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
+import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { EquipmentSchema } from '@module/item/data/equipment.js'
 import { SkillSchema } from '@module/item/data/skill.js'
@@ -286,6 +287,14 @@ Portrait will not be imported.`
     this.output.thrust = thrust
     this.output.swing = swing
 
+    const modeWithSameName = (referenceMode: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>>) =>
+      this.actor && [...this.actor.system.moveV2.values()].find(mode => mode.mode === referenceMode.mode)
+    const modesAreEqual = (
+      newMode: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>>,
+      oldMode: MoveModeV2
+    ): boolean =>
+      newMode.mode === oldMode.mode && newMode.basic === oldMode.basic && newMode.enhanced === oldMode.enhanced
+
     // Import speeds for move modes(based on attributes in GGA)
     const groundMove = {
       _id: foundry.utils.randomID(),
@@ -315,12 +324,21 @@ Portrait will not be imported.`
       ...this.#importMoveType('Space Move'),
     }
 
-    this.output.moveV2 ||= {}
-    this.output.moveV2[groundMove._id] = groundMove
-    this.output.moveV2[airMove._id] = airMove
-    this.output.moveV2[waterMove._id] = waterMove
-    this.output.moveV2[spaceMove._id] = spaceMove
-    this.output._currentMoveModeId = groundMove._id
+    const allModes = [groundMove, airMove, waterMove, spaceMove]
+
+    for (const mode of allModes) {
+      const previousMode = modeWithSameName(mode)
+
+      if (previousMode) {
+        if (!modesAreEqual(mode, previousMode)) mode._id = previousMode._id
+        else continue
+      }
+
+      this.output.moveV2 ||= {}
+      this.output.moveV2[mode._id as string] = mode
+    }
+
+    this.output._currentMoveModeId = groundMove._id as string
   }
 
   /* ---------------------------------------- */

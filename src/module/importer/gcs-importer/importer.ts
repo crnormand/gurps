@@ -711,18 +711,38 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importMiscValues() {
-    const id = foundry.utils.randomID()
+    const modeWithSameName = (referenceMode: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>>) =>
+      this.actor && [...this.actor.system.moveV2.values()].find(mode => mode.mode === referenceMode.mode)
+    const modesAreEqual = (
+      newMode: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>>,
+      oldMode: MoveModeV2
+    ): boolean =>
+      newMode.mode === oldMode.mode && newMode.basic === oldMode.basic && newMode.enhanced === oldMode.enhanced
 
     const groundMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      _id: id,
+      _id: foundry.utils.randomID(),
       mode: 'GURPS.moveModeGround',
       basic: this.output.basicmove?.value ?? 5,
       enhanced: 0,
     }
 
-    this.output.moveV2 ||= {}
-    this.output.moveV2[id] = groundMove
-    this.output._currentMoveModeId = id
+    const allModes = [groundMove]
+
+    for (const mode of allModes) {
+      const previousMode = modeWithSameName(mode)
+
+      if (previousMode) {
+        if (!modesAreEqual(mode, previousMode)) mode._id = previousMode._id
+        else continue
+      }
+
+      this.output.moveV2 ||= {}
+      this.output.moveV2[mode._id as string] = mode
+    }
+
+    console.log(this.output.moveV2)
+
+    this.output._currentMoveModeId = groundMove._id as string
   }
 
   /* ---------------------------------------- */
