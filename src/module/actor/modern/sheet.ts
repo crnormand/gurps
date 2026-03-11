@@ -8,7 +8,7 @@ import type {
   HandlebarsActorSheetV2Constructor,
 } from '@gurps-types/foundry/actor-sheet-v2.js'
 import { Application } from '@gurps-types/foundry/application.js'
-import { getGame, getUser, isHTMLElement } from '@module/util/guards.js'
+import { getGame, getUser } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import GurpsWiring from '../../gurps-wiring.js'
@@ -418,14 +418,7 @@ export class GurpsActorModernSheet extends SheetBase {
 
   #onClickRoll(event: MouseEvent): void {
     event.preventDefault()
-    const target = event.currentTarget
-
-    if (!isHTMLElement(target)) return
-    const otf = target.dataset.otf
-
-    if (otf) {
-      GURPS.performAction({ orig: otf, type: 'skill-spell', actor: this.actor }, this.actor, event)
-    }
+    GURPS.handleRoll(event, this.actor)
   }
 
   async editSkills(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {

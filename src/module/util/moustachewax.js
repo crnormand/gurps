@@ -1094,7 +1094,7 @@ ${content}
     const rgb = backgroundHex
       .replace(/^#/, '')
       .match(/.{2}/g)
-      .map(pair => parseInt(pair, 16) / 255)
+      ?.map(pair => parseInt(pair, 16) / 255) ?? [1, 1, 1] // default to white if invalid input
     const [red, green, blue] = rgb.map(channel =>
       channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
     )
