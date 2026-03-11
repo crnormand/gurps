@@ -1,7 +1,9 @@
-import { GurpsBaseActorSheet } from './base-actor-sheet.ts'
+import { Fatigue } from '@rules/injury/fatigue.js'
+import { HitPoints } from '@rules/injury/hit-points.js'
+
+import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 
 import ActorSheet = gurps.applications.ActorSheet
-import HitFatPoints from '@module/util/hitpoints.js'
 
 type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>
 
@@ -23,6 +25,7 @@ namespace GurpsActorGcsSheet {
     systemFields?: foundry.data.fields.SchemaField<CharacterV2Schema>['fields']
     systemSource?: foundry.data.fields.SchemaField.SourceData<CharacterV2Schema>
     moveModeChoices?: Record<string, string>
+    pools: PoolEntry[]
   }
 }
 
@@ -69,24 +72,43 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       systemFields: this.actor.system.schema.fields,
       systemSource: this.actor.system._source,
       moveModeChoices,
+      pools: this._preparePools(),
     }
   }
 
-  protected async _preparePools(): Promise<PoolEntry[]> {
+  protected _preparePools(): PoolEntry[] {
     const pools: PoolEntry[] = []
     const systemFields = this.actor.system.schema.fields
     const systemSource = this.actor.system._source
 
-    pools.push({
-      fields: {
-        numerator: systemFields.HP.fields.value,
-        denominator: systemFields.HP.fields.max,
+    pools.push(
+      {
+        fields: {
+          numerator: systemFields.HP.fields.value,
+          denominator: systemFields.HP.fields.max,
+        },
+        numerator: systemSource.HP.value,
+        denominator: systemSource.HP.max,
+        name: 'GURPS.HP',
+        state:
+          HitPoints.getThresholds(systemSource.HP.max).find(threshold => threshold.value >= systemSource.HP.value)
+            ?.condition || '',
       },
-      numerator: systemSource.HP.value,
-      denominator: systemSource.HP.max,
-      name: 'GURPS.HP',
-      state: HitFatPoints.hpCondition(HP, member),
-    })
+      {
+        fields: {
+          numerator: systemFields.FP.fields.value,
+          denominator: systemFields.FP.fields.max,
+        },
+        numerator: systemSource.FP.value,
+        denominator: systemSource.FP.max,
+        name: 'GURPS.FP',
+        state:
+          Fatigue.getThresholds(systemSource.FP.max).find(threshold => threshold.value >= systemSource.FP.value)
+            ?.condition || '',
+      }
+    )
+
+    return pools
   }
 }
 
