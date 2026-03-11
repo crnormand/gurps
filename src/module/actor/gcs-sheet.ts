@@ -1,3 +1,4 @@
+import { isHTMLElement } from '@module/util/guards.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
@@ -12,11 +13,17 @@ type PoolEntry = {
     numerator: foundry.data.fields.NumberField<any>
     denominator: foundry.data.fields.NumberField<any>
   }
+  path: string
   numerator: number
   denominator: number
   name: string
   state: string
   thresholds: ThresholdDescriptor[]
+}
+
+type LiftingMovingEntry = {
+  label: string
+  value: string
 }
 
 namespace GurpsActorGcsSheet {
@@ -27,6 +34,7 @@ namespace GurpsActorGcsSheet {
     systemSource?: foundry.data.fields.SchemaField.SourceData<CharacterV2Schema>
     moveModeChoices?: Record<string, string>
     pools: PoolEntry[]
+    liftingMoving: LiftingMovingEntry[]
   }
 }
 
@@ -40,6 +48,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     position: {
       width: 800,
       height: 800,
+    },
+    actions: {
+      incrementPool: GurpsActorGcsSheet.#onIncrementPool,
+      decrementPool: GurpsActorGcsSheet.#onDecrementPool,
     },
   }
 
@@ -74,8 +86,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       systemSource: this.actor.system._source,
       moveModeChoices,
       pools: this._preparePools(),
+      liftingMoving: this._prepareLiftingMoving(),
     }
   }
+
+  /* ---------------------------------------- */
 
   protected _preparePools(): PoolEntry[] {
     const pools: PoolEntry[] = []
@@ -91,6 +106,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
           numerator: systemFields.HP.fields.value,
           denominator: systemFields.HP.fields.max,
         },
+        path: 'system.HP.value',
         numerator: systemSource.HP.value,
         denominator: systemSource.HP.max,
         name: 'GURPS.HP',
@@ -102,6 +118,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
           numerator: systemFields.FP.fields.value,
           denominator: systemFields.FP.fields.max,
         },
+        path: 'system.FP.value',
         numerator: systemSource.FP.value,
         denominator: systemSource.FP.max,
         name: 'GURPS.FP',
@@ -111,6 +128,68 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     )
 
     return pools
+  }
+
+  /* ---------------------------------------- */
+
+  protected _prepareLiftingMoving(): LiftingMovingEntry[] {
+    const liftingMoving = this.actor.system.liftingmoving
+
+    return [
+      { label: 'GURPS.basicLift', value: liftingMoving.basiclift },
+      { label: 'GURPS.oneHandLift', value: liftingMoving.onehandedlift },
+      { label: 'GURPS.twoHandLift', value: liftingMoving.twohandedlift },
+      { label: 'GURPS.shoveAndKnockOver', value: liftingMoving.shove },
+      { label: 'GURPS.runningShoveAndKnockOver', value: liftingMoving.runningshove },
+      { label: 'GURPS.shiftSlightly', value: liftingMoving.shiftslightly },
+      { label: 'GURPS.carryOnBack', value: liftingMoving.carryonback },
+    ].map(({ label, value }) => {
+      return { label, value: value.toLocaleString() }
+    })
+  }
+
+  /* ---------------------------------------- */
+  /*  Action Bindings                         */
+  /* ---------------------------------------- */
+
+  static async #onIncrementPool(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
+    return this.#updatePool(event, 1)
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onDecrementPool(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
+    return this.#updatePool(event, -1)
+  }
+
+  /* ---------------------------------------- */
+
+  async #updatePool(event: PointerEvent, valueDelta: number): Promise<void> {
+    event.preventDefault()
+
+    const element = event.target
+
+    if (!isHTMLElement(element)) return
+
+    const systemPath = element.dataset.path
+
+    if (!systemPath) {
+      console.error('No pool path provided')
+
+      return
+    }
+
+    const pathValue = foundry.utils.getProperty(this.actor, systemPath)
+
+    if (!pathValue || !(typeof pathValue === 'number')) {
+      console.error(`Invalid pool path provided, value does not exist or is not a number: ${systemPath}`)
+
+      return
+    }
+
+    const newValue = pathValue + valueDelta
+
+    await this.actor.update({ [systemPath]: newValue })
   }
 }
 
