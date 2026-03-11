@@ -87,10 +87,15 @@ function init() {
       canConfigure: false,
     })
 
-    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorGcsSheet as DocumentSheetV2.AnyConstructor, {
-      makeDefault: true,
-      types: ['characterV2'],
-    })
+    foundry.documents.collections.Actors.registerSheet(
+      'gurps',
+      // TODO: fix type
+      GurpsActorGcsSheet as unknown as DocumentSheetV2.AnyConstructor,
+      {
+        makeDefault: true,
+        types: ['characterV2'],
+      }
+    )
   })
 }
 
