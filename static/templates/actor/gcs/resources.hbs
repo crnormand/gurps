@@ -7,6 +7,18 @@
   </div>
 {{/inline}}
 
+{{#*inline ".poolEntry"}}
+  <div class="form-group form-group-inverse">
+    <div class="form-fields">
+      {{formInput fields.numerator value=numerator}}
+      <label>of</label>
+      {{formInput fields.denominator value=denominator}}
+    </div>
+    <label>{{name}}</label>
+    <label>{{state}}</label>
+  </div>
+{{/inline}}
+
 <section>
   <div class="gcs-attributes">
     <div class="gcs-primary-attributes gcs-section">
@@ -42,6 +54,9 @@
     <div class="gcs-pool-attributes gcs-section">
       <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.poolAttributes"}}</div>
       <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+        {{#each pools as |pool|}}
+        {{> ".poolEntry" pool}}
+        {{/each}}
       </div>
     </div>
   </div>
