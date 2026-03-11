@@ -21,7 +21,9 @@
 {{#*inline ".poolEntry"}}
   <div class="pool-entry form-group">
     <div class="form-fields flexrow">
+      <button data-action="decrementPool" data-path="{{path}}"><a class="fa-solid fa-minus"></a></button>
       {{formInput fields.numerator value=numerator}}
+      <button data-action="incrementPool" data-path="{{path}}"><a class="fa-solid fa-plus"></a></button>
       <label class="poolSplit">/</label>
       {{formInput fields.denominator value=denominator}}
       <label>{{localize name}}</label>
@@ -135,62 +137,16 @@
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.moving"}}</div>
     <table class="gcs-table  gcs-section-content">
       <tbody>
+        {{#each liftingMoving}}
         <tr>
-          <td>
-            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.basiclift }}
+          <td class="gcs-lifting-value">
+            {{ localize "GURPS.Actor.gcsSheet.pound" value=value }}
           </td>
           <td>
-            {{localize "GURPS.basicLift"}}
+            {{localize label}}
           </td>
         </tr>
-        <tr>
-          <td>
-            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.onehandedlift }}
-          </td>
-          <td>
-            {{localize "GURPS.oneHandLift"}}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.twohandedlift }}
-          </td>
-          <td>
-            {{localize "GURPS.twoHandLift"}}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.shove }}
-          </td>
-          <td>
-            {{localize "GURPS.shoveAndKnockOver"}}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.runningshove }}
-          </td>
-          <td>
-            {{localize "GURPS.runningShoveAndKnockOver"}}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            {{ localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.shiftslightly }}
-          </td>
-          <td>
-            {{localize "GURPS.shiftSlightly"}}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            {{localize "GURPS.Actor.gcsSheet.pound" value=system.liftingmoving.carryonback}}
-          </td>
-          <td>
-            {{localize "GURPS.carryOnBack"}}
-          </td>
-        </tr>
+        {{/each}}
       </tbody>
     </table>
     </div>
