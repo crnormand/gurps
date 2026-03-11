@@ -17,7 +17,7 @@ export interface IResourceTrackerThreshold {
 export interface IResourceTracker {
   name: string
   alias: string
-  max: number
+  initialValue: string | null
   min: number
   value: number
   pdf: string
@@ -26,7 +26,6 @@ export interface IResourceTracker {
   isMaxEnforced: boolean
   isMinEnforced: boolean
   useBreakpoints: boolean
-  initialValue: string | null
   thresholds: IResourceTrackerThreshold[]
 }
 

@@ -14,7 +14,6 @@ export class ResourceTrackerManager extends FormApplication {
           name: game.i18n?.localize('GURPS.grapplingControlPoints') ?? '',
           alias: game.i18n?.localize('GURPS.grapplingCPAbbrev') ?? '',
           pdf: 'FDG4',
-          max: 0,
           min: 0,
           value: 0,
           isDamageType: true,
@@ -134,7 +133,6 @@ export class ResourceTrackerManager extends FormApplication {
         tracker: {
           name: '',
           alias: '',
-          max: 0,
           min: 0,
           value: 0,
           pdf: '',

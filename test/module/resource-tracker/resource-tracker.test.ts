@@ -25,7 +25,7 @@ const threshold = (overrides: Partial<ThresholdInput> = {}): ThresholdInput => (
 
 const tracker = (overrides: Partial<Record<string, unknown>> = {}): TrackerInstance =>
   new TrackerInstance({
-    max: 0,
+    initialValue: '0',
     value: 0,
     useBreakpoints: false,
     thresholds: [],
@@ -33,6 +33,22 @@ const tracker = (overrides: Partial<Record<string, unknown>> = {}): TrackerInsta
   })
 
 describe('TrackerInstance getters', () => {
+  describe('max', () => {
+    it('returns the numeric initialValue when it is a number', () => {
+      const instance = tracker({ initialValue: '42' })
+
+      expect(instance.max).toBe(42)
+    })
+
+    it('resolves max from parent system path when initialValue is a path', () => {
+      const instance: any = tracker({ initialValue: 'HP.max' })
+
+      instance.parent = { system: { HP: { max: 13 } } }
+
+      expect(instance.max).toBe(13)
+    })
+  })
+
   describe('currentThreshold', () => {
     it('returns null when no threshold matches', () => {
       const instance = tracker({
@@ -74,7 +90,7 @@ describe('TrackerInstance getters', () => {
     it('returns the descriptors for an accumulator', () => {
       const instance = tracker()
 
-      instance.max = 100
+      instance.initialValue = '100'
       instance.isAccumulator = true
       instance.useBreakpoints = true
 
@@ -136,7 +152,7 @@ describe('TrackerInstance getters', () => {
     it('returns the descriptors for a non-accumulator', () => {
       const instance = tracker()
 
-      instance.max = 100
+      instance.initialValue = '100'
       instance.isAccumulator = false
       instance.useBreakpoints = false
 

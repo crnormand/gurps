@@ -560,64 +560,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       this.calculateDerivedValues()
     }
-
-    // Done after all derived data is created.
-
-    this.initializeTrackerInstances()
-  }
-
-  private initializeTrackerInstances() {
-    if (!this.isOfType('gcsCharacter') && this.modelV2.additionalresources?.tracker) {
-      const trackers: TrackerInstance[] = (this.modelV2.additionalresources.tracker as any).contents ?? []
-
-      for (const tracker of trackers) {
-        // Go through all TrackerInstances looking for those that have an initialValue:
-        if (tracker.initialValue) {
-          try {
-            // First try to parse initialValue as a number.
-            let value = parseInt(tracker.initialValue)
-
-            if (isNaN(value)) {
-              // If parsing failed, try to use initialValue as a path to another value on the actor.
-              const foundValue = foundry.utils.getProperty(this.system, tracker.initialValue)
-
-              value = typeof foundValue === 'number' ? foundValue : tracker.value
-            }
-
-            const updates: Partial<TrackerInstance> = {}
-
-            updates.initialValue = null
-            updates.max = value
-            updates.value = tracker.isAccumulator ? tracker.min : value
-
-            tracker.update(updates)
-          } catch (error) {
-            ui.notifications!.error(
-              game.i18n!.format('GURPS.resourceTracker.initializationError', {
-                name: tracker.name,
-                initialValue: tracker.initialValue,
-                error: `${error}`,
-              })
-            )
-            tracker.update({ initialValue: null })
-          }
-        }
-      }
-    } else if (this.modelV2.additionalresources?.tracker) {
-      const trackers: TrackerInstance[] = (this.modelV2.additionalresources.tracker as any).contents ?? []
-
-      trackers
-        .filter(tracker => tracker.initialValue && tracker.initialValue !== '' && tracker.initialValue !== null)
-        .forEach(tracker => {
-          ui.notifications!.warn(
-            game.i18n!.format('GURPS.resourceTracker.gcsInitialValueUnsupported', {
-              name: tracker.name,
-              initialValue: tracker.initialValue!,
-            })
-          )
-          tracker.update({ initialValue: null })
-        })
-    }
   }
 
   /* ---------------------------------------- */

@@ -136,6 +136,14 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
       return result ?? -1
     }
   }
+
+  get max(): number {
+    if (isNaN(parseInt(this.initialValue))) {
+      return foundry.utils.getProperty(this.parent, this.initialValue) as number
+    }
+
+    return Number(this.initialValue)
+  }
 }
 
 /* ---------------------------------------- */
@@ -145,7 +153,11 @@ const resourceTrackerSchema = () => {
     ...pseudoDocumentSchema(),
     name: new fields.StringField({ required: true, nullable: false, initial: '' }),
     value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    max: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    // Contains either a number or a property path to a number on the actor's system data. This allows the tracker to
+    // either have a static max value or a dynamic one that references another value on the actor.
+    initialValue: new fields.StringField({ required: true, nullable: false, initial: '' }),
+
     min: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     alias: new fields.StringField({ required: true, nullable: false, initial: '' }),
     pdf: new fields.StringField({ required: true, nullable: false, initial: '' }),
@@ -154,7 +166,6 @@ const resourceTrackerSchema = () => {
     isDamageType: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     isAccumulator: new fields.BooleanField({ required: true, nullable: false, initial: false }),
     useBreakpoints: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    initialValue: new fields.StringField({ required: true, nullable: true, initial: null }),
     thresholds: new fields.ArrayField(
       new fields.EmbeddedDataField(ResourceTrackerThreshold, { required: true, nullable: false }),
       {

@@ -21,7 +21,7 @@
         {{/if}}
         {{>hpfp-editor name='FP' resource=system.FP label='GURPS.attributesFPNAME'}}
       </div>
-      {{>locations parent=../data}}
+      {{>locations parent=../system}}
       {{>encumbrance}}
       {{>quicknote}}
       {{>lifting}}
@@ -37,8 +37,8 @@
     {{>skills}}
     {{>spells}}
 
-    {{>equipment container='carried' data=this.data}}
-    {{>equipment container='other' data=this.data}}
+    {{>equipment container='carried'}}
+    {{>equipment container='other'}}
 
     {{>notes}}
   </div>

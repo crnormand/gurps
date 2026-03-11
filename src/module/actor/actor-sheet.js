@@ -63,13 +63,11 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   getData() {
     const sheetData = super.getData()
 
-    sheetData.olddata = sheetData.data
     let actions = {}
 
     if (!this.actor.system.conditions.actions?.maxActions) actions['maxActions'] = 1
     if (!this.actor.system.conditions.actions?.maxBlocks) actions['maxBlocks'] = 1
     if (Object.keys(actions).length > 0) this.actor.internalUpdate({ 'system.conditions.actions': actions })
-    sheetData.data = this.actor.system
     sheetData.system = this.actor.system
     sheetData.ranges = GURPS.rangeObject.ranges
     sheetData.useCI = GURPS.ConditionalInjury.isInUse()
@@ -84,13 +82,30 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       hasOther: !isEmptyObject(this.actor.system?.equipment?.other),
     }
     sheetData.isGM = game.user.isGM
-    sheetData._id = sheetData.olddata._id
+    sheetData._id = sheetData.system._id
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
     sheetData.useQN = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
 
     sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
 
+    sheetData.trackers = this._prepareTrackerData(this.actor.system.additionalresources.tracker)
+
     return sheetData
+  }
+
+  /* -------------------------------------------- */
+
+  _prepareTrackerData(trackers) {
+    if (!trackers) return {}
+
+    // Iterate through the trackers.contents array and create an equivalent object with key = _id and the data from each tracker instance.
+    const preparedTrackers = {}
+
+    for (const tracker of trackers.contents) {
+      preparedTrackers[tracker._id] = { ...tracker, max: tracker.max }
+    }
+
+    return preparedTrackers
   }
 
   /* -------------------------------------------- */
