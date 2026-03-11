@@ -33,6 +33,10 @@ section[data-application-part='resources'] {
 
     .gcs-pool-attributes {
       grid-area: pools;
+
+      .poolSplit {
+        text-align: center;
+      }
     }
   }
 
@@ -46,5 +50,27 @@ section[data-application-part='resources'] {
 
   .gcs-moving {
     grid-area: moving;
+  }
+}
+
+// Pool Threshold Tooltip (rendered separately from the rest of the sheet)
+.gcs-pool-tooltip {
+  font-family: 'Roboto', sans-serif;
+
+  .threshold {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .value {
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .condition {
+      text-align: left;
+      margin-left: 0.25rem;
+    }
   }
 }

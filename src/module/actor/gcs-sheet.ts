@@ -1,5 +1,5 @@
 import { Fatigue } from '@rules/injury/fatigue.js'
-import { HitPoints } from '@rules/injury/hit-points.js'
+import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 
@@ -16,6 +16,7 @@ type PoolEntry = {
   denominator: number
   name: string
   state: string
+  thresholds: ThresholdDescriptor[]
 }
 
 namespace GurpsActorGcsSheet {
@@ -81,6 +82,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     const systemFields = this.actor.system.schema.fields
     const systemSource = this.actor.system._source
 
+    const hpThresholds = HitPoints.getThresholds(systemSource.HP.max)
+    const fpThresholds = Fatigue.getThresholds(systemSource.FP.max)
+
     pools.push(
       {
         fields: {
@@ -90,9 +94,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         numerator: systemSource.HP.value,
         denominator: systemSource.HP.max,
         name: 'GURPS.HP',
-        state:
-          HitPoints.getThresholds(systemSource.HP.max).find(threshold => threshold.value >= systemSource.HP.value)
-            ?.condition || '',
+        state: hpThresholds.find(threshold => threshold.value >= systemSource.HP.value)?.condition || '',
+        thresholds: hpThresholds,
       },
       {
         fields: {
@@ -102,9 +105,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         numerator: systemSource.FP.value,
         denominator: systemSource.FP.max,
         name: 'GURPS.FP',
-        state:
-          Fatigue.getThresholds(systemSource.FP.max).find(threshold => threshold.value >= systemSource.FP.value)
-            ?.condition || '',
+        state: fpThresholds.find(threshold => threshold.value >= systemSource.FP.value)?.condition || '',
+        thresholds: fpThresholds,
       }
     )
 
