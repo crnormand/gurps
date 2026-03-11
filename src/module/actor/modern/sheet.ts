@@ -1,5 +1,5 @@
 import { Application } from '@gurps-types/foundry/application.js'
-import { getGame, isHTMLElement } from '@module/util/guards.js'
+import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
