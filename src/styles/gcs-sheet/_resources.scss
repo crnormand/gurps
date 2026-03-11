@@ -34,6 +34,10 @@ section[data-application-part='resources'] {
     .gcs-pool-attributes {
       grid-area: pools;
 
+      .pool-entry .form-fields {
+        gap: 0.5rem;
+      }
+
       .poolSplit {
         text-align: center;
       }
@@ -50,6 +54,11 @@ section[data-application-part='resources'] {
 
   .gcs-moving {
     grid-area: moving;
+
+    .gcs-lifting-value {
+      text-align: end;
+      font-weight: 700;
+    }
   }
 }
 

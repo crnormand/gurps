@@ -20,36 +20,36 @@
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.identity"}}</div>
     <div class="gcs-field-rows gcs-section-content">
       {{formField fields.name value=actor.name localize=true}}
-      {{formField systemFields.profile.fields.title value=systemSource.traits.title localize=true}}
+      {{formField systemFields.profile.fields.title value=systemSource.profile.title localize=true}}
     </div>
   </div>
   <div class="gcs-miscellaneous gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.miscellaneous"}}</div>
     <div class="gcs-field-rows gcs-section-content">
-      {{formField systemFields.profile.fields.createdon value=systemSource.traits.createdon localize=true}}
-      {{formField systemFields.profile.fields.modifiedon value=systemSource.traits.modifiedon localize=true}}
+      {{formField systemFields.profile.fields.createdon value=systemSource.profile.createdon localize=true}}
+      {{formField systemFields.profile.fields.modifiedon value=systemSource.profile.modifiedon localize=true}}
     </div>
   </div>
   <div class="gcs-description gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.description"}}</div>
     <div class="gcs-field-columns gcs-section-content">
       <div class="gcs-field-rows">
-        {{formField systemFields.profile.fields.gender value=systemSource.traits.gender localize=true}}
-        {{formField systemFields.profile.fields.age value=systemSource.traits.age localize=true}}
-        {{formField systemFields.profile.fields.birthday value=systemSource.traits.birthday localize=true}}
-        {{formField systemFields.profile.fields.religion value=systemSource.traits.religion localize=true}}
+        {{formField systemFields.profile.fields.gender value=systemSource.profile.gender localize=true}}
+        {{formField systemFields.profile.fields.age value=systemSource.profile.age localize=true}}
+        {{formField systemFields.profile.fields.birthday value=systemSource.profile.birthday localize=true}}
+        {{formField systemFields.profile.fields.religion value=systemSource.profile.religion localize=true}}
       </div>
       <div class="gcs-field-rows">
-        {{formField systemFields.profile.fields.height value=systemSource.traits.height localize=true}}
-        {{formField systemFields.profile.fields.weight value=systemSource.traits.weight localize=true}}
-        {{formField systemFields.profile.fields.sizemod value=systemSource.traits.sizemod localize=true}}
-        {{formField systemFields.profile.fields.techlevel value=systemSource.traits.techlevel localize=true}}
+        {{formField systemFields.profile.fields.height value=systemSource.profile.height localize=true}}
+        {{formField systemFields.profile.fields.weight value=systemSource.profile.weight localize=true}}
+        {{formField systemFields.profile.fields.sizemod value=systemSource.profile.sizemod localize=true}}
+        {{formField systemFields.profile.fields.techlevel value=systemSource.profile.techlevel localize=true}}
       </div>
       <div class="gcs-field-rows">
-        {{formField systemFields.profile.fields.hair value=systemSource.traits.hair localize=true}}
-        {{formField systemFields.profile.fields.eyes value=systemSource.traits.eyes localize=true}}
-        {{formField systemFields.profile.fields.skin value=systemSource.traits.skin localize=true}}
-        {{formField systemFields.profile.fields.hand value=systemSource.traits.hand localize=true}}
+        {{formField systemFields.profile.fields.hair value=systemSource.profile.hair localize=true}}
+        {{formField systemFields.profile.fields.eyes value=systemSource.profile.eyes localize=true}}
+        {{formField systemFields.profile.fields.skin value=systemSource.profile.skin localize=true}}
+        {{formField systemFields.profile.fields.hand value=systemSource.profile.hand localize=true}}
       </div>
     </div>
   </div>
