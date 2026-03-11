@@ -38,13 +38,13 @@
 
 @mixin css-variables-dark {
   /* Color */
-  --gcs-color-surface-bg: #282828;
+  --gcs-color-surface-bg: #1e1e1e;
   --gcs-color-surface-fg: var(--color-light-fg);
 
   --gcs-color-header-bg: #404040;
   --gcs-color-header-fg: var(--color-light-fg);
 
-  --gcs-color-banding-bg: #282820;
+  --gcs-color-banding-bg: #2a2a22;
   --gcs-color-banding-fg: var(--color-light-fg);
 
   --gcs-color-focus-bg: #0080cc;
