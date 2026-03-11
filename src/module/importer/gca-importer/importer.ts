@@ -464,17 +464,11 @@ Portrait will not be imported.`
     )
 
     const bodyPlansAreEqual = () => {
-      const oldLocations = Object.values(currentHitLocations)
+      const oldLocations = Object.values(currentHitLocations).map(({ _id, ...rest }) => rest)
 
-      const newLocations = Object.values(this.output.hitlocationsV2 ?? {})
-
-      for (const location of oldLocations) {
-        if (location) delete location._id
-      }
-
-      for (const location of newLocations) {
-        if (location) delete location._id
-      }
+      const newLocations = Object.values(
+        this.output.hitlocationsV2 as Record<string, foundry.data.fields.SchemaField.CreateData<HitLocationSchemaV2>>
+      ).map(({ _id, ...rest }) => rest)
 
       if (oldLocations.length !== newLocations.length) return false
 
