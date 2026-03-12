@@ -1113,29 +1113,7 @@ ${content}
   Handlebars.registerHelper('contrastColor', function (backgroundHex) {
     return constrastColor(backgroundHex)
   })
-
-  Handlebars.registerHelper('trackerTooltip', function (tracker, _options) {
-    if (!tracker) return ''
-
-    let thresholds = ''
-
-    for (let descriptor of tracker.descriptors) {
-      const value = foundry.utils.escapeHTML(String(descriptor.value ?? ''))
-      const condition = foundry.utils.escapeHTML(String(descriptor.condition ?? ''))
-
-      thresholds += `
-        <label>${value}</label>
-        <label>${condition}</label>`
-    }
-
-    // Its important to use the double quotes (") for the HTML attributes, as we use single quotes (') for the
-    // Handlebars template, and the SafeString will be injected directly into the HTML. If we used double
-    // quotes for the attributes, it would break the HTML structure when injected.
-    let tooltip = `<div class="tracker-tooltip">${thresholds}</div>`
-
-    return new Handlebars.SafeString(tooltip)
-  })
-
+  
   // === register Handlebars partials ===
   // Partial name will be the last component of the path name, e.g.: 'systems/gurps/templates/actor/foo.hbs" -- the name is "foo".
   // Use it in an HTML/HBS file like this: {{> foo }}.
