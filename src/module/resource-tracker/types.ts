@@ -3,7 +3,6 @@ const SettingPrefix = 'resource-tracker'
 
 export const SETTING_TRACKER_EDITOR = `${SettingPrefix}.manager`
 export const SETTING_TRACKER_TEMPLATES = `${SettingPrefix}.templates`
-// TODO May be removed when the setting is removed.
 export const OLD_SETTING_TEMPLATES = 'tracker-templates'
 
 export interface IResourceTrackerThreshold {

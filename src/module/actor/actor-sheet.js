@@ -102,7 +102,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     const preparedTrackers = {}
 
     for (const tracker of trackers.contents) {
-      preparedTrackers[tracker._id] = { ...tracker, max: tracker.max }
+      preparedTrackers[tracker._id] = { ...tracker, max: tracker.max, value: tracker.value }
     }
 
     return preparedTrackers
@@ -207,19 +207,27 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find('button[data-operation="resource-inc"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
-      let path = parent.attr('data-gurps-resource')
+      let pathAndKey = parent.attr('data-gurps-resource')
 
-      let tracker = foundry.utils.getProperty(this.actor.system, path)
-      let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
+      if (pathAndKey.includes('additionalresources.tracker.')) {
+        // Get the last segment from the path; this is the index of the tracker.
+        const key = pathAndKey.split('.').slice(-1)[0]
+        const tracker = this.actor.system.additionalresources.tracker.contents[parseInt(key)]
 
-      if (isNaN(value)) value = tracker.max || 0
+        tracker.value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
+      } else {
+        let tracker = foundry.utils.getProperty(this.actor.system, pathAndKey)
+        let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
 
-      if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
-      if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
+        if (isNaN(value)) value = tracker.max || 0
 
-      let json = `{ "system.${path}.value": ${value} }`
+        if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
+        if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
-      this.actor.update(JSON.parse(json))
+        let json = `{ "system.${pathAndKey}.value": ${value} }`
+
+        this.actor.update(JSON.parse(json))
+      }
     })
 
     // Handle resource tracker "-" button.
@@ -228,17 +236,25 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
-      let tracker = foundry.utils.getProperty(this.actor.system, path)
-      let value = (tracker.value || 0) - (ev.shiftKey ? 5 : 1)
+      if (path.includes('additionalresources.tracker.')) {
+        // Get the last segment from the path; this is the index of the tracker.
+        const key = path.split('.').slice(-1)[0]
+        const tracker = this.actor.system.additionalresources.tracker.contents[parseInt(key)]
 
-      if (isNaN(value)) value = tracker.max || 0
+        tracker.value = (+tracker.value || 0) - (ev.shiftKey ? 5 : 1)
+      } else {
+        let tracker = foundry.utils.getProperty(this.actor.system, path)
+        let value = (tracker.value || 0) - (ev.shiftKey ? 5 : 1)
 
-      if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
-      if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
+        if (isNaN(value)) value = tracker.max || 0
 
-      let json = `{ "system.${path}.value": ${value} }`
+        if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
+        if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
-      this.actor.update(JSON.parse(json))
+        let json = `{ "system.${path}.value": ${value} }`
+
+        this.actor.update(JSON.parse(json))
+      }
     })
 
     // Handle resource tracker "reset" button.
@@ -247,12 +263,20 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
-      let tracker = foundry.utils.getProperty(this.actor.system, path)
-      let value = tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
+      if (path.includes('additionalresources.tracker.')) {
+        // Get the last segment from the path; this is the index of the tracker.
+        const key = path.split('.').slice(-1)[0]
+        const tracker = this.actor.system.additionalresources.tracker.contents[parseInt(key)]
 
-      let json = `{ "system.${path}.value": ${value} }`
+        tracker.resetValue()
+      } else {
+        let tracker = foundry.utils.getProperty(this.actor.system, path)
+        let value = tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
 
-      this.actor.update(JSON.parse(json))
+        let json = `{ "system.${path}.value": ${value} }`
+
+        this.actor.update(JSON.parse(json))
+      }
     })
 
     // allow a click on the 'edit' icon to open the resource tracker editor.

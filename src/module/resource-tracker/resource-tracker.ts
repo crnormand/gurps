@@ -144,6 +144,22 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
 
     return Number(this.initialValue)
   }
+
+  get value(): number {
+    return this.currentValue ?? (this.isAccumulator ? 0 : this.max)
+  }
+
+  set value(newValue: number) {
+    let value = this.isMinEnforced && newValue < this.min ? this.min : newValue
+
+    value = this.isMaxEnforced && value > this.max ? this.max : value
+
+    this.update({ currentValue: value })
+  }
+
+  resetValue() {
+    this.value = this.isAccumulator ? 0 : this.max
+  }
 }
 
 /* ---------------------------------------- */
@@ -152,7 +168,10 @@ const resourceTrackerSchema = () => {
   return {
     ...pseudoDocumentSchema(),
     name: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+
+    // The current value of the resource. If null, the value is derived (0 for accumulators, max for non-accumulators).
+    // After the first update, this will always be a number.
+    currentValue: new fields.NumberField({ required: true, nullable: true, initial: null }),
 
     // Contains either a number or a property path to a number on the actor's system data. This allows the tracker to
     // either have a static max value or a dynamic one that references another value on the actor.

@@ -26,7 +26,7 @@ const threshold = (overrides: Partial<ThresholdInput> = {}): ThresholdInput => (
 const tracker = (overrides: Partial<Record<string, unknown>> = {}): TrackerInstance =>
   new TrackerInstance({
     initialValue: '0',
-    value: 0,
+    currentValue: 0,
     useBreakpoints: false,
     thresholds: [],
     ...overrides,
@@ -43,7 +43,7 @@ describe('TrackerInstance getters', () => {
     it('resolves max from parent system path when initialValue is a path', () => {
       const instance: any = tracker({ initialValue: 'HP.max' })
 
-      instance.parent = { system: { HP: { max: 13 } } }
+      instance.parent = { HP: { max: 13 } }
 
       expect(instance.max).toBe(13)
     })
@@ -52,7 +52,7 @@ describe('TrackerInstance getters', () => {
   describe('currentThreshold', () => {
     it('returns null when no threshold matches', () => {
       const instance = tracker({
-        value: 6,
+        currentValue: 6,
         thresholds: [threshold({ value: 5 })],
       })
 
@@ -64,7 +64,7 @@ describe('TrackerInstance getters', () => {
       const laterMatch = threshold({ value: 10, condition: 'Later Match', color: '#222222' })
       const instance = tracker({
         useBreakpoints: false,
-        value: 6,
+        currentValue: 6,
         thresholds: [firstMatch, laterMatch],
       })
 
@@ -77,7 +77,7 @@ describe('TrackerInstance getters', () => {
       const lastMatch = threshold({ value: 10, condition: 'Last Match', color: '#333333' })
       const instance = tracker({
         useBreakpoints: true,
-        value: 6,
+        currentValue: 6,
         thresholds: [firstMatch, lastMatch],
       })
 
