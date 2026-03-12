@@ -14,8 +14,8 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
-  override prepareBaseData(): void {
-    super.prepareBaseData()
+  override prepareDerivedData(): void {
+    super.prepareDerivedData()
     this.#prepareLevelsFromOtf()
   }
 
@@ -58,6 +58,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
     }
 
     action.action.calcOnly = true
+    action.action.suppressWarnings = true
     // TODO: verify that target is of type "number" (or replace this whole thing)
     GURPS.performAction(action.action, this.actor).then(
       (result: boolean | { target: number; thing: any } | undefined) => {

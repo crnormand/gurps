@@ -577,7 +577,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   override prepareEmbeddedDocuments(): void {
     super.prepareEmbeddedDocuments()
-    if (this.isNewActorType) this.modelV2.prepareEmbeddedDocuments()
+    const isTypeData = this.system instanceof foundry.abstract.TypeDataModel
+
+    if (isTypeData) this.system.prepareEmbeddedDocuments()
   }
 
   /* ---------------------------------------- */

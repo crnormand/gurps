@@ -1426,6 +1426,7 @@ if (!globalThis.GURPS) {
   async function findBestActionInChain({ action, actor, event, targets, originalOtf }) {
     const actions = []
     let overridetxt = action.overridetxt
+    const suppressWarnings = action.suppressWarnings
 
     while (action) {
       action.overridetxt = overridetxt
@@ -1448,7 +1449,9 @@ if (!globalThis.GURPS) {
     const levels = calculations.map(result => (result ? result.target : 0))
 
     if (!levels.some(level => level > 0)) {
-      ui.notifications.warn(game.i18n.localize('GURPS.noViableSkill'))
+      if (!suppressWarnings) {
+        ui.notifications.warn(game.i18n.localize('GURPS.noViableSkill'))
+      }
 
       return null // actor does not have any of these skills
     }

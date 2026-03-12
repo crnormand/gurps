@@ -356,6 +356,10 @@ declare global {
 
     /* ---------------------------------------- */
 
+    handleRoll(event: JQuery.MouseEventBase | Event, actor: Actor.Implementation, options?: { targets?: string[] })
+
+    /* ---------------------------------------- */
+
     performAction(
       action: GurpsAction,
       actor: Actor | Actor.Implementation | null,

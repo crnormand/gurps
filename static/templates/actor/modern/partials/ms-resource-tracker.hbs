@@ -38,8 +38,14 @@
     {{{tracker-style color id=(concat "ID-" id)}}}
   {{/if}}
   <div id="ID-{{id}}" class='ms-tracker-condition'>
-
-    <span class='text' data-tooltip-html='{{{trackerTooltip this}}}'>{{{gurpslink condition}}}</span>
+    <span class='text' data-tooltip-html='
+      <div class="tracker-tooltip">
+        <label class="title">{{name}}</label>
+        {{#each descriptors as |threshold|}}
+          <label>{{threshold.value}}</label><label>{{localize threshold.condition}}</label>
+        {{/each}}
+      </div>
+  '>{{{gurpslink condition}}}</span>
   </div>
 
   <div class='ms-tracker-footer'>
