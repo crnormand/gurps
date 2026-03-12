@@ -95,7 +95,7 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
   }
 
   static async #onClearTracker(this: ResourceTrackerEditorV2, _event: PointerEvent): Promise<void> {
-    this.#tracker.value = 0
+    this.#tracker.currentValue = null
     this.#tracker.initialValue = null
     this.#tracker.min = 0
     this.#tracker.pdf = ''
@@ -287,7 +287,6 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
     const key = path.replace('tracker.', '')
 
     tracker[key] = value
-    this.render({ force: true })
   }
 }
 

@@ -18,7 +18,7 @@ export interface IResourceTracker {
   alias: string
   initialValue: string | null
   min: number
-  value: number
+  currentValue: number | null
   pdf: string
   isDamageType: boolean
   isAccumulator: boolean

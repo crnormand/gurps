@@ -86,6 +86,16 @@ type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
 
 type GurpsActor = GurpsActorV2<Actor.SubType>
 
+function getResourceTrackers(actor: GurpsActor) {
+  return (actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
+}
+
+function getResourceTracker(actor: GurpsActor, trackerKey: string | undefined) {
+  if (!trackerKey) return undefined
+
+  return getResourceTrackers(actor)?.get(trackerKey)
+}
+
 // See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
 const SheetBase = foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.sheets.ActorSheetV2
@@ -803,7 +813,7 @@ export class GurpsActorModernSheet extends SheetBase {
   }
 
   prepareTrackerData(): PreparedTrackerData[] {
-    const trackers = (this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
+    const trackers = getResourceTrackers(this.actor)
 
     if (!trackers) return []
 
@@ -848,38 +858,24 @@ export class GurpsActorModernSheet extends SheetBase {
     target: HTMLElement
   ): Promise<void> {
     event.preventDefault()
-    const trackerKey = target.dataset.key
-
-    if (!trackerKey) return
-
-    const trackers = (this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
-    const tracker = trackers?.get(trackerKey)
+    const tracker = getResourceTracker(this.actor, target.dataset.key)
 
     if (!tracker) return
 
-    let newValue: number
+    if (target.dataset.action === 'resetTracker') {
+      tracker.resetValue()
 
-    if (target.dataset.action === 'decreaseTracker') {
-      newValue = tracker.isMinEnforced ? Math.max(tracker.value - 1, tracker.min) : tracker.value - 1
-    } else if (target.dataset.action === 'increaseTracker') {
-      newValue = tracker.isMaxEnforced ? Math.min(tracker.value + 1, tracker.max) : tracker.value + 1
-    } else if (target.dataset.action === 'resetTracker') {
-      newValue = tracker.isAccumulator ? 0 : tracker.max
-    } else {
       return
     }
 
-    tracker.update({ value: newValue })
+    const newValue = target.dataset.action === 'decreaseTracker' ? tracker.value - 1 : tracker.value + 1
+
+    tracker.value = newValue
   }
 
   static async #onEditTracker(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
-    const trackerKey = target.dataset.key
-
-    if (!trackerKey) return
-
-    const trackers = (this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
-    const tracker = trackers?.get(trackerKey)
+    const tracker = getResourceTracker(this.actor, target.dataset.key)
 
     if (!tracker) return
 
@@ -888,12 +884,7 @@ export class GurpsActorModernSheet extends SheetBase {
 
   static async #onDeleteTracker(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
-    const trackerKey = target.dataset.key
-
-    if (!trackerKey) return
-
-    const trackers = (this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
-    const tracker = trackers?.get(trackerKey)
+    const tracker = getResourceTracker(this.actor, target.dataset.key)
 
     if (!tracker) return
 

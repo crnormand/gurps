@@ -423,17 +423,24 @@ export function bindAllTrackerEdits(html: HTMLElement, actor: Actor.Implementati
       const inputElement = event.currentTarget
 
       if (!isHTMLInputElement(inputElement)) return
-      const tracker = inputElement.closest(trackerSelector)
+      const trackerElement = inputElement.closest(trackerSelector)
 
-      if (!isHTMLElement(tracker)) return
-      tracker.classList.remove(editingClass)
+      if (!isHTMLElement(trackerElement)) return
+      trackerElement.classList.remove(editingClass)
+      const trackerKey = inputElement.dataset.key
 
-      const fieldPath = inputElement.name
+      if (!trackerKey) return
       const newValue = parseInt(inputElement.value, 10)
-      const currentValue = foundry.utils.getProperty(actor, fieldPath) as number
+      const map = actor.system.additionalresources?.tracker
+
+      if (!map) return
+      const tracker = map.get(trackerKey)
+
+      if (!tracker) return
+      const currentValue = tracker.value
 
       if (!isNaN(newValue) && newValue !== currentValue) {
-        actor.update({ [fieldPath]: newValue })
+        tracker.value = newValue
       }
     })
 

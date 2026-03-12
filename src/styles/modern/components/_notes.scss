@@ -237,9 +237,7 @@
 .ms-trackers-list {
   display: flex;
   flex-direction: row;
-  gap: var(--ms-space-4);
   background: var(--ms-bg-header);
-  padding: var(--ms-space-3);
 
   .ms-tracker {
     flex: 0 1;
@@ -248,7 +246,7 @@
     background: var(--ms-bg-card);
     border: 1px solid var(--ms-border);
     border-radius: var(--ms-radius);
-    padding: var(--ms-space-4);
+    padding: var(--ms-space-3);
 
     &:hover {
       .ms-tracker-display {
@@ -432,8 +430,8 @@ aside div.tracker-tooltip {
   cursor: text;
   padding: var(--ms-space-3);
 
-  > .glinkmod,
-  > .gurpslink {
+  >.glinkmod,
+  >.gurpslink {
     color: var(--ms-accent);
     cursor: pointer;
     font-weight: bold;
