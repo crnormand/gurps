@@ -5,7 +5,7 @@ section[data-application-part='resources'] {
   grid-template-areas:
     'attributes body encumbrance'
     'attributes body moving';
-  grid-template-columns: 0fr auto auto;
+  grid-template-columns: auto auto auto;
   grid-template-rows: 0fr 0fr;
 
   .gcs-attributes {
@@ -19,6 +19,14 @@ section[data-application-part='resources'] {
       'damage secondary'
       'pools pools';
 
+    .gcs-section-content {
+      height: fit-content;
+    }
+
+    input {
+      max-width: 6ch;
+    }
+
     .gcs-primary-attributes {
       grid-area: primary;
     }
@@ -29,13 +37,22 @@ section[data-application-part='resources'] {
 
     .gcs-basic-damage {
       grid-area: damage;
+
+      input {
+        min-width: 8ch;
+        max-width: 8ch;
+      }
     }
 
     .gcs-pool-attributes {
       grid-area: pools;
 
-      .pool-entry .form-fields {
+      .form-fields {
         gap: 0.5rem;
+      }
+
+      button {
+        max-width: var(--gcs-input-height);
       }
 
       .poolSplit {

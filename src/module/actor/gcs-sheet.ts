@@ -16,6 +16,7 @@ type PoolEntry = {
   path: string
   numerator: number
   denominator: number
+  atMax: boolean
   name: string
   state: string
   thresholds: ThresholdDescriptor[]
@@ -109,6 +110,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         path: 'system.HP.value',
         numerator: systemSource.HP.value,
         denominator: systemSource.HP.max,
+        atMax: systemSource.HP.value >= systemSource.HP.max,
         name: 'GURPS.HP',
         state: hpThresholds.find(threshold => threshold.value >= systemSource.HP.value)?.condition || '',
         thresholds: hpThresholds,
@@ -121,6 +123,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         path: 'system.FP.value',
         numerator: systemSource.FP.value,
         denominator: systemSource.FP.max,
+        atMax: systemSource.FP.value >= systemSource.FP.max,
         name: 'GURPS.FP',
         state: fpThresholds.find(threshold => threshold.value >= systemSource.FP.value)?.condition || '',
         thresholds: fpThresholds,
@@ -181,13 +184,18 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
     const pathValue = foundry.utils.getProperty(this.actor, systemPath)
 
-    if (!pathValue || !(typeof pathValue === 'number')) {
+    if (pathValue === undefined || pathValue === null || typeof pathValue !== 'number') {
       console.error(`Invalid pool path provided, value does not exist or is not a number: ${systemPath}`)
 
       return
     }
 
-    const newValue = pathValue + valueDelta
+    const maxPath = systemPath.replace(/\.value$/, '.max')
+    const maxValue = foundry.utils.getProperty(this.actor, maxPath)
+    const newValue =
+      valueDelta > 0 && typeof maxValue === 'number'
+        ? Math.min(pathValue + valueDelta, maxValue)
+        : pathValue + valueDelta
 
     await this.actor.update({ [systemPath]: newValue })
   }
