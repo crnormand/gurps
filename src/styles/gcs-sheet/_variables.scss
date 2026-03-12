@@ -1,5 +1,6 @@
 @mixin css-variables {
-  /* Layout */
+  /** SVG */
+  --gcs-caret-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23606060'/></svg>");
 
   /* GCS automatically chooses one of these two colours
    * depending on the background colour of the sheet,
@@ -11,17 +12,6 @@
   /** Header */
   --gcs-color-header-bg: $gcs-color-base-header;
   --gcs-color-header-fg: var(--color-light-fg);
-
-  /** Section */
-  // --gcs-color-surface-bg: lighten($gcs-color-base-surface, 58/53);
-  // --gcs-color-surface-fg: var(--color-dark-fg);
-  //
-  // /** Text Input */
-  // --gcs-color-input-bg: lighten($gcs-color-base-surface, 64/53);
-  // --gcs-color-input-fg: var(--color-dark-fg);
-  //
-  // /** Select Input */
-  // --gcs-color-input-bg: darken($gcs-color-base-surface, 47/53);
 
   --gcs-input-height: 1.25rem;
   --gcs-input-label-width: 4rem;
@@ -54,7 +44,10 @@
 }
 
 @mixin css-variables-dark {
-  // /* Color */
+  /** SVG */
+  --gcs-caret-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23a0a0a0'/></svg>");
+
+  /* Color */
   --gcs-color-surface-bg: #1e1e1e;
   --gcs-color-surface-fg: var(--color-light-fg);
 
