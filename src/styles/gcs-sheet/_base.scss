@@ -10,19 +10,11 @@ body {
 
   &.theme-dark {
     @include css-variables-dark;
-
-    .gcs-section .form-fields select {
-      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23a0a0a0'/></svg>");
-    }
   }
 
   @media (prefers-color-scheme: dark) {
     &:not(.theme-light) {
       @include css-variables-dark;
-
-      .gcs-section .form-fields select {
-        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23a0a0a0'/></svg>");
-      }
     }
   }
 }
@@ -172,10 +164,10 @@ body {
       select {
         appearance: none;
         padding-right: 1.25rem;
-        background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23606060'/></svg>");
         background-repeat: no-repeat;
         background-position: right 0.25rem center;
         background-size: 0.5rem;
+        background-image: var(--gcs-caret-down);
       }
     }
   }
