@@ -1113,7 +1113,7 @@ ${content}
   Handlebars.registerHelper('contrastColor', function (backgroundHex) {
     return constrastColor(backgroundHex)
   })
-  
+
   // === register Handlebars partials ===
   // Partial name will be the last component of the path name, e.g.: 'systems/gurps/templates/actor/foo.hbs" -- the name is "foo".
   // Use it in an HTML/HBS file like this: {{> foo }}.
