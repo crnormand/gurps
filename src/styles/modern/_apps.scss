@@ -126,11 +126,13 @@
           padding: 0.25rem 0.5rem;
           color: var(--ms-text-muted);
           font-style: italic;
-          background: repeating-linear-gradient(45deg,
-              transparent,
-              transparent 4px,
-              rgba(0, 0, 0, 0.05) 4px,
-              rgba(0, 0, 0, 0.05) 8px);
+          background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 4px,
+            rgba(0, 0, 0, 0.05) 4px,
+            rgba(0, 0, 0, 0.05) 8px
+          );
           border: 1px dashed var(--ms-border-light);
           border-radius: 2px;
           min-width: 3rem;

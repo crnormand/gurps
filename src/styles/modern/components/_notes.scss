@@ -430,8 +430,8 @@ aside div.tracker-tooltip {
   cursor: text;
   padding: var(--ms-space-3);
 
-  >.glinkmod,
-  >.gurpslink {
+  > .glinkmod,
+  > .gurpslink {
     color: var(--ms-accent);
     cursor: pointer;
     font-weight: bold;
