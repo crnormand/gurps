@@ -22,8 +22,8 @@
   <div class="pool-entry form-group">
     <div class="form-fields flexrow">
       <button data-action="decrementPool" data-path="{{path}}"><a class="fa-solid fa-minus"></a></button>
-      {{formInput fields.numerator value=numerator}}
-      <button data-action="incrementPool" data-path="{{path}}"><a class="fa-solid fa-plus"></a></button>
+      {{formInput fields.numerator value=numerator max=denominator}}
+      <button data-action="incrementPool" data-path="{{path}}" {{#if atMax}}disabled{{/if}}><a class="fa-solid fa-plus"></a></button>
       <label class="poolSplit">/</label>
       {{formInput fields.denominator value=denominator}}
       <label>{{localize name}}</label>

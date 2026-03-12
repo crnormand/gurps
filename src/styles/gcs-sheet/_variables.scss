@@ -8,13 +8,30 @@
   --color-dark-fg: #101010;
   --color-light-fg: #f0f0f0;
 
-  --gcs-input-height: 1.1rem;
+  /** Header */
+  --gcs-color-header-bg: $gcs-color-base-header;
+  --gcs-color-header-fg: var(--color-light-fg);
+
+  /** Section */
+  // --gcs-color-surface-bg: lighten($gcs-color-base-surface, 58/53);
+  // --gcs-color-surface-fg: var(--color-dark-fg);
+  //
+  // /** Text Input */
+  // --gcs-color-input-bg: lighten($gcs-color-base-surface, 64/53);
+  // --gcs-color-input-fg: var(--color-dark-fg);
+  //
+  // /** Select Input */
+  // --gcs-color-input-bg: darken($gcs-color-base-surface, 47/53);
+
+  --gcs-input-height: 1.25rem;
   --gcs-input-label-width: 4rem;
   --gcs-section-gap: 0.1rem;
 
   /* Fonts */
   --gcs-font-size-header: 1rem;
+
   --gcs-font-size-content: 0.875rem;
+  --gcs-font-size-select: 0.8rem;
 
   /* Color */
   --gcs-color-surface-bg: #e8e8e8;
@@ -23,7 +40,7 @@
   --gcs-color-header-bg: #505050;
   --gcs-color-header-fg: var(--color-light-fg);
 
-  --gcs-color-banding-bg: #e8e8d8;
+  --gcs-color-banding-bg: #e4e4d8;
   --gcs-color-banding-fg: var(--color-dark-fg);
 
   --gcs-color-focus-bg: #006199;
@@ -37,7 +54,7 @@
 }
 
 @mixin css-variables-dark {
-  /* Color */
+  // /* Color */
   --gcs-color-surface-bg: #1e1e1e;
   --gcs-color-surface-fg: var(--color-light-fg);
 
