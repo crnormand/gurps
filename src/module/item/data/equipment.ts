@@ -31,6 +31,24 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   /* ---------------------------------------- */
 
+  get carried(): boolean {
+    if (this.isContained) {
+      const container = this.container!
+
+      if (!container.isOfType('equipmentV2')) {
+        ui.notifications?.error(
+          `Expected container of equipment item to be of type "equipmentV2", but got "${container.type}"`
+        )
+
+        return this._carried
+      }
+
+      return container.system.carried
+    }
+
+    return this._carried
+  }
+
   override get enabled(): boolean {
     return this.equipped && this.carried
   }
@@ -86,8 +104,12 @@ const equipmentSchema = () => {
     /** The stored location of this item, e.g. "Backpack", "Belt Pouch", etc. */
     location: new fields.StringField({ required: true, nullable: false }),
 
-    /** Whether this item is currently being carried by the character. */
-    carried: new fields.BooleanField({ required: true, nullable: false }),
+    /**
+     * Whether this item is currently being carried by the character.
+     * This value is ignored for items that are contained within another item,
+     * in which case the container's carried value is used instead.
+     */
+    _carried: new fields.BooleanField({ required: true, nullable: false, initial: true }),
 
     /** Whether this item is currently equipped by the character. */
     equipped: new fields.BooleanField({ required: true, nullable: false }),
