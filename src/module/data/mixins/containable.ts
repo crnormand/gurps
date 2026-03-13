@@ -55,6 +55,9 @@ interface IContainable<T = any> {
 
   /** Check if this object is contained by (directly or indirectly) the specified container. */
   isContainedBy(item: T): boolean
+
+  /** Toggle the open state of this container. */
+  toggleOpen(): void | Promise<void>
 }
 
 /* ---------------------------------------- */

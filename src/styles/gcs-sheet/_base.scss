@@ -126,7 +126,7 @@ body {
       padding-left: 0.25rem;
 
       /* make the actual control fill the field cell */
-      > :is(input, textarea) {
+      :is(input, textarea) {
         width: 100%;
         box-sizing: border-box;
         line-height: var(--gcs-input-height);
@@ -171,30 +171,30 @@ body {
       }
     }
   }
+}
 
-  .gcs-table {
-    margin: 0;
+.gcs-table {
+  margin: 0;
 
-    thead,
-    tfoot {
-      @include gcs-header;
-      justify-content: space-evenly;
-    }
+  thead,
+  tfoot {
+    @include gcs-header;
+    justify-content: space-evenly;
+  }
 
-    td,
-    th {
-      white-space: nowrap;
-      padding: 0.15rem 0.25rem;
-    }
+  td,
+  th {
+    white-space: nowrap;
+    padding: 0.15rem 0.25rem;
+  }
 
-    tbody {
-      background-color: var(--gcs-color-surface-bg);
-      color: var(--gcs-color-surface-fg);
+  tbody {
+    background-color: var(--gcs-color-surface-bg);
+    color: var(--gcs-color-surface-fg);
 
-      tr:nth-child(even) {
-        background-color: var(--gcs-color-banding-bg);
-        color: var(--gcs-color-banding-fg);
-      }
+    tr:nth-child(even) {
+      background-color: var(--gcs-color-banding-bg);
+      color: var(--gcs-color-banding-fg);
     }
   }
 }

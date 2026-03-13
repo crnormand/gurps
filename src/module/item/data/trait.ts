@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayTrait } from '@gurps-types/gurps/display-item.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
@@ -22,6 +23,14 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
   /* ---------------------------------------- */
 
+  static override get sortKeys(): Record<string, string> {
+    return foundry.utils.mergeObject(super.sortKeys, {
+      points: 'system.points',
+    })
+  }
+
+  /* ---------------------------------------- */
+
   get selfControlNote(): string {
     if (this.cr === null) return ''
 
@@ -36,6 +45,22 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
     return source
   }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayTrait {
+    const fullName = this.level !== null ? `${this.parent.name} ${this.level}` : this.parent.name
+
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      level: this.level,
+      fullName,
+      points: this.points,
+      cr: this.cr,
+      crOTF: this.selfControlNote,
+    })
+  }
+
+  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */
