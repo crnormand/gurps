@@ -508,12 +508,12 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     // match its carried state.
     const childUpdates = item.isOfType('equipmentV2')
       ? item.system.children.map(child => {
-          return { _id: child._id, 'system.carried': carried }
+          return { _id: child._id, 'system._carried': carried }
         })
       : []
 
     await this.actor.updateEmbeddedDocuments('Item', [
-      { _id: item._id, 'system.containedBy': containedBy, 'system.carried': carried, sort } as Record<string, unknown>,
+      { _id: item._id, 'system.containedBy': containedBy, 'system._carried': carried, sort } as Record<string, unknown>,
       ...childUpdates,
     ])
   }
