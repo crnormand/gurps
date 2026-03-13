@@ -1,8 +1,8 @@
+import type { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { COSTS_REGEX } from '@util/parselink.js'
-import { zeroFill } from '@util/utilities.js'
 
 /**
- * If the desc contains *Cost ?FP or *Max:9 then perform action
+ * If the desc contains *Cost ?FP or *Max:? then perform action
  * @param {GurpsActor|User} actor
  * @param {string} description
  * @returns {null|number} an overriding MAX value if *Max is found, otherwise null.
@@ -62,19 +62,25 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
     await actor.update({ [`system.${key}.value`]: resourceValue - cost })
   } else if (target.match(/^tr\d+/i)) {
     // Match "trNNNN" where NNNN is the tracker number.
-    const key = zeroFill(Number(target.replace(/^tr/i, '')), 4)
+    const key = Number(target.replace(/^tr/i, ''))
 
-    const trackerValue = foundry.utils.getProperty(actor, `system.additionalresources.tracker.${key}.value`) as number
+    const trackerCollection = actor.system.additionalresources?.tracker?.contents
 
-    if (trackerValue === undefined || trackerValue === null) {
+    if (!trackerCollection) {
       ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: `tr${key}` }))
 
       return
     }
 
-    await actor.update({
-      [`system.additionalresources.tracker.${key}.value`]: trackerValue - cost,
-    })
+    const tracker = trackerCollection[key]
+
+    if (tracker === undefined || tracker === null) {
+      ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: `tr${key}` }))
+
+      return
+    }
+
+    tracker.value = tracker.value - cost
   } else if (target.match(/^tr\(.+\)/i)) {
     // Format "tr(TRACKER NAME)" where TRACKER NAME is the name of the tracker.
     let trackerName = target.replace(/^tr\((.+)\)/i, '$1').trim()
@@ -87,7 +93,15 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
       trackerName = trackerName.slice(1, -1)
     }
 
-    const tracker = (actor.trackersByName as Record<string, any>)[trackerName]
+    const trackerCollection = actor.system.additionalresources?.tracker?.contents
+
+    if (!trackerCollection) {
+      ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: trackerName }))
+
+      return
+    }
+
+    const tracker = trackerCollection.find((it: TrackerInstance) => it.name === trackerName)
 
     if (!tracker) {
       ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: trackerName }))
@@ -95,20 +109,7 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
       return
     }
 
-    const trackerCurrentValue = foundry.utils.getProperty(
-      actor,
-      `system.additionalresources.tracker.${tracker.key}.value`
-    ) as number
-
-    if (trackerCurrentValue === undefined || trackerCurrentValue === null) {
-      ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: trackerName }))
-
-      return
-    }
-
-    await actor.update({
-      [`system.additionalresources.tracker.${tracker.key}.value`]: trackerCurrentValue - cost,
-    })
+    tracker.value = tracker.value - cost
   } else {
     // Build a list of possible resource pools based on the actor's HP, FP, and Trackers. Prompt the user to select one.
     const costs: Record<string, string> = {}
@@ -119,26 +120,12 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
 
     const trackerCollection = system.additionalresources?.tracker
 
-    if (trackerCollection && typeof (trackerCollection as any).entries === 'function') {
-      // v2-style tracker collection
-      for (const [key, tracker] of (trackerCollection as any).entries()) {
-        const trackerName = (tracker?.name ?? '').toString().trim()
-        const label = trackerName !== '' ? trackerName : `Tracker ${key}`
-        const value = tracker?.value ?? ''
+    for (const [key, tracker] of (trackerCollection as any).entries()) {
+      const trackerName = (tracker?.name ?? '').toString().trim()
+      const label = trackerName !== '' ? trackerName : `Tracker ${key}`
+      const value = tracker?.value ?? ''
 
-        costs[`system.additionalresources.tracker.${key}.value`] = `${label} (${value})`
-      }
-    } else {
-      // Fallback for plain-object tracker storage
-      const trackerObject = (trackerCollection ?? {}) as Record<string, any>
-
-      for (const [key, tracker] of Object.entries(trackerObject)) {
-        const trackerName = (tracker?.name ?? '').toString().trim()
-        const label = trackerName !== '' ? trackerName : `Tracker ${key}`
-        const value = tracker?.value ?? ''
-
-        costs[`system.additionalresources.tracker.${key}.value`] = `${label} (${value})`
-      }
+      costs[key] = `${label} (${value})`
     }
 
     // If there are no valid costs, show a warning notification to the users that the cost was not applied.
@@ -149,6 +136,7 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
     }
 
     // Unknown resource type: prompt the user for either HP, FP, or a Tracker name.
+    // Response will be either 'system.HP.value', 'system.FP.value', or the tracker key.
     const defaultCostKey = costs[`system.FP.value`] ? 'system.FP.value' : Object.keys(costs)[0]
     const response = await askUserForEnergyPool(costs, defaultCostKey)
 
@@ -158,15 +146,28 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
       return
     }
 
-    const resourceValue = foundry.utils.getProperty(actor, response) as number
+    if (response.startsWith('system.')) {
+      const resourceValue = foundry.utils.getProperty(actor, response) as number
 
-    if (resourceValue === undefined || resourceValue === null) {
-      ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: response }))
+      if (resourceValue === undefined || resourceValue === null) {
+        ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: response }))
 
-      return
+        return
+      }
+
+      await actor.update({ [response]: resourceValue - cost })
+    } else {
+      // If it doesn't start with 'system.', treat the response as a tracker key.
+      const tracker = actor.system.additionalresources?.tracker?.get(response)
+
+      if (!tracker) {
+        ui.notifications!.warn(game.i18n!.format('GURPS.otf.trackerNotFound', { tracker: response }))
+
+        return
+      }
+
+      tracker.value = tracker.value - cost
     }
-
-    await actor.update({ [response]: resourceValue - cost })
   }
 }
 

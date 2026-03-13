@@ -4,13 +4,13 @@
  * Determine the luminescence of the provided background color, and return either a light or dark foreground color to
  * contrast with it.
  *
- * @param {string} backgroundHex - The background color in hexadecimal format (e.g., '#ff0000' for red).
+ * @param {string} backgroundHex - The background color as a 6-digit hex string (e.g., '#ff0000' for red).
  * @param {string} darkColor - The color to use for dark foreground elements.
  * @param {string} lightColor - The color to use for light foreground elements.
  * @returns {string} - The appropriate foreground color based on the background color's luminescence.
  */
 export function constrastColor(backgroundHex: string, darkColor = '#1c1a17', lightColor = '#f8f6f2'): string {
-  if (!backgroundHex || !/^#([0-9A-Fa-f]{3}){1,2}$/.test(backgroundHex)) {
+  if (!backgroundHex || !/^#[0-9A-Fa-f]{6}$/.test(backgroundHex)) {
     console.warn(
       `Invalid background color provided to constrastColor: ${backgroundHex}. Falling back to default colors.`
     )

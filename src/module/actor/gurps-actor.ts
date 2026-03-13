@@ -20,7 +20,11 @@ import { ModelCollection } from '../data/model-collection.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
-import { IResourceTracker, IResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/index.js'
+import {
+  IResourceTracker,
+  IResourceTrackerTemplate,
+  ResourceTrackerManager,
+} from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../util/damage-utils.js'
 
@@ -2622,7 +2626,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   get trackersByName() {
     // Convert this.system.additionalresources.tracker into an object keyed by tracker.name.
-    const byName: Record<string, TrackerInstance> = {}
+    const byName: Record<string, IResourceTracker> = {}
 
     for (const [_key, value] of Object.entries(this.modelV1.additionalresources.tracker ?? {})) {
       byName[`${value.name}`] = value
@@ -2762,11 +2766,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * Adds any assigned resource trackers to the actor data and sheet.
    */
   private async setResourceTrackers() {
-    /** @type {TrackerInstance[]} */
+    /** @type {IResourceTracker[]} */
     const currentTrackers: IResourceTracker[] = GurpsActorV2.getTrackersAsArray(this.system)
 
-    const newTrackers: IResourceTrackerTemplate[] =
-      GURPS.modules.ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
+    const newTrackers: IResourceTrackerTemplate[] = ResourceTrackerManager.getMissingRequiredTemplates(currentTrackers)
 
     // If no new trackers were added, nothing to do.
     if (newTrackers.length === 0) return
@@ -4669,7 +4672,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   ): Record<string, any> {
     const trackers = GurpsActorV2.getTrackersAsArray(data)
 
-    trackers.push(trackerData as TrackerInstance)
+    trackers.push(trackerData as IResourceTracker)
 
     return arrayToObject(trackers)
   }
@@ -4677,7 +4680,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * @deprecated Actor v1 only.
    */
-  private static getTrackersAsArray(data: Record<string, any>): TrackerInstance[] {
+  private static getTrackersAsArray(data: Record<string, any>): IResourceTracker[] {
     let trackerArray = data.additionalresources.tracker
 
     if (!trackerArray) trackerArray = {}

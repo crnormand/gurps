@@ -213,17 +213,19 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
 
         if (!field) return
 
-        if (target.id === 'alias') {
-          const alias = target.value
+        let value: unknown = target.value
 
-          if (!/^[A-Za-z0-9_+-]+$/.test(alias)) {
-            ui.notifications!.warn(game.i18n!.format('GURPS.resourceTracker.edit.invalidAlias', { alias: alias }))
+        if (target.id === 'alias') {
+          const temp = target.value 
+          
+          if (!/^[A-Za-z0-9_+-]*$/.test(temp)) {
+            ui.notifications!.warn(game.i18n!.format('GURPS.resourceTracker.edit.invalidAlias', { alias: temp }))
 
             return
           }
-        }
 
-        let value: unknown = target.value
+          if (temp === '') value = null
+        }
 
         if (target instanceof HTMLInputElement && target.type === 'checkbox') {
           value = target.checked

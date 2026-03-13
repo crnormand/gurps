@@ -1206,10 +1206,19 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       return
     }
 
+    // For the old character sheet assume key is the index into an array of trackers.
     const key = pathAndKey.split('.').slice(-1)[0]
 
-    const trackers = this.actor.system.additionalresources.tracker || {}
-    const tracker = trackers.contents[parseInt(key)]
+    const index = parseInt(key)
+
+    if (isNaN(index)) {
+      ui.notifications.error(game.i18n.format('GURPS.resourceTracker.trackerNotFound', { key: pathAndKey }))
+
+      return
+    }
+
+    const trackers = this.actor.system.additionalresources?.tracker?.contents || []
+    const tracker = trackers[index]
 
     if (!tracker) {
       ui.notifications.error(game.i18n.format('GURPS.resourceTracker.trackerNotFound', { key: pathAndKey }))

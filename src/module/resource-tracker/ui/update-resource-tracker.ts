@@ -1,6 +1,8 @@
 import { TrackerInstance } from '../resource-tracker.js'
 import { IResourceTracker } from '../types.js'
 
+import { ResourceTrackerEditorV2 } from './resource-tracker-editor-v2.ts'
+
 export async function updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance): Promise<void> {
   const trackerData = JSON.parse(JSON.stringify(tracker)) as IResourceTracker
 
@@ -8,7 +10,7 @@ export async function updateResourceTracker(actor: Actor.Implementation, tracker
     onUpdate: (editedTracker: IResourceTracker) => Promise<void>
   }
 
-  const dialog = new GURPS.modules.ResourceTracker.TrackerEditorV2(trackerData, {
+  const dialog = new ResourceTrackerEditorV2(trackerData, {
     onUpdate: async (editedTracker: IResourceTracker): Promise<void> => {
       await tracker.update(editedTracker as any)
     },

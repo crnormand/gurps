@@ -1,12 +1,10 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { migrate } from './migration.js'
-import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import { TrackerInstance } from './resource-tracker.js'
 import { initializeSettings } from './settings.js'
 import { IResourceTracker, IResourceTrackerTemplate } from './types.js'
-import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.js'
 import { updateResourceTracker } from './ui/update-resource-tracker.js'
 
 function init() {
@@ -43,14 +41,13 @@ function init() {
  * @example
  * interface ResourceTrackerModule extends GurpsModule {
  *   TemplateManager: typeof ResourceTrackerManager
- *   TrackerEditor: typeof ResourceTrackerEditor
  *   getTrackerTemplates(): ResourceTrackerTemplate[]
  *}
  *
  * export const ResourceTracker: ResourceTrackerModule = {
  *  init,
  *  TemplateManager: ResourceTrackerManager,
- *  TrackerEditor: ResourceTrackerEditor,
+ *  TrackerEditorV2: ResourceTrackerEditorV2,
  *  getTrackerTemplates(): ResourceTrackerTemplate[] {
  *     return game.settings.get(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES)
  *   }
@@ -59,9 +56,6 @@ function init() {
  * const templates = ResourceTracker.getTrackerTemplates()
  */
 interface ResourceTrackerModule extends GurpsModule {
-  TemplateManager: typeof ResourceTrackerManager
-  TrackerEditor: typeof ResourceTrackerEditor
-  TrackerEditorV2: typeof ResourceTrackerEditorV2
   updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance, trackerId?: string): Promise<void>
   getAllTemplatesMap(): Record<string, IResourceTrackerTemplate>
   getMissingRequiredTemplates(currentTrackers: IResourceTracker[]): IResourceTrackerTemplate[]
@@ -70,9 +64,6 @@ interface ResourceTrackerModule extends GurpsModule {
 export const ResourceTrackerModule: ResourceTrackerModule = {
   init,
   migrate,
-  TemplateManager: ResourceTrackerManager,
-  TrackerEditor: ResourceTrackerEditor,
-  TrackerEditorV2: ResourceTrackerEditorV2,
   updateResourceTracker,
   getAllTemplatesMap: ResourceTrackerManager.getAllTemplatesMap,
   getMissingRequiredTemplates: ResourceTrackerManager.getMissingRequiredTemplates,

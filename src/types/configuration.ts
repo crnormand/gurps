@@ -1,8 +1,8 @@
-import { CharacterModel, GcsCharacterModel } from '@module/actor/data/index.js'
+import type { CharacterModel, GcsCharacterModel } from '@module/actor/data/index.js'
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import type { ActorV1Model } from '@module/actor/legacy/actorv1-interface.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
-import { MapField } from '@module/data/fields/map-field.js'
+import type { MapField } from '@module/data/fields/map-field.js'
 import type GurpsActiveEffect from '@module/effects/active-effect.js'
 import type {
   EquipmentModel,
@@ -19,10 +19,10 @@ import type {
 } from '@module/item/data/index.js'
 import type { GurpsItemV2 } from '@module/item/gurps-item.js'
 import type { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
-import { IResourceTrackerTemplate, ResourceTrackerManager } from '@module/resource-tracker/index.js'
+import type { IResourceTrackerTemplate, ResourceTrackerManager } from '@module/resource-tracker/index.js'
 import type { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import type { GurpsToken } from '@module/token/gurps-token.js'
-import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
+import type { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
