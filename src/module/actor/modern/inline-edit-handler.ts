@@ -465,6 +465,7 @@ export function bindAllTrackerEdits(html: HTMLElement, actor: Actor.Implementati
 
         if (!trackerKey) {
           inputElement.blur()
+
           return
         }
 
@@ -472,6 +473,7 @@ export function bindAllTrackerEdits(html: HTMLElement, actor: Actor.Implementati
 
         if (!map) {
           inputElement.blur()
+
           return
         }
 

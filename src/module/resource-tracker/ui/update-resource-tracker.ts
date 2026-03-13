@@ -1,7 +1,7 @@
 import { TrackerInstance } from '../resource-tracker.js'
 import { IResourceTracker } from '../types.js'
 
-import { ResourceTrackerEditorV2 } from './resource-tracker-editor-v2.ts'
+import { ResourceTrackerEditorV2 } from './resource-tracker-editor-v2.js'
 
 export async function updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance): Promise<void> {
   const trackerData = JSON.parse(JSON.stringify(tracker)) as IResourceTracker

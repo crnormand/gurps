@@ -118,9 +118,10 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
     if (system.HP) costs[`system.HP.value`] = `${game.i18n!.localize('GURPS.HP')} (${system.HP.value})`
     if (system.FP) costs[`system.FP.value`] = `${game.i18n!.localize('GURPS.FP')} (${system.FP.value})`
 
-    const trackerCollection = system.additionalresources?.tracker
+    // Set trackerCollection to an empty Map if it doesn't exist to avoid errors when calling .entries() later.
+    const trackerCollection = system.additionalresources?.tracker ?? new Map()
 
-    for (const [key, tracker] of (trackerCollection as any).entries()) {
+    for (const [key, tracker] of trackerCollection.entries()) {
       const trackerName = (tracker?.name ?? '').toString().trim()
       const label = trackerName !== '' ? trackerName : `Tracker ${key}`
       const value = tracker?.value ?? ''
