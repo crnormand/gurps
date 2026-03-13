@@ -154,7 +154,9 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
 
     value = this.isMaxEnforced && value > this.max ? this.max : value
 
-    this.update({ currentValue: value })
+    void this.update({ currentValue: value }).catch(error => {
+      console.error('Failed to update tracker value', error)
+    })
   }
 
   resetValue() {
