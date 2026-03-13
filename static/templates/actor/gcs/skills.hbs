@@ -46,6 +46,7 @@
   {{/if}}
 {{/inline}}
 
+<div class="gcs-item-table-container">
 <table class="gcs-table gcs-item-table gcs-skill-table ">
   <colgroup>
     <col class="gcs-col-name">
@@ -56,19 +57,19 @@
   <thead>
     <tr>
       <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.skills.name}}">
-        Skill / Technique <i class="fa-solid fa-sort gcs-sort-icon"></i>
+        Skill / Technique
       </th>
       <th class="gcs-sortable" data-action="sortItems"
         data-sort-by="{{sortKeys.skills.level}}">
-        SL<i class="fa-solid fa-sort gcs-sort-icon"></i>
+        SL
       </th>
       <th class="gcs-sortable" data-action="sortItems"
         data-sort-by="{{sortKeys.skills.rsl}}">
-        RSL<i class="fa-solid fa-sort gcs-sort-icon"></i>
+        RSL
       </th>
       <th class="gcs-sortable" data-action="sortItems"
         data-sort-by="{{sortKeys.skills.points}}">
-        Pts <i class="fa-solid fa-sort gcs-sort-icon"></i>
+        Pts
       </th>
     </tr>
   </thead>
@@ -82,3 +83,4 @@
     {{/each}}
   </tbody>
 </table>
+</div>

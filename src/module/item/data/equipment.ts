@@ -1,4 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayEquipment } from '@gurps-types/gurps/display-item.js'
+import { Weight } from '@module/data/common/weight.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
@@ -15,8 +17,15 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
-      type: 'equipment',
-      childTypes: ['equipment'],
+      type: 'equipmentV2',
+      childTypes: ['equipmentV2'],
+      sortKeys: {
+        quantity: 'system.quantity',
+        value: 'system.cost',
+        extendedValue: 'system.costsum',
+        weight: 'system.weight',
+        extendedWeight: 'system.weightsum',
+      },
     })
   }
 
@@ -42,6 +51,22 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
     if (!this.equipped) return []
 
     return super.getGlobalBonuses()
+  }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayEquipment {
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      equipped: this.equipped,
+      carried: this.carried,
+      quantity: this.count,
+      techLevel: this.techlevel,
+      legalityClass: this.legalityclass,
+      value: this.cost,
+      extendedValue: this.costsum,
+      weight: Weight.from(this.weight, Weight.Unit.Pound, true).toObject(),
+      extendedWeight: Weight.from(this.weightsum, Weight.Unit.Pound, true).toObject(),
+    })
   }
 }
 

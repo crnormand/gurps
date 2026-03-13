@@ -1,4 +1,4 @@
-import { DisplaySkill, DisplaySpell, DisplayTrait } from '@gurps-types/gurps/display-item.js'
+import { DisplayEquipment, DisplaySkill, DisplaySpell, DisplayTrait } from '@gurps-types/gurps/display-item.js'
 import { isHTMLElement } from '@module/util/guards.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
@@ -40,6 +40,8 @@ namespace GurpsActorGcsSheet {
     traits: DisplayTrait[]
     skills: DisplaySkill[]
     spells: DisplaySpell[]
+    carriedEquipment: DisplayEquipment[]
+    otherEquipment: DisplayEquipment[]
     sortKeys: Record<string, Record<string, string>>
   }
 }
@@ -87,6 +89,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     spells: {
       template: this.systemPath('gcs/spells.hbs'),
     },
+    equipment: {
+      template: this.systemPath('gcs/equipment.hbs'),
+    },
   }
 
   /* ---------------------------------------- */
@@ -109,9 +114,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       moveModeChoices,
       pools: this._preparePools(),
       liftingMoving: this._prepareLiftingMoving(),
-      traits: this.actor.system.adsV2.map(trait => trait.system.toDisplayItem()),
-      skills: this.actor.system.skillsV2.map(trait => trait.system.toDisplayItem()),
-      spells: this.actor.system.spellsV2.map(trait => trait.system.toDisplayItem()),
+      traits: this.actor.system.adsV2.map(item => item.system.toDisplayItem()),
+      skills: this.actor.system.skillsV2.map(item => item.system.toDisplayItem()),
+      spells: this.actor.system.spellsV2.map(item => item.system.toDisplayItem()),
+      carriedEquipment: this.actor.system.equipmentV2.carried.map(item => item.system.toDisplayItem()),
+      otherEquipment: this.actor.system.equipmentV2.other.map(item => item.system.toDisplayItem()),
       sortKeys,
     }
   }

@@ -36,6 +36,7 @@
   {{/if}}
 {{/inline}}
 
+<div class="gcs-item-table-container">
 <table class="gcs-table gcs-item-table gcs-trait-table ">
   <colgroup>
     <col class="gcs-col-name">
@@ -43,13 +44,8 @@
   </colgroup>
   <thead>
     <tr>
-      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.traits.name}}">
-        {{localize "GURPS.advantagesTab"}} <i class="fa-solid fa-sort gcs-sort-icon"></i>
-      </th>
-      <th class="gcs-sortable" data-action="sortItems"
-        data-sort-by="{{sortKeys.traits.points}}">
-        Pts <i class="fa-solid fa-sort gcs-sort-icon"></i>
-      </th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.traits.name}}">{{localize "GURPS.advantagesTab"}}</th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.traits.points}}">Pts</th>
     </tr>
   </thead>
   <tbody>
@@ -62,3 +58,4 @@
     {{/each}}
   </tbody>
 </table>
+</div>
