@@ -1715,6 +1715,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
+  getCollectionForItemType(itemType: Item.SubType, carried = true): Item.Implementation[] {
+    switch (itemType) {
+      case 'featureV2':
+        return this.adsV2
+      case 'skillV2':
+        return this.skillsV2
+      case 'spellV2':
+        return this.spellsV2
+      case 'equipmentV2':
+        return carried ? this.equipmentV2.carried : this.equipmentV2.other
+      default:
+        return []
+    }
+  }
+
+  /* ---------------------------------------- */
+
   // #validDRChanges(changes: Record<string, any>): Record<string, any> {
   //   const array = foundry.utils.deepClone(this._source.hitlocationsV2)
   //   const regex = /^system\.hitlocationsV2\.(\d+)\..*/

@@ -4,6 +4,7 @@ import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
+import { resolveItemDropPosition } from './helpers.js'
 
 import ActorSheet = gurps.applications.ActorSheet
 
@@ -373,7 +374,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
   /* ---------------------------------------- */
 
   protected override _onDragStart(event: DragEvent) {
-    console.log('Drag started:', event)
     const element = event.currentTarget
 
     if (!isHTMLElement(element)) return
@@ -409,43 +409,113 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
   /* ---------------------------------------- */
 
-  protected override _onDragOver(event: DragEvent): void {
-    const element = event.target as HTMLElement
-  }
+  // protected override _onDragOver(event: DragEvent): void {
+  //   const element = event.target as HTMLElement
+  // }
 
   /* ---------------------------------------- */
 
   protected async _onDropItem(event: DragEvent, itemData: DragData): Promise<void> {
-    const target = event.target as HTMLElement
-    const newParentId = target.closest<HTMLElement>('[data-item-id]')?.dataset.itemId ?? null
-
-    if (!newParentId) return
+    const element = event.target as HTMLElement
+    const targetId = element.closest<HTMLElement>('[data-item-id]')?.dataset.itemId ?? null
 
     const item = await fromUuid<Item.Implementation>(itemData.uuid)
 
     if (!item || !item.isOwner) return
 
-    const newParent = this.actor.items.get(newParentId)
+    // target is the target item on which the dropped item is dropped.
+    let target = targetId ? (this.actor.items.get(targetId) ?? null) : null
 
-    if (!newParent) return
+    if (target && target.type !== item.type) {
+      ui.notifications?.warn('GURPS.dragDrop.itemTypeMismatch', { localize: true })
 
+      return
+    }
+
+    // If the target is an item, we need to find out whether it is carried to be able to put the dragged
+    // item in the right list
+    let carried = true
+
+    if (target) {
+      if (target.isOfType('equipmentV2')) carried = target.system.carried
+    } else {
+      const tableId = element.closest<HTMLElement>('[data-table-id]')?.dataset.tableId
+
+      carried = tableId === 'carriedEquipment'
+    }
+
+    // Decide whether the dropped item should go inside or before the target item.
+    const dropPosition = target ? await resolveItemDropPosition(item) : null
+
+    /**
+     * Begin preparing the sort update. By default, the sort siblings of the dropped item
+     * are the top-level items in a given section corresponding to its item type (e.g. traits, skills, spells,
+     * equipment). If the item is dropped inside another item, then the siblings are the children of the target item.
+     */
+    let siblings = this.actor.system.getCollectionForItemType(item.type, carried)
+    let containedBy = target?.system.containedBy ?? null
+    let targetContainer = target?.system.container ?? null
+
+    if (dropPosition === 'inside') {
+      // If the user selected "inside", the target item is now the container to drop the dropped item
+      // into, and the new target is the first child of the container.
+      containedBy = targetId
+      targetContainer = target
+
+      siblings = target?.system.children ?? []
+      target = siblings[0]
+    } else {
+      // If the user did not select "inside", the container is the item which contains the target
+      // item, and the sivlings are the children of that container. If the target item is a top-level item, then the
+      // container is null and the siblings are the top-level items of the section.
+      targetContainer = target?.system.container ?? null
+
+      if (targetContainer) siblings = targetContainer.system.children
+    }
+
+    // Sort the dropped item in relation to the target item, keeping the target's siblings as siblings.
+    // This should return an array containing a sort update for the dropped item.
+    const sortUpdates = foundry.utils.performIntegerSort(item, { target, siblings, sortBefore: true })
+
+    // Extract the new sort value for the dropped item from the sort updates returned by performIntegerSort
+    const sort = sortUpdates.find(update => update.target._id === item.id)?.update.sort
+
+    // If the item came from somewhere other than the current actor, create the item on the actor.
     if (item.actor !== this.actor) {
       await this.actor.createEmbeddedDocuments('Item', [
         foundry.utils.mergeObject(item.toObject(), {
-          system: { containedBy: newParentId },
+          sort,
+          system: { containedBy, carried },
         }),
       ])
 
       return
     }
 
-    if (item.system.containsItem(newParent)) {
-      console.warn('Cannot move item into one of its descendants')
+    // If the target or the new parent is a child of the dropped item, we cannot move the item
+    // into the target container, as that would create a circular containment relationship. In that case, we log a
+    // warning and do not move the item.
+    if (
+      (target && item.system.containsItem(target)) ||
+      (targetContainer && item.system.containsItem(targetContainer))
+    ) {
+      ui.notifications?.warn('GURPS.dragDrop.itemContainerLoop', { localize: true })
 
       return
     }
 
-    await item.update({ 'system.containedBy': newParentId } as Record<string, unknown>)
+    // If the dropped item is an equipment container, its contents need to
+    // match its carried state.
+    const childUpdates = item.isOfType('equipmentV2')
+      ? item.system.children.map(child => {
+          return { _id: child._id, 'system.carried': carried }
+        })
+      : []
+
+    await this.actor.updateEmbeddedDocuments('Item', [
+      { _id: item._id, 'system.containedBy': containedBy, 'system.carried': carried, sort } as Record<string, unknown>,
+      ...childUpdates,
+    ])
   }
 }
 

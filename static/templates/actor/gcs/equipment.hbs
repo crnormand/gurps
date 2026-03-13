@@ -3,7 +3,7 @@
       data-item-id="{{id}}"
       data-has-children="{{hasChildren}}"
       draggable="true">
-    {{#if carried}}
+    {{#if carriedTable}}
     <td class="gcs-item-equipped">
       {{#if equipped}}
       <i class="fa-solid fa-check"></i>
@@ -44,7 +44,7 @@
   </tr>
   {{#if (and hasChildren childrenOpen)}}
   {{#each children}}
-    {{> ".equipmentEntry"}}
+    {{> ".equipmentEntry" carriedTable=../carriedTable}}
   {{/each}}
   {{/if}}
 {{/inline}}
@@ -103,10 +103,10 @@
     </thead>
     <tbody>
       {{#each carriedEquipment}}
-        {{> ".equipmentEntry"}}
+        {{> ".equipmentEntry" carriedTable=true}}
       {{else}}
       <tr class="gcs-item-empty">
-        <td colspan="2">{{localize "GURPS.none"}}</td>
+        <td colspan="9">{{localize "GURPS.none"}}</td>
       </tr>
       {{/each}}
     </tbody>
@@ -161,10 +161,10 @@
     </thead>
     <tbody>
       {{#each otherEquipment}}
-        {{> ".equipmentEntry"}}
+        {{> ".equipmentEntry" carriedTable=false}}
       {{else}}
       <tr class="gcs-item-empty">
-        <td colspan="2">{{localize "GURPS.none"}}</td>
+        <td colspan="8">{{localize "GURPS.none"}}</td>
       </tr>
       {{/each}}
     </tbody>

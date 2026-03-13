@@ -1,7 +1,7 @@
 import { ImportSettings } from '@module/importer/index.js'
 import { getUser } from '@module/util/guards.js'
 
-import { ActorImporter } from './actor-importer.js'
+import { ActorImporter } from '../actor-importer.js'
 
 import DragDrop = foundry.applications.ux.DragDrop
 import ActorSheet = gurps.applications.ActorSheet
