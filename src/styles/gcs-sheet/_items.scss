@@ -2,6 +2,21 @@
   width: 100%;
   table-layout: fixed;
 
+  colgroup {
+    col.gcs-col-name {
+      width: auto;
+    }
+    col.gcs-col-level {
+      width: 2.5rem;
+    }
+    col.gcs-col-rsl {
+      width: 2.5rem;
+    }
+    col.gcs-col-points {
+      width: 2.5rem;
+    }
+  }
+
   th.gcs-sortable {
     cursor: pointer;
     user-select: none;
@@ -98,6 +113,10 @@
 
   tr.gcs-drag-over {
     outline: 2px solid var(--gcs-color-focus-bg);
+  }
+
+  td {
+    white-space: unset;
   }
 
   .gcs-item-empty td {

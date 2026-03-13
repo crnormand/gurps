@@ -1069,6 +1069,7 @@ Portrait will not be imported.`
       duration: spell.duration ?? '',
       resist: spell.resist ?? '',
       casttime: spell.casting_time ?? '',
+      techlevel: spell.tech_level ?? '',
     }
 
     spell.childItems?.forEach((child: GcsSpell, childIndex: number) => this.#importSpell(child, childIndex, _id))

@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplaySpell } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@util/parselink.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
@@ -24,14 +25,15 @@ class SpellModel extends BaseItemModel<SpellSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): ItemMetadata {
-    return {
-      embedded: {},
+    return foundry.utils.mergeObject(super.metadata, {
       type: 'spellV2',
-      invalidActorTypes: [],
-      actions: {},
       childTypes: ['spellV2'],
-      modifierTypes: [],
-    }
+      sortKeys: {
+        points: 'system.points',
+        level: 'system.level',
+        relativeLevel: 'system.relativelevel',
+      },
+    })
   }
 
   /* ---------------------------------------- */
@@ -103,6 +105,29 @@ class SpellModel extends BaseItemModel<SpellSchema> {
       }
     }
   }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplaySpell {
+    let fullName = this.name
+
+    if (this.techlevel) fullName += `/TL${this.techlevel}`
+
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      level: this.level,
+      relativeLevel: this.relativelevel,
+      fullName,
+      points: this.points,
+      spellClass: this.class,
+      colleges: this.college.split(',').map(college => college.trim()),
+      castingCost: this.cost,
+      maintenanceCost: this.maintain,
+      duration: this.duration,
+      resist: this.resist,
+      castingTime: this.casttime,
+      techLevel: this.techlevel,
+    })
+  }
 }
 
 /* ---------------------------------------- */
@@ -141,6 +166,9 @@ const spellSchema = () => {
 
     /** The level of this spell relative to its controlling attriute, e.g. "IQ-2" */
     relativelevel: new fields.StringField({ required: true, nullable: false }),
+
+    /** The tech level of this spell, if any. */
+    techlevel: new fields.StringField({ required: true, nullable: true, initial: null }),
 
     /** Any OTF formulas associated witht this spell. */
     otf: new fields.StringField({ required: true, nullable: false }),
