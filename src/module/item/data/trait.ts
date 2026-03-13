@@ -52,6 +52,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
       points: this.points,
       cr: this.cr,
       crOTF: this.selfControlNote,
+      enabled: this.enabled,
     })
   }
 }

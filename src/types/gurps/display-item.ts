@@ -1,3 +1,5 @@
+import type { WeightUnit } from '@module/data/common/weight.js'
+
 interface ISortableItem {
   sortKeys: Record<string, string>
 }
@@ -38,6 +40,8 @@ interface DisplayTrait extends BaseDisplayItem {
   cr: number | null
   /** The Control Roll OTF contents for this trait, if any */
   crOTF: string
+  /** Is this trait enabled? */
+  enabled: boolean
 }
 
 /* ---------------------------------------- */
@@ -84,4 +88,33 @@ interface DisplaySpell extends BaseDisplayItem {
 
 /* ---------------------------------------- */
 
-export type { BaseDisplayItem, DisplaySkill, DisplayTrait, ISortableItem, DisplaySpell }
+interface DisplayEquipment extends BaseDisplayItem {
+  /** Is this item equipped? */
+  equipped: boolean
+  /** Is this item carried? */
+  carried: boolean
+  /** The quanttiy of this equipment */
+  quantity: number
+  /** The tech level of this equipment, if any */
+  techLevel: string | null
+  /** The legality class of this equipment, if any */
+  legalityClass: string | null
+  /** The monetary value of this item */
+  value: number
+  /** The extended value of this item, including child items */
+  extendedValue: number
+  /** The weight of this item, separated into a value and unit */
+  weight: {
+    value: number
+    unit: WeightUnit
+  }
+  /** The extended weight of this item, including child items */
+  extendedWeight: {
+    value: number
+    unit: WeightUnit
+  }
+}
+
+/* ---------------------------------------- */
+
+export type { BaseDisplayItem, DisplayEquipment, DisplaySkill, DisplaySpell, DisplayTrait, ISortableItem }

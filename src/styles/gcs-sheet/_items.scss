@@ -1,3 +1,7 @@
+.gcs-item-table-container {
+  background-color: var(--gcs-color-surface-bg);
+}
+
 .gcs-item-table {
   width: 100%;
   table-layout: fixed;
@@ -14,6 +18,30 @@
     }
     col.gcs-col-points {
       width: 2.5rem;
+    }
+    col.gcs-col-equipped {
+      width: 1.5rem;
+    }
+    col.gcs-col-quantity {
+      width: 2.5rem;
+    }
+    col.gcs-col-tl {
+      width: 2.5rem;
+    }
+    col.gcs-col-lc {
+      width: 2.5rem;
+    }
+    col.gcs-col-value {
+      width: 2.5rem;
+    }
+    col.gcs-col-weight {
+      width: 3.5rem;
+    }
+    col.gcs-col-extended-value {
+      width: 2.5rem;
+    }
+    col.gcs-col-extended-weight {
+      width: 3.5rem;
     }
   }
 
