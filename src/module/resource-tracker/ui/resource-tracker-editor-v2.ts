@@ -216,8 +216,8 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
         let value: unknown = target.value
 
         if (target.id === 'alias') {
-          const temp = target.value 
-          
+          const temp = target.value
+
           if (!/^[A-Za-z0-9_+-]*$/.test(temp)) {
             ui.notifications!.warn(game.i18n!.format('GURPS.resourceTracker.edit.invalidAlias', { alias: temp }))
 

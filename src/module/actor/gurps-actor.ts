@@ -20,11 +20,7 @@ import { ModelCollection } from '../data/model-collection.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
-import {
-  IResourceTracker,
-  IResourceTrackerTemplate,
-  ResourceTrackerManager,
-} from '../resource-tracker/index.js'
+import { IResourceTracker, IResourceTrackerTemplate, ResourceTrackerManager } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../util/damage-utils.js'
 
