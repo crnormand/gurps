@@ -34,12 +34,11 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
   static fromTemplate(template: ResourceTrackerTemplate, actor: Actor.Implementation): TrackerInstance {
     const tracker = new TrackerInstance(template.tracker.toObject())
 
-    if (template.initialValue !== null) {
+    if (template.initialValue !== null && template.initialValue !== '') {
       tracker.value = parseInt(template.initialValue) || 0
 
       if (isNaN(tracker.value)) {
-        // try to use initialValue as a path to another value
-        // TODO: verify this works
+        // Try to use initialValue as a path to another value.
         const foundValue = Number(foundry.utils.getProperty(actor, 'system.' + template.initialValue))
 
         tracker.value = isNaN(foundValue) ? template.tracker.value : foundValue
@@ -138,6 +137,10 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
   }
 
   get max(): number {
+    if (this.initialValue === null || this.initialValue === '') {
+      return 0
+    }
+
     if (isNaN(parseInt(this.initialValue))) {
       return foundry.utils.getProperty(this.parent, this.initialValue) as number
     }
@@ -175,7 +178,7 @@ const resourceTrackerSchema = () => {
 
     // Contains either a number or a property path to a number on the actor's system data. This allows the tracker to
     // either have a static max value or a dynamic one that references another value on the actor.
-    initialValue: new fields.StringField({ required: true, nullable: false, initial: '' }),
+    initialValue: new fields.StringField({ required: true, nullable: true, initial: null }),
 
     min: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     alias: new fields.StringField({ required: true, nullable: false, initial: '' }),

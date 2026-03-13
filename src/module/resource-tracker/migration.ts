@@ -24,6 +24,7 @@ function convertOldSettings(
   const newTemplates: Record<string, ResourceTrackerTemplate> = {}
 
   for (const oldTemplate of objectToArray(oldTemplates)) {
+    const id = foundry.utils.randomID()
     const newTemplate = new ResourceTrackerTemplate({
       tracker: {
         ...oldTemplate.tracker,
@@ -32,7 +33,7 @@ function convertOldSettings(
       },
       initialValue: oldTemplate.initialValue,
       autoapply: !!oldTemplate.slot,
-      id: oldTemplate.id,
+      id,
     })
 
     // remove old slot field if it exists
@@ -50,7 +51,7 @@ function convertOldSettings(
       delete (newTemplate.tracker as Record<string, unknown>).breakpoints
     }
 
-    newTemplates[oldTemplate.tracker.name] = newTemplate
+    newTemplates[id] = newTemplate
   }
 
   return newTemplates
