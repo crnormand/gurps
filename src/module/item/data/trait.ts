@@ -18,14 +18,9 @@ class TraitModel extends BaseItemModel<TraitSchema> {
     return foundry.utils.mergeObject(super.metadata, {
       type: 'featureV2',
       childTypes: ['featureV2'],
-    })
-  }
-
-  /* ---------------------------------------- */
-
-  static override get sortKeys(): Record<string, string> {
-    return foundry.utils.mergeObject(super.sortKeys, {
-      points: 'system.points',
+      sortKeys: {
+        points: 'system.points',
+      },
     })
   }
 
@@ -59,8 +54,6 @@ class TraitModel extends BaseItemModel<TraitSchema> {
       crOTF: this.selfControlNote,
     })
   }
-
-  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */

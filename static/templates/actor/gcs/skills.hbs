@@ -1,0 +1,84 @@
+{{#*inline ".skillEntry"}}
+  <tr class="gcs-item-row"
+      data-item-id="{{id}}"
+      data-has-children="{{hasChildren}}"
+      draggable="true">
+    <td class="gcs-item-name-cell">
+      <div class="gcs-item-name-line indent{{indent}}">
+        {{#if hasChildren}}
+        <i
+          class="fa-solid fa-caret-down gcs-container-toggle"
+          data-open="{{childrenOpen}}"
+          data-action="toggleItemContainer"
+        ></i>
+        {{else}}
+        <span class="gcs-container-spacer"></span>
+        {{/if}}
+        <span class="gcs-item-name-text">{{fullName}}</span>
+        {{#if hasNotes}}
+        <i
+          class="fa-solid fa-notes gcs-notes-toggle"
+          data-action="toggleItemNotes"
+          data-open="{{notesOpen}}"
+        ></i>
+        {{/if}}
+      </div>
+      {{#if (and hasNotes notesOpen)}}
+      <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+      {{/if}}
+    </td>
+    <td class="gcs-item-level">
+      {{#unless hasChildren}}
+        {{level}}
+      {{/unless}}
+    </td>
+    <td class="gcs-item-rsl">
+      {{#unless hasChildren}}
+        {{relativeLevel}}
+      {{/unless}}
+    </td>
+    <td class="gcs-item-points">{{points}}</td>
+  </tr>
+  {{#if (and hasChildren childrenOpen)}}
+  {{#each children}}
+    {{> ".skillEntry"}}
+  {{/each}}
+  {{/if}}
+{{/inline}}
+
+<table class="gcs-table gcs-item-table gcs-skill-table ">
+  <colgroup>
+    <col class="gcs-col-name">
+    <col class="gcs-col-level">
+    <col class="gcs-col-rsl">
+    <col class="gcs-col-points">
+  </colgroup>
+  <thead>
+    <tr>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.skills.name}}">
+        Skill / Technique <i class="fa-solid fa-sort gcs-sort-icon"></i>
+      </th>
+      <th class="gcs-sortable" data-action="sortItems"
+        data-sort-by="{{sortKeys.skills.level}}">
+        SL<i class="fa-solid fa-sort gcs-sort-icon"></i>
+      </th>
+      <th class="gcs-sortable" data-action="sortItems"
+        data-sort-by="{{sortKeys.skills.rsl}}">
+        RSL<i class="fa-solid fa-sort gcs-sort-icon"></i>
+      </th>
+      <th class="gcs-sortable" data-action="sortItems"
+        data-sort-by="{{sortKeys.skills.points}}">
+        Pts <i class="fa-solid fa-sort gcs-sort-icon"></i>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each skills}}
+      {{> ".skillEntry"}}
+    {{else}}
+    <tr class="gcs-item-empty">
+      <td colspan="2">{{localize "GURPS.none"}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

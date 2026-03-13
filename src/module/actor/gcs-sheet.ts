@@ -1,5 +1,4 @@
-import { DisplayTrait } from '@gurps-types/gurps/display-item.js'
-import { TraitModel } from '@module/item/data/trait.js'
+import { DisplaySkill, DisplaySpell, DisplayTrait } from '@gurps-types/gurps/display-item.js'
 import { isHTMLElement } from '@module/util/guards.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
@@ -39,9 +38,9 @@ namespace GurpsActorGcsSheet {
     pools: PoolEntry[]
     liftingMoving: LiftingMovingEntry[]
     traits: DisplayTrait[]
-    sortKeys: {
-      traits: Record<string, string>
-    }
+    skills: DisplaySkill[]
+    spells: DisplaySpell[]
+    sortKeys: Record<string, Record<string, string>>
   }
 }
 
@@ -82,6 +81,12 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     traits: {
       template: this.systemPath('gcs/traits.hbs'),
     },
+    skills: {
+      template: this.systemPath('gcs/skills.hbs'),
+    },
+    spells: {
+      template: this.systemPath('gcs/spells.hbs'),
+    },
   }
 
   /* ---------------------------------------- */
@@ -93,7 +98,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
     const moveModeChoices = Object.fromEntries(this.actor.system.moveV2.map(mode => [mode._id, mode.mode]))
 
-    const traitSortKeys = TraitModel.sortKeys ?? {}
+    const sortKeys = this._prepareSortKeys()
 
     return {
       ...superContext,
@@ -105,9 +110,25 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       pools: this._preparePools(),
       liftingMoving: this._prepareLiftingMoving(),
       traits: this.actor.system.adsV2.map(trait => trait.system.toDisplayItem()),
-      sortKeys: {
-        traits: traitSortKeys,
-      },
+      skills: this.actor.system.skillsV2.map(trait => trait.system.toDisplayItem()),
+      spells: this.actor.system.spellsV2.map(trait => trait.system.toDisplayItem()),
+      sortKeys,
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  protected _prepareSortKeys(): Record<string, Record<string, string>> {
+    const firstTrait = this.actor.system.allAdsV2[0]
+    const firstSkill = this.actor.system.skillsV2[0]
+    const firstSpell = this.actor.system.spellsV2[0]
+    const firstEquipment = this.actor.system.allEquipmentV2[0]
+
+    return {
+      traits: firstTrait ? firstTrait.system.metadata.sortKeys : {},
+      skills: firstSkill ? firstSkill.system.metadata.sortKeys : {},
+      spells: firstSpell ? firstSpell.system.metadata.sortKeys : {},
+      equipment: firstEquipment ? firstEquipment.system.metadata.sortKeys : {},
     }
   }
 
@@ -357,6 +378,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       switch (part) {
         case 'traits':
           return this.actor.system.allAdsV2
+        case 'skills':
+          return this.actor.system.allSkillsV2
+        case 'spells':
+          return this.actor.system.allSpellsV2
         default:
           return []
       }

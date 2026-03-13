@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplaySkill } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@util/parselink.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
@@ -26,8 +27,15 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     return foundry.utils.mergeObject(super.metadata, {
       type: 'skillV2',
       childTypes: ['skillV2'],
+      sortKeys: {
+        points: 'system.points',
+        level: 'system.level',
+        relativeLevel: 'system.relativelevel',
+      },
     })
   }
+
+  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
@@ -100,6 +108,24 @@ class SkillModel extends BaseItemModel<SkillSchema> {
         }
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplaySkill {
+    let fullName = this.name
+
+    if (this.techlevel) fullName += `/TL${this.techlevel}`
+    if (this.specialization) fullName += ` (${this.specialization})`
+
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      techLevel: this.techlevel,
+      specialization: this.specialization,
+      level: this.level,
+      relativeLevel: this.relativelevel,
+      fullName,
+      points: this.points,
+    })
   }
 }
 

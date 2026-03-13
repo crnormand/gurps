@@ -25,6 +25,13 @@ type ItemMetadata = Readonly<{
   childTypes: string[]
   /** A set of Item subtypes that this item can contain as modifiers */
   modifierTypes: string[]
+  /**
+   * The sort keys for this item type, used to determine
+   * which property to look up when sorting items of this type.
+   * The key is the name of the entity property to sort by, and the
+   * value is the path to the property value.
+   */
+  sortKeys: Record<string, string>
 }>
 
 /* ---------------------------------------- */
@@ -72,6 +79,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       actions: {},
       childTypes: [],
       modifierTypes: [],
+      sortKeys: { name: 'name' },
     }
   }
 
@@ -88,21 +96,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   }
 
   /* ---------------------------------------- */
-
-  /**
-   * The sort keys for this item type, used to determine
-   * which property to look up when sorting items of this type.
-   * The key is the name of the entity property to sort by, and the
-   * value is the path to the property value.
-   */
-  static get sortKeys(): Record<string, string> {
-    return { name: 'name' }
-  }
-
-  /* ---------------------------------------- */
   /*  Instance properties                     */
-  /* ---------------------------------------- */
-
   /* ---------------------------------------- */
 
   get item(): Item.Implementation {

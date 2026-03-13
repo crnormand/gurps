@@ -30,6 +30,19 @@ body {
   .window-content {
     font-family: 'Roboto', sans-serif;
     gap: var(--gcs-section-gap);
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    > * {
+      flex: 0 0 100%;
+    }
+
+    [data-application-part='traits'],
+    [data-application-part='skills'] {
+      flex: 1 0;
+    }
   }
 }
 
