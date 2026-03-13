@@ -13,12 +13,11 @@ import {
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import * as dataModels from './data/index.js'
 import { MoveModeV2 } from './data/move-mode.js'
-import { GurpsActorGcsSheet } from './gcs-sheet.js'
 import { GurpsActorV2 } from './gurps-actor.js'
 import { migrateActor, runMigration } from './migrate.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
-import { TestActorSheet } from './test-actor-sheet.js'
+import * as sheets from './sheets/index.ts'
 
 interface ActorModule extends GurpsModule {
   migrateActor: typeof migrateActor
@@ -81,16 +80,20 @@ function init() {
 
     // NOTE: This sheet is hidden from Users but can be set by invoking
     // (actor).setFlag("core","sheetClass","gurps.TestActorSheet")
-    foundry.documents.collections.Actors.registerSheet('gurps', TestActorSheet as DocumentSheetV2.AnyConstructor, {
-      makeDefault: true,
-      types: ['gcsCharacter'],
-      canConfigure: false,
-    })
+    foundry.documents.collections.Actors.registerSheet(
+      'gurps',
+      sheets.TestActorSheet as DocumentSheetV2.AnyConstructor,
+      {
+        makeDefault: true,
+        types: ['gcsCharacter'],
+        canConfigure: false,
+      }
+    )
 
     foundry.documents.collections.Actors.registerSheet(
       'gurps',
       // TODO: fix type
-      GurpsActorGcsSheet as unknown as DocumentSheetV2.AnyConstructor,
+      sheets.GurpsActorGcsSheet as unknown as DocumentSheetV2.AnyConstructor,
       {
         makeDefault: true,
         types: ['characterV2'],
