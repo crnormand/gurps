@@ -1314,12 +1314,12 @@ export class GurpsActor extends Actor {
     const currentTrackers = GurpsActor.getTrackersAsArray(this.system)
 
     /** @type {ResourceTrackerTemplate[]} */
-    const newTrackers = GURPS.modules.ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
+    const missingTemplates = GURPS.modules.ResourceTracker.getMissingRequiredTemplates(currentTrackers)
 
     // If no new trackers were added, nothing to do.
-    if (newTrackers.length === 0) return
+    if (missingTemplates.length === 0) return
 
-    for (const template of newTrackers) {
+    for (const template of missingTemplates) {
       this._initializeTrackerValues(template)
       currentTrackers.push(template.tracker)
     }
