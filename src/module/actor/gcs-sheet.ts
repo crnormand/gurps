@@ -7,7 +7,11 @@ import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 
 import ActorSheet = gurps.applications.ActorSheet
 
+/* ---------------------------------------- */
+
 type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>
+
+/* ---------------------------------------- */
 
 type PoolEntry = {
   fields: {
@@ -23,10 +27,23 @@ type PoolEntry = {
   thresholds: ThresholdDescriptor[]
 }
 
+/* ---------------------------------------- */
+
 type LiftingMovingEntry = {
   label: string
   value: string
 }
+
+/* ---------------------------------------- */
+
+// NOTE: temporary, more types will be added as drag & drop functionality is implemented
+type DragData = {
+  type: 'Item'
+  id: string
+  uuid: string
+}
+
+/* ---------------------------------------- */
 
 namespace GurpsActorGcsSheet {
   export interface RenderContext extends ActorSheet.RenderContext {
@@ -214,157 +231,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
   }
 
   /* ---------------------------------------- */
-
-  // #bindItemDragDrop(): void {
-  //   const tbody = this.element.querySelector<HTMLTableSectionElement>('.gcs-traits-table tbody')
-  //
-  //   if (!tbody) return
-  //
-  //   tbody.addEventListener('dragstart', this.#onTraitDragStart.bind(this))
-  //   tbody.addEventListener('dragover', this.#onTraitDragOver.bind(this))
-  //   tbody.addEventListener('dragleave', this.#onTraitDragLeave.bind(this))
-  //   tbody.addEventListener('drop', this.#onTraitDrop.bind(this))
-  //   tbody.addEventListener('dragend', this.#onTraitDragEnd.bind(this))
-  // }
-  //
-  // /* ---------------------------------------- */
-  //
-  // #onTraitDragStart(event: DragEvent): void {
-  //   const row = (event.target as HTMLElement).closest<HTMLElement>('tr.gcs-trait-row')
-  //
-  //   if (!row) return
-  //   const itemId = row.dataset.itemId
-  //
-  //   if (!itemId) return
-  //
-  //   this.#dragItemId = itemId
-  //   event.dataTransfer?.setData('text/plain', itemId)
-  //   row.classList.add('gcs-dragging')
-  // }
-  //
-  // /* ---------------------------------------- */
-  //
-  // #onTraitDragOver(event: DragEvent): void {
-  //   event.preventDefault()
-  //   const row = (event.target as HTMLElement).closest<HTMLElement>('tr.gcs-trait-row')
-  //
-  //   if (!row || row.dataset.itemId === this.#dragItemId) return
-  //
-  //   this.element.querySelectorAll('.gcs-drag-over').forEach(el => el.classList.remove('gcs-drag-over'))
-  //   row.classList.add('gcs-drag-over')
-  // }
-  //
-  // /* ---------------------------------------- */
-  //
-  // #onTraitDragLeave(event: DragEvent): void {
-  //   const related = event.relatedTarget as HTMLElement | null
-  //
-  //   if (related?.closest('.gcs-traits-table')) return
-  //   this.element.querySelectorAll('.gcs-drag-over').forEach(el => el.classList.remove('gcs-drag-over'))
-  // }
-  //
-  // /* ---------------------------------------- */
-  //
-  // async #onTraitDrop(event: DragEvent): Promise<void> {
-  //   event.preventDefault()
-  //
-  //   const draggedId = this.#dragItemId
-  //
-  //   this.#dragItemId = null
-  //
-  //   this.element
-  //     .querySelectorAll('.gcs-drag-over, .gcs-dragging')
-  //     .forEach(el => el.classList.remove('gcs-drag-over', 'gcs-dragging'))
-  //
-  //   if (!draggedId) return
-  //
-  //   const targetRow = (event.target as HTMLElement).closest<HTMLElement>('tr.gcs-trait-row')
-  //
-  //   if (!targetRow || targetRow.dataset.itemId === draggedId) return
-  //
-  //   const targetId = targetRow.dataset.itemId!
-  //   const draggedItem = this.actor.items.get(draggedId)
-  //   const targetItem = this.actor.items.get(targetId)
-  //
-  //   if (!draggedItem || !targetItem) return
-  //
-  //   // Determine drop zone: top 25% = before, bottom 25% = after, middle 50% = into container
-  //   const rect = targetRow.getBoundingClientRect()
-  //   const zone = (event.clientY - rect.top) / rect.height
-  //   const targetHasChildren = targetRow.dataset.hasChildren === 'true'
-  //
-  //   let newParentId: string | null
-  //   let insertBefore: boolean
-  //   let appendInto: boolean = false
-  //
-  //   if (targetHasChildren && zone > 0.25 && zone < 0.75) {
-  //     newParentId = targetId
-  //     insertBefore = false
-  //     appendInto = true
-  //   } else if (zone < 0.5) {
-  //     newParentId = (targetItem.system as any).containedBy ?? null
-  //     insertBefore = true
-  //   } else {
-  //     newParentId = (targetItem.system as any).containedBy ?? null
-  //     insertBefore = false
-  //   }
-  //
-  //   // Prevent circular containment: don't allow dropping into own subtree
-  //   if (newParentId !== null && this.#isDescendant(newParentId, draggedId)) return
-  //
-  //   // Find siblings in the target container (excluding the dragged item)
-  //   const siblings = [...this.actor.items]
-  //     .filter(i => (i.system as any).containedBy === newParentId && i.id !== draggedId)
-  //     .sort((left, right) => left.sort - right.sort)
-  //
-  //   let newSort: number
-  //
-  //   if (appendInto) {
-  //     newSort = siblings.length > 0 ? siblings[siblings.length - 1].sort + 100000 : 100000
-  //   } else if (insertBefore) {
-  //     const idx = siblings.findIndex(i => i.id === targetId)
-  //     const prev = siblings[idx - 1]
-  //
-  //     newSort = prev ? Math.round((prev.sort + targetItem.sort) / 2) : targetItem.sort - 100000
-  //   } else {
-  //     const idx = siblings.findIndex(i => i.id === targetId)
-  //     const next = siblings[idx + 1]
-  //
-  //     newSort = next ? Math.round((targetItem.sort + next.sort) / 2) : targetItem.sort + 100000
-  //   }
-  //
-  //   await draggedItem.update({ sort: newSort, 'system.containedBy': newParentId } as Record<string, unknown>)
-  // }
-  //
-  // /* ---------------------------------------- */
-  //
-  // #onTraitDragEnd(_event: DragEvent): void {
-  //   this.#dragItemId = null
-  //   this.element
-  //     .querySelectorAll('.gcs-drag-over, .gcs-dragging')
-  //     .forEach(el => el.classList.remove('gcs-drag-over', 'gcs-dragging'))
-  // }
-  //
-  // /* ---------------------------------------- */
-  //
-  // #isDescendant(candidateId: string, ancestorId: string): boolean {
-  //   const queue = [ancestorId]
-  //
-  //   while (queue.length > 0) {
-  //     const current = queue.shift()!
-  //
-  //     for (const item of this.actor.items) {
-  //       if ((item.system as any).containedBy === current) {
-  //         if (item.id === candidateId) return true
-  //         queue.push(item.id!)
-  //       }
-  //     }
-  //   }
-  //
-  //   return false
-  // }
-  //
-  /* ---------------------------------------- */
   /*  Action Bindings                         */
   /* ---------------------------------------- */
 
@@ -389,14 +255,18 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
           return this.actor.system.allSkillsV2
         case 'spells':
           return this.actor.system.allSpellsV2
+        case 'carriedEquipment':
+          return this.actor.system.equipmentV2.carried
+        case 'otehrEquipment':
+          return this.actor.system.equipmentV2.other
         default:
           return []
       }
     }
 
-    const part = target.closest<HTMLElement>('[data-application-part]')?.dataset.applicationPart ?? ''
+    const tableId = target.closest<HTMLElement>('[data-table-id]')?.dataset.tableId ?? ''
     const sortBy = target.dataset.sortBy
-    const itemList = getItemList(part)
+    const itemList = getItemList(tableId)
 
     const unsortedIds = itemList.map(i => i._id)
 
@@ -496,6 +366,86 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         : pathValue - valueDelta
 
     await this.actor.update({ [systemPath]: newValue })
+  }
+
+  /* ---------------------------------------- */
+  /*  Drag & Drop Handling                    */
+  /* ---------------------------------------- */
+
+  protected override _onDragStart(event: DragEvent) {
+    console.log('Drag started:', event)
+    const element = event.currentTarget
+
+    if (!isHTMLElement(element)) return
+
+    const itemRow = element?.closest<HTMLElement>('[data-item-id]')
+
+    if (!itemRow) return
+
+    const itemId = itemRow.dataset.itemId
+
+    if (!itemId) return
+
+    const item = this.actor.items.get(itemId)
+
+    if (!item) return
+
+    event.dataTransfer?.setData('text/plain', JSON.stringify({ type: 'Item', id: itemId, uuid: item.uuid }))
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _onDrop(event: DragEvent): Promise<void> {
+    const data = foundry.applications.ux.TextEditor.getDragEventData(event) as DragData | null
+
+    if (!data) return
+
+    switch (data?.type) {
+      case 'Item': {
+        return this._onDropItem(event, data)
+      }
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _onDragOver(event: DragEvent): void {
+    const element = event.target as HTMLElement
+  }
+
+  /* ---------------------------------------- */
+
+  protected async _onDropItem(event: DragEvent, itemData: DragData): Promise<void> {
+    const target = event.target as HTMLElement
+    const newParentId = target.closest<HTMLElement>('[data-item-id]')?.dataset.itemId ?? null
+
+    if (!newParentId) return
+
+    const item = await fromUuid<Item.Implementation>(itemData.uuid)
+
+    if (!item || !item.isOwner) return
+
+    const newParent = this.actor.items.get(newParentId)
+
+    if (!newParent) return
+
+    if (item.actor !== this.actor) {
+      await this.actor.createEmbeddedDocuments('Item', [
+        foundry.utils.mergeObject(item.toObject(), {
+          system: { containedBy: newParentId },
+        }),
+      ])
+
+      return
+    }
+
+    if (item.system.containsItem(newParent)) {
+      console.warn('Cannot move item into one of its descendants')
+
+      return
+    }
+
+    await item.update({ 'system.containedBy': newParentId } as Record<string, unknown>)
   }
 }
 
