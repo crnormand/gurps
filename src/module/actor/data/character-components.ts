@@ -1,4 +1,6 @@
-import { fields } from '@gurps-types/foundry/index.js'
+import { fields, DataModel } from '@gurps-types/foundry/index.js'
+
+/* ---------------------------------------- */
 
 const attributeSchema = () => {
   return {
@@ -10,14 +12,28 @@ const attributeSchema = () => {
 
 /* ---------------------------------------- */
 
+class CharacterPool extends DataModel<PoolSchema> {
+  static override defineSchema(): PoolSchema {
+    return poolSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  get value(): number {
+    return this.max - this.damage
+  }
+}
+
 const poolSchema = () => {
   return {
-    value: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    damage: new fields.NumberField({ required: true, nullable: false, initial: 0, min: 0 }),
     min: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     max: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
   }
 }
+
+type PoolSchema = ReturnType<typeof poolSchema>
 
 /* ---------------------------------------- */
 
@@ -125,12 +141,13 @@ const conditionsSchema = () => {
 
 export {
   attributeSchema,
+  CharacterPool,
   conditionsSchema,
   damageActionSchema,
   encumbranceSchema,
   liftingMovingSchema,
-  poolSchema,
   type DamageActionSchema,
   type EncumbranceSchema,
   type LiftingMovingSchema,
+  type PoolSchema,
 }

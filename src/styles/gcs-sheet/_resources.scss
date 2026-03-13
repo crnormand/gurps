@@ -55,8 +55,13 @@ section[data-application-part='resources'] {
         max-width: var(--gcs-input-height);
       }
 
-      .poolSplit {
+      .pool-split {
         text-align: center;
+      }
+
+      .pool-state {
+        min-width: 10ch;
+        white-space: nowrap;
       }
     }
   }

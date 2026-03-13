@@ -387,14 +387,14 @@ Portrait will not be imported.`
         this.output[key] = {
           min: 0,
           max: attribute.calc.value,
-          value: attribute.calc.current,
+          damage: attribute.damage,
           points: attribute.calc.points,
         }
       } else {
         this.output[key] = {
           min: 0,
           max: 10,
-          value: 10,
+          damage: 0,
           points: 0,
         }
       }
@@ -435,7 +435,10 @@ Portrait will not be imported.`
     const currentHP = this.actor.system.HP.value
     const currentFP = this.actor.system.FP.value
 
-    const statsDifference = currentHP !== this.output.HP!.value || currentFP !== this.output.FP!.value
+    const newHP = (this.output.HP?.max ?? 0) - (this.output.HP?.damage ?? 0)
+    const newFP = (this.output.FP?.max ?? 0) - (this.output.FP?.damage ?? 0)
+
+    const statsDifference = currentHP !== newHP || currentFP !== newFP
 
     if (!statsDifference) return
 
@@ -445,8 +448,8 @@ Portrait will not be imported.`
 
     if (automaticOverwrite === 'keep') {
       // Automatically ignore values from file
-      this.output.HP!.value = currentHP
-      this.output.FP!.value = currentFP
+      this.output.HP!.damage = this.actor.system.HP.damage
+      this.output.FP!.damage = this.actor.system.FP.damage
 
       return
     }
@@ -459,8 +462,8 @@ Portrait will not be imported.`
       content: game.i18n!.format('GURPS.importer.promptHPandFP.content', {
         currentHP: `${currentHP}`,
         currentFP: `${currentFP}`,
-        hp: `${this.output.HP!.value}`,
-        fp: `${this.output.FP!.value}`,
+        hp: `${newHP}`,
+        fp: `${newFP}`,
       }),
       modal: true,
       buttons: [
@@ -479,8 +482,8 @@ Portrait will not be imported.`
     })
 
     if (overwriteOption === 'keep') {
-      this.output.HP!.value = currentHP
-      this.output.FP!.value = currentFP
+      this.output.HP!.damage = this.actor.system.HP.damage
+      this.output.FP!.damage = this.actor.system.FP.damage
     }
   }
 
@@ -989,7 +992,7 @@ Portrait will not be imported.`
       disabled: trait.disabled,
       containedBy: containedBy ?? null,
       cr: trait.cr ?? null,
-      level: trait.levels ?? 0,
+      level: trait.can_level ? (trait.levels ?? 0) : null,
       userdesc: trait.userdesc ?? '',
       points: trait.calc?.points ?? 0,
     }

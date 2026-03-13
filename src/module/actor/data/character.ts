@@ -37,11 +37,11 @@ import { CheckInfo } from '../types.js'
 import { ActorMetadata, BaseActorModel } from './base.js'
 import {
   attributeSchema,
+  CharacterPool,
   conditionsSchema,
   DamageActionSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
-  poolSchema,
 } from './character-components.js'
 import { HitLocationEntryV2 } from './hit-location-entry.js'
 import { MoveModeV2 } from './move-mode.js'
@@ -226,8 +226,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   protected override _initialize(options?: DataModel.InitializeOptions): void {
     super._initialize(options)
-
-    console.log(this._currentMoveModeId)
 
     if (!this._currentMoveModeId || ![...this.moveV2.keys()].includes(this._currentMoveModeId)) {
       this._currentMoveModeId = [...this.moveV2.keys()][0] ?? null
@@ -1754,9 +1752,9 @@ const characterSchema = () => {
     // ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎
 
     // Built-in pools
-    HP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
-    FP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
-    QP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
+    HP: new fields.EmbeddedDataField(CharacterPool, { required: true, nullable: false }),
+    FP: new fields.EmbeddedDataField(CharacterPool, { required: true, nullable: false }),
+    QP: new fields.EmbeddedDataField(CharacterPool, { required: true, nullable: false }),
 
     // NOTE: This value represents "Basic Dodge", this being Math.floor(Basic Speed) + 3 + Modifiers (e.g. Enhanced
     // Dodge). It is the base value used to get the Actual Dodge value under encumbrance.

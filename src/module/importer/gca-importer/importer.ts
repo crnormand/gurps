@@ -240,14 +240,14 @@ Portrait will not be imported.`
           min: 0,
           max: attribute.score,
           // NOTE: apparently GCA does not store injury?
-          value: attribute.score,
+          damage: 0,
           points: attribute.points,
         }
       } else {
         this.output[key] = {
           min: 0,
           max: 10,
-          value: 10,
+          damage: 0,
           points: 0,
         }
       }
