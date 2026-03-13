@@ -114,7 +114,10 @@ declare global {
       /* ---------------------------------------- */
 
       namespace ActorSheet {
-        export type Configuration = ActorSheetV2Configuration
+        export type Configuration = ActorSheetV2Configuration & {
+          /** Custom dragDrop property */
+          dragDrop?: foundry.applications.ux.DragDrop.Configuration[]
+        }
 
         export type ActionHandler = ActorSheetV2ActionHandler
 

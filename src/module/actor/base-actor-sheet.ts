@@ -3,6 +3,7 @@ import { getUser } from '@module/util/guards.js'
 
 import { ActorImporter } from './actor-importer.js'
 
+import DragDrop = foundry.applications.ux.DragDrop
 import ActorSheet = gurps.applications.ActorSheet
 
 // See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
@@ -15,6 +16,109 @@ const _InternalGurpsBaseActorSheet = <Type extends Actor.SubType>() =>
 
 const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
   class GurpsBaseActorSheet extends _InternalGurpsBaseActorSheet<Type>() {
+    constructor(options?: ActorSheet.Configuration & { document?: Actor.OfType<Type> }) {
+      super(options)
+      this.#dragDrop = this.#createDragDropHandlers()
+    }
+
+    /* ---------------------------------------- */
+    /*  Drag & Drop Handling                    */
+    /* ---------------------------------------- */
+
+    #dragDrop: DragDrop[]
+
+    /* ---------------------------------------- */
+
+    /**
+     * Create drag-and-drop workflow handlers for this Application
+     * @returns An array of DragDrop handlers
+     */
+    #createDragDropHandlers(): DragDrop[] {
+      return (
+        (this.options as ActorSheet.Configuration).dragDrop?.map(dragDrop => {
+          dragDrop.permissions = {
+            dragstart: this._canDragStart.bind(this),
+            drop: this._canDragDrop.bind(this),
+          }
+          dragDrop.callbacks = {
+            dragstart: this._onDragStart.bind(this),
+            dragover: this._onDragOver.bind(this),
+            drop: this._onDrop.bind(this),
+          }
+
+          return new DragDrop(dragDrop)
+        }) ?? []
+      )
+    }
+
+    /* ---------------------------------------- */
+
+    get dragDrop(): DragDrop[] {
+      return this.#dragDrop
+    }
+
+    /* ---------------------------------------- */
+
+    /**
+     * Define whether a user is able to begin a dragstart workflow for a given drag selector
+     * @param selector       The candidate HTML selector for dragging
+     * @returns              Can the current user drag this selector?
+     * @protected
+     */
+    protected _canDragStart(_selector: DragDrop.DragSelector): boolean {
+      return this.actor.isOwner
+    }
+
+    /**
+     * Define whether a user is able to conclude a drag-and-drop workflow for a given drop selector
+     * @param  selector The candidate HTML selector for the drop target
+     * @returns         Can the current user drop on this selector?
+     * @protected
+     */
+    protected _canDragDrop(_selector: DragDrop.DragSelector): boolean {
+      return this.actor.isOwner
+    }
+
+    /**
+     * Callback actions which occur at the beginning of a drag start workflow.
+     * @param {DragEvent} event       The originating DragEvent
+     * @protected
+     */
+    protected _onDragStart(event: DragEvent) {
+      // Extract the data you need
+      const dragData = null
+
+      if (!dragData) return
+
+      // Set data transfer
+      event.dataTransfer?.setData('text/plain', JSON.stringify(dragData))
+    }
+
+    /* ---------------------------------------- */
+
+    /**
+     * Callback actions which occur when a dragged element is over a drop target.
+     * @param event       The originating DragEvent
+     * @protected
+     */
+    protected _onDragOver(_event: DragEvent): void {}
+
+    /* ---------------------------------------- */
+
+    /**
+     * Callback actions which occur when a dragged element is dropped on a target.
+     * @param event       The originating DragEvent
+     * @protected
+     */
+    protected async _onDrop(_event: DragEvent): Promise<void> {
+      // NOTE: STUB
+      // const data = foundry.applications.ux.TextEditor.getDragEventData(event)
+      // switch (data?.type) {
+      // }
+    }
+
+    /* ---------------------------------------- */
+
     static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
       classes: ['gurps', 'sheet', 'actor'],
       tag: 'form',
@@ -27,6 +131,7 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
       actions: {
         importActor: GurpsBaseActorSheet.#onImportActor,
       },
+      dragDrop: [{ dragSelector: '[draggable]', dropSelector: null }],
     }
 
     /* ---------------------------------------- */
@@ -72,11 +177,11 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
       options: ActorSheet.RenderOptions
     ): Promise<void> {
       super._onRender(context, options)
-
-      const html = this.element
+      this.#dragDrop.forEach(dragDrop => dragDrop.bind(this.element))
 
       if (options.isFirstRender) {
-        html.addEventListener('click', () => GURPS.SetLastActor(this.actor))
+        GURPS.SetLastActor(this.actor)
+        this.element.addEventListener('click', () => GURPS.SetLastActor(this.actor))
       }
     }
 
