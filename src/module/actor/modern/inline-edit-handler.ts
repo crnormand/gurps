@@ -461,9 +461,24 @@ export function bindAllTrackerEdits(html: HTMLElement, actor: Actor.Implementati
 
         if (!isHTMLElement(tracker)) return
         tracker.classList.remove(editingClass)
-        const fieldPath = inputElement.name
+        const trackerKey = inputElement.dataset.key
 
-        inputElement.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
+        if (!trackerKey) {
+          inputElement.blur()
+          return
+        }
+
+        const map = actor.system.additionalresources?.tracker
+
+        if (!map) {
+          inputElement.blur()
+          return
+        }
+
+        const trackerData = map.get(trackerKey)
+        const originalValue = trackerData?.value
+
+        inputElement.value = originalValue !== undefined ? String(originalValue) : ''
         inputElement.blur()
       }
     })
