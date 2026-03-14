@@ -993,13 +993,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // moveoverride: { maneuver: string | null; posture: string | null } = {
-  //   maneuver: null,
-  //   posture: null,
-  // }
-
-  /* ---------------------------------------- */
-
   // List of top-level ADs (not contained in another AD), sorted by `sort` field.
   get adsV2(): Item.OfType<'featureV2'>[] {
     return this.allAdsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
@@ -1945,22 +1938,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return []
     }
   }
-
-  /* ---------------------------------------- */
-
-  // #validDRChanges(changes: Record<string, any>): Record<string, any> {
-  //   const array = foundry.utils.deepClone(this._source.hitlocationsV2)
-  //   const regex = /^system\.hitlocationsV2\.(\d+)\..*/
-
-  //   for (const [key, value] of Object.entries(changes)) {
-  //     const index = parseInt(key.replace(regex, '$1'))
-  //     const field = key.replace(regex, '')
-
-  //     // @ts-expect-error
-  //     array[index][field] = value
-  //   }
-  //   return { 'system.hitlocationsV2': array }
-  // }
 }
 
 /* ---------------------------------------- */

@@ -7,10 +7,6 @@ import { AnyObject } from 'fvtt-types/utils'
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 
 class SkillModel extends BaseItemModel<SkillSchema> {
-  /* ---------------------------------------- */
-  /*  Derived Values                          */
-  /* ---------------------------------------- */
-
   level: number = 0
 
   /* ---------------------------------------- */
@@ -34,8 +30,6 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       },
     })
   }
-
-  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */

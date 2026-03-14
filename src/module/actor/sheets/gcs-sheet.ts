@@ -257,17 +257,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
   /* ---------------------------------------- */
 
-  // protected override async _onRender(
-  //   context: GurpsActorGcsSheet.RenderContext,
-  //   options: ActorSheet.RenderOptions
-  // ): Promise<void> {
-  //   await super._onRender(context, options)
-  //   this.#applyTraitSortIndicator()
-  //   this.#bindTraitDragDrop()
-  // }
-
-  /* ---------------------------------------- */
-
   protected _preparePools(): PoolEntry[] {
     const pools: PoolEntry[] = []
     const systemFields = this.actor.system.schema.fields

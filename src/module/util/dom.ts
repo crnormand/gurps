@@ -8,6 +8,8 @@ type HTMLButtonOptions = {
   disabled?: boolean
 }
 
+/* ---------------------------------------- */
+
 export function constructHTMLButton({
   label = '',
   dataset = {},
