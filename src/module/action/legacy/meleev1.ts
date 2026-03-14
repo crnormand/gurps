@@ -36,11 +36,6 @@ class MeleeV1 {
     return []
   }
 
-  // not sure what cost is supposed to do
-  // get cost() {
-  //   return this.meleeV2.cost
-  // }
-
   get damage() {
     return this.meleeV2.damage
   }
