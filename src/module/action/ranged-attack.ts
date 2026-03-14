@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayRangedAttack } from '@gurps-types/gurps/display-item.js'
 import { LengthUnit } from '@module/data/common/length.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -340,6 +341,22 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
         }
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayRangedAttack {
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      acc: this.acc,
+      bulk: this.bulk,
+      halfDamageRange: this.halfd,
+      maxRange: this.max,
+      minRange: '',
+      range: this.range,
+      recoil: this.rcl,
+      rof: this.rateOfFire,
+      shots: this.shots,
+    })
   }
 }
 

@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayMeleeAttack } from '@gurps-types/gurps/display-item.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
@@ -161,6 +162,16 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
         }
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayMeleeAttack {
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      reach: this.reach,
+      parry: this.parry,
+      block: this.block,
+    })
   }
 }
 

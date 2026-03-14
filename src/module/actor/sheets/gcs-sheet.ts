@@ -1,5 +1,13 @@
-import { DisplayEquipment, DisplaySkill, DisplaySpell, DisplayTrait } from '@gurps-types/gurps/display-item.js'
+import {
+  DisplayEquipment,
+  DisplayMeleeAttack,
+  DisplayRangedAttack,
+  DisplaySkill,
+  DisplaySpell,
+  DisplayTrait,
+} from '@gurps-types/gurps/display-item.js'
 import { isHTMLElement } from '@module/util/guards.js'
+import { systemPath } from '@module/util/misc.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
@@ -55,6 +63,13 @@ type DragData = {
 
 /* ---------------------------------------- */
 
+type DisplayConditionalModifier = {
+  modifier: number
+  situation: string
+}
+
+/* ---------------------------------------- */
+
 namespace GurpsActorGcsSheet {
   export interface RenderContext extends ActorSheet.RenderContext {
     isPlay: boolean
@@ -70,6 +85,10 @@ namespace GurpsActorGcsSheet {
     spells: DisplaySpell[]
     carriedEquipment: DisplayEquipment[]
     otherEquipment: DisplayEquipment[]
+    meleeAttacks: DisplayMeleeAttack[]
+    rangedAttacks: DisplayRangedAttack[]
+    reactionModifiers: DisplayConditionalModifier[]
+    conditionalModifiers: DisplayConditionalModifier[]
     sortKeys: Record<string, Record<string, string>>
     attributeFields: Record<string, AttributeEntry>
   }
@@ -99,28 +118,31 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
   static override PARTS: Record<string, gurps.applications.handlebars.TemplatePart> = {
     header: {
-      template: this.systemPath('gcs/header.hbs'),
+      template: systemPath('templates/actor/gcs/header.hbs'),
     },
     resources: {
-      template: this.systemPath('gcs/resources.hbs'),
+      template: systemPath('templates/actor/gcs/resources.hbs'),
+    },
+    reactions: {
+      template: systemPath('templates/actor/gcs/reactions.hbs'),
     },
     combat: {
-      template: this.systemPath('gcs/combat.hbs'),
+      template: systemPath('templates/actor/gcs/combat.hbs'),
     },
     traits: {
-      template: this.systemPath('gcs/traits.hbs'),
+      template: systemPath('templates/actor/gcs/traits.hbs'),
     },
     skills: {
-      template: this.systemPath('gcs/skills.hbs'),
+      template: systemPath('templates/actor/gcs/skills.hbs'),
     },
     spells: {
-      template: this.systemPath('gcs/spells.hbs'),
+      template: systemPath('templates/actor/gcs/spells.hbs'),
     },
     equipment: {
-      template: this.systemPath('gcs/equipment.hbs'),
+      template: systemPath('templates/actor/gcs/equipment.hbs'),
     },
     footer: {
-      template: this.systemPath('gcs/footer.hbs'),
+      template: systemPath('templates/actor/gcs/footer.hbs'),
     },
   }
 
@@ -150,6 +172,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       spells: this.actor.system.spellsV2.map(item => item.system.toDisplayItem()),
       carriedEquipment: this.actor.system.equipmentV2.carried.map(item => item.system.toDisplayItem()),
       otherEquipment: this.actor.system.equipmentV2.other.map(item => item.system.toDisplayItem()),
+      meleeAttacks: this.actor.system.meleeV2.map(action => action.toDisplayItem()),
+      rangedAttacks: this.actor.system.rangedV2.map(action => action.toDisplayItem()),
+      reactionModifiers: this.actor.system.reactions,
+      conditionalModifiers: this.actor.system.conditionalmods,
       attributeFields: this._prepareAttributes(),
       sortKeys,
     }

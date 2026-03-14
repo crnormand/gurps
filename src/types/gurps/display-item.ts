@@ -117,4 +117,73 @@ interface DisplayEquipment extends BaseDisplayItem {
 
 /* ---------------------------------------- */
 
-export type { BaseDisplayItem, DisplayEquipment, DisplaySkill, DisplaySpell, DisplayTrait, ISortableItem }
+interface BaseDisplayAttack {
+  /** The ID of this action */
+  id: string
+  /** The simple name of this attack, without level or any other modifiers which may change the name */
+  name: string
+  /** The name of this attack, with any modifiers which may change the name */
+  fullName: string
+  /** The plaintext notes for this item, without any markup */
+  notes: string
+  /** Does this item have any notes? */
+  hasNotes: boolean
+  /** If this item contains notes, are the notes currently un-collapsed? */
+  notesOpen: boolean
+  /** The level of this attack */
+  level: number
+  /** The damage roll of this attack */
+  damage: string
+  /** The minimum ST required to effectively use this attack, if any */
+  st: string
+  /** The usage name of this attack, e.g. "Swing", "Bash", "Slug" */
+  usage: string
+}
+
+/* ---------------------------------------- */
+
+interface DisplayMeleeAttack extends BaseDisplayAttack {
+  /** The reach of this attack, e.g. "C", "C,1", "1,2", etc. */
+  reach: string
+  /** The parry value of this attack, e.g. "3", "3F",  etc. */
+  parry: string
+  /** The block value of this attack, e.g. "3",  etc. */
+  block: string
+}
+
+/* ---------------------------------------- */
+
+interface DisplayRangedAttack extends BaseDisplayAttack {
+  /** The accuracy of this attack */
+  acc: string
+  /** The bulk modifier for this attack */
+  bulk: string
+  /** The range of this attack, including half-damage range, maximum range, and minimum range */
+  range: string
+  /** The half-damage range of this attack */
+  halfDamageRange: string
+  /** The maximum range of this attack */
+  maxRange: string
+  /** The minimum range of this attack */
+  minRange: string
+  /** The number of shots this attack can make before reloading */
+  shots: string
+  /** The recoil of this attack */
+  recoil: string
+  /** The rate of fire for this attack*/
+  rof: string
+}
+
+/* ---------------------------------------- */
+
+export type {
+  BaseDisplayAttack,
+  BaseDisplayItem,
+  DisplayEquipment,
+  DisplayMeleeAttack,
+  DisplayRangedAttack,
+  DisplaySkill,
+  DisplaySpell,
+  DisplayTrait,
+  ISortableItem,
+}

@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { BaseDisplayAttack } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@util/parselink.js'
 
 import { BaseAction } from './base-action.js'
@@ -84,6 +85,23 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
   }
 
   /* ---------------------------------------- */
+
+  toDisplayItem(): BaseDisplayAttack {
+    return {
+      id: this._id,
+      name: this.item.name,
+      fullName: this.item.system.toDisplayItem?.()?.fullName ?? this.item.name,
+      usage: this.name ?? this.mode,
+      notes: this.notes,
+      hasNotes: this.notes.trim().length > 0,
+      notesOpen: this.notesOpen,
+      level: this.level,
+      damage: this.damage.join(', '),
+      st: this.st,
+    }
+  }
+
+  /* ---------------------------------------- */
   /*  Derived Values                          */
   /* ---------------------------------------- */
   get _displayName(): string | null {
@@ -109,6 +127,8 @@ const baseAttackSchema = () => {
     mode: new fields.StringField({ required: true, nullable: false }),
     modifierTags: new fields.StringField({ required: true, nullable: false }),
     notes: new fields.StringField({ required: true, nullable: false }),
+    /** A boolean determining whether the Item notes are currently un-collapsed and visible on the character sheet. */
+    notesOpen: new fields.BooleanField({ required: true, nullable: false, initial: true }),
     otf: new fields.StringField({ required: true, nullable: false }),
     st: new fields.StringField({ required: true, nullable: false }),
   }

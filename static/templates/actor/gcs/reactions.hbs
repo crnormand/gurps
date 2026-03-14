@@ -1,0 +1,53 @@
+
+{{#*inline ".conditionalModifierEntry"}}
+  <tr class="gcs-item-row">
+    <td class="gcs-item-modifier">{{{displayNumber modifier}}}</td>
+    <td class="gcs-item-situation">{{situation}}</td>
+  </tr>
+{{/inline}}
+
+<section class="flexrow">
+  <table class="gcs-table gcs-item-table gcs-reaction-table">
+    <colgroup>
+      <col class="gcs-col-modifier">
+      <col class="gcs-col-situation">
+    </colgroup>
+    <thead>
+      <tr>
+        <th><i class="fa-solid fa-plus-minus"></i></th>
+        <th>Reaction</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each reactionModifiers}}
+        {{> ".conditionalModifierEntry"}}
+      {{else}}
+      <tr class="gcs-item-empty">
+        <td colspan="2">{{localize "GURPS.none"}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <table class="gcs-table gcs-item-table gcs-reaction-table">
+    <colgroup>
+      <col class="gcs-col-modifier">
+      <col class="gcs-col-situation">
+    </colgroup>
+    <thead>
+      <tr>
+        <th><i class="fa-solid fa-plus-minus"></i></th>
+        <th>Condition</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each conditionalModifiers}}
+        {{> ".conditionalModifierEntry"}}
+      {{else}}
+      <tr class="gcs-item-empty">
+        <td colspan="2">{{localize "GURPS.none"}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</section>

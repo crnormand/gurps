@@ -44,6 +44,15 @@ body {
       flex: 1 0;
     }
 
+    [data-application-part='reactions'] {
+      gap: var(--gcs-section-gap);
+      background-color: var(--gcs-color-surface-bg);
+
+      > table {
+        align-self: start;
+      }
+    }
+
     [data-application-part='footer'] {
       text-align: center;
     }

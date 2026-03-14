@@ -1,2 +1,132 @@
-<section >
+{{#*inline ".meleeEntry"}}
+  <tr class="gcs-item-row" data-item-id="{{id}}">
+    <td class="gcs-item-name-cell">
+      <div class="gcs-item-name-line">
+        <span class="gcs-item-name-text">{{fullName}}</span>
+        {{#if hasNotes}}
+        <i
+          class="fa-solid fa-notes gcs-notes-toggle"
+          data-action="toggleItemNotes"
+          data-open="{{notesOpen}}"
+        ></i>
+        {{/if}}
+      </div>
+      {{#if (and hasNotes notesOpen)}}
+      <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+      {{/if}}
+    </td>
+    <td class="gcs-item-usage">{{usage}}</td>
+    <td class="gcs-item-level">{{level}}</td>
+    <td class="gcs-item-parry">{{parry}}</td>
+    <td class="gcs-item-block">{{block}}</td>
+    <td class="gcs-item-damage">{{damage}}</td>
+    <td class="gcs-item-reach">{{reach}}</td>
+    <td class="gcs-item-st">{{st}}</td>
+  </tr>
+{{/inline}}
+
+{{#*inline ".rangedEntry"}}
+  <tr class="gcs-item-row" data-item-id="{{id}}">
+    <td class="gcs-item-name-cell">
+      <div class="gcs-item-name-line">
+        <span class="gcs-item-name-text">{{fullName}}</span>
+        {{#if hasNotes}}
+        <i
+          class="fa-solid fa-notes gcs-notes-toggle"
+          data-action="toggleItemNotes"
+          data-open="{{notesOpen}}"
+        ></i>
+        {{/if}}
+      </div>
+      {{#if (and hasNotes notesOpen)}}
+      <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+      {{/if}}
+    </td>
+    <td class="gcs-item-usage">{{usage}}</td>
+    <td class="gcs-item-level">{{level}}</td>
+    <td class="gcs-item-acc">{{acc}}</td>
+    <td class="gcs-item-damage">{{damage}}</td>
+    <td class="gcs-item-range">{{range}}</td>
+    <td class="gcs-item-rof">{{rof}}</td>
+    <td class="gcs-item-shots">{{shots}}</td>
+    <td class="gcs-item-bulk">{{bulk}}</td>
+    <td class="gcs-item-recoil">{{recoil}}</td>
+    <td class="gcs-item-st">{{st}}</td>
+  </tr>
+{{/inline}}
+
+<section>
+  <table class="gcs-table gcs-combat-table gcs-melee-table">
+    <colgroup>
+      <col class="gcs-col-name">
+      <col class="gcs-col-usage">
+      <col class="gcs-col-level">
+      <col class="gcs-col-parry">
+      <col class="gcs-col-block">
+      <col class="gcs-col-damage">
+      <col class="gcs-col-reach">
+      <col class="gcs-col-st">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Melee Weapon</th>
+        <th>Usage</th>
+        <th>SL</th>
+        <th>Parry</th>
+        <th>Block</th>
+        <th>Damage</th>
+        <th>Reach</th>
+        <th>ST</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each meleeAttacks}}
+        {{> ".meleeEntry"}}
+      {{else}}
+      <tr class="gcs-item-empty">
+        <td colspan="8">{{localize "GURPS.none"}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <table class="gcs-table gcs-combat-table gcs-ranged-table">
+    <colgroup>
+      <col class="gcs-col-name">
+      <col class="gcs-col-usage">
+      <col class="gcs-col-level">
+      <col class="gcs-col-acc">
+      <col class="gcs-col-damage">
+      <col class="gcs-col-range">
+      <col class="gcs-col-rof">
+      <col class="gcs-col-shots">
+      <col class="gcs-col-bulk">
+      <col class="gcs-col-recoil">
+      <col class="gcs-col-st">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Ranged Weapon</th>
+        <th>Usage</th>
+        <th>SL</th>
+        <th>Acc</th>
+        <th>Damage</th>
+        <th>Range</th>
+        <th>RoF</th>
+        <th>Shots</th>
+        <th>Bulk</th>
+        <th>Recoil</th>
+        <th>ST</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each rangedAttacks}}
+        {{> ".rangedEntry"}}
+      {{else}}
+      <tr class="gcs-item-empty">
+        <td colspan="11">{{localize "GURPS.none"}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
 </section>

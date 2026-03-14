@@ -179,12 +179,6 @@ const GurpsBaseActorSheet = <
 
     /* ---------------------------------------- */
 
-    static systemPath(part: string) {
-      return `systems/gurps/templates/actor/${part}`
-    }
-
-    /* ---------------------------------------- */
-
     override _getHeaderControls(): gurps.applications.api.Application.ControlsEntry[] {
       const controls = super._getHeaderControls()
 
