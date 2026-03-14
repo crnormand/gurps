@@ -26,6 +26,10 @@ class BaseAction<
 
   /* ---------------------------------------- */
 
+  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.action.baseAction']
+
+  /* ---------------------------------------- */
+
   get item(): Item.Implementation {
     return this.parent.parent as Item.Implementation
   }

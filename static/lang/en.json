@@ -11,15 +11,15 @@
     "abbrevReference": "Ref",
     "acc": "Acc",
     "accForWeapon": "Acc for {weapon}",
-    "Action": {
-      "BaseAction": {
+    "action": {
+      "aaseAction": {
         "FIELDS": {
           "addToQuickRoll": "Add to Quick Roll",
           "disabled": "Disabled",
           "name": "Name"
         }
       },
-      "BaseAttack": {
+      "baseAttack": {
         "FIELDS": {
           "consumeAction": "Consume Action",
           "damage": "Damage",
@@ -33,7 +33,7 @@
           "st": "ST"
         }
       },
-      "MeleeAttack": {
+      "meleeAttack": {
         "blockDisabled": "No",
         "FIELDS": {
           "baseParryPenalty": "Base Parry Penalty",
@@ -56,7 +56,7 @@
         },
         "parryDisabled": "No"
       },
-      "RangedAttack": {
+      "rangedAttack": {
         "FIELDS": {
           "acc": {
             "base": "Base",

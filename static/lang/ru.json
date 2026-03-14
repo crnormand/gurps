@@ -11,15 +11,15 @@
     "abbrevReference": "Ссылка",
     "acc": "Точ",
     "accForWeapon": "Точ для {weapon}",
-    "Action": {
-      "BaseAction": {
+    "action": {
+      "baseAction": {
         "FIELDS": {
           "addToQuickRoll": "Добавить к быстрому броску",
           "disabled": "Отключено",
           "name": "Название"
         }
       },
-      "BaseAttack": {
+      "baseAttack": {
         "FIELDS": {
           "consumeAction": "Использует действие",
           "damage": "Урон",
@@ -33,7 +33,7 @@
           "st": "ST"
         }
       },
-      "MeleeAttack": {
+      "meleeAttack": {
         "blockDisabled": "Нет",
         "FIELDS": {
           "baseParryPenalty": "Базовый штраф парирования",
@@ -56,8 +56,7 @@
         },
         "parryDisabled": "Нет"
       },
-      "RangedAttack": {
-        "jet": "Реактивный",
+      "rangedAttack": {
         "FIELDS": {
           "acc": {
             "base": "Базовая",
@@ -96,7 +95,8 @@
             "reloadTimeIsPerShot": "За выстрел",
             "thrown": "Брошено"
           }
-        }
+        },
+        "jet": "Реактивный"
       }
     },
     "active": "Активный",
