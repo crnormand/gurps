@@ -43,6 +43,10 @@ body {
     [data-application-part='skills'] {
       flex: 1 0;
     }
+
+    [data-application-part='footer'] {
+      text-align: center;
+    }
   }
 }
 

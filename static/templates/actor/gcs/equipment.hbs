@@ -38,9 +38,9 @@
     <td class="gcs-item-tl">{{techLevel}}</td>
     <td class="gcs-item-lc">{{legalityClass}}</td>
     <td class="gcs-item-value">{{value}}</td>
-    <td class="gcs-item-weight">{{weight.value}} {{weight.unit}}</td>
+    <td class="gcs-item-weight">{{localize "GURPS.sheet.gcsActorSheet.pound" value=weight.value}}</td>
     <td class="gcs-item-extended-value">{{extendedValue}}</td>
-    <td class="gcs-item-extended-weight">{{extendedWeight.value}} {{extendedWeight.unit}}</td>
+    <td class="gcs-item-extended-weight">{{localize "GURPS.sheet.gcsActorSheet.pound" value=extendedWeight.value}}</td>
   </tr>
   {{#if (and hasChildren childrenOpen)}}
   {{#each children}}

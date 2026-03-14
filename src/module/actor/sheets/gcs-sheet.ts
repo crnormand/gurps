@@ -119,6 +119,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     equipment: {
       template: this.systemPath('gcs/equipment.hbs'),
     },
+    footer: {
+      template: this.systemPath('gcs/footer.hbs'),
+    },
   }
 
   /* ---------------------------------------- */

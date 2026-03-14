@@ -261,10 +261,6 @@
             "label": "Vision"
           }
         }
-      },
-      "gcsSheet": {
-        "portrait": "Portrait",
-        "pound": "{value} lb"
       }
     },
     "addAbbrev": "Abbrev",
@@ -1708,7 +1704,7 @@
     "share": "Share",
     "sheet": {
       "gcs": {
-        "copyright": "GCS is copyrighted 1998-2024 by Richard A. Wilkes. All rights reserved."
+        "copyright": "GCS is copyrighted 1998-2026 by Richard A. Wilkes. All rights reserved."
       },
       "gcsActorSheet": {
         "basicDamage": "Basic Damage",
@@ -1720,6 +1716,7 @@
         "pointTotals": "{total} Points",
         "poolAttributes": "Point Pools",
         "portrait": "Portrait",
+        "pound": "{value} lb",
         "primaryAttributes": "Primary Attributes",
         "secondaryAttributes": "Secondary Attributes"
       },
