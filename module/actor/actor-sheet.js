@@ -1789,7 +1789,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (event.currentTarget.dataset.hasOwnProperty('damage')) {
       let otf = event.currentTarget.dataset.otf
       if (otf && otf.startsWith('D:')) {
-        GurpsWiring.handleGurpslink(event, this.actor, '', { targets: targets })
+        GurpsWiring.handleGurpslink(event, this.actor, null, { targets: targets })
         return
       }
     }
