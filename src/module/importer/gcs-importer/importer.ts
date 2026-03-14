@@ -1092,7 +1092,7 @@ Portrait will not be imported.`
   #importEquipment(
     equipment: GcsEquipment,
     index: number,
-    carried: boolean,
+    _carried: boolean,
     containedBy?: string | undefined
   ): Item.CreateData {
     const type = 'equipmentV2'
@@ -1112,7 +1112,7 @@ Portrait will not be imported.`
       weight,
       cost: equipment.calc?.value ?? 0,
       location: '',
-      carried,
+      _carried,
       equipped: equipment.equipped ?? false,
       techlevel: equipment.tech_level ?? '',
       categories: equipment.tags?.join(', ') ?? '',
@@ -1125,7 +1125,7 @@ Portrait will not be imported.`
     }
 
     equipment.childItems?.forEach((child: GcsEquipment, childIndex: number) =>
-      this.#importEquipment(child, childIndex, carried, _id)
+      this.#importEquipment(child, childIndex, _carried, _id)
     )
 
     const item: Item.CreateData<'equipmentV2'> = {

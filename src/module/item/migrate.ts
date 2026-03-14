@@ -207,6 +207,7 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
     weightsum: String(oldData.eqt.weightsum),
     uses: Number(oldData.eqt.uses),
     maxuses: Number(oldData.eqt.maxuses),
+    _carried: oldData.eqt.carried,
   }
 
   return newData

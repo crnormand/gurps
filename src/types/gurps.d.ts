@@ -121,8 +121,10 @@ declare global {
 
         export type RenderOptions = ActorSheetV2RenderOptions
 
-        export type HandlebarsConstructor<TDocument extends Actor = Actor> =
-          HandlebarsActorSheetV2Constructor<TDocument>
+        export type HandlebarsConstructor<
+          TDocument extends Actor = Actor,
+          RenderOptions extends ActorSheetV2RenderOptions = ActorSheetV2RenderOptions,
+        > = HandlebarsActorSheetV2Constructor<TDocument, RenderOptions>
 
         export type HandlebarsInstance<TDocument extends Actor = Actor> = HandlebarsActorSheetV2Instance<TDocument>
       }
