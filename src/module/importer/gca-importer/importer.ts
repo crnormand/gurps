@@ -352,20 +352,30 @@ Portrait will not be imported.`
     }
 
     const allModes = [groundMove, airMove, waterMove, spaceMove]
+    let currentMoveModeId: string | null = null
 
     for (const mode of allModes) {
       const previousMode = modeWithSameName(mode)
+      const isGroundMove = mode === groundMove
 
       if (previousMode) {
-        if (!modesAreEqual(mode, previousMode)) mode._id = previousMode._id
-        else continue
+        if (!modesAreEqual(mode, previousMode)) {
+          mode._id = previousMode._id
+        } else {
+          // Reuse the existing identical mode without re-adding it; ensure
+          // the current move mode ID points at the reused mode if this is ground.
+          if (isGroundMove) currentMoveModeId = previousMode._id as string
+          continue
+        }
       }
 
       this.output.moveV2 ||= {}
       this.output.moveV2[mode._id as string] = mode
+
+      if (isGroundMove) currentMoveModeId = mode._id as string
     }
 
-    this.output._currentMoveModeId = groundMove._id as string
+    this.output._currentMoveModeId = (currentMoveModeId ?? groundMove._id) as string
   }
 
   /* ---------------------------------------- */
