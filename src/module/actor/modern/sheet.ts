@@ -4,10 +4,10 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
 import GurpsWiring from '../../gurps-wiring.js'
-import { GurpsBaseActorSheet } from '../sheets/base-actor-sheet.ts'
 import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.js'
 import MoveModeEditor from '../move-mode-editor.js'
+import { GurpsBaseActorSheet } from '../sheets/base-actor-sheet.js'
 
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'

@@ -1,4 +1,4 @@
-import { ThresholdDescriptor } from './hit-points.ts'
+import { ThresholdDescriptor } from './hit-points.js'
 
 export class Fatigue {
   /**
@@ -25,4 +25,4 @@ export class Fatigue {
   }
 }
 
-export type { ThresholdDescriptor as IThresholdDescriptor } from './hit-points.ts'
+export type { ThresholdDescriptor as IThresholdDescriptor } from './hit-points.js'
