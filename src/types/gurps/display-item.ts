@@ -93,7 +93,7 @@ interface DisplayEquipment extends BaseDisplayItem {
   equipped: boolean
   /** Is this item carried? */
   carried: boolean
-  /** The quanttiy of this equipment */
+  /** The quantity of this equipment */
   quantity: number
   /** The tech level of this equipment, if any */
   techLevel: string | null

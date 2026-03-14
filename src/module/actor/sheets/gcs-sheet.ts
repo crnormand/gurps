@@ -362,7 +362,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
           return this.actor.system.allSpellsV2
         case 'carriedEquipment':
           return this.actor.system.equipmentV2.carried
-        case 'otehrEquipment':
+        case 'otherEquipment':
           return this.actor.system.equipmentV2.other
         default:
           return []

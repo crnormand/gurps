@@ -20,7 +20,7 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
       type: 'equipmentV2',
       childTypes: ['equipmentV2'],
       sortKeys: {
-        quantity: 'system.quantity',
+        quantity: 'system.count',
         value: 'system.cost',
         extendedValue: 'system.costsum',
         weight: 'system.weight',

@@ -732,14 +732,16 @@ Portrait will not be imported.`
 
       if (previousMode) {
         if (!modesAreEqual(mode, previousMode)) mode._id = previousMode._id
-        else continue
+        else {
+          // Reuse the existing mode's ID so that _currentMoveModeId references a valid mode.
+          mode._id = previousMode._id
+          continue
+        }
       }
 
       this.output.moveV2 ||= {}
       this.output.moveV2[mode._id as string] = mode
     }
-
-    console.log(this.output.moveV2)
 
     this.output._currentMoveModeId = groundMove._id as string
   }

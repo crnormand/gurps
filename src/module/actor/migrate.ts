@@ -448,6 +448,7 @@ function migrateActorSystem(
   }
 
   let currentMoveModeId: string | null = null
+  let firstMoveModeId: string | null = null
 
   // Migrate move modes
   if (oldData.move) {
@@ -472,13 +473,14 @@ function migrateActorSystem(
         default: data.default,
       }
 
+      if (!firstMoveModeId) firstMoveModeId = id
       if (data.default) currentMoveModeId = id
 
       newData.moveV2 ||= {}
       newData.moveV2[id] = move
     })
 
-    newData._currentMoveModeId = currentMoveModeId
+    newData._currentMoveModeId = currentMoveModeId ?? firstMoveModeId ?? ''
   }
 
   // Migrate resource trackers

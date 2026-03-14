@@ -1,6 +1,4 @@
-export async function resolveItemDropPosition(
-  item: Item.Implementation
-): Promise<'before' | 'inside' | 'after' | null> {
+export async function resolveItemDropPosition(item: Item.Implementation): Promise<'before' | 'inside' | null> {
   return await foundry.applications.api.DialogV2.wait({
     window: { title: item.name },
     content: `<p>${game.i18n!.localize('GURPS.dropResolve')}</p>`,
