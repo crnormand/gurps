@@ -3,6 +3,12 @@ import { atou } from '../lib/utilities.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
+  /**
+   * Attach standard click and context menu event handlers to any element that qualifies as a "gurpslink", "gmod", "glinkmod",
+   * "glinkmodplus", "glinkmodminus", or "pdflink". Also make any element with a "data-otf" attribute draggable and attach a
+   * context menu to it.
+   * @param {*} html - a JQuery element to search within for elements to attach click handlers to.
+   */
   static hookupAllEvents(html) {
     html
       .find('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
@@ -12,6 +18,11 @@ export default class GurpsWiring {
       })
   }
 
+  /**
+   * Attach standard click event handlers to any element that qualifies as a "gurpslink", "gmod", "glinkmod",
+   * "glinkmodplus", "glinkmodminus", or "pdflink". Also make any element with a "data-otf" attribute draggable.
+   * @param {*} html - a JQuery element to search within for elements to attach click handlers to.
+   */
   static hookupClickEvents(html) {
     html
       .find('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
@@ -20,10 +31,6 @@ export default class GurpsWiring {
       })
   }
 
-  /**
-   * Given an HTMLElement, attach all of our listeners to it. No need to call bind(), since they don't use "this".
-   * @param {HTMLElement} element The element to wire up GURPS click/drag handlers for.
-   */
   static #hookupGurpsClick(element) {
     // In case we are rendering the same html multiple times, we may have already wired up some of the elements. To
     // avoid wiring them up twice, we will check for the presence of the "data-gurps-clickwired" attribute. If it is
@@ -87,9 +94,7 @@ export default class GurpsWiring {
       element.addEventListener('contextmenu', GurpsWiring.onRightClickGurpslink)
     } else if (element.classList.contains('pdflink')) {
       GurpsWiring.#createPdfLinkMenu(element)
-    }
-
-    if (element.hasAttribute('data-otf')) {
+    } else if (element.hasAttribute('data-otf')) {
       element.addEventListener('contextmenu', GurpsWiring.onRightClickOtf)
     }
   }
@@ -102,12 +107,11 @@ export default class GurpsWiring {
 
     let users = GURPS.LastActor?.getOwners()?.filter(u => !u.isGM) || []
     let names = users.map(u => u.name).join(' ')
-    let parent = options.JQuery ? $(link).parent() : link.parentElement
 
     // COMPATIBILITY: v12
     // new foundry.applications.ux.ContextMenu(container, selector, menuItems)
     new ContextMenu(
-      parent,
+      link,
       '.pdflink',
       [
         {
