@@ -13,7 +13,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.Action.BaseAttack']
+  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.action.baseAttack']
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */

@@ -11,7 +11,7 @@
     "abbrevReference": "Ref",
     "acc": "Prec",
     "accForWeapon": "Prec para {weapon}",
-    "Action": {
+    "action": {
       "BaseAction": {
         "FIELDS": {
           "addToQuickRoll": "Adicionar ao Rolamento Rápido",
@@ -19,7 +19,7 @@
           "name": "Nome"
         }
       },
-      "BaseAttack": {
+      "baseAttack": {
         "FIELDS": {
           "consumeAction": "Consumir Ação",
           "damage": "Dano",
@@ -33,7 +33,7 @@
           "st": "ST"
         }
       },
-      "MeleeAttack": {
+      "meleeAttack": {
         "blockDisabled": "Não",
         "FIELDS": {
           "baseParryPenalty": "Penalidade Base de Aparação",
@@ -56,8 +56,7 @@
         },
         "parryDisabled": "Não"
       },
-      "RangedAttack": {
-        "jet": "Jato",
+      "rangedAttack": {
         "FIELDS": {
           "acc": {
             "base": "Base",
@@ -96,7 +95,8 @@
             "reloadTimeIsPerShot": "Por Tiro",
             "thrown": "Arremessado"
           }
-        }
+        },
+        "jet": "Jato"
       }
     },
     "active": "Ativo",
