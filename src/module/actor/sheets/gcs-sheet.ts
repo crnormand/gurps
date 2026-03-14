@@ -85,8 +85,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       height: 800,
     },
     actions: {
-      incrementPool: GurpsActorGcsSheet.#onIncrementPool,
-      decrementPool: GurpsActorGcsSheet.#onDecrementPool,
+      incrementPool: GurpsActorGcsSheet.#onUpdatePool,
+      decrementPool: GurpsActorGcsSheet.#onUpdatePool,
       sortItems: GurpsActorGcsSheet.#onSortItems,
       toggleItemContainer: GurpsActorGcsSheet.#onToggleItemContainer,
       toggleItemNotes: GurpsActorGcsSheet.#onToggleItemNotes,
@@ -333,18 +333,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
   /*  Action Bindings                         */
   /* ---------------------------------------- */
 
-  static async #onIncrementPool(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    return this.#updatePool(event, target, 1)
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onDecrementPool(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    return this.#updatePool(event, target, -1)
-  }
-
-  /* ---------------------------------------- */
-
   static async #onSortItems(this: GurpsActorGcsSheet, _event: PointerEvent, target: HTMLElement): Promise<void> {
     const getItemList = (part: string): Item.Implementation[] => {
       switch (part) {
@@ -434,8 +422,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
   /* ---------------------------------------- */
 
-  async #updatePool(event: PointerEvent, target: HTMLElement, valueDelta: number): Promise<void> {
+  static async #onUpdatePool(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
+
+    const valueDelta = target.dataset.action === 'incrementPool' ? -1 : 1
 
     const systemPath = target.dataset.path
 
