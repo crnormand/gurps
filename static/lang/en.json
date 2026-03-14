@@ -104,7 +104,7 @@
     "active": "Active",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
-    "Actor": {
+    "actor": {
       "characterV2": {
         "FIELDS": {
           "_currentMoveModeId": {
