@@ -608,6 +608,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     // If the item came from somewhere other than the current actor, create the item on the actor.
     if (item.actor !== this.actor) {
       const systemUpdate: Record<string, unknown> = { containedBy }
+
       if (item.isOfType('equipmentV2')) {
         systemUpdate._carried = carried
       }

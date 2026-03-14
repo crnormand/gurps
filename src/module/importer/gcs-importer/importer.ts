@@ -731,12 +731,8 @@ Portrait will not be imported.`
       const previousMode = modeWithSameName(mode)
 
       if (previousMode) {
-        if (!modesAreEqual(mode, previousMode)) mode._id = previousMode._id
-        else {
-          // Reuse the existing mode's ID so that _currentMoveModeId references a valid mode.
-          mode._id = previousMode._id
-          continue
-        }
+        mode._id = previousMode._id
+        if (modesAreEqual(mode, previousMode)) continue
       }
 
       this.output.moveV2 ||= {}
