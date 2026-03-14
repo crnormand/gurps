@@ -1789,7 +1789,19 @@ export class GurpsActorSheet extends ActorSheet {
     if (event.currentTarget.dataset.hasOwnProperty('damage')) {
       let otf = event.currentTarget.dataset.otf
       if (otf && otf.startsWith('D:')) {
-        GurpsWiring.handleGurpslink(event, this.actor, null, { targets: targets })
+        const rollMode = game.settings.get('core', 'rollMode')
+        let blindroll = rollMode === CONST.DICE_ROLL_MODES.BLIND
+
+        const isShiftClickBlindEnabled = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND)
+
+        // Allow keyboard modifiers to override default roll mode:
+        if (event.shiftKey && isShiftClickBlindEnabled) {
+          blindroll = true
+        } else if (event.ctrlKey || event.metaKey) {
+          blindroll = true
+        }
+
+        GurpsWiring.handleGurpslink(event, this.actor, null, { targets, blindroll })
         return
       }
     }
