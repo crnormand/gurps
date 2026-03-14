@@ -933,7 +933,7 @@ Portrait will not be imported.`
       weight: parseFloat(equipment.calcs.postformulaweight ?? '0') || 0,
       cost: parseFloat(equipment.calcs.postformulacost ?? '0') || 0,
       location: '',
-      carried: true,
+      _carried: true,
       equipped: true,
       techlevel: equipment.tl ?? '',
       categories: equipment.cat,

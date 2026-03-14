@@ -46,6 +46,30 @@ body {
   }
 }
 
+.gcs-link-mod,
+.gcs-link-roll {
+  cursor: pointer;
+  border-radius: 0.25rem;
+}
+
+.gcs-link-roll {
+  background-color: var(--gcs-color-roll-bg);
+  color: var(--gcs-color-roll-fg);
+
+  &:hover {
+    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), white 15%);
+  }
+}
+
+.gcs-link-mod {
+  background-color: var(--gcs-color-mod-bg);
+  color: var(--gcs-color-mod-fg);
+
+  &:hover {
+    background-color: color-mix(in hsl, var(--gcs-color-mod-bg), white 15%);
+  }
+}
+
 .gcs-section {
   display: grid;
   grid-template-rows: 0fr auto;
@@ -150,6 +174,10 @@ body {
 
         background-color: var(--gcs-color-input-bg);
         color: var(--gcs-color-input-fg);
+
+        &[disabled] {
+          background-color: transparent;
+        }
       }
 
       button,

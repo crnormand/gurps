@@ -1734,7 +1734,8 @@
         "portrait": "Portrait",
         "tab": "Personal",
         "title": "Title"
-      }
+      },
+      "toggleMode": "Toggle Play/Edit Mode"
     },
     "shiftSlightly": "Shift Slightly",
     "shock": "Shock",

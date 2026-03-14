@@ -37,6 +37,15 @@ type LiftingMovingEntry = {
 
 /* ---------------------------------------- */
 
+type AttributeEntry = {
+  field: foundry.data.fields.DataField<any>
+  name?: string
+  value: unknown
+  nonRollable?: boolean
+}
+
+/* ---------------------------------------- */
+
 // NOTE: temporary, more types will be added as drag & drop functionality is implemented
 type DragData = {
   type: 'Item'
@@ -48,6 +57,7 @@ type DragData = {
 
 namespace GurpsActorGcsSheet {
   export interface RenderContext extends ActorSheet.RenderContext {
+    isPlay: boolean
     actor: Actor.OfType<'characterV2'>
     system: Actor.SystemOfType<'characterV2'>
     systemFields?: foundry.data.fields.SchemaField<CharacterV2Schema>['fields']
@@ -61,16 +71,13 @@ namespace GurpsActorGcsSheet {
     carriedEquipment: DisplayEquipment[]
     otherEquipment: DisplayEquipment[]
     sortKeys: Record<string, Record<string, string>>
+    attributeFields: Record<string, AttributeEntry>
   }
 }
 
 /* ---------------------------------------- */
 
 class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
-  // #dragItemId: string | null = null
-
-  /* ---------------------------------------- */
-
   static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
     classes: ['gcs-sheet'],
     position: {
@@ -83,6 +90,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       sortItems: GurpsActorGcsSheet.#onSortItems,
       toggleItemContainer: GurpsActorGcsSheet.#onToggleItemContainer,
       toggleItemNotes: GurpsActorGcsSheet.#onToggleItemNotes,
+      addModifier: GurpsActorGcsSheet.#onAddModifier,
+      rollOtf: GurpsActorGcsSheet.#onRollOtf,
     },
   }
 
@@ -125,6 +134,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
     return {
       ...superContext,
+      isPlay: this.isPlayMode,
       actor: this.actor,
       system: this.actor.system,
       systemFields: this.actor.system.schema.fields,
@@ -137,7 +147,95 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       spells: this.actor.system.spellsV2.map(item => item.system.toDisplayItem()),
       carriedEquipment: this.actor.system.equipmentV2.carried.map(item => item.system.toDisplayItem()),
       otherEquipment: this.actor.system.equipmentV2.other.map(item => item.system.toDisplayItem()),
+      attributeFields: this._prepareAttributes(),
       sortKeys,
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  protected _prepareAttributes(): Record<string, AttributeEntry> {
+    const systemFields = this.actor.system.schema.fields
+    const systemSource = this.actor.system._source
+    const attributeFields = this.actor.system.schema.fields.attributes.fields
+    const attributeSource = this.actor.system._source.attributes
+
+    return {
+      ST: {
+        field: attributeFields.ST.fields.import,
+        name: 'ST',
+        value: attributeSource.ST.import,
+      },
+      DX: {
+        field: attributeFields.DX.fields.import,
+        name: 'DX',
+        value: attributeSource.DX.import,
+      },
+      IQ: {
+        field: attributeFields.IQ.fields.import,
+        name: 'IQ',
+        value: attributeSource.IQ.import,
+      },
+      HT: {
+        field: attributeFields.HT.fields.import,
+        name: 'HT',
+        value: attributeSource.HT.import,
+      },
+      WILL: {
+        field: attributeFields.WILL.fields.import,
+        name: 'WILL',
+        value: attributeSource.WILL.import,
+      },
+      frightCheck: {
+        field: systemFields.frightcheck,
+        name: 'frightcheck',
+        value: systemSource.frightcheck,
+      },
+      PER: {
+        field: attributeFields.PER.fields.import,
+        name: 'PER',
+        value: attributeSource.PER.import,
+      },
+      vision: {
+        field: systemFields.vision,
+        name: 'vision',
+        value: systemSource.vision,
+      },
+      hearing: {
+        field: systemFields.hearing,
+        name: 'hearing',
+        value: systemSource.hearing,
+      },
+      tasteSmell: {
+        field: systemFields.tastesmell,
+        name: 'tastesmell',
+        value: systemSource.tastesmell,
+      },
+      touch: {
+        field: systemFields.touch,
+        name: 'touch',
+        value: systemSource.touch,
+      },
+      basicSpeed: {
+        field: systemFields.basicspeed.fields.value,
+        value: systemSource.basicspeed.value,
+        nonRollable: true,
+      },
+      basicMove: {
+        field: systemFields.basicmove.fields.value,
+        value: systemSource.basicmove.value,
+        nonRollable: true,
+      },
+      basicThrust: {
+        field: systemFields.thrust,
+        value: systemSource.thrust,
+        name: `${systemSource.thrust} dmg`,
+      },
+      basicSwing: {
+        field: systemFields.swing,
+        value: systemSource.swing,
+        name: `${systemSource.swing} dmg`,
+      },
     }
   }
 
@@ -235,14 +333,14 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
   /*  Action Bindings                         */
   /* ---------------------------------------- */
 
-  static async #onIncrementPool(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
-    return this.#updatePool(event, 1)
+  static async #onIncrementPool(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    return this.#updatePool(event, target, 1)
   }
 
   /* ---------------------------------------- */
 
-  static async #onDecrementPool(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
-    return this.#updatePool(event, -1)
+  static async #onDecrementPool(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    return this.#updatePool(event, target, -1)
   }
 
   /* ---------------------------------------- */
@@ -336,14 +434,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
   /* ---------------------------------------- */
 
-  async #updatePool(event: PointerEvent, valueDelta: number): Promise<void> {
+  async #updatePool(event: PointerEvent, target: HTMLElement, valueDelta: number): Promise<void> {
     event.preventDefault()
 
-    const element = event.target
-
-    if (!isHTMLElement(element)) return
-
-    const systemPath = element.dataset.path
+    const systemPath = target.dataset.path
 
     if (!systemPath) {
       console.error('No pool path provided')
@@ -367,6 +461,29 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         : pathValue - valueDelta
 
     await this.actor.update({ [systemPath]: newValue })
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onAddModifier(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event.preventDefault()
+
+    const value = target.dataset.value ?? '0'
+    const comment = target.dataset.comment ?? ''
+
+    GURPS.ModifierBucket.addModifier(value, comment)
+  }
+
+  static async #onRollOtf(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event.preventDefault()
+
+    const value = target.dataset.value ?? ''
+
+    const parsed = GURPS.parselink(value)
+
+    if (!parsed.action) return
+
+    GURPS.performAction(parsed.action, this.actor, event)
   }
 
   /* ---------------------------------------- */

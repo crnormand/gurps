@@ -1,5 +1,7 @@
 import { ImportSettings } from '@module/importer/index.js'
+import { constructHTMLButton } from '@module/util/dom.js'
 import { getUser } from '@module/util/guards.js'
+import { DeepPartial } from 'fvtt-types/utils'
 
 import { ActorImporter } from '../actor-importer.js'
 
@@ -7,18 +9,58 @@ import DragDrop = foundry.applications.ux.DragDrop
 import ActorSheet = gurps.applications.ActorSheet
 
 // See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
-const _InternalGurpsBaseActorSheet = <Type extends Actor.SubType>() =>
+const _InternalGurpsBaseActorSheet = <
+  Type extends Actor.SubType,
+  RenderOptions extends ActorSheet.RenderOptions = ActorSheet.RenderOptions,
+>() =>
   foundry.applications.api.HandlebarsApplicationMixin(
     foundry.applications.sheets.ActorSheetV2
-  ) as unknown as gurps.applications.ActorSheet.HandlebarsConstructor<Actor.OfType<Type>>
+  ) as unknown as gurps.applications.ActorSheet.HandlebarsConstructor<Actor.OfType<Type>, RenderOptions>
+
+namespace GurpsBaseActorSheet {
+  export type RenderOptions = ActorSheet.RenderOptions & {
+    mode?: 1 | 2
+  }
+}
 
 /* ---------------------------------------- */
 
-const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
-  class GurpsBaseActorSheet extends _InternalGurpsBaseActorSheet<Type>() {
+const GurpsBaseActorSheet = <
+  Type extends Actor.SubType,
+  RenderOptions extends GurpsBaseActorSheet.RenderOptions = GurpsBaseActorSheet.RenderOptions,
+>() =>
+  class GurpsBaseActorSheet extends _InternalGurpsBaseActorSheet<Type, RenderOptions>() {
     constructor(options?: ActorSheet.Configuration & { document?: Actor.OfType<Type> }) {
       super(options)
       this.#dragDrop = this.#createDragDropHandlers()
+    }
+
+    /* ---------------------------------------- */
+
+    /** Available sheet modes */
+    static MODES = Object.freeze({
+      PLAY: 1,
+      EDIT: 2,
+    })
+
+    /**
+     * The mode the sheet is currently in.
+     */
+    protected _mode: (typeof GurpsBaseActorSheet.MODES)[keyof typeof GurpsBaseActorSheet.MODES] =
+      GurpsBaseActorSheet.MODES.PLAY
+
+    /* ---------------------------------------- */
+
+    /** Is this sheet in Play Mode? */
+    get isPlayMode(): boolean {
+      return this._mode === GurpsBaseActorSheet.MODES.PLAY
+    }
+
+    /* ---------------------------------------- */
+
+    /** Is this sheet in Edit Mode? */
+    get isEditMode(): boolean {
+      return this._mode === GurpsBaseActorSheet.MODES.EDIT
     }
 
     /* ---------------------------------------- */
@@ -66,7 +108,7 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
      * @protected
      */
     protected _canDragStart(_selector: DragDrop.DragSelector): boolean {
-      return this.actor.isOwner
+      return this.isEditable
     }
 
     /**
@@ -76,7 +118,7 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
      * @protected
      */
     protected _canDragDrop(_selector: DragDrop.DragSelector): boolean {
-      return this.actor.isOwner
+      return this.isEditable
     }
 
     /**
@@ -130,6 +172,7 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
       },
       actions: {
         importActor: GurpsBaseActorSheet.#onImportActor,
+        toggleMode: GurpsBaseActorSheet.#onToggleMode,
       },
       dragDrop: [{ dragSelector: '[draggable]', dropSelector: null }],
     }
@@ -172,10 +215,49 @@ const GurpsBaseActorSheet = <Type extends Actor.SubType>() =>
 
     /* ---------------------------------------- */
 
-    protected override async _onRender(
-      context: ActorSheet.RenderContext,
-      options: ActorSheet.RenderOptions
-    ): Promise<void> {
+    static async #onToggleMode(this: GurpsBaseActorSheet): Promise<void> {
+      if (!this.isEditable) {
+        console.error("You can't switch to Edit mode if the sheet is uneditable.")
+
+        return
+      }
+
+      await this.render({
+        mode: this.isPlayMode ? GurpsBaseActorSheet.MODES.EDIT : GurpsBaseActorSheet.MODES.PLAY,
+      } as RenderOptions)
+    }
+
+    /* ---------------------------------------- */
+    /*  Render Handling                         */
+    /* ---------------------------------------- */
+
+    protected override _configureRenderOptions(options: DeepPartial<RenderOptions>): void {
+      super._configureRenderOptions(options)
+
+      if (options.mode && this.isEditable) this._mode = options.mode
+    }
+
+    /* ---------------------------------------- */
+
+    protected override async _renderFrame(options: DeepPartial<RenderOptions>): Promise<HTMLElement> {
+      const frame = await super._renderFrame(options)
+
+      const buttons = [
+        constructHTMLButton({
+          label: '',
+          classes: ['header-control', 'icon', 'fa-solid', 'fa-user-lock'],
+          dataset: { action: 'toggleMode', tooltip: 'GURPS.sheet.toggleMode' },
+        }),
+      ]
+
+      this.window.controls?.after(...buttons)
+
+      return frame
+    }
+
+    /* ---------------------------------------- */
+
+    protected override async _onRender(context: ActorSheet.RenderContext, options: RenderOptions): Promise<void> {
       super._onRender(context, options)
       this.#dragDrop.forEach(dragDrop => dragDrop.bind(this.element))
 

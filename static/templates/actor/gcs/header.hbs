@@ -2,7 +2,7 @@
 {{#*inline ".pointTotal"}}
   <div class="gcs-point-total form-group">
     <div class="form-fields">
-      {{formInput field value=value localize=true}}
+      {{formInput field value=value localize=true disabled=@root.isPlay}}
     </div>
     <label>{{field.label}}</label>
   </div>
@@ -19,37 +19,51 @@
   <div class="gcs-identity gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.identity"}}</div>
     <div class="gcs-field-rows gcs-section-content">
-      {{formField fields.name value=actor.name localize=true}}
-      {{formField systemFields.profile.fields.title value=systemSource.profile.title localize=true}}
+      {{formField fields.name value=actor.name localize=true disabled=isPlay}}
+      {{formField systemFields.profile.fields.title value=systemSource.profile.title localize=true disabled=isPlay}}
     </div>
   </div>
   <div class="gcs-miscellaneous gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.miscellaneous"}}</div>
     <div class="gcs-field-rows gcs-section-content">
-      {{formField systemFields.profile.fields.createdon value=systemSource.profile.createdon localize=true}}
-      {{formField systemFields.profile.fields.modifiedon value=systemSource.profile.modifiedon localize=true}}
+      {{formField systemFields.profile.fields.createdon value=systemSource.profile.createdon localize=true disabled=isPlay}}
+      {{formField systemFields.profile.fields.modifiedon value=systemSource.profile.modifiedon localize=true disabled=isPlay}}
     </div>
   </div>
   <div class="gcs-description gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.description"}}</div>
     <div class="gcs-field-columns gcs-section-content">
       <div class="gcs-field-rows">
-        {{formField systemFields.profile.fields.gender value=systemSource.profile.gender localize=true}}
-        {{formField systemFields.profile.fields.age value=systemSource.profile.age localize=true}}
-        {{formField systemFields.profile.fields.birthday value=systemSource.profile.birthday localize=true}}
-        {{formField systemFields.profile.fields.religion value=systemSource.profile.religion localize=true}}
+        {{formField systemFields.profile.fields.gender value=systemSource.profile.gender localize=true disabled=isPlay}}
+        {{formField systemFields.profile.fields.age value=systemSource.profile.age localize=true disabled=isPlay}}
+        {{formField systemFields.profile.fields.birthday value=systemSource.profile.birthday localize=true disabled=isPlay}}
+        {{formField systemFields.profile.fields.religion value=systemSource.profile.religion localize=true disabled=isPlay}}
       </div>
       <div class="gcs-field-rows">
-        {{formField systemFields.profile.fields.height value=systemSource.profile.height localize=true}}
-        {{formField systemFields.profile.fields.weight value=systemSource.profile.weight localize=true}}
-        {{formField systemFields.profile.fields.sizemod value=systemSource.profile.sizemod localize=true}}
-        {{formField systemFields.profile.fields.techlevel value=systemSource.profile.techlevel localize=true}}
+        {{formField systemFields.profile.fields.height value=systemSource.profile.height localize=true disabled=isPlay}}
+        {{formField systemFields.profile.fields.weight value=systemSource.profile.weight localize=true disabled=isPlay}}
+        {{#if isPlay}}
+        <div class="form-group">
+          <label>{{localize "GURPS.Actor.characterV2.FIELDS.profile.sizemod.label"}}</label>
+          <div
+            class="form-fields gcs-link-mod"
+            data-action="addModifier"
+            data-value="{{systemSource.profile.sizemod}}"
+            data-comment="{{localize 'GURPS.Actor.characterV2.FIELDS.profile.sizemod.label'}}"
+            >
+            <span>{{displayNumber systemSource.profile.sizemod}}</span>
+          </div>
+        </div>
+        {{else}}
+          {{formField systemFields.profile.fields.sizemod value=systemSource.profile.sizemod localize=true}}
+        {{/if}}
+        {{formField systemFields.profile.fields.techlevel value=systemSource.profile.techlevel localize=true disabled=isPlay}}
       </div>
       <div class="gcs-field-rows">
-        {{formField systemFields.profile.fields.hair value=systemSource.profile.hair localize=true}}
-        {{formField systemFields.profile.fields.eyes value=systemSource.profile.eyes localize=true}}
-        {{formField systemFields.profile.fields.skin value=systemSource.profile.skin localize=true}}
-        {{formField systemFields.profile.fields.hand value=systemSource.profile.hand localize=true}}
+        {{formField systemFields.profile.fields.hair value=systemSource.profile.hair localize=true disabled=isPlay}}
+        {{formField systemFields.profile.fields.eyes value=systemSource.profile.eyes localize=true disabled=isPlay}}
+        {{formField systemFields.profile.fields.skin value=systemSource.profile.skin localize=true disabled=isPlay}}
+        {{formField systemFields.profile.fields.hand value=systemSource.profile.hand localize=true disabled=isPlay}}
       </div>
     </div>
   </div>
