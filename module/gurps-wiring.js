@@ -21,7 +21,8 @@ export default class GurpsWiring {
   }
 
   /**
-   * Given a jquery html, attach all of our listeners to it. No need to call bind(), since they don't use "this".
+   * Given an HTMLElement, attach all of our listeners to it. No need to call bind(), since they don't use "this".
+   * @param {HTMLElement} element The element to wire up GURPS click/drag handlers for.
    */
   static #hookupGurpsClick(element) {
     // In case we are rendering the same html multiple times, we may have already wired up some of the elements. To
