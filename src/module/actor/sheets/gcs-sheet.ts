@@ -642,10 +642,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         })
       : []
 
-    await this.actor.updateEmbeddedDocuments('Item', [
-      { _id: item._id, 'system.containedBy': containedBy, 'system._carried': carried, sort } as Record<string, unknown>,
-      ...childUpdates,
-    ])
+    const baseUpdate: Record<string, unknown> = {
+      _id: item._id,
+      'system.containedBy': containedBy,
+      sort,
+    }
+
+    if (item.isOfType('equipmentV2')) {
+      baseUpdate['system._carried'] = carried
+    }
+
+    await this.actor.updateEmbeddedDocuments('Item', [baseUpdate, ...childUpdates])
   }
 }
 
