@@ -1782,10 +1782,10 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   async _onClickRoll(event, targets) {
-    // Special handling for damage rolls: If it has a damage dataset and it starts with 'D:', then it is a GurpsLink
-    // damage roll, and we want to use GurpsWiring.handleGurpslink to resolve it. GURPS.handleRoll doesn't really know
-    // how to handle the "D:<Weapon-Name>" format. This really points out the duplication and the needless complexity
-    // of the current OTF handling.
+    // Special handling for damage rolls: if the element has a damage dataset and its OTF starts with 'D:', then it is
+    // a GurpsLink-style damage roll. In that case we delegate to GurpsWiring.handleGurpslink so that the GurpsLink
+    // machinery (including attack damage resolution and target handling) is used instead of the more generic
+    // GURPS.handleRoll path.
     if (event.currentTarget.dataset.hasOwnProperty('damage')) {
       let otf = event.currentTarget.dataset.otf
       if (otf && otf.startsWith('D:')) {
