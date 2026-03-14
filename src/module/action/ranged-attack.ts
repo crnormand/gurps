@@ -227,9 +227,6 @@ const rangedAttackSchema = () => {
 
     /** The number of shots and reload round count for this attack. */
     shots: new WeaponShotsField(),
-
-    /** Unused field from previous iterations of this schema */
-    // legalityclass: new fields.StringField({ required: true, nullable: false }),
   }
 }
 

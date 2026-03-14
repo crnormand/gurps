@@ -165,15 +165,6 @@ const meleeAttackSchema = () => {
 
     /** The block value of this attack */
     block: new WeaponBlockField(),
-
-    /**
-     * NOTE: These fields seem inappropriate for attacks and appear to be vestigial. They have been commented out but
-     * left here temporarily for documentation purposes.
-     */
-
-    // weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    // techlevel: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    // cost: new fields.StringField({ required: true, nullable: false }),
   }
 }
 

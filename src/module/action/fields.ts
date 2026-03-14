@@ -9,7 +9,7 @@ import {
   parseReach,
   parseRecoil,
   parseShots,
-} from '@module/util/parse-weapon.js'
+} from '@module/action/parse-weapon.js'
 
 /* ---------------------------------------- */
 

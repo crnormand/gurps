@@ -1,9 +1,9 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
+import { parseBlock, parseParry } from '@module/action/parse-weapon.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { TraitSchema } from '@module/item/data/trait.js'
-import { parseBlock, parseParry } from '@module/util/parse-weapon.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackSchema } from '../../action/melee-attack.js'

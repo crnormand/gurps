@@ -92,8 +92,6 @@ const baseAttackSchema = () => {
       initial: [],
     }),
     consumeAction: new fields.BooleanField({ required: true, nullable: false, initial: true }),
-    // not sure what this does
-    // cost: new fields.StringField({ required: true, nullable: false }),
     extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
     mode: new fields.StringField({ required: true, nullable: false }),
