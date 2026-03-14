@@ -44,7 +44,7 @@ describe('GurpsActorV2.moveItem', () => {
 
     equipmentData = {
       containedBy: null,
-      carried: true,
+      _carried: true,
       equipped: false,
       count: 1,
       weight: 0,
@@ -210,7 +210,7 @@ describe('GurpsActorV2.moveItem', () => {
       sort: 0,
       system: new EquipmentModel({
         ...equipmentData,
-        carried: false, // Add to "Other" (i.e., not carried).
+        _carried: false, // Add to "Other" (i.e., not carried).
       }),
     })
 
@@ -227,7 +227,7 @@ describe('GurpsActorV2.moveItem', () => {
         expect.objectContaining({
           _id: 'eq4',
           system: expect.objectContaining({
-            carried: true,
+            _carried: true,
           }),
         }),
       ]),
@@ -246,7 +246,7 @@ describe('GurpsActorV2.moveItem', () => {
         expect.objectContaining({
           _id: 'eq1',
           system: expect.objectContaining({
-            carried: false,
+            _carried: false,
           }),
         }),
       ]),
@@ -317,7 +317,7 @@ describe('GurpsActorV2.moveItem', () => {
       system: new EquipmentModel({
         ...equipmentData,
         containedBy: null,
-        carried: false,
+        _carried: false,
       }),
     })
 
@@ -384,7 +384,7 @@ describe('GurpsActorV2.moveItem', () => {
           system: expect.objectContaining({
             containedBy: 'eq2', // Inside the backpack
             count: 2, // The split quantity
-            carried: true,
+            _carried: true,
           }),
         }),
       ]),
