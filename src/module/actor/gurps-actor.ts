@@ -2321,9 +2321,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       },
     } as Item.UpdateData
 
-    if (item.type === 'equipmentV2') {
+    if (item.isOfType('equipmentV2')) {
       // @ts-expect-error: wrong type for _id provided by fvtt-types
-      update.system!.carried = targetCollection === 'system.equipmentV2.carried'
+      update.system!._carried = targetCollection === 'system.equipmentV2.carried'
     }
 
     updates.push(update)
