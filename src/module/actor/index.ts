@@ -17,7 +17,7 @@ import { GurpsActorV2 } from './gurps-actor.js'
 import { migrateActor, runMigration } from './migrate.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
-import * as sheets from './sheets/index.ts'
+import * as sheets from './sheets/index.js'
 
 interface ActorModule extends GurpsModule {
   migrateActor: typeof migrateActor
