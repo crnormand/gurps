@@ -277,12 +277,12 @@ describe('RangedAttackModel', () => {
 
   /* ---------------------------------------- */
 
-  describe('#prepareDisplayValues (via prepareBaseData)', () => {
+  describe('#prepareDisplayValues (via prepareDerivedData)', () => {
     describe('accText', () => {
       test('jet accuracy → localized jet key', () => {
         const model = makeRanged({ acc: { base: 0, scope: 0, jet: true } })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.accText).toBe('GURPS.action.rangedAttack.jet')
       })
@@ -296,7 +296,7 @@ describe('RangedAttackModel', () => {
       ])('%s', (_desc, acc, expected) => {
         const model = makeRanged({ acc })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.accText).toBe(expected)
       })
@@ -316,7 +316,7 @@ describe('RangedAttackModel', () => {
       ])('%s', (_desc, bulk, expected) => {
         const model = makeRanged({ bulk })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.bulkText).toBe(expected)
       })
@@ -339,7 +339,7 @@ describe('RangedAttackModel', () => {
       ])('%s', (_desc, range, expected) => {
         const model = makeRanged({ range })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.rangeText).toBe(expected)
       })
@@ -351,7 +351,7 @@ describe('RangedAttackModel', () => {
       test('jet → localized jet key', () => {
         const model = makeRanged({ rateOfFire: rofWith({}, {}, true) })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.rofText).toBe('GURPS.action.rangedAttack.jet')
       })
@@ -359,7 +359,7 @@ describe('RangedAttackModel', () => {
       test('no shots in either mode → empty', () => {
         const model = makeRanged({ rateOfFire: rofWith() })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.rofText).toBe('')
       })
@@ -377,7 +377,7 @@ describe('RangedAttackModel', () => {
       ])('%s', (_desc, mode1Overrides, expected) => {
         const model = makeRanged({ rateOfFire: rofWith(mode1Overrides) })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.rofText).toBe(expected)
       })
@@ -385,7 +385,7 @@ describe('RangedAttackModel', () => {
       test('dual mode → mode1/mode2', () => {
         const model = makeRanged({ rateOfFire: rofWith({ shotsPerAttack: 3 }, { shotsPerAttack: 20 }) })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.rofText).toBe('3/20')
       })
@@ -393,7 +393,7 @@ describe('RangedAttackModel', () => {
       test('mode1 empty + mode2 has shots → only mode2 shown', () => {
         const model = makeRanged({ rateOfFire: rofWith({}, { shotsPerAttack: 20 }) })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.rofText).toBe('20')
       })
@@ -409,7 +409,7 @@ describe('RangedAttackModel', () => {
       ])('%s', (_desc, recoil, expected) => {
         const model = makeRanged({ recoil })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.recoilText).toBe(expected)
       })
@@ -423,7 +423,7 @@ describe('RangedAttackModel', () => {
           shots: { count: 0, inChamber: 0, duration: 0, reloadTime: 0, reloadTimeIsPerShot: false, thrown: true },
         })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.shotsText).toBe('T')
       })
@@ -448,7 +448,7 @@ describe('RangedAttackModel', () => {
         }
         const model = makeRanged({ shots: { ...shotsDefaults, ...shotsOverrides } })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.shotsText).toBe(expected)
       })
