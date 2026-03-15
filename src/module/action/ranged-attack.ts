@@ -349,15 +349,15 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
     const fullName = super.toDisplayItem().fullName
 
     return foundry.utils.mergeObject(super.toDisplayItem(), {
-      acc: this.acc,
-      bulk: this.bulk,
-      halfDamageRange: this.halfd,
-      maxRange: this.max,
-      minRange: '',
-      range: this.range,
-      recoil: this.rcl,
-      rof: this.rateOfFire,
-      shots: this.shots,
+      acc: this.accText,
+      bulk: this.bulkText,
+      halfDamageRange: this.range.halfDamage.toLocaleString(),
+      maxRange: this.range.max.toLocaleString(),
+      minRange: this.range.min.toLocaleString(),
+      range: this.rangeText,
+      recoil: this.recoilText,
+      rof: this.rofText,
+      shots: this.shotsText,
       otf: {
         level: `R:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
         damage: `D:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
