@@ -90,10 +90,11 @@ describe('RangedAttackModel', () => {
 
     describe('bulk normalization', () => {
       test.each([
-        ['positive normal left unchanged', { normal: 3, giant: 0 }, 3, 0],
+        ['negative normal left unchanged', { normal: -3, giant: 0 }, -3, 0],
+        ['negative giant left unchanged', { normal: 0, giant: -4 }, 0, -4],
         ['zero values left unchanged', { normal: 0, giant: 0 }, 0, 0],
-        ['negative normal clamped to 0', { normal: -3, giant: 0 }, 0, 0],
-        ['negative giant clamped to 0', { normal: 0, giant: -5 }, 0, 0],
+        ['positive normal clamped to 0', { normal: 3, giant: 0 }, 0, 0],
+        ['positive giant clamped to 0', { normal: 0, giant: 5 }, 0, 0],
       ])('%s', (_desc, bulk, expectedNormal, expectedGiant) => {
         const result = RangedAttackModel.cleanData({ bulk })
 
