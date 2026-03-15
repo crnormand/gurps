@@ -24,7 +24,7 @@ class MeleeV1 {
   }
 
   get block() {
-    return this.meleeV2.block
+    return this.meleeV2.blockText
   }
 
   get consumeAction() {

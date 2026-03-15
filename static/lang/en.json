@@ -12,7 +12,7 @@
     "acc": "Acc",
     "accForWeapon": "Acc for {weapon}",
     "action": {
-      "aaseAction": {
+      "baseAction": {
         "FIELDS": {
           "addToQuickRoll": "Add to Quick Roll",
           "disabled": "Disabled",

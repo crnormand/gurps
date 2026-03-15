@@ -12,7 +12,7 @@
     "acc": "Préc",
     "accForWeapon": "Préc pour {weapon}",
     "action": {
-      "BaseAction": {
+      "baseAction": {
         "FIELDS": {
           "addToQuickRoll": "Ajouter au jet rapide",
           "disabled": "Désactivé",
