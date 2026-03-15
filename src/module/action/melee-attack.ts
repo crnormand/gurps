@@ -100,11 +100,11 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   #prepareDisplayValues(): void {
     this.parryText = this.parry.canParry
       ? `${this.parryLevel}${this.parry.fencing ? 'F' : ''}${this.parry.unbalanced ? 'U' : ''}`
-      : (game.i18n?.localize('GURPS.Action.MeleeAttack.parryDisabled') ?? '')
+      : (game.i18n?.localize('GURPS.action.meleeAttack.parryDisabled') ?? '')
 
     this.blockText = this.block.canBlock
       ? `${this.blockLevel}`
-      : (game.i18n?.localize('GURPS.Action.MeleeAttack.blockDisabled') ?? '')
+      : (game.i18n?.localize('GURPS.action.meleeAttack.blockDisabled') ?? '')
 
     // Prepare reach value
     let reach = ''

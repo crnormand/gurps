@@ -49,7 +49,7 @@ function parseParry(text: string): Parry {
 
   text = text.trim().toLowerCase()
 
-  if (!negativeStrings('GURPS.Action.MeleeAttack.parryDisabled').includes(text)) {
+  if (!negativeStrings('GURPS.action.meleeAttack.parryDisabled').includes(text)) {
     parry.canParry = true
     parry.fencing = text.includes('f')
     parry.unbalanced = text.includes('u')
@@ -66,7 +66,7 @@ function parseBlock(text: string): Block {
 
   text = text.trim().toLowerCase()
 
-  if (!negativeStrings('GURPS.Action.MeleeAttack.blockDisabled').includes(text)) {
+  if (!negativeStrings('GURPS.action.meleeAttack.blockDisabled').includes(text)) {
     block.canBlock = true
     block.modifier = extractNumber(text)
   }
@@ -114,8 +114,8 @@ function parseAcc(text: string): Acc {
 
   if (
     text.includes('jet') ||
-    text.includes('GURPS.Action.RangedAttack.jet'.toLocaleLowerCase()) ||
-    text.includes(game.i18n?.localize('GURPS.Action.RangedAttack.jet').toLocaleLowerCase() ?? 'jet')
+    text.includes('GURPS.action.rangedAttack.jet'.toLocaleLowerCase()) ||
+    text.includes(game.i18n?.localize('GURPS.action.rangedAttack.jet').toLocaleLowerCase() ?? 'jet')
   ) {
     accuracy.jet = true
   } else {

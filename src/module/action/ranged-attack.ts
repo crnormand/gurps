@@ -66,7 +66,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   #prepareDisplayValues(): void {
     // Prepare the Acc text
-    if (this.acc.jet) this.accText = game.i18n?.localize('GURPS.Action.RangedAttack.jet') ?? ''
+    if (this.acc.jet) this.accText = game.i18n?.localize('GURPS.action.rangedAttack.jet') ?? ''
     else {
       this.accText = `${this.acc.base}`
       if (this.acc.scope !== 0) this.accText += `+${this.acc.scope}`
@@ -85,7 +85,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
     this.#prepareRangeValue(false)
 
     // Prepare the rate of fire text
-    if (this.rateOfFire.jet) this.rofText = game.i18n?.localize('GURPS.Action.RangedAttack.jet') ?? ''
+    if (this.rateOfFire.jet) this.rofText = game.i18n?.localize('GURPS.action.rangedAttack.jet') ?? ''
     else {
       const mode1Text = this.#prepareRateofFireText(this.rateOfFire.mode1)
       const mode2Text = this.#prepareRateofFireText(this.rateOfFire.mode2)

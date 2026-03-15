@@ -12,7 +12,7 @@
     "acc": "Prec",
     "accForWeapon": "Prec para {weapon}",
     "action": {
-      "BaseAction": {
+      "baseAction": {
         "FIELDS": {
           "addToQuickRoll": "Adicionar ao Rolamento Rápido",
           "disabled": "Desativado",

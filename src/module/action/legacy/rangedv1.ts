@@ -49,7 +49,9 @@ class RangedV1 {
   }
 
   get halfd() {
-    return this.rangedV2.range.halfDamage
+    const half = this.rangedV2.range?.halfDamage
+
+    return half == null ? '' : String(half)
   }
 
   get import() {
@@ -65,7 +67,8 @@ class RangedV1 {
   }
 
   get max() {
-    return this.rangedV2.range.max
+    // Legacy sheets expect `max` to be a string; coerce underlying value to string to avoid numeric return.
+    return String(this.rangedV2.range.max ?? '')
   }
 
   get mode() {
@@ -101,7 +104,7 @@ class RangedV1 {
   }
 
   get rcl() {
-    return this.rangedV2.recoil.shot
+    return this.rangedV2.recoilText
   }
 
   get rof() {
