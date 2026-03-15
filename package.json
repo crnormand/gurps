@@ -1,24 +1,23 @@
 {
   "description": "GURPS Game Aid",
   "devDependencies": {
-    "@types/jest": "^30.0.0",
     "@types/jquery": "^3.5.32",
     "@types/node": "^22.14.1",
+    "@vitest/coverage-v8": "^4.1.0",
     "chokidar": "^4.0.3",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import-x": "^4.16.1",
     "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
     "husky": "^9.1.7",
-    "jest": "^30.2.0",
     "prettier": "^3.5.3",
     "purgecss": "^8.0.0",
     "sass": "^1.97.1",
-    "ts-jest": "^29.3.4",
     "tsc-alias": "^1.8.16",
     "tsc-watch": "^7.2.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.50.0"
+    "typescript-eslint": "^8.50.0",
+    "vitest": "^4.1.0"
   },
   "name": "gurps",
   "overrides": {
@@ -42,8 +41,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky",
-    "tdd": "NODE_OPTIONS=\"--experimental-vm-modules --disable-warning=ExperimentalWarning\" jest --coverage --config=jest.config.mjs",
-    "test": "NODE_OPTIONS=\"--experimental-vm-modules --disable-warning=ExperimentalWarning\" jest --config=jest.config.mjs",
+    "tdd": "vitest --coverage",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test",
     "watch": "node build/watch.mjs",
