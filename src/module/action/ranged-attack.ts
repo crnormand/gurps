@@ -57,13 +57,12 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
     // Clean the bulk field to ensure it is normalized.
     if ('bulk' in source && typeof source.bulk === 'object' && source.bulk !== null) {
       if ('normal' in source.bulk && typeof source.bulk.normal === 'number')
-        source.bulk.normal = Math.max(source.bulk.normal, 0)
-
-      if ('normal' in source.bulk && typeof source.bulk.normal === 'number')
-        source.bulk.normal = Math.max(source.bulk.normal, 0)
+        // Bulk penalties should be non-positive; clamp toward 0 from below.
+        source.bulk.normal = Math.min(source.bulk.normal, 0)
 
       if ('giant' in source.bulk && typeof source.bulk.giant === 'number')
-        source.bulk.giant = Math.max(source.bulk.giant, 0)
+        // Giant bulk penalties should also be non-positive; clamp toward 0 from below.
+        source.bulk.giant = Math.min(source.bulk.giant, 0)
     }
 
     // Clean the range field to ensure it is normalized.
