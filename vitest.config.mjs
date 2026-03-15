@@ -18,6 +18,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    setupFiles: ['./test/jest.setup.js'],
+    setupFiles: ['./test/vitest.setup.ts'],
   },
 })
