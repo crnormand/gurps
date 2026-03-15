@@ -29,7 +29,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
   get selfControlNote(): string {
     if (this.cr === null) return ''
 
-    return '[' + game.i18n?.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name + ']'
+    return game.i18n?.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name
   }
 
   /* ---------------------------------------- */
@@ -50,9 +50,11 @@ class TraitModel extends BaseItemModel<TraitSchema> {
       level: this.level,
       fullName,
       points: this.points,
-      cr: this.cr,
-      crOTF: this.selfControlNote,
+      cr: this.cr ? `GURPS.CR${this.cr}` : null,
       enabled: this.enabled,
+      otf: {
+        cr: this.selfControlNote,
+      },
     })
   }
 }

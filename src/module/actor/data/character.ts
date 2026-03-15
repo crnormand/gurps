@@ -3,6 +3,7 @@ import { MeleeV1 } from '@module/action/legacy/meleev1.js'
 import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { ActionType } from '@module/action/types.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import DiceField from '@module/data/fields/dice-field.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
@@ -1920,6 +1921,42 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  findAttack(name: string, isMelee: boolean, isRanged: boolean): MeleeAttackModel | RangedAttackModel | null {
+    const usage = name.match(/ \((?<usage>[^()]+)\)/)?.groups?.usage ?? ''
+    let nameWithoutUsage = name
+
+    if (usage) {
+      nameWithoutUsage = name.replace(` (${usage})`, '')
+    }
+
+    const attackType: ActionType.MeleeAttack | ActionType.RangedAttack | 'both' | null =
+      isMelee && isRanged
+        ? 'both'
+        : !isMelee && !isRanged
+          ? null
+          : isMelee
+            ? ActionType.MeleeAttack
+            : ActionType.RangedAttack
+
+    if (!attackType) return null
+
+    const weapons = this.parent.getItemAttacks().filter(attack => attackType === 'both' || attack.type === attackType)
+
+    let weapon = weapons.find(attack => attack.item.name === nameWithoutUsage && (!usage || attack.mode === usage))
+
+    if (!weapon) {
+      // Account for the possibility that the usage was matched incorrectly as part of the name (e.g. "Guns (Pistol)")
+      // and usage does not exist
+      weapon = weapons.find(attack => attack.item.name === name && !attack.mode)
+    }
+
+    if (!weapon) return null
+
+    return weapon
   }
 
   /* ---------------------------------------- */

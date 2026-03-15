@@ -126,6 +126,10 @@ class SpellModel extends BaseItemModel<SpellSchema> {
       resist: this.resist,
       castingTime: this.casttime,
       techLevel: this.techlevel,
+      otf: {
+        level: `Sp:"${this.parent.name}"`,
+        relativeLevel: `Sp:"${this.parent.name}"`,
+      },
     })
   }
 }

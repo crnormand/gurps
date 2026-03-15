@@ -346,6 +346,8 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplayRangedAttack {
+    const fullName = super.toDisplayItem().fullName
+
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       acc: this.acc,
       bulk: this.bulk,
@@ -356,6 +358,10 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
       recoil: this.rcl,
       rof: this.rateOfFire,
       shots: this.shots,
+      otf: {
+        level: `R:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
+        damage: `D:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
+      },
     })
   }
 }

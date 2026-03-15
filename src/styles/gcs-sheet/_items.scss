@@ -82,11 +82,17 @@
     }
   }
 
-  .gcs-item-notes {
+  .gcs-item-notes-container {
+    min-height: 0;
+
     @for $i from 0 through 8 {
       &.indent#{$i} {
         padding-left: #{1.25 + $i * 1.25}rem;
       }
+    }
+
+    .gcs-item-cr {
+      padding: 0 0.25rem;
     }
   }
 

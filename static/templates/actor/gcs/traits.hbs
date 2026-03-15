@@ -23,9 +23,14 @@
         ></i>
         {{/if}}
       </div>
-      {{#if (and hasNotes notesOpen)}}
-      <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
-      {{/if}}
+      <div class="gcs-item-notes-container indent{{indent}}">
+        {{#if cr}}
+        <div data-action="rollOtf" data-value="{{otf.cr}}" class="gcs-item-cr indent{{indent}}">{{localize cr}}</div>
+        {{/if}}
+        {{#if (and hasNotes notesOpen)}}
+        <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+        {{/if}}
+      </div>
     </td>
     <td class="gcs-item-points">{{points}}</td>
   </tr>

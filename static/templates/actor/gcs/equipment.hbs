@@ -31,9 +31,11 @@
         ></i>
         {{/if}}
       </div>
-      {{#if (and hasNotes notesOpen)}}
-      <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
-      {{/if}}
+      <div class="gcs-item-notes-container indent{{indent}}">
+        {{#if (and hasNotes notesOpen)}}
+        <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+        {{/if}}
+      </div>
     </td>
     <td class="gcs-item-tl">{{techLevel}}</td>
     <td class="gcs-item-lc">{{legalityClass}}</td>

@@ -16,10 +16,10 @@
       {{/if}}
     </td>
     <td class="gcs-item-usage">{{usage}}</td>
-    <td class="gcs-item-level">{{level}}</td>
+    <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
     <td class="gcs-item-parry">{{parry}}</td>
     <td class="gcs-item-block">{{block}}</td>
-    <td class="gcs-item-damage">{{damage}}</td>
+    <td data-action="rollOtf" data-value="{{otf.damage}}" class="gcs-item-damage">{{damage}}</td>
     <td class="gcs-item-reach">{{reach}}</td>
     <td class="gcs-item-st">{{st}}</td>
   </tr>
@@ -43,9 +43,10 @@
       {{/if}}
     </td>
     <td class="gcs-item-usage">{{usage}}</td>
-    <td class="gcs-item-level">{{level}}</td>
+
+    <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
     <td class="gcs-item-acc">{{acc}}</td>
-    <td class="gcs-item-damage">{{damage}}</td>
+    <td data-action="rollOtf" data-value="{{otf.damage}}" class="gcs-item-damage">{{damage}}</td>
     <td class="gcs-item-range">{{range}}</td>
     <td class="gcs-item-rof">{{rof}}</td>
     <td class="gcs-item-shots">{{shots}}</td>

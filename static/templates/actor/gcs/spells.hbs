@@ -23,20 +23,19 @@
         ></i>
         {{/if}}
       </div>
-      {{#if (and hasNotes notesOpen)}}
-      <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
-      {{/if}}
+      <div class="gcs-item-notes-container indent{{indent}}">
+        {{#if (and hasNotes notesOpen)}}
+        <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+        {{/if}}
+      </div>
     </td>
-    <td class="gcs-item-level">
-      {{#unless hasChildren}}
-        {{level}}
-      {{/unless}}
-    </td>
-    <td class="gcs-item-rsl">
-      {{#unless hasChildren}}
-        {{relativeLevel}}
-      {{/unless}}
-    </td>
+    {{#if hasChildren}}
+      <td class="gcs-item-level"></td>
+      <td class="gcs-item-rsl"></td>
+    {{else}}
+      <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
+      <td data-action="rollOtf"  data-value="{{otf.relativeLevel}}" class="gcs-item-rsl">{{relativeLevel}}</td>
+    {{/if}}
     <td class="gcs-item-points">{{points}}</td>
   </tr>
   {{#if (and hasChildren childrenOpen)}}

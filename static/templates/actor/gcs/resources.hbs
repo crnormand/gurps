@@ -7,7 +7,7 @@
     {{else}}
       {{#if @root.isPlay}}
       <div
-          class="form-fields gcs-link-roll"
+          class="form-fields"
           data-action="rollOtf"
           data-value="{{name}}"
         >
@@ -105,7 +105,7 @@
             <td>{{location.rollText}}</td>
             <td>{{location.where}}</td>
             <td
-              class="form-fields gcs-link-mod"
+              class="form-fields"
               data-action="addModifier"
               data-value="{{location.penalty}}"
               data-comment="{{localize 'GURPS.hitLocationPenalty'}}: {{location.where}}"
@@ -130,7 +130,7 @@
       </thead>
       <tbody>
         {{#each system.encumbrance as |enc|}}
-          <tr>
+        <tr class="{{#if enc.current}}selected{{/if}}">
             <td>
               {{#if enc.current}}
               <i class="fa-solid fa-weight-hanging"></i>

@@ -37,11 +37,13 @@ interface DisplayTrait extends BaseDisplayItem {
   /** The number of points this trait is worth */
   points: number
   /** The Control Roll value for this trait, if any */
-  cr: number | null
-  /** The Control Roll OTF contents for this trait, if any */
-  crOTF: string
+  cr: string | null
   /** Is this trait enabled? */
   enabled: boolean
+  /** The OTF's associated with this trait */
+  otf: {
+    cr: string
+  }
 }
 
 /* ---------------------------------------- */
@@ -57,6 +59,11 @@ interface DisplaySkill extends BaseDisplayItem {
   techLevel: string | null
   /** The specialization of this skill, if any */
   specialization: string | null
+  /** The OTF's associated with this skill */
+  otf: {
+    level: string
+    relativeLevel: string
+  }
 }
 
 /* ---------------------------------------- */
@@ -84,6 +91,11 @@ interface DisplaySpell extends BaseDisplayItem {
   castingTime: string
   /** The tech level of this skill, if any */
   techLevel: string | null
+  /** The OTF's associated with this spell */
+  otf: {
+    level: string
+    relativeLevel: string
+  }
 }
 
 /* ---------------------------------------- */
@@ -149,6 +161,13 @@ interface DisplayMeleeAttack extends BaseDisplayAttack {
   parry: string
   /** The block value of this attack, e.g. "3",  etc. */
   block: string
+  /** The OTF's associated with this attack */
+  otf: {
+    level: string
+    damage: string
+    parry: string
+    block: string
+  }
 }
 
 /* ---------------------------------------- */
@@ -172,6 +191,11 @@ interface DisplayRangedAttack extends BaseDisplayAttack {
   recoil: string
   /** The rate of fire for this attack*/
   rof: string
+  /** The OTF's associated with this attack */
+  otf: {
+    level: string
+    damage: string
+  }
 }
 
 /* ---------------------------------------- */

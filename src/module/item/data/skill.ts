@@ -119,6 +119,10 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       relativeLevel: this.relativelevel,
       fullName,
       points: this.points,
+      otf: {
+        level: `Sk:"${this.parent.name}"`,
+        relativeLevel: `Sk:"${this.parent.name}"`,
+      },
     })
   }
 }

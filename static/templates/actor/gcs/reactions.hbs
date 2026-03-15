@@ -1,7 +1,11 @@
 
 {{#*inline ".conditionalModifierEntry"}}
   <tr class="gcs-item-row">
-    <td class="gcs-item-modifier">{{{displayNumber modifier}}}</td>
+    <td
+      data-action="addModifier"
+      data-value="{{modifier}}"
+      data-comment="{{situation}}"
+      class="gcs-item-modifier">{{{displayNumber modifier}}}</td>
     <td class="gcs-item-situation">{{situation}}</td>
   </tr>
 {{/inline}}

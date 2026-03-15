@@ -8,14 +8,9 @@
 body {
   @include css-variables;
 
-  &.theme-dark {
+  &.theme-dark .application.gcs-sheet:not(.theme-light),
+  .application.gcs-sheet.theme-dark {
     @include css-variables-dark;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    &:not(.theme-light) {
-      @include css-variables-dark;
-    }
   }
 }
 
@@ -59,13 +54,20 @@ body {
   }
 }
 
-.gcs-link-mod,
-.gcs-link-roll {
+[data-action='rollOtf'],
+[data-action='addModifier'] {
+  height: var(--gcs-input-height);
+  line-height: var(--gcs-input-height);
   cursor: pointer;
-  border-radius: 0.25rem;
+  padding-right: 0.25rem;
+
+  span {
+    width: 100%;
+    padding: 0 0.5rem;
+  }
 }
 
-.gcs-link-roll {
+[data-action='rollOtf'] {
   background-color: var(--gcs-color-roll-bg);
   color: var(--gcs-color-roll-fg);
 
@@ -74,7 +76,7 @@ body {
   }
 }
 
-.gcs-link-mod {
+[data-action='addModifier'] {
   background-color: var(--gcs-color-mod-bg);
   color: var(--gcs-color-mod-fg);
 
@@ -102,11 +104,12 @@ body {
     &.gcs-field-columns,
     &.gcs-field-rows {
       padding: 0;
+      grid-gap: 1px;
     }
 
     &.gcs-field-columns {
       display: flex;
-      gap: 0.1rem;
+      gap: 1px;
       align-items: start;
     }
   }
@@ -249,6 +252,11 @@ body {
     tr:nth-child(even) {
       background-color: var(--gcs-color-banding-bg);
       color: var(--gcs-color-banding-fg);
+    }
+
+    tr.selected {
+      background-color: var(--gcs-color-focus-bg);
+      color: var(--gcs-color-focus-fg);
     }
   }
 }
