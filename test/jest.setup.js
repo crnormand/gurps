@@ -4,6 +4,8 @@ global.foundry = {
       constructor(data) {
         Object.assign(this, data)
       }
+
+      static cleanData = source => source ?? {}
     },
     TypeDataModel: class {
       constructor(data) {
