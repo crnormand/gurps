@@ -1,8 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { LengthUnit } from '@module/data/common/length.js'
-import * as Settings from '@module/util/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { BaseAttack } from './base-attack.js'
 import {
@@ -34,6 +33,147 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   static override defineSchema(): RangedAttackSchema {
     return Object.assign(super.defineSchema(), rangedAttackSchema())
+  }
+
+  /* ---------------------------------------- */
+
+  static override cleanData(source?: AnyMutableObject, options?: fields.DataField.CleanOptions): AnyMutableObject {
+    source = super.cleanData(source, options)
+
+    // Clean the accuracy field to ensure it is normalized.
+    if ('acc' in source && typeof source.acc === 'object' && source.acc !== null) {
+      if ('jet' in source.acc && typeof source.acc.jet === 'boolean' && source.acc.jet) {
+        const acc = source.acc as AnyMutableObject
+
+        acc.base = 0
+        acc.scope = 0
+      }
+
+      if ('base' in source.acc && typeof source.acc.base === 'number') source.acc.base = Math.max(source.acc.base, 0)
+      if ('scope' in source.acc && typeof source.acc.scope === 'number')
+        source.acc.scope = Math.max(source.acc.scope, 0)
+    }
+
+    // Clean the bulk field to ensure it is normalized.
+    if ('bulk' in source && typeof source.bulk === 'object' && source.bulk !== null) {
+      if ('normal' in source.bulk && typeof source.bulk.normal === 'number')
+        source.bulk.normal = Math.max(source.bulk.normal, 0)
+
+      if ('normal' in source.bulk && typeof source.bulk.normal === 'number')
+        source.bulk.normal = Math.max(source.bulk.normal, 0)
+
+      if ('giant' in source.bulk && typeof source.bulk.giant === 'number')
+        source.bulk.giant = Math.max(source.bulk.giant, 0)
+    }
+
+    // Clean the range field to ensure it is normalized.
+    if ('range' in source && typeof source.range === 'object' && source.range !== null) {
+      if ('halfDamage' in source.range && typeof source.range.halfDamage === 'number')
+        source.range.halfDamage = Math.max(source.range.halfDamage, 0)
+      if ('min' in source.range && typeof source.range.min === 'number')
+        source.range.min = Math.max(source.range.min, 0)
+      if ('max' in source.range && typeof source.range.max === 'number')
+        source.range.max = Math.max(source.range.max, 0)
+
+      if (
+        'min' in source.range &&
+        typeof source.range.min === 'number' &&
+        'max' in source.range &&
+        typeof source.range.max === 'number'
+      ) {
+        if (source.range.min > source.range.max) {
+          ;[source.range.min, source.range.max] = [source.range.max, source.range.min]
+        }
+      }
+
+      if (
+        'min' in source.range &&
+        typeof source.range.min === 'number' &&
+        'halfDamage' in source.range &&
+        typeof source.range.halfDamage === 'number'
+      ) {
+        if (source.range.halfDamage < source.range.min) {
+          source.range.halfDamage = 0
+        }
+      }
+
+      if (
+        'max' in source.range &&
+        typeof source.range.max === 'number' &&
+        'halfDamage' in source.range &&
+        typeof source.range.halfDamage === 'number'
+      ) {
+        if (source.range.halfDamage > source.range.max) {
+          source.range.halfDamage = 0
+        }
+      }
+    }
+
+    // Clean the rate of fire field to ensure it is normalized.
+    if ('rateOfFire' in source && typeof source.rateOfFire === 'object' && source.rateOfFire !== null) {
+      const rateOfFire = source.rateOfFire as AnyMutableObject
+
+      for (const modeKey of ['mode1', 'mode2'] as const) {
+        if (modeKey in source.rateOfFire && typeof rateOfFire[modeKey] === 'object' && rateOfFire[modeKey] !== null) {
+          const mode = rateOfFire[modeKey] as AnyMutableObject
+
+          if ('shotsPerAttack' in mode && typeof mode.shotsPerAttack === 'number') {
+            mode.shotsPerAttack = Math.max(Math.ceil(mode.shotsPerAttack), 0)
+
+            if (mode.shotsPerAttack === 0) {
+              mode.secondaryProjectiles = 0
+              mode.fullAutoOnly = false
+              mode.highCyclicControlledBursts = false
+
+              continue
+            }
+
+            if ('secondaryProjectiles' in mode && typeof mode.secondaryProjectiles === 'number')
+              mode.secondaryProjectiles = Math.max(Math.ceil(mode.secondaryProjectiles), 0)
+          }
+        }
+      }
+    }
+
+    // Clean the recoil field to ensure it is normalized.
+    if ('recoil' in source && typeof source.recoil === 'object' && source.recoil !== null) {
+      if ('shot' in source.recoil && typeof source.recoil.shot === 'number')
+        source.recoil.shot = Math.max(source.recoil.shot, 0)
+      if ('slug' in source.recoil && typeof source.recoil.slug === 'number')
+        source.recoil.slug = Math.max(source.recoil.slug, 0)
+    }
+
+    // Clean the shots field to ensure it is normalized.
+    if ('shots' in source && typeof source.shots === 'object' && source.shots !== null) {
+      if ('reloadTime' in source.shots && typeof source.shots.reloadTime === 'number')
+        source.shots.reloadTime = Math.max(source.shots.reloadTime, 0)
+
+      const shots = source.shots as AnyMutableObject
+
+      if ('thrown' in source.shots && typeof source.shots.thrown === 'boolean' && source.shots.thrown) {
+        shots.count = 0
+        shots.inChamber = 0
+        shots.duration = 0
+      } else {
+        const count = 'count' in shots && typeof shots.count === 'number' ? shots.count : 0
+        const inChamber = 'inChamber' in shots && typeof shots.inChamber === 'number' ? shots.inChamber : 0
+
+        shots.count = Math.max(count ?? 0, 0)
+
+        shots.inChamber = Math.max(inChamber ?? 0, 0)
+
+        if (shots.count === 0 && shots.inChamber === 0) {
+          shots.duration = 0
+          shots.reloadTime = 0
+        } else {
+          const duration = 'duration' in shots && typeof shots.duration === 'number' ? shots.duration : 0
+
+          shots.duration = Math.max(duration ?? 0, 0)
+        }
+      }
+    }
+
+    return source
   }
 
   /* ---------------------------------------- */
@@ -137,7 +277,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
   /* ---------------------------------------- */
 
   #prepareMusclePoweredRange(): void {
-    if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_CONVERT_RANGED) === false) return
+    if (game.settings?.get(GURPS.SYSTEM_NAME, 'convert-ranged') === false) return
     if (!this.item.isOwned) return
 
     if (!this.range.musclePowered) return
