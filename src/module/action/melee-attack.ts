@@ -36,6 +36,20 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
         parry.fencing = false
         parry.unbalanced = false
         parry.modifier = 0
+
+        source.parry = parry
+      }
+    }
+
+    // Clean the block field to ensure it is normalized.
+    // If blocking is disabled, the other block fields are also reset to their default values.
+    if ('block' in source && typeof source.block === 'object' && source.block !== null) {
+      if ('canBlock' in source.block && typeof source.block.canBlock === 'boolean' && !source.block.canBlock) {
+        const block = source.block as AnyMutableObject
+
+        block.modifier = 0
+
+        source.block = block
       }
     }
 
