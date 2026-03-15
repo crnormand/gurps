@@ -260,8 +260,8 @@ function parseRateOfFire(text: string): RateOfFire {
 
   if (
     text.includes('jet') ||
-    text.includes('GURPS.Action.RangedAttack.jet'.toLocaleLowerCase()) ||
-    text.includes(game.i18n?.localize('GURPS.Action.RangedAttack.jet').toLocaleLowerCase() ?? 'jet')
+    text.includes('GURPS.action.rangedAttack.jet'.toLocaleLowerCase()) ||
+    text.includes(game.i18n?.localize('GURPS.action.rangedAttack.jet').toLocaleLowerCase() ?? 'jet')
   ) {
     rof.jet = true
 
