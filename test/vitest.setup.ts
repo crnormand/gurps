@@ -1,3 +1,5 @@
+export {}
+
 const typePrototypes: [new (...args: never[]) => unknown, string][] = [
   [Array, 'Array'],
   [Set, 'Set'],
@@ -370,11 +372,11 @@ global.foundry = {
       }
 
       for (const [key, value] of Object.entries(obj)) {
-        const type = foundry.utils.getType(value)
+        const type = global.foundry.utils.getType(value)
 
         if (type === 'Object') {
-          if (foundry.utils.isEmpty(value)) flat[key] = value
-          const inner = foundry.utils.flattenObject(value as Record<string, unknown>, _d + 1)
+          if (global.foundry.utils.isEmpty(value)) flat[key] = value
+          const inner = global.foundry.utils.flattenObject(value as Record<string, unknown>, _d + 1)
 
           for (const [ik, iv] of Object.entries(inner)) {
             flat[`${key}.${ik}`] = iv
@@ -406,7 +408,7 @@ global.foundry = {
       return 'Unknown'
     },
     isEmpty: (value: unknown): boolean => {
-      const type = foundry.utils.getType(value)
+      const type = global.foundry.utils.getType(value)
 
       switch (type) {
         case 'undefined':

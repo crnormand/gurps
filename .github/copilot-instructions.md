@@ -439,7 +439,7 @@ The project uses strict TypeScript settings:
 - **Strict mode**: Enabled with noImplicitAny, strictNullChecks, strictFunctionTypes
 - **Output**: dist/ directory with source maps
 - **Types**: Includes jquery and fvtt-types
-- **Exclusions**: build/, node_modules/, dist/, dev-utilities/, scripts/, test/vitest.setup.ts
+- **Includes/Excludes**: Refer to `tsconfig.json` and `tsconfig.eslint.json` for authoritative `include`/`exclude` settings; notably, `src/lib/**/*` is excluded from TypeScript compilation and `test/` files are not excluded by default.
 
 Key TypeScript patterns:
 
