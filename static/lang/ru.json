@@ -487,6 +487,7 @@
     "BODYPLANwinged humanoid": "Гуманоид, крылатый",
     "bonuses": "Бонусы",
     "bulk": "Разм",
+    "bulkForWeapon": "Громоздкость для {weapon}",
     "cancel": "Отмена",
     "cannotDragNonFoundryEqt": "Вы не можете перетащить не-Foundry снаряжение к другому персонажу.",
     "cannotDropItemAlreadyExists": "У вас уже есть этот предмет.",

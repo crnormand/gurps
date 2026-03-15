@@ -487,6 +487,7 @@
     "BODYPLANwinged humanoid": "Humanoïde, Ailé",
     "bonuses": "Bonus",
     "bulk": "Masse",
+    "bulkForWeapon": "Encombrement pour {weapon}",
     "cancel": "Annuler",
     "cannotDragNonFoundryEqt": "Vous ne pouvez pas glisser-déposer de l'équipement non-Foundry sur un autre personnage",
     "cannotDropItemAlreadyExists": "Vous avez déjà cet objet.",

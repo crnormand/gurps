@@ -165,8 +165,8 @@ interface DisplayMeleeAttack extends BaseDisplayAttack {
   otf: {
     level: string
     damage: string
-    parry: string
-    block: string
+    parry: string | null
+    block: string | null
   }
 }
 

@@ -169,6 +169,10 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   override toDisplayItem(): DisplayMeleeAttack {
     const fullName = super.toDisplayItem().fullName
 
+    const block = this.block ? `B:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`) : null
+
+    const parry = this.parry ? `P:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`) : null
+
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       reach: this.reach,
       parry: this.parry,
@@ -176,8 +180,8 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
       otf: {
         level: `M:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
         damage: `D:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
-        block: `B:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
-        parry: `P:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
+        block,
+        parry,
       },
     })
   }

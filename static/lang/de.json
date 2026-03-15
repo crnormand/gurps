@@ -487,6 +487,7 @@
     "BODYPLANwinged humanoid": "Humanoid, Geflügelt",
     "bonuses": "Bonusse",
     "bulk": "Handlichkeit",
+    "bulkForWeapon": "Bulk für {weapon}",
     "cancel": "Abbrechen",
     "cannotDragNonFoundryEqt": "Du kannst keine Nicht-Foundry-Ausrüstung auf einen anderen Charakter ziehen.",
     "cannotDropItemAlreadyExists": "Du hast diesen Gegenstand bereits.",

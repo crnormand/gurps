@@ -17,8 +17,16 @@
     </td>
     <td class="gcs-item-usage">{{usage}}</td>
     <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
-    <td class="gcs-item-parry">{{parry}}</td>
-    <td class="gcs-item-block">{{block}}</td>
+    {{#if otf.parry}}
+      <td data-action="rollOtf" data-value="{{otf.parry}}" class="gcs-item-parry">{{parry}}</td>
+    {{else}}
+      <td class="gcs-item-parry">{{parry}}</td>
+    {{/if}}
+    {{#if otf.block}}
+      <td data-action="rollOtf" data-value="{{otf.block}}" class="gcs-item-block">{{block}}</td>
+    {{else}}
+      <td class="gcs-item-block">{{block}}</td>
+    {{/if}}
     <td data-action="rollOtf" data-value="{{otf.damage}}" class="gcs-item-damage">{{damage}}</td>
     <td class="gcs-item-reach">{{reach}}</td>
     <td class="gcs-item-st">{{st}}</td>
@@ -45,12 +53,20 @@
     <td class="gcs-item-usage">{{usage}}</td>
 
     <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
+    {{#if acc}}
+    <td data-action="addModifier" data-value="{{acc}}" data-comment="{{localize 'GURPS.accForWeapon' weapon=fullName}}" class="gcs-item-acc">{{acc}}</td>
+    {{else}}
     <td class="gcs-item-acc">{{acc}}</td>
+    {{/if}}
     <td data-action="rollOtf" data-value="{{otf.damage}}" class="gcs-item-damage">{{damage}}</td>
     <td class="gcs-item-range">{{range}}</td>
     <td class="gcs-item-rof">{{rof}}</td>
     <td class="gcs-item-shots">{{shots}}</td>
+    {{#if bulk}}
+    <td data-action="addModifier" data-value="{{bulk}}" data-comment="{{localize 'GURPS.bulkForWeapon' weapon=fullName}}" class="gcs-item-bulk">{{bulk}}</td>
+    {{else}}
     <td class="gcs-item-bulk">{{bulk}}</td>
+    {{/if}}
     <td class="gcs-item-recoil">{{recoil}}</td>
     <td class="gcs-item-st">{{st}}</td>
   </tr>

@@ -487,6 +487,7 @@
     "BODYPLANwinged humanoid": "Humanoide Alado",
     "bonuses": "Bônus",
     "bulk": "Magnitude",
+    "bulkForWeapon": "Bulk para {weapon}",
     "cancel": "Cancelar",
     "cannotDragNonFoundryEqt": "Você não pode arrastar equipamento que não é do Foundry para outro personagem.",
     "cannotDropItemAlreadyExists": "Você já possui este item.",
