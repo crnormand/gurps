@@ -1,6 +1,6 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
-import { parseBlock } from '@module/action/parse-weapon.js'
+import { parseBlock } from '@module/action/parse-attack.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'

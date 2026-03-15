@@ -1,5 +1,5 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
-import { parseBlock, parseParry } from '@module/action/parse-weapon.js'
+import { parseBlock, parseParry } from '@module/action/parse-attack.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'

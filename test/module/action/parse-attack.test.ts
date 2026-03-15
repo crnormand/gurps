@@ -8,7 +8,7 @@ import {
   parseReach,
   parseRecoil,
   parseShots,
-} from '@module/action/parse-weapon.js'
+} from '@module/action/parse-attack.js'
 
 // game.i18n.localize returns the key unchanged in the test environment,
 // so negativeStrings uses the raw key as the localized fallback.
