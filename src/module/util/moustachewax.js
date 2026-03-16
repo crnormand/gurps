@@ -10,7 +10,7 @@ import { extractOtfs } from '@util/otf.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import { isArray, isEmpty, quotedAttackName, recurselist, stripBracketContents, zeroFill } from '@util/utilities.js'
 
-import { constrastColor } from './constrast-color.js'
+import { constrastColor } from './contrast-color.ts'
 import { multiplyDice } from './damage-utils.js'
 import { gurpslink } from './gurpslink.js'
 import { i18nFallback } from './i18nFallback.js'

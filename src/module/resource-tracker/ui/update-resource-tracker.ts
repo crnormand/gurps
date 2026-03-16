@@ -4,7 +4,7 @@ import { IResourceTracker } from '../types.js'
 import { ResourceTrackerEditorV2 } from './resource-tracker-editor-v2.js'
 
 export async function updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance): Promise<void> {
-  const trackerData = JSON.parse(JSON.stringify(tracker)) as IResourceTracker
+  const trackerData = tracker
 
   interface TrackerEditorOptions {
     onUpdate: (editedTracker: IResourceTracker) => Promise<void>

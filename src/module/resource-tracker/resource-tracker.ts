@@ -266,4 +266,5 @@ export {
   type ResourceTrackerSchema,
   type ResourceTrackerThresholdSchema,
   type ResourceTrackerTemplateSchema,
+  resourceTrackerTemplateSchema,
 }

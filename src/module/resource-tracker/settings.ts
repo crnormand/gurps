@@ -1,5 +1,8 @@
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import { fields } from '@gurps-types/foundry/index.js'
+
 import { SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
+import { resourceTrackerTemplateSchema } from './resource-tracker.js'
 
 export async function initializeSettings() {
   if (!game.settings) throw new Error('GURPS | Game settings not found')
@@ -15,10 +18,16 @@ export async function initializeSettings() {
   })
 
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, {
-    name: game.i18n.localize('GURPS.resourceTracker.template.title'),
+    name: 'GURPS.resourceTracker.template.title',
     scope: 'world',
     config: false,
-    type: Object as any,
+    type: new fields.TypedObjectField(
+      new fields.SchemaField(resourceTrackerTemplateSchema(), { required: true, nullable: false }),
+      {
+        required: true,
+        nullable: false,
+      }
+    ),
     default: ResourceTrackerManager.getDefaultTemplates(),
     onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
   })

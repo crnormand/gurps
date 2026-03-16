@@ -1,16 +1,24 @@
 import { TrackerComparators, TrackerOperators } from './types.js'
 import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from './types.js'
 import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.js'
+import { TrackerInstance } from './resource-tracker.js'
+
+type TrackerTemplateSettingValue = {
+  id: string
+  tracker: TrackerInstance
+  initialValue: string | null
+  autoapply: boolean
+}
 
 export class ResourceTrackerManager extends FormApplication {
   _templates: Record<string, IResourceTrackerTemplate>
 
-  static getDefaultTemplates(): Record<string, IResourceTrackerTemplate> {
+  static getDefaultTemplates(): Record<string, TrackerTemplateSettingValue> {
     const id = foundry.utils.randomID()
 
     return {
       [id]: {
-        tracker: {
+        tracker: new TrackerInstance({
           name: 'GURPS.grapplingControlPoints',
           alias: 'GURPS.grapplingCPAbbrev',
           pdf: 'FDG4',
@@ -66,10 +74,9 @@ export class ResourceTrackerManager extends FormApplication {
               color: '#900000',
             },
           ],
-        },
+        }),
         initialValue: 'attributes.ST.value',
         autoapply: false,
-        name: 'GURPS.grapplingControlPoints',
         id,
       },
     }
