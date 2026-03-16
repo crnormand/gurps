@@ -10,7 +10,7 @@ import { extractOtfs } from '@util/otf.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import { isArray, isEmpty, quotedAttackName, recurselist, stripBracketContents, zeroFill } from '@util/utilities.js'
 
-import { constrastColor } from './contrast-color.ts'
+import { contrastColor } from './contrast-color.js'
 import { multiplyDice } from './damage-utils.js'
 import { gurpslink } from './gurpslink.js'
 import { i18nFallback } from './i18nFallback.js'
@@ -1086,21 +1086,22 @@ ${content}
   })
 
   Handlebars.registerHelper('tracker-style', function (color, _options) {
-    const contrastColor = constrastColor(color)
+    const contrastingColor = contrastColor(color)
     const id = _options.hash.id
 
     return `
       <style>
         #${id}.ms-tracker-condition .text {
           background-color: ${color};
-          color: ${contrastColor};
+          color: ${contrastingColor};
         }
         .theme-dark #${id}.ms-tracker-condition .text {
-          background-color: ${contrastColor};
+          background-color: ${contrastingColor};
           color: ${color};
         }
       </style>`
   })
+
   /**
    * Used to produce a foreground color which automatically contrasts against a provided
    * background color, using WCAG relative luminescence.
@@ -1110,8 +1111,8 @@ ${content}
    *  ensure they match the actual colors used in the sheet. If the system colors are changed, these values should be
    *  updated to match.
    */
-  Handlebars.registerHelper('contrastColor', function (backgroundHex) {
-    return constrastColor(backgroundHex)
+  Handlebars.registerHelper('contrast-color', function (backgroundHex) {
+    return contrastColor(backgroundHex)
   })
 
   // === register Handlebars partials ===

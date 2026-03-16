@@ -872,7 +872,7 @@ export class GurpsActorModernSheet extends SheetBase {
 
     if (!tracker) return
 
-    GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
+    await GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
   }
 
   static async #onDeleteTracker(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {

@@ -9,7 +9,7 @@
  * @param {string} lightColor - The color to use for light foreground elements.
  * @returns {string} - The appropriate foreground color based on the background color's luminescence.
  */
-export function constrastColor(backgroundHex: string, darkColor = '#1c1a17', lightColor = '#f8f6f2'): string {
+export function contrastColor(backgroundHex: string, darkColor = '#1c1a17', lightColor = '#f8f6f2'): string {
   if (!backgroundHex || !/^#[0-9A-Fa-f]{6}$/.test(backgroundHex)) {
     console.warn(
       `Invalid background color provided to constrastColor: ${backgroundHex}. Falling back to default colors.`

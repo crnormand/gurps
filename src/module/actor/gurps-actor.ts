@@ -4693,7 +4693,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
     const data = GurpsActorV2.addTrackerToDataObject(this.system, trackerData as Record<string, any>)
 
-    await this.update({ 'system.additionalresources.-=tracker': null } as Actor.UpdateData) // force Foundry to see the change
+    // await this.update({ 'system.additionalresources.tracker': {} } as Actor.UpdateData) // force Foundry to see the change
     await this.update({ 'system.additionalresources.tracker': data } as Actor.UpdateData)
 
     this._forceRender()

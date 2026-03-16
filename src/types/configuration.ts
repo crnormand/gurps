@@ -19,11 +19,7 @@ import type {
 } from '@module/item/data/index.js'
 import type { GurpsItemV2 } from '@module/item/gurps-item.js'
 import type { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
-import type {
-  IResourceTrackerTemplate,
-  ResourceTrackerManager,
-  ResourceTrackerTemplateSchema,
-} from '@module/resource-tracker/index.js'
+import type { IResourceTrackerTemplate, ResourceTrackerManager } from '@module/resource-tracker/index.js'
 import type { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import type { GurpsToken } from '@module/token/gurps-token.js'
 import type { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -145,10 +141,7 @@ declare module 'fvtt-types/configuration' {
 
     /** Resource Tracker */
     'gurps.resource-tracker.manager': new (options?: any) => ResourceTrackerManager
-    'gurps.resource-tracker.templates': foundry.data.fields.TypedObjectField<
-      foundry.data.fields.SchemaField<ResourceTrackerTemplateSchema, { required: true; nullable: false }>,
-      { required: true; nullable: false }
-    >
+    'gurps.resource-tracker.templates': Record<string, IResourceTrackerTemplate>
 
     /** Developer */
     'gurps.dev.enableNonProductionDocumentTypes': foundry.data.fields.BooleanField

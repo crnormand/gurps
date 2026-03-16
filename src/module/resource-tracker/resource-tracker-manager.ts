@@ -1,26 +1,18 @@
 import { TrackerComparators, TrackerOperators } from './types.js'
 import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from './types.js'
 import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.js'
-import { TrackerInstance } from './resource-tracker.js'
-
-type TrackerTemplateSettingValue = {
-  id: string
-  tracker: TrackerInstance
-  initialValue: string | null
-  autoapply: boolean
-}
 
 export class ResourceTrackerManager extends FormApplication {
   _templates: Record<string, IResourceTrackerTemplate>
 
-  static getDefaultTemplates(): Record<string, TrackerTemplateSettingValue> {
+  static getDefaultTemplates(): Record<string, IResourceTrackerTemplate> {
     const id = foundry.utils.randomID()
 
     return {
       [id]: {
-        tracker: new TrackerInstance({
-          name: 'GURPS.grapplingControlPoints',
-          alias: 'GURPS.grapplingCPAbbrev',
+        tracker: {
+          name: game.i18n!.localize('GURPS.grapplingControlPoints'),
+          alias: game.i18n!.localize('GURPS.grapplingCPAbbrev'),
           pdf: 'FDG4',
           min: 0,
           currentValue: null,
@@ -35,48 +27,49 @@ export class ResourceTrackerManager extends FormApplication {
               comparison: TrackerComparators.LT,
               operator: TrackerOperators.MULTIPLY,
               value: 0.1,
-              condition: 'GURPS.grapplingUnrestrained',
+              condition: game.i18n!.localize('GURPS.grapplingUnrestrained'),
               color: '#90ee90',
             },
             {
               comparison: TrackerComparators.GTE,
               operator: TrackerOperators.MULTIPLY,
               value: 0.1,
-              condition: 'GURPS.grapplingGrabbed',
+              condition: game.i18n!.localize('GURPS.grapplingGrabbed'),
               color: '#eeee30',
             },
             {
               comparison: TrackerComparators.GTE,
               operator: TrackerOperators.MULTIPLY,
               value: 0.5,
-              condition: 'GURPS.grapplingGrappled',
+              condition: game.i18n!.localize('GURPS.grapplingGrappled'),
               color: '#eeaa30',
             },
             {
               comparison: TrackerComparators.GTE,
               operator: TrackerOperators.MULTIPLY,
               value: 1.0,
-              condition: 'GURPS.grapplingRestrained',
+              condition: game.i18n!.localize('GURPS.grapplingRestrained'),
               color: '#ee5000',
             },
             {
               comparison: TrackerComparators.GTE,
               operator: TrackerOperators.MULTIPLY,
               value: 1.5,
-              condition: 'GURPS.grapplingControlled',
+              condition: game.i18n!.localize('GURPS.grapplingControlled'),
               color: '#ee0000',
             },
             {
               comparison: TrackerComparators.GTE,
               operator: TrackerOperators.MULTIPLY,
               value: 2.0,
-              condition: 'GURPS.grapplingPinned',
+              condition: game.i18n!.localize('GURPS.grapplingPinned'),
               color: '#900000',
             },
           ],
-        }),
+        },
         initialValue: 'attributes.ST.value',
         autoapply: false,
+        name: game.i18n!.localize('GURPS.grapplingControlPoints'),
         id,
       },
     }
@@ -216,7 +209,8 @@ export class ResourceTrackerManager extends FormApplication {
         resolve(value)
       }
 
-      const dialog = new ResourceTrackerEditorV2(foundry.utils.deepClone(tracker), {
+      const trackerData = { ...tracker, currentValue: tracker.currentValue } as IResourceTracker
+      const dialog = new ResourceTrackerEditorV2(trackerData, {
         onUpdate: editedTracker => {
           resolveOnce(this.#uniquifyTracker(key, editedTracker))
         },
