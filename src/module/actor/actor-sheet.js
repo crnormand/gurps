@@ -12,6 +12,7 @@ import { GgaContextMenuV2 } from '../ui/context-menu.js'
 
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
+import { prepareTrackerDataForSheet } from './modern/dialog-crud-handler.ts'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
 
@@ -88,24 +89,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
 
-    sheetData.trackers = this._prepareTrackerData(this.actor.system.additionalresources.tracker)
+    sheetData.trackers = prepareTrackerDataForSheet(this.actor)
 
     return sheetData
-  }
-
-  /* -------------------------------------------- */
-
-  _prepareTrackerData(trackers) {
-    if (!trackers) return {}
-
-    // Iterate through the trackers.contents array and create an equivalent object with key = _id and the data from each tracker instance.
-    const preparedTrackers = {}
-
-    for (const tracker of trackers.contents) {
-      preparedTrackers[tracker._id] = { ...tracker, max: tracker.max, value: tracker.value }
-    }
-
-    return preparedTrackers
   }
 
   /* -------------------------------------------- */
@@ -354,8 +340,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
         if (!details.open) {
           let parent = ev.currentTarget.closest('[data-gurps-resource]')
-          let path = $(parent).attr('data-gurps-resource')
-          let tracker = foundry.utils.getProperty(this.actor.system, path)
+          const key = $(parent).attr('data-id')
+
+          const path = key ? `additionalresources.tracker.${key}` : $(parent).attr('data-gurps-resource')
+
+          let tracker = key
+            ? this.actor.system.additionalresources.tracker.get(key)
+            : foundry.utils.getProperty(this.actor.system, path)
 
           let restoreButton = $(details).find('button.restore')
 
@@ -399,20 +390,23 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
         // update the actor's data to newValue
         let parent = ev.currentTarget.closest('[data-gurps-resource]')
-        let path = $(parent).attr('data-gurps-resource')
+        const key = $(parent).attr('data-id')
+
+        const path = key ? `additionalresources.tracker.${key}` : $(parent).attr('data-gurps-resource')
+
+        let tracker = key
+          ? this.actor.system.additionalresources.tracker.get(key)
+          : foundry.utils.getProperty(this.actor.system, path)
         let value = parseInt(newValue)
 
         // This is a hack to get the correct value for the tracker.
-        if (path.startsWith('additionalresources.tracker.')) {
-          let tracker = foundry.utils.getProperty(this.actor.system, path)
+        if (key) {
+          tracker.value = value
+        } else {
+          let json = `{ "system.${path}.value": ${value} }`
 
-          if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
-          if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
+          this.actor.internalUpdate(JSON.parse(json))
         }
-
-        let json = `{ "system.${path}.value": ${value} }`
-
-        this.actor.internalUpdate(JSON.parse(json))
 
         details.open = false
       })
