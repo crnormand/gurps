@@ -1280,6 +1280,7 @@
         "name": "Ressourcen Name",
         "title": "Ressourcen Anzeigen Verwaltung"
       },
+      "trackerNamed": "Ressourcen-Tracker '{name}'",
       "trackerNotFound": "Ressourcen-Tracker '{key}' nicht gefunden.",
       "undefined": "Nicht definiert",
       "view": {

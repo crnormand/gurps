@@ -1280,6 +1280,7 @@
         "name": "Nom Ressource",
         "title": "Gestionnaire du Suivi des Ressources"
       },
+      "trackerNamed": "Suivi des ressources '{name}'",
       "trackerNotFound": "Suivi des ressources '{key}' introuvable.",
       "undefined": "Aucun défini",
       "view": {

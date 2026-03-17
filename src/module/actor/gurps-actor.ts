@@ -4690,7 +4690,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async addTracker(): Promise<void> {
     this.ignoreRender = true
 
-    const trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
+    const trackerData = { name: '', curentValue: null, initialValue: '', min: 0, points: 0 }
     const data = GurpsActorV2.addTrackerToDataObject(this.system, trackerData as Record<string, any>)
 
     // await this.update({ 'system.additionalresources.tracker': {} } as Actor.UpdateData) // force Foundry to see the change

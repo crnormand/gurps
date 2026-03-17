@@ -1280,6 +1280,7 @@
         "name": "Nome do Modelo",
         "title": "Configurar Controle de Recursos"
       },
+      "trackerNamed": "Controle de Recurso '{name}'",
       "trackerNotFound": "Controle de recurso '{key}' não encontrado.",
       "undefined": "Nenhum Definido",
       "view": {

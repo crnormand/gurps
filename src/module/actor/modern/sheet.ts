@@ -22,7 +22,13 @@ import MoveModeEditor from '../move-mode-editor.js'
 
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
-import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.js'
+import {
+  bindEquipmentCrudActions,
+  bindNoteCrudActions,
+  bindTrackerActions,
+  PreparedTrackerData,
+  prepareTrackerDataForSheet,
+} from './dialog-crud-handler.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
 import { entityConfigurations, modifierConfigurations } from './entity-config.js'
 import {
@@ -62,39 +68,9 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
   tab?: Application.Tab
 }
 
-type PreparedTrackerData = {
-  id: string
-  name: string
-  value: number
-  min: number
-  max: number
-  condition: string
-  color: string | null
-  pdf: string
-  alias: string
-  thresholds: {
-    comparison: string
-    operator: string
-    value: number
-    condition: string
-    color: string | null
-  }[]
-  descriptors: ThresholdDescriptor[]
-}
-
 type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
 
 type GurpsActor = GurpsActorV2<Actor.SubType>
-
-function getResourceTrackers(actor: GurpsActor) {
-  return (actor.system as Actor.SystemOfType<'character' | 'characterV2'>).additionalresources?.tracker
-}
-
-function getResourceTracker(actor: GurpsActor, trackerKey: string | undefined) {
-  if (!trackerKey) return undefined
-
-  return getResourceTrackers(actor)?.get(trackerKey)
-}
 
 // See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
 const SheetBase = foundry.applications.api.HandlebarsApplicationMixin(
@@ -123,11 +99,11 @@ export class GurpsActorModernSheet extends SheetBase {
       importActor: GurpsActorModernSheet.#onImportActor,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
-      editTracker: GurpsActorModernSheet.#onEditTracker,
-      deleteTracker: GurpsActorModernSheet.#onDeleteTracker,
-      decreaseTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
-      increaseTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
-      resetTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
+      // editTracker: GurpsActorModernSheet.#onEditTracker,
+      // deleteTracker: GurpsActorModernSheet.#onDeleteTracker,
+      // decreaseTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
+      // increaseTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
+      // resetTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
     },
   }
 
@@ -192,7 +168,7 @@ export class GurpsActorModernSheet extends SheetBase {
         Object.keys(actorSystem?.reactions ?? {}).length + Object.keys(actorSystem?.conditionalmods ?? {}).length,
       showHPTinting: getGame().settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
       moveMode: this.actor.currentMoveMode,
-      resourceTrackers: this.prepareTrackerData(),
+      resourceTrackers: prepareTrackerDataForSheet(this.actor),
       hpThresholds: HitPoints.getThresholds(actorSystem.HP.max),
       fpThresholds: Fatigue.getThresholds(actorSystem.FP.max),
     }
@@ -803,84 +779,5 @@ export class GurpsActorModernSheet extends SheetBase {
         target.value = newText
       }
     }
-  }
-
-  prepareTrackerData(): PreparedTrackerData[] {
-    const trackers = getResourceTrackers(this.actor)
-
-    if (!trackers) return []
-
-    // Convert from Record<string, Tracker> to array of PreparedTrackerData for easier handling in templates.
-    const preparedData: PreparedTrackerData[] = []
-
-    let index = 0
-
-    for (const [_key, tracker] of trackers.entries()) {
-      const trackerId = String(tracker.id)
-
-      preparedData.push({
-        id: trackerId,
-        name: tracker.name
-          ? game.i18n!.localize(tracker.name)
-          : `${game.i18n!.localize('GURPS.resourceTracker.placeholder')}[${index}]`,
-        value: tracker.value,
-        condition: tracker.currentThreshold?.condition || '',
-        color: tracker.currentThreshold?.color || null,
-        pdf: tracker.pdf || '',
-        alias: tracker.alias || '',
-        min: tracker.min,
-        max: tracker.max,
-        thresholds: tracker.thresholds.map(threshold => ({
-          comparison: threshold.comparison,
-          operator: threshold.operator,
-          value: threshold.value,
-          condition: threshold.condition,
-          color: threshold.color,
-        })),
-        descriptors: tracker.thresholdDescriptors || [],
-      })
-      index++
-    }
-
-    return preparedData
-  }
-
-  static async #onUpdateTrackerValue(
-    this: GurpsActorModernSheet,
-    event: PointerEvent,
-    target: HTMLElement
-  ): Promise<void> {
-    event.preventDefault()
-    const tracker = getResourceTracker(this.actor, target.dataset.key)
-
-    if (!tracker) return
-
-    if (target.dataset.action === 'resetTracker') {
-      tracker.resetValue()
-
-      return
-    }
-
-    const newValue = target.dataset.action === 'decreaseTracker' ? tracker.value - 1 : tracker.value + 1
-
-    tracker.value = newValue
-  }
-
-  static async #onEditTracker(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-    const tracker = getResourceTracker(this.actor, target.dataset.key)
-
-    if (!tracker) return
-
-    await GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
-  }
-
-  static async #onDeleteTracker(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-    const tracker = getResourceTracker(this.actor, target.dataset.key)
-
-    if (!tracker) return
-
-    await tracker.delete()
   }
 }

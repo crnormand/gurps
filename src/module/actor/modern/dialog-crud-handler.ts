@@ -1,4 +1,5 @@
 import { getGame, isHTMLElement } from '@module/util/guards.js'
+import { ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
 import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.js'
 
@@ -167,12 +168,216 @@ export function bindNoteCrudActions(
 }
 
 export function bindTrackerActions(html: HTMLElement, actor: Actor.Implementation): void {
-  const addButtons = html.querySelectorAll<HTMLElement>('[data-action="addTracker"]')
+  const path = 'system.additionalresources.tracker'
+  const entityType = 'Tracker'
+
+  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityType}"]`)
 
   addButtons.forEach(button => {
     button.addEventListener('click', (event: MouseEvent) => {
       event.preventDefault()
-      actor.addTracker()
+
+      const trackerData = {
+        _id: foundry.utils.randomID(),
+        name: '',
+        currentValue: null,
+        initialValue: '',
+        min: 0,
+        alias: '',
+        pdf: '',
+        isMaxEnforced: false,
+        isMinEnforced: false,
+        isDamageType: false,
+        isAccumulator: false,
+        useBreakpoints: false,
+        thresholds: [],
+      }
+
+      actor.update({ [path]: { [trackerData._id]: trackerData } } as Actor.UpdateData)
+
+      // actor.addTracker()
     })
   })
+
+  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete${entityType}"]`)
+
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const trackerKey = target.dataset.key ?? ''
+      const tracker = actor.system.additionalresources?.tracker?.get(trackerKey)
+
+      if (!tracker) {
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: trackerKey }))
+
+        return
+      }
+
+      const confirmed = await confirmAndDelete(
+        actor,
+        `${path}.${trackerKey}`,
+        tracker.name,
+        game.i18n!.format('GURPS.resourceTracker.trackerNamed', { name: tracker.name }),
+        async _ => {
+          await tracker.delete()
+        }
+      )
+
+      if (confirmed) {
+        await actor.refreshDR()
+      }
+    })
+  })
+
+  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit${entityType}"]`)
+
+  editButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const trackerKey = target.dataset.key ?? ''
+      const tracker = actor.system.additionalresources?.tracker?.get(trackerKey)
+
+      if (!tracker) {
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: trackerKey }))
+
+        return
+      }
+
+      await GURPS.modules.ResourceTracker.updateResourceTracker(actor, tracker)
+    })
+  })
+
+  const decreaseButtons = html.querySelectorAll<HTMLElement>(`[data-action="decrease${entityType}"]`)
+
+  decreaseButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const trackerKey = target.dataset.key ?? ''
+      const tracker = actor.system.additionalresources?.tracker?.get(trackerKey)
+
+      if (!tracker) {
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: trackerKey }))
+
+        return
+      }
+
+      tracker.value = tracker.value - 1
+    })
+  })
+
+  const increaseButtons = html.querySelectorAll<HTMLElement>(`[data-action="increase${entityType}"]`)
+
+  increaseButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const trackerKey = target.dataset.key ?? ''
+      const tracker = actor.system.additionalresources?.tracker?.get(trackerKey)
+
+      if (!tracker) {
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: trackerKey }))
+
+        return
+      }
+
+      tracker.value = tracker.value + 1
+    })
+  })
+
+  const resetButtons = html.querySelectorAll<HTMLElement>(`[data-action="reset${entityType}"]`)
+
+  resetButtons.forEach(button => {
+    button.addEventListener('click', async (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      const target = event.currentTarget
+
+      if (!isHTMLElement(target)) return
+      const trackerKey = target.dataset.key ?? ''
+      const tracker = actor.system.additionalresources?.tracker?.get(trackerKey)
+
+      if (!tracker) {
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: trackerKey }))
+
+        return
+      }
+
+      tracker.resetValue()
+    })
+  })
+}
+
+export type PreparedTrackerData = {
+  id: string
+  name: string
+  value: number
+  min: number
+  max: number
+  condition: string
+  color: string | null
+  pdf: string
+  alias: string
+  thresholds: {
+    comparison: string
+    operator: string
+    value: number
+    condition: string
+    color: string | null
+  }[]
+  descriptors: ThresholdDescriptor[]
+}
+
+export function prepareTrackerDataForSheet(actor: Actor.Implementation): PreparedTrackerData[] {
+  const trackers = actor.system.additionalresources?.tracker.contents
+
+  if (!trackers) return []
+
+  // Convert from Record<string, Tracker> to array of PreparedTrackerData for easier handling in templates.
+  const preparedData: PreparedTrackerData[] = []
+
+  let index = 0
+
+  for (const [_key, tracker] of trackers.entries()) {
+    const trackerId = String(tracker.id)
+
+    preparedData.push({
+      id: trackerId,
+      name: tracker.name
+        ? game.i18n!.localize(tracker.name)
+        : `${game.i18n!.localize('GURPS.resourceTracker.placeholder')}[${index}]`,
+      value: tracker.value,
+      condition: tracker.currentThreshold?.condition || '',
+      color: tracker.currentThreshold?.color || null,
+      pdf: tracker.pdf || '',
+      alias: tracker.alias || '',
+      min: tracker.min,
+      max: tracker.max,
+      thresholds: tracker.thresholds.map(threshold => ({
+        comparison: threshold.comparison,
+        operator: threshold.operator,
+        value: threshold.value,
+        condition: threshold.condition,
+        color: threshold.color,
+      })),
+      descriptors: tracker.thresholdDescriptors || [],
+    })
+    index++
+  }
+
+  return preparedData
 }

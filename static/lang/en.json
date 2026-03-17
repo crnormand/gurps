@@ -1279,6 +1279,7 @@
         "name": "Template Name",
         "title": "Resource Tracker Manager"
       },
+      "trackerNamed": "Resource Tracker '{name}'",
       "trackerNotFound": "Resource tracker '{key}' not found.",
       "undefined": "None Defined",
       "view": {
