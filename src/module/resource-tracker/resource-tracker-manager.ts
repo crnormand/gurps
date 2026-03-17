@@ -11,6 +11,7 @@ export class ResourceTrackerManager extends FormApplication {
     return {
       [id]: {
         tracker: {
+          _id: id,
           name: game.i18n!.localize('GURPS.grapplingControlPoints'),
           alias: game.i18n!.localize('GURPS.grapplingCPAbbrev'),
           pdf: 'FDG4',
@@ -131,6 +132,7 @@ export class ResourceTrackerManager extends FormApplication {
 
       this._templates[id] = {
         tracker: {
+          _id: id,
           name: '',
           alias: '',
           min: 0,
