@@ -14,6 +14,7 @@ export interface IResourceTrackerThreshold {
 }
 
 export interface IResourceTracker {
+  _id: string
   name: string
   alias: string
   initialValue: string | null

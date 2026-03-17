@@ -478,9 +478,10 @@ function migrateActorSystem(
     Object.values(oldData.additionalresources.tracker).forEach(data => {
       const id = foundry.utils.randomID()
 
+      const trackerData = GURPS.modules.ResourceTracker.migrateTrackerInstanceToV2(data)
+
       const tracker: DataModel.CreateData<DataModel.SchemaOf<TrackerInstance>> = {
-        ...data,
-        _id: id,
+        ...trackerData,
       }
 
       newData.additionalresources ||= {}

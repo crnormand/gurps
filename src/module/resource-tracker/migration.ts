@@ -1,8 +1,9 @@
 import { migrateLegacySettings, SettingMigration } from '@module/util/migration/settings-migration.js'
 import { objectToArray } from '@util/utilities.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 import { ResourceTrackerTemplate } from './resource-tracker.js'
-import { OLD_SETTING_TEMPLATES, SETTING_TRACKER_TEMPLATES } from './types.js'
+import { IResourceTracker, OLD_SETTING_TEMPLATES, SETTING_TRACKER_TEMPLATES } from './types.js'
 
 /**
  * Array of migration configurations for legacy resource tracker settings.
@@ -24,37 +25,62 @@ function convertOldSettings(
   const newTemplates: Record<string, ResourceTrackerTemplate> = {}
 
   for (const oldTemplate of objectToArray(oldTemplates)) {
-    const id = foundry.utils.randomID()
-    const newTemplate = new ResourceTrackerTemplate({
-      tracker: {
-        ...oldTemplate.tracker,
-        isAccumulator: oldTemplate.tracker.isDamageTracker ?? false,
-        useBreakpoints: oldTemplate.tracker.breakpoints ?? false,
-      },
-      initialValue: oldTemplate.initialValue,
-      autoapply: !!oldTemplate.slot,
-      id,
-    })
+    const newTemplate = new ResourceTrackerTemplate(migrateTemplateToV2(oldTemplate))
 
-    // remove old slot field if it exists
-    if ('slot' in newTemplate) {
-      delete (newTemplate as Record<string, unknown>).slot
-    }
-
-    // remove old isDamageTracker field if it exists
-    if ('isDamageTracker' in newTemplate.tracker) {
-      delete (newTemplate.tracker as Record<string, unknown>).isDamageTracker
-    }
-
-    // remove old breakpoints field if it exists
-    if ('breakpoints' in newTemplate.tracker) {
-      delete (newTemplate.tracker as Record<string, unknown>).breakpoints
-    }
-
-    newTemplates[id] = newTemplate
+    newTemplates[newTemplate.id] = newTemplate
   }
 
   return newTemplates
+}
+
+/**
+ * Given a legacy template object, creates a new ResourceTrackerTemplate instance with the appropriate properties.
+ * @param oldTemplate
+ * @returns A new ResourceTrackerTemplate instance with properties mapped from the legacy template.
+ */
+export function migrateTemplateToV2(oldTemplate: any) {
+  const template = {
+    tracker: migrateTrackerInstanceToV2(oldTemplate.tracker),
+    initialValue: oldTemplate.initialValue,
+    autoapply: !!oldTemplate.slot,
+    id: foundry.utils.randomID(),
+  }
+
+  return template
+}
+
+/**
+ * Given a legacy tracker instance object, creates a new IResourceTracker instance with the appropriate properties.
+ * @param instanceV1
+ * @returns A new IResourceTracker instance with properties mapped from the legacy instance.
+ */
+export function migrateTrackerInstanceToV2(instanceV1: AnyObject): IResourceTracker {
+  const legacyInitialValue = instanceV1.initialValue as string | null | undefined
+  const legacyMax = instanceV1.max as number | undefined
+
+  // Prefer the existing initialValue; fall back to max when initialValue is absent or empty.
+  const initialValue =
+    legacyInitialValue !== undefined && legacyInitialValue !== null && legacyInitialValue !== ''
+      ? legacyInitialValue
+      : legacyMax !== undefined
+        ? String(legacyMax)
+        : null
+
+  return {
+    _id: foundry.utils.randomID(),
+    name: instanceV1.name as string,
+    alias: (instanceV1.alias as string) ?? '',
+    pdf: (instanceV1.pdf as string) ?? '',
+    isDamageType: (instanceV1.isDamageType as boolean) ?? false,
+    isAccumulator: (instanceV1.isDamageTracker as boolean) ?? false,
+    isMaxEnforced: (instanceV1.isMaximumEnforced as boolean) ?? false,
+    isMinEnforced: (instanceV1.isMinimumEnforced as boolean) ?? false,
+    useBreakpoints: (instanceV1.breakpoints as boolean) ?? false,
+    min: (instanceV1.min as number) ?? 0,
+    currentValue: (instanceV1.value as number | null) ?? null,
+    initialValue,
+    thresholds: (instanceV1.thresholds as IResourceTracker['thresholds']) ?? [],
+  }
 }
 
 export async function migrate(): Promise<void> {

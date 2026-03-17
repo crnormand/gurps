@@ -1,5 +1,6 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
+import { migrateTrackerInstanceToV2 } from './migration.js'
 import { migrate } from './migration.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import { TrackerInstance } from './resource-tracker.js'
@@ -59,6 +60,7 @@ interface ResourceTrackerModule extends GurpsModule {
   updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance, trackerId?: string): Promise<void>
   getAllTemplatesMap(): Record<string, IResourceTrackerTemplate>
   getMissingRequiredTemplates(currentTrackers: IResourceTracker[]): IResourceTrackerTemplate[]
+  migrateTrackerInstanceToV2(trackerData: any): IResourceTracker
 }
 
 export const ResourceTrackerModule: ResourceTrackerModule = {
@@ -67,6 +69,7 @@ export const ResourceTrackerModule: ResourceTrackerModule = {
   updateResourceTracker,
   getAllTemplatesMap: ResourceTrackerManager.getAllTemplatesMap,
   getMissingRequiredTemplates: ResourceTrackerManager.getMissingRequiredTemplates,
+  migrateTrackerInstanceToV2,
 }
 
 export type { IResourceTrackerThreshold, IResourceTracker, IResourceTrackerTemplate } from './types.js'
