@@ -157,6 +157,14 @@
               "label": "Basic Speed"
             }
           },
+          "conditions": {
+            "maneuver": {
+              "label": "Maneuver"
+            },
+            "posture": {
+              "label": "Posture"
+            }
+          },
           "frightcheck": {
             "label": "Fright Check"
           },
@@ -1712,10 +1720,12 @@
         "description": "Description",
         "encumbrance": "Encumbrance, Move & Dodge",
         "identity": "Identity",
+        "maneuverStatus": "Maneuver / Status",
         "miscellaneous": "Miscellaneous",
         "moving": "Lifting & Moving Things",
         "pointTotals": "{total} Points",
         "poolAttributes": "Point Pools",
+        "poolBase": "Base",
         "portrait": "Portrait",
         "pound": "{value} lb",
         "primaryAttributes": "Primary Attributes",

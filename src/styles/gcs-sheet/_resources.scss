@@ -6,7 +6,6 @@ section[data-application-part='resources'] {
     'attributes body encumbrance'
     'attributes body moving';
   grid-template-columns: auto auto auto;
-  grid-template-rows: 0fr 0fr;
 
   .gcs-attributes {
     grid-area: attributes;
@@ -15,9 +14,9 @@ section[data-application-part='resources'] {
     grid-gap: 0.1rem;
 
     grid-template-areas:
-      'primary secondary'
-      'damage secondary'
-      'pools pools';
+      'primary pools'
+      'secondary maneuver'
+      'damage maneuver';
 
     .gcs-section-content {
       height: fit-content;
@@ -48,6 +47,17 @@ section[data-application-part='resources'] {
     .gcs-pool-attributes {
       grid-area: pools;
 
+      .pool-entry {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 0 0.5rem;
+
+        .pool-controls {
+          gap: 0.1rem;
+        }
+      }
+
       .form-fields {
         gap: 0.5rem;
       }
@@ -58,12 +68,17 @@ section[data-application-part='resources'] {
 
       .pool-split {
         text-align: center;
+        max-width: 1ch;
       }
 
       .pool-state {
         min-width: 10ch;
         white-space: nowrap;
       }
+    }
+
+    .gcs-maneuver-status {
+      grid-area: maneuver;
     }
   }
 

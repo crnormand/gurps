@@ -11,6 +11,8 @@ import { systemPath } from '@module/util/misc.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
+import Maneuvers from '../maneuver.js'
+
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 import { resolveItemDropPosition } from './helpers.js'
 
@@ -91,6 +93,8 @@ namespace GurpsActorGcsSheet {
     conditionalModifiers: DisplayConditionalModifier[]
     sortKeys: Record<string, Record<string, string>>
     attributeFields: Record<string, AttributeEntry>
+    maneuverChoices: Record<string, { label: string }>
+    postureChoices: Record<string, { label: string }>
   }
 }
 
@@ -157,6 +161,16 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
     const sortKeys = this._prepareSortKeys()
 
+    // TODO: replace once Maneuvers is updated.
+    const maneuverChoices = Maneuvers.getAllData() as Record<string, { label: string }>
+
+    const postureChoices = Object.fromEntries([
+      ['standing', { label: 'GURPS.status.Standing' }],
+      ...Object.entries(GURPS.StatusEffect.getAllPostures()).map(([key, value]) => [key, { label: value.name }]),
+    ])
+
+    // NOTE: posture resets on save, need to fix that. the system data should be the source of truth.
+
     return {
       ...superContext,
       isPlay: this.isPlayMode,
@@ -177,6 +191,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       reactionModifiers: this.actor.system.reactions,
       conditionalModifiers: this.actor.system.conditionalmods,
       attributeFields: this._prepareAttributes(),
+      maneuverChoices,
+      postureChoices,
       sortKeys,
     }
   }

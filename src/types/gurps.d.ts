@@ -379,6 +379,8 @@ declare global {
 
     StatusEffect: {
       lookup(id: string): any
+
+      getAllPostures(): Record<string, { id: string; img: string; name: string; move: string }>
     }
 
     /* ---------------------------------------- */
