@@ -1,0 +1,37 @@
+<div class='ms-tracker-editor'>
+  <div class='ms-content'>
+    <section class='ms-section'>
+      <h3 class='section-header'><i class="fa-solid fa-gear"></i> {{localize 'GURPS.resourceTracker.edit.templates'}}
+      </h3>
+      <div class='template-list'>
+        <div class='ms-table-header'>{{localize 'GURPS.resourceTracker.template.name'}}</div>
+        <div class='ms-table-header'>{{localize 'GURPS.resourceTracker.edit.alias'}}</div>
+        <div class='ms-table-header'>{{localize 'GURPS.autoApply'}}</div>
+        <div class='ms-table-header'>{{localize 'GURPS.resourceTracker.template.initializer'}}</div>
+        <div class='ms-table-header'></div>
+
+        {{#each templates}}
+          <button data-action='editTemplate' data-key='{{@key}}'>{{tracker.name}}</button>
+          <label>{{tracker.alias}}</label>
+          <input type='checkbox' data-action='autoApplyTemplate' data-key='{{@key}}' {{checked autoapply}} />
+          <label>{{tracker.initialValue}}</label>
+          <i class='fas fa-trash ms-action-btn ms-delete' data-action='deleteTemplate' data-key='{{@key}}'
+            title='{{localize 'GURPS.delete'}}'></i>
+        {{/each}}
+      </div>
+      <footer>
+        <div class="ms-add-row">
+          <span class="ms-add-btn" data-action="addTemplate"><i
+              class="fas fa-plus"></i>{{localize 'GURPS.resourceTracker.edit.addTemplate'}}</span>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <footer class='ms-footer'>
+    <button type='button' class='ms-button ms-cancel-button' data-action='cancel'><i
+        class="fa-solid fa-ban"></i>{{localize 'GURPS.cancel'}}</button>
+    <button type='submit' class='ms-button ms-save-button'><i
+        class="fa-solid fa-floppy-disk"></i>{{localize 'GURPS.update'}}</button>
+  </footer>
+</div>

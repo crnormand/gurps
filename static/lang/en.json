@@ -1250,6 +1250,7 @@
     "resourceTracker": {
       "current": "Current Value",
       "edit": {
+        "addTemplate": "Add Resource Tracker Template",
         "alias": "Alias",
         "clear": "Clear Tracker Configuration",
         "clearColor": "Clear Color",
@@ -1265,6 +1266,7 @@
         "setColor": "Set Color",
         "threshold": "Threshold",
         "thresholds": "Thresholds",
+        "templates": "Manage Resource Tracker Templates",
         "title": "Resource Tracker Editor",
         "useBreakpoints": "Use Breakpoints"
       },

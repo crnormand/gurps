@@ -1251,6 +1251,7 @@
     "resourceTracker": {
       "current": "Valor Atual",
       "edit": {
+        "addTemplate": "Adicionar Modelo de Controle de Recursos",
         "alias": "Apelido",
         "clear": "Limpar Configuração do Controle",
         "clearColor": "Limpar Cor",
@@ -1266,6 +1267,7 @@
         "setColor": "Definir Cor",
         "threshold": "Limiar",
         "thresholds": "Limiares",
+        "templates": "Gerenciar Modelos de Controle de Recursos",
         "title": "Editor de Controle de Recursos",
         "useBreakpoints": "Usar Pontos de Interrupção"
       },

@@ -1251,6 +1251,7 @@
     "resourceTracker": {
       "current": "Aktueller Wert",
       "edit": {
+        "addTemplate": "Ressourcen-Tracker-Vorlage hinzufügen",
         "alias": "Alias",
         "clear": "Tracker-Konfiguration zurücksetzen",
         "clearColor": "Farbe löschen",
@@ -1266,6 +1267,7 @@
         "setColor": "Farbe festlegen",
         "threshold": "Schwellenwert",
         "thresholds": "Schwellenwerte",
+        "templates": "Ressourcen-Tracker-Vorlagen verwalten",
         "title": "Ressourcen-Tracker-Editor",
         "useBreakpoints": "Schwellenwerte verwenden"
       },

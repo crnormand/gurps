@@ -1251,6 +1251,7 @@
     "resourceTracker": {
       "current": "Valeur Actuelle",
       "edit": {
+        "addTemplate": "Ajouter un modèle de suivi des ressources",
         "alias": "Alias",
         "clear": "Effacer la configuration du suivi",
         "clearColor": "Effacer la couleur",
@@ -1266,6 +1267,7 @@
         "setColor": "Définir la couleur",
         "threshold": "Seuil",
         "thresholds": "Seuils",
+        "templates": "Gérer les modèles de suivi des ressources",
         "title": "Éditeur de Suivi des Ressources",
         "useBreakpoints": "Utiliser des seuils"
       },

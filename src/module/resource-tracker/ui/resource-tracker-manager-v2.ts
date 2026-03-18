@@ -12,8 +12,6 @@ type ResourceTrackerManagerV2Context = foundry.applications.api.ApplicationV2.Re
 export class ResourceTrackerManagerV2 extends foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.api.ApplicationV2
 ) {
-  #templates: Record<string, IResourceTrackerTemplate>
-
   static getDefaultTemplates(): Record<string, IResourceTrackerTemplate> {
     const id = foundry.utils.randomID()
 
@@ -107,9 +105,15 @@ export class ResourceTrackerManagerV2 extends foundry.applications.api.Handlebar
     return newTrackers
   }
 
+  #templates: Record<string, IResourceTrackerTemplate>
+  #originalTemplates: Record<string, IResourceTrackerTemplate>
+
   constructor(options: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {}) {
     super(options)
     this.#templates = ResourceTrackerManagerV2.getAllTemplatesMap()
+
+    // Make a copy of the source data so we can restore it if the user cancels out of the editor.
+    this.#originalTemplates = foundry.utils.deepClone(this.#templates)
   }
 
   static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
@@ -129,169 +133,27 @@ export class ResourceTrackerManagerV2 extends foundry.applications.api.Handlebar
       closeOnSubmit: true,
       handler: ResourceTrackerManagerV2.#onSubmit,
     },
+    actions: {
+      addTemplate: ResourceTrackerManagerV2.#addTemplate,
+      cancel: ResourceTrackerManagerV2.#cancel,
+      deleteTemplate: ResourceTrackerManagerV2.#deleteTemplate,
+      editTemplate: ResourceTrackerManagerV2.#editTemplate,
+      autoApplyTemplate: ResourceTrackerManagerV2.#autoApplyTemplate,
+    },
   }
 
   static override PARTS: Record<string, foundry.applications.api.HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     main: {
-      template: 'systems/gurps/templates/resource-tracker/tracker-manager.hbs',
+      template: 'systems/gurps/templates/resource-tracker/tracker-manager-body.hbs',
     },
   }
 
   protected override async _prepareContext(
-    options: foundry.applications.api.ApplicationV2.RenderOptions
+    _options: foundry.applications.api.ApplicationV2.RenderOptions
   ): Promise<ResourceTrackerManagerV2Context> {
-    const baseContext = await super._prepareContext(options)
-
-    return foundry.utils.mergeObject(baseContext, {
+    return {
       templates: this.#templates,
-    })
-  }
-
-  protected override async _onRender(
-    context: ResourceTrackerManagerV2Context,
-    options: DeepPartial<foundry.applications.api.ApplicationV2.RenderOptions> & { isFirstRender: boolean }
-  ): Promise<void> {
-    await super._onRender(context, options)
-
-    this.#bindEvents()
-  }
-
-  #bindEvents(): void {
-    const root = this.element
-
-    root.querySelector('#template-add')?.addEventListener('click', event => {
-      event.preventDefault()
-      const id = foundry.utils.randomID()
-
-      this.#templates[id] = {
-        tracker: {
-          _id: id,
-          name: '',
-          alias: '',
-          min: 0,
-          currentValue: null,
-          pdf: '',
-          isDamageType: false,
-          isAccumulator: false,
-          isMaxEnforced: false,
-          isMinEnforced: false,
-          useBreakpoints: false,
-          initialValue: null,
-          thresholds: [],
-        },
-        autoapply: false,
-        name: '',
-        id,
-      }
-      void this.render({ force: true })
-    })
-
-    root.querySelectorAll<HTMLElement>('[name="delete-template"]').forEach(element => {
-      element.addEventListener('click', event => {
-        event.preventDefault()
-        const key = element.getAttribute('data')
-
-        if (!key) return
-
-        delete this.#templates[key]
-        void this.render({ force: true })
-      })
-    })
-
-    root.querySelectorAll<HTMLElement>('[name="name"]').forEach(element => {
-      element.addEventListener('click', async event => {
-        event.preventDefault()
-        const key = element.getAttribute('data')
-
-        if (!key) return
-
-        const template = this.#templates[key]
-
-        if (!template) return
-
-        const editedTracker = await this.#editTrackerTemplate(key, template.tracker)
-
-        if (!editedTracker) return
-
-        template.tracker = editedTracker
-        template.name = editedTracker.name
-        await this.render({ force: true })
-      })
-    })
-
-    root.querySelectorAll<HTMLInputElement>('[name="autoapply"]').forEach(element => {
-      element.addEventListener('change', () => {
-        const key = element.getAttribute('data')
-
-        if (!key || !this.#templates[key]) return
-
-        this.#templates[key].autoapply = element.checked
-        void this.render({ force: true })
-      })
-    })
-
-    root.querySelectorAll<HTMLInputElement>('[name="initial-value"]').forEach(element => {
-      element.addEventListener('change', () => {
-        const key = element.getAttribute('data')
-
-        if (!key || !this.#templates[key]) return
-
-        this.#templates[key].tracker.initialValue = element.value
-      })
-    })
-  }
-
-  async #editTrackerTemplate(key: string, tracker: IResourceTracker): Promise<IResourceTracker | null> {
-    return await new Promise<IResourceTracker | null>(resolve => {
-      let resolved = false
-
-      const resolveOnce = (value: IResourceTracker | null) => {
-        if (resolved) return
-
-        resolved = true
-        resolve(value)
-      }
-
-      const trackerData = { ...tracker, currentValue: tracker.currentValue } as IResourceTracker
-      const dialog = new ResourceTrackerEditorV2(trackerData, {
-        onUpdate: editedTracker => {
-          resolveOnce(this.#uniquifyTracker(key, editedTracker))
-        },
-        onCancel: () => {
-          resolveOnce(null)
-        },
-      })
-
-      void dialog.render({ force: true })
-    })
-  }
-
-  #uniquifyTracker(key: string, tracker: IResourceTracker): IResourceTracker {
-    const result = foundry.utils.deepClone(tracker)
-
-    const others = Object.entries(this.#templates)
-      .filter(([templateKey]) => templateKey !== key)
-      .map(([, template]) => template.tracker)
-
-    const usedNames = new Set(others.map(otherTracker => otherTracker.name).filter(Boolean))
-    const usedAliases = new Set(others.map(otherTracker => otherTracker.alias).filter(Boolean))
-
-    result.name = this.#nextUnique(result.name, usedNames)
-    result.alias = this.#nextUnique(result.alias, usedAliases)
-
-    return result
-  }
-
-  #nextUnique(base: string, usedValues: Set<string>): string {
-    if (!base) return base
-
-    let candidate = base
-
-    while (usedValues.has(candidate)) {
-      candidate += ' (copy)'
     }
-
-    return candidate
   }
 
   static async #onSubmit(
@@ -331,5 +193,135 @@ export class ResourceTrackerManagerV2 extends foundry.applications.api.Handlebar
         resource: true,
       }
     })
+  }
+
+  static async #addTemplate(this: ResourceTrackerManagerV2, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    const id = foundry.utils.randomID()
+
+    this.#templates[id] = {
+      tracker: {
+        _id: id,
+        name: '',
+        alias: '',
+        min: 0,
+        currentValue: null,
+        pdf: '',
+        isDamageType: false,
+        isAccumulator: false,
+        isMaxEnforced: false,
+        isMinEnforced: false,
+        useBreakpoints: false,
+        initialValue: null,
+        thresholds: [],
+      },
+      autoapply: false,
+      name: '',
+      id,
+    }
+    await this.render({ force: true })
+  }
+
+  static async #cancel(this: ResourceTrackerManagerV2, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    event.stopPropagation()
+
+    // Restore the source data to discard any unsaved changes. Without this, the editor would be showing stale data
+    // that doesn't reflect the current state of the settings if reopened after canceling out of a previous edit.
+    this.#templates = foundry.utils.deepClone(this.#originalTemplates)
+    await this.close()
+  }
+
+  static async #deleteTemplate(this: ResourceTrackerManagerV2, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    const key = (event.target as HTMLElement).getAttribute('data-key')
+
+    if (!key) return
+
+    delete this.#templates[key]
+    void this.render({ force: true })
+  }
+
+  static async #editTemplate(this: ResourceTrackerManagerV2, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    const key = (event.target as HTMLElement).getAttribute('data-key')
+
+    if (!key) return
+
+    const template = this.#templates[key]
+
+    if (!template) return
+
+    const editedTracker = await this.#editTrackerTemplate(key, template.tracker)
+
+    if (!editedTracker) return
+
+    template.tracker = editedTracker
+    template.name = editedTracker.name
+    await this.render({ force: true })
+  }
+
+  static async #autoApplyTemplate(this: ResourceTrackerManagerV2, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    const element = event.target as HTMLInputElement
+    const key = element.getAttribute('data-key')
+
+    if (!key || !this.#templates[key]) return
+
+    this.#templates[key].autoapply = element.checked
+    void this.render({ force: true })
+  }
+
+  async #editTrackerTemplate(key: string, tracker: IResourceTracker): Promise<IResourceTracker | null> {
+    return await new Promise<IResourceTracker | null>(resolve => {
+      let resolved = false
+
+      const resolveOnce = (value: IResourceTracker | null) => {
+        if (resolved) return
+
+        resolved = true
+        resolve(value)
+      }
+
+      const trackerData = { ...tracker } as IResourceTracker
+      const dialog = new ResourceTrackerEditorV2(trackerData, {
+        onUpdate: editedTracker => {
+          resolveOnce(this.#uniquifyTracker(key, editedTracker))
+        },
+        onCancel: () => {
+          resolveOnce(null)
+        },
+      })
+
+      void dialog.render({ force: true })
+    })
+  }
+
+  #uniquifyTracker(key: string, tracker: IResourceTracker): IResourceTracker {
+    const result = foundry.utils.deepClone(tracker)
+
+    const others = Object.entries(this.#templates)
+      .filter(([templateKey]) => templateKey !== key)
+      .map(([, template]) => template.tracker)
+
+    const usedNames = new Set(others.map(otherTracker => otherTracker.name).filter(Boolean))
+    const usedAliases = new Set(others.map(otherTracker => otherTracker.alias).filter(Boolean))
+
+    result.name = this.#nextUnique(result.name, usedNames)
+    result.alias = this.#nextUnique(result.alias, usedAliases)
+
+    return result
+  }
+
+  #nextUnique(base: string, usedValues: Set<string>): string {
+    if (!base) return base
+
+    let candidate = base
+
+    while (usedValues.has(candidate)) {
+      candidate += ' (copy)'
+    }
+
+    return candidate
   }
 }
