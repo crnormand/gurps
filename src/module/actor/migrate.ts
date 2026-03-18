@@ -2,7 +2,6 @@ import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData } from '@module/item/migrate.js'
-import { TrackerInstance } from '@module/resource-tracker/index.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
@@ -480,13 +479,9 @@ function migrateActorSystem(
 
       const trackerData = GURPS.modules.ResourceTracker.migrateTrackerInstanceToV2(data)
 
-      const tracker: DataModel.CreateData<DataModel.SchemaOf<TrackerInstance>> = {
-        ...trackerData,
-      }
-
       newData.additionalresources ||= {}
       newData.additionalresources.tracker ||= {}
-      newData.additionalresources.tracker[id] = tracker
+      newData.additionalresources.tracker[id] = trackerData
     })
   }
 

@@ -2,7 +2,6 @@ import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { migrateTrackerInstanceToV2 } from './migration.js'
 import { migrate } from './migration.js'
-import { TrackerInstance } from './resource-tracker.js'
 import { initializeSettings } from './settings.js'
 import { IResourceTracker, IResourceTrackerTemplate } from './types.js'
 import { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.ts'
@@ -57,7 +56,7 @@ function init() {
  * const templates = ResourceTracker.getTrackerTemplates()
  */
 interface ResourceTrackerModule extends GurpsModule {
-  updateResourceTracker(actor: Actor.Implementation, tracker: TrackerInstance, trackerId?: string): Promise<void>
+  updateResourceTracker: typeof updateResourceTracker
   getAllTemplatesMap(): Record<string, IResourceTrackerTemplate>
   getMissingRequiredTemplates(currentTrackers: IResourceTracker[]): IResourceTrackerTemplate[]
   migrateTrackerInstanceToV2(trackerData: any): IResourceTracker
@@ -74,7 +73,6 @@ export const ResourceTrackerModule: ResourceTrackerModule = {
 
 export type { IResourceTrackerThreshold, IResourceTracker, IResourceTrackerTemplate } from './types.js'
 
-export { ResourceTrackerManager } from './ui/resource-tracker-manager.ts'
 export { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.ts'
 export type { ResourceTrackerSchema, ResourceTrackerTemplateSchema } from './resource-tracker.js'
 export { TrackerInstance, ResourceTrackerTemplate } from './resource-tracker.js'
