@@ -284,7 +284,7 @@ export class ResourceTrackerManagerV2 extends foundry.applications.api.Handlebar
       }
 
       const trackerData = { ...tracker } as IResourceTracker
-      const dialog = new ResourceTrackerEditorV2(trackerData, {
+      const app = new ResourceTrackerEditorV2(trackerData, {
         onUpdate: editedTracker => {
           resolveOnce(this.#uniquifyTracker(key, editedTracker))
         },
@@ -293,7 +293,7 @@ export class ResourceTrackerManagerV2 extends foundry.applications.api.Handlebar
         },
       })
 
-      void dialog.render({ force: true })
+      void app.render({ force: true })
     })
   }
 
