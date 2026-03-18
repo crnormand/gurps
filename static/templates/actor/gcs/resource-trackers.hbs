@@ -1,0 +1,39 @@
+{{#*inline ".poolTooltip"}}
+  <div class="gcs-tooltip gcs-pool-tooltip">
+    {{#each thresholds}}
+    <div class="threshold">
+      <span class="value">{{value}}</span>
+      <span class="condition">{{localize condition}}</span>
+    </div>
+    {{/each}}
+  </div>
+{{/inline}}
+
+{{#*inline ".poolEntry"}}
+  <div class="gcs-pool-attribute gcs-section">
+    <div class="gcs-section-header">{{localize name}}</div>
+    <div class="gcs-section-content">
+      <div class="form-fields flexrow">
+        <button data-action="decrementPool" data-path="{{path}}"><i class="fa-solid fa-minus"></i></button>
+        <pool-value name="{{path}}" value="{{numerator}}" data-max="{{denominator}}"></pool-value>
+        <button data-action="incrementPool" data-path="{{path}}" {{#if atMax}}disabled{{/if}}><i class="fa-solid fa-plus"></i></button>
+        <button data-action="resetPool" data-path="{{path}}"><i class="fa-solid fa-undo"></i></button>
+      </div>
+      <div
+        class="pool-state"
+        data-tooltip='{{> '.poolTooltip' thresholds=thresholds}}'
+        style="background-color: {{color}}; color: {{contrast-color color}}"
+        >{{localize state}}</div>
+      <div class="form-fields flexrow">
+        <label >{{localize "GURPS.sheet.gcsActorSheet.poolBase"}}</label>
+        {{formInput fields.denominator value=denominator disabled=@root.isPlay}}
+      </div>
+    </div>
+  </div>
+{{/inline}}
+
+<section>
+  {{#each pools as |pool|}}
+  {{> ".poolEntry" pool}}
+  {{/each}}
+</section>

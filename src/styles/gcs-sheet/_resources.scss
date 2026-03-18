@@ -14,9 +14,9 @@ section[data-application-part='resources'] {
     grid-gap: 0.1rem;
 
     grid-template-areas:
-      'primary pools'
-      'secondary maneuver'
-      'damage maneuver';
+      'primary secondary'
+      'damage secondary'
+      'maneuver maneuver';
 
     .gcs-section-content {
       height: fit-content;
@@ -41,39 +41,6 @@ section[data-application-part='resources'] {
       input {
         min-width: 8ch;
         max-width: 8ch;
-      }
-    }
-
-    .gcs-pool-attributes {
-      grid-area: pools;
-
-      .pool-entry {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        align-items: center;
-        gap: 0 0.5rem;
-
-        .pool-controls {
-          gap: 0.1rem;
-        }
-      }
-
-      .form-fields {
-        gap: 0.5rem;
-      }
-
-      button {
-        max-width: var(--gcs-input-height);
-      }
-
-      .pool-split {
-        text-align: center;
-        max-width: 1ch;
-      }
-
-      .pool-state {
-        min-width: 10ch;
-        white-space: nowrap;
       }
     }
 

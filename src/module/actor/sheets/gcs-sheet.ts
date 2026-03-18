@@ -35,6 +35,7 @@ type PoolEntry = {
   atMax: boolean
   name: string
   state: string
+  color: string
   thresholds: ThresholdDescriptor[]
 }
 
@@ -95,6 +96,8 @@ namespace GurpsActorGcsSheet {
     attributeFields: Record<string, AttributeEntry>
     maneuverChoices: Record<string, { label: string }>
     postureChoices: Record<string, { label: string }>
+    createdDate: string
+    modifiedDate: string
   }
 }
 
@@ -110,6 +113,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     actions: {
       incrementPool: GurpsActorGcsSheet.#onUpdatePool,
       decrementPool: GurpsActorGcsSheet.#onUpdatePool,
+      resetPool: GurpsActorGcsSheet.#onUpdatePool,
       sortItems: GurpsActorGcsSheet.#onSortItems,
       toggleItemContainer: GurpsActorGcsSheet.#onToggleItemContainer,
       toggleItemNotes: GurpsActorGcsSheet.#onToggleItemNotes,
@@ -126,6 +130,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     },
     resources: {
       template: systemPath('templates/actor/gcs/resources.hbs'),
+    },
+    resourceTrackers: {
+      template: systemPath('templates/actor/gcs/resource-trackers.hbs'),
     },
     reactions: {
       template: systemPath('templates/actor/gcs/reactions.hbs'),
@@ -169,6 +176,14 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       ...Object.entries(GURPS.StatusEffect.getAllPostures()).map(([key, value]) => [key, { label: value.name }]),
     ])
 
+    const createdDate = this.actor.system.profile.createdon
+      ? new Date(this.actor.system.profile.createdon).toLocaleString()
+      : ''
+
+    const modifiedDate = this.actor.system.profile.modifiedon
+      ? new Date(this.actor.system.profile.modifiedon).toLocaleString()
+      : ''
+
     // NOTE: posture resets on save, need to fix that. the system data should be the source of truth.
 
     return {
@@ -179,6 +194,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       systemFields: this.actor.system.schema.fields,
       systemSource: this.actor.system._source,
       moveModeChoices,
+      createdDate,
+      modifiedDate,
       pools: this._preparePools(),
       liftingMoving: this._prepareLiftingMoving(),
       traits: this.actor.system.adsV2.map(item => item.system.toDisplayItem()),
@@ -307,11 +324,13 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     const systemFields = this.actor.system.schema.fields
     const systemSource = this.actor.system._source
 
+    const defaultColor = '#4a9b4b'
+
     const hpThresholds = HitPoints.getThresholds(systemSource.HP.max).reverse()
     const fpThresholds = Fatigue.getThresholds(systemSource.FP.max).reverse()
 
-    const hpState = hpThresholds.find(threshold => threshold.value >= this.actor.system.HP.value)?.condition || ''
-    const fpState = fpThresholds.find(threshold => threshold.value >= this.actor.system.FP.value)?.condition || ''
+    const hpState = hpThresholds.find(threshold => threshold.value >= this.actor.system.HP.value)
+    const fpState = fpThresholds.find(threshold => threshold.value >= this.actor.system.FP.value)
 
     pools.push(
       {
@@ -324,7 +343,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         denominator: systemSource.HP.max,
         atMax: systemSource.HP.damage === 0,
         name: 'GURPS.HP',
-        state: hpState,
+        state: hpState?.condition || '',
+        color: hpState?.color || defaultColor,
         thresholds: hpThresholds,
       },
       {
@@ -337,7 +357,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         denominator: systemSource.FP.max,
         atMax: systemSource.FP.damage === 0,
         name: 'GURPS.FP',
-        state: fpState,
+        state: fpState?.condition || '',
+        color: fpState?.color || defaultColor,
         thresholds: fpThresholds,
       }
     )
@@ -459,7 +480,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
   static async #onUpdatePool(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
 
-    const valueDelta = target.dataset.action === 'incrementPool' ? -1 : 1
+    const valueDelta =
+      target.dataset.action === 'incrementPool' ? 1 : target.dataset.action === 'decrementPool' ? -1 : 0
 
     const systemPath = target.dataset.path
 
@@ -477,12 +499,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       return
     }
 
-    const maxPath = systemPath.replace(/\.value$/, '.max')
-    const maxValue = foundry.utils.getProperty(this.actor, maxPath)
-    const newValue =
-      valueDelta > 0 && typeof maxValue === 'number'
-        ? Math.min(pathValue - valueDelta, maxValue)
-        : pathValue - valueDelta
+    let newValue = 0
+
+    if (target.dataset.action !== 'resetPool') {
+      const maxPath = systemPath.replace(/\.value$/, '.max')
+      const maxValue = foundry.utils.getProperty(this.actor, maxPath)
+
+      newValue =
+        valueDelta > 0 && typeof maxValue === 'number'
+          ? Math.min(pathValue - valueDelta, maxValue)
+          : pathValue - valueDelta
+    }
 
     await this.actor.update({ [systemPath]: newValue })
   }

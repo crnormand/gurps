@@ -1724,7 +1724,6 @@
         "miscellaneous": "Miscellaneous",
         "moving": "Lifting & Moving Things",
         "pointTotals": "{total} Points",
-        "poolAttributes": "Point Pools",
         "poolBase": "Base",
         "portrait": "Portrait",
         "pound": "{value} lb",
@@ -1881,7 +1880,9 @@
       "TerriblePain": "Terrible Pain",
       "Tipsy": "Tipsy",
       "Tired": "Tired",
-      "Wait": "Waiting"
+      "Tiring": "Tiring",
+      "Wait": "Waiting",
+      "Wounded": "Wounded"
     },
     "step": "Step",
     "stepOrTwo": "Step or Two",

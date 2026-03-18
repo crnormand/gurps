@@ -23,6 +23,7 @@ body {
   }
 
   .window-content {
+    background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 15%);
     font-family: 'Roboto', sans-serif;
     gap: var(--gcs-section-gap);
 
@@ -162,70 +163,79 @@ body {
       display: flex;
       flex-direction: column;
     }
+  }
 
-    > label {
-      grid-column: 1;
-      justify-self: stretch;
-      text-align: end;
-      white-space: nowrap;
-      padding-left: 0.5rem;
-      padding-right: 0.25rem;
-      align-content: center;
+  > label {
+    grid-column: 1;
+    justify-self: stretch;
+    text-align: end;
+    white-space: nowrap;
+    padding-left: 0.5rem;
+    padding-right: 0.25rem;
+    align-content: center;
+  }
+
+  .form-fields {
+    grid-column: 2;
+    min-width: 0;
+    padding-left: 0.25rem;
+    white-space: nowrap;
+
+    /* make the actual control fill the field cell */
+    :is(input, textarea) {
+      width: 100%;
+      box-sizing: border-box;
+      line-height: var(--gcs-input-height);
+      height: var(--gcs-input-height);
+      border: none;
+      border-bottom: 0.1rem solid var(--gcs-color-header-bg);
+      border-radius: 0;
+
+      background-color: var(--gcs-color-input-bg);
+      color: var(--gcs-color-input-fg);
+
+      &:disabled {
+        background-color: transparent;
+      }
+
+      &:focus {
+        outline: 1px solid var(--gcs-color-focus-bg);
+      }
     }
 
-    .form-fields {
-      grid-column: 2;
-      min-width: 0;
-      padding-left: 0.25rem;
+    button,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      line-height: var(--gcs-input-height);
+      height: var(--gcs-input-height);
+      min-height: 0;
+      border: 0.1rem solid rgba(255, 255, 255, 0.25);
+      border-radius: 0.2rem;
+      font-variant: normal;
+      font-size: var(--gcs-font-size-select);
 
-      /* make the actual control fill the field cell */
-      :is(input, textarea) {
-        width: 100%;
-        box-sizing: border-box;
-        line-height: var(--gcs-input-height);
-        height: var(--gcs-input-height);
-        border: none;
-        border-bottom: 0.1rem solid var(--gcs-color-header-bg);
-        border-radius: 0;
+      background-color: color-mix(in hsl, var(--gcs-color-surface-bg), white 15%);
+      color: var(--gcs-color-surface-fg);
 
-        background-color: var(--gcs-color-input-bg);
-        color: var(--gcs-color-input-fg);
-
-        &[disabled] {
-          background-color: transparent;
-        }
+      &:disabled {
+        background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 30%);
+        color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
+        cursor: not-allowed;
       }
 
-      button,
-      select {
-        width: 100%;
-        box-sizing: border-box;
-        line-height: var(--gcs-input-height);
-        height: var(--gcs-input-height);
-        min-height: 0;
-        border: 0.1rem solid rgba(255, 255, 255, 0.25);
-        border-radius: 0.2rem;
-        font-variant: normal;
-        font-size: var(--gcs-font-size-select);
-
-        background-color: color-mix(in hsl, var(--gcs-color-surface-bg), white 15%);
-        color: var(--gcs-color-surface-fg);
-
-        &:disabled {
-          background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 30%);
-          color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
-          cursor: not-allowed;
-        }
+      &:focus {
+        outline: 2px solid var(--gcs-color-focus-bg);
       }
+    }
 
-      select {
-        appearance: none;
-        padding-right: 1.25rem;
-        background-repeat: no-repeat;
-        background-position: right 0.25rem center;
-        background-size: 0.5rem;
-        background-image: var(--gcs-caret-down);
-      }
+    select {
+      appearance: none;
+      padding-right: 1.25rem;
+      background-repeat: no-repeat;
+      background-position: right 0.25rem center;
+      background-size: 0.5rem;
+      background-image: var(--gcs-caret-down);
     }
   }
 }
