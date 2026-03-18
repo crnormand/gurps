@@ -1,13 +1,81 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { BaseAttack } from './base-attack.js'
+import { WeaponBlockField, WeaponParryField, WeaponReachField } from './fields.js'
 import { ActionType } from './types.js'
 
 class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+  parryLevel: number = 0
+  parryText: string = ''
+  blockLevel: number = 0
+  blockText: string = ''
+  reachText: string = ''
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): MeleeAttackSchema {
     return Object.assign(super.defineSchema(), meleeAttackSchema())
+  }
+
+  /* ---------------------------------------- */
+
+  static override cleanData(source?: AnyMutableObject, options?: fields.DataField.CleanOptions): AnyMutableObject {
+    source = super.cleanData(source, options)
+
+    // Clean the parry field to ensure it is normalized.
+    // If parrying is disabled, the other parry fields are also reset to their default values.
+    if ('parry' in source && typeof source.parry === 'object' && source.parry !== null) {
+      if ('canParry' in source.parry && typeof source.parry.canParry === 'boolean' && !source.parry.canParry) {
+        const parry = source.parry as AnyMutableObject
+
+        parry.fencing = false
+        parry.unbalanced = false
+        parry.modifier = 0
+
+        source.parry = parry
+      }
+    }
+
+    // Clean the block field to ensure it is normalized.
+    // If blocking is disabled, the other block fields are also reset to their default values.
+    if ('block' in source && typeof source.block === 'object' && source.block !== null) {
+      if ('canBlock' in source.block && typeof source.block.canBlock === 'boolean' && !source.block.canBlock) {
+        const block = source.block as AnyMutableObject
+
+        block.modifier = 0
+
+        source.block = block
+      }
+    }
+
+    // Normalize the reach value to ensure min cannot be bigger than max and only valid reach values
+    // can pass through for each.
+    if ('reach' in source && typeof source.reach === 'object' && source.reach !== null) {
+      if (
+        'min' in source.reach &&
+        typeof source.reach.min === 'number' &&
+        'max' in source.reach &&
+        typeof source.reach.max === 'number'
+      ) {
+        source.reach.min = Math.max(source.reach.min, 0)
+        source.reach.max = Math.max(source.reach.max, 0)
+
+        if (source.reach.min === 0 && source.reach.max !== 0) {
+          source.reach.min = 1
+        } else if (source.reach.min !== 0 && source.reach.max === 0) {
+          source.reach.max = source.reach.min
+        }
+
+        source.reach.max = Math.max(Number(source.reach.min), Number(source.reach.max))
+      }
+    }
+
+    return source
   }
 
   /* ---------------------------------------- */
@@ -17,12 +85,17 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   }
 
   /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.action.meleeAttack']
+
+  /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
   override prepareDerivedData(): void {
     super.prepareDerivedData()
     this.#prepareDefenses()
+    this.#prepareDisplayValues()
   }
 
   /* ---------------------------------------- */
@@ -31,27 +104,38 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
     // Do not prepare defenses if the item is not owned
     if (!this.item.isOwned) return
 
-    // If parry is a number, its value will be re-calculated using the parry
-    // bonus and the current level.
-    // NOTE: Change from previous method where parry itself could store a
-    // value with a leading [+-] to indicate a bonus.
-    if (!isNaN(parseInt(this.parry))) {
-      const parryLevel = parseInt(this.parry)
-      const parrySuffix = this.parry.replace(parryLevel.toString(), '').trim()
+    this.parryLevel = this.parry.canParry ? Math.floor(this.level / 2) + 3 + this.parry.modifier : 0
 
-      this.parry = `${3 + Math.floor(this.level / 2) + this.parrybonus}${parrySuffix}`
+    this.blockLevel = this.block.canBlock ? Math.floor(this.level / 2) + 3 + this.block.modifier : 0
+  }
+
+  /* ---------------------------------------- */
+
+  #prepareDisplayValues(): void {
+    this.parryText = this.parry.canParry
+      ? `${this.parryLevel}${this.parry.fencing ? 'F' : ''}${this.parry.unbalanced ? 'U' : ''}`
+      : (game.i18n?.localize('GURPS.action.meleeAttack.parryDisabled') ?? '')
+
+    this.blockText = this.block.canBlock
+      ? `${this.blockLevel}`
+      : (game.i18n?.localize('GURPS.action.meleeAttack.blockDisabled') ?? '')
+
+    // Prepare reach value
+    let reach = ''
+
+    if (this.reach.closeCombat) reach += 'C'
+
+    if (this.reach.min !== 0 || this.reach.max !== 0) {
+      if (reach.length > 0) reach += ','
+      reach += this.reach.min.toString()
+
+      if (this.reach.max !== this.reach.min) {
+        reach += `-${this.reach.max}`
+      }
     }
 
-    // If block is a number, its value will be re-calculated using the block
-    // bonus and the current level.
-    // NOTE: Change from previous method where block itself could store a
-    // value with a leading [+-] to indicate a bonus.
-    if (!isNaN(parseInt(this.block))) {
-      const blockLevel = parseInt(this.block)
-      const blockSuffix = this.block.replace(blockLevel.toString(), '').trim()
-
-      this.block = `${3 + Math.floor(this.level / 2) + this.blockbonus}${blockSuffix}`
-    }
+    if (this.reach.changeRequiresReady) reach += '*'
+    this.reachText = reach
   }
 
   /* ---------------------------------------- */
@@ -62,35 +146,18 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
       if (bonus.type === 'attribute' && bonus.attrkey === 'DX') {
         this.level += bonus.mod as number
 
-        // Add to parry if it is a number
-        if (!isNaN(parseInt(this.parry))) {
-          // Handle parry with a suffix such as "F"
-          const parryLevel = parseInt(this.parry)
-          const parrySuffix = this.parry.replace(parryLevel.toString(), '').trim()
-
-          this.parry = `${3 + Math.floor(this.level / 2)}${parrySuffix}`
-        }
-
-        if (!isNaN(parseInt(this.block))) {
-          this.block = `${3 + Math.floor(this.level / 2)}`
-        }
+        // Recalculate parry and block levels after applying the bonus to the attack level
+        this.#prepareDefenses()
+        this.#prepareDisplayValues()
       }
 
       if (bonus.type === 'attack' && bonus.isMelee) {
         if (this.name && this.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
           this.level += bonus.mod as number
 
-          // Handle parry with a suffix such as "F"
-          if (!isNaN(parseInt(this.parry))) {
-            const parryLevel = parseInt(this.parry)
-            const parrySuffix = this.parry.replace(parryLevel.toString(), '').trim()
-
-            this.parry = `${3 + Math.floor(this.level / 2)}${parrySuffix}`
-          }
-
-          if (!isNaN(parseInt(this.block))) {
-            this.block = `${3 + Math.floor(this.level / 2)}`
-          }
+          // Recalculate parry and block levels after applying the bonus to the attack level
+          this.#prepareDefenses()
+          this.#prepareDisplayValues()
         }
       }
     }
@@ -101,32 +168,17 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
 
 const meleeAttackSchema = () => {
   return {
-    /** The reach of this attack, e.g. "C", "C,1", "1,2", etc. */
-    reach: new fields.StringField({ required: true, nullable: false }),
+    /** The reach of this attack */
+    reach: new WeaponReachField(),
 
-    /** The parry value of this attack, e.g. "3", "3F",  etc. */
-    parry: new fields.StringField({ required: true, nullable: false }),
+    /** The parry value of this attack */
+    parry: new WeaponParryField(),
 
-    /** The parry bonus of this attack, which is added to the base parry value to determine the final parry value. */
-    parrybonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-
-    /** The parry penalty of this attack, which is added to the base parry value to determine the final parry value. */
+    /** The penalty to this attack's parry level for multiple parries in a given turn. */
     baseParryPenalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
-    /** The block value of this attack, e.g. "3",  etc. */
-    block: new fields.StringField({ required: true, nullable: false }),
-
-    /** The block bonus of this attack, which is added to the base block value to determine the final block value. */
-    blockbonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-
-    /**
-     * NOTE: These fields seem inappropriate for attacks and appear to be vestigial. They have been commented out but
-     * left here temporarily for documentation purposes.
-     */
-
-    // weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    // techlevel: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    // cost: new fields.StringField({ required: true, nullable: false }),
+    /** The block value of this attack */
+    block: new WeaponBlockField(),
   }
 }
 

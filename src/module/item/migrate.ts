@@ -1,5 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
-import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
+import { Melee, Ranged } from '@module/actor/actor-components.js'
 
 import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.js'
 
@@ -26,7 +27,7 @@ async function runMigration() {
       progress: true,
     })
 
-    console.log('Migrating world items')
+    console.log('GURPS | Migrating world items')
     const items = game.items!.filter(item => item.isOfType('equipment', 'feature', 'skill', 'spell'))
     const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
 
@@ -179,22 +180,85 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
   }
 
   if (oldData.melee) {
-    Object.values(oldData.melee).forEach(action => {
-      const id = foundry.utils.randomID()
+    const melee = Object.values(oldData.melee) as Melee[]
 
-      newData.actions![id] = action as CreateDataOf<MeleeAttackModel>
+    melee.forEach(action => {
+      const _id = foundry.utils.randomID()
+      const newMelee = migrateMeleeWeapon(action, _id)
+
+      newData.actions[_id] = newMelee
     })
   }
 
   if (oldData.ranged) {
-    Object.values(oldData.ranged).forEach(action => {
-      const id = foundry.utils.randomID()
+    const ranged = Object.values(oldData.ranged) as Ranged[]
 
-      newData.actions![id] = action as CreateDataOf<RangedAttackModel>
+    ranged.forEach(action => {
+      const _id = foundry.utils.randomID()
+      const newRanged = migrateRangedWeapon(action, _id)
+
+      newData.actions[_id] = newRanged
     })
   }
 
   return newData
+}
+
+/* ---------------------------------------- */
+
+function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.CreateData<MeleeAttackSchema> {
+  const damage = typeof oldMelee.damage === 'string' ? [oldMelee.damage] : oldMelee.damage
+
+  const newMelee: fields.SchemaField.CreateData<MeleeAttackSchema> = {
+    _id,
+    type: ActionType.MeleeAttack,
+    baseParryPenalty: Number(oldMelee.baseParryPenalty),
+    block: oldMelee.block,
+    consumeAction: oldMelee.consumeAction,
+    damage,
+    extraAttacks: Number(oldMelee.extraAttacks),
+    import: Number(oldMelee.import),
+    itemModifiers: '',
+    mode: oldMelee.mode,
+    modifierTags: oldMelee.modifierTags,
+    notes: oldMelee.notes,
+    otf: oldMelee.otf,
+    parry: oldMelee.parry,
+    reach: oldMelee.reach,
+    st: oldMelee.st,
+  }
+
+  return newMelee
+}
+
+/* ---------------------------------------- */
+
+function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField.CreateData<RangedAttackSchema> {
+  const damage = typeof oldRanged.damage === 'string' ? [oldRanged.damage] : oldRanged.damage
+
+  const newRanged: fields.SchemaField.CreateData<RangedAttackSchema> = {
+    _id,
+    type: ActionType.RangedAttack,
+    acc: oldRanged.acc,
+    ammo: Number(oldRanged.ammo),
+    bulk: oldRanged.bulk,
+    consumeAction: oldRanged.consumeAction,
+    damage,
+    extraAttacks: Number(oldRanged.extraAttacks),
+    import: Number(oldRanged.import),
+    itemModifiers: '',
+    mode: oldRanged.mode,
+    modifierTags: oldRanged.modifierTags,
+    notes: oldRanged.notes,
+    otf: oldRanged.otf,
+    range: oldRanged.range,
+    rateOfFire: oldRanged.rof,
+    recoil: oldRanged.rcl,
+    shots: oldRanged.shots,
+    st: oldRanged.st,
+  }
+
+  return newRanged
 }
 
 /* ---------------------------------------- */
@@ -204,7 +268,7 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.eqt,
     isContainer: Boolean(oldData.eqt.contains && Object.keys(oldData.eqt.contains).length > 0),
-    weightsum: String(oldData.eqt.weightsum),
+    weightsum: oldData.eqt.weightsum.toString(),
     uses: Number(oldData.eqt.uses),
     maxuses: Number(oldData.eqt.maxuses),
   }
@@ -232,7 +296,7 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
     ...oldData.ski,
     isContainer: Boolean(oldData.ski.contains && Object.keys(oldData.ski.contains).length > 0),
     import: Number(oldData.ski.import),
-    relativelevel: String(oldData.ski.relativelevel),
+    relativelevel: oldData.ski.relativelevel.toString(),
   }
 
   return newData
@@ -246,7 +310,7 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
     ...oldData.spl,
     isContainer: Boolean(oldData.spl.contains && Object.keys(oldData.spl.contains).length > 0),
     import: Number(oldData.spl.import),
-    relativelevel: String(oldData.spl.relativelevel),
+    relativelevel: oldData.spl.relativelevel.toString(),
   }
 
   return newData
@@ -254,4 +318,16 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
 
 /* ---------------------------------------- */
 
-export { getNewItemType, migrateItem, getMigratedItemData, migrateItemCompendium, runMigration }
+export {
+  getNewItemType,
+  migrateItem,
+  getMigratedItemData,
+  migrateItemCompendium,
+  runMigration,
+  migrateEquipmentSystem,
+  migrateTraitSystem,
+  migrateSkillSystem,
+  migrateSpellSystem,
+  migrateMeleeWeapon,
+  migrateRangedWeapon,
+}

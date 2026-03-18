@@ -1,5 +1,5 @@
 import { IResourceTrackerTemplate, SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
-import { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.ts'
+import { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.js'
 
 type ResourceTrackerTemplateMap = Record<string, IResourceTrackerTemplate>
 type ResourceTrackerTemplateMapConstructor = ObjectConstructor & {

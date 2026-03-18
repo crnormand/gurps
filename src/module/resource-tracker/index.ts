@@ -4,7 +4,7 @@ import { migrateTrackerInstanceToV2 } from './migration.js'
 import { migrate } from './migration.js'
 import { initializeSettings } from './settings.js'
 import { IResourceTracker, IResourceTrackerTemplate } from './types.js'
-import { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.ts'
+import { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.js'
 import { updateResourceTracker } from './ui/update-resource-tracker.js'
 
 function init() {
@@ -73,7 +73,7 @@ export const ResourceTrackerModule: ResourceTrackerModule = {
 
 export type { IResourceTrackerThreshold, IResourceTracker, IResourceTrackerTemplate } from './types.js'
 
-export { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.ts'
+export { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.js'
 export type { ResourceTrackerSchema, ResourceTrackerTemplateSchema } from './resource-tracker.js'
 export { TrackerInstance, ResourceTrackerTemplate } from './resource-tracker.js'
 export { OperatorFunctions, ComparisonFunctions } from './types.js'

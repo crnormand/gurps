@@ -24,7 +24,7 @@ class MeleeV1 {
   }
 
   get block() {
-    return this.meleeV2.block
+    return this.meleeV2.blockText
   }
 
   get consumeAction() {
@@ -34,10 +34,6 @@ class MeleeV1 {
   get contains() {
     // return this.meleeV2.contains
     return []
-  }
-
-  get cost() {
-    return this.meleeV2.cost
   }
 
   get damage() {
@@ -89,15 +85,15 @@ class MeleeV1 {
   }
 
   get parry() {
-    return this.meleeV2.parry
+    return this.meleeV2.parryText
   }
 
   get parryBonus() {
-    return this.meleeV2.parrybonus
+    return this.meleeV2.parry.modifier
   }
 
   get reach() {
-    return this.meleeV2.reach
+    return this.meleeV2.reachText
   }
 
   get st() {

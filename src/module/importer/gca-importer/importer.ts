@@ -1,5 +1,6 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
+import { parseBlock } from '@module/action/parse-weapon.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
 import { BaseItemModel } from '@module/item/data/base.js'
@@ -638,18 +639,31 @@ Portrait will not be imported.`
 
     const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
 
+    const level = weapon.charskillscore ?? 0
+
+    const block = parseBlock(weapon.charblockscore ?? '')
+    // The GCA block value is the pre-calculated block value. We're getting
+    // the expected block value given 0 block modifier to see if the weapon
+    // has any block bonus.
+    const blockLevelDifference = Math.floor(level / 2) + 3
+
+    block.modifier = (block.modifier ?? 0) - blockLevelDifference
+
     return {
       name,
       type,
       _id,
-      notes: weapon.notes ?? '',
-      mode: weapon.name ?? '',
-      import: weapon.charskillscore ?? 0,
+      baseParryPenalty: -4,
+      block,
       damage,
-      st: weapon.charminst ?? '',
+      import: level,
+      itemModifiers: '',
+      mode: weapon.name ?? '',
+      modifierTags: '',
+      notes: weapon.notes ?? '',
+      parry: weapon.parry ?? '',
       reach: weapon.charreach ?? '',
-      parry: weapon.charparry ?? '',
-      block: weapon.charblockscore ?? '',
+      st: weapon.charminst ?? '',
     }
   }
 
@@ -660,20 +674,25 @@ Portrait will not be imported.`
 
     const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
 
+    const halfDamageRange = weapon.charrangehalfdam ?? ''
+    const maxRange = weapon.charrangemax ?? ''
+    const range = halfDamageRange && maxRange ? `${halfDamageRange}/${maxRange}` : halfDamageRange || maxRange || ''
+
     return {
       name,
       type,
       _id,
-      notes: weapon.notes ?? '',
-      mode: weapon.name ?? '',
-      import: weapon.charskillscore ?? 0,
-      damage,
-      st: weapon.charminst ?? '',
       acc: weapon.characc ?? '',
-      range: weapon.charrangemax ?? '',
+      damage,
+      import: weapon.charskillscore ?? 0,
+      itemModifiers: '',
+      mode: weapon.name ?? '',
+      modifierTags: '',
+      notes: weapon.notes ?? '',
+      range,
+      recoil: weapon.charrcl ?? '',
       shots: weapon.charshots ?? '',
-      rcl: weapon.charrcl ?? '',
-      halfd: weapon.charrangehalfdam ?? '',
+      st: weapon.charminst ?? '',
     }
   }
 

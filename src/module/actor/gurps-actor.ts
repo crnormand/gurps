@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/data-fields.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { multiplyDice } from '@util/damage-utils.js'
 import { parseItemKey } from '@util/object-utils.js'
 import { COSTS_REGEX, parselink } from '@util/parselink.js'
 import {
@@ -22,7 +23,6 @@ import { ImportSettings } from '../importer/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { IResourceTracker, IResourceTrackerTemplate } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
-import { multiplyDice } from '../util/damage-utils.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'

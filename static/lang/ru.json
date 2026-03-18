@@ -11,6 +11,94 @@
     "abbrevReference": "Ссылка",
     "acc": "Точ",
     "accForWeapon": "Точ для {weapon}",
+    "action": {
+      "baseAction": {
+        "FIELDS": {
+          "addToQuickRoll": "Добавить к быстрому броску",
+          "disabled": "Отключено",
+          "name": "Название"
+        }
+      },
+      "baseAttack": {
+        "FIELDS": {
+          "consumeAction": "Использует действие",
+          "damage": "Урон",
+          "extraAttacks": "Дополнительные атаки",
+          "import": "Базовый уровень",
+          "itemModifiers": "Модификаторы предмета",
+          "mode": "Режим",
+          "modifierTags": "Теги модификаторов",
+          "notes": "Заметки",
+          "otf": "Формула OTF",
+          "st": "ST"
+        }
+      },
+      "meleeAttack": {
+        "blockDisabled": "Нет",
+        "FIELDS": {
+          "baseParryPenalty": "Базовый штраф парирования",
+          "block": {
+            "canBlock": "Может блокировать",
+            "modifier": "Модификатор"
+          },
+          "parry": {
+            "canParry": "Может парировать",
+            "fencing": "Фехтование",
+            "modifier": "Модификатор",
+            "unbalanced": "Несбалансированное"
+          },
+          "reach": {
+            "changeRequiresReady": "Смена требует готовности",
+            "closeCombat": "Ближний бой",
+            "max": "Макс",
+            "min": "Мин"
+          }
+        },
+        "parryDisabled": "Нет"
+      },
+      "rangedAttack": {
+        "FIELDS": {
+          "acc": {
+            "base": "Базовая",
+            "jet": "Реактивный",
+            "scope": "Прицел"
+          },
+          "ammo": "Боеприпасы",
+          "bulk": {
+            "giant": "Великан",
+            "normal": "Обычный",
+            "retractingStock": "Складной приклад"
+          },
+          "range": {
+            "halfDamage": "1/2D",
+            "inMiles": "В милях",
+            "max": "Макс",
+            "min": "Мин",
+            "musclePowered": "Мышечная сила"
+          },
+          "rateOfFire": {
+            "fullAutoOnly": "Только автоматический",
+            "highCyclicControlledBursts": "Высокоцикличные управляемые очереди",
+            "jet": "Реактивный",
+            "secondaryProjectiles": "Вторичные снаряды",
+            "shotsPerAttack": "Выстрелов/Атака"
+          },
+          "recoil": {
+            "shot": "Выстрел",
+            "slug": "Пуля"
+          },
+          "shots": {
+            "count": "Количество",
+            "duration": "Длительность (с)",
+            "inChamber": "В патроннике",
+            "reloadTime": "Время перезарядки",
+            "reloadTimeIsPerShot": "За выстрел",
+            "thrown": "Брошено"
+          }
+        },
+        "jet": "Реактивный"
+      }
+    },
     "active": "Активный",
     "activeEffect": "Активный эффект",
     "activeEffects": "Активные эффекты",

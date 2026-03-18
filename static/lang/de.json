@@ -11,6 +11,94 @@
     "abbrevReference": "Ref",
     "acc": "ZG",
     "accForWeapon": "ZG für {weapon}",
+    "action": {
+      "baseAction": {
+        "FIELDS": {
+          "addToQuickRoll": "Zu Schnellwurf hinzufügen",
+          "disabled": "Deaktiviert",
+          "name": "Name"
+        }
+      },
+      "baseAttack": {
+        "FIELDS": {
+          "consumeAction": "Aktion verbrauchen",
+          "damage": "Schaden",
+          "extraAttacks": "Zusätzliche Angriffe",
+          "import": "Grundstufe",
+          "itemModifiers": "Gegenstandsmodifikatoren",
+          "mode": "Modus",
+          "modifierTags": "Modifikator-Tags",
+          "notes": "Notizen",
+          "otf": "OTF-Formel",
+          "st": "ST"
+        }
+      },
+      "meleeAttack": {
+        "blockDisabled": "Nein",
+        "FIELDS": {
+          "baseParryPenalty": "Basis-Parier-Malus",
+          "block": {
+            "canBlock": "Kann blocken",
+            "modifier": "Modifikator"
+          },
+          "parry": {
+            "canParry": "Kann parieren",
+            "fencing": "Fechten",
+            "modifier": "Modifikator",
+            "unbalanced": "Unausgeglichen"
+          },
+          "reach": {
+            "changeRequiresReady": "Wechsel erfordert Bereit",
+            "closeCombat": "Nahkampf",
+            "max": "Max",
+            "min": "Min"
+          }
+        },
+        "parryDisabled": "Nein"
+      },
+      "rangedAttack": {
+        "FIELDS": {
+          "acc": {
+            "base": "Basis",
+            "jet": "Strahl",
+            "scope": "Zielfernrohr"
+          },
+          "ammo": "Munition",
+          "bulk": {
+            "giant": "Riese",
+            "normal": "Normal",
+            "retractingStock": "Einklappbarer Schaft"
+          },
+          "range": {
+            "halfDamage": "1/2D",
+            "inMiles": "In Meilen",
+            "max": "Max",
+            "min": "Min",
+            "musclePowered": "Muskelkraft"
+          },
+          "rateOfFire": {
+            "fullAutoOnly": "Nur Vollautomatik",
+            "highCyclicControlledBursts": "Hochzyklische kontrollierte Feuerstöße",
+            "jet": "Strahl",
+            "secondaryProjectiles": "Sekundäre Projektile",
+            "shotsPerAttack": "Schuss/Angriff"
+          },
+          "recoil": {
+            "shot": "Schuss",
+            "slug": "Slug"
+          },
+          "shots": {
+            "count": "Anzahl",
+            "duration": "Dauer (s)",
+            "inChamber": "Im Patronenlager",
+            "reloadTime": "Ladezeit",
+            "reloadTimeIsPerShot": "Pro Schuss",
+            "thrown": "Geworfen"
+          }
+        },
+        "jet": "Strahl"
+      }
+    },
     "active": "Aktiv",
     "activeEffect": "Aktiver Effekt",
     "activeEffects": "Aktive Effekte",

@@ -3,7 +3,7 @@ import { DeepPartial } from 'fvtt-types/utils'
 import { TrackerInstance } from '../resource-tracker.js'
 import { IResourceTracker, IResourceTrackerTemplate, TrackerComparators, TrackerOperators } from '../types.js'
 
-import { ResourceTrackerManagerV2 } from './resource-tracker-manager-v2.ts'
+import { ResourceTrackerManagerV2 } from './resource-tracker-manager-v2.js'
 
 type ResourceTrackerEditorV2Options = DeepPartial<foundry.applications.api.ApplicationV2.Configuration> & {
   onUpdate?: (trackerData: IResourceTracker) => Promise<void> | void

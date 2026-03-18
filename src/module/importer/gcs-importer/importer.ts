@@ -1,4 +1,5 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
+import { parseBlock, parseParry } from '@module/action/parse-weapon.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
@@ -902,29 +903,34 @@ Portrait will not be imported.`
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
-    let parrybonus = 0
-    let blockbonus = 0
+    const parry = parseParry(weapon.calc?.parry || weapon.parry || '')
 
+    const block = parseBlock(weapon.calc?.block || weapon.block || '')
+
+    // If we are importing a character instead of an Item Compendium,
+    // we can apply parry bonuses from the character to the weapon's
+    // parry and block values.
     if (this._isMode(GcsImporterMode.Character)) {
-      parrybonus = this.input.calc.parry_bonus ?? 0
-      blockbonus = this.input.calc.parry_bonus ?? 0
+      parry.modifier += this.input.calc.parry_bonus ?? 0
+      block.modifier += this.input.calc.parry_bonus ?? 0
     }
 
     return {
       name,
       type,
       _id,
-      mode: weapon.usage || '',
-      notes: weapon.usage_notes || '',
-      import: weapon.calc?.level || 0,
+      baseParryPenalty: -4,
+      block,
       damage: [weapon.calc?.damage || ''],
-      st: weapon.calc?.strength || weapon.strength,
-      reach: weapon.calc?.reach || weapon.reach,
-      parry: weapon.calc?.parry || weapon.parry,
-      parrybonus,
-      block: weapon.calc?.block || weapon.block,
-      blockbonus,
+      import: weapon.calc?.level || 0,
+      itemModifiers: '',
+      mode: weapon.usage || '',
+      modifierTags: '',
+      notes: weapon.usage_notes || '',
       otf: this.#importWeaponDefaults(weapon),
+      parry,
+      reach: weapon.calc?.reach || weapon.reach || '',
+      st: weapon.calc?.strength || weapon.strength,
     }
   }
 
@@ -935,24 +941,23 @@ Portrait will not be imported.`
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 
-    const halfd = weapon.range?.includes('/') ? weapon.range.split('/')[0] : '0'
-
     return {
       name,
       type,
       _id,
-      notes: weapon.usage_notes || '',
-      import: weapon.calc?.level || 0,
-      damage: [weapon.calc?.damage || ''],
-      st: weapon.calc?.strength || weapon.strength,
-      acc: weapon.calc?.accuracy || weapon.accuracy,
-      shots: weapon.calc?.shots || weapon.shots,
-      range: weapon.calc?.range || weapon.range,
-      rcl: weapon.calc?.recoil || weapon.recoil,
-      halfd,
-      rateOfFire: weapon.calc?.rate_of_fire || weapon.rate_of_fire,
+      acc: weapon.calc?.accuracy || weapon.accuracy || '',
       bulk: weapon.calc?.bulk || weapon.bulk || '0',
+      damage: [weapon.calc?.damage || ''],
+      import: weapon.calc?.level || 0,
+      itemModifiers: '',
+      modifierTags: '',
+      notes: weapon.usage_notes || '',
       otf: this.#importWeaponDefaults(weapon),
+      range: weapon.calc?.range || weapon.range || '',
+      rateOfFire: weapon.calc?.rate_of_fire || weapon.rate_of_fire || '',
+      recoil: weapon.calc?.recoil || weapon.recoil || '',
+      shots: weapon.calc?.shots || weapon.shots || '',
+      st: weapon.calc?.strength || weapon.strength,
     }
   }
 

@@ -1,6 +1,6 @@
+import { Ranged } from '@module/actor/actor-components.js'
 import { defineGetterProperties } from '@util/object-utils.js'
 
-import { Ranged } from '../../actor/actor-components.js'
 import { RangedAttackModel } from '../ranged-attack.js'
 
 class RangedV1 {
@@ -17,7 +17,7 @@ class RangedV1 {
 
   // Generate getters for each of the ranged attack properties. Delegate to the underlying RangedAttackModel.
   get acc() {
-    return this.rangedV2.acc
+    return this.rangedV2.accText
   }
 
   get addToQuickRoll() {
@@ -29,7 +29,7 @@ class RangedV1 {
   }
 
   get bulk() {
-    return this.rangedV2.bulk
+    return this.rangedV2.bulkText
   }
 
   get consumeAction() {
@@ -49,7 +49,9 @@ class RangedV1 {
   }
 
   get halfd() {
-    return this.rangedV2.halfd
+    const half = this.rangedV2.range?.halfDamage
+
+    return half == null ? '' : String(half)
   }
 
   get import() {
@@ -60,16 +62,13 @@ class RangedV1 {
     return this.rangedV2.itemModifiers
   }
 
-  get legalityclass() {
-    return this.rangedV2.legalityclass
-  }
-
   get level() {
     return this.rangedV2.level
   }
 
   get max() {
-    return this.rangedV2.max
+    // Legacy sheets expect `max` to be a string; coerce underlying value to string to avoid numeric return.
+    return String(this.rangedV2.range.max ?? '')
   }
 
   get mode() {
@@ -101,15 +100,15 @@ class RangedV1 {
   }
 
   get range() {
-    return this.rangedV2.range
+    return this.rangedV2.rangeText
   }
 
   get rcl() {
-    return this.rangedV2.rcl
+    return this.rangedV2.recoilText
   }
 
   get rof() {
-    return this.rangedV2.rateOfFire
+    return this.rangedV2.rofText
   }
 
   get shots() {

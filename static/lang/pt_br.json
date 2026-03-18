@@ -11,6 +11,94 @@
     "abbrevReference": "Ref",
     "acc": "Prec",
     "accForWeapon": "Prec para {weapon}",
+    "action": {
+      "baseAction": {
+        "FIELDS": {
+          "addToQuickRoll": "Adicionar ao Rolamento Rápido",
+          "disabled": "Desativado",
+          "name": "Nome"
+        }
+      },
+      "baseAttack": {
+        "FIELDS": {
+          "consumeAction": "Consumir Ação",
+          "damage": "Dano",
+          "extraAttacks": "Ataques Extras",
+          "import": "Nível Base",
+          "itemModifiers": "Modificadores de Item",
+          "mode": "Modo",
+          "modifierTags": "Tags de Modificador",
+          "notes": "Notas",
+          "otf": "Fórmula OTF",
+          "st": "ST"
+        }
+      },
+      "meleeAttack": {
+        "blockDisabled": "Não",
+        "FIELDS": {
+          "baseParryPenalty": "Penalidade Base de Aparação",
+          "block": {
+            "canBlock": "Pode Bloquear",
+            "modifier": "Modificador"
+          },
+          "parry": {
+            "canParry": "Pode Aparar",
+            "fencing": "Esgrima",
+            "modifier": "Modificador",
+            "unbalanced": "Desequilibrado"
+          },
+          "reach": {
+            "changeRequiresReady": "Mudança Requer Pronto",
+            "closeCombat": "Combate Próximo",
+            "max": "Máx",
+            "min": "Mín"
+          }
+        },
+        "parryDisabled": "Não"
+      },
+      "rangedAttack": {
+        "FIELDS": {
+          "acc": {
+            "base": "Base",
+            "jet": "Jato",
+            "scope": "Mira"
+          },
+          "ammo": "Munição",
+          "bulk": {
+            "giant": "Gigante",
+            "normal": "Normal",
+            "retractingStock": "Coronha Retrátil"
+          },
+          "range": {
+            "halfDamage": "1/2D",
+            "inMiles": "Em Milhas",
+            "max": "Máx",
+            "min": "Mín",
+            "musclePowered": "Propulsado por Músculo"
+          },
+          "rateOfFire": {
+            "fullAutoOnly": "Apenas Automático",
+            "highCyclicControlledBursts": "Rajadas Controladas de Alta Cadência",
+            "jet": "Jato",
+            "secondaryProjectiles": "Projéteis Secundários",
+            "shotsPerAttack": "Tiros/Ataque"
+          },
+          "recoil": {
+            "shot": "Tiro",
+            "slug": "Projétil"
+          },
+          "shots": {
+            "count": "Contagem",
+            "duration": "Duração (s)",
+            "inChamber": "Na Câmara",
+            "reloadTime": "Tempo de Recarga",
+            "reloadTimeIsPerShot": "Por Tiro",
+            "thrown": "Arremessado"
+          }
+        },
+        "jet": "Jato"
+      }
+    },
     "active": "Ativo",
     "activeEffect": "Efeito Ativo",
     "activeEffects": "Efeitos Ativos",
