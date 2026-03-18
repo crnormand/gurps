@@ -1,5 +1,7 @@
 'use strict'
 
+// TODO This file should be deprecated in favor of using the version in `src/rules`.
+
 /**
  * @typedef {object} Condition
  * @property {Attribute: number} breakpoint
@@ -60,12 +62,12 @@ const hpConditions = {
 const fpConditions = {
   NORMAL: {
     breakpoint: _ => Number.MAX_SAFE_INTEGER,
-    label: 'GURPS.normal',
+    label: 'GURPS.status.Healthy',
     style: 'normal',
   },
   REELING: {
     breakpoint: FP => Math.ceil(FP.max / 3) - 1,
-    label: 'GURPS.status.tired',
+    label: 'GURPS.status.Tired',
     style: 'tired',
   },
   COLLAPSE: {

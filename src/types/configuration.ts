@@ -1,8 +1,8 @@
-import { CharacterModel, GcsCharacterModel } from '@module/actor/data/index.js'
+import type { CharacterModel, GcsCharacterModel } from '@module/actor/data/index.js'
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import type { ActorV1Model } from '@module/actor/legacy/actorv1-interface.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
-import { MapField } from '@module/data/fields/map-field.js'
+import type { MapField } from '@module/data/fields/map-field.js'
 import type GurpsActiveEffect from '@module/effects/active-effect.js'
 import type {
   EquipmentModel,
@@ -19,11 +19,10 @@ import type {
 } from '@module/item/data/index.js'
 import type { GurpsItemV2 } from '@module/item/gurps-item.js'
 import type { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
-import type { ResourceTrackerManager } from '@module/resource-tracker/resource-tracker-manager.js'
-import type { ResourceTrackerTemplate } from '@module/resource-tracker/resource-tracker.js'
+import type { IResourceTrackerTemplate, ResourceTrackerManagerV2 } from '@module/resource-tracker/index.js'
 import type { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import type { GurpsToken } from '@module/token/gurps-token.js'
-import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
+import type { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
@@ -141,8 +140,8 @@ declare module 'fvtt-types/configuration' {
     'gurps.pdf.open-first': boolean
 
     /** Resource Tracker */
-    'gurps.resource-tracker.manager': new (options?: any) => ResourceTrackerManager
-    'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
+    'gurps.resource-tracker.manager': new (options?: any) => ResourceTrackerManagerV2
+    'gurps.resource-tracker.templates': Record<string, IResourceTrackerTemplate>
 
     /** Developer */
     'gurps.dev.enableNonProductionDocumentTypes': foundry.data.fields.BooleanField
@@ -206,7 +205,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.overwrite-portraitsk': boolean
     'gurps.pdf-open-first': boolean
     'gurps.show-the-math': boolean
-    'gurps.tracker-templates': new (options?: any) => Record<string, ResourceTrackerTemplate>
+    'gurps.tracker-templates': new (options?: any) => Record<string, IResourceTrackerTemplate>
     'gurps.use-browser-importer': boolean
     'gurps.use-size-modifier-difference-in-melee': boolean
     'gurps.automatic-encumbrance': boolean

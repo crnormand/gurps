@@ -51,7 +51,10 @@ export async function confirmAndDelete(
   actor: Actor.Implementation,
   key: string,
   displayName: string | undefined,
-  fallbackLocaleKey: string
+  fallbackLocaleKey: string,
+  deleteCallback: (key: string) => Promise<void> = async () => {
+    await actor.deleteEntry(key)
+  }
 ): Promise<boolean> {
   const confirmed = await foundry.applications.api.DialogV2.confirm({
     window: { title: getGame().i18n.localize('GURPS.delete') },
@@ -59,7 +62,7 @@ export async function confirmAndDelete(
   })
 
   if (confirmed) {
-    await actor.deleteEntry(key)
+    await deleteCallback(key)
   }
 
   return confirmed ?? false

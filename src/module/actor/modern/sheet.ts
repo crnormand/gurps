@@ -10,6 +10,8 @@ import type {
 import { Application } from '@gurps-types/foundry/application.js'
 import { getGame, getUser } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { Fatigue } from '@rules/injury/fatigue.js'
+import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
 import GurpsWiring from '../../gurps-wiring.js'
 import { ImportSettings } from '../../importer/index.js'
@@ -20,10 +22,22 @@ import MoveModeEditor from '../move-mode-editor.js'
 
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
-import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.js'
+import {
+  bindEquipmentCrudActions,
+  bindNoteCrudActions,
+  bindTrackerActions,
+  PreparedTrackerData,
+  prepareTrackerDataForSheet,
+} from './dialog-crud-handler.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
 import { entityConfigurations, modifierConfigurations } from './entity-config.js'
-import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.js'
+import {
+  bindAllInlineEdits,
+  bindAttributeEdit,
+  bindSecondaryStatsEdit,
+  bindPointsEdit,
+  bindAllTrackerEdits,
+} from './inline-edit-handler.js'
 import { isPostureOrManeuver } from './utils/effect.js'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
@@ -48,6 +62,9 @@ export interface ModernSheetContext extends ActorSheetV2RenderContext {
   showHPTinting: boolean
   // Uses getter's union return type since it varies between v1/v2 actor models
   moveMode: GurpsActorV2<Actor.SubType>['currentMoveMode']
+  resourceTrackers: PreparedTrackerData[]
+  hpThresholds: ThresholdDescriptor[]
+  fpThresholds: ThresholdDescriptor[]
   tab?: Application.Tab
 }
 
@@ -146,6 +163,9 @@ export class GurpsActorModernSheet extends SheetBase {
         Object.keys(actorSystem?.reactions ?? {}).length + Object.keys(actorSystem?.conditionalmods ?? {}).length,
       showHPTinting: getGame().settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
       moveMode: this.actor.currentMoveMode,
+      resourceTrackers: prepareTrackerDataForSheet(this.actor),
+      hpThresholds: HitPoints.getThresholds(actorSystem.HP.max),
+      fpThresholds: Fatigue.getThresholds(actorSystem.FP.max),
     }
 
     return context
@@ -194,6 +214,7 @@ export class GurpsActorModernSheet extends SheetBase {
     bindAttributeEdit(html, actor)
     bindSecondaryStatsEdit(html, actor)
     bindPointsEdit(html, actor)
+    bindAllTrackerEdits(html, actor)
 
     // Bind resource reset handlers - note: these are now handled by actions system
     // but keeping for complex multi-resource configs

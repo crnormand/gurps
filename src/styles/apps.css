@@ -2043,8 +2043,8 @@ details .popup.square5x4 {
 
 .modtooltip .collapsible-wrapper .label-toggle,
 .modtooltip .collapsible-wrapper > label {
-  appearance: menulist-button;
   -webkit-appearance: menulist-button;
+  appearance: menulist-button;
   border: 1px solid rgb(122, 121, 113);
   padding: 0.35em;
   border-radius: 0.25em;
@@ -2126,7 +2126,6 @@ details .popup.square5x4 {
 .system-gurps .sheet.actor .glinkmod {
   padding: 1px 4px;
   line-height: inherit;
-  color: inherit;
 }
 
 .system-gurps .gurpslink {
@@ -2257,7 +2256,7 @@ details .popup.square5x4 {
   row-gap: 13px;
   justify-items: stretch;
   justify-content: stretch;
-  text-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .modtooltip .shaded-group > div {
@@ -2273,7 +2272,7 @@ details .popup.square5x4 {
 }
 
 .removemod.minus {
-  text-wrap: wrap;
+  white-space: normal;
   text-indent: -1.5em;
   margin-left: 1.5em;
   color: darkred;

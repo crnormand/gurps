@@ -1,4 +1,4 @@
-import { migrateSettings } from '@module/util/migrate-settings.js'
+import { migrateLegacySettings, SettingMigration } from '@module/util/migration/settings-migration.js'
 
 import {
   AUTOMATICALLY_SET_IGNORE_QTY,
@@ -46,36 +46,64 @@ function toEncoding(value: unknown): 'Latin1' | 'UTF8' {
   return numeric === 0 ? 'Latin1' : 'UTF8'
 }
 
-type MigrationHandler = (value: unknown) => Promise<unknown>
-
-const legacyMigrations = new Map<string, MigrationHandler>([
-  [SETTING_IMPORT_HP_FP, value => game.settings!.set(GURPS.SYSTEM_NAME, OVERWRITE_HP_FP, toOverwriteChoice(value))],
-  [
-    SETTING_IMPORT_BODYPLAN,
-    value => game.settings!.set(GURPS.SYSTEM_NAME, OVERWRITE_BODYPLAN, toOverwriteChoice(value)),
-  ],
-  [SETTING_IGNORE_IMPORT_NAME, value => game.settings!.set(GURPS.SYSTEM_NAME, OVERWRITE_NAME, Boolean(!value))],
-  [SETTING_BLOCK_IMPORT, value => game.settings!.set(GURPS.SYSTEM_NAME, ONLY_TRUSTED_IMPORT, Boolean(value))],
-  [
-    SETTING_AUTOMATICALLY_SET_IGNOREQTY,
-    value => game.settings!.set(GURPS.SYSTEM_NAME, AUTOMATICALLY_SET_IGNORE_QTY, Boolean(value)),
-  ],
-  [
-    SETTING_IMPORT_EXTENDED_VALUES_GCS,
-    value => game.settings!.set(GURPS.SYSTEM_NAME, IMPORT_EXTENDED_VALUES_GCS, Boolean(value)),
-  ],
-  [
-    SETTING_IMPORT_FILE_ENCODING,
-    value => game.settings!.set(GURPS.SYSTEM_NAME, IMPORT_FILE_ENCODING, toEncoding(value)),
-  ],
-  [SETTING_USE_BROWSER_IMPORTER, value => game.settings!.set(GURPS.SYSTEM_NAME, USE_BROWSER_IMPORTER, Boolean(value))],
-  [SETTING_ignoreImportQty, value => game.settings!.set(GURPS.SYSTEM_NAME, DISPLAY_PRESERVE_QTY_FLAG, Boolean(value))],
-  [SETTING_OVERWRITE_PORTRAITS, value => game.settings!.set(GURPS.SYSTEM_NAME, OVERWRITE_PORTRAITS, Boolean(value))],
-])
+const migrations: SettingMigration[] = [
+  {
+    oldName: SETTING_IMPORT_HP_FP,
+    newName: OVERWRITE_HP_FP,
+    migrateValue: value => toOverwriteChoice(value),
+  },
+  {
+    oldName: SETTING_IMPORT_BODYPLAN,
+    newName: OVERWRITE_BODYPLAN,
+    migrateValue: value => toOverwriteChoice(value),
+  },
+  {
+    oldName: SETTING_IGNORE_IMPORT_NAME,
+    newName: OVERWRITE_NAME,
+    migrateValue: value => Boolean(!value),
+  },
+  {
+    oldName: SETTING_BLOCK_IMPORT,
+    newName: ONLY_TRUSTED_IMPORT,
+    migrateValue: value => Boolean(value),
+  },
+  {
+    oldName: SETTING_AUTOMATICALLY_SET_IGNOREQTY,
+    newName: AUTOMATICALLY_SET_IGNORE_QTY,
+    migrateValue: value => Boolean(value),
+  },
+  {
+    oldName: SETTING_IMPORT_EXTENDED_VALUES_GCS,
+    newName: IMPORT_EXTENDED_VALUES_GCS,
+    migrateValue: value => Boolean(value),
+  },
+  {
+    oldName: SETTING_IMPORT_FILE_ENCODING,
+    newName: IMPORT_FILE_ENCODING,
+    migrateValue: value => toEncoding(value),
+  },
+  {
+    oldName: SETTING_USE_BROWSER_IMPORTER,
+    newName: USE_BROWSER_IMPORTER,
+    migrateValue: value => Boolean(value),
+  },
+  {
+    oldName: SETTING_ignoreImportQty,
+    newName: DISPLAY_PRESERVE_QTY_FLAG,
+    migrateValue: value => Boolean(value),
+  },
+  {
+    oldName: SETTING_OVERWRITE_PORTRAITS,
+    newName: OVERWRITE_PORTRAITS,
+    migrateValue: value => Boolean(value),
+  },
+]
 
 /**
  * Migrate legacy GCS Importer settings to new settings, and remove the legacy settings.
  */
 export async function migrate(): Promise<void> {
-  return migrateSettings(legacyMigrations)
+  await migrateLegacySettings(GURPS.SYSTEM_NAME, migrations).catch(error => {
+    console.error('GURPS | Settings migration failed', error)
+  })
 }

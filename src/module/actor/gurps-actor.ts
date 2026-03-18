@@ -20,8 +20,7 @@ import { ModelCollection } from '../data/model-collection.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
-import { ResourceTracker } from '../resource-tracker/index.js'
-import { ResourceTrackerTemplate, TrackerInstance } from '../resource-tracker/resource-tracker.js'
+import { IResourceTracker, IResourceTrackerTemplate } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
 import { multiplyDice } from '../util/damage-utils.js'
 
@@ -2623,7 +2622,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   get trackersByName() {
     // Convert this.system.additionalresources.tracker into an object keyed by tracker.name.
-    const byName: Record<string, TrackerInstance> = {}
+    const byName: Record<string, IResourceTracker> = {}
 
     for (const [_key, value] of Object.entries(this.modelV1.additionalresources.tracker ?? {})) {
       byName[`${value.name}`] = value
@@ -2763,11 +2762,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * Adds any assigned resource trackers to the actor data and sheet.
    */
   private async setResourceTrackers() {
-    /** @type {TrackerInstance[]} */
-    const currentTrackers: TrackerInstance[] = GurpsActorV2.getTrackersAsArray(this.system)
+    /** @type {IResourceTracker[]} */
+    const currentTrackers: IResourceTracker[] = GurpsActorV2.getTrackersAsArray(this.system)
 
-    const newTrackers: ResourceTrackerTemplate[] =
-      ResourceTracker.TemplateManager.getMissingRequiredTemplates(currentTrackers)
+    const newTrackers: IResourceTrackerTemplate[] =
+      GURPS.modules.ResourceTracker.getMissingRequiredTemplates(currentTrackers)
 
     // If no new trackers were added, nothing to do.
     if (newTrackers.length === 0) return
@@ -4670,7 +4669,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   ): Record<string, any> {
     const trackers = GurpsActorV2.getTrackersAsArray(data)
 
-    trackers.push(trackerData as TrackerInstance)
+    trackers.push(trackerData as IResourceTracker)
 
     return arrayToObject(trackers)
   }
@@ -4678,7 +4677,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * @deprecated Actor v1 only.
    */
-  private static getTrackersAsArray(data: Record<string, any>): TrackerInstance[] {
+  private static getTrackersAsArray(data: Record<string, any>): IResourceTracker[] {
     let trackerArray = data.additionalresources.tracker
 
     if (!trackerArray) trackerArray = {}
@@ -4692,10 +4691,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async addTracker(): Promise<void> {
     this.ignoreRender = true
 
-    const trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
+    const trackerData = { name: '', curentValue: null, initialValue: '', min: 0, points: 0 }
     const data = GurpsActorV2.addTrackerToDataObject(this.system, trackerData as Record<string, any>)
 
-    await this.update({ 'system.additionalresources.-=tracker': null } as Actor.UpdateData) // force Foundry to see the change
+    // await this.update({ 'system.additionalresources.tracker': {} } as Actor.UpdateData) // force Foundry to see the change
     await this.update({ 'system.additionalresources.tracker': data } as Actor.UpdateData)
 
     this._forceRender()
@@ -4726,13 +4725,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   private _initializeTrackerValues(template: Record<string, any>) {
     let value = template.tracker.value
+    const initialValue = template.tracker?.initialValue
 
-    if (template.initialValue) {
-      value = parseInt(template.initialValue, 10)
+    if (initialValue) {
+      value = parseInt(initialValue, 10)
 
       if (Number.isNaN(value)) {
         // try to use initialValue as a path to another value
-        value = foundry.utils.getProperty(this, 'system.' + template.initialValue) ?? template.tracker.value
+        value = foundry.utils.getProperty(this, 'system.' + initialValue) ?? template.tracker.value
       }
     }
 

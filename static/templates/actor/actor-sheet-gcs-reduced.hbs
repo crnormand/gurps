@@ -67,11 +67,11 @@
     {{/if}}
 
     {{#if (notEmpty system.equipment.carried)}}
-      {{>equipment container='carried' data=this.data}}
+      {{>equipment container='carried'}}
     {{/if}}
 
     {{#if (notEmpty system.equipment.other)}}
-      {{>equipment container='other' data=this.data}}
+      {{>equipment container='other'}}
     {{/if}}
 
     {{>notes}}

@@ -190,21 +190,16 @@
 </div>
 
 {{!-- Trackers --}}
-{{#if system.additionalresources.tracker}}
+{{#if resourceTrackers}}
 <div class='ms-section'>
   <h3 class='ms-section-header'>
     <i class='fas fa-heartbeat'></i>
-    {{localize 'GURPS.resourceTrackers'}}
+    {{localize 'GURPS.resourceTracker.view.title'}}
     <i class='fas fa-plus ms-add-icon' data-action='addTracker'></i>
   </h3>
   <div class='ms-trackers-list'>
-    {{#each system.additionalresources.tracker}}
-    {{>resource-tracker
-        label=name
-        resource=this
-        name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
-        editable=true
-      }}
+    {{#each resourceTrackers}}
+      {{>ms-resource-tracker key=@key}}
     {{/each}}
   </div>
 </div>
@@ -212,7 +207,7 @@
 <div class='ms-section'>
   <h3 class='ms-section-header'>
     <i class='fas fa-heartbeat'></i>
-    {{localize 'GURPS.resourceTrackers'}}
+    {{localize 'GURPS.resourceTracker.view.title'}}
     <i class='fas fa-plus ms-add-icon' data-action='addTracker'></i>
   </h3>
   <div class='ms-empty'>{{localize 'GURPS.none'}}</div>

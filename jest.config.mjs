@@ -1,6 +1,7 @@
 export default {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
+  coverageProvider: 'v8',
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   moduleNameMapper: {
     // Some tests import runtime-style paths (e.g. ../../module/foo.js) from within /test.

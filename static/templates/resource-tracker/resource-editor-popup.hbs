@@ -13,7 +13,7 @@
           <input class='current gcs-input' type='text' value='{{tracker.value}}' data-dtype='Number' />
           <div class='label'>{{localize 'GURPS.current'}}</div>
           <input class='alias gcs-input' type='text' value='{{tracker.alias}}' />
-          <div class='label'>{{localize 'GURPS.resourceTemplateAlias'}}</div>
+          <div class='label'>{{localize 'GURPS.resourceTracker.edit.alias'}}</div>
         </div>
 
         <div class='inputs' style='margin: 0;'>
@@ -25,7 +25,7 @@
                 {{checked tracker.isMinimumEnforced}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
               />
-              {{localize 'GURPS.resourceEnforceMinimum'}}
+              {{localize 'GURPS.resourceTracker.edit.enforceMin'}}
             </label>
           </div>
           <div style='grid-column: 1 / span 2; white-space: normal'>
@@ -36,7 +36,7 @@
                 {{checked tracker.isMaximumEnforced}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
               />
-              {{localize 'GURPS.resourceEnforceMaximum'}}
+              {{localize 'GURPS.resourceTracker.edit.enforceMax'}}
             </label>
           </div>
           <div style='grid-column: 1 / span 2; white-space: normal'>
@@ -47,7 +47,7 @@
                 {{checked tracker.isDamageType}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
               />
-              {{localize 'GURPS.resourceDamageType'}}
+              {{localize 'GURPS.resourceTracker.edit.damageType'}}
             </label>
           </div>
           <input class='pdf-ref gcs-input' type='text' value='{{tracker.pdf}}' />
@@ -62,7 +62,7 @@
           {{checked tracker.isDamageTracker}}
           style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
         />
-        {{localize 'GURPS.resourceDamageTracker'}}
+        {{localize 'GURPS.resourceTracker.edit.isAccumulator'}}
       </label>
       <label class='label' style='display: block; padding-left: 15px; text-indent: -15px; margin-top: 10px;'>
         <input
@@ -84,7 +84,7 @@
     <div style='overflow-y: auto; height: 16em;'>
       <div class='threshold table'>
         {{#if tracker.thresholds}}
-          <div class='label span3'>{{localize 'GURPS.resourceCurrentValue'}}</div>
+          <div class='label span3'>{{localize 'GURPS.resourceTracker.current'}}</div>
           <div class='label'>{{localize 'GURPS.condition'}}</div>
           <div class='label'>{{localize 'GURPS.color'}}</div>
           <div><a id='threshold-add' class='button icon'><i class='fas fa-plus'></i></a></div>

@@ -1,0 +1,174 @@
+@use 'mixins' as *;
+
+.ms-tracker-editor {
+  .ms-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ms-space-6);
+    margin-bottom: var(--ms-space-6);
+
+    .ms-name-input {
+      font-size: var(--ms-font-xl);
+      font-weight: var(--ms-weight-semibold);
+      flex-basis: 100%;
+      border: none;
+      background: transparent;
+      color: var(--ms-text-primary);
+      width: 100%;
+      max-width: 400px;
+      @include truncate;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: var(--ms-space-2);
+      font-size: var(--ms-font-sm);
+      color: var(--ms-text-muted);
+    }
+  }
+
+  .ms-content {
+    display: flex;
+    gap: var(--ms-gap);
+    margin: 0 var(--ms-gap);
+
+    section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--ms-space-4);
+      justify-content: space-between;
+
+      h3 {
+        font-size: var(--ms-font-lg);
+        padding-bottom: var(--ms-space-3);
+        border-bottom: 1px solid var(--ms-border-light);
+        font-weight: var(--ms-weight-semibold);
+        color: var(--ms-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+
+        i {
+          color: var(--ms-accent);
+        }
+      }
+    }
+
+    .ms-field {
+      label {
+        font-size: var(--ms-font-xs);
+        color: var(--ms-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+
+        // For labels with checkboxes, we want to align the text better with the checkbox input.
+        &[for='useBreakpoints'],
+        &[for='enforce-minimum'],
+        &[for='enforce-maximum'],
+        &[for='isAccumulator'],
+        &[for='damage-type'] {
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      input[type='checkbox'] {
+        padding-right: var(--ms-space-2);
+      }
+    }
+
+    .template-list {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto auto;
+      gap: var(--ms-space-2) var(--ms-space-6);
+      font-size: var(--ms-font-xs);
+      align-items: center;
+
+      label {
+        text-align: center;
+      }
+
+      input[type='checkbox'] {
+        justify-self: center;
+      }
+    }
+
+    .ms-table-header {
+      font-size: var(--ms-font-sm);
+      color: var(--ms-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      border-bottom: 1px solid var(--ms-border-light);
+      text-align: center;
+    }
+
+    .threshold-list {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: var(--ms-space-2) var(--ms-space-6);
+      font-size: var(--ms-font-xs);
+      align-items: center;
+
+      .current-value {
+        display: inline-grid;
+        grid-template-columns: auto auto auto auto;
+        gap: var(--ms-space-1);
+
+        input {
+          max-width: 4rem;
+        }
+      }
+
+      .color-input-group {
+        display: flex;
+        gap: var(--ms-space-1);
+        align-items: center;
+
+        input[type='color'] {
+          height: 2rem;
+          width: 3rem;
+        }
+
+        button {
+          padding: 0.25rem 0.5rem;
+          min-width: auto;
+        }
+
+        .color-none {
+          display: inline-block;
+          padding: 0.25rem 0.5rem;
+          color: var(--ms-text-muted);
+          font-style: italic;
+          background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 4px,
+            rgba(0, 0, 0, 0.05) 4px,
+            rgba(0, 0, 0, 0.05) 8px
+          );
+          border: 1px dashed var(--ms-border-light);
+          border-radius: 2px;
+          min-width: 3rem;
+          text-align: center;
+          min-height: 1.5rem;
+        }
+      }
+    }
+  }
+
+  .ms-footer {
+    display: flex;
+    flex-direction: row;
+    gap: var(--ms-gap);
+    margin-bottom: var(--ms-space-6);
+
+    button {
+      flex: 1;
+      text-transform: uppercase;
+      height: calc(1.25 * var(--input-height));
+    }
+  }
+}

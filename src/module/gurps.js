@@ -1,17 +1,19 @@
 // Import Modules
+import { applyModifierDescription } from '@module/otf/description-utilities.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
 import HitFatPoints from '@module/util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
 import Initiative from '@module/util/initiative.js'
 import { ClearLastActor, SetLastActor } from '@module/util/last-actor.js'
-import { Migration } from '@module/util/migration.js'
+import { Migration } from '@module/util/migration/migration.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
 import { getTokenForActor } from '@module/util/token.js'
+import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
 import JQueryHelpers from '@util/jquery-helper.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
-import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@util/parselink.js'
+import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@util/parselink.js'
 import { GurpsRange, setupRanges } from '@util/ranges.js'
 import { SemanticVersion } from '@util/semver.js'
 import {
@@ -43,7 +45,6 @@ import AddChatHooks from './chat.js'
 import { registerColorPickerSettings } from './color-character-sheet/color-character-sheet-settings.js'
 import { colorGurpsActorSheet } from './color-character-sheet/color-character-sheet.js'
 import { Combat } from './combat/index.js'
-import { calculateRoFModifier } from './combat/utilities.js'
 import { CombatTracker } from './combat-tracker/index.js'
 import { Compendium } from './compendium/index.js'
 import GurpsConditionalInjury from './conditional-injury.js'
@@ -65,7 +66,7 @@ import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
 import { Prereqs } from './prereqs/index.js'
-import { ResourceTracker } from './resource-tracker/index.js'
+import { ResourceTrackerModule } from './resource-tracker/index.js'
 import { Scripting } from './scripting/index.js'
 import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
@@ -116,7 +117,7 @@ if (!globalThis.GURPS) {
     Item,
     Pdf,
     Prereqs,
-    ResourceTracker,
+    ResourceTracker: ResourceTrackerModule,
     Scripting,
     Token,
     UI,
@@ -1045,11 +1046,11 @@ if (!globalThis.GURPS) {
           value: parsedRateOfFire,
         })
 
-        const bonusForRoF = calculateRoFModifier(shots)
+        const bonusForNumberOfShots = MissileWeaponAttacks.calculateRoFModifier(shots)
 
-        if (bonusForRoF !== 0)
+        if (bonusForNumberOfShots !== 0)
           GURPS.ModifierBucket.addModifier(
-            bonusForRoF,
+            bonusForNumberOfShots,
             game.i18n.format('GURPS.combat.rof.bonusLabel', { shots }),
             targetmods
           )
@@ -1787,44 +1788,7 @@ if (!globalThis.GURPS) {
 
   GURPS.handleRoll = handleRoll
 
-  /**
-   * If the desc contains *Cost ?FP or *Max:9 then perform action
-   * @param {GurpsActorV2|User} actor
-   * @param {string} desc
-   */
-  async function applyModifierDesc(actor, desc) {
-    if (!desc) return null
-    let match = desc.match(COSTS_REGEX)
-
-    if (!!match && !!actor && !actor.isSelf) {
-      let delta = parseInt(match.groups.cost)
-      let target = match.groups.type
-
-      if (target.match(/^[hf]p/i)) {
-        let key = target.toUpperCase()
-
-        // @ts-expect-error - dynamic property access on actor.system
-        delta = actor.system[key].value - delta
-        await actor.update({ ['system.' + key + '.value']: delta })
-      }
-
-      if (target.match(/^tr/i)) {
-        await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
-
-        return null
-      }
-    }
-
-    let parse = desc.replace(/.*\*max: ?(\d+).*/gi, '$1')
-
-    if (parse != desc) {
-      return parseInt(parse)
-    }
-
-    return null // indicating no overriding MAX value
-  }
-
-  GURPS.applyModifierDesc = applyModifierDesc
+  GURPS.applyModifierDesc = applyModifierDescription
 
   /**
    * TODO Move to i18n.js.
@@ -2171,9 +2135,6 @@ if (!globalThis.GURPS) {
     HitLocation.init()
 
     RegisterChatProcessors()
-    // GurpsActiveEffect.init()
-
-    // Add Debugger info
 
     // Modifier Bucket must be defined after hit locations
     GURPS.ModifierBucket = new ModifierBucket()

@@ -1,54 +1,81 @@
-<div class='tracked-resource {{#unless name}}inactive{{/unless}}' data-gurps-resource='{{name}}'>
+<div class='tracked-resource {{#unless name}}inactive{{/unless}}' data-gurps-resource='{{name}}' data-id="{{id}}">
   {{> resource-controls}}
 
   <div class='condition-block tooltip-wrapper'>
-    {{#if thresholds}}
-      {{#if breakpoints}}
-        {{#with (lookup thresholds (breakpointIndex-of thresholds max value))}}
-				<div class='tooltip condition' style='background-color: {{color}}; color: {{contrastColor color}}'>{{{gurpslink condition}}}
-            <span class="tooltiptext">
-              <div style="display: grid; grid-template-columns: min-content min-content auto;">
-                {{#each (controlBreakpoints ../this)}}
-                  {{#unless (eq @index 0)}}
-                  <div class="field condensed noedit">{{comparison}}</div>
-                  <div class="field condensed noedit">{{breakpoint}}</div>
-                  <div class="label">{{label}}</div>
-                  {{/unless}}
-                {{/each}}
-              </div>
-            </span>
-          </div>
-          <div style='display: grid; grid-template-columns: auto auto;'>
-            <div style='font-size: 100%;'>{{{pdflink ../pdf}}}</div>
-            <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
-          </div>
-        {{/with}}
-      {{else}}
-        {{#with (lookup thresholds (threshold-of thresholds max value))}}
-          <div class='tooltip condition' style='background-color: {{color}}; color: {{contrastColor color}}'>{{{gurpslink condition}}}
-            <span class="tooltiptext">
-              <div style="display: grid; grid-template-columns: min-content min-content auto;">
-                {{#each (thresholdBreakpoints ../this)}}
-                  <div class="field condensed noedit">{{threshold.comparison}}</div>
-                  <div class="field condensed noedit">{{breakpoint}}</div>
-                  <div class="label">{{threshold.condition}}</div>
-                {{/each}}
-              </div>
-            </span>
-          </div>
-          <div style='display: grid; grid-template-columns: auto auto;'>
-            <div style='font-size: 100%;'>{{{pdflink ../pdf}}}</div>
-            <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
-          </div>
-        {{/with}}
-      {{/if}}
-    {{else}}
-      <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
-        {{#if
-        (gt value max)}}Over
-        {{else}}{{#if (lt value min)}}Below{{else}}Normal{{/if}}{{/if}}
+
+    {{!-- CharacterV2 trackers. MUCH simpler. --}}
+    {{#if condition}}
+      <div class='tooltip condition' style='background-color: {{color}}; color: {{contrast-color color}}'>
+        <span class='text' data-tooltip-html='
+        <div class="tracker-tooltip">
+          <label class="title">{{label}}</label>
+          {{#each descriptors as |threshold|}}
+            <label>{{threshold.value}}</label><label>{{localize threshold.condition}}</label>
+          {{/each}}
+        </div>
+    '>{{{gurpslink condition}}}</span>
       </div>
-      <div class='max'>({{min}}/{{max}})</div>
+      <div style='display: grid; grid-template-columns: auto auto;'>
+        <div style='font-size: 100%;'>{{{pdflink pdf}}}</div>
+        <div class='max'>{{alias}} ({{min}}/{{max}})</div>
+      </div>
+
+    {{else}}
+
+      {{!-- HP and FP and CharacterV1 trackers --}}
+      {{#if thresholds}}
+        {{#if breakpoints}}
+          {{#with (lookup thresholds (breakpointIndex-of thresholds max value))}}
+            <div class='tooltip condition' style='background-color: {{color}}; color: {{contrast-color color}}'>
+              {{{gurpslink condition}}}
+              <span class="tooltiptext">
+                <div style="display: grid; grid-template-columns: min-content min-content auto;">
+                  {{#each (controlBreakpoints ../this)}}
+                    {{#unless (eq @index 0)}}
+                      <div class="field condensed noedit">{{comparison}}</div>
+                      <div class="field condensed noedit">{{breakpoint}}</div>
+                      <div class="label">{{label}}</div>
+                    {{/unless}}
+                  {{/each}}
+                </div>
+              </span>
+            </div>
+            <div style='display: grid; grid-template-columns: auto auto;'>
+              <div style='font-size: 100%;'>{{{pdflink pdf}}}</div>
+              <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
+            </div>
+          {{/with}}
+        {{else}}
+          {{#with (lookup thresholds (threshold-of thresholds max value))}}
+            <div class='tooltip condition' style='background-color: {{color}}; color: {{contrast-color color}}'>
+              {{{gurpslink condition}}}
+              <span class="tooltiptext">
+                <div style="display: grid; grid-template-columns: min-content min-content auto;">
+                  {{#each (thresholdBreakpoints ../this)}}
+                    <div class="field condensed noedit">{{threshold.comparison}}</div>
+                    <div class="field condensed noedit">{{breakpoint}}</div>
+                    <div class="label">{{threshold.condition}}</div>
+                  {{/each}}
+                </div>
+              </span>
+            </div>
+            <div style='display: grid; grid-template-columns: auto auto;'>
+              <div style='font-size: 100%;'>{{{pdflink ../pdf}}}</div>
+              <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
+            </div>
+          {{/with}}
+        {{/if}}
+      {{else}}
+        <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
+          {{#if
+        (gt value max)}}Over
+          {{else}}{{#if (lt value min)}}Below{{else}}Normal{{/if}}{{/if}}
+        </div>
+        <div class='max'>({{min}}/{{max}})</div>
+      {{/if}}
+
     {{/if}}
+
+
   </div>
 </div> <!-- end of resource -->

@@ -2,17 +2,17 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
 import { parselink } from '@util/parselink.js'
 import { atou, isEmptyObject, zeroFill } from '@util/utilities.js'
 
-import * as CI from '../../rules/conditional-injury.js'
+import * as CI from '../../rules/injury/conditional-injury/conditional-injury.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
-import { ResourceTracker } from '../resource-tracker/index.js'
 import { GgaContextMenuV2 } from '../ui/context-menu.js'
 
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
+import { prepareTrackerDataForSheet } from './modern/dialog-crud-handler.ts'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
 
@@ -64,13 +64,11 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   getData() {
     const sheetData = super.getData()
 
-    sheetData.olddata = sheetData.data
     let actions = {}
 
     if (!this.actor.system.conditions.actions?.maxActions) actions['maxActions'] = 1
     if (!this.actor.system.conditions.actions?.maxBlocks) actions['maxBlocks'] = 1
     if (Object.keys(actions).length > 0) this.actor.internalUpdate({ 'system.conditions.actions': actions })
-    sheetData.data = this.actor.system
     sheetData.system = this.actor.system
     sheetData.ranges = GURPS.rangeObject.ranges
     sheetData.useCI = GURPS.ConditionalInjury.isInUse()
@@ -85,11 +83,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       hasOther: !isEmptyObject(this.actor.system?.equipment?.other),
     }
     sheetData.isGM = game.user.isGM
-    sheetData._id = sheetData.olddata._id
+    sheetData._id = sheetData.system._id
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
     sheetData.useQN = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
 
     sheetData.toggleQnotes = this.actor.getFlag('gurps', 'qnotes')
+
+    sheetData.trackers = prepareTrackerDataForSheet(this.actor)
 
     return sheetData
   }
@@ -193,19 +193,27 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     html.find('button[data-operation="resource-inc"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
-      let path = parent.attr('data-gurps-resource')
+      let pathAndKey = parent.attr('data-gurps-resource')
 
-      let tracker = foundry.utils.getProperty(this.actor.system, path)
-      let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
+      if (pathAndKey.includes('additionalresources.tracker.')) {
+        // Get the last segment from the path; this is the index of the tracker.
+        const key = pathAndKey.split('.').slice(-1)[0]
+        const tracker = this.actor.system.additionalresources.tracker.contents[parseInt(key)]
 
-      if (isNaN(value)) value = tracker.max || 0
+        tracker.value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
+      } else {
+        let tracker = foundry.utils.getProperty(this.actor.system, pathAndKey)
+        let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
 
-      if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
-      if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
+        if (isNaN(value)) value = tracker.max || 0
 
-      let json = `{ "system.${path}.value": ${value} }`
+        if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
+        if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
-      this.actor.update(JSON.parse(json))
+        let json = `{ "system.${pathAndKey}.value": ${value} }`
+
+        this.actor.update(JSON.parse(json))
+      }
     })
 
     // Handle resource tracker "-" button.
@@ -214,17 +222,25 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
-      let tracker = foundry.utils.getProperty(this.actor.system, path)
-      let value = (tracker.value || 0) - (ev.shiftKey ? 5 : 1)
+      if (path.includes('additionalresources.tracker.')) {
+        // Get the last segment from the path; this is the index of the tracker.
+        const key = path.split('.').slice(-1)[0]
+        const tracker = this.actor.system.additionalresources.tracker.contents[parseInt(key)]
 
-      if (isNaN(value)) value = tracker.max || 0
+        tracker.value = (+tracker.value || 0) - (ev.shiftKey ? 5 : 1)
+      } else {
+        let tracker = foundry.utils.getProperty(this.actor.system, path)
+        let value = (tracker.value || 0) - (ev.shiftKey ? 5 : 1)
 
-      if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
-      if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
+        if (isNaN(value)) value = tracker.max || 0
 
-      let json = `{ "system.${path}.value": ${value} }`
+        if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
+        if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
 
-      this.actor.update(JSON.parse(json))
+        let json = `{ "system.${path}.value": ${value} }`
+
+        this.actor.update(JSON.parse(json))
+      }
     })
 
     // Handle resource tracker "reset" button.
@@ -233,12 +249,20 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
-      let tracker = foundry.utils.getProperty(this.actor.system, path)
-      let value = tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
+      if (path.includes('additionalresources.tracker.')) {
+        // Get the last segment from the path; this is the index of the tracker.
+        const key = path.split('.').slice(-1)[0]
+        const tracker = this.actor.system.additionalresources.tracker.contents[parseInt(key)]
 
-      let json = `{ "system.${path}.value": ${value} }`
+        tracker.resetValue()
+      } else {
+        let tracker = foundry.utils.getProperty(this.actor.system, path)
+        let value = tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
 
-      this.actor.update(JSON.parse(json))
+        let json = `{ "system.${path}.value": ${value} }`
+
+        this.actor.update(JSON.parse(json))
+      }
     })
 
     // allow a click on the 'edit' icon to open the resource tracker editor.
@@ -316,8 +340,13 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
         if (!details.open) {
           let parent = ev.currentTarget.closest('[data-gurps-resource]')
-          let path = $(parent).attr('data-gurps-resource')
-          let tracker = foundry.utils.getProperty(this.actor.system, path)
+          const key = $(parent).attr('data-id')
+
+          const path = key ? `additionalresources.tracker.${key}` : $(parent).attr('data-gurps-resource')
+
+          let tracker = key
+            ? this.actor.system.additionalresources.tracker.get(key)
+            : foundry.utils.getProperty(this.actor.system, path)
 
           let restoreButton = $(details).find('button.restore')
 
@@ -361,20 +390,23 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
         // update the actor's data to newValue
         let parent = ev.currentTarget.closest('[data-gurps-resource]')
-        let path = $(parent).attr('data-gurps-resource')
+        const key = $(parent).attr('data-id')
+
+        const path = key ? `additionalresources.tracker.${key}` : $(parent).attr('data-gurps-resource')
+
+        let tracker = key
+          ? this.actor.system.additionalresources.tracker.get(key)
+          : foundry.utils.getProperty(this.actor.system, path)
         let value = parseInt(newValue)
 
         // This is a hack to get the correct value for the tracker.
-        if (path.startsWith('additionalresources.tracker.')) {
-          let tracker = foundry.utils.getProperty(this.actor.system, path)
+        if (key) {
+          tracker.value = value
+        } else {
+          let json = `{ "system.${path}.value": ${value} }`
 
-          if (tracker.isMinimumEnforced && value < tracker.min) value = tracker.min
-          if (tracker.isMaximumEnforced && value > tracker.max) value = tracker.max
+          this.actor.internalUpdate(JSON.parse(json))
         }
-
-        let json = `{ "system.${path}.value": ${value} }`
-
-        this.actor.internalUpdate(JSON.parse(json))
 
         details.open = false
       })
@@ -1156,77 +1188,39 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
    *
    * @param {*} ev
    */
-  async editTracker(ev) {
-    ev.preventDefault()
+  async editTracker(event) {
+    event.preventDefault()
 
-    let path = $(ev.currentTarget).closest('[data-gurps-resource]').attr('data-gurps-resource')
+    const target = event.currentTarget.closest('[data-gurps-resource]')
+    const pathAndKey = target.dataset.gurpsResource
 
-    // TODO: Refactor -- call a method on ResourceTracker Manager to delete the tracker, or return the template
-    // to apply. This function would simply update the tracker with the new data (whether it was edited
-    // or a template was applied).
-    let templates = ResourceTracker.TemplateManager.getAllTemplates()
+    if (!pathAndKey) {
+      ui.notifications.error(game.i18n.format('GURPS.resourceTracker.trackerNotFound', { key: pathAndKey }))
 
-    if (!templates || templates.length == 0) templates = null
-
-    let selectTracker = async function (html) {
-      let name = html.find('select option:selected').text().trim()
-      let template = templates.find(template => template.tracker.name === name)
-
-      await this.actor.applyTrackerTemplate(path, template)
+      return
     }
 
-    // show dialog asking if they want to apply a standard tracker, or edit this tracker
-    let buttons = {
-      edit: {
-        icon: '<i class="fas fa-edit"></i>',
-        label: game.i18n.localize('GURPS.resourceEditTracker'),
-        callback: () => this._editTracker(path),
-      },
-      remove: {
-        icon: '<i class="fas fa-trash"></i>',
-        label: game.i18n.localize('GURPS.resourceDeleteTracker'),
-        callback: async () => await this.actor.removeTracker(path),
-      },
+    // For the old character sheet assume key is the index into an array of trackers.
+    const key = pathAndKey.split('.').slice(-1)[0]
+
+    const index = parseInt(key)
+
+    if (isNaN(index)) {
+      ui.notifications.error(game.i18n.format('GURPS.resourceTracker.trackerNotFound', { key: pathAndKey }))
+
+      return
     }
 
-    if (templates) {
-      buttons.apply = {
-        icon: '<i class="far fa-copy"></i>',
-        label: game.i18n.localize('GURPS.resourceCopyTemplate'),
-        callback: selectTracker.bind(this),
-      }
+    const trackers = this.actor.system.additionalresources?.tracker?.contents || []
+    const tracker = trackers[index]
+
+    if (!tracker) {
+      ui.notifications.error(game.i18n.format('GURPS.resourceTracker.trackerNotFound', { key: pathAndKey }))
+
+      return
     }
 
-    let dialog = new Dialog(
-      {
-        title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
-        content: await foundry.applications.handlebars.renderTemplate(
-          'systems/gurps/templates/actor/update-tracker.hbs',
-          { templates: templates }
-        ),
-        buttons: buttons,
-        default: 'edit',
-        templates: templates,
-      },
-      { width: 600 }
-    )
-
-    dialog.render(true)
-  }
-
-  async _editTracker(path) {
-    let tracker = foundry.utils.getProperty(this.actor.system, path)
-    let dialog = new ResourceTracker.TrackerEditor(JSON.parse(JSON.stringify(tracker)))
-
-    dialog._updateTracker = async () => {
-      let update = {}
-
-      update[`system.${path}`] = dialog._tracker
-      this.actor.update(update)
-      dialog.close()
-    }
-
-    dialog.render(true)
+    GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
   }
 
   async _showActiveEffectsListPopup(ev) {

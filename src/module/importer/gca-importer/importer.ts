@@ -10,7 +10,7 @@ import { TraitSchema } from '@module/item/data/trait.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { HitLocation, hitlocationDictionary } from '../../hitlocation/hitlocation.js'
-import { createDataIsOfType } from '../helpers.js'
+import { createDataIsOfType, createStandardTrackers } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
 import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'
@@ -68,6 +68,7 @@ class GcaImporter {
     this.#importItems()
     this.#importPointTotals()
     this.#importMiscValues()
+    createStandardTrackers(this)
 
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag

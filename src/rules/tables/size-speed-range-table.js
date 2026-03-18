@@ -1,5 +1,9 @@
 'use strict'
 
+/**
+ * Encodes the Size and Speed/Range Table for use with range and size modifiers.
+ * @source B550 "Size and Speed/Range Table"
+ */
 export class SizeAndSpeedRangeTable {
   constructor() {
     this._table = new RepeatingSequenceConverter([2, 3, 5, 7, 10, 15])

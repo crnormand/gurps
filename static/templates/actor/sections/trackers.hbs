@@ -1,12 +1,12 @@
 <div id='combat-trackers'>
   <div class='header'>
     <div class='headermenu' data-key='system.additionalresources.tracker'>
-      <span>{{localize 'GURPS.resourceTrackers'}}</span>
+      <span>{{localize 'GURPS.resourceTracker.view.title'}}</span>
       <i class='fas fa-caret-square-down'></i>
     </div>
   </div>
   <div id='tracker-scroller'>
-    {{#each system.additionalresources.tracker}}
+    {{#each trackers}}
       {{>resource-tracker
           label=name
           resource=this

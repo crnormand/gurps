@@ -1,11 +1,10 @@
 import { INameable } from '@module/data/mixins/nameable.js'
 
 class GurpsItems extends foundry.documents.collections.Items {
-  // @ts-expect-error - Something wrong with the return type?
   override getName<Options extends foundry.documents.abstract.DocumentCollection.GetOptions | undefined = undefined>(
     name: string,
     options?: Options
-  ): Collection.GetReturnType<Item.Stored, Options> {
+  ): Item.Stored {
     let entry = this.find(item => item.name === name)
 
     if (!entry)

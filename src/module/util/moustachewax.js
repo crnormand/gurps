@@ -4,20 +4,13 @@ import { MoveModes } from '@module/actor/gurps-actor.js'
 import Maneuvers from '@module/actor/maneuver.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { ImportSettings } from '@module/importer/index.js'
+import { ComparisonFunctions, OperatorFunctions } from '@module/resource-tracker/index.js'
 import { TokenActions } from '@module/token-actions.js'
 import { extractOtfs } from '@util/otf.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
-import {
-  getComparison,
-  getOperation,
-  isArray,
-  isEmpty,
-  quotedAttackName,
-  recurselist,
-  stripBracketContents,
-  zeroFill,
-} from '@util/utilities.js'
+import { isArray, isEmpty, quotedAttackName, recurselist, stripBracketContents, zeroFill } from '@util/utilities.js'
 
+import { contrastColor } from './contrast-color.js'
 import { multiplyDice } from './damage-utils.js'
 import { gurpslink } from './gurpslink.js'
 import { i18nFallback } from './i18nFallback.js'
@@ -722,6 +715,14 @@ export default function () {
     return result
   })
 
+  function getOperation(operator) {
+    return OperatorFunctions[operator]
+  }
+
+  function getComparison(comparison) {
+    return ComparisonFunctions[comparison]
+  }
+
   /**
    * Unlike the 'threshold-of' method above, this returns the *last* threshold whose condition matches.
    */
@@ -1084,23 +1085,34 @@ ${content}
     console.log(text)
   })
 
+  Handlebars.registerHelper('tracker-style', function (color, _options) {
+    const contrastingColor = contrastColor(color)
+    const id = _options.hash.id
+
+    return `
+      <style>
+        #${id}.ms-tracker-condition .text {
+          background-color: ${color};
+          color: ${contrastingColor};
+        }
+        .theme-dark #${id}.ms-tracker-condition .text {
+          background-color: ${contrastingColor};
+          color: ${color};
+        }
+      </style>`
+  })
+
   /**
    * Used to produce a foreground color which automatically contrasts against a provided
    * background color, using WCAG relative luminescence.
+   *
    * @prop backgroundHex - Provided background color.
-   * @returns hex value - Either black or white.
+   * @returns hex value - Either "system black" or "system white". These values were copied from the CSS variables to
+   *  ensure they match the actual colors used in the sheet. If the system colors are changed, these values should be
+   *  updated to match.
    */
-  Handlebars.registerHelper('contrastColor', function (backgroundHex) {
-    const rgb = backgroundHex
-      .replace(/^#/, '')
-      .match(/.{2}/g)
-      ?.map(pair => parseInt(pair, 16) / 255) ?? [1, 1, 1] // default to white if invalid input
-    const [red, green, blue] = rgb.map(channel =>
-      channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
-    )
-    const luminescence = 0.2126 * red + 0.7152 * green + 0.0722 * blue
-
-    return luminescence > 0.179 ? '#000000' : '#ffffff'
+  Handlebars.registerHelper('contrast-color', function (backgroundHex) {
+    return contrastColor(backgroundHex)
   })
 
   // === register Handlebars partials ===
@@ -1124,6 +1136,7 @@ ${content}
     'systems/gurps/templates/actor/modern/partials/data-table.hbs',
     'systems/gurps/templates/actor/modern/partials/attack-table.hbs',
     'systems/gurps/templates/actor/modern/partials/resource-bar.hbs',
+    'systems/gurps/templates/actor/modern/partials/ms-resource-tracker.hbs',
     'systems/gurps/templates/actor/modern/partials/attribute-badge.hbs',
     'systems/gurps/templates/actor/modern/partials/traits-table.hbs',
     'systems/gurps/templates/actor/modern/partials/modifiers-table.hbs',

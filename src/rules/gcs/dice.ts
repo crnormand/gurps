@@ -29,6 +29,7 @@ export class GcsDice {
    *  - 1d+3 stays 1d+3
    *  - 1d+4 becomes 2d-1
    *  - 2d-5 becomes 1d-1
+   * @source B269
    * @param damage
    * @returns
    */

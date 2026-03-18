@@ -1,3 +1,9 @@
+/**
+ * Implementation of the Conditional Injury optional rule.
+ * @source Pyramid #3/120
+ */
+
+/** @source Pyramid #3/120 */
 const naturalHealingTable = [
   {
     severity: -6,
@@ -49,6 +55,7 @@ const naturalHealingTable = [
   },
 ]
 
+/** @source Pyramid #3/120 */
 export const daysToHealForSeverity = severity => {
   // gotta love untyped languages
   if (severity < -6 || !severity) {
@@ -66,6 +73,7 @@ export const daysToHealForSeverity = severity => {
   return null
 }
 
+/** @source Pyramid #3/120 */
 export const severityForDaysToHeal = days => {
   if (days <= 0 || !days) {
     return null
@@ -82,6 +90,7 @@ export const severityForDaysToHeal = days => {
   return 5
 }
 
+/** @source Pyramid #3/120 */
 export const conditionalEffectsTable = [
   {
     //        severity: "",
@@ -169,6 +178,7 @@ export const conditionalEffectsTable = [
   },
 ]
 
+/** @source Pyramid #3/120 */
 export const grossEffectsForSeverity = severity => {
   // gotta love untyped languages
   if (severity < -6 || severity === '' || severity === null || severity === undefined) {
@@ -186,6 +196,7 @@ export const grossEffectsForSeverity = severity => {
   return 'Total Destruction'
 }
 
+/** @source Pyramid #3/120 */
 export const incrementSeverity = severity => {
   if (severity === '' || severity === null || severity === undefined) {
     return -6
@@ -196,6 +207,7 @@ export const incrementSeverity = severity => {
   return incrementedSeverity > 6 ? 6 : incrementedSeverity
 }
 
+/** @source Pyramid #3/120 */
 export const decrementSeverity = severity => {
   if (severity === '' || severity === null || severity === undefined || severity == -6) {
     return null
@@ -210,6 +222,7 @@ export const decrementSeverity = severity => {
   return decrementedSeverity < -6 ? -6 : decrementedSeverity
 }
 
+/** @source Pyramid #3/120 */
 export const incrementDaysToHeal = (days, delta = 1) => {
   if (days === '' || days === null || days === undefined) {
     days = 0
@@ -218,6 +231,7 @@ export const incrementDaysToHeal = (days, delta = 1) => {
   return parseInt(days, 10) + delta
 }
 
+/** @source Pyramid #3/120 */
 export const decrementDaysToHeal = (days, delta = 1) => {
   if (days === '' || days === null || days === undefined) {
     days = 0
@@ -228,6 +242,7 @@ export const decrementDaysToHeal = (days, delta = 1) => {
   return decrementedDays < 0 ? 0 : decrementedDays
 }
 
+/** @source Pyramid #3/120 */
 export const setSeverity = severity => {
   if (severity === '' || severity === null || severity === undefined) {
     return null
@@ -242,6 +257,7 @@ export const setSeverity = severity => {
   return severity > 6 ? 6 : severity
 }
 
+/** @source Pyramid #3/120 */
 export const setDaysToHeal = days => {
   if (days === '' || days === null || days === undefined) {
     return 0

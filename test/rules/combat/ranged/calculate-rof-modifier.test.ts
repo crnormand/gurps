@@ -1,4 +1,4 @@
-import { calculateRoFModifier } from '../../../../module/combat/utilities.js'
+import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
 
 describe('calculateRoFModifier', () => {
   test.each([
@@ -17,6 +17,6 @@ describe('calculateRoFModifier', () => {
     [250, 8],
     [999, 15],
   ])('rof %d => modifier %d', (rof, expected) => {
-    expect(calculateRoFModifier(rof)).toBe(expected)
+    expect(MissileWeaponAttacks.calculateRoFModifier(rof)).toBe(expected)
   })
 })
