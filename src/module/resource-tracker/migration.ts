@@ -39,9 +39,14 @@ function convertOldSettings(
  * @returns A new ResourceTrackerTemplate instance with properties mapped from the legacy template.
  */
 export function migrateTemplateToV2(oldTemplate: any) {
+  const tracker = migrateTrackerInstanceToV2(oldTemplate.tracker)
+
+  if (oldTemplate.initialValue !== undefined && oldTemplate.initialValue !== null && oldTemplate.initialValue !== '') {
+    tracker.initialValue = oldTemplate.initialValue as string
+  }
+
   const template = {
-    tracker: migrateTrackerInstanceToV2(oldTemplate.tracker),
-    initialValue: oldTemplate.initialValue,
+    tracker,
     autoapply: !!oldTemplate.slot,
     id: foundry.utils.randomID(),
   }

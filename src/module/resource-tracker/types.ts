@@ -32,7 +32,6 @@ export interface IResourceTracker {
 export interface IResourceTrackerTemplate {
   tracker: IResourceTracker
   autoapply: boolean
-  initialValue: string | null
   name: string
   id: string
 }

@@ -1,4 +1,4 @@
-import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.ts'
 import { IResourceTrackerTemplate, SETTING_TRACKER_EDITOR, SETTING_TRACKER_TEMPLATES } from './types.js'
 
 type ResourceTrackerTemplateMap = Record<string, IResourceTrackerTemplate>
@@ -17,7 +17,7 @@ export async function initializeSettings() {
     name: game.i18n.localize('GURPS.resourceTracker.template.title'),
     hint: game.i18n.localize('GURPS.resourceTracker.template.hint'),
     label: game.i18n.localize('GURPS.resourceTracker.template.button'),
-    type: ResourceTrackerManager,
+    type: ResourceTrackerManagerV2,
     restricted: true,
     icon: 'fa-solid fa-square-dashed-circle-plus',
   })
@@ -27,7 +27,7 @@ export async function initializeSettings() {
     scope: 'world',
     config: false,
     type: ResourceTrackerTemplateMapType,
-    default: ResourceTrackerManager.getDefaultTemplates(),
+    default: ResourceTrackerManagerV2.getDefaultTemplates(),
     onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
   })
 }

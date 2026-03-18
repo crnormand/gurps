@@ -1,9 +1,18 @@
-import { TrackerComparators, TrackerOperators } from './types.js'
-import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from './types.js'
-import { ResourceTrackerEditorV2 } from './ui/resource-tracker-editor-v2.js'
+import { DeepPartial } from 'fvtt-types/utils'
 
-export class ResourceTrackerManager extends FormApplication {
-  _templates: Record<string, IResourceTrackerTemplate>
+import { TrackerComparators, TrackerOperators } from '../types.ts'
+import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from '../types.ts'
+
+import { ResourceTrackerEditorV2 } from './resource-tracker-editor-v2.ts'
+
+type ResourceTrackerManagerV2Context = foundry.applications.api.ApplicationV2.RenderContext & {
+  templates: Record<string, IResourceTrackerTemplate>
+}
+
+export class ResourceTrackerManagerV2 extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.api.ApplicationV2
+) {
+  #templates: Record<string, IResourceTrackerTemplate>
 
   static getDefaultTemplates(): Record<string, IResourceTrackerTemplate> {
     const id = foundry.utils.randomID()
@@ -68,7 +77,6 @@ export class ResourceTrackerManager extends FormApplication {
             },
           ],
         },
-        initialValue: 'attributes.ST.value',
         autoapply: false,
         name: game.i18n!.localize('GURPS.grapplingControlPoints'),
         id,
@@ -86,7 +94,9 @@ export class ResourceTrackerManager extends FormApplication {
 
   static getMissingRequiredTemplates(currentTrackers: IResourceTracker[]): IResourceTrackerTemplate[] {
     const newTrackers: IResourceTrackerTemplate[] = []
-    const templates = Object.values(ResourceTrackerManager.getAllTemplatesMap()).filter(template => template.autoapply)
+    const templates = Object.values(ResourceTrackerManagerV2.getAllTemplatesMap()).filter(
+      template => template.autoapply
+    )
 
     for (const template of templates) {
       if (!currentTrackers.some(tracker => tracker.name === template.tracker.name)) {
@@ -97,40 +107,63 @@ export class ResourceTrackerManager extends FormApplication {
     return newTrackers
   }
 
-  constructor(options = {}) {
+  constructor(options: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {}) {
     super(options)
-
-    this._templates = ResourceTrackerManager.getAllTemplatesMap()
+    this.#templates = ResourceTrackerManagerV2.getAllTemplatesMap()
   }
 
-  static override get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: 'tracker-manager',
-      template: 'systems/gurps/templates/resource-tracker/tracker-manager.hbs',
-      resizable: false,
-      minimizable: false,
+  static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
+    id: 'tracker-manager-v2',
+    classes: ['gurps', 'sheet', 'resource-tracker', 'modern-sheet'],
+    tag: 'form',
+    position: {
       width: 520,
       height: 'auto',
-      title: game.i18n?.localize('GURPS.resourceTracker.template.title') ?? '',
+    },
+    window: {
+      title: 'GURPS.resourceTracker.template.title',
+      resizable: false,
+      minimizable: false,
+    },
+    form: {
       closeOnSubmit: true,
+      handler: ResourceTrackerManagerV2.#onSubmit,
+    },
+  }
+
+  static override PARTS: Record<string, foundry.applications.api.HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
+    main: {
+      template: 'systems/gurps/templates/resource-tracker/tracker-manager.hbs',
+    },
+  }
+
+  protected override async _prepareContext(
+    options: foundry.applications.api.ApplicationV2.RenderOptions
+  ): Promise<ResourceTrackerManagerV2Context> {
+    const baseContext = await super._prepareContext(options)
+
+    return foundry.utils.mergeObject(baseContext, {
+      templates: this.#templates,
     })
   }
 
-  override getData(options: unknown) {
-    const data = super.getData(options as any)
+  protected override async _onRender(
+    context: ResourceTrackerManagerV2Context,
+    options: DeepPartial<foundry.applications.api.ApplicationV2.RenderOptions> & { isFirstRender: boolean }
+  ): Promise<void> {
+    await super._onRender(context, options)
 
-    return foundry.utils.mergeObject(data, {
-      templates: this._templates,
-    })
+    this.#bindEvents()
   }
 
-  override activateListeners(html: JQuery): void {
-    super.activateListeners(html)
+  #bindEvents(): void {
+    const root = this.element
 
-    html.find('#template-add').on('click', () => {
+    root.querySelector('#template-add')?.addEventListener('click', event => {
+      event.preventDefault()
       const id = foundry.utils.randomID()
 
-      this._templates[id] = {
+      this.#templates[id] = {
         tracker: {
           _id: id,
           name: '',
@@ -147,56 +180,64 @@ export class ResourceTrackerManager extends FormApplication {
           thresholds: [],
         },
         autoapply: false,
-        initialValue: null,
         name: '',
         id,
       }
-      this.render(true)
+      void this.render({ force: true })
     })
 
-    html.find('[name="delete-template"]').on('click', ev => {
-      const key = $(ev.currentTarget).attr('data')
+    root.querySelectorAll<HTMLElement>('[name="delete-template"]').forEach(element => {
+      element.addEventListener('click', event => {
+        event.preventDefault()
+        const key = element.getAttribute('data')
 
-      if (!key) return
+        if (!key) return
 
-      delete this._templates[key]
-      this.render(true)
+        delete this.#templates[key]
+        void this.render({ force: true })
+      })
     })
 
-    html.find('[name="name"]').on('click', async ev => {
-      const key = $(ev.currentTarget).attr('data')
+    root.querySelectorAll<HTMLElement>('[name="name"]').forEach(element => {
+      element.addEventListener('click', async event => {
+        event.preventDefault()
+        const key = element.getAttribute('data')
 
-      if (!key) return
+        if (!key) return
 
-      const template = this._templates[key]
+        const template = this.#templates[key]
 
-      if (!template) return
+        if (!template) return
 
-      const editedTracker = await this.#editTrackerTemplate(key, template.tracker)
+        const editedTracker = await this.#editTrackerTemplate(key, template.tracker)
 
-      if (!editedTracker) return
+        if (!editedTracker) return
 
-      template.tracker = editedTracker
-      template.name = editedTracker.name
-      this.render(true)
+        template.tracker = editedTracker
+        template.name = editedTracker.name
+        await this.render({ force: true })
+      })
     })
 
-    html.find('[name="autoapply"]').on('change', ev => {
-      const key = $(ev.currentTarget).attr('data')
-      const value = (ev.currentTarget as HTMLInputElement).checked
+    root.querySelectorAll<HTMLInputElement>('[name="autoapply"]').forEach(element => {
+      element.addEventListener('change', () => {
+        const key = element.getAttribute('data')
 
-      if (!key || !this._templates[key]) return
+        if (!key || !this.#templates[key]) return
 
-      this._templates[key].autoapply = value
-      this.render(true)
+        this.#templates[key].autoapply = element.checked
+        void this.render({ force: true })
+      })
     })
 
-    html.find('[name="initial-value"]').on('change', ev => {
-      const key = $(ev.currentTarget).attr('data')
+    root.querySelectorAll<HTMLInputElement>('[name="initial-value"]').forEach(element => {
+      element.addEventListener('change', () => {
+        const key = element.getAttribute('data')
 
-      if (!key || !this._templates[key]) return
+        if (!key || !this.#templates[key]) return
 
-      this._templates[key].initialValue = (ev.currentTarget as HTMLInputElement).value
+        this.#templates[key].tracker.initialValue = element.value
+      })
     })
   }
 
@@ -228,7 +269,7 @@ export class ResourceTrackerManager extends FormApplication {
   #uniquifyTracker(key: string, tracker: IResourceTracker): IResourceTracker {
     const result = foundry.utils.deepClone(tracker)
 
-    const others = Object.entries(this._templates)
+    const others = Object.entries(this.#templates)
       .filter(([templateKey]) => templateKey !== key)
       .map(([, template]) => template.tracker)
 
@@ -253,8 +294,20 @@ export class ResourceTrackerManager extends FormApplication {
     return candidate
   }
 
-  override async _updateObject(): Promise<void> {
-    await game.settings?.set(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, this._templates as any)
+  static async #onSubmit(
+    this: ResourceTrackerManagerV2,
+    event: SubmitEvent | Event,
+    _form: HTMLFormElement,
+    _formData: FormDataExtended
+  ): Promise<void> {
+    event.preventDefault()
+    event.stopPropagation()
+
+    await this.#updateObject()
+  }
+
+  async #updateObject(): Promise<void> {
+    await game.settings?.set(GURPS.SYSTEM_NAME, SETTING_TRACKER_TEMPLATES, this.#templates as any)
 
     const entries = Object.entries(GURPS.DamageTables.woundModifiers).filter(([_, value]) => !!value.resource)
 
@@ -265,7 +318,7 @@ export class ResourceTrackerManager extends FormApplication {
       toDelete.forEach(([deleteKey]) => delete GURPS.DamageTables.damageTypeMap[deleteKey])
     })
 
-    const resourceTrackers = Object.values(this._templates)
+    const resourceTrackers = Object.values(this.#templates)
       .filter(it => !!it.tracker.isDamageType)
       .filter(it => !!it.tracker.alias)
       .map(it => it.tracker)

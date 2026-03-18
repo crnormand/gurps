@@ -33,13 +33,14 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
 
   static fromTemplate(template: ResourceTrackerTemplate, actor: Actor.Implementation): TrackerInstance {
     const tracker = new TrackerInstance(template.tracker.toObject())
+    const initialValue = template.tracker.initialValue
 
-    if (template.initialValue !== null && template.initialValue !== '') {
-      tracker.value = parseInt(template.initialValue) || 0
+    if (initialValue !== null && initialValue !== '') {
+      tracker.value = parseInt(initialValue) || 0
 
       if (isNaN(tracker.value)) {
         // Try to use initialValue as a path to another value.
-        const foundValue = Number(foundry.utils.getProperty(actor, 'system.' + template.initialValue))
+        const foundValue = Number(foundry.utils.getProperty(actor, 'system.' + initialValue))
 
         tracker.value = isNaN(foundValue) ? template.tracker.value : foundValue
       }
@@ -250,7 +251,6 @@ const resourceTrackerTemplateSchema = () => {
   return {
     id: new fields.StringField({ required: true, nullable: false }),
     tracker: new fields.EmbeddedDataField(TrackerInstance, { required: true, nullable: false }),
-    initialValue: new fields.StringField({ required: true, nullable: true, initial: null }),
     autoapply: new fields.BooleanField({ required: true, nullable: false, initial: false }),
   }
 }

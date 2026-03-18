@@ -36,7 +36,6 @@ export function createStandardTrackers(importer: { output: any; actor?: any }) {
 
     const trackerData: DataModel.CreateData<ResourceTrackerSchema> = {
       ...template.tracker,
-      initialValue: template.initialValue,
       _id: id,
     }
 

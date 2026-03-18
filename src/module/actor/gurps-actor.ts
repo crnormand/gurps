@@ -4724,13 +4724,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   private _initializeTrackerValues(template: Record<string, any>) {
     let value = template.tracker.value
+    const initialValue = template.tracker?.initialValue
 
-    if (template.initialValue) {
-      value = parseInt(template.initialValue, 10)
+    if (initialValue) {
+      value = parseInt(initialValue, 10)
 
       if (Number.isNaN(value)) {
         // try to use initialValue as a path to another value
-        value = foundry.utils.getProperty(this, 'system.' + template.initialValue) ?? template.tracker.value
+        value = foundry.utils.getProperty(this, 'system.' + initialValue) ?? template.tracker.value
       }
     }
 

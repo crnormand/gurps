@@ -1,8 +1,9 @@
 import { DeepPartial } from 'fvtt-types/utils'
 
-import { ResourceTrackerManager } from '../resource-tracker-manager.js'
 import { TrackerInstance } from '../resource-tracker.js'
 import { IResourceTracker, IResourceTrackerTemplate, TrackerComparators, TrackerOperators } from '../types.js'
+
+import { ResourceTrackerManager } from './resource-tracker-manager.ts'
 
 type ResourceTrackerEditorV2Options = DeepPartial<foundry.applications.api.ApplicationV2.Configuration> & {
   onUpdate?: (trackerData: IResourceTracker) => Promise<void> | void
@@ -123,8 +124,6 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
     const selectedTemplate = templates[selectedId]
 
     if (!selectedTemplate || !selectedTemplate.tracker) return
-
-    selectedTemplate.tracker.initialValue = selectedTemplate.initialValue
 
     Object.assign(this.#tracker, foundry.utils.deepClone(selectedTemplate.tracker))
 

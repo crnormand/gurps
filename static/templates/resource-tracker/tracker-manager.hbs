@@ -36,7 +36,13 @@
             <input name='autoapply' type='checkbox' data='{{@key}}' {{checked autoapply}} />
 
             <!-- initialValue -->
-            <input name='initial-value' data='{{@key}}' class='gcs-input' type='text' value='{{initialValue}}' />
+            <input
+              name='initial-value'
+              data='{{@key}}'
+              class='gcs-input'
+              type='text'
+              value='{{tracker.initialValue}}'
+            />
 
             <div class='vertical-center'>
               <a name='delete-template' data='{{@key}}' class='button icon'><i class='fas fa-trash'></i></a>

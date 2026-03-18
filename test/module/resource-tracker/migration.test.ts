@@ -85,9 +85,9 @@ describe('migrateTemplateToV2', () => {
 
     expect(result).toHaveProperty('id')
     expect(result.id).toMatch(/^mocked-id-\d+$/)
-    expect(result).toHaveProperty('initialValue', 'attributes.HP.max')
     expect(result).toHaveProperty('autoapply', true)
     expect(result).toHaveProperty('tracker')
+    expect(result.tracker).toHaveProperty('initialValue', 'attributes.HP.max')
   })
 
   it('migrates nested tracker data using tracker migration', () => {
