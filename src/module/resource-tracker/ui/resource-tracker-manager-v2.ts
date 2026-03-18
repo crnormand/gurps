@@ -1,9 +1,9 @@
 import { DeepPartial } from 'fvtt-types/utils'
 
-import { TrackerComparators, TrackerOperators } from '../types.ts'
-import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from '../types.ts'
+import { TrackerComparators, TrackerOperators } from '../types.js'
+import { IResourceTracker, IResourceTrackerTemplate, SETTING_TRACKER_TEMPLATES } from '../types.js'
 
-import { ResourceTrackerEditorV2 } from './resource-tracker-editor-v2.ts'
+import { ResourceTrackerEditorV2 } from './resource-tracker-editor-v2.js'
 
 type ResourceTrackerManagerV2Context = foundry.applications.api.ApplicationV2.RenderContext & {
   templates: Record<string, IResourceTrackerTemplate>

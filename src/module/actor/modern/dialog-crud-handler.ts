@@ -227,6 +227,7 @@ export function bindTrackerActions(html: HTMLElement, actor: Actor.Implementatio
         }
       )
 
+      // TODO: Make DR modifiers derived rather than persisted.
       if (confirmed) {
         await actor.refreshDR()
       }

@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Determine the luminescence of the provided background color, and return either a light or dark foreground color to
  * contrast with it.

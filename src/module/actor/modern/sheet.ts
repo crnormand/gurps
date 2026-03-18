@@ -99,11 +99,6 @@ export class GurpsActorModernSheet extends SheetBase {
       importActor: GurpsActorModernSheet.#onImportActor,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
-      // editTracker: GurpsActorModernSheet.#onEditTracker,
-      // deleteTracker: GurpsActorModernSheet.#onDeleteTracker,
-      // decreaseTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
-      // increaseTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
-      // resetTracker: GurpsActorModernSheet.#onUpdateTrackerValue,
     },
   }
 
