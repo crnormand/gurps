@@ -1852,6 +1852,29 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   }
 
   async _onClickRoll(event, targets) {
+    // Special handling for damage rolls: if the element has a damage dataset and its OTF starts with 'D:', then it is
+    // a GurpsLink-style damage roll. In that case we delegate to GurpsWiring.handleGurpslink so that the GurpsLink
+    // machinery (including attack damage resolution and target handling) is used instead of the more generic
+    // GURPS.handleRoll path.
+    if (event.currentTarget.dataset.hasOwnProperty('damage')) {
+      let otf = event.currentTarget.dataset.otf
+      if (otf && otf.startsWith('D:')) {
+        const rollMode = game.settings.get('core', 'rollMode')
+        let blindroll = rollMode === CONST.DICE_ROLL_MODES.BLIND
+
+        const isShiftClickBlindEnabled = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND)
+
+        // Allow keyboard modifiers to override default roll mode:
+        if (event.shiftKey && isShiftClickBlindEnabled) {
+          blindroll = true
+        } else if (event.ctrlKey || event.metaKey) {
+          blindroll = true
+        }
+
+        GurpsWiring.handleGurpslink(event, this.actor, null, { targets, blindroll })
+        return
+      }
+    }
     GURPS.handleRoll(event, this.actor, { targets: targets })
   }
 
