@@ -1,102 +1,146 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import GgaContextMenu from './utilities/contextmenu.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
+  /**
+   * Attach standard click and context menu event handlers to any element that qualifies as a "gurpslink", "gmod", "glinkmod",
+   * "glinkmodplus", "glinkmodminus", or "pdflink". Also make any element with a "data-otf" attribute draggable and attach a
+   * context menu to it.
+   * @param {*} html - a JQuery element to search within for elements to attach click handlers to.
+   */
   static hookupAllEvents(html) {
-    this.hookupGurps(html)
-    this.hookupGurpsRightClick(html)
+    html
+      .find('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
+      .each((_, element) => {
+        this.#hookupGurpsClick(element)
+        this.#hookupGurpsContextMenu(element)
+      })
   }
 
   /**
-   * Given a jquery html, attach all of our listeners to it. No need to call bind(), since they don't use "this".
-   * @param {JQuery<HTMLElement>} html
+   * Attach standard click event handlers to any element that qualifies as a "gurpslink", "gmod", "glinkmod",
+   * "glinkmodplus", "glinkmodminus", or "pdflink". Also make any element with a "data-otf" attribute draggable.
+   * @param {*} html - a JQuery element to search within for elements to attach click handlers to.
    */
-  static hookupGurps(html) {
-    html.find('.gurpslink').on('click', GurpsWiring.chatClickGurpslink)
-    html.find('.gmod').on('click', GurpsWiring.chatClickGmod)
-    html.find('.glinkmod').on('click', GurpsWiring.chatClickGmod)
-    html.find('.glinkmodplus').on('click', GurpsWiring.chatClickGmod)
-    html.find('.glinkmodminus').on('click', GurpsWiring.chatClickGmod)
-    html.find('.pdflink').on('click', GURPS.modules.Pdf.handleOnPdf)
+  static hookupClickEvents(html) {
+    html
+      .find('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
+      .each((_, element) => {
+        this.#hookupGurpsClick(element)
+      })
+  }
 
-    // Make any OtF element draggable
-    html.find('[data-otf]').each((_, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
+  static #hookupGurpsClick(element) {
+    // In case we are rendering the same html multiple times, we may have already wired up some of the elements. To
+    // avoid wiring them up twice, we will check for the presence of the "data-gurps-clickwired" attribute. If it is
+    // not present, we will wire up the element and set the attribute to true.
+    if (element.hasAttribute('data-gurps-clickwired')) return
+
+    element.setAttribute('data-gurps-clickwired', 'true')
+
+    if (element.classList.contains('gurpslink')) {
+      element.addEventListener('click', GurpsWiring.chatClickGurpslink)
+    } else if (
+      element.classList.contains('gmod') ||
+      element.classList.contains('glinkmod') ||
+      element.classList.contains('glinkmodplus') ||
+      element.classList.contains('glinkmodminus')
+    ) {
+      element.addEventListener('click', GurpsWiring.chatClickGmod)
+    } else if (element.classList.contains('pdflink')) {
+      element.addEventListener('click', GURPS.modules.Pdf.handleOnPdf)
+    }
+
+    if (element.hasAttribute('data-otf')) {
+      // Make any OtF element draggable.
+      element.setAttribute('draggable', true)
+      element.addEventListener('dragstart', ev => {
         let display = ''
         if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
-            otf: li.getAttribute('data-otf'),
+            otf: element.getAttribute('data-otf'),
             displayname: display,
             encodedAction: ev.currentTarget.dataset.action,
           })
         )
       })
-    })
+    }
   }
 
   /**
-   * @param {JQuery<HTMLElement>} html
+   * Given a jquery html, attach all of our listeners to it. No need to call bind(), since they don't use "this".
    */
-  static hookupGurpsRightClick(html) {
-    html.find('a.gurpslink').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.gurpslink').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.glinkmod').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.glinkmodplus').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.glinkmodminus').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.gmod').on('contextmenu', GurpsWiring.onRightClickGmod)
-    html.find('[data-otf]').on('contextmenu', GurpsWiring.onRightClickOtf)
+  static #hookupGurpsContextMenu(element) {
+    // In case we are rendering the same html multiple times, we may have already wired up some of the elements. To
+    // avoid wiring them up twice, we will check for the presence of the "data-gurps-contextmenuwired" attribute. If it
+    // is not present, we will wire up the element and set the attribute to true.
+    if (element.hasAttribute('data-gurps-contextmenuwired')) return
 
-    if (html.find('.pdflink').length > 0) {
-      for (const link of html.find('.pdflink')) {
-        this.createPdfLinkMenu(link)
-      }
+    element.setAttribute('data-gurps-contextmenuwired', 'true')
+
+    if (element.classList.contains('gurpslink')) {
+      element.addEventListener('contextmenu', GurpsWiring.onRightClickGurpslink)
+    } else if (element.classList.contains('gmod')) {
+      // TODO Why do we have a separate right click handler for gmod vs glinkmod? Can we unify them?
+      element.addEventListener('contextmenu', GurpsWiring.onRightClickGmod)
+    } else if (
+      element.classList.contains('glinkmod') ||
+      element.classList.contains('glinkmodplus') ||
+      element.classList.contains('glinkmodminus')
+    ) {
+      element.addEventListener('contextmenu', GurpsWiring.onRightClickGurpslink)
+    } else if (element.classList.contains('pdflink')) {
+      GurpsWiring.#createPdfLinkMenu(element)
+    } else if (element.hasAttribute('data-otf')) {
+      element.addEventListener('contextmenu', GurpsWiring.onRightClickOtf)
     }
-
-    // html.find('.pdflink').on('contextmenu', event => {
-    //   event.preventDefault()
-    //   let el = event.currentTarget
-    //   GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
-    // })
   }
 
-  static createPdfLinkMenu(link) {
-    let text = link.innerText
-    let parent = $(link).parent()
+  static #createPdfLinkMenu(link) {
+    const options = {
+      fixed: true,
+    }
+    if (link instanceof HTMLElement) options.JQuery = false
 
-    let actor = GURPS.LastActor
-    let users = actor?.getOwners()?.filter(u => !u.isGM) || []
-    let otf = '[PDF:' + text + ']'
+    let users = GURPS.LastActor?.getOwners()?.filter(u => !u.isGM) || []
     let names = users.map(u => u.name).join(' ')
 
-    let container = $(parent).closest('section.window-content')
-
-    new GgaContextMenu(container, parent, '.pdflink', `Send PDF:${text}...`, [
-      {
-        name: 'To Everyone',
-        icon: '<i class="fas fa-user-friends"></i>',
-        callback: () => GURPS.sendOtfMessage(otf, false),
-        condition: () => game.user.isGM,
-      },
-      {
-        name: `Whisper to ${names}`,
-        icon: '<i class="fas fa-user-secret"></i>',
-        callback: () => GURPS.sendOtfMessage(otf, false, users),
-        condition: () => game.user.isGM && users.length > 0,
-      },
-      {
-        name: 'Copy to Chat',
-        icon: '<i class="far fa-comment"></i>',
-        callback: () => {
-          $(document).find('#chat-message').val(otf)
+    // COMPATIBILITY: v12
+    // new foundry.applications.ux.ContextMenu(container, selector, menuItems)
+    new ContextMenu(
+      link,
+      '.pdflink',
+      [
+        {
+          name: 'GURPS.sendToEveryone',
+          icon: '<i class="fas fa-user-friends"></i>',
+          callback: () => GURPS.sendOtfMessage('[PDF:' + link.innerText + ']', false),
+          condition: () => game.user.isGM,
         },
-        condition: () => true,
-      },
-    ])
+        {
+          name: game.i18n.format('GURPS.whisperToNames', { names }),
+          icon: '<i class="fas fa-user-secret"></i>',
+          callback: () => GURPS.sendOtfMessage('[PDF:' + link.innerText + ']', false, users),
+          condition: () => {
+            return game.user.isGM && users.length > 0
+          },
+        },
+        {
+          name: 'GURPS.sendToChat',
+          icon: '<i class="far fa-comment"></i>',
+          callback: () => {
+            $(document)
+              .find('#chat-message')
+              .val('[PDF:' + link.innerText + ']')
+          },
+          condition: () => true,
+        },
+      ],
+      options
+    )
   }
 
   /**
@@ -157,9 +201,10 @@ export default class GurpsWiring {
     let action = el.dataset.action
     if (!!action) {
       action = JSON.parse(atou(action))
+      // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
       if (action.type === 'damage' || action.type === 'deriveddamage' || action.type === 'attackdamage')
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
-      else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+      else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor)
     }
   }
 
