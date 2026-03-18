@@ -141,12 +141,12 @@ describe('TrackerInstance getters', () => {
       const descriptors = instance.thresholdDescriptors
 
       expect(Array.isArray(descriptors)).toBe(true)
-      expect(descriptors[0]).toEqual({ value: 0, condition: 'Unrestrained' })
-      expect(descriptors[1]).toEqual({ value: 10, condition: 'Grabbed' })
-      expect(descriptors[2]).toEqual({ value: 50, condition: 'Grappled' })
-      expect(descriptors[3]).toEqual({ value: 100, condition: 'Restrained' })
-      expect(descriptors[4]).toEqual({ value: 150, condition: 'Controlled' })
-      expect(descriptors[5]).toEqual({ value: 200, condition: 'Pinned' })
+      expect(descriptors[0]).toEqual({ value: 0, condition: 'Unrestrained', color: '' })
+      expect(descriptors[1]).toEqual({ value: 10, condition: 'Grabbed', color: '' })
+      expect(descriptors[2]).toEqual({ value: 50, condition: 'Grappled', color: '' })
+      expect(descriptors[3]).toEqual({ value: 100, condition: 'Restrained', color: '' })
+      expect(descriptors[4]).toEqual({ value: 150, condition: 'Controlled', color: '' })
+      expect(descriptors[5]).toEqual({ value: 200, condition: 'Pinned', color: '' })
     })
 
     it('returns the descriptors for a non-accumulator', () => {
@@ -225,15 +225,15 @@ describe('TrackerInstance getters', () => {
       const descriptors = instance.thresholdDescriptors
 
       expect(Array.isArray(descriptors)).toBe(true)
-      expect(descriptors[0]).toEqual({ value: 100, condition: 'Healthy' })
-      expect(descriptors[1]).toEqual({ value: 33, condition: 'Reeling' })
-      expect(descriptors[2]).toEqual({ value: 0, condition: 'Danger of Collapse' })
-      expect(descriptors[3]).toEqual({ value: -100, condition: 'Death Check 1' })
-      expect(descriptors[4]).toEqual({ value: -200, condition: 'Death Check 2' })
-      expect(descriptors[5]).toEqual({ value: -300, condition: 'Death Check 3' })
-      expect(descriptors[6]).toEqual({ value: -400, condition: 'Death Check 4' })
-      expect(descriptors[7]).toEqual({ value: -500, condition: 'Dead' })
-      expect(descriptors[8]).toEqual({ value: -1000, condition: 'Destroyed' })
+      expect(descriptors[0]).toEqual({ value: 100, condition: 'Healthy', color: '' })
+      expect(descriptors[1]).toEqual({ value: 33, condition: 'Reeling', color: '' })
+      expect(descriptors[2]).toEqual({ value: 0, condition: 'Danger of Collapse', color: '' })
+      expect(descriptors[3]).toEqual({ value: -100, condition: 'Death Check 1', color: '' })
+      expect(descriptors[4]).toEqual({ value: -200, condition: 'Death Check 2', color: '' })
+      expect(descriptors[5]).toEqual({ value: -300, condition: 'Death Check 3', color: '' })
+      expect(descriptors[6]).toEqual({ value: -400, condition: 'Death Check 4', color: '' })
+      expect(descriptors[7]).toEqual({ value: -500, condition: 'Dead', color: '' })
+      expect(descriptors[8]).toEqual({ value: -1000, condition: 'Destroyed', color: '' })
     })
   })
 
