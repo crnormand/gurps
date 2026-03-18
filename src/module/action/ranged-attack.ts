@@ -397,21 +397,4 @@ type RangedAttackSchema = BaseAttack.Schema & ReturnType<typeof rangedAttackSche
 
 /* ---------------------------------------- */
 
-const rateOfFireModeSchema = () => {
-  return {
-    /** The maximum number of times this weapon can be shot in a single attack action */
-    shotsPerAttack: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    /** The number of secondary projectiles released by every attack (e.g. for a shotgun) */
-    secondaryProjectiles: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-    /** Is this weapon only able to fire in fully automatic mode? */
-    fullAutoOnly: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-    /** Does this weapon fire in high-cyclic controlled bursts? */
-    highCyclicControlledBursts: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-  }
-}
-
-type RateOfFireModeSchema = ReturnType<typeof rateOfFireModeSchema>
-
-/* ---------------------------------------- */
-
-export { RangedAttackModel, type RangedAttackSchema, type RateOfFireModeSchema }
+export { RangedAttackModel, type RangedAttackSchema }

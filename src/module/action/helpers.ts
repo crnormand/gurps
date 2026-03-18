@@ -1,7 +1,8 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
+import { WeaponRateOfFireModeSchema } from './fields.js'
 import { MeleeAttackSchema } from './melee-attack.js'
-import { RangedAttackSchema, RateOfFireModeSchema } from './ranged-attack.js'
+import { RangedAttackSchema } from './ranged-attack.js'
 
 type Reach = fields.SchemaField.CreateData<MeleeAttackSchema>['reach']
 type Parry = fields.SchemaField.CreateData<MeleeAttackSchema>['parry']
@@ -13,7 +14,7 @@ type Range = fields.SchemaField.CreateData<RangedAttackSchema>['range']
 type Recoil = fields.SchemaField.CreateData<RangedAttackSchema>['recoil']
 type Shots = fields.SchemaField.CreateData<RangedAttackSchema>['shots']
 type RateOfFire = fields.SchemaField.CreateData<RangedAttackSchema>['rateOfFire']
-type RateOfFireMode = fields.SchemaField.CreateData<RateOfFireModeSchema>
+type RateOfFireMode = fields.SchemaField.CreateData<WeaponRateOfFireModeSchema>
 
 /**
  * Helper functions for the actions module.
@@ -205,7 +206,7 @@ function parseRecoil(text: string): Recoil {
 /* ---------------------------------------- */
 
 function parseShots(text: string): Shots {
-  const shots: Shots = { count: 0, inChamber: 0, duration: 0, reloadTime: 0, realodTimeIsPerShot: false, thrown: false }
+  const shots: Shots = { count: 0, inChamber: 0, duration: 0, reloadTime: 0, reloadTimeIsPerShot: false, thrown: false }
 
   text = text.trim().toLowerCase().replaceAll(' ', '').replaceAll(',', '')
 
@@ -230,7 +231,7 @@ function parseShots(text: string): Shots {
 
   if (text.startsWith('(')) {
     shots.reloadTime = extractNumber(text.slice(1))
-    shots.realodTimeIsPerShot = text.includes('i')
+    shots.reloadTimeIsPerShot = text.includes('i')
   }
 
   return shots
