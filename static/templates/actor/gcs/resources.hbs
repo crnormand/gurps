@@ -45,7 +45,7 @@
     </div>
     <div class="form-fields flexrow">
       <label >{{localize "GURPS.sheet.gcsActorSheet.poolBase"}}</label>
-      {{formInput fields.denominator value=denominator}}
+      {{formInput fields.denominator value=denominator disabled=@root.isPlay}}
       <label class="pool-state" data-tooltip='{{> '.poolTooltip' thresholds=thresholds}}'>{{localize state}}</label>
     </div>
   </div>
@@ -96,6 +96,30 @@
       <div class="gcs-field-rows gcs-section-content">
         {{formGroup systemFields.conditions.fields.maneuver value=system.conditions.maneuver blank=false  choices=maneuverChoices localize=true disabled=(not actor.inCombat)}}
         {{formGroup systemFields.conditions.fields.posture value=system.conditions.posture blank=false  choices=postureChoices localize=true}}
+        <div class="form-group">
+          <label>{{localize "GURPS.conditionsCombatMove"}}</label>
+          <div class="form-fields">
+            <span>{{system.conditions.move}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize "GURPS.maxActionsPerTurn"}}</label>
+          <div class="form-fields">
+            <span>{{system.conditions.actions.maxActions}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize "GURPS.maxBlocksPerTurn"}}</label>
+          <div class="form-fields">
+            <span>{{system.conditions.actions.maxBlocks}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize "GURPS.activeEffects"}}</label>
+          <div class="form-fields">
+            <span>{{status.blocksPerTurn}}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
