@@ -1,7 +1,6 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrate.js'
-import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'

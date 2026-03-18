@@ -112,12 +112,12 @@ describe('MeleeAttackModel', () => {
   /*  #prepareDisplayValues                   */
   /* ---------------------------------------- */
 
-  describe('#prepareDisplayValues (via prepareBaseData)', () => {
+  describe('#prepareDisplayValues (via prepareDerivedData)', () => {
     describe('parryText', () => {
       test('localized disabled key when canParry is false', () => {
         const model = makeMelee({ parry: { canParry: false, fencing: false, unbalanced: false, modifier: 0 } })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.parryText).toBe('GURPS.action.meleeAttack.parryDisabled')
       })
@@ -141,7 +141,7 @@ describe('MeleeAttackModel', () => {
           true // isOwned so #prepareDefenses runs
         )
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.parryText).toBe(expected)
       })
@@ -153,7 +153,7 @@ describe('MeleeAttackModel', () => {
       test('localized disabled key when canBlock is false', () => {
         const model = makeMelee({ block: { canBlock: false, modifier: 0 } })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.blockText).toBe('GURPS.action.meleeAttack.blockDisabled')
       })
@@ -173,7 +173,7 @@ describe('MeleeAttackModel', () => {
           true
         )
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.blockText).toBe(expected)
       })
@@ -195,7 +195,7 @@ describe('MeleeAttackModel', () => {
       ])('%s', (_desc, reach, expected) => {
         const model = makeMelee({ reach })
 
-        model.prepareBaseData()
+        model.prepareDerivedData()
 
         expect(model.reachText).toBe(expected)
       })
