@@ -10,8 +10,13 @@
 {{/inline}}
 
 {{#*inline ".poolEntry"}}
-  <div class="gcs-pool-attribute gcs-section">
-    <div class="gcs-section-header">{{localize name}}</div>
+<div class="gcs-pool-attribute gcs-section">
+    <div class="gcs-section-header">
+      {{localize name}}
+      {{#if (and (not @root.isPlay) (eq type "resourceTracker"))}}
+        <a data-action="editResourceTracker" data-path="{{path}}"><i class="fa-solid fa-pen-to-square"></i></a>
+      {{/if}}
+    </div>
     <div class="gcs-section-content">
       <div class="form-fields flexrow">
         <button data-action="decrementPool" data-path="{{path}}"><i class="fa-solid fa-minus"></i></button>

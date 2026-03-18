@@ -25,6 +25,7 @@ type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<
 /* ---------------------------------------- */
 
 type PoolEntry = {
+  type: 'pool' | 'resourceTracker'
   fields: {
     numerator: foundry.data.fields.NumberField<any>
     denominator: foundry.data.fields.NumberField<any>
@@ -119,6 +120,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       toggleItemNotes: GurpsActorGcsSheet.#onToggleItemNotes,
       addModifier: GurpsActorGcsSheet.#onAddModifier,
       rollOtf: GurpsActorGcsSheet.#onRollOtf,
+      editResourceTracker: GurpsActorGcsSheet.#onEditResourceTracker,
     },
   }
 
@@ -334,6 +336,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
 
     pools.push(
       {
+        type: 'pool',
         fields: {
           numerator: systemFields.HP.fields.damage,
           denominator: systemFields.HP.fields.max,
@@ -348,6 +351,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         thresholds: hpThresholds,
       },
       {
+        type: 'pool',
         fields: {
           numerator: systemFields.FP.fields.damage,
           denominator: systemFields.FP.fields.max,
@@ -362,6 +366,30 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         thresholds: fpThresholds,
       }
     )
+
+    for (const tracker of this.actor.system.additionalresources.tracker) {
+      const pseudoDenominator = new foundry.data.fields.NumberField({ readonly: true, nullable: true })
+
+      const currentThreshold = tracker.currentThreshold
+
+      const thresholds = tracker.thresholdDescriptors
+
+      pools.push({
+        type: 'resourceTracker',
+        fields: {
+          numerator: tracker.schema.fields.currentValue,
+          denominator: pseudoDenominator,
+        },
+        path: tracker._id,
+        numerator: tracker.value,
+        denominator: tracker.max,
+        atMax: tracker.value === tracker.max,
+        name: tracker.name,
+        state: currentThreshold?.condition || '',
+        color: currentThreshold?.color || defaultColor,
+        thresholds: thresholds,
+      })
+    }
 
     return pools
   }
@@ -525,6 +553,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     GURPS.ModifierBucket.addModifier(value, comment)
   }
 
+  /* ---------------------------------------- */
+
   static async #onRollOtf(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
 
@@ -538,25 +568,69 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
   }
 
   /* ---------------------------------------- */
+
+  static async #onEditResourceTracker(
+    this: GurpsActorGcsSheet,
+    event: PointerEvent,
+    target: HTMLElement
+  ): Promise<void> {
+    event.preventDefault()
+
+    const id = target.dataset.path
+
+    if (!id) {
+      console.error('No resource tracker id provided')
+
+      return
+    }
+
+    const tracker = this.actor.system.additionalresources.tracker.get(id)
+
+    if (!tracker) {
+      console.error(`No resource tracker found with id ${id}`)
+
+      return
+    }
+
+    await GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
+  }
+
+  /* ---------------------------------------- */
   /*  Drag & Drop Handling                    */
   /* ---------------------------------------- */
 
   protected override _onDragStart(event: DragEvent) {
     const element = event.currentTarget
 
-    if (!isHTMLElement(element)) return
+    if (!isHTMLElement(element)) {
+      console.error('Drag start event target is not an HTMLElement')
+
+      return
+    }
 
     const itemRow = element?.closest<HTMLElement>('[data-item-id]')
 
-    if (!itemRow) return
+    if (!itemRow) {
+      console.error('No item row found for drag start target')
+
+      return
+    }
 
     const itemId = itemRow.dataset.itemId
 
-    if (!itemId) return
+    if (!itemId) {
+      console.error('No item id found on item row')
+
+      return
+    }
 
     const item = this.actor.items.get(itemId)
 
-    if (!item) return
+    if (!item) {
+      console.error(`No item found with id ${itemId}`)
+
+      return
+    }
 
     event.dataTransfer?.setData('text/plain', JSON.stringify({ type: 'Item', id: itemId, uuid: item.uuid }))
   }
@@ -574,12 +648,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       }
     }
   }
-
-  /* ---------------------------------------- */
-
-  // protected override _onDragOver(event: DragEvent): void {
-  //   const element = event.target as HTMLElement
-  // }
 
   /* ---------------------------------------- */
 

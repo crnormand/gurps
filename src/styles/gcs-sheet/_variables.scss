@@ -21,6 +21,7 @@
   --gcs-font-size-header: 1rem;
 
   --gcs-font-size-content: 0.875rem;
+  --gcs-font-size-header-icon: 0.75rem;
   --gcs-font-size-select: 0.8rem;
 
   /* Color */
@@ -43,10 +44,10 @@
   --gcs-color-input-fg: var(--color-dark-fg);
 
   --gcs-color-mod-bg: #c06020;
-  --gcs-color-mod-fg: var(--color-light-fg);
+  --gcs-color-mod-fg: var(--color-dark-fg);
 
   --gcs-color-roll-bg: #08c080;
-  --gcs-color-roll-fg: var(--color-light-fg);
+  --gcs-color-roll-fg: var(--color-dark-fg);
 }
 
 @mixin css-variables-dark {
@@ -72,6 +73,9 @@
   --gcs-color-input-bg: #000000;
   --gcs-color-input-fg: var(--color-light-fg);
 
+  --gcs-color-mod-bg: #c06020;
+  --gcs-color-mod-fg: var(--color-dark-fg);
+
   --gcs-color-roll-bg: #08c080;
-  --gcs-color-roll-fg: var(--color-light-fg);
+  --gcs-color-roll-fg: var(--color-dark-fg);
 }

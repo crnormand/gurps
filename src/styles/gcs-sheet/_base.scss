@@ -96,6 +96,9 @@ body {
 
   .gcs-section-header {
     @include gcs-header;
+
+    display: flex;
+    gap: 0.5rem;
   }
 
   .gcs-section-content {
@@ -245,7 +248,9 @@ body {
 
   thead,
   tfoot {
-    @include gcs-header;
+    th {
+      @include gcs-header;
+    }
     justify-content: space-evenly;
   }
 

@@ -69,31 +69,42 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
     const thresholds = [...this.thresholds]
 
     if (this.isAccumulator) {
-      results.push({ value: 0, condition: thresholds.shift()?.condition ?? '' })
+      results.push({ value: 0, condition: thresholds.shift()?.condition ?? '', color: thresholds[0]?.color ?? '' })
 
       for (const threshold of thresholds) {
         results.push({
           value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
           condition: threshold.condition,
+          color: threshold.color ?? '',
         })
       }
     } else {
       if (this.useBreakpoints) {
-        results.push({ value: this.max, condition: thresholds.shift()?.condition ?? '' })
+        results.push({
+          value: this.max,
+          condition: thresholds.shift()?.condition ?? '',
+          color: thresholds[0]?.color ?? '',
+        })
 
         for (const threshold of thresholds) {
           results.push({
             value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
             condition: threshold.condition,
+            color: threshold.color ?? '',
           })
         }
       } else {
-        results.push({ value: this.max, condition: thresholds.shift()?.condition ?? '' })
+        results.push({
+          value: this.max,
+          condition: thresholds.shift()?.condition ?? '',
+          color: thresholds[0]?.color ?? '',
+        })
 
         for (const threshold of thresholds) {
           results.push({
             value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
             condition: threshold.condition,
+            color: threshold.color ?? '',
           })
         }
       }

@@ -1,4 +1,6 @@
 @mixin gcs-header {
+  justify-content: space-evenly;
+
   padding: 0.15rem 0.25rem;
   padding-bottom: 0.2rem;
   border: none;
@@ -11,4 +13,8 @@
   font-weight: 600;
   text-align: center;
   white-space: nowrap;
+
+  i[class^='fa'] {
+    font-size: var(--gcs-font-size-header-icon);
+  }
 }
