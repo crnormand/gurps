@@ -2,33 +2,60 @@ import { multiplyDice } from '@util/damage-utils.js'
 import { parselink } from '@util/parselink.js'
 import { atou } from '@util/utilities.js'
 
-import { GgaContextMenuV2 } from './ui/context-menu.js'
-
 export default class GurpsWiring {
+  /**
+   * Attach standard click and context menu event handlers to any element that qualifies as a "gurpslink", "gmod", "glinkmod",
+   * "glinkmodplus", "glinkmodminus", or "pdflink". Also make any element with a "data-otf" attribute draggable and attach a
+   * context menu to it.
+   * @param {HTMLElement} html - a HTMLElement to search within for elements to attach click handlers to.
+   */
   static hookupAllEvents(html) {
-    // Convert jQuery to HTMLElement if needed for backward compatibility
-    if (html instanceof jQuery) html = html[0]
-
-    GurpsWiring.hookupGurps(html)
-    GurpsWiring._hookupGurpsRightClick(html)
+    html
+      .querySelectorAll('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
+      .forEach(element => {
+        this.#hookupGurpsClick(element)
+        this.#hookupGurpsContextMenu(element)
+      })
   }
 
   /**
-   * Given an HTMLElement, attach all of our listeners to it. No need to call bind(), since they don't use "this".
-   * @param {HTMLElement} html
+   * Attach standard click event handlers to any element that qualifies as a "gurpslink", "gmod", "glinkmod",
+   * "glinkmodplus", "glinkmodminus", or "pdflink". Also make any element with a "data-otf" attribute draggable.
+   * @param {HTMLElement} html - a HTMLElement to search within for elements to attach click handlers to.
    */
-  static hookupGurps(html) {
-    html.querySelectorAll('.gurpslink').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGurpslink))
-    html.querySelectorAll('.gmod').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGmod))
-    html.querySelectorAll('.glinkmod').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGmod))
-    html.querySelectorAll('.glinkmodplus').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGmod))
-    html.querySelectorAll('.glinkmodminus').forEach(el => el.addEventListener('click', GurpsWiring._chatClickGmod))
-    html.querySelectorAll('.pdflink').forEach(el => el.addEventListener('click', GURPS.modules.Pdf.handleOnPdf))
+  static hookupClickEvents(html) {
+    html
+      .querySelectorAll('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
+      .forEach(element => {
+        this.#hookupGurpsClick(element)
+      })
+  }
 
-    // Make any OtF element draggable
-    html.querySelectorAll('[data-otf]').forEach(li => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
+  static #hookupGurpsClick(element) {
+    // In case we are rendering the same html multiple times, we may have already wired up some of the elements. To
+    // avoid wiring them up twice, we will check for the presence of the "data-gurps-clickwired" attribute. If it is
+    // not present, we will wire up the element and set the attribute to true.
+    if (element.hasAttribute('data-gurps-clickwired')) return
+
+    element.setAttribute('data-gurps-clickwired', 'true')
+
+    if (element.classList.contains('gurpslink')) {
+      element.addEventListener('click', GurpsWiring.chatClickGurpslink)
+    } else if (
+      element.classList.contains('gmod') ||
+      element.classList.contains('glinkmod') ||
+      element.classList.contains('glinkmodplus') ||
+      element.classList.contains('glinkmodminus')
+    ) {
+      element.addEventListener('click', GurpsWiring.chatClickGmod)
+    } else if (element.classList.contains('pdflink')) {
+      element.addEventListener('click', GURPS.modules.Pdf.handleOnPdf)
+    }
+
+    if (element.hasAttribute('data-otf')) {
+      // Make any OtF element draggable.
+      element.setAttribute('draggable', true)
+      element.addEventListener('dragstart', ev => {
         let display = ''
 
         if (ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
@@ -36,99 +63,102 @@ export default class GurpsWiring {
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
-            otf: li.getAttribute('data-otf'),
+            otf: element.getAttribute('data-otf'),
             displayname: display,
             encodedAction: ev.currentTarget.dataset.action,
           })
         )
       })
-    })
-  }
-
-  /**
-   * @param {HTMLElement} html
-   */
-  static _hookupGurpsRightClick(html) {
-    html
-      .querySelectorAll('a.gurpslink')
-      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
-    html
-      .querySelectorAll('.gurpslink')
-      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
-    html
-      .querySelectorAll('.glinkmod')
-      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
-    html
-      .querySelectorAll('.glinkmodplus')
-      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
-    html
-      .querySelectorAll('.glinkmodminus')
-      .forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGurpslink))
-    html.querySelectorAll('.gmod').forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickGmod))
-    html.querySelectorAll('[data-otf]').forEach(el => el.addEventListener('contextmenu', GurpsWiring._onRightClickOtf))
-
-    const pdfLinks = html.querySelectorAll('.pdflink')
-
-    if (pdfLinks.length > 0) {
-      for (const link of pdfLinks) {
-        GurpsWiring._createPdfLinkMenu(link)
-      }
     }
   }
 
-  static _createPdfLinkMenu(link) {
-    console.assert(link instanceof HTMLElement)
-    let text = link.innerText
-    let target = link.parentElement
+  /**
+   * Given a HTMLElement, attach all of our listeners to it. No need to call bind(), since they don't use "this".
+   */
+  static #hookupGurpsContextMenu(element) {
+    // In case we are rendering the same html multiple times, we may have already wired up some of the elements. To
+    // avoid wiring them up twice, we will check for the presence of the "data-gurps-contextmenuwired" attribute. If it
+    // is not present, we will wire up the element and set the attribute to true.
+    if (element.hasAttribute('data-gurps-contextmenuwired')) return
 
-    let actor = GURPS.LastActor
-    let users = actor?.getOwners()?.filter(user => !user.isGM) || []
-    let otf = '[PDF:' + text + ']'
+    element.setAttribute('data-gurps-contextmenuwired', 'true')
+
+    if (element.classList.contains('gurpslink')) {
+      element.addEventListener('contextmenu', GurpsWiring.onRightClickGurpslink)
+    } else if (element.classList.contains('gmod')) {
+      // TODO Why do we have a separate right click handler for gmod vs glinkmod? Can we unify them?
+      element.addEventListener('contextmenu', GurpsWiring.onRightClickGmod)
+    } else if (
+      element.classList.contains('glinkmod') ||
+      element.classList.contains('glinkmodplus') ||
+      element.classList.contains('glinkmodminus')
+    ) {
+      element.addEventListener('contextmenu', GurpsWiring.onRightClickGurpslink)
+    } else if (element.classList.contains('pdflink')) {
+      GurpsWiring.#createPdfLinkMenu(element)
+    } else if (element.hasAttribute('data-otf')) {
+      element.addEventListener('contextmenu', GurpsWiring.onRightClickOtf)
+    }
+  }
+
+  static #createPdfLinkMenu(link) {
+    const options = {
+      fixed: true,
+    }
+
+    if (link instanceof HTMLElement) options.JQuery = false
+
+    let users = GURPS.LastActor?.getOwners()?.filter(user => !user.isGM) || []
     let names = users.map(user => user.name).join(' ')
 
-    let container = target.closest('section.window-content')
-
-    new GgaContextMenuV2(
-      target,
+    new foundry.applications.ux.ContextMenu(
+      link,
       '.pdflink',
       [
         {
-          name: game.i18n.format('GURPS.contextmenu.pdf.sendToEveryone', { text: text }),
+          name: 'GURPS.sendToEveryone',
           icon: '<i class="fas fa-user-friends"></i>',
-          callback: () => GURPS.sendOtfMessage(otf, false),
+          callback: () => GURPS.sendOtfMessage('[PDF:' + link.innerText + ']', false),
           condition: () => game.user.isGM,
         },
         {
-          name: game.i18n.format('GURPS.contextmenu.pdf.whisperToOwners', { text: text, owners: names }),
+          name: game.i18n.format('GURPS.whisperToNames', { names }),
           icon: '<i class="fas fa-user-secret"></i>',
-          callback: () => GURPS.sendOtfMessage(otf, false, users),
-          condition: () => game.user.isGM && users.length > 0,
+          callback: () => GURPS.sendOtfMessage('[PDF:' + link.innerText + ']', false, users),
+          condition: () => {
+            return game.user.isGM && users.length > 0
+          },
         },
         {
-          name: game.i18n.format('GURPS.contextmenu.pdf.copyToChat', { text: text }),
+          name: 'GURPS.sendToChat',
           icon: '<i class="far fa-comment"></i>',
           callback: () => {
-            $(document).find('#chat-message').val(otf)
+            $(document)
+              .find('#chat-message')
+              .val('[PDF:' + link.innerText + ']')
           },
           condition: () => true,
         },
       ],
-      container
+      options
     )
   }
 
   /**
-   * @param {Event} event
+   * @param {JQuery.MouseEventBase} event
    */
-  static _chatClickGurpslink(event) {
+  static chatClickGurpslink(event) {
     GurpsWiring.handleGurpslink(event, GURPS.LastActor)
   }
 
   /**
-   * @param {Event} event
+   * @param {JQuery.ClickEvent} event
    */
-  static _chatClickGmod(event) {
-    GurpsWiring.handleGurpslink(event, GURPS.LastActor)
+  static chatClickGmod(event) {
+    let element = event.currentTarget
+    let desc = element.dataset.name
+
+    GurpsWiring.handleGurpslink(event, GURPS.LastActor, desc)
   }
 
   /**
@@ -136,17 +166,20 @@ export default class GurpsWiring {
    * and followed the On-the-Fly formulas. As such, we may already have an action block (base 64 encoded so we can handle
    * any text). If not, we will just re-parse the text looking for the action block.
    *
-   * @param {Event} event
+   * @param {JQuery.MouseEventBase} event
+   * @param {import("./actor/actor.js").GurpsActor | null} actor
+   * @param {undefined} [desc]
+   * @param {undefined} [targets]
    */
-  static handleGurpslink(event, actor, options) {
+  static handleGurpslink(event, actor, desc, options) {
     event.preventDefault()
     let element = event.currentTarget
     let action = element.dataset?.action // If we have already parsed
 
     if (action) action = JSON.parse(atou(action))
-    else action = parselink(element.innerText).action
+    else action = parselink(element.innerText, desc).action
 
-    if (!action && element.dataset?.otf) action = parselink(element.dataset.otf).action
+    if (!action && element.dataset?.otf) action = parselink(element.dataset.otf, desc).action
 
     if (options?.combined) {
       action.formula = multiplyDice(action.formula, options.combined)
@@ -162,9 +195,9 @@ export default class GurpsWiring {
   }
 
   /**
-   * @param {Event} event
+   * @param {JQuery.ContextMenuEvent} event
    */
-  static _onRightClickGurpslink(event) {
+  static onRightClickGurpslink(event) {
     event.preventDefault()
     event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
     let el = event.currentTarget
@@ -172,13 +205,14 @@ export default class GurpsWiring {
 
     if (action) {
       action = JSON.parse(atou(action))
+      // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
       if (action.type === 'damage' || action.type === 'deriveddamage' || action.type === 'attackdamage')
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
-      else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+      else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor)
     }
   }
 
-  static async _onRightClickGmod(event) {
+  static async onRightClickGmod(event) {
     event.preventDefault()
     let el = event.currentTarget
     let name = el.dataset.name
@@ -187,16 +221,16 @@ export default class GurpsWiring {
     GURPS.whisperOtfToOwner(text + ' ' + name, null, event, false, this.actor)
   }
 
-  static async _onRightClickOtf(event) {
+  static async onRightClickOtf(event) {
     event.preventDefault()
-    let el = event.currentTarget
-    let isDamageRoll = Object.hasOwn(el.dataset, 'damage')
-    let otf = event.currentTarget.dataset.otf
+    const element = event.currentTarget
+    const isDamageRoll = Object.hasOwn(element.dataset, 'damage')
+    const otf = element.dataset.otf
 
     if (isDamageRoll) {
       GURPS.resolveDamageRoll(event, this.actor, otf, null, game.user.isGM)
     } else {
-      GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, null, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
+      GURPS.whisperOtfToOwner(otf, null, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
   }
 }

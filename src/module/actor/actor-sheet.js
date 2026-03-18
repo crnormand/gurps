@@ -1856,8 +1856,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     // a GurpsLink-style damage roll. In that case we delegate to GurpsWiring.handleGurpslink so that the GurpsLink
     // machinery (including attack damage resolution and target handling) is used instead of the more generic
     // GURPS.handleRoll path.
-    if (event.currentTarget.dataset.hasOwnProperty('damage')) {
+
+    if (Object.hasOwn(event.currentTarget.dataset, 'damage')) {
       let otf = event.currentTarget.dataset.otf
+
       if (otf && otf.startsWith('D:')) {
         const rollMode = game.settings.get('core', 'rollMode')
         let blindroll = rollMode === CONST.DICE_ROLL_MODES.BLIND
@@ -1872,9 +1874,11 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         }
 
         GurpsWiring.handleGurpslink(event, this.actor, null, { targets, blindroll })
+
         return
       }
     }
+
     GURPS.handleRoll(event, this.actor, { targets: targets })
   }
 
