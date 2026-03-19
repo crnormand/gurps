@@ -199,6 +199,30 @@ export function bindSecondaryStatsEdit(html: JQuery, actor: GurpsActor): void {
         fieldset.classList.remove(editingClass)
 
         const fieldPath = input.name
+
+        // Set dataPath to the data-name attribute of the input, which should be the full path to the field on the
+        // actor, such as "system.thrust" or "system.swing".
+        const dataPath = input.dataset.name
+
+        if (dataPath === 'system.thrust' || dataPath === 'system.swing') {
+          // Content for these fields must be in the format xd+/-y, such as 2d+1 or 3d-2. Validate this before updating
+          // the actor.
+          const regex = /^\d+d([+-]\d+)?$/
+          if (!regex.test(input.value.trim())) {
+            // If the input doesn't match the expected format, reset it to the current value and exit without updating
+            // the actor.
+            console.debug(
+              `Invalid input for ${dataPath}: ${input.value}. Expected format is xd+/-y, such as 2d+1 or 3d-2.`
+            )
+            input.value = String(foundry.utils.getProperty(actor, dataPath) ?? '')
+            return
+          }
+
+          console.debug(`Updating ${dataPath} to ${input.value.trim()}`)
+          actor.update({ [fieldPath]: input.value.trim() })
+          return
+        }
+
         const newValue = parseFloat(input.value)
         const currentValue = foundry.utils.getProperty(actor, fieldPath) as number
 
