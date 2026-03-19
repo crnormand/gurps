@@ -24,7 +24,7 @@
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.thrust'}}</span>
       {{>dice-button otf=(concat system.thrust ' dmg') text=system.thrust damage=true}}
-      <input class='ms-stat-input' type='text' data-name='system.thrust' 
+      <input class='ms-stat-input' type='text' 
              name='system.thrust' value='{{system.thrust}}'/>
     </div>
     {{/if}}
@@ -32,7 +32,7 @@
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.swing'}}</span>
       {{>dice-button otf=(concat system.swing ' dmg') text=system.swing damage=true}}
-      <input class='ms-stat-input' type='text' data-name='system.swing' 
+      <input class='ms-stat-input' type='text' 
              name='system.swing' value='{{system.swing}}'/>
     </div>
     {{/if}}
