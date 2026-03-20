@@ -33,12 +33,16 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   get carried(): boolean {
     if (this.isContained) {
-      const container = this.container!
+      const container = this.container
+
+      if (!container) {
+        console.error('Item is marked as contained but has no container:', this)
+
+        return this._carried
+      }
 
       if (!container.isOfType('equipmentV2')) {
-        ui.notifications?.error(
-          `Expected container of equipment item to be of type "equipmentV2", but got "${container.type}"`
-        )
+        console.error(`Expected container of equipment item to be of type "equipmentV2", but got "${container.type}"`)
 
         return this._carried
       }

@@ -15,7 +15,7 @@ import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import Maneuvers from '../maneuver.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
-import { resolveItemDropPosition } from './helpers.js'
+import { buildItemCopyWithChildren, resolveItemDropPosition, resolveItemDropQuantity } from './helpers.js'
 
 import ActorSheet = gurps.applications.ActorSheet
 
@@ -720,6 +720,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     // Decide whether the dropped item should go inside or before the target item.
     const dropPosition = target ? await resolveItemDropPosition(item) : null
 
+    if (dropPosition === null) return
+
     /**
      * Begin preparing the sort update. By default, the sort siblings of the dropped item
      * are the top-level items in a given section corresponding to its item type (e.g. traits, skills, spells,
@@ -753,20 +755,22 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     // Extract the new sort value for the dropped item from the sort updates returned by performIntegerSort
     const sort = sortUpdates.find(update => update.target._id === item.id)?.update.sort
 
+    if (item.isOfType('equipmentV2')) {
+      return this._onDropEquipment({ item, target, targetContainer, sort, containedBy, carried })
+    }
+
     // If the item came from somewhere other than the current actor, create the item on the actor.
     if (item.actor !== this.actor) {
-      const systemUpdate: Record<string, unknown> = { containedBy }
+      const newItemData = foundry.utils.mergeObject(item.toObject(), {
+        _id: foundry.utils.randomID(),
+        system: { containedBy, _carried: carried },
+        sort,
+      })
+      const newChildData = item.system.children.flatMap(child =>
+        buildItemCopyWithChildren(child, newItemData._id, carried)
+      )
 
-      if (item.isOfType('equipmentV2')) {
-        systemUpdate._carried = carried
-      }
-
-      await this.actor.createEmbeddedDocuments('Item', [
-        foundry.utils.mergeObject(item.toObject(), {
-          sort,
-          system: systemUpdate,
-        }),
-      ])
+      await this.actor.createEmbeddedDocuments('Item', [newItemData, ...newChildData])
 
       return
     }
@@ -783,25 +787,105 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
       return
     }
 
-    // If the dropped item is an equipment container, its contents need to
-    // match its carried state.
-    const childUpdates = item.isOfType('equipmentV2')
-      ? item.system.children.map(child => {
-          return { _id: child._id, 'system._carried': carried }
-        })
-      : []
-
     const baseUpdate: Record<string, unknown> = {
       _id: item._id,
       'system.containedBy': containedBy,
       sort,
     }
 
-    if (item.isOfType('equipmentV2')) {
-      baseUpdate['system._carried'] = carried
+    await this.actor.updateEmbeddedDocuments('Item', [baseUpdate])
+  }
+
+  /* ---------------------------------------- */
+
+  protected async _onDropEquipment({
+    item,
+    target,
+    targetContainer,
+    sort,
+    containedBy,
+    carried,
+  }: {
+    item: Item.OfType<'equipmentV2'>
+    target: Item.Implementation | null
+    targetContainer: Item.Implementation | null
+    sort: number | undefined
+    containedBy: string | null
+    carried: boolean
+  }): Promise<void> {
+    const transferredQuantity = await resolveItemDropQuantity(item)
+
+    if (transferredQuantity === null) return
+
+    const remainingQuantity = item.system.count - transferredQuantity
+
+    // If the item came from a different actor, create a copy here with the transferred quantity.
+    if (item.actor !== this.actor) {
+      const newItemData = foundry.utils.mergeObject(item.toObject(), {
+        _id: foundry.utils.randomID(),
+        system: { count: transferredQuantity, containedBy, _carried: carried },
+        sort,
+      })
+      const newChildData = item.system.children.flatMap(child =>
+        buildItemCopyWithChildren(child as Item.OfType<'equipmentV2'>, newItemData._id, carried)
+      )
+
+      await this.actor.createEmbeddedDocuments('Item', [newItemData, ...newChildData], { keepId: true })
+
+      // Remove or reduce the source item's quantity on the original actor.
+      if (remainingQuantity === 0) await item.delete()
+      else await item.update({ 'system.count': remainingQuantity } as Item.UpdateData)
+
+      return
     }
 
-    await this.actor.updateEmbeddedDocuments('Item', [baseUpdate, ...childUpdates])
+    // If the target or the new parent is a child of the dropped item, we cannot move the item
+    // into the target container, as that would create a circular containment relationship. In that
+    // case, we log a warning and do not move the item.
+    if (
+      (target && item.system.containsItem(target)) ||
+      (targetContainer && item.system.containsItem(targetContainer))
+    ) {
+      ui.notifications?.warn('GURPS.dragDrop.itemContainerLoop', { localize: true })
+
+      return
+    }
+
+    // Update every child's carried state to match the item's new location.
+    const childUpdates = item.system.children.map(child => ({ _id: child._id, 'system._carried': carried }))
+
+    if (remainingQuantity > 0) {
+      // Splitting the stack: create a new item with the transferred quantity and keep the original
+      // with the remainder. Children are duplicated alongside the new item.
+      const newItemData = foundry.utils.mergeObject(item.toObject(), {
+        _id: foundry.utils.randomID(),
+        system: { count: transferredQuantity, containedBy, _carried: carried },
+        sort,
+      })
+      // hey
+      const newChildData = item.system.children.flatMap(child =>
+        buildItemCopyWithChildren(child as Item.OfType<'equipmentV2'>, newItemData._id, carried)
+      )
+
+      await this.actor.createEmbeddedDocuments('Item', [newItemData, ...newChildData], { keepId: true })
+      await this.actor.updateEmbeddedDocuments('Item', [
+        { _id: item._id, 'system.count': remainingQuantity } as Record<string, unknown>,
+        ...childUpdates,
+      ] as Item.UpdateData[])
+
+      return
+    }
+
+    // Moving the full stack: update item and children in place.
+    const baseUpdate: Record<string, unknown> = {
+      _id: item._id,
+      'system.containedBy': containedBy,
+      'system.count': transferredQuantity,
+      'system._carried': carried,
+      sort,
+    }
+
+    await this.actor.updateEmbeddedDocuments('Item', [baseUpdate, ...childUpdates] as Item.UpdateData[])
   }
 }
 
