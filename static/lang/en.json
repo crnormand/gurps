@@ -1,11 +1,20 @@
 {
   "DOCUMENT": {
     "Action": "Action",
+    "Attribute": "Attribute",
+    "AttributeDefinition": "Attribute Definition",
+    "AttributeThreshold": "Attribute Threshold",
+    "Body": "Body Plan",
     "ConditionalModifier": "Conditional Modifier",
+    "Feature": "Feature",
+    "GcsSubTable": "Hit Location Sub-Table",
     "HitLocation": "Hit Location",
     "MoveMode": "Move Mode",
+    "Note": "Note",
+    "Prereq": "Prerequisite",
     "ReactionModifier": "Reaction Modifier",
-    "ResourceTracker": "Resource Tracker"
+    "ResourceTracker": "Resource Tracker",
+    "Study": "Study Entry"
   },
   "GURPS": {
     "abbrevPoints": "Pts",
@@ -1076,6 +1085,10 @@
     "invalidDiceText": "The provided text ({text}) does not match any dice pattern.",
     "invalidUserForDamageWarning": "Only GMs are allowed to Apply Damage.",
     "isFreeAction": "Is a Free Action",
+    "item": {
+      "deleteContents": "Also delete contents ({count} items will be deleted!)",
+      "deleteMessage": "Are you sure you want to delete <strong>{name}</strong>?"
+    },
     "itemBonusText": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc.",
     "itemFeatures": "Features",
     "itemModifiersText": "Enter Modifier Effect (one per line) using format: <modifier> <#tag> [<#tag>...].<br>Examples: -1 to DX #DX #combat, +2 Per #resting, -1 to all DX-based rolls #disease #combat.",
@@ -1815,7 +1828,6 @@
     "spellTime": "Casting Time",
     "splitDrValue": "DR Value",
     "splitQuantity": "Split Quantity",
-    "transferAll": "Transfer All",
     "spoken": "Spoken",
     "statsTab": "Stats",
     "status": {
@@ -1932,6 +1944,7 @@
       "weaponMaster": "Weapon Master",
       "xenophilia": "Xenophilia"
     },
+    "transferAll": "Transfer All",
     "TransferTo": "Transfer to {name}",
     "twoHandLift": "Two-Hand Lift",
     "unconscious": "Unconscious",

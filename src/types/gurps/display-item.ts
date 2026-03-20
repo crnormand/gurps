@@ -132,6 +132,8 @@ interface DisplayEquipment extends BaseDisplayItem {
 interface BaseDisplayAttack {
   /** The ID of this action */
   id: string
+  /** The ID of this action's parent */
+  parentId: string
   /** The simple name of this attack, without level or any other modifiers which may change the name */
   name: string
   /** The name of this attack, with any modifiers which may change the name */

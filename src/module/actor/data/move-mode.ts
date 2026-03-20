@@ -11,6 +11,7 @@ class MoveModeV2 extends PseudoDocument<MoveSchema> {
   static override get metadata(): PseudoDocument.Metadata<'MoveMode'> {
     return {
       documentName: 'MoveMode',
+      label: 'DOCUMENT.MoveMode',
       icon: '',
       embedded: {},
     }

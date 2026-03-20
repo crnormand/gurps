@@ -11,6 +11,7 @@ class Study extends PseudoDocument<StudySchema> {
   static override get metadata(): PseudoDocument.Metadata<'Study'> {
     return {
       documentName: 'Study',
+      label: 'DOCUMENT.Study',
       icon: '',
       embedded: {},
     }

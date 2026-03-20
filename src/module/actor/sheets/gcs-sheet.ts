@@ -105,7 +105,11 @@ namespace GurpsActorGcsSheet {
 
 /* ---------------------------------------- */
 
-class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
+class GurpsActorGcsSheet extends GurpsBaseActorSheet<
+  'characterV2',
+  ActorSheet.RenderOptions,
+  GurpsActorGcsSheet.RenderContext
+>() {
   static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
     classes: ['gcs-sheet'],
     position: {
@@ -420,7 +424,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
   /* ---------------------------------------- */
 
   protected override async _onRender(
-    context: ActorSheet.RenderContext,
+    context: GurpsActorGcsSheet.RenderContext,
     options: ActorSheet.RenderOptions
   ): Promise<void> {
     super._onRender(context, options)
@@ -438,15 +442,125 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
         const otfText = match[1]
         const parsedOtf = GURPS.parselink(otfText)
 
-        console.log('Parsed OTF:', { otfText, parsedOtf })
-
         if (parsedOtf.text) {
           otfElement.innerHTML = otfElement.innerHTML.replace(`[${otfText}]`, parsedOtf.text)
         }
       }
     }
 
+    const itemRows = this.element.querySelectorAll<HTMLElement>('.gcs-item-row')
+
+    for (const itemRow of itemRows) {
+      itemRow.addEventListener('dblclick', event => {
+        event.preventDefault()
+        const target = event.currentTarget as HTMLElement
+        const itemId = target.dataset.itemId
+
+        if (!itemId) {
+          console.error('No item id found on item row')
+
+          return
+        }
+
+        const item = this.actor.items.get(itemId)
+
+        if (!item) {
+          console.error(`No item found with id ${itemId}`)
+
+          return
+        }
+
+        const sheet = item.sheet
+
+        if (item.isOwner && sheet) {
+          if (sheet instanceof foundry.applications.sheets.ItemSheetV2) sheet.render({ force: true })
+          else sheet.render(true)
+        }
+      })
+    }
+
     GurpsWiring.hookupAllEvents(this.element)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _onFirstRender(
+    context: GurpsActorGcsSheet.RenderContext,
+    options: ActorSheet.RenderOptions
+  ): Promise<void> {
+    super._onFirstRender(context, options)
+
+    this._createContextMenu(this._createItemContextOptions, '.gcs-item-row', {
+      jQuery: false,
+      hookName: 'createItemContextOptions',
+      parentClassHooks: false,
+      fixed: true,
+      eventName: 'contextmenu',
+    })
+
+    this._createContextMenu(this._createActionContextOptions, '.gcs-action-row', {
+      jQuery: false,
+      hookName: 'createActionContextOptions',
+      parentClassHooks: false,
+      fixed: true,
+      eventName: 'contextmenu',
+    })
+  }
+
+  /* ---------------------------------------- */
+
+  protected _createItemContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+    return [
+      {
+        name: 'Delete',
+        icon: '<i class="fa-solid fa-fw fa-trash"></i>',
+        condition: target => target.dataset.itemId !== undefined,
+        callback: async target => {
+          const item = this.actor.items.get(target.dataset.itemId ?? '')
+
+          if (item) await item.deleteDialog()
+        },
+      },
+    ]
+  }
+
+  /* ---------------------------------------- */
+
+  protected _createActionContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+    return [
+      {
+        name: 'Delete',
+        icon: '<i class="fa-solid fa-fw fa-trash"></i>',
+        condition: target => target.dataset.parentId !== undefined && target.dataset.actionId !== undefined,
+        callback: async target => {
+          const parentId = target.dataset.parentId
+
+          if (!parentId) {
+            console.error('No Action parent ID found on action context menu target')
+
+            return
+          }
+
+          const parent = this.actor.items.get(target.dataset.parentId ?? '')
+
+          if (!parent) {
+            console.error(`No item found for action context menu with item id ${target.dataset.parentId}`)
+
+            return
+          }
+
+          const action = parent.getEmbeddedDocument('Action', target.dataset.actionId ?? '')
+
+          if (!action) {
+            console.error(`No action found for action context menu with action id ${target.dataset.actionId}`)
+
+            return
+          }
+
+          await action.deleteDialog()
+        },
+      },
+    ]
   }
 
   /* ---------------------------------------- */

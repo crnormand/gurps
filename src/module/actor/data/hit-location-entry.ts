@@ -12,6 +12,7 @@ class HitLocationEntryV2 extends PseudoDocument<HitLocationSchemaV2> {
   static override get metadata(): PseudoDocument.Metadata<'HitLocation'> {
     return {
       documentName: 'HitLocation',
+      label: 'DOCUMENT.HitLocation',
       icon: '',
       embedded: {},
     }

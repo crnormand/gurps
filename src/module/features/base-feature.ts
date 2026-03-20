@@ -22,6 +22,7 @@ class BaseFeature<Schema extends BaseFeature.Schema>
   static override get metadata(): PseudoDocument.Metadata<'Feature'> {
     return {
       documentName: 'Feature',
+      label: 'DOCUMENT.Feature',
       icon: '',
       embedded: {},
     }

@@ -84,10 +84,11 @@ export interface HeaderControlsEntry {
 export interface HandlebarsActorSheetV2Constructor<
   TDocument extends Actor = Actor,
   RenderOptions extends ActorSheetV2RenderOptions = ActorSheetV2RenderOptions,
+  RenderContext extends ActorSheetV2RenderContext = ActorSheetV2RenderContext,
 > {
   new (
     options?: DeepPartial<ActorSheetV2Configuration> & { document?: TDocument }
-  ): HandlebarsActorSheetV2Instance<TDocument, RenderOptions>
+  ): HandlebarsActorSheetV2Instance<TDocument, RenderOptions, RenderContext>
   DEFAULT_OPTIONS: DeepPartial<ActorSheetV2Configuration>
   PARTS: Record<string, HandlebarsTemplatePart>
   TABS: Record<string, Application.TabsConfiguration>
@@ -98,6 +99,7 @@ export interface HandlebarsActorSheetV2Constructor<
 export declare abstract class HandlebarsActorSheetV2Instance<
   TDocument extends Actor = Actor,
   RenderOptions extends ActorSheetV2RenderOptions = ActorSheetV2RenderOptions,
+  RenderContext extends ActorSheetV2RenderContext = ActorSheetV2RenderContext,
 > {
   readonly actor: TDocument
   readonly document: TDocument
@@ -110,17 +112,23 @@ export declare abstract class HandlebarsActorSheetV2Instance<
 
   render(options?: Partial<RenderOptions>): Promise<this>
   close(options?: { animate?: boolean }): Promise<this>
-  protected _prepareContext(options: RenderOptions): Promise<ActorSheetV2RenderContext>
+  protected _prepareContext(options: RenderOptions): Promise<RenderContext>
   protected _preparePartContext(
     partId: string,
-    context: ActorSheetV2RenderContext,
+    context: RenderContext,
     options: DeepPartial<RenderOptions>
-  ): Promise<ActorSheetV2RenderContext>
+  ): Promise<RenderContext>
   protected _configureRenderOptions(options: DeepPartial<RenderOptions>): void
-  protected _onRender(context: ActorSheetV2RenderContext, options: RenderOptions): Promise<void>
+  protected _onRender(context: RenderContext, options: RenderOptions): Promise<void>
+  protected _onFirstRender(context: RenderContext, options: RenderOptions): Promise<void>
   protected _prepareTabs(group: string): Record<string, Application.Tab>
   protected _renderFrame(options: DeepPartial<RenderOptions>): Promise<HTMLElement>
-  _getHeaderControls(): HeaderControlsEntry[]
+  protected _createContextMenu(
+    handler: Application.CreateContextMenuHandler,
+    selector: string,
+    options: Application.CreateContextMenuOptions
+  ): ContextMenu | null
+  protected _getHeaderControls(): HeaderControlsEntry[]
   get title(): string
   get window(): Application.Window
   get isEditable(): boolean

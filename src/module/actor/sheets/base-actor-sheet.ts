@@ -12,10 +12,11 @@ import ActorSheet = gurps.applications.ActorSheet
 const _InternalGurpsBaseActorSheet = <
   Type extends Actor.SubType,
   RenderOptions extends ActorSheet.RenderOptions = ActorSheet.RenderOptions,
+  RenderContext extends ActorSheet.RenderContext = ActorSheet.RenderContext,
 >() =>
   foundry.applications.api.HandlebarsApplicationMixin(
     foundry.applications.sheets.ActorSheetV2
-  ) as unknown as gurps.applications.ActorSheet.HandlebarsConstructor<Actor.OfType<Type>, RenderOptions>
+  ) as unknown as gurps.applications.ActorSheet.HandlebarsConstructor<Actor.OfType<Type>, RenderOptions, RenderContext>
 
 namespace GurpsBaseActorSheet {
   export type RenderOptions = ActorSheet.RenderOptions & {
@@ -28,8 +29,9 @@ namespace GurpsBaseActorSheet {
 const GurpsBaseActorSheet = <
   Type extends Actor.SubType,
   RenderOptions extends GurpsBaseActorSheet.RenderOptions = GurpsBaseActorSheet.RenderOptions,
+  RenderContext extends ActorSheet.RenderContext = ActorSheet.RenderContext,
 >() =>
-  class GurpsBaseActorSheet extends _InternalGurpsBaseActorSheet<Type, RenderOptions>() {
+  class GurpsBaseActorSheet extends _InternalGurpsBaseActorSheet<Type, RenderOptions, RenderContext>() {
     constructor(options?: ActorSheet.Configuration & { document?: Actor.OfType<Type> }) {
       super(options)
       this.#dragDrop = this.#createDragDropHandlers()
@@ -251,7 +253,7 @@ const GurpsBaseActorSheet = <
 
     /* ---------------------------------------- */
 
-    protected override async _onRender(context: ActorSheet.RenderContext, options: RenderOptions): Promise<void> {
+    protected override async _onRender(context: RenderContext, options: RenderOptions): Promise<void> {
       super._onRender(context, options)
       this.#dragDrop.forEach(dragDrop => dragDrop.bind(this.element))
 

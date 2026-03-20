@@ -1,7 +1,7 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
-import { hasMetadata, isUpdatableDocument } from '@module/util/guards.js'
+import { getGame, hasMetadata, isUpdatableDocument } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyObject, InexactPartial } from 'fvtt-types/utils'
 
 import { type ModelCollection } from '../data/model-collection.js'
 
@@ -35,7 +35,7 @@ class PseudoDocument<
 
   /* ---------------------------------------- */
 
-  get metadata() {
+  get metadata(): PseudoDocument.Metadata<gurps.Pseudo.Name> {
     return this.static.metadata
   }
 
@@ -346,6 +346,43 @@ class PseudoDocument<
     return this.document.update(update, operation)
   }
 
+  /**
+   * Present a Dialog form to confirm deletion of this PseudoDocument.
+   * @param [options] Additional options passed to `DialogV2.confirm`
+   * @param [operation]  Document deletion options.
+   * @returns A Promise that resolves to the deleted PseudoDocument
+   */
+  async deleteDialog(
+    options?: InexactPartial<foundry.applications.api.DialogV2.ConfirmConfig>,
+    operation?: PseudoDocument.DeleteOperation
+  ): Promise<this | false | null | undefined> {
+    let content = options?.content
+
+    const type = getGame().i18n.localize(this.metadata.label)
+    const name = ('name' in this ? this.name : null) as string | null
+
+    if (!content) {
+      const question = getGame().i18n.localize('AreYouSure')
+      const warning = getGame().i18n.format('SIDEBAR.DeleteWarning', { type })
+
+      content = `<p><strong>${question}</strong> ${warning}</p>`
+    }
+
+    return foundry.applications.api.DialogV2.confirm(
+      foundry.utils.mergeObject(
+        {
+          content,
+          yes: { callback: () => this.delete(operation) },
+          window: {
+            icon: 'fa-solid fa-trash',
+            title: `${getGame().i18n.format('DOCUMENT.Delete', { type })}: ${name}`,
+          },
+        },
+        options
+      ) as foundry.applications.api.DialogV2.ConfirmConfig
+    ) as Promise<this | false | null | undefined>
+  }
+
   /* ---------------------------------------- */
 
   /**
@@ -421,8 +458,10 @@ const pseudoDocumentSchema = () => {
 
 namespace PseudoDocument {
   export type Metadata<Name extends gurps.Pseudo.Name> = {
-    /* The document name of this pseudo-document. */
+    /** The document name of this pseudo-document. */
     documentName: Name
+    /** The localizable label for this pseudo-document type. */
+    label: string
     /** The font-awesome icon for this pseudo-document type */
     icon: string
     /* Record of document names of pseudo-documents and the path to the collection. */
@@ -434,6 +473,12 @@ namespace PseudoDocument {
   /* ---------------------------------------- */
 
   export type Schema = ReturnType<typeof pseudoDocumentSchema>
+
+  /* ---------------------------------------- */
+
+  export type DeleteOperation = Document.Database.DeleteOperation<
+    foundry.abstract.types.DatabaseDeleteOperation<Document.Any>
+  >
 }
 
 /* ---------------------------------------- */

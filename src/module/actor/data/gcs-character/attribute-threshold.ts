@@ -17,6 +17,7 @@ class AttributeThreshold extends PseudoDocument<AttributeThresholdSchema> {
   static override get metadata(): PseudoDocument.Metadata<'AttributeThreshold'> {
     return {
       documentName: 'AttributeThreshold',
+      label: 'DOCUMENT.AttributeThreshold',
       icon: '',
       embedded: {},
     }

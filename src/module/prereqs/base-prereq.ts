@@ -21,6 +21,7 @@ class BasePrereq<Schema extends BasePrereq.Schema>
   static override get metadata(): PseudoDocument.Metadata<'Prereq'> {
     return {
       documentName: 'Prereq',
+      label: 'DOCUMENT.Prereq',
       icon: '',
       embedded: {},
     }

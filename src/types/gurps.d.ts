@@ -16,29 +16,29 @@ import { SpellBonus } from '@module/features/spell-bonus.js'
 import { SpellPointBonus } from '@module/features/spell-point-bonus.js'
 import { TraitBonus } from '@module/features/trait-bonus.js'
 import {
-  WeaponBonus,
   WeaponAccBonus,
-  WeaponScopeAccBonus,
+  WeaponBlockBonus,
+  WeaponBonus,
+  WeaponBulkBonus,
+  WeaponChamberShotsBonus,
   WeaponDRDivisorBonus,
   WeaponEffectiveSTBonus,
-  WeaponMinSTBonus,
-  WeaponMinReachBonus,
-  WeaponMaxReachBonus,
   WeaponHalfDamageRangeBonus,
-  WeaponMinRangeBonus,
   WeaponMaxRangeBonus,
-  WeaponRecoilBonus,
-  WeaponBulkBonus,
-  WeaponParryBonus,
-  WeaponBlockBonus,
-  WeaponRofMode1ShotsBonus,
-  WeaponRofMode1SecondaryBonus,
-  WeaponRofMode2ShotsBonus,
-  WeaponRofMode2SecondaryBonus,
+  WeaponMaxReachBonus,
+  WeaponMinRangeBonus,
+  WeaponMinReachBonus,
+  WeaponMinSTBonus,
   WeaponNonChamberShotsBonus,
-  WeaponChamberShotsBonus,
-  WeaponShotDurationBonus,
+  WeaponParryBonus,
+  WeaponRecoilBonus,
   WeaponReloadTimeBonus,
+  WeaponRofMode1SecondaryBonus,
+  WeaponRofMode1ShotsBonus,
+  WeaponRofMode2SecondaryBonus,
+  WeaponRofMode2ShotsBonus,
+  WeaponScopeAccBonus,
+  WeaponShotDurationBonus,
   WeaponSwitch,
 } from '@module/features/weapon-bonus.js'
 import {
@@ -128,7 +128,8 @@ declare global {
         export type HandlebarsConstructor<
           TDocument extends Actor = Actor,
           RenderOptions extends ActorSheetV2RenderOptions = ActorSheetV2RenderOptions,
-        > = HandlebarsActorSheetV2Constructor<TDocument, RenderOptions>
+          RenderContext extends ActorSheetV2RenderContext = ActorSheetV2RenderContext,
+        > = HandlebarsActorSheetV2Constructor<TDocument, RenderOptions, RenderContext>
 
         export type HandlebarsInstance<TDocument extends Actor = Actor> = HandlebarsActorSheetV2Instance<TDocument>
       }

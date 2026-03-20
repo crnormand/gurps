@@ -89,6 +89,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
   toDisplayItem(): BaseDisplayAttack {
     return {
       id: this._id,
+      parentId: this.document.id!,
       name: this.item.name,
       fullName: this.item.system.toDisplayItem?.()?.fullName ?? this.item.name,
       usage: this.name ?? this.mode,

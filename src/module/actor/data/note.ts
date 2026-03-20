@@ -24,6 +24,7 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
   static override get metadata(): PseudoDocument.Metadata<'Note'> {
     return {
       documentName: 'Note',
+      label: 'DOCUMENT.Note',
       icon: '',
       embedded: {},
     }

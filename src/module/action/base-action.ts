@@ -19,6 +19,7 @@ class BaseAction<
   static override get metadata(): PseudoDocument.Metadata<'Action'> {
     return {
       documentName: 'Action',
+      label: 'DOCUMENT.Action',
       icon: '',
       embedded: {},
     }

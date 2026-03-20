@@ -19,6 +19,7 @@ class GcsAttribute extends PseudoDocument<GcsAttributeSchema> {
   static override get metadata(): PseudoDocument.Metadata<'Attribute'> {
     return {
       documentName: 'Attribute',
+      label: 'DOCUMENT.Attribute',
       icon: '',
       embedded: {},
     }

@@ -23,6 +23,7 @@ class ConditionalModifier extends PseudoDocument<ConditionalModifier.Schema> {
   static override get metadata(): PseudoDocument.Metadata<'ConditionalModifier'> {
     return {
       documentName: 'ConditionalModifier',
+      label: 'DOCUMENT.ConditionalModifier',
       icon: '',
       embedded: {},
     }
@@ -53,6 +54,7 @@ class ReactionModifier extends PseudoDocument<ConditionalModifier.Schema> {
   static override get metadata(): PseudoDocument.Metadata<'ReactionModifier'> {
     return {
       documentName: 'ReactionModifier',
+      label: 'DOCUMENT.ReactionModifier',
       icon: '',
       embedded: {},
     }

@@ -24,6 +24,7 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
   static override get metadata(): PseudoDocument.Metadata<'ResourceTracker'> {
     return {
       documentName: 'ResourceTracker',
+      label: 'DOCUMENT.ResourceTracker',
       icon: '',
       embedded: {},
     }

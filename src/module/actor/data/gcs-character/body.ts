@@ -18,6 +18,7 @@ class GcsSubTable extends PseudoDocument<GcsSubTableSchema, DataModel.Any, GcsSu
   static override get metadata(): PseudoDocument.Metadata<'LocationSubTable'> {
     return {
       documentName: 'LocationSubTable',
+      label: 'DOCUMENT.GcsSubTable',
       icon: '',
       embedded: {},
     }
@@ -89,6 +90,7 @@ class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, DataModel.Any,
   static override get metadata(): PseudoDocument.Metadata<'HitLocation'> {
     return {
       documentName: 'HitLocation',
+      label: 'DOCUMENT.HitLocation',
       icon: '',
       embedded: {},
     }
@@ -170,6 +172,7 @@ class GcsBody extends PseudoDocument<GcsBody.Schema> {
   static override get metadata(): PseudoDocument.Metadata<'Body'> {
     return {
       documentName: 'Body',
+      label: 'DOCUMENT.Body',
       icon: '',
       embedded: {
         HitLocation: '_locations',
