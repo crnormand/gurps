@@ -23,6 +23,7 @@
 - Damage roll from character sheet doesn't work if weapon name contains a comma \#2576
 - Bug: Modifiers clicked while the journal page's editor page is open will apply the modifier twice. \#2559
 - Bug: Mook Thrust/Swing New UI doesn't let you type dice (Only Integers) \#2556
+- Allow OTFs with \*costs term to query for resource pool.
 
 ## Release 0.18.13 02/05/2026
 

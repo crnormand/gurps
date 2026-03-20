@@ -4,6 +4,7 @@ import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
+import { validateDice } from '@module/data/validators/dice-validator.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
@@ -1764,9 +1765,9 @@ const characterSchema = () => {
     touch: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.touch' }),
 
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    thrust: new fields.StringField({ required: true, nullable: false, label: 'GURPS.thrust' }),
+    thrust: new fields.StringField({ required: true, nullable: false, label: 'GURPS.thrust', validate: validateDice }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    swing: new fields.StringField({ required: true, nullable: false, label: 'GURPS.swing' }),
+    swing: new fields.StringField({ required: true, nullable: false, label: 'GURPS.swing', validate: validateDice }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
     // NOTE: Change from previous schema; the encumbrance data is derived and only the current level is stored.

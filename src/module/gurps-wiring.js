@@ -10,6 +10,15 @@ export default class GurpsWiring {
    * @param {HTMLElement} html - a HTMLElement to search within for elements to attach click handlers to.
    */
   static hookupAllEvents(html) {
+    if (!(html instanceof HTMLElement)) {
+      html = html[0]
+      // print stack trace to help debug why we are getting a jQuery object instead of an HTMLElement
+      console.warn(
+        'GurpsWiring.hookupAllEvents was passed a jQuery object instead of an HTMLElement.',
+        new Error().stack
+      )
+    }
+
     html
       .querySelectorAll('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
       .forEach(element => {
@@ -24,6 +33,15 @@ export default class GurpsWiring {
    * @param {HTMLElement} html - a HTMLElement to search within for elements to attach click handlers to.
    */
   static hookupClickEvents(html) {
+    if (!(html instanceof HTMLElement)) {
+      html = html[0]
+      // print stack trace to help debug why we are getting a jQuery object instead of an HTMLElement
+      console.warn(
+        'GurpsWiring.hookupClickEvents was passed a jQuery object instead of an HTMLElement.',
+        new Error().stack
+      )
+    }
+
     html
       .querySelectorAll('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
       .forEach(element => {
