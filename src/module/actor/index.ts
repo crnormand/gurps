@@ -14,13 +14,14 @@ import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import * as dataModels from './data/index.js'
 import { MoveModeV2 } from './data/move-mode.js'
 import { GurpsActorV2 } from './gurps-actor.js'
-import { migrateActor, runMigration } from './migrate.js'
+import { runMigration } from './migrate.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
 import * as sheets from './sheets/index.js'
 
 interface ActorModule extends GurpsModule {
-  migrateActor: typeof migrateActor
+  dataModels: typeof dataModels
+  sheets: typeof sheets
   migrate: typeof runMigration
   HitLocationEntry: typeof HitLocationEntryV2
   MoveMode: typeof MoveModeV2
@@ -104,7 +105,8 @@ function init() {
 
 export const Actor: ActorModule = {
   init,
-  migrateActor,
+  dataModels,
+  sheets,
   migrate: runMigration,
   HitLocationEntry: HitLocationEntryV2,
   MoveMode: MoveModeV2,

@@ -6,6 +6,7 @@ import {
   DisplaySpell,
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
+import GurpsWiring from '@module/gurps-wiring.js'
 import { isHTMLElement } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
@@ -159,6 +160,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     },
   }
 
+  /* ---------------------------------------- */
+  /*  Context Preparation                     */
   /* ---------------------------------------- */
 
   protected override async _prepareContext(
@@ -410,6 +413,40 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<'characterV2'>() {
     ].map(({ label, value }) => {
       return { label, value: value.toLocaleString() }
     })
+  }
+
+  /* ---------------------------------------- */
+  /*  Non-Action Bindings                     */
+  /* ---------------------------------------- */
+
+  protected override async _onRender(
+    context: ActorSheet.RenderContext,
+    options: ActorSheet.RenderOptions
+  ): Promise<void> {
+    super._onRender(context, options)
+
+    const elements = [...this.element.querySelectorAll<HTMLElement>('*')].filter(
+      element => element.children.length === 0 && /\[([^[\]]+)\]/.test(element.innerText)
+    )
+
+    for (const otfElement of elements) {
+      const otfTextMatches = [...otfElement.innerText.matchAll(/\[([^[\]]+)\]/gi)]
+
+      if (otfTextMatches.length === 0) continue
+
+      for (const match of otfTextMatches) {
+        const otfText = match[1]
+        const parsedOtf = GURPS.parselink(otfText)
+
+        console.log('Parsed OTF:', { otfText, parsedOtf })
+
+        if (parsedOtf.text) {
+          otfElement.innerHTML = otfElement.innerHTML.replace(`[${otfText}]`, parsedOtf.text)
+        }
+      }
+    }
+
+    GurpsWiring.hookupAllEvents(this.element)
   }
 
   /* ---------------------------------------- */

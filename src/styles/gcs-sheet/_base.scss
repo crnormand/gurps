@@ -128,8 +128,7 @@ body {
     width: 100%;
 
     .form-group:nth-child(even) {
-      background-color: var(--gcs-color-banding-bg);
-      color: var(--gcs-color-banding-fg);
+      @include gcs-banding;
     }
 
     &.gcs-field-rows-reverse {
@@ -265,8 +264,7 @@ body {
     color: var(--gcs-color-surface-fg);
 
     tr:nth-child(even) {
-      background-color: var(--gcs-color-banding-bg);
-      color: var(--gcs-color-banding-fg);
+      @include gcs-banding;
     }
 
     tr.selected {

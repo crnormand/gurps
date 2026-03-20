@@ -18,3 +18,23 @@
     font-size: var(--gcs-font-size-header-icon);
   }
 }
+
+@mixin gcs-banding {
+  background-color: var(--gcs-color-banding-bg);
+  color: var(--gcs-color-banding-fg);
+  [data-action='rollOtf'] {
+    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 20%);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 40%);
+    }
+  }
+
+  [data-action='addModifier'] {
+    background-color: color-mix(in hsl, var(--gcs-color-mod-bg), var(--gcs-color-banding-bg) 20%);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-mod-bg), var(--gcs-color-banding-bg) 40%);
+    }
+  }
+}
