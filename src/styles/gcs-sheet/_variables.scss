@@ -28,6 +28,10 @@
   --gcs-color-surface-bg: #f4f5f5;
   --gcs-color-surface-fg: var(--color-dark-fg);
 
+  --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), black 5%);
+  --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
+  --gcs-color-control-fg: var(--color-dark-fg);
+
   --gcs-color-header-bg: #505050;
   --gcs-color-header-fg: var(--color-light-fg);
 
@@ -57,6 +61,10 @@
   /* Color */
   --gcs-color-surface-bg: #1e1e1e;
   --gcs-color-surface-fg: var(--color-light-fg);
+
+  --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), white 20%);
+  --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), white 15%);
+  --gcs-color-control-fg: var(--color-light-fg);
 
   --gcs-color-header-bg: #404040;
   --gcs-color-header-fg: var(--color-light-fg);

@@ -205,6 +205,15 @@ body {
       }
     }
 
+    select {
+      appearance: none;
+      padding-right: 1.25rem;
+      background-repeat: no-repeat;
+      background-position: right 0.25rem center;
+      background-size: 0.5rem;
+      background-image: var(--gcs-caret-down);
+    }
+
     button,
     select {
       width: 100%;
@@ -217,8 +226,9 @@ body {
       font-variant: normal;
       font-size: var(--gcs-font-size-select);
 
-      background-color: color-mix(in hsl, var(--gcs-color-surface-bg), white 15%);
-      color: var(--gcs-color-surface-fg);
+      background-color: var(--gcs-color-control-bg);
+      border: 1px solid var(--gcs-color-control-border);
+      color: var(--gcs-color-control-fg);
 
       &:disabled {
         background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 30%);
@@ -229,15 +239,6 @@ body {
       &:focus {
         outline: 2px solid var(--gcs-color-focus-bg);
       }
-    }
-
-    select {
-      appearance: none;
-      padding-right: 1.25rem;
-      background-repeat: no-repeat;
-      background-position: right 0.25rem center;
-      background-size: 0.5rem;
-      background-image: var(--gcs-caret-down);
     }
   }
 }

@@ -12,6 +12,20 @@
 
   button {
     max-width: var(--gcs-input-height);
+
+    &[data-action='decrementPool'] {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    &[data-action='incrementPool'] {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+
+    &[data-action='resetPool'] {
+      margin-left: 0.5rem;
+    }
   }
 
   .pool-state {
