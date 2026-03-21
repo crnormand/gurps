@@ -1,11 +1,11 @@
 import { validateDice } from '@module/data/validators/dice-validator.js'
 
 describe('validateDice', () => {
-  test.each([['2d6+1'], ['2d6-1'], ['2d6−1'], ['2d6‐1']])('accepts valid modifier signs: %s', dice => {
+  test.each([['2d6+1'], ['2d6-1'], ['2d6‐1'], ['2d6–1'], ['2d6−1']])('accepts valid modifier signs: %s', dice => {
     expect(validateDice(dice)).toBe(true)
   })
 
-  test.each([['2d'], ['2d+1'], ['2d-1'], ['2d−1'], ['2d‐1']])(
+  test.each([['2d'], ['2d+1'], ['2d-1'], ['2d‐1'], ['2d–1'], ['2d−1']])(
     'accepts dice expressions without sides value: %s',
     dice => {
       expect(validateDice(dice)).toBe(true)
