@@ -2210,12 +2210,11 @@ if (!globalThis.GURPS) {
 
   Hooks.once('ready', async function () {
     // Popup a dialog informing the user about the one-way migration and asking them to confirm they want to proceed.
-    // If they cancel, shutdown the world (game.World.shutdown()) to prevent them from accidentally doing the migration.
+    // If they cancel, shutdown the world (game.shutDown()) to prevent them from accidentally doing the migration.
     const previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION)
 
-    GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
-
-    if (foundry.utils.isNewerVersion(GURPS.currentVersion, previousVersionString)) {
+    // Only show the warning if the migration version is less than 1.0.0.
+    if (foundry.utils.isNewerVersion('1.0.0', previousVersionString)) {
       if (game.user.isGM) {
         const warningText = game.i18n.localize('GURPS.migration.toV1_0_0.warningText')
         const proceedText = game.i18n.localize('GURPS.migration.toV1_0_0.proceedText')
@@ -2269,6 +2268,8 @@ if (!globalThis.GURPS) {
     initialize_i18nHelper()
 
     HitLocation.ready()
+
+    GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
 
     if (foundry.utils.isNewerVersion(GURPS.currentVersion, previousVersionString)) {
       console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
