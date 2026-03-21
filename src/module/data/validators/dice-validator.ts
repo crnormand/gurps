@@ -1,4 +1,4 @@
-export const DICE_PATTERN = /^(?<number>\d+)d(?<sides>\d+)?(?<modifier>[+\-\u2010\u2212]\d+)?$/i
+export const DICE_PATTERN = /^(?<number>\d+)d(?<sides>\d+)?(?<modifier>[+\-\u2010\u2013\u2212]\d+)?$/i
 
 // TODO: Consider using this function everywhere we need to validate a dice string.
 //
