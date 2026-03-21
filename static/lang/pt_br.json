@@ -952,6 +952,15 @@
         "progressMessage": "Aplicando migrações de Ator para a versão {version}, por favor aguarde...",
         "successMessage": "Migrações de Ator aplicadas com sucesso para a versão {version}."
       },
+      "toV1_0_0": {
+        "cancel": "Cancelar Migração",
+        "cancellationMessage": "Migração cancelada. Faça um backup do seu mundo e tente novamente quando estiver pronto.",
+        "notGMMessage": "Iniciar este Mundo acionará uma migração de mão única para o novo modelo de dados do GGA v1.0.0. Esta ação deve ser reservada apenas para o Mestre. Você será desconectado imediatamente.",
+        "proceed": "Prosseguir com a Migração",
+        "proceedText": "Deseja prosseguir com a migração?",
+        "title": "Migração GGA v1.0.0",
+        "warningText": "O GGA v1.0.0 fez mudanças significativas nas estruturas de dados subjacentes para oferecer suporte a novos recursos e melhorar o desempenho. Como resultado, existe um processo de migração sem volta que converterá o seu mundo existente para o novo formato. Esse processo não pode ser desfeito, então faça um backup do seu mundo antes de prosseguir."
+      },
       "item": {
         "progressMessage": "Aplicando migrações de Item para a versão {version}, por favor aguarde...",
         "successMessage": "Migrações de Item aplicadas com sucesso para a versão {version}."

@@ -2209,6 +2209,54 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
+    // Popup a dialog informing the user about the one-way migration and asking them to confirm they want to proceed.
+    // If they cancel, shutdown the world (game.World.shutdown()) to prevent them from accidentally doing the migration.
+    const previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION)
+
+    GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
+
+    if (foundry.utils.isNewerVersion(GURPS.currentVersion, previousVersionString)) {
+      if (game.user.isGM) {
+        const warningText = game.i18n.localize('GURPS.migration.toV1_0_0.warningText')
+        const proceedText = game.i18n.localize('GURPS.migration.toV1_0_0.proceedText')
+
+        const confirmed = await foundry.applications.api.DialogV2.wait({
+          window: { title: game.i18n.localize('GURPS.migration.toV1_0_0.title') },
+          content: `<p>${warningText}</p><p>${proceedText}</p>`,
+          position: { height: 'auto', width: 600 },
+          buttons: [
+            {
+              action: 'proceed',
+              icon: 'fas fa-check',
+              label: 'GURPS.migration.toV1_0_0.proceed',
+            },
+            {
+              action: 'cancel',
+              icon: 'fas fa-times',
+              label: 'GURPS.migration.toV1_0_0.cancel',
+            },
+          ],
+          default: 'cancel',
+        })
+
+        if (confirmed !== 'proceed') {
+          ui.notifications.warn(game.i18n.localize('GURPS.migration.toV1_0_0.cancellationMessage'))
+          game.shutDown()
+
+          return
+        }
+      } else {
+        const notGMText = game.i18n.localize('GURPS.migration.toV1_0_0.notGMMessage')
+
+        await foundry.applications.api.DialogV2.prompt({
+          window: { title: game.i18n.localize('GURPS.migration.toV1_0_0.title') },
+          content: `<p>${notGMText}</p>`,
+        })
+
+        game.logOut()
+      }
+    }
+
     // TODO Move to a new 'bucket' module?
     // Find the element with ID "chat-message".
     document.querySelector('#chat-message')?.addEventListener('drop', handleChatInputDrop)
@@ -2221,9 +2269,6 @@ if (!globalThis.GURPS) {
     initialize_i18nHelper()
 
     HitLocation.ready()
-
-    GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
-    let previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
 
     if (foundry.utils.isNewerVersion(GURPS.currentVersion, previousVersionString)) {
       console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
