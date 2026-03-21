@@ -1,4 +1,4 @@
-import { validateDice } from '@module/data/validators/dice-validator.js'
+import { diceValidate } from '@module/data/validators/dice-validator.js'
 import { isHTMLElement, isHTMLInputElement } from '@module/util/guards.js'
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
@@ -291,7 +291,7 @@ export function bindSecondaryStatsEdit(html: HTMLElement, actor: Actor.Implement
             // Content for these fields must be in the format xd+/-y, such as 2d+1 or 3d-2. Validate this before updating
             // the actor.
 
-            if (!validateDice(input.value)) {
+            if (!diceValidate(input.value)) {
               // If the input doesn't match the expected format, reset it to the current value and exit without updating
               // the actor.
               input.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')

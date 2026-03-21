@@ -891,6 +891,7 @@
     "importTraitToFoundryItem": "Foundry-Item",
     "importUpdate": "Aktualisieren",
     "injury": "Verletzung",
+    "invalidDice": "Der eingegebene Text entspricht keinem Würfelmuster.",
     "invalidUserForDamageWarning": "Nur SL dürfen Schaden zufügen.",
     "isFreeAction": "Ist eine freie Aktion.",
     "itemBonusText": "Füge On-the-Fly 'Bonus' Formel ein (eine pro Reihe) um die Werte von Attributen, Fertigkeiten, etc. to modifizieren.",
