@@ -275,7 +275,7 @@ export class EffectModifierPopout extends Application {
   activateListeners(html) {
     super.activateListeners(html)
 
-    GurpsWiring.hookupClickEvents(html)
+    GurpsWiring.hookupClickEvents(html[0])
 
     html.find('a.gurpslink').on('contextmenu', ev => this.onRightClick(ev))
     html.find('.gurpslink').on('contextmenu', ev => this.onRightClick(ev))

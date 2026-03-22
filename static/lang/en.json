@@ -891,6 +891,7 @@
     "importTraitToFoundryItem": "Foundry Item",
     "importUpdate": "Update",
     "injury": "Injury",
+    "invalidDice": "The provided text does not match any dice pattern.",
     "invalidUserForDamageWarning": "Only GMs are allowed to Apply Damage.",
     "isFreeAction": "Is a Free Action",
     "itemBonusText": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc.",

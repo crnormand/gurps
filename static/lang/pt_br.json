@@ -891,6 +891,7 @@
     "importTraitToFoundryItem": "Item do Foundry",
     "importUpdate": "Atualizar",
     "injury": "Lesão",
+    "invalidDice": "O texto fornecido não corresponde a nenhum padrão de dados.",
     "invalidUserForDamageWarning": "Somente MJs podem aplicar dano.",
     "isFreeAction": "É uma ação livre.",
     "itemBonusText": "Insira Fórmulas 'Bônus' On-the-Fly (uma por linha) para modificar valores de atributos, perícias, etc.",
