@@ -2209,7 +2209,7 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
-    // Popup a dialog informing the user about the one-way migration and asking them to confirm they want to proceed.
+    // Pop up a dialog informing the user about the one-way migration and asking them to confirm they want to proceed.
     // If they cancel, shutdown the world (game.shutDown()) to prevent them from accidentally doing the migration.
     const previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION)
     const NEW_DATAMODEL_VERSION = '1.0.0'
