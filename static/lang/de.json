@@ -953,6 +953,15 @@
         "progressMessage": "Charakter-Migrationen für Version {version} werden angewendet, bitte warten...",
         "successMessage": "Charakter-Migrationen für Version {version} erfolgreich angewendet."
       },
+      "toV1_0_0": {
+        "cancel": "Migration abbrechen",
+        "cancellationMessage": "Migration abgebrochen. Bitte sichern Sie Ihre Welt und versuchen Sie es erneut, wenn Sie bereit sind.",
+        "notGMMessage": "Der Start dieser Welt löst eine Einweg-Migration zum neuen GGA v1.0.0-Datenmodell aus. Diese Aktion sollte dem SL vorbehalten bleiben. Sie werden sofort abgemeldet.",
+        "proceed": "Migration fortsetzen",
+        "proceedText": "Möchten Sie mit der Migration fortfahren?",
+        "title": "GGA v1.0.0 Migration",
+        "warningText": "GGA v1.0.0 hat erhebliche Änderungen an den zugrunde liegenden Datenstrukturen vorgenommen, um neue Funktionen zu unterstützen und die Leistung zu verbessern. Daher gibt es einen Einweg-Migrationsprozess, der Ihre bestehende Welt in das neue Format umwandelt. Dieser Vorgang kann nicht rückgängig gemacht werden. Bitte sichern Sie Ihre Welt, bevor Sie fortfahren."
+      },
       "item": {
         "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
         "successMessage": "Objekt-Migrationen für Version {version} erfolgreich angewendet."
