@@ -1,7 +1,7 @@
-import { jest } from '@jest/globals'
 import { CharacterModel } from '@module/actor/data/character.js'
 import { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import { GurpsItemV2 } from '@module/item/gurps-item.js'
+import { vi, Mock } from 'vitest'
 
 describe('GurpsActorV2.moveItem', () => {
   let actor: GurpsActorV2<'characterV2'>
@@ -23,7 +23,7 @@ describe('GurpsActorV2.moveItem', () => {
     if (!global.game.settings) {
       // @ts-expect-error - game is a partial mock for testing
       global.game.settings = {
-        get: jest.fn().mockReturnValue(false), // Default to false for settings
+        get: vi.fn().mockReturnValue(false), // Default to false for settings
       }
     }
 
@@ -34,13 +34,13 @@ describe('GurpsActorV2.moveItem', () => {
     actor.system._source = { allNotes: [], moveV2: [] }
 
     // Mock updateEmbeddedDocuments to track calls
-    jest.spyOn(actor, 'updateEmbeddedDocuments').mockResolvedValue([] as any)
+    vi.spyOn(actor, 'updateEmbeddedDocuments').mockResolvedValue([] as any)
 
     // Mock resolveDropPosition to return 'before' by default
-    jest.spyOn(actor as any, 'resolveDropPosition').mockResolvedValue('before')
+    vi.spyOn(actor as any, 'resolveDropPosition').mockResolvedValue('before')
 
     // Mock toggleExpand
-    jest.spyOn(actor, 'toggleExpand').mockResolvedValue(undefined)
+    vi.spyOn(actor, 'toggleExpand').mockResolvedValue(undefined)
 
     equipmentData = {
       containedBy: null,
@@ -259,7 +259,7 @@ describe('GurpsActorV2.moveItem', () => {
 
     await actor.moveItem('system.equipmentV2.carried.0', 'system.equipmentV2.carried.2')
 
-    const calls = (actor.updateEmbeddedDocuments as jest.Mock).mock.calls[0]
+    const calls = (actor.updateEmbeddedDocuments as Mock).mock.calls[0]
     const updates = calls[1] as any[]
 
     // When moving eq1 before eq3, eq2.sort === 0, eq1.sort === 1, and eq3.sort === 2.
@@ -271,7 +271,7 @@ describe('GurpsActorV2.moveItem', () => {
   it('adds item to end of array when dropping on collection', async () => {
     await actor.moveItem('system.equipmentV2.carried.0', 'system.equipmentV2.carried')
 
-    const calls = (actor.updateEmbeddedDocuments as jest.Mock).mock.calls[0]
+    const calls = (actor.updateEmbeddedDocuments as Mock).mock.calls[0]
     const updates = calls[1] as any[]
 
     expectItemIdAtSortIndex(updates, 'eq2', 0)
@@ -362,7 +362,7 @@ describe('GurpsActorV2.moveItem', () => {
     setDropPosition(actor, 'inside')
 
     // Mock createEmbeddedDocuments to track the new item creation
-    const createSpy = jest.spyOn(actor, 'createEmbeddedDocuments').mockResolvedValue([
+    const createSpy = vi.spyOn(actor, 'createEmbeddedDocuments').mockResolvedValue([
       {
         id: 'eq1-split',
         _id: 'eq1-split',
@@ -392,7 +392,7 @@ describe('GurpsActorV2.moveItem', () => {
     )
 
     // Verify updateEmbeddedDocuments was called to reduce the source item count
-    const updateCalls = (actor.updateEmbeddedDocuments as jest.Mock).mock.calls
+    const updateCalls = (actor.updateEmbeddedDocuments as Mock).mock.calls
     const countUpdateCall = updateCalls.find(
       (call: any) =>
         call[0] === 'Item' && call[1].some((update: any) => update._id === 'eq1' && update.system?.count === 3)
@@ -407,9 +407,9 @@ describe('GurpsActorV2.moveItem', () => {
     actor.system.allEquipmentV2[0].system.count = 5
 
     // Mock promptEquipmentQuantity to return null (user cancelled)
-    jest.spyOn(actor as any, 'promptEquipmentQuantity').mockResolvedValue(null)
+    vi.spyOn(actor as any, 'promptEquipmentQuantity').mockResolvedValue(null)
 
-    const createSpy = jest.spyOn(actor, 'createEmbeddedDocuments')
+    const createSpy = vi.spyOn(actor, 'createEmbeddedDocuments')
 
     await actor.moveItem('system.equipmentV2.carried.0', 'system.equipmentV2.carried.1', true)
 
@@ -423,7 +423,7 @@ describe('GurpsActorV2.moveItem', () => {
     setDropPosition(actor, 'inside')
     setEquipmentQuantity(actor, 0)
 
-    const createSpy = jest.spyOn(actor, 'createEmbeddedDocuments')
+    const createSpy = vi.spyOn(actor, 'createEmbeddedDocuments')
 
     await actor.moveItem('system.equipmentV2.carried.0', 'system.equipmentV2.carried.1', true)
 
@@ -436,8 +436,8 @@ describe('GurpsActorV2.moveItem', () => {
 
     actor.system.allEquipmentV2[0].system.count = 1
 
-    const promptSpy = jest.spyOn(actor as any, 'promptEquipmentQuantity')
-    const createSpy = jest.spyOn(actor, 'createEmbeddedDocuments')
+    const promptSpy = vi.spyOn(actor as any, 'promptEquipmentQuantity')
+    const createSpy = vi.spyOn(actor, 'createEmbeddedDocuments')
 
     await actor.moveItem('system.equipmentV2.carried.0', 'system.equipmentV2.carried.1', true)
 
@@ -451,7 +451,7 @@ describe('GurpsActorV2.moveItem', () => {
     setDropPosition(actor, 'inside')
     setEquipmentQuantity(actor, 5)
 
-    const createSpy = jest.spyOn(actor, 'createEmbeddedDocuments')
+    const createSpy = vi.spyOn(actor, 'createEmbeddedDocuments')
 
     await actor.moveItem('system.equipmentV2.carried.0', 'system.equipmentV2.carried.1', true)
 
@@ -463,11 +463,11 @@ describe('GurpsActorV2.moveItem', () => {
 
 // Helper functions
 function setEquipmentQuantity(actor: GurpsActorV2<'characterV2'>, value: number) {
-  jest.spyOn(actor as any, 'promptEquipmentQuantity').mockResolvedValue(value)
+  vi.spyOn(actor as any, 'promptEquipmentQuantity').mockResolvedValue(value)
 }
 
 function getUpdates(actor: GurpsActorV2<'characterV2'>) {
-  const calls = (actor.updateEmbeddedDocuments as jest.Mock).mock.calls[0]
+  const calls = (actor.updateEmbeddedDocuments as Mock).mock.calls[0]
   const updates = calls[1] as any[]
 
   return updates
@@ -478,5 +478,5 @@ function expectItemIdAtSortIndex(updates: any[], itemId: string, sortIndex: numb
 }
 
 function setDropPosition(actor: GurpsActorV2<'characterV2'>, value: string | null) {
-  jest.spyOn(actor as any, 'resolveDropPosition').mockResolvedValue(value)
+  vi.spyOn(actor as any, 'resolveDropPosition').mockResolvedValue(value)
 }

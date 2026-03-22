@@ -59,7 +59,7 @@ module/
 - **lib/**: Third-party JavaScript libraries independent of Foundry
 - **utils/**: Foundry-dependent utilities
 - **scripts/**: Javascript libraries dependent on Foundry but not part of the module
-- **test/**: Unit tests using Jest with TypeScript support
+- **test/**: Unit tests using Vitest with TypeScript support
 
 ## Coding Standards and Patterns
 
@@ -268,9 +268,9 @@ const name = actor.name || 'Unknown Actor'
 
 #### Unit Tests
 
-- Use Jest with TypeScript support via ts-jest and experimental VM modules
+- Use Vitest with TypeScript support
 - Place tests in `test/` directory
-- Mock Foundry globals in `test/jest.setup.js`
+- Mock Foundry globals in `test/vitest.setup.ts`
 - Test files should end with `.test.ts` or `.test.js`
 - Use table-driven tests (test.each) for multiple test cases
 
@@ -325,16 +325,16 @@ global.foundry = {
 }
 
 // Mock embedded document operations
-actor.updateEmbeddedDocuments = jest.fn().mockResolvedValue([])
-actor.createEmbeddedDocuments = jest.fn().mockResolvedValue([])
-actor.deleteEmbeddedDocuments = jest.fn().mockResolvedValue([])
+actor.updateEmbeddedDocuments = vi.fn().mockResolvedValue([])
+actor.createEmbeddedDocuments = vi.fn().mockResolvedValue([])
+actor.deleteEmbeddedDocuments = vi.fn().mockResolvedValue([])
 
 // Mock game.settings for tests
 // @ts-expect-error
 if (!global.game.settings) {
   // @ts-expect-error
   global.game.settings = {
-    get: jest.fn().mockReturnValue(false),
+    get: vi.fn().mockReturnValue(false),
   }
 }
 ```
@@ -346,31 +346,30 @@ npm run test      # Run tests once
 npm run tdd       # Run tests with coverage and watch mode
 ```
 
-#### Jest Configuration
+#### Vitest Configuration
 
-The project uses Jest with experimental VM modules:
+The project uses Vitest:
 
-- **Preset**: ts-jest/presets/default-esm
 - **Environment**: node
-- **Extensions as ESM**: .ts, .tsx
-- **Module name mapper**: Maps .js imports to TypeScript files, stubs miscellaneous-settings
-- **Transform**: ts-jest with useESM enabled
-- **Setup files**: test/jest.setup.js (excluded from TypeScript compilation)
+- **Globals**: enabled
+- **Setup files**: test/vitest.setup.ts
+- **Path aliases**: mirrors tsconfig.json (@module, @lib, @util, @rules, @gurps-types)
 
-Key configuration:
+Key configuration (`vitest.config.mjs`):
 
 ```javascript
-export default {
-  preset: 'ts-jest/presets/default-esm',
-  testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  moduleNameMapper: {
-    '^(.*)\\.js$': '$1',
-    '^module/(.*)$': '<rootDir>/module/$1',
-    '^../../lib/miscellaneous-settings\\.js$': '<rootDir>/test/stubs/miscellaneous-settings-stub.js',
+export default defineConfig({
+  resolve: {
+    alias: {
+      /* mirrors tsconfig paths */
+    },
   },
-  setupFiles: ['./test/jest.setup.js'],
-}
+  test: {
+    globals: true,
+    environment: 'node',
+    setupFiles: ['./test/vitest.setup.ts'],
+  },
+})
 ```
 
 #### Current Test Coverage
@@ -403,7 +402,7 @@ The project includes tests organized to mirror the module structure:
 
 Test infrastructure:
 
-- `test/jest.setup.js` - Foundry VTT API mocking (TypeDataModel, Actor, Item, etc.)
+- `test/vitest.setup.ts` - Foundry VTT API mocking (TypeDataModel, Actor, Item, etc.)
 - `test/foundry-utils/` - Foundry collection mocks
 - `test/stubs/` - Stub implementations for dependencies
 
@@ -439,13 +438,13 @@ The project uses strict TypeScript settings:
 - **Module**: NodeNext with NodeNext resolution
 - **Strict mode**: Enabled with noImplicitAny, strictNullChecks, strictFunctionTypes
 - **Output**: dist/ directory with source maps
-- **Types**: Includes jquery, jest, and fvtt-types
-- **Exclusions**: build/, node_modules/, dist/, dev-utilities/, scripts/, test/jest.setup.js
+- **Types**: Includes jquery and fvtt-types
+- **Includes/Excludes**: Refer to `tsconfig.json` and `tsconfig.eslint.json` for authoritative `include`/`exclude` settings; notably, `src/lib/**/*` is excluded from TypeScript compilation and `test/` files are not excluded by default.
 
 Key TypeScript patterns:
 
 - Use `@ts-expect-error` for intentional type violations (e.g., accessing global.game in tests)
-- Exclude Jest setup files from compilation to avoid namespace conflicts
+- Exclude Vitest setup files from compilation to avoid namespace conflicts
 - Global type definitions in `global.d.ts` extend Foundry types
 
 ### File Organization
