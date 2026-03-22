@@ -1,6 +1,6 @@
 import { diceNormalize, diceParse, diceValidate } from '@module/data/validators/dice-validator.js'
 
-describe('validateDice', () => {
+describe('diceValidate', () => {
   test.each([['2d6+1'], ['2d6-1'], ['2d6‐1'], ['2d6–1'], ['2d6−1']])('accepts valid modifier signs: %s', dice => {
     expect(diceValidate(dice)).toBe(true)
   })
