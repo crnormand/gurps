@@ -4,7 +4,8 @@
     "rootDir": "..",
     "baseUrl": "../src",
     "noEmit": true,
-    "types": ["jquery", "jest", "fvtt-types", "node"]
+    "types": ["jquery", "vitest/globals", "fvtt-types", "node"],
+    "isolatedModules": true
   },
   "include": ["./**/*.ts", "./**/*.tsx", "../src/**/*.ts", "../src/**/*.tsx"]
 }

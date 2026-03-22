@@ -1,6 +1,6 @@
-import { jest } from '@jest/globals'
 import { migrateTemplateToV2, migrateTrackerInstanceToV2 } from '@module/resource-tracker/migration.js'
 import { IResourceTracker } from '@module/resource-tracker/types.js'
+import { vi } from 'vitest'
 
 const legacyTrackerInstance = {
   name: 'Control Points',
@@ -73,11 +73,10 @@ const legacyTemplate = {
 describe('migrateTemplateToV2', () => {
   beforeEach(() => {
     if (!foundry.utils.randomID) {
-      // @ts-expect-error - Mocking a function that may not exist in the test environment.
-      foundry.utils.randomID = jest.fn()
+      foundry.utils.randomID = vi.fn()
     }
 
-    jest.spyOn(foundry.utils, 'randomID').mockImplementation(() => `mocked-id-${counter++}`)
+    vi.spyOn(foundry.utils, 'randomID').mockImplementation(() => `mocked-id-${counter++}`)
   })
 
   it('maps template fields to the v2 shape', () => {
@@ -122,11 +121,10 @@ describe('migrateTemplateToV2', () => {
 describe('migrateTrackerInstanceToV2', () => {
   beforeEach(() => {
     if (!foundry.utils.randomID) {
-      // @ts-expect-error - Mocking a function that may not exist in the test environment.
-      foundry.utils.randomID = jest.fn()
+      foundry.utils.randomID = vi.fn()
     }
 
-    jest.spyOn(foundry.utils, 'randomID').mockImplementation(() => `mocked-id-${counter++}`)
+    vi.spyOn(foundry.utils, 'randomID').mockImplementation(() => `mocked-id-${counter++}`)
   })
 
   it('creates a TrackerInstance from legacy tracker data', async () => {

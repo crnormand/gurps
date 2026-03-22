@@ -1,11 +1,11 @@
-import { jest } from '@jest/globals'
 import { migrateLegacySettings, SettingMigration } from '@module/util/migration/settings-migration.js'
+import { vi, Mock } from 'vitest'
 
 const globalMock = globalThis as typeof globalThis & {
   game: {
     settings?: {
       storage: Map<string, any>
-      set: jest.Mock<(...args: [string, string, unknown]) => Promise<void>>
+      set: Mock<(...args: [string, string, unknown]) => Promise<void>>
     }
   }
   GURPS: any
@@ -14,10 +14,10 @@ const globalMock = globalThis as typeof globalThis & {
 describe('migrateLegacySettings', () => {
   let mockStorage: any
   let mockSettings: Map<string, any>
-  let consoleWarnSpy: jest.SpiedFunction<typeof console.warn>
-  let consoleLogSpy: jest.SpiedFunction<typeof console.log>
-  let consoleErrorSpy: jest.SpiedFunction<typeof console.error>
-  let consoleDebugSpy: jest.SpiedFunction<typeof console.debug>
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+  let consoleDebugSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
     // Initialize globals
@@ -25,23 +25,23 @@ describe('migrateLegacySettings', () => {
     globalMock.GURPS = globalMock.GURPS || { SYSTEM_NAME: 'gurps' }
 
     // Setup console spies
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => undefined)
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
-    consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation(() => undefined)
+    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined)
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    consoleDebugSpy = vi.spyOn(console, 'debug').mockImplementation(() => undefined)
 
     // Create mock storage
     mockSettings = new Map()
     mockStorage = {
       contents: [],
       get: (id: string) => mockSettings.get(id),
-      set: jest.fn((id: string, data: any) => mockSettings.set(id, data)),
+      set: vi.fn((id: string, data: any) => mockSettings.set(id, data)),
     }
 
     // Mock game.settings
     globalMock.game.settings = {
       storage: new Map([['world', mockStorage]]),
-      set: jest.fn<(...args: [string, string, unknown]) => Promise<void>>().mockResolvedValue(undefined),
+      set: vi.fn<(namespace: string, key: string, value: unknown) => Promise<void>>().mockResolvedValue(undefined),
     }
   })
 
@@ -57,7 +57,7 @@ describe('migrateLegacySettings', () => {
       key,
       value,
       id,
-      delete: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      delete: vi.fn<() => Promise<void>>().mockResolvedValue(undefined),
     } as unknown as foundry.documents.Setting
 
     mockSettings.set(id, setting)
@@ -283,8 +283,8 @@ describe('migrateLegacySettings', () => {
       mockStorage.contents = [setting1, setting2]
 
       // Mock game.settings.set to fail on second call
-      globalMock.game.settings!.set = jest
-        .fn<(...args: [string, string, unknown]) => Promise<void>>()
+      globalMock.game.settings!.set = vi
+        .fn<(namespace: string, key: string, value: unknown) => Promise<void>>()
         .mockResolvedValueOnce(undefined)
         .mockRejectedValueOnce(new Error('Settings write failed'))
 
@@ -349,7 +349,7 @@ describe('migrateLegacySettings', () => {
     it('rejects when deleting a migrated legacy setting fails', async () => {
       const setting = createMockSetting('gurps.settingToDelete', 'value', 'id-1')
 
-      ;(setting as unknown as { delete: jest.Mock<() => Promise<void>> }).delete.mockRejectedValueOnce(
+      ;(setting as unknown as { delete: Mock<() => Promise<void>> }).delete.mockRejectedValueOnce(
         new Error('Delete failed')
       )
       mockStorage.contents = [setting]
@@ -530,7 +530,7 @@ describe('migrateLegacySettings', () => {
     it('returns early when storage is unavailable', async () => {
       globalMock.game.settings = {
         storage: new Map(), // No 'world' storage
-        set: jest.fn<(...args: [string, string, unknown]) => Promise<void>>(),
+        set: vi.fn<(namespace: string, key: string, value: unknown) => Promise<void>>(),
       }
 
       const migrations: SettingMigration[] = [
