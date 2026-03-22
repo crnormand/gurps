@@ -8,7 +8,7 @@ import { MoveModeV2 } from './data/move-mode.js'
 import { NoteV2 } from './data/note.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
 
-async function runMigration() {
+async function runMigration(): Promise<void> {
   if (!game.user || !game.user.isGM) return
 
   const migrationVersion = game.settings!.get(GURPS.SYSTEM_NAME, 'migration-version')
