@@ -16,9 +16,9 @@ export type DiceData = {
 // TODO: Decide if we will persist all variations of the modifier sign or if we will normalize them to a single character.
 
 /**
- * Validate a dice string in the format of "XdY+Z" where X is the number of dice, Y is the number of sides, and Z is an
- * optional modifier. 'X' is required and must be a positive integer, 'Y' is required and must be a positive integer,
- * and 'Z' is optional and can be either positive or negative.
+ * Validate a dice string in the format of "XdY+Z✕A" where X is the number of dice, Y is the number of sides, and Z is
+ * an optional modifier and A is an optional multiplier. 'X' is required and must be a positive integer, 'Y' is
+ * optional and must be a positive integer if provided, and 'Z' is optional and can be either positive or negative.
  */
 export function diceValidate(dice: string, _options = {}): boolean | void {
   if (typeof dice !== 'string') {
@@ -44,11 +44,13 @@ export function diceValidate(dice: string, _options = {}): boolean | void {
 }
 
 /**
- * Parse a dice string in the format of "XdY+Z" where X is the number of dice, Y is the number of sides, and Z is an
- * optional modifier. 'X' is required and must be a positive integer, 'Y' is required and must be a positive integer,
- * and 'Z' is optional and can be either positive or negative.
+ * Parse a dice string in the format of "XdY+Z✕A" where X is the number of dice, Y is the number of sides, and Z is
+ * an optional modifier and A is an optional multiplier. 'X' is required and must be a positive integer, 'Y' is
+ * optional and must be a positive integer if provided, and 'Z' is optional and can be either positive or negative.
+ *
  * @param dice
- * @returns
+ * @returns {DiceData | null} An object containing the count, sides, modifier, and multiplier if the input is valid, or
+ *   null if the input is invalid.
  */
 export function diceParse(dice: string): DiceData | null {
   if (typeof dice !== 'string') {
@@ -77,7 +79,16 @@ export function diceParse(dice: string): DiceData | null {
   return { count, sides, modifier, multiplier }
 }
 
-export function diceNormalize(dice: string): string | null {
+/**
+ * Normalize a dice string by parsing it and then reformatting it in a consistent way. The normalized format will be
+ * "XdY+Z✕A" where X is the number of dice, Y is the number of sides, Z is the modifier (if any), and A is the
+ * multiplier (if any). Modifiers will be normalized to use lowercase 'd', '+' for positive values and '-' for negative
+ * values, and multipliers will be normalized to use '✕'.
+ *
+ * @param dice
+ * @returns {string | null} A normalized dice string if the input is valid, or null if the input is invalid.
+ */
+export function diceNormalize(dice: string, useGurpsFormat = true): string | null {
   const parsedDice = diceParse(dice)
 
   if (!parsedDice) {
@@ -88,5 +99,7 @@ export function diceNormalize(dice: string): string | null {
     parsedDice.modifier > 0 ? `+${parsedDice.modifier}` : parsedDice.modifier < 0 ? `${parsedDice.modifier}` : ''
   const multiplier = parsedDice.multiplier !== 1 ? `✕${parsedDice.multiplier}` : ''
 
-  return `${parsedDice.count}d${parsedDice.sides}${modifier}${multiplier}`
+  const sides = useGurpsFormat && parsedDice.sides === 6 ? '' : parsedDice.sides
+
+  return `${parsedDice.count}d${sides}${modifier}${multiplier}`
 }

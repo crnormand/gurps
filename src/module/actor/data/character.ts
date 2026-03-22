@@ -4,7 +4,7 @@ import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
-import { diceValidate } from '@module/data/validators/dice-validator.js'
+import DiceField from '@module/data/fields/dice-field.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
@@ -1277,14 +1277,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             {
               symbol: 'fa-solid fa-sword',
               label: game.i18n?.localize('GURPS.thrust') ?? '',
-              value: this.thrust,
+              value: this.thrust as string,
               otf: 'thrust',
               isOTF: true,
             },
             {
               symbol: 'fa-solid fa-mace',
               label: game.i18n?.localize('GURPS.swing') ?? '',
-              value: this.swing,
+              value: this.swing as string,
               otf: 'swing',
               isOTF: true,
             },
@@ -1765,21 +1765,9 @@ const characterSchema = () => {
     touch: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.touch' }),
 
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    thrust: new fields.StringField({
-      required: true,
-      nullable: false,
-      label: 'GURPS.thrust',
-      validate: diceValidate,
-      validationError: 'GURPS.invalidDice',
-    }),
+    thrust: new DiceField({ required: true, nullable: false, label: 'GURPS.thrust' }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    swing: new fields.StringField({
-      required: true,
-      nullable: false,
-      label: 'GURPS.swing',
-      validate: diceValidate,
-      validationError: 'GURPS.invalidDice',
-    }),
+    swing: new DiceField({ required: true, nullable: false, label: 'GURPS.swing' }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
     // NOTE: Change from previous schema; the encumbrance data is derived and only the current level is stored.
