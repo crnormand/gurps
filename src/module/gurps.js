@@ -2254,6 +2254,7 @@ if (!globalThis.GURPS) {
         })
 
         await game.logOut()
+
         return
       }
     }
