@@ -13,14 +13,12 @@ export type DiceData = {
 
 // TODO: Consider using this function everywhere we need to validate a dice string.
 
-// TODO: Decide if we will persist all variations of the modifier sign or if we will normalize them to a single character.
-
 /**
  * Validate a dice string in the format of "XdY+Z✕A" where X is the number of dice, Y is the number of sides, and Z is
  * an optional modifier and A is an optional multiplier. 'X' is required and must be a positive integer, 'Y' is
  * optional and must be a positive integer if provided, and 'Z' is optional and can be either positive or negative.
  */
-export function diceValidate(dice: string, _options = {}): boolean | void {
+export function diceValidate(dice: string, _options = {}): boolean {
   if (typeof dice !== 'string') {
     return false
   }
@@ -64,17 +62,18 @@ export function diceParse(dice: string): DiceData | null {
     return null
   }
 
-  const count = match.groups!.count ? parseInt(match.groups!.count) : 1
-  const sides = match.groups!.sides ? parseInt(match.groups!.sides) : 6
+  const count = match.groups!.count ? parseInt(match.groups!.count, 10) : 1
+  const sides = match.groups!.sides ? parseInt(match.groups!.sides, 10) : 6
 
   if (count <= 0 || sides <= 0) {
     return null
   }
 
-  const modifier = match.groups!.mod
-    ? parseInt(match.groups!.mod.replace(/[\u2010\u2013\u2212]/g, '-').replace(/\s+/g, ''))
-    : 0
-  const multiplier = match.groups!.mult ? parseInt(match.groups!.mult.replace(/^[✕xX]\s*/, '')) : 1
+  const modifierValue = match.groups!.mod?.replace(/[\u2010\u2013\u2212]/g, '-') ?? '0'
+  const modifier = parseInt(modifierValue.replace(/\s+/g, ''), 10)
+
+  const multiplierValue = match.groups!.mult?.replace(/^[✕xX]\s*/, '') ?? '1'
+  const multiplier = parseInt(multiplierValue, 10)
 
   return { count, sides, modifier, multiplier }
 }
