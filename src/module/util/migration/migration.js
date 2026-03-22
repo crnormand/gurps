@@ -44,6 +44,12 @@ export class Migration {
   }
 
   async showConfirmationDialogIfAutoAddIsTrue() {
+    const MIGRATION_RELEASE = '0.18.1'
+
+    if (this.currentVersion.isHigherThan(MIGRATION_RELEASE)) {
+      return false
+    }
+
     if (this.migrationVersion.isHigherThan(this.currentVersion)) {
       const taggedModifiers = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
 
@@ -60,6 +66,12 @@ export class Migration {
   }
 
   async migrateBadDamageChatMessages() {
+    const MIGRATION_RELEASE = '0.18.1'
+
+    if (this.currentVersion.isHigherThan(MIGRATION_RELEASE)) {
+      return false
+    }
+
     const chatMessages = game.messages.contents.filter(message =>
       message.content.includes('<div class="damage-chat-message">')
     )
