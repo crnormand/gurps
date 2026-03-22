@@ -2240,7 +2240,7 @@ if (!globalThis.GURPS) {
 
         if (confirmed !== 'proceed') {
           ui.notifications.warn(game.i18n.localize('GURPS.migration.toV1_0_0.cancellationMessage'))
-          game.shutDown()
+          await game.shutDown()
 
           return
         }
@@ -2252,7 +2252,7 @@ if (!globalThis.GURPS) {
           content: `<p>${notGMText}</p>`,
         })
 
-        game.logOut()
+        await game.logOut()
       }
     }
 
