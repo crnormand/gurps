@@ -50,19 +50,17 @@ export class Migration {
       return false
     }
 
-    if (this.migrationVersion.isHigherThan(this.currentVersion)) {
-      const taggedModifiers = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const taggedModifiers = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
 
-      if (!taggedModifiers) {
-        return false
-      }
-
-      if (taggedModifiers.autoAdd) {
-        game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG, true)
-      }
-
-      return true
+    if (!taggedModifiers) {
+      return false
     }
+
+    if (taggedModifiers.autoAdd) {
+      game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG, true)
+    }
+
+    return true
   }
 
   async migrateBadDamageChatMessages() {
