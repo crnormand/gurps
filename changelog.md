@@ -1,10 +1,10 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.14
+## Release 0.18.14 03/22/2026
 
 ### Features
 
-- Automate Foundry publishing when creating a new release.
+- Automate Foundry publishing when creating a new release (not user-facing).
 
 ### Bugfixes
 
