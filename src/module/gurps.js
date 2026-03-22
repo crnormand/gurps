@@ -2280,8 +2280,8 @@ if (!globalThis.GURPS) {
 
     // Run any needed migrations.
     Migration.run()
-    Object.values(GURPS.modules).forEach(mod => {
-      if (mod.migrate) mod.migrate()
+    Object.values(GURPS.modules).forEach(async mod => {
+      if (mod.migrate) await mod.migrate()
     })
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the

@@ -44,22 +44,32 @@ export class Migration {
   }
 
   async showConfirmationDialogIfAutoAddIsTrue() {
-    if (this.migrationVersion.isHigherThan(this.currentVersion)) {
-      const taggedModifiers = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+    const MIGRATION_RELEASE = '0.18.1'
 
-      if (!taggedModifiers) {
-        return false
-      }
-
-      if (taggedModifiers.autoAdd) {
-        game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG, true)
-      }
-
-      return true
+    if (this.currentVersion.isHigherThan(MIGRATION_RELEASE)) {
+      return false
     }
+
+    const taggedModifiers = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+
+    if (!taggedModifiers) {
+      return false
+    }
+
+    if (taggedModifiers.autoAdd) {
+      game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG, true)
+    }
+
+    return true
   }
 
   async migrateBadDamageChatMessages() {
+    const MIGRATION_RELEASE = '0.18.1'
+
+    if (this.currentVersion.isHigherThan(MIGRATION_RELEASE)) {
+      return false
+    }
+
     const chatMessages = game.messages.contents.filter(message =>
       message.content.includes('<div class="damage-chat-message">')
     )
