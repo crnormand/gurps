@@ -891,7 +891,7 @@
     "importTraitToFoundryItem": "Objet Foundry",
     "importUpdate": "Mettre à jour",
     "injury": "Blessure",
-    "invalidDice": "Le texte fourni ne correspond à aucun format de dés.",
+    "invalidDice": "Le texte fourni ({text}) ne correspond à aucun format de dés.",
     "invalidUserForDamageWarning": "Seuls les MJ sont autorisés à Appliquer des Dégâts.",
     "isFreeAction": "Est une action gratuite.",
     "itemBonusText": "Entrer les Formules A la Volée 'Bonus' (une par ligne) pour modifier les valeurs des caractéristiques, compétences, etc.",

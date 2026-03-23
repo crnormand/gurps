@@ -228,7 +228,7 @@ function getMigratedActorData(
 
     const newMelee = migrateMeleeWeapon(weapon, _id)
 
-    migrationItem.system!.actions![_id] = newMelee
+    migrationItemSystem!.actions![_id] = newMelee
   })
 
   Object.values(system.ranged).forEach((weapon: Ranged) => {
@@ -236,7 +236,7 @@ function getMigratedActorData(
 
     const newRanged = migrateRangedWeapon(weapon, _id)
 
-    migrationItem.system!.actions![_id] = newRanged
+    migrationItemSystem!.actions![_id] = newRanged
   })
 
   migrationItem.system = migrationItemSystem
@@ -248,7 +248,7 @@ function getMigratedActorData(
     type: 'characterV2',
     img: oldActor.img,
     name: oldActor.name,
-    system: migrateActorSystem(oldActor.system as ActorV1Model),
+    system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name),
     items,
   }
 
@@ -258,8 +258,12 @@ function getMigratedActorData(
 /* ---------------------------------------- */
 
 function migrateActorSystem(
-  oldData: ActorV1Model
+  oldData: ActorV1Model,
+  actorName?: string
 ): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> {
+  if (typeof oldData.conditions.move === 'string')
+    console.warn(`MIGRATE: Actor ${actorName} oldData.conditions.move: ${oldData.conditions.move}`)
+
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
     attributes: oldData.attributes,
     HP: oldData.HP,
@@ -333,7 +337,7 @@ function migrateActorSystem(
       },
       posture: oldData.conditions.posture,
       maneuver: oldData.conditions.maneuver,
-      // TODO: Check why this is number | string
+      // TODO: Check why this is number | string -- perhaps it can contain number of yards of movement (number) or "STEP" (string)?
       move: String(oldData.conditions.move),
       self: {
         modifiers: [],
@@ -360,6 +364,9 @@ function migrateActorSystem(
   // Check for missing fields or other bad info
   if (!newData.profile?.sizemod || isNaN(newData.profile.sizemod)) {
     // Should never happen but better than a non-null assertion.
+    console.warn(
+      `MIGRATE: Actor ${actorName} is missing sizemod or has invalid sizemod. Defaulting to 0. Sizemod value: ${newData.profile?.sizemod}`
+    )
     newData.profile ||= {}
     newData.profile.sizemod = 0
   }

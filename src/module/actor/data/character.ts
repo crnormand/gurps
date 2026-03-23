@@ -1765,9 +1765,9 @@ const characterSchema = () => {
     touch: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.touch' }),
 
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    thrust: new DiceField({ required: true, nullable: false, label: 'GURPS.thrust' }),
+    thrust: new DiceField({ required: true, nullable: false, blank: true, label: 'GURPS.thrust' }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    swing: new DiceField({ required: true, nullable: false, label: 'GURPS.swing' }),
+    swing: new DiceField({ required: true, nullable: false, blank: true, label: 'GURPS.swing' }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
     // NOTE: Change from previous schema; the encumbrance data is derived and only the current level is stored.
