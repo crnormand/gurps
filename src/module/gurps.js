@@ -997,7 +997,7 @@ if (!globalThis.GURPS) {
       if (!!action.isMelee && !action.isRanged) prefix = 'M:'
       if (!action.isMelee && !!action.isRanged) prefix = 'R:'
       let thing = stripBracketContents(att.name)
-      let qn = quotedAttackName({ name: thing, mode: att.mode })
+      let qn = quotedAttackName({ displayName: thing, mode: att.mode })
       let aid = actor ? `@${actor.id}@` : ''
       const chatthing = `[${aid}${prefix}${qn}]`
       const followon = `[${aid}D:${qn}]`
@@ -1666,7 +1666,11 @@ if (!globalThis.GURPS) {
       // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
       let text = element.dataset.otf ? element.dataset.otf : element.innerText.trim()
 
-      let parts = text.includes(',') ? text.split(',') : [text]
+      let parts = [text]
+
+      // If text starts with "M:", "R:", or "D:", its an attack roll that only specifies the weapon, not the dice.
+      // Don't split it.
+      if (!text.match(/^[MRD]:/)) parts = text.includes(',') ? text.split(',') : [text]
 
       for (let part of parts) {
         //let result = parseForRollOrDamage(part.trim())

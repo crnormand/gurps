@@ -18,6 +18,8 @@
       </div>
       {{#each (attackflatlist items)}}
         <div class='ms-attack-row' data-key='{{../path}}.{{@key}}'>
+          {{debug ../otfPrefix}}
+
           <span class='ms-attack-name'>{{>dice-button otf=(quotedAttackName ../otfPrefix this) text=this.displayName}}</span>
           <span class='ms-attack-usage'>{{this.mode}}</span>
           <span class='ms-attack-level'>{{this.level}}</span>

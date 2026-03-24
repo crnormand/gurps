@@ -80,7 +80,7 @@ class RangedV1 {
   }
 
   get name() {
-    return this.rangedV2.name
+    return this.rangedV2._displayName
   }
 
   get displayName() {
