@@ -228,7 +228,8 @@ function getMigratedActorData(
 
     const newMelee = migrateMeleeWeapon(weapon, _id)
 
-    migrationItemSystem!.actions![_id] = newMelee
+    migrationItemSystem.actions ||= {}
+    migrationItemSystem.actions[_id] = newMelee
   })
 
   Object.values(system.ranged).forEach((weapon: Ranged) => {
@@ -236,7 +237,8 @@ function getMigratedActorData(
 
     const newRanged = migrateRangedWeapon(weapon, _id)
 
-    migrationItemSystem!.actions![_id] = newRanged
+    migrationItemSystem.actions ||= {}
+    migrationItemSystem.actions[_id] = newRanged
   })
 
   migrationItem.system = migrationItemSystem
