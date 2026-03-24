@@ -299,37 +299,37 @@ describe('utilities', () => {
 
   describe('quotedAttackName', () => {
     test('should return quoted attack name', () => {
-      const item = { name: 'Attack', mode: 'Mode' }
+      const item = { displayName: 'Attack', mode: 'Mode' }
 
       expect(utilities.quotedAttackName(item)).toBe(`"Attack (Mode)"`)
     })
 
     test('should return quoted attack name without mode', () => {
-      const item = { name: 'Attack' }
+      const item = { displayName: 'Attack' }
 
       expect(utilities.quotedAttackName(item)).toBe(`"Attack"`)
     })
 
     test('should handle quoted item name', () => {
-      const item = { name: 'Sword "Saethors Bane"' }
+      const item = { displayName: 'Sword "Saethors Bane"' }
 
       expect(utilities.quotedAttackName(item)).toBe(`'Sword "Saethors Bane"'`)
     })
 
     test('should handle single quotes in item name', () => {
-      const item = { name: "Sword 'Saethors Bane'" }
+      const item = { displayName: "Sword 'Saethors Bane'" }
 
       expect(utilities.quotedAttackName(item)).toBe(`"Sword 'Saethors Bane'"`)
     })
 
     test('should handle mixed quotes in item name', () => {
-      const item = { name: `Sword "Saethor's Bane"` }
+      const item = { displayName: `Sword "Saethor's Bane"` }
 
       expect(utilities.quotedAttackName(item)).toBe(`'Sword "Saethor\\'s Bane"'`)
     })
 
     test('Dashes in Ranged Weapon names used as Modifiers', () => {
-      const item = { name: `AK-98` }
+      const item = { displayName: `AK-98` }
 
       expect(utilities.quotedAttackName(item)).toBe(`"AK-98"`)
     })

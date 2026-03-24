@@ -623,7 +623,7 @@ const SINGLE_QUOTE = "'"
 
 /**
  * Returns the attack name quoted appropriately, depending on whether it contains double quotes.
- * @param {{ name: string, mode?: (string|null) }} item
+ * @param {{ displayName: string, mode?: (string|null) }} item
  * @returns {string}
  */
 export function quotedAttackName(item) {
