@@ -767,7 +767,6 @@ Portrait will not be imported.`
       actions: {},
       _reactions: {},
       _conditionalmods: {},
-      name: item.name,
       notes: item.calc?.resolved_notes || item.local_notes || item.notes || '',
       pageref: item.reference ?? '',
       vtt_notes: item.vtt_notes ?? null,
@@ -899,7 +898,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importMeleeWeapon(weapon: GcsWeapon): DataModel.CreateData<MeleeAttackSchema> {
-    const name = weapon.usage ?? ''
+    const name = null // weapon.usage ?? ''
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
@@ -937,7 +936,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importRangedWeapon(weapon: GcsWeapon): DataModel.CreateData<RangedAttackSchema> {
-    const name = weapon.usage ?? ''
+    const name = null // weapon.usage ?? ''
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 

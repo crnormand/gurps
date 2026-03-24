@@ -585,7 +585,7 @@ Portrait will not be imported.`
     containedBy: string | null = null
   ): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {
-      name: item.name ?? '',
+      // name: item.name ?? '',
       notes: item.ref?.notes ?? '',
       pageref: item.ref?.page ?? '',
       vtt_notes: item.ref?.vttnotes ?? '',

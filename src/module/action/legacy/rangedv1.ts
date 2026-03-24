@@ -12,7 +12,7 @@ class RangedV1 {
     const rangedKeys = Object.keys(new Ranged())
 
     // Make selected prototype getters enumerable own properties so Object.values() includes them.
-    defineGetterProperties(this, [...rangedKeys, 'addToQuickRoll', 'itemModifiers', 'name'])
+    defineGetterProperties(this, [...rangedKeys, 'addToQuickRoll', 'itemModifiers', 'name', 'displayName'])
   }
 
   // Generate getters for each of the ranged attack properties. Delegate to the underlying RangedAttackModel.
@@ -81,6 +81,10 @@ class RangedV1 {
 
   get name() {
     return this.rangedV2.name
+  }
+
+  get displayName() {
+    return this.rangedV2._displayName
   }
 
   get notes() {

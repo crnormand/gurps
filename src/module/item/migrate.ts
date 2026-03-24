@@ -241,6 +241,7 @@ function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.Cr
     parry: oldMelee.parry,
     reach: oldMelee.reach,
     st: oldMelee.st,
+    name: oldMelee.name,
   }
 
   return newMelee
@@ -286,6 +287,7 @@ function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField
     recoil: oldRanged.rcl,
     shots: oldRanged.shots,
     st: oldRanged.st,
+    name: oldRanged.name,
   }
 
   return newRanged

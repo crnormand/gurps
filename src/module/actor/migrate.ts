@@ -189,7 +189,7 @@ function getMigratedActorData(
 
   const migrationItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<'featureV2'>>> = {
     containedBy: null,
-    name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
+    // name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
     notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
     points: 0,
     _reactions: {},
