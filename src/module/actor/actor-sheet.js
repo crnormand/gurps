@@ -71,8 +71,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     if (Object.keys(actions).length > 0) this.actor.internalUpdate({ 'system.conditions.actions': actions })
     sheetData.system = this.actor.system
     sheetData.ranges = GURPS.rangeObject.ranges
-    sheetData.useCI = GURPS.ConditionalInjury.isInUse()
-    sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
+    // @deprecated in favour of new conditional injury module.
+    // sheetData.useCI = GURPS.ConditionalInjury.isInUse()
+    // sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.system.eqtsummary
     sheetData.navigateBar = {

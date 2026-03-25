@@ -14,7 +14,8 @@
     <div class="gcs-section-header">
       {{localize name}}
       {{#if (and (not @root.isPlay) (eq type "resourceTracker"))}}
-        <a data-action="editResourceTracker" data-path="{{path}}"><i class="fa-solid fa-pen-to-square"></i></a>
+        <a data-action="editResourceTracker" data-id="{{path}}"><i class="fa-solid fa-pen-to-square"></i></a>
+        <a data-action="removeResourceTracker" data-id="{{path}}"><i class="fa-solid fa-trash"></i></a>
       {{/if}}
     </div>
     <div class="gcs-section-content">
@@ -39,7 +40,7 @@
         {{else}}
         <label >{{localize "GURPS.sheet.gcsActorSheet.poolBase"}}</label>
         {{/if}}
-        {{formInput fields.denominator value=denominator disabled=@root.isPlay}}
+        {{formInput fields.denominator value=denominator disabled=(or (eq type "resourceTracker") @root.isPlay)}}
       </div>
       {{#if note}}
       <br>
