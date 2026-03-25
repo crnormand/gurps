@@ -7,6 +7,7 @@ import {
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
 import GurpsWiring from '@module/gurps-wiring.js'
+import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { getGame, isHTMLElement } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
@@ -128,6 +129,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       toggleItemNotes: GurpsActorGcsSheet.#onToggleItemNotes,
       addModifier: GurpsActorGcsSheet.#onAddModifier,
       rollOtf: GurpsActorGcsSheet.#onRollOtf,
+      addResourceTracker: GurpsActorGcsSheet.#onAddResourceTracker,
+      removeResourceTracker: GurpsActorGcsSheet.#onRemoveResourceTracker,
       editResourceTracker: GurpsActorGcsSheet.#onEditResourceTracker,
     },
   }
@@ -363,7 +366,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         path: tracker._id,
         numerator: tracker.value,
         denominator: tracker.max,
-        atMax: tracker.value === tracker.max,
+        atMin: tracker.isMinEnforced && tracker.value === tracker.min,
+        atMax: tracker.isMaxEnforced && tracker.value === tracker.max,
         name: tracker.name,
         state: currentThreshold?.condition || '',
         color: currentThreshold?.color || defaultColor,
@@ -752,7 +756,16 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       return
     }
 
-    const pathValue = foundry.utils.getProperty(this.actor, systemPath)
+    let pathValue: number | null = 0
+    let pool: TrackerInstance | null = null
+
+    if (type === 'resourceTracker') {
+      pool = this.actor.system.additionalresources.tracker.get(systemPath) ?? null
+
+      pathValue = pool?.value ?? null
+    } else {
+      pathValue = foundry.utils.getProperty(this.actor, systemPath) as number
+    }
 
     if (pathValue === undefined || pathValue === null || typeof pathValue !== 'number') {
       console.error(`Invalid pool path provided, value does not exist or is not a number: ${systemPath}`)
@@ -777,7 +790,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       newValue = pathValue + valueDelta
     }
 
-    await this.actor.update({ [systemPath]: newValue })
+    if (type === 'resourceTracker') {
+      await pool?.update({ currentValue: newValue })
+    } else {
+      await this.actor.update({ [systemPath]: newValue })
+    }
   }
 
   /* ---------------------------------------- */
@@ -807,6 +824,18 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
+  static async #onAddResourceTracker(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+
+    if (!this.actor.isOwner) return
+
+    const _id = foundry.utils.randomID()
+
+    await TrackerInstance.create({ _id }, { parent: this.actor, renderSheet: true })
+  }
+
+  /* ---------------------------------------- */
+
   static async #onEditResourceTracker(
     this: GurpsActorGcsSheet,
     event: PointerEvent,
@@ -814,7 +843,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ): Promise<void> {
     event.preventDefault()
 
-    const id = target.dataset.path
+    const id = target.dataset.id
 
     if (!id) {
       console.error('No resource tracker id provided')
@@ -831,6 +860,34 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     }
 
     await GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onRemoveResourceTracker(
+    this: GurpsActorGcsSheet,
+    event: PointerEvent,
+    target: HTMLElement
+  ): Promise<void> {
+    event.preventDefault()
+
+    const id = target.dataset.id
+
+    if (!id) {
+      console.error('No resource tracker id provided')
+
+      return
+    }
+
+    const tracker = this.actor.system.additionalresources.tracker.get(id)
+
+    if (!tracker) {
+      console.error(`No resource tracker found with id ${id}`)
+
+      return
+    }
+
+    await tracker.deleteDialog()
   }
 
   /* ---------------------------------------- */
