@@ -29,18 +29,24 @@ type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<
 
 type PoolEntry = {
   type: 'pool' | 'resourceTracker' | 'conditionalInjury'
-  fields: {
-    numerator: foundry.data.fields.NumberField<any>
-    denominator: foundry.data.fields.NumberField<any>
+  numerator: {
+    field: foundry.data.fields.NumberField<any>
+    value: number
+    path?: string
+    label?: string
+    initial?: number
   }
-  path: string
-  numerator: number
-  denominator: number
+  denominator: {
+    field: foundry.data.fields.NumberField<any>
+    value: number
+    path?: string
+    label?: string
+  }
   atMin?: boolean
   atMax: boolean
   name: string
-  state: string
-  color: string
+  state?: string
+  color?: string
   note?: string
   thresholds: ThresholdDescriptor[]
 }
@@ -359,13 +365,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
       pools.push({
         type: 'resourceTracker',
-        fields: {
-          numerator: tracker.schema.fields.currentValue,
-          denominator: pseudoDenominator,
+        numerator: {
+          field: tracker.schema.fields.currentValue,
+          path: tracker._id,
+          value: tracker.value,
+          initial: tracker.isAccumulator ? 0 : tracker.max,
         },
-        path: tracker._id,
-        numerator: tracker.value,
-        denominator: tracker.max,
+        denominator: {
+          field: pseudoDenominator,
+          value: tracker.max,
+          label: 'GURPS.sheet.gcsActorSheet.poolBase',
+        },
         atMin: tracker.isMinEnforced && tracker.value === tracker.min,
         atMax: tracker.isMaxEnforced && tracker.value === tracker.max,
         name: tracker.name,
@@ -396,13 +406,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     pools.push(
       {
         type: 'pool',
-        fields: {
-          numerator: systemFields.HP.fields.damage,
-          denominator: systemFields.HP.fields.max,
+        numerator: {
+          field: systemFields.HP.fields.damage,
+          path: 'system.HP.damage',
+          value: systemSource.HP.damage,
+          initial: systemSource.HP.max,
         },
-        path: 'system.HP.damage',
-        numerator: systemSource.HP.damage,
-        denominator: systemSource.HP.max,
+        denominator: {
+          field: systemFields.HP.fields.max,
+          value: systemSource.HP.max,
+          label: 'GURPS.sheet.gcsActorSheet.poolBase',
+        },
         atMax: systemSource.HP.damage === 0,
         name: 'GURPS.HP',
         state: hpState?.condition || '',
@@ -411,13 +425,18 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       },
       {
         type: 'pool',
-        fields: {
-          numerator: systemFields.FP.fields.damage,
-          denominator: systemFields.FP.fields.max,
+
+        numerator: {
+          field: systemFields.FP.fields.damage,
+          path: 'system.FP.damage',
+          value: systemSource.FP.damage,
+          initial: systemSource.FP.max,
         },
-        path: 'system.FP.damage',
-        numerator: systemSource.FP.damage,
-        denominator: systemSource.FP.max,
+        denominator: {
+          field: systemFields.FP.fields.max,
+          value: systemSource.FP.max,
+          label: 'GURPS.sheet.gcsActorSheet.poolBase',
+        },
         atMax: systemSource.FP.damage === 0,
         name: 'GURPS.FP',
         state: fpState?.condition || '',
@@ -437,13 +456,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     return {
       type: 'pool',
-      fields: {
-        numerator: systemFields.QP.fields.damage,
-        denominator: systemFields.QP.fields.max,
+      numerator: {
+        field: systemFields.QP.fields.damage,
+        path: 'system.QP.damage',
+        value: systemSource.QP.damage,
+        initial: systemSource.QP.max,
       },
-      path: 'system.QP.damage',
-      numerator: systemSource.QP.damage,
-      denominator: systemSource.QP.max,
+      denominator: {
+        field: systemFields.QP.fields.max,
+        value: systemSource.QP.max,
+        label: 'GURPS.sheet.gcsActorSheet.poolBase',
+      },
       atMax: systemSource.QP.damage === 0,
       name: 'GURPS.QP',
       state: '',
@@ -461,24 +484,46 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const defaultColor = '#4a9b4b'
 
     const ciState = ConditionalInjury.thresholdForSeverity(systemSource.conditionalinjury.injury.severity)
+    const pseudoDenominator = new foundry.data.fields.NumberField({ readonly: true, nullable: true })
 
     return [
       {
         type: 'conditionalInjury',
-        fields: {
-          numerator: systemFields.conditionalinjury.fields.injury.fields.severity,
-          denominator: systemFields.conditionalinjury.fields.RT.fields.value,
+        numerator: {
+          field: systemFields.conditionalinjury.fields.injury.fields.severity,
+          path: 'system.conditionalinjury.injury.severity',
+          value: systemSource.conditionalinjury.injury.severity,
+          initial: -7,
         },
-        path: 'system.conditionalinjury.injury.severity',
-        numerator: systemSource.conditionalinjury.injury.severity,
-        denominator: systemSource.conditionalinjury.RT.value,
+        denominator: {
+          field: systemFields.conditionalinjury.fields.RT.fields.value,
+          value: systemSource.conditionalinjury.RT.value,
+          label: 'GURPS.sheet.gcsActorSheet.poolBase',
+        },
         atMin: systemSource.conditionalinjury.injury.severity < -6,
         atMax: systemSource.conditionalinjury.injury.severity >= 6,
         name: 'GURPS.severity',
         state: ciState.condition,
         color: ciState.color || defaultColor,
-        note: getGame().i18n.format('GURPS.conditionalInjury.daysToHeal', { days: ciState.days.toString() }),
         thresholds: ConditionalInjury.thresholds,
+      },
+      {
+        type: 'conditionalInjury',
+        numerator: {
+          field: systemFields.conditionalinjury.fields.injury.fields.daystoheal,
+          path: 'system.conditionalinjury.injury.daystoheal',
+          value: systemSource.conditionalinjury.injury.daystoheal,
+          initial: ciState.days,
+        },
+        denominator: {
+          field: pseudoDenominator,
+          value: ciState.days,
+          label: 'GURPS.conditionalInjury.daysToHeal.max',
+        },
+        atMin: systemSource.conditionalinjury.injury.severity <= 0,
+        atMax: systemSource.conditionalinjury.injury.daystoheal >= ciState.days,
+        name: 'GURPS.conditionalInjury.daysToHeal.title',
+        thresholds: [],
       },
     ]
   }
@@ -776,11 +821,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     let newValue = 0
 
     if (action === 'resetPool') {
-      if (type === 'conditionalInjury') newValue = -6
-      else if (type === 'resourceTracker' && pool) {
-        if (pool.isAccumulator) newValue = 0
-        else newValue = pool.max
-      }
+      const initial = parseInt(target.dataset.initial ?? '0', 10)
+
+      if (!isNaN(initial)) newValue = initial
     } else {
       newValue = pathValue + valueDelta
     }

@@ -563,7 +563,10 @@
     "concentrationCheck": "Concentration check",
     "condition": "Condition",
     "conditionalInjury": {
-      "daysToHeal": "Days to Heal: {days}",
+      "daysToHeal": {
+        "max": "Max",
+        "title": "Days to Heal"
+      },
       "RT": "RT",
       "severity": {
         "crippled": "Crippled",
