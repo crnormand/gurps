@@ -777,14 +777,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     if (action === 'resetPool') {
       if (type === 'conditionalInjury') newValue = -6
-      else if (type === 'resourceTracker') {
-        const maxPath = systemPath.replace(/\.value$/, '.max')
-        const maxValue = foundry.utils.getProperty(this.actor, maxPath)
-
-        newValue =
-          valueDelta > 0 && typeof maxValue === 'number'
-            ? Math.min(pathValue - valueDelta, maxValue)
-            : pathValue - valueDelta
+      else if (type === 'resourceTracker' && pool) {
+        if (pool.isAccumulator) newValue = 0
+        else newValue = pool.max
       }
     } else {
       newValue = pathValue + valueDelta
