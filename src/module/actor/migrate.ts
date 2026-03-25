@@ -45,7 +45,6 @@ async function runMigration(): Promise<void> {
     ui.notifications!.remove(warning)
     ui.notifications!.success('GURPS.migration.actor.successMessage', {
       format: { version: '1.0.0' },
-      permanent: true,
     })
   }
 }

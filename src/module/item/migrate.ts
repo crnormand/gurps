@@ -53,7 +53,6 @@ async function runMigration() {
     ui.notifications!.remove(warning)
     ui.notifications!.success('GURPS.migration.item.successMessage', {
       format: { version: '1.0.0' },
-      permanent: true,
     })
   }
 }
