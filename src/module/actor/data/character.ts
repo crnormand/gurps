@@ -2071,7 +2071,7 @@ const characterSchema = () => {
         ),
         injury: new fields.SchemaField(
           {
-            severity: new fields.StringField({ required: true, nullable: false, initial: 0 }),
+            severity: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
             daystoheal: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
           },
           { required: true, nullable: false }

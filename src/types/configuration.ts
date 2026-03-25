@@ -183,6 +183,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
     'gurps.use-quintessence': boolean
     'gurps.use-tagged-modifiers': TaggedModifiersSettings
+    'gurps.useConditionalInjury': boolean
 
     'gurps.use-foundry-items': boolean
     // TODO: Deprecated settings.

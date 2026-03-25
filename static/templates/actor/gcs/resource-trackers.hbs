@@ -19,10 +19,14 @@
     </div>
     <div class="gcs-section-content">
       <div class="form-fields flexrow">
-        <button data-action="decrementPool" data-path="{{path}}"><i class="fa-solid fa-minus"></i></button>
-        <pool-value name="{{path}}" value="{{numerator}}" data-max="{{denominator}}"></pool-value>
-        <button data-action="incrementPool" data-path="{{path}}" {{#if atMax}}disabled{{/if}}><i class="fa-solid fa-plus"></i></button>
-        <button data-action="resetPool" data-path="{{path}}"><i class="fa-solid fa-undo"></i></button>
+        <button data-action="decrementPool" data-type="{{type}}" data-path="{{path}}" {{#if atMin}}disabled{{/if}}><i class="fa-solid fa-minus"></i></button>
+        {{#if (eq type "pool")}}
+          <pool-value name="{{path}}" value="{{numerator}}" data-max="{{denominator}}"></pool-value>
+        {{else}}
+          {{formInput fields.numerator value=numerator }}
+        {{/if}}
+        <button data-action="incrementPool" data-type="{{type}}" data-path="{{path}}" {{#if atMax}}disabled{{/if}}><i class="fa-solid fa-plus"></i></button>
+        <button data-action="resetPool" data-type="{{type}}" data-path="{{path}}"><i class="fa-solid fa-undo"></i></button>
       </div>
       <div
         class="pool-state"
@@ -30,9 +34,19 @@
         style="background-color: {{color}}; color: {{contrast-color color}}"
         >{{localize state}}</div>
       <div class="form-fields flexrow">
+        {{#if (eq type "conditionalInjury")}}
+        <label >{{localize "GURPS.conditionalInjury.RT"}}</label>
+        {{else}}
         <label >{{localize "GURPS.sheet.gcsActorSheet.poolBase"}}</label>
+        {{/if}}
         {{formInput fields.denominator value=denominator disabled=@root.isPlay}}
       </div>
+      {{#if note}}
+      <br>
+      <div class="form-fields flexrow">
+        {{note}}
+      </div>
+      {{/if}}
     </div>
   </div>
 {{/inline}}
@@ -41,4 +55,20 @@
   {{#each pools as |pool|}}
   {{> ".poolEntry" pool}}
   {{/each}}
+  {{#unless isPlay}}
+  <div class="gcs-pool-attribute gcs-section">
+      <div class="gcs-section-header">
+        ...
+        <i class="fa-solid fa-elipses"></i>
+      </div>
+      <div class="gcs-section-content">
+        <div class="form-fields flexrow">
+          <button data-action="addResourceTracker" class="flexrow">
+            <i class="fa-solid fa-plus"></i>
+            {{localize "GURPS.resourceTracker.create"}}
+          </button>
+        </div>
+      </div>
+    </div>
+  {{/unless}}
 </section>

@@ -562,6 +562,21 @@
     },
     "concentrationCheck": "Concentration check",
     "condition": "Condition",
+    "conditionalInjury": {
+      "daysToHeal": "Days to Heal: {days}",
+      "RT": "RT",
+      "severity": {
+        "crippled": "Crippled",
+        "instantlyFatal": "Instantly Fatal",
+        "majorWound": "Major Wound",
+        "minorWound": "Minor Wound",
+        "mortalWound": "Mortal Wound",
+        "none": "None",
+        "reeling": "Reeling",
+        "scratch": "Scratch",
+        "totalDestruction": "Total Destruction"
+      }
+    },
     "conditionalModifier": "Conditional Modifier",
     "conditionalMods": "Conditional Modifiers",
     "conditions": "Status",
@@ -1541,6 +1556,7 @@
     "resolveDiceRoll": "What Did You Roll?",
     "resourcesModsTab": "Resources and Modifiers",
     "resourceTracker": {
+      "create": "Add Resource Tracker",
       "current": "Current Value",
       "edit": {
         "addTemplate": "Add Resource Tracker Template",
@@ -1609,7 +1625,6 @@
     "selectToken": "Select Token",
     "sendToChat": "Send to chat",
     "sendToEveryone": "Send to Everyone",
-    "serverity": "Severity",
     "setManeuver": "Set Maneuver",
     "settingActiveEffects": "Turn on Active Effects",
     "settingAddCumulativeParryPenalties": "Automatically Add Cumulative Parry Penalties",
@@ -1723,6 +1738,7 @@
     "settingUseQuintessence": "Use Quintessence",
     "settingUseTaggedModifiers": "Use Tagged Modifiers",
     "severities": "Severities",
+    "severity": "Severity",
     "share": "Share",
     "sheet": {
       "gcs": {

@@ -11,7 +11,9 @@
   }
 
   button {
-    max-width: var(--gcs-input-height);
+    &:not([data-action='addResourceTracker']) {
+      max-width: var(--gcs-input-height);
+    }
 
     &[data-action='decrementPool'] {
       border-bottom-right-radius: 0;

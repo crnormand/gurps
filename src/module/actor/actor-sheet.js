@@ -1,8 +1,8 @@
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { ConditionalInjury as CI } from '@rules/injury/conditional-injury/conditional-injury.js'
 import { parselink } from '@util/parselink.js'
 import { atou, isEmptyObject, zeroFill } from '@util/utilities.js'
 
-import * as CI from '../../rules/injury/conditional-injury/conditional-injury.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'

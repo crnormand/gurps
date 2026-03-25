@@ -337,7 +337,7 @@ function migrateActorSystem(
         points: oldData.conditionalinjury.RT.points,
       },
       injury: {
-        severity: oldData.conditionalinjury.injury.severity,
+        severity: parseInt(oldData.conditionalinjury.injury.severity) || 0,
         daystoheal: oldData.conditionalinjury.injury.daystoheal,
       },
     },
