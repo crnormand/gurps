@@ -27,8 +27,15 @@ type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<
 
 /* ---------------------------------------- */
 
+const DEFAULT_POOL_COLOR = '#4a9b4b'
+
+/* ---------------------------------------- */
+
 type PoolEntry = {
   type: 'pool' | 'resourceTracker' | 'conditionalInjury'
+  invertedDelta: boolean
+  denominatorEditable: boolean
+  editable: boolean
   numerator: {
     field: foundry.data.fields.NumberField<any>
     value: number
@@ -120,6 +127,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ActorSheet.RenderOptions,
   GurpsActorGcsSheet.RenderContext
 >() {
+  static readonly #pseudoDenominator = new foundry.data.fields.NumberField({ readonly: true, nullable: true })
+
+  /* ---------------------------------------- */
+
   static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
     classes: ['gcs-sheet'],
     position: {
@@ -343,8 +354,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected _preparePools(): PoolEntry[] {
     const pools: PoolEntry[] = []
 
-    const defaultColor = '#4a9b4b'
-
     const useConditionalInjury = getGame().settings.get('gurps', 'useConditionalInjury')
 
     if (useConditionalInjury) pools.push(...this._prepareConditionalInjuryPools())
@@ -353,18 +362,18 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const useQuintessence = getGame().settings.get('gurps', 'use-quintessence')
 
     if (useQuintessence) {
-      pools.push(this._prepareQuintessencePool())
+      pools.push(this.#prepareAttributePool('QP', []))
     }
 
     for (const tracker of this.actor.system.additionalresources.tracker) {
-      const pseudoDenominator = new foundry.data.fields.NumberField({ readonly: true, nullable: true })
-
       const currentThreshold = tracker.currentThreshold
-
       const thresholds = tracker.thresholdDescriptors
 
       pools.push({
         type: 'resourceTracker',
+        invertedDelta: false,
+        denominatorEditable: false,
+        editable: true,
         numerator: {
           field: tracker.schema.fields.currentValue,
           path: tracker._id,
@@ -372,7 +381,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
           initial: tracker.isAccumulator ? 0 : tracker.max,
         },
         denominator: {
-          field: pseudoDenominator,
+          field: GurpsActorGcsSheet.#pseudoDenominator,
           value: tracker.max,
           label: 'GURPS.sheet.gcsActorSheet.poolBase',
         },
@@ -380,7 +389,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMax: tracker.isMaxEnforced && tracker.value === tracker.max,
         name: tracker.name,
         state: currentThreshold?.condition || '',
-        color: currentThreshold?.color || defaultColor,
+        color: currentThreshold?.color || DEFAULT_POOL_COLOR,
         thresholds: thresholds,
       })
     }
@@ -391,87 +400,42 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   /* ---------------------------------------- */
 
   protected _prepareDefaultPools(): PoolEntry[] {
-    const pools: PoolEntry[] = []
-    const systemFields = this.actor.system.schema.fields
     const systemSource = this.actor.system._source
 
     const hpThresholds = HitPoints.getThresholds(systemSource.HP.max).reverse()
     const fpThresholds = Fatigue.getThresholds(systemSource.FP.max).reverse()
 
-    const hpState = hpThresholds.find(threshold => threshold.value >= this.actor.system.HP.value)
-    const fpState = fpThresholds.find(threshold => threshold.value >= this.actor.system.FP.value)
-
-    const defaultColor = '#4a9b4b'
-
-    pools.push(
-      {
-        type: 'pool',
-        numerator: {
-          field: systemFields.HP.fields.damage,
-          path: 'system.HP.damage',
-          value: systemSource.HP.damage,
-          initial: systemSource.HP.max,
-        },
-        denominator: {
-          field: systemFields.HP.fields.max,
-          value: systemSource.HP.max,
-          label: 'GURPS.sheet.gcsActorSheet.poolBase',
-        },
-        atMax: systemSource.HP.damage === 0,
-        name: 'GURPS.HP',
-        state: hpState?.condition || '',
-        color: hpState?.color || defaultColor,
-        thresholds: hpThresholds,
-      },
-      {
-        type: 'pool',
-
-        numerator: {
-          field: systemFields.FP.fields.damage,
-          path: 'system.FP.damage',
-          value: systemSource.FP.damage,
-          initial: systemSource.FP.max,
-        },
-        denominator: {
-          field: systemFields.FP.fields.max,
-          value: systemSource.FP.max,
-          label: 'GURPS.sheet.gcsActorSheet.poolBase',
-        },
-        atMax: systemSource.FP.damage === 0,
-        name: 'GURPS.FP',
-        state: fpState?.condition || '',
-        color: fpState?.color || defaultColor,
-        thresholds: fpThresholds,
-      }
-    )
-
-    return pools
+    return [this.#prepareAttributePool('HP', hpThresholds), this.#prepareAttributePool('FP', fpThresholds)]
   }
 
-  protected _prepareQuintessencePool(): PoolEntry {
+  #prepareAttributePool(key: 'HP' | 'FP' | 'QP', thresholds: ThresholdDescriptor[]): PoolEntry {
     const systemFields = this.actor.system.schema.fields
     const systemSource = this.actor.system._source
 
-    const defaultColor = '#4a9b4b'
+    const currentValue = this.actor.system[key].value
+    const state = thresholds.find(threshold => threshold.value >= currentValue)
 
     return {
       type: 'pool',
+      invertedDelta: true,
+      denominatorEditable: true,
+      editable: false,
       numerator: {
-        field: systemFields.QP.fields.damage,
-        path: 'system.QP.damage',
-        value: systemSource.QP.damage,
-        initial: systemSource.QP.max,
+        field: systemFields[key].fields.damage,
+        path: `system.${key}.damage`,
+        value: systemSource[key].damage,
+        initial: 0,
       },
       denominator: {
-        field: systemFields.QP.fields.max,
-        value: systemSource.QP.max,
+        field: systemFields[key].fields.max,
+        value: systemSource[key].max,
         label: 'GURPS.sheet.gcsActorSheet.poolBase',
       },
-      atMax: systemSource.QP.damage === 0,
-      name: 'GURPS.QP',
-      state: '',
-      color: defaultColor,
-      thresholds: [],
+      atMax: systemSource[key].damage === 0,
+      name: `GURPS.${key}`,
+      state: state?.condition || '',
+      color: state?.color || DEFAULT_POOL_COLOR,
+      thresholds,
     }
   }
 
@@ -481,14 +445,14 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const systemFields = this.actor.system.schema.fields
     const systemSource = this.actor.system._source
 
-    const defaultColor = '#4a9b4b'
-
     const ciState = ConditionalInjury.thresholdForSeverity(systemSource.conditionalinjury.injury.severity)
-    const pseudoDenominator = new foundry.data.fields.NumberField({ readonly: true, nullable: true })
 
     return [
       {
         type: 'conditionalInjury',
+        invertedDelta: false,
+        denominatorEditable: false,
+        editable: false,
         numerator: {
           field: systemFields.conditionalinjury.fields.injury.fields.severity,
           path: 'system.conditionalinjury.injury.severity',
@@ -504,11 +468,14 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMax: systemSource.conditionalinjury.injury.severity >= 6,
         name: 'GURPS.severity',
         state: ciState.condition,
-        color: ciState.color || defaultColor,
+        color: ciState.color || DEFAULT_POOL_COLOR,
         thresholds: ConditionalInjury.thresholds,
       },
       {
         type: 'conditionalInjury',
+        invertedDelta: false,
+        denominatorEditable: false,
+        editable: false,
         numerator: {
           field: systemFields.conditionalinjury.fields.injury.fields.daystoheal,
           path: 'system.conditionalinjury.injury.daystoheal',
@@ -516,7 +483,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
           initial: ciState.days,
         },
         denominator: {
-          field: pseudoDenominator,
+          field: GurpsActorGcsSheet.#pseudoDenominator,
           value: ciState.days,
           label: 'GURPS.conditionalInjury.daysToHeal.max',
         },
@@ -787,33 +754,24 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     event.preventDefault()
 
     const action = target.dataset.action as 'incrementPool' | 'decrementPool' | 'resetPool'
-    const type = target.dataset.type as PoolEntry['type']
+    const inverted = target.dataset.inverted === 'true'
 
     let valueDelta = action === 'incrementPool' ? 1 : action === 'decrementPool' ? -1 : 0
 
-    if (type === 'pool') valueDelta = -valueDelta
+    if (inverted) valueDelta = -valueDelta
 
-    const systemPath = target.dataset.path
+    const path = target.dataset.path
 
-    if (!systemPath) {
+    if (!path) {
       console.error('No pool path provided')
 
       return
     }
 
-    let pathValue: number | null = 0
-    let pool: TrackerInstance | null = null
+    const pathValue = GurpsActorGcsSheet.#getPoolCurrentValue(this, path)
 
-    if (type === 'resourceTracker') {
-      pool = this.actor.system.additionalresources.tracker.get(systemPath) ?? null
-
-      pathValue = pool?.value ?? null
-    } else {
-      pathValue = foundry.utils.getProperty(this.actor, systemPath) as number
-    }
-
-    if (pathValue === undefined || pathValue === null || typeof pathValue !== 'number') {
-      console.error(`Invalid pool path provided, value does not exist or is not a number: ${systemPath}`)
+    if (pathValue === null) {
+      console.error(`Invalid pool path provided, value does not exist or is not a number: ${path}`)
 
       return
     }
@@ -828,10 +786,30 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       newValue = pathValue + valueDelta
     }
 
-    if (type === 'resourceTracker') {
-      await pool?.update({ currentValue: newValue })
+    await GurpsActorGcsSheet.#setPoolValue(this, path, newValue)
+  }
+
+  /* ---------------------------------------- */
+
+  static #getPoolCurrentValue(sheet: GurpsActorGcsSheet, path: string): number | null {
+    const tracker = sheet.actor.system.additionalresources.tracker.get(path)
+
+    if (tracker) return tracker.value
+
+    const value = foundry.utils.getProperty(sheet.actor, path)
+
+    return typeof value === 'number' ? value : null
+  }
+
+  /* ---------------------------------------- */
+
+  static async #setPoolValue(sheet: GurpsActorGcsSheet, path: string, newValue: number): Promise<void> {
+    const tracker = sheet.actor.system.additionalresources.tracker.get(path)
+
+    if (tracker) {
+      await tracker.update({ currentValue: newValue })
     } else {
-      await this.actor.update({ [systemPath]: newValue })
+      await sheet.actor.update({ [path]: newValue })
     }
   }
 

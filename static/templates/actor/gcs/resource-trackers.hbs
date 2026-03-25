@@ -13,21 +13,21 @@
 <div class="gcs-pool-attribute gcs-section">
     <div class="gcs-section-header">
       {{localize name}}
-      {{#if (and (not @root.isPlay) (eq type "resourceTracker"))}}
+      {{#if (and (not @root.isPlay) editable)}}
         <a data-action="editResourceTracker" data-id="{{numerator.path}}"><i class="fa-solid fa-pen-to-square"></i></a>
         <a data-action="removeResourceTracker" data-id="{{numerator.path}}"><i class="fa-solid fa-trash"></i></a>
       {{/if}}
     </div>
     <div class="gcs-section-content">
       <div class="form-fields flexrow">
-        <button data-action="decrementPool" data-type="{{type}}" data-path="{{numerator.path}}" {{#if atMin}}disabled{{/if}}><i class="fa-solid fa-minus"></i></button>
+        <button data-action="decrementPool" data-inverted="{{invertedDelta}}" data-path="{{numerator.path}}" {{#if atMin}}disabled{{/if}}><i class="fa-solid fa-minus"></i></button>
         {{#if (eq type "pool")}}
           <pool-value name="{{path}}" value="{{numerator.value}}" data-max="{{denominator.value}}"></pool-value>
         {{else}}
           {{formInput numerator.field value=numerator.value }}
         {{/if}}
-        <button data-action="incrementPool" data-type="{{type}}" data-path="{{numerator.path}}" {{#if atMax}}disabled{{/if}}><i class="fa-solid fa-plus"></i></button>
-        <button data-action="resetPool" data-type="{{type}}" data-initial="{{numerator.initial}}" data-path="{{numerator.path}}"><i class="fa-solid fa-undo"></i></button>
+        <button data-action="incrementPool" data-inverted="{{invertedDelta}}" data-path="{{numerator.path}}" {{#if atMax}}disabled{{/if}}><i class="fa-solid fa-plus"></i></button>
+        <button data-action="resetPool" data-inverted="{{invertedDelta}}" data-initial="{{numerator.initial}}" data-path="{{numerator.path}}"><i class="fa-solid fa-undo"></i></button>
       </div>
       {{#if (or state color thresholds.length)}}
       <div
@@ -38,7 +38,7 @@
       {{/if}}
       <div class="form-fields flexrow">
         <label >{{localize denominator.label}}</label>
-        {{formInput denominator.field value=denominator.value disabled=(or (eq type "resourceTracker") @root.isPlay)}}
+        {{formInput denominator.field value=denominator.value disabled=(or (not denominatorEditable) @root.isPlay)}}
       </div>
     </div>
   </div>
