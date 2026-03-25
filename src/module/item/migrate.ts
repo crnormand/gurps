@@ -295,13 +295,19 @@ function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField
 /* ---------------------------------------- */
 
 function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): NewDataWrapper<'equipmentV2'> {
+  if (!Number(oldData.eqt.uses))
+    console.warn(`MIGRATE: Equipment ${oldData.eqt.name} has invalid uses: ${oldData.eqt.uses}. Defaulting to 0.`)
+
+  if (!Number(oldData.eqt.maxuses))
+    console.warn(`MIGRATE: Equipment ${oldData.eqt.name} has invalid maxuses: ${oldData.eqt.maxuses}. Defaulting to 0.`)
+
   const newData: NewDataWrapper<'equipmentV2'> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.eqt,
     isContainer: Boolean(oldData.eqt.contains && Object.keys(oldData.eqt.contains).length > 0),
     weightsum: oldData.eqt.weightsum.toString(),
-    uses: Number(oldData.eqt.uses),
-    maxuses: Number(oldData.eqt.maxuses),
+    uses: Number(oldData.eqt.uses) || 0,
+    maxuses: Number(oldData.eqt.maxuses) || 0,
   }
 
   return newData
@@ -322,6 +328,9 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
 /* ---------------------------------------- */
 
 function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWrapper<'skillV2'> {
+  if (!Number(oldData.ski.import))
+    console.warn(`MIGRATE: Skill ${oldData.ski.name} has invalid import value: ${oldData.ski.import}. Defaulting to 0.`)
+
   if (!oldData.ski.relativelevel)
     console.warn(`MIGRATE: Skill ${oldData.ski.name} is missing relative level. Defaulting to ''. ID: ${parentId}`)
 
@@ -329,7 +338,7 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.ski,
     isContainer: Boolean(oldData.ski.contains && Object.keys(oldData.ski.contains).length > 0),
-    import: Number(oldData.ski.import),
+    import: Number(oldData.ski.import) || 0,
     relativelevel: (oldData.ski.relativelevel ?? '').toString(),
   }
 
@@ -339,6 +348,9 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
 /* ---------------------------------------- */
 
 function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWrapper<'spellV2'> {
+  if (!Number(oldData.spl.import))
+    console.warn(`MIGRATE: Spell ${oldData.spl.name} has invalid import value: ${oldData.spl.import}. Defaulting to 0.`)
+
   if (!oldData.spl.relativelevel)
     console.warn(`MIGRATE: Spell ${oldData.spl.name} is missing relative level. Defaulting to ''. ID: ${parentId}`)
 
@@ -346,7 +358,7 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.spl,
     isContainer: Boolean(oldData.spl.contains && Object.keys(oldData.spl.contains).length > 0),
-    import: Number(oldData.spl.import),
+    import: Number(oldData.spl.import) || 0,
     relativelevel: (oldData.spl.relativelevel ?? '').toString(),
   }
 

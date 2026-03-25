@@ -671,7 +671,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
     })
 
-    this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+    this.equippedparry = this.parent?.getItemAttacks({ attackType: 'melee' })?.reduce((acc, attack) => {
       if (!attack.parry) return acc
       const newParry = attack.parryLevel ?? 0
 
@@ -680,7 +680,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       return acc
     }, 0)
 
-    this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
+    this.equippedblock = this.parent?.getItemAttacks({ attackType: 'melee' })?.reduce((acc, attack) => {
       if (!attack.block) return acc
       const newblock = attack.blockLevel ?? 0
 
