@@ -201,7 +201,7 @@ function getMigratedActorData(
 
     const data: DataModel.CreateData<DataModel.SchemaOf<ReactionModifier>> = {
       _id,
-      modifier: Number(mod.modifier),
+      modifier: Number(mod.modifier) || 0,
       situation: mod.situation,
       modifierTags: mod.modifierTags,
     }
@@ -214,7 +214,7 @@ function getMigratedActorData(
 
     const data: DataModel.CreateData<DataModel.SchemaOf<ConditionalModifier>> = {
       _id,
-      modifier: Number(mod.modifier),
+      modifier: Number(mod.modifier) || 0,
       situation: mod.situation,
       modifierTags: mod.modifierTags,
     }
@@ -265,6 +265,24 @@ function migrateActorSystem(
   if (typeof oldData.conditions.move === 'string')
     console.warn(`MIGRATE: Actor ${actorName} oldData.conditions.move: ${oldData.conditions.move}`)
 
+  if (!Number(oldData.basicmove.value))
+    console.warn(
+      `MIGRATE: Actor ${actorName} has invalid Basic Move value: ${oldData.basicmove.value}. Defaulting to 0.`
+    )
+
+  if (!Number(oldData.basicspeed.value))
+    console.warn(
+      `MIGRATE: Actor ${actorName} has invalid Basic Speed value: ${oldData.basicspeed.value}. Defaulting to 0.`
+    )
+
+  if (!Number(oldData.conditionalinjury.RT.value))
+    console.warn(
+      `MIGRATE: Actor ${actorName} has invalid Robustness Threshold value: ${oldData.conditionalinjury.RT.value}. Defaulting to 0.`
+    )
+
+  if (!Number(oldData.traits.sizemod))
+    console.warn(`MIGRATE: Actor ${actorName} has invalid SM value: ${oldData.traits.sizemod}. Defaulting to 0.`)
+
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
     attributes: oldData.attributes,
     HP: oldData.HP,
@@ -275,11 +293,11 @@ function migrateActorSystem(
     // Dodge). It is the base value used to get the Actual Dodge value under encumbrance.
     dodge: { value: Object.values(oldData.encumbrance)[0]?.dodge ?? 0 },
     basicmove: {
-      value: Number(oldData.basicmove.value),
+      value: Number(oldData.basicmove.value) || 0,
       points: oldData.basicmove.points,
     },
     basicspeed: {
-      value: Number(oldData.basicspeed.value),
+      value: Number(oldData.basicspeed.value) || 0,
       points: oldData.basicspeed.points,
     },
     frightcheck: oldData.frightcheck,
@@ -300,7 +318,7 @@ function migrateActorSystem(
 
     conditionalinjury: {
       RT: {
-        value: Number(oldData.conditionalinjury.RT.value),
+        value: Number(oldData.conditionalinjury.RT.value) || 0,
         points: oldData.conditionalinjury.RT.points,
       },
       injury: {
@@ -322,7 +340,7 @@ function migrateActorSystem(
       hair: oldData.traits.hair,
       hand: oldData.traits.hand,
       skin: oldData.traits.skin,
-      sizemod: Number(oldData.traits.sizemod),
+      sizemod: Number(oldData.traits.sizemod) || 0,
       techlevel: oldData.traits.techlevel,
       createdon: oldData.traits.createdon,
       modifiedon: oldData.traits.modifiedon,
@@ -416,11 +434,21 @@ function migrateActorSystem(
     Object.values(oldData.move).forEach(data => {
       const id = foundry.utils.randomID()
 
+      if (!Number(data.basic))
+        console.warn(
+          `MIGRATE: Move Mode ${data.mode} has invalid Basic Move value: ${data.basic}. Defaulting to 0. ID: ${id}`
+        )
+
+      if (!Number(data.enhanced))
+        console.warn(
+          `MIGRATE: Move Mode ${data.mode} has invalid Enhanced Move value: ${data.enhanced}. Defaulting to 0. ID: ${id}`
+        )
+
       const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
         _id: id,
         mode: data.mode,
-        basic: Number(data.basic),
-        enhanced: data.enhanced ? Number(data.enhanced) : null,
+        basic: Number(data.basic) | 0,
+        enhanced: data.enhanced ? Number(data.enhanced) || 0 : null,
         default: data.default,
       }
 
