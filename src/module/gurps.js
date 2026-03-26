@@ -1736,8 +1736,6 @@ if (!globalThis.GURPS) {
 
       text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
       thing = text.replace(/(.*?)\(.*\)/g, '$1')
-
-      // opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
       opt.text = text.replace(/.*?\((.*)\)/g, '$1')
 
       if (opt.text === text) opt.text = ''
