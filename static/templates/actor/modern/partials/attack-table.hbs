@@ -18,9 +18,7 @@
       </div>
       {{#each (attackflatlist items)}}
         <div class='ms-attack-row' data-key='{{../path}}.{{@key}}'>
-          {{debug ../otfPrefix}}
-
-          <span class='ms-attack-name'>{{>dice-button otf=(quotedAttackName ../otfPrefix this) text=this.name}}</span>
+          <span class='ms-attack-name'>{{>dice-button otf=(quotedAttackName ../otfPrefix this) text=this.displayName damage=false}}</span>
           <span class='ms-attack-usage'>{{this.mode}}</span>
           <span class='ms-attack-level'>{{this.level}}</span>
           <span
@@ -28,7 +26,7 @@
           {{#if ../isMelee}}
             <span class='ms-attack-reach'>{{this.reach}}</span>
             <span
-              class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry color='var(--ms-text-muted)'}}{{/if}}</span>
+              class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry damage=false color='var(--ms-text-muted)'}}{{/if}}</span>
           {{else}}
             <span class='ms-attack-acc {{gmod this.acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=this.name}}" data-otf='{{{displayNumber this.acc}}} Acc'>{{this.acc}}</span>
             <span class='ms-attack-range'>{{this.range}}</span>
