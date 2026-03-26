@@ -1,6 +1,6 @@
 import { numberValidate } from '@module/data/validators/number-validator.js'
 
-describe('isValidNumberValue', () => {
+describe('numberValidate', () => {
   test.each([[7], ['7'], [' 7 '], ['3.14'], [-3], ['-3']])('accepts finite numbers and numeric strings: %p', value => {
     expect(numberValidate(value)).toBe(true)
   })
