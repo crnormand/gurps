@@ -1668,9 +1668,9 @@ if (!globalThis.GURPS) {
 
       let parts = [text]
 
-      // If text starts with "M:", "R:", or "D:", its an attack roll that only specifies the weapon, not the dice.
-      // Don't split it.
-      if (!text.match(/^[MRD]:/)) parts = text.includes(',') ? text.split(',') : [text]
+      // If text starts with an OTF-style prefix (e.g. "M:", "R:", "D:", "A:", "P:", "B:"), it's an attack roll that
+      // only specifies the weapon (or similar), not the dice. Don't split it.
+      if (!text.match(/^[MRADPB]:/i)) parts = text.includes(',') ? text.split(',') : [text]
 
       for (let part of parts) {
         //let result = parseForRollOrDamage(part.trim())
