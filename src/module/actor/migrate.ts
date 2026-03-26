@@ -381,10 +381,11 @@ function migrateActorSystem(
   }
 
   // Check for missing fields or other bad info
-  if (!newData.profile?.sizemod || isNaN(newData.profile.sizemod)) {
+  const sizeMod = newData.profile?.sizemod
+  if (!Number.isFinite(sizeMod)) {
     // Should never happen but better than a non-null assertion.
     console.warn(
-      `MIGRATE: Actor ${actorName} is missing sizemod or has invalid sizemod. Defaulting to 0. Sizemod value: ${newData.profile?.sizemod}`
+      `MIGRATE: Actor ${actorName} is missing sizemod or has invalid sizemod. Defaulting to 0. Sizemod value: ${sizeMod}`
     )
     newData.profile ||= {}
     newData.profile.sizemod = 0
