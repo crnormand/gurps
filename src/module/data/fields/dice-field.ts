@@ -18,7 +18,7 @@ class DiceField extends fields.StringField {
 
     if (normalized === null) {
       if (this.options.blank) return ''
-      else throw new Error(game.i18n?.format('GURPS.invalidDice', { text: String(value) }) ?? VALIDATION_ERROR)
+      else throw new Error(game.i18n?.format('GURPS.invalidDiceText', { text: String(value) }) ?? VALIDATION_ERROR)
     }
 
     return normalized

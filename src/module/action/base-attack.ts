@@ -23,8 +23,8 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
     super.prepareDerivedData()
     this.#prepareLevelsFromOtf()
 
-    if (Object.getOwnPropertyDescriptor(this, 'displayName') === undefined) {
-      Object.defineProperty(this, 'displayName', {
+    if (Object.getOwnPropertyDescriptor(this, 'name') === undefined) {
+      Object.defineProperty(this, 'name', {
         // Bind this property to the underlying name property, which may be overridden by legacy actions to return the name of the item.
         get: () => this._displayName,
         enumerable: true,
@@ -87,7 +87,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
   /*  Derived Values                          */
   /* ---------------------------------------- */
   get _displayName(): string | null {
-    return this.name ?? (this.item as any)?.name ?? null
+    return this._source.name ?? (this.item as any)?.name ?? null
   }
 
   level: number = 0

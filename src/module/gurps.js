@@ -997,7 +997,7 @@ if (!globalThis.GURPS) {
       if (!!action.isMelee && !action.isRanged) prefix = 'M:'
       if (!action.isMelee && !!action.isRanged) prefix = 'R:'
       let thing = stripBracketContents(att.name)
-      let qn = quotedAttackName({ displayName: thing, mode: att.mode })
+      let qn = quotedAttackName({ name: thing, mode: att.mode })
       let aid = actor ? `@${actor.id}@` : ''
       const chatthing = `[${aid}${prefix}${qn}]`
       const followon = `[${aid}D:${qn}]`

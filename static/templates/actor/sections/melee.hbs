@@ -21,7 +21,7 @@
       </div>
 
       <div class='desc indent{{indent}}' data-key='system.melee.{{@key}}'>
-        <input name='system.melee.{{@key}}.name' class='gcs-input-25' type='text' value='{{displayName}}' />
+        <input name='system.melee.{{@key}}.name' class='gcs-input-25' type='text' value='{{name}}' />
         <div class='list_note'>
           <input name='system.melee.{{@key}}.notes' class='gcs-input-25' type='text' value='{{notes}}' />
         </div>
@@ -60,7 +60,7 @@
                 {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
               <div class='tooltip gga-manual'>
-                {{{gurpslink displayName}}}
+                {{{gurpslink name}}}
                 {{#if (displayItemHover this)}}
                   <div class='tooltiptext gga-manual'><img src='{{img}}' /></div>
                 {{/if}}
@@ -79,9 +79,9 @@
           </div>
         </div>
 
-        <div class='usage rollable flex-center' data-name='{{displayName}} ({{mode}})' data-key='system.melee.{{@key}}'
+        <div class='usage rollable flex-center' data-name='{{name}} ({{mode}})' data-key='system.melee.{{@key}}'
           data-otf='{{quotedAttackName "M" this}}'>{{mode}}</div>
-        <div class='level rollable flex-center' data-name='{{displayName}} ({{mode}})' data-key='system.melee.{{@key}}'
+        <div class='level rollable flex-center' data-name='{{name}} ({{mode}})' data-key='system.melee.{{@key}}'
           data-otf='{{quotedAttackName "M" this}}'>{{level}}</div>
         <div class='parry flex-center' style='background-color: #ffffbe; width: 100%;'>
           {{#if (isNum parry)}}

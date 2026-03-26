@@ -24,7 +24,7 @@
       </div>
 
       <div class='desc indent{{indent}}'>
-        <input name='system.ranged.{{@key}}.name' class='gcs-input-25' type='text' value='{{displayName}}' />
+        <input name='system.ranged.{{@key}}.name' class='gcs-input-25' type='text' value='{{name}}' />
         <div class='list_note'>
           <input name='system.ranged.{{@key}}.notes' class='gcs-input-25' type='text' value='{{notes}}' />
         </div>
@@ -72,7 +72,7 @@
                 {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
               <div class='tooltip gga-manual'>
-                {{{gurpslink this.displayName}}}
+                {{{gurpslink this.name}}}
                 {{#if (displayItemHover this)}}
                   <div class='tooltiptext gga-manual'><img src='{{img}}' /></div>
                 {{/if}}
@@ -91,19 +91,19 @@
 
         <div
           class='usage rollable flex-center'
-          data-name='{{displayName}} ({{mode}})'
+          data-name='{{name}} ({{mode}})'
           data-key='system.ranged.{{@key}}'
           data-otf='{{quotedAttackName 'R' this}}'
         >{{mode}}</div>
         <div
           class='level rollable flex-center'
-          data-name='{{displayName}} ({{mode}})'
+          data-name='{{name}} ({{mode}})'
           data-key='system.ranged.{{@key}}'
           data-otf='{{quotedAttackName 'R' this}}'
         >{{level}}</div>
         <div
           class='acc gga-right {{gmod this.acc}}'
-          data-name={{localize 'GURPS.accForWeapon' weapon=displayName}}
+          data-name={{localize 'GURPS.accForWeapon' weapon=name}}
           data-otf='{{{displayNumber this.acc}}} Acc'
         >
           {{{displayNumber this.acc showPlus=false}}}
@@ -114,7 +114,7 @@
         <div class='shots flex-center'>{{shots}}</div>
         <div
           class='bulk gga-right {{gmod this.bulk}}'
-          data-name='Bulk for {{displayName}}'
+          data-name='Bulk for {{name}}'
           data-otf='{{bulk}} Bulk'
         >{{{displayNumber this.bulk}}}
         </div>

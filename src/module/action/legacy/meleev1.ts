@@ -12,7 +12,7 @@ class MeleeV1 {
     const meleeKeys = Object.keys(new Melee())
 
     // Make selected prototype getters enumerable own properties so Object.values() includes them.
-    defineGetterProperties(this, [...meleeKeys, 'name', 'displayName', 'parryBonus', 'itemModifier', 'addToQuickRoll'])
+    defineGetterProperties(this, [...meleeKeys, 'name', 'parryBonus', 'itemModifier', 'addToQuickRoll'])
   }
 
   get addToQuickRoll() {
@@ -65,10 +65,6 @@ class MeleeV1 {
   }
 
   get name() {
-    return this.meleeV2._displayName
-  }
-
-  get displayName() {
     return this.meleeV2._displayName
   }
 

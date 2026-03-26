@@ -1,4 +1,5 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { numberValidate } from '@module/data/validators/number-validator.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrate.js'
 
@@ -265,22 +266,22 @@ function migrateActorSystem(
   if (typeof oldData.conditions.move === 'string')
     console.warn(`MIGRATE: Actor ${actorName} oldData.conditions.move: ${oldData.conditions.move}`)
 
-  if (!Number(oldData.basicmove.value))
+  if (!numberValidate(oldData.basicmove.value, { nonnegative: true, integerOnly: true }))
     console.warn(
       `MIGRATE: Actor ${actorName} has invalid Basic Move value: ${oldData.basicmove.value}. Defaulting to 0.`
     )
 
-  if (!Number(oldData.basicspeed.value))
+  if (!numberValidate(oldData.basicspeed.value, { nonnegative: true }))
     console.warn(
       `MIGRATE: Actor ${actorName} has invalid Basic Speed value: ${oldData.basicspeed.value}. Defaulting to 0.`
     )
 
-  if (!Number(oldData.conditionalinjury.RT.value))
+  if (!numberValidate(oldData.conditionalinjury.RT.value))
     console.warn(
       `MIGRATE: Actor ${actorName} has invalid Robustness Threshold value: ${oldData.conditionalinjury.RT.value}. Defaulting to 0.`
     )
 
-  if (!Number(oldData.traits.sizemod))
+  if (!numberValidate(oldData.traits.sizemod, { integerOnly: true }))
     console.warn(`MIGRATE: Actor ${actorName} has invalid SM value: ${oldData.traits.sizemod}. Defaulting to 0.`)
 
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
@@ -382,7 +383,8 @@ function migrateActorSystem(
 
   // Check for missing fields or other bad info
   const sizeMod = newData.profile?.sizemod
-  if (!Number.isFinite(sizeMod)) {
+
+  if (!numberValidate(sizeMod, { integerOnly: true })) {
     // Should never happen but better than a non-null assertion.
     console.warn(
       `MIGRATE: Actor ${actorName} is missing sizemod or has invalid sizemod. Defaulting to 0. Sizemod value: ${sizeMod}`
@@ -435,12 +437,12 @@ function migrateActorSystem(
     Object.values(oldData.move).forEach(data => {
       const id = foundry.utils.randomID()
 
-      if (!Number(data.basic))
+      if (!numberValidate(data.basic, { nonnegative: true, integerOnly: true }))
         console.warn(
           `MIGRATE: Move Mode ${data.mode} has invalid Basic Move value: ${data.basic}. Defaulting to 0. ID: ${id}`
         )
 
-      if (!Number(data.enhanced))
+      if (!numberValidate(data.enhanced, { nonnegative: true, integerOnly: true }))
         console.warn(
           `MIGRATE: Move Mode ${data.mode} has invalid Enhanced Move value: ${data.enhanced}. Defaulting to 0. ID: ${id}`
         )
