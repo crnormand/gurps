@@ -447,7 +447,7 @@ function migrateActorSystem(
       const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
         _id: id,
         mode: data.mode,
-        basic: Number(data.basic) | 0,
+        basic: Number.isFinite(Number(data.basic)) ? Number(data.basic) : 0,
         enhanced: data.enhanced ? Number(data.enhanced) || 0 : null,
         default: data.default,
       }
