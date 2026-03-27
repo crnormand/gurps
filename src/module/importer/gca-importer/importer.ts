@@ -93,11 +93,9 @@ class GcaImporter {
       // Restore saved counts and uses in raw item data before creating embedded documents
       this.#restoreEquipmentCountsAndUses(savedEquipmentCounts)
 
-      const itemsToCreate = this.items.filter(itemData => !this.#existingItemId(itemData))
-      const itemsToUpdate = this.items.filter(itemData => this.#existingItemId(itemData))
+      await this.#deleteImportedItems(actor)
 
-      await actor.updateEmbeddedDocuments('Item', itemsToUpdate, { recursive: false })
-      await actor.createEmbeddedDocuments('Item', itemsToCreate, { keepId: true })
+      await actor.createEmbeddedDocuments('Item', this.items, { keepId: true })
     } else {
       // @ts-expect-error: Actor shows as stored type, but is not stored.
       actor = await Actor.create({
@@ -146,6 +144,30 @@ class GcaImporter {
     const existingId = this.existingItems.find(existing => existing.system.importid === id)?._id ?? null
 
     return existingId || null
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Removes any items on the actor imported from an external program.
+   * This function does not discriminate between GCS or GCA imported items,
+   * as there could theoretically be cases in which items are imported from GCA,
+   * then from GCS, or vice versa. Not sure why anyone would do that, but we're accounting
+   * for it here.
+   *
+   * @param actor - The affected actor
+   */
+  async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
+    const importedItems = actor.items.filter(item => {
+      const system = item.system as { importFrom: string }
+
+      return ['GCS', 'GCA'].includes(system?.importFrom)
+    })
+
+    await actor.deleteEmbeddedDocuments(
+      'Item',
+      importedItems.map(i => i.id!)
+    )
   }
 
   /* ---------------------------------------- */
