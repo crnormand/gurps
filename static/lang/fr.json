@@ -954,6 +954,14 @@
         "progressMessage": "Application des migrations d'Acteur pour la version {version}, veuillez patienter...",
         "successMessage": "Migrations d'Acteur appliquées avec succès pour la version {version}."
       },
+      "item": {
+        "progressMessage": "Application des migrations d'Objet pour la version {version}, veuillez patienter...",
+        "successMessage": "Migrations d'Objet appliquées avec succès pour la version {version}."
+      },
+      "migrationItem": {
+        "name": "Le Porte-Tout",
+        "notes": "Ceci est un objet temporaire utilisé pour contenir toutes les Réactions, Modificateurs Conditionnels et Armes après la migration du personnage. Pour déplacer ces éléments à leur place appropriée, veuillez réimporter ce personnage depuis GCS ou GCA."
+      },
       "toV1_0_0": {
         "cancel": "Annuler la migration",
         "cancellationMessage": "Migration annulée. Veuillez sauvegarder votre monde et réessayer lorsque vous serez prêt.",
@@ -962,14 +970,6 @@
         "proceedText": "Voulez-vous poursuivre la migration ?",
         "title": "Migration GGA v1.0.0",
         "warningText": "GGA v1.0.0 a apporté des changements importants aux structures de données sous-jacentes afin de prendre en charge de nouvelles fonctionnalités et d'améliorer les performances. En conséquence, un processus de migration à sens unique convertira votre monde existant vers le nouveau format. Cette opération ne peut pas être annulée. Veuillez sauvegarder votre monde avant de continuer."
-      },
-      "item": {
-        "progressMessage": "Application des migrations d'Objet pour la version {version}, veuillez patienter...",
-        "successMessage": "Migrations d'Objet appliquées avec succès pour la version {version}."
-      },
-      "migrationItem": {
-        "name": "Le Porte-Tout",
-        "notes": "Ceci est un objet temporaire utilisé pour contenir toutes les Réactions, Modificateurs Conditionnels et Armes après la migration du personnage. Pour déplacer ces éléments à leur place appropriée, veuillez réimporter ce personnage depuis GCS ou GCA."
       }
     },
     "minDamageRule": "Dégâts min.:",
@@ -1364,14 +1364,14 @@
         "minimum": "Minimum",
         "noColor": "(aucune)",
         "setColor": "Définir la couleur",
+        "templates": "Gérer les modèles de suivi des ressources",
         "threshold": "Seuil",
         "thresholds": "Seuils",
-        "templates": "Gérer les modèles de suivi des ressources",
         "title": "Éditeur de Suivi des Ressources",
         "useBreakpoints": "Utiliser des seuils"
       },
-      "initializationError": "Erreur lors de l'initialisation du Suivi des Ressources \"{name}\" -- impossible de définir initialValue ({initialValue}) : {error}",
       "gcsInitialValueUnsupported": "Les personnages GCS ne prennent pas encore en charge les suivis de ressources avec des valeurs initiales. Cela pourrait etre ajoute dans une future mise a jour. Tracker : \"{name}\", initialValue : {initialValue}",
+      "initializationError": "Erreur lors de l'initialisation du Suivi des Ressources \"{name}\" -- impossible de définir initialValue ({initialValue}) : {error}",
       "placeholder": "Ressource",
       "template": {
         "add": "Cliquer sur le bouton '+' ci-dessus pour ajouter un modèle.",

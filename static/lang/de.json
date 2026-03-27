@@ -954,6 +954,14 @@
         "progressMessage": "Charakter-Migrationen für Version {version} werden angewendet, bitte warten...",
         "successMessage": "Charakter-Migrationen für Version {version} erfolgreich angewendet."
       },
+      "item": {
+        "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
+        "successMessage": "Objekt-Migrationen für Version {version} erfolgreich angewendet."
+      },
+      "migrationItem": {
+        "name": "Der Alleshalter",
+        "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
+      },
       "toV1_0_0": {
         "cancel": "Migration abbrechen",
         "cancellationMessage": "Migration abgebrochen. Bitte sichern Sie Ihre Welt und versuchen Sie es erneut, wenn Sie bereit sind.",
@@ -962,14 +970,6 @@
         "proceedText": "Möchten Sie mit der Migration fortfahren?",
         "title": "GGA v1.0.0 Migration",
         "warningText": "GGA v1.0.0 hat erhebliche Änderungen an den zugrunde liegenden Datenstrukturen vorgenommen, um neue Funktionen zu unterstützen und die Leistung zu verbessern. Daher gibt es einen Einweg-Migrationsprozess, der Ihre bestehende Welt in das neue Format umwandelt. Dieser Vorgang kann nicht rückgängig gemacht werden. Bitte sichern Sie Ihre Welt, bevor Sie fortfahren."
-      },
-      "item": {
-        "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
-        "successMessage": "Objekt-Migrationen für Version {version} erfolgreich angewendet."
-      },
-      "migrationItem": {
-        "name": "Der Alleshalter",
-        "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
       }
     },
     "minDamageRule": "Min. Schaden:",
@@ -1364,14 +1364,14 @@
         "minimum": "Minimum",
         "noColor": "(keine)",
         "setColor": "Farbe festlegen",
+        "templates": "Ressourcen-Tracker-Vorlagen verwalten",
         "threshold": "Schwellenwert",
         "thresholds": "Schwellenwerte",
-        "templates": "Ressourcen-Tracker-Vorlagen verwalten",
         "title": "Ressourcen-Tracker-Editor",
         "useBreakpoints": "Schwellenwerte verwenden"
       },
-      "initializationError": "Fehler beim Initialisieren des Ressourcen-Trackers \"{name}\" -- initialValue ({initialValue}) konnte nicht gesetzt werden: {error}",
       "gcsInitialValueUnsupported": "GCS-Charaktere unterstutzen derzeit keine Ressourcen-Tracker mit Anfangswerten. Dies wird moglicherweise in einem zukunftigen Update hinzugefugt. Tracker: \"{name}\", initialValue: {initialValue}",
+      "initializationError": "Fehler beim Initialisieren des Ressourcen-Trackers \"{name}\" -- initialValue ({initialValue}) konnte nicht gesetzt werden: {error}",
       "placeholder": "Ressource",
       "template": {
         "add": "Klicke die '+' Schaltfläche um eine Vorlage hinzuzufügen.",

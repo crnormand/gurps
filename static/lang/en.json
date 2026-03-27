@@ -953,6 +953,14 @@
         "progressMessage": "Applying Actor migrations for version {version}, please wait...",
         "successMessage": "Successfully applied Actor migrations for version {version}."
       },
+      "item": {
+        "progressMessage": "Applying Item migrations for version {version}, please wait...",
+        "successMessage": "Successfully applied Item migrations for version {version}."
+      },
+      "migrationItem": {
+        "name": "The Everything Holder",
+        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+      },
       "toV1_0_0": {
         "cancel": "Cancel Migration",
         "cancellationMessage": "Migration cancelled. Please back up your world and try again when you are ready.",
@@ -961,14 +969,6 @@
         "proceedText": "Do you want to proceed with the migration?",
         "title": "GGA v1.0.0 Migration",
         "warningText": "GGA v1.0.0 has made significant changes to the underlying data structures in order to support new features and improve performance. As a result, there is a one-way migration process that will convert your existing world to the new format. This process cannot be undone, so please make sure to back up your world before proceeding."
-      },
-      "item": {
-        "progressMessage": "Applying Item migrations for version {version}, please wait...",
-        "successMessage": "Successfully applied Item migrations for version {version}."
-      },
-      "migrationItem": {
-        "name": "The Everything Holder",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
       }
     },
     "minDamageRule": "Min. Damage:",
@@ -1363,14 +1363,14 @@
         "minimum": "Minimum",
         "noColor": "(none)",
         "setColor": "Set Color",
+        "templates": "Manage Resource Tracker Templates",
         "threshold": "Threshold",
         "thresholds": "Thresholds",
-        "templates": "Manage Resource Tracker Templates",
         "title": "Resource Tracker Editor",
         "useBreakpoints": "Use Breakpoints"
       },
-      "initializationError": "Error initializing Resource Tracker \"{name}\" -- could not set initialValue ({initialValue}): {error}",
       "gcsInitialValueUnsupported": "GCS Characters do not currently support Resource Trackers with initial values. This may be added in a future update. Tracker: \"{name}\", initialValue: {initialValue}",
+      "initializationError": "Error initializing Resource Tracker \"{name}\" -- could not set initialValue ({initialValue}): {error}",
       "placeholder": "Resource",
       "template": {
         "add": "Click the '+' button to add a template.",
