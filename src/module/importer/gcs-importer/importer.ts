@@ -920,16 +920,16 @@ Portrait will not be imported.`
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
-    const parry = parseParry(weapon.calc?.parry || weapon.parry || '')
+    const parry = parseParry(weapon.parry || '')
 
-    const block = parseBlock(weapon.calc?.block || weapon.block || '')
+    const block = parseBlock(weapon.block || '')
 
     // If we are importing a character instead of an Item Compendium,
     // we can apply parry bonuses from the character to the weapon's
     // parry and block values.
     if (this._isMode(GcsImporterMode.Character)) {
-      parry.modifier += this.input.calc.parry_bonus ?? 0
-      block.modifier += this.input.calc.parry_bonus ?? 0
+      if (parry.canParry) parry.modifier += this.input.calc.parry_bonus ?? 0
+      if (block.canBlock) block.modifier += this.input.calc.block_bonus ?? 0
     }
 
     return {
