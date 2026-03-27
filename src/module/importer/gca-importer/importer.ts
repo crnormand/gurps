@@ -653,6 +653,16 @@ Portrait will not be imported.`
 
     block.modifier = (block.modifier ?? 0) - blockLevelDifference
 
+    let parry = weapon.parry
+
+    const baseParry = Number(parry ?? '')
+
+    if (!isNaN(baseParry)) {
+      const parryBonus = this.input.traits.attributes.find(attr => attr.name === 'Parry')?.score ?? 0
+
+      parry = (baseParry + parryBonus).toString()
+    }
+
     return {
       name,
       type,
@@ -665,7 +675,7 @@ Portrait will not be imported.`
       mode: weapon.name ?? '',
       modifierTags: '',
       notes: weapon.notes ?? '',
-      parry: weapon.parry ?? '',
+      parry,
       reach: weapon.charreach ?? '',
       st: weapon.charminst ?? '',
     }
