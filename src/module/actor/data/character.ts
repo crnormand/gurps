@@ -76,6 +76,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     user: User.Implementation
   ): Promise<boolean | void> {
     const result = await super._preCreate(data, options, user)
+
     if (result === false) return false
 
     if (

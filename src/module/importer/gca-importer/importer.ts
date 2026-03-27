@@ -95,7 +95,13 @@ class GcaImporter {
 
       await this.#deleteImportedItems(actor)
 
-      await actor.createEmbeddedDocuments('Item', this.items, { keepId: true })
+      this.existingItems = actor.items.contents
+
+      const itemsToUpdate = this.items.filter(itemData => this.#existingItemId(itemData))
+      const itemsToCreate = this.items.filter(itemData => !this.#existingItemId(itemData))
+
+      await actor.updateEmbeddedDocuments('Item', itemsToUpdate, { recursive: false })
+      await actor.createEmbeddedDocuments('Item', itemsToCreate, { keepId: true })
     } else {
       // @ts-expect-error: Actor shows as stored type, but is not stored.
       actor = await Actor.create({
@@ -368,9 +374,11 @@ Portrait will not be imported.`
 
     const authorCreatedRaw = this.input.author?.datecreated
     let createdDate = authorCreatedRaw ? new Date(authorCreatedRaw) : new Date()
+
     if (isNaN(createdDate.getTime())) {
       createdDate = new Date()
     }
+
     const createdon = createdDate.toISOString()
     const modifiedon = new Date().toISOString()
 
