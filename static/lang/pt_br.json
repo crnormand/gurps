@@ -954,6 +954,14 @@
         "progressMessage": "Aplicando migrações de Ator para a versão {version}, por favor aguarde...",
         "successMessage": "Migrações de Ator aplicadas com sucesso para a versão {version}."
       },
+      "item": {
+        "progressMessage": "Aplicando migrações de Item para a versão {version}, por favor aguarde...",
+        "successMessage": "Migrações de Item aplicadas com sucesso para a versão {version}."
+      },
+      "migrationItem": {
+        "name": "O Porta-Tudo",
+        "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do personagem. Para mover essas entidades de volta para seus lugares apropriados, por favor reimporte este personagem do GCS ou GCA."
+      },
       "toV1_0_0": {
         "cancel": "Cancelar Migração",
         "cancellationMessage": "Migração cancelada. Faça um backup do seu mundo e tente novamente quando estiver pronto.",
@@ -962,14 +970,6 @@
         "proceedText": "Deseja prosseguir com a migração?",
         "title": "Migração GGA v1.0.0",
         "warningText": "O GGA v1.0.0 fez mudanças significativas nas estruturas de dados subjacentes para oferecer suporte a novos recursos e melhorar o desempenho. Como resultado, existe um processo de migração sem volta que converterá o seu mundo existente para o novo formato. Esse processo não pode ser desfeito, então faça um backup do seu mundo antes de prosseguir."
-      },
-      "item": {
-        "progressMessage": "Aplicando migrações de Item para a versão {version}, por favor aguarde...",
-        "successMessage": "Migrações de Item aplicadas com sucesso para a versão {version}."
-      },
-      "migrationItem": {
-        "name": "O Porta-Tudo",
-        "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do personagem. Para mover essas entidades de volta para seus lugares apropriados, por favor reimporte este personagem do GCS ou GCA."
       }
     },
     "minDamageRule": "Dano mín.:",
@@ -1364,14 +1364,14 @@
         "minimum": "Mínimo",
         "noColor": "(nenhuma)",
         "setColor": "Definir Cor",
+        "templates": "Gerenciar Modelos de Controle de Recursos",
         "threshold": "Limiar",
         "thresholds": "Limiares",
-        "templates": "Gerenciar Modelos de Controle de Recursos",
         "title": "Editor de Controle de Recursos",
         "useBreakpoints": "Usar Pontos de Interrupção"
       },
-      "initializationError": "Erro ao inicializar o Controle de Recursos \"{name}\" -- não foi possível definir initialValue ({initialValue}): {error}",
       "gcsInitialValueUnsupported": "Personagens GCS ainda nao suportam Controles de Recursos com valores iniciais. Isso pode ser adicionado em uma atualizacao futura. Tracker: \"{name}\", initialValue: {initialValue}",
+      "initializationError": "Erro ao inicializar o Controle de Recursos \"{name}\" -- não foi possível definir initialValue ({initialValue}): {error}",
       "placeholder": "Recurso",
       "template": {
         "add": "Clique no botão '+', acima, para adicionar um modelo.",
