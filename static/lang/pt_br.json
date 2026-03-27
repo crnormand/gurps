@@ -958,7 +958,7 @@
         "progressMessage": "Aplicando migrações de Item para a versão {version}, por favor aguarde...",
         "successMessage": "Migrações de Item aplicadas com sucesso para a versão {version}."
       },
-      "migrationItem": {
+      "holderItem": {
         "name": "O Porta-Tudo",
         "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do personagem. Para mover essas entidades de volta para seus lugares apropriados, por favor reimporte este personagem do GCS ou GCA."
       },

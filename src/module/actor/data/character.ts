@@ -84,9 +84,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       const holderItemData: Item.CreateData = {
         _id: foundry.utils.randomID(),
         type: 'featureV2',
-        name: getGame().i18n.localize('GURPS.migration.migrationItem.name'),
+        name: getGame().i18n.localize('GURPS.migration.holderItem.name'),
         system: {
-          notes: getGame().i18n.localize('GURPS.migration.migrationItem.notes'),
+          notes: getGame().i18n.localize('GURPS.migration.holderItem.notes'),
         },
       }
 

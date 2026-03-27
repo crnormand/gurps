@@ -958,7 +958,7 @@
         "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
         "successMessage": "Objekt-Migrationen für Version {version} erfolgreich angewendet."
       },
-      "migrationItem": {
+      "holderItem": {
         "name": "Der Alleshalter",
         "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
       },
