@@ -14,14 +14,10 @@ class TraitModel extends BaseItemModel<TraitSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): ItemMetadata {
-    return {
-      embedded: {},
+    return foundry.utils.mergeObject(super.metadata, {
       type: 'featureV2',
-      invalidActorTypes: [],
-      actions: {},
       childTypes: ['featureV2'],
-      modifierTypes: [],
-    }
+    })
   }
 
   /* ---------------------------------------- */
