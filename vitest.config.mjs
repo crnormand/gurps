@@ -19,5 +19,9 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     setupFiles: ['./test/vitest.setup.ts'],
+    coverage: {
+      reportsDirectory: './coverage',
+      reporter: ['text', 'html', 'json', 'lcov'],
+    },
   },
 })

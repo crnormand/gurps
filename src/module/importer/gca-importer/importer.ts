@@ -585,7 +585,7 @@ Portrait will not be imported.`
     containedBy: string | null = null
   ): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {
-      name: item.name ?? '',
+      // name: item.name ?? '',
       notes: item.ref?.notes ?? '',
       pageref: item.ref?.page ?? '',
       vtt_notes: item.ref?.vttnotes ?? '',
@@ -633,7 +633,8 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importMeleeWeapon(weapon: GCAAttackMode): DataModel.CreateData<MeleeAttackSchema> {
-    const name = weapon.name ?? ''
+    // Set name to null so that it inherists the parent item's name by default.
+    const name = null
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
@@ -668,7 +669,8 @@ Portrait will not be imported.`
   }
 
   #importRangedWeapon(weapon: GCAAttackMode): DataModel.CreateData<RangedAttackSchema> {
-    const name = weapon.name ?? ''
+    // Set name to null so that it inherists the parent item's name by default.
+    const name = null
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 

@@ -4400,7 +4400,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   private findByOriginalName(name: string, include = false): Item.Implementation | null {
     let item = this.items.find(i => i.system.originalName === name)
 
-    if (!item) item = this.items.find(i => i.system.name === name)
+    if (!item) item = this.items.find(i => i.name === name)
     if (item) return item as Item.Implementation
 
     const actorSysKeys = ['ads', 'skills', 'spells']

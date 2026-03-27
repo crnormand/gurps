@@ -1666,7 +1666,11 @@ if (!globalThis.GURPS) {
       // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
       let text = element.dataset.otf ? element.dataset.otf : element.innerText.trim()
 
-      let parts = text.includes(',') ? text.split(',') : [text]
+      let parts = [text]
+
+      // If text starts with an OTF-style prefix (e.g. "M:", "R:", "D:", "A:", "P:", "B:"), it's an attack roll that
+      // only specifies the weapon (or similar), not the dice. Don't split it.
+      if (!text.match(/^[MRADPB]:/i)) parts = text.includes(',') ? text.split(',') : [text]
 
       for (let part of parts) {
         //let result = parseForRollOrDamage(part.trim())
@@ -1732,8 +1736,6 @@ if (!globalThis.GURPS) {
 
       text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
       thing = text.replace(/(.*?)\(.*\)/g, '$1')
-
-      // opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
       opt.text = text.replace(/.*?\((.*)\)/g, '$1')
 
       if (opt.text === text) opt.text = ''
@@ -2280,9 +2282,10 @@ if (!globalThis.GURPS) {
 
     // Run any needed migrations.
     Migration.run()
-    Object.values(GURPS.modules).forEach(async mod => {
-      if (mod.migrate) await mod.migrate()
-    })
+
+    for (const module of Object.values(GURPS.modules)) {
+      if (module.migrate) await module.migrate()
+    }
 
     // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
     // migration version to the current version even if it is lower than the current version.

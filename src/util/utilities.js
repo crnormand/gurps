@@ -627,7 +627,9 @@ const SINGLE_QUOTE = "'"
  * @returns {string}
  */
 export function quotedAttackName(item) {
-  let name = item.mode ? item.name + ' (' + item.mode + ')' : item.name
+  let attackName = item.name ? item.name : ''
+
+  let name = item.mode ? attackName + ' (' + item.mode + ')' : attackName
 
   if (name.includes(DOUBLE_QUOTE)) {
     // use single quotes

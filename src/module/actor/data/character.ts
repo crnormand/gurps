@@ -671,23 +671,25 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
     })
 
-    this.equippedparry = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-      if (!attack.parry) return acc
-      const newParry = attack.parryLevel ?? 0
+    this.equippedparry =
+      this.parent?.getItemAttacks({ attackType: 'melee' })?.reduce((acc, attack) => {
+        if (!attack.parry) return acc
+        const newParry = attack.parryLevel ?? 0
 
-      if (newParry > acc) acc = newParry
+        if (newParry > acc) acc = newParry
 
-      return acc
-    }, 0)
+        return acc
+      }, 0) ?? 0
 
-    this.equippedblock = this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-      if (!attack.block) return acc
-      const newblock = attack.blockLevel ?? 0
+    this.equippedblock =
+      this.parent?.getItemAttacks({ attackType: 'melee' })?.reduce((acc, attack) => {
+        if (!attack.block) return acc
+        const newblock = attack.blockLevel ?? 0
 
-      if (newblock > acc) acc = newblock
+        if (newblock > acc) acc = newblock
 
-      return acc
-    }, 0)
+        return acc
+      }, 0) ?? 0
   }
 
   /* ---------------------------------------- */
@@ -1765,9 +1767,9 @@ const characterSchema = () => {
     touch: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.touch' }),
 
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    thrust: new DiceField({ required: true, nullable: false, label: 'GURPS.thrust' }),
+    thrust: new DiceField({ required: true, nullable: false, blank: true, label: 'GURPS.thrust' }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    swing: new DiceField({ required: true, nullable: false, label: 'GURPS.swing' }),
+    swing: new DiceField({ required: true, nullable: false, blank: true, label: 'GURPS.swing' }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
     // NOTE: Change from previous schema; the encumbrance data is derived and only the current level is stored.

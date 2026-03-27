@@ -1,4 +1,5 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { numberValidate } from '@module/data/validators/number-validator.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrate.js'
 
@@ -8,7 +9,7 @@ import { MoveModeV2 } from './data/move-mode.js'
 import { NoteV2 } from './data/note.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
 
-async function runMigration() {
+async function runMigration(): Promise<void> {
   if (!game.user || !game.user.isGM) return
 
   const migrationVersion = game.settings!.get(GURPS.SYSTEM_NAME, 'migration-version')
@@ -45,7 +46,6 @@ async function runMigration() {
     ui.notifications!.remove(warning)
     ui.notifications!.success('GURPS.migration.actor.successMessage', {
       format: { version: '1.0.0' },
-      permanent: true,
     })
   }
 }
@@ -189,7 +189,7 @@ function getMigratedActorData(
 
   const migrationItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<'featureV2'>>> = {
     containedBy: null,
-    name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
+    // name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
     notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
     points: 0,
     _reactions: {},
@@ -202,7 +202,7 @@ function getMigratedActorData(
 
     const data: DataModel.CreateData<DataModel.SchemaOf<ReactionModifier>> = {
       _id,
-      modifier: Number(mod.modifier),
+      modifier: Number(mod.modifier) || 0,
       situation: mod.situation,
       modifierTags: mod.modifierTags,
     }
@@ -215,7 +215,7 @@ function getMigratedActorData(
 
     const data: DataModel.CreateData<DataModel.SchemaOf<ConditionalModifier>> = {
       _id,
-      modifier: Number(mod.modifier),
+      modifier: Number(mod.modifier) || 0,
       situation: mod.situation,
       modifierTags: mod.modifierTags,
     }
@@ -228,7 +228,8 @@ function getMigratedActorData(
 
     const newMelee = migrateMeleeWeapon(weapon, _id)
 
-    migrationItem.system!.actions![_id] = newMelee
+    migrationItemSystem.actions ||= {}
+    migrationItemSystem.actions[_id] = newMelee
   })
 
   Object.values(system.ranged).forEach((weapon: Ranged) => {
@@ -236,7 +237,8 @@ function getMigratedActorData(
 
     const newRanged = migrateRangedWeapon(weapon, _id)
 
-    migrationItem.system!.actions![_id] = newRanged
+    migrationItemSystem.actions ||= {}
+    migrationItemSystem.actions[_id] = newRanged
   })
 
   migrationItem.system = migrationItemSystem
@@ -248,7 +250,7 @@ function getMigratedActorData(
     type: 'characterV2',
     img: oldActor.img,
     name: oldActor.name,
-    system: migrateActorSystem(oldActor.system as ActorV1Model),
+    system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name),
     items,
   }
 
@@ -258,8 +260,30 @@ function getMigratedActorData(
 /* ---------------------------------------- */
 
 function migrateActorSystem(
-  oldData: ActorV1Model
+  oldData: ActorV1Model,
+  actorName?: string
 ): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> {
+  if (typeof oldData.conditions.move === 'string')
+    console.warn(`MIGRATE: Actor ${actorName} oldData.conditions.move: ${oldData.conditions.move}`)
+
+  if (!numberValidate(oldData.basicmove.value, { nonnegative: true, integerOnly: true }))
+    console.warn(
+      `MIGRATE: Actor ${actorName} has invalid Basic Move value: ${oldData.basicmove.value}. Defaulting to 0.`
+    )
+
+  if (!numberValidate(oldData.basicspeed.value, { nonnegative: true }))
+    console.warn(
+      `MIGRATE: Actor ${actorName} has invalid Basic Speed value: ${oldData.basicspeed.value}. Defaulting to 0.`
+    )
+
+  if (!numberValidate(oldData.conditionalinjury.RT.value))
+    console.warn(
+      `MIGRATE: Actor ${actorName} has invalid Robustness Threshold value: ${oldData.conditionalinjury.RT.value}. Defaulting to 0.`
+    )
+
+  if (!numberValidate(oldData.traits.sizemod, { integerOnly: true }))
+    console.warn(`MIGRATE: Actor ${actorName} has invalid SM value: ${oldData.traits.sizemod}. Defaulting to 0.`)
+
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
     attributes: oldData.attributes,
     HP: oldData.HP,
@@ -270,11 +294,11 @@ function migrateActorSystem(
     // Dodge). It is the base value used to get the Actual Dodge value under encumbrance.
     dodge: { value: Object.values(oldData.encumbrance)[0]?.dodge ?? 0 },
     basicmove: {
-      value: Number(oldData.basicmove.value),
+      value: Number(oldData.basicmove.value) || 0,
       points: oldData.basicmove.points,
     },
     basicspeed: {
-      value: Number(oldData.basicspeed.value),
+      value: Number(oldData.basicspeed.value) || 0,
       points: oldData.basicspeed.points,
     },
     frightcheck: oldData.frightcheck,
@@ -295,7 +319,7 @@ function migrateActorSystem(
 
     conditionalinjury: {
       RT: {
-        value: Number(oldData.conditionalinjury.RT.value),
+        value: Number(oldData.conditionalinjury.RT.value) || 0,
         points: oldData.conditionalinjury.RT.points,
       },
       injury: {
@@ -317,7 +341,7 @@ function migrateActorSystem(
       hair: oldData.traits.hair,
       hand: oldData.traits.hand,
       skin: oldData.traits.skin,
-      sizemod: Number(oldData.traits.sizemod),
+      sizemod: Number(oldData.traits.sizemod) || 0,
       techlevel: oldData.traits.techlevel,
       createdon: oldData.traits.createdon,
       modifiedon: oldData.traits.modifiedon,
@@ -333,7 +357,7 @@ function migrateActorSystem(
       },
       posture: oldData.conditions.posture,
       maneuver: oldData.conditions.maneuver,
-      // TODO: Check why this is number | string
+      // TODO: Check why this is number | string -- perhaps it can contain number of yards of movement (number) or "STEP" (string)?
       move: String(oldData.conditions.move),
       self: {
         modifiers: [],
@@ -358,8 +382,13 @@ function migrateActorSystem(
   }
 
   // Check for missing fields or other bad info
-  if (!newData.profile?.sizemod || isNaN(newData.profile.sizemod)) {
+  const sizeMod = newData.profile?.sizemod
+
+  if (!numberValidate(sizeMod, { integerOnly: true })) {
     // Should never happen but better than a non-null assertion.
+    console.warn(
+      `MIGRATE: Actor ${actorName} is missing sizemod or has invalid sizemod. Defaulting to 0. Sizemod value: ${sizeMod}`
+    )
     newData.profile ||= {}
     newData.profile.sizemod = 0
   }
@@ -408,11 +437,21 @@ function migrateActorSystem(
     Object.values(oldData.move).forEach(data => {
       const id = foundry.utils.randomID()
 
+      if (!numberValidate(data.basic, { nonnegative: true, integerOnly: true }))
+        console.warn(
+          `MIGRATE: Move Mode ${data.mode} has invalid Basic Move value: ${data.basic}. Defaulting to 0. ID: ${id}`
+        )
+
+      if (data.enhanced != null && !numberValidate(data.enhanced, { nonnegative: true, integerOnly: true }))
+        console.warn(
+          `MIGRATE: Move Mode ${data.mode} has invalid Enhanced Move value: ${data.enhanced}. Defaulting to 0. ID: ${id}`
+        )
+
       const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
         _id: id,
         mode: data.mode,
-        basic: Number(data.basic),
-        enhanced: data.enhanced ? Number(data.enhanced) : null,
+        basic: Number.isFinite(Number(data.basic)) ? Number(data.basic) : 0,
+        enhanced: data.enhanced != null ? Number(data.enhanced) || 0 : null,
         default: data.default,
       }
 

@@ -65,7 +65,7 @@ class MeleeV1 {
   }
 
   get name() {
-    return this.meleeV2.name
+    return this.meleeV2._displayName
   }
 
   get notes() {

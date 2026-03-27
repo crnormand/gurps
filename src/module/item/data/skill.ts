@@ -99,7 +99,7 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       }
 
       if (bonus.type === 'skill-spell' && bonus.isRanged) {
-        if (this.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
+        if (this.item.name.match(makeRegexPatternFrom(bonus.name as string, false))) {
           this.level += bonus.mod as number
         }
       }

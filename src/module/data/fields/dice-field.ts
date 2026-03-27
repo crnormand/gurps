@@ -17,7 +17,8 @@ class DiceField extends fields.StringField {
     const normalized = diceNormalize(String(value), options.useGurpsFormat)
 
     if (normalized === null) {
-      throw new Error(game.i18n?.localize('GURPS.invalidDice') ?? VALIDATION_ERROR)
+      if (this.options.blank) return ''
+      else throw new Error(game.i18n?.format('GURPS.invalidDiceText', { text: String(value) }) ?? VALIDATION_ERROR)
     }
 
     return normalized

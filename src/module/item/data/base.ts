@@ -373,7 +373,7 @@ const baseItemModelSchema = () => {
      * The name of this Item. This is occasionally used when the displayed name and Document name do not align
      * TODO: Evaluate whether this field should be kept.
      */
-    name: new fields.StringField({ required: true, nullable: false }),
+    // name: new fields.StringField({ required: true, nullable: false }),
 
     /** Item notes, displayed under the Item name on the charcter sheet */
     notes: new fields.StringField({ required: true, nullable: false }),
