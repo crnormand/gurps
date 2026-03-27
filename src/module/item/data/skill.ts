@@ -107,7 +107,7 @@ class SkillModel extends BaseItemModel<SkillSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplaySkill {
-    let fullName = this.name
+    let fullName = this.parent.name
 
     if (this.techlevel) fullName += `/TL${this.techlevel}`
     if (this.specialization) fullName += ` (${this.specialization})`

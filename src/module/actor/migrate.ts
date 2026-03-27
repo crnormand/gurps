@@ -470,7 +470,6 @@ function migrateActorSystem(
         mode: data.mode,
         basic: Number.isFinite(Number(data.basic)) ? Number(data.basic) : 0,
         enhanced: data.enhanced != null ? Number(data.enhanced) || 0 : null,
-        default: data.default,
       }
 
       if (!firstMoveModeId) firstMoveModeId = id

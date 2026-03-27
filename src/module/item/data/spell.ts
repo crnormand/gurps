@@ -109,7 +109,7 @@ class SpellModel extends BaseItemModel<SpellSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplaySpell {
-    let fullName = this.name
+    let fullName = this.parent.name
 
     if (this.techlevel) fullName += `/TL${this.techlevel}`
 
