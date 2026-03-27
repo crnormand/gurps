@@ -14,7 +14,7 @@ import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { EquipmentSchema } from '../../item/data/equipment.js'
 import { SkillSchema } from '../../item/data/skill.js'
 import { SpellSchema } from '../../item/data/spell.js'
-import { createDataIsOfType, createStandardTrackers } from '../helpers.js'
+import { createDataIsOfType, createStandardTrackers, promptDeletionOfMigratedItems } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
 import { GcsCollection } from './schema/base.js'
@@ -64,6 +64,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
   actor?: Actor.OfType<'characterV2'>
   output: DataModel.CreateData<CharacterSchema> = {}
   items: Item.CreateData[]
+  existingItems: Item.Stored[]
   img: string
 
   /* ---------------------------------------- */
@@ -72,6 +73,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     this._mode = options.mode
     this.input = options.input
     this.output = {}
+    this.existingItems = []
 
     this.items = []
     this.img = ''
@@ -116,7 +118,10 @@ class GcsImporter<Mode extends GcsImporterMode> {
     const name = ImportSettings.overwriteName ? importedName : (actor?.name ?? importedName)
 
     // Set actor as a GcsImporter property for easier reference.
-    if (actor) this.actor = actor
+    if (actor) {
+      this.actor = actor
+      this.existingItems = actor.items.contents
+    }
 
     this.#importPortrait()
     await this.#importAttributes()
@@ -126,6 +131,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     this.#importPointTotals()
     this.#importMiscValues()
     this.#importNotes()
+    await promptDeletionOfMigratedItems(this.actor)
     createStandardTrackers(this)
 
     if (actor) {
@@ -133,8 +139,6 @@ class GcsImporter<Mode extends GcsImporterMode> {
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
         actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<'equipmentV2'>[]
       )
-
-      await this.#deleteImportedItems(actor)
 
       // Update actor with new system data and create new items
       await actor.update({
@@ -146,25 +150,10 @@ class GcsImporter<Mode extends GcsImporterMode> {
       // Restore saved counts and uses in raw item data before creating embedded documents
       this.#restoreEquipmentCountsAndUses(savedEquipmentCounts)
 
-      const existingItems = actor.items.contents.map(item => {
-        return { _id: item.id || null, importid: item.system.importid || '' }
-      })
+      const itemsToCreate = this.items.filter(itemData => !this.#existingItemId(itemData))
+      const itemsToUpdate = this.items.filter(itemData => this.#existingItemId(itemData))
 
-      const itemsToCreate: Item.CreateData[] = []
-      const itemsToUpdate: Item.CreateData[] = []
-
-      for (const itemData of this.items) {
-        const existingId = this.#existingItemId(itemData, existingItems)
-
-        if (!existingId) {
-          itemsToCreate.push(itemData)
-        } else {
-          itemData._id = existingId
-          itemsToUpdate.push(itemData)
-        }
-      }
-
-      await actor.updateEmbeddedDocuments('Item', itemsToUpdate)
+      await actor.updateEmbeddedDocuments('Item', itemsToUpdate, { recursive: false })
       await actor.createEmbeddedDocuments('Item', itemsToCreate, { keepId: true })
     } else {
       // @ts-expect-error: Actor shows as stored type, but is not stored.
@@ -199,13 +188,13 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
   /* ---------------------------------------- */
 
-  #existingItemId(itemData: Item.CreateData, existingIds: { _id: string | null; importid: string }[]): string | null {
+  #existingItemId(itemData: Item.CreateData): string | null {
     const system = itemData.system as AnyObject
     const id = system?.importid
 
     if (!id) return null
 
-    const existingId = existingIds.find(existing => existing.importid === id)?._id ?? null
+    const existingId = this.existingItems.find(existing => existing.system.importid === id)?._id ?? null
 
     return existingId || null
   }
@@ -215,6 +204,18 @@ class GcsImporter<Mode extends GcsImporterMode> {
   async #importItemCompendium(): Promise<foundry.documents.collections.CompendiumCollection<'Item'> | null> {
     if (!this._isMode(GcsImporterMode.ItemCompendium))
       return Promise.reject(new Error('GcsImporter: Invalid mode for item compendium import.'))
+
+    if (!game.packs) {
+      console.error("GURPS | Foundry game.packs is undefined. Can't import compendium.")
+
+      return null
+    }
+
+    const name = this.input.name.replace(/ /g, '_')
+
+    let pack = game.packs.get(`world.${name}`) as foundry.documents.collections.CompendiumCollection<'Item'> | undefined
+
+    if (pack) this.existingItems = await pack.getDocuments()
 
     if (this.#itemCollectionIsOfType(this.input, GcsItemCollectionType.Trait)) {
       this.input.rows.forEach((trait, index) => this.#importTrait(trait, index))
@@ -230,35 +231,8 @@ class GcsImporter<Mode extends GcsImporterMode> {
       return Promise.reject(new Error('GcsImporter: Unsupported item collection type for compendium import.'))
     }
 
-    const name = this.input.name.replace(/ /g, '_')
-
-    if (!game.packs) {
-      console.error("GURPS | Foundry game.packs is undefined. Can't import compendium.")
-
-      return null
-    }
-
-    let pack = game.packs.get(`world.${name}`) as foundry.documents.collections.CompendiumCollection<'Item'> | undefined
-
-    const existingItems: { _id: string | null; importid: string }[] = pack
-      ? (await pack.getDocuments()).map(item => {
-          return { _id: item._id || null, importid: item.system.importid || '' }
-        })
-      : []
-
-    const itemsToCreate: Item.CreateData[] = []
-    const itemsToUpdate: Item.CreateData[] = []
-
-    for (const itemData of this.items) {
-      const existingId = this.#existingItemId(itemData, existingItems)
-
-      if (!existingId) {
-        itemsToCreate.push(itemData)
-      } else {
-        itemData._id = existingId
-        itemsToUpdate.push(itemData)
-      }
-    }
+    const itemsToCreate = this.items.filter(itemData => !this.#existingItemId(itemData))
+    const itemsToUpdate = this.items.filter(itemData => this.#existingItemId(itemData))
 
     if (!pack) {
       pack = await foundry.documents.collections.CompendiumCollection.createCompendium({
@@ -296,30 +270,6 @@ class GcsImporter<Mode extends GcsImporterMode> {
         }
       }
     }
-  }
-
-  /* ---------------------------------------- */
-
-  /**
-   * Removes any items on the actor imported from an external program.
-   * This function does not discriminate between GCS or GCA imported items,
-   * as there could theoretically be cases in which items are imported from GCA,
-   * then from GCS, or vice versa. Not sure why anyone would do that, but we're accounting
-   * for it here.
-   *
-   * @param actor - The affected actor
-   */
-  async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
-    const importedItems = actor.items.filter(item => {
-      const system = item.system as { importFrom: string }
-
-      return ['GCS', 'GCA'].includes(system?.importFrom)
-    })
-
-    await actor.deleteEmbeddedDocuments(
-      'Item',
-      importedItems.map(i => i.id!)
-    )
   }
 
   /* ---------------------------------------- */
@@ -779,7 +729,7 @@ Portrait will not be imported.`
 
   /* ---------------------------------------- */
 
-  #importItem(item: AnyGcsItem, _carried = true): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
+  #importItem(item: AnyGcsItem, _carried = true): [DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>>, string] {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {
       actions: {},
       _reactions: {},
@@ -790,6 +740,12 @@ Portrait will not be imported.`
       importFrom: 'GCS',
       importid: item.id ?? '',
     }
+
+    let id = foundry.utils.randomID()
+
+    const existingItemId = this.#existingItemId({ system, type: 'base', name: '' })
+
+    if (existingItemId) id = existingItemId
 
     system.itemModifiers = ''
     system.open = true
@@ -856,7 +812,7 @@ Portrait will not be imported.`
         })
     )
 
-    return system
+    return [system, id]
   }
 
   /* ---------------------------------------- */
@@ -983,12 +939,13 @@ Portrait will not be imported.`
 
   #importTrait(trait: GcsTrait, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = 'featureV2'
-    const _id = foundry.utils.randomID()
     // TODO: localize
     const name = trait.name ?? 'Trait'
 
+    const [baseSystem, _id] = this.#importItem(trait)
+
     const system: DataModel.CreateData<TraitSchema> = {
-      ...this.#importItem(trait),
+      ...baseSystem,
       disabled: trait.disabled,
       containedBy: containedBy ?? null,
       cr: trait.cr ?? null,
@@ -1017,12 +974,13 @@ Portrait will not be imported.`
 
   #importSkill(skill: GcsSkill, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = 'skillV2'
-    const _id = foundry.utils.randomID()
     // TODO: localize
     const name = skill.name ?? 'Skill'
 
+    const [baseSystem, _id] = this.#importItem(skill)
+
     const system: DataModel.CreateData<SkillSchema> = {
-      ...this.#importItem(skill),
+      ...baseSystem,
       containedBy: containedBy ?? null,
       points: skill.points ?? 0,
       difficulty: skill.difficulty ?? '',
@@ -1051,12 +1009,13 @@ Portrait will not be imported.`
 
   #importSpell(spell: GcsSpell, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = 'spellV2'
-    const _id = foundry.utils.randomID()
     // TODO: localize
     const name = spell.name ?? 'Spell'
 
+    const [baseSystem, _id] = this.#importItem(spell)
+
     const system: DataModel.CreateData<SpellSchema> = {
-      ...this.#importItem(spell),
+      ...baseSystem,
       containedBy: containedBy ?? null,
       points: spell.points ?? 0,
       difficulty: spell.difficulty ?? '',
@@ -1095,7 +1054,6 @@ Portrait will not be imported.`
     containedBy?: string | undefined
   ): Item.CreateData {
     const type = 'equipmentV2'
-    const _id = foundry.utils.randomID()
     // TODO: localize
     const name = equipment.name ?? 'Equipment'
 
@@ -1103,10 +1061,11 @@ Portrait will not be imported.`
       ? parseFloat(equipment.calc.weight)
       : parseFloat(equipment.calc?.extended_weight || '0')
 
-    const system: DataModel.CreateData<EquipmentSchema> = {
-      ...this.#importItem(equipment),
-      containedBy: containedBy ?? null,
+    const [baseSystem, _id] = this.#importItem(equipment)
 
+    const system: DataModel.CreateData<EquipmentSchema> = {
+      ...baseSystem,
+      containedBy: containedBy ?? null,
       count: equipment.quantity ?? 1,
       weight,
       cost: equipment.calc?.value ?? 0,

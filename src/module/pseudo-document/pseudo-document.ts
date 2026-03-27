@@ -413,6 +413,7 @@ class PseudoDocument<
 const pseudoDocumentSchema = () => {
   return {
     _id: new fields.DocumentIdField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
+    flags: new fields.ObjectField({ required: false, nullable: false, initial: {} }),
   }
 }
 

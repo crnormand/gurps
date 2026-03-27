@@ -188,6 +188,8 @@ function getMigratedActorData(
     name: game.i18n?.localize('GURPS.migration.holderItem.name'),
   }
 
+  const holderItemFlags = { isMigratedItem: true }
+
   const holderItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<'featureV2'>>> = {
     containedBy: null,
     // name: game.i18n?.localize('GURPS.migration.holderItem.name'),
@@ -206,6 +208,7 @@ function getMigratedActorData(
       modifier: Number(mod.modifier) || 0,
       situation: mod.situation,
       modifierTags: mod.modifierTags,
+      flags: holderItemFlags,
     }
 
     holderItemSystem!._reactions![_id] = data
@@ -219,6 +222,7 @@ function getMigratedActorData(
       modifier: Number(mod.modifier) || 0,
       situation: mod.situation,
       modifierTags: mod.modifierTags,
+      flags: holderItemFlags,
     }
 
     holderItemSystem!._conditionalmods![_id] = data
@@ -229,6 +233,8 @@ function getMigratedActorData(
 
     const newMelee = migrateMeleeWeapon(weapon, _id)
 
+    newMelee.flags = holderItemFlags
+
     holderItemSystem.actions ||= {}
     holderItemSystem.actions[_id] = newMelee
   })
@@ -237,6 +243,8 @@ function getMigratedActorData(
     const _id = foundry.utils.randomID()
 
     const newRanged = migrateRangedWeapon(weapon, _id)
+
+    newRanged.flags = holderItemFlags
 
     holderItemSystem.actions ||= {}
     holderItemSystem.actions[_id] = newRanged
