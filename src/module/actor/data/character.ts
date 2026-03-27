@@ -14,6 +14,7 @@ import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
+import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { multiplyDice } from '@util/damage-utils.js'
 import { roundTo } from '@util/math.js'
@@ -64,6 +65,37 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         ResourceTracker: `system.additionalresources.tracker`,
       },
       type: 'base',
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _preCreate(
+    data: TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>,
+    options: foundry.abstract.Document.Database.PreCreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
+    user: User.Implementation
+  ): Promise<boolean | void> {
+    super._preCreate(data, options, user)
+
+    if (
+      !data?.system?.holderItemId ||
+      (data?.system?.holderItemId && !data.items?.some(item => item._id === data.system.holderItemId))
+    ) {
+      const holderItemData: Item.CreateData = {
+        _id: foundry.utils.randomID(),
+        type: 'featureV2',
+        name: getGame().i18n.localize('GURPS.migration.migrationItem.name'),
+        system: {
+          notes: getGame().i18n.localize('GURPS.migration.migrationItem.notes'),
+        },
+      }
+
+      this.parent.updateSource({
+        items: [...(data.items ?? []), holderItemData],
+        system: {
+          holderItemId: holderItemData._id,
+        },
+      })
     }
   }
 
@@ -183,21 +215,35 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
+  get holderItem(): Item.OfType<'featureV2'> {
+    return this.parent.items.get(this.holderItemId) as Item.OfType<'featureV2'>
+  }
+
+  /* ---------------------------------------- */
+
   get currentmovemode(): MoveModeV2 {
     return this.moveV2.find(mv => mv.default)!
   }
+
+  /* ---------------------------------------- */
 
   get currentdodge(): number {
     return this.currentEncumbranceData?.currentdodge ?? 0
   }
 
+  /* ---------------------------------------- */
+
   get currentmove(): number {
     return this.currentEncumbranceData?.currentmove ?? 0
   }
 
+  /* ---------------------------------------- */
+
   get currentsprint(): number {
     return this.currentmove * 1.2 // TODO Should this be rounded to an integer?
   }
+
+  /* ---------------------------------------- */
 
   get currentflight(): number {
     const flightmode = this.moveV2.find(mv => this.isAirMoveMode(mv))
@@ -456,7 +502,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
 
     this.allAdsV2 = this.parent.items
-      .filter(item => (item as Item.Implementation).isOfType('featureV2'))
+      .filter(item => (item as Item.Implementation).isOfType('featureV2') && item._id !== this.holderItemId)
       .map(item => item as Item.OfType<'featureV2'>)
     this.allSkillsV2 = this.parent.items
       .filter(item => (item as Item.Implementation).isOfType('skillV2'))
@@ -1884,6 +1930,13 @@ const characterSchema = () => {
     moveV2: new CollectionField(MoveModeV2, { required: true, nullable: false, initial: {} }),
 
     allNotes: new CollectionField(NoteV2, { required: true, nullable: false, initial: {} }),
+
+    holderItemId: new fields.DocumentIdField({
+      required: true,
+      nullable: false,
+      readonly: true,
+      initial: () => foundry.utils.randomID(),
+    }),
 
     // NOTE: the following have been replaced with Items or accessors in the new model, and thus should not be used.
     // They are commented out but this note is kept here for reference.

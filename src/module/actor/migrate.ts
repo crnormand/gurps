@@ -183,6 +183,7 @@ function getMigratedActorData(
   // ActorV1 has no concept of Reaction and Conditional Modifier ownership by items,
   // so reactions and conditional modifiers are moved to a single placeholder item.
   const migrationItem: Item.CreateData<'featureV2'> = {
+    _id: foundry.utils.randomID(),
     type: 'featureV2',
     name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
   }
@@ -250,7 +251,7 @@ function getMigratedActorData(
     type: 'characterV2',
     img: oldActor.img,
     name: oldActor.name,
-    system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name),
+    system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name, { holderItemId: migrationItem._id! }),
     items,
   }
 
@@ -261,7 +262,8 @@ function getMigratedActorData(
 
 function migrateActorSystem(
   oldData: ActorV1Model,
-  actorName?: string
+  actorName?: string,
+  injectedData?: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>>
 ): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> {
   if (typeof oldData.conditions.move === 'string')
     console.warn(`MIGRATE: Actor ${actorName} oldData.conditions.move: ${oldData.conditions.move}`)
@@ -284,7 +286,11 @@ function migrateActorSystem(
   if (!numberValidate(oldData.traits.sizemod, { integerOnly: true }))
     console.warn(`MIGRATE: Actor ${actorName} has invalid SM value: ${oldData.traits.sizemod}. Defaulting to 0.`)
 
+  const holderItemId = injectedData?.holderItemId || ''
+
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
+    ...injectedData,
+    holderItemId,
     attributes: oldData.attributes,
     HP: oldData.HP,
     FP: oldData.FP,
@@ -413,11 +419,14 @@ function migrateActorSystem(
   const addNote = (data: Note, parentId: string | null) => {
     const id = foundry.utils.randomID()
 
+    console.log(data)
+
     const note: DataModel.CreateData<DataModel.SchemaOf<NoteV2>> = {
       ...data,
       text: data.notes,
       containedBy: parentId,
       markdown: data.notes,
+      importid: data.uuid,
       _id: id,
     }
 
