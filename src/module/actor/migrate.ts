@@ -327,7 +327,7 @@ function migrateActorSystem(
     additionalresources: {
       qnotes: oldData.additionalresources?.qnotes,
       tracker: {},
-      importname: oldData.additionalresources?.importname,
+      importname: oldData.additionalresources?.importname ?? oldData.additionalresources?.importName,
       importpath: oldData.additionalresources?.importpath,
     },
 
