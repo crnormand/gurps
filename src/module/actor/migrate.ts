@@ -442,7 +442,7 @@ function migrateActorSystem(
           `MIGRATE: Move Mode ${data.mode} has invalid Basic Move value: ${data.basic}. Defaulting to 0. ID: ${id}`
         )
 
-      if (!numberValidate(data.enhanced, { nonnegative: true, integerOnly: true }))
+      if (data.enhanced != null && !numberValidate(data.enhanced, { nonnegative: true, integerOnly: true }))
         console.warn(
           `MIGRATE: Move Mode ${data.mode} has invalid Enhanced Move value: ${data.enhanced}. Defaulting to 0. ID: ${id}`
         )
@@ -451,7 +451,7 @@ function migrateActorSystem(
         _id: id,
         mode: data.mode,
         basic: Number.isFinite(Number(data.basic)) ? Number(data.basic) : 0,
-        enhanced: data.enhanced ? Number(data.enhanced) || 0 : null,
+        enhanced: data.enhanced != null ? Number(data.enhanced) || 0 : null,
         default: data.default,
       }
 

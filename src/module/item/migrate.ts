@@ -1,6 +1,7 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
 import { Melee, Ranged } from '@module/actor/actor-components.js'
+import { numberValidate } from '@module/data/validators/number-validator.js'
 
 import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.js'
 
@@ -208,17 +209,17 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
 function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.CreateData<MeleeAttackSchema> {
   const damage = typeof oldMelee.damage === 'string' ? [oldMelee.damage] : oldMelee.damage
 
-  if (!Number(oldMelee.baseParryPenalty))
+  if (!numberValidate(oldMelee.baseParryPenalty, { integerOnly: true }))
     console.warn(
       `MIGRATE: Melee attack ${oldMelee.mode} has invalid baseParryPenalty: ${oldMelee.baseParryPenalty}. Defaulting to 0. ID: ${_id}`
     )
 
-  if (!Number(oldMelee.extraAttacks))
+  if (!numberValidate(oldMelee.extraAttacks, { integerOnly: true, nonnegative: true }))
     console.warn(
       `MIGRATE: Melee attack ${oldMelee.mode} has invalid extraAttacks: ${oldMelee.extraAttacks}. Defaulting to 0. ID: ${_id}`
     )
 
-  if (!Number(oldMelee.import))
+  if (!numberValidate(oldMelee.import, { integerOnly: true, nonnegative: true }))
     console.warn(
       `MIGRATE: Melee attack ${oldMelee.mode} has invalid import value: ${oldMelee.import}. Defaulting to 0. ID: ${_id}`
     )
@@ -251,17 +252,17 @@ function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.Cr
 function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField.CreateData<RangedAttackSchema> {
   const damage = typeof oldRanged.damage === 'string' ? [oldRanged.damage] : oldRanged.damage
 
-  if (!Number(oldRanged.ammo))
+  if (!numberValidate(oldRanged.ammo, { integerOnly: true, nonnegative: true }))
     console.warn(
       `MIGRATE: Ranged attack ${oldRanged.mode} has invalid ammo value: ${oldRanged.ammo}. Defaulting to 0. ID: ${_id}`
     )
 
-  if (!Number(oldRanged.extraAttacks))
+  if (!numberValidate(oldRanged.extraAttacks, { integerOnly: true, nonnegative: true }))
     console.warn(
       `MIGRATE: Ranged attack ${oldRanged.mode} has invalid extraAttacks: ${oldRanged.extraAttacks}. Defaulting to 0. ID: ${_id}`
     )
 
-  if (!Number(oldRanged.import))
+  if (!numberValidate(oldRanged.import, { integerOnly: true, nonnegative: true }))
     console.warn(
       `MIGRATE: Ranged attack ${oldRanged.mode} has invalid import value: ${oldRanged.import}. Defaulting to 0. ID: ${_id}`
     )
@@ -295,10 +296,10 @@ function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField
 /* ---------------------------------------- */
 
 function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): NewDataWrapper<'equipmentV2'> {
-  if (!Number(oldData.eqt.uses))
+  if (!numberValidate(oldData.eqt.uses, { integerOnly: true, nonnegative: true }))
     console.warn(`MIGRATE: Equipment ${oldData.eqt.name} has invalid uses: ${oldData.eqt.uses}. Defaulting to 0.`)
 
-  if (!Number(oldData.eqt.maxuses))
+  if (!numberValidate(oldData.eqt.maxuses, { integerOnly: true, nonnegative: true }))
     console.warn(`MIGRATE: Equipment ${oldData.eqt.name} has invalid maxuses: ${oldData.eqt.maxuses}. Defaulting to 0.`)
 
   const newData: NewDataWrapper<'equipmentV2'> = {
@@ -328,7 +329,7 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
 /* ---------------------------------------- */
 
 function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWrapper<'skillV2'> {
-  if (!Number(oldData.ski.import))
+  if (!numberValidate(oldData.ski.import, { integerOnly: true, nonnegative: true }))
     console.warn(`MIGRATE: Skill ${oldData.ski.name} has invalid import value: ${oldData.ski.import}. Defaulting to 0.`)
 
   if (!oldData.ski.relativelevel)
@@ -348,7 +349,7 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
 /* ---------------------------------------- */
 
 function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWrapper<'spellV2'> {
-  if (!Number(oldData.spl.import))
+  if (!numberValidate(oldData.spl.import, { integerOnly: true, nonnegative: true }))
     console.warn(`MIGRATE: Spell ${oldData.spl.name} has invalid import value: ${oldData.spl.import}. Defaulting to 0.`)
 
   if (!oldData.spl.relativelevel)

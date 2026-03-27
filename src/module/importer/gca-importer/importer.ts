@@ -633,7 +633,8 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importMeleeWeapon(weapon: GCAAttackMode): DataModel.CreateData<MeleeAttackSchema> {
-    const name = weapon.name ?? ''
+    // Set name to null so that it inherists the parent item's name by default.
+    const name = null
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
@@ -668,7 +669,8 @@ Portrait will not be imported.`
   }
 
   #importRangedWeapon(weapon: GCAAttackMode): DataModel.CreateData<RangedAttackSchema> {
-    const name = weapon.name ?? ''
+    // Set name to null so that it inherists the parent item's name by default.
+    const name = null
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 
