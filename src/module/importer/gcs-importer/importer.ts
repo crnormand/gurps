@@ -62,8 +62,6 @@ class GcsImporter<Mode extends GcsImporterMode> {
   _mode: Mode
   input: GcsImporterInputType<Mode>
   actor?: Actor.OfType<'characterV2'>
-  // declare inputActor: GcsCharacter
-  // declare inputCollection: AnyGcsItemCollection
   output: DataModel.CreateData<CharacterSchema> = {}
   items: Item.CreateData[]
   img: string
@@ -148,7 +146,26 @@ class GcsImporter<Mode extends GcsImporterMode> {
       // Restore saved counts and uses in raw item data before creating embedded documents
       this.#restoreEquipmentCountsAndUses(savedEquipmentCounts)
 
-      await actor.createEmbeddedDocuments('Item', this.items, { keepId: true })
+      const existingItems = actor.items.contents.map(item => {
+        return { _id: item.id || null, importid: item.system.importid || '' }
+      })
+
+      const itemsToCreate: Item.CreateData[] = []
+      const itemsToUpdate: Item.CreateData[] = []
+
+      for (const itemData of this.items) {
+        const existingId = this.#existingItemId(itemData, existingItems)
+
+        if (!existingId) {
+          itemsToCreate.push(itemData)
+        } else {
+          itemData._id = existingId
+          itemsToUpdate.push(itemData)
+        }
+      }
+
+      await actor.updateEmbeddedDocuments('Item', itemsToUpdate)
+      await actor.createEmbeddedDocuments('Item', itemsToCreate, { keepId: true })
     } else {
       // @ts-expect-error: Actor shows as stored type, but is not stored.
       actor = await Actor.create({
@@ -1134,22 +1151,30 @@ Portrait will not be imported.`
 
   /* ---------------------------------------- */
 
-  #importNote(gcs_note: GcsNote, containedBy: string | null): void {
-    const id = foundry.utils.randomID()
+  #importNote(gcsNote: GcsNote, containedBy: string | null): void {
     const note: DataModel.CreateData<NoteV2Schema> = {
-      _id: id,
+      _id: foundry.utils.randomID(),
       open: true,
       containedBy,
-      markdown: gcs_note.markdown,
-      text: gcs_note.text,
-      reference: gcs_note.reference,
-      reference_highlight: gcs_note.reference_highlight,
+      markdown: gcsNote.markdown,
+      text: gcsNote.text,
+      reference: gcsNote.reference,
+      reference_highlight: gcsNote.reference_highlight,
+      importid: gcsNote.id,
       calc: {
-        resolved_notes: gcs_note.calc?.resolved_notes ?? null,
+        resolved_notes: gcsNote.calc?.resolved_notes ?? null,
       },
     }
 
-    gcs_note.childItems.forEach((child: GcsNote) => {
+    const existingNote = (this.actor?.system.allNotes.contents ?? []).find(
+      existing => existing?.importid === note.importid
+    )
+
+    if (existingNote) note._id = existingNote._id
+
+    const id = note._id as string
+
+    gcsNote.childItems.forEach((child: GcsNote) => {
       this.#importNote(child, id)
     })
 

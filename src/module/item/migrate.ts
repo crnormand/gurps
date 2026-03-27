@@ -309,6 +309,7 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
     weightsum: oldData.eqt.weightsum.toString(),
     uses: Number(oldData.eqt.uses) || 0,
     maxuses: Number(oldData.eqt.maxuses) || 0,
+    importid: oldData.eqt.uuid || '',
   }
 
   return newData
@@ -321,6 +322,7 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.fea,
     isContainer: Boolean(oldData.fea.contains && Object.keys(oldData.fea.contains).length > 0),
+    importid: oldData.fea.uuid || '',
   }
 
   return newData
@@ -341,6 +343,7 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
     isContainer: Boolean(oldData.ski.contains && Object.keys(oldData.ski.contains).length > 0),
     import: Number(oldData.ski.import) || 0,
     relativelevel: (oldData.ski.relativelevel ?? '').toString(),
+    importid: oldData.ski.uuid || '',
   }
 
   return newData
@@ -361,6 +364,7 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
     isContainer: Boolean(oldData.spl.contains && Object.keys(oldData.spl.contains).length > 0),
     import: Number(oldData.spl.import) || 0,
     relativelevel: (oldData.spl.relativelevel ?? '').toString(),
+    importid: oldData.spl.uuid || '',
   }
 
   return newData
