@@ -786,6 +786,11 @@
         "successMessage": "Kompendium \"{name}\" wurde erfolgreich importiert ({num} Elemente importiert).",
         "title": "GCS-Kompendium-Elemente importieren"
       },
+      "migratedItemsPrompt": {
+        "message": "Vor dem Importieren haben wir einige übrig gebliebene Elemente einer früheren Migration gefunden, die wahrscheinlich Duplikate sind. In den meisten Fällen ist es sicher, sie alle zu löschen.<br><strong>Jedoch:</strong> Wenn Sie eines der unten aufgeführten Elemente in Foundry <em>vor</em> der Migration manuell hinzugefügt haben, lassen Sie es deaktiviert — es kann nach dem Löschen nicht wiederhergestellt werden.<br>Markieren Sie die Elemente, die Sie löschen möchten, oder markieren Sie alle, wenn Sie sicher sind, dass keines manuell hinzugefügt wurde. Nicht markierte Elemente werden nicht erneut angezeigt.",
+        "selectAll": "Alle auswählen",
+        "title": "Verwaiste migrierte Elemente löschen?"
+      },
       "promptBodyPlan": {
         "content": "<p>Möchten Sie den aktuellen Körperplan <strong>beibehalten</strong> (<strong>{currentBodyPlan}</strong>) oder ihn mit dem Körperplan aus der Importdatei <strong>überschreiben</strong> (<strong>{bodyplan}</strong>)?</p>",
         "title": "Aktuellen Körperplan überschreiben?"

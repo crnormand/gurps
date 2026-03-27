@@ -786,6 +786,11 @@
         "successMessage": "Compêndio \"{name}\" importado com sucesso ({num} itens importados).",
         "title": "Importar Itens do Compêndio GCS"
       },
+      "migratedItemsPrompt": {
+        "message": "Antes de importar, encontramos alguns itens restantes de uma migração anterior que provavelmente são duplicatas. Na maioria dos casos, é seguro excluir todos eles.<br><strong>No entanto:</strong> se você adicionou manualmente algum dos itens abaixo no Foundry <em>antes</em> da migração, deixe-os desmarcados — eles não poderão ser recuperados após a exclusão.<br>Marque os itens que deseja excluir, ou marque todos se tiver certeza de que nenhum foi adicionado manualmente. Qualquer item não marcado não será sinalizado novamente.",
+        "selectAll": "Selecionar Todos",
+        "title": "Excluir Itens Migrados Órfãos?"
+      },
       "promptBodyPlan": {
         "content": "<p>Você deseja <strong>Manter</strong> o plano corporal atual (<strong>{currentBodyPlan}</strong>), ou <strong>Sobrescrever</strong> com o plano corporal do arquivo de importação (<strong>{bodyplan}</strong>)?</p>",
         "title": "Sobrescrever Plano Corporal Atual?"

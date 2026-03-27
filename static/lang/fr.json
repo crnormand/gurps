@@ -786,6 +786,11 @@
         "successMessage": "Recueil \"{name}\" importé avec succès ({num} éléments importés).",
         "title": "Importer des éléments du Compendium GCS"
       },
+      "migratedItemsPrompt": {
+        "message": "Avant l'importation, nous avons trouvé des éléments restants d'une migration précédente qui sont probablement des doublons. Dans la plupart des cas, il est sûr de tous les supprimer.<br><strong>Cependant :</strong> si vous avez ajouté manuellement l'un des éléments ci-dessous dans Foundry <em>avant</em> la migration, laissez-les décochés — ils ne pourront pas être récupérés une fois supprimés.<br>Cochez les éléments que vous souhaitez supprimer, ou cochez tout si vous êtes sûr qu'aucun n'a été ajouté manuellement. Tout ce qui reste décoché ne sera plus signalé.",
+        "selectAll": "Tout sélectionner",
+        "title": "Supprimer les éléments migrés orphelins ?"
+      },
       "promptBodyPlan": {
         "content": "<p>Voulez-vous <strong>Conserver</strong> le plan corporel actuel (<strong>{currentBodyPlan}</strong>), ou <strong>Écraser</strong> avec le plan corporel du fichier d'importation (<strong>{bodyplan}</strong>)?</p>",
         "title": "Écraser le Plan Corporel Actuel?"
