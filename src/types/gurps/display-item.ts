@@ -20,7 +20,7 @@ interface BaseDisplayItem {
   /** The name of this item, with any modifiers which may change the name */
   fullName: string
   /** The plaintext notes for this item, without any markup */
-  notes: string
+  notes: string | Handlebars.SafeString
   /** Does this item have any notes? */
   hasNotes: boolean
   /** If this item contains notes, are the notes currently un-collapsed? */

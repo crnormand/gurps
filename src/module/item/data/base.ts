@@ -345,6 +345,12 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       .filter(child => !!child && !!child.system)
       .map(child => child!.system!.toDisplayItem!())
 
+    const converter = new globalThis.showdown.Converter({
+      tables: true,
+      strikethrough: true,
+    })
+    const notes = new Handlebars.SafeString(`<div class="gcs-markdown">` + converter.makeHtml(this.notes) + '</div>')
+
     return {
       id: this.parent.id!,
       children,
@@ -352,7 +358,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       childrenOpen: this.open ?? false,
       name: this.parent.name,
       fullName: this.parent.name,
-      notes: this.notes,
+      notes,
       hasNotes: this.notes.trim().length > 0,
       notesOpen: this.notesOpen,
       indent: this.ancestors.length,

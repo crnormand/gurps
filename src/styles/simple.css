@@ -618,10 +618,6 @@
   border: none;
 }
 
-.gurps.sheet.actor {
-  font-size: var(--font-size-13);
-}
-
 .roll.flex-center {
   text-wrap: nowrap;
 }
