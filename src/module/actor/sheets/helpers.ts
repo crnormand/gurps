@@ -60,10 +60,10 @@ export async function resolveItemDropQuantity(item: Item.OfType<'equipmentV2'>):
         icon: 'fa-solid fa-check',
         label: 'GURPS.ok',
         default: true,
-        callback: (_event, button, _dialog) => {
+        callback: (_event, button, _dialog): number => {
           const input = button.form?.elements.namedItem('quantity') as HTMLInputElement
 
-          if (!input) return null
+          if (!input) return 0
 
           return parseInt(input.value) || 0
         },
@@ -72,7 +72,7 @@ export async function resolveItemDropQuantity(item: Item.OfType<'equipmentV2'>):
         action: 'transferAll',
         icon: 'fa-solid fa-angles-right',
         label: 'GURPS.transferAll',
-        callback: () => max,
+        callback: (): number => max,
       },
     ],
   })

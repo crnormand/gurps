@@ -215,185 +215,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   equippedblock: number = 0
 
   /* ---------------------------------------- */
-  /*  Accessors                               */
-  /* ---------------------------------------- */
-
-  get holderItem(): Item.OfType<'featureV2'> | undefined {
-    return this.parent.items.get(this.holderItemId) as Item.OfType<'featureV2'> | undefined
-  }
-
-  /* ---------------------------------------- */
-
-  get currentmovemode(): MoveModeV2 {
-    return this.moveV2.find(mv => mv.default)!
-  }
-
-  /* ---------------------------------------- */
-
-  get currentdodge(): number {
-    return this.currentEncumbranceData?.currentdodge ?? 0
-  }
-
-  /* ---------------------------------------- */
-
-  get currentmove(): number {
-    return this.currentEncumbranceData?.currentmove ?? 0
-  }
-
-  /* ---------------------------------------- */
-
-  get currentsprint(): number {
-    return this.currentmove * 1.2 // TODO Should this be rounded to an integer?
-  }
-
-  /* ---------------------------------------- */
-
-  get currentflight(): number {
-    const flightmode = this.moveV2.find(mv => this.isAirMoveMode(mv))
-
-    return flightmode?.basic ?? 0
-  }
-
-  /* ---------------------------------------- */
-
-  // moveoverride: { maneuver: string | null; posture: string | null } = {
-  //   maneuver: null,
-  //   posture: null,
-  // }
-
-  /* ---------------------------------------- */
-
-  // List of top-level ADs (not contained in another AD), sorted by `sort` field.
-  get adsV2(): Item.OfType<'featureV2'>[] {
-    return this.allAdsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get ads() {
-    return arrayToObject(
-      this.adsV2.map(item => new TraitV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  get skillsV2(): Item.OfType<'skillV2'>[] {
-    return this.allSkillsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get skills() {
-    return arrayToObject(
-      this.skillsV2.map(item => new SkillV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  get spellsV2(): Item.OfType<'spellV2'>[] {
-    return this.allSpellsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get spells() {
-    return arrayToObject(
-      this.spellsV2.map(item => new SpellV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  get equipmentV2() {
-    return {
-      carried: this.allEquipmentCarried
-        .filter(item => item.containedBy === null)
-        .sort((left, right) => left.sort - right.sort),
-      other: this.allEquipmentOther
-        .filter(item => item.containedBy === null)
-        .sort((left, right) => left.sort - right.sort),
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  get allEquipmentCarried() {
-    return this.allEquipmentV2.filter(item => item.system.carried === true)
-  }
-
-  /* ---------------------------------------- */
-
-  get allEquipmentOther() {
-    return this.allEquipmentV2.filter(item => item.system.carried === false)
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get equipment() {
-    return {
-      carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
-      other: arrayToObject(this.equipmentV2.other.map(item => new EquipmentV1(item))),
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get melee() {
-    return arrayToObject(
-      this.meleeV2.map(item => new MeleeV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get ranged() {
-    return arrayToObject(
-      this.rangedV2.map(item => new RangedV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get move() {
-    return Object.fromEntries(this.moveV2.map((mv, index) => [zeroFill(index, 5), mv]))
-  }
-
-  /* ---------------------------------------- */
-
-  // List of top-level notes (not contained in another note).
-  get notesV2() {
-    return this.allNotes.filter(item => item.containedBy === null)
-  }
-
-  // @deprecated Legacy collection.
-  get notes() {
-    return arrayToObject(
-      this.notesV2.map(item => new NoteV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  private get currentEncumbranceData() {
-    return this.encumbrance.find(enc => enc.current)
-  }
-
-  /* ---------------------------------------- */
 
   /**
    * Normalize a move mode identifier to its untranslated key form.
@@ -930,6 +751,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
   /*  Accessors                               */
+  /* ---------------------------------------- */
+
+  get holderItem(): Item.OfType<'featureV2'> {
+    return this.parent.items.get(this.holderItemId) as Item.OfType<'featureV2'>
+  }
+
   /* ---------------------------------------- */
 
   get currentMoveMode(): MoveModeV2 {

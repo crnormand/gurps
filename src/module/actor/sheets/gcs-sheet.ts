@@ -971,7 +971,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     if (!item || !item.isOwner) return
 
     // target is the target item on which the dropped item is dropped.
-    let target = targetId ? (this.actor.items.get(targetId) ?? null) : null
+    let target: Item.Implementation | null = targetId ? (this.actor.items.get(targetId) ?? null) : null
 
     if (target && target.type !== item.type) {
       ui.notifications?.warn('GURPS.dragDrop.itemTypeMismatch', { localize: true })
