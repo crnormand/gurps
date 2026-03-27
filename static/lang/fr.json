@@ -1,8 +1,10 @@
 {
   "DOCUMENT": {
     "Action": "Action",
+    "ConditionalModifier": "Modificateur conditionnel",
     "HitLocation": "Localisation des coups",
     "MoveMode": "Mode de déplacement",
+    "ReactionModifier": "Modificateur de réaction",
     "ResourceTracker": "Suivi des ressources"
   },
   "GURPS": {

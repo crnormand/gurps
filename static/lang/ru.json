@@ -1,8 +1,10 @@
 {
   "DOCUMENT": {
     "Action": "Действие",
+    "ConditionalModifier": "Условный модификатор",
     "HitLocation": "Место попадания",
     "MoveMode": "Режим передвижения",
+    "ReactionModifier": "Модификатор реакции",
     "ResourceTracker": "Трекер ресурсов"
   },
   "GURPS": {
