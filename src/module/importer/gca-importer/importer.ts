@@ -344,6 +344,9 @@ Portrait will not be imported.`
     const SM = this.input.traits.attributes.find(attr => attr.symbol === 'SM')
     const TL = this.input.traits.attributes.find(attr => attr.symbol === 'TL')
 
+    const createdon = new Date(this.input.author?.datecreated ?? Date.now()).toISOString()
+    const modifiedon = new Date().toISOString()
+
     this.output.profile = {
       title: '',
       height: vitals?.height ?? '',
@@ -359,8 +362,8 @@ Portrait will not be imported.`
       skin: '',
       sizemod: SM?.score ?? 0,
       techlevel: `${TL?.score ?? 0}`,
-      createdon: this.input.author?.datecreated ?? '',
-      modifiedon: '',
+      createdon,
+      modifiedon,
       player: this.input.player ?? '',
     }
   }
@@ -417,6 +420,7 @@ Portrait will not be imported.`
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
+          flags: {},
           where: location.location ?? '',
           import: Number.isNaN(dr) ? 0 : dr,
           rollText: roll,
@@ -439,7 +443,8 @@ Portrait will not be imported.`
 
   async #promptHitLocationOverwrite() {
     // No need to run this if there is no existing actor or if this is the first import.
-    if (!this.actor || !this.actor.system.profile.modifiedon) return
+    if (!this.actor || (!this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname))
+      return
 
     const currentBodyPlan = this.actor.system.bodyplan
 
