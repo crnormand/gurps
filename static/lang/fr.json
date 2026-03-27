@@ -789,6 +789,8 @@
         "title": "Importer des éléments du Compendium GCS"
       },
       "migratedItemsPrompt": {
+        "cancel": "Ne pas supprimer",
+        "confirmDeletions": "Supprimer la sélection",
         "message": "Avant l'importation, nous avons trouvé des éléments restants d'une migration précédente qui sont probablement des doublons. Dans la plupart des cas, il est sûr de tous les supprimer.<br><strong>Cependant :</strong> si vous avez ajouté manuellement l'un des éléments ci-dessous dans Foundry <em>avant</em> la migration, laissez-les décochés — ils ne pourront pas être récupérés une fois supprimés.<br>Cochez les éléments que vous souhaitez supprimer, ou cochez tout si vous êtes sûr qu'aucun n'a été ajouté manuellement. Tout ce qui reste décoché ne sera plus signalé.",
         "selectAll": "Tout sélectionner",
         "title": "Supprimer les éléments migrés orphelins ?"
@@ -961,13 +963,13 @@
         "progressMessage": "Application des migrations d'Acteur pour la version {version}, veuillez patienter...",
         "successMessage": "Migrations d'Acteur appliquées avec succès pour la version {version}."
       },
-      "item": {
-        "progressMessage": "Application des migrations d'Objet pour la version {version}, veuillez patienter...",
-        "successMessage": "Migrations d'Objet appliquées avec succès pour la version {version}."
-      },
       "holderItem": {
         "name": "Le Porte-Tout",
         "notes": "Ceci est un objet temporaire utilisé pour contenir toutes les Réactions, Modificateurs Conditionnels et Armes après la migration du personnage. Pour déplacer ces éléments à leur place appropriée, veuillez réimporter ce personnage depuis GCS ou GCA."
+      },
+      "item": {
+        "progressMessage": "Application des migrations d'Objet pour la version {version}, veuillez patienter...",
+        "successMessage": "Migrations d'Objet appliquées avec succès pour la version {version}."
       },
       "toV1_0_0": {
         "cancel": "Annuler la migration",

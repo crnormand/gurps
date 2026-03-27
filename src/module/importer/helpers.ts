@@ -125,7 +125,7 @@ export async function promptDeletionOfMigratedItems(actor?: Actor.Implementation
       {
         action: 'confirmDeletions',
         icon: 'fa-solid fa-trash',
-        label: 'Delete Selected',
+        label: 'GURPS.importer.migratedItemsPrompt.confirmDeletions',
         default: false,
         callback: (event, button, dialog) => {
           event.preventDefault()
@@ -143,7 +143,7 @@ export async function promptDeletionOfMigratedItems(actor?: Actor.Implementation
       {
         action: 'cancel',
         icon: 'fa-solid fa-ban',
-        label: 'Do Not Delete',
+        label: 'GURPS.importer.migratedItemsPrompt.cancel',
         default: true,
         callback: (event, button) => {
           event.preventDefault()
