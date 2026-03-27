@@ -419,8 +419,6 @@ function migrateActorSystem(
   const addNote = (data: Note, parentId: string | null) => {
     const id = foundry.utils.randomID()
 
-    console.log(data)
-
     const note: DataModel.CreateData<DataModel.SchemaOf<NoteV2>> = {
       ...data,
       text: data.notes,

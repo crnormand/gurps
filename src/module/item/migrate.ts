@@ -224,21 +224,60 @@ function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.Cr
       `MIGRATE: Melee attack ${oldMelee.mode} has invalid import value: ${oldMelee.import}. Defaulting to 0. ID: ${_id}`
     )
 
+  const importedLevel = Number(oldMelee.import) || 0
+
+  let parry = oldMelee.parry
+  let block = oldMelee.block
+
+  if (parry !== '') {
+    let parryMod = 0
+
+    const oldParryText = oldMelee.parry.match(/^\d+/)?.[0] || '0'
+    const parrySuffix = oldMelee.parry.replace(oldParryText, '')
+    const oldParry = parseInt(oldParryText)
+
+    if (!isNaN(oldParry)) {
+      const expectedParry = importedLevel / 2 + 3
+
+      parryMod = oldParry - expectedParry
+    }
+
+    parryMod += Number(oldMelee.parrybonus) || 0
+
+    parry = `${parryMod}${parrySuffix}`
+  }
+
+  if (block !== '') {
+    let blockMod = 0
+
+    const oldBlockText = oldMelee.block.match(/^\d+/)?.[0] || '0'
+    const blockSuffix = oldMelee.block.replace(oldBlockText, '')
+    const oldBlock = parseInt(oldBlockText)
+
+    if (!isNaN(oldBlock)) {
+      const expectedBlock = importedLevel / 2 + 3
+
+      blockMod = oldBlock - expectedBlock
+    }
+
+    block = `${blockMod}${blockSuffix}`
+  }
+
   const newMelee: fields.SchemaField.CreateData<MeleeAttackSchema> = {
     _id,
     type: ActionType.MeleeAttack,
     baseParryPenalty: Number(oldMelee.baseParryPenalty) || 0,
-    block: oldMelee.block,
+    block,
     consumeAction: oldMelee.consumeAction,
     damage,
     extraAttacks: Number(oldMelee.extraAttacks) || 0,
-    import: Number(oldMelee.import) || 0,
+    import: importedLevel,
     itemModifiers: '',
     mode: oldMelee.mode,
     modifierTags: oldMelee.modifierTags,
     notes: oldMelee.notes,
     otf: oldMelee.otf,
-    parry: oldMelee.parry,
+    parry,
     reach: oldMelee.reach,
     st: oldMelee.st,
     name: oldMelee.name,

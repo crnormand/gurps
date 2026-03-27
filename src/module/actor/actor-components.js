@@ -762,6 +762,7 @@ export class Melee extends Attack {
     this.cost = ''
     this.reach = ''
     this.parry = ''
+    this.parrybonus = ''
     this.block = ''
     this.baseParryPenalty = -4
   }
