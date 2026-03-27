@@ -75,7 +75,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     options: foundry.abstract.Document.Database.PreCreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
     user: User.Implementation
   ): Promise<boolean | void> {
-    super._preCreate(data, options, user)
+    const result = await super._preCreate(data, options, user)
+    if (result === false) return false
 
     if (
       !data?.system?.holderItemId ||
@@ -215,8 +216,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  get holderItem(): Item.OfType<'featureV2'> {
-    return this.parent.items.get(this.holderItemId) as Item.OfType<'featureV2'>
+  get holderItem(): Item.OfType<'featureV2'> | undefined {
+    return this.parent.items.get(this.holderItemId) as Item.OfType<'featureV2'> | undefined
   }
 
   /* ---------------------------------------- */

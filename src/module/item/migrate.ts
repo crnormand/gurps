@@ -230,37 +230,45 @@ function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.Cr
   let block = oldMelee.block
 
   if (parry !== '') {
-    let parryMod = 0
+    const parryMatch = oldMelee.parry.match(/^\d+/)
 
-    const oldParryText = oldMelee.parry.match(/^\d+/)?.[0] || '0'
-    const parrySuffix = oldMelee.parry.replace(oldParryText, '')
-    const oldParry = parseInt(oldParryText)
+    if (parryMatch) {
+      let parryMod = 0
 
-    if (!isNaN(oldParry)) {
-      const expectedParry = importedLevel / 2 + 3
+        const oldParryText = parryMatch[0]
+        const parrySuffix = oldMelee.parry.replace(oldParryText, '')
+        const oldParry = parseInt(oldParryText)
 
-      parryMod = oldParry - expectedParry
-    }
+        if (!isNaN(oldParry)) {
+          const expectedParry = importedLevel / 2 + 3
 
-    parryMod += Number(oldMelee.parrybonus) || 0
+          parryMod = oldParry - expectedParry
+        }
 
-    parry = `${parryMod}${parrySuffix}`
+        parryMod += Number(oldMelee.parrybonus) || 0
+
+        parry = `${parryMod}${parrySuffix}`
+      }
   }
 
   if (block !== '') {
-    let blockMod = 0
+    const blockMatch = oldMelee.block.match(/^\d+/)
 
-    const oldBlockText = oldMelee.block.match(/^\d+/)?.[0] || '0'
-    const blockSuffix = oldMelee.block.replace(oldBlockText, '')
-    const oldBlock = parseInt(oldBlockText)
+    if (blockMatch) {
+      let blockMod = 0
 
-    if (!isNaN(oldBlock)) {
-      const expectedBlock = importedLevel / 2 + 3
+      const oldBlockText = blockMatch[0]
+      const blockSuffix = oldMelee.block.replace(oldBlockText, '')
+      const oldBlock = parseInt(oldBlockText)
 
-      blockMod = oldBlock - expectedBlock
+      if (!isNaN(oldBlock)) {
+        const expectedBlock = importedLevel / 2 + 3
+
+        blockMod = oldBlock - expectedBlock
+      }
+
+      block = `${blockMod}${blockSuffix}`
     }
-
-    block = `${blockMod}${blockSuffix}`
   }
 
   const newMelee: fields.SchemaField.CreateData<MeleeAttackSchema> = {

@@ -366,7 +366,12 @@ Portrait will not be imported.`
     const SM = this.input.traits.attributes.find(attr => attr.symbol === 'SM')
     const TL = this.input.traits.attributes.find(attr => attr.symbol === 'TL')
 
-    const createdon = new Date(this.input.author?.datecreated ?? Date.now()).toISOString()
+    const authorCreatedRaw = this.input.author?.datecreated
+    let createdDate = authorCreatedRaw ? new Date(authorCreatedRaw) : new Date()
+    if (isNaN(createdDate.getTime())) {
+      createdDate = new Date()
+    }
+    const createdon = createdDate.toISOString()
     const modifiedon = new Date().toISOString()
 
     this.output.profile = {

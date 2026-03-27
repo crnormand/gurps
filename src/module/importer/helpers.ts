@@ -50,7 +50,7 @@ export function createStandardTrackers(importer: { output: any; actor?: any }) {
 
 /**
  * If the affected actor was migrated from the pre-1.0.0 version of GGA, it likely holds
- * orphaned pseudo-dcouments which will be duplicated on first import. This prompts the user to delete those
+ * orphaned pseudo-documents which will be duplicated on first import. This prompts the user to delete those
  * pseudo-documents, which are identified by a specific flag set on them, in order to prevent duplicates.
  *
  */
