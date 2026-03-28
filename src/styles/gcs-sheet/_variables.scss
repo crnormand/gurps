@@ -49,11 +49,14 @@
   --gcs-color-input-bg: #eff0f0;
   --gcs-color-input-fg: var(--color-dark-fg);
 
-  --gcs-color-mod-bg: #f0b87a;
-  --gcs-color-mod-fg: var(--color-dark-fg);
-
-  --gcs-color-roll-bg: #7de8bc;
+  --gcs-color-roll-bg: #f9f0a0;
   --gcs-color-roll-fg: var(--color-dark-fg);
+
+  --gcs-color-positive-bg: #a8e0b0;
+  --gcs-color-positive-fg: var(--color-dark-fg);
+
+  --gcs-color-negative-bg: #f0b87a;
+  --gcs-color-negative-fg: var(--color-dark-fg);
 }
 
 @mixin css-variables-dark {
@@ -83,9 +86,12 @@
   --gcs-color-input-bg: #000000;
   --gcs-color-input-fg: var(--color-light-fg);
 
-  --gcs-color-mod-bg: #f0b87a;
-  --gcs-color-mod-fg: var(--color-dark-fg);
-
-  --gcs-color-roll-bg: #7de8bc;
+  --gcs-color-roll-bg: #e8e068;
   --gcs-color-roll-fg: var(--color-dark-fg);
+
+  --gcs-color-positive-bg: #6acc80;
+  --gcs-color-positive-fg: var(--color-dark-fg);
+
+  --gcs-color-negative-bg: #e89050;
+  --gcs-color-negative-fg: var(--color-dark-fg);
 }

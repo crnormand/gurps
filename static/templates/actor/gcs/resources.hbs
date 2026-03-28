@@ -104,7 +104,7 @@
             <td>{{location.rollText}}</td>
             <td>{{location.where}}</td>
             <td
-              class="form-fields"
+              class="form-fields {{ifThen (gte location.penalty 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
               data-action="addModifier"
               data-value="{{location.penalty}}"
               data-comment="{{localize 'GURPS.hitLocationPenalty'}}: {{location.where}}"

@@ -77,12 +77,19 @@ body {
   }
 }
 
-[data-action='addModifier'] {
-  background-color: var(--gcs-color-mod-bg);
-  color: var(--gcs-color-mod-fg);
+.gcs-mod-positive[data-action='addModifier'] {
+  background-color: var(--gcs-color-positive-bg);
 
   &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-mod-bg), white 15%);
+    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 15%);
+  }
+}
+
+.gcs-mod-negative[data-action='addModifier'] {
+  background-color: var(--gcs-color-negative-bg);
+
+  &:hover {
+    background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 15%);
   }
 }
 

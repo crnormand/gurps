@@ -54,7 +54,12 @@
 
     <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
     {{#if acc}}
-    <td data-action="addModifier" data-value="{{acc}}" data-comment="{{localize 'GURPS.accForWeapon' weapon=fullName}}" class="gcs-item-acc">{{acc}}</td>
+    <td
+      data-action="addModifier"
+      data-value="{{acc}}"
+      data-comment="{{localize 'GURPS.accForWeapon' weapon=fullName}}"
+      class="gcs-item-acc form-fields gcs-link-mod gcs-item-modifier {{ifThen (gte acc 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
+      >{{acc}}</td>
     {{else}}
     <td class="gcs-item-acc">{{acc}}</td>
     {{/if}}
@@ -63,7 +68,12 @@
     <td class="gcs-item-rof">{{rof}}</td>
     <td class="gcs-item-shots">{{shots}}</td>
     {{#if bulk}}
-    <td data-action="addModifier" data-value="{{bulk}}" data-comment="{{localize 'GURPS.bulkForWeapon' weapon=fullName}}" class="gcs-item-bulk">{{bulk}}</td>
+    <td
+      data-action="addModifier"
+      data-value="{{bulk}}"
+      data-comment="{{localize 'GURPS.bulkForWeapon' weapon=fullName}}"
+      class="gcs-item-bulk {{ifThen (gte bulk 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
+      >{{bulk}}</td>
     {{else}}
     <td class="gcs-item-bulk">{{bulk}}</td>
     {{/if}}

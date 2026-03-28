@@ -30,11 +30,19 @@
     }
   }
 
-  [data-action='addModifier'] {
-    background-color: color-mix(in hsl, var(--gcs-color-mod-bg), var(--gcs-color-banding-bg) 20%);
+  .gcs-mod-positive[data-action='addModifier'] {
+    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 20%);
 
     &:hover {
-      background-color: color-mix(in hsl, var(--gcs-color-mod-bg), var(--gcs-color-banding-bg) 40%);
+      background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 40%);
+    }
+  }
+
+  .gcs-mod-negative[data-action='addModifier'] {
+    background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 20%);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 40%);
     }
   }
 }
