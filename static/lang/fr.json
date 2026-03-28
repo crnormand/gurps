@@ -166,6 +166,14 @@
               "label": "Vitesse de base"
             }
           },
+          "conditions": {
+            "maneuver": {
+              "label": "Manœuvre"
+            },
+            "posture": {
+              "label": "Posture"
+            }
+          },
           "frightcheck": {
             "label": "Test de Peur"
           },
@@ -554,6 +562,24 @@
     },
     "concentrationCheck": "Jet Concentration",
     "condition": "Etat",
+    "conditionalInjury": {
+      "daysToHeal": {
+        "max": "Max",
+        "title": "Jours de guérison"
+      },
+      "RT": "RT",
+      "severity": {
+        "crippled": "Estropié",
+        "instantlyFatal": "Immédiatement fatal",
+        "majorWound": "Blessure grave",
+        "minorWound": "Blessure mineure",
+        "mortalWound": "Blessure mortelle",
+        "none": "Aucune",
+        "reeling": "Titubant",
+        "scratch": "Égratignure",
+        "totalDestruction": "Destruction totale"
+      }
+    },
     "conditionalModifier": "Modificateur Conditionnel",
     "conditionalMods": "Modificateurs Conditionnels",
     "conditions": "Statuts",
@@ -1496,6 +1522,12 @@
     "pointsUnspent": "Restants",
     "publicRollAsDefault": "Jet Public par défaut",
     "quantity": "Quantité",
+    "quickNotes": {
+      "examples": "<b>Exemples :</b> [+1 grâce au bouclier]<br>[Esquive +3 retraite]<br>[Esquive +2 Défense Fiévreuse *Coût 1PF]",
+      "save": "Sauvegarder",
+      "text": "Entrez une note rapide (idéal pour une formule à la volée !) :",
+      "title": "Notes rapides"
+    },
     "quickRoll": "Jet rapide",
     "quickRollMenu": "Menu de Jet Rapide",
     "quickRollShowAttacks": "Afficher les Jets d'Attaque",
@@ -1533,6 +1565,7 @@
     "resolveDiceRoll": "Jet obtenu?",
     "resourcesModsTab": "Ressources et Modificateurs",
     "resourceTracker": {
+      "create": "Ajouter un suivi de ressource",
       "current": "Valeur Actuelle",
       "edit": {
         "addTemplate": "Ajouter un modèle de suivi des ressources",
@@ -1725,10 +1758,13 @@
         "description": "Description",
         "encumbrance": "Encombrement",
         "identity": "Identité",
+        "label": "Fiche de personnage GCS",
+        "maneuverStatus": "Manœuvre / Statut",
         "miscellaneous": "Divers",
         "moving": "Déplacement",
         "pointTotals": "Totaux de Points",
         "poolAttributes": "Attributs de Réserve",
+        "poolBase": "Base",
         "portrait": "Portrait",
         "pound": "kg.",
         "primaryAttributes": "Attributs Primaires",
@@ -1884,7 +1920,9 @@
       "TerriblePain": "Douleur Terrible",
       "Tipsy": "Pompette",
       "Tired": "Fatigué",
-      "Wait": "En Attente"
+      "Tiring": "Épuisant",
+      "Wait": "En Attente",
+      "Wounded": "Blessé"
     },
     "step": "Pas",
     "stepOrTwo": "Un ou deux pas",

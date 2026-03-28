@@ -166,6 +166,14 @@
               "label": "Базовая скорость"
             }
           },
+          "conditions": {
+            "maneuver": {
+              "label": "Манёвр"
+            },
+            "posture": {
+              "label": "Поза"
+            }
+          },
           "frightcheck": {
             "label": "Проверка страха"
           },
@@ -554,6 +562,24 @@
     },
     "concentrationCheck": "Проверка концентрации",
     "condition": "Состояние",
+    "conditionalInjury": {
+      "daysToHeal": {
+        "max": "Макс",
+        "title": "Дней на лечение"
+      },
+      "RT": "РТ",
+      "severity": {
+        "crippled": "Покалечен",
+        "instantlyFatal": "Мгновенная смерть",
+        "majorWound": "Тяжёлое ранение",
+        "minorWound": "Лёгкое ранение",
+        "mortalWound": "Смертельное ранение",
+        "none": "Нет",
+        "reeling": "Шатается",
+        "scratch": "Царапина",
+        "totalDestruction": "Полное уничтожение"
+      }
+    },
     "conditionalModifier": "Условный модификатор",
     "conditionalMods": "Условные модификаторы",
     "conditions": "Статус",
@@ -1496,6 +1522,12 @@
     "pointsUnspent": "Непотраченные",
     "publicRollAsDefault": "Публичный бросок по умолчанию",
     "quantity": "Количество",
+    "quickNotes": {
+      "examples": "<b>Примеры:</b> [+1 за щит]<br>[Уклонение +3 отступление]<br>[Уклонение +2 Лихорадочная защита *Стоимость 1ОС]",
+      "save": "Сохранить",
+      "text": "Введите быструю заметку (отличное место для формулы на ходу!):",
+      "title": "Быстрые заметки"
+    },
     "quickRoll": "Быстрый бросок",
     "quickRollMenu": "Меню быстрого броска",
     "quickRollShowAttacks": "Показать броски атак",
@@ -1533,6 +1565,7 @@
     "resolveDiceRoll": "Какой у вас бросок?",
     "resourcesModsTab": "Ресурсы и Модификаторы",
     "resourceTracker": {
+      "create": "Добавить счётчик ресурсов",
       "current": "Текущее значение",
       "edit": {
         "addTemplate": "Добавить шаблон счётчика ресурсов",
@@ -1601,7 +1634,6 @@
     "selectToken": "Выберите токен",
     "sendToChat": "Отправить в чат",
     "sendToEveryone": "Отправить всем",
-    "severity": "Тяжесть",
     "setManeuver": "Установить манёвр",
     "settingActiveEffects": "Включить активные эффекты",
     "settingAddCumulativeParryPenalties": "Автоматически добавлять кумулятивные штрафы за парирование",
@@ -1715,6 +1747,7 @@
     "settingUseQuintessence": "Использовать Квинтэссенцию",
     "settingUseTaggedModifiers": "Использовать отмеченные модификаторы",
     "severities": "Тяжести",
+    "severity": "Тяжесть",
     "share": "Поделиться",
     "sheet": {
       "gcs": {
@@ -1725,10 +1758,13 @@
         "description": "Описание",
         "encumbrance": "Нагрузка",
         "identity": "Личность",
+        "label": "Лист персонажа GCS",
+        "maneuverStatus": "Манёвр / Статус",
         "miscellaneous": "Разное",
         "moving": "Движение",
         "pointTotals": "Итого очков",
         "poolAttributes": "Атрибуты запаса",
+        "poolBase": "База",
         "portrait": "Изображение",
         "pound": "кг.",
         "primaryAttributes": "Основные атрибуты",
@@ -1887,7 +1923,9 @@
       "TerriblePain": "Ужасная боль",
       "Tipsy": "Поддатость",
       "Tired": "Утомлен",
-      "Wait": "Ожидание"
+      "Tiring": "Утомляющий",
+      "Wait": "Ожидание",
+      "Wounded": "Ранен"
     },
     "step": "Шаг",
     "stepOrTwo": "Шаг или два",

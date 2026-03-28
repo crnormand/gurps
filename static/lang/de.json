@@ -166,6 +166,14 @@
               "label": "Basis Geschwindigkeit"
             }
           },
+          "conditions": {
+            "maneuver": {
+              "label": "Manöver"
+            },
+            "posture": {
+              "label": "Haltung"
+            }
+          },
           "frightcheck": {
             "label": "Schreckprobe"
           },
@@ -554,6 +562,24 @@
     },
     "concentrationCheck": "Konzentrationswurf",
     "condition": "Zustand",
+    "conditionalInjury": {
+      "daysToHeal": {
+        "max": "Max",
+        "title": "Heilungstage"
+      },
+      "RT": "RT",
+      "severity": {
+        "crippled": "Verkrüppelt",
+        "instantlyFatal": "Sofort tödlich",
+        "majorWound": "Schwere Wunde",
+        "minorWound": "Leichte Wunde",
+        "mortalWound": "Tödliche Wunde",
+        "none": "Keine",
+        "reeling": "Taumelnd",
+        "scratch": "Kratzer",
+        "totalDestruction": "Vollständige Zerstörung"
+      }
+    },
     "conditionalModifier": "Situativer Modifikator",
     "conditionalMods": "Situative Modifikatoren",
     "conditions": "Zustände",
@@ -1496,6 +1522,12 @@
     "pointsUnspent": "Unverbrauchte",
     "publicRollAsDefault": "Öffentlicher Wurf als Standard",
     "quantity": "Anzahl",
+    "quickNotes": {
+      "examples": "<b>Beispiele:</b> [+1 durch Schild]<br>[Ausweichen +3 Rückzug]<br>[Ausweichen +2 Fieberhafte Verteidigung *Kosten 1AP]",
+      "save": "Speichern",
+      "text": "Schnellnotiz eingeben (ideal für spontane Formeln!):",
+      "title": "Schnellnotizen"
+    },
     "quickRoll": "Schnellwurf",
     "quickRollMenu": "Schnellwurfmenü",
     "quickRollShowAttacks": "Zeige Angriffswürfe",
@@ -1533,6 +1565,7 @@
     "resolveDiceRoll": "Was wurde gewürfelt?",
     "resourcesModsTab": "Ressourcen und Modifikatoren",
     "resourceTracker": {
+      "create": "Ressourcen-Tracker hinzufügen",
       "current": "Aktueller Wert",
       "edit": {
         "addTemplate": "Ressourcen-Tracker-Vorlage hinzufügen",
@@ -1725,10 +1758,13 @@
         "description": "Beschreibung",
         "encumbrance": "Belastung",
         "identity": "Identität",
+        "label": "GCS-Charakterbogen",
+        "maneuverStatus": "Manöver / Status",
         "miscellaneous": "Sonstiges",
         "moving": "Bewegen",
         "pointTotals": "Punktesummen",
         "poolAttributes": "Poolattribute",
+        "poolBase": "Basis",
         "portrait": "Portrait",
         "pound": "lbs.",
         "primaryAttributes": "Primäre Attribute",
@@ -1884,7 +1920,9 @@
       "TerriblePain": "Furchtbare Schmerzen",
       "Tipsy": "Angetrunken",
       "Tired": "Müde",
-      "Wait": "Wartend"
+      "Tiring": "Ermüdend",
+      "Wait": "Wartend",
+      "Wounded": "Verwundet"
     },
     "step": "Schritt",
     "stepOrTwo": "Schritt oder zwei",

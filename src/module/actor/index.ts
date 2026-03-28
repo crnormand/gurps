@@ -98,6 +98,7 @@ function init() {
       {
         makeDefault: true,
         types: ['characterV2'],
+        label: 'GURPS.sheet.gcsActorSheet.label',
       }
     )
   })

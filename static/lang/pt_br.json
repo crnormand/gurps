@@ -166,6 +166,14 @@
               "label": "Velocidade Básica"
             }
           },
+          "conditions": {
+            "maneuver": {
+              "label": "Manobra"
+            },
+            "posture": {
+              "label": "Postura"
+            }
+          },
           "frightcheck": {
             "label": "Teste de Medo"
           },
@@ -554,6 +562,24 @@
     },
     "concentrationCheck": "Teste de Concentração",
     "condition": "Condição",
+    "conditionalInjury": {
+      "daysToHeal": {
+        "max": "Máx",
+        "title": "Dias para Curar"
+      },
+      "RT": "RT",
+      "severity": {
+        "crippled": "Aleijado(a)",
+        "instantlyFatal": "Instantaneamente Fatal",
+        "majorWound": "Ferimento Grave",
+        "minorWound": "Ferimento Leve",
+        "mortalWound": "Ferimento Mortal",
+        "none": "Nenhum",
+        "reeling": "Cambaleando",
+        "scratch": "Arranhão",
+        "totalDestruction": "Destruição Total"
+      }
+    },
     "conditionalModifier": "Modificador Condicional",
     "conditionalMods": "Modificadores Condicionais",
     "conditions": "Condições",
@@ -1496,6 +1522,12 @@
     "pointsUnspent": "A Gastar",
     "publicRollAsDefault": "Rolagem Pública como padrão",
     "quantity": "Quantidade",
+    "quickNotes": {
+      "examples": "<b>Exemplos:</b> [+1 por escudo]<br>[Esquiva +3 recuo]<br>[Esquiva +2 Defesa Febril *Custo 1PF]",
+      "save": "Salvar",
+      "text": "Digite uma Nota Rápida (ótimo lugar para uma fórmula improvisada!):",
+      "title": "Notas Rápidas"
+    },
     "quickRoll": "Rolagem Rápida",
     "quickRollMenu": "Menu de Rolagem Rápida",
     "quickRollShowAttacks": "Exibir Rolagens de Ataque",
@@ -1533,6 +1565,7 @@
     "resolveDiceRoll": "Qual Foi a Jogada?",
     "resourcesModsTab": "Recursos e Modificadores",
     "resourceTracker": {
+      "create": "Adicionar Rastreador de Recursos",
       "current": "Valor Atual",
       "edit": {
         "addTemplate": "Adicionar Modelo de Controle de Recursos",
@@ -1601,7 +1634,6 @@
     "selectToken": "Selecionar Miniatura",
     "sendToChat": "Enviar para o bate-papo",
     "sendToEveryone": "Enviar para todos",
-    "severity": "Severidade",
     "setManeuver": "Configurar Manobra",
     "settingActiveEffects": "Acionar Efeitos Ativos",
     "settingAddCumulativeParryPenalties": "Adicionar Penalidades de Aparar Cumulativas Automaticamente",
@@ -1715,6 +1747,7 @@
     "settingUseQuintessence": "Usar Quintessência",
     "settingUseTaggedModifiers": "Usar modificadores marcados",
     "severities": "Severidades",
+    "severity": "Severidade",
     "share": "Compartilhar",
     "sheet": {
       "gcs": {
@@ -1725,10 +1758,13 @@
         "description": "Descrição",
         "encumbrance": "Encumbramento",
         "identity": "Identidade",
+        "label": "Ficha de Personagem GCS",
+        "maneuverStatus": "Manobra / Status",
         "miscellaneous": "Diversos",
         "moving": "Movimentação",
         "pointTotals": "Totais de Pontos",
         "poolAttributes": "Atributos de Reserva",
+        "poolBase": "Base",
         "portrait": "Retrato",
         "pound": "kg.",
         "primaryAttributes": "Atributos Primários",
@@ -1884,7 +1920,9 @@
       "TerriblePain": "Dor Terrível",
       "Tipsy": "Embriagado(a)",
       "Tired": "Cansado(a)",
-      "Wait": "Aguardando"
+      "Tiring": "Cansativo",
+      "Wait": "Aguardando",
+      "Wounded": "Ferido(a)"
     },
     "step": "Passo",
     "stepOrTwo": "Passo ou Dois",

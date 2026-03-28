@@ -1758,6 +1758,7 @@
         "description": "Description",
         "encumbrance": "Encumbrance, Move & Dodge",
         "identity": "Identity",
+        "label": "GCS Actor Sheet",
         "maneuverStatus": "Maneuver / Status",
         "miscellaneous": "Miscellaneous",
         "moving": "Lifting & Moving Things",
