@@ -15,6 +15,7 @@ import { systemPath } from '@module/util/misc.js'
 import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 import Maneuvers from '../maneuver.js'
 
@@ -83,12 +84,9 @@ type AttributeEntry = {
 
 /* ---------------------------------------- */
 
-// NOTE: temporary, more types will be added as drag & drop functionality is implemented
-type DragData = {
-  type: 'Item'
-  id: string
-  uuid: string
-}
+type DragData = { type: 'Item'; id: string; uuid: string } | { type: 'damageItem'; payload: AnyObject }
+
+type DragDataOf<T extends DragData['type']> = Extract<DragData, { type: T }>
 
 /* ---------------------------------------- */
 
@@ -233,8 +231,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const modifiedDate = this.actor.system.profile.modifiedon
       ? new Date(this.actor.system.profile.modifiedon).toLocaleString()
       : ''
-
-    // NOTE: posture resets on save, need to fix that. the system data should be the source of truth.
 
     return {
       ...superContext,
@@ -1052,18 +1048,23 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected override async _onDrop(event: DragEvent): Promise<void> {
     const data = foundry.applications.ux.TextEditor.getDragEventData(event) as DragData | null
 
+    console.log(data)
+
     if (!data) return
 
     switch (data?.type) {
       case 'Item': {
         return this._onDropItem(event, data)
       }
+      case 'damageItem': {
+        return this.actor.handleDamageDrop(data.payload)
+      }
     }
   }
 
   /* ---------------------------------------- */
 
-  protected async _onDropItem(event: DragEvent, itemData: DragData): Promise<void> {
+  protected async _onDropItem(event: DragEvent, itemData: DragDataOf<'Item'>): Promise<void> {
     const element = event.target as HTMLElement
     const targetId = element.closest<HTMLElement>('[data-item-id]')?.dataset.itemId ?? null
 

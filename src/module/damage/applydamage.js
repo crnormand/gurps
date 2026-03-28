@@ -1,5 +1,6 @@
 'use strict'
 
+import { CharacterPool } from '@module/actor/data/character-components.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsAndNegOnly } from '@util/jquery-helper.js'
 import {
@@ -833,12 +834,18 @@ export default class ApplyDamageDialog extends Application {
       resultsTable: results,
     }
 
-    let newValue = resource.isDamageTracker ? resource.value + injury : resource.value - injury
+    if (resource instanceof CharacterPool) {
+      const newDamage = resource.damage + injury
 
-    let update = {}
+      await this.actor.update({ [`${path}.damage`]: newDamage })
+    } else {
+      let newValue = resource.isDamageTracker ? resource.value + injury : resource.value - injury
 
-    update[`${path}.value`] = newValue
-    await this.actor.update(update)
+      let update = {}
+
+      update[`${path}.value`] = newValue
+      await this.actor.update(update)
+    }
 
     this._renderTemplate('chat-damage-results.hbs', data).then(html => {
       let speaker = ChatMessage.getSpeaker(game.user)
