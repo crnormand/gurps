@@ -12,11 +12,16 @@
     }
   }
 
+  /* ---------------------------------------- */
+
   button {
+    // All buttons except "add tracker" are square icon buttons.
     &:not([data-action='addResourceTracker']) {
       max-width: var(--gcs-input-height);
     }
 
+    // Decrement/increment share a border; flatten the adjacent corners so they
+    // read as a single stepper control.
     &[data-action='decrementPool'] {
       border-bottom-right-radius: 0;
       border-top-right-radius: 0;
@@ -31,6 +36,8 @@
       margin-left: 0.5rem;
     }
   }
+
+  /* ---------------------------------------- */
 
   .pool-state {
     white-space: nowrap;

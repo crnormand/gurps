@@ -35,6 +35,7 @@ body {
       flex: 0 0 100%;
     }
 
+    // Traits and skills sit side-by-side; each takes equal remaining width.
     [data-application-part='traits'],
     [data-application-part='skills'] {
       flex: 1 0;
@@ -59,6 +60,9 @@ body {
   }
 }
 
+/* ---------------------------------------- */
+
+// Roll and modifier buttons share base sizing; color is applied separately below.
 [data-action='rollOtf'],
 [data-action='addModifier'] {
   height: var(--gcs-input-height);
@@ -97,6 +101,8 @@ body {
   }
 }
 
+/* ---------------------------------------- */
+
 .gcs-section {
   display: grid;
   grid-template-rows: 0fr auto;
@@ -129,11 +135,12 @@ body {
     }
   }
 
+  // Two-column label/value grid; label is max-content, value fills remaining space.
   .gcs-field-rows {
     display: grid;
     grid-template-columns: max-content minmax(4ch, 1fr);
 
-    /* equal share of flex space; min-width: 0 lets 1fr resolve inside a flex item */
+    // Equal share of flex space; min-width: 0 lets 1fr resolve inside a flex item.
     flex: 1 1 0;
     min-width: 0;
     width: 100%;
@@ -142,6 +149,7 @@ body {
       @include gcs-banding;
     }
 
+    // Reversed variant: value first, label second (e.g. point totals).
     &.gcs-field-rows-reverse {
       grid-template-columns: minmax(4ch, 1fr) max-content;
 
@@ -190,7 +198,6 @@ body {
     min-width: 0;
     white-space: nowrap;
 
-    /* make the actual control fill the field cell */
     :is(input, textarea) {
       width: 100%;
       box-sizing: border-box;
@@ -213,6 +220,7 @@ body {
       }
     }
 
+    // Custom caret for selects via inline SVG so it respects theme color.
     select {
       appearance: none;
       padding-right: 1.25rem;
@@ -250,6 +258,8 @@ body {
     }
   }
 }
+
+/* ---------------------------------------- */
 
 .gcs-table {
   margin: 0;
@@ -291,7 +301,9 @@ body {
   }
 }
 
-// Pool Threshold Tooltip (rendered separately from the rest of the sheet)
+/* ---------------------------------------- */
+
+// Pool threshold tooltip (rendered outside the sheet application).
 #tooltip:has(.gcs-tooltip) {
   background: var(--gcs-color-tooltip-bg);
   color: var(--gcs-color-tooltip-fg);

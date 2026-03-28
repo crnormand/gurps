@@ -1,7 +1,9 @@
 section[data-application-part='header'] {
   display: grid;
-  grid-gap: var(--gcs-section-gap);
+  gap: var(--gcs-section-gap);
 
+  // portrait | identity  | miscellaneous | points
+  // portrait | description (spans 2)     | points
   grid-template-areas:
     'portrait identity miscellaneous points'
     'portrait description description points';

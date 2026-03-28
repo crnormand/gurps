@@ -1,7 +1,7 @@
 .gcs-markdown {
   all: revert;
   font-family: 'Roboto', sans-serif;
-  font-size: variable(--gcs-font-size-notes);
+  font-size: var(--gcs-font-size-notes);
   line-height: 1.4;
   color: inherit;
 
@@ -10,6 +10,8 @@
     font-family: inherit;
     color: inherit;
   }
+
+  /* ---------------------------------------- */
 
   h1,
   h2,
@@ -33,6 +35,8 @@
     font-size: 1.1em;
   }
 
+  /* ---------------------------------------- */
+
   p {
     margin: 0;
   }
@@ -47,7 +51,6 @@
 
   ul,
   ol {
-    margin: 0.25em 0;
     margin-block: 0;
     padding-left: 1.5em;
 
@@ -68,6 +71,8 @@
   ol {
     list-style: decimal;
   }
+
+  /* ---------------------------------------- */
 
   table {
     border-collapse: collapse;
@@ -95,6 +100,8 @@
       font-weight: bold;
     }
   }
+
+  /* ---------------------------------------- */
 
   code {
     background: var(--gcs-color-quote-bg);

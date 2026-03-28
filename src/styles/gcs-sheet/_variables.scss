@@ -1,32 +1,33 @@
 @mixin css-variables {
-  /** SVG */
+  /* SVG */
   --gcs-caret-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23606060'/></svg>");
 
-  /* GCS automatically chooses one of these two colours
-   * depending on the background colour of the sheet,
-   * so we're just using these everywhere.
+  /* GCS automatically chooses one of these two colours depending on the background
+   * colour of the sheet, so we're just using these everywhere.
    */
   --color-dark-fg: #101010;
   --color-light-fg: #f0f0f0;
 
-  /** Header */
-  --gcs-color-header-bg: $gcs-color-base-header;
-  --gcs-color-header-fg: var(--color-light-fg);
+  /* ---------------------------------------- */
 
+  /* Layout */
   --gcs-input-height: 1.25rem;
   --gcs-input-label-width: 4rem;
   --gcs-section-gap: 0.1rem;
   --gcs-padding-label: 0.15rem 0.25rem;
 
+  /* ---------------------------------------- */
+
   /* Fonts */
   --gcs-font-size-header: 1rem;
-
   --gcs-font-size-content: 0.875rem;
   --gcs-font-size-notes: 0.75rem;
   --gcs-font-size-header-icon: 0.75rem;
   --gcs-font-size-select: 0.8rem;
 
-  /* Color */
+  /* ---------------------------------------- */
+
+  /* Colors */
   --gcs-color-surface-bg: #f4f5f5;
   --gcs-color-surface-fg: var(--color-dark-fg);
 
@@ -55,17 +56,18 @@
   --gcs-color-roll-fg: var(--color-dark-fg);
 
   --gcs-color-positive-bg: #a8e0b0;
-  --gcs-color-positive-fg: var(--color-dark-fg);
-
   --gcs-color-negative-bg: #f0b87a;
-  --gcs-color-negative-fg: var(--color-dark-fg);
 }
 
+/* ---------------------------------------- */
+
 @mixin css-variables-dark {
-  /** SVG */
+  /* SVG */
   --gcs-caret-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23a0a0a0'/></svg>");
 
-  /* Color */
+  /* ---------------------------------------- */
+
+  /* Colors */
   --gcs-color-surface-bg: #1e1e1e;
   --gcs-color-surface-fg: var(--color-light-fg);
 
@@ -92,8 +94,5 @@
   --gcs-color-roll-fg: var(--color-dark-fg);
 
   --gcs-color-positive-bg: #6acc80;
-  --gcs-color-positive-fg: var(--color-dark-fg);
-
   --gcs-color-negative-bg: #e89050;
-  --gcs-color-negative-fg: var(--color-dark-fg);
 }

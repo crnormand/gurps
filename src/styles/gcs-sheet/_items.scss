@@ -6,7 +6,7 @@
 
 .gcs-item-table {
   width: 100%;
-  // auto layout: columns size to content, min/max enforced via td rules below.
+  // Auto layout: columns size to content, min/max enforced via td rules below.
   // col width: 100% on the name column still acts as a "take remaining space" hint.
   table-layout: auto;
 
@@ -15,6 +15,11 @@
       width: 100%;
     }
   }
+
+  /* ---------------------------------------- */
+
+  // Column sizing: min-width is enforced by the browser; max-width clips overflow.
+  // Alignment is co-located here since it is tightly coupled to column identity.
 
   td.gcs-item-modifier {
     @include gcs-col(2rem, 3.5rem);
@@ -75,6 +80,8 @@
     text-align: right;
   }
 
+  /* ---------------------------------------- */
+
   th.gcs-sortable {
     cursor: pointer;
     user-select: none;
@@ -92,6 +99,9 @@
     }
   }
 
+  /* ---------------------------------------- */
+
+  // Name cell layout: icon + text + optional notes-toggle on the right.
   .gcs-item-name-cell {
     padding: 0;
   }
@@ -124,6 +134,7 @@
     }
   }
 
+  // Spacer and toggle are the same width so items without children stay aligned.
   .gcs-container-spacer {
     display: inline-block;
     width: 0.75rem;
@@ -153,6 +164,10 @@
     }
   }
 
+  /* ---------------------------------------- */
+
+  // Row state modifiers.
+
   tr.gcs-container-collapsed .gcs-container-toggle {
     transform: rotate(-90deg);
   }
@@ -173,6 +188,9 @@
     outline: 2px solid var(--gcs-color-focus-bg);
   }
 
+  /* ---------------------------------------- */
+
+  // Override .gcs-table's nowrap so long item names can wrap.
   td {
     white-space: unset;
   }
