@@ -113,6 +113,7 @@ body {
 
   .gcs-section-header {
     @include gcs-header;
+    min-height: 1.6rem;
 
     display: flex;
     gap: 0.5rem;

@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: row;
   gap: 0.1rem;
+  overflow-x: auto;
 
   .form-fields {
     height: auto;
@@ -10,6 +11,12 @@
     span {
       max-width: 6ch;
     }
+  }
+
+  /* ---------------------------------------- */
+
+  .gcs-pool-attribute {
+    flex: 0 0 auto;
   }
 
   /* ---------------------------------------- */
