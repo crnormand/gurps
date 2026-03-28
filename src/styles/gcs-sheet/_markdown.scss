@@ -1,7 +1,7 @@
 .gcs-markdown {
   all: revert;
   font-family: 'Roboto', sans-serif;
-  font-size: 0.875rem;
+  font-size: variable(--gcs-font-size-notes);
   line-height: 1.4;
   color: inherit;
 
@@ -34,7 +34,7 @@
   }
 
   p {
-    margin: 0.4em 0;
+    margin: 0;
   }
 
   blockquote {
@@ -43,10 +43,6 @@
     border-left: 3px solid var(--gcs-color-focus-bg);
     background: var(--gcs-color-quote-bg);
     color: var(--gcs-color-surface-fg);
-
-    p {
-      margin: 0;
-    }
   }
 
   ul,

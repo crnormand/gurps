@@ -1166,7 +1166,7 @@
         "successMessage": "Charakter-Migrationen für Version {version} erfolgreich angewendet."
       },
       "holderItem": {
-        "name": "Der Alleshalter",
+        "name": "Persönliche Aktionen & Modifikatoren",
         "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
       },
       "item": {

@@ -92,7 +92,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
       documentName: this.static.metadata.documentName,
       parentId: this.document.id!,
       name: this.item.name,
-      fullName: this.item.system.toDisplayItem?.()?.fullName ?? this.item.name,
+      fullName: this._displayName ?? this.item.name,
       usage: this.name ?? this.mode,
       notes: this.notes,
       hasNotes: this.notes.trim().length > 0,

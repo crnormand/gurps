@@ -1166,7 +1166,7 @@
         "successMessage": "Migrações de Ator aplicadas com sucesso para a versão {version}."
       },
       "holderItem": {
-        "name": "O Porta-Tudo",
+        "name": "Ações & Modificadores Pessoais",
         "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do personagem. Para mover essas entidades de volta para seus lugares apropriados, por favor reimporte este personagem do GCS ou GCA."
       },
       "item": {

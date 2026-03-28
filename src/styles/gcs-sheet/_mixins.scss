@@ -1,7 +1,7 @@
 @mixin gcs-header {
   justify-content: space-evenly;
 
-  padding: 0.15rem 0.25rem;
+  padding: var(--gcs-padding-label);
   padding-bottom: 0.2rem;
   border: none;
 
@@ -18,6 +18,22 @@
     font-size: var(--gcs-font-size-header-icon);
   }
 }
+
+/* ---------------------------------------- */
+
+/// Apply min/max width constraints to a table cell.
+/// Use on `td` (and `th` where column classes exist) inside a `table-layout: auto` table.
+/// - $min: enforced by the browser as the column minimum
+/// - $max: clips overflow; column won't shrink below content width, but content is hidden if wider
+@mixin gcs-col($min: 0, $max: null) {
+  min-width: $min;
+  @if $max {
+    max-width: $max;
+    overflow: hidden;
+  }
+}
+
+/* ---------------------------------------- */
 
 @mixin gcs-banding {
   background-color: var(--gcs-color-banding-bg);

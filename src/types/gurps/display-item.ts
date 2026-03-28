@@ -106,23 +106,23 @@ interface DisplayEquipment extends BaseDisplayItem {
   /** Is this item carried? */
   carried: boolean
   /** The quantity of this equipment */
-  quantity: number
+  quantity: string
   /** The tech level of this equipment, if any */
   techLevel: string | null
   /** The legality class of this equipment, if any */
   legalityClass: string | null
   /** The monetary value of this item */
-  value: number
+  value: string
   /** The extended value of this item, including child items */
-  extendedValue: number
+  extendedValue: string
   /** The weight of this item, separated into a value and unit */
   weight: {
-    value: number
+    value: string
     unit: WeightUnit
   }
   /** The extended weight of this item, including child items */
   extendedWeight: {
-    value: number
+    value: string
     unit: WeightUnit
   }
 }

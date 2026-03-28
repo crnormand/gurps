@@ -1,71 +1,78 @@
+@use 'mixins' as *;
+
 .gcs-item-table-container {
   background-color: var(--gcs-color-surface-bg);
 }
 
 .gcs-item-table {
   width: 100%;
-  table-layout: fixed;
+  // auto layout: columns size to content, min/max enforced via td rules below.
+  // col width: 100% on the name column still acts as a "take remaining space" hint.
+  table-layout: auto;
 
   colgroup {
     col.gcs-col-name {
       width: 100%;
     }
-    col.gcs-col-modifier {
-      width: 2.5rem;
-    }
-    col.gcs-col-level {
-      width: 2.5rem;
-    }
-    col.gcs-col-rsl {
-      width: 2.5rem;
-    }
-    col.gcs-col-points {
-      width: 2.5rem;
-    }
-    col.gcs-col-equipped {
-      width: 1.5rem;
-    }
-    col.gcs-col-quantity {
-      width: 2.5rem;
-    }
-    col.gcs-col-tl {
-      width: 2.5rem;
-    }
-    col.gcs-col-lc {
-      width: 2.5rem;
-    }
-    col.gcs-col-value {
-      width: 2.5rem;
-    }
-    col.gcs-col-weight {
-      width: 3.5rem;
-    }
-    col.gcs-col-extended-value {
-      width: 2.5rem;
-    }
-    col.gcs-col-extended-weight {
-      width: 3.5rem;
-    }
+  }
+
+  td.gcs-item-modifier {
+    @include gcs-col(2rem, 3.5rem);
   }
 
   td.gcs-item-level {
+    @include gcs-col(2rem, 3.5rem);
     text-align: center;
   }
 
-  td.gcs-item-points,
-  td.gcs-item-quantity,
-  td.gcs-item-tl,
-  td.gcs-item-lc,
-  td.gcs-item-value,
-  td.gcs-item-weight,
-  td.gcs-item-extended-value,
-  td.gcs-item-extended-weight {
+  td.gcs-item-rsl {
+    @include gcs-col(2.5rem, 4rem);
+  }
+
+  td.gcs-item-points {
+    @include gcs-col(2rem, 3.5rem);
     text-align: right;
   }
 
   td.gcs-item-equipped {
+    @include gcs-col(1.5rem, 2rem);
     text-align: center;
     cursor: pointer;
+  }
+
+  td.gcs-item-quantity {
+    @include gcs-col(2rem, 3.5rem);
+    text-align: right;
+  }
+
+  td.gcs-item-tl {
+    @include gcs-col(2rem, 3.5rem);
+    text-align: right;
+  }
+
+  td.gcs-item-lc {
+    @include gcs-col(2rem, 3.5rem);
+    text-align: right;
+  }
+
+  td.gcs-item-value {
+    @include gcs-col(2rem);
+    text-align: right;
+  }
+
+  td.gcs-item-weight {
+    @include gcs-col(2.5rem);
+    text-align: right;
+  }
+
+  td.gcs-item-extended-value {
+    @include gcs-col(2rem);
+    text-align: right;
+  }
+
+  td.gcs-item-extended-weight {
+    @include gcs-col(2.5rem);
+    text-align: right;
   }
 
   th.gcs-sortable {
@@ -103,6 +110,7 @@
   }
 
   .gcs-item-notes-container {
+    font-size: var(--gcs-font-size-notes);
     min-height: 0;
 
     @for $i from 0 through 8 {
@@ -143,12 +151,6 @@
     &:hover {
       opacity: 1;
     }
-  }
-
-  .gcs-item-notes {
-    font-size: 0.8em;
-    opacity: 0.8;
-    padding: 0 0.5rem 0.2rem;
   }
 
   tr.gcs-container-collapsed .gcs-container-toggle {

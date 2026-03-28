@@ -213,6 +213,17 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   override toString(): string {
     return Weight.objectToString({ value: this.value, unit: this.unit })
   }
+
+  /* ---------------------------------------- */
+
+  toLocaleObject(): { value: string; unit: WeightUnit } {
+    const object = this.toObject()
+
+    return {
+      value: object.value.toLocaleString(undefined, { maximumFractionDigits: Weight.ROUNDING_PRECISION }),
+      unit: object.unit,
+    }
+  }
 }
 
 /* ---------------------------------------- */

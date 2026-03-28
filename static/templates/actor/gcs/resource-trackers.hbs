@@ -22,7 +22,7 @@
       <div class="form-fields flexrow">
         <button data-action="decrementPool" data-inverted="{{invertedDelta}}" data-path="{{numerator.path}}" {{#if atMin}}disabled{{/if}}><i class="fa-solid fa-minus"></i></button>
         {{#if (eq type "pool")}}
-          <pool-value name="{{path}}" value="{{numerator.value}}" data-max="{{denominator.value}}"></pool-value>
+          <pool-value name="{{numerator.path}}" value="{{numerator.value}}" data-max="{{denominator.value}}"></pool-value>
         {{else}}
           {{formInput numerator.field value=numerator.value }}
         {{/if}}

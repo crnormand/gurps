@@ -24,6 +24,7 @@ section[data-application-part='resources'] {
 
     [data-action='rollOtf'],
     input {
+      text-align: right;
       max-width: 6ch;
     }
 
@@ -46,11 +47,19 @@ section[data-application-part='resources'] {
 
     .gcs-maneuver-status {
       grid-area: maneuver;
+
+      label {
+        text-align: right;
+      }
     }
   }
 
   .gcs-body {
     grid-area: body;
+
+    .gcs-section-content {
+      padding: 0;
+    }
   }
 
   .gcs-encumbrance {

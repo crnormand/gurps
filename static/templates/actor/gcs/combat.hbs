@@ -5,7 +5,7 @@
         <span class="gcs-item-name-text">{{fullName}}</span>
         {{#if hasNotes}}
         <i
-          class="fa-solid fa-notes gcs-notes-toggle"
+          class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
           data-action="toggleItemNotes"
           data-open="{{notesOpen}}"
         ></i>
@@ -40,7 +40,7 @@
         <span class="gcs-item-name-text">{{fullName}}</span>
         {{#if hasNotes}}
         <i
-          class="fa-solid fa-notes gcs-notes-toggle"
+          class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
           data-action="toggleItemNotes"
           data-open="{{notesOpen}}"
         ></i>
@@ -96,14 +96,14 @@
     </colgroup>
     <thead>
       <tr>
-        <th>Melee Weapon</th>
-        <th>Usage</th>
-        <th>SL</th>
-        <th>Parry</th>
-        <th>Block</th>
-        <th>Damage</th>
-        <th>Reach</th>
-        <th>ST</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponMelee"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponUsage"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.skillLevel"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponParry"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponBlock"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponDamage"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponReach"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponST"}}</th>
       </tr>
     </thead>
     <tbody>
@@ -133,17 +133,17 @@
     </colgroup>
     <thead>
       <tr>
-        <th>Ranged Weapon</th>
-        <th>Usage</th>
-        <th>SL</th>
-        <th>Acc</th>
-        <th>Damage</th>
-        <th>Range</th>
-        <th>RoF</th>
-        <th>Shots</th>
-        <th>Bulk</th>
-        <th>Recoil</th>
-        <th>ST</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponRanged"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponUsage"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.skillLevel"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponAccuracy"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponDamage"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponRange"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponROF"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponShots"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponBulk"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponRecoil"}}</th>
+        <th>{{localize "GURPS.sheet.gcsActorSheet.weaponST"}}</th>
       </tr>
     </thead>
     <tbody>

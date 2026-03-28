@@ -17,7 +17,7 @@
         <span class="gcs-item-name-text">{{fullName}}</span>
         {{#if hasNotes}}
         <i
-          class="fa-solid fa-notes gcs-notes-toggle"
+          class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
           data-action="toggleItemNotes"
           data-open="{{notesOpen}}"
         ></i>
@@ -54,13 +54,13 @@
   </colgroup>
   <thead>
     <tr>
-      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.spells.name}}">Spell</th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.spells.name}}">{{localize "GURPS.sheet.gcsActorSheet.spells"}}</th>
       <th class="gcs-sortable" data-action="sortItems"
-        data-sort-by="{{sortKeys.spells.level}}">SL</th>
+        data-sort-by="{{sortKeys.spells.level}}">{{localize "GURPS.sheet.gcsActorSheet.skillLevel"}}</th>
       <th class="gcs-sortable" data-action="sortItems"
-        data-sort-by="{{sortKeys.spells.rsl}}">RSL</th>
+        data-sort-by="{{sortKeys.spells.rsl}}">{{localize "GURPS.sheet.gcsActorSheet.skillRelativeLevel"}}</th>
       <th class="gcs-sortable" data-action="sortItems"
-        data-sort-by="{{sortKeys.spells.points}}">Pts</th>
+        data-sort-by="{{sortKeys.spells.points}}">{{localize "GURPS.sheet.gcsActorSheet.points"}}</th>
     </tr>
   </thead>
   <tbody>

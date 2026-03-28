@@ -387,13 +387,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       const currentThreshold = tracker.currentThreshold
       const thresholds = tracker.thresholdDescriptors
 
+      const trackerSchema = tracker.schema
+
+      trackerSchema.name = tracker._id
+
       pools.push({
         type: 'resourceTracker',
         invertedDelta: false,
         denominatorEditable: false,
         editable: true,
         numerator: {
-          field: tracker.schema.fields.currentValue,
+          field: trackerSchema.fields.currentValue,
           path: tracker._id,
           value: tracker.value,
           initial: tracker.isAccumulator ? 0 : tracker.max,
@@ -523,9 +527,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       { label: 'GURPS.oneHandLift', value: liftingMoving.onehandedlift },
       { label: 'GURPS.twoHandLift', value: liftingMoving.twohandedlift },
       { label: 'GURPS.shoveAndKnockOver', value: liftingMoving.shove },
+      { label: 'GURPS.carryOnBack', value: liftingMoving.carryonback },
       { label: 'GURPS.runningShoveAndKnockOver', value: liftingMoving.runningshove },
       { label: 'GURPS.shiftSlightly', value: liftingMoving.shiftslightly },
-      { label: 'GURPS.carryOnBack', value: liftingMoving.carryonback },
     ].map(({ label, value }) => {
       return { label, value: value.toLocaleString() }
     })
@@ -1073,8 +1077,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   protected override async _onDrop(event: DragEvent): Promise<void> {
     const data = foundry.applications.ux.TextEditor.getDragEventData(event) as DragData | null
-
-    console.log(data)
 
     if (!data) return
 
