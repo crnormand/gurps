@@ -7,6 +7,7 @@ import {
   DisplaySpell,
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
+import { Weight } from '@module/data/common/weight.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import type { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
@@ -124,6 +125,10 @@ namespace GurpsActorGcsSheet {
     createdDate: string
     modifiedDate: string
     quickNotes: Handlebars.SafeString
+    carriedValue: string
+    carriedWeight: string
+    otherValue: string
+    otherWeight: string
   }
 }
 
@@ -259,6 +264,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       postureChoices,
       sortKeys,
       quickNotes: new Handlebars.SafeString(this.actor.system.additionalresources.qnotes),
+      carriedValue: '$' + this.actor.system.eqtsummary.eqtcost.toLocaleString(),
+      carriedWeight: Weight.fromPounds(this.actor.system.eqtsummary.eqtlbs).toString(),
+      otherWeight: Weight.fromPounds(this.actor.system.eqtsummary.otherlbs).toString(),
+      otherValue: '$' + this.actor.system.eqtsummary.othercost.toLocaleString(),
     }
   }
 
@@ -946,9 +955,12 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     if (!this.actor.isOwner) return
 
-    const _id = foundry.utils.randomID()
+    const createData = {
+      _id: foundry.utils.randomID(),
+      name: getGame().i18n.localize('GURPS.resourceTracker.placeholder'),
+    }
 
-    await TrackerInstance.create({ _id }, { parent: this.actor, renderSheet: true })
+    await TrackerInstance.create(createData, { parent: this.actor, renderSheet: true })
   }
 
   /* ---------------------------------------- */

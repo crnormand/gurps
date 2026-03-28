@@ -174,7 +174,7 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   /* ---------------------------------------- */
 
   static objectToString(data: { value: number; unit: WeightUnit }): string {
-    return `${Math.round(data.value * Math.pow(10, Weight.ROUNDING_PRECISION)) / Math.pow(10, Weight.ROUNDING_PRECISION)} ${Weight.UNIT_LABELS[data.unit][0]}`
+    return `${(Math.round(data.value * Math.pow(10, Weight.ROUNDING_PRECISION)) / Math.pow(10, Weight.ROUNDING_PRECISION)).toLocaleString()} ${Weight.UNIT_LABELS[data.unit][0]}`
   }
 
   /* ---------------------------------------- */
