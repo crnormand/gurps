@@ -131,7 +131,7 @@ export async function promptDeletionOfMigratedItems(actor?: Actor.Implementation
           event.preventDefault()
 
           const checkboxes = Array.from(
-            dialog.element.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked')
+            dialog.element.querySelectorAll<HTMLInputElement>('tbody input[type="checkbox"]:checked')
           ).map(checkbox => checkbox.name)
 
           return {
