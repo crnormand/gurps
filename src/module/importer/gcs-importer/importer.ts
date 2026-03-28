@@ -1,5 +1,5 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
-import { parseBlock, parseParry } from '@module/action/parse-weapon.js'
+import { parseBlock, parseParry } from '@module/action/parse-attack.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { BaseItemModel } from '@module/item/data/base.js'
@@ -383,14 +383,14 @@ Portrait will not be imported.`
         this.output[key] = {
           min: 0,
           max: attribute.calc.value,
-          value: attribute.calc.current,
+          damage: attribute.damage,
           points: attribute.calc.points,
         }
       } else {
         this.output[key] = {
           min: 0,
           max: 10,
-          value: 10,
+          damage: 0,
           points: 0,
         }
       }
@@ -431,7 +431,10 @@ Portrait will not be imported.`
     const currentHP = this.actor.system.HP.value
     const currentFP = this.actor.system.FP.value
 
-    const statsDifference = currentHP !== this.output.HP!.value || currentFP !== this.output.FP!.value
+    const newHP = (this.output.HP?.max ?? 0) - (this.output.HP?.damage ?? 0)
+    const newFP = (this.output.FP?.max ?? 0) - (this.output.FP?.damage ?? 0)
+
+    const statsDifference = currentHP !== newHP || currentFP !== newFP
 
     if (!statsDifference) return
 
@@ -441,8 +444,8 @@ Portrait will not be imported.`
 
     if (automaticOverwrite === 'keep') {
       // Automatically ignore values from file
-      this.output.HP!.value = currentHP
-      this.output.FP!.value = currentFP
+      this.output.HP!.damage = this.actor.system.HP.damage
+      this.output.FP!.damage = this.actor.system.FP.damage
 
       return
     }
@@ -455,8 +458,8 @@ Portrait will not be imported.`
       content: game.i18n!.format('GURPS.importer.promptHPandFP.content', {
         currentHP: `${currentHP}`,
         currentFP: `${currentFP}`,
-        hp: `${this.output.HP!.value}`,
-        fp: `${this.output.FP!.value}`,
+        hp: `${newHP}`,
+        fp: `${newFP}`,
       }),
       modal: true,
       buttons: [
@@ -475,8 +478,8 @@ Portrait will not be imported.`
     })
 
     if (overwriteOption === 'keep') {
-      this.output.HP!.value = currentHP
-      this.output.FP!.value = currentFP
+      this.output.HP!.damage = this.actor.system.HP.damage
+      this.output.FP!.damage = this.actor.system.FP.damage
     }
   }
 
@@ -707,18 +710,36 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importMiscValues() {
-    const id = foundry.utils.randomID()
+    const modeWithSameName = (referenceMode: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>>) =>
+      this.actor && [...this.actor.system.moveV2.values()].find(mode => mode.mode === referenceMode.mode)
+    const modesAreEqual = (
+      newMode: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>>,
+      oldMode: MoveModeV2
+    ): boolean =>
+      newMode.mode === oldMode.mode && newMode.basic === oldMode.basic && newMode.enhanced === oldMode.enhanced
 
     const groundMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      _id: id,
+      _id: foundry.utils.randomID(),
       mode: 'GURPS.moveModeGround',
       basic: this.output.basicmove?.value ?? 5,
       enhanced: 0,
-      default: true,
     }
 
-    this.output.moveV2 ||= {}
-    this.output.moveV2[id] = groundMove
+    const allModes = [groundMove]
+
+    for (const mode of allModes) {
+      const previousMode = modeWithSameName(mode)
+
+      if (previousMode) {
+        mode._id = previousMode._id
+        if (modesAreEqual(mode, previousMode)) continue
+      }
+
+      this.output.moveV2 ||= {}
+      this.output.moveV2[mode._id as string] = mode
+    }
+
+    this.output._currentMoveModeId = groundMove._id as string
   }
 
   /* ---------------------------------------- */
@@ -977,7 +998,7 @@ Portrait will not be imported.`
       disabled: trait.disabled,
       containedBy: containedBy ?? null,
       cr: trait.cr ?? null,
-      level: trait.levels ?? 0,
+      level: trait.can_level ? (trait.levels ?? 0) : null,
       userdesc: trait.userdesc ?? '',
       points: trait.calc?.points ?? 0,
     }
@@ -1056,6 +1077,7 @@ Portrait will not be imported.`
       duration: spell.duration ?? '',
       resist: spell.resist ?? '',
       casttime: spell.casting_time ?? '',
+      techlevel: spell.tech_level ?? '',
     }
 
     spell.childItems?.forEach((child: GcsSpell, childIndex: number) => this.#importSpell(child, childIndex, _id))
@@ -1078,7 +1100,7 @@ Portrait will not be imported.`
   #importEquipment(
     equipment: GcsEquipment,
     index: number,
-    carried: boolean,
+    _carried: boolean,
     containedBy?: string | undefined
   ): Item.CreateData {
     const type = 'equipmentV2'
@@ -1098,7 +1120,7 @@ Portrait will not be imported.`
       weight,
       cost: equipment.calc?.value ?? 0,
       location: '',
-      carried,
+      _carried,
       equipped: equipment.equipped ?? false,
       techlevel: equipment.tech_level ?? '',
       categories: equipment.tags?.join(', ') ?? '',
@@ -1111,7 +1133,7 @@ Portrait will not be imported.`
     }
 
     equipment.childItems?.forEach((child: GcsEquipment, childIndex: number) =>
-      this.#importEquipment(child, childIndex, carried, _id)
+      this.#importEquipment(child, childIndex, _carried, _id)
     )
 
     const item: Item.CreateData<'equipmentV2'> = {

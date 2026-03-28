@@ -1,0 +1,94 @@
+section[data-application-part='resources'] {
+  display: grid;
+  grid-gap: var(--gcs-section-gap);
+
+  grid-template-areas:
+    'attributes body encumbrance'
+    'attributes body moving';
+  grid-template-columns: auto auto auto;
+
+  .gcs-attributes {
+    grid-area: attributes;
+
+    display: grid;
+    grid-gap: 0.1rem;
+
+    grid-template-areas:
+      'primary secondary'
+      'damage secondary'
+      'maneuver maneuver';
+
+    .gcs-section-content {
+      height: fit-content;
+    }
+
+    [data-action='rollOtf'],
+    input {
+      max-width: 6ch;
+    }
+
+    .gcs-primary-attributes {
+      grid-area: primary;
+    }
+
+    .gcs-secondary-attributes {
+      grid-area: secondary;
+    }
+
+    .gcs-basic-damage {
+      grid-area: damage;
+
+      input {
+        min-width: 8ch;
+        max-width: 8ch;
+      }
+    }
+
+    .gcs-maneuver-status {
+      grid-area: maneuver;
+    }
+  }
+
+  .gcs-body {
+    grid-area: body;
+  }
+
+  .gcs-encumbrance {
+    grid-area: encumbrance;
+
+    [data-action='setEncumbrance'] {
+      cursor: pointer;
+    }
+  }
+
+  .gcs-moving {
+    grid-area: moving;
+
+    .gcs-lifting-value {
+      text-align: end;
+      font-weight: 700;
+    }
+  }
+}
+
+// Pool Threshold Tooltip (rendered separately from the rest of the sheet)
+.gcs-pool-tooltip {
+  font-family: 'Roboto', sans-serif;
+
+  .threshold {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .value {
+      text-align: right;
+      font-weight: 700;
+    }
+
+    .condition {
+      text-align: left;
+      margin-left: 0.25rem;
+    }
+  }
+}

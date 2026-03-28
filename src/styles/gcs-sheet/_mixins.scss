@@ -1,0 +1,40 @@
+@mixin gcs-header {
+  justify-content: space-evenly;
+
+  padding: 0.15rem 0.25rem;
+  padding-bottom: 0.2rem;
+  border: none;
+
+  background-color: var(--gcs-color-header-bg);
+  color: var(--gcs-color-header-fg);
+
+  font-variant: all-small-caps;
+  font-size: var(--gcs-font-size-header);
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+
+  i[class^='fa'] {
+    font-size: var(--gcs-font-size-header-icon);
+  }
+}
+
+@mixin gcs-banding {
+  background-color: var(--gcs-color-banding-bg);
+  color: var(--gcs-color-banding-fg);
+  [data-action='rollOtf'] {
+    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 20%);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 40%);
+    }
+  }
+
+  [data-action='addModifier'] {
+    background-color: color-mix(in hsl, var(--gcs-color-mod-bg), var(--gcs-color-banding-bg) 20%);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-mod-bg), var(--gcs-color-banding-bg) 40%);
+    }
+  }
+}

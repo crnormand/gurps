@@ -1,0 +1,85 @@
+{{#*inline ".skillEntry"}}
+  <tr class="gcs-item-row"
+      data-item-id="{{id}}"
+      data-has-children="{{hasChildren}}"
+      draggable="true">
+    <td class="gcs-item-name-cell">
+      <div class="gcs-item-name-line indent{{indent}}">
+        {{#if hasChildren}}
+        <i
+          class="fa-solid fa-caret-down gcs-container-toggle"
+          data-open="{{childrenOpen}}"
+          data-action="toggleItemContainer"
+        ></i>
+        {{else}}
+        <span class="gcs-container-spacer"></span>
+        {{/if}}
+        <span class="gcs-item-name-text">{{fullName}}</span>
+        {{#if hasNotes}}
+        <i
+          class="fa-solid fa-notes gcs-notes-toggle"
+          data-action="toggleItemNotes"
+          data-open="{{notesOpen}}"
+        ></i>
+        {{/if}}
+      </div>
+      <div class="gcs-item-notes-container indent{{indent}}">
+        {{#if (and hasNotes notesOpen)}}
+        <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+        {{/if}}
+      </div>
+    </td>
+    {{#if hasChildren}}
+      <td class="gcs-item-level"></td>
+      <td class="gcs-item-rsl"></td>
+    {{else}}
+      <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
+      <td data-action="rollOtf"  data-value="{{otf.relativeLevel}}" class="gcs-item-rsl">{{relativeLevel}}</td>
+    {{/if}}
+    <td class="gcs-item-points">{{points}}</td>
+  </tr>
+  {{#if (and hasChildren childrenOpen)}}
+  {{#each children}}
+    {{> ".skillEntry"}}
+  {{/each}}
+  {{/if}}
+{{/inline}}
+
+<div class="gcs-item-table-container">
+<table data-table-id="skills" class="gcs-table gcs-item-table gcs-skill-table ">
+  <colgroup>
+    <col class="gcs-col-name">
+    <col class="gcs-col-level">
+    <col class="gcs-col-rsl">
+    <col class="gcs-col-points">
+  </colgroup>
+  <thead>
+    <tr>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.skills.name}}">
+        Skill / Technique
+      </th>
+      <th class="gcs-sortable" data-action="sortItems"
+        data-sort-by="{{sortKeys.skills.level}}">
+        SL
+      </th>
+      <th class="gcs-sortable" data-action="sortItems"
+        data-sort-by="{{sortKeys.skills.rsl}}">
+        RSL
+      </th>
+      <th class="gcs-sortable" data-action="sortItems"
+        data-sort-by="{{sortKeys.skills.points}}">
+        Pts
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each skills}}
+      {{> ".skillEntry"}}
+    {{else}}
+    <tr class="gcs-item-empty">
+      <td colspan="4">{{localize "GURPS.none"}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+</div>

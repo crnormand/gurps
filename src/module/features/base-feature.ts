@@ -20,11 +20,10 @@ class BaseFeature<Schema extends BaseFeature.Schema>
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'Feature'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Feature',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.Feature',
+    })
   }
 
   /* ---------------------------------------- */

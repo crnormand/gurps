@@ -1,0 +1,39 @@
+[data-application-part='resourceTrackers'] {
+  display: flex;
+  flex-direction: row;
+  gap: 0.1rem;
+
+  .form-fields {
+    input,
+    span {
+      max-width: 6ch;
+    }
+  }
+
+  button {
+    &:not([data-action='addResourceTracker']) {
+      max-width: var(--gcs-input-height);
+    }
+
+    &[data-action='decrementPool'] {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    &[data-action='incrementPool'] {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+
+    &[data-action='resetPool'] {
+      margin-left: 0.5rem;
+    }
+  }
+
+  .pool-state {
+    white-space: nowrap;
+    text-align: center;
+    padding: 0.1rem;
+    border: 1px solid color-mix(in hsl, var(--gcs-color-surface-bg), white 15%);
+  }
+}

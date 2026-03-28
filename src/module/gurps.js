@@ -49,7 +49,8 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 import { Combat } from './combat/index.js'
 import { CombatTracker } from './combat-tracker/index.js'
 import { Compendium } from './compendium/index.js'
-import GurpsConditionalInjury from './conditional-injury.js'
+// @deprecated in favour of new conditional injury module.
+// import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { Dev } from './dev/index.js'
@@ -1561,7 +1562,8 @@ if (!globalThis.GURPS) {
     var item
 
     if (!actor) return item
-    if (actor instanceof GurpsActorV2) actor = actor.system
+    if (foundry.utils.isSubclass(actor, Actor)) actor = actor.system
+    if (actor.isOfType('characterV2')) return actor.findAttack(sname, isMelee, isRanged)
     let name = sanitize(sname)
     let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(name, false, false), 'i')
     let smode = ''
@@ -2144,7 +2146,8 @@ if (!globalThis.GURPS) {
 
     GURPS.initiative = new Initiative()
     GURPS.hitpoints = new HitFatPoints()
-    GURPS.ConditionalInjury = new GurpsConditionalInjury()
+    // @deprecated in favour of new conditional injury module.
+    // GURPS.ConditionalInjury = new GurpsConditionalInjury()
 
     // do this only after we've initialized localize
     GURPS.Maneuvers = Maneuvers

@@ -1,5 +1,7 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { BaseDisplayItem } from '@gurps-types/gurps/display-item.js'
 import { ActionType, AnyActionClass, BaseAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { MarkdownUtil } from '@module/util/markdown.js'
 import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -24,6 +26,13 @@ type ItemMetadata = Readonly<{
   childTypes: string[]
   /** A set of Item subtypes that this item can contain as modifiers */
   modifierTypes: string[]
+  /**
+   * The sort keys for this item type, used to determine
+   * which property to look up when sorting items of this type.
+   * The key is the name of the entity property to sort by, and the
+   * value is the path to the property value.
+   */
+  sortKeys: Record<string, string>
 }>
 
 /* ---------------------------------------- */
@@ -71,6 +80,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       actions: {},
       childTypes: [],
       modifierTypes: [],
+      sortKeys: { name: 'name' },
     }
   }
 
@@ -88,8 +98,6 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
   /*  Instance properties                     */
-  /* ---------------------------------------- */
-
   /* ---------------------------------------- */
 
   get item(): Item.Implementation {
@@ -326,6 +334,35 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
     return bonuses
   }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Convert this item's data to a format used for display in the character sheet and other UI elements.
+   * This format should be shared between all items representing the same underlying GURPS entity.
+   * */
+  toDisplayItem(): BaseDisplayItem {
+    const children = this.children
+      .filter(child => !!child && !!child.system)
+      .map(child => child!.system!.toDisplayItem!())
+
+    const notes = MarkdownUtil.toHTML(this.notes)
+
+    return {
+      id: this.parent.id!,
+      children,
+      hasChildren: this.children.length > 0,
+      childrenOpen: this.open ?? false,
+      name: this.parent.name,
+      fullName: this.parent.name,
+      notes,
+      hasNotes: this.notes.trim().length > 0,
+      notesOpen: this.notesOpen,
+      indent: this.ancestors.length,
+    }
+  }
+
+  /* ---------------------------------------- */
 }
 
 /* ---------------------------------------- */
@@ -378,6 +415,9 @@ const baseItemModelSchema = () => {
 
     /** Item notes, displayed under the Item name on the charcter sheet */
     notes: new fields.StringField({ required: true, nullable: false }),
+
+    /** A boolean determining whether the Item notes are currently un-collapsed and visible on the character sheet. */
+    notesOpen: new fields.BooleanField({ required: true, nullable: false, initial: true }),
 
     /** The GURPS book page regarding this item, used for looking up rules related to the item. */
     pageref: new fields.StringField({ required: true, nullable: false }),

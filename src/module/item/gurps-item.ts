@@ -1,7 +1,7 @@
 import { recurselist } from '@util/utilities.js'
 
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
-import { IContainable } from '../data/mixins/containable.js'
+import { IContainable, isContainable } from '../data/mixins/containable.js'
 import { ModelCollection } from '../data/model-collection.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 
@@ -181,7 +181,27 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  override delete(operation?: Item.Database.DeleteOperation & { deleteContents?: boolean }): Promise<this | undefined> {
+  override async delete(
+    operation?: Item.Database.DeleteOperation & { deleteContents?: boolean }
+  ): Promise<this | undefined> {
+    if (isContainable(this) && this.contents.length > 0) {
+      if (operation && operation.deleteContents) {
+        await Item.deleteDocuments(
+          this.allContents.map(item => item.id!),
+          { parent: this.parent }
+        )
+      } else {
+        const containedBy = this.modelV2.containedBy ?? null
+
+        await Item.updateDocuments(
+          this.contents.map(item => {
+            return { _id: item.id!, 'system.containedBy': containedBy }
+          }),
+          { parent: this.parent }
+        )
+      }
+    }
+
     return super.delete(operation)
   }
 
@@ -189,7 +209,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   override async deleteDialog(options = {}): Promise<this | false | null | undefined> {
     // Display custom delete dialog when deleting a container with contents
-    const count = this.contents.length
+    const count = this.allContents.length
 
     if (count) {
       const response = await foundry.applications.api.Dialog.confirm({
@@ -197,10 +217,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
           title: `${game.i18n?.format('DOCUMENT.Delete', { type: game.i18n.localize('DOCUMENT.Item') })}: ${this.name}`,
         },
         content:
-          `<p>${game.i18n?.format('GURPS.Item.DeleteMessage', { count: count.toString() })}</p>` +
+          `<p>${game.i18n?.format('GURPS.item.deleteMessage', { name: this.name })}</p>` +
           `<label>` +
           `<input type="checkbox" name="deleteContents">` +
-          `${game.i18n?.localize('GURPS.Item.DeleteContents')}` +
+          `${game.i18n?.format('GURPS.item.deleteContents', { count: count.toString() })}` +
           `</label>`,
         yes: {
           action: '',

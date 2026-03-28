@@ -1,0 +1,91 @@
+@mixin css-variables {
+  /** SVG */
+  --gcs-caret-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23606060'/></svg>");
+
+  /* GCS automatically chooses one of these two colours
+   * depending on the background colour of the sheet,
+   * so we're just using these everywhere.
+   */
+  --color-dark-fg: #101010;
+  --color-light-fg: #f0f0f0;
+
+  /** Header */
+  --gcs-color-header-bg: $gcs-color-base-header;
+  --gcs-color-header-fg: var(--color-light-fg);
+
+  --gcs-input-height: 1.25rem;
+  --gcs-input-label-width: 4rem;
+  --gcs-section-gap: 0.1rem;
+
+  /* Fonts */
+  --gcs-font-size-header: 1rem;
+
+  --gcs-font-size-content: 0.875rem;
+  --gcs-font-size-header-icon: 0.75rem;
+  --gcs-font-size-select: 0.8rem;
+
+  /* Color */
+  --gcs-color-surface-bg: #f4f5f5;
+  --gcs-color-surface-fg: var(--color-dark-fg);
+
+  --gcs-color-quote-bg: color-mix(in hsl, var(--gcs-color-surface-bg), black 15%);
+
+  --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), black 5%);
+  --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
+  --gcs-color-control-fg: var(--color-dark-fg);
+
+  --gcs-color-header-bg: #505050;
+  --gcs-color-header-fg: var(--color-light-fg);
+
+  --gcs-color-banding-bg: #e4e4d8;
+  --gcs-color-banding-fg: var(--color-dark-fg);
+
+  --gcs-color-focus-bg: #006199;
+  --gcs-color-focus-fg: var(--color-light-fg);
+
+  --gcs-color-tooltip-bg: #fff4c6;
+  --gcs-color-tooltip-fg: var(--color-dark-fg);
+
+  --gcs-color-input-bg: #eff0f0;
+  --gcs-color-input-fg: var(--color-dark-fg);
+
+  --gcs-color-mod-bg: #f0b87a;
+  --gcs-color-mod-fg: var(--color-dark-fg);
+
+  --gcs-color-roll-bg: #7de8bc;
+  --gcs-color-roll-fg: var(--color-dark-fg);
+}
+
+@mixin css-variables-dark {
+  /** SVG */
+  --gcs-caret-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'><path d='M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L64 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z' fill='%23a0a0a0'/></svg>");
+
+  /* Color */
+  --gcs-color-surface-bg: #1e1e1e;
+  --gcs-color-surface-fg: var(--color-light-fg);
+
+  --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), white 20%);
+  --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), white 15%);
+  --gcs-color-control-fg: var(--color-light-fg);
+
+  --gcs-color-header-bg: #404040;
+  --gcs-color-header-fg: var(--color-light-fg);
+
+  --gcs-color-banding-bg: #2a2a22;
+  --gcs-color-banding-fg: var(--color-light-fg);
+
+  --gcs-color-focus-bg: #0080cc;
+  --gcs-color-focus-fg: var(--color-light-fg);
+
+  --gcs-color-tooltip-bg: #fff299;
+  --gcs-color-tooltip-fg: var(--color-dark-fg);
+
+  --gcs-color-input-bg: #000000;
+  --gcs-color-input-fg: var(--color-light-fg);
+
+  --gcs-color-mod-bg: #f0b87a;
+  --gcs-color-mod-fg: var(--color-dark-fg);
+
+  --gcs-color-roll-bg: #7de8bc;
+  --gcs-color-roll-fg: var(--color-dark-fg);
+}

@@ -16,29 +16,29 @@ import { SpellBonus } from '@module/features/spell-bonus.js'
 import { SpellPointBonus } from '@module/features/spell-point-bonus.js'
 import { TraitBonus } from '@module/features/trait-bonus.js'
 import {
-  WeaponBonus,
   WeaponAccBonus,
-  WeaponScopeAccBonus,
+  WeaponBlockBonus,
+  WeaponBonus,
+  WeaponBulkBonus,
+  WeaponChamberShotsBonus,
   WeaponDRDivisorBonus,
   WeaponEffectiveSTBonus,
-  WeaponMinSTBonus,
-  WeaponMinReachBonus,
-  WeaponMaxReachBonus,
   WeaponHalfDamageRangeBonus,
-  WeaponMinRangeBonus,
   WeaponMaxRangeBonus,
-  WeaponRecoilBonus,
-  WeaponBulkBonus,
-  WeaponParryBonus,
-  WeaponBlockBonus,
-  WeaponRofMode1ShotsBonus,
-  WeaponRofMode1SecondaryBonus,
-  WeaponRofMode2ShotsBonus,
-  WeaponRofMode2SecondaryBonus,
+  WeaponMaxReachBonus,
+  WeaponMinRangeBonus,
+  WeaponMinReachBonus,
+  WeaponMinSTBonus,
   WeaponNonChamberShotsBonus,
-  WeaponChamberShotsBonus,
-  WeaponShotDurationBonus,
+  WeaponParryBonus,
+  WeaponRecoilBonus,
   WeaponReloadTimeBonus,
+  WeaponRofMode1SecondaryBonus,
+  WeaponRofMode1ShotsBonus,
+  WeaponRofMode2SecondaryBonus,
+  WeaponRofMode2ShotsBonus,
+  WeaponScopeAccBonus,
+  WeaponShotDurationBonus,
   WeaponSwitch,
 } from '@module/features/weapon-bonus.js'
 import {
@@ -60,6 +60,18 @@ import {
 } from '@module/prereqs/index.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { AnyObject } from 'fvtt-types/utils'
+
+import {
+  ActorSheetV2ActionHandler,
+  ActorSheetV2Configuration,
+  ActorSheetV2RenderContext,
+  ActorSheetV2RenderOptions,
+  HandlebarsActorSheetV2Constructor,
+  HandlebarsActorSheetV2Instance,
+  HandlebarsTemplatePart,
+  HeaderControlsEntry,
+} from './foundry/actor-sheet-v2.js'
+import { Application as ApplicationV2 } from './foundry/application.js'
 
 export {}
 
@@ -83,6 +95,49 @@ declare global {
     interface MetadataOwner {
       metadata: {
         embedded: Record<string, string>
+      }
+    }
+
+    /* ---------------------------------------- */
+
+    namespace applications {
+      namespace api {
+        export type Application = ApplicationV2
+
+        /* ---------------------------------------- */
+
+        namespace Application {
+          export type ControlsEntry = HeaderControlsEntry
+        }
+      }
+
+      /* ---------------------------------------- */
+
+      namespace ActorSheet {
+        export type Configuration = ActorSheetV2Configuration & {
+          /** Custom dragDrop property */
+          dragDrop?: foundry.applications.ux.DragDrop.Configuration[]
+        }
+
+        export type ActionHandler = ActorSheetV2ActionHandler
+
+        export type RenderContext = ActorSheetV2RenderContext
+
+        export type RenderOptions = ActorSheetV2RenderOptions
+
+        export type HandlebarsConstructor<
+          TDocument extends Actor = Actor,
+          RenderOptions extends ActorSheetV2RenderOptions = ActorSheetV2RenderOptions,
+          RenderContext extends ActorSheetV2RenderContext = ActorSheetV2RenderContext,
+        > = HandlebarsActorSheetV2Constructor<TDocument, RenderOptions, RenderContext>
+
+        export type HandlebarsInstance<TDocument extends Actor = Actor> = HandlebarsActorSheetV2Instance<TDocument>
+      }
+
+      /* ---------------------------------------- */
+
+      namespace handlebars {
+        export type TemplatePart = HandlebarsTemplatePart
       }
     }
 
@@ -315,8 +370,18 @@ declare global {
 
     /* ---------------------------------------- */
 
+    SetLastActor(actor: Actor.Implementation, tokenDocument?: TokenDocument.Implementation): void
+
+    /* ---------------------------------------- */
+
+    ClearLastActor(actor: Actor.Implementation): void
+
+    /* ---------------------------------------- */
+
     StatusEffect: {
       lookup(id: string): any
+
+      getAllPostures(): Record<string, { id: string; img: string; name: string; move: string }>
     }
 
     /* ---------------------------------------- */

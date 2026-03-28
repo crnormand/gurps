@@ -1,0 +1,288 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+/* ---------------------------------------- */
+
+body {
+  @include css-variables;
+
+  &.theme-dark .application.gcs-sheet:not(.theme-light),
+  .application.gcs-sheet.theme-dark {
+    @include css-variables-dark;
+  }
+}
+
+/* ---------------------------------------- */
+
+.application.gcs-sheet {
+  .window-header {
+    @include gcs-header;
+    margin-bottom: var(--gcs-section-gap);
+  }
+
+  .window-content {
+    background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 15%);
+    font-family: 'Roboto', sans-serif;
+    gap: var(--gcs-section-gap);
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    > * {
+      flex: 0 0 100%;
+    }
+
+    [data-application-part='traits'],
+    [data-application-part='skills'] {
+      flex: 1 0;
+    }
+
+    [data-application-part='reactions'] {
+      gap: var(--gcs-section-gap);
+      background-color: var(--gcs-color-surface-bg);
+
+      > table {
+        align-self: start;
+      }
+    }
+
+    [data-application-part='footer'] {
+      text-align: center;
+    }
+  }
+}
+
+[data-action='rollOtf'],
+[data-action='addModifier'] {
+  height: var(--gcs-input-height);
+  line-height: var(--gcs-input-height);
+  cursor: pointer;
+  padding-right: 0.25rem;
+
+  span {
+    width: 100%;
+    padding: 0 0.5rem;
+  }
+}
+
+[data-action='rollOtf'] {
+  background-color: var(--gcs-color-roll-bg);
+  color: var(--gcs-color-roll-fg);
+
+  &:hover {
+    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), white 15%);
+  }
+}
+
+[data-action='addModifier'] {
+  background-color: var(--gcs-color-mod-bg);
+  color: var(--gcs-color-mod-fg);
+
+  &:hover {
+    background-color: color-mix(in hsl, var(--gcs-color-mod-bg), white 15%);
+  }
+}
+
+.gcs-section {
+  display: grid;
+  grid-template-rows: 0fr auto;
+  border: 0.1rem solid var(--gcs-color-header-bg);
+
+  background-color: var(--gcs-color-surface-bg);
+  color: var(--gcs-color-surface-fg);
+
+  .gcs-section-header {
+    @include gcs-header;
+
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .gcs-section-content {
+    padding: 0.3rem;
+    font-size: var(--gcs-font-size-content);
+
+    &.gcs-field-columns,
+    &.gcs-field-rows {
+      padding: 0;
+      grid-gap: 1px;
+    }
+
+    &.gcs-field-columns {
+      display: flex;
+      gap: 1px;
+      align-items: start;
+    }
+  }
+
+  .gcs-field-rows {
+    display: grid;
+    grid-template-columns: max-content minmax(4ch, 1fr);
+
+    /* equal share of flex space; min-width: 0 lets 1fr resolve inside a flex item */
+    flex: 1 1 0;
+    min-width: 0;
+    width: 100%;
+
+    .form-group:nth-child(even) {
+      @include gcs-banding;
+    }
+
+    &.gcs-field-rows-reverse {
+      grid-template-columns: minmax(4ch, 1fr) max-content;
+
+      .form-group {
+        > .form-fields {
+          grid-column: 1;
+          padding-left: 0;
+          padding-right: 0.25rem;
+        }
+
+        > label {
+          grid-column: 2;
+          text-align: start;
+          padding-left: 0.25rem;
+          padding-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .form-group {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+
+    &.flexrow {
+      display: flex;
+      flex-direction: row;
+    }
+
+    &.flexcol {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  > label {
+    grid-column: 1;
+    justify-self: stretch;
+    text-align: end;
+    white-space: nowrap;
+    padding-left: 0.5rem;
+    padding-right: 0.25rem;
+    align-content: center;
+  }
+
+  .form-fields {
+    grid-column: 2;
+    min-width: 0;
+    padding-left: 0.25rem;
+    white-space: nowrap;
+
+    /* make the actual control fill the field cell */
+    :is(input, textarea) {
+      width: 100%;
+      box-sizing: border-box;
+      line-height: var(--gcs-input-height);
+      height: var(--gcs-input-height);
+      border: none;
+      border-bottom: 0.1rem solid var(--gcs-color-header-bg);
+      border-radius: 0;
+
+      background-color: var(--gcs-color-input-bg);
+      color: var(--gcs-color-input-fg);
+      box-shadow: none;
+
+      &:disabled {
+        background-color: transparent;
+      }
+
+      &:focus {
+        outline: 1px solid var(--gcs-color-focus-bg);
+      }
+    }
+
+    select {
+      appearance: none;
+      padding-right: 1.25rem;
+      background-repeat: no-repeat;
+      background-position: right 0.25rem center;
+      background-size: 0.5rem;
+      background-image: var(--gcs-caret-down);
+    }
+
+    button,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      line-height: var(--gcs-input-height);
+      height: var(--gcs-input-height);
+      min-height: 0;
+      border: 0.1rem solid rgba(255, 255, 255, 0.25);
+      border-radius: 0.2rem;
+      font-variant: normal;
+      font-size: var(--gcs-font-size-select);
+
+      background-color: var(--gcs-color-control-bg);
+      border: 1px solid var(--gcs-color-control-border);
+      color: var(--gcs-color-control-fg);
+
+      &:disabled {
+        background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 30%);
+        color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
+        cursor: not-allowed;
+      }
+
+      &:focus {
+        outline: 2px solid var(--gcs-color-focus-bg);
+      }
+    }
+  }
+}
+
+.gcs-table {
+  margin: 0;
+
+  thead,
+  tfoot {
+    th {
+      @include gcs-header;
+    }
+    justify-content: space-evenly;
+  }
+
+  td,
+  th {
+    white-space: nowrap;
+    padding: 0.15rem 0.25rem;
+  }
+
+  tbody {
+    background-color: var(--gcs-color-surface-bg);
+    color: var(--gcs-color-surface-fg);
+
+    tr:nth-child(even) {
+      @include gcs-banding;
+    }
+
+    tr.selected {
+      background-color: var(--gcs-color-focus-bg);
+      color: var(--gcs-color-focus-fg);
+    }
+  }
+}
+
+// Pool Threshold Tooltip (rendered separately from the rest of the sheet)
+#tooltip:has(.gcs-tooltip) {
+  background: var(--gcs-color-tooltip-bg);
+  color: var(--gcs-color-tooltip-fg);
+
+  padding: 0.25rem;
+  border: 0.1rem solid rgba(0, 0, 0, 0.25);
+  border-radius: 0;
+  box-shadow: none;
+}

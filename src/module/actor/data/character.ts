@@ -1,8 +1,9 @@
-import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { DataModel, fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { MeleeV1 } from '@module/action/legacy/meleev1.js'
 import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { ActionType } from '@module/action/types.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import DiceField from '@module/data/fields/dice-field.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
@@ -39,11 +40,11 @@ import { CheckInfo } from '../types.js'
 import { ActorMetadata, BaseActorModel } from './base.js'
 import {
   attributeSchema,
+  CharacterPool,
   conditionsSchema,
   DamageActionSchema,
   EncumbranceSchema,
   LiftingMovingSchema,
-  poolSchema,
 } from './character-components.js'
 import { HitLocationEntryV2 } from './hit-location-entry.js'
 import { MoveModeV2 } from './move-mode.js'
@@ -126,7 +127,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return (val ?? fallback) as T
   }
 
-  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.Actor.Character')
+  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.actor.characterV2')
 
   /* ---------------------------------------- */
   /*  Instance properties                     */
@@ -214,185 +215,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   equippedblock: number = 0
 
   /* ---------------------------------------- */
-  /*  Accessors                               */
-  /* ---------------------------------------- */
-
-  get holderItem(): Item.OfType<'featureV2'> | undefined {
-    return this.parent.items.get(this.holderItemId) as Item.OfType<'featureV2'> | undefined
-  }
-
-  /* ---------------------------------------- */
-
-  get currentmovemode(): MoveModeV2 {
-    return this.moveV2.find(mv => mv.default)!
-  }
-
-  /* ---------------------------------------- */
-
-  get currentdodge(): number {
-    return this.currentEncumbranceData?.currentdodge ?? 0
-  }
-
-  /* ---------------------------------------- */
-
-  get currentmove(): number {
-    return this.currentEncumbranceData?.currentmove ?? 0
-  }
-
-  /* ---------------------------------------- */
-
-  get currentsprint(): number {
-    return this.currentmove * 1.2 // TODO Should this be rounded to an integer?
-  }
-
-  /* ---------------------------------------- */
-
-  get currentflight(): number {
-    const flightmode = this.moveV2.find(mv => this.isAirMoveMode(mv))
-
-    return flightmode?.basic ?? 0
-  }
-
-  /* ---------------------------------------- */
-
-  // moveoverride: { maneuver: string | null; posture: string | null } = {
-  //   maneuver: null,
-  //   posture: null,
-  // }
-
-  /* ---------------------------------------- */
-
-  // List of top-level ADs (not contained in another AD), sorted by `sort` field.
-  get adsV2(): Item.OfType<'featureV2'>[] {
-    return this.allAdsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get ads() {
-    return arrayToObject(
-      this.adsV2.map(item => new TraitV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  get skillsV2(): Item.OfType<'skillV2'>[] {
-    return this.allSkillsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get skills() {
-    return arrayToObject(
-      this.skillsV2.map(item => new SkillV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  get spellsV2(): Item.OfType<'spellV2'>[] {
-    return this.allSpellsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get spells() {
-    return arrayToObject(
-      this.spellsV2.map(item => new SpellV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  get equipmentV2() {
-    return {
-      carried: this.allEquipmentCarried
-        .filter(item => item.containedBy === null)
-        .sort((left, right) => left.sort - right.sort),
-      other: this.allEquipmentOther
-        .filter(item => item.containedBy === null)
-        .sort((left, right) => left.sort - right.sort),
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  get allEquipmentCarried() {
-    return this.allEquipmentV2.filter(item => item.system.carried === true)
-  }
-
-  /* ---------------------------------------- */
-
-  get allEquipmentOther() {
-    return this.allEquipmentV2.filter(item => item.system.carried === false)
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get equipment() {
-    return {
-      carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
-      other: arrayToObject(this.equipmentV2.other.map(item => new EquipmentV1(item))),
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get melee() {
-    return arrayToObject(
-      this.meleeV2.map(item => new MeleeV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get ranged() {
-    return arrayToObject(
-      this.rangedV2.map(item => new RangedV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  // @deprecated Legacy collection.
-  get move() {
-    return Object.fromEntries(this.moveV2.map((mv, index) => [zeroFill(index, 5), mv]))
-  }
-
-  /* ---------------------------------------- */
-
-  // List of top-level notes (not contained in another note).
-  get notesV2() {
-    return this.allNotes.filter(item => item.containedBy === null)
-  }
-
-  // @deprecated Legacy collection.
-  get notes() {
-    return arrayToObject(
-      this.notesV2.map(item => new NoteV1(item)),
-      5
-    )
-  }
-
-  /* ---------------------------------------- */
-
-  private get currentEncumbranceData() {
-    return this.encumbrance.find(enc => enc.current)
-  }
-
-  /* ---------------------------------------- */
 
   /**
    * Normalize a move mode identifier to its untranslated key form.
@@ -438,6 +260,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
+  protected override _initialize(options?: DataModel.InitializeOptions): void {
+    super._initialize(options)
+
+    if (!this._currentMoveModeId || ![...this.moveV2.keys()].includes(this._currentMoveModeId)) {
+      this._currentMoveModeId = [...this.moveV2.keys()][0] ?? null
+    }
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * Prepare data related to this DataModel itself, before any derived data is computed.
    */
@@ -456,8 +288,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // TODO: verify whether this should be fully reset
     this.conditions = {
       ...this.conditions,
-      posture: 'standing',
-      maneuver: 'do_nothing',
+      // posture: 'standing',
+      // maneuver: 'do_nothing',
       self: { modifiers: [] },
       target: { modifiers: [] },
       usermods: new Set<string>(),
@@ -549,16 +381,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     this.conditions.maneuver = maneuverEffect ? (maneuverEffect.flags.gurps?.name ?? null) : null
   }
-
-  /* ---------------------------------------- */
-
-  // NOTE: Not needed; hit location names are now derived at runtime.
-  // #prepareHitLocationNames(): Record<string, HitLocationEntry> {
-  //   return this.hitlocations.reduce((acc: Record<string, HitLocationEntry>, location) => {
-  //     acc[location.where] = location
-  //     return acc
-  //   }, {})
-  // }
 
   /* ---------------------------------------- */
 
@@ -921,8 +743,23 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  get currentMoveMode(): MoveModeV2 | null {
-    return this.moveV2.find(enc => enc.default) ?? null
+  get holderItem(): Item.OfType<'featureV2'> {
+    return this.parent.items.get(this.holderItemId) as Item.OfType<'featureV2'>
+  }
+
+  /* ---------------------------------------- */
+
+  get currentMoveMode(): MoveModeV2 {
+    const id = this._currentMoveModeId
+    const defaultMoveMode = [...this.moveV2.values()][0]
+
+    if (id) {
+      const moveMode = this.moveV2.get(id)
+
+      return moveMode ? moveMode : defaultMoveMode
+    }
+
+    return defaultMoveMode
   }
 
   /* ---------------------------------------- */
@@ -946,6 +783,162 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const torsoLocation = this.hitlocationsV2.find(location => location.penalty === 0)
 
     return torsoLocation
+  }
+
+  /* ---------------------------------------- */
+
+  get currentdodge(): number {
+    return this.currentEncumbranceData?.currentdodge ?? 0
+  }
+
+  /* ---------------------------------------- */
+
+  get currentmove(): number {
+    return this.currentEncumbranceData?.currentmove ?? 0
+  }
+
+  /* ---------------------------------------- */
+
+  get currentsprint(): number {
+    return this.currentmove * 1.2 // TODO Should this be rounded to an integer?
+  }
+
+  get currentflight(): number {
+    const flightmode = this.moveV2.find(mv => this.isAirMoveMode(mv))
+
+    return flightmode?.basic ?? 0
+  }
+
+  /* ---------------------------------------- */
+
+  // List of top-level ADs (not contained in another AD), sorted by `sort` field.
+  get adsV2(): Item.OfType<'featureV2'>[] {
+    return this.allAdsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
+  }
+
+  /* ---------------------------------------- */
+
+  // @deprecated Legacy collection.
+  get ads() {
+    return arrayToObject(
+      this.adsV2.map(item => new TraitV1(item)),
+      5
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get skillsV2(): Item.OfType<'skillV2'>[] {
+    return this.allSkillsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
+  }
+
+  /* ---------------------------------------- */
+
+  // @deprecated Legacy collection.
+  get skills() {
+    return arrayToObject(
+      this.skillsV2.map(item => new SkillV1(item)),
+      5
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get spellsV2(): Item.OfType<'spellV2'>[] {
+    return this.allSpellsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
+  }
+
+  /* ---------------------------------------- */
+
+  // @deprecated Legacy collection.
+  get spells() {
+    return arrayToObject(
+      this.spellsV2.map(item => new SpellV1(item)),
+      5
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  get equipmentV2() {
+    return {
+      carried: this.allEquipmentCarried
+        .filter(item => item.containedBy === null)
+        .sort((left, right) => left.sort - right.sort),
+      other: this.allEquipmentOther
+        .filter(item => item.containedBy === null)
+        .sort((left, right) => left.sort - right.sort),
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  get allEquipmentCarried() {
+    return this.allEquipmentV2.filter(item => item.system.carried === true)
+  }
+
+  /* ---------------------------------------- */
+
+  get allEquipmentOther() {
+    return this.allEquipmentV2.filter(item => item.system.carried === false)
+  }
+
+  /* ---------------------------------------- */
+
+  // @deprecated Legacy collection.
+  get equipment() {
+    return {
+      carried: arrayToObject(this.equipmentV2.carried.map(item => new EquipmentV1(item))),
+      other: arrayToObject(this.equipmentV2.other.map(item => new EquipmentV1(item))),
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  // @deprecated Legacy collection.
+  get melee() {
+    return arrayToObject(
+      this.meleeV2.map(item => new MeleeV1(item)),
+      5
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  // @deprecated Legacy collection.
+  get ranged() {
+    return arrayToObject(
+      this.rangedV2.map(item => new RangedV1(item)),
+      5
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  // @deprecated Legacy collection.
+  get move() {
+    return Object.fromEntries(this.moveV2.map((mv, index) => [zeroFill(index, 5), mv]))
+  }
+
+  /* ---------------------------------------- */
+
+  // List of top-level notes (not contained in another note).
+  get notesV2() {
+    return this.allNotes.filter(item => item.containedBy === null)
+  }
+
+  // @deprecated Legacy collection.
+  get notes() {
+    return arrayToObject(
+      this.notesV2.map(item => new NoteV1(item)),
+      5
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  private get currentEncumbranceData() {
+    return this.encumbrance.find(enc => enc.current)
   }
 
   /* ---------------------------------------- */
@@ -1749,19 +1742,56 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  // #validDRChanges(changes: Record<string, any>): Record<string, any> {
-  //   const array = foundry.utils.deepClone(this._source.hitlocationsV2)
-  //   const regex = /^system\.hitlocationsV2\.(\d+)\..*/
+  findAttack(name: string, isMelee: boolean, isRanged: boolean): MeleeAttackModel | RangedAttackModel | null {
+    const usage = name.match(/ \((?<usage>[^()]+)\)/)?.groups?.usage ?? ''
+    let nameWithoutUsage = name
 
-  //   for (const [key, value] of Object.entries(changes)) {
-  //     const index = parseInt(key.replace(regex, '$1'))
-  //     const field = key.replace(regex, '')
+    if (usage) {
+      nameWithoutUsage = name.replace(` (${usage})`, '')
+    }
 
-  //     // @ts-expect-error
-  //     array[index][field] = value
-  //   }
-  //   return { 'system.hitlocationsV2': array }
-  // }
+    const attackType: ActionType.MeleeAttack | ActionType.RangedAttack | 'both' | null =
+      isMelee && isRanged
+        ? 'both'
+        : !isMelee && !isRanged
+          ? null
+          : isMelee
+            ? ActionType.MeleeAttack
+            : ActionType.RangedAttack
+
+    if (!attackType) return null
+
+    const weapons = this.parent.getItemAttacks().filter(attack => attackType === 'both' || attack.type === attackType)
+
+    let weapon = weapons.find(attack => attack.item.name === nameWithoutUsage && (!usage || attack.mode === usage))
+
+    if (!weapon) {
+      // Account for the possibility that the usage was matched incorrectly as part of the name (e.g. "Guns (Pistol)")
+      // and usage does not exist
+      weapon = weapons.find(attack => attack.item.name === name && !attack.mode)
+    }
+
+    if (!weapon) return null
+
+    return weapon
+  }
+
+  /* ---------------------------------------- */
+
+  getCollectionForItemType(itemType: Item.SubType, carried = true): Item.Implementation[] {
+    switch (itemType) {
+      case 'featureV2':
+        return this.adsV2
+      case 'skillV2':
+        return this.skillsV2
+      case 'spellV2':
+        return this.spellsV2
+      case 'equipmentV2':
+        return carried ? this.equipmentV2.carried : this.equipmentV2.other
+      default:
+        return []
+    }
+  }
 }
 
 /* ---------------------------------------- */
@@ -1786,9 +1816,9 @@ const characterSchema = () => {
     // ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎ ⬇︎
 
     // Built-in pools
-    HP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
-    FP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
-    QP: new fields.SchemaField(poolSchema(), { required: true, nullable: false }),
+    HP: new fields.EmbeddedDataField(CharacterPool, { required: true, nullable: false }),
+    FP: new fields.EmbeddedDataField(CharacterPool, { required: true, nullable: false }),
+    QP: new fields.EmbeddedDataField(CharacterPool, { required: true, nullable: false }),
 
     // NOTE: This value represents "Basic Dodge", this being Math.floor(Basic Speed) + 3 + Modifiers (e.g. Enhanced
     // Dodge). It is the base value used to get the Actual Dodge value under encumbrance.
@@ -1808,16 +1838,16 @@ const characterSchema = () => {
       points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     }),
 
-    frightcheck: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.frightcheck' }),
-    hearing: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.hearing' }),
-    tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.tastesmell' }),
-    vision: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.vision' }),
-    touch: new fields.NumberField({ required: true, nullable: false, initial: 0, label: 'GURPS.touch' }),
+    frightcheck: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    hearing: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    tastesmell: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    vision: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    touch: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    thrust: new DiceField({ required: true, nullable: false, blank: true, label: 'GURPS.thrust' }),
+    thrust: new DiceField({ required: true, nullable: false, blank: true }),
     // NOTE: may want to revise this in the future to a custom DiceField or the like
-    swing: new DiceField({ required: true, nullable: false, blank: true, label: 'GURPS.swing' }),
+    swing: new DiceField({ required: true, nullable: false, blank: true }),
     // ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎ ⬆︎
 
     // NOTE: Change from previous schema; the encumbrance data is derived and only the current level is stored.
@@ -1858,7 +1888,7 @@ const characterSchema = () => {
         ),
         injury: new fields.SchemaField(
           {
-            severity: new fields.StringField({ required: true, nullable: false, initial: 0 }),
+            severity: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
             daystoheal: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
           },
           { required: true, nullable: false }
@@ -1930,6 +1960,13 @@ const characterSchema = () => {
     //
     // * Tunneling = Underground (1 yard per level)
     moveV2: new CollectionField(MoveModeV2, { required: true, nullable: false, initial: {} }),
+
+    /** The currently selected move mode used to calculate move values */
+    _currentMoveModeId: new fields.StringField({
+      required: true,
+      nullable: false,
+      blank: true,
+    }),
 
     allNotes: new CollectionField(NoteV2, { required: true, nullable: false, initial: {} }),
 

@@ -17,10 +17,11 @@ export class Fatigue {
     if (!maxFP || maxFP <= 0) return []
 
     return [
-      { value: maxFP, condition: 'GURPS.status.Rested' },
-      { value: Math.ceil(maxFP / 3) - 1, condition: 'GURPS.status.Tired' },
-      { value: 0, condition: 'GURPS.collapse' },
-      { value: -maxFP, condition: 'GURPS.unconscious' },
+      { value: maxFP, condition: 'GURPS.status.Rested', color: '#4a9b4b' },
+      { value: maxFP - 1, condition: 'GURPS.status.Tiring', color: '#7ab648' },
+      { value: Math.ceil(maxFP / 3) - 1, condition: 'GURPS.status.Tired', color: '#d4a017' },
+      { value: 0, condition: 'GURPS.collapse', color: '#d4621a' },
+      { value: -maxFP, condition: 'GURPS.unconscious', color: '#4a0c0c' },
     ]
   }
 }

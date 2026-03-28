@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayRangedAttack } from '@gurps-types/gurps/display-item.js'
 import { LengthUnit } from '@module/data/common/length.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -199,6 +200,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
   override prepareDerivedData(): void {
     super.prepareDerivedData()
     this.#prepareMusclePoweredRange()
+    this.#prepareDisplayValues()
   }
 
   /* ---------------------------------------- */
@@ -340,6 +342,28 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
         }
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayRangedAttack {
+    const fullName = super.toDisplayItem().fullName
+
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      acc: this.accText,
+      bulk: this.bulkText,
+      halfDamageRange: this.range.halfDamage.toLocaleString(),
+      maxRange: this.range.max.toLocaleString(),
+      minRange: this.range.min.toLocaleString(),
+      range: this.rangeText,
+      recoil: this.recoilText,
+      rof: this.rofText,
+      shots: this.shotsText,
+      otf: {
+        level: `R:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
+        damage: `D:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
+      },
+    })
   }
 }
 

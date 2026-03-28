@@ -15,11 +15,10 @@ class AttributeThreshold extends PseudoDocument<AttributeThresholdSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'AttributeThreshold'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'AttributeThreshold',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.AttributeThreshold',
+    })
   }
 }
 

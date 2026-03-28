@@ -1,8 +1,9 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayNote } from '@gurps-types/gurps/display-item.js'
+import { IContainable, containableSchema } from '@module/data/mixins/containable.js'
+import { ContainerUtils } from '@module/data/mixins/container-utils.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
-
-import { IContainable, containableSchema } from '../../data/mixins/containable.js'
-import { ContainerUtils } from '../../data/mixins/container-utils.js'
+import { MarkdownUtil } from '@module/util/markdown.js'
 
 import { CharacterModel } from './character.js'
 
@@ -22,11 +23,13 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'Note'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Note',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.Note',
+      sortKeys: {
+        name: 'markdown',
+      },
+    })
   }
 
   /* ---------------------------------------- */
@@ -125,6 +128,26 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
    */
   get resolvedContent(): string | null {
     return this.calc?.resolved_notes ? this.calc.resolved_notes : this.text
+  }
+
+  toDisplayItem(): DisplayNote {
+    const fullName = this.title
+
+    const children = this.contents.filter(child => !!child).map(child => child!.toDisplayItem!())
+
+    const notes = MarkdownUtil.toHTML(this.markdown)
+
+    return {
+      id: this.id!,
+      documentName: this.static.metadata.documentName,
+      children,
+      hasChildren: this.contents.length > 0,
+      childrenOpen: this.open ?? false,
+      name: fullName,
+      fullName,
+      notes,
+      indent: this.ancestors.length,
+    }
   }
 }
 

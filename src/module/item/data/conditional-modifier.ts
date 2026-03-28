@@ -21,11 +21,10 @@ class ConditionalModifier extends PseudoDocument<ConditionalModifier.Schema> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'ConditionalModifier'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'ConditionalModifier',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.ConditionalModifier',
+    })
   }
 
   /* ---------------------------------------- */
@@ -51,11 +50,10 @@ class ReactionModifier extends PseudoDocument<ConditionalModifier.Schema> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'ReactionModifier'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'ReactionModifier',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.ReactionModifier',
+    })
   }
 
   /* ---------------------------------------- */

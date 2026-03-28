@@ -1,0 +1,177 @@
+{{#*inline ".attributeEntry"}}
+  <div class="form-group form-group-inverse">
+    {{#if nonRollable}}
+      <div class="form-fields">
+        {{formInput field value=value localize=true disabled=@root.isPlay}}
+      </div>
+    {{else}}
+      {{#if @root.isPlay}}
+      <div
+          class="form-fields"
+          data-action="rollOtf"
+          data-value="{{name}}"
+        >
+        <span>{{value}}</span>
+      </div>
+      {{else}}
+      <div class="form-fields">
+        {{formInput field value=value localize=true}}
+      </div>
+      {{/if}}
+    {{/if}}
+    <label>{{field.label}}</label>
+  </div>
+{{/inline}}
+
+
+<section>
+  <div class="gcs-attributes">
+    <div class="gcs-primary-attributes gcs-section">
+      <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.primaryAttributes"}}</div>
+      <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+        {{> ".attributeEntry" attributeFields.ST }}
+        {{> ".attributeEntry" attributeFields.DX }}
+        {{> ".attributeEntry" attributeFields.IQ }}
+        {{> ".attributeEntry" attributeFields.HT }}
+      </div>
+    </div>
+    <div class="gcs-basic-damage gcs-section">
+      <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.basicDamage"}}</div>
+      <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+        {{> ".attributeEntry" attributeFields.basicThrust }}
+        {{> ".attributeEntry" attributeFields.basicSwing }}
+      </div>
+    </div>
+    <div class="gcs-secondary-attributes gcs-section">
+      <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.secondaryAttributes"}}</div>
+      <div class="gcs-field-rows gcs-field-rows-reverse gcs-section-content">
+        {{> ".attributeEntry" attributeFields.WILL }}
+        {{> ".attributeEntry" attributeFields.frightCheck }}
+        {{> ".attributeEntry" attributeFields.PER }}
+        {{> ".attributeEntry" attributeFields.vision }}
+        {{> ".attributeEntry" attributeFields.hearing }}
+        {{> ".attributeEntry" attributeFields.tasteSmell }}
+        {{> ".attributeEntry" attributeFields.touch }}
+        {{> ".attributeEntry" attributeFields.basicSpeed }}
+        {{> ".attributeEntry" attributeFields.basicMove }}
+      </div>
+    </div>
+    <div class="gcs-maneuver-status gcs-section">
+      <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.maneuverStatus"}}</div>
+      <div class="gcs-field-rows gcs-section-content">
+        {{formGroup systemFields.conditions.fields.maneuver name="maneuver" value=system.conditions.maneuver blank=false  choices=maneuverChoices localize=true disabled=(not actor.inCombat)}}
+        {{formGroup systemFields.conditions.fields.posture name="posture" value=system.conditions.posture blank=false  choices=postureChoices localize=true}}
+        <div class="form-group">
+          <label>{{localize "GURPS.conditionsCombatMove"}}</label>
+          <div class="form-fields">
+            <span>{{system.conditions.move}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize "GURPS.maxActionsPerTurn"}}</label>
+          <div class="form-fields">
+            <span>{{system.conditions.actions.maxActions}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize "GURPS.maxBlocksPerTurn"}}</label>
+          <div class="form-fields">
+            <span>{{system.conditions.actions.maxBlocks}}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize "GURPS.activeEffects"}}</label>
+          <div class="form-fields">
+            <span>{{status.blocksPerTurn}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="gcs-body gcs-section">
+    <div class="gcs-section-header">{{ systemSource.bodyplan }}</div>
+    <table class="gcs-table  gcs-section-content">
+      <thead>
+        <tr>
+          <th>Roll</th>
+          <th colspan="2">Location</th>
+          <th>DR</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each systemSource.hitlocationsV2 as |location|}}
+          <tr>
+            <td>{{location.rollText}}</td>
+            <td>{{location.where}}</td>
+            <td
+              class="form-fields"
+              data-action="addModifier"
+              data-value="{{location.penalty}}"
+              data-comment="{{localize 'GURPS.hitLocationPenalty'}}: {{location.where}}"
+              >{{location.penalty}}</td>
+            <td>{{location._dr}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <div class="gcs-encumbrance gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.encumbrance"}}</div>
+    <table class="gcs-table  gcs-section-content">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Level</th>
+          <th>Max Load</th>
+          <th>Move</th>
+          <th>Dodge</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each system.encumbrance as |enc|}}
+        <tr class="{{#if enc.current}}selected{{/if}}">
+            <td data-action="setEncumbrance" data-index="{{@index}}" >
+              {{#if enc.current}}
+              <i class="fa-solid fa-weight-hanging"></i>
+              {{/if}}
+            </td>
+            <td>{{localize (concat "GURPS.encumbranceLevel-" enc.level)}}</td>
+            <td>{{ localize "GURPS.sheet.gcsActorSheet.pound" value=enc.weight }}</td>
+            <td>{{enc.move}}</td>
+            {{#if enc.current}}
+            <td data-action="rollOtf" data-value="Dodge" >{{enc.dodge}}</td>
+            {{else}}
+            <td>{{enc.dodge}}</td>
+            {{/if}}
+          </tr>
+        {{/each}}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="5">
+            {{formGroup  systemFields._currentMoveModeId value=system._currentMoveModeId classes="flexrow" blank=false  choices=moveModeChoices localize=true}}
+          </th>
+        </tr>
+      </tfoot>
+    </table>
+    </div>
+  </div>
+  <div class="gcs-moving gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.moving"}}</div>
+    <table class="gcs-table  gcs-section-content">
+      <tbody>
+        {{#each liftingMoving}}
+        <tr>
+          <td class="gcs-lifting-value">
+            {{ localize "GURPS.sheet.gcsActorSheet.pound" value=value }}
+          </td>
+          <td>
+            {{localize label}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</section>

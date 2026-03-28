@@ -81,10 +81,14 @@ export interface HeaderControlsEntry {
 
 /* ---------------------------------------- */
 
-export interface HandlebarsActorSheetV2Constructor<TDocument extends Actor = Actor> {
+export interface HandlebarsActorSheetV2Constructor<
+  TDocument extends Actor = Actor,
+  RenderOptions extends ActorSheetV2RenderOptions = ActorSheetV2RenderOptions,
+  RenderContext extends ActorSheetV2RenderContext = ActorSheetV2RenderContext,
+> {
   new (
     options?: DeepPartial<ActorSheetV2Configuration> & { document?: TDocument }
-  ): HandlebarsActorSheetV2Instance<TDocument>
+  ): HandlebarsActorSheetV2Instance<TDocument, RenderOptions, RenderContext>
   DEFAULT_OPTIONS: DeepPartial<ActorSheetV2Configuration>
   PARTS: Record<string, HandlebarsTemplatePart>
   TABS: Record<string, Application.TabsConfiguration>
@@ -92,7 +96,11 @@ export interface HandlebarsActorSheetV2Constructor<TDocument extends Actor = Act
 
 /* ---------------------------------------- */
 
-export declare abstract class HandlebarsActorSheetV2Instance<TDocument extends Actor = Actor> {
+export declare abstract class HandlebarsActorSheetV2Instance<
+  TDocument extends Actor = Actor,
+  RenderOptions extends ActorSheetV2RenderOptions = ActorSheetV2RenderOptions,
+  RenderContext extends ActorSheetV2RenderContext = ActorSheetV2RenderContext,
+> {
   readonly actor: TDocument
   readonly document: TDocument
   readonly element: HTMLElement
@@ -102,15 +110,26 @@ export declare abstract class HandlebarsActorSheetV2Instance<TDocument extends A
   static PARTS: Record<string, HandlebarsTemplatePart>
   static TABS: Record<string, Application.TabsConfiguration>
 
-  render(options?: Partial<ActorSheetV2RenderOptions>): Promise<this>
+  render(options?: Partial<RenderOptions>): Promise<this>
   close(options?: { animate?: boolean }): Promise<this>
-  protected _prepareContext(options: ActorSheetV2RenderOptions): Promise<ActorSheetV2RenderContext>
+  protected _prepareContext(options: RenderOptions): Promise<RenderContext>
   protected _preparePartContext(
     partId: string,
-    context: ActorSheetV2RenderContext,
-    options: DeepPartial<ActorSheetV2RenderOptions>
-  ): Promise<ActorSheetV2RenderContext>
-  protected _onRender(context: ActorSheetV2RenderContext, options: ActorSheetV2RenderOptions): Promise<void>
+    context: RenderContext,
+    options: DeepPartial<RenderOptions>
+  ): Promise<RenderContext>
+  protected _configureRenderOptions(options: DeepPartial<RenderOptions>): void
+  protected _onRender(context: RenderContext, options: RenderOptions): Promise<void>
+  protected _onFirstRender(context: RenderContext, options: RenderOptions): Promise<void>
   protected _prepareTabs(group: string): Record<string, Application.Tab>
-  _getHeaderControls(): HeaderControlsEntry[]
+  protected _renderFrame(options: DeepPartial<RenderOptions>): Promise<HTMLElement>
+  protected _createContextMenu(
+    handler: Application.CreateContextMenuHandler,
+    selector: string,
+    options: Application.CreateContextMenuOptions
+  ): ContextMenu | null
+  protected _getHeaderControls(): HeaderControlsEntry[]
+  get title(): string
+  get window(): Application.Window
+  get isEditable(): boolean
 }

@@ -1,3 +1,5 @@
+import showdown from 'showdown'
+
 export {}
 
 const typePrototypes: [new (...args: never[]) => unknown, string][] = [
@@ -239,6 +241,8 @@ class MockCollection<V> extends Map<string, V> {
     return result
   }
 }
+
+globalThis.showdown = showdown
 
 global.foundry = {
   abstract: {

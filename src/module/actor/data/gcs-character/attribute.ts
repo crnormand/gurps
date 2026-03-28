@@ -17,11 +17,10 @@ class GcsAttribute extends PseudoDocument<GcsAttributeSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'Attribute'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Attribute',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.Attribute',
+    })
   }
 
   /* ---------------------------------------- */

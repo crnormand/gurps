@@ -1,0 +1,174 @@
+{{#*inline ".equipmentEntry"}}
+  <tr class="gcs-item-row"
+      data-item-id="{{id}}"
+      data-has-children="{{hasChildren}}"
+      draggable="true">
+    {{#if carriedTable}}
+    <td class="gcs-item-equipped">
+      {{#if equipped}}
+      <i class="fa-solid fa-check"></i>
+      {{/if}}
+    </td>
+    {{/if}}
+    <td class="gcs-item-quantity">{{quantity}}</td>
+    <td class="gcs-item-name-cell">
+      <div class="gcs-item-name-line indent{{indent}}">
+        {{#if hasChildren}}
+        <i
+          class="fa-solid fa-caret-down gcs-container-toggle"
+          data-open="{{childrenOpen}}"
+          data-action="toggleItemContainer"
+        ></i>
+        {{else}}
+        <span class="gcs-container-spacer"></span>
+        {{/if}}
+        <span class="gcs-item-name-text">{{fullName}}</span>
+        {{#if hasNotes}}
+        <i
+          class="fa-solid fa-notes gcs-notes-toggle"
+          data-action="toggleItemNotes"
+          data-open="{{notesOpen}}"
+        ></i>
+        {{/if}}
+      </div>
+      <div class="gcs-item-notes-container indent{{indent}}">
+        {{#if (and hasNotes notesOpen)}}
+        <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+        {{/if}}
+      </div>
+    </td>
+    <td class="gcs-item-tl">{{techLevel}}</td>
+    <td class="gcs-item-lc">{{legalityClass}}</td>
+    <td class="gcs-item-value">{{value}}</td>
+    <td class="gcs-item-weight">{{localize "GURPS.sheet.gcsActorSheet.pound" value=weight.value}}</td>
+    <td class="gcs-item-extended-value">{{extendedValue}}</td>
+    <td class="gcs-item-extended-weight">{{localize "GURPS.sheet.gcsActorSheet.pound" value=extendedWeight.value}}</td>
+  </tr>
+  {{#if (and hasChildren childrenOpen)}}
+  {{#each children}}
+    {{> ".equipmentEntry" carriedTable=../carriedTable}}
+  {{/each}}
+  {{/if}}
+{{/inline}}
+
+<section>
+  <table data-table-id="carriedEquipment" class="gcs-table gcs-item-table gcs-skill-table ">
+    <colgroup>
+      <col class="gcs-col-equipped">
+      <col class="gcs-col-quantity">
+      <col class="gcs-col-name">
+      <col class="gcs-col-tl">
+      <col class="gcs-col-lc">
+      <col class="gcs-col-value">
+      <col class="gcs-col-weight">
+      <col class="gcs-col-extended-value">
+      <col class="gcs-col-extended-weight">
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="gcs-sortable">
+          <i class="fa-solid fa-check"></i>
+        </th>
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.quantity}}">
+          #
+        </th>
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.name}}">
+          Carried Equipment
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.techLevel}}">
+          TL
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.legalityClass}}">
+          LC
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.value}}">
+          <i class="fa-solid fa-coins"></i>
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.weight}}">
+          <i class="fa-solid fa-weight-hanging"></i>
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.extendedValue}}">
+          <i class="fa-solid fa-coins"></i>
+          <i class="fa-solid fa-coins"></i>
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.extendedWeight}}">
+          <i class="fa-solid fa-weight-hanging"></i>
+          <i class="fa-solid fa-weight-hanging"></i>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each carriedEquipment}}
+        {{> ".equipmentEntry" carriedTable=true}}
+      {{else}}
+      <tr class="gcs-item-empty">
+        <td colspan="9">{{localize "GURPS.none"}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <table data-table-id="otherEquipment" class="gcs-table gcs-item-table gcs-skill-table ">
+    <colgroup>
+      <col class="gcs-col-quantity">
+      <col class="gcs-col-name">
+      <col class="gcs-col-tl">
+      <col class="gcs-col-lc">
+      <col class="gcs-col-value">
+      <col class="gcs-col-weight">
+      <col class="gcs-col-extended-value">
+      <col class="gcs-col-extended-weight">
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.quantity}}">
+          #
+        </th>
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.name}}">
+          Other Equipment
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.techLevel}}">
+          TL
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.legalityClass}}">
+          LC
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.value}}">
+          <i class="fa-solid fa-coins"></i>
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.weight}}">
+          <i class="fa-solid fa-weight-hanging"></i>
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.extendedValue}}">
+          <i class="fa-solid fa-coins"></i>
+          <i class="fa-solid fa-coins"></i>
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.extendedWeight}}">
+          <i class="fa-solid fa-weight-hanging"></i>
+          <i class="fa-solid fa-weight-hanging"></i>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each otherEquipment}}
+        {{> ".equipmentEntry" carriedTable=false}}
+      {{else}}
+      <tr class="gcs-item-empty">
+        <td colspan="8">{{localize "GURPS.none"}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</section>

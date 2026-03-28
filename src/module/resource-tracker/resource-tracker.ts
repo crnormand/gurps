@@ -22,11 +22,10 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'ResourceTracker'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'ResourceTracker',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.ResourceTracker',
+    })
   }
 
   /* ---------------------------------------- */
@@ -63,47 +62,31 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
   }
 
   get thresholdDescriptors(): ThresholdDescriptor[] {
-    const results: ThresholdDescriptor[] = []
+    const [first, ...rest] = this.thresholds
 
-    // Make a copy of the thresholds array.
-    const thresholds = [...this.thresholds]
+    const descriptorFrom = (value: number, threshold?: ResourceTrackerThreshold): ThresholdDescriptor => ({
+      value,
+      condition: threshold?.condition ?? '',
+      color: threshold?.color ?? '',
+    })
+
+    const computedDescriptors = rest.map(threshold =>
+      descriptorFrom(
+        Math.trunc(OperatorFunctions[threshold.operator as TrackerOperators](this.max, threshold.value)),
+        threshold
+      )
+    )
 
     if (this.isAccumulator) {
-      results.push({ value: 0, condition: thresholds.shift()?.condition ?? '' })
-
-      for (const threshold of thresholds) {
-        results.push({
-          value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
-          condition: threshold.condition,
-        })
-      }
-    } else {
-      if (this.useBreakpoints) {
-        results.push({ value: this.max, condition: thresholds.shift()?.condition ?? '' })
-
-        for (const threshold of thresholds) {
-          results.push({
-            value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
-            condition: threshold.condition,
-          })
-        }
-      } else {
-        results.push({ value: this.max, condition: thresholds.shift()?.condition ?? '' })
-
-        for (const threshold of thresholds) {
-          results.push({
-            value: Math.trunc(getOperator(threshold)(this.max, threshold.value)),
-            condition: threshold.condition,
-          })
-        }
-      }
+      return [descriptorFrom(0, first), ...computedDescriptors]
     }
 
-    return results
-
-    function getOperator(threshold: ResourceTrackerThreshold) {
-      return OperatorFunctions[threshold.operator as TrackerOperators]
+    if (this.useBreakpoints) {
+      return [descriptorFrom(this.max, first), ...computedDescriptors]
     }
+
+    // Neither accumulator nor breakpoints: header uses second threshold's condition/color
+    return [descriptorFrom(this.max, first), ...computedDescriptors]
   }
 
   /**

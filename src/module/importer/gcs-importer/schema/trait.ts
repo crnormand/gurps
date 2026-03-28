@@ -167,6 +167,7 @@ const traitData = () => {
     // STUB: features is not yet supported
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     round_down: new fields.BooleanField({ required: true, nullable: true, initial: null }),
+    can_level: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     // END: TraitNonContainerOnlySyncData
 
     // START: calc

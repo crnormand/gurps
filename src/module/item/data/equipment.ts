@@ -1,4 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayEquipment } from '@gurps-types/gurps/display-item.js'
+import { Weight } from '@module/data/common/weight.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
@@ -15,12 +17,41 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
-      type: 'equipment',
-      childTypes: ['equipment'],
+      type: 'equipmentV2',
+      childTypes: ['equipmentV2'],
+      sortKeys: {
+        quantity: 'system.count',
+        value: 'system.cost',
+        extendedValue: 'system.costsum',
+        weight: 'system.weight',
+        extendedWeight: 'system.weightsum',
+      },
     })
   }
 
   /* ---------------------------------------- */
+
+  get carried(): boolean {
+    if (this.isContained) {
+      const container = this.container
+
+      if (!container) {
+        console.error('Item is marked as contained but has no container:', this)
+
+        return this._carried
+      }
+
+      if (!container.isOfType('equipmentV2')) {
+        console.error(`Expected container of equipment item to be of type "equipmentV2", but got "${container.type}"`)
+
+        return this._carried
+      }
+
+      return container.system.carried
+    }
+
+    return this._carried
+  }
 
   override get enabled(): boolean {
     return this.equipped && this.carried
@@ -43,6 +74,22 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
     return super.getGlobalBonuses()
   }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayEquipment {
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      equipped: this.equipped,
+      carried: this.carried,
+      quantity: this.count,
+      techLevel: this.techlevel,
+      legalityClass: this.legalityclass,
+      value: this.cost,
+      extendedValue: this.costsum,
+      weight: Weight.from(this.weight, Weight.Unit.Pound, true).toObject(),
+      extendedWeight: Weight.from(this.weightsum, Weight.Unit.Pound, true).toObject(),
+    })
+  }
 }
 
 /* ---------------------------------------- */
@@ -61,8 +108,12 @@ const equipmentSchema = () => {
     /** The stored location of this item, e.g. "Backpack", "Belt Pouch", etc. */
     location: new fields.StringField({ required: true, nullable: false }),
 
-    /** Whether this item is currently being carried by the character. */
-    carried: new fields.BooleanField({ required: true, nullable: false }),
+    /**
+     * Whether this item is currently being carried by the character.
+     * This value is ignored for items that are contained within another item,
+     * in which case the container's carried value is used instead.
+     */
+    _carried: new fields.BooleanField({ required: true, nullable: false, initial: true }),
 
     /** Whether this item is currently equipped by the character. */
     equipped: new fields.BooleanField({ required: true, nullable: false }),

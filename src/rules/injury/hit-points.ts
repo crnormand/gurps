@@ -1,6 +1,7 @@
 export interface ThresholdDescriptor {
   value: number
   condition: string
+  color: string
 }
 
 export class HitPoints {
@@ -26,15 +27,16 @@ export class HitPoints {
     if (!maxHP || maxHP <= 0) return []
 
     return [
-      { value: maxHP, condition: 'GURPS.status.Healthy' },
-      { value: Math.ceil(maxHP / 3) - 1, condition: 'GURPS.status.Reeling' },
-      { value: 0, condition: 'GURPS.collapse' },
-      { value: -maxHP, condition: 'GURPS.check1' },
-      { value: -2 * maxHP, condition: 'GURPS.check2' },
-      { value: -3 * maxHP, condition: 'GURPS.check3' },
-      { value: -4 * maxHP, condition: 'GURPS.check4' },
-      { value: -5 * maxHP, condition: 'GURPS.dead' },
-      { value: -10 * maxHP, condition: 'GURPS.destroyed' },
+      { value: maxHP, condition: 'GURPS.status.Healthy', color: '#4a9b4b' },
+      { value: maxHP - 1, condition: 'GURPS.status.Wounded', color: '#7ab648' },
+      { value: Math.ceil(maxHP / 3) - 1, condition: 'GURPS.status.Reeling', color: '#d4a017' },
+      { value: 0, condition: 'GURPS.collapse', color: '#d4621a' },
+      { value: -maxHP, condition: 'GURPS.check1', color: '#c03a25' },
+      { value: -2 * maxHP, condition: 'GURPS.check2', color: '#a82a20' },
+      { value: -3 * maxHP, condition: 'GURPS.check3', color: '#8e1f1a' },
+      { value: -4 * maxHP, condition: 'GURPS.check4', color: '#761515' },
+      { value: -5 * maxHP, condition: 'GURPS.dead', color: '#4a0c0c' },
+      { value: -10 * maxHP, condition: 'GURPS.destroyed', color: '#1a0505' },
     ]
   }
 }

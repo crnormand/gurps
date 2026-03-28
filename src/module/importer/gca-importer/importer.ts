@@ -1,8 +1,9 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
-import { parseBlock } from '@module/action/parse-weapon.js'
+import { parseBlock } from '@module/action/parse-attack.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
+import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { EquipmentSchema } from '@module/item/data/equipment.js'
 import { SkillSchema } from '@module/item/data/skill.js'
@@ -266,14 +267,14 @@ Portrait will not be imported.`
           min: 0,
           max: attribute.score,
           // NOTE: apparently GCA does not store injury?
-          value: attribute.score,
+          damage: 0,
           points: attribute.points,
         }
       } else {
         this.output[key] = {
           min: 0,
           max: 10,
-          value: 10,
+          damage: 0,
           points: 0,
         }
       }
@@ -313,6 +314,14 @@ Portrait will not be imported.`
     this.output.thrust = thrust
     this.output.swing = swing
 
+    const modeWithSameName = (referenceMode: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>>) =>
+      this.actor && [...this.actor.system.moveV2.values()].find(mode => mode.mode === referenceMode.mode)
+    const modesAreEqual = (
+      newMode: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>>,
+      oldMode: MoveModeV2
+    ): boolean =>
+      newMode.mode === oldMode.mode && newMode.basic === oldMode.basic && newMode.enhanced === oldMode.enhanced
+
     // Import speeds for move modes(based on attributes in GGA)
     const groundMove = {
       _id: foundry.utils.randomID(),
@@ -342,11 +351,25 @@ Portrait will not be imported.`
       ...this.#importMoveType('Space Move'),
     }
 
-    this.output.moveV2 ||= {}
-    this.output.moveV2[groundMove._id] = groundMove
-    this.output.moveV2[airMove._id] = airMove
-    this.output.moveV2[waterMove._id] = waterMove
-    this.output.moveV2[spaceMove._id] = spaceMove
+    const allModes = [groundMove, airMove, waterMove, spaceMove]
+    let currentMoveModeId: string | null = null
+
+    for (const mode of allModes) {
+      const previousMode = modeWithSameName(mode)
+      const isGroundMove = mode === groundMove
+
+      if (previousMode) {
+        mode._id = previousMode._id
+        if (modesAreEqual(mode, previousMode)) continue
+      }
+
+      this.output.moveV2 ||= {}
+      this.output.moveV2[mode._id as string] = mode
+
+      if (isGroundMove) currentMoveModeId = mode._id as string
+    }
+
+    this.output._currentMoveModeId = (currentMoveModeId ?? groundMove._id) as string
   }
 
   /* ---------------------------------------- */
@@ -914,7 +937,7 @@ Portrait will not be imported.`
       weight: parseFloat(equipment.calcs.postformulaweight ?? '0') || 0,
       cost: parseFloat(equipment.calcs.postformulacost ?? '0') || 0,
       location: '',
-      carried: true,
+      _carried: true,
       equipped: true,
       techlevel: equipment.tl ?? '',
       categories: equipment.cat,

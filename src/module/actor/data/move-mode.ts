@@ -9,11 +9,10 @@ class MoveModeV2 extends PseudoDocument<MoveSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'MoveMode'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'MoveMode',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.MoveMode',
+    })
   }
 }
 
@@ -22,10 +21,12 @@ class MoveModeV2 extends PseudoDocument<MoveSchema> {
 const moveSchema = () => {
   return {
     ...pseudoDocumentSchema(),
+    /* The name of this move mode */
     mode: new fields.StringField({ required: true, nullable: false }),
+    /* The "basic" value of this move mode, this is the normal move value for the mode. */
     basic: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    /* The enhanced move value for this move mode.*/
     enhanced: new fields.NumberField({ required: true, nullable: true }),
-    default: new fields.BooleanField({ required: true, nullable: false, initial: false }),
   }
 }
 

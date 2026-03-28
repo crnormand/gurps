@@ -7,7 +7,7 @@ export default class GurpsWiring {
    * Attach standard click and context menu event handlers to any element that qualifies as a "gurpslink", "gmod", "glinkmod",
    * "glinkmodplus", "glinkmodminus", or "pdflink". Also make any element with a "data-otf" attribute draggable and attach a
    * context menu to it.
-   * @param {HTMLElement} html - a HTMLElement to search within for elements to attach click handlers to.
+   * @param {HTMLElement | JQuery<HTMLElement>} html - a HTMLElement to search within for elements to attach click handlers to.
    */
   static hookupAllEvents(html) {
     if (!(html instanceof HTMLElement)) {
@@ -30,7 +30,7 @@ export default class GurpsWiring {
   /**
    * Attach standard click event handlers to any element that qualifies as a "gurpslink", "gmod", "glinkmod",
    * "glinkmodplus", "glinkmodminus", or "pdflink". Also make any element with a "data-otf" attribute draggable.
-   * @param {HTMLElement} html - a HTMLElement to search within for elements to attach click handlers to.
+   * @param {HTMLElement | JQuery<HTMLElement>} html - a HTMLElement to search within for elements to attach click handlers to.
    */
   static hookupClickEvents(html) {
     if (!(html instanceof HTMLElement)) {

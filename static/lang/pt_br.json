@@ -1,11 +1,20 @@
 {
   "DOCUMENT": {
     "Action": "Ação",
+    "Attribute": "Atributo",
+    "AttributeDefinition": "Definição de Atributo",
+    "AttributeThreshold": "Limiar de Atributo",
+    "Body": "Plano Corporal",
     "ConditionalModifier": "Modificador Condicional",
+    "Feature": "Característica",
+    "GcsSubTable": "Sub-tabela de Localização",
     "HitLocation": "Localização do Golpe",
     "MoveMode": "Modo de Movimento",
+    "Note": "Nota",
+    "Prereq": "Pré-requisito",
     "ReactionModifier": "Modificador de Reação",
-    "ResourceTracker": "Rastreador de Recursos"
+    "ResourceTracker": "Rastreador de Recursos",
+    "Study": "Entrada de Estudo"
   },
   "GURPS": {
     "abbrevPoints": "Ptos",
@@ -104,6 +113,165 @@
     "active": "Ativo",
     "activeEffect": "Efeito Ativo",
     "activeEffects": "Efeitos Ativos",
+    "actor": {
+      "characterV2": {
+        "FIELDS": {
+          "_currentMoveModeId": {
+            "label": "Modo de Movimento Atual"
+          },
+          "attributes": {
+            "DX": {
+              "import": {
+                "label": "Destreza (DX)"
+              }
+            },
+            "HT": {
+              "import": {
+                "label": "Saúde (HT)"
+              }
+            },
+            "IQ": {
+              "import": {
+                "label": "Inteligência (IQ)"
+              }
+            },
+            "PER": {
+              "import": {
+                "label": "Percepção (Per)"
+              }
+            },
+            "QN": {
+              "import": {
+                "label": "Quintessência (QN)"
+              }
+            },
+            "ST": {
+              "import": {
+                "label": "Força (ST)"
+              }
+            },
+            "WILL": {
+              "import": {
+                "label": "Vontade"
+              }
+            }
+          },
+          "basicmove": {
+            "value": {
+              "label": "Movimento Básico"
+            }
+          },
+          "basicspeed": {
+            "value": {
+              "label": "Velocidade Básica"
+            }
+          },
+          "frightcheck": {
+            "label": "Teste de Medo"
+          },
+          "hearing": {
+            "label": "Audição"
+          },
+          "profile": {
+            "age": {
+              "label": "Idade"
+            },
+            "birthday": {
+              "label": "Aniversário"
+            },
+            "createdon": {
+              "label": "Criado em"
+            },
+            "eyes": {
+              "label": "Olhos"
+            },
+            "gender": {
+              "label": "Gênero"
+            },
+            "hair": {
+              "label": "Cabelo"
+            },
+            "hand": {
+              "label": "Mão dominante"
+            },
+            "height": {
+              "label": "Altura"
+            },
+            "modifiedon": {
+              "label": "Modificado em"
+            },
+            "player": {
+              "label": "Jogador(a)"
+            },
+            "race": {
+              "label": "Raça"
+            },
+            "religion": {
+              "label": "Religião"
+            },
+            "sizemod": {
+              "label": "Modificador de Tamanho"
+            },
+            "skin": {
+              "label": "Pele"
+            },
+            "techlevel": {
+              "label": "Nível Tecnológico"
+            },
+            "title": {
+              "label": "Título"
+            },
+            "weight": {
+              "label": "Peso"
+            }
+          },
+          "swing": {
+            "label": "Golpe em Balanço"
+          },
+          "tastesmell": {
+            "label": "Paladar/Olfato"
+          },
+          "thrust": {
+            "label": "Golpe de Ponta"
+          },
+          "totalpoints": {
+            "ads": {
+              "label": "Vantagens"
+            },
+            "attributes": {
+              "label": "Atributos"
+            },
+            "disads": {
+              "label": "Desvantagens"
+            },
+            "quirks": {
+              "label": "Manias"
+            },
+            "race": {
+              "label": "Raça"
+            },
+            "skills": {
+              "label": "Perícias"
+            },
+            "spells": {
+              "label": "Magias"
+            },
+            "total": {
+              "label": "Total"
+            },
+            "unspent": {
+              "label": "Não gastos"
+            }
+          },
+          "touch": {
+            "label": "Tato"
+          },
+          "vision": {
+            "label": "Visão"
+          }
+        }
+      }
+    },
     "addAbbrev": "Abrev",
     "addAdditionalStackingModifier": "Modificadores adicionais",
     "addAdjustedForDamageType": "‡ - Ajustado devido ao Modificador de Dano",
@@ -122,7 +290,7 @@
     "addstunEffect": "Efeito de atordoamento adicionado no alvo.",
     "addToQuickRoll": "Adicionar à Rolagem Rápida",
     "addTracker": "Adicionar Controle de Recurso no final",
-    "addWHard": "c/ Rígido",
+    "addWHard": "c/Endurecido",
     "advantage": "Vantagem",
     "advantages": "Vantagens",
     "advantagesTab": "Vantagens e Desvantagens",
@@ -227,6 +395,7 @@
     "BODYPLANwinged humanoid": "Humanoide Alado",
     "bonuses": "Bônus",
     "bulk": "Magnitude",
+    "bulkForWeapon": "Bulk para {weapon}",
     "cancel": "Cancelar",
     "cannotDragNonFoundryEqt": "Você não pode arrastar equipamento que não é do Foundry para outro personagem.",
     "cannotDropItemAlreadyExists": "Você já possui este item.",
@@ -316,7 +485,7 @@
     "checkReactions": "Adicionar Modificadores de Reação do Ator à Janela de Modificadores de Efeito.",
     "clickToEdit": "Clique para Editar",
     "clickToRemove": "clique para remover",
-    "collapse": "Desmaio",
+    "collapse": "Colapsar",
     "color": "Cor",
     "colorSheetMenuAreasAdsDisadsColor": "Cor das Vants/Desvants",
     "colorSheetMenuAreasAdsDisadsHoverColor": "Cor ao Passar o Mouse sobre as Vants/Desvants",
@@ -554,6 +723,10 @@
       }
     },
     "dodge": "Esquiva",
+    "dragDrop": {
+      "itemContainerLoop": "Não é possível mover um item para um de seus próprios contêineres.",
+      "itemTypeMismatch": "Incompatibilidade de tipo de item."
+    },
     "dragSameContainer": "Não é possível adicionar o objeto e este contêiner, pois ele já está dentro dele.",
     "dropBefore": "Antes do alvo",
     "dropInside": "Dentro do alvo",
@@ -904,9 +1077,12 @@
     "invalidDiceText": "O texto fornecido ({text}) não corresponde a nenhum padrão de dados.",
     "invalidUserForDamageWarning": "Somente MJs podem aplicar dano.",
     "isFreeAction": "É uma ação livre.",
+    "item": {
+      "deleteContents": "Também excluir o conteúdo ({count} itens serão excluídos!)",
+      "deleteMessage": "Tem certeza que deseja excluir <strong>{name}</strong>?"
+    },
     "itemBonusText": "Insira Fórmulas 'Bônus' On-the-Fly (uma por linha) para modificar valores de atributos, perícias, etc.",
     "itemFeatures": "Características",
-    "itemImport": "Importar Biblioteca de Equipamentos",
     "itemModifiersText": "Insira o Efeito do Modificador (um por linha) usando o formato: <modifier> <#tag> [<#tag>...].<br>Exemplos: -1 para DX #DX #combate, +2 Per #descanso, -1 para todas as rolagens baseadas em DX #doença #combate.",
     "knockback": "Projeção, {amount} {unit}",
     "knockbackCheck": "{name}: teste de {dx}, {acrobacia}, ou {judô} ou sofra uma queda!",
@@ -1345,7 +1521,7 @@
     "removeItem": "Remover Item",
     "removeproneEffect": "Remover efeito Caído no alvo.",
     "reset": "Limpar Configuração",
-    "resolve": "Determinação",
+    "resolve": "Resolver",
     "resolveDamage": {
       "combine": "Combinar",
       "multiple": "Múltiplas rolagens",
@@ -1425,7 +1601,7 @@
     "selectToken": "Selecionar Miniatura",
     "sendToChat": "Enviar para o bate-papo",
     "sendToEveryone": "Enviar para todos",
-    "serverity": "Severidade",
+    "severity": "Severidade",
     "setManeuver": "Configurar Manobra",
     "settingActiveEffects": "Acionar Efeitos Ativos",
     "settingAddCumulativeParryPenalties": "Adicionar Penalidades de Aparar Cumulativas Automaticamente",
@@ -1542,7 +1718,21 @@
     "share": "Compartilhar",
     "sheet": {
       "gcs": {
-        "copyright": "GCS© Todos os Direitos Reservados 1998-2024 Richard A. Wilkes."
+        "copyright": "GCS© Todos os Direitos Reservados 1998-2026 Richard A. Wilkes."
+      },
+      "gcsActorSheet": {
+        "basicDamage": "Dano Básico",
+        "description": "Descrição",
+        "encumbrance": "Encumbramento",
+        "identity": "Identidade",
+        "miscellaneous": "Diversos",
+        "moving": "Movimentação",
+        "pointTotals": "Totais de Pontos",
+        "poolAttributes": "Atributos de Reserva",
+        "portrait": "Retrato",
+        "pound": "kg.",
+        "primaryAttributes": "Atributos Primários",
+        "secondaryAttributes": "Atributos Secundários"
       },
       "personal": {
         "created": "Criação",
@@ -1555,7 +1745,8 @@
         "portrait": "Retrato",
         "tab": "Pessoal",
         "title": "Título"
-      }
+      },
+      "toggleMode": "Alternar Modo de Edição"
     },
     "shiftSlightly": "Mover Ligeiramente",
     "shock": "Choque",
@@ -1646,16 +1837,16 @@
       "Blind": "Cego(a)",
       "Burn": "Queimando",
       "Coughing": "Tossindo",
-      "Counter1": "Contra-ataque 1",
-      "Counter10": "Contra-ataque 10",
-      "Counter2": "Contra-ataque 2",
-      "Counter3": "Contra-ataque 3",
-      "Counter4": "Contra-ataque 4",
-      "Counter5": "Contra-ataque 5",
-      "Counter6": "Contra-ataque 6",
-      "Counter7": "Contra-ataque 7",
-      "Counter8": "Contra-ataque 8",
-      "Counter9": "Contra-ataque 9",
+      "Counter1": "Contador 1",
+      "Counter10": "Contador 10",
+      "Counter2": "Contador 2",
+      "Counter3": "Contador 3",
+      "Counter4": "Contador 4",
+      "Counter5": "Contador 5",
+      "Counter6": "Contador 6",
+      "Counter7": "Contador 7",
+      "Counter8": "Contador 8",
+      "Counter9": "Contador 9",
       "Crawling": "Rastejando",
       "Crouch": "Agachado(a)",
       "Deaf": "Ensurdecido(a)",
@@ -1742,6 +1933,7 @@
       "weaponMaster": "Mestre em Armas",
       "xenophilia": "Xenofilia"
     },
+    "transferAll": "Transferir Tudo",
     "TransferTo": "Transferir para {name}",
     "twoHandLift": "Levantar com DUAS mãos",
     "unconscious": "Inconsciente",

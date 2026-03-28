@@ -16,11 +16,10 @@ class GcsSubTable extends PseudoDocument<GcsSubTableSchema, DataModel.Any, GcsSu
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'LocationSubTable'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'LocationSubTable',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.GcsSubTable',
+    })
   }
 
   /* ---------------------------------------- */
@@ -87,11 +86,10 @@ class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, DataModel.Any,
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'HitLocation'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'HitLocation',
-      icon: '',
-      embedded: {},
-    }
+      label: 'DOCUMENT.HitLocation',
+    })
   }
 
   /* ---------------------------------------- */
@@ -168,14 +166,14 @@ class GcsBody extends PseudoDocument<GcsBody.Schema> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'Body'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Body',
-      icon: '',
+      label: 'DOCUMENT.Body',
       embedded: {
         HitLocation: '_locations',
         LocationSubTable: '_subTables',
       },
-    }
+    })
   }
 }
 

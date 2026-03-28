@@ -1,4 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayTrait } from '@gurps-types/gurps/display-item.js'
+import { getGame } from '@module/util/guards.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
@@ -17,6 +19,9 @@ class TraitModel extends BaseItemModel<TraitSchema> {
     return foundry.utils.mergeObject(super.metadata, {
       type: 'featureV2',
       childTypes: ['featureV2'],
+      sortKeys: {
+        points: 'system.points',
+      },
     })
   }
 
@@ -25,7 +30,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
   get selfControlNote(): string {
     if (this.cr === null) return ''
 
-    return '[' + game.i18n?.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name + ']'
+    return getGame().i18n.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name
   }
 
   /* ---------------------------------------- */
@@ -35,6 +40,23 @@ class TraitModel extends BaseItemModel<TraitSchema> {
     if (source.import) source.level ??= source.import || null
 
     return source
+  }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayTrait {
+    const fullName = this.level !== null ? `${this.parent.name} ${this.level}` : this.parent.name
+
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      level: this.level,
+      fullName,
+      points: this.points,
+      cr: this.cr ? `GURPS.CR${this.cr}` : null,
+      enabled: this.enabled,
+      otf: {
+        cr: this.selfControlNote,
+      },
+    })
   }
 }
 

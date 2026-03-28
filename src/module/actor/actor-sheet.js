@@ -1,8 +1,8 @@
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { ConditionalInjury as CI } from '@rules/injury/conditional-injury/conditional-injury.js'
 import { parselink } from '@util/parselink.js'
 import { atou, isEmptyObject, zeroFill } from '@util/utilities.js'
 
-import * as CI from '../../rules/injury/conditional-injury/conditional-injury.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
@@ -71,8 +71,9 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     if (Object.keys(actions).length > 0) this.actor.internalUpdate({ 'system.conditions.actions': actions })
     sheetData.system = this.actor.system
     sheetData.ranges = GURPS.rangeObject.ranges
-    sheetData.useCI = GURPS.ConditionalInjury.isInUse()
-    sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
+    // @deprecated in favour of new conditional injury module.
+    // sheetData.useCI = GURPS.ConditionalInjury.isInUse()
+    // sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.system.eqtsummary
     sheetData.navigateBar = {

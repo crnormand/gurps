@@ -426,7 +426,8 @@ export function initializeSettings() {
       config: true,
       type: Boolean,
       default: false,
-      onChange: _value => GURPS.ConditionalInjury.update(),
+      // @deprecated in favour of new conditional injury module.
+      // onChange: _value => GURPS.ConditionalInjury.update(),
     })
 
     // Status Effects Configuration ----

@@ -1,11 +1,20 @@
 {
   "DOCUMENT": {
     "Action": "Action",
+    "Attribute": "Attribut",
+    "AttributeDefinition": "Définition d'attribut",
+    "AttributeThreshold": "Seuil d'attribut",
+    "Body": "Plan corporel",
     "ConditionalModifier": "Modificateur conditionnel",
+    "Feature": "Capacité",
+    "GcsSubTable": "Sous-table de localisation",
     "HitLocation": "Localisation des coups",
     "MoveMode": "Mode de déplacement",
+    "Note": "Note",
+    "Prereq": "Prérequis",
     "ReactionModifier": "Modificateur de réaction",
-    "ResourceTracker": "Suivi des ressources"
+    "ResourceTracker": "Suivi des ressources",
+    "Study": "Entrée d'étude"
   },
   "GURPS": {
     "abbrevPoints": "Pts",
@@ -104,6 +113,165 @@
     "active": "Actif",
     "activeEffect": "Effet Actif",
     "activeEffects": "Effets Actifs",
+    "actor": {
+      "characterV2": {
+        "FIELDS": {
+          "_currentMoveModeId": {
+            "label": "Mode de déplacement actuel"
+          },
+          "attributes": {
+            "DX": {
+              "import": {
+                "label": "Dextérité (DX)"
+              }
+            },
+            "HT": {
+              "import": {
+                "label": "Santé (HT)"
+              }
+            },
+            "IQ": {
+              "import": {
+                "label": "Intelligence (IQ)"
+              }
+            },
+            "PER": {
+              "import": {
+                "label": "Perception (Per)"
+              }
+            },
+            "QN": {
+              "import": {
+                "label": "Quintessence (QN)"
+              }
+            },
+            "ST": {
+              "import": {
+                "label": "Force (ST)"
+              }
+            },
+            "WILL": {
+              "import": {
+                "label": "Volonté"
+              }
+            }
+          },
+          "basicmove": {
+            "value": {
+              "label": "Mouvement de base"
+            }
+          },
+          "basicspeed": {
+            "value": {
+              "label": "Vitesse de base"
+            }
+          },
+          "frightcheck": {
+            "label": "Test de Peur"
+          },
+          "hearing": {
+            "label": "Ouïe"
+          },
+          "profile": {
+            "age": {
+              "label": "Âge"
+            },
+            "birthday": {
+              "label": "Anniversaire"
+            },
+            "createdon": {
+              "label": "Créé le"
+            },
+            "eyes": {
+              "label": "Yeux"
+            },
+            "gender": {
+              "label": "Genre"
+            },
+            "hair": {
+              "label": "Cheveux"
+            },
+            "hand": {
+              "label": "Main dominante"
+            },
+            "height": {
+              "label": "Taille"
+            },
+            "modifiedon": {
+              "label": "Modifié le"
+            },
+            "player": {
+              "label": "Joueur"
+            },
+            "race": {
+              "label": "Race"
+            },
+            "religion": {
+              "label": "Religion"
+            },
+            "sizemod": {
+              "label": "Mod. de Taille"
+            },
+            "skin": {
+              "label": "Peau"
+            },
+            "techlevel": {
+              "label": "Niveau Tech"
+            },
+            "title": {
+              "label": "Titre"
+            },
+            "weight": {
+              "label": "Poids"
+            }
+          },
+          "swing": {
+            "label": "Dégâts de Taille"
+          },
+          "tastesmell": {
+            "label": "Goût/Odorat"
+          },
+          "thrust": {
+            "label": "Dégâts d'Estoc"
+          },
+          "totalpoints": {
+            "ads": {
+              "label": "Avantages"
+            },
+            "attributes": {
+              "label": "Attributs"
+            },
+            "disads": {
+              "label": "Désavantages"
+            },
+            "quirks": {
+              "label": "Manies"
+            },
+            "race": {
+              "label": "Race"
+            },
+            "skills": {
+              "label": "Compétences"
+            },
+            "spells": {
+              "label": "Sorts"
+            },
+            "total": {
+              "label": "Total"
+            },
+            "unspent": {
+              "label": "Non dépensés"
+            }
+          },
+          "touch": {
+            "label": "Toucher"
+          },
+          "vision": {
+            "label": "Vision"
+          }
+        }
+      }
+    },
     "addAbbrev": "Abrev",
     "addAdditionalStackingModifier": "Modificateur Additionel",
     "addAdjustedForDamageType": "‡ - Ajusté pour le Modificateur de Dégâts",
@@ -227,6 +395,7 @@
     "BODYPLANwinged humanoid": "Humanoïde, Ailé",
     "bonuses": "Bonus",
     "bulk": "Masse",
+    "bulkForWeapon": "Encombrement pour {weapon}",
     "cancel": "Annuler",
     "cannotDragNonFoundryEqt": "Vous ne pouvez pas glisser-déposer de l'équipement non-Foundry sur un autre personnage",
     "cannotDropItemAlreadyExists": "Vous avez déjà cet objet.",
@@ -554,9 +723,13 @@
       }
     },
     "dodge": "Esquive",
+    "dragDrop": {
+      "itemContainerLoop": "Impossible de déplacer un objet dans l'un de ses propres conteneurs.",
+      "itemTypeMismatch": "Type d'objet incompatible."
+    },
     "dragSameContainer": "Impossible d'ajouter l'objet à ce conteneur, car il y est déjà.",
     "dropBefore": "Avant la cible",
-    "dropInside": "Après la cible",
+    "dropInside": "Dans la cible",
     "droppedItem": "Objet Déposé",
     "droppingItemNotification": "{actorName} reçoit {itemName}",
     "dropPlacement": "Où voulez-vous placer l'objet ?",
@@ -665,7 +838,7 @@
     "forbid": "Interdire",
     "forHighPainThreshold": "{mod} pour Résistance à la Douleur",
     "forLowPainThreshold": "{mod} pour Sensible à la Douleur",
-    "forPerfectBalance": "{mod} pour Sensible à la Douleur",
+    "forPerfectBalance": "{mod} pour Équilibre Parfait",
     "FP": "PF",
     "frightcheck": "Résistance à la peur",
     "fromEllipses": "De ...",
@@ -673,8 +846,8 @@
     "grapplingControlled": "Contrôlé",
     "grapplingControlPoints": "Points de Contrôle",
     "grapplingCPAbbrev": "ctrl",
-    "grapplingGrabbed": "Aggripé",
-    "grapplingGrappled": "Aggripé",
+    "grapplingGrabbed": "Agrippé",
+    "grapplingGrappled": "Empoigné",
     "grapplingPinned": "Cloué",
     "grapplingRestrained": "Contenu",
     "grapplingUnrestrained": "Non Contenu",
@@ -904,9 +1077,12 @@
     "invalidDiceText": "Le texte fourni ({text}) ne correspond à aucun format de dés.",
     "invalidUserForDamageWarning": "Seuls les MJ sont autorisés à Appliquer des Dégâts.",
     "isFreeAction": "Est une action gratuite.",
+    "item": {
+      "deleteContents": "Supprimer également le contenu ({count} objets seront supprimés !)",
+      "deleteMessage": "Êtes-vous sûr de vouloir supprimer <strong>{name}</strong> ?"
+    },
     "itemBonusText": "Entrer les Formules A la Volée 'Bonus' (une par ligne) pour modifier les valeurs des caractéristiques, compétences, etc.",
     "itemFeatures": "Caractéristiques",
-    "itemImport": "Import Bibliothèque d'Equipement",
     "itemModifiersText": "Entrez l'Effet du Modificateur (un par ligne) en utilisant le format : <modifier> <#tag> [<#tag>...].<br>Exemples : -1 à DX #DX #combat, +2 Per #repos, -1 à tous les jets basés sur DX #maladie #combat.",
     "knockback": "Renversement, {amount} {unit}",
     "knockbackCheck": "{name}: jet {dx}, {acrobatics}, ou {judo} ou chute!",
@@ -1425,7 +1601,6 @@
     "selectToken": "Sélectionner Token",
     "sendToChat": "Envoyer au chat",
     "sendToEveryone": "Envoyer à tout le monde",
-    "serverity": "Gravité",
     "setManeuver": "Définir Manoeuvre",
     "settingActiveEffects": "Activer Effets Actifs",
     "settingAddCumulativeParryPenalties": "Ajouter automatiquement les pénalités de parade cumulatives",
@@ -1539,10 +1714,25 @@
     "settingUseQuintessence": "Utiliser la Quintessence",
     "settingUseTaggedModifiers": "Utiliser les modificateurs marqués",
     "severities": "Gravités",
+    "severity": "Gravité",
     "share": "Partager",
     "sheet": {
       "gcs": {
-        "copyright": "GCS is une marque déposée (1998-2024) par Richard A. Wilkes. Tous droits réservés."
+        "copyright": "GCS is une marque déposée (1998-2026) par Richard A. Wilkes. Tous droits réservés."
+      },
+      "gcsActorSheet": {
+        "basicDamage": "Dégâts de Base",
+        "description": "Description",
+        "encumbrance": "Encombrement",
+        "identity": "Identité",
+        "miscellaneous": "Divers",
+        "moving": "Déplacement",
+        "pointTotals": "Totaux de Points",
+        "poolAttributes": "Attributs de Réserve",
+        "portrait": "Portrait",
+        "pound": "kg.",
+        "primaryAttributes": "Attributs Primaires",
+        "secondaryAttributes": "Attributs Secondaires"
       },
       "personal": {
         "created": "Créé",
@@ -1555,7 +1745,8 @@
         "portrait": "Portrait",
         "tab": "Personnel",
         "title": "Titre"
-      }
+      },
+      "toggleMode": "Basculer le Mode Édition"
     },
     "shiftSlightly": "Décaler Légèrement",
     "shock": "Choc",
@@ -1583,7 +1774,7 @@
     "SkillIQE": "QI/F",
     "SkillIQH": "QI/A",
     "SkillIQVH": "QI/TA",
-    "skillJudo": "Karate",
+    "skillJudo": "Judo",
     "skillLevel": "Niveau Compétence",
     "SkillPerA": "Per/M",
     "SkillPerE": "Per/F",
@@ -1656,7 +1847,7 @@
       "Counter7": "Compteur 7",
       "Counter8": "Compteur 8",
       "Counter9": "Compteur 9",
-      "Crawling": "Jet obtenu",
+      "Crawling": "À Quatre Pattes",
       "Crouch": "Accroupi",
       "Deaf": "Sourd",
       "Disable": "Infirme",
@@ -1702,7 +1893,7 @@
     "suffersHeadVitalsWound": "{name} a été touché sur {location} avec une pénalité de Choc.",
     "suffersKnockback": "{name} est Renversé ([PDF:{pdfref}]) ou {yards} {unit}.",
     "swimmerFlyer": "Aquatique / Volant",
-    "swing": "Dégâts de Taille",
+    "swing": "Dégâts d'Amplitude",
     "tabSheet": {
       "tabs": "ONGLETS"
     },
@@ -1714,7 +1905,7 @@
     "tastesmell": "Goût/Odorat",
     "temporaryCombatTag": "Tag de combat temporaire",
     "thresholds": "Seuils",
-    "thrust": "Dégâts d'Estoc",
+    "thrust": "Dégâts de Poussée",
     "tired": "Fatigué",
     "TL": "TL",
     "toAimBonus": "Bonus pour Viser",
@@ -1742,6 +1933,7 @@
       "weaponMaster": "Maître d'Armes",
       "xenophilia": "Xénophilie"
     },
+    "transferAll": "Tout transférer",
     "TransferTo": "Transférer à {name}",
     "twoHandLift": "Porter à deux mains",
     "unconscious": "Inconscient",

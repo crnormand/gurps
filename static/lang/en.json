@@ -1,11 +1,20 @@
 {
   "DOCUMENT": {
     "Action": "Action",
+    "Attribute": "Attribute",
+    "AttributeDefinition": "Attribute Definition",
+    "AttributeThreshold": "Attribute Threshold",
+    "Body": "Body Plan",
     "ConditionalModifier": "Conditional Modifier",
+    "Feature": "Feature",
+    "GcsSubTable": "Hit Location Sub-Table",
     "HitLocation": "Hit Location",
     "MoveMode": "Move Mode",
+    "Note": "Note",
+    "Prereq": "Prerequisite",
     "ReactionModifier": "Reaction Modifier",
-    "ResourceTracker": "Resource Tracker"
+    "ResourceTracker": "Resource Tracker",
+    "Study": "Study Entry"
   },
   "GURPS": {
     "abbrevPoints": "Pts",
@@ -104,6 +113,173 @@
     "active": "Active",
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
+    "actor": {
+      "characterV2": {
+        "FIELDS": {
+          "_currentMoveModeId": {
+            "label": "Move Mode"
+          },
+          "attributes": {
+            "DX": {
+              "import": {
+                "label": "Dexterity (DX)"
+              }
+            },
+            "HT": {
+              "import": {
+                "label": "Health (HT)"
+              }
+            },
+            "IQ": {
+              "import": {
+                "label": "Intelligence (IQ)"
+              }
+            },
+            "PER": {
+              "import": {
+                "label": "Perception (Per)"
+              }
+            },
+            "QN": {
+              "import": {
+                "label": "Quintessence (QN)"
+              }
+            },
+            "ST": {
+              "import": {
+                "label": "Strength (ST)"
+              }
+            },
+            "WILL": {
+              "import": {
+                "label": "Will"
+              }
+            }
+          },
+          "basicmove": {
+            "value": {
+              "label": "Basic Move"
+            }
+          },
+          "basicspeed": {
+            "value": {
+              "label": "Basic Speed"
+            }
+          },
+          "conditions": {
+            "maneuver": {
+              "label": "Maneuver"
+            },
+            "posture": {
+              "label": "Posture"
+            }
+          },
+          "frightcheck": {
+            "label": "Fright Check"
+          },
+          "hearing": {
+            "label": "Hearing"
+          },
+          "profile": {
+            "age": {
+              "label": "Age"
+            },
+            "birthday": {
+              "label": "Birthday"
+            },
+            "createdon": {
+              "label": "Created On"
+            },
+            "eyes": {
+              "label": "Eyes"
+            },
+            "gender": {
+              "label": "Gender"
+            },
+            "hair": {
+              "label": "Hair"
+            },
+            "hand": {
+              "label": "Hand"
+            },
+            "height": {
+              "label": "Height"
+            },
+            "modifiedon": {
+              "label": "Modified On"
+            },
+            "player": {
+              "label": "Player"
+            },
+            "race": {
+              "label": "Ancestry"
+            },
+            "religion": {
+              "label": "Religion"
+            },
+            "sizemod": {
+              "label": "SM"
+            },
+            "skin": {
+              "label": "Skin"
+            },
+            "techlevel": {
+              "label": "TL"
+            },
+            "title": {
+              "label": "Title"
+            },
+            "weight": {
+              "label": "Weight"
+            }
+          },
+          "swing": {
+            "label": "Basic Swing"
+          },
+          "tastesmell": {
+            "label": "Taste & Smell"
+          },
+          "thrust": {
+            "label": "Basic Thrust"
+          },
+          "totalpoints": {
+            "ads": {
+              "label": "Advantages"
+            },
+            "attributes": {
+              "label": "Attributes"
+            },
+            "disads": {
+              "label": "Disadvantages"
+            },
+            "quirks": {
+              "label": "Quirks"
+            },
+            "race": {
+              "label": "Ancestry"
+            },
+            "skills": {
+              "label": "Skills"
+            },
+            "spells": {
+              "label": "Spells"
+            },
+            "total": {
+              "label": "Total"
+            },
+            "unspent": {
+              "label": "Unspent"
+            }
+          },
+          "touch": {
+            "label": "Touch"
+          },
+          "vision": {
+            "label": "Vision"
+          }
+        }
+      }
+    },
     "addAbbrev": "Abbrev",
     "addAdditionalStackingModifier": "Additional modifier",
     "addAdjustedForDamageType": "‡ - Adjusted for Damage Modifier",
@@ -227,6 +403,7 @@
     "BODYPLANwinged humanoid": "Humanoid, Winged",
     "bonuses": "Bonuses",
     "bulk": "Bulk",
+    "bulkForWeapon": "Bulk for {weapon}",
     "cancel": "Cancel",
     "cannotDragNonFoundryEqt": "You cannot drag non-Foundry equipment to another character.",
     "cannotDropItemAlreadyExists": "You already have this item.",
@@ -385,6 +562,24 @@
     },
     "concentrationCheck": "Concentration check",
     "condition": "Condition",
+    "conditionalInjury": {
+      "daysToHeal": {
+        "max": "Max",
+        "title": "Days to Heal"
+      },
+      "RT": "RT",
+      "severity": {
+        "crippled": "Crippled",
+        "instantlyFatal": "Instantly Fatal",
+        "majorWound": "Major Wound",
+        "minorWound": "Minor Wound",
+        "mortalWound": "Mortal Wound",
+        "none": "None",
+        "reeling": "Reeling",
+        "scratch": "Scratch",
+        "totalDestruction": "Total Destruction"
+      }
+    },
     "conditionalModifier": "Conditional Modifier",
     "conditionalMods": "Conditional Modifiers",
     "conditions": "Status",
@@ -554,6 +749,10 @@
       }
     },
     "dodge": "Dodge",
+    "dragDrop": {
+      "itemContainerLoop": "Cannot drop item: target item is a descendant of the dropped item.",
+      "itemTypeMismatch": "Cannot drop item: target type does not match dropped item type."
+    },
     "dragSameContainer": "Cannot add the object to this container, as it is already inside it.",
     "dropBefore": "Before the target",
     "dropInside": "Inside the target",
@@ -904,6 +1103,10 @@
     "invalidDiceText": "The provided text ({text}) does not match any dice pattern.",
     "invalidUserForDamageWarning": "Only GMs are allowed to Apply Damage.",
     "isFreeAction": "Is a Free Action",
+    "item": {
+      "deleteContents": "Also delete contents ({count} items will be deleted!)",
+      "deleteMessage": "Are you sure you want to delete <strong>{name}</strong>?"
+    },
     "itemBonusText": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc.",
     "itemFeatures": "Features",
     "itemModifiersText": "Enter Modifier Effect (one per line) using format: <modifier> <#tag> [<#tag>...].<br>Examples: -1 to DX #DX #combat, +2 Per #resting, -1 to all DX-based rolls #disease #combat.",
@@ -1319,6 +1522,12 @@
     "pointsUnspent": "Unspent",
     "publicRollAsDefault": "Public Roll as default",
     "quantity": "Quantity",
+    "quickNotes": {
+      "examples": "<b>Examples:</b> [+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]",
+      "save": "Save",
+      "text": "Enter a Quick Note (a great place to put an On-the-Fly formula!):",
+      "title": "Quick Notes"
+    },
     "quickRoll": "Quick Roll",
     "quickRollMenu": "Quick Roll Menu",
     "quickRollShowAttacks": "Show Attack Rolls",
@@ -1356,6 +1565,7 @@
     "resolveDiceRoll": "What Did You Roll?",
     "resourcesModsTab": "Resources and Modifiers",
     "resourceTracker": {
+      "create": "Add Resource Tracker",
       "current": "Current Value",
       "edit": {
         "addTemplate": "Add Resource Tracker Template",
@@ -1424,7 +1634,6 @@
     "selectToken": "Select Token",
     "sendToChat": "Send to chat",
     "sendToEveryone": "Send to Everyone",
-    "serverity": "Severity",
     "setManeuver": "Set Maneuver",
     "settingActiveEffects": "Turn on Active Effects",
     "settingAddCumulativeParryPenalties": "Automatically Add Cumulative Parry Penalties",
@@ -1538,10 +1747,26 @@
     "settingUseQuintessence": "Use Quintessence",
     "settingUseTaggedModifiers": "Use Tagged Modifiers",
     "severities": "Severities",
+    "severity": "Severity",
     "share": "Share",
     "sheet": {
       "gcs": {
-        "copyright": "GCS is copyrighted 1998-2024 by Richard A. Wilkes. All rights reserved."
+        "copyright": "GCS is copyrighted 1998-2026 by Richard A. Wilkes. All rights reserved."
+      },
+      "gcsActorSheet": {
+        "basicDamage": "Basic Damage",
+        "description": "Description",
+        "encumbrance": "Encumbrance, Move & Dodge",
+        "identity": "Identity",
+        "maneuverStatus": "Maneuver / Status",
+        "miscellaneous": "Miscellaneous",
+        "moving": "Lifting & Moving Things",
+        "pointTotals": "{total} Points",
+        "poolBase": "Base",
+        "portrait": "Portrait",
+        "pound": "{value} lb",
+        "primaryAttributes": "Primary Attributes",
+        "secondaryAttributes": "Secondary Attributes"
       },
       "personal": {
         "created": "Created",
@@ -1554,7 +1779,8 @@
         "portrait": "Portrait",
         "tab": "Personal",
         "title": "Title"
-      }
+      },
+      "toggleMode": "Toggle Play/Edit Mode"
     },
     "shiftSlightly": "Shift Slightly",
     "shock": "Shock",
@@ -1692,7 +1918,9 @@
       "TerriblePain": "Terrible Pain",
       "Tipsy": "Tipsy",
       "Tired": "Tired",
-      "Wait": "Waiting"
+      "Tiring": "Tiring",
+      "Wait": "Waiting",
+      "Wounded": "Wounded"
     },
     "step": "Step",
     "stepOrTwo": "Step or Two",
@@ -1741,6 +1969,7 @@
       "weaponMaster": "Weapon Master",
       "xenophilia": "Xenophilia"
     },
+    "transferAll": "Transfer All",
     "TransferTo": "Transfer to {name}",
     "twoHandLift": "Two-Hand Lift",
     "unconscious": "Unconscious",

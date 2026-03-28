@@ -110,9 +110,9 @@
           <span class='ms-ci-label'>{{localize 'GURPS.days'}}</span>
         </div>
         <div class='ms-ci-status'>
-          <span class='ms-ci-severity-badge {{ciCurrentGrossEffects system.conditionalinjury.injury.severity "style"}}'>
-            {{ciCurrentGrossEffects system.conditionalinjury.injury.severity 'label'}}
-          </span>
+          <!-- <span class='ms-ci-severity-badge {{ciCurrentGrossEffects system.conditionalinjury.injury.severity "style"}}'> -->
+          <!--   {{ciCurrentGrossEffects system.conditionalinjury.injury.severity 'label'}} -->
+          <!-- </span> -->
           <span class='ms-ci-info'>
             [{{#if system.conditionalinjury.RT.points}}{{system.conditionalinjury.RT.points}}{{else}}{{system.HP.points}}{{/if}}]
             {{system.conditionalinjury.RT.value}} {{localize 'GURPS.rt'}} | {{system.HP.max}} HP

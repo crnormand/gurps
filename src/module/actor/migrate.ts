@@ -337,7 +337,7 @@ function migrateActorSystem(
         points: oldData.conditionalinjury.RT.points,
       },
       injury: {
-        severity: oldData.conditionalinjury.injury.severity,
+        severity: (sev => (Number.isNaN(sev) ? null : sev))(parseInt(oldData.conditionalinjury.injury.severity)),
         daystoheal: oldData.conditionalinjury.injury.daystoheal,
       },
     },
@@ -447,6 +447,9 @@ function migrateActorSystem(
     Object.values(oldData.notes).forEach(note => addNote(note, null))
   }
 
+  let currentMoveModeId: string | null = null
+  let firstMoveModeId: string | null = null
+
   // Migrate move modes
   if (oldData.move) {
     Object.values(oldData.move).forEach(data => {
@@ -467,12 +470,16 @@ function migrateActorSystem(
         mode: data.mode,
         basic: Number.isFinite(Number(data.basic)) ? Number(data.basic) : 0,
         enhanced: data.enhanced != null ? Number(data.enhanced) || 0 : null,
-        default: data.default,
       }
+
+      if (!firstMoveModeId) firstMoveModeId = id
+      if (data.default) currentMoveModeId = id
 
       newData.moveV2 ||= {}
       newData.moveV2[id] = move
     })
+
+    newData._currentMoveModeId = currentMoveModeId ?? firstMoveModeId ?? ''
   }
 
   // Migrate resource trackers

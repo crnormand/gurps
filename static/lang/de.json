@@ -1,11 +1,20 @@
 {
   "DOCUMENT": {
     "Action": "Aktion",
+    "Attribute": "Attribut",
+    "AttributeDefinition": "Attributdefinition",
+    "AttributeThreshold": "Attributschwelle",
+    "Body": "Körperplan",
     "ConditionalModifier": "Bedingter Modifikator",
+    "Feature": "Merkmal",
+    "GcsSubTable": "Trefferzonen-Untertabelle",
     "HitLocation": "Trefferzone",
     "MoveMode": "Bewegungsmodus",
+    "Note": "Notiz",
+    "Prereq": "Voraussetzung",
     "ReactionModifier": "Reaktionsmodifikator",
-    "ResourceTracker": "Ressourcen-Tracker"
+    "ResourceTracker": "Ressourcen-Tracker",
+    "Study": "Studieneintrag"
   },
   "GURPS": {
     "abbrevPoints": "Pkt",
@@ -104,6 +113,165 @@
     "active": "Aktiv",
     "activeEffect": "Aktiver Effekt",
     "activeEffects": "Aktive Effekte",
+    "actor": {
+      "characterV2": {
+        "FIELDS": {
+          "_currentMoveModeId": {
+            "label": "Aktueller Bewegungsmodus"
+          },
+          "attributes": {
+            "DX": {
+              "import": {
+                "label": "Geschicklichkeit (DX)"
+              }
+            },
+            "HT": {
+              "import": {
+                "label": "Konstitution (HT)"
+              }
+            },
+            "IQ": {
+              "import": {
+                "label": "Intelligenz (IQ)"
+              }
+            },
+            "PER": {
+              "import": {
+                "label": "Wahrnehmung (Per)"
+              }
+            },
+            "QN": {
+              "import": {
+                "label": "Quintessenz (QN)"
+              }
+            },
+            "ST": {
+              "import": {
+                "label": "Stärke (ST)"
+              }
+            },
+            "WILL": {
+              "import": {
+                "label": "Wille"
+              }
+            }
+          },
+          "basicmove": {
+            "value": {
+              "label": "Basis Bewegung"
+            }
+          },
+          "basicspeed": {
+            "value": {
+              "label": "Basis Geschwindigkeit"
+            }
+          },
+          "frightcheck": {
+            "label": "Schreckprobe"
+          },
+          "hearing": {
+            "label": "Hören"
+          },
+          "profile": {
+            "age": {
+              "label": "Alter"
+            },
+            "birthday": {
+              "label": "Geburtstag"
+            },
+            "createdon": {
+              "label": "Erstellt am"
+            },
+            "eyes": {
+              "label": "Augen"
+            },
+            "gender": {
+              "label": "Geschlecht"
+            },
+            "hair": {
+              "label": "Haar"
+            },
+            "hand": {
+              "label": "Händigkeit"
+            },
+            "height": {
+              "label": "Größe"
+            },
+            "modifiedon": {
+              "label": "Zuletzt geändert"
+            },
+            "player": {
+              "label": "Spieler"
+            },
+            "race": {
+              "label": "Volk"
+            },
+            "religion": {
+              "label": "Religion"
+            },
+            "sizemod": {
+              "label": "Größenmodifikator"
+            },
+            "skin": {
+              "label": "Haut"
+            },
+            "techlevel": {
+              "label": "Techlevel"
+            },
+            "title": {
+              "label": "Titel"
+            },
+            "weight": {
+              "label": "Gewicht"
+            }
+          },
+          "swing": {
+            "label": "Basis Schwung"
+          },
+          "tastesmell": {
+            "label": "Riechen/Schmecken"
+          },
+          "thrust": {
+            "label": "Basis Stoß"
+          },
+          "totalpoints": {
+            "ads": {
+              "label": "Vorteile"
+            },
+            "attributes": {
+              "label": "Attribute"
+            },
+            "disads": {
+              "label": "Nachteile"
+            },
+            "quirks": {
+              "label": "Marotten"
+            },
+            "race": {
+              "label": "Volk"
+            },
+            "skills": {
+              "label": "Fertigkeiten"
+            },
+            "spells": {
+              "label": "Zauber"
+            },
+            "total": {
+              "label": "Gesamtpunkte"
+            },
+            "unspent": {
+              "label": "Unverbrauchte"
+            }
+          },
+          "touch": {
+            "label": "Tastsinn"
+          },
+          "vision": {
+            "label": "Sehen"
+          }
+        }
+      }
+    },
     "addAbbrev": "Abkürzung",
     "addAdditionalStackingModifier": "Weiterer Modifikator",
     "addAdjustedForDamageType": "‡ - Angepasst nach Schadensmodifikator",
@@ -122,7 +290,7 @@
     "addstunEffect": "Betäubungseffekt auf Ziel hinzugefügt.",
     "addToQuickRoll": "Zu Schnellwurf hinzufügen",
     "addTracker": "Ressourcen Anzeige am Ende hinzufügen",
-    "addWHard": "mit/Hard",
+    "addWHard": "mit/Geh",
     "advantage": "Vorteil",
     "advantages": "Vorteile",
     "advantagesTab": "Vorteile und Nachteile",
@@ -187,7 +355,7 @@
     "attributesPERNAME": "Wahrnehmung",
     "attributesPrimary": "Basis Attribute",
     "attributesQN": "QN",
-    "attributesQNNAME": "Quintessence",
+    "attributesQNNAME": "Quintessenz",
     "attributesSecondary": "Sekundäre Attribute",
     "attributesST": "ST",
     "attributesSTNAME": "Stärke",
@@ -227,6 +395,7 @@
     "BODYPLANwinged humanoid": "Humanoid, Geflügelt",
     "bonuses": "Bonusse",
     "bulk": "Handlichkeit",
+    "bulkForWeapon": "Bulk für {weapon}",
     "cancel": "Abbrechen",
     "cannotDragNonFoundryEqt": "Du kannst keine Nicht-Foundry-Ausrüstung auf einen anderen Charakter ziehen.",
     "cannotDropItemAlreadyExists": "Du hast diesen Gegenstand bereits.",
@@ -316,7 +485,7 @@
     "checkReactions": "Fügen Sie Schauspielerreaktionsmodifikatoren zum Effektmodifikatoren-Popup hinzu.",
     "clickToEdit": "Klicke zum Bearbeiten",
     "clickToRemove": "klicke zum entfernen",
-    "collapse": "Zusammenbruch",
+    "collapse": "Einklappen",
     "color": "Farbe",
     "colorSheetMenuAreasAdsDisadsColor": "Vorteile/Nachteile Farbe",
     "colorSheetMenuAreasAdsDisadsHoverColor": "Vorteile/Nachteile Hover-Farbe",
@@ -466,7 +635,7 @@
     "descriptionHand": "Händigkeit",
     "descriptionHeight": "Größe",
     "descriptionReligion": "Glaube",
-    "descriptionSizeModifier": "Größen-Modifikator(SM)",
+    "descriptionSizeModifier": "Größenmodifikator (SM)",
     "descriptionSkin": "Haut",
     "descriptionTechLevel": "Techlevel (TL)",
     "destroyed": "Zerstört",
@@ -554,6 +723,10 @@
       }
     },
     "dodge": "Ausweichen",
+    "dragDrop": {
+      "itemContainerLoop": "Ein Gegenstand kann nicht in einen seiner eigenen Container verschoben werden.",
+      "itemTypeMismatch": "Gegenstandstyp stimmt nicht überein."
+    },
     "dragSameContainer": "Der Gegenstand kann nicht zu diesem Container hinzugefügt werden, da es sich bereits darin befindet.",
     "dropBefore": "VOR dem Ziel",
     "dropInside": "IM Ziel",
@@ -665,7 +838,7 @@
     "forbid": "Verbieten",
     "forHighPainThreshold": "{mod} für Schmerzunempfindlichkeit",
     "forLowPainThreshold": "{mod} für Schmerzüberempfindlichkeit",
-    "forPerfectBalance": "{mod} für Perfekte Balance",
+    "forPerfectBalance": "{mod} für Perfekte Standfestigkeit",
     "FP": "AP",
     "frightcheck": "Schreckprobe",
     "fromEllipses": "von ...",
@@ -904,9 +1077,12 @@
     "invalidDiceText": "Der eingegebene Text ({text}) entspricht keinem Würfelmuster.",
     "invalidUserForDamageWarning": "Nur SL dürfen Schaden zufügen.",
     "isFreeAction": "Ist eine freie Aktion.",
+    "item": {
+      "deleteContents": "Auch Inhalte löschen ({count} Gegenstände werden gelöscht!)",
+      "deleteMessage": "Sicher, dass du <strong>{name}</strong> löschen möchtest?"
+    },
     "itemBonusText": "Füge On-the-Fly 'Bonus' Formel ein (eine pro Reihe) um die Werte von Attributen, Fertigkeiten, etc. to modifizieren.",
     "itemFeatures": "Merkmal",
-    "itemImport": "Artikelsammlung Importieren",
     "itemModifiersText": "Gib Modifikator Effekt ein (einer pro Zeile) im Format: <modifier> <#tag> [<#tag>...].<br>Beispiele: -1 auf DX #DX #combat, +2 Per #resting, -1 auf alle DX-basierten Würfe #disease #combat.",
     "knockback": "Rückprall, {amount} {unit}",
     "knockbackCheck": "{name}: Würfle {dx}, {acrobatics}, oder {judo} oder stürze!",
@@ -1425,7 +1601,6 @@
     "selectToken": "Wähle Token",
     "sendToChat": "An Chat senden",
     "sendToEveryone": "An alle senden",
-    "serverity": "Schwere",
     "setManeuver": "Wähle Manöver",
     "settingActiveEffects": "Aktive Effekte einschalten",
     "settingAddCumulativeParryPenalties": "Kumulative Parier-Strafen automatisch hinzufügen",
@@ -1539,10 +1714,25 @@
     "settingUseQuintessence": "Quintessenz verwenden",
     "settingUseTaggedModifiers": "Verwenden Sie markierte Modifikatoren",
     "severities": "Schweregrade",
+    "severity": "Schwere",
     "share": "Teilen",
     "sheet": {
       "gcs": {
-        "copyright": "GCS ist urheberrechtlich geschützt 1998-2024 von Richard A. Wilkes. Alle Rechte vorbehalten."
+        "copyright": "GCS ist urheberrechtlich geschützt 1998-2026 von Richard A. Wilkes. Alle Rechte vorbehalten."
+      },
+      "gcsActorSheet": {
+        "basicDamage": "Grundschaden",
+        "description": "Beschreibung",
+        "encumbrance": "Belastung",
+        "identity": "Identität",
+        "miscellaneous": "Sonstiges",
+        "moving": "Bewegen",
+        "pointTotals": "Punktesummen",
+        "poolAttributes": "Poolattribute",
+        "portrait": "Portrait",
+        "pound": "lbs.",
+        "primaryAttributes": "Primäre Attribute",
+        "secondaryAttributes": "Sekundäre Attribute"
       },
       "personal": {
         "created": "Erstellt",
@@ -1555,7 +1745,8 @@
         "portrait": "Portrait",
         "tab": "Persönlich",
         "title": "Titel"
-      }
+      },
+      "toggleMode": "Bearbeitungsmodus umschalten"
     },
     "shiftSlightly": "Geringfügig Verschieben",
     "shock": "Schock",
@@ -1742,6 +1933,7 @@
       "weaponMaster": "Waffenmeister",
       "xenophilia": "Fremdenliebe"
     },
+    "transferAll": "Alles übertragen",
     "TransferTo": "Übertrage auf {name}",
     "twoHandLift": "Zwei-Hand Heben",
     "unconscious": "Bewusstlos",
