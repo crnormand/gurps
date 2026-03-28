@@ -48,7 +48,23 @@
     }
   }
 
-  td.gcs-col-equipped {
+  td.gcs-item-level {
+    text-align: center;
+  }
+
+  td.gcs-item-points,
+  td.gcs-item-quantity,
+  td.gcs-item-tl,
+  td.gcs-item-lc,
+  td.gcs-item-value,
+  td.gcs-item-weight,
+  td.gcs-item-extended-value,
+  td.gcs-item-extended-weight {
+    text-align: right;
+  }
+
+  td.gcs-item-equipped {
+    text-align: center;
     cursor: pointer;
   }
 

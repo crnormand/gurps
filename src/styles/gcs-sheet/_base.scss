@@ -255,6 +255,10 @@ body {
     justify-content: space-evenly;
   }
 
+  td + td {
+    border-left: 1px solid var(--gcs-color-control-border);
+  }
+
   td,
   th {
     white-space: nowrap;
