@@ -595,6 +595,30 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       })
     }
 
+    // Change Maneuver
+
+    const maneuverSelect = this.element.querySelector<HTMLSelectElement>('select[name="maneuver"]')
+
+    maneuverSelect?.addEventListener('change', async event => {
+      event.preventDefault()
+
+      const value = event.currentTarget instanceof HTMLSelectElement ? event.currentTarget.value : 'do_nothing'
+
+      await this.actor.replaceManeuver(value)
+    })
+
+    // Change Posture
+
+    const postureSelect = this.element.querySelector<HTMLSelectElement>('select[name="posture"]')
+
+    postureSelect?.addEventListener('change', async event => {
+      event.preventDefault()
+
+      const value = event.currentTarget instanceof HTMLSelectElement ? event.currentTarget.value : 'standing'
+
+      await this.actor.replacePosture(value)
+    })
+
     GurpsWiring.hookupAllEvents(this.element)
   }
 

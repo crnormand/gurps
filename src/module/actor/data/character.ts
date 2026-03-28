@@ -288,8 +288,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     // TODO: verify whether this should be fully reset
     this.conditions = {
       ...this.conditions,
-      posture: 'standing',
-      maneuver: 'do_nothing',
+      // posture: 'standing',
+      // maneuver: 'do_nothing',
       self: { modifiers: [] },
       target: { modifiers: [] },
       usermods: new Set<string>(),
@@ -381,16 +381,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     this.conditions.maneuver = maneuverEffect ? (maneuverEffect.flags.gurps?.name ?? null) : null
   }
-
-  /* ---------------------------------------- */
-
-  // NOTE: Not needed; hit location names are now derived at runtime.
-  // #prepareHitLocationNames(): Record<string, HitLocationEntry> {
-  //   return this.hitlocations.reduce((acc: Record<string, HitLocationEntry>, location) => {
-  //     acc[location.where] = location
-  //     return acc
-  //   }, {})
-  // }
 
   /* ---------------------------------------- */
 

@@ -59,8 +59,8 @@
     <div class="gcs-maneuver-status gcs-section">
       <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.maneuverStatus"}}</div>
       <div class="gcs-field-rows gcs-section-content">
-        {{formGroup systemFields.conditions.fields.maneuver value=system.conditions.maneuver blank=false  choices=maneuverChoices localize=true disabled=(not actor.inCombat)}}
-        {{formGroup systemFields.conditions.fields.posture value=system.conditions.posture blank=false  choices=postureChoices localize=true}}
+        {{formGroup systemFields.conditions.fields.maneuver name="maneuver" value=system.conditions.maneuver blank=false  choices=maneuverChoices localize=true disabled=(not actor.inCombat)}}
+        {{formGroup systemFields.conditions.fields.posture name="posture" value=system.conditions.posture blank=false  choices=postureChoices localize=true}}
         <div class="form-group">
           <label>{{localize "GURPS.conditionsCombatMove"}}</label>
           <div class="form-fields">
