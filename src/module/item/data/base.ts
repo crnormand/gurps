@@ -1,6 +1,7 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { BaseDisplayItem } from '@gurps-types/gurps/display-item.js'
 import { ActionType, AnyActionClass, BaseAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { MarkdownUtil } from '@module/util/markdown.js'
 import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -345,12 +346,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       .filter(child => !!child && !!child.system)
       .map(child => child!.system!.toDisplayItem!())
 
-    const converter = new globalThis.showdown.Converter({
-      tables: true,
-      strikethrough: true,
-      html: false,
-    })
-    const notes = new Handlebars.SafeString(`<div class="gcs-markdown">` + converter.makeHtml(this.notes) + '</div>')
+    const notes = MarkdownUtil.toHTML(this.notes)
 
     return {
       id: this.parent.id!,

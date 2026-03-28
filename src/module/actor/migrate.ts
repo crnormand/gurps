@@ -337,7 +337,7 @@ function migrateActorSystem(
         points: oldData.conditionalinjury.RT.points,
       },
       injury: {
-        severity: ((s => (Number.isNaN(s) ? null : s))(parseInt(oldData.conditionalinjury.injury.severity))),
+        severity: (sev => (Number.isNaN(sev) ? null : sev))(parseInt(oldData.conditionalinjury.injury.severity)),
         daystoheal: oldData.conditionalinjury.injury.daystoheal,
       },
     },

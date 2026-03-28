@@ -220,7 +220,7 @@ interface DisplayNote extends BaseDisplayPseudoDocument {
   name: string
   /** The name of this item, with any modifiers which may change the name */
   fullName: string
-  /** The plaintext notes for this item, without any markup */
+  /** The HTML-formatted notes for this item */
   notes: string | Handlebars.SafeString
   /** What is the indentation level of this item, for display purposes? */
   indent: number

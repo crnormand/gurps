@@ -3,6 +3,7 @@ import { DisplayNote } from '@gurps-types/gurps/display-item.js'
 import { IContainable, containableSchema } from '@module/data/mixins/containable.js'
 import { ContainerUtils } from '@module/data/mixins/container-utils.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
+import { MarkdownUtil } from '@module/util/markdown.js'
 
 import { CharacterModel } from './character.js'
 
@@ -134,14 +135,7 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
 
     const children = this.contents.filter(child => !!child).map(child => child!.toDisplayItem!())
 
-    const converter = new globalThis.showdown.Converter({
-      tables: true,
-      strikethrough: true,
-      html: false,
-    })
-    const notes = new Handlebars.SafeString(
-      `<div class="gcs-markdown">` + converter.makeHtml(this.markdown ?? '') + '</div>'
-    )
+    const notes = MarkdownUtil.toHTML(this.markdown)
 
     return {
       id: this.id!,

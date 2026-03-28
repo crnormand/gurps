@@ -1524,7 +1524,7 @@
     "quantity": "Quantity",
     "quickNotes": {
       "examples": "<b>Examples:</b> [+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]",
-      "save": "Save ",
+      "save": "Save",
       "text": "Enter a Quick Note (a great place to put an On-the-Fly formula!):",
       "title": "Quick Notes"
     },
