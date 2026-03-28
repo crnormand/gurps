@@ -1750,6 +1750,12 @@
     "severity": "Тяжесть",
     "share": "Поделиться",
     "sheet": {
+      "encumbrance": {
+        "dodge": "Уклонение",
+        "level": "Уровень",
+        "maxLoad": "Макс. нагрузка",
+        "move": "Движение"
+      },
       "gcs": {
         "copyright": "Права на GCS принадлежат Richard A. Wilkes, 1998-2026. Все права защищены."
       },
@@ -1796,6 +1802,11 @@
         "weaponShots": "Выстр.",
         "weaponST": "СТ",
         "weaponUsage": "Применение"
+      },
+      "hitLocation": {
+        "dr": "ДР",
+        "location": "Локация",
+        "roll": "Бросок"
       },
       "personal": {
         "created": "Создан",

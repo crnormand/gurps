@@ -56,7 +56,10 @@
   --gcs-color-roll-fg: var(--color-dark-fg);
 
   --gcs-color-positive-bg: #a8e0b0;
+  --gcs-color-positive-fg: var(--color-dark-fg);
+
   --gcs-color-negative-bg: #f0b87a;
+  --gcs-color-negative-fg: var(--color-dark-fg);
 }
 
 /* ---------------------------------------- */
@@ -94,5 +97,7 @@
   --gcs-color-roll-fg: var(--color-dark-fg);
 
   --gcs-color-positive-bg: #6acc80;
+  --gcs-color-positive-fg: var(--color-dark-fg);
   --gcs-color-negative-bg: #e89050;
+  --gcs-color-negative-fg: var(--color-dark-fg);
 }

@@ -1750,6 +1750,12 @@
     "severity": "Severidade",
     "share": "Compartilhar",
     "sheet": {
+      "encumbrance": {
+        "dodge": "Esquiva",
+        "level": "Nível",
+        "maxLoad": "Carga Máx.",
+        "move": "Movimento"
+      },
       "gcs": {
         "copyright": "GCS© Todos os Direitos Reservados 1998-2026 Richard A. Wilkes."
       },
@@ -1796,6 +1802,11 @@
         "weaponShots": "Tiros",
         "weaponST": "ST",
         "weaponUsage": "Uso"
+      },
+      "hitLocation": {
+        "dr": "DR",
+        "location": "Localização",
+        "roll": "Rolagem"
       },
       "personal": {
         "created": "Criação",

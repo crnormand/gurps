@@ -24,7 +24,11 @@
         {{#if (eq type "pool")}}
           <pool-value name="{{numerator.path}}" value="{{numerator.value}}" data-max="{{denominator.value}}"></pool-value>
         {{else}}
-          {{formInput numerator.field value=numerator.value }}
+          {{#if numerator.name}}
+            {{formInput numerator.field name=numerator.name value=numerator.value }}
+          {{else}}
+            {{formInput numerator.field value=numerator.value }}
+          {{/if}}
         {{/if}}
         <button data-action="incrementPool" data-inverted="{{invertedDelta}}" data-path="{{numerator.path}}" {{#if atMax}}disabled{{/if}}><i class="fa-solid fa-plus"></i></button>
         <button data-action="resetPool" data-inverted="{{invertedDelta}}" data-initial="{{numerator.initial}}" data-path="{{numerator.path}}"><i class="fa-solid fa-undo"></i></button>
@@ -38,7 +42,11 @@
       {{/if}}
       <div class="form-fields flexrow">
         <label >{{localize denominator.label}}</label>
-        {{formInput denominator.field value=denominator.value disabled=(or (not denominatorEditable) @root.isPlay)}}
+        {{#if denominator.name}}
+          {{formInput denominator.field name=denominator.name value=denominator.value disabled=(or (not denominatorEditable) @root.isPlay)}}
+        {{else}}
+          {{formInput denominator.field value=denominator.value disabled=(or (not denominatorEditable) @root.isPlay)}}
+        {{/if}}
       </div>
     </div>
   </div>

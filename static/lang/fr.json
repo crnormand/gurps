@@ -1750,6 +1750,12 @@
     "severity": "Gravité",
     "share": "Partager",
     "sheet": {
+      "encumbrance": {
+        "dodge": "Esquive",
+        "level": "Niveau",
+        "maxLoad": "Charge Max.",
+        "move": "Déplacement"
+      },
       "gcs": {
         "copyright": "GCS is une marque déposée (1998-2026) par Richard A. Wilkes. Tous droits réservés."
       },
@@ -1796,6 +1802,11 @@
         "weaponShots": "Coups",
         "weaponST": "ST",
         "weaponUsage": "Usage"
+      },
+      "hitLocation": {
+        "dr": "DR",
+        "location": "Localisation",
+        "roll": "Jet"
       },
       "personal": {
         "created": "Créé",

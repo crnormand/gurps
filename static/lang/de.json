@@ -1750,6 +1750,12 @@
     "severity": "Schwere",
     "share": "Teilen",
     "sheet": {
+      "encumbrance": {
+        "dodge": "Ausweichen",
+        "level": "Stufe",
+        "maxLoad": "Max. Last",
+        "move": "Bewegung"
+      },
       "gcs": {
         "copyright": "GCS ist urheberrechtlich geschützt 1998-2026 von Richard A. Wilkes. Alle Rechte vorbehalten."
       },
@@ -1796,6 +1802,11 @@
         "weaponShots": "Schuss",
         "weaponST": "ST",
         "weaponUsage": "Verwendung"
+      },
+      "hitLocation": {
+        "dr": "DR",
+        "location": "Trefferlage",
+        "roll": "Wurf"
       },
       "personal": {
         "created": "Erstellt",

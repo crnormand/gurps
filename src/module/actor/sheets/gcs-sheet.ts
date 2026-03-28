@@ -51,12 +51,14 @@ type PoolEntry = {
     path?: string
     label?: string
     initial?: number
+    name?: string
   }
   denominator: {
     field: foundry.data.fields.NumberField<any>
     value: number
     path?: string
     label?: string
+    name?: string
   }
   atMin?: boolean
   atMax: boolean
@@ -396,20 +398,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       const currentThreshold = tracker.currentThreshold
       const thresholds = tracker.thresholdDescriptors
 
-      const trackerSchema = tracker.schema
-
-      trackerSchema.name = tracker._id
-
       pools.push({
         type: 'resourceTracker',
         invertedDelta: false,
         denominatorEditable: false,
         editable: true,
         numerator: {
-          field: trackerSchema.fields.currentValue,
+          field: tracker.schema.fields.currentValue,
           path: tracker._id,
           value: tracker.value,
           initial: tracker.isAccumulator ? 0 : tracker.max,
+          name: `${tracker.fieldPath}.${tracker._id}.value`,
         },
         denominator: {
           field: GurpsActorGcsSheet.#pseudoDenominator,

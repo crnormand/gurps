@@ -87,6 +87,7 @@ body {
 
 .gcs-mod-positive[data-action='addModifier'] {
   background-color: var(--gcs-color-positive-bg);
+  color: var(--gcs-color-positive-fg);
 
   &:hover {
     background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 15%);
@@ -95,6 +96,7 @@ body {
 
 .gcs-mod-negative[data-action='addModifier'] {
   background-color: var(--gcs-color-negative-bg);
+  color: var(--gcs-color-negative-fg);
 
   &:hover {
     background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 15%);
