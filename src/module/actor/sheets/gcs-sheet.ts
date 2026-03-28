@@ -565,6 +565,30 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const itemRows = this.element.querySelectorAll<HTMLElement>('.gcs-item-row')
 
     for (const itemRow of itemRows) {
+      const equippedColumn = itemRow.querySelector<HTMLElement>('.gcs-item-equipped')
+
+      equippedColumn?.addEventListener('click', async event => {
+        event.preventDefault()
+
+        const itemId = itemRow.dataset.itemId
+
+        if (!itemId) {
+          console.error('No item id found on item row')
+
+          return
+        }
+
+        const item = this.actor.items.get(itemId)
+
+        if (!item || !item.isOfType('equipmentV2')) {
+          console.error(`Item with id ${itemId} is not of type equipmentV2`)
+
+          return
+        }
+
+        await item.update({ 'system.equipped': !item.system.equipped } as Item.UpdateData)
+      })
+
       itemRow.addEventListener('dblclick', event => {
         event.preventDefault()
         const target = event.currentTarget as HTMLElement
