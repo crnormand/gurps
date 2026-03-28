@@ -55,6 +55,10 @@ section[data-application-part='resources'] {
 
   .gcs-encumbrance {
     grid-area: encumbrance;
+
+    [data-action='setEncumbrance'] {
+      cursor: pointer;
+    }
   }
 
   .gcs-moving {

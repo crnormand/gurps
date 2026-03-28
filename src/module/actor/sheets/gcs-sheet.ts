@@ -153,6 +153,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       addResourceTracker: GurpsActorGcsSheet.#onAddResourceTracker,
       removeResourceTracker: GurpsActorGcsSheet.#onRemoveResourceTracker,
       editResourceTracker: GurpsActorGcsSheet.#onEditResourceTracker,
+      setEncumbrance: GurpsActorGcsSheet.#onSetEncumbrance,
     },
   }
 
@@ -941,6 +942,24 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     }
 
     await tracker.deleteDialog()
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onSetEncumbrance(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event.preventDefault()
+
+    const index = target.dataset.index
+
+    if (!index) {
+      console.error('No encumbrance index provided')
+
+      return
+    }
+
+    if (getGame().settings.get(GURPS.SYSTEM_NAME, 'automatic-encumbrance')) return
+
+    await this.actor.update({ 'system.additionalresources.currentEncumbrance': parseInt(index) } as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */

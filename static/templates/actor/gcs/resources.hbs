@@ -130,7 +130,7 @@
       <tbody>
         {{#each system.encumbrance as |enc|}}
         <tr class="{{#if enc.current}}selected{{/if}}">
-            <td>
+            <td data-action="setEncumbrance" data-index="{{@index}}" >
               {{#if enc.current}}
               <i class="fa-solid fa-weight-hanging"></i>
               {{/if}}
