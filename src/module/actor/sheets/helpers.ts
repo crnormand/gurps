@@ -1,3 +1,5 @@
+import { systemPath } from '@module/util/misc.js'
+
 /**
  * Recursively builds create-data for an item and all its descendants, assigning each a
  * fresh ID and the given container/carried state. Returns a flat array of all items
@@ -73,6 +75,34 @@ export async function resolveItemDropQuantity(item: Item.OfType<'equipmentV2'>):
         icon: 'fa-solid fa-angles-right',
         label: 'GURPS.transferAll',
         callback: (): number => max,
+      },
+    ],
+  })
+}
+
+/* ---------------------------------------- */
+
+export async function openQuickNotesEditor(actor: Actor.OfType<'characterV2'>): Promise<void> {
+  const content = await foundry.applications.handlebars.renderTemplate(
+    systemPath('templates/actor/quick-notes-editor.hbs'),
+    {
+      notes: actor.system.additionalresources?.qnotes?.replace(/<br>/g, '\n') ?? '',
+    }
+  )
+
+  await foundry.applications.api.DialogV2.wait({
+    window: { title: 'GURPS.quickNotes.title', resizable: true },
+    content,
+    buttons: [
+      {
+        action: 'save',
+        label: 'GURPS.quickNotes.save',
+        icon: 'fa-solid fa-save',
+        callback: async (_event, _button, dialog) => {
+          const value = dialog.element.querySelector('textarea')?.value ?? ''
+
+          await actor.update({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') } as Actor.UpdateData)
+        },
       },
     ],
   })

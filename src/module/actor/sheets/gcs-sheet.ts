@@ -19,7 +19,12 @@ import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import Maneuvers from '../maneuver.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
-import { buildItemCopyWithChildren, resolveItemDropPosition, resolveItemDropQuantity } from './helpers.js'
+import {
+  buildItemCopyWithChildren,
+  openQuickNotesEditor,
+  resolveItemDropPosition,
+  resolveItemDropQuantity,
+} from './helpers.js'
 
 import ActorSheet = gurps.applications.ActorSheet
 
@@ -120,6 +125,7 @@ namespace GurpsActorGcsSheet {
     postureChoices: Record<string, { label: string }>
     createdDate: string
     modifiedDate: string
+    quickNotes: Handlebars.SafeString
   }
 }
 
@@ -154,6 +160,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       removeResourceTracker: GurpsActorGcsSheet.#onRemoveResourceTracker,
       editResourceTracker: GurpsActorGcsSheet.#onEditResourceTracker,
       setEncumbrance: GurpsActorGcsSheet.#onSetEncumbrance,
+      editQuickNotes: GurpsActorGcsSheet.#onEditQuickNotes,
     },
   }
 
@@ -168,6 +175,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     },
     resourceTrackers: {
       template: systemPath('templates/actor/gcs/resource-trackers.hbs'),
+    },
+    quickNotes: {
+      template: systemPath('templates/actor/gcs/quick-notes.hbs'),
     },
     reactions: {
       template: systemPath('templates/actor/gcs/reactions.hbs'),
@@ -252,6 +262,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       maneuverChoices,
       postureChoices,
       sortKeys,
+      quickNotes: new Handlebars.SafeString(this.actor.system.additionalresources.qnotes),
     }
   }
 
@@ -535,6 +546,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const elements = [...this.element.querySelectorAll<HTMLElement>('*')].filter(
       element => element.children.length === 0 && /\[([^[\]]+)\]/.test(element.innerText)
     )
+
+    elements.push(this.element.querySelector<HTMLElement>('.quick-notes')!)
 
     for (const otfElement of elements) {
       const otfTextMatches = [...otfElement.innerText.matchAll(/\[([^[\]]+)\]/gi)]
@@ -960,6 +973,14 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     if (getGame().settings.get(GURPS.SYSTEM_NAME, 'automatic-encumbrance')) return
 
     await this.actor.update({ 'system.additionalresources.currentEncumbrance': parseInt(index) } as Actor.UpdateData)
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onEditQuickNotes(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+
+    await openQuickNotesEditor(this.actor)
   }
 
   /* ---------------------------------------- */
