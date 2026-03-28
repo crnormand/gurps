@@ -1,12 +1,14 @@
 import {
   DisplayEquipment,
   DisplayMeleeAttack,
+  DisplayNote,
   DisplayRangedAttack,
   DisplaySkill,
   DisplaySpell,
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
 import GurpsWiring from '@module/gurps-wiring.js'
+import type { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { getGame, isHTMLElement } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
@@ -109,6 +111,7 @@ namespace GurpsActorGcsSheet {
     otherEquipment: DisplayEquipment[]
     meleeAttacks: DisplayMeleeAttack[]
     rangedAttacks: DisplayRangedAttack[]
+    notes: DisplayNote[]
     reactionModifiers: DisplayConditionalModifier[]
     conditionalModifiers: DisplayConditionalModifier[]
     sortKeys: Record<string, Record<string, string>>
@@ -143,6 +146,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       resetPool: GurpsActorGcsSheet.#onUpdatePool,
       sortItems: GurpsActorGcsSheet.#onSortItems,
       toggleItemContainer: GurpsActorGcsSheet.#onToggleItemContainer,
+      toggleActionContainer: GurpsActorGcsSheet.#onToggleActionContainer,
       toggleItemNotes: GurpsActorGcsSheet.#onToggleItemNotes,
       addModifier: GurpsActorGcsSheet.#onAddModifier,
       rollOtf: GurpsActorGcsSheet.#onRollOtf,
@@ -181,6 +185,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     },
     equipment: {
       template: systemPath('templates/actor/gcs/equipment.hbs'),
+    },
+    notes: {
+      template: systemPath('templates/actor/gcs/notes.hbs'),
     },
     footer: {
       template: systemPath('templates/actor/gcs/footer.hbs'),
@@ -235,6 +242,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       spells: this.actor.system.spellsV2.map(item => item.system.toDisplayItem()),
       carriedEquipment: this.actor.system.equipmentV2.carried.map(item => item.system.toDisplayItem()),
       otherEquipment: this.actor.system.equipmentV2.other.map(item => item.system.toDisplayItem()),
+      notes: this.actor.system.notesV2.map(note => note.toDisplayItem()),
       meleeAttacks: this.actor.system.meleeV2.map(action => action.toDisplayItem()),
       rangedAttacks: this.actor.system.rangedV2.map(action => action.toDisplayItem()),
       reactionModifiers: this.actor.system.reactions,
@@ -592,9 +600,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       eventName: 'contextmenu',
     })
 
-    this._createContextMenu(this._createActionContextOptions, '.gcs-action-row', {
+    this._createContextMenu(this._createPseudoDocumentContextOptions, '.gcs-action-row', {
       jQuery: false,
-      hookName: 'createActionContextOptions',
+      hookName: 'createPseudoDocumentContextOptions',
       parentClassHooks: false,
       fixed: true,
       eventName: 'contextmenu',
@@ -620,38 +628,46 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  protected _createActionContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+  protected _createPseudoDocumentContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
     return [
       {
         name: 'Delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        condition: target => target.dataset.parentId !== undefined && target.dataset.actionId !== undefined,
+        condition: target => target.dataset.actionId !== undefined,
         callback: async target => {
           const parentId = target.dataset.parentId
+          const documentName = target.dataset.documentName
 
-          if (!parentId) {
-            console.error('No Action parent ID found on action context menu target')
-
-            return
-          }
-
-          const parent = this.actor.items.get(target.dataset.parentId ?? '')
-
-          if (!parent) {
-            console.error(`No item found for action context menu with item id ${target.dataset.parentId}`)
+          if (!parentId && !documentName) {
+            console.error('No parent ID or document name found on pseudo-document context menu target')
 
             return
           }
 
-          const action = parent.getEmbeddedDocument('Action', target.dataset.actionId ?? '')
+          let doc: PseudoDocument | null = null
 
-          if (!action) {
-            console.error(`No action found for action context menu with action id ${target.dataset.actionId}`)
+          if (parentId) {
+            const parent = this.actor.items.get(target.dataset.parentId ?? '')
+
+            if (!parent) {
+              console.error(`No item found for pseudo-document context menu with item id ${target.dataset.parentId}`)
+
+              return
+            }
+
+            doc = parent.getEmbeddedDocument('Action', target.dataset.actionId ?? '') ?? null
+          } else if (documentName) {
+            doc =
+              this.actor.getEmbeddedPseudoDocumentCollection(documentName)?.get(target.dataset.actionId ?? '') ?? null
+          }
+
+          if (!doc) {
+            console.error(`No pseudo-document found for action context menu with action id ${target.dataset.actionId}`)
 
             return
           }
 
-          await action.deleteDialog()
+          await doc?.deleteDialog()
         },
       },
     ]
@@ -729,6 +745,27 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const item = this.actor.items.get(itemId)
 
     await item?.system.toggleOpen?.()
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onToggleActionContainer(
+    this: GurpsActorGcsSheet,
+    event: PointerEvent,
+    target: HTMLElement
+  ): Promise<void> {
+    event.preventDefault()
+
+    const documentName = target.closest<HTMLElement>('[data-document-name]')?.dataset.documentName
+    const actionId = target.closest<HTMLElement>('[data-action-id]')?.dataset.actionId
+
+    if (!documentName || !actionId) return
+
+    const action = this.actor.getEmbeddedPseudoDocumentCollection(documentName)?.get(actionId)
+
+    if (!action) return
+
+    if ('toggleOpen' in action && typeof action.toggleOpen === 'function') await action.toggleOpen()
   }
 
   /* ---------------------------------------- */

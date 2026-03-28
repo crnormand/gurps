@@ -1,0 +1,52 @@
+{{#*inline ".noteEntry"}}
+  <tr class="gcs-action-row"
+      data-action-id="{{id}}"
+      data-document-name="{{documentName}}"
+      data-has-children="{{hasChildren}}"
+      draggable="true">
+    <td class="gcs-item-name-cell">
+      <div class="gcs-item-name-line indent{{indent}}">
+        {{#if hasChildren}}
+        <i
+          class="fa-solid fa-caret-down gcs-container-toggle"
+          data-open="{{childrenOpen}}"
+          data-action="toggleActionContainer"
+        ></i>
+        {{else}}
+        <span class="gcs-container-spacer"></span>
+        {{/if}}
+        <span class="gcs-item-name-text">{{notes}}</span>
+      </div>
+    </td>
+    <td class="gcs-item-points">{{points}}</td>
+  </tr>
+  {{#if (and hasChildren childrenOpen)}}
+  {{#each children}}
+    {{> ".noteEntry"}}
+  {{/each}}
+  {{/if}}
+{{/inline}}
+
+<div class="gcs-item-table-container">
+<table data-table-id="notes" class="gcs-table gcs-item-table gcs-note-table ">
+  <colgroup>
+    <col class="gcs-col-name">
+  </colgroup>
+  <thead>
+    <tr>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.skills.name}}">
+        Note
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each notes}}
+      {{> ".noteEntry"}}
+    {{else}}
+    <tr class="gcs-item-empty">
+      <td >{{localize "GURPS.none"}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+</div>

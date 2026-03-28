@@ -129,9 +129,16 @@ interface DisplayEquipment extends BaseDisplayItem {
 
 /* ---------------------------------------- */
 
-interface BaseDisplayAttack {
-  /** The ID of this action */
+interface BaseDisplayPseudoDocument {
+  /** The ID of this pseudo-document */
   id: string
+  /** The document class of this pseudo-document */
+  documentName: string
+}
+
+/* ---------------------------------------- */
+
+interface BaseDisplayAttack extends BaseDisplayPseudoDocument {
   /** The ID of this action's parent */
   parentId: string
   /** The simple name of this attack, without level or any other modifiers which may change the name */
@@ -202,11 +209,29 @@ interface DisplayRangedAttack extends BaseDisplayAttack {
 
 /* ---------------------------------------- */
 
+interface DisplayNote extends BaseDisplayPseudoDocument {
+  /** The list of child items contained within this item, if any */
+  children: DisplayNote[]
+  /** Does this item have any children? */
+  hasChildren: boolean
+  /** Is this item (if it is a container) currently un-collapsed? */
+  childrenOpen: boolean
+  /** The simple name of this item, without level or any other modifiers which may change the name */
+  name: string
+  /** The name of this item, with any modifiers which may change the name */
+  fullName: string
+  /** The plaintext notes for this item, without any markup */
+  notes: string | Handlebars.SafeString
+  /** What is the indentation level of this item, for display purposes? */
+  indent: number
+}
+
 export type {
   BaseDisplayAttack,
   BaseDisplayItem,
   DisplayEquipment,
   DisplayMeleeAttack,
+  DisplayNote,
   DisplayRangedAttack,
   DisplaySkill,
   DisplaySpell,
