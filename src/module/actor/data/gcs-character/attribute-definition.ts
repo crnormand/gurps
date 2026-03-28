@@ -29,12 +29,11 @@ class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinition.Schem
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'AttributeDefinition'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'AttributeDefinition',
       label: 'DOCUMENT.AttributeDefinition',
-      icon: '',
       embedded: { AttributeThreshold: '_thresholds' },
-    }
+    })
   }
 
   /* ---------------------------------------- */

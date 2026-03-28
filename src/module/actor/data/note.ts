@@ -22,12 +22,13 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'Note'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Note',
       label: 'DOCUMENT.Note',
-      icon: '',
-      embedded: {},
-    }
+      sortKeys: {
+        name: 'markdown',
+      },
+    })
   }
 
   /* ---------------------------------------- */
@@ -136,6 +137,7 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
     const converter = new globalThis.showdown.Converter({
       tables: true,
       strikethrough: true,
+      html: false,
     })
     const notes = new Handlebars.SafeString(
       `<div class="gcs-markdown">` + converter.makeHtml(this.markdown ?? '') + '</div>'

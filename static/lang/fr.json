@@ -1601,7 +1601,6 @@
     "selectToken": "Sélectionner Token",
     "sendToChat": "Envoyer au chat",
     "sendToEveryone": "Envoyer à tout le monde",
-    "severity": "Gravité",
     "setManeuver": "Définir Manoeuvre",
     "settingActiveEffects": "Activer Effets Actifs",
     "settingAddCumulativeParryPenalties": "Ajouter automatiquement les pénalités de parade cumulatives",
@@ -1715,6 +1714,7 @@
     "settingUseQuintessence": "Utiliser la Quintessence",
     "settingUseTaggedModifiers": "Utiliser les modificateurs marqués",
     "severities": "Gravités",
+    "severity": "Gravité",
     "share": "Partager",
     "sheet": {
       "gcs": {

@@ -10,12 +10,10 @@ class HitLocationEntryV2 extends PseudoDocument<HitLocationSchemaV2> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'HitLocation'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'HitLocation',
       label: 'DOCUMENT.HitLocation',
-      icon: '',
-      embedded: {},
-    }
+    })
   }
 
   /* ---------------------------------------- */

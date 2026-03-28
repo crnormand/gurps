@@ -348,6 +348,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
     const converter = new globalThis.showdown.Converter({
       tables: true,
       strikethrough: true,
+      html: false,
     })
     const notes = new Handlebars.SafeString(`<div class="gcs-markdown">` + converter.makeHtml(this.notes) + '</div>')
 

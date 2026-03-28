@@ -152,7 +152,7 @@ export class ConditionalInjury {
   /** @source Pyramid #3/120 */
   static daysToHealForSeverity(severity: number): number | null {
     // gotta love untyped languages
-    if (severity < -6 || !severity) {
+    if (severity < -6 || severity === null || severity === undefined || typeof severity !== 'number') {
       return 0
     }
 

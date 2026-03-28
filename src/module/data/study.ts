@@ -9,12 +9,10 @@ class Study extends PseudoDocument<StudySchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'Study'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Study',
       label: 'DOCUMENT.Study',
-      icon: '',
-      embedded: {},
-    }
+    })
   }
 }
 

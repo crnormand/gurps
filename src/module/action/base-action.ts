@@ -17,12 +17,10 @@ class BaseAction<
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'Action'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Action',
       label: 'DOCUMENT.Action',
-      icon: '',
-      embedded: {},
-    }
+    })
   }
 
   /* ---------------------------------------- */

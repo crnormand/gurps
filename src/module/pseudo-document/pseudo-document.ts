@@ -26,6 +26,7 @@ class PseudoDocument<
       label: '',
       icon: '',
       embedded: {},
+      sortKeys: {},
     }
   }
 
@@ -468,6 +469,13 @@ namespace PseudoDocument {
     embedded: Record<string, string>
     /* The class used to render this pseudo-document. */
     sheetClass?: typeof PseudoDocumentSheet
+    /**
+     * The sort keys for this pseudo-document type, used to determine
+     * which property to look up when sorting items of this type.
+     * The key is the name of the entity property to sort by, and the
+     * value is the path to the property value.
+     */
+    sortKeys: Record<string, string>
   }
 
   /* ---------------------------------------- */

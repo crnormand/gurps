@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplayTrait } from '@gurps-types/gurps/display-item.js'
+import { getGame } from '@module/util/guards.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
@@ -29,7 +30,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
   get selfControlNote(): string {
     if (this.cr === null) return ''
 
-    return game.i18n?.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name
+    return getGame().i18n.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name
   }
 
   /* ---------------------------------------- */

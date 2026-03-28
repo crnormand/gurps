@@ -356,12 +356,14 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const firstSkill = this.actor.system.skillsV2[0]
     const firstSpell = this.actor.system.spellsV2[0]
     const firstEquipment = this.actor.system.allEquipmentV2[0]
+    const firstNote = this.actor.system.notesV2[0]
 
     return {
       traits: firstTrait ? firstTrait.system.metadata.sortKeys : {},
       skills: firstSkill ? firstSkill.system.metadata.sortKeys : {},
       spells: firstSpell ? firstSpell.system.metadata.sortKeys : {},
       equipment: firstEquipment ? firstEquipment.system.metadata.sortKeys : {},
+      notes: firstNote ? firstNote.metadata.sortKeys : {},
     }
   }
 

@@ -9,12 +9,10 @@ class MoveModeV2 extends PseudoDocument<MoveSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'MoveMode'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'MoveMode',
       label: 'DOCUMENT.MoveMode',
-      icon: '',
-      embedded: {},
-    }
+    })
   }
 }
 

@@ -19,12 +19,10 @@ class BasePrereq<Schema extends BasePrereq.Schema>
   /* ---------------------------------------- */
 
   static override get metadata(): PseudoDocument.Metadata<'Prereq'> {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Prereq',
       label: 'DOCUMENT.Prereq',
-      icon: '',
-      embedded: {},
-    }
+    })
   }
 
   /* ---------------------------------------- */

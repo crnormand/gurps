@@ -1601,7 +1601,6 @@
     "selectToken": "Wähle Token",
     "sendToChat": "An Chat senden",
     "sendToEveryone": "An alle senden",
-    "severity": "Schwere",
     "setManeuver": "Wähle Manöver",
     "settingActiveEffects": "Aktive Effekte einschalten",
     "settingAddCumulativeParryPenalties": "Kumulative Parier-Strafen automatisch hinzufügen",
@@ -1715,6 +1714,7 @@
     "settingUseQuintessence": "Quintessenz verwenden",
     "settingUseTaggedModifiers": "Verwenden Sie markierte Modifikatoren",
     "severities": "Schweregrade",
+    "severity": "Schwere",
     "share": "Teilen",
     "sheet": {
       "gcs": {
