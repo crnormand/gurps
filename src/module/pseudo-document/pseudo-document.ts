@@ -498,10 +498,17 @@ namespace PseudoDocument {
 
   /* ---------------------------------------- */
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-object-type
+  declare class ConcretePseudoDocument extends PseudoDocument<DataSchema, DataModel.Any, {}> {}
+
+  /* ---------------------------------------- */
+
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface Any extends AnyPseudoDocument {}
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface AnyConstructor extends Identity<typeof AnyPseudoDocument> {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface ConcreteConstructor extends Identity<typeof ConcretePseudoDocument> {}
 }
 
 /* ---------------------------------------- */

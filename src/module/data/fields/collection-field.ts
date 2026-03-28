@@ -1,4 +1,4 @@
-import { DataModel, fields } from '@gurps-types/foundry/index.js'
+import { fields } from '@gurps-types/foundry/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { PseudoDocument } from '../../pseudo-document/pseudo-document.js'
@@ -22,9 +22,21 @@ class LazyTypedSchemaField<
 /* ---------------------------------------- */
 
 namespace CollectionField {
-  export type Types<Model extends typeof TypedPseudoDocument> = {
-    [type: string]: Model
-  }
+  export type Model = PseudoDocument.ConcreteConstructor | TypedPseudoDocument.ConcreteConstructor
+
+  /* ---------------------------------------- */
+
+  export type Types<M extends TypedPseudoDocument.AnyConstructor> = [TypedPseudoDocument.DocumentNameOf<M>] extends [
+    infer DocumentName extends gurps.Pseudo.WithTypes,
+  ]
+    ? {
+        [K in keyof PseudoDocumentConfig.Types[DocumentName]]: PseudoDocumentConfig.Types[DocumentName][K] extends gurps.Pseudo.ConfigEntry<
+          infer Doc
+        >
+          ? fields.EmbeddedDataField<Doc>
+          : never
+      }
+    : fields.TypedSchemaField.Types
 
   /* ---------------------------------------- */
 
@@ -34,23 +46,23 @@ namespace CollectionField {
 
   /* ---------------------------------------- */
 
-  export type Element<Model extends DataModel.ConcreteConstructor> = Model extends typeof TypedPseudoDocument
-    ? LazyTypedSchemaField<CollectionField.Types<Model>>
-    : fields.EmbeddedDataField<Model>
+  export type Element<M extends Model> = M extends TypedPseudoDocument.AnyConstructor
+    ? LazyTypedSchemaField<Types<M>>
+    : fields.EmbeddedDataField<M>
 
   /* ---------------------------------------- */
 
   export type AssignmentType<
-    Model extends DataModel.ConcreteConstructor,
+    M extends Model,
     Options extends CollectionField.Options<AnyObject>,
-  > = fields.TypedObjectField.AssignmentType<Element<Model>, Options>
+  > = fields.TypedObjectField.AssignmentType<Element<M>, Options>
 
   /* ---------------------------------------- */
 
   export type InitializedType<
-    Model extends DataModel.ConcreteConstructor,
+    M extends Model,
     Options extends CollectionField.Options<AnyObject>,
-  > = fields.DataField.DerivedInitializedType<ModelCollection<InstanceType<Model>>, Options>
+  > = fields.DataField.DerivedInitializedType<ModelCollection<InstanceType<M>>, Options>
 
   /* ---------------------------------------- */
 
@@ -61,7 +73,7 @@ namespace CollectionField {
 }
 
 class CollectionField<
-  const Model extends DataModel.ConcreteConstructor,
+  const Model extends CollectionField.Model,
   const Element extends CollectionField.Element<Model> = CollectionField.Element<Model>,
   const Options extends CollectionField.Options<AnyObject> = CollectionField.DefaultOptions,
   const AssignmentType = CollectionField.AssignmentType<Model, Options>,
@@ -83,7 +95,7 @@ class CollectionField<
 
   override initialize(
     value: PersistedType,
-    model: DataModel.Any,
+    model: PseudoDocument.Any,
     options?: fields.DataField.InitializeOptions
   ): InitializedType | (() => InitializedType | null) {
     const init = super.initialize(value, model, options)
