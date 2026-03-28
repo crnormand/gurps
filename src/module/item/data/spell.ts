@@ -24,14 +24,10 @@ class SpellModel extends BaseItemModel<SpellSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): ItemMetadata {
-    return {
-      embedded: {},
+    return foundry.utils.mergeObject(super.metadata, {
       type: 'spellV2',
-      invalidActorTypes: [],
-      actions: {},
       childTypes: ['spellV2'],
-      modifierTypes: [],
-    }
+    })
   }
 
   /* ---------------------------------------- */

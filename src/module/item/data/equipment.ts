@@ -14,14 +14,10 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): ItemMetadata {
-    return {
-      embedded: {},
+    return foundry.utils.mergeObject(super.metadata, {
       type: 'equipment',
-      invalidActorTypes: [],
-      actions: {},
       childTypes: ['equipment'],
-      modifierTypes: [],
-    }
+    })
   }
 
   /* ---------------------------------------- */

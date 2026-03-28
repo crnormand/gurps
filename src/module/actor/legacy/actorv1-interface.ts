@@ -256,6 +256,7 @@ interface ActorV1Model {
     bodyplan: string
     tracker: Record<string, TrackerInstance>
     importname?: string
+    importName?: string
     importpath?: string
   }
   conditions: {

@@ -2548,6 +2548,13 @@ export class ActorImporter {
     return num.includes(',') ? parseDecimalNumber(num, { thousands: '.', decimal: ',' }) : parseDecimalNumber(num)
   }
 
+  textFrom(obj) {
+    if (!obj) return ''
+    let text = obj['#text']?.trim()
+
+    return text ?? ''
+  }
+
   calcTotalCarried(eqp) {
     let total = 0
 

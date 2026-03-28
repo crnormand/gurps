@@ -1,8 +1,10 @@
 {
   "DOCUMENT": {
     "Action": "Aktion",
+    "ConditionalModifier": "Bedingter Modifikator",
     "HitLocation": "Trefferzone",
     "MoveMode": "Bewegungsmodus",
+    "ReactionModifier": "Reaktionsmodifikator",
     "ResourceTracker": "Ressourcen-Tracker"
   },
   "GURPS": {
@@ -786,6 +788,13 @@
         "successMessage": "Kompendium \"{name}\" wurde erfolgreich importiert ({num} Elemente importiert).",
         "title": "GCS-Kompendium-Elemente importieren"
       },
+      "migratedItemsPrompt": {
+        "cancel": "Nicht löschen",
+        "confirmDeletions": "Ausgewählte löschen",
+        "message": "Vor dem Importieren haben wir einige übrig gebliebene Elemente einer früheren Migration gefunden, die wahrscheinlich Duplikate sind. In den meisten Fällen ist es sicher, sie alle zu löschen.<br><strong>Jedoch:</strong> Wenn Sie eines der unten aufgeführten Elemente in Foundry <em>vor</em> der Migration manuell hinzugefügt haben, lassen Sie es deaktiviert — es kann nach dem Löschen nicht wiederhergestellt werden.<br>Markieren Sie die Elemente, die Sie löschen möchten, oder markieren Sie alle, wenn Sie sicher sind, dass keines manuell hinzugefügt wurde. Nicht markierte Elemente werden nicht erneut angezeigt.",
+        "selectAll": "Alle auswählen",
+        "title": "Verwaiste migrierte Elemente löschen?"
+      },
       "promptBodyPlan": {
         "content": "<p>Möchten Sie den aktuellen Körperplan <strong>beibehalten</strong> (<strong>{currentBodyPlan}</strong>) oder ihn mit dem Körperplan aus der Importdatei <strong>überschreiben</strong> (<strong>{bodyplan}</strong>)?</p>",
         "title": "Aktuellen Körperplan überschreiben?"
@@ -954,13 +963,13 @@
         "progressMessage": "Charakter-Migrationen für Version {version} werden angewendet, bitte warten...",
         "successMessage": "Charakter-Migrationen für Version {version} erfolgreich angewendet."
       },
+      "holderItem": {
+        "name": "Der Alleshalter",
+        "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
+      },
       "item": {
         "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
         "successMessage": "Objekt-Migrationen für Version {version} erfolgreich angewendet."
-      },
-      "migrationItem": {
-        "name": "Der Alleshalter",
-        "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
       },
       "toV1_0_0": {
         "cancel": "Migration abbrechen",

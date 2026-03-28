@@ -1,8 +1,10 @@
 {
   "DOCUMENT": {
     "Action": "Action",
+    "ConditionalModifier": "Conditional Modifier",
     "HitLocation": "Hit Location",
     "MoveMode": "Move Mode",
+    "ReactionModifier": "Reaction Modifier",
     "ResourceTracker": "Resource Tracker"
   },
   "GURPS": {
@@ -786,6 +788,13 @@
         "successMessage": "Compendium \"{name}\" imported successfully ({num} items imported).",
         "title": "Import GCS Compendium Items"
       },
+      "migratedItemsPrompt": {
+        "cancel": "Do Not Delete",
+        "confirmDeletions": "Delete Selected",
+        "message": "Before importing, we found some leftover items from a previous migration that are likely duplicates. In most cases, it's safe to delete them all.<br><strong>However:</strong> if you manually added any of the items below in Foundry <em>before</em> the migration, leave them unchecked — they can't be recovered once deleted.<br>Check the items you'd like to delete, or check all if you're confident none were added manually. Anything left unchecked won't be flagged again.",
+        "selectAll": "Select All",
+        "title": "Delete Orphaned Migrated Items?"
+      },
       "promptBodyPlan": {
         "content": "<p>Do you want to <strong>Keep</strong> the current body plan (<strong>{currentBodyPlan}</strong>), or <strong>Overwrite</strong> it with the body plan from the import file (<strong>{bodyplan}</strong>)?</p>",
         "title": "Overwrite Current BodyPlan?"
@@ -953,13 +962,13 @@
         "progressMessage": "Applying Actor migrations for version {version}, please wait...",
         "successMessage": "Successfully applied Actor migrations for version {version}."
       },
+      "holderItem": {
+        "name": "The Everything Holder",
+        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+      },
       "item": {
         "progressMessage": "Applying Item migrations for version {version}, please wait...",
         "successMessage": "Successfully applied Item migrations for version {version}."
-      },
-      "migrationItem": {
-        "name": "The Everything Holder",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
       },
       "toV1_0_0": {
         "cancel": "Cancel Migration",

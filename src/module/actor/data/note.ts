@@ -142,6 +142,7 @@ const noteV2Schema = () => {
     reference: new fields.StringField({ required: true, nullable: false, initial: '' }),
     reference_highlight: new fields.StringField({ required: true, nullable: false, initial: '' }),
     save: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+    importid: new fields.StringField({ required: true, nullable: false, initial: '' }),
     calc: new fields.SchemaField(
       {
         resolved_notes: new fields.StringField({ required: false, nullable: true, initial: null }),

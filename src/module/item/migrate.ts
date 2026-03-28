@@ -224,21 +224,68 @@ function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.Cr
       `MIGRATE: Melee attack ${oldMelee.mode} has invalid import value: ${oldMelee.import}. Defaulting to 0. ID: ${_id}`
     )
 
+  const importedLevel = Number(oldMelee.import) || 0
+
+  let parry = oldMelee.parry
+  let block = oldMelee.block
+
+  if (parry !== '') {
+    const parryMatch = oldMelee.parry.match(/^\d+/)
+
+    if (parryMatch) {
+      let parryMod = 0
+
+      const oldParryText = parryMatch[0]
+      const parrySuffix = oldMelee.parry.replace(oldParryText, '')
+      const oldParry = parseInt(oldParryText)
+
+      if (!isNaN(oldParry)) {
+        const expectedParry = Math.floor(importedLevel / 2) + 3
+
+        parryMod = oldParry - expectedParry
+      }
+
+      parryMod += Number(oldMelee.parrybonus) || 0
+
+      parry = `${parryMod}${parrySuffix}`
+    }
+  }
+
+  if (block !== '') {
+    const blockMatch = oldMelee.block.match(/^\d+/)
+
+    if (blockMatch) {
+      let blockMod = 0
+
+      const oldBlockText = blockMatch[0]
+      const blockSuffix = oldMelee.block.replace(oldBlockText, '')
+      const oldBlock = parseInt(oldBlockText)
+
+      if (!isNaN(oldBlock)) {
+        const expectedBlock = Math.floor(importedLevel / 2) + 3
+
+        blockMod = oldBlock - expectedBlock
+      }
+
+      block = `${blockMod}${blockSuffix}`
+    }
+  }
+
   const newMelee: fields.SchemaField.CreateData<MeleeAttackSchema> = {
     _id,
     type: ActionType.MeleeAttack,
     baseParryPenalty: Number(oldMelee.baseParryPenalty) || 0,
-    block: oldMelee.block,
+    block,
     consumeAction: oldMelee.consumeAction,
     damage,
     extraAttacks: Number(oldMelee.extraAttacks) || 0,
-    import: Number(oldMelee.import) || 0,
+    import: importedLevel,
     itemModifiers: '',
     mode: oldMelee.mode,
     modifierTags: oldMelee.modifierTags,
     notes: oldMelee.notes,
     otf: oldMelee.otf,
-    parry: oldMelee.parry,
+    parry,
     reach: oldMelee.reach,
     st: oldMelee.st,
     name: oldMelee.name,
@@ -309,6 +356,7 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
     weightsum: oldData.eqt.weightsum.toString(),
     uses: Number(oldData.eqt.uses) || 0,
     maxuses: Number(oldData.eqt.maxuses) || 0,
+    importid: oldData.eqt.uuid || '',
   }
 
   return newData
@@ -321,6 +369,7 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.fea,
     isContainer: Boolean(oldData.fea.contains && Object.keys(oldData.fea.contains).length > 0),
+    importid: oldData.fea.uuid || '',
   }
 
   return newData
@@ -341,6 +390,7 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
     isContainer: Boolean(oldData.ski.contains && Object.keys(oldData.ski.contains).length > 0),
     import: Number(oldData.ski.import) || 0,
     relativelevel: (oldData.ski.relativelevel ?? '').toString(),
+    importid: oldData.ski.uuid || '',
   }
 
   return newData
@@ -361,6 +411,7 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
     isContainer: Boolean(oldData.spl.contains && Object.keys(oldData.spl.contains).length > 0),
     import: Number(oldData.spl.import) || 0,
     relativelevel: (oldData.spl.relativelevel ?? '').toString(),
+    importid: oldData.spl.uuid || '',
   }
 
   return newData

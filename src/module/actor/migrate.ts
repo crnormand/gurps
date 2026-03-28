@@ -182,15 +182,18 @@ function getMigratedActorData(
 
   // ActorV1 has no concept of Reaction and Conditional Modifier ownership by items,
   // so reactions and conditional modifiers are moved to a single placeholder item.
-  const migrationItem: Item.CreateData<'featureV2'> = {
+  const holderItem: Item.CreateData<'featureV2'> = {
+    _id: foundry.utils.randomID(),
     type: 'featureV2',
-    name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
+    name: game.i18n?.localize('GURPS.migration.holderItem.name'),
   }
 
-  const migrationItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<'featureV2'>>> = {
+  const holderItemFlags = { isMigratedItem: true }
+
+  const holderItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<'featureV2'>>> = {
     containedBy: null,
-    // name: game.i18n?.localize('GURPS.migration.migrationItem.name'),
-    notes: game.i18n?.localize('GURPS.migration.migrationItem.notes'),
+    // name: game.i18n?.localize('GURPS.migration.holderItem.name'),
+    notes: game.i18n?.localize('GURPS.migration.holderItem.notes'),
     points: 0,
     _reactions: {},
     _conditionalmods: {},
@@ -205,9 +208,10 @@ function getMigratedActorData(
       modifier: Number(mod.modifier) || 0,
       situation: mod.situation,
       modifierTags: mod.modifierTags,
+      flags: holderItemFlags,
     }
 
-    migrationItemSystem!._reactions![_id] = data
+    holderItemSystem!._reactions![_id] = data
   })
 
   Object.values(system.conditionalmods).forEach(mod => {
@@ -218,9 +222,10 @@ function getMigratedActorData(
       modifier: Number(mod.modifier) || 0,
       situation: mod.situation,
       modifierTags: mod.modifierTags,
+      flags: holderItemFlags,
     }
 
-    migrationItemSystem!._conditionalmods![_id] = data
+    holderItemSystem!._conditionalmods![_id] = data
   })
 
   Object.values(system.melee).forEach((weapon: Melee) => {
@@ -228,8 +233,10 @@ function getMigratedActorData(
 
     const newMelee = migrateMeleeWeapon(weapon, _id)
 
-    migrationItemSystem.actions ||= {}
-    migrationItemSystem.actions[_id] = newMelee
+    newMelee.flags = holderItemFlags
+
+    holderItemSystem.actions ||= {}
+    holderItemSystem.actions[_id] = newMelee
   })
 
   Object.values(system.ranged).forEach((weapon: Ranged) => {
@@ -237,20 +244,22 @@ function getMigratedActorData(
 
     const newRanged = migrateRangedWeapon(weapon, _id)
 
-    migrationItemSystem.actions ||= {}
-    migrationItemSystem.actions[_id] = newRanged
+    newRanged.flags = holderItemFlags
+
+    holderItemSystem.actions ||= {}
+    holderItemSystem.actions[_id] = newRanged
   })
 
-  migrationItem.system = migrationItemSystem
+  holderItem.system = holderItemSystem
 
-  items.push(migrationItem)
+  items.push(holderItem)
 
   const updateData: Actor.CreateData<'characterV2'> = {
     _id: oldActor._id,
     type: 'characterV2',
     img: oldActor.img,
     name: oldActor.name,
-    system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name),
+    system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name, { holderItemId: holderItem._id! }),
     items,
   }
 
@@ -261,7 +270,8 @@ function getMigratedActorData(
 
 function migrateActorSystem(
   oldData: ActorV1Model,
-  actorName?: string
+  actorName?: string,
+  injectedData?: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>>
 ): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> {
   if (typeof oldData.conditions.move === 'string')
     console.warn(`MIGRATE: Actor ${actorName} oldData.conditions.move: ${oldData.conditions.move}`)
@@ -284,7 +294,11 @@ function migrateActorSystem(
   if (!numberValidate(oldData.traits.sizemod, { integerOnly: true }))
     console.warn(`MIGRATE: Actor ${actorName} has invalid SM value: ${oldData.traits.sizemod}. Defaulting to 0.`)
 
+  const holderItemId = injectedData?.holderItemId || ''
+
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
+    ...injectedData,
+    holderItemId,
     attributes: oldData.attributes,
     HP: oldData.HP,
     FP: oldData.FP,
@@ -313,7 +327,7 @@ function migrateActorSystem(
     additionalresources: {
       qnotes: oldData.additionalresources?.qnotes,
       tracker: {},
-      importname: oldData.additionalresources?.importname,
+      importname: oldData.additionalresources?.importname ?? oldData.additionalresources?.importName,
       importpath: oldData.additionalresources?.importpath,
     },
 
@@ -418,6 +432,7 @@ function migrateActorSystem(
       text: data.notes,
       containedBy: parentId,
       markdown: data.notes,
+      importid: data.uuid,
       _id: id,
     }
 

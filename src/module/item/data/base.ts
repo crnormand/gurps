@@ -62,6 +62,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   static get metadata(): ItemMetadata {
     return {
       embedded: {
+        Action: 'system.actions',
         ReactionModifier: 'system._reactions',
         ConditionalModifier: 'system._conditionalmods',
       },

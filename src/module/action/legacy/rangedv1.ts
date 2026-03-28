@@ -112,7 +112,7 @@ class RangedV1 {
   }
 
   get shots() {
-    return this.rangedV2.shots
+    return this.rangedV2.shotsText
   }
 
   get st() {

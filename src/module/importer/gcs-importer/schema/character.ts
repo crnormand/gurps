@@ -203,6 +203,8 @@ const characterData = () => {
         swing: new fields.StringField({ required: true, nullable: false }),
         thrust: new fields.StringField({ required: true, nullable: false }),
         parry_bonus: new fields.NumberField({ required: true, nullable: true }),
+        dodge_bonus: new fields.NumberField({ required: true, nullable: true }),
+        block_bonus: new fields.NumberField({ required: true, nullable: true }),
         dodge: new fields.ArrayField(new fields.NumberField({ required: true, nullable: false }), {
           required: true,
           nullable: false,

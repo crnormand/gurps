@@ -23,14 +23,10 @@ class SkillModel extends BaseItemModel<SkillSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): ItemMetadata {
-    return {
-      embedded: {},
+    return foundry.utils.mergeObject(super.metadata, {
       type: 'skillV2',
-      invalidActorTypes: [],
-      actions: {},
       childTypes: ['skillV2'],
-      modifierTypes: [],
-    }
+    })
   }
 
   /* ---------------------------------------- */

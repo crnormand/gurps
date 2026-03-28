@@ -1,4 +1,4 @@
-import { ActionType, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { ActionType, AnyAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
@@ -41,6 +41,10 @@ import {
   WeaponReloadTimeBonus,
   WeaponSwitch,
 } from '@module/features/weapon-bonus.js'
+import {
+  ReactionModifier,
+  ConditionalModifier as ConditionalModifierDocument,
+} from '@module/item/data/conditional-modifier.js'
 import { Feature } from '@module/item/legacy/itemv1-interface.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
@@ -222,8 +226,9 @@ declare global {
       }
 
       Item: {
-        MeleeAttack: MeleeAttackModel
-        RangedAttack: RangedAttackModel
+        Action: AnyAction
+        ReactionModifier: ReactionModifier
+        ConditionalModifier: ConditionalModifierDocument
       }
     }
 
@@ -356,7 +361,11 @@ declare global {
 
     /* ---------------------------------------- */
 
-    handleRoll(event: JQuery.MouseEventBase | Event, actor: Actor.Implementation, options?: { targets?: string[] })
+    handleRoll(
+      event: JQuery.MouseEventBase | Event,
+      actor: Actor.Implementation,
+      options?: { targets?: string[] }
+    ): Promise<void>
 
     /* ---------------------------------------- */
 

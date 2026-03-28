@@ -11,7 +11,7 @@ import { TraitSchema } from '@module/item/data/trait.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { HitLocation, hitlocationDictionary } from '../../hitlocation/hitlocation.js'
-import { createDataIsOfType, createStandardTrackers } from '../helpers.js'
+import { createDataIsOfType, createStandardTrackers, promptDeletionOfMigratedItems } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
 import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'
@@ -31,6 +31,7 @@ class GcaImporter {
   input: GCACharacter
   output: DataModel.CreateData<CharacterSchema>
   items: Item.CreateData[]
+  existingItems: Item.Stored[]
   img: string
 
   /* ---------------------------------------- */
@@ -38,6 +39,7 @@ class GcaImporter {
   constructor(input: GCACharacter) {
     this.input = input
     this.output = {}
+    this.existingItems = []
 
     this.items = []
     this.img = ''
@@ -60,7 +62,10 @@ class GcaImporter {
     const name = this.input.name ?? 'Imported Character'
 
     // Set actor as a GcaImporter property for easier reference.
-    if (actor) this.actor = actor
+    if (actor) {
+      this.actor = actor
+      this.existingItems = actor.items.contents
+    }
 
     this.#importPortrait()
     this.#importAttributes()
@@ -69,6 +74,7 @@ class GcaImporter {
     this.#importItems()
     this.#importPointTotals()
     this.#importMiscValues()
+    await promptDeletionOfMigratedItems(this.actor)
     createStandardTrackers(this)
 
     if (actor) {
@@ -76,8 +82,6 @@ class GcaImporter {
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
         actor.items.contents.filter(item => item.isOfType('equipmentV2'))
       )
-
-      await this.#deleteImportedItems(actor)
 
       // Update actor with new system data and create new items
       await actor.update({
@@ -89,7 +93,15 @@ class GcaImporter {
       // Restore saved counts and uses in raw item data before creating embedded documents
       this.#restoreEquipmentCountsAndUses(savedEquipmentCounts)
 
-      await actor.createEmbeddedDocuments('Item', this.items, { keepId: true })
+      await this.#deleteImportedItems(actor)
+
+      this.existingItems = actor.items.contents
+
+      const itemsToUpdate = this.items.filter(itemData => this.#existingItemId(itemData))
+      const itemsToCreate = this.items.filter(itemData => !this.#existingItemId(itemData))
+
+      await actor.updateEmbeddedDocuments('Item', itemsToUpdate, { recursive: false })
+      await actor.createEmbeddedDocuments('Item', itemsToCreate, { keepId: true })
     } else {
       // @ts-expect-error: Actor shows as stored type, but is not stored.
       actor = await Actor.create({
@@ -125,6 +137,19 @@ class GcaImporter {
         }
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  #existingItemId(itemData: Item.CreateData): string | null {
+    const system = itemData.system as AnyObject
+    const id = system?.importid
+
+    if (!id) return null
+
+    const existingId = this.existingItems.find(existing => existing.system.importid === id)?._id ?? null
+
+    return existingId || null
   }
 
   /* ---------------------------------------- */
@@ -347,6 +372,16 @@ Portrait will not be imported.`
     const SM = this.input.traits.attributes.find(attr => attr.symbol === 'SM')
     const TL = this.input.traits.attributes.find(attr => attr.symbol === 'TL')
 
+    const authorCreatedRaw = this.input.author?.datecreated
+    let createdDate = authorCreatedRaw ? new Date(authorCreatedRaw) : new Date()
+
+    if (isNaN(createdDate.getTime())) {
+      createdDate = new Date()
+    }
+
+    const createdon = createdDate.toISOString()
+    const modifiedon = new Date().toISOString()
+
     this.output.profile = {
       title: '',
       height: vitals?.height ?? '',
@@ -362,8 +397,8 @@ Portrait will not be imported.`
       skin: '',
       sizemod: SM?.score ?? 0,
       techlevel: `${TL?.score ?? 0}`,
-      createdon: this.input.author?.datecreated ?? '',
-      modifiedon: '',
+      createdon,
+      modifiedon,
       player: this.input.player ?? '',
     }
   }
@@ -420,6 +455,7 @@ Portrait will not be imported.`
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
+          flags: {},
           where: location.location ?? '',
           import: Number.isNaN(dr) ? 0 : dr,
           rollText: roll,
@@ -442,7 +478,8 @@ Portrait will not be imported.`
 
   async #promptHitLocationOverwrite() {
     // No need to run this if there is no existing actor or if this is the first import.
-    if (!this.actor || !this.actor.system.profile.modifiedon) return
+    if (!this.actor || (!this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname))
+      return
 
     const currentBodyPlan = this.actor.system.bodyplan
 
@@ -583,7 +620,7 @@ Portrait will not be imported.`
   #importItem(
     item: GCATrait,
     containedBy: string | null = null
-  ): DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> {
+  ): [DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>>, string] {
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {
       // name: item.name ?? '',
       notes: item.ref?.notes ?? '',
@@ -594,7 +631,13 @@ Portrait will not be imported.`
       _reactions: {},
       _conditionalmods: {},
       containedBy,
+      importid: `k${item.$idkey}`,
     }
+
+    let id = foundry.utils.randomID()
+    const existingItemId = this.#existingItemId({ system, type: 'base', name: '' })
+
+    if (existingItemId) id = existingItemId
 
     if (item.attackmodes) {
       system.actions = item.attackmodes
@@ -619,7 +662,7 @@ Portrait will not be imported.`
         )
     }
 
-    return system
+    return [system, id]
   }
 
   /* ---------------------------------------- */
@@ -650,6 +693,16 @@ Portrait will not be imported.`
 
     block.modifier = (block.modifier ?? 0) - blockLevelDifference
 
+    let parry = weapon.parry
+
+    const baseParry = Number(parry ?? '')
+
+    if (!isNaN(baseParry)) {
+      const parryBonus = this.input.traits.attributes.find(attr => attr.name === 'Parry')?.score ?? 0
+
+      parry = (baseParry + parryBonus).toString()
+    }
+
     return {
       name,
       type,
@@ -662,7 +715,7 @@ Portrait will not be imported.`
       mode: weapon.name ?? '',
       modifierTags: '',
       notes: weapon.notes ?? '',
-      parry: weapon.parry ?? '',
+      parry,
       reach: weapon.charreach ?? '',
       st: weapon.charminst ?? '',
     }
@@ -713,15 +766,16 @@ Portrait will not be imported.`
    */
   #importTrait(trait: GCATrait, containedBy: string | null = null): void {
     const type = 'featureV2'
-    const _id = foundry.utils.randomID()
 
     let name = trait.name ?? 'Trait'
     const crRegex = /\[\s*CR: (\d{1,2})\s*\]/i
 
     const isLeveled = trait.calcs.cost?.includes('/') ?? false
 
+    const [baseSystem, _id] = this.#importItem(trait, containedBy)
+
     const system: DataModel.CreateData<TraitSchema> = {
-      ...this.#importItem(trait, containedBy),
+      ...baseSystem,
       cr: 0,
       level: isLeveled ? (trait.level ?? 0) : null,
       userdesc: trait.ref?.description ?? '',
@@ -758,13 +812,13 @@ Portrait will not be imported.`
 
   #importSkill(skill: GCATrait, containedBy: string | null = null): void {
     const type = 'skillV2'
-    const _id = foundry.utils.randomID()
     // TODO: localize
     const name = skill.name ?? 'Skill'
 
-    const system: DataModel.CreateData<SkillSchema> = {
-      ...this.#importItem(skill, containedBy),
+    const [baseSystem, _id] = this.#importItem(skill, containedBy)
 
+    const system: DataModel.CreateData<SkillSchema> = {
+      ...baseSystem,
       points: skill.points ?? 0,
       difficulty: skill.type ?? '',
       relativelevel: `${skill.stepoff}${skill.step}`,
@@ -787,7 +841,6 @@ Portrait will not be imported.`
 
   #importSpell(spell: GCATrait, containedBy: string | null = null): void {
     const type = 'spellV2'
-    const _id = foundry.utils.randomID()
     // TODO: localize
     const name = spell.name ?? 'Spell'
 
@@ -818,8 +871,10 @@ Portrait will not be imported.`
         .filter(collegeName => !collegeName.startsWith('~'))
         .join(', ') ?? ''
 
+    const [baseSystem, _id] = this.#importItem(spell, containedBy)
+
     const system: DataModel.CreateData<SpellSchema> = {
-      ...this.#importItem(spell, containedBy),
+      ...baseSystem,
       points: spell.points ?? 0,
       difficulty: spell.type ?? '',
       relativelevel: `${spell.stepoff}${spell.step}`,
@@ -849,11 +904,12 @@ Portrait will not be imported.`
 
   #importEquipment(equipment: GCATrait, containedBy: string | null = null): void {
     const type = 'equipmentV2'
-    const _id = foundry.utils.randomID()
     const name = equipment.name ?? 'Equipment'
 
+    const [baseSystem, _id] = this.#importItem(equipment, containedBy)
+
     const system: DataModel.CreateData<EquipmentSchema> = {
-      ...this.#importItem(equipment, containedBy),
+      ...baseSystem,
       count: equipment.count ?? 1,
       weight: parseFloat(equipment.calcs.postformulaweight ?? '0') || 0,
       cost: parseFloat(equipment.calcs.postformulacost ?? '0') || 0,

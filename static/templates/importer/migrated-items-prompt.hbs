@@ -1,0 +1,32 @@
+{{#*inline ".entry"}}
+<tr>
+  <td>
+    <input type="checkbox" id="{{id}}" name="{{id}}">
+    <label for="{{id}}">{{name}}</label>
+  </td>
+</tr>
+{{/inline}}
+
+{{#*inline ".table"}}
+<table>
+  <thead>
+    <tr>
+      <th>
+        {{localize title}}
+        <input type="checkbox" id="{{title}}">
+        <label for="{{title}}">{{localize "GURPS.importer.migratedItemsPrompt.selectAll"}}</label>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#each entries}}
+    {{> ".entry"}}
+  {{/each}}
+  </tbody>
+</table>
+{{/inline}}
+
+<p>{{{localize "GURPS.importer.migratedItemsPrompt.message"}}}</p>
+{{#each collections}}
+  {{> ".table"}}
+{{/each}}
