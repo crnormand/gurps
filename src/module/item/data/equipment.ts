@@ -28,6 +28,7 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
         weight: 'system.weight',
         extendedWeight: 'system.weightsum',
       },
+      detailsPartial: ['item.partials.equipment'],
     })
   }
 

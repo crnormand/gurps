@@ -1,0 +1,129 @@
+@use 'variables' as *;
+
+body {
+  .application.modern-item-sheet {
+    @include css-variables;
+  }
+
+  &.theme-dark .application.modern-item-sheet:not(.theme-light),
+  .application.modern-item-sheet.theme-dark {
+    @include css-variables-dark;
+  }
+}
+
+.application.modern-item-sheet {
+  font-family: 'Roboto', sans-serif;
+
+  .window-header {
+    &.header-trait {
+      background: var(--ms-bg-header-trait);
+    }
+    &.header-skill {
+      background: var(--ms-bg-header-skill);
+    }
+    &.header-spell {
+      background: var(--ms-bg-header-spell);
+    }
+    &.header-equipment {
+      background: var(--ms-bg-header-equipment);
+    }
+  }
+
+  .window-content {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    border: none;
+    background: var(--ms-bg);
+  }
+
+  .ms-header {
+    display: grid;
+    grid-template-columns: 120px auto;
+    grid-template-areas:
+      'portrait name'
+      'portrait tabs';
+    gap: var(--ms-space-6);
+    align-items: start;
+    background: var(--ms-bg-header);
+    border-bottom: none;
+    padding: var(--ms-space-5) var(--ms-space-6);
+  }
+
+  .ms-portrait-wrapper {
+    grid-area: portrait;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .ms-portrait {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 2px solid var(--ms-border);
+    cursor: pointer;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .ms-name-container {
+    grid-area: name;
+    .ms-name {
+      font-size: var(--ms-font-title);
+      font-weight: var(--ms-weight-semibold);
+      margin: 0 0 var(--ms-space-1) 0;
+      line-height: var(--ms-leading-tight);
+      color: var(--ms-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 246px;
+      border-bottom: none;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--ms-accent);
+      }
+    }
+
+    input[name='name'] {
+      display: none;
+      font-size: var(--ms-font-xl);
+      font-weight: var(--ms-weight-semibold);
+      line-height: var(--ms-leading-tight);
+      border: none;
+      border-bottom: 2px solid var(--ms-hp);
+      border-radius: 0;
+      padding: 0;
+      max-width: 246px;
+      background: transparent;
+      color: var(--ms-text);
+      outline: none;
+    }
+
+    &.editing {
+      .ms-name {
+        display: none;
+      }
+
+      input[name='name'] {
+        display: block;
+      }
+    }
+  }
+
+  .ms-tabs {
+    grid-area: tabs;
+
+    align-self: end;
+    transform: translateY(0.2rem);
+  }
+}

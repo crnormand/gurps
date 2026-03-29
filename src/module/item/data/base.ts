@@ -11,7 +11,7 @@ import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
 import { ConditionalModifier, ReactionModifier } from './conditional-modifier.js'
 
-type ItemMetadata = Readonly<{
+type ItemMetadata = {
   /** The expected `type` value */
   type: string
   /** Actor types that this item cannot be placed on */
@@ -33,7 +33,7 @@ type ItemMetadata = Readonly<{
    * value is the path to the property value.
    */
   sortKeys: Record<string, string>
-}>
+}
 
 /* ---------------------------------------- */
 
