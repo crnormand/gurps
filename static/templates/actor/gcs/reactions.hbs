@@ -5,7 +5,7 @@
       data-action="addModifier"
       data-value="{{modifier}}"
       data-comment="{{situation}}"
-      class="gcs-item-modifier">{{{displayNumber modifier}}}</td>
+      class="gcs-item-modifier {{ifThen (gte modifier 0) 'gcs-mod-positive' 'gcs-mod-negative' }}">{{{displayNumber modifier}}}</td>
     <td class="gcs-item-situation">{{situation}}</td>
   </tr>
 {{/inline}}
@@ -19,7 +19,9 @@
     <thead>
       <tr>
         <th><i class="fa-solid fa-plus-minus"></i></th>
-        <th>Reaction</th>
+        <th>
+          {{localize "GURPS.sheet.gcsActorSheet.reactionModifiers"}}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -41,7 +43,9 @@
     <thead>
       <tr>
         <th><i class="fa-solid fa-plus-minus"></i></th>
-        <th>Condition</th>
+        <th>
+          {{localize "GURPS.sheet.gcsActorSheet.conditionalModifiers"}}
+        </th>
       </tr>
     </thead>
     <tbody>

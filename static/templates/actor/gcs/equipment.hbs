@@ -25,7 +25,7 @@
         <span class="gcs-item-name-text">{{fullName}}</span>
         {{#if hasNotes}}
         <i
-          class="fa-solid fa-notes gcs-notes-toggle"
+          class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
           data-action="toggleItemNotes"
           data-open="{{notesOpen}}"
         ></i>
@@ -73,15 +73,15 @@
           #
         </th>
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.name}}">
-          Carried Equipment
+          {{localize "GURPS.sheet.gcsActorSheet.equipmentCarried" value=carriedValue weight=carriedWeight}}
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.techLevel}}">
-          TL
+          {{localize "GURPS.sheet.gcsActorSheet.techLevel"}}
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.legalityClass}}">
-          LC
+          {{localize "GURPS.sheet.gcsActorSheet.legalityClass"}}
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.value}}">
@@ -93,12 +93,12 @@
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.extendedValue}}">
-          <i class="fa-solid fa-coins"></i>
+          <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-coins"></i>
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.extendedWeight}}">
-          <i class="fa-solid fa-weight-hanging"></i>
+          <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
       </tr>
@@ -131,15 +131,15 @@
           #
         </th>
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.name}}">
-          Other Equipment
+          {{localize "GURPS.sheet.gcsActorSheet.equipmentOther" value=otherValue weight=otherWeight}}
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.techLevel}}">
-          TL
+          {{localize "GURPS.sheet.gcsActorSheet.techLevel"}}
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.legalityClass}}">
-          LC
+          {{localize "GURPS.sheet.gcsActorSheet.legalityClass"}}
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.value}}">
@@ -151,12 +151,12 @@
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.extendedValue}}">
-          <i class="fa-solid fa-coins"></i>
+          <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-coins"></i>
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.extendedWeight}}">
-          <i class="fa-solid fa-weight-hanging"></i>
+          <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
       </tr>

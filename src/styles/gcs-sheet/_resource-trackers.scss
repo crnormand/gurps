@@ -2,19 +2,33 @@
   display: flex;
   flex-direction: row;
   gap: 0.1rem;
+  overflow-x: auto;
 
   .form-fields {
+    height: auto;
+
     input,
     span {
       max-width: 6ch;
     }
   }
 
+  /* ---------------------------------------- */
+
+  .gcs-pool-attribute {
+    flex: 0 0 auto;
+  }
+
+  /* ---------------------------------------- */
+
   button {
+    // All buttons except "add tracker" are square icon buttons.
     &:not([data-action='addResourceTracker']) {
       max-width: var(--gcs-input-height);
     }
 
+    // Decrement/increment share a border; flatten the adjacent corners so they
+    // read as a single stepper control.
     &[data-action='decrementPool'] {
       border-bottom-right-radius: 0;
       border-top-right-radius: 0;
@@ -29,6 +43,8 @@
       margin-left: 0.5rem;
     }
   }
+
+  /* ---------------------------------------- */
 
   .pool-state {
     white-space: nowrap;

@@ -1,3 +1,5 @@
+// .gcs-item-table resets white-space to unset for all td; restore nowrap for the
+// points column since it contains formatted numbers that must not wrap.
 .gcs-trait-table {
   .gcs-item-points {
     text-align: right;

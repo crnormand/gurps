@@ -1166,7 +1166,7 @@
         "successMessage": "Migrações de Ator aplicadas com sucesso para a versão {version}."
       },
       "holderItem": {
-        "name": "O Porta-Tudo",
+        "name": "Ações & Modificadores Pessoais",
         "notes": "Este é um item temporário usado para armazenar todas as Reações, Modificadores Condicionais e Armas após a migração do personagem. Para mover essas entidades de volta para seus lugares apropriados, por favor reimporte este personagem do GCS ou GCA."
       },
       "item": {
@@ -1750,25 +1750,63 @@
     "severity": "Severidade",
     "share": "Compartilhar",
     "sheet": {
+      "encumbrance": {
+        "dodge": "Esquiva",
+        "level": "Nível",
+        "maxLoad": "Carga Máx.",
+        "move": "Movimento"
+      },
       "gcs": {
         "copyright": "GCS© Todos os Direitos Reservados 1998-2026 Richard A. Wilkes."
       },
       "gcsActorSheet": {
         "basicDamage": "Dano Básico",
+        "conditionalModifiers": "Modificadores Condicionais",
         "description": "Descrição",
         "encumbrance": "Encumbramento",
+        "equipmentCarried": "Equipamento Carregado ({weight}; {value})",
+        "equipmentOther": "Outro Equipamento ({weight}; {value})",
         "identity": "Identidade",
         "label": "Ficha de Personagem GCS",
+        "legalityClass": "LC",
         "maneuverStatus": "Manobra / Status",
         "miscellaneous": "Diversos",
         "moving": "Movimentação",
+        "notes": "Notas",
+        "points": "Pts",
         "pointTotals": "Totais de Pontos",
         "poolAttributes": "Atributos de Reserva",
         "poolBase": "Base",
         "portrait": "Retrato",
         "pound": "kg.",
         "primaryAttributes": "Atributos Primários",
-        "secondaryAttributes": "Atributos Secundários"
+        "reactionModifiers": "Reações",
+        "secondaryAttributes": "Atributos Secundários",
+        "skillLevel": "SL",
+        "skillRelativeLevel": "RSL",
+        "skills": "Perícias / Técnicas",
+        "spells": "Magias",
+        "techLevel": "TL",
+        "traits": "Características",
+        "weaponAccuracy": "Prec.",
+        "weaponBlock": "Bloco",
+        "weaponBulk": "Bulk",
+        "weaponDamage": "Dano",
+        "weaponMelee": "Armas Corpo-a-Corpo",
+        "weaponParry": "Apar.",
+        "weaponRange": "Alc.",
+        "weaponRanged": "Armas à Distância",
+        "weaponReach": "Ext.",
+        "weaponRecoil": "Recuo",
+        "weaponROF": "Cad.",
+        "weaponShots": "Tiros",
+        "weaponST": "ST",
+        "weaponUsage": "Uso"
+      },
+      "hitLocation": {
+        "dr": "DR",
+        "location": "Localização",
+        "roll": "Rolagem"
       },
       "personal": {
         "created": "Criação",

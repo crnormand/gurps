@@ -1,7 +1,7 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
 import { getGame, hasMetadata, isUpdatableDocument } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
-import { AnyObject, InexactPartial } from 'fvtt-types/utils'
+import { AnyObject, Identity, InexactPartial } from 'fvtt-types/utils'
 
 import { type ModelCollection } from '../data/model-collection.js'
 
@@ -487,6 +487,28 @@ namespace PseudoDocument {
   export type DeleteOperation = Document.Database.DeleteOperation<
     foundry.abstract.types.DatabaseDeleteOperation<Document.Any>
   >
+
+  /* ---------------------------------------- */
+
+  type DataSchema = ReturnType<typeof pseudoDocumentSchema> & fields.DataSchema
+
+  declare abstract class AnyPseudoDocument extends PseudoDocument<DataSchema, any, AnyObject> {
+    constructor(...args: never)
+  }
+
+  /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-object-type
+  declare class ConcretePseudoDocument extends PseudoDocument<DataSchema, DataModel.Any, {}> {}
+
+  /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface Any extends AnyPseudoDocument {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface AnyConstructor extends Identity<typeof AnyPseudoDocument> {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface ConcreteConstructor extends Identity<typeof ConcretePseudoDocument> {}
 }
 
 /* ---------------------------------------- */

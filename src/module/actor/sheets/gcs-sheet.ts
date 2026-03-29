@@ -7,6 +7,7 @@ import {
   DisplaySpell,
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
+import { Weight } from '@module/data/common/weight.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import type { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
@@ -50,12 +51,14 @@ type PoolEntry = {
     path?: string
     label?: string
     initial?: number
+    name?: string
   }
   denominator: {
     field: foundry.data.fields.NumberField<any>
     value: number
     path?: string
     label?: string
+    name?: string
   }
   atMin?: boolean
   atMax: boolean
@@ -124,6 +127,10 @@ namespace GurpsActorGcsSheet {
     createdDate: string
     modifiedDate: string
     quickNotes: Handlebars.SafeString
+    carriedValue: string
+    carriedWeight: string
+    otherValue: string
+    otherWeight: string
   }
 }
 
@@ -259,6 +266,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       postureChoices,
       sortKeys,
       quickNotes: new Handlebars.SafeString(this.actor.system.additionalresources.qnotes),
+      carriedValue: '$' + this.actor.system.eqtsummary.eqtcost.toLocaleString(),
+      carriedWeight: Weight.fromPounds(this.actor.system.eqtsummary.eqtlbs).toString(),
+      otherWeight: Weight.fromPounds(this.actor.system.eqtsummary.otherlbs).toString(),
+      otherValue: '$' + this.actor.system.eqtsummary.othercost.toLocaleString(),
     }
   }
 
@@ -397,6 +408,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
           path: tracker._id,
           value: tracker.value,
           initial: tracker.isAccumulator ? 0 : tracker.max,
+          name: `${tracker.fieldPath}.${tracker._id}.value`,
         },
         denominator: {
           field: GurpsActorGcsSheet.#pseudoDenominator,
@@ -523,9 +535,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       { label: 'GURPS.oneHandLift', value: liftingMoving.onehandedlift },
       { label: 'GURPS.twoHandLift', value: liftingMoving.twohandedlift },
       { label: 'GURPS.shoveAndKnockOver', value: liftingMoving.shove },
+      { label: 'GURPS.carryOnBack', value: liftingMoving.carryonback },
       { label: 'GURPS.runningShoveAndKnockOver', value: liftingMoving.runningshove },
       { label: 'GURPS.shiftSlightly', value: liftingMoving.shiftslightly },
-      { label: 'GURPS.carryOnBack', value: liftingMoving.carryonback },
     ].map(({ label, value }) => {
       return { label, value: value.toLocaleString() }
     })
@@ -942,9 +954,12 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     if (!this.actor.isOwner) return
 
-    const _id = foundry.utils.randomID()
+    const createData = {
+      _id: foundry.utils.randomID(),
+      name: getGame().i18n.localize('GURPS.resourceTracker.placeholder'),
+    }
 
-    await TrackerInstance.create({ _id }, { parent: this.actor, renderSheet: true })
+    await TrackerInstance.create(createData, { parent: this.actor, renderSheet: true })
   }
 
   /* ---------------------------------------- */
@@ -1073,8 +1088,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   protected override async _onDrop(event: DragEvent): Promise<void> {
     const data = foundry.applications.ux.TextEditor.getDragEventData(event) as DragData | null
-
-    console.log(data)
 
     if (!data) return
 

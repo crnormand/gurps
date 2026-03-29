@@ -1166,7 +1166,7 @@
         "successMessage": "Миграции актёра для версии {version} успешно применены."
       },
       "holderItem": {
-        "name": "Универсальный держатель",
+        "name": "Личные действия и модификаторы",
         "notes": "Это временный предмет, используемый для хранения всех реакций, условных модификаторов и оружия после миграции персонажа. Чтобы вернуть эти элементы на их места, пожалуйста, повторно импортируйте этого персонажа из GCS или GCA."
       },
       "item": {
@@ -1750,25 +1750,63 @@
     "severity": "Тяжесть",
     "share": "Поделиться",
     "sheet": {
+      "encumbrance": {
+        "dodge": "Уклонение",
+        "level": "Уровень",
+        "maxLoad": "Макс. нагрузка",
+        "move": "Движение"
+      },
       "gcs": {
         "copyright": "Права на GCS принадлежат Richard A. Wilkes, 1998-2026. Все права защищены."
       },
       "gcsActorSheet": {
         "basicDamage": "Базовый урон",
+        "conditionalModifiers": "Условные модификаторы",
         "description": "Описание",
         "encumbrance": "Нагрузка",
+        "equipmentCarried": "Носимое снаряжение ({weight}; {value})",
+        "equipmentOther": "Прочее снаряжение ({weight}; {value})",
         "identity": "Личность",
         "label": "Лист персонажа GCS",
+        "legalityClass": "ЛК",
         "maneuverStatus": "Манёвр / Статус",
         "miscellaneous": "Разное",
         "moving": "Движение",
+        "notes": "Заметки",
+        "points": "Оч.",
         "pointTotals": "Итого очков",
         "poolAttributes": "Атрибуты запаса",
         "poolBase": "База",
         "portrait": "Изображение",
         "pound": "кг.",
         "primaryAttributes": "Основные атрибуты",
-        "secondaryAttributes": "Вторичные атрибуты"
+        "reactionModifiers": "Реакции",
+        "secondaryAttributes": "Вторичные атрибуты",
+        "skillLevel": "СЛ",
+        "skillRelativeLevel": "РСЛ",
+        "skills": "Навыки / Техники",
+        "spells": "Заклинания",
+        "techLevel": "ТЛ",
+        "traits": "Особенности",
+        "weaponAccuracy": "Точн.",
+        "weaponBlock": "Блок",
+        "weaponBulk": "Объём",
+        "weaponDamage": "Урон",
+        "weaponMelee": "Оружие ближнего боя",
+        "weaponParry": "Пар.",
+        "weaponRange": "Дист.",
+        "weaponRanged": "Дальнобойное оружие",
+        "weaponReach": "Досяг.",
+        "weaponRecoil": "Отдача",
+        "weaponROF": "СкС",
+        "weaponShots": "Выстр.",
+        "weaponST": "СТ",
+        "weaponUsage": "Применение"
+      },
+      "hitLocation": {
+        "dr": "ДР",
+        "location": "Локация",
+        "roll": "Бросок"
       },
       "personal": {
         "created": "Создан",

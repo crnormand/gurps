@@ -174,7 +174,7 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
   /* ---------------------------------------- */
 
   static objectToString(data: { value: number; unit: WeightUnit }): string {
-    return `${Math.round(data.value * Math.pow(10, Weight.ROUNDING_PRECISION)) / Math.pow(10, Weight.ROUNDING_PRECISION)} ${Weight.UNIT_LABELS[data.unit][0]}`
+    return `${(Math.round(data.value * Math.pow(10, Weight.ROUNDING_PRECISION)) / Math.pow(10, Weight.ROUNDING_PRECISION)).toLocaleString()} ${Weight.UNIT_LABELS[data.unit][0]}`
   }
 
   /* ---------------------------------------- */
@@ -212,6 +212,17 @@ class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends
 
   override toString(): string {
     return Weight.objectToString({ value: this.value, unit: this.unit })
+  }
+
+  /* ---------------------------------------- */
+
+  toLocaleObject(): { value: string; unit: WeightUnit } {
+    const object = this.toObject()
+
+    return {
+      value: object.value.toLocaleString(undefined, { maximumFractionDigits: Weight.ROUNDING_PRECISION }),
+      unit: object.unit,
+    }
   }
 }
 

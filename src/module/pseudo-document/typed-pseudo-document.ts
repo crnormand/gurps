@@ -1,6 +1,6 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
 import { systemPath } from '@module/util/misc.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyObject, Identity } from 'fvtt-types/utils'
 
 import { PseudoDocument, pseudoDocumentSchema } from './pseudo-document.js'
 
@@ -8,11 +8,11 @@ import { PseudoDocument, pseudoDocumentSchema } from './pseudo-document.js'
 
 // @ts-expect-error - Polymorphic static create return type is incompatible with base class signature, this is a TS limitation
 class TypedPseudoDocument<
-  TName extends gurps.Pseudo.WithTypes = gurps.Pseudo.WithTypes,
+  DocumentName extends gurps.Pseudo.WithTypes = gurps.Pseudo.WithTypes,
   Schema extends TypedPseudoDocument.Schema = TypedPseudoDocument.Schema,
   Parent extends DataModel.Any = DataModel.Any,
 > extends PseudoDocument<Schema, Parent> {
-  declare readonly _documentName: TName
+  declare readonly _documentName: DocumentName
 
   static override defineSchema(): TypedPseudoDocument.Schema {
     return typedPseudoDocumentSchema(this)
@@ -66,9 +66,9 @@ class TypedPseudoDocument<
 
   /* ---------------------------------------- */
 
-  isOfType<SubType extends TypedPseudoDocument.TypeNames<TName>>(
+  isOfType<SubType extends TypedPseudoDocument.TypeNames<DocumentName>>(
     ...types: SubType[]
-  ): this is TypedPseudoDocument.OfType<TName, SubType>
+  ): this is TypedPseudoDocument.OfType<DocumentName, SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type)
   }
@@ -134,20 +134,57 @@ namespace TypedPseudoDocument {
 
   /* ---------------------------------------- */
 
+  export type DocumentNameOf<M> = M extends abstract new (
+    ...args: any[]
+  ) => TypedPseudoDocument<infer DocumentName, any, any>
+    ? DocumentName
+    : never
+
+  /* ---------------------------------------- */
+
   export type OfType<
     Name extends gurps.Pseudo.WithTypes,
     Type extends TypeNames<Name>,
-  > = PseudoDocumentConfig.Types extends {
-    readonly [_ in Name]: { readonly discriminate: 'all' }
+  > = PseudoDocumentConfig.Types[Name] extends {
+    readonly [_1 in Type]: { documentClass: abstract new (...args: any) => any }
   }
-    ? PseudoDocumentConfig.Types[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
-      ? PseudoDocumentConfig.Types[Name][Type]['documentClass']
-      : never
+    ? InstanceType<PseudoDocumentConfig.Types[Name][Type]['documentClass']>
+    : never
+
+  /* ---------------------------------------- */
+
+  export type ConstructorOfType<
+    Name extends gurps.Pseudo.WithTypes,
+    Type extends TypeNames<Name>,
+  > = PseudoDocumentConfig.Types[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
+    ? PseudoDocumentConfig.Types[Name][Type]['documentClass']
     : never
 
   /* ---------------------------------------- */
 
   export type Schema = PseudoDocument.Schema & ReturnType<typeof typedPseudoDocumentSchema>
+
+  /* ---------------------------------------- */
+
+  type DataSchema = ReturnType<typeof typedPseudoDocumentSchema> & fields.DataSchema
+
+  declare abstract class AnyTypedPseudoDocument extends PseudoDocument<DataSchema, any, AnyObject> {
+    constructor(...args: never)
+  }
+
+  /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  declare class ConcreteTypedPseudoDocument extends TypedPseudoDocument<any, DataSchema, DataModel.Any> {}
+
+  /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface Any extends AnyTypedPseudoDocument {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface AnyConstructor extends Identity<typeof AnyTypedPseudoDocument> {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface ConcreteConstructor extends Identity<typeof ConcreteTypedPseudoDocument> {}
 }
 
 /* ---------------------------------------- */

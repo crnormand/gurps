@@ -1,18 +1,25 @@
 section[data-application-part='resources'] {
   display: grid;
-  grid-gap: var(--gcs-section-gap);
+  gap: var(--gcs-section-gap);
 
+  // attributes | body | encumbrance
+  // attributes | body | moving
   grid-template-areas:
     'attributes body encumbrance'
     'attributes body moving';
   grid-template-columns: auto auto auto;
 
+  /* ---------------------------------------- */
+
   .gcs-attributes {
     grid-area: attributes;
 
     display: grid;
-    grid-gap: 0.1rem;
+    gap: 0.1rem;
 
+    // primary   | secondary
+    // damage    | secondary
+    // maneuver (spans both)
     grid-template-areas:
       'primary secondary'
       'damage secondary'
@@ -24,6 +31,7 @@ section[data-application-part='resources'] {
 
     [data-action='rollOtf'],
     input {
+      text-align: right;
       max-width: 6ch;
     }
 
@@ -46,11 +54,21 @@ section[data-application-part='resources'] {
 
     .gcs-maneuver-status {
       grid-area: maneuver;
+
+      label {
+        text-align: right;
+      }
     }
   }
 
+  /* ---------------------------------------- */
+
   .gcs-body {
     grid-area: body;
+
+    .gcs-section-content {
+      padding: 0;
+    }
   }
 
   .gcs-encumbrance {
@@ -65,13 +83,15 @@ section[data-application-part='resources'] {
     grid-area: moving;
 
     .gcs-lifting-value {
-      text-align: end;
+      text-align: right;
       font-weight: 700;
     }
   }
 }
 
-// Pool Threshold Tooltip (rendered separately from the rest of the sheet)
+/* ---------------------------------------- */
+
+// Pool threshold tooltip (rendered outside the sheet application).
 .gcs-pool-tooltip {
   font-family: 'Roboto', sans-serif;
 

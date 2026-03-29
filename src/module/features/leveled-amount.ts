@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { Feature, FeatureType } from './index.js'
+import { Feature } from './index.js'
 
 const leveledAmountSchema = () => {
   return {
@@ -38,7 +38,7 @@ function isLeveledAmount(obj: unknown): obj is ILeveledAmount {
 
 /* ---------------------------------------- */
 
-function getLeveledAmount<T extends FeatureType>(bonus: Feature<T> & ILeveledAmount): number {
+function getLeveledAmount<T extends Feature.Type>(bonus: Feature.OfType<T> & ILeveledAmount): number {
   if (bonus.perLevel) {
     const level = 'level' in bonus.parent && typeof bonus.parent.level === 'number' ? bonus.parent.level : 1
 

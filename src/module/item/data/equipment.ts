@@ -81,13 +81,13 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       equipped: this.equipped,
       carried: this.carried,
-      quantity: this.count,
+      quantity: this.count.toLocaleString(),
       techLevel: this.techlevel,
       legalityClass: this.legalityclass,
-      value: this.cost,
-      extendedValue: this.costsum,
-      weight: Weight.from(this.weight, Weight.Unit.Pound, true).toObject(),
-      extendedWeight: Weight.from(this.weightsum, Weight.Unit.Pound, true).toObject(),
+      value: this.cost.toLocaleString(),
+      extendedValue: this.costsum.toLocaleString(),
+      weight: Weight.from(this.weight, Weight.Unit.Pound, true).toLocaleObject(),
+      extendedWeight: Weight.from(this.weightsum, Weight.Unit.Pound, true).toLocaleObject(),
     })
   }
 }

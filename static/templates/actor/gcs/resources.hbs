@@ -90,30 +90,32 @@
   </div>
   <div class="gcs-body gcs-section">
     <div class="gcs-section-header">{{ systemSource.bodyplan }}</div>
-    <table class="gcs-table  gcs-section-content">
-      <thead>
-        <tr>
-          <th>Roll</th>
-          <th colspan="2">Location</th>
-          <th>DR</th>
-        </tr>
-      </thead>
-      <tbody>
-        {{#each systemSource.hitlocationsV2 as |location|}}
+    <div class="gcs-section-content">
+      <table class="gcs-table">
+        <thead>
           <tr>
-            <td>{{location.rollText}}</td>
-            <td>{{location.where}}</td>
-            <td
-              class="form-fields"
-              data-action="addModifier"
-              data-value="{{location.penalty}}"
-              data-comment="{{localize 'GURPS.hitLocationPenalty'}}: {{location.where}}"
-              >{{location.penalty}}</td>
-            <td>{{location._dr}}</td>
+            <th>{{localize "GURPS.sheet.hitLocation.roll"}}</th>
+            <th colspan="2">{{localize "GURPS.sheet.hitLocation.location"}}</th>
+            <th>{{localize "GURPS.sheet.hitLocation.dr"}}</th>
           </tr>
-        {{/each}}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {{#each systemSource.hitlocationsV2 as |location|}}
+            <tr>
+              <td>{{location.rollText}}</td>
+              <td>{{location.where}}</td>
+              <td
+                class="form-fields {{ifThen (gte location.penalty 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
+                data-action="addModifier"
+                data-value="{{location.penalty}}"
+                data-comment="{{localize 'GURPS.hitLocationPenalty'}}: {{location.where}}"
+                >{{location.penalty}}</td>
+              <td>{{location._dr}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
   </div>
   <div class="gcs-encumbrance gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.encumbrance"}}</div>
@@ -121,10 +123,10 @@
       <thead>
         <tr>
           <th></th>
-          <th>Level</th>
-          <th>Max Load</th>
-          <th>Move</th>
-          <th>Dodge</th>
+          <th>{{localize "GURPS.sheet.encumbrance.level"}}</th>
+          <th>{{localize "GURPS.sheet.encumbrance.maxLoad"}}</th>
+          <th>{{localize "GURPS.sheet.encumbrance.move"}}</th>
+          <th>{{localize "GURPS.sheet.encumbrance.dodge"}}</th>
         </tr>
       </thead>
       <tbody>

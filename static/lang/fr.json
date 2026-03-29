@@ -1166,7 +1166,7 @@
         "successMessage": "Migrations d'Acteur appliquées avec succès pour la version {version}."
       },
       "holderItem": {
-        "name": "Le Porte-Tout",
+        "name": "Actions & Modificateurs Personnels",
         "notes": "Ceci est un objet temporaire utilisé pour contenir toutes les Réactions, Modificateurs Conditionnels et Armes après la migration du personnage. Pour déplacer ces éléments à leur place appropriée, veuillez réimporter ce personnage depuis GCS ou GCA."
       },
       "item": {
@@ -1750,25 +1750,63 @@
     "severity": "Gravité",
     "share": "Partager",
     "sheet": {
+      "encumbrance": {
+        "dodge": "Esquive",
+        "level": "Niveau",
+        "maxLoad": "Charge Max.",
+        "move": "Déplacement"
+      },
       "gcs": {
         "copyright": "GCS is une marque déposée (1998-2026) par Richard A. Wilkes. Tous droits réservés."
       },
       "gcsActorSheet": {
         "basicDamage": "Dégâts de Base",
+        "conditionalModifiers": "Modificateurs Conditionnels",
         "description": "Description",
         "encumbrance": "Encombrement",
+        "equipmentCarried": "Équipement Porté ({weight} ; {value})",
+        "equipmentOther": "Autre Équipement ({weight} ; {value})",
         "identity": "Identité",
         "label": "Fiche de personnage GCS",
+        "legalityClass": "LC",
         "maneuverStatus": "Manœuvre / Statut",
         "miscellaneous": "Divers",
         "moving": "Déplacement",
+        "notes": "Notes",
+        "points": "Pts",
         "pointTotals": "Totaux de Points",
         "poolAttributes": "Attributs de Réserve",
         "poolBase": "Base",
         "portrait": "Portrait",
         "pound": "kg.",
         "primaryAttributes": "Attributs Primaires",
-        "secondaryAttributes": "Attributs Secondaires"
+        "reactionModifiers": "Réactions",
+        "secondaryAttributes": "Attributs Secondaires",
+        "skillLevel": "SL",
+        "skillRelativeLevel": "RSL",
+        "skills": "Compétences / Techniques",
+        "spells": "Sorts",
+        "techLevel": "TL",
+        "traits": "Traits",
+        "weaponAccuracy": "Préc",
+        "weaponBlock": "Bloc",
+        "weaponBulk": "Bulk",
+        "weaponDamage": "Dégâts",
+        "weaponMelee": "Armes de Mêlée",
+        "weaponParry": "Parade",
+        "weaponRange": "Portée",
+        "weaponRanged": "Armes à Distance",
+        "weaponReach": "Allonge",
+        "weaponRecoil": "Recul",
+        "weaponROF": "Cad.",
+        "weaponShots": "Coups",
+        "weaponST": "ST",
+        "weaponUsage": "Usage"
+      },
+      "hitLocation": {
+        "dr": "DR",
+        "location": "Localisation",
+        "roll": "Jet"
       },
       "personal": {
         "created": "Créé",

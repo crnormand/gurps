@@ -1,6 +1,6 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { BaseDisplayItem } from '@gurps-types/gurps/display-item.js'
-import { ActionType, AnyActionClass, BaseAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { Action, ActionType, BaseAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { MarkdownUtil } from '@module/util/markdown.js'
 import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
@@ -375,7 +375,7 @@ const baseItemModelSchema = () => {
     ...containableSchema(),
 
     /** The ModelCollection for an Item's Actions, which includes Melee and Ranged Attacks. */
-    actions: new CollectionField(BaseAction as AnyActionClass, { required: true, nullable: false }),
+    actions: new CollectionField(BaseAction as Action.AnyConstructor, { required: true, nullable: false }),
 
     /**
      * Is this Item a container that can hold other items? This should be toggleable in the UI for any Item,

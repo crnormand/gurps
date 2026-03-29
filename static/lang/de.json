@@ -1166,7 +1166,7 @@
         "successMessage": "Charakter-Migrationen für Version {version} erfolgreich angewendet."
       },
       "holderItem": {
-        "name": "Der Alleshalter",
+        "name": "Persönliche Aktionen & Modifikatoren",
         "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
       },
       "item": {
@@ -1750,25 +1750,63 @@
     "severity": "Schwere",
     "share": "Teilen",
     "sheet": {
+      "encumbrance": {
+        "dodge": "Ausweichen",
+        "level": "Stufe",
+        "maxLoad": "Max. Last",
+        "move": "Bewegung"
+      },
       "gcs": {
         "copyright": "GCS ist urheberrechtlich geschützt 1998-2026 von Richard A. Wilkes. Alle Rechte vorbehalten."
       },
       "gcsActorSheet": {
         "basicDamage": "Grundschaden",
+        "conditionalModifiers": "Bedingte Modifikatoren",
         "description": "Beschreibung",
         "encumbrance": "Belastung",
+        "equipmentCarried": "Getragene Ausrüstung ({weight}; {value})",
+        "equipmentOther": "Sonstige Ausrüstung ({weight}; {value})",
         "identity": "Identität",
         "label": "GCS-Charakterbogen",
+        "legalityClass": "LC",
         "maneuverStatus": "Manöver / Status",
         "miscellaneous": "Sonstiges",
         "moving": "Bewegen",
+        "notes": "Notizen",
+        "points": "Pkt",
         "pointTotals": "Punktesummen",
         "poolAttributes": "Poolattribute",
         "poolBase": "Basis",
         "portrait": "Portrait",
         "pound": "lbs.",
         "primaryAttributes": "Primäre Attribute",
-        "secondaryAttributes": "Sekundäre Attribute"
+        "reactionModifiers": "Reaktionen",
+        "secondaryAttributes": "Sekundäre Attribute",
+        "skillLevel": "SL",
+        "skillRelativeLevel": "RSL",
+        "skills": "Fertigkeiten / Techniken",
+        "spells": "Zauber",
+        "techLevel": "TL",
+        "traits": "Merkmale",
+        "weaponAccuracy": "Gen.",
+        "weaponBlock": "Block",
+        "weaponBulk": "Sperr.",
+        "weaponDamage": "Schaden",
+        "weaponMelee": "Nahkampfwaffen",
+        "weaponParry": "Parade",
+        "weaponRange": "Reichw.",
+        "weaponRanged": "Fernkampfwaffen",
+        "weaponReach": "Länge",
+        "weaponRecoil": "Rücks.",
+        "weaponROF": "FGS",
+        "weaponShots": "Schuss",
+        "weaponST": "ST",
+        "weaponUsage": "Verwendung"
+      },
+      "hitLocation": {
+        "dr": "DR",
+        "location": "Trefferlage",
+        "roll": "Wurf"
       },
       "personal": {
         "created": "Erstellt",

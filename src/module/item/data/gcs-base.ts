@@ -1,5 +1,5 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
-import { BaseAction } from '@module/action/base-action.js'
+import { Action, BaseAction } from '@module/action/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { IContainable, containableSchema } from '@module/data/mixins/containable.js'
 import { ContainerUtils } from '@module/data/mixins/container-utils.js'
@@ -275,7 +275,7 @@ const gcsBaseItemSchema = () => {
     referenceHighlight: new fields.StringField({ required: true, nullable: false }),
     thirdParty: new fields.ObjectField({ required: true, nullable: false }),
 
-    actions: new CollectionField(BaseAction),
+    actions: new CollectionField(BaseAction as Action.AnyConstructor, { required: true, nullable: false }),
     isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
   }
 }

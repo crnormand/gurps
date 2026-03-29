@@ -58,6 +58,7 @@ import {
   SpellPrereq,
   TraitPrereq,
 } from '@module/prereqs/index.js'
+import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -194,7 +195,7 @@ declare global {
        * image for a given pseudo-document type. It is used in the global GURPS.CONFIG object to define the available
        * pseudo-document types and their associated metadata.
        */
-      type ConfigEntry<Doc extends foundry.abstract.DataModel.AnyConstructor> = {
+      type ConfigEntry<Doc extends TypedPseudoDocument.AnyConstructor> = {
         /** Human-readable label. */
         label: string
         /** Default image used by documents of this type. */
