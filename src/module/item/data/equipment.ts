@@ -147,10 +147,6 @@ const equipmentSchema = () => {
 
     /** Whether the importer should ignore changes to quantity for this item on re-import. */
     ignoreImportQty: new fields.BooleanField({ required: true, nullable: false }),
-
-    /** NOTE: This field does not appear to be used anywhere. */
-
-    // lastUpdate: new fields.StringField({ required: false, nullable: true }),
   }
 }
 
