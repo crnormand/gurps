@@ -20,7 +20,7 @@ interface PrereqsModule extends GurpsModule {
 
 /* ---------------------------------------- */
 
-const PrereqClasses = {
+export const PrereqClasses = {
   [PrereqType.List]: PrereqList,
   [PrereqType.Trait]: TraitPrereq,
   [PrereqType.Attribute]: AttributePrereq,
@@ -32,12 +32,16 @@ const PrereqClasses = {
   [PrereqType.Script]: ScriptPrereq,
 }
 
-/* ---------------------------------------- */
+namespace Prereq {
+  export type Type = PrereqType
 
-type AnyPrereq = InstanceType<PrereqClass<PrereqType>>
-type Prereq<Type extends PrereqType> = InstanceType<(typeof PrereqClasses)[Type]>
-type AnyPrereqClass = (typeof PrereqClasses)[PrereqType]
-type PrereqClass<Type extends PrereqType> = (typeof PrereqClasses)[Type]
+  /* ---------------------------------------- */
+
+  export type Any = InstanceType<ConstructorOfType<PrereqType>>
+  export type OfType<Type extends PrereqType> = InstanceType<(typeof PrereqClasses)[Type]>
+  export type AnyConstructor = (typeof PrereqClasses)[PrereqType]
+  export type ConstructorOfType<Type extends PrereqType> = (typeof PrereqClasses)[Type]
+}
 
 /* ---------------------------------------- */
 
@@ -84,7 +88,6 @@ export {
   ContainedQuantityPrereq,
   ContainedWeightPrereq,
   EquippedEquipmentPrereq,
-  PrereqClasses,
   PrereqList,
   PrereqType,
   ScriptPrereq,
@@ -93,4 +96,4 @@ export {
   TraitPrereq,
 }
 
-export type { AnyPrereq, AnyPrereqClass, Prereq, PrereqClass }
+export type { Prereq }

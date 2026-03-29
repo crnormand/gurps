@@ -145,12 +145,19 @@ namespace TypedPseudoDocument {
   export type OfType<
     Name extends gurps.Pseudo.WithTypes,
     Type extends TypeNames<Name>,
-  > = PseudoDocumentConfig.Types extends {
-    readonly [_ in Name]: { readonly discriminate: 'all' }
+  > = PseudoDocumentConfig.Types[Name] extends {
+    readonly [_1 in Type]: { documentClass: abstract new (...args: any) => any }
   }
-    ? PseudoDocumentConfig.Types[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
-      ? PseudoDocumentConfig.Types[Name][Type]['documentClass']
-      : never
+    ? InstanceType<PseudoDocumentConfig.Types[Name][Type]['documentClass']>
+    : never
+
+  /* ---------------------------------------- */
+
+  export type ConstructorOfType<
+    Name extends gurps.Pseudo.WithTypes,
+    Type extends TypeNames<Name>,
+  > = PseudoDocumentConfig.Types[Name] extends { readonly [_1 in Type]: { documentClass: object | undefined } }
+    ? PseudoDocumentConfig.Types[Name][Type]['documentClass']
     : never
 
   /* ---------------------------------------- */

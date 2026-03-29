@@ -1,4 +1,5 @@
-import { BaseFeature } from '../../features/index.js'
+import { BaseFeature } from '@module/features/index.js'
+
 import { CollectionField } from '../fields/collection-field.js'
 import { ModelCollection } from '../model-collection.js'
 

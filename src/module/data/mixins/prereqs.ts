@@ -1,18 +1,18 @@
-import { AnyPrereq, AnyPrereqClass, BasePrereq, PrereqList, PrereqType } from '@module/prereqs/index.js'
+import { BasePrereq, PrereqList, PrereqType } from '@module/prereqs/index.js'
 
 import { NumericComparison } from '../criteria/number-criteria.js'
 import { CollectionField } from '../fields/collection-field.js'
 import { ModelCollection } from '../model-collection.js'
 
-const RootPrereqID = 'RdIneBreTqzetRFN'
-
 const prereqsSchema = () => {
+  const _id = foundry.utils.randomID()
+
   return {
-    _prereqs: new CollectionField(BasePrereq as AnyPrereqClass, {
+    _prereqs: new CollectionField(BasePrereq, {
       initial: () => {
         return {
-          [RootPrereqID]: {
-            _id: RootPrereqID,
+          [_id]: {
+            _id,
             type: PrereqType.List,
             containerId: null,
             all: true,
@@ -32,7 +32,7 @@ interface IPrereqsBaseData {
 
 interface IPrereqs {
   // List of prereqs contained within this item
-  _prereqs: ModelCollection<AnyPrereq>
+  _prereqs: ModelCollection<BasePrereq<BasePrereq.Schema>>
 
   prereqs: PrereqList
 
@@ -45,12 +45,12 @@ interface IPrereqs {
 function preparePrereqs(this: IPrereqs & { parent: { name: string } }) {
   this._prereqs.forEach(prereq => prereq.prepareBaseData())
 
-  const rootPrereq = this._prereqs.find(prereq => prereq.type === PrereqType.List && prereq.containerId === null)
+  const rootPrereq = this._prereqs.find(prereq => prereq.isOfType(PrereqType.List) && prereq.containerId === null)
 
   if (!rootPrereq) {
     console.error(`No root prereq found for equipment item ${this.parent.name}`)
   } else {
-    this.prereqs = rootPrereq as PrereqList
+    this.prereqs = rootPrereq as unknown as PrereqList
   }
 }
 

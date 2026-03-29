@@ -46,9 +46,7 @@ interface FeaturesModule extends GurpsModule {
   models: typeof FeatureClasses
 }
 
-/* ---------------------------------------- */
-
-const FeatureClasses = {
+export const FeatureClasses = {
   [FeatureType.AttributeBonus]: AttributeBonus,
   [FeatureType.ConditionalModifier]: ConditionalModifier,
   [FeatureType.DRBonus]: DRBonus,
@@ -88,10 +86,16 @@ const FeatureClasses = {
 
 /* ---------------------------------------- */
 
-type AnyFeature = InstanceType<FeatureClass<FeatureType>>
-type Feature<Type extends FeatureType> = InstanceType<(typeof FeatureClasses)[Type]>
-type AnyFeatureClass = (typeof FeatureClasses)[FeatureType]
-type FeatureClass<Type extends FeatureType> = (typeof FeatureClasses)[Type]
+namespace Feature {
+  export type Type = FeatureType
+
+  /* ---------------------------------------- */
+
+  export type Any = InstanceType<ConsturctorOfType<FeatureType>>
+  export type OfType<T extends FeatureType> = InstanceType<(typeof FeatureClasses)[T]>
+  export type AnyConstructor = (typeof FeatureClasses)[FeatureType]
+  export type ConsturctorOfType<Type extends FeatureType> = (typeof FeatureClasses)[Type]
+}
 
 /* ---------------------------------------- */
 
@@ -204,6 +208,6 @@ export const Features: FeaturesModule = {
   models: FeatureClasses,
 }
 
-export { FeatureClasses, FeatureType, BaseFeature }
+export { FeatureType, BaseFeature }
 
-export type { AnyFeature, AnyFeatureClass, Feature, FeatureClass }
+export type { Feature }

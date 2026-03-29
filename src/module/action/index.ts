@@ -7,15 +7,19 @@ import { ActionType } from './types.js'
 
 /* ---------------------------------------- */
 
-const ActionClasses = {
+export const ActionClasses = {
   [ActionType.MeleeAttack]: MeleeAttackModel,
   [ActionType.RangedAttack]: RangedAttackModel,
 }
 
-type AnyAction = InstanceType<ActionClass<ActionType>>
-type Action<Type extends ActionType> = InstanceType<(typeof ActionClasses)[Type]>
-type AnyActionClass = (typeof ActionClasses)[ActionType]
-type ActionClass<Type extends ActionType> = (typeof ActionClasses)[Type]
+namespace Action {
+  export type Type = ActionType
+
+  export type Any = InstanceType<ConstructorOfType<ActionType>>
+  export type OfType<Type extends ActionType> = InstanceType<(typeof ActionClasses)[Type]>
+  export type AnyConstructor = (typeof ActionClasses)[ActionType]
+  export type ConstructorOfType<Type extends ActionType> = (typeof ActionClasses)[Type]
+}
 
 /* ---------------------------------------- */
 
@@ -40,11 +44,16 @@ function init() {
 
 /* ---------------------------------------- */
 
-export const ActionModule: GurpsModule = {
+interface ActionModule extends GurpsModule {
+  models: typeof ActionClasses
+}
+
+export const ActionModule: ActionModule = {
   init,
+  models: ActionClasses,
 }
 
 export * from './melee-attack.js'
 export * from './ranged-attack.js'
-export { ActionClasses, ActionType, BaseAction, MeleeAttackModel, RangedAttackModel }
-export type { Action, ActionClass, AnyAction, AnyActionClass }
+export { ActionType, BaseAction, MeleeAttackModel, RangedAttackModel }
+export type { Action }

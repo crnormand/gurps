@@ -1,11 +1,10 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
+import type { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType } from './types.js'
-
-import { Prereq } from './index.js'
 
 class PrereqList extends BasePrereq<PrereqListSchema> {
   children: BasePrereq<any>[] = []
@@ -39,7 +38,7 @@ class PrereqList extends BasePrereq<PrereqListSchema> {
   async createChild<Type extends PrereqType>({
     type,
     ...data
-  }: { type: Type } & AnyObject): Promise<Prereq<Type> | null> {
+  }: { type: Type } & AnyObject): Promise<TypedPseudoDocument.OfType<'Prereq', Type> | null> {
     if (!this.item) {
       console.error(
         'PrereqList.createChild called but this.item is null. Cannot create child prereq without parent item.'
@@ -59,7 +58,7 @@ class PrereqList extends BasePrereq<PrereqListSchema> {
       return null
     }
 
-    return child as Prereq<Type>
+    return child as TypedPseudoDocument.OfType<'Prereq', Type>
   }
 
   /* ---------------------------------------- */
