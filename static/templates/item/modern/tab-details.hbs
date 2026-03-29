@@ -1,0 +1,5 @@
+<section class='tab {{tab.cssClass}}' data-tab='details' data-group='primary'>
+  {{#each detailsPartial as |part|}}
+  {{> (part) @root}}
+  {{/each}}
+</section>

@@ -33,6 +33,15 @@ function init() {
       makeDefault: true,
       canConfigure: false,
     })
+    foundry.documents.collections.Items.registerSheet(
+      'gurps',
+      sheets.GurpsItemModernSheet as unknown as foundry.applications.api.ApplicationV2.AnyConstructor,
+      {
+        makeDefault: true,
+        types: [ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment],
+        label: 'GURPS.sheet.modernItemSheet.label',
+      }
+    )
   })
 }
 

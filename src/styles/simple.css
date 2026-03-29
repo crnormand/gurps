@@ -346,11 +346,11 @@
   height: 28px;
 }
 
-.gurps .tabs {
-  height: 40px;
-  /* border-top: 1px solid #aaa; */
-  /* border-bottom: 1px solid #aaa; */
-}
+/* .gurps .tabs { */
+/*   height: 40px; */
+/* border-top: 1px solid #aaa; */
+/* border-bottom: 1px solid #aaa; */
+/* } */
 
 .gurps .tabs .item {
   line-height: 40px;
@@ -620,11 +620,6 @@
 
 .roll.flex-center {
   text-wrap: nowrap;
-}
-
-.gurps.sheet.item {
-  min-width: 460px;
-  min-height: 400px;
 }
 
 .gurps .fieldblock {

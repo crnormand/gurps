@@ -1928,6 +1928,9 @@
         "location": "Location",
         "roll": "Roll"
       },
+      "modernItemSheet": {
+        "label": "Modern Item Sheet"
+      },
       "modernSheet": {
         "label": "Modern Sheet"
       },
