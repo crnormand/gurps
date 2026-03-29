@@ -357,6 +357,7 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
     uses: Number(oldData.eqt.uses) || 0,
     maxuses: Number(oldData.eqt.maxuses) || 0,
     importid: oldData.eqt.uuid || '',
+    _carried: oldData.eqt.carried,
   }
 
   return newData
