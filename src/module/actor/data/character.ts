@@ -131,7 +131,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return (val ?? fallback) as T
   }
 
-  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.actor.characterV2')
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, 'GURPS.actor.characterV2']
 
   /* ---------------------------------------- */
   /*  Instance properties                     */
