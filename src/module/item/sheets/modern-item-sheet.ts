@@ -1,6 +1,8 @@
 import { DeepPartial, HandlebarsApplicationMixin, ItemSheet, Application } from '@gurps-types/foundry/index.js'
+import { Action } from '@module/action/index.js'
 import { bindInlineEdit } from '@module/actor/modern/inline-edit-handler.js'
 import GurpsWiring from '@module/gurps-wiring.js'
+import { getGame } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 
 import { ItemType } from '../types.js'
@@ -24,6 +26,8 @@ namespace GurpsItemModernSheet {
       foundry.abstract.DataModel.SchemaOf<Item.SystemOfType<Type>>
     >
     tab?: Application.Tab
+    detailsPartial: string[]
+    actions: Action.Any[]
   }
 }
 
@@ -39,7 +43,7 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
     classes: ['modern-item-sheet'],
     position: {
       width: 600,
-      height: 400,
+      height: 600,
     },
   }
 
@@ -51,12 +55,15 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
     },
     details: {
       template: systemPath('templates/item/modern/tab-details.hbs'),
+      scrollable: [''],
     },
     actions: {
       template: systemPath('templates/item/modern/tab-actions.hbs'),
+      scrollable: [''],
     },
     modifiers: {
       template: systemPath('templates/item/modern/tab-modifiers.hbs'),
+      scrollable: [''],
     },
   }
 
@@ -88,6 +95,8 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
       system: this.item.system,
       systemFields: this.item.system.schema.fields,
       systemSource: this.item.system._source,
+      detailsPartial: this.item.system.metadata.detailsPartial,
+      actions: this.item.system.actions.contents,
     }
   }
 
@@ -105,36 +114,34 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
     return context
   }
 
+  protected _getTypeContext(): { class: string; icon: string } {
+    switch (this.item.type) {
+      case ItemType.Trait:
+        return { class: 'ms-type-trait', icon: 'fa-solid fa-theater-masks' }
+      case ItemType.Skill:
+        return { class: 'ms-type-skill', icon: 'fa-solid fa-person-swimming' }
+      case ItemType.Spell:
+        return { class: 'ms-type-spell', icon: 'fa-solid fa-wand-magic-sparkles' }
+      case ItemType.Equipment:
+        return { class: 'ms-type-equipment', icon: 'fa-solid fa-screwdriver-wrench' }
+      default:
+        return { class: '', icon: 'fa-solid fa-ban' }
+    }
+  }
+
   /* ---------------------------------------- */
 
   protected override async _renderFrame(options: DeepPartial<ItemSheet.RenderOptions>): Promise<HTMLElement> {
     const frame = await super._renderFrame(options)
 
-    const getTypeContent = (type: Item.SubType): { class: string; icon: string } => {
-      switch (type) {
-        case ItemType.Trait:
-          return { class: 'header-trait', icon: 'fa-solid fa-theater-masks' }
-        case ItemType.Skill:
-          return { class: 'header-skill', icon: 'fa-solid fa-person-swimming' }
-        case ItemType.Spell:
-          return { class: 'header-spell', icon: 'fa-solid fa-wand-magic-sparkles' }
-        case ItemType.Equipment:
-          return { class: 'header-equipment', icon: 'fa-solid fa-screwdriver-wrench' }
-        default:
-          return { class: '', icon: 'fa-solid fa-ban' }
-      }
-    }
-
-    const typeContent = getTypeContent(this.document.type)
-
-    this.window.header?.classList.add(typeContent.class)
-
     const titleElement = this.window.header?.querySelector('h1')
+
+    const typeContext = this._getTypeContext()
 
     if (titleElement) {
       const iconHtml = document.createElement('i')
 
-      iconHtml.classList.add(...typeContent.icon.split(' '))
+      iconHtml.classList.add(...typeContext.icon.split(' '))
 
       this.window.header?.insertBefore(iconHtml, titleElement)
     }
@@ -151,6 +158,11 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
     options: ItemSheet.RenderOptions
   ): Promise<void> {
     super._onRender(context, options)
+    this._applyPlaceholderText()
+
+    const typeContext = this._getTypeContext()
+
+    this.element.classList.add(typeContext.class)
 
     bindInlineEdit(this.element, {
       displaySelector: '.ms-name-display',
@@ -160,6 +172,18 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
     })
 
     GurpsWiring.hookupAllEvents(this.element)
+  }
+
+  /* ---------------------------------------- */
+
+  protected _applyPlaceholderText(): void {
+    const affectedFields = ['bonuses', 'itemModifiers']
+
+    for (const fieldName of affectedFields) {
+      const input = this.element.querySelector(`textarea[name="system.${fieldName}"]`)
+
+      input?.setAttribute('placeholder', getGame().i18n.localize(`GURPS.item.base.FIELDS.${fieldName}.placeholder`))
+    }
   }
 
   /* ---------------------------------------- */

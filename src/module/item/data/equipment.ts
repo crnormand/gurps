@@ -28,9 +28,13 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
         weight: 'system.weight',
         extendedWeight: 'system.weightsum',
       },
-      detailsPartial: ['item.partials.equipment'],
+      detailsPartial: ['item.partials.details-equipment', 'item.partials.details-base'],
     })
   }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, `GURPS.item.${this.metadata.type}`]
 
   /* ---------------------------------------- */
 
@@ -125,7 +129,7 @@ const equipmentSchema = () => {
     techlevel: new fields.StringField({ required: true, nullable: false }),
 
     /** A comma-separated list of this item's categories, e.g. "Weapon, Ranged, Thrown" */
-    categories: new fields.StringField({ required: true, nullable: false }),
+    categories: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
 
     /** The Legality Class of this item, generally numeric. */
     legalityclass: new fields.StringField({ required: true, nullable: false }),

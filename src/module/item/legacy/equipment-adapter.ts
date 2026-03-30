@@ -69,7 +69,7 @@ class EquipmentV1 {
   }
 
   get categories(): string {
-    return this.equipmentV2.system.categories
+    return [...this.equipmentV2.system.categories].join(', ')
   }
 
   get collapsed(): Record<string, EquipmentV1> {
@@ -133,7 +133,7 @@ class EquipmentV1 {
   }
 
   get modifierTags(): string {
-    return (this.equipmentV2.system as EquipmentModel).modifierTags ?? ''
+    return [...this.equipmentV2.system.modifierTags].join(', ')
   }
 
   get name(): string {

@@ -1,3 +1,25 @@
+{{#*inline ".action-entry"}}
+<div class="ms-action-entry" data-document-name="{{metadata.documentName}}" data-pseudo-id="{{_id}}">
+    <div class="action-name">{{this.name}}</div>
+    <div class="action-usage">{{this.usage}}</div>
+    <div class="action-damage">{{this.damageText}}</div>
+    <span class='ms-row-actions'>
+      <i class='fas fa-pen-to-square ms-action-btn' data-action='editPseudo'></i>
+      <i class='fas fa-trash ms-action-btn' data-action='deletePseudo'></i>
+    </span>
+  </div>
+{{/inline}}
+
 <section class='tab {{tab.cssClass}}' data-tab='actions' data-group='primary'>
-  Actions
+  <fieldset>
+    <legend>{{localize "GURPS.actions"}}</legend>
+    <button data-action="createPseudo" data-document-name="Action" class="ms-action-btn"><i class="fa-solid fa-plus"></i>Add Action</button>
+      <div class="ms-action-entries">
+      {{#each actions}}
+        {{> ".action-entry"}}
+      {{else}}
+        <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+      {{/each}}
+      </div>
+  </fieldset>
 </section>
