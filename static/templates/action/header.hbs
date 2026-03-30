@@ -1,0 +1,18 @@
+<header class='ms-header'>
+  <div class='ms-portrait-wrapper'>
+    <div class='ms-portrait'>
+      <img
+        src='{{action.img}}'
+        data-action='editImage'
+        data-edit='img'
+      />
+    </div>
+  </div>
+
+  <div class='ms-name-container'>
+    <h1 class='ms-name ms-name-display'>{{action.name}}</h1>
+    {{formInput fields.name.field name=fields.name.name value=fields.name.value}}
+  </div>
+
+  {{> "common.partials.tab-navigation"}}
+</header>

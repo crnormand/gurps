@@ -24,8 +24,13 @@ class TraitModel extends BaseItemModel<TraitSchema> {
       sortKeys: {
         points: 'system.points',
       },
+      detailsPartial: ['item.partials.details-trait', 'item.partials.details-base'],
     })
   }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, `GURPS.item.${this.metadata.type}`]
 
   /* ---------------------------------------- */
 
@@ -65,6 +70,10 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 /* ---------------------------------------- */
 
 const traitSchema = () => {
+  const crChoices = Object.fromEntries(
+    [-1, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(key => [key, `GURPS.item.featureV2.crChoices.${key}`])
+  )
+
   return {
     /** The level of the trait, which may be null if the trait is not leveled */
     level: new fields.NumberField({ required: true, nullable: true, initial: null }),
@@ -76,7 +85,7 @@ const traitSchema = () => {
     points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The Control Roll value for this trait, which may be null if not applicable */
-    cr: new fields.NumberField({ required: true, nullable: true, initial: null }),
+    cr: new fields.NumberField({ required: true, nullable: false, initial: -1, choices: crChoices }),
   }
 }
 

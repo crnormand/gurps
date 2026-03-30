@@ -1,5 +1,7 @@
 @use 'variables' as *;
 
+$ms-portrait-height: 92px;
+
 body {
   .application.modern-item-sheet {
     @include css-variables;
@@ -9,23 +11,59 @@ body {
   .application.modern-item-sheet.theme-dark {
     @include css-variables-dark;
   }
+
+  .application.modern-item-sheet,
+  &.theme-dark .application.modern-item-sheet:not(.theme-light),
+  .application.modern-item-sheet.theme-dark {
+    &.ms-type-trait {
+      --ms-accent: var(--ms-accent-trait);
+    }
+
+    &.ms-type-skill {
+      --ms-accent: var(--ms-accent-skill);
+    }
+
+    &.ms-type-spell {
+      --ms-accent: var(--ms-accent-spell);
+    }
+
+    &.ms-type-equipment {
+      --ms-accent: var(--ms-accent-equipment);
+    }
+  }
 }
 
 .application.modern-item-sheet {
   font-family: 'Roboto', sans-serif;
 
   .window-header {
-    &.header-trait {
-      background: var(--ms-bg-header-trait);
+    background: var(--ms-accent);
+  }
+
+  hr {
+    margin: var(--ms-gap);
+    background-image: linear-gradient(90deg, transparent 0%, var(--ms-accent) 50%, transparent 100%);
+  }
+
+  input[type='text'],
+  input[type='number'],
+  textarea,
+  select {
+    font-family: 'Roboto', sans-serif;
+    background: var(--ms-bg);
+    color: var(--ms-text);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius);
+    padding: var(--ms-space-2) var(--ms-space-4);
+    font-size: var(--ms-font-xs);
+
+    &:focus {
+      outline: none;
+      border-color: var(--ms-accent);
     }
-    &.header-skill {
-      background: var(--ms-bg-header-skill);
-    }
-    &.header-spell {
-      background: var(--ms-bg-header-spell);
-    }
-    &.header-equipment {
-      background: var(--ms-bg-header-equipment);
+
+    &::placeholder {
+      color: var(--ms-text-dim);
     }
   }
 
@@ -41,7 +79,7 @@ body {
 
   .ms-header {
     display: grid;
-    grid-template-columns: 120px auto;
+    grid-template-columns: $ms-portrait-height auto;
     grid-template-areas:
       'portrait name'
       'portrait tabs';
@@ -52,6 +90,48 @@ body {
     padding: var(--ms-space-5) var(--ms-space-6);
   }
 
+  .ms-details {
+    border-radius: 0.25rem;
+
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr; /* label | field | label | field */
+    gap: var(--ms-gap) calc(var(--ms-gap) * 2);
+
+    > hr {
+      grid-column: 1 / -1;
+    }
+
+    > .form-group {
+      display: contents; /* dissolve into the parent grid */
+      grid-column: 1 / 2;
+      grid-template-columns: subgrid;
+
+      &.ms-double-field {
+        grid-column: 1 / -1;
+
+        > .form-fields {
+          grid-column: 2 / -1;
+
+          textarea {
+            width: 100%;
+          }
+        }
+      }
+
+      label {
+        text-align: right;
+        grid-column: auto; /* flows naturally */
+        align-self: center;
+      }
+
+      > .form-fields {
+        grid-column: auto;
+      }
+
+      gap: var(--ms-gap);
+    }
+  }
+
   .ms-portrait-wrapper {
     grid-area: portrait;
     position: relative;
@@ -60,8 +140,8 @@ body {
 
   .ms-portrait {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: $ms-portrait-height;
+    height: $ms-portrait-height;
     border-radius: 1rem;
     overflow: hidden;
     border: 2px solid var(--ms-border);
@@ -125,5 +205,17 @@ body {
 
     align-self: end;
     transform: translateY(0.2rem);
+
+    [data-tab]:hover,
+    [data-tab].active {
+      text-shadow: none;
+    }
+  }
+
+  section.tab.active {
+    padding: var(--ms-gap);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ms-gap);
   }
 }

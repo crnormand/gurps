@@ -1,7 +1,14 @@
 import { systemPath } from './misc.js'
 
 async function registerPartials(): Promise<void> {
-  const templates = ['templates/common/partials/tab-navigation.hbs', 'templates/item/partials/equipment.hbs']
+  const templates = [
+    'templates/common/partials/tab-navigation.hbs',
+    'templates/item/partials/details-base.hbs',
+    'templates/item/partials/details-equipment.hbs',
+    'templates/item/partials/details-skill.hbs',
+    'templates/item/partials/details-spell.hbs',
+    'templates/item/partials/details-trait.hbs',
+  ]
 
   templates.forEach(filename => {
     // Name: 'templates/path/to/my/partial.hbs' -> 'path.to.my.partial'

@@ -35,8 +35,13 @@ class SpellModel extends BaseItemModel<SpellSchema> {
         level: 'system.level',
         relativeLevel: 'system.relativelevel',
       },
+      detailsPartial: ['item.partials.details-spell', 'item.partials.details-base'],
     })
   }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, `GURPS.item.${this.metadata.type}`]
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
@@ -121,7 +126,7 @@ class SpellModel extends BaseItemModel<SpellSchema> {
       fullName,
       points: this.points,
       spellClass: this.class,
-      colleges: this.college.split(',').map(college => college.trim()),
+      colleges: Array.from(this.college.map(college => college.trim())),
       castingCost: this.cost,
       maintenanceCost: this.maintain,
       duration: this.duration,
@@ -150,7 +155,7 @@ const spellSchema = () => {
     class: new fields.StringField({ required: true, nullable: false }),
 
     /** A comma-separated list of colleges this spell belongs to. */
-    college: new fields.StringField({ required: true, nullable: false }),
+    college: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
 
     /** The casting cost of this spell */
     cost: new fields.StringField({ required: true, nullable: false }),

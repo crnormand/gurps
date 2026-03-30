@@ -73,7 +73,7 @@ class SpellV1 {
   }
 
   get college(): string | null {
-    return this.spellV2.system?.college ?? null
+    return [...this.spellV2.system.college].join(', ')
   }
 
   get consumeAction(): boolean {
@@ -141,7 +141,7 @@ class SpellV1 {
   }
 
   get modifierTags(): string {
-    return this.spellV2.system.modifierTags
+    return [...this.spellV2.system.modifierTags].join(', ')
   }
 
   get name(): string {
