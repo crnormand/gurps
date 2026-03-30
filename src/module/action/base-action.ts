@@ -20,6 +20,7 @@ class BaseAction<
     return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Action',
       label: 'DOCUMENT.Action',
+      sheetClass: GURPS.CONFIG.PseudoDocument.Sheets.Action,
     })
   }
 

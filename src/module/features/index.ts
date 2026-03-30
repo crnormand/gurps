@@ -102,6 +102,8 @@ namespace Feature {
 function init() {
   console.log('GURPS | Initializing GURPS Features module.')
   Hooks.on('init', () => {
+    GURPS.CONFIG.PseudoDocument.Types.Feature = BaseFeature
+
     GURPS.CONFIG.PseudoDocument.SubTypes.Feature = {
       [FeatureType.AttributeBonus]: { documentClass: AttributeBonus, label: 'TYPES.Feature.attributeBonus' },
       [FeatureType.ConditionalModifier]: {
