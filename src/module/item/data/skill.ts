@@ -30,8 +30,13 @@ class SkillModel extends BaseItemModel<SkillSchema> {
         level: 'system.level',
         relativeLevel: 'system.relativelevel',
       },
+      detailsPartial: ['item.partials.details-skill', 'item.partials.details-base'],
     })
   }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, `GURPS.item.${this.metadata.type}`]
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */

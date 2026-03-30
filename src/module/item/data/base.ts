@@ -11,13 +11,13 @@ import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
 import { ConditionalModifier, ReactionModifier } from './conditional-modifier.js'
 
-type ItemMetadata = {
+type ItemMetadata = Readonly<{
   /** The expected `type` value */
   type: string
   /** Actor types that this item cannot be placed on */
   invalidActorTypes: string[]
   /** Are there any partials to fill in the Details tab of the item? */
-  detailsPartial?: string[]
+  detailsPartial: string[]
   /** Record of document names of pseudo-documents and the path to the collection. */
   embedded: Record<string, string>
   /** Record of actions the item can perform */
@@ -33,7 +33,7 @@ type ItemMetadata = {
    * value is the path to the property value.
    */
   sortKeys: Record<string, string>
-}
+}>
 
 /* ---------------------------------------- */
 
@@ -81,6 +81,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       childTypes: [],
       modifierTypes: [],
       sortKeys: { name: 'name' },
+      detailsPartial: [],
     }
   }
 
@@ -89,6 +90,10 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   get metadata(): ItemMetadata {
     return (this.constructor as typeof BaseItemModel).metadata
   }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, 'GURPS.item.base']
 
   /* ---------------------------------------- */
 
@@ -410,7 +415,7 @@ const baseItemModelSchema = () => {
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
 
     /** Which modifier tags should automatically apply to this Item? */
-    modifierTags: new fields.StringField({ required: true, nullable: false }),
+    modifierTags: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
 
     /** Reaction Bonuses applied by this Item. */
     _reactions: new CollectionField(ReactionModifier, { required: true, nullable: false }),
