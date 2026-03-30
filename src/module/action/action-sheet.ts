@@ -1,4 +1,5 @@
 import { HandlebarsApplicationMixin, Application } from '@gurps-types/foundry/index.js'
+import { bindInlineEdit } from '@module/actor/modern/inline-edit-handler.js'
 import { PseudoDocumentSheet } from '@module/pseudo-document/pseudo-document-sheet.js'
 import { systemPath } from '@module/util/misc.js'
 
@@ -19,7 +20,7 @@ namespace ActionSheet {
 
 class ActionSheet extends PseudoDocumentSheet<Action.Any> {
   static override DEFAULT_OPTIONS = {
-    classes: ['action-sheet'],
+    classes: ['action-sheet', 'modern-item-sheet'],
     position: {
       width: 600,
       height: 600,
@@ -70,6 +71,24 @@ class ActionSheet extends PseudoDocumentSheet<Action.Any> {
 
     return foundry.utils.mergeObject(superContext, {
       action: this.pseudoDocument,
+    })
+  }
+
+  /* ---------------------------------------- */
+  /*  Non-Action Bindings                     */
+  /* ---------------------------------------- */
+
+  protected override async _onRender(
+    context: ActionSheet.RenderContext,
+    options: PseudoDocumentSheet.RenderOptions
+  ): Promise<void> {
+    super._onRender(context, options)
+
+    bindInlineEdit(this.element, {
+      displaySelector: '.ms-name-display',
+      containerSelector: '.ms-name-container',
+      inputSelector: 'input[name="name"]',
+      fieldType: 'name',
     })
   }
 }

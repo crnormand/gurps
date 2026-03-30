@@ -37,7 +37,13 @@ class PseudoDocument<
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES: string[] = ['DOCUMENT']
+  static getDefaultArtwork(_data: AnyObject): Record<string, string> {
+    return { img: 'icons/svg/item-bag.svg' }
+  }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.pseudo']
 
   /* -------------------------------------------------- */
 
@@ -600,8 +606,12 @@ class PseudoDocument<
    * @returns The prepared create dialog context.
    */
   protected static _prepareCreateDialogContext(_parent?: Document.Any | null): AnyObject {
+    const schema = this.schema
+
+    foundry.helpers.Localization.localizeSchema(schema, this.LOCALIZATION_PREFIXES)
+
     return {
-      fields: this.schema.fields,
+      fields: schema.fields,
     }
   }
 
