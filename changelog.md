@@ -11,11 +11,17 @@
 
 ### Bugfixes
 
-## Release 0.18.14
+## Release 0.18.15
+
+### Bugfixes
+
+- Rework Russian lang file entries to fit available space in the Modern sheet.
+
+## Release 0.18.14 03/22/2026
 
 ### Features
 
-- Automate Foundry publishing when creating a new release.
+- Automate Foundry publishing when creating a new release (not user-facing).
 
 ### Bugfixes
 
