@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.15
+
+### Bugfixes
+
+- Rework Russian lang file entries to fit available space in the Modern sheet.
+
 ## Release 0.18.14 03/22/2026
 
 ### Features
