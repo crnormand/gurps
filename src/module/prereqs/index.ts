@@ -48,6 +48,8 @@ namespace Prereq {
 function init() {
   console.log('GURPS | Initializing GURPS Prereqs module.')
   Hooks.on('init', () => {
+    GURPS.CONFIG.PseudoDocument.Types.Prereq = BasePrereq
+
     GURPS.CONFIG.PseudoDocument.SubTypes.Prereq = {
       [PrereqType.List]: { documentClass: PrereqList, label: 'TYPES.Prereq.prereqList' },
       [PrereqType.Trait]: { documentClass: TraitPrereq, label: 'TYPES.Prereq.traitPrereq' },
