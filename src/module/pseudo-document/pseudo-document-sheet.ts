@@ -12,7 +12,8 @@ namespace PseudoDocumentSheet {
   }
 
   export interface RenderContext<Doc extends PseudoDocument.Any> extends Application.RenderContext {
-    document: Doc
+    document: Doc | null
+    source: foundry.data.fields.SchemaField.SourceData<foundry.abstract.DataModel.SchemaOf<Doc>>
     fields?: Record<string, { field: foundry.data.fields.DataField.Any; value: any; name: string }>
   }
 
@@ -46,8 +47,9 @@ class PseudoDocumentSheet<
   > = {
     id: '{id}',
     actions: {
+      editImage: PseudoDocumentSheet.#onEditImage,
       copyUuid: {
-        handler: PseudoDocumentSheet.#copyUuid,
+        handler: PseudoDocumentSheet.#onCopyUuid,
         buttons: [0, 2],
       },
     },
@@ -134,6 +136,8 @@ class PseudoDocumentSheet<
     const superContext = await super._prepareContext(options)
 
     return foundry.utils.mergeObject(superContext, {
+      document: this.pseudoDocument!,
+      source: this.pseudoDocument!._source as any,
       fields: PseudoDocument.getSchemaFields(this.pseudoDocument!),
     }) as unknown as RenderContext
   }
@@ -220,7 +224,7 @@ class PseudoDocumentSheet<
 
   /* -------------------------------------------------- */
 
-  static #copyUuid(this: PseudoDocumentSheet, event: PointerEvent) {
+  static #onCopyUuid(this: PseudoDocumentSheet, event: PointerEvent) {
     event.preventDefault() // Don't open context menu
     event.stopPropagation() // Don't trigger other events
     if (event.detail > 1) return // Ignore repeated clicks
@@ -231,6 +235,66 @@ class PseudoDocumentSheet<
 
     game.clipboard?.copyPlainText(id)
     ui.notifications?.info('DOCUMENT.IdCopiedClipboard', { format: { label, type, id } })
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onEditImage(this: PseudoDocumentSheet, _event: PointerEvent, target: HTMLImageElement) {
+    if (target.nodeName !== 'IMG') {
+      throw new Error('The editImage action is available only for IMG elements.')
+    }
+
+    if (!this.pseudoDocument) {
+      console.warn('No pseudo-document found for this sheet!')
+
+      return
+    }
+
+    const attr = target.dataset.edit ?? ''
+
+    const current = foundry.utils.getProperty(this.pseudoDocument._source, attr)
+
+    if (typeof current !== 'string') {
+      console.error(
+        `The editImage action is only available for string properties, but the current value of '${attr}' is not a string!`
+      )
+
+      return
+    }
+
+    const defaultArtwork =
+      (this.pseudoDocument.constructor as typeof PseudoDocument).getDefaultArtwork?.(this.document._source) ?? {}
+
+    const defaultImage = foundry.utils.getProperty(defaultArtwork, attr)
+
+    if (typeof defaultImage !== 'string') {
+      console.error(
+        'The default artwork for this pseudo-document does not have a string property at the specified path!'
+      )
+
+      return
+    }
+
+    const fp = new foundry.applications.apps.FilePicker.implementation({
+      current,
+      type: 'image',
+      redirectToRoot: defaultImage ? [defaultImage] : [],
+      callback: path => {
+        target.src = path
+
+        if (this.options.form?.submitOnChange) {
+          const submit = new Event('submit', { cancelable: true })
+
+          this.form?.dispatchEvent(submit)
+        }
+      },
+      position: {
+        top: this.position.top + 40,
+        left: this.position.left + 10,
+      },
+    })
+
+    await fp.browse()
   }
 }
 /* -------------------------------------------------- */

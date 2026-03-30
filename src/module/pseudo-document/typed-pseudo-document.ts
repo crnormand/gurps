@@ -104,9 +104,13 @@ class TypedPseudoDocument<
       })
     )
 
+    const schema = this.schema
+
+    foundry.helpers.Localization.localizeSchema(schema, this.LOCALIZATION_PREFIXES)
+
     return {
       typeOptions,
-      fields: this.schema.fields,
+      fields: schema.fields,
     }
   }
 }
