@@ -5,6 +5,7 @@
 ### Bugfixes
 
 - Rework Russian lang file entries to fit available space in the Modern sheet.
+- Allow the system to be installed in Foundry v14.
 
 ## Release 0.18.14 03/22/2026
 
