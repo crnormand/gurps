@@ -7,14 +7,14 @@
 - Added new revised character and item schema, with automatic migration for existing characters and items.
 - Added direct import support for characters from GCA 5.
 
-
 ### Bugfixes
 
-## Release 0.18.15
+## Release 0.18.15 03/04/2026
 
 ### Bugfixes
 
 - Rework Russian lang file entries to fit available space in the Modern sheet.
+- Allow the system to be installed in Foundry v14.
 
 ## Release 0.18.14 03/22/2026
 
