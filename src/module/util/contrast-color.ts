@@ -1,3 +1,5 @@
+import { getCssVariable } from './get-css-value.ts'
+
 /**
  * Determine the luminescence of the provided background color, and return either a light or dark foreground color to
  * contrast with it.
@@ -7,7 +9,12 @@
  * @param {string} lightColor - The color to use for light foreground elements.
  * @returns {string} - The appropriate foreground color based on the background color's luminescence.
  */
-export function contrastColor(backgroundHex: string, darkColor = '#1c1a17', lightColor = '#f8f6f2'): string {
+export function contrastColor(backgroundHex: string, darkColor?: string, lightColor?: string): string {
+  // If darkColor is not provided, attempt to get it from CSS variable, falling back to a default if necessary.
+  // Do the same for lightColor.
+  darkColor = darkColor || getCssVariable(document.body, '--ms-dark-text', '#1c1a17')
+  lightColor = lightColor || getCssVariable(document.body, '--ms-light-text', '#f8f6f2')
+
   if (!backgroundHex || !/^#[0-9A-Fa-f]{6}$/.test(backgroundHex)) {
     console.warn(
       `Invalid background color provided to constrastColor: ${backgroundHex}. Falling back to default colors.`

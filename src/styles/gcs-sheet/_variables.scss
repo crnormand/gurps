@@ -28,7 +28,7 @@
   /* ---------------------------------------- */
 
   /* Colors */
-  --gcs-color-surface-bg: #f4f5f5;
+  --gcs-color-surface-bg: #f5f5f4;
   --gcs-color-surface-fg: var(--color-dark-fg);
 
   --gcs-color-quote-bg: color-mix(in hsl, var(--gcs-color-surface-bg), black 15%);
@@ -37,13 +37,13 @@
   --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
   --gcs-color-control-fg: var(--color-dark-fg);
 
-  --gcs-color-header-bg: #505050;
+  --gcs-color-header-bg: #52504a;
   --gcs-color-header-fg: var(--color-light-fg);
 
   --gcs-color-banding-bg: #e4e4d8;
   --gcs-color-banding-fg: var(--color-dark-fg);
 
-  --gcs-color-focus-bg: #A0C8E0;
+  --gcs-color-focus-bg: #a0c8e0;
   --gcs-color-focus-fg: var(--color-dark-fg);
 
   --gcs-color-tooltip-bg: #fff4c6;
@@ -52,15 +52,15 @@
   --gcs-color-input-bg: #eff0f0;
   --gcs-color-input-fg: var(--color-dark-fg);
 
-  --gcs-color-roll-bg: #F1EA81;
+  --gcs-color-roll-bg: #f1ea81;
   --gcs-color-roll-fg: var(--color-dark-fg);
   --gcs-color-roll-bg-hover: #a99829;
 
-  --gcs-color-positive-bg: #B1D175;
+  --gcs-color-positive-bg: #b1d175;
   --gcs-color-positive-fg: var(--color-dark-fg);
   --gcs-color-positive-bg-hover: #4e6c00;
 
-  --gcs-color-negative-bg: #F6B24D;
+  --gcs-color-negative-bg: #f6b24d;
   --gcs-color-negative-fg: var(--color-dark-fg);
   --gcs-color-negative-bg-hover: #b34700;
 

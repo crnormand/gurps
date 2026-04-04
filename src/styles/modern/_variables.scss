@@ -1,4 +1,6 @@
 @mixin css-variables {
+  --ms-dark-text: #1a1a1a;
+  --ms-light-text: #e8e4dc;
   --ms-bg: #f8f6f2;
   --ms-bg-header: #f0ede8;
   --ms-bg-card: #ffffff;
@@ -7,7 +9,7 @@
   --ms-bg-muted: #eceae6;
   --ms-border: #d8d4cc;
   --ms-border-light: #e8e4dc;
-  --ms-text: #1a1a1a;
+  --ms-text: var(--ms-dark-text);
   --ms-text-muted: #555555;
   --ms-text-dim: #888888;
   --ms-accent: #3e6a4d;
@@ -69,7 +71,7 @@
   --ms-bg-muted: #1a1816;
   --ms-border: #3a3732;
   --ms-border-light: #2e2b27;
-  --ms-text: #e8e4dc;
+  --ms-text: var(--ms-light-text);
   --ms-text-muted: #a8a49c;
   --ms-text-dim: #6a665e;
   --ms-accent: #5a9e6f;

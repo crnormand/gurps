@@ -44,7 +44,11 @@
     background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 30%);
 
     &:hover {
-      background-color: color-mix(in hsl, color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 30%), var(--gcs-color-roll-bg-hover) 60%);
+      background-color: color-mix(
+        in hsl,
+        color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 30%),
+        var(--gcs-color-roll-bg-hover) 60%
+      );
     }
   }
 
@@ -52,7 +56,11 @@
     background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 40%);
 
     &:hover {
-      background-color: color-mix(in hsl, color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 40%), var(--gcs-color-positive-bg-hover) 60%);
+      background-color: color-mix(
+        in hsl,
+        color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 40%),
+        var(--gcs-color-positive-bg-hover) 60%
+      );
     }
   }
 
@@ -60,7 +68,11 @@
     background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 20%);
 
     &:hover {
-      background-color: color-mix(in hsl, color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 20%), var(--gcs-color-negative-bg-hover) 60%);
+      background-color: color-mix(
+        in hsl,
+        color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 20%),
+        var(--gcs-color-negative-bg-hover) 60%
+      );
     }
   }
 }
