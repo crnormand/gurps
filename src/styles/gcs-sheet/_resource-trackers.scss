@@ -22,6 +22,7 @@
   /* ---------------------------------------- */
 
   button {
+
     // All buttons except "add tracker" are square icon buttons.
     &:not([data-action='addResourceTracker']) {
       max-width: var(--gcs-input-height);
@@ -35,17 +36,6 @@
       font-size: var(--gcs-font-size-header-icon);
     }
 
-    // Decrement/increment share a border; flatten the adjacent corners so they
-    // read as a single stepper control.
-    // &[data-action='decrementPool'] {
-    // border-bottom-right-radius: 0;
-    // border-top-right-radius: 0;
-    // }
-
-    // &[data-action='incrementPool'] {
-    // border-bottom-left-radius: 0;
-    // border-top-left-radius: 0;
-    //}
 
     &[data-action='resetPool'] {
       margin-left: 0.5rem;
