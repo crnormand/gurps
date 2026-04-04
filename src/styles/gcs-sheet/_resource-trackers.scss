@@ -22,7 +22,6 @@
   /* ---------------------------------------- */
 
   button {
-
     // All buttons except "add tracker" are square icon buttons.
     &:not([data-action='addResourceTracker']) {
       max-width: var(--gcs-input-height);
@@ -35,7 +34,6 @@
       outline: inherit;
       font-size: var(--gcs-font-size-header-icon);
     }
-
 
     &[data-action='resetPool'] {
       margin-left: 0.5rem;
