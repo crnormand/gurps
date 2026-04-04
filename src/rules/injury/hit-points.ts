@@ -1,3 +1,8 @@
+import { getCssVariable } from '@module/util/get-css-value.js'
+
+const CSS_ELEMENT = document.body
+const POOL_COLOR_VARIABLE = '--gcs-color-default-pool'
+
 export interface ThresholdDescriptor {
   value: number
   condition: string
@@ -27,16 +32,20 @@ export class HitPoints {
     if (!maxHP || maxHP <= 0) return []
 
     return [
-      { value: maxHP, condition: 'GURPS.status.Healthy', color: '#4a9b4b' },
-      { value: maxHP - 1, condition: 'GURPS.status.Wounded', color: '#7ab648' },
-      { value: Math.ceil(maxHP / 3) - 1, condition: 'GURPS.status.Reeling', color: '#d4a017' },
-      { value: 0, condition: 'GURPS.collapse', color: '#d4621a' },
-      { value: -maxHP, condition: 'GURPS.check1', color: '#c03a25' },
-      { value: -2 * maxHP, condition: 'GURPS.check2', color: '#a82a20' },
-      { value: -3 * maxHP, condition: 'GURPS.check3', color: '#8e1f1a' },
-      { value: -4 * maxHP, condition: 'GURPS.check4', color: '#761515' },
-      { value: -5 * maxHP, condition: 'GURPS.dead', color: '#4a0c0c' },
-      { value: -10 * maxHP, condition: 'GURPS.destroyed', color: '#1a0505' },
+      {
+        value: maxHP,
+        condition: 'GURPS.status.Healthy',
+        color: getCssVariable(CSS_ELEMENT, POOL_COLOR_VARIABLE, '#B1D175'),
+      },
+      { value: maxHP - 1, condition: 'GURPS.status.Wounded', color: '#D8E871' },
+      { value: Math.ceil(maxHP / 3) - 1, condition: 'GURPS.status.Reeling', color: '#DAD06A' },
+      { value: 0, condition: 'GURPS.collapse', color: '#EFAC78' },
+      { value: -maxHP, condition: 'GURPS.check1', color: '#B25A56' },
+      { value: -2 * maxHP, condition: 'GURPS.check2', color: '#9A4D4A' },
+      { value: -3 * maxHP, condition: 'GURPS.check3', color: '#834140' },
+      { value: -4 * maxHP, condition: 'GURPS.check4', color: '#6B3535' },
+      { value: -5 * maxHP, condition: 'GURPS.dead', color: '#54292B' },
+      { value: -10 * maxHP, condition: 'GURPS.destroyed', color: '#3D1E20' },
     ]
   }
 }

@@ -5,8 +5,8 @@
   /* GCS automatically chooses one of these two colours depending on the background
    * colour of the sheet, so we're just using these everywhere.
    */
-  --color-dark-fg: #101010;
-  --color-light-fg: #f0f0f0;
+  --color-dark-fg: #1c1a17;
+  --color-light-fg: #f8f6f2;
 
   /* ---------------------------------------- */
 
@@ -43,8 +43,8 @@
   --gcs-color-banding-bg: #e4e4d8;
   --gcs-color-banding-fg: var(--color-dark-fg);
 
-  --gcs-color-focus-bg: #006199;
-  --gcs-color-focus-fg: var(--color-light-fg);
+  --gcs-color-focus-bg: #A0C8E0;
+  --gcs-color-focus-fg: var(--color-dark-fg);
 
   --gcs-color-tooltip-bg: #fff4c6;
   --gcs-color-tooltip-fg: var(--color-dark-fg);
@@ -52,14 +52,19 @@
   --gcs-color-input-bg: #eff0f0;
   --gcs-color-input-fg: var(--color-dark-fg);
 
-  --gcs-color-roll-bg: #f9f0a0;
+  --gcs-color-roll-bg: #F1EA81;
   --gcs-color-roll-fg: var(--color-dark-fg);
+  --gcs-color-roll-bg-hover: #a99829;
 
-  --gcs-color-positive-bg: #a8e0b0;
+  --gcs-color-positive-bg: #B1D175;
   --gcs-color-positive-fg: var(--color-dark-fg);
+  --gcs-color-positive-bg-hover: #4e6c00;
 
-  --gcs-color-negative-bg: #f0b87a;
+  --gcs-color-negative-bg: #F6B24D;
   --gcs-color-negative-fg: var(--color-dark-fg);
+  --gcs-color-negative-bg-hover: #b34700;
+
+  --gcs-color-default-pool: var(--gcs-color-positive-bg);
 }
 
 /* ---------------------------------------- */

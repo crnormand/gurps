@@ -11,6 +11,7 @@ import { Weight } from '@module/data/common/weight.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import type { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
+import { getCssVariable } from '@module/util/get-css-value.js'
 import { getGame, isHTMLElement } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
@@ -35,8 +36,6 @@ import ActorSheet = gurps.applications.ActorSheet
 type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>
 
 /* ---------------------------------------- */
-
-const DEFAULT_POOL_COLOR = '#4a9b4b'
 
 /* ---------------------------------------- */
 
@@ -133,6 +132,10 @@ namespace GurpsActorGcsSheet {
     otherWeight: string
   }
 }
+
+const CSS_ELEMENT = document.body
+const POOL_COLOR_VARIABLE = '--gcs-color-default-pool'
+const POOL_COLOR_FALLBACK = '#B1D175'
 
 /* ---------------------------------------- */
 
@@ -419,7 +422,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMax: tracker.isMaxEnforced && tracker.value === tracker.max,
         name: tracker.name,
         state: currentThreshold?.condition || '',
-        color: currentThreshold?.color || DEFAULT_POOL_COLOR,
+        color: currentThreshold?.color || getCssVariable(CSS_ELEMENT, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK),
         thresholds: thresholds,
       })
     }
@@ -464,7 +467,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       atMax: systemSource[key].damage === 0,
       name: `GURPS.${key}`,
       state: state?.condition || '',
-      color: state?.color || DEFAULT_POOL_COLOR,
+      color: state?.color || getCssVariable(CSS_ELEMENT, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK),
       thresholds,
     }
   }
@@ -498,7 +501,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMax: systemSource.conditionalinjury.injury.severity >= 6,
         name: 'GURPS.severity',
         state: ciState.condition,
-        color: ciState.color || DEFAULT_POOL_COLOR,
+        color: ciState.color || getCssVariable(CSS_ELEMENT, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK),
         thresholds: ConditionalInjury.thresholds,
       },
       {

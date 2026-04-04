@@ -31,7 +31,7 @@ body {
     flex-direction: row;
     flex-wrap: wrap;
 
-    > * {
+    >* {
       flex: 0 0 100%;
     }
 
@@ -45,7 +45,7 @@ body {
       gap: var(--gcs-section-gap);
       background-color: var(--gcs-color-surface-bg);
 
-      > table {
+      >table {
         align-self: start;
       }
     }
@@ -81,7 +81,7 @@ body {
   color: var(--gcs-color-roll-fg);
 
   &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), white 15%);
+    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-roll-bg-hover) 40%);
   }
 }
 
@@ -90,7 +90,7 @@ body {
   color: var(--gcs-color-positive-fg);
 
   &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 15%);
+    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-positive-bg-hover) 40%);
   }
 }
 
@@ -99,7 +99,7 @@ body {
   color: var(--gcs-color-negative-fg);
 
   &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 15%);
+    background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-negative-bg-hover) 15%);
   }
 }
 
@@ -157,11 +157,11 @@ body {
       grid-template-columns: minmax(4ch, 1fr) max-content;
 
       .form-group {
-        > .form-fields {
+        >.form-fields {
           grid-column: 1;
         }
 
-        > label {
+        >label {
           grid-column: 2;
           text-align: start;
         }
@@ -185,7 +185,7 @@ body {
     }
   }
 
-  > label {
+  >label {
     grid-column: 1;
     justify-self: stretch;
     text-align: end;
@@ -272,6 +272,7 @@ body {
     th {
       @include gcs-header;
     }
+
     justify-content: space-evenly;
   }
 
@@ -279,7 +280,7 @@ body {
     overflow-x: hidden;
   }
 
-  td + td {
+  td+td {
     border-left: 1px solid var(--gcs-color-control-border);
   }
 

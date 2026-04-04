@@ -26,5 +26,5 @@ export function contrastColor(backgroundHex: string, darkColor = '#1c1a17', ligh
   )
   const luminescence = 0.2126 * red + 0.7152 * green + 0.0722 * blue
 
-  return luminescence > 0.179 ? darkColor : lightColor
+  return luminescence > 0.2 ? darkColor : lightColor
 }
