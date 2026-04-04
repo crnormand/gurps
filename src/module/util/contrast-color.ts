@@ -1,4 +1,4 @@
-import { getCssVariable } from './get-css-value.ts'
+import { getCssVariable } from './get-css-value.js'
 
 /**
  * Determine the luminescence of the provided background color, and return either a light or dark foreground color to
