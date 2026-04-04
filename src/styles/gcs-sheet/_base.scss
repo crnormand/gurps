@@ -250,7 +250,7 @@ body {
       color: var(--gcs-color-control-fg);
 
       &:disabled {
-        background-color: none;
+        background-color: transparent;
         color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
         cursor: not-allowed;
       }
