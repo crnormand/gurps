@@ -1,7 +1,8 @@
 {
   "http.proxyStrictSSL": false,
   "chat.tools.terminal.autoApprove": {
-    "true": true
+    "true": true,
+    "npx vitest": true
   },
   "[scss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",

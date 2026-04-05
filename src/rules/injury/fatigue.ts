@@ -2,7 +2,6 @@ import { getCssVariable } from '@module/util/get-css-value.js'
 
 import { ThresholdDescriptor } from './hit-points.js'
 
-const CSS_ELEMENT = document.body
 const POOL_COLOR_VARIABLE = '--gcs-color-default-pool'
 
 export class Fatigue {
@@ -25,7 +24,7 @@ export class Fatigue {
       {
         value: maxFP,
         condition: 'GURPS.status.Rested',
-        color: getCssVariable(CSS_ELEMENT, POOL_COLOR_VARIABLE, '#B1D175'),
+        color: getCssVariable(document.body, POOL_COLOR_VARIABLE, '#B1D175'),
       },
       { value: maxFP - 1, condition: 'GURPS.status.Tiring', color: '#D8E871' },
       { value: Math.ceil(maxFP / 3) - 1, condition: 'GURPS.status.Tired', color: '#DAD06A' },

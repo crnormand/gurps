@@ -133,7 +133,6 @@ namespace GurpsActorGcsSheet {
   }
 }
 
-const CSS_ELEMENT = document.body
 const POOL_COLOR_VARIABLE = '--gcs-color-default-pool'
 const POOL_COLOR_FALLBACK = '#B1D175'
 
@@ -397,6 +396,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       pools.push(this.#prepareAttributePool('QP', []))
     }
 
+    const defaultPoolColor = getCssVariable(document.body, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK)
+
     for (const tracker of this.actor.system.additionalresources.tracker) {
       const currentThreshold = tracker.currentThreshold
       const thresholds = tracker.thresholdDescriptors
@@ -422,7 +423,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMax: tracker.isMaxEnforced && tracker.value === tracker.max,
         name: tracker.name,
         state: currentThreshold?.condition || '',
-        color: currentThreshold?.color || getCssVariable(CSS_ELEMENT, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK),
+        color: currentThreshold?.color || defaultPoolColor,
         thresholds: thresholds,
       })
     }
@@ -467,7 +468,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       atMax: systemSource[key].damage === 0,
       name: `GURPS.${key}`,
       state: state?.condition || '',
-      color: state?.color || getCssVariable(CSS_ELEMENT, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK),
+      color: state?.color || getCssVariable(document.body, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK),
       thresholds,
     }
   }
@@ -501,7 +502,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMax: systemSource.conditionalinjury.injury.severity >= 6,
         name: 'GURPS.severity',
         state: ciState.condition,
-        color: ciState.color || getCssVariable(CSS_ELEMENT, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK),
+        color: ciState.color || getCssVariable(document.body, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK),
         thresholds: ConditionalInjury.thresholds,
       },
       {

@@ -1,5 +1,8 @@
 import { getCssVariable } from './get-css-value.js'
 
+let cachedDarkText: string | undefined
+let cachedLightText: string | undefined
+
 /**
  * Determine the luminescence of the provided background color, and return either a light or dark foreground color to
  * contrast with it.
@@ -12,8 +15,10 @@ import { getCssVariable } from './get-css-value.js'
 export function contrastColor(backgroundHex: string, darkColor?: string, lightColor?: string): string {
   // If darkColor is not provided, attempt to get it from CSS variable, falling back to a default if necessary.
   // Do the same for lightColor.
-  darkColor = darkColor || getCssVariable(document.body, '--ms-dark-text', '#1c1a17')
-  lightColor = lightColor || getCssVariable(document.body, '--ms-light-text', '#f8f6f2')
+  cachedDarkText ??= getCssVariable(document.body, '--ms-dark-text', '#1c1a17')
+  cachedLightText ??= getCssVariable(document.body, '--ms-light-text', '#f8f6f2')
+  darkColor = darkColor || cachedDarkText
+  lightColor = lightColor || cachedLightText
 
   if (!backgroundHex || !/^#[0-9A-Fa-f]{6}$/.test(backgroundHex)) {
     console.warn(
