@@ -2,20 +2,20 @@
 .claude/
 
 # IDE
-.idea/
-.vs/
 .DS_Store
+.history
+.idea/
+.npmrc
 .project
 .settings/
+.vs/
+.vscode/
 Thumbs.db
 scripts/foundry.js
 node_modules
 coverage
-.npmrc
 data/monsters.csv
-.history
 simple.css.map
-.vscode/launch.json
 
 # Build
 dist/
