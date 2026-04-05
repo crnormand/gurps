@@ -1,16 +1,15 @@
 {{#*inline ".poolTooltip"}}
-  <div class="gcs-tooltip gcs-pool-tooltip">
+  <div class="tracker-tooltip">
+    <label class="title">{{localize name}}</label>
     {{#each thresholds}}
-    <div class="threshold">
-      <span class="value">{{value}}</span>
-      <span class="condition">{{localize condition}}</span>
-    </div>
+      <label>{{value}}</label>
+      <label>{{localize condition}}</label>
     {{/each}}
   </div>
 {{/inline}}
 
 {{#*inline ".poolEntry"}}
-<div class="gcs-pool-attribute gcs-section">
+  <div class="gcs-pool-attribute gcs-section">
     <div class="gcs-section-header">
       {{localize name}}
       {{#if (and (not @root.isPlay) editable)}}
@@ -34,14 +33,14 @@
         <button data-action="resetPool" data-inverted="{{invertedDelta}}" data-initial="{{numerator.initial}}" data-path="{{numerator.path}}"><i class="fa-solid fa-undo"></i></button>
       </div>
       {{#if (or state color thresholds.length)}}
-      <div
-        class="pool-state"
-        data-tooltip='{{> '.poolTooltip' thresholds=thresholds}}'
-        style="background-color: {{color}}; color: {{contrast-color color}}"
+        <div
+          class="pool-state"
+          data-tooltip='{{> '.poolTooltip' thresholds=thresholds}}'
+          style="background-color: {{color}}; color: {{contrast-color color}}"
         >{{localize state}}</div>
       {{/if}}
       <div class="form-fields flexrow">
-        <label >{{localize denominator.label}}</label>
+        <label>{{localize denominator.label}}</label>
         {{#if denominator.name}}
           {{formInput denominator.field name=denominator.name value=denominator.value disabled=(or (not denominatorEditable) @root.isPlay)}}
         {{else}}
@@ -54,10 +53,10 @@
 
 <section>
   {{#each pools as |pool|}}
-  {{> ".poolEntry" pool}}
+    {{> ".poolEntry" pool}}
   {{/each}}
   {{#unless isPlay}}
-  <div class="gcs-pool-attribute gcs-section">
+    <div class="gcs-pool-attribute gcs-section">
       <div class="gcs-section-header">
         ...
       </div>

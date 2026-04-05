@@ -83,13 +83,13 @@
   --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), white 15%);
   --gcs-color-control-fg: var(--color-light-fg);
 
-  --gcs-color-header-bg: #404040;
+  --gcs-color-header-bg: #46443f;
   --gcs-color-header-fg: var(--color-light-fg);
 
   --gcs-color-banding-bg: #2a2a22;
   --gcs-color-banding-fg: var(--color-light-fg);
 
-  --gcs-color-focus-bg: #0080cc;
+  --gcs-color-focus-bg: color-mix(in hsl, #a0c8e0, black 20%);
   --gcs-color-focus-fg: var(--color-light-fg);
 
   --gcs-color-tooltip-bg: #fff299;
@@ -98,11 +98,15 @@
   --gcs-color-input-bg: #000000;
   --gcs-color-input-fg: var(--color-light-fg);
 
-  --gcs-color-roll-bg: #e8e068;
+  --gcs-color-roll-bg: color-mix(in hsl, #f1ea81, black 20%);
   --gcs-color-roll-fg: var(--color-dark-fg);
+  --gcs-color-roll-bg-hover: color-mix(in hsl, #a99829, black 15%);
 
-  --gcs-color-positive-bg: #6acc80;
+  --gcs-color-positive-bg: color-mix(in hsl, #b1d175, black 20%);
   --gcs-color-positive-fg: var(--color-dark-fg);
-  --gcs-color-negative-bg: #e89050;
+  --gcs-color-positive-bg-hover: color-mix(in hsl, #4e6c00, black 15%);
+
+  --gcs-color-negative-bg: color-mix(in hsl, #f6b24d, black 20%);
   --gcs-color-negative-fg: var(--color-dark-fg);
+  --gcs-color-negative-bg-hover: color-mix(in hsl, #b34700, black 15%);
 }

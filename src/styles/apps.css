@@ -25,21 +25,28 @@ Global Override body {
 
 .system-gurps {
   --gga-color-pdflink: blue;
+
   --gga-background-rollable: #ffffbe;
   --gga-background-rollable-hover: gold;
+
   --gga-background-gmod: rgb(255, 230, 190);
   --gga-background-gmod-hover: orange;
+
   --gga-color-gurpslink: rgb(121, 107, 73);
   --gga-background-gurpslink: lightgoldenrodyellow;
   --gga-bordercolor-gurpslink: darkgoldenrod;
   --gga-color-gurpslink-hover: #252320;
+
   --gga-background-glinkmod: #e0e0e0;
   --gga-bordercolor-glinkmod: grey;
   --gga-color-glinkmod-hover: #252320;
+  --gga-background-glinkmod-hover: #c0c0c0;
+
   --gga-background-glinkmodplus: #d0ffd0;
   --gga-bordercolor-glinkmodplus: darkgreen;
   --gga-color-glinkmodplus: #2e5a3e;
   --gga-background-glinkmodplus-hover: lightgreen;
+
   --gga-background-glinkmodminus: rgb(255, 207, 214);
   --gga-bordercolor-glinkmodminus: rgb(122, 21, 21);
   --gga-color-glinkmodminus: firebrick;
@@ -2139,6 +2146,7 @@ details .popup.square5x4 {
 .system-gurps .glinkmodminus:hover,
 .system-gurps .glinkmod:hover {
   color: var(--gga-color-gurpslink-hover);
+  background-color: var(--gga-background-glinkmod-hover);
   cursor: pointer;
 }
 
