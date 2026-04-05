@@ -1,13 +1,17 @@
 import { getCssVariable } from '@module/util/get-css-value.js'
+import { afterEach, vi } from 'vitest'
 
 describe('getCssVariable', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   function mockElement(propertyMap: Record<string, string>): HTMLElement {
     const el = {} as HTMLElement
 
-    // @ts-expect-error - Mock global getComputedStyle for node environment.
-    globalThis.getComputedStyle = (_el: HTMLElement) => ({
+    vi.stubGlobal('getComputedStyle', (_el: HTMLElement) => ({
       getPropertyValue: (prop: string) => propertyMap[prop] ?? '',
-    })
+    }))
 
     return el
   }
