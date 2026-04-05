@@ -7,7 +7,7 @@ section[data-application-part='resources'] {
   grid-template-areas:
     'attributes body encumbrance'
     'attributes body moving';
-  grid-template-columns: auto auto auto;
+  grid-template-columns: max-content auto auto;
 
   /* ---------------------------------------- */
 

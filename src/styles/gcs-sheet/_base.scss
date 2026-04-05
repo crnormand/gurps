@@ -31,7 +31,7 @@ body {
     flex-direction: row;
     flex-wrap: wrap;
 
-    > * {
+    >* {
       flex: 0 0 100%;
     }
 
@@ -45,7 +45,7 @@ body {
       gap: var(--gcs-section-gap);
       background-color: var(--gcs-color-surface-bg);
 
-      > table {
+      >table {
         align-self: start;
       }
     }
@@ -157,11 +157,12 @@ body {
       grid-template-columns: minmax(4ch, 1fr) max-content;
 
       .form-group {
-        > .form-fields {
+        >.form-fields {
           grid-column: 1;
+          min-width: 6ch;
         }
 
-        > label {
+        >label {
           grid-column: 2;
           text-align: start;
         }
@@ -174,6 +175,14 @@ body {
     display: grid;
     grid-template-columns: subgrid;
 
+    &.form-group-inverse {
+      grid-template-columns: max-content minmax(4ch, 1fr);
+
+      input {
+        padding-right: 0.75rem;
+      }
+    }
+
     &.flexrow {
       display: flex;
       flex-direction: row;
@@ -185,7 +194,7 @@ body {
     }
   }
 
-  > label {
+  >label {
     grid-column: 1;
     justify-self: stretch;
     text-align: end;
@@ -284,7 +293,7 @@ body {
     overflow-x: hidden;
   }
 
-  td + td {
+  td+td {
     border-left: 1px solid var(--gcs-color-control-border);
   }
 
