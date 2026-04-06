@@ -5,10 +5,12 @@
 
 import { ThresholdDescriptor } from '../hit-points.ts'
 
+type PainLevel = 'Mild' | 'Moderate' | 'Severe' | 'Terrible' | 'Agony'
+
 interface CIThresholdDescriptor extends ThresholdDescriptor {
   days: number
   shock: number
-  pain: string | null
+  pain: PainLevel | null
 }
 
 /* ---------------------------------------- */
@@ -18,115 +20,101 @@ export class ConditionalInjury {
   static thresholds: CIThresholdDescriptor[] = [
     {
       value: -7,
-      condition: 'GURPS.conditionalInjury.severity.none',
+      state: 'Healthy',
       days: 0,
       shock: 0,
       pain: null,
-      color: '#4a9b4b',
     },
     {
       value: -6,
-      condition: 'GURPS.conditionalInjury.severity.scratch',
+      state: 'Scratch',
       days: 1,
       shock: -1,
-      pain: 'GURPS.status.MildPain',
-      color: '#7ab648',
+      pain: 'Mild',
     },
     {
       value: -5,
-      condition: 'GURPS.conditionalInjury.severity.minorWound',
+      state: 'MinorWound1',
       days: 1.5,
       shock: -2,
-      pain: 'GURPS.status.MildPain',
-      color: '#d4a017',
+      pain: 'Mild',
     },
     {
       value: -4,
-      condition: 'GURPS.conditionalInjury.severity.minorWound',
+      state: 'MinorWound2',
       days: 2,
       shock: -2,
-      pain: 'GURPS.status.ModeratePain',
-      color: '#d4a017',
+      pain: 'Moderate',
     },
     {
       value: -3,
-      condition: 'GURPS.conditionalInjury.severity.minorWound',
+      state: 'MinorWound3',
       days: 5,
       shock: -2,
-      pain: 'GURPS.status.ModeratePain',
-      color: '#d4a017',
+      pain: 'Moderate',
     },
     {
       value: -2,
-      condition: 'GURPS.conditionalInjury.severity.majorWound',
+      state: 'MajorWound',
       days: 7,
       shock: -4,
-      pain: 'GURPS.status.SeverePain',
-      color: '#d4621a',
+      pain: 'Severe',
     },
     {
       value: -1,
-      condition: 'GURPS.conditionalInjury.severity.reeling',
+      state: 'Reeling',
       days: 10,
       shock: -4,
-      pain: 'GURPS.status.TerriblePain',
-      color: '#c03a25',
+      pain: 'Terrible',
     },
     {
       value: 0,
-      condition: 'GURPS.conditionalInjury.severity.crippled',
+      state: 'Crippled1',
       days: 14,
       shock: -4,
-      pain: 'GURPS.status.Agony',
-      color: '#a82a20',
+      pain: 'Agony',
     },
     {
       value: 1,
-      condition: 'GURPS.conditionalInjury.severity.crippled',
+      state: 'Crippled2',
       days: 21,
       shock: -4,
-      pain: 'GURPS.status.Agony',
-      color: '#a82a20',
+      pain: 'Agony',
     },
     {
       value: 2,
-      condition: 'GURPS.conditionalInjury.severity.mortalWound',
+      state: 'MortalWound1',
       days: 35,
       shock: -4,
-      pain: 'GURPS.status.Agony',
-      color: '#8e1f1a',
+      pain: 'Agony',
     },
     {
       value: 3,
-      condition: 'GURPS.conditionalInjury.severity.mortalWound',
+      state: 'MortalWound2',
       days: 49,
       shock: -4,
-      pain: 'GURPS.status.Agony',
-      color: '#8e1f1a',
+      pain: 'Agony',
     },
     {
       value: 4,
-      condition: 'GURPS.conditionalInjury.severity.instantlyFatal',
+      state: 'InstantlyFatal1',
       days: 70,
       shock: -4,
-      pain: 'GURPS.status.Agony',
-      color: '#4a0c0c',
+      pain: 'Agony',
     },
     {
       value: 5,
-      condition: 'GURPS.conditionalInjury.severity.instantlyFatal',
+      state: 'InstantlyFatal2',
       days: 105,
       shock: -4,
-      pain: 'GURPS.status.Agony',
-      color: '#4a0c0c',
+      pain: 'Agony',
     },
     {
       value: 6,
-      condition: 'GURPS.conditionalInjury.severity.totalDestruction',
+      state: 'Destroyed',
       days: 0,
       shock: 0,
-      pain: '',
-      color: '#1a0505',
+      pain: null,
     },
   ]
 
@@ -190,16 +178,16 @@ export class ConditionalInjury {
   static grossEffectsForSeverity(severity: number): string {
     // gotta love untyped languages
     if (severity < -6 || severity === null || severity === undefined || typeof severity !== 'number') {
-      return 'GURPS.conditionalInjury.severity.none'
+      return 'Healthy'
     }
 
     for (const row of this.thresholds) {
       if (severity === row.value) {
-        return row.condition
+        return row.state
       }
     }
 
-    return 'GURPS.conditionalInjury.severity.totalDestruction'
+    return 'Destroyed'
   }
 
   /* ---------------------------------------- */

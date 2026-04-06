@@ -23,37 +23,37 @@ const hpConditions = {
   },
   COLLAPSE: {
     breakpoint: _ => 0,
-    label: 'GURPS.collapse',
+    label: 'GURPS.status.Collapse',
     style: 'collapse',
   },
   CHECK1: {
     breakpoint: HP => -1 * HP.max,
-    label: 'GURPS.check1',
+    label: 'GURPS.status.DeathCheck1',
     style: 'check',
   },
   CHECK2: {
     breakpoint: HP => -2 * HP.max,
-    label: 'GURPS.check2',
+    label: 'GURPS.status.DeathCheck2',
     style: 'check',
   },
   CHECK3: {
     breakpoint: HP => -3 * HP.max,
-    label: 'GURPS.check3',
+    label: 'GURPS.status.DeathCheck3',
     style: 'check',
   },
   CHECK4: {
     breakpoint: HP => -4 * HP.max,
-    label: 'GURPS.check4',
+    label: 'GURPS.status.DeathCheck4',
     style: 'check',
   },
   DEAD: {
     breakpoint: HP => -5 * HP.max,
-    label: 'GURPS.dead',
+    label: 'GURPS.status.Dead',
     style: 'dead',
   },
   DESTROYED: {
     breakpoint: HP => -10 * HP.max,
-    label: 'GURPS.destroyed',
+    label: 'GURPS.status.Destroyed',
     style: 'destroyed',
   },
 }
@@ -72,13 +72,13 @@ const fpConditions = {
   },
   COLLAPSE: {
     breakpoint: _ => 0,
-    label: 'GURPS.collapse',
+    label: 'GURPS.status.Collapse',
 
     style: 'collapse',
   },
   UNCONSCIOUS: {
     breakpoint: FP => -1 * FP.max,
-    label: 'GURPS.unconscious',
+    label: 'GURPS.status.Unconscious',
     style: 'unconscious',
   },
 }

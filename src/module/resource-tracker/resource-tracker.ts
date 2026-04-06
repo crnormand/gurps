@@ -2,6 +2,8 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 import { ThresholdDescriptor } from '@rules/injury/hit-points.js'
 
+export type ColoredThresholdDescriptor = ThresholdDescriptor & { color: string }
+
 import {
   IResourceTrackerTemplate,
   IResourceTrackerThreshold,
@@ -61,12 +63,12 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
     return threshold || null
   }
 
-  get thresholdDescriptors(): ThresholdDescriptor[] {
+  get thresholdDescriptors(): ColoredThresholdDescriptor[] {
     const [first, ...rest] = this.thresholds
 
-    const descriptorFrom = (value: number, threshold?: ResourceTrackerThreshold): ThresholdDescriptor => ({
+    const descriptorFrom = (value: number, threshold?: ResourceTrackerThreshold): ColoredThresholdDescriptor => ({
       value,
-      condition: threshold?.condition ?? '',
+      state: threshold?.state ?? '',
       color: threshold?.color ?? '',
     })
 
@@ -85,7 +87,7 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
       return [descriptorFrom(this.max, first), ...computedDescriptors]
     }
 
-    // Neither accumulator nor breakpoints: header uses second threshold's condition/color
+    // Neither accumulator nor breakpoints: header uses second threshold's state/color
     return [descriptorFrom(this.max, first), ...computedDescriptors]
   }
 
@@ -206,7 +208,7 @@ const resourceTrackerThresholdSchema = () => {
 
     operator: new fields.StringField({ required: true, nullable: false }),
     value: new fields.NumberField({ required: true, nullable: false }),
-    condition: new fields.StringField({ required: true, nullable: false }),
+    state: new fields.StringField({ required: true, nullable: false }),
     color: new fields.StringField({ required: true, nullable: true, initial: null }),
   }
 }

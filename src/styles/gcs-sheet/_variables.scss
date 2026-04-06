@@ -28,41 +28,43 @@
   /* ---------------------------------------- */
 
   /* Colors */
-  --gcs-color-surface-bg: #f5f5f4;
-  --gcs-color-surface-fg: var(--color-dark-fg);
+  --gcs-color-surface-bg: var(--gga-color-white);
+  --gcs-color-surface-fg: var(--gga-color-black);
 
-  --gcs-color-quote-bg: color-mix(in hsl, var(--gcs-color-surface-bg), black 15%);
+  --gcs-color-quote-bg: color-mix(in hsl, var(--gcs-color-surface-bg), var(--gga-color-black) 15%);
 
-  --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), black 5%);
-  --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
-  --gcs-color-control-fg: var(--color-dark-fg);
+  --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), var(--gga-color-black) 5%);
+  --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), var(--gga-color-black) 15%);
+  --gcs-color-control-fg: var(--gga-color-black);
 
-  --gcs-color-header-bg: #46443f;
-  --gcs-color-header-fg: var(--color-light-fg);
+  --gcs-color-header-bg: var(--gga-color-darkest-grey);
+  --gcs-color-header-fg: var(--gga-color-white);
 
-  --gcs-color-banding-bg: #e4e4d8;
-  --gcs-color-banding-fg: var(--color-dark-fg);
+  --gcs-color-section-border: var(--gga-color-darkest-grey);
 
-  --gcs-color-focus-bg: #a0c8e0;
-  --gcs-color-focus-fg: var(--color-dark-fg);
+  --gcs-color-banding-bg: var(--gga-color-light-grey);
+  --gcs-color-banding-fg: var(--gga-color-black);
+
+  --gcs-color-focus-bg: var(--gga-color-blue);
+  --gcs-color-focus-fg: var(--gga-color-black);
 
   --gcs-color-tooltip-bg: #fff4c6;
-  --gcs-color-tooltip-fg: var(--color-dark-fg);
+  --gcs-color-tooltip-fg: var(--gga-color-black);
 
   --gcs-color-input-bg: #eff0f0;
-  --gcs-color-input-fg: var(--color-dark-fg);
+  --gcs-color-input-fg: var(--gga-color-black);
 
-  --gcs-color-roll-bg: #f1ea81;
-  --gcs-color-roll-fg: var(--color-dark-fg);
-  --gcs-color-roll-bg-hover: #a99829;
+  --gcs-color-roll-bg: var(--gga-color-yellow);
+  --gcs-color-roll-fg: var(--gga-color-black);
+  --gcs-color-roll-bg-hover: var(--gga-color-dark-yellow);
 
-  --gcs-color-positive-bg: #b1d175;
-  --gcs-color-positive-fg: var(--color-dark-fg);
-  --gcs-color-positive-bg-hover: #4e6c00;
+  --gcs-color-positive-bg: var(--gga-color-green);
+  --gcs-color-positive-fg: var(--gga-color-black);
+  --gcs-color-positive-bg-hover: var(--gga-color-med-green);
 
-  --gcs-color-negative-bg: #f6b24d;
-  --gcs-color-negative-fg: var(--color-dark-fg);
-  --gcs-color-negative-bg-hover: #b34700;
+  --gcs-color-negative-bg: var(--gga-color-orange);
+  --gcs-color-negative-fg: var(--gga-color-black);
+  --gcs-color-negative-bg-hover: var(--gga-color-med-orange);
 
   --gcs-color-default-pool: var(--gcs-color-positive-bg);
 }
@@ -76,37 +78,40 @@
   /* ---------------------------------------- */
 
   /* Colors */
-  --gcs-color-surface-bg: #1e1e1e;
-  --gcs-color-surface-fg: var(--color-light-fg);
+  --gcs-color-surface-bg: var(--gga-color-darkest-grey);
+  --gcs-color-surface-fg: var(--gga-color-light-grey);
 
-  --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), white 20%);
-  --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), white 15%);
-  --gcs-color-control-fg: var(--color-light-fg);
+  --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), var(--gga-color-white) 20%);
+  --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), var(--gga-color-white) 15%);
+  --gcs-color-control-fg: var(--gga-color-light-grey);
 
-  --gcs-color-header-bg: #46443f;
-  --gcs-color-header-fg: var(--color-light-fg);
+  --gcs-color-header-bg: var(--gga-color-black);
+  --gcs-color-header-fg: var(--gga-color-light-grey);
 
-  --gcs-color-banding-bg: #2a2a22;
-  --gcs-color-banding-fg: var(--color-light-fg);
+  --gcs-color-section-border: var(--gga-color-light-grey);
 
-  --gcs-color-focus-bg: color-mix(in hsl, #a0c8e0, black 20%);
-  --gcs-color-focus-fg: var(--color-light-fg);
+  --gcs-color-banding-bg: var(--gga-color-darker-grey);
+  --gcs-color-banding-fg: var(--gga-color-light-grey);
+
+  // --gcs-color-focus-bg: color-mix(in hsl, #a0c8e0, var(--gga-color-black) 20%);
+  --gcs-color-focus-bg: var(--gga-color-dark-blue);
+  --gcs-color-focus-fg: var(--gga-color-light-grey);
 
   --gcs-color-tooltip-bg: #fff299;
-  --gcs-color-tooltip-fg: var(--color-dark-fg);
+  --gcs-color-tooltip-fg: var(--gga-color-black);
 
-  --gcs-color-input-bg: #000000;
-  --gcs-color-input-fg: var(--color-light-fg);
+  --gcs-color-input-bg: var(--gga-color-black);
+  --gcs-color-input-fg: var(--gga-color-light-grey);
 
-  --gcs-color-roll-bg: color-mix(in hsl, #f1ea81, black 20%);
-  --gcs-color-roll-fg: var(--color-dark-fg);
-  --gcs-color-roll-bg-hover: color-mix(in hsl, #a99829, black 15%);
+  --gcs-color-roll-bg: var(--gga-color-dark-yellow);
+  --gcs-color-roll-fg: var(--gga-color-black);
+  --gcs-color-roll-bg-hover: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gga-color-yellow) 30%);
 
-  --gcs-color-positive-bg: color-mix(in hsl, #b1d175, black 20%);
-  --gcs-color-positive-fg: var(--color-dark-fg);
-  --gcs-color-positive-bg-hover: color-mix(in hsl, #4e6c00, black 15%);
+  --gcs-color-positive-bg: var(--gga-color-dark-green);
+  --gcs-color-positive-fg: var(--gga-color-grey);
+  --gcs-color-positive-bg-hover: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gga-color-green) 30%);
 
-  --gcs-color-negative-bg: color-mix(in hsl, #f6b24d, black 20%);
-  --gcs-color-negative-fg: var(--color-dark-fg);
-  --gcs-color-negative-bg-hover: color-mix(in hsl, #b34700, black 15%);
+  --gcs-color-negative-bg: var(--gga-color-dark-orange);
+  --gcs-color-negative-fg: var(--gga-color-grey);
+  --gcs-color-negative-bg-hover: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gga-color-orange) 30%);
 }

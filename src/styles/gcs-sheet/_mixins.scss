@@ -53,12 +53,12 @@
   }
 
   .gcs-mod-positive[data-action='addModifier'] {
-    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 40%);
+    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 10%);
 
     &:hover {
       background-color: color-mix(
         in hsl,
-        color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 40%),
+        color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 10%),
         var(--gcs-color-positive-bg-hover) 60%
       );
     }

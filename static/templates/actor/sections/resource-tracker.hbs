@@ -5,7 +5,7 @@
 
     {{!-- CharacterV2 trackers. MUCH simpler. --}}
     {{#if condition}}
-      <div class='tooltip condition' style='background-color: {{color}}; color: {{contrast-color color}}'>
+      <div class='tooltip condition' style='background-color: {{color}}; color: black'>
         <span class='text' data-tooltip-html='
         <div class="tracker-tooltip">
           <label class="title">{{label}}</label>
@@ -26,7 +26,7 @@
       {{#if thresholds}}
         {{#if breakpoints}}
           {{#with (lookup thresholds (breakpointIndex-of thresholds max value))}}
-            <div class='tooltip condition' style='background-color: {{color}}; color: {{contrast-color color}}'>
+            <div class='tooltip condition' style='background-color: {{color}}; color: black'>
               {{{gurpslink condition}}}
               <span class="tooltiptext">
                 <div style="display: grid; grid-template-columns: min-content min-content auto;">
@@ -47,7 +47,7 @@
           {{/with}}
         {{else}}
           {{#with (lookup thresholds (threshold-of thresholds max value))}}
-            <div class='tooltip condition' style='background-color: {{color}}; color: {{contrast-color color}}'>
+            <div class='tooltip condition' style='background-color: {{color}}; color: black'>
               {{{gurpslink condition}}}
               <span class="tooltiptext">
                 <div style="display: grid; grid-template-columns: min-content min-content auto;">

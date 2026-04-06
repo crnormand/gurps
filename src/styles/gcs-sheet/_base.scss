@@ -1,5 +1,6 @@
 @use 'variables' as *;
 @use 'mixins' as *;
+@use '../_variables' as gga;
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
@@ -7,10 +8,12 @@
 
 body {
   @include css-variables;
+  @include gga.css-color-variables;
 
   &.theme-dark .application.gcs-sheet:not(.theme-light),
   .application.gcs-sheet.theme-dark {
     @include css-variables-dark;
+    @include gga.css-color-variables-dark;
   }
 }
 
@@ -108,7 +111,7 @@ body {
 .gcs-section {
   display: grid;
   grid-template-rows: 0fr auto;
-  border: 0.1rem solid var(--gcs-color-header-bg);
+  border: 0.1rem solid var(--gcs-color-section-border);
 
   background-color: var(--gcs-color-surface-bg);
   color: var(--gcs-color-surface-fg);

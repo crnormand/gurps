@@ -9,7 +9,7 @@ export interface IResourceTrackerThreshold {
   comparison: string
   operator: string
   value: number
-  condition: string
+  state: string
   color: string | null
 }
 

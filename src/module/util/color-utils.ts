@@ -1,4 +1,4 @@
-import { getCssVariable } from './get-css-value.js'
+import { getCssVariable } from './get-css-value.ts'
 
 let cachedDarkText: string | undefined
 let cachedLightText: string | undefined
@@ -20,9 +20,18 @@ export function contrastColor(backgroundHex: string, darkColor?: string, lightCo
   darkColor = darkColor || cachedDarkText
   lightColor = lightColor || cachedLightText
 
+  // If the provided background color is "rgb()" function, resolve it.
+  const rgbMatch = backgroundHex.match(/^rgb\(\s*(?<red>\d+),\s*(?<green>\d+),\s*(?<blue>\d+)\s*\)$/)
+
+  if (rgbMatch) {
+    const { red, green, blue } = rgbMatch.groups!
+
+    backgroundHex = '#' + [red, green, blue].map(ch => Number(ch).toString(16).padStart(2, '0')).join('')
+  }
+
   if (!backgroundHex || !/^#[0-9A-Fa-f]{6}$/.test(backgroundHex)) {
     console.warn(
-      `Invalid background color provided to constrastColor: ${backgroundHex}. Falling back to default colors.`
+      `Invalid background color provided to contrastColor: ${backgroundHex}. Falling back to default colors.`
     )
 
     return darkColor
@@ -39,4 +48,36 @@ export function contrastColor(backgroundHex: string, darkColor?: string, lightCo
   const luminescence = 0.2126 * red + 0.7152 * green + 0.0722 * blue
 
   return luminescence > 0.2 ? darkColor : lightColor
+}
+
+/**
+ * Convert a CSS color string to #RRGGBB hex format. Handles rgb(), color(srgb ...), and pass-through for hex strings.
+ */
+export function toHexColor(color: string): string {
+  const rgbMatch = color.match(/^rgb\(\s*(?<red>\d+),\s*(?<green>\d+),\s*(?<blue>\d+)\s*\)$/)
+
+  if (rgbMatch) {
+    const { red, green, blue } = rgbMatch.groups!
+
+    return '#' + [red, green, blue].map(ch => Number(ch).toString(16).padStart(2, '0')).join('')
+  }
+
+  const srgbMatch = color.match(/^color\(srgb\s+(?<red>[\d.]+)\s+(?<green>[\d.]+)\s+(?<blue>[\d.]+)\s*\)$/)
+
+  if (srgbMatch) {
+    const { red, green, blue } = srgbMatch.groups!
+
+    return (
+      '#' +
+      [red, green, blue]
+        .map(ch =>
+          Math.round(Number(ch) * 255)
+            .toString(16)
+            .padStart(2, '0')
+        )
+        .join('')
+    )
+  }
+
+  return color
 }
