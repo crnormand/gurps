@@ -3,7 +3,8 @@
 body {
   @include css-variables;
 
-  &.theme-dark {
+  &.theme-dark .application.modern-sheet:not(.theme-light),
+  .application.modern-sheet.theme-dark {
     @include css-variables-dark;
   }
 
@@ -130,7 +131,4 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
       text-decoration: underline;
     }
   }
-}
-
-.ms-equipment-grid {
 }

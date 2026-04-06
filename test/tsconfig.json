@@ -2,7 +2,6 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "rootDir": "..",
-    "baseUrl": "../src",
     "noEmit": true,
     "types": ["jquery", "vitest/globals", "fvtt-types", "node"],
     "isolatedModules": true

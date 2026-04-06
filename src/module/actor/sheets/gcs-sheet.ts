@@ -474,7 +474,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       atMax: systemSource[key].damage === 0,
       name: `GURPS.${key}`,
       state: text,
-      color: color,
+      color,
       thresholds,
     }
   }
@@ -486,6 +486,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const systemSource = this.actor.system._source
 
     const ciState = ConditionalInjury.thresholdForSeverity(systemSource.conditionalinjury.injury.severity)
+
+    const color = getColorForState('CI', ciState.state, this.options.classes?.includes('theme-dark') ? 'dark' : 'light')
+    const text = getTextForState('CI', ciState.state)
 
     return [
       {
@@ -507,8 +510,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMin: systemSource.conditionalinjury.injury.severity < -6,
         atMax: systemSource.conditionalinjury.injury.severity >= 6,
         name: 'GURPS.severity',
-        state: ciState.state,
-        color: getColorForState('CI', ciState.state, this.options.classes?.includes('theme-dark') ? 'dark' : 'light'),
+        state: text,
+        color,
         thresholds: ConditionalInjury.thresholds,
       },
       {
