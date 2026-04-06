@@ -197,38 +197,6 @@ export function getColorForState(key: string, state: string | undefined, theme: 
   if (!state) return finalFallback
   const cacheRecord = ColorCache[theme][key]?.[state]
 
-  // if (!cacheRecord) {
-  //   console.warn(`No color cache record found for key "${key}" and state "${state}". Falling back to default color.`)
-
-  //   return finalFallback
-  // }
-
-  // if (cacheRecord.color === null) {
-  //   const styleRoot = document.body.querySelector('.application.gcs-sheet')
-
-  //   if (!styleRoot) {
-  //     console.warn(`No style root found for '.application.gcs-sheet'. Falling back to default color.`)
-
-  //     return cacheRecord.fallback || finalFallback
-  //   }
-
-  //   const cssColor = getComputedStyle(styleRoot).getPropertyValue(cacheRecord.colorName).trim()
-
-  //   // If the css variable is a color-mix function, resolve it to a hex color using a temporary element.
-  //   if (cssColor.startsWith('color-mix')) {
-  //     const tempElement = document.createElement('div')
-
-  //     tempElement.style.color = cssColor
-  //     styleRoot.appendChild(tempElement)
-  //     const resolvedColor = getComputedStyle(tempElement).color
-
-  //     styleRoot.removeChild(tempElement)
-  //     cacheRecord.color = toHexColor(resolvedColor) || cacheRecord.fallback
-  //   } else {
-  //     cacheRecord.color = toHexColor(cssColor) || cacheRecord.fallback
-  //   }
-  // }
-
   return cacheRecord.colorName
 }
 

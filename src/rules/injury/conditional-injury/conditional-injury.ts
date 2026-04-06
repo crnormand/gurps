@@ -20,7 +20,7 @@ export class ConditionalInjury {
   static thresholds: CIThresholdDescriptor[] = [
     {
       value: -7,
-      state: 'Healthy',
+      state: 'None',
       days: 0,
       shock: 0,
       pain: null,
@@ -111,7 +111,7 @@ export class ConditionalInjury {
     },
     {
       value: 6,
-      state: 'Destroyed',
+      state: 'TotalDestruction',
       days: 0,
       shock: 0,
       pain: null,

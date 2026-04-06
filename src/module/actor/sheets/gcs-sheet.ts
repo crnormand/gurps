@@ -508,7 +508,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMax: systemSource.conditionalinjury.injury.severity >= 6,
         name: 'GURPS.severity',
         state: ciState.state,
-        color: getColorForState('CI', ciState.state),
+        color: getColorForState('CI', ciState.state, this.options.classes?.includes('theme-dark') ? 'dark' : 'light'),
         thresholds: ConditionalInjury.thresholds,
       },
       {
