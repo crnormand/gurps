@@ -2,6 +2,7 @@
 
 .gcs-item-table-container {
   background-color: var(--gcs-color-surface-bg);
+  border: 1px solid var(--gcs-color-section-border);
 }
 
 .gcs-item-table {
@@ -9,6 +10,14 @@
   // Auto layout: columns size to content, min/max enforced via td rules below.
   // col width: 100% on the name column still acts as a "take remaining space" hint.
   table-layout: auto;
+
+  &[data-table-id='spells'] {
+    border: 1px solid var(--gcs-color-section-border);
+
+    thead {
+      border: 1px solid var(--gcs-color-section-border);
+    }
+  }
 
   colgroup {
     col.gcs-col-name {
@@ -53,31 +62,37 @@
   td.gcs-item-tl {
     @include gcs-col(2rem, 3.5rem);
     text-align: right;
+    white-space: nowrap;
   }
 
   td.gcs-item-lc {
     @include gcs-col(2rem, 3.5rem);
     text-align: right;
+    white-space: nowrap;
   }
 
   td.gcs-item-value {
     @include gcs-col(2rem);
     text-align: right;
+    white-space: nowrap;
   }
 
   td.gcs-item-weight {
     @include gcs-col(2.5rem);
     text-align: right;
+    white-space: nowrap;
   }
 
   td.gcs-item-extended-value {
     @include gcs-col(2rem);
     text-align: right;
+    white-space: nowrap;
   }
 
   td.gcs-item-extended-weight {
     @include gcs-col(2.5rem);
     text-align: right;
+    white-space: nowrap;
   }
 
   /* ---------------------------------------- */

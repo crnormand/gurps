@@ -28,8 +28,8 @@
   /* ---------------------------------------- */
 
   /* Colors */
-  --gcs-color-surface-bg: var(--gga-color-white);
-  --gcs-color-surface-fg: var(--gga-color-black);
+  --gcs-color-surface-bg: var(--color-light-fg);
+  --gcs-color-surface-fg: var(--color-dark-fg: );
 
   --gcs-color-quote-bg: color-mix(in hsl, var(--gcs-color-surface-bg), var(--gga-color-black) 15%);
 
@@ -78,19 +78,19 @@
   /* ---------------------------------------- */
 
   /* Colors */
-  --gcs-color-surface-bg: var(--gga-color-darkest-grey);
-  --gcs-color-surface-fg: var(--gga-color-light-grey);
+  --gcs-color-surface-bg: var(--color-dark-fg);
+  --gcs-color-surface-fg: var(--color-light-fg);
 
   --gcs-color-control-bg: color-mix(in hsl, var(--gcs-color-surface-bg), var(--gga-color-white) 20%);
   --gcs-color-control-border: color-mix(in hsl, var(--gcs-color-control-bg), var(--gga-color-white) 15%);
   --gcs-color-control-fg: var(--gga-color-light-grey);
 
-  --gcs-color-header-bg: var(--gga-color-black);
+  --gcs-color-header-bg: var(--gga-color-black1); // #222019
   --gcs-color-header-fg: var(--gga-color-light-grey);
 
   --gcs-color-section-border: var(--gga-color-dark-grey);
 
-  --gcs-color-banding-bg: var(--gga-color-darker-grey);
+  --gcs-color-banding-bg: var(--gga-color-black3);
   --gcs-color-banding-fg: var(--gga-color-light-grey);
 
   // --gcs-color-focus-bg: color-mix(in hsl, #a0c8e0, var(--gga-color-black) 20%);

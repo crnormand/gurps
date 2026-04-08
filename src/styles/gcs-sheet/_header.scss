@@ -23,18 +23,22 @@ section[data-application-part='header'] {
 
   .gcs-identity {
     grid-area: identity;
+    align-content: start;
   }
 
   .gcs-description {
     grid-area: description;
+    align-content: start;
   }
 
   .gcs-miscellaneous {
     grid-area: miscellaneous;
+    align-content: start;
   }
 
   .gcs-point-totals {
     grid-area: points;
+    align-content: start;
     width: 10rem;
   }
 }

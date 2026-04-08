@@ -9,6 +9,7 @@
 body {
   @include css-variables;
   @include gga.css-color-variables;
+  @include gga.css-spacing-variables;
 
   &.theme-dark .application.gcs-sheet:not(.theme-light),
   .application.gcs-sheet.theme-dark {
@@ -22,13 +23,14 @@ body {
 .application.gcs-sheet {
   .window-header {
     @include gcs-header;
-    margin-bottom: var(--gcs-section-gap);
+    margin-bottom: var(--gga-space-1);
   }
 
   .window-content {
-    background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 15%);
-    font-family: 'Roboto', sans-serif;
-    gap: var(--gcs-section-gap);
+    margin: var(--gga-space-2);
+    background-color: var(--gcs-color-surface-bg);
+    font-family: 'Verdana', sans-serif;
+    gap: var(--gga-space-1);
 
     display: flex;
     flex-direction: row;
@@ -45,7 +47,7 @@ body {
     }
 
     [data-application-part='reactions'] {
-      gap: var(--gcs-section-gap);
+      gap: var(--gga-space-1);
       background-color: var(--gcs-color-surface-bg);
 
       > table {
@@ -55,11 +57,13 @@ body {
 
     [data-application-part='footer'] {
       text-align: center;
+      color: var(--gga-color-text-callout);
+      font-size: var(--font-size-10);
     }
   }
 
   label {
-    padding: var(--gcs-padding-label);
+    padding: var(--gga-space-2);
   }
 }
 
@@ -121,22 +125,22 @@ body {
     min-height: 1.4rem;
 
     display: flex;
-    gap: 0.5rem;
+    gap: var(--gga-space-2);
   }
 
   .gcs-section-content {
-    padding: 0.25rem;
+    padding: var(--gga-space-2);
     font-size: var(--gcs-font-size-content);
 
     &.gcs-field-columns,
     &.gcs-field-rows {
       padding: 0;
-      grid-gap: 1px;
+      grid-gap: var(--gga-space-1);
     }
 
     &.gcs-field-columns {
       display: flex;
-      gap: 1px;
+      gap: var(--gga-space-1);
       align-items: start;
     }
   }
@@ -151,7 +155,7 @@ body {
     min-width: 0;
     width: 100%;
 
-    .form-group:nth-child(even) {
+    .form-group:nth-child(odd) {
       @include gcs-banding;
     }
 
@@ -296,10 +300,6 @@ body {
     overflow-x: hidden;
   }
 
-  td + td {
-    border-left: 1px solid var(--gcs-color-control-border);
-  }
-
   td,
   th {
     white-space: nowrap;
@@ -310,13 +310,38 @@ body {
     background-color: var(--gcs-color-surface-bg);
     color: var(--gcs-color-surface-fg);
 
-    tr:nth-child(even) {
+    tr {
+      background-color: var(--gcs-color-surface-bg);
+    }
+
+    tr:nth-child(odd) {
       @include gcs-banding;
     }
 
     tr.selected {
       background-color: var(--gcs-color-focus-bg);
       color: var(--gcs-color-focus-fg);
+    }
+  }
+}
+
+/* ---------------------------------------- */
+
+section[data-application-part='combat'],
+section[data-application-part='equipment'] {
+  table:not(:last-child) {
+    margin-bottom: var(--gga-space-1);
+  }
+}
+
+section[data-application-part='combat'],
+section[data-application-part='equipment'],
+section[data-application-part='reactions'] {
+  table {
+    border: 1px solid var(--gcs-color-section-border);
+
+    thead {
+      border: 1px solid var(--gcs-color-section-border);
     }
   }
 }

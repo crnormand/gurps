@@ -3,10 +3,10 @@
 
   padding: var(--gcs-padding-label);
   padding-bottom: 0.2rem;
-  border: none;
+  border-bottom: 2px solid var(--gcs-color-section-border);
 
-  background-color: var(--gcs-color-header-bg);
-  color: var(--gcs-color-header-fg);
+  background-color: var(--gga-color-darkest-grey);
+  color: var(--gga-color-header-text);
 
   font-variant: all-small-caps;
   font-size: var(--gcs-font-size-header);
