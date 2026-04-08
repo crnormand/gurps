@@ -1,4 +1,6 @@
-import { fields } from '@gurps-types/foundry/data-fields.js'
+import { Document, fields } from '@gurps-types/foundry/index.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
+import { type ItemMetadata } from '@module/item/data/base.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { multiplyDice } from '@util/damage-utils.js'
@@ -27,6 +29,7 @@ import { TokenActions } from '../token-actions.js'
 
 import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
+import { type ActorMetadata } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { collectDeletions } from './deletion.js'
@@ -80,6 +83,8 @@ interface EquipmentDropData {
 }
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> implements ActorV1Interface {
+  declare pseudoCollections: Record<string, ModelCollection>
+
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
     return this.system as Actor.SystemOfType<ActorType.Character>
@@ -109,6 +114,29 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Actor.SubType)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _configure(options = {}) {
+    super._configure(options)
+
+    const collections: Record<string, ModelCollection> = {}
+    const model = CONFIG[this.documentName].dataModels[this._source.type]
+    const embedded = (model as unknown as gurps.MetadataOwner)?.metadata?.embedded ?? {}
+
+    for (const [documentName, fieldPath] of Object.entries(embedded)) {
+      const data = foundry.utils.getProperty(this._source, fieldPath) as AnyObject
+      const field = model.schema.getField(fieldPath.slice('system.'.length)) as CollectionField
+
+      collections[documentName] = new (field.constructor as typeof CollectionField).implementation(
+        documentName as any,
+        this,
+        data
+      )
+    }
+
+    Object.defineProperty(this, 'pseudoCollections', { value: Object.seal(collections), writable: false })
   }
 
   /* ---------------------------------------- */
@@ -170,7 +198,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (!isDevMode) {
       options ||= {}
       const allTypes = Actor.TYPES
-      const excludeTypes = ['base', 'character', 'enemy', 'gcsCharacter', 'gcsLoot']
+      const excludeTypes = [
+        'base',
+        ActorType.LegacyCharacter,
+        ActorType.LegacyEnemy,
+        ActorType.GcsCharacter,
+        ActorType.GcsLoot,
+      ]
 
       // Disable non-production Actor types if developer mode is off.
       // @ts-expect-error: Improper types
@@ -182,21 +216,38 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor'>>(
+  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor' | 'Item'>>(
     embeddedName: EmbeddedName,
     id: string,
-    options?: foundry.abstract.Document.GetEmbeddedDocumentOptions
-  ): gurps.Pseudo.EmbeddedDocument<'Actor', EmbeddedName> {
+    options?: Document.GetEmbeddedDocumentOptions
+  ): gurps.Pseudo.EmbeddedDocument<'Actor' | 'Item', EmbeddedName> {
     const { invalid = false, strict = true } = options ?? {}
 
-    if (this.isNewActorType) {
-      const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+    const metadata = (this.system?.constructor as any).metadata as ActorMetadata
 
-      if (embeddedName in systemEmbeds) {
-        const path = systemEmbeds[embeddedName]
-        const document = foundry.utils.getProperty(this, path) as any
+    const systemEmbeds = metadata.embedded ?? {}
 
-        return (document.get(id, { invalid, strict }) ?? undefined) as any
+    if (embeddedName in systemEmbeds) {
+      return this.getEmbeddedCollection(embeddedName as keyof PseudoDocumentConfig.Embeds['Actor']).get(id, {
+        invalid,
+        strict,
+      }) as any
+    }
+
+    const holderItem: Item.Implementation | null =
+      (this.system[metadata.embeddedHolderField as keyof typeof this.system] as Item.Implementation) ?? null
+
+    if (holderItem) {
+      const itemMetadata = (holderItem.system?.constructor as any).metadata as ItemMetadata
+
+      if (itemMetadata.embedded && embeddedName in itemMetadata.embedded) {
+        const holderResult = holderItem.getEmbeddedDocument(
+          embeddedName as gurps.Pseudo.EmbeddedCollectionName<'Item'>,
+          id,
+          { invalid, strict }
+        )
+
+        if (holderResult) return holderResult
       }
     }
 
@@ -205,19 +256,85 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  /**
-   * Obtain the embedded collection of a given pseudo-document type.
-   */
-  getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
-    const collectionPath = (this.system?.constructor as any).metadata.embedded?.[embeddedName]
+  override getEmbeddedCollection<EmbeddedName extends Actor.Embedded.CollectionName>(
+    embeddedName: EmbeddedName
+  ): Actor.Embedded.CollectionFor<EmbeddedName>
+  override getEmbeddedCollection<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Actor']>(
+    embeddedName: EmbeddedName
+  ): ModelCollection<PseudoDocumentConfig.Embeds['Actor'][EmbeddedName]>
+  override getEmbeddedCollection(embeddedName: string): unknown {
+    return (
+      this.pseudoCollections[embeddedName] ?? super.getEmbeddedCollection(embeddedName as Actor.Embedded.CollectionName)
+    )
+  }
 
-    if (!collectionPath) {
-      throw new Error(
-        `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
-      )
+  /* ---------------------------------------- */
+
+  override async createEmbeddedDocuments<EmbeddedName extends Actor.Embedded.Name>(
+    embeddedName: EmbeddedName,
+    data: Document.CreateDataForName<EmbeddedName>[] | undefined,
+    operation?: Document.Database.CreateOperationForName<EmbeddedName>
+  ): Promise<Array<Document.StoredForName<EmbeddedName>>>
+  override async createEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Actor']>(
+    embeddedName: EmbeddedName,
+    data: gurps.Pseudo.EmbeddedCreateData<'Actor', EmbeddedName>[] | undefined,
+    operation?: Partial<gurps.Pseudo.CreateOperation>
+  ): Promise<Array<PseudoDocumentConfig.Embeds['Actor'][EmbeddedName]>>
+  override async createEmbeddedDocuments(
+    embeddedName: string,
+    data?: unknown[],
+    operation?: object
+  ): Promise<unknown[]> {
+    const metadata = (this.system?.constructor as any).metadata as ActorMetadata
+
+    if (metadata.embedded && embeddedName in metadata.embedded) {
+      const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
+
+      return cls.createDocuments(data as any[], { parent: this, ...operation })
+    } else if (metadata.embeddedHolderField) {
+      const holderItem: Item.Implementation | null =
+        (this.system[metadata.embeddedHolderField as keyof typeof this.system] as Item.Implementation) ?? null
+
+      if (holderItem) {
+        const itemMetadata = (holderItem.system?.constructor as any).metadata as ItemMetadata
+
+        if (itemMetadata.embedded && embeddedName in itemMetadata.embedded) {
+          const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
+
+          return cls.createDocuments(data as any[], { ...operation, parent: holderItem })
+        }
+      }
     }
 
-    return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
+    return super.createEmbeddedDocuments(embeddedName as Actor.Embedded.Name, data as never, operation as never)
+  }
+
+  /* ---------------------------------------- */
+
+  override async deleteEmbeddedDocuments<EmbeddedName extends Actor.Embedded.Name>(
+    embeddedName: EmbeddedName,
+    ids: Array<string>,
+    operation?: Document.Database.DeleteOperationForName<EmbeddedName>
+  ): Promise<Array<Document.StoredForName<EmbeddedName>>>
+  override async deleteEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Actor']>(
+    embeddedName: EmbeddedName,
+    ids: Array<string>,
+    operation?: Partial<PseudoDocument.DeleteOperation>
+  ): Promise<Array<PseudoDocumentConfig.Embeds['Actor'][EmbeddedName]>>
+  override async deleteEmbeddedDocuments(
+    embeddedName: string,
+    ids: Array<string>,
+    operation?: object
+  ): Promise<unknown[]> {
+    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+
+    if (embeddedName in systemEmbeds) {
+      const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
+
+      return cls.deleteDocuments(ids, { parent: this, ...operation })
+    }
+
+    return super.deleteEmbeddedDocuments(embeddedName as Actor.Embedded.Name, ids as never, operation as never)
   }
 
   /* ---------------------------------------- */
@@ -570,7 +687,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const embedded = this.modelV2?.metadata?.embedded ?? {}
 
     for (const documentName of Object.keys(embedded)) {
-      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) fn(pseudoDocument)
+      for (const pseudoDocument of this.getEmbeddedCollection(documentName as any)) fn(pseudoDocument)
     }
   }
 

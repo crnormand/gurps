@@ -261,6 +261,21 @@ declare global {
       interface CreateOperation extends foundry.abstract.types.DatabaseCreateOperation {
         parent: Pseudo.ParentDocument
       }
+
+      /* ---------------------------------------- */
+
+      /**
+       * The creation data type for a pseudo-document embedded in a parent document. Derived from the
+       * pseudo-document's DataModel schema so that callers get field-level type checking on create data.
+       */
+      type EmbeddedCreateData<
+        ParentType extends keyof PseudoDocumentConfig.Embeds,
+        EmbeddedName extends keyof PseudoDocumentConfig.Embeds[ParentType],
+      > = PseudoDocumentConfig.Embeds[ParentType][EmbeddedName] extends foundry.abstract.DataModel.Any
+        ? foundry.abstract.DataModel.CreateData<
+            foundry.abstract.DataModel.SchemaOf<PseudoDocumentConfig.Embeds[ParentType][EmbeddedName]>
+          >
+        : AnyObject
     }
   }
 
