@@ -222,8 +222,7 @@ body {
       box-sizing: border-box;
       line-height: var(--gcs-input-height);
       height: var(--gcs-input-height);
-      border: none;
-      border-bottom: 0.1rem solid var(--gcs-color-header-bg);
+      border: 1px solid var(--gcs-color-input-border);
       border-radius: 0;
 
       background-color: var(--gcs-color-input-bg);
@@ -232,6 +231,8 @@ body {
 
       &:disabled {
         background-color: transparent;
+        border: 1px solid transparent;
+        border-bottom: 1px solid var(--gcs-color-input-border);
       }
 
       &:focus {

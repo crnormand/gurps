@@ -3,7 +3,7 @@
  * @source Pyramid #3/120
  */
 
-import { ThresholdDescriptor } from '../hit-points'
+import { ThresholdDescriptor } from '../hit-points.js'
 
 type PainLevel = 'Mild' | 'Moderate' | 'Severe' | 'Terrible' | 'Agony'
 

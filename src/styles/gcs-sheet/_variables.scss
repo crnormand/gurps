@@ -51,8 +51,9 @@
   --gcs-color-tooltip-bg: #fff4c6;
   --gcs-color-tooltip-fg: var(--gga-color-black);
 
-  --gcs-color-input-bg: #eff0f0;
-  --gcs-color-input-fg: var(--gga-color-black);
+  --gcs-color-input-bg: var(--gcs-color-surface-bg);
+  --gcs-color-input-fg: var(--gcs-color-surface-fg);
+  --gcs-color-input-border: var(--gga-color-grey);
 
   --gcs-color-roll-bg: var(--gga-color-yellow);
   --gcs-color-roll-fg: var(--gga-color-black);
@@ -93,15 +94,15 @@
   --gcs-color-banding-bg: var(--gga-color-black3);
   --gcs-color-banding-fg: var(--gga-color-light-grey);
 
-  // --gcs-color-focus-bg: color-mix(in hsl, #a0c8e0, var(--gga-color-black) 20%);
   --gcs-color-focus-bg: var(--gga-color-dark-blue);
   --gcs-color-focus-fg: var(--gga-color-light-grey);
 
   --gcs-color-tooltip-bg: #fff299;
   --gcs-color-tooltip-fg: var(--gga-color-black);
 
-  --gcs-color-input-bg: var(--gga-color-black);
-  --gcs-color-input-fg: var(--gga-color-light-grey);
+  --gcs-color-input-bg: var(--gga-color-darkest-grey);
+  --gcs-color-input-fg: var(--gga-color-white);
+  --gcs-color-input-border: var(--gga-color-dark-grey);
 
   --gcs-color-roll-bg: var(--gga-color-dark-yellow);
   --gcs-color-roll-fg: var(--gga-color-black);
