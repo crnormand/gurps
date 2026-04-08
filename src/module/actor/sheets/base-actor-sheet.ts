@@ -318,7 +318,7 @@ const GurpsBaseActorSheet = <
       const sheet = 'sheet' in doc ? doc.sheet : null
 
       if (!sheet) {
-        console.error('Could not find sheet for document with UUID ${uuid}.')
+        console.error(`Could not find sheet for document with UUID ${doc.uuid}.`)
 
         return
       }
@@ -346,7 +346,7 @@ const GurpsBaseActorSheet = <
       if ('deleteDialog' in doc && typeof doc.deleteDialog === 'function') {
         await doc.deleteDialog?.()
       } else {
-        console.error('Could not find delete method for document with UUID ${uuid}.')
+        console.error(`Could not find delete method for document with UUID ${doc.uuid}.`)
 
         return
       }

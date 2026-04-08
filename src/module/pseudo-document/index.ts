@@ -15,6 +15,7 @@ interface ActorModule extends GurpsModule {
 }
 
 function init() {}
+
 export const Pseudo: ActorModule = {
   init,
   dataModels: {

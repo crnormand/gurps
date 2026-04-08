@@ -466,11 +466,6 @@ class PseudoDocument<
     if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
 
     Object.assign(operation, { pseudo: { operation: 'delete', type: this.documentName, uuid: this.uuid } })
-    const update: Record<string, unknown> = { [`${this.fieldPath}.-=${this.id}`]: null }
-
-    if (hasMetadata(this.constructor)) {
-      PseudoDocument._configureUpdates('delete', this.document, update, operation)
-    }
 
     const deleted = await (this.constructor as typeof PseudoDocument).deleteDocuments(this.id, {
       parent: this.document as gurps.Pseudo.ParentDocument,
@@ -533,6 +528,7 @@ class PseudoDocument<
 
       if (maybeDeleted) {
         updates[`${fieldPath}.-=${id}`] = null
+        deleted.push(maybeDeleted as InstanceType<T>)
 
         if (isContainable(maybeDeleted) && maybeDeleted.contents.length > 0) {
           if (operation && operation.deleteContents) {
@@ -540,6 +536,7 @@ class PseudoDocument<
 
             allContents.forEach((doc: PseudoDocument) => {
               updates[`${doc.fieldPath}.-=${doc.id}`] = null
+              deleted.push(doc as InstanceType<T>)
             })
           } else {
             const containedBy = maybeDeleted.containedBy ?? null
