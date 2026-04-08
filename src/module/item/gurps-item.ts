@@ -1,8 +1,9 @@
 import { Document } from '@gurps-types/foundry/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
-import { AnyMutableObject, AnyObject, InexactPartial } from 'fvtt-types/utils'
+import { AnyObject, InexactPartial } from 'fvtt-types/utils'
 
+import { recurselist } from '@util/utilities.js'
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { IContainable, isContainable } from '../data/mixins/containable.js'
 import { ModelCollection } from '../data/model-collection.js'

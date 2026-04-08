@@ -732,7 +732,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
             doc = parent.getEmbeddedDocument('Action', target.dataset.actionId ?? '') ?? null
           } else if (documentName) {
             doc =
-              this.actor.getEmbeddedPseudoDocumentCollection(documentName)?.get(target.dataset.actionId ?? '') ?? null
+              (this.actor.getEmbeddedCollection(documentName as any)?.get(target.dataset.actionId ?? '') ?? null) as PseudoDocument | null
           }
 
           if (!doc) {
@@ -835,7 +835,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     if (!documentName || !actionId) return
 
-    const action = this.actor.getEmbeddedPseudoDocumentCollection(documentName)?.get(actionId)
+    const action = this.actor.getEmbeddedCollection(documentName as any)?.get(actionId)
 
     if (!action) return
 
