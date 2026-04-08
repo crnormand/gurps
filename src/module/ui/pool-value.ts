@@ -4,8 +4,11 @@ export class PoolValueElement extends foundry.applications.elements.AbstractForm
 
   /* ---------------------------------------- */
 
-  /** Not declared on the superlcass in the types but exists in Foundry's implementation */
+  /** Not declared on the superclass in the types but exists in Foundry's implementation */
   protected _primaryInput: HTMLInputElement = document.createElement('input')
+
+  /** Not declared on the superclass in the types but exists in Foundry's implementation */
+  declare protected abortSignal: AbortSignal
 
   /* ---------------------------------------- */
 
@@ -31,7 +34,7 @@ export class PoolValueElement extends foundry.applications.elements.AbstractForm
 
         this.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }))
       },
-      { signal: (this as unknown as { abortSignal: AbortSignal }).abortSignal }
+      { signal: this.abortSignal }
     )
   }
 
