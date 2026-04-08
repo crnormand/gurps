@@ -1,5 +1,6 @@
 import { ActorImporter } from './actor-importer.js'
 import { GurpsActorV2 } from './gurps-actor.js'
+import { ActorType } from './types.js'
 
 export const AddMultipleImportButton = function (html) {
   const button = document.createElement('button')
@@ -160,7 +161,7 @@ class MultipleImportApp extends Application {
         actor = await GurpsActorV2.create(
           {
             name: file.file,
-            type: 'character',
+            type: ActorType.Character,
           },
           { renderSheet: false }
         )

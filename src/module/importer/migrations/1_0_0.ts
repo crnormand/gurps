@@ -1,3 +1,4 @@
+import { MigrationReport } from '@module/migration/types.js'
 import { migrateLegacySettings, SettingMigration } from '@module/util/migration/settings-migration.js'
 
 import {
@@ -21,7 +22,13 @@ import {
   SETTING_USE_BROWSER_IMPORTER,
   SETTING_ignoreImportQty,
   USE_BROWSER_IMPORTER,
-} from './types.js'
+} from '../types.js'
+
+/* ---------------------------------------- */
+
+const MIGRATION_VERSION = '1.0.0-alpha'
+
+/* ---------------------------------------- */
 
 const OVERWRITE_CHOICE = {
   overwrite: 'overwrite',
@@ -30,6 +37,8 @@ const OVERWRITE_CHOICE = {
 } as const
 
 type OverwriteChoice = (typeof OVERWRITE_CHOICE)[keyof typeof OVERWRITE_CHOICE]
+
+/* ---------------------------------------- */
 
 function toOverwriteChoice(value: unknown): OverwriteChoice {
   const numeric = typeof value === 'number' ? value : Number(value)
@@ -40,11 +49,15 @@ function toOverwriteChoice(value: unknown): OverwriteChoice {
   return OVERWRITE_CHOICE.ask
 }
 
+/* ---------------------------------------- */
+
 function toEncoding(value: unknown): 'Latin1' | 'UTF8' {
   const numeric = typeof value === 'number' ? value : Number(value)
 
   return numeric === 0 ? 'Latin1' : 'UTF8'
 }
+
+/* ---------------------------------------- */
 
 const migrations: SettingMigration[] = [
   {
@@ -99,11 +112,15 @@ const migrations: SettingMigration[] = [
   },
 ]
 
+/* ---------------------------------------- */
+
 /**
  * Migrate legacy GCS Importer settings to new settings, and remove the legacy settings.
  */
-export async function migrate(): Promise<void> {
+export async function migrate(): Promise<MigrationReport | void> {
   await migrateLegacySettings(GURPS.SYSTEM_NAME, migrations).catch(error => {
     console.error('GURPS | Settings migration failed', error)
   })
 }
+
+export const v1_0_0 = { version: MIGRATION_VERSION, migrate }

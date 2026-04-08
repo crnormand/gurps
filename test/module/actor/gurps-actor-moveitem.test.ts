@@ -7,7 +7,7 @@ import { vi, Mock } from 'vitest'
 
 describe('GurpsActorV2.moveItem', () => {
   let actor: GurpsActorV2<ActorType.Character>
-  let equipmentItems: Item.OfType<ItemType.Equipment>[]
+  let equipmentItems: GurpsItemV2<ItemType.Equipment>[]
   let EquipmentModel: any
   let equipmentData: any
 

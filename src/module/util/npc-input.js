@@ -4,6 +4,7 @@ import { digitsAndDecimalOnly, digitsOnly } from '../../util/jquery-helper.js'
 import { sanitize } from '../../util/utilities.js'
 import { Advantage, Encumbrance, Equipment, Melee, Note, Ranged, Skill } from '../actor/actor-components.js'
 import { GurpsActorV2 } from '../actor/gurps-actor.js'
+import { ActorType } from '../actor/types.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 
 import getUserInput from './get-user-input.js'
@@ -239,7 +240,7 @@ export class NpcInput extends FormApplication {
       if (err) ui.notifications.warn('Unable to create Mook: ' + err)
       else this.setTesting(false)
     } else {
-      let data = { name: this.mook.name, type: 'character' }
+      let data = { name: this.mook.name, type: ActorType.Character }
       let createdActor = await GurpsActorV2.create(data, { renderSheet: false })
 
       await this.populate(createdActor)

@@ -15,7 +15,7 @@ import {
 /* ---------------------------------------- */
 
 class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements IResourceTracker {
-  static override defineSchema() {
+  static override defineSchema(): ResourceTrackerSchema {
     return resourceTrackerSchema()
   }
 

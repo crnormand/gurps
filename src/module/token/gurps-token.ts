@@ -1,5 +1,6 @@
+import { ActorType } from '@module/actor/types.js'
+
 import Maneuvers from '../actor/maneuver.js'
-import { ActorType } from '../actor/types.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 

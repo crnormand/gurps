@@ -1,15 +1,11 @@
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
+import { ConditionalModifier, ReactionModifier } from './data/conditional-modifier.js'
 import * as dataModels from './data/index.js'
 import { GurpsItemV2 } from './gurps-item.js'
-import { GurpsItemSheet } from './item-sheet.js'
-import { migrateItem, runMigration, migrateItemCompendium } from './migrate.js'
-
-interface ItemModule extends GurpsModule {
-  migrateItemCompendium: typeof migrateItemCompendium
-  migrateItem: typeof migrateItem
-  migrate: typeof runMigration
-}
+import { migrations } from './migrations/index.js'
+import * as sheets from './sheets/index.js'
+import { ItemType } from './types.js'
 
 function init() {
   console.log('GURPS | Initializing GURPS Item module.')
@@ -17,6 +13,10 @@ function init() {
     CONFIG.Item.documentClass = GurpsItemV2
 
     CONFIG.Item.dataModels = {
+      feature: dataModels.TraitModel,
+      skill: dataModels.SkillModel,
+      spell: dataModels.SpellModel,
+      equipment: dataModels.EquipmentModel,
       featureV2: dataModels.TraitModel,
       skillV2: dataModels.SkillModel,
       spellV2: dataModels.SpellModel,
@@ -30,14 +30,24 @@ function init() {
       gcsNote: dataModels.GcsNoteModel,
     }
 
+    // @ts-expect-error: Invalid type
+    GURPS.CONFIG ||= {}
+    // @ts-expect-error: Invalid type
+    GURPS.CONFIG.PseudoDocument ||= {}
+    // @ts-expect-error: Invalid type
+    GURPS.CONFIG.PseudoDocument.Types ||= {}
+    GURPS.CONFIG.PseudoDocument.Types.ReactionModifier = ReactionModifier
+    GURPS.CONFIG.PseudoDocument.Types.ConditionalModifier = ConditionalModifier
+
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
-    foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
+    foundry.documents.collections.Items.registerSheet('gurps', sheets.GurpsItemSheet, {
+      types: [ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment],
+      makeDefault: true,
+    })
   })
 }
 
-export const Item: ItemModule = {
+export const Item: GurpsModule = {
   init,
-  migrateItem,
-  migrateItemCompendium,
-  migrate: runMigration,
+  migrations,
 }

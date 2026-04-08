@@ -1,4 +1,4 @@
-import { BasePrereq, Prereq, PrereqList, PrereqType } from '@module/prereqs/index.js'
+import { BasePrereq, PrereqList, PrereqType } from '@module/prereqs/index.js'
 
 import { NumericComparison } from '../criteria/number-criteria.js'
 import { CollectionField } from '../fields/collection-field.js'
@@ -8,7 +8,7 @@ const prereqsSchema = () => {
   const _id = foundry.utils.randomID()
 
   return {
-    _prereqs: new CollectionField(BasePrereq as Prereq.AnyConstructor, {
+    _prereqs: new CollectionField(BasePrereq, {
       initial: () => {
         return {
           [_id]: {

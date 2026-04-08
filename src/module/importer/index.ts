@@ -3,7 +3,7 @@ import type { GurpsModule } from '@gurps-types/gurps-module.js'
 import { CharacterModel } from '../actor/data/character.js'
 
 import { actorImporterPrompt, itemImporterPrompt } from './importer-prompt.js'
-import { migrate } from './migrate.js'
+import { migrations } from './migrations/index.js'
 import { initializeGameSettings } from './settings.js'
 import {
   AUTOMATICALLY_SET_IGNORE_QTY,
@@ -35,7 +35,7 @@ function init() {
 
 const Importer: ImporterModule = {
   init,
-  migrate,
+  migrations,
   actorImporterPrompt,
   itemImporterPrompt,
 }

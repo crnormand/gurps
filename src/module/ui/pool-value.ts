@@ -1,5 +1,6 @@
 export class PoolValueElement extends foundry.applications.elements.AbstractFormInputElement<number> {
   static override tagName = 'pool-value'
+
   static override observedAttributes = ['disabled', 'value', 'data-max']
 
   /* ---------------------------------------- */

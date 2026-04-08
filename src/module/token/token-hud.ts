@@ -1,6 +1,5 @@
+import { ActorType } from '@module/actor/types.js'
 import { DeepPartial } from 'fvtt-types/utils'
-
-import { ActorType } from '../actor/types.js'
 
 export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
   static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
@@ -33,7 +32,7 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
       return context
     }
 
-    if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.LegacyEnemy, ActorType.Character)) {
+    if (!actor.isOfType(ActorType.Character)) {
       console.warn('Actor is of unsupported type, cannot get current Maneuver!')
 
       return context

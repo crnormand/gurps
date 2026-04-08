@@ -3,7 +3,7 @@
  * @source Pyramid #3/120
  */
 
-import { ThresholdDescriptor } from '../hit-points.ts'
+import { ThresholdDescriptor } from '../hit-points.js'
 
 interface CIThresholdDescriptor extends ThresholdDescriptor {
   days: number

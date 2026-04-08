@@ -148,10 +148,7 @@ export function bindAllInlineEdits(html: HTMLElement, actor: Actor.OfType<ActorT
   })
 }
 
-export function bindAttributeEdit(
-  html: HTMLElement,
-  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
-): void {
+export function bindAttributeEdit(html: HTMLElement, actor: Actor.OfType<ActorType.Character>): void {
   const wrapperSelector = '.ms-attr-wrapper'
   const badgeSelector = '.ms-attr-badge'
   const inputSelector = '.ms-attr-input'

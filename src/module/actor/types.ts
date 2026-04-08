@@ -1,7 +1,10 @@
 export enum ActorType {
-  LegacyCharacter = 'character',
-  LegacyEnemy = 'enemy',
-  Character = 'characterV2',
+  // LegacyCharacter = 'character',
+  // LegacyEnemy = 'enemy',
+  // Enemy = 'enemyV2',
+  // Character = 'characterV2',
+  // Enemy = 'enemy',
+  Character = 'character',
   GcsCharacter = 'gcsCharacter',
   GcsLoot = 'gcsLoot',
 }

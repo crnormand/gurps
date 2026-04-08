@@ -4,23 +4,18 @@
 
 ### Features
 
+- Automate Foundry publishing when creating a new release.
 - Added new revised character and item schema, with automatic migration for existing characters and items.
 - Added direct import support for characters from GCA 5.
+- Allow OTFs with \*costs term to query for resource pool.
 
 ### Bugfixes
 
-## Release 0.18.15 03/04/2026
-
-### Bugfixes
-
-- Rework Russian lang file entries to fit available space in the Modern sheet.
-- Allow the system to be installed in Foundry v14.
-
-## Release 0.18.14 03/22/2026
+## Release 0.18.14
 
 ### Features
 
-- Automate Foundry publishing when creating a new release (not user-facing).
+- Automate Foundry publishing when creating a new release.
 
 ### Bugfixes
 

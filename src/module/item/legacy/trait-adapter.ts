@@ -1,6 +1,7 @@
 import { defineGetterProperties } from '@util/object-utils.js'
 import { arrayToObject } from '@util/utilities.js'
 
+import { GurpsItemV2 } from '../gurps-item.js'
 import { ItemType } from '../types.js'
 
 // Make selected prototype getters enumerable own properties so Object.values() includes them.
@@ -30,14 +31,14 @@ const getterKeys = [
 class TraitV1 {
   private _contains: Record<string, TraitV1>
 
-  constructor(traitV2: Item.OfType<ItemType.Trait>) {
+  constructor(traitV2: GurpsItemV2<ItemType.Trait>) {
     this.traitV2 = traitV2
 
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: Item.OfType<ItemType.Trait>[] = this.traitV2.sortedContents.map(
-      it => it as Item.OfType<ItemType.Trait>
+    const containedItems: GurpsItemV2<ItemType.Trait>[] = this.traitV2.sortedContents.map(
+      it => it as GurpsItemV2<ItemType.Trait>
     )
 
     this._contains = arrayToObject(
@@ -48,7 +49,7 @@ class TraitV1 {
     this.save = false
   }
 
-  traitV2: Item.OfType<ItemType.Trait>
+  traitV2: GurpsItemV2<ItemType.Trait>
   save: boolean
 
   get addToQuickRoll(): boolean {

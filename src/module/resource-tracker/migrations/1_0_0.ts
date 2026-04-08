@@ -2,8 +2,10 @@ import { migrateLegacySettings, SettingMigration } from '@module/util/migration/
 import { objectToArray } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { ResourceTrackerTemplate } from './resource-tracker.js'
-import { IResourceTracker, OLD_SETTING_TEMPLATES, SETTING_TRACKER_TEMPLATES } from './types.js'
+import { ResourceTrackerTemplate } from '../resource-tracker.js'
+import { IResourceTracker, OLD_SETTING_TEMPLATES, SETTING_TRACKER_TEMPLATES } from '../types.js'
+
+const MIGRATION_VERSION = '1.0.0-alpha'
 
 /**
  * Array of migration configurations for legacy resource tracker settings.
@@ -88,6 +90,8 @@ export function migrateTrackerInstanceToV2(instanceV1: AnyObject): IResourceTrac
   }
 }
 
-export async function migrate(): Promise<void> {
+async function migrate(): Promise<void> {
   await migrateLegacySettings(GURPS.SYSTEM_NAME, legacyMigrations)
 }
+
+export const v1_0_0 = { version: MIGRATION_VERSION, migrate }

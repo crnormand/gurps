@@ -26,8 +26,7 @@ class PrereqList extends BasePrereq<PrereqListSchema> {
   /* ---------------------------------------- */
 
   override prepareBaseData(): void {
-    // @ts-expect-error - The type fix for this is implemented in a later PR.
-    this.children = this.parent?._prereqs?.filter(prereq => prereq.containerId === this._id) ?? []
+    this.children = this.collection?.filter(prereq => prereq.containerId === this._id) ?? []
   }
 
   /* ---------------------------------------- */

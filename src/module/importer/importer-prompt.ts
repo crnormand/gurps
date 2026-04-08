@@ -1,6 +1,6 @@
+import { ActorType } from '@module/actor/types.js'
+import { ItemType } from '@module/item/types.js'
 import { AnyObject } from 'fvtt-types/utils'
-
-import { ActorType } from '../actor/types.js'
 
 import { GcaImporter } from './gca-importer/importer.js'
 import { GCA5 } from './gca-importer/schema.js'
@@ -178,7 +178,7 @@ async function itemImporterPrompt() {
               case 'adq': {
                 const collection = GcsTraitCollection.fromImportData({
                   ...jsonObject,
-                  type: 'trait',
+                  type: ItemType.Trait,
                   name,
                 }) as GcsTraitCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -189,7 +189,7 @@ async function itemImporterPrompt() {
               case 'skl': {
                 const collection = GcsSkillCollection.fromImportData({
                   ...jsonObject,
-                  type: 'skill',
+                  type: ItemType.Skill,
                   name,
                 }) as GcsSkillCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -200,7 +200,7 @@ async function itemImporterPrompt() {
               case 'spl': {
                 const collection = GcsSpellCollection.fromImportData({
                   ...jsonObject,
-                  type: 'spell',
+                  type: ItemType.Spell,
                   name,
                 }) as GcsSpellCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -211,7 +211,7 @@ async function itemImporterPrompt() {
               case 'eqp': {
                 const collection = GcsEquipmentCollection.fromImportData({
                   ...jsonObject,
-                  type: 'equipment',
+                  type: ItemType.Equipment,
                   name,
                 }) as GcsEquipmentCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)

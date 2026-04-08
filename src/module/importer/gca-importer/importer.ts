@@ -483,6 +483,7 @@ Portrait will not be imported.`
           flags: {},
           where: location.location ?? '',
           import: Number.isNaN(dr) ? 0 : dr,
+          _dr: Number.isNaN(dr) ? 0 : dr,
           rollText: roll,
           penalty: Number(location.penalty) || 0,
           split: {},
@@ -665,26 +666,21 @@ Portrait will not be imported.`
     if (existingItemId) id = existingItemId
 
     if (item.attackmodes) {
-      system.actions = item.attackmodes
-        .map((action: GCAAttackMode) => this.#importWeapon(action))
-        .reduce(
-          (
-            acc: Record<string, DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>>,
-            weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>
-          ) => {
+      system.actions = Object.fromEntries(
+        item.attackmodes
+          .map((action: GCAAttackMode) => this.#importWeapon(action))
+          .filter((weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>) => {
             if (!weapon._id || typeof weapon._id !== 'string') {
               console.error('GURPS | Failed to import weapon: No _id set.')
               console.error(weapon)
 
-              return acc
+              return false
             }
 
-            acc[weapon._id] = weapon
-
-            return acc
-          },
-          {}
-        )
+            return true
+          })
+          .map(action => [action._id, action])
+      )
     }
 
     return [system, id]

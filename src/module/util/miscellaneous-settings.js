@@ -1,6 +1,6 @@
 'use strict'
 
-import { ItemImageSettings } from '@module/actor/actor-sheet.js'
+// import { ItemImageSettings } from '@module/actor/actor-sheet.js'
 import { TaggedModifierSettings } from '@module/actor/effect-modifier-popout.js'
 import ModifierBucketJournals from '@module/modifier-bucket/select-journals.js'
 import { QuickRollSettings } from '@module/token/quick-roll-settings.js'
@@ -279,13 +279,13 @@ export function initializeSettings() {
       onChange: value => console.log(`Show item image in inventory : ${JSON.stringify(value)}`),
     })
 
-    game.settings.registerMenu(SYSTEM_NAME, SETTING_SHOW_ITEM_IMAGE, {
-      name: game.i18n.localize('GURPS.settingShowItemImage'),
-      label: game.i18n.localize('GURPS.settingLabelShowItemImage'),
-      hint: game.i18n.localize('GURPS.settingHintShowItemImage'),
-      type: ItemImageSettings,
-      restricted: true,
-    })
+    // game.settings.registerMenu(SYSTEM_NAME, SETTING_SHOW_ITEM_IMAGE, {
+    //   name: game.i18n.localize('GURPS.settingShowItemImage'),
+    //   label: game.i18n.localize('GURPS.settingLabelShowItemImage'),
+    //   hint: game.i18n.localize('GURPS.settingHintShowItemImage'),
+    //   type: ItemImageSettings,
+    //   restricted: true,
+    // })
 
     // Modifier Bucket Configuration ----
 

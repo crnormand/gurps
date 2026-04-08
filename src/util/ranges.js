@@ -183,11 +183,11 @@ export class GurpsRange {
     if (GURPS.ModifierBucket) GURPS.ModifierBucket.refresh()
 
     // FYI update all actors
-    for (const actor of game.actors.contents) {
-      if (actor.permission >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)
-        // Return true if the current game user has observer or owner rights to an actor
-        await actor.update({ ranges: this.ranges })
-    }
+    // for (const actor of game.actors.contents) {
+    //   if (actor.permission >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)
+    //     // Return true if the current game user has observer or owner rights to an actor
+    //     await actor.update({ ranges: this.ranges })
+    // }
   }
 }
 

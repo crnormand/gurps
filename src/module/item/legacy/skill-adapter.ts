@@ -1,6 +1,7 @@
 import { defineGetterProperties } from '@util/object-utils.js'
 import { arrayToObject } from '@util/utilities.js'
 
+import { GurpsItemV2 } from '../gurps-item.js'
 import { ItemType } from '../types.js'
 
 const getterKeys = [
@@ -32,14 +33,14 @@ const getterKeys = [
 class SkillV1 {
   private _contains: Record<string, SkillV1>
 
-  constructor(skillV2: Item.OfType<ItemType.Skill>) {
+  constructor(skillV2: GurpsItemV2<ItemType.Skill>) {
     this.skillV2 = skillV2
 
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: Item.OfType<ItemType.Skill>[] = this.skillV2.sortedContents.map(
-      item => item as Item.OfType<ItemType.Skill>
+    const containedItems: GurpsItemV2<ItemType.Skill>[] = this.skillV2.sortedContents.map(
+      item => item as GurpsItemV2<ItemType.Skill>
     )
 
     this._contains = arrayToObject(
@@ -50,7 +51,7 @@ class SkillV1 {
     this.save = false
   }
 
-  skillV2: Item.OfType<ItemType.Skill>
+  skillV2: GurpsItemV2<ItemType.Skill>
   save: boolean
 
   // For each of the properties in getterKeys, define a getter that proxies to skillV2.system or skillV2 as appropriate.

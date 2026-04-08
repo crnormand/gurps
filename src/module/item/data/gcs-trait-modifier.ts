@@ -5,6 +5,7 @@ import { INameable, INameableAccesser } from '@module/data/mixins/nameable.js'
 import { ItemType } from '../types.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
+import type { GcsTraitModel } from './gcs-trait.js'
 
 class GcsTraitModifierModel
   extends GcsBaseItemModel<GcsTraitModifierSchema, INameable.AccesserBaseData>
@@ -23,7 +24,7 @@ class GcsTraitModifierModel
   static override get metadata(): GcsItemMetadata {
     return {
       embedded: { Feature: 'system.features' },
-      type: 'gcsTraitModifier',
+      type: ItemType.GcsTraitModifier,
       invalidActorTypes: [],
       actions: {},
       childTypes: [],
@@ -54,7 +55,7 @@ class GcsTraitModifierModel
   fillWithNameableKeys(map: Map<string, string>, existing?: Map<string, string>): void {
     if (!this.enabled) return
 
-    existing ??= this.trait?.system.nameableReplacements
+    existing ??= (this.trait?.system as GcsTraitModel | undefined)?.nameableReplacements
     existing ??= new Map()
 
     INameable.extract.call(this, this.parent.name, map, existing)

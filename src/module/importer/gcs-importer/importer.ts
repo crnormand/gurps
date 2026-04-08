@@ -1,21 +1,21 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
 import { parseBlock, parseParry } from '@module/action/parse-attack.js'
-import { MoveModeV2 } from '@module/actor/data/move-mode.js'
+import { groundMoveForBasicMove, MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
+import { ActorType } from '@module/actor/types.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { TraitSchema } from '@module/item/data/trait.js'
+import { ItemType } from '@module/item/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackSchema } from '../../action/melee-attack.js'
 import { RangedAttackSchema } from '../../action/ranged-attack.js'
 import { CharacterSchema } from '../../actor/data/character.js'
 import { HitLocationSchemaV2 } from '../../actor/data/hit-location-entry.js'
-import { ActorType } from '../../actor/types.js'
 import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
 import { EquipmentSchema } from '../../item/data/equipment.js'
 import { SkillSchema } from '../../item/data/skill.js'
 import { SpellSchema } from '../../item/data/spell.js'
-import { ItemType } from '../../item/types.js'
 import { createDataIsOfType, createStandardTrackers, promptDeletionOfMigratedItems } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
@@ -139,7 +139,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
-        actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<ItemType.Equipment>[]
+        actor.items.contents.filter(item => item.type === ItemType.Equipment) as Item.OfType<ItemType.Equipment>[]
       )
 
       // Update actor with new system data and create new items
@@ -535,10 +535,13 @@ Portrait will not be imported.`
           | undefined
         const role = entry?.role ?? entry?.id ?? ''
 
+        const totalDR = (location.calc.dr as Record<string, number>).all ?? 0
+
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
           where: location.table_name ?? '',
-          import: (location.calc.dr as Record<string, number>).all ?? 0,
+          import: totalDR,
+          _dr: totalDR,
           penalty: location.hit_penalty ?? 0,
           rollText: location.calc.roll_range ?? '-',
           split,
@@ -559,7 +562,7 @@ Portrait will not be imported.`
 
   async #promptHitLocationOverwrite() {
     // No need to run this if there is no existing actor or if this is the first import.
-    if (!this.actor || !this.actor.system.profile.modifiedon) return
+    if (!this.actor) return
 
     const currentBodyPlan = this.actor.system.bodyplan
 
@@ -720,12 +723,7 @@ Portrait will not be imported.`
     ): boolean =>
       newMode.mode === oldMode.mode && newMode.basic === oldMode.basic && newMode.enhanced === oldMode.enhanced
 
-    const groundMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      _id: foundry.utils.randomID(),
-      mode: 'GURPS.moveModeGround',
-      basic: this.output.basicmove?.value ?? 5,
-      enhanced: 0,
-    }
+    const groundMove = groundMoveForBasicMove(this.output.basicmove?.value ?? 5)
 
     const allModes = [groundMove]
 
