@@ -322,7 +322,9 @@ class LengthField<
     const required = config.required === null ? undefined : config.required
     const stringConfig: fields.StringField.Options = { ...config, required }
 
-    return foundry.applications.fields.createTextInput(stringConfig as foundry.applications.fields.TextInputConfig)
+    return foundry.applications.fields.createTextInput(
+      stringConfig as foundry.applications.fields.FormInputConfig<string>
+    )
   }
 }
 

@@ -1,11 +1,11 @@
 export class PoolValueElement extends foundry.applications.elements.AbstractFormInputElement<number> {
   static override tagName = 'pool-value'
-  static override observedAttributes = ['disabled', 'value', 'data-max']
+  static observedAttributes = ['disabled', 'value', 'data-max']
 
   /* ---------------------------------------- */
 
   /** Not declared on the superlcass in the types but exists in Foundry's implementation */
-  protected override _primaryInput: HTMLInputElement = document.createElement('input')
+  protected _primaryInput: HTMLInputElement = document.createElement('input')
 
   /* ---------------------------------------- */
 
@@ -31,7 +31,7 @@ export class PoolValueElement extends foundry.applications.elements.AbstractForm
 
         this.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }))
       },
-      { signal: this.abortSignal }
+      { signal: (this as unknown as { abortSignal: AbortSignal }).abortSignal }
     )
   }
 
@@ -56,7 +56,7 @@ export class PoolValueElement extends foundry.applications.elements.AbstractForm
 
   /* ---------------------------------------- */
 
-  override attributeChangedCallback(attrName: string, _oldValue: string | null, newValue: string | null): void {
+  attributeChangedCallback(attrName: string, _oldValue: string | null, newValue: string | null): void {
     if (attrName === 'value') {
       this._setValue(Number(newValue) || 0)
       this._refresh()
