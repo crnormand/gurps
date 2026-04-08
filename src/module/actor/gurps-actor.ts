@@ -2248,7 +2248,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const item = foundry.utils.getProperty(this, sourcekey) as Item.Implementation
 
     // If Item is equipmentV2, check if we should split the item's quantity.
-    if (item && item.type === 'equipmentV2' && split) {
+    if (item && item.isOfType(ItemType.Equipment) && split) {
       if (await this.#splitEquipment(sourcekey, targetkey)) return
     }
 
@@ -2260,7 +2260,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     // If the item is being dropped onto a same-named item, check if we should merge them.
-    if (item.type === 'equipmentV2' && (await this.checkForMerge(item as Item.OfType<ItemType.Equipment>, targetkey)))
+    if (item.isOfType(ItemType.Equipment) && (await this.checkForMerge(item, targetkey)))
       return
 
     let where: 'before' | 'inside' | 'after' | null = null

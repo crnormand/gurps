@@ -139,7 +139,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
-        actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<ItemType.Equipment>[]
+        actor.items.contents.filter(item => item.isOfType(ItemType.Equipment))
       )
 
       // Update actor with new system data and create new items
