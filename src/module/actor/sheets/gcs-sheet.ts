@@ -731,8 +731,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
             doc = parent.getEmbeddedDocument('Action', target.dataset.actionId ?? '') ?? null
           } else if (documentName) {
-            doc =
-              (this.actor.getEmbeddedCollection(documentName as any)?.get(target.dataset.actionId ?? '') ?? null) as PseudoDocument | null
+            doc = (this.actor.getEmbeddedCollection(documentName as any)?.get(target.dataset.actionId ?? '') ??
+              null) as PseudoDocument | null
           }
 
           if (!doc) {
