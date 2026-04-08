@@ -98,7 +98,7 @@ class PseudoDocument<
   /* ---------------------------------------- */
 
   /**
-   * Gets the default new name for a PsuedoDocument
+   * Gets the default new name for a PseudoDocument
    * @param {object} context                    The context for which to create the Document name.
    * @param {string} [context.type]             The sub-type of the document
    * @param {Document|null} [context.parent]    A parent document within which the created Document should belong
@@ -366,8 +366,6 @@ class PseudoDocument<
       throw new Error('Source is not an object!')
     }
 
-    console.log('source object', source)
-
     return this.id in source
   }
 
@@ -384,7 +382,7 @@ class PseudoDocument<
     const isArray = Array.isArray(data)
     const createData = isArray ? data : [data]
 
-    const created = await this.createDocuments(createData, operation)
+    const created = await this.createDocuments(createData, { parent, ...operation })
 
     if (renderSheet && created) {
       created.forEach(pseudo => pseudo.sheet?.render({ force: true }))

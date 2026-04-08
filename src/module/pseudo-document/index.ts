@@ -14,12 +14,7 @@ interface ActorModule extends GurpsModule {
   }
 }
 
-function init() {
-  console.log('GURPS | Initializing GURPS Pseudo-Document module.')
-
-  Hooks.on('init', async () => {})
-}
-
+function init() {}
 export const Pseudo: ActorModule = {
   init,
   dataModels: {

@@ -39,7 +39,7 @@ export async function deleteDialogWithContents<Doc extends Document.Any | Pseudo
     if (contentsCount > 0) {
       content += `<label>
           <input type="checkbox" name="deleteContents">
-          ${game.i18n?.format('GURPS.item.deleteContents', { count: contentsCount.toString() })}
+          ${getGame().i18n.format('GURPS.item.deleteContents', { count: contentsCount.toString() })}
           </label>`
     }
   }
