@@ -20,6 +20,14 @@ body {
 
 /* ---------------------------------------- */
 
+.application .window-header button.header-control[data-action='toggleMode'] {
+  &.editable {
+    background: var(--gga-color-red);
+  }
+}
+
+/* ---------------------------------------- */
+
 .application.gcs-sheet {
   .window-header {
     @include gcs-header;
