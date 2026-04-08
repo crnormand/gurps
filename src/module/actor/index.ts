@@ -1,4 +1,3 @@
-import { DocumentSheetV2 } from '@gurps-types/foundry/document-sheet-v2.js'
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import {
@@ -80,22 +79,9 @@ function init() {
       makeDefault: true,
     })
 
-    // NOTE: This sheet is hidden from Users but can be set by invoking
-    // (actor).setFlag("core","sheetClass","gurps.TestActorSheet")
     foundry.documents.collections.Actors.registerSheet(
       'gurps',
-      sheets.TestActorSheet as DocumentSheetV2.AnyConstructor,
-      {
-        makeDefault: true,
-        types: [ActorType.GcsCharacter],
-        canConfigure: false,
-      }
-    )
-
-    foundry.documents.collections.Actors.registerSheet(
-      'gurps',
-      // TODO: fix type
-      sheets.GurpsActorGcsSheet as unknown as DocumentSheetV2.AnyConstructor,
+      sheets.GurpsActorGcsSheet as unknown as foundry.applications.api.DocumentSheet.AnyConstructor,
       {
         makeDefault: true,
         types: [ActorType.Character],

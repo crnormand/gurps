@@ -1,5 +1,5 @@
 <div class='ms-add-row'>
-  <span class='ms-add-btn' data-action='{{action}}' {{#if container}}data-container='{{container}}'{{/if}}>
-    <i class='fas fa-plus'></i> {{label}}
+  <span class='ms-add-btn' data-action="createEmbedded" data-document-name="{{documentName}}" data-type="{{type}}" data-carried="{{flags.carried}}">
+    <i class='fas fa-plus'></i> {{localize "DOCUMENT.New" type=(localize (concat "TYPES." documentName "." type)) }}
   </span>
 </div>

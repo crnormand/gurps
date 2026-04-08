@@ -58,248 +58,248 @@ body {
   label {
     padding: var(--gcs-padding-label);
   }
-}
 
-/* ---------------------------------------- */
+  /* ---------------------------------------- */
 
-// Roll and modifier buttons share base sizing; color is applied separately below.
-[data-action='rollOtf'],
-[data-action='addModifier'] {
-  height: var(--gcs-input-height);
-  line-height: var(--gcs-input-height);
-  cursor: pointer;
-  padding-right: 0.25rem;
-
-  span {
-    width: 100%;
-    padding: 0 0.5rem;
-  }
-}
-
-[data-action='rollOtf'] {
-  background-color: var(--gcs-color-roll-bg);
-  color: var(--gcs-color-roll-fg);
-
-  &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), white 15%);
-  }
-}
-
-.gcs-mod-positive[data-action='addModifier'] {
-  background-color: var(--gcs-color-positive-bg);
-  color: var(--gcs-color-positive-fg);
-
-  &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 15%);
-  }
-}
-
-.gcs-mod-negative[data-action='addModifier'] {
-  background-color: var(--gcs-color-negative-bg);
-  color: var(--gcs-color-negative-fg);
-
-  &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 15%);
-  }
-}
-
-/* ---------------------------------------- */
-
-.gcs-section {
-  display: grid;
-  grid-template-rows: 0fr auto;
-  border: 0.1rem solid var(--gcs-color-header-bg);
-
-  background-color: var(--gcs-color-surface-bg);
-  color: var(--gcs-color-surface-fg);
-
-  .gcs-section-header {
-    @include gcs-header;
-    min-height: 1.6rem;
-
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .gcs-section-content {
-    padding: 0.25rem;
-    font-size: var(--gcs-font-size-content);
-
-    &.gcs-field-columns,
-    &.gcs-field-rows {
-      padding: 0;
-      grid-gap: 1px;
-    }
-
-    &.gcs-field-columns {
-      display: flex;
-      gap: 1px;
-      align-items: start;
-    }
-  }
-
-  // Two-column label/value grid; label is max-content, value fills remaining space.
-  .gcs-field-rows {
-    display: grid;
-    grid-template-columns: max-content minmax(4ch, 1fr);
-
-    // Equal share of flex space; min-width: 0 lets 1fr resolve inside a flex item.
-    flex: 1 1 0;
-    min-width: 0;
-    width: 100%;
-
-    .form-group:nth-child(even) {
-      @include gcs-banding;
-    }
-
-    // Reversed variant: value first, label second (e.g. point totals).
-    &.gcs-field-rows-reverse {
-      grid-template-columns: minmax(4ch, 1fr) max-content;
-
-      .form-group {
-        > .form-fields {
-          grid-column: 1;
-        }
-
-        > label {
-          grid-column: 2;
-          text-align: start;
-        }
-      }
-    }
-  }
-
-  .form-group {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: subgrid;
-
-    &.flexrow {
-      display: flex;
-      flex-direction: row;
-    }
-
-    &.flexcol {
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  > label {
-    grid-column: 1;
-    justify-self: stretch;
-    text-align: end;
-    white-space: nowrap;
-    padding-left: 0.5rem;
+  // Roll and modifier buttons share base sizing; color is applied separately below.
+  [data-action='rollOtf'],
+  [data-action='addModifier'] {
+    height: var(--gcs-input-height);
+    line-height: var(--gcs-input-height);
+    cursor: pointer;
     padding-right: 0.25rem;
-    align-content: center;
-  }
 
-  .form-fields {
-    height: 100%;
-    grid-column: 2;
-    min-width: 0;
-    white-space: nowrap;
-
-    :is(input, textarea) {
+    span {
       width: 100%;
-      box-sizing: border-box;
-      line-height: var(--gcs-input-height);
-      height: var(--gcs-input-height);
-      border: none;
-      border-bottom: 0.1rem solid var(--gcs-color-header-bg);
-      border-radius: 0;
-
-      background-color: var(--gcs-color-input-bg);
-      color: var(--gcs-color-input-fg);
-      box-shadow: none;
-
-      &:disabled {
-        background-color: transparent;
-      }
-
-      &:focus {
-        outline: 1px solid var(--gcs-color-focus-bg);
-      }
-    }
-
-    // Custom caret for selects via inline SVG so it respects theme color.
-    select {
-      appearance: none;
-      padding-right: 1.25rem;
-      background-repeat: no-repeat;
-      background-position: right 0.25rem center;
-      background-size: 0.5rem;
-      background-image: var(--gcs-caret-down);
-    }
-
-    button,
-    select {
-      width: 100%;
-      box-sizing: border-box;
-      line-height: var(--gcs-input-height);
-      height: var(--gcs-input-height);
-      min-height: 0;
-      border: 0.1rem solid rgba(255, 255, 255, 0.25);
-      border-radius: 0.2rem;
-      font-variant: normal;
-      font-size: var(--gcs-font-size-select);
-
-      background-color: var(--gcs-color-control-bg);
-      border: 1px solid var(--gcs-color-control-border);
-      color: var(--gcs-color-control-fg);
-
-      &:disabled {
-        background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 30%);
-        color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
-        cursor: not-allowed;
-      }
-
-      &:focus {
-        outline: 2px solid var(--gcs-color-focus-bg);
-      }
+      padding: 0 0.5rem;
     }
   }
-}
 
-/* ---------------------------------------- */
+  [data-action='rollOtf'] {
+    background-color: var(--gcs-color-roll-bg);
+    color: var(--gcs-color-roll-fg);
 
-.gcs-table {
-  margin: 0;
-
-  thead,
-  tfoot {
-    th {
-      @include gcs-header;
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-roll-bg), white 15%);
     }
-    justify-content: space-evenly;
   }
 
-  td {
-    overflow-x: hidden;
+  .gcs-mod-positive[data-action='addModifier'] {
+    background-color: var(--gcs-color-positive-bg);
+    color: var(--gcs-color-positive-fg);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 15%);
+    }
   }
 
-  td + td {
-    border-left: 1px solid var(--gcs-color-control-border);
+  .gcs-mod-negative[data-action='addModifier'] {
+    background-color: var(--gcs-color-negative-bg);
+    color: var(--gcs-color-negative-fg);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 15%);
+    }
   }
 
-  td,
-  th {
-    white-space: nowrap;
-    padding: var(--gcs-padding-label);
-  }
+  /* ---------------------------------------- */
 
-  tbody {
+  .gcs-section {
+    display: grid;
+    grid-template-rows: 0fr auto;
+    border: 0.1rem solid var(--gcs-color-header-bg);
+
     background-color: var(--gcs-color-surface-bg);
     color: var(--gcs-color-surface-fg);
 
-    tr:nth-child(even) {
-      @include gcs-banding;
+    .gcs-section-header {
+      @include gcs-header;
+      min-height: 1.6rem;
+
+      display: flex;
+      gap: 0.5rem;
     }
 
-    tr.selected {
-      background-color: var(--gcs-color-focus-bg);
-      color: var(--gcs-color-focus-fg);
+    .gcs-section-content {
+      padding: 0.25rem;
+      font-size: var(--gcs-font-size-content);
+
+      &.gcs-field-columns,
+      &.gcs-field-rows {
+        padding: 0;
+        grid-gap: 1px;
+      }
+
+      &.gcs-field-columns {
+        display: flex;
+        gap: 1px;
+        align-items: start;
+      }
+    }
+
+    // Two-column label/value grid; label is max-content, value fills remaining space.
+    .gcs-field-rows {
+      display: grid;
+      grid-template-columns: max-content minmax(4ch, 1fr);
+
+      // Equal share of flex space; min-width: 0 lets 1fr resolve inside a flex item.
+      flex: 1 1 0;
+      min-width: 0;
+      width: 100%;
+
+      .form-group:nth-child(even) {
+        @include gcs-banding;
+      }
+
+      // Reversed variant: value first, label second (e.g. point totals).
+      &.gcs-field-rows-reverse {
+        grid-template-columns: minmax(4ch, 1fr) max-content;
+
+        .form-group {
+          > .form-fields {
+            grid-column: 1;
+          }
+
+          > label {
+            grid-column: 2;
+            text-align: start;
+          }
+        }
+      }
+    }
+
+    .form-group {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: subgrid;
+
+      &.flexrow {
+        display: flex;
+        flex-direction: row;
+      }
+
+      &.flexcol {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+
+    > label {
+      grid-column: 1;
+      justify-self: stretch;
+      text-align: end;
+      white-space: nowrap;
+      padding-left: 0.5rem;
+      padding-right: 0.25rem;
+      align-content: center;
+    }
+
+    .form-fields {
+      height: 100%;
+      grid-column: 2;
+      min-width: 0;
+      white-space: nowrap;
+
+      :is(input, textarea) {
+        width: 100%;
+        box-sizing: border-box;
+        line-height: var(--gcs-input-height);
+        height: var(--gcs-input-height);
+        border: none;
+        border-bottom: 0.1rem solid var(--gcs-color-header-bg);
+        border-radius: 0;
+
+        background-color: var(--gcs-color-input-bg);
+        color: var(--gcs-color-input-fg);
+        box-shadow: none;
+
+        &:disabled {
+          background-color: transparent;
+        }
+
+        &:focus {
+          outline: 1px solid var(--gcs-color-focus-bg);
+        }
+      }
+
+      // Custom caret for selects via inline SVG so it respects theme color.
+      select {
+        appearance: none;
+        padding-right: 1.25rem;
+        background-repeat: no-repeat;
+        background-position: right 0.25rem center;
+        background-size: 0.5rem;
+        background-image: var(--gcs-caret-down);
+      }
+
+      button,
+      select {
+        width: 100%;
+        box-sizing: border-box;
+        line-height: var(--gcs-input-height);
+        height: var(--gcs-input-height);
+        min-height: 0;
+        border: 0.1rem solid rgba(255, 255, 255, 0.25);
+        border-radius: 0.2rem;
+        font-variant: normal;
+        font-size: var(--gcs-font-size-select);
+
+        background-color: var(--gcs-color-control-bg);
+        border: 1px solid var(--gcs-color-control-border);
+        color: var(--gcs-color-control-fg);
+
+        &:disabled {
+          background-color: color-mix(in hsl, var(--gcs-color-surface-bg), black 30%);
+          color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
+          cursor: not-allowed;
+        }
+
+        &:focus {
+          outline: 2px solid var(--gcs-color-focus-bg);
+        }
+      }
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  .gcs-table {
+    margin: 0;
+
+    thead,
+    tfoot {
+      th {
+        @include gcs-header;
+      }
+      justify-content: space-evenly;
+    }
+
+    td {
+      overflow-x: hidden;
+    }
+
+    td + td {
+      border-left: 1px solid var(--gcs-color-control-border);
+    }
+
+    td,
+    th {
+      white-space: nowrap;
+      padding: var(--gcs-padding-label);
+    }
+
+    tbody {
+      background-color: var(--gcs-color-surface-bg);
+      color: var(--gcs-color-surface-fg);
+
+      tr:nth-child(even) {
+        @include gcs-banding;
+      }
+
+      tr.selected {
+        background-color: var(--gcs-color-focus-bg);
+        color: var(--gcs-color-focus-fg);
+      }
     }
   }
 }

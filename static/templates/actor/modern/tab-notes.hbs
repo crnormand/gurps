@@ -124,6 +124,26 @@
   </div>
 </div>
 
+{{#*inline ".note"}}
+  <div class='ms-note-row' data-uuid="{{uuid}}">
+    <div class='ms-note-content indent{{indent}}'>
+      {{#if hasChildren}}<i class='fas fa-caret-down ms-container-icon {{ifThen childrenOpen "" "container-collapsed"}}'></i>{{/if}}
+      {{#if notes}}
+        {{#if fullName}}<strong>{{{gurpslinkbr fullName}}}</strong> {{/if}}{{{gurpslinkbr notes}}}
+      {{else}}
+        {{localize "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>
+      {{/if}}
+    </div>
+    <span class='ms-note-ref'>{{pdfReference reference}}</span>
+    {{> "actor.modern.partials.row-actions"}}
+  </div>
+  {{#if (and hasChildren childrenOpen)}}
+    {{#each children}}
+      {{> ".note" }}
+    {{/each}}
+  {{/if}}
+{{/inline}}
+
 {{!-- Notes + Lifting --}}
 <div class='ms-notes-columns'>
   <div class='ms-section'>
@@ -132,33 +152,13 @@
       {{localize 'GURPS.notes'}}
     </h3>
     <div class='ms-notes-list'>
-      {{#each (flatlist system.notes)}}
-      {{#unless isCollapsed}}
-      <div class='ms-note-row' data-key='system.notes.{{@key}}'>
-        <div class='ms-note-content indent{{indent}}'>
-          {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon' data-key='system.notes.{{@key}}'></i>{{/if}}
-          {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon' data-key='system.notes.{{@key}}'></i>{{/if}}
-          {{#if this.notes}}
-            {{#if title}}<strong>{{{gurpslinkbr this.title}}}</strong> {{/if}}{{{gurpslinkbr this.notes}}}
-          {{else}}
-            {{localize "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>
-          {{/if}}
-          {{#if (isUserCreated this)}}
-            <i class='fas fa-bookmark ms-user-created' title='{{localize "GURPS.equipmentUserCreated"}}'></i>
-          {{/if}}
-        </div>
-        <span class='ms-note-ref'>{{{pdflinkext this}}}</span>
-        <span class='ms-note-actions'>
-          <i class='fas fa-pen-to-square ms-action-btn' data-action='editNote' data-key='system.notes.{{@key}}' title='Edit'></i>
-          <i class='fas fa-trash ms-action-btn ms-delete' data-action='deleteNote' data-key='system.notes.{{@key}}' title='Delete'></i>
-        </span>
-      </div>
-      {{/unless}}
+      {{#each notes}}
+        {{> ".note"}}
       {{else}}
       <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
       {{/each}}
       <div class='ms-add-row'>
-        <span class='ms-add-btn' data-action='addNote'><i class='fas fa-plus'></i> {{localize 'GURPS.notes'}}</span>
+        <span class='ms-add-btn' data-action='createEmbedded' data-document-name="Note"><i class='fas fa-plus'></i> {{localize 'GURPS.notes'}}</span>
       </div>
     </div>
   </div>
@@ -199,7 +199,7 @@
   </h3>
   <div class='ms-trackers-list'>
     {{#each resourceTrackers}}
-      {{>ms-resource-tracker key=@key}}
+      {{> "actor.partials.resource-tracker" }}
     {{/each}}
   </div>
 </div>
@@ -208,7 +208,7 @@
   <h3 class='ms-section-header'>
     <i class='fas fa-heartbeat'></i>
     {{localize 'GURPS.resourceTracker.view.title'}}
-    <i class='fas fa-plus ms-add-icon' data-action='addTracker'></i>
+    <i class='fas fa-plus ms-add-icon' data-action='createEmbedded' data-document-name="ResourceTracker"></i>
   </h3>
   <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
 </div>

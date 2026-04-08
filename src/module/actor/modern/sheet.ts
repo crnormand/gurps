@@ -1,28 +1,38 @@
-import { Application } from '@gurps-types/foundry/application.js'
+import { HandlebarsApplicationMixin, ActorSheet, Application } from '@gurps-types/foundry/index.js'
+import {
+  DisplayConditionalModifier,
+  DisplayEquipment,
+  DisplayMeleeAttack,
+  DisplayNote,
+  DisplayRangedAttack,
+  DisplaySkill,
+  DisplaySpell,
+  DisplayTrait,
+} from '@gurps-types/gurps/display-item.js'
+import { ActionType } from '@module/action/types.js'
+import GurpsWiring from '@module/gurps-wiring.js'
+import { ItemType } from '@module/item/types.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
-import GurpsWiring from '../../gurps-wiring.js'
 import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.js'
 import MoveModeEditor from '../move-mode-editor.js'
 import { GurpsBaseActorSheet } from '../sheets/base-actor-sheet.js'
 import { ActorType } from '../types.js'
 
-import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
-import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
+import { bindSectionCollapse, bindContainerCollapse } from './collapse-handler.js'
 import {
-  bindEquipmentCrudActions,
-  bindNoteCrudActions,
+  //   bindEquipmentCrudActions,
+  //   bindNoteCrudActions,
   bindTrackerActions,
   PreparedTrackerData,
   prepareTrackerDataForSheet,
 } from './dialog-crud-handler.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
-import { entityConfigurations, modifierConfigurations } from './entity-config.js'
 import {
   bindAllInlineEdits,
   bindAttributeEdit,
@@ -31,8 +41,6 @@ import {
   bindAllTrackerEdits,
 } from './inline-edit-handler.js'
 import { isPostureOrManeuver } from './utils/effect.js'
-
-import ActorSheet = gurps.applications.ActorSheet
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
@@ -45,29 +53,63 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
   }, 0)
 }
 
-export interface ModernSheetContext extends ActorSheet.RenderContext {
-  system: Actor.SystemOfType<ActorType.LegacyCharacter | ActorType.Character>
-  effects: ActiveEffect[]
-  skillCount: number
-  traitCount: number
-  meleeCount: number
-  rangedCount: number
-  modifierCount: number
-  showHPTinting: boolean
-  // Uses getter's union return type since it varies between v1/v2 actor models
-  moveMode: GurpsActorV2<Actor.SubType>['currentMoveMode']
-  resourceTrackers: PreparedTrackerData[]
-  hpThresholds: ThresholdDescriptor[]
-  fpThresholds: ThresholdDescriptor[]
-  tab?: Application.Tab
+export namespace GurpsActorModernSheet {
+  export type Type = ActorType.Character
+
+  export interface ModernItemSection<DisplayItem> {
+    section: string
+    documentName: ItemType | string
+    type: ItemType | string
+    icon: string
+    title: string
+    count: number
+    items: DisplayItem[]
+    flags: Record<string, unknown>
+  }
+
+  export interface ItemSections {
+    traits: ModernItemSection<DisplayTrait>
+    skills: ModernItemSection<DisplaySkill>
+    spells: ModernItemSection<DisplaySpell>
+    equipmentCarried: ModernItemSection<DisplayEquipment>
+    equipmentOther: ModernItemSection<DisplayEquipment>
+    attacksMelee: ModernItemSection<DisplayMeleeAttack>
+    attacksRanged: ModernItemSection<DisplayRangedAttack>
+  }
+
+  export interface RenderContext extends ActorSheet.RenderContext {
+    system: Actor.SystemOfType<Type>
+    effects: ActiveEffect[]
+    skillCount: number
+    traitCount: number
+    meleeCount: number
+    rangedCount: number
+    modifierCount: number
+    showHPTinting: boolean
+    reactions: DisplayConditionalModifier[]
+    conditionalModifiers: DisplayConditionalModifier[]
+    itemSections: ItemSections
+    notes: DisplayNote[]
+    // Uses getter's union return type since it varies between v1/v2 actor models
+    moveMode: GurpsActorV2<Actor.SubType>['currentMoveMode']
+    resourceTrackers: PreparedTrackerData[]
+    hpThresholds: ThresholdDescriptor[]
+    fpThresholds: ThresholdDescriptor[]
+    tab?: Application.Tab
+  }
+
+  export interface RenderOptions extends GurpsBaseActorSheet.RenderOptions {
+    isFirstRender: boolean
+  }
 }
 
-type RenderOptions = ActorSheet.RenderOptions & { isFirstRender: boolean }
-
 export class GurpsActorModernSheet extends GurpsBaseActorSheet<
-  ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy
+  GurpsActorModernSheet.Type,
+  GurpsBaseActorSheet.Configuration,
+  GurpsBaseActorSheet.RenderOptions,
+  GurpsActorModernSheet.RenderContext
 >() {
-  static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
+  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
     classes: ['modern-sheet'],
     position: {
       width: 768,
@@ -86,12 +128,14 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       deleteEffect: GurpsActorModernSheet.#onDeleteEffect,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
+      decrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
+      incrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
     },
   }
 
   /* ---------------------------------------- */
 
-  static override PARTS: Record<string, gurps.applications.handlebars.TemplatePart> = {
+  static override PARTS: Record<string, HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     header: {
       template: 'systems/gurps/templates/actor/modern/header.hbs',
     },
@@ -131,24 +175,30 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  protected override async _prepareContext(options: RenderOptions): Promise<ModernSheetContext> {
+  protected override async _prepareContext(
+    options: GurpsActorModernSheet.RenderOptions
+  ): Promise<GurpsActorModernSheet.RenderContext> {
     const baseContext = await super._prepareContext(options)
-    const actorSystem = this.actor.system as Actor.SystemOfType<ActorType.LegacyCharacter | ActorType.Character>
+    const actorSystem = this.actor.system as Actor.SystemOfType<GurpsActorModernSheet.Type>
 
     const effects = this.actor.effects.contents.filter(effect => !isPostureOrManeuver(effect))
 
-    const context: ModernSheetContext = {
+    const itemSections = this._prepareItemSections()
+
+    const context: GurpsActorModernSheet.RenderContext = {
       ...baseContext,
       actor: this.actor,
       system: actorSystem,
       effects,
-      skillCount: countItems(actorSystem?.skills),
-      traitCount: countItems(actorSystem?.ads),
+      itemSections,
+      notes: this.actor.getEmbeddedCollection('Note').contents.map(note => note.toDisplayItem()),
       meleeCount: countItems(actorSystem?.melee),
       rangedCount: countItems(actorSystem?.ranged),
       modifierCount:
         Object.keys(actorSystem?.reactions ?? {}).length + Object.keys(actorSystem?.conditionalmods ?? {}).length,
       showHPTinting: getGame().settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_PORTRAIT_HP_TINTING) as boolean,
+      reactions: this.actor.system.reactions.map(mod => mod.toDisplayItem()),
+      conditionalModifiers: this.actor.system.conditionalmods.map(mod => mod.toDisplayItem()),
       moveMode: this.actor.currentMoveMode,
       resourceTrackers: prepareTrackerDataForSheet(this.actor),
       hpThresholds: HitPoints.getThresholds(actorSystem.HP.max),
@@ -158,11 +208,99 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     return context
   }
 
+  /* ---------------------------------------- */
+
+  protected _prepareItemSections(): GurpsActorModernSheet.ItemSections {
+    const melee = this.actor.getItemAttacks({ attackType: 'melee' })
+    const ranged = this.actor.getItemAttacks({ attackType: 'ranged' })
+
+    return {
+      traits: {
+        section: 'traits',
+        documentName: 'Item',
+        type: ItemType.Trait,
+        icon: 'fa-solid fa-sparkles',
+        title: 'GURPS.advDisadvPerkQuirks',
+        count: this.actor.system.allAdsV2.length,
+        items: this.actor.system.adsV2.map(item => item.system.toDisplayItem()),
+        flags: {
+          otf: true,
+          points: true,
+          reference: true,
+        },
+      },
+      skills: {
+        section: 'skills',
+        documentName: 'Item',
+        type: ItemType.Skill,
+        icon: 'fa-solid fa-graduation-cap',
+        title: 'GURPS.skills',
+        count: this.actor.system.allSkillsV2.length,
+        items: this.actor.system.skillsV2.map(item => item.system.toDisplayItem()),
+        flags: { level: true, rsl: true },
+      },
+      spells: {
+        section: 'spells',
+        documentName: 'Item',
+        type: ItemType.Spell,
+        icon: 'fa-solid fa-hat-wizard',
+        title: 'GURPS.spells',
+        count: this.actor.system.allSpellsV2.length,
+        items: this.actor.system.spellsV2.map(item => item.system.toDisplayItem()),
+        flags: { level: true, rsl: true, college: true },
+      },
+      equipmentCarried: {
+        section: 'traits',
+        documentName: 'Item',
+        type: ItemType.Equipment,
+        icon: 'fa-solid fa-briefcase',
+        // TODO: add total weight and value)
+        title: 'GURPS.equipmentCarried',
+        count: this.actor.system.equipmentV2.carried.length,
+        items: this.actor.system.equipmentV2.carried.map(item => item.system.toDisplayItem()),
+        flags: { equipped: true, carried: true },
+      },
+      equipmentOther: {
+        section: 'traits',
+        documentName: 'Item',
+        type: ItemType.Equipment,
+        icon: 'fa-solid fa-archive',
+        // TODO: add total weight and value)
+        title: 'GURPS.equipmentOther',
+        count: this.actor.system.equipmentV2.other.length,
+        items: this.actor.system.equipmentV2.other.map(item => item.system.toDisplayItem()),
+        flags: { carried: false },
+      },
+      attacksMelee: {
+        section: 'melee',
+        documentName: 'Action',
+        type: ActionType.MeleeAttack,
+        icon: 'fa-solid fa-sword',
+        title: 'GURPS.melee',
+        count: melee.length,
+        items: melee.map(item => item.toDisplayItem()),
+        flags: {},
+      },
+      attacksRanged: {
+        section: 'ranged',
+        documentName: 'Action',
+        type: ActionType.RangedAttack,
+        icon: 'fa-solid fa-crosshairs',
+        title: 'GURPS.ranged',
+        count: ranged.length,
+        items: ranged.map(item => item.toDisplayItem()),
+        flags: {},
+      },
+    }
+  }
+
+  /* ---------------------------------------- */
+
   protected override async _preparePartContext(
     partId: string,
-    context: ModernSheetContext,
+    context: GurpsActorModernSheet.RenderContext,
     options: DeepPartial<ActorSheet.RenderOptions>
-  ): Promise<ModernSheetContext> {
+  ): Promise<GurpsActorModernSheet.RenderContext> {
     await super._preparePartContext(partId, context, options)
 
     if (context.tabs && partId in context.tabs) context.tab = context.tabs[partId]
@@ -170,14 +308,13 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     return context
   }
 
-  protected override async _onRender(context: ActorSheet.RenderContext, options: RenderOptions): Promise<void> {
+  protected override async _onRender(
+    context: GurpsActorModernSheet.RenderContext,
+    options: GurpsActorModernSheet.RenderOptions
+  ): Promise<void> {
     super._onRender(context, options)
 
-    // Add character v1/v2 type guard
     const actor = this.actor
-
-    if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.Character, ActorType.LegacyEnemy)) return
-
     const html = this.element
 
     // Bind inline edit handlers (click-to-edit pattern)
@@ -187,26 +324,20 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     bindPointsEdit(html, actor)
     bindAllTrackerEdits(html, actor)
 
-    // Bind resource reset handlers - note: these are now handled by actions system
-    // but keeping for complex multi-resource configs
-    bindResourceReset(html, actor, [
-      {
-        selector: '.ms-resource-reset[data-action="resetHp"]',
-        resourcePath: 'system.HP.value',
-        maxPath: 'system.HP.max',
-      },
-      {
-        selector: '.ms-resource-reset[data-action="resetFp"]',
-        resourcePath: 'system.FP.value',
-        maxPath: 'system.FP.max',
-      },
-    ])
-
-    // Bind row expand/collapse handlers
-    bindRowExpand(html, {
-      rowSelector: '.ms-skills-row, .ms-traits-row',
-      excludeSelectors: ['.ms-use-button', '.expandcollapseicon', '.ms-row-actions'],
-    })
+    // // Bind resource reset handlers - note: these are now handled by actions system
+    // // but keeping for complex multi-resource configs
+    // bindResourceReset(html, actor, [
+    //   {
+    //     selector: '.ms-resource-reset[data-action="resetHp"]',
+    //     resourcePath: 'system.HP.value',
+    //     maxPath: 'system.HP.max',
+    //   },
+    //   {
+    //     selector: '.ms-resource-reset[data-action="resetFp"]',
+    //     resourcePath: 'system.FP.value',
+    //     maxPath: 'system.FP.max',
+    //   },
+    // ])
 
     bindSectionCollapse(html, {
       headerSelector: '.ms-section-header.ms-collapsible',
@@ -228,8 +359,8 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     quickNotesContent?.addEventListener('dblclick', () => this.#openQuickNoteEditor())
 
     // Bind CRUD actions for entities
-    bindEquipmentCrudActions(html, this.actor, this)
-    bindNoteCrudActions(html, this.actor, this)
+    // bindEquipmentCrudActions(html, this.actor)
+    // bindNoteCrudActions(html, this.actor, this)
     bindTrackerActions(html, this.actor)
 
     // Bind dropdown handlers
@@ -261,12 +392,9 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
         )
       })
     })
-
-    // Wire rollable elements
-    html.querySelectorAll<HTMLElement>('.rollable').forEach(element => {
-      element.addEventListener('click', this.#onClickRoll.bind(this))
-    })
   }
+
+  /* ---------------------------------------- */
 
   static async #onResetResource(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
@@ -283,10 +411,14 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     }
   }
 
+  /* ---------------------------------------- */
+
   static async #onAddEffect(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
     new EffectPicker(this.actor).render(true)
   }
+
+  /* ---------------------------------------- */
 
   static async #onDeleteEffect(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
@@ -306,18 +438,54 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     }
   }
 
+  /* ---------------------------------------- */
+
   static async #onEditQuickNotes(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
     await this.#openQuickNoteEditor()
   }
+
+  /* ---------------------------------------- */
 
   static async #onEditMoveMode(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
     new MoveModeEditor(this.actor).render(true)
   }
 
+  /* ---------------------------------------- */
+
+  static async #onChangeQuantity(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event?.preventDefault()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc) return
+
+    if (!(doc instanceof CONFIG.Item.documentClass)) {
+      console.error('Expected document to be an Item, but got', doc)
+
+      return
+    }
+
+    if (!doc.isOfType(ItemType.Equipment)) {
+      console.error('Expected document to be of type Equipment, but got', doc)
+
+      return
+    }
+
+    const action = target.dataset.action
+
+    if (action === 'incrementQuantity') {
+      await doc.system.incrementQuantity()
+    } else {
+      await doc.system.decrementQuantity()
+    }
+  }
+
+  /* ---------------------------------------- */
+
   async #openQuickNoteEditor(): Promise<void> {
-    const actorSystem = this.actor.system as Actor.SystemOfType<ActorType.LegacyCharacter | ActorType.Character>
+    const actorSystem = this.actor.system as Actor.SystemOfType<GurpsActorModernSheet.Type>
     const noteText = ((actorSystem.additionalresources as { qnotes?: string })?.qnotes || '').replace(/<br>/g, '\n')
     const actor = this.actor
 
@@ -348,6 +516,8 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     textarea.addEventListener('drop', this.dropFoundryLinks.bind(this) as EventListener)
   }
 
+  /* ---------------------------------------- */
+
   #bindPostureActions(html: HTMLElement): void {
     bindDropdownToggle(html, {
       dropdownSelector: '.ms-posture-dropdown',
@@ -357,6 +527,8 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     })
   }
 
+  /* ---------------------------------------- */
+
   #bindManeuverActions(html: HTMLElement): void {
     bindDropdownToggle(html, {
       dropdownSelector: '.ms-maneuver-dropdown',
@@ -365,6 +537,8 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       onSelect: (maneuver: string) => this.actor.replaceManeuver(maneuver),
     })
   }
+
+  /* ---------------------------------------- */
 
   #bindMoveModeActions(html: HTMLElement): void {
     const editButton = html.querySelector('.ms-move-mode-edit')
@@ -381,330 +555,27 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     })
   }
 
-  #bindEntityCrudActions(html: HTMLElement): void {
-    entityConfigurations.forEach(config => {
-      const editMethodKey = config.editMethod as keyof this
-      const resolvedConfig: EntityConfigWithMethod = {
-        ...config,
-        editMethod: (this[editMethodKey] as EntityConfigWithMethod['editMethod']).bind(this),
-        createArgs: config.createArgs?.(),
-      }
+  /* ---------------------------------------- */
 
-      bindCrudActions(html, this.actor, this, resolvedConfig)
-    })
-
-    modifierConfigurations.forEach(({ isReaction }) => {
-      bindModifierCrudActions(html, this.actor, this, this.editModifier.bind(this), isReaction)
-    })
+  #bindEntityCrudActions(_html: HTMLElement): void {
+    // TODO: redo
+    // entityConfigurations.forEach(config => {
+    //   const editMethodKey = config.editMethod as keyof this
+    //   const resolvedConfig: EntityConfigWithMethod = {
+    //     ...config,
+    //     editMethod: (this[editMethodKey] as EntityConfigWithMethod['editMethod']).bind(this),
+    //     createArgs: config.createArgs?.(),
+    //   }
+    //
+    //   bindCrudActions(html, this.actor, this, resolvedConfig)
+    // })
+    // TODO: redo
+    // modifierConfigurations.forEach(({ isReaction }) => {
+    //   bindModifierCrudActions(html, this.actor, this, this.editModifier.bind(this), isReaction)
+    // })
   }
 
-  #onClickRoll(event: MouseEvent): void {
-    event.preventDefault()
-    GURPS.handleRoll(event, this.actor)
-  }
-
-  async editSkills(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    if (obj.consumeAction === undefined) obj.consumeAction = false
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/skill-editor-popup.hbs',
-      'Skill Editor',
-      [
-        'name',
-        'import',
-        'relativelevel',
-        'pageref',
-        'notes',
-        'checkotf',
-        'duringotf',
-        'passotf',
-        'failotf',
-        'itemModifiers',
-        'modifierTags',
-      ],
-      ['points']
-    )
-  }
-
-  async editAds(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/advantage-editor-popup.hbs',
-      'Trait Editor',
-      ['name', 'notes', 'pageref', 'checkotf', 'duringotf', 'passotf', 'failotf', 'itemModifiers', 'modifierTags'],
-      ['points']
-    )
-  }
-
-  async editSpells(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    if (obj.consumeAction === undefined) obj.consumeAction = true
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/spell-editor-popup.hbs',
-      'Spell Editor',
-      [
-        'name',
-        'import',
-        'difficulty',
-        'pageref',
-        'notes',
-        'resist',
-        'class',
-        'cost',
-        'maintain',
-        'casttime',
-        'duration',
-        'college',
-        'checkotf',
-        'duringotf',
-        'passotf',
-        'failotf',
-        'itemModifiers',
-        'modifierTags',
-      ],
-      ['points']
-    )
-  }
-
-  async editMelee(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/melee-editor-popup.hbs',
-      'Melee Weapon Editor',
-      [
-        'name',
-        'import',
-        'reach',
-        'parry',
-        'block',
-        'damage',
-        'st',
-        'mode',
-        'notes',
-        'checkotf',
-        'duringotf',
-        'passotf',
-        'failotf',
-        'itemModifiers',
-        'modifierTags',
-      ],
-      []
-    )
-  }
-
-  async editRanged(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/ranged-editor-popup.hbs',
-      'Ranged Weapon Editor',
-      [
-        'name',
-        'import',
-        'acc',
-        'range',
-        'rof',
-        'shots',
-        'rcl',
-        'bulk',
-        'damage',
-        'st',
-        'mode',
-        'notes',
-        'checkotf',
-        'duringotf',
-        'passotf',
-        'failotf',
-        'itemModifiers',
-        'modifierTags',
-      ],
-      []
-    )
-  }
-
-  async editEquipment(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    const dlgHtml = await foundry.applications.handlebars.renderTemplate(
-      'systems/gurps/templates/equipment-editor-popup.hbs',
-      obj
-    )
-    const dialog = await new foundry.applications.api.DialogV2({
-      window: { title: 'Equipment Editor', resizable: true },
-      content: dlgHtml,
-      buttons: [
-        {
-          action: 'update',
-          label: 'Update',
-          icon: 'fas fa-save',
-          callback: (_event: Event, button: HTMLButtonElement) => {
-            const form = button.form
-
-            if (!form) return
-
-            const getValue = (selector: string): string => {
-              const el = form.querySelector(selector)
-
-              return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.value : ''
-            }
-
-            const isChecked = (selector: string): boolean => {
-              const el = form.querySelector(selector)
-
-              return el instanceof HTMLInputElement ? el.checked : false
-            }
-
-            obj.name = getValue('.name') || ''
-            obj.notes = getValue('.notes') || ''
-            obj.pageref = getValue('.pageref') || ''
-            obj.count = parseFloat(getValue('.count')) || 0
-            obj.cost = parseFloat(getValue('.cost')) || 0
-            obj.weight = parseFloat(getValue('.weight')) || 0
-            obj.carried = isChecked('.carried')
-            obj.equipped = isChecked('.equipped')
-            obj.save = isChecked('.save')
-            actor.editItem(path, obj)
-          },
-        },
-      ],
-      position: { width: 560 },
-    }).render({ force: true })
-
-    const element = dialog.element
-
-    element.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(textarea => {
-      textarea.addEventListener('drop', this.dropFoundryLinks.bind(this))
-    })
-    element.querySelectorAll<HTMLInputElement>('input').forEach(input => {
-      input.addEventListener('drop', this.dropFoundryLinks.bind(this))
-    })
-  }
-
-  async editNotes(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/note-editor-popup.hbs',
-      'Note Editor',
-      ['pageref', 'notes', 'markdown', 'title'],
-      [],
-      730
-    )
-  }
-
-  async editModifier(
-    actor: Actor.Implementation,
-    path: string,
-    obj: Record<string, unknown>,
-    isReaction = true
-  ): Promise<void> {
-    const dlgHtml = await foundry.applications.handlebars.renderTemplate(
-      'systems/gurps/templates/modifier-editor-popup.hbs',
-      obj
-    )
-    const title = isReaction
-      ? getGame().i18n.localize('GURPS.reaction')
-      : getGame().i18n.localize('GURPS.conditionalModifier')
-
-    await foundry.applications.api.DialogV2.wait({
-      window: { title: `${title} Editor` },
-      content: dlgHtml,
-      buttons: [
-        {
-          action: 'update',
-          label: getGame().i18n.localize('GURPS.update'),
-          icon: 'fas fa-save',
-          callback: (_event: Event, button: HTMLButtonElement) => {
-            const form = button.form
-
-            if (!form) return
-            const modifierInput = form.querySelector('.modifier')
-            const situationInput = form.querySelector('.situation')
-
-            obj.modifier = modifierInput instanceof HTMLInputElement ? parseInt(modifierInput.value) || 0 : 0
-            obj.situation = situationInput instanceof HTMLInputElement ? situationInput.value : ''
-            actor.internalUpdate({ [path]: obj })
-          },
-        },
-      ],
-    })
-  }
-
-  async editItem(
-    actor: Actor.Implementation,
-    path: string,
-    obj: Record<string, unknown>,
-    template: string,
-    title: string,
-    strprops: string[],
-    numprops: string[],
-    width = 560
-  ): Promise<void> {
-    const dlgHtml = await foundry.applications.handlebars.renderTemplate(template, obj)
-    const dialog = await new foundry.applications.api.DialogV2({
-      window: { title, resizable: true },
-      content: dlgHtml,
-      buttons: [
-        {
-          action: 'update',
-          label: 'Update',
-          icon: 'fas fa-save',
-          callback: (_event: Event, button: HTMLButtonElement) => {
-            const form = button.form
-
-            if (!form) return
-
-            const getValue = (selector: string): string => {
-              const el = form.querySelector(selector)
-
-              return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.value : ''
-            }
-
-            const isChecked = (selector: string): boolean => {
-              const el = form.querySelector(selector)
-
-              return el instanceof HTMLInputElement ? el.checked : false
-            }
-
-            strprops.forEach(prop => (obj[prop] = getValue(`.${prop}`) || ''))
-            numprops.forEach(prop => (obj[prop] = parseFloat(getValue(`.${prop}`))))
-
-            const quickRoll = form.querySelector('.quick-roll')
-
-            if (quickRoll) obj.addToQuickRoll = isChecked('.quick-roll')
-
-            const consumeAction = form.querySelector('.consumeAction')
-
-            if (consumeAction) obj.consumeAction = isChecked('.consumeAction')
-
-            const save = form.querySelector('.save')
-
-            if (save) obj.save = isChecked('.save')
-
-            actor.editItem(path, obj)
-          },
-        },
-      ],
-      position: { width },
-    }).render({ force: true })
-
-    const element = dialog.element
-
-    element.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(textarea => {
-      textarea.addEventListener('drop', this.dropFoundryLinks.bind(this))
-    })
-    element.querySelectorAll<HTMLInputElement>('input').forEach(input => {
-      input.addEventListener('drop', this.dropFoundryLinks.bind(this))
-    })
-  }
+  /* ---------------------------------------- */
 
   dropFoundryLinks(event: Event | JQuery.DropEvent, modelkey?: string): void {
     const ev = (event as JQuery.DropEvent).originalEvent ?? (event as DragEvent)

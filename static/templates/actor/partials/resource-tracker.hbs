@@ -1,0 +1,55 @@
+<div class='ms-tracker' data-uuid='{{uuid}}'>
+
+  <div class='ms-tracker-header'>
+    <label class='name'>{{name}}</label>
+    <div class='actions'>
+      <i class='fas fa-pen-to-square ms-action-btn' data-action='editTracker' title='{{localize 'GURPS.edit'}}'></i>
+      <i class='fas fa-trash ms-delete ms-action-btn' data-action='deleteEmbedded'  title='{{localize 'GURPS.delete'}}'></i>
+    </div>
+  </div>
+
+  <div class='ms-spinner'>
+    <button data-action='decreaseTracker' data-key='{{id}}'
+      title='{{localize "GURPS.resourceTracker.view.decrement"}}'>
+      <i class='fas fa-minus'></i>
+    </button>
+
+    <div class='ms-tracker-value'>
+      <div class='ms-tracker-display'>{{value}}</div>
+      <input type="number" class="ms-tracker-input" data-key='{{id}}'
+        value="{{value}}">
+    </div>
+
+    <button data-action='increaseTracker' data-key='{{id}}'
+      title='{{localize "GURPS.resourceTracker.view.increment"}}'>
+      <i class='fas fa-plus'></i>
+    </button>
+
+    <button data-action='resetTracker' data-key='{{id}}' title='{{localize "GURPS.resourceTracker.view.reset"}}'>
+      <i class='fas fa-rotate-left'></i>
+    </button>
+  </div>
+
+  {{#if color}}
+    {{!-- Inline style is necessary to apply the dynamic color value. The contrast helper is used to determine the
+          appropriate text color based on the background color. --}}
+    {{{tracker-style color id=(concat "ID-" id)}}}
+  {{/if}}
+  <div id="ID-{{id}}" class='ms-tracker-condition'>
+    <span class='text' data-tooltip-html='
+      <div class="tracker-tooltip">
+        <label class="title">{{name}}</label>
+        {{#each descriptors as |threshold|}}
+          <label>{{threshold.value}}</label><label>{{localize threshold.condition}}</label>
+        {{/each}}
+      </div>
+  '>{{{gurpslink condition}}}</span>
+  </div>
+
+  <div class='ms-tracker-footer'>
+    <div class='ms-tracker-pdf'>{{{pdflink pdf}}}</div>
+    <div class='ms-tracker-alias'>{{alias}}</div>
+    <div class='ms-tracker-minmax'>{{min}}/{{max}}</div>
+  </div>
+
+</div>

@@ -1,7 +1,9 @@
 import { diceValidate } from '@module/data/validators/dice-validator.js'
+import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { isHTMLElement, isHTMLInputElement } from '@module/util/guards.js'
 
 import { ActorType } from '../types.js'
+
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()
@@ -109,7 +111,7 @@ const inlineEditConfigs: InlineEditConfigInternal[] = [
 
 export function buildOnBlurHandler(
   config: InlineEditConfigInternal,
-  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
+  actor: Actor.OfType<ActorType.Character>
 ): ((input: HTMLInputElement) => void) | undefined {
   if (config.fieldType === 'name') {
     return (input: HTMLInputElement) => {
@@ -139,10 +141,7 @@ export function buildOnBlurHandler(
   return undefined
 }
 
-export function bindAllInlineEdits(
-  html: HTMLElement,
-  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
-): void {
+export function bindAllInlineEdits(html: HTMLElement, actor: Actor.OfType<ActorType.Character>): void {
   inlineEditConfigs.forEach(config => {
     const onBlur = buildOnBlurHandler(config, actor)
 
@@ -443,7 +442,7 @@ export function bindAllTrackerEdits(html: HTMLElement, actor: Actor.Implementati
   const inputs = html.querySelectorAll<HTMLInputElement>(inputSelector)
 
   inputs.forEach(input => {
-    input.addEventListener('blur', (event: FocusEvent) => {
+    input.addEventListener('blur', async (event: FocusEvent) => {
       const inputElement = event.currentTarget
 
       if (!isHTMLInputElement(inputElement)) return
@@ -451,14 +450,10 @@ export function bindAllTrackerEdits(html: HTMLElement, actor: Actor.Implementati
 
       if (!isHTMLElement(trackerElement)) return
       trackerElement.classList.remove(editingClass)
-      const trackerKey = inputElement.dataset.key
+      const uuid = inputElement.closest<HTMLElement>('[data-uuid]')?.dataset.uuid ?? ''
 
-      if (!trackerKey) return
       const newValue = parseInt(inputElement.value, 10)
-      const map = actor.system.additionalresources?.tracker
-
-      if (!map) return
-      const tracker = map.get(trackerKey)
+      const tracker = (await fromUuid(uuid, { relative: actor })) as TrackerInstance | null
 
       if (!tracker) return
       const currentValue = tracker.value
@@ -468,45 +463,45 @@ export function bindAllTrackerEdits(html: HTMLElement, actor: Actor.Implementati
       }
     })
 
-    input.addEventListener('keydown', (event: KeyboardEvent) => {
-      if (event.key === 'Enter') {
-        event.preventDefault()
-        const inputElement = event.currentTarget
-
-        if (isHTMLInputElement(inputElement)) inputElement.blur()
-      }
-
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        const inputElement = event.currentTarget
-
-        if (!isHTMLInputElement(inputElement)) return
-        const tracker = inputElement.closest(trackerSelector)
-
-        if (!isHTMLElement(tracker)) return
-        tracker.classList.remove(editingClass)
-        const trackerKey = inputElement.dataset.key
-
-        if (!trackerKey) {
-          inputElement.blur()
-
-          return
-        }
-
-        const map = actor.system.additionalresources?.tracker
-
-        if (!map) {
-          inputElement.blur()
-
-          return
-        }
-
-        const trackerData = map.get(trackerKey)
-        const originalValue = trackerData?.value
-
-        inputElement.value = originalValue !== undefined ? String(originalValue) : ''
-        inputElement.blur()
-      }
-    })
+    // input.addEventListener('keydown', (event: KeyboardEvent) => {
+    //   if (event.key === 'Enter') {
+    //     event.preventDefault()
+    //     const inputElement = event.currentTarget
+    //
+    //     if (isHTMLInputElement(inputElement)) inputElement.blur()
+    //   }
+    //
+    //   if (event.key === 'Escape') {
+    //     event.preventDefault()
+    //     const inputElement = event.currentTarget
+    //
+    //     if (!isHTMLInputElement(inputElement)) return
+    //     const tracker = inputElement.closest(trackerSelector)
+    //
+    //     if (!isHTMLElement(tracker)) return
+    //     tracker.classList.remove(editingClass)
+    //     const trackerKey = inputElement.dataset.key
+    //
+    //     if (!trackerKey) {
+    //       inputElement.blur()
+    //
+    //       return
+    //     }
+    //
+    //     const map = actor.system.additionalresources?.tracker
+    //
+    //     if (!map) {
+    //       inputElement.blur()
+    //
+    //       return
+    //     }
+    //
+    //     const trackerData = map.get(trackerKey)
+    //     const originalValue = trackerData?.value
+    //
+    //     inputElement.value = originalValue !== undefined ? String(originalValue) : ''
+    //     inputElement.blur()
+    //   }
+    // })
   })
 }

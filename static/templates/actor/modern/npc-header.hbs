@@ -1,11 +1,11 @@
 <header class='ms-header'>
-  {{>ms-portrait}}
+  {{> "actor.modern.partials.ms-portrait"}}
 
   <div class='ms-identity'>
-    {{>ms-identity compact=true}}
-    {{>ms-attributes}}
-    {{>ms-resources}}
+    {{> "actor.modern.partials.ms-identity" compact=true}}
+    {{> "actor.modern.partials.ms-attributes"}}
+    {{> "actor.modern.partials.ms-resources"}}
   </div>
 
-  {{>ms-secondary-stats showCombatStats=true parryblock=parryblock defense=defense}}
+  {{> "actor.modern.partials.ms-secondary-stats" showCombatStats=true parryblock=parryblock defense=defense}}
 </header>

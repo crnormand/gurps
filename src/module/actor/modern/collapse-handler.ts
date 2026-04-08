@@ -116,24 +116,24 @@ const restoreCollapsedState = (rows: HTMLElement[], actorId: string): void => {
   })
 }
 
-export function bindRowExpand(html: HTMLElement, config: RowExpandConfig): void {
-  const { rowSelector, excludeSelectors = [], expandedClass = 'expanded' } = config
-
-  const rows = html.querySelectorAll<HTMLElement>(rowSelector)
-
-  rows.forEach(row => {
-    row.addEventListener('click', (event: MouseEvent) => {
-      const target = event.target
-
-      if (!isHTMLElement(target)) return
-      const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
-
-      if (shouldExclude) return
-
-      row.classList.toggle(expandedClass)
-    })
-  })
-}
+// export function bindRowExpand(html: HTMLElement, config: RowExpandConfig): void {
+//   const { rowSelector, excludeSelectors = [], expandedClass = 'expanded' } = config
+//
+//   const rows = html.querySelectorAll<HTMLElement>(rowSelector)
+//
+//   rows.forEach(row => {
+//     row.addEventListener('click', (event: MouseEvent) => {
+//       const target = event.target
+//
+//       if (!isHTMLElement(target)) return
+//       const shouldExclude = excludeSelectors.some(selector => target.closest(selector))
+//
+//       if (shouldExclude) return
+//
+//       row.classList.toggle(expandedClass)
+//     })
+//   })
+// }
 
 export function bindSectionCollapse(html: HTMLElement, config: SectionCollapseConfig): void {
   const { headerSelector, excludeSelectors = [], collapsedClass = 'collapsed' } = config

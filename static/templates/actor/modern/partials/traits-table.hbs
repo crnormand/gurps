@@ -1,5 +1,5 @@
 <div class='ms-section' data-section='traits'>
-  {{>section-header icon="fa-sparkles" title=(localize "GURPS.advDisadvPerkQuirks") count=traitCount collapsible=true}}
+  {{> "actor.modern.partials.section-header" icon="fa-sparkles" title=(localize "GURPS.advDisadvPerkQuirks") count=traitCount collapsible=true}}
   <div class='ms-section-content'>
     <div class='ms-traits-table'>
       <div class='ms-traits-header'>
@@ -17,18 +17,18 @@
         </span>
         <span class='ms-col-otf'>
           {{#each (extractOtfs this.name this.notes)}}
-          {{>dice-button otf=this.formula text=this.text encodedAction=this.encodedAction}}
+          {{> "actor.modern.partials.dice-button" otf=this.formula text=this.text encodedAction=this.encodedAction}}
           {{/each}}
         </span>
         <span class='ms-col-points {{pointsClass this.points}}'>[{{this.points}}]</span>
         <span class='ms-col-ref'>{{{pdflinkext this}}}</span>
-        {{>row-actions editAction="editTrait" deleteAction="deleteTrait" key=(concat "system.ads." @key)}}
-        {{>row-notes notes=this.notes}}
+        {{> "actor.modern.partials.row-actions" editAction="editTrait" deleteAction="deleteTrait" key=(concat "system.ads." @key)}}
+        {{> "actor.modern.partials.row-notes" notes=this.notes}}
       </div>
       {{else}}
       <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
       {{/each}}
-      {{>add-row action="addTrait" label=(localize "GURPS.advantage")}}
+      {{> "actor.modern.partials.add-row" action="addTrait" label=(localize "GURPS.advantage")}}
     </div>
   </div>
 </div>

@@ -23,7 +23,7 @@
 
   button {
     // All buttons except "add tracker" are square icon buttons.
-    &:not([data-action='addResourceTracker']) {
+    &:not([data-action='createEmbedded']) {
       max-width: var(--gcs-input-height);
     }
 

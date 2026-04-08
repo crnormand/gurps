@@ -1,7 +1,7 @@
-import { ItemType } from '@module/item/types.js'
+import { ActorType } from '@module/actor/types.js'
 import { systemPath } from '@module/util/misc.js'
-import { ActorType } from '../types.js'
 
+import { ItemType } from '../types.js'
 
 /**
  * Recursively builds create-data for an item and all its descendants, assigning each a

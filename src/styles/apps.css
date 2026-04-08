@@ -567,7 +567,7 @@ ul#result-effects li {
                 {{{resultsTable}}}
             </div>
         </div>
-    </div>
+    </div> 
   */
 .collapsible-wrapper .label-toggle {
   display: block;
@@ -2114,7 +2114,7 @@ details .popup.square5x4 {
 .system-gurps .glinkmodminus,
 .system-gurps .glinkmod {
   padding: 2px 8px;
-  border-radius: 16px;
+  border-radius: 999px;
   font-weight: 600;
   line-height: 1.6;
   display: inline-block;
@@ -2272,7 +2272,7 @@ details .popup.square5x4 {
 }
 
 .removemod.minus {
-  word-wrap: break-word;
+  white-space: normal;
   text-indent: -1.5em;
   margin-left: 1.5em;
   color: darkred;
@@ -2438,9 +2438,9 @@ details .popup.square5x4 {
   opacity: 1;
 }
 
-/*
+/* 
 // if #collapsible-hud is checked, set border of .maneuver-open
-#token-hud .maneuver-open
+#token-hud .maneuver-open 
 {
   border: 1px solid #ff6400;
 } */

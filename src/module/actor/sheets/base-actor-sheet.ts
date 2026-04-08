@@ -1,4 +1,4 @@
-import { Document } from '@gurps-types/foundry/index.js'
+import { Document, ActorSheet, DragDrop, HeaderControlsEntry } from '@gurps-types/foundry/index.js'
 import { ImportSettings } from '@module/importer/index.js'
 import { ItemType } from '@module/item/types.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
@@ -9,34 +9,42 @@ import { AnyMutableObject, DeepPartial } from 'fvtt-types/utils'
 import { ActorImporter } from '../actor-importer.js'
 import { ActorType } from '../types.js'
 
-import DragDrop = foundry.applications.ux.DragDrop
-import ActorSheet = gurps.applications.ActorSheet
-
-// See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
+// See module/types/foundry/actor-sheet.ts for why we need this type assertion
 const _InternalGurpsBaseActorSheet = <
   Type extends Actor.SubType,
-  RenderOptions extends ActorSheet.RenderOptions = ActorSheet.RenderOptions,
   RenderContext extends ActorSheet.RenderContext = ActorSheet.RenderContext,
+  Configuration extends ActorSheet.Configuration = ActorSheet.Configuration,
+  RenderOptions extends ActorSheet.RenderOptions = ActorSheet.RenderOptions,
 >() =>
   foundry.applications.api.HandlebarsApplicationMixin(
     foundry.applications.sheets.ActorSheetV2
-  ) as unknown as gurps.applications.ActorSheet.HandlebarsConstructor<Actor.OfType<Type>, RenderOptions, RenderContext>
+  ) as unknown as ActorSheet.HandlebarsConstructor<Actor.OfType<Type>, RenderContext, Configuration, RenderOptions>
+
+/* ---------------------------------------- */
 
 namespace GurpsBaseActorSheet {
-  export type RenderOptions = ActorSheet.RenderOptions & {
+  export interface Configuration extends ActorSheet.Configuration {
+    dragDrop?: DragDrop.Configuration[]
+  }
+
+  export interface RenderOptions extends ActorSheet.RenderOptions {
     mode?: 1 | 2
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface RenderContext extends ActorSheet.RenderContext {}
 }
 
 /* ---------------------------------------- */
 
 const GurpsBaseActorSheet = <
   Type extends Actor.SubType,
+  Configuration extends GurpsBaseActorSheet.Configuration = GurpsBaseActorSheet.Configuration,
   RenderOptions extends GurpsBaseActorSheet.RenderOptions = GurpsBaseActorSheet.RenderOptions,
-  RenderContext extends ActorSheet.RenderContext = ActorSheet.RenderContext,
+  RenderContext extends GurpsBaseActorSheet.RenderContext = GurpsBaseActorSheet.RenderContext,
 >() =>
-  class GurpsBaseActorSheet extends _InternalGurpsBaseActorSheet<Type, RenderOptions, RenderContext>() {
-    constructor(options?: ActorSheet.Configuration & { document?: Actor.OfType<Type> }) {
+  class GurpsBaseActorSheet extends _InternalGurpsBaseActorSheet<Type, RenderContext, Configuration, RenderOptions>() {
+    constructor(options?: Configuration & { document?: Actor.OfType<Type> }) {
       super(options)
       this.#dragDrop = this.#createDragDropHandlers()
     }
@@ -83,7 +91,7 @@ const GurpsBaseActorSheet = <
      */
     #createDragDropHandlers(): DragDrop[] {
       return (
-        (this.options as ActorSheet.Configuration).dragDrop?.map(dragDrop => {
+        this.options.dragDrop?.map(dragDrop => {
           dragDrop.permissions = {
             dragstart: this._canDragStart.bind(this),
             drop: this._canDragDrop.bind(this),
@@ -94,7 +102,7 @@ const GurpsBaseActorSheet = <
             drop: this._onDrop.bind(this),
           }
 
-          return new DragDrop(dragDrop)
+          return new foundry.applications.ux.DragDrop(dragDrop)
         }) ?? []
       )
     }
@@ -111,9 +119,8 @@ const GurpsBaseActorSheet = <
      * Define whether a user is able to begin a dragstart workflow for a given drag selector
      * @param selector       The candidate HTML selector for dragging
      * @returns              Can the current user drag this selector?
-     * @protected
      */
-    protected _canDragStart(_selector: DragDrop.DragSelector): boolean {
+    protected override _canDragStart(_selector: DragDrop.DragSelector): boolean {
       return this.isEditable
     }
 
@@ -121,18 +128,16 @@ const GurpsBaseActorSheet = <
      * Define whether a user is able to conclude a drag-and-drop workflow for a given drop selector
      * @param  selector The candidate HTML selector for the drop target
      * @returns         Can the current user drop on this selector?
-     * @protected
      */
-    protected _canDragDrop(_selector: DragDrop.DragSelector): boolean {
+    protected override _canDragDrop(_selector: DragDrop.DragSelector): boolean {
       return this.isEditable
     }
 
     /**
      * Callback actions which occur at the beginning of a drag start workflow.
-     * @param {DragEvent} event       The originating DragEvent
-     * @protected
+     * @param event       The originating DragEvent
      */
-    protected _onDragStart(event: DragEvent) {
+    protected override _onDragStart(event: DragEvent) {
       // Extract the data you need
       const dragData = null
 
@@ -147,27 +152,20 @@ const GurpsBaseActorSheet = <
     /**
      * Callback actions which occur when a dragged element is over a drop target.
      * @param event       The originating DragEvent
-     * @protected
      */
-    protected _onDragOver(_event: DragEvent): void {}
+    protected override _onDragOver(_event: DragEvent): void {}
 
     /* ---------------------------------------- */
 
     /**
      * Callback actions which occur when a dragged element is dropped on a target.
      * @param event       The originating DragEvent
-     * @protected
      */
-    protected async _onDrop(_event: DragEvent): Promise<void> {
-      // NOTE: STUB
-      // const data = foundry.applications.ux.TextEditor.getDragEventData(event)
-      // switch (data?.type) {
-      // }
-    }
+    protected override async _onDrop(_event: DragEvent): Promise<void> {}
 
     /* ---------------------------------------- */
 
-    static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
+    static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
       classes: ['gurps', 'sheet', 'actor'],
       tag: 'form',
       window: {
@@ -191,7 +189,7 @@ const GurpsBaseActorSheet = <
 
     /* ---------------------------------------- */
 
-    override _getHeaderControls(): gurps.applications.api.Application.ControlsEntry[] {
+    protected override _getHeaderControls(): HeaderControlsEntry[] {
       const controls = super._getHeaderControls()
 
       const blockImport = ImportSettings.onlyTrustedUsersCanImport

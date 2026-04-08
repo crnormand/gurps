@@ -4,7 +4,6 @@ import * as dataModels from './data/index.js'
 import { GurpsItemV2 } from './gurps-item.js'
 import { GurpsItemSheet } from './item-sheet.js'
 import { migrateItem, runMigration, migrateItemCompendium } from './migrate.js'
-import { TestItemSheet } from './test-item-sheet.js'
 
 interface ItemModule extends GurpsModule {
   migrateItemCompendium: typeof migrateItemCompendium
@@ -34,14 +33,6 @@ function init() {
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
     foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
-    // NOTE: This sheet is hidden from Users but can be set by invoking
-    // (item).setFlag("core","sheetClass","gurps.TestItemSheet")
-    // @ts-expect-error: broken typing
-    foundry.documents.collections.Items.registerSheet('gurps', TestItemSheet, {
-      makeDefault: true,
-      types: ['gcsEquipment'],
-      canConfigure: false,
-    })
   })
 }
 
