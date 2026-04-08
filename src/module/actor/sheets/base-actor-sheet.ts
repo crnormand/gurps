@@ -211,15 +211,19 @@ const GurpsBaseActorSheet = <
 
     /* ---------------------------------------- */
 
-    static async #onToggleMode(this: GurpsBaseActorSheet): Promise<void> {
+    static async #onToggleMode(this: GurpsBaseActorSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
       if (!this.isEditable) {
         console.error("You can't switch to Edit mode if the sheet is uneditable.")
 
         return
       }
 
+      const newMode = this.isPlayMode ? GurpsBaseActorSheet.MODES.EDIT : GurpsBaseActorSheet.MODES.PLAY
+
+      target.classList.toggle('editable', newMode === GurpsBaseActorSheet.MODES.EDIT)
+
       await this.render({
-        mode: this.isPlayMode ? GurpsBaseActorSheet.MODES.EDIT : GurpsBaseActorSheet.MODES.PLAY,
+        mode: newMode,
       } as RenderOptions)
     }
 

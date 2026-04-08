@@ -10,7 +10,7 @@ type ThresholdInput = {
   comparison: string
   operator: string
   value: number
-  condition: string
+  state: string
   color: string
 }
 
@@ -18,7 +18,7 @@ const threshold = (overrides: Partial<ThresholdInput> = {}): ThresholdInput => (
   comparison: '≤',
   operator: '+',
   value: 0,
-  condition: 'Test Condition',
+  state: 'Test Condition',
   color: '#ffffff',
   ...overrides,
 })
@@ -60,28 +60,28 @@ describe('TrackerInstance getters', () => {
     })
 
     it('returns first matching threshold when breakpoints is false', () => {
-      const firstMatch = threshold({ value: 7, condition: 'First Match', color: '#111111' })
-      const laterMatch = threshold({ value: 10, condition: 'Later Match', color: '#222222' })
+      const firstMatch = threshold({ value: 7, state: 'First Match', color: '#111111' })
+      const laterMatch = threshold({ value: 10, state: 'Later Match', color: '#222222' })
       const instance = tracker({
         useBreakpoints: false,
         currentValue: 6,
         thresholds: [firstMatch, laterMatch],
       })
 
-      expect(instance.currentThreshold?.condition).toBe('First Match')
+      expect(instance.currentThreshold?.state).toBe('First Match')
       expect(instance.currentThreshold?.color).toBe('#111111')
     })
 
     it('returns last matching threshold when breakpoints is true', () => {
-      const firstMatch = threshold({ value: 7, condition: 'First Match', color: '#111111' })
-      const lastMatch = threshold({ value: 10, condition: 'Last Match', color: '#333333' })
+      const firstMatch = threshold({ value: 7, state: 'First Match', color: '#111111' })
+      const lastMatch = threshold({ value: 10, state: 'Last Match', color: '#333333' })
       const instance = tracker({
         useBreakpoints: true,
         currentValue: 6,
         thresholds: [firstMatch, lastMatch],
       })
 
-      expect(instance.currentThreshold?.condition).toBe('Last Match')
+      expect(instance.currentThreshold?.state).toBe('Last Match')
       expect(instance.currentThreshold?.color).toBe('#333333')
     })
   })
@@ -99,54 +99,54 @@ describe('TrackerInstance getters', () => {
       t1.comparison = TrackerComparators.LT
       t1.operator = TrackerOperators.MULTIPLY
       t1.value = 0.1
-      t1.condition = 'Unrestrained'
+      t1.state = 'Unrestrained'
 
       const t2 = new ResourceTrackerThreshold()
 
       t2.comparison = TrackerComparators.GTE
       t2.operator = TrackerOperators.MULTIPLY
       t2.value = 0.1
-      t2.condition = 'Grabbed'
+      t2.state = 'Grabbed'
 
       const t3 = new ResourceTrackerThreshold()
 
       t3.comparison = TrackerComparators.GTE
       t3.operator = TrackerOperators.MULTIPLY
       t3.value = 0.5
-      t3.condition = 'Grappled'
+      t3.state = 'Grappled'
 
       const t4 = new ResourceTrackerThreshold()
 
       t4.comparison = TrackerComparators.GTE
       t4.operator = TrackerOperators.MULTIPLY
       t4.value = 1.0
-      t4.condition = 'Restrained'
+      t4.state = 'Restrained'
 
       const t5 = new ResourceTrackerThreshold()
 
       t5.comparison = TrackerComparators.GTE
       t5.operator = TrackerOperators.MULTIPLY
       t5.value = 1.5
-      t5.condition = 'Controlled'
+      t5.state = 'Controlled'
 
       const t6 = new ResourceTrackerThreshold()
 
       t6.comparison = TrackerComparators.GTE
       t6.operator = TrackerOperators.MULTIPLY
       t6.value = 2.0
-      t6.condition = 'Pinned'
+      t6.state = 'Pinned'
 
       instance.thresholds = [t1, t2, t3, t4, t5, t6]
 
       const descriptors = instance.thresholdDescriptors
 
       expect(Array.isArray(descriptors)).toBe(true)
-      expect(descriptors[0]).toEqual({ value: 0, condition: 'Unrestrained', color: '' })
-      expect(descriptors[1]).toEqual({ value: 10, condition: 'Grabbed', color: '' })
-      expect(descriptors[2]).toEqual({ value: 50, condition: 'Grappled', color: '' })
-      expect(descriptors[3]).toEqual({ value: 100, condition: 'Restrained', color: '' })
-      expect(descriptors[4]).toEqual({ value: 150, condition: 'Controlled', color: '' })
-      expect(descriptors[5]).toEqual({ value: 200, condition: 'Pinned', color: '' })
+      expect(descriptors[0]).toEqual({ value: 0, state: 'Unrestrained', color: '' })
+      expect(descriptors[1]).toEqual({ value: 10, state: 'Grabbed', color: '' })
+      expect(descriptors[2]).toEqual({ value: 50, state: 'Grappled', color: '' })
+      expect(descriptors[3]).toEqual({ value: 100, state: 'Restrained', color: '' })
+      expect(descriptors[4]).toEqual({ value: 150, state: 'Controlled', color: '' })
+      expect(descriptors[5]).toEqual({ value: 200, state: 'Pinned', color: '' })
     })
 
     it('returns the descriptors for a non-accumulator', () => {
@@ -162,78 +162,78 @@ describe('TrackerInstance getters', () => {
       t1.comparison = TrackerComparators.GT
       t1.operator = TrackerOperators.MULTIPLY
       t1.value = 1 / 3
-      t1.condition = 'Healthy'
+      t1.state = 'Healthy'
 
       const t2 = new ResourceTrackerThreshold()
 
       t2.comparison = TrackerComparators.LTE
       t2.operator = TrackerOperators.MULTIPLY
       t2.value = 1 / 3
-      t2.condition = 'Reeling'
+      t2.state = 'Reeling'
 
       const t3 = new ResourceTrackerThreshold()
 
       t3.comparison = TrackerComparators.LTE
       t3.operator = TrackerOperators.MULTIPLY
       t3.value = 0
-      t3.condition = 'Danger of Collapse'
+      t3.state = 'Danger of Collapse'
 
       const t4 = new ResourceTrackerThreshold()
 
       t4.comparison = TrackerComparators.LTE
       t4.operator = TrackerOperators.MULTIPLY
       t4.value = -1
-      t4.condition = 'Death Check 1'
+      t4.state = 'Death Check 1'
 
       const t5 = new ResourceTrackerThreshold()
 
       t5.comparison = TrackerComparators.LTE
       t5.operator = TrackerOperators.MULTIPLY
       t5.value = -2
-      t5.condition = 'Death Check 2'
+      t5.state = 'Death Check 2'
 
       const t6 = new ResourceTrackerThreshold()
 
       t6.comparison = TrackerComparators.LTE
       t6.operator = TrackerOperators.MULTIPLY
       t6.value = -3
-      t6.condition = 'Death Check 3'
+      t6.state = 'Death Check 3'
 
       const t7 = new ResourceTrackerThreshold()
 
       t7.comparison = TrackerComparators.LTE
       t7.operator = TrackerOperators.MULTIPLY
       t7.value = -4
-      t7.condition = 'Death Check 4'
+      t7.state = 'Death Check 4'
 
       const t8 = new ResourceTrackerThreshold()
 
       t8.comparison = TrackerComparators.LTE
       t8.operator = TrackerOperators.MULTIPLY
       t8.value = -5
-      t8.condition = 'Dead'
+      t8.state = 'Dead'
 
       const t9 = new ResourceTrackerThreshold()
 
       t9.comparison = TrackerComparators.LT
       t9.operator = TrackerOperators.MULTIPLY
       t9.value = -10
-      t9.condition = 'Destroyed'
+      t9.state = 'Destroyed'
 
       instance.thresholds = [t1, t2, t3, t4, t5, t6, t7, t8, t9]
 
       const descriptors = instance.thresholdDescriptors
 
       expect(Array.isArray(descriptors)).toBe(true)
-      expect(descriptors[0]).toEqual({ value: 100, condition: 'Healthy', color: '' })
-      expect(descriptors[1]).toEqual({ value: 33, condition: 'Reeling', color: '' })
-      expect(descriptors[2]).toEqual({ value: 0, condition: 'Danger of Collapse', color: '' })
-      expect(descriptors[3]).toEqual({ value: -100, condition: 'Death Check 1', color: '' })
-      expect(descriptors[4]).toEqual({ value: -200, condition: 'Death Check 2', color: '' })
-      expect(descriptors[5]).toEqual({ value: -300, condition: 'Death Check 3', color: '' })
-      expect(descriptors[6]).toEqual({ value: -400, condition: 'Death Check 4', color: '' })
-      expect(descriptors[7]).toEqual({ value: -500, condition: 'Dead', color: '' })
-      expect(descriptors[8]).toEqual({ value: -1000, condition: 'Destroyed', color: '' })
+      expect(descriptors[0]).toEqual({ value: 100, state: 'Healthy', color: '' })
+      expect(descriptors[1]).toEqual({ value: 33, state: 'Reeling', color: '' })
+      expect(descriptors[2]).toEqual({ value: 0, state: 'Danger of Collapse', color: '' })
+      expect(descriptors[3]).toEqual({ value: -100, state: 'Death Check 1', color: '' })
+      expect(descriptors[4]).toEqual({ value: -200, state: 'Death Check 2', color: '' })
+      expect(descriptors[5]).toEqual({ value: -300, state: 'Death Check 3', color: '' })
+      expect(descriptors[6]).toEqual({ value: -400, state: 'Death Check 4', color: '' })
+      expect(descriptors[7]).toEqual({ value: -500, state: 'Dead', color: '' })
+      expect(descriptors[8]).toEqual({ value: -1000, state: 'Destroyed', color: '' })
     })
   })
 

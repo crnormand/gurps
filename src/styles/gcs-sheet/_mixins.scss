@@ -3,10 +3,10 @@
 
   padding: var(--gcs-padding-label);
   padding-bottom: 0.2rem;
-  border: none;
+  border-bottom: 2px solid var(--gcs-color-section-border);
 
-  background-color: var(--gcs-color-header-bg);
-  color: var(--gcs-color-header-fg);
+  background-color: var(--gga-color-darkest-grey);
+  color: var(--gga-color-header-text);
 
   font-variant: all-small-caps;
   font-size: var(--gcs-font-size-header);
@@ -27,6 +27,7 @@
 /// - $max: clips overflow; column won't shrink below content width, but content is hidden if wider
 @mixin gcs-col($min: 0, $max: null) {
   min-width: $min;
+
   @if $max {
     max-width: $max;
     overflow: hidden;
@@ -38,19 +39,28 @@
 @mixin gcs-banding {
   background-color: var(--gcs-color-banding-bg);
   color: var(--gcs-color-banding-fg);
+
   [data-action='rollOtf'] {
-    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 20%);
+    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 30%);
 
     &:hover {
-      background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 40%);
+      background-color: color-mix(
+        in hsl,
+        color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 30%),
+        var(--gcs-color-roll-bg-hover) 60%
+      );
     }
   }
 
   .gcs-mod-positive[data-action='addModifier'] {
-    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 20%);
+    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 10%);
 
     &:hover {
-      background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 40%);
+      background-color: color-mix(
+        in hsl,
+        color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 10%),
+        var(--gcs-color-positive-bg-hover) 60%
+      );
     }
   }
 
@@ -58,7 +68,11 @@
     background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 20%);
 
     &:hover {
-      background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 40%);
+      background-color: color-mix(
+        in hsl,
+        color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 20%),
+        var(--gcs-color-negative-bg-hover) 60%
+      );
     }
   }
 }

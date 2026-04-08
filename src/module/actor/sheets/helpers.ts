@@ -107,3 +107,103 @@ export async function openQuickNotesEditor(actor: Actor.OfType<'characterV2'>): 
     ],
   })
 }
+
+type ColorCacheRecord = Record<string, { colorName: string; fallback: string }>
+
+const ColorCache: Record<string, Record<string, ColorCacheRecord>> = {
+  light: {
+    FP: {
+      Rested: { colorName: 'var(--gga-color-modifier-0)', fallback: '#89bd5b' },
+      Tiring: { colorName: 'var(--gga-color-modifier-1)', fallback: '#dddc98' },
+      Tired: { colorName: 'var(--gga-color-modifier-4)', fallback: '#c38355' },
+      Collapse: { colorName: 'var(--gga-color-modifier-6)', fallback: '#9c423a' },
+      Unconscious: { colorName: 'var(--gga-color-modifier-12)', fallback: '#4e211d' },
+    },
+
+    HP: {
+      Healthy: { colorName: 'var(--gga-color-modifier-0)', fallback: '#89bd5b' },
+      Wounded: { colorName: 'var(--gga-color-modifier-1)', fallback: '#dddc98' },
+      Reeling: { colorName: 'var(--gga-color-modifier-4)', fallback: '#c38355' },
+      Collapse: { colorName: 'var(--gga-color-modifier-6)', fallback: '#9c423a' },
+      DeathCheck1: { colorName: 'var(--gga-color-modifier-8)', fallback: '#9c423a' },
+      DeathCheck2: { colorName: 'var(--gga-color-modifier-9)', fallback: '#9c423a' },
+      DeathCheck3: { colorName: 'var(--gga-color-modifier-10)', fallback: '#9c423a' },
+      DeathCheck4: { colorName: 'var(--gga-color-modifier-11)', fallback: '#9c423a' },
+      Dead: { colorName: 'var(--gga-color-modifier-12)', fallback: '#9c423a' },
+      Destroyed: { colorName: 'var(--gga-color-modifier-12)', fallback: '#9c423a' },
+    },
+
+    CI: {
+      None: { colorName: 'var(--gga-color-modifier-0)', fallback: '#89bd5b' },
+      Scratch: { colorName: 'var(--gga-color-modifier-1)', fallback: '#dddc98' },
+      MinorWound1: { colorName: 'var(--gga-color-modifier-2)', fallback: '#dddc98' },
+      MinorWound2: { colorName: 'var(--gga-color-modifier-3)', fallback: '#dddc98' },
+      MinorWound3: { colorName: 'var(--gga-color-modifier-4)', fallback: '#dddc98' },
+      MajorWound: { colorName: 'var(--gga-color-modifier-5)', fallback: '#c38355' },
+      Reeling: { colorName: 'var(--gga-color-modifier-6)', fallback: '#9c423a' },
+      Crippled1: { colorName: 'var(--gga-color-modifier-7)', fallback: '#9c423a' },
+      Crippled2: { colorName: 'var(--gga-color-modifier-8)', fallback: '#9c423a' },
+      MortalWound1: { colorName: 'var(--gga-color-modifier-9)', fallback: '#9c423a' },
+      MortalWound2: { colorName: 'var(--gga-color-modifier-10)', fallback: '#9c423a' },
+      InstantlyFatal1: { colorName: 'var(--gga-color-modifier-11)', fallback: '#9c423a' },
+      InstantlyFatal2: { colorName: 'var(--gga-color-modifier-12)', fallback: '#9c423a' },
+      TotalDestruction: { colorName: 'var(--gga-color-modifier-13)', fallback: '#9c423a' },
+    },
+  },
+  dark: {
+    FP: {
+      Rested: { colorName: 'var(--gga-color-modifier-0)', fallback: '#89bd5b' },
+      Tiring: { colorName: 'var(--gga-color-modifier-1)', fallback: '#dddc98' },
+      Tired: { colorName: 'var(--gga-color-modifier-4)', fallback: '#c38355' },
+      Collapse: { colorName: 'var(--gga-color-modifier-6)', fallback: '#9c423a' },
+      Unconscious: { colorName: 'var(--gga-color-modifier-12)', fallback: '#4e211d' },
+    },
+
+    HP: {
+      Healthy: { colorName: 'var(--gga-color-modifier-0)', fallback: '#89bd5b' },
+      Wounded: { colorName: 'var(--gga-color-modifier-2)', fallback: '#dddc98' },
+      Reeling: { colorName: 'var(--gga-color-modifier-3)', fallback: '#c38355' },
+      Collapse: { colorName: 'var(--gga-color-modifier-4)', fallback: '#9c423a' },
+      DeathCheck1: { colorName: 'var(--gga-color-modifier-5)', fallback: '#9c423a' },
+      DeathCheck2: { colorName: 'var(--gga-color-modifier-6)', fallback: '#9c423a' },
+      DeathCheck3: { colorName: 'var(--gga-color-modifier-7)', fallback: '#9c423a' },
+      DeathCheck4: { colorName: 'var(--gga-color-modifier-9)', fallback: '#9c423a' },
+      Dead: { colorName: 'var(--gga-color-modifier-11)', fallback: '#9c423a' },
+      Destroyed: { colorName: 'var(--gga-color-modifier-12)', fallback: '#9c423a' },
+    },
+
+    CI: {
+      None: { colorName: 'var(--gga-color-modifier-0)', fallback: '#89bd5b' },
+      Scratch: { colorName: 'var(--gga-color-modifier-1)', fallback: '#dddc98' },
+      MinorWound1: { colorName: 'var(--gga-color-modifier-2)', fallback: '#dddc98' },
+      MinorWound2: { colorName: 'var(--gga-color-modifier-3)', fallback: '#dddc98' },
+      MinorWound3: { colorName: 'var(--gga-color-modifier-4)', fallback: '#dddc98' },
+      MajorWound: { colorName: 'var(--gga-color-modifier-5)', fallback: '#c38355' },
+      Reeling: { colorName: 'var(--gga-color-modifier-6)', fallback: '#9c423a' },
+      Crippled1: { colorName: 'var(--gga-color-modifier-7)', fallback: '#9c423a' },
+      Crippled2: { colorName: 'var(--gga-color-modifier-8)', fallback: '#9c423a' },
+      MortalWound1: { colorName: 'var(--gga-color-modifier-9)', fallback: '#9c423a' },
+      MortalWound2: { colorName: 'var(--gga-color-modifier-10)', fallback: '#9c423a' },
+      InstantlyFatal1: { colorName: 'var(--gga-color-modifier-11)', fallback: '#9c423a' },
+      InstantlyFatal2: { colorName: 'var(--gga-color-modifier-12)', fallback: '#9c423a' },
+      TotalDestruction: { colorName: 'var(--gga-color-modifier-13)', fallback: '#9c423a' },
+    },
+  },
+}
+
+export function getColorForState(key: string, state: string | undefined, theme: 'light' | 'dark' = 'light'): string {
+  const finalFallback = '#808080'
+
+  if (!state) return finalFallback
+  const cacheRecord = ColorCache[theme][key]?.[state]
+
+  return cacheRecord.colorName
+}
+
+export function getTextForState(key: string, state: string | undefined): string {
+  if (!state) return ''
+
+  const localizationKey = key === 'CI' ? `GURPS.conditionalInjury.severity.${state}` : `GURPS.status.${state}`
+
+  return game.i18n!.localize(localizationKey)
+}

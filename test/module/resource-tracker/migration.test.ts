@@ -135,7 +135,14 @@ describe('migrateTrackerInstanceToV2', () => {
     expect(result).toHaveProperty('pdf', 'FDG4')
     expect(result).toHaveProperty('isDamageType', true)
     expect(result).toHaveProperty('min', 0)
-    expect(result).toHaveProperty('thresholds', legacyTrackerInstance.thresholds)
+
+    // Migration renames "condition" to "state".
+    const expectedThresholds = legacyTrackerInstance.thresholds.map(({ condition, ...rest }) => ({
+      ...rest,
+      state: condition,
+    }))
+
+    expect(result).toHaveProperty('thresholds', expectedThresholds)
   })
 
   it('maps legacy value to currentValue', () => {

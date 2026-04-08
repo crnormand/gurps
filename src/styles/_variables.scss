@@ -7,3 +7,90 @@ body.theme-dark {
   --color-modifier-negative: #ff7b7b;
   --color-modifier-positive: #00ff00;
 }
+
+@mixin css-color-variables {
+  // Key colors
+  --gga-color-white: #f8f6f2;
+
+  --gga-color-black: #1c1a17;
+  --gga-color-black1: #222019;
+  --gga-color-black2: #252320;
+  --gga-color-black3: #2a2825;
+
+  --gga-color-light-grey: #e6e4e0;
+  --gga-color-grey: #d6d4cf;
+  --gga-color-med-grey: #9e9b96;
+  --gga-color-dark-grey: #5e5b57;
+  --gga-color-darker-grey: #494742;
+  --gga-color-darkest-grey: #222019;
+
+  --gga-color-blue: #83d7e7;
+  --gga-color-med-blue: #5badbd;
+  --gga-color-dark-blue: #2f6975;
+
+  --gga-color-yellow: #f9f8ac;
+  --gga-color-med-yellow: #dddc98;
+  --gga-color-dark-yellow: #a4a371;
+
+  --gga-color-green: #b2e981;
+  --gga-color-med-green: #89bd5b;
+  --gga-color-dark-green: #4f752e;
+
+  --gga-color-orange: #f0ab7a;
+  --gga-color-med-orange: #c38355;
+  --gga-color-dark-orange: #794b2a;
+
+  --gga-color-red: #e45144;
+  --gga-color-med-red: #9c423a;
+  --gga-color-dark-red: #4e211d;
+
+  /* ---------------------------------------- */
+  --gga-color-header-text: var(--gga-color-light-grey);
+  --gga-color-text-callout: var(--gga-color-dark-blue);
+
+  --gga-color-modifier-0: var(--gga-color-green);
+  --gga-color-modifier-1: color-mix(in hsl, var(--gga-color-green) 50%, var(--gga-color-yellow));
+  --gga-color-modifier-2: var(--gga-color-yellow);
+  --gga-color-modifier-3: color-mix(in hsl, var(--gga-color-yellow) 50%, var(--gga-color-orange));
+  --gga-color-modifier-4: var(--gga-color-orange);
+  --gga-color-modifier-5: color-mix(in hsl, var(--gga-color-orange) 50%, var(--gga-color-red));
+  --gga-color-modifier-6: var(--gga-color-red);
+  --gga-color-modifier-7: color-mix(in hsl, var(--gga-color-red) 75%, var(--gga-color-med-red));
+  --gga-color-modifier-8: color-mix(in hsl, var(--gga-color-red) 50%, var(--gga-color-med-red));
+  --gga-color-modifier-9: color-mix(in hsl, var(--gga-color-red) 25%, var(--gga-color-med-red));
+  --gga-color-modifier-10: var(--gga-color-med-red);
+  --gga-color-modifier-11: color-mix(in hsl, var(--gga-color-med-red) 67%, var(--gga-color-dark-red));
+  --gga-color-modifier-12: color-mix(in hsl, var(--gga-color-med-red) 33%, var(--gga-color-dark-red));
+  --gga-color-modifier-13: var(--gga-color-dark-red);
+}
+
+@mixin css-color-variables-dark {
+  --gga-color-text-callout: var(--gga-color-blue);
+
+  --gga-color-modifier-0: var(--gga-color-dark-green);
+  --gga-color-modifier-1: color-mix(in hsl, var(--gga-color-dark-green) 50%, var(--gga-color-dark-yellow));
+  --gga-color-modifier-2: var(--gga-color-dark-yellow);
+  --gga-color-modifier-3: color-mix(in hsl, var(--gga-color-dark-yellow) 50%, var(--gga-color-med-orange));
+  --gga-color-modifier-4: var(--gga-color-med-orange);
+  --gga-color-modifier-5: color-mix(in hsl, var(--gga-color-med-orange) 50%, var(--gga-color-dark-red));
+  --gga-color-modifier-6: var(--gga-color-med-red);
+  --gga-color-modifier-7: color-mix(in hsl, var(--gga-color-med-red) 75%, var(--gga-color-dark-red));
+  --gga-color-modifier-8: color-mix(in hsl, var(--gga-color-med-red) 50%, var(--gga-color-dark-red));
+  --gga-color-modifier-9: color-mix(in hsl, var(--gga-color-med-red) 25%, var(--gga-color-dark-red));
+  --gga-color-modifier-10: var(--gga-color-dark-red);
+  --gga-color-modifier-11: color-mix(in hsl, var(--gga-color-dark-red) 67%, var(--gga-color-black));
+  --gga-color-modifier-12: color-mix(in hsl, var(--gga-color-dark-red) 33%, var(--gga-color-black));
+  --gga-color-modifier-13: var(--gga-color-black);
+}
+
+@mixin css-spacing-variables {
+  --gga-space-1: 2px;
+  --gga-space-2: 4px;
+  --gga-space-3: 6px;
+  --gga-space-4: 8px;
+  --gga-space-5: 10px;
+  --gga-space-6: 12px;
+  --gga-space-8: 16px;
+  --gga-space-10: 20px;
+  --gga-space-12: 24px;
+}

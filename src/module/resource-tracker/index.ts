@@ -74,7 +74,11 @@ export const ResourceTrackerModule: ResourceTrackerModule = {
 export type { IResourceTrackerThreshold, IResourceTracker, IResourceTrackerTemplate } from './types.js'
 
 export { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.js'
-export type { ResourceTrackerSchema, ResourceTrackerTemplateSchema } from './resource-tracker.js'
+export type {
+  ResourceTrackerSchema,
+  ResourceTrackerTemplateSchema,
+  ColoredThresholdDescriptor,
+} from './resource-tracker.js'
 export { TrackerInstance, ResourceTrackerTemplate } from './resource-tracker.js'
 export { OperatorFunctions, ComparisonFunctions } from './types.js'
 export { ResourceTrackerTemplateMapType } from './settings.js'

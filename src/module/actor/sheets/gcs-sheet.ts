@@ -11,6 +11,8 @@ import { Weight } from '@module/data/common/weight.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import type { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
+import { contrastColor, toHexColor } from '@module/util/color-utils.js'
+import { getCssVariable } from '@module/util/get-css-value.js'
 import { getGame, isHTMLElement } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
@@ -23,6 +25,8 @@ import Maneuvers from '../maneuver.js'
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 import {
   buildItemCopyWithChildren,
+  getColorForState,
+  getTextForState,
   openQuickNotesEditor,
   resolveItemDropPosition,
   resolveItemDropQuantity,
@@ -35,8 +39,6 @@ import ActorSheet = gurps.applications.ActorSheet
 type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>
 
 /* ---------------------------------------- */
-
-const DEFAULT_POOL_COLOR = '#4a9b4b'
 
 /* ---------------------------------------- */
 
@@ -133,6 +135,9 @@ namespace GurpsActorGcsSheet {
     otherWeight: string
   }
 }
+
+const POOL_COLOR_VARIABLE = '--gcs-color-default-pool'
+const POOL_COLOR_FALLBACK = '#B1D175'
 
 /* ---------------------------------------- */
 
@@ -394,6 +399,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       pools.push(this.#prepareAttributePool('QP', []))
     }
 
+    const defaultPoolColor = getCssVariable(document.body, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK)
+
     for (const tracker of this.actor.system.additionalresources.tracker) {
       const currentThreshold = tracker.currentThreshold
       const thresholds = tracker.thresholdDescriptors
@@ -418,8 +425,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMin: tracker.isMinEnforced && tracker.value === tracker.min,
         atMax: tracker.isMaxEnforced && tracker.value === tracker.max,
         name: tracker.name,
-        state: currentThreshold?.condition || '',
-        color: currentThreshold?.color || DEFAULT_POOL_COLOR,
+        state: currentThreshold?.state || '',
+        color: currentThreshold?.color || defaultPoolColor,
         thresholds: thresholds,
       })
     }
@@ -445,6 +452,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const currentValue = this.actor.system[key].value
     const state = thresholds.find(threshold => threshold.value >= currentValue)
 
+    const color = getColorForState(key, state?.state, this.options.classes?.includes('theme-dark') ? 'dark' : 'light')
+    const text = getTextForState(key, state?.state)
+
     return {
       type: 'pool',
       invertedDelta: true,
@@ -463,8 +473,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       },
       atMax: systemSource[key].damage === 0,
       name: `GURPS.${key}`,
-      state: state?.condition || '',
-      color: state?.color || DEFAULT_POOL_COLOR,
+      state: text,
+      color,
       thresholds,
     }
   }
@@ -476,6 +486,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const systemSource = this.actor.system._source
 
     const ciState = ConditionalInjury.thresholdForSeverity(systemSource.conditionalinjury.injury.severity)
+
+    const color = getColorForState('CI', ciState.state, this.options.classes?.includes('theme-dark') ? 'dark' : 'light')
+    const text = getTextForState('CI', ciState.state)
 
     return [
       {
@@ -497,8 +510,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         atMin: systemSource.conditionalinjury.injury.severity < -6,
         atMax: systemSource.conditionalinjury.injury.severity >= 6,
         name: 'GURPS.severity',
-        state: ciState.condition,
-        color: ciState.color || DEFAULT_POOL_COLOR,
+        state: text,
+        color,
         thresholds: ConditionalInjury.thresholds,
       },
       {
@@ -652,6 +665,21 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
       await this.actor.replacePosture(value)
     })
+
+    // Color pool-state foreground based on background color.
+
+    const poolStates = this.element.querySelectorAll<HTMLElement>('.pool-state')
+
+    for (const poolState of poolStates) {
+      const backgroundColor = getComputedStyle(poolState).backgroundColor
+      const hexColor = toHexColor(backgroundColor)
+
+      if (hexColor) {
+        const foregroundColor = contrastColor(hexColor, '#1c1a17', '#f8f6f2')
+
+        poolState.style.color = foregroundColor
+      }
+    }
 
     GurpsWiring.hookupAllEvents(this.element)
   }

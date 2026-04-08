@@ -329,7 +329,7 @@ export type PreparedTrackerData = {
   value: number
   min: number
   max: number
-  condition: string
+  state: string
   color: string | null
   pdf: string
   alias: string
@@ -337,7 +337,7 @@ export type PreparedTrackerData = {
     comparison: string
     operator: string
     value: number
-    condition: string
+    state: string
     color: string | null
   }[]
   descriptors: ThresholdDescriptor[]
@@ -362,7 +362,7 @@ export function prepareTrackerDataForSheet(actor: Actor.Implementation): Prepare
         ? game.i18n!.localize(tracker.name)
         : `${game.i18n!.localize('GURPS.resourceTracker.placeholder')}[${index}]`,
       value: tracker.value,
-      condition: tracker.currentThreshold?.condition || '',
+      state: tracker.currentThreshold?.state || '',
       color: tracker.currentThreshold?.color || null,
       pdf: tracker.pdf || '',
       alias: tracker.alias || '',
@@ -372,7 +372,7 @@ export function prepareTrackerDataForSheet(actor: Actor.Implementation): Prepare
         comparison: threshold.comparison,
         operator: threshold.operator,
         value: threshold.value,
-        condition: threshold.condition,
+        state: threshold.state,
         color: threshold.color,
       })),
       descriptors: tracker.thresholdDescriptors || [],

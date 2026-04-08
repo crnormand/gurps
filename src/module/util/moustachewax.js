@@ -12,7 +12,7 @@ import { extractOtfs } from '@util/otf.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import { isArray, isEmpty, quotedAttackName, recurselist, stripBracketContents, zeroFill } from '@util/utilities.js'
 
-import { contrastColor } from './contrast-color.js'
+import { contrastColor } from './color-utils.ts'
 import { i18nFallback } from './i18nFallback.js'
 import * as Settings from './miscellaneous-settings.js'
 
@@ -1100,19 +1100,6 @@ ${content}
           color: ${color};
         }
       </style>`
-  })
-
-  /**
-   * Used to produce a foreground color which automatically contrasts against a provided
-   * background color, using WCAG relative luminescence.
-   *
-   * @prop backgroundHex - Provided background color.
-   * @returns hex value - Either "system black" or "system white". These values were copied from the CSS variables to
-   *  ensure they match the actual colors used in the sheet. If the system colors are changed, these values should be
-   *  updated to match.
-   */
-  Handlebars.registerHelper('contrast-color', function (backgroundHex) {
-    return contrastColor(backgroundHex)
   })
 
   // === register Handlebars partials ===

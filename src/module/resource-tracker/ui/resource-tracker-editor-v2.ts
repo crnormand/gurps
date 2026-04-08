@@ -179,7 +179,7 @@ export class ResourceTrackerEditorV2 extends foundry.applications.api.Handlebars
       comparison: TrackerComparators.GT,
       operator: TrackerOperators.MULTIPLY,
       value: 1,
-      condition: 'GURPS.normal',
+      state: 'GURPS.normal',
       color: null,
     } as TrackerInstance['thresholds'][number])
 
