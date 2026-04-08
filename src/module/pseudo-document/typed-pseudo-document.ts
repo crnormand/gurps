@@ -61,7 +61,7 @@ class TypedPseudoDocument<
   /* ---------------------------------------- */
 
   static get documentConfig(): PseudoDocumentConfig.Types[gurps.Pseudo.WithTypes & typeof this.metadata.documentName] {
-    return GURPS.CONFIG.PseudoDocument[this.metadata.documentName] as any
+    return GURPS.CONFIG.PseudoDocument.SubTypes[this.metadata.documentName] as any
   }
 
   /* ---------------------------------------- */

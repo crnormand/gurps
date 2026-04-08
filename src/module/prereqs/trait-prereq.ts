@@ -1,7 +1,10 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { ActorType } from '@module/actor/types.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
+import type { GcsTraitModel } from '@module/item/data/gcs-trait.js'
+import { ItemType } from '@module/item/types.js'
 
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType } from './types.js'
@@ -22,15 +25,15 @@ class TraitPrereq extends BasePrereq<TraitPrereqSchema> {
   override get isSatisfied(): boolean {
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('gcsCharacter'))
+    if (!actor || !actor.isOfType(ActorType.GcsCharacter))
       throw new Error('TraitPrereq: No Actor provided or invalid Actor type.')
 
     const hasTrait = actor.items.some(item => {
-      if (!item.isOfType('gcsTrait')) return false
+      if (!item.isOfType(ItemType.GcsTrait)) return false
       if (!this.name.matches(item.name)) return false
-      if (!this.level.matches(item.system.currentLevel)) return false
+      if (!this.level.matches((item.system as GcsTraitModel).currentLevel)) return false
 
-      return this.notes.matches(item.system.localNotesWithReplacements)
+      return this.notes.matches((item.system as GcsTraitModel).localNotesWithReplacements)
     })
 
     return this.has ? hasTrait : !hasTrait

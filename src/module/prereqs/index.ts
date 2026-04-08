@@ -52,8 +52,14 @@ function init() {
     GURPS.CONFIG ||= {}
     // @ts-expect-error: Invalid type
     GURPS.CONFIG.PseudoDocument ||= {}
+    // @ts-expect-error: Invalid type
+    GURPS.CONFIG.PseudoDocument.Types ||= {}
 
-    GURPS.CONFIG.PseudoDocument.Prereq = {
+    GURPS.CONFIG.PseudoDocument.Types.Prereq = BasePrereq
+
+    // @ts-expect-error: Invalid type
+    GURPS.CONFIG.PseudoDocument.SubTypes ||= {}
+    GURPS.CONFIG.PseudoDocument.SubTypes.Prereq = {
       [PrereqType.List]: { documentClass: PrereqList, label: 'TYPES.Prereq.prereqList' },
       [PrereqType.Trait]: { documentClass: TraitPrereq, label: 'TYPES.Prereq.traitPrereq' },
       [PrereqType.Attribute]: { documentClass: AttributePrereq, label: 'TYPES.Prereq.attributePrereq' },

@@ -4,6 +4,7 @@ import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { ActionType } from '@module/action/types.js'
+import { defaultHitLocations } from '@module/config/hit-locations.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import DiceField from '@module/data/fields/dice-field.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
@@ -13,6 +14,7 @@ import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
 import { SkillV1 } from '@module/item/legacy/skill-adapter.js'
 import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
+import { ItemType } from '@module/item/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { getGame } from '@module/util/guards.js'
@@ -21,7 +23,7 @@ import { multiplyDice } from '@util/damage-utils.js'
 import { roundTo } from '@util/math.js'
 import { COSTS_REGEX } from '@util/parselink.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '@util/utilities.js'
-import { AnyObject, DeepPartial } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import { HitLocationEntry } from '../actor-components.js'
 import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
@@ -47,7 +49,7 @@ import {
   LiftingMovingSchema,
 } from './character-components.js'
 import { HitLocationEntryV2 } from './hit-location-entry.js'
-import { MoveModeV2 } from './move-mode.js'
+import { groundMoveForBasicMove, MoveModeV2 } from './move-mode.js'
 import { NoteV2 } from './note.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
@@ -65,6 +67,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         MoveMode: `system.moveV2`,
         ResourceTracker: `system.additionalresources.tracker`,
       },
+      embeddedHolderField: 'holderItem',
       type: 'base',
     }
   }
@@ -82,11 +85,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     if (
       !data?.system?.holderItemId ||
-      (data?.system?.holderItemId && !data.items?.some(item => item._id === data.system.holderItemId))
+      (data?.system?.holderItemId &&
+        !data.items?.some((item: Item.Implementation) => item._id === data.system.holderItemId))
     ) {
-      const holderItemData: Item.CreateData = {
+      const holderItemData: Item.CreateData<ItemType.Trait> = {
         _id: foundry.utils.randomID(),
-        type: 'featureV2',
+        type: ItemType.Trait,
         name: getGame().i18n.localize('GURPS.migration.holderItem.name'),
         system: {
           notes: getGame().i18n.localize('GURPS.migration.holderItem.notes'),
@@ -135,10 +139,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   // Item collections
   // Flat list of all Items of each type.
-  allAdsV2: Item.OfType<'featureV2'>[] = []
-  allSkillsV2: Item.OfType<'skillV2'>[] = []
-  allSpellsV2: Item.OfType<'spellV2'>[] = []
-  allEquipmentV2: Item.OfType<'equipmentV2'>[] = []
+  allAdsV2: Item.OfType<ItemType.Trait>[] = []
+  allSkillsV2: Item.OfType<ItemType.Skill>[] = []
+  allSpellsV2: Item.OfType<ItemType.Spell>[] = []
+  allEquipmentV2: Item.OfType<ItemType.Equipment>[] = []
 
   // Action collections
   meleeV2: MeleeAttackModel[] = []
@@ -336,17 +340,17 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
 
     this.allAdsV2 = this.parent.items
-      .filter(item => (item as Item.Implementation).isOfType('featureV2') && item._id !== this.holderItemId)
-      .map(item => item as Item.OfType<'featureV2'>)
+      .filter(item => (item as Item.Implementation).isOfType(ItemType.Trait) && item._id !== this.holderItemId)
+      .map(item => item as Item.OfType<ItemType.Trait>)
     this.allSkillsV2 = this.parent.items
-      .filter(item => (item as Item.Implementation).isOfType('skillV2'))
-      .map(item => item as Item.OfType<'skillV2'>)
+      .filter(item => (item as Item.Implementation).isOfType(ItemType.Skill))
+      .map(item => item as Item.OfType<ItemType.Skill>)
     this.allSpellsV2 = this.parent.items
-      .filter(item => (item as Item.Implementation).isOfType('spellV2'))
-      .map(item => item as Item.OfType<'spellV2'>)
+      .filter(item => (item as Item.Implementation).isOfType(ItemType.Spell))
+      .map(item => item as Item.OfType<ItemType.Spell>)
     this.allEquipmentV2 = this.parent.items
-      .filter(item => (item as Item.Implementation).isOfType('equipmentV2'))
-      .map(item => item as Item.OfType<'equipmentV2'>)
+      .filter(item => (item as Item.Implementation).isOfType(ItemType.Equipment))
+      .map(item => item as Item.OfType<ItemType.Equipment>)
     this.meleeV2 = this.parent.getItemAttacks({ attackType: 'melee' })
     this.rangedV2 = this.parent.getItemAttacks({ attackType: 'ranged' })
 
@@ -566,7 +570,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #prepareUserModifiers() {
     this.parent.items.forEach(item => {
-      if (!(item as Item.Implementation).isOfType('featureV2', 'skillV2', 'spellV2', 'equipmentV2')) return
+      if (!(item as Item.Implementation).isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment))
+        return
 
       for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(line => line.trim())) {
         const modifierDescription = `${modifier} ${item.id}`
@@ -743,8 +748,22 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /*  Accessors                               */
   /* ---------------------------------------- */
 
-  get holderItem(): Item.OfType<'featureV2'> {
-    return this.parent.items.get(this.holderItemId) as Item.OfType<'featureV2'>
+  get holderItem(): Item.OfType<ItemType.Trait> {
+    return this.parent.items.get(this.holderItemId) as Item.OfType<ItemType.Trait>
+  }
+
+  /* ---------------------------------------- */
+
+  get equippedParry(): number {
+    let highest = 0
+
+    for (const equipment of this.allEquipmentCarried) {
+      for (const weapon of equipment.system.actions.filter(action => action.isOfType(ActionType.MeleeAttack))) {
+        if (weapon.parryLevel && weapon.parryLevel > highest) highest = weapon.parryLevel
+      }
+    }
+
+    return highest
   }
 
   /* ---------------------------------------- */
@@ -812,7 +831,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   // List of top-level ADs (not contained in another AD), sorted by `sort` field.
-  get adsV2(): Item.OfType<'featureV2'>[] {
+  get adsV2(): Item.OfType<ItemType.Trait>[] {
     return this.allAdsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
   }
 
@@ -828,7 +847,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get skillsV2(): Item.OfType<'skillV2'>[] {
+  get skillsV2(): Item.OfType<ItemType.Skill>[] {
     return this.allSkillsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
   }
 
@@ -844,7 +863,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get spellsV2(): Item.OfType<'spellV2'>[] {
+  get spellsV2(): Item.OfType<ItemType.Spell>[] {
     return this.allSpellsV2.filter(item => item.containedBy === null).sort((left, right) => left.sort - right.sort)
   }
 
@@ -1130,11 +1149,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  findTrait(name: string): Item.OfType<'featureV2'> | null {
+  findTrait(name: string): Item.OfType<ItemType.Trait> | null {
     return this.allAdsV2.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
   }
 
-  findAdvantage(name: string): Item.OfType<'featureV2'> | null {
+  findAdvantage(name: string): Item.OfType<ItemType.Trait> | null {
     return this.findTrait(name)
   }
 
@@ -1405,18 +1424,18 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
       case 'markedChecks': {
         const items = this.parent.items.filter(item =>
-          (item as Item.Implementation).isOfType('featureV2', 'skillV2', 'spellV2')
+          (item as Item.Implementation).isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell)
         )
 
         for (const item of items) {
           if (item.system.addToQuickRoll) {
-            const type = item.type === 'featureV2' ? 'ad' : item.type
+            const type = item.type === ItemType.Trait ? 'ad' : item.type
             let value = 0
 
-            if ((item as Item.Implementation).isOfType('skillV2'))
-              value = (item as Item.OfType<'skillV2'>).system.import
-            if ((item as Item.Implementation).isOfType('spellV2'))
-              value = (item as Item.OfType<'spellV2'>).system.import
+            if ((item as Item.Implementation).isOfType(ItemType.Skill))
+              value = (item as Item.OfType<ItemType.Skill>).system.import
+            if ((item as Item.Implementation).isOfType(ItemType.Spell))
+              value = (item as Item.OfType<ItemType.Spell>).system.import
 
             checks.push({
               symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
@@ -1559,7 +1578,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       game.user?.targets.reduce((acc: string[], target: Token.Implementation) => {
         const actor = target.actor
 
-        if (!actor || !actor.isNewActorType) return acc
+        if (!actor) return acc
 
         acc.push(
           ...((actor.system as CharacterModel).conditions.target.modifiers?.map(mod => {
@@ -1763,7 +1782,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     const weapons = this.parent.getItemAttacks().filter(attack => attackType === 'both' || attack.type === attackType)
 
-    let weapon = weapons.find(attack => attack.item.name === nameWithoutUsage && (!usage || attack.mode === usage))
+    let weapon = weapons.find(attack => attack._displayName === nameWithoutUsage && (!usage || attack.mode === usage))
 
     if (!weapon) {
       // Account for the possibility that the usage was matched incorrectly as part of the name (e.g. "Guns (Pistol)")
@@ -1780,13 +1799,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   getCollectionForItemType(itemType: Item.SubType, carried = true): Item.Implementation[] {
     switch (itemType) {
-      case 'featureV2':
+      case ItemType.Trait:
         return this.adsV2
-      case 'skillV2':
+      case ItemType.Skill:
         return this.skillsV2
-      case 'spellV2':
+      case ItemType.Spell:
         return this.spellsV2
-      case 'equipmentV2':
+      case ItemType.Equipment:
         return carried ? this.equipmentV2.carried : this.equipmentV2.other
       default:
         return []
@@ -1936,16 +1955,16 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
-    bodyplan: new fields.StringField({ required: true, nullable: false }),
+    bodyplan: new fields.StringField({ required: true, nullable: false, initial: 'Humanoid' }),
     hitlocationsV2: new CollectionField(HitLocationEntryV2, {
       required: true,
       nullable: false,
-      initial: {},
+      initial: () => defaultHitLocations(),
     }),
 
     conditions: new fields.SchemaField(conditionsSchema(), { required: true, nullable: false }),
 
-    // TODO Different move modes can be added based on Traits such as "Flight". Perhaps it's completely derived from Traits?
+    // TODO: Different move modes can be added based on Traits such as "Flight". Perhaps it's completely derived from Traits?
     // * "Normal" - Ground (Basic Move)/Air (0)/Water (Basic Move / 5)
     // * Amphibious = Ground (Basic Move)/Water (Basic Move)
     // * Aquatic = Ground (0) and Water (Basic Move)
@@ -1959,13 +1978,30 @@ const characterSchema = () => {
     //  Enhanced Move = (Basic Speed x level; half level x 1.5) For ONE move mode
     //
     // * Tunneling = Underground (1 yard per level)
-    moveV2: new CollectionField(MoveModeV2, { required: true, nullable: false, initial: {} }),
+    moveV2: new CollectionField(MoveModeV2, {
+      required: true,
+      nullable: false,
+      initial: (source: unknown) => {
+        const groundMove = groundMoveForBasicMove((source as any)?.basicmove.value ?? 0)
+
+        const allMoves: AnyMutableObject = {}
+
+        allMoves[groundMove._id as string] = groundMove
+
+        return allMoves
+      },
+    }),
 
     /** The currently selected move mode used to calculate move values */
     _currentMoveModeId: new fields.StringField({
       required: true,
       nullable: false,
       blank: true,
+      initial: (source: unknown) => {
+        const moveKeys = Object.keys((source as any)?.moveV2 ?? {})
+
+        return moveKeys.length > 0 ? moveKeys[0] : ''
+      },
     }),
 
     allNotes: new CollectionField(NoteV2, { required: true, nullable: false, initial: {} }),

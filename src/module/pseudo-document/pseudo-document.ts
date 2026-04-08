@@ -1,4 +1,5 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
+import { type BaseDisplayPseudoDocument } from '@gurps-types/gurps/display-item.js'
 import { getGame, hasMetadata, isUpdatableDocument } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 import { AnyObject, Identity, InexactPartial } from 'fvtt-types/utils'
@@ -123,6 +124,16 @@ class PseudoDocument<
    */
   get sheet() {
     return PseudoDocumentSheet.getSheet(this)
+  }
+
+  /* ---------------------------------------- */
+
+  toDisplayItem(): BaseDisplayPseudoDocument {
+    return {
+      id: this.id,
+      uuid: this.uuid,
+      documentName: this.documentName,
+    }
   }
 
   /* ---------------------------------------- */
@@ -451,6 +462,13 @@ class PseudoDocument<
 const pseudoDocumentSchema = () => {
   return {
     _id: new fields.DocumentIdField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
+    name: new fields.StringField({
+      required: true,
+      nullable: false,
+      initial: () => '',
+    }) as fields.StringField<{ required: true; nullable: false; initial: () => string }>,
+    img: new fields.FilePathField({ categories: ['IMAGE'] }),
+    sort: new fields.IntegerSortField({ required: true, initial: 0 }),
     flags: new fields.ObjectField({ required: false, nullable: false, initial: () => ({}) }),
   }
 }

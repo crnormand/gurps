@@ -54,7 +54,7 @@ abstract class GcsBaseItemModel<
 
   static get metadata(): GcsItemMetadata {
     return {
-      embedded: {},
+      embedded: { Action: 'system.actions' },
       type: 'base',
       invalidActorTypes: [],
       actions: {},

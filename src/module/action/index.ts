@@ -29,8 +29,13 @@ function init() {
   GURPS.CONFIG ||= {}
   // @ts-expect-error: Invalid type
   GURPS.CONFIG.PseudoDocument ||= {}
+  // @ts-expect-error: Invalid type
+  GURPS.CONFIG.PseudoDocument.Types ||= {}
+  GURPS.CONFIG.PseudoDocument.Types.Action = BaseAction
 
-  GURPS.CONFIG.PseudoDocument.Action = {
+  // @ts-expect-error: Invalid type
+  GURPS.CONFIG.PseudoDocument.SubTypes ||= {}
+  GURPS.CONFIG.PseudoDocument.SubTypes.Action = {
     [ActionType.MeleeAttack]: {
       label: 'TYPES.Action.meleeAttack',
       documentClass: MeleeAttackModel,

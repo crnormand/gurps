@@ -106,8 +106,14 @@ function init() {
     GURPS.CONFIG ||= {}
     // @ts-expect-error: Invalid type
     GURPS.CONFIG.PseudoDocument ||= {}
+    // @ts-expect-error: Invalid type
+    GURPS.CONFIG.PseudoDocument.Types ||= {}
 
-    GURPS.CONFIG.PseudoDocument.Feature = {
+    GURPS.CONFIG.PseudoDocument.Types.Feature = BaseFeature
+
+    // @ts-expect-error: Invalid type
+    GURPS.CONFIG.PseudoDocument.SubTypes ||= {}
+    GURPS.CONFIG.PseudoDocument.SubTypes.Feature = {
       [FeatureType.AttributeBonus]: { documentClass: AttributeBonus, label: 'TYPES.Feature.attributeBonus' },
       [FeatureType.ConditionalModifier]: {
         documentClass: ConditionalModifier,

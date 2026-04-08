@@ -1,6 +1,8 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { ActorType } from '@module/actor/types.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
+import { ItemType } from '@module/item/types.js'
 
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType } from './types.js'
@@ -21,11 +23,11 @@ class EquippedEquipmentPrereq extends BasePrereq<EquippedEquipmentPrereqSchema> 
   override get isSatisfied(): boolean {
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('gcsCharacter'))
+    if (!actor || !actor.isOfType(ActorType.GcsCharacter))
       throw new Error('EquippedEquipmentPrereq: No Actor provided or invalid Actor type.')
 
     const hasEquipment = actor.items.some(item => {
-      if (!item.isOfType('gcsEquipment')) return false
+      if (!item.isOfType(ItemType.GcsEquipment)) return false
       if (!item.system.carried || !item.system.equipped) return false
       if (!this.name.matches(item.name)) return false
 

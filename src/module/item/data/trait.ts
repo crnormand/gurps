@@ -3,6 +3,8 @@ import { DisplayTrait } from '@gurps-types/gurps/display-item.js'
 import { getGame } from '@module/util/guards.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
+import { ItemType } from '../types.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 
 class TraitModel extends BaseItemModel<TraitSchema> {
@@ -17,8 +19,8 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
-      type: 'featureV2',
-      childTypes: ['featureV2'],
+      type: ItemType.Trait,
+      childTypes: [ItemType.Trait],
       sortKeys: {
         points: 'system.points',
       },

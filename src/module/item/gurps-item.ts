@@ -8,6 +8,7 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { BaseItemModel } from './data/base.js'
 import { EquipmentModel } from './data/equipment.js'
 import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
+import { ItemType } from './types.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
@@ -339,7 +340,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   /* ---------------------------------------- */
 
   async toggleEnabled(enabled: boolean | null = null) {
-    if (!this.isOfType('equipmentV2')) {
+    if (!this.isOfType(ItemType.Equipment)) {
       console.warn(`Item of type "${this.type}" cannot be toggled.`)
 
       return

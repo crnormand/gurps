@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplayRangedAttack } from '@gurps-types/gurps/display-item.js'
+import { ActorType } from '@module/actor/types.js'
 import { LengthUnit } from '@module/data/common/length.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -184,7 +185,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.action.rangedAttack']
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.action.rangedAttack']
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */
@@ -285,7 +286,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('characterV2')) return
+    if (!actor || !actor.isOfType(ActorType.Character)) return
 
     const st = actor.system.attributes.ST.value
 
@@ -360,8 +361,8 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
       rof: this.rofText,
       shots: this.shotsText,
       otf: {
-        level: `R:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
-        damage: `D:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
+        level: `R:"${fullName}"`,
+        damage: `D:"${fullName}"`,
       },
     })
   }

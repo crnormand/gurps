@@ -34,7 +34,7 @@ interface RollInfo {
 interface ActorV1Interface {
   // Properties
   _additionalResources: Record<string, any>
-  _hitLocationRolls: HitLocationEntry[] | Record<string, Record<string, HitLocationRecord>>
+  _hitLocationRolls: HitLocationEntry[] | Record<string, HitLocationEntryV1>
   defaultHitLocation: string
   displayname: string
   hitLocationByWhere: Record<string, HitLocationEntryV1>
@@ -49,7 +49,11 @@ interface ActorV1Interface {
   _forceRender(): void
   _removeItemAdditions(itemId: string): Promise<void>
   _sanityCheckItemSettings(component: AnyObject): Promise<boolean>
-  _updateItemFromForm(item: Item.OfType<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>): Promise<void>
+  // _updateItemFromForm(
+  //   item: Item.OfType<
+  //     'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
+  //   >
+  // ): Promise<void>
   accumulateDamageRoll(action: any): Promise<void>
   addNewItemData(itemData: Record<string, any>, targetkey: string | null): void
   addTaggedRollModifiers(

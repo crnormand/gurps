@@ -1,7 +1,7 @@
 import { defineGetterProperties } from '@util/object-utils.js'
 import { arrayToObject } from '@util/utilities.js'
 
-import { GurpsItemV2 } from '../gurps-item.js'
+import { ItemType } from '../types.js'
 
 // Make selected prototype getters enumerable own properties so Object.values() includes them.
 const getterKeys = [
@@ -30,14 +30,14 @@ const getterKeys = [
 class TraitV1 {
   private _contains: Record<string, TraitV1>
 
-  constructor(traitV2: GurpsItemV2<'featureV2'>) {
+  constructor(traitV2: Item.OfType<ItemType.Trait>) {
     this.traitV2 = traitV2
 
     defineGetterProperties(this, getterKeys)
 
     // Get contained items.
-    const containedItems: GurpsItemV2<'featureV2'>[] = this.traitV2.sortedContents.map(
-      it => it as GurpsItemV2<'featureV2'>
+    const containedItems: Item.OfType<ItemType.Trait>[] = this.traitV2.sortedContents.map(
+      it => it as Item.OfType<ItemType.Trait>
     )
 
     this._contains = arrayToObject(
@@ -48,7 +48,7 @@ class TraitV1 {
     this.save = false
   }
 
-  traitV2: GurpsItemV2<'featureV2'>
+  traitV2: Item.OfType<ItemType.Trait>
   save: boolean
 
   get addToQuickRoll(): boolean {
@@ -156,7 +156,7 @@ class TraitV1 {
   static getUpdateData(newData: Partial<TraitV1>, traitv1?: TraitV1): Record<string, any> {
     const updateData: Record<string, any> = {}
 
-    updateData['type'] = 'featureV2'
+    updateData['type'] = ItemType.Trait
     updateData['system'] = {}
     updateData.system['open'] = true
     updateData.system['containedBy'] = null

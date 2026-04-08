@@ -6,6 +6,8 @@ import { IPrereqs, IPrereqsBaseData, preparePrereqs, prereqsSchema } from '@modu
 import { ScriptEquipment } from '@module/scripting/adapters/equipment.js'
 import { ScriptResolver } from '@module/scripting/resolver.js'
 
+import { ItemType } from '../types.js'
+
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 type EquipmentBaseData = INameable.AccesserBaseData & IPrereqsBaseData
@@ -30,7 +32,7 @@ class GcsEquipmentModel
   static override get metadata(): GcsItemMetadata {
     return {
       embedded: { Prereq: 'system._prereqs', Feature: 'system.features' },
-      type: 'gcsEquipment',
+      type: ItemType.GcsEquipment,
       invalidActorTypes: [],
       actions: {},
       childTypes: [],
@@ -102,7 +104,7 @@ class GcsEquipmentModel
 
     return Weight.sum(
       this.weight,
-      ...this.children.filter(child => child.isOfType('gcsEquipment')).map(child => child.system.weight)
+      ...this.children.filter(child => child.isOfType(ItemType.GcsEquipment)).map(child => child.system.weight)
     )
   }
 }

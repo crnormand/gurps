@@ -3,6 +3,8 @@ import { DisplayEquipment } from '@gurps-types/gurps/display-item.js'
 import { Weight } from '@module/data/common/weight.js'
 import { AnyObject } from 'fvtt-types/utils'
 
+import { ItemType } from '../types.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 
 class EquipmentModel extends BaseItemModel<EquipmentSchema> {
@@ -17,8 +19,8 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
-      type: 'equipmentV2',
-      childTypes: ['equipmentV2'],
+      type: ItemType.Equipment,
+      childTypes: [ItemType.Equipment],
       sortKeys: {
         quantity: 'system.count',
         value: 'system.cost',
@@ -41,7 +43,7 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
         return this._carried
       }
 
-      if (!container.isOfType('equipmentV2')) {
+      if (!container.isOfType(ItemType.Equipment)) {
         console.error(`Expected container of equipment item to be of type "equipmentV2", but got "${container.type}"`)
 
         return this._carried
@@ -63,6 +65,30 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
     const currentEnabled = this.equipped
 
     return this.parent.update({ system: { equipped: enabled === null ? !currentEnabled : enabled } })
+  }
+
+  /* ---------------------------------------- */
+
+  async incrementQuantity(): Promise<this['parent'] | undefined> {
+    const quantity = this.count + 1
+
+    return this.parent.update({ 'system.count': quantity } as Item.UpdateData)
+  }
+
+  /* ---------------------------------------- */
+
+  async decrementQuantity(): Promise<this['parent'] | undefined> {
+    const quantity = this.count - 1
+
+    // NOTE: A user can keep a 0 quantity of an item but if they decrement again after the quantity
+    // is already 0, it's safe to assume they want to delete the item so we'll prompt them for it.
+    if (quantity < 0) {
+      await this.parent.deleteDialog()
+
+      return
+    }
+
+    return this.parent.update({ 'system.count': quantity } as Item.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -97,7 +123,7 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 const equipmentSchema = () => {
   return {
     /** The quantity of this item. */
-    count: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    count: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 }),
 
     /** The weight of one unit of this item. */
     weight: new fields.NumberField({ required: true, nullable: false, initial: 0 }),

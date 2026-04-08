@@ -1,7 +1,9 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { ActorType } from '@module/actor/types.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
+import { ItemType } from '@module/item/types.js'
 
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType, SpellPrereqSubType } from './types.js'
@@ -22,12 +24,12 @@ class SpellPrereq extends BasePrereq<SpellPrereqSchema> {
   override get isSatisfied(): boolean {
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('gcsCharacter'))
+    if (!actor || !actor.isOfType(ActorType.GcsCharacter))
       throw new Error('SpellPrereq: No Actor provided or invalid Actor type.')
 
     let matchCount: number
 
-    const spells = actor.itemTypes['gcsSpell'].filter(item => !item.system.isContainer)
+    const spells = actor.itemTypes[ItemType.GcsSpell].filter(item => !item.system.isContainer)
 
     switch (this.subType) {
       case SpellPrereqSubType.Any:

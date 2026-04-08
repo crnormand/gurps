@@ -3,6 +3,8 @@ import { WeightUnit, WeightField } from '@module/data/common/weight.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
 import { INameable, INameableApplier } from '@module/data/mixins/nameable.js'
 
+import { ItemType } from '../types.js'
+
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 class GcsEquipmentModifierModel
@@ -23,7 +25,7 @@ class GcsEquipmentModifierModel
   static override get metadata(): GcsItemMetadata {
     return {
       embedded: { Feature: 'system.features' },
-      type: 'gcsEquipmentModifier',
+      type: ItemType.GcsEquipmentModifier,
       invalidActorTypes: [],
       actions: {},
       childTypes: [],
@@ -33,8 +35,8 @@ class GcsEquipmentModifierModel
 
   /* ---------------------------------------- */
 
-  get equipment(): Item.OfType<'gcsEquipment'> | null {
-    return this.ancestors.find(item => item.isOfType('gcsEquipment')) ?? null
+  get equipment(): Item.OfType<ItemType.GcsEquipment> | null {
+    return this.ancestors.find(item => item.isOfType(ItemType.GcsEquipment)) ?? null
   }
 
   get enabled(): boolean {

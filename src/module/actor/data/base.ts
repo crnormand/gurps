@@ -8,6 +8,8 @@ type ActorMetadata = Readonly<{
   detailsPartial?: string[]
   /* Record of document names of pseudo-documents and the path to the collection. */
   embedded: Record<string, string>
+  /** The path under which an Item which stores embedded documents on behalf of the Actor can be found */
+  embeddedHolderField?: string
 }>
 
 /* ---------------------------------------- */

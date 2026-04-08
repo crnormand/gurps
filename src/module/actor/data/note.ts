@@ -130,16 +130,14 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
     return this.calc?.resolved_notes ? this.calc.resolved_notes : this.text
   }
 
-  toDisplayItem(): DisplayNote {
+  override toDisplayItem(): DisplayNote {
     const fullName = this.title
 
     const children = this.contents.filter(child => !!child).map(child => child!.toDisplayItem!())
 
     const notes = MarkdownUtil.toHTML(this.markdown)
 
-    return {
-      id: this.id!,
-      documentName: this.static.metadata.documentName,
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
       children,
       hasChildren: this.contents.length > 0,
       childrenOpen: this.open ?? false,
@@ -147,7 +145,8 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
       fullName,
       notes,
       indent: this.ancestors.length,
-    }
+      reference: this.reference,
+    })
   }
 }
 

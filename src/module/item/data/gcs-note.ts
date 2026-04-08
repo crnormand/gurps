@@ -1,5 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
+import { ItemType } from '../types.js'
+
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 class GcsNoteModel extends GcsBaseItemModel<GcsNoteSchema> {
@@ -12,7 +14,7 @@ class GcsNoteModel extends GcsBaseItemModel<GcsNoteSchema> {
   static override get metadata(): GcsItemMetadata {
     return {
       embedded: {},
-      type: 'gcsNote',
+      type: ItemType.GcsNote,
       invalidActorTypes: [],
       actions: {},
       childTypes: [],

@@ -147,7 +147,6 @@ class GcsAttributeDefinition extends PseudoDocument<GcsAttributeDefinition.Schem
 const attributeDefinitionSchema = () => {
   return {
     ...pseudoDocumentSchema(),
-    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     // NOTE: The .initial value of this field is a temporary placeholder. GCS generates a new ID
     // as an alphanumeric (plus _) string of minimum length to ensure there are no duplicate ID keys.
     // Therefore, it should cycle through "a" -> "z", then "aa" etc.
@@ -164,7 +163,6 @@ const attributeDefinitionSchema = () => {
       choices: Object.values(GcsAttributePlacement),
       initial: GcsAttributePlacement.Automatic,
     }),
-    name: new fields.StringField({ required: true, nullable: false }),
     fullName: new fields.StringField({ required: true, nullable: false }),
     // NOTE: This is parsed as JS code, but no type yet exists for this.
     // TODO: Create dedicated JS code type.

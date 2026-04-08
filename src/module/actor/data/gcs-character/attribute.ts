@@ -1,4 +1,5 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
+import { ActorType } from '@module/actor/types.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
 import { AttributeType, GcsAttributeDefinition } from './attribute-definition.js'
@@ -64,7 +65,7 @@ class GcsAttribute extends PseudoDocument<GcsAttributeSchema> {
     super._initialize(options)
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('gcsCharacter')) {
+    if (!actor || !actor.isOfType(ActorType.GcsCharacter)) {
       console.error('GcsAttribute: No Actor provided or invalid Actor type.')
 
       return
@@ -87,9 +88,9 @@ class GcsAttribute extends PseudoDocument<GcsAttributeSchema> {
 
   /* ---------------------------------------- */
 
-  get sort(): number {
-    return this._definition?.sort || 0
-  }
+  // get sort(): number {
+  //   return this._definition?.sort || 0
+  // }
 
   /* ---------------------------------------- */
 
