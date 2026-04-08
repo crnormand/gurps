@@ -8,6 +8,8 @@ import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { MoveModeV2 } from './data/move-mode.js'
 import { NoteV2 } from './data/note.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
+import { ActorType } from './types.js'
+import { ItemType } from '../item/types.js'
 
 async function runMigration(): Promise<void> {
   if (!game.user || !game.user.isGM) return
@@ -62,8 +64,8 @@ async function migrateActorCompendium(pack: CompendiumCollection<'Actor'>) {
 
 /* ---------------------------------------- */
 
-async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
-  if (!actor.isOfType('character', 'enemy')) {
+async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<ActorType.Character> | void> {
+  if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.LegacyEnemy)) {
     console.error(
       'Attempted to migrate actor that is not of type character. Actor name:',
       actor.name,
@@ -82,7 +84,7 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
     return
   }
 
-  const newActor = (await actor.update(updateData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
+  const newActor = (await actor.update(updateData, { recursive: false })) as unknown as Actor.OfType<ActorType.Character>
 
   if (!newActor) {
     console.error('Failed to update actor with migrated data. Actor name:', actor.name)
@@ -97,7 +99,7 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
 
 function getMigratedActorData(
   oldActor: Actor.Implementation | Actor.CreateData
-): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.OfType<'characterV2'>>> | null {
+): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.OfType<ActorType.Character>>> | null {
   if (!game.i18n) {
     console.error('GURPS | Cannot migrate actor because game.i18n is not initialized.')
 
@@ -182,15 +184,15 @@ function getMigratedActorData(
 
   // ActorV1 has no concept of Reaction and Conditional Modifier ownership by items,
   // so reactions and conditional modifiers are moved to a single placeholder item.
-  const holderItem: Item.CreateData<'featureV2'> = {
+  const holderItem: Item.CreateData<ItemType.Trait> = {
     _id: foundry.utils.randomID(),
-    type: 'featureV2',
+    type: ItemType.Trait,
     name: game.i18n?.localize('GURPS.migration.holderItem.name'),
   }
 
   const holderItemFlags = { isMigratedItem: true }
 
-  const holderItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<'featureV2'>>> = {
+  const holderItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<ItemType.Trait>>> = {
     containedBy: null,
     // name: game.i18n?.localize('GURPS.migration.holderItem.name'),
     notes: game.i18n?.localize('GURPS.migration.holderItem.notes'),
@@ -254,9 +256,9 @@ function getMigratedActorData(
 
   items.push(holderItem)
 
-  const updateData: Actor.CreateData<'characterV2'> = {
+  const updateData: Actor.CreateData<ActorType.Character> = {
     _id: oldActor._id,
-    type: 'characterV2',
+    type: ActorType.Character,
     img: oldActor.img,
     name: oldActor.name,
     system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name, { holderItemId: holderItem._id! }),
@@ -271,8 +273,8 @@ function getMigratedActorData(
 function migrateActorSystem(
   oldData: ActorV1Model,
   actorName?: string,
-  injectedData?: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>>
-): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> {
+  injectedData?: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>>
+): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>> {
   if (typeof oldData.conditions.move === 'string')
     console.warn(`MIGRATE: Actor ${actorName} oldData.conditions.move: ${oldData.conditions.move}`)
 
@@ -296,7 +298,7 @@ function migrateActorSystem(
 
   const holderItemId = injectedData?.holderItemId || ''
 
-  const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
+  const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>> = {
     ...injectedData,
     holderItemId,
     attributes: oldData.attributes,

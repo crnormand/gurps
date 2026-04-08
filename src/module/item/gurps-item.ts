@@ -18,7 +18,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   // Narrowed view of this.system for GurpsItemV2 logic.
   get modelV2(): BaseItemModel {
-    return this.system as Item.SystemOfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
+    return this.system as Item.SystemOfType<ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell>
   }
 
   // Narrowed view of this.system for GurpsItem logic.
@@ -30,7 +30,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   // Common guard for new actor subtypes.
   get isNewItemType(): boolean {
-    return this.isOfType('equipmentV2', 'featureV2', 'skillV2', 'spellV2')
+    return this.isOfType(ItemType.Equipment, ItemType.Trait, ItemType.Skill, ItemType.Spell)
   }
 
   /* ---------------------------------------- */

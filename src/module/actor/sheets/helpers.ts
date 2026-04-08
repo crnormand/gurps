@@ -1,4 +1,6 @@
 import { systemPath } from '@module/util/misc.js'
+import { ActorType } from '../types.js'
+import { ItemType } from '../../item/types.js'
 
 /**
  * Recursively builds create-data for an item and all its descendants, assigning each a
@@ -43,7 +45,7 @@ export async function resolveItemDropPosition(item: Item.Implementation): Promis
 
 /* ---------------------------------------- */
 
-export async function resolveItemDropQuantity(item: Item.OfType<'equipmentV2'>): Promise<number | null> {
+export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipment>): Promise<number | null> {
   const max = item.system.count
 
   return await foundry.applications.api.DialogV2.wait({
@@ -82,7 +84,7 @@ export async function resolveItemDropQuantity(item: Item.OfType<'equipmentV2'>):
 
 /* ---------------------------------------- */
 
-export async function openQuickNotesEditor(actor: Actor.OfType<'characterV2'>): Promise<void> {
+export async function openQuickNotesEditor(actor: Actor.OfType<ActorType.Character>): Promise<void> {
   const content = await foundry.applications.handlebars.renderTemplate(
     systemPath('templates/actor/quick-notes-editor.hbs'),
     {

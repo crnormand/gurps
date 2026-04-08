@@ -1,5 +1,6 @@
 import { diceValidate } from '@module/data/validators/dice-validator.js'
 import { isHTMLElement, isHTMLInputElement } from '@module/util/guards.js'
+import { ActorType } from '../types.js'
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()
@@ -107,7 +108,7 @@ const inlineEditConfigs: InlineEditConfigInternal[] = [
 
 export function buildOnBlurHandler(
   config: InlineEditConfigInternal,
-  actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>
+  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
 ): ((input: HTMLInputElement) => void) | undefined {
   if (config.fieldType === 'name') {
     return (input: HTMLInputElement) => {
@@ -139,7 +140,7 @@ export function buildOnBlurHandler(
 
 export function bindAllInlineEdits(
   html: HTMLElement,
-  actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>
+  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
 ): void {
   inlineEditConfigs.forEach(config => {
     const onBlur = buildOnBlurHandler(config, actor)
@@ -148,7 +149,7 @@ export function bindAllInlineEdits(
   })
 }
 
-export function bindAttributeEdit(html: HTMLElement, actor: Actor.OfType<'character' | 'characterV2' | 'enemy'>): void {
+export function bindAttributeEdit(html: HTMLElement, actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>): void {
   const wrapperSelector = '.ms-attr-wrapper'
   const badgeSelector = '.ms-attr-badge'
   const inputSelector = '.ms-attr-input'

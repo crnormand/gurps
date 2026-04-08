@@ -2,6 +2,8 @@ import { DataModel } from '@gurps-types/foundry/index.js'
 import { MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
 import { parseBlock } from '@module/action/parse-attack.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
+import { ActorType } from '@module/actor/types.js'
+import { ItemType } from '@module/item/types.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { BaseItemModel } from '@module/item/data/base.js'
@@ -28,7 +30,7 @@ import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'
  */
 
 class GcaImporter {
-  actor?: Actor.OfType<'characterV2'>
+  actor?: Actor.OfType<ActorType.Character>
   input: GCACharacter
   output: DataModel.CreateData<CharacterSchema>
   items: Item.CreateData[]
@@ -50,16 +52,16 @@ class GcaImporter {
 
   static async importCharacter(
     input: GCACharacter,
-    actor?: Actor.OfType<'characterV2'>
-  ): Promise<Actor.OfType<'characterV2'>> {
+    actor?: Actor.OfType<ActorType.Character>
+  ): Promise<Actor.OfType<ActorType.Character>> {
     return await new GcaImporter(input).#importCharacter(actor)
   }
 
   /* ---------------------------------------- */
 
-  async #importCharacter(actor?: Actor.OfType<'characterV2'>) {
+  async #importCharacter(actor?: Actor.OfType<ActorType.Character>) {
     const _id = foundry.utils.randomID()
-    const type = 'characterV2'
+    const type = ActorType.Character
     const name = this.input.name ?? 'Imported Character'
 
     // Set actor as a GcaImporter property for easier reference.
@@ -81,7 +83,7 @@ class GcaImporter {
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
-        actor.items.contents.filter(item => item.isOfType('equipmentV2'))
+        actor.items.contents.filter(item => item.isOfType(ItemType.Equipment))
       )
 
       // Update actor with new system data and create new items
@@ -127,7 +129,7 @@ class GcaImporter {
   #restoreEquipmentCountsAndUses(savedEquipmentCounts: Map<string, { quantity: number; uses: number }>) {
     if (savedEquipmentCounts.size > 0) {
       for (const itemData of this.items) {
-        if (createDataIsOfType(itemData, 'equipmentV2')) {
+        if (createDataIsOfType(itemData, ItemType.Equipment)) {
           const system = itemData.system
 
           if (system && system.importid && savedEquipmentCounts.has(system.importid)) {
@@ -164,7 +166,7 @@ class GcaImporter {
    *
    * @param actor - The affected actor
    */
-  async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
+  async #deleteImportedItems(actor: Actor.OfType<ActorType.Character>) {
     const importedItems = actor.items.filter(item => {
       const system = item.system as { importFrom: string }
 
@@ -179,7 +181,7 @@ class GcaImporter {
 
   /* ---------------------------------------- */
 
-  #saveEquipmentCountsIfNecessary(items: Item.OfType<'equipmentV2'>[]) {
+  #saveEquipmentCountsIfNecessary(items: Item.OfType<ItemType.Equipment>[]) {
     const savedEquipmentCounts = new Map<string, { quantity: number; uses: number }>()
 
     items.forEach(item => {
@@ -788,7 +790,7 @@ Portrait will not be imported.`
    * parity and data retention.
    */
   #importTrait(trait: GCATrait, containedBy: string | null = null): void {
-    const type = 'featureV2'
+    const type = ItemType.Trait
 
     let name = trait.name ?? 'Trait'
     const crRegex = /\[\s*CR: (\d{1,2})\s*\]/i
@@ -834,7 +836,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importSkill(skill: GCATrait, containedBy: string | null = null): void {
-    const type = 'skillV2'
+    const type = ItemType.Skill
     // TODO: localize
     const name = skill.name ?? 'Skill'
 
@@ -863,7 +865,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importSpell(spell: GCATrait, containedBy: string | null = null): void {
-    const type = 'spellV2'
+    const type = ItemType.Spell
     // TODO: localize
     const name = spell.name ?? 'Spell'
 
@@ -926,7 +928,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importEquipment(equipment: GCATrait, containedBy: string | null = null): void {
-    const type = 'equipmentV2'
+    const type = ItemType.Equipment
     const name = equipment.name ?? 'Equipment'
 
     const [baseSystem, _id] = this.#importItem(equipment, containedBy)

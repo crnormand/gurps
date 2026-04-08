@@ -3,6 +3,7 @@ import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
 import { INameable, INameableAccesser } from '@module/data/mixins/nameable.js'
 
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
+import { ItemType } from '../types.js'
 
 class GcsTraitModifierModel
   extends GcsBaseItemModel<GcsTraitModifierSchema, INameable.AccesserBaseData>
@@ -31,8 +32,8 @@ class GcsTraitModifierModel
 
   /* ---------------------------------------- */
 
-  get trait(): Item.OfType<'gcsTrait'> | null {
-    return this.ancestors.find(item => item.isOfType('gcsTrait')) ?? null
+  get trait(): Item.OfType<ItemType.GcsTrait> | null {
+    return this.ancestors.find(item => item.isOfType(ItemType.GcsTrait)) ?? null
   }
 
   get enabled(): boolean {

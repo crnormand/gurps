@@ -15,6 +15,7 @@ import * as dataModels from './data/index.js'
 import { MoveModeV2 } from './data/move-mode.js'
 import { GurpsActorV2 } from './gurps-actor.js'
 import { runMigration } from './migrate.js'
+import { ActorType } from './types.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
 import * as sheets from './sheets/index.js'
@@ -86,7 +87,7 @@ function init() {
       sheets.TestActorSheet as DocumentSheetV2.AnyConstructor,
       {
         makeDefault: true,
-        types: ['gcsCharacter'],
+        types: [ActorType.GcsCharacter],
         canConfigure: false,
       }
     )
@@ -97,7 +98,7 @@ function init() {
       sheets.GurpsActorGcsSheet as unknown as DocumentSheetV2.AnyConstructor,
       {
         makeDefault: true,
-        types: ['characterV2'],
+        types: [ActorType.Character],
         label: 'GURPS.sheet.gcsActorSheet.label',
       }
     )

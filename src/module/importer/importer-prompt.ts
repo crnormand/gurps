@@ -1,5 +1,6 @@
 import { AnyObject } from 'fvtt-types/utils'
 
+import { ActorType } from '../actor/types.js'
 import { GcaImporter } from './gca-importer/importer.js'
 import { GCA5 } from './gca-importer/schema.js'
 import { GcsImporter } from './gcs-importer/importer.js'
@@ -9,7 +10,7 @@ import { GcsSkillCollection } from './gcs-importer/schema/skill.js'
 import { GcsSpellCollection } from './gcs-importer/schema/spell.js'
 import { GcsTraitCollection } from './gcs-importer/schema/trait.js'
 
-async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
+async function actorImporterPrompt(actor?: Actor.OfType<ActorType.Character>) {
   if (!game.i18n) {
     ui.notifications?.error('GURPS | Cannot open import dialog: game.i18n not available.')
 

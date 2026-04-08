@@ -10,6 +10,7 @@ import EffectPicker from '../effect-picker.js'
 import type { GurpsActorV2 } from '../gurps-actor.js'
 import MoveModeEditor from '../move-mode-editor.js'
 import { GurpsBaseActorSheet } from '../sheets/base-actor-sheet.js'
+import { ActorType } from '../types.js'
 
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
@@ -45,7 +46,7 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
 }
 
 export interface ModernSheetContext extends ActorSheet.RenderContext {
-  system: Actor.SystemOfType<'character' | 'characterV2'>
+  system: Actor.SystemOfType<ActorType.LegacyCharacter | ActorType.Character>
   effects: ActiveEffect[]
   skillCount: number
   traitCount: number
@@ -63,7 +64,7 @@ export interface ModernSheetContext extends ActorSheet.RenderContext {
 
 type RenderOptions = ActorSheet.RenderOptions & { isFirstRender: boolean }
 
-export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'characterV2' | 'enemy'>() {
+export class GurpsActorModernSheet extends GurpsBaseActorSheet<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>() {
   static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
     classes: ['modern-sheet'],
     position: {
@@ -130,7 +131,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
 
   protected override async _prepareContext(options: RenderOptions): Promise<ModernSheetContext> {
     const baseContext = await super._prepareContext(options)
-    const actorSystem = this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>
+    const actorSystem = this.actor.system as Actor.SystemOfType<ActorType.LegacyCharacter | ActorType.Character>
 
     const effects = this.actor.effects.contents.filter(effect => !isPostureOrManeuver(effect))
 
@@ -173,7 +174,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
     // Add character v1/v2 type guard
     const actor = this.actor
 
-    if (!actor.isOfType('character', 'characterV2', 'enemy')) return
+    if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.Character, ActorType.LegacyEnemy)) return
 
     const html = this.element
 
@@ -314,7 +315,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
   }
 
   async #openQuickNoteEditor(): Promise<void> {
-    const actorSystem = this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>
+    const actorSystem = this.actor.system as Actor.SystemOfType<ActorType.LegacyCharacter | ActorType.Character>
     const noteText = ((actorSystem.additionalresources as { qnotes?: string })?.qnotes || '').replace(/<br>/g, '\n')
     const actor = this.actor
 

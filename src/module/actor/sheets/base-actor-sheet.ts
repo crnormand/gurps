@@ -4,6 +4,7 @@ import { getUser } from '@module/util/guards.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
 import { ActorImporter } from '../actor-importer.js'
+import { ActorType } from '../types.js'
 
 import DragDrop = foundry.applications.ux.DragDrop
 import ActorSheet = gurps.applications.ActorSheet
@@ -202,7 +203,7 @@ const GurpsBaseActorSheet = <
     static async #onImportActor(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
       event.preventDefault()
 
-      if (this.actor.isOfType('characterV2')) {
+      if (this.actor.isOfType(ActorType.Character)) {
         await GURPS.modules.Importer.actorImporterPrompt(this.actor)
       } else {
         return new ActorImporter(this.actor).importActor()

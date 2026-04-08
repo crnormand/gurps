@@ -1,4 +1,5 @@
 import Maneuvers from '../actor/maneuver.js'
+import { ActorType } from '../actor/types.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 
@@ -13,7 +14,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
     super._onCreate(data, options, userId)
     const actor = this.actor
 
-    if (actor && actor.isOfType('characterV2')) {
+    if (actor && actor.isOfType(ActorType.Character)) {
       const maneuverText = actor.system.conditions.maneuver
 
       actor.replaceManeuver(maneuverText ?? 'Do Nothing')
