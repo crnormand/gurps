@@ -1,4 +1,4 @@
-import { getCssVariable } from './get-css-value.ts'
+import { getCssVariable } from './get-css-value.js'
 
 let cachedDarkText: string | undefined
 let cachedLightText: string | undefined
