@@ -20,6 +20,7 @@ import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { ModelCollection } from '../data/model-collection.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
+import { ItemType } from '../item/types.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { IResourceTracker, IResourceTrackerTemplate } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
@@ -50,7 +51,6 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
 import { ActorType, CanRollResult, CheckInfo } from './types.js'
-import { ItemType } from '../item/types.js'
 
 function DamageModule() {
   return GURPS.modules.Damage
@@ -2094,7 +2094,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  async #createEquipment(eqt: Record<string, any>, count: number, parent: Item.OfType<ItemType.Equipment> | null = null) {
+  async #createEquipment(
+    eqt: Record<string, any>,
+    count: number,
+    parent: Item.OfType<ItemType.Equipment> | null = null
+  ) {
     const { _id: _omit, ...itemData } = foundry.utils.duplicate(eqt) as Record<string, any>
 
     itemData.system.containedBy = parent?.id ?? null
@@ -2256,14 +2260,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     // If the item is being dropped onto a same-named item, check if we should merge them.
-    if (item.type === 'equipmentV2' && (await this.checkForMerge(item as Item.OfType<ItemType.Equipment>, targetkey))) return
+    if (item.type === 'equipmentV2' && (await this.checkForMerge(item as Item.OfType<ItemType.Equipment>, targetkey)))
+      return
 
     let where: 'before' | 'inside' | 'after' | null = null
 
     if (targetkey === targetCollection)
       where = 'after' // Dropping on the collection itself, so add to the end.
     else
-      where = await this.resolveDropPosition(item as Item.OfType<ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell>)
+      where = await this.resolveDropPosition(
+        item as Item.OfType<ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell>
+      )
 
     if (!where) return
 
@@ -2555,7 +2562,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       ])
 
       await this.addItemData(localItem, targetKey) // only created 1 item
-      const item = this.items.get(localItem._id) as Item.OfType<'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell>
+      const item = this.items.get(localItem._id) as Item.OfType<
+        'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
+      >
 
       return this._updateItemFromForm(item!)
     }
@@ -3243,10 +3252,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const data = this.modelV1
 
     for (const item of this.items.contents) {
-      const itemData = (item as Item.OfType<'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell>).modelV1 as Record<
-        string,
-        any
-      >
+      const itemData = (
+        item as Item.OfType<
+          'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
+        >
+      ).modelV1 as Record<string, any>
 
       if (
         (item.type !== 'equipment' || (itemData.equipped && itemData.carried)) &&
@@ -4305,7 +4315,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    * @param item
    */
-  async _updateItemFromForm(item: Item.OfType<'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell>) {
+  async _updateItemFromForm(
+    item: Item.OfType<
+      'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
+    >
+  ) {
     if (this.isNewActorType) return
 
     const sysKey =

@@ -64,7 +64,9 @@ export interface ModernSheetContext extends ActorSheet.RenderContext {
 
 type RenderOptions = ActorSheet.RenderOptions & { isFirstRender: boolean }
 
-export class GurpsActorModernSheet extends GurpsBaseActorSheet<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>() {
+export class GurpsActorModernSheet extends GurpsBaseActorSheet<
+  ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy
+>() {
   static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
     classes: ['modern-sheet'],
     position: {

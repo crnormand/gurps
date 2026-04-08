@@ -3,13 +3,14 @@ import { numberValidate } from '@module/data/validators/number-validator.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrate.js'
 
+import { ItemType } from '../item/types.js'
+
 import { Melee, Ranged, Note } from './actor-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { MoveModeV2 } from './data/move-mode.js'
 import { NoteV2 } from './data/note.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
 import { ActorType } from './types.js'
-import { ItemType } from '../item/types.js'
 
 async function runMigration(): Promise<void> {
   if (!game.user || !game.user.isGM) return
@@ -84,7 +85,9 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<A
     return
   }
 
-  const newActor = (await actor.update(updateData, { recursive: false })) as unknown as Actor.OfType<ActorType.Character>
+  const newActor = (await actor.update(updateData, {
+    recursive: false,
+  })) as unknown as Actor.OfType<ActorType.Character>
 
   if (!newActor) {
     console.error('Failed to update actor with migrated data. Actor name:', actor.name)

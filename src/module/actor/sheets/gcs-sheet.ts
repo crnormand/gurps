@@ -18,11 +18,11 @@ import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { AnyObject } from 'fvtt-types/utils'
 
+import { ItemType } from '../../item/types.js'
 import Maneuvers from '../maneuver.js'
 import { ActorType } from '../types.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
-import { ItemType } from '../../item/types.js'
 import {
   buildItemCopyWithChildren,
   openQuickNotesEditor,

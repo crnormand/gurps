@@ -1,4 +1,5 @@
 import { DeepPartial } from 'fvtt-types/utils'
+
 import { ActorType } from '../actor/types.js'
 
 export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {

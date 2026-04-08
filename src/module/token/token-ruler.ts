@@ -1,5 +1,5 @@
-import { Length, LengthUnit } from '../data/common/length.js'
 import { ActorType } from '../actor/types.js'
+import { Length, LengthUnit } from '../data/common/length.js'
 
 import { tokenMoveColors } from './constants.js'
 

@@ -30,7 +30,9 @@ async function runMigration() {
     })
 
     console.log('GURPS | Migrating world items')
-    const items = game.items!.filter(item => item.isOfType(ItemType.LegacyEquipment, ItemType.LegacyTrait, ItemType.LegacySkill, ItemType.LegacySpell))
+    const items = game.items!.filter(item =>
+      item.isOfType(ItemType.LegacyEquipment, ItemType.LegacyTrait, ItemType.LegacySkill, ItemType.LegacySpell)
+    )
     const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
 
     const length = items.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)

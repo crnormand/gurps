@@ -1,6 +1,7 @@
 import { AnyObject } from 'fvtt-types/utils'
 
 import { ActorType } from '../actor/types.js'
+
 import { GcaImporter } from './gca-importer/importer.js'
 import { GCA5 } from './gca-importer/schema.js'
 import { GcsImporter } from './gcs-importer/importer.js'

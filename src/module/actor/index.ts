@@ -15,10 +15,10 @@ import * as dataModels from './data/index.js'
 import { MoveModeV2 } from './data/move-mode.js'
 import { GurpsActorV2 } from './gurps-actor.js'
 import { runMigration } from './migrate.js'
-import { ActorType } from './types.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
 import * as sheets from './sheets/index.js'
+import { ActorType } from './types.js'
 
 interface ActorModule extends GurpsModule {
   dataModels: typeof dataModels

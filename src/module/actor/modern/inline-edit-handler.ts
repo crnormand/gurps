@@ -1,5 +1,6 @@
 import { diceValidate } from '@module/data/validators/dice-validator.js'
 import { isHTMLElement, isHTMLInputElement } from '@module/util/guards.js'
+
 import { ActorType } from '../types.js'
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
@@ -149,7 +150,10 @@ export function bindAllInlineEdits(
   })
 }
 
-export function bindAttributeEdit(html: HTMLElement, actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>): void {
+export function bindAttributeEdit(
+  html: HTMLElement,
+  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
+): void {
   const wrapperSelector = '.ms-attr-wrapper'
   const badgeSelector = '.ms-attr-badge'
   const inputSelector = '.ms-attr-input'

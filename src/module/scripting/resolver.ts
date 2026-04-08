@@ -1,5 +1,5 @@
-import { Weight, WeightUnit } from '@module/data/common/weight.js'
 import { ActorType } from '@module/actor/types.js'
+import { Weight, WeightUnit } from '@module/data/common/weight.js'
 
 import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './adapters/index.js'
 import { ScriptInterpreter } from './interpreter.js'
