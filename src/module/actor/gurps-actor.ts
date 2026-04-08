@@ -2260,8 +2260,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     // If the item is being dropped onto a same-named item, check if we should merge them.
-    if (item.isOfType(ItemType.Equipment) && (await this.checkForMerge(item, targetkey)))
-      return
+    if (item.isOfType(ItemType.Equipment) && (await this.checkForMerge(item, targetkey))) return
 
     let where: 'before' | 'inside' | 'after' | null = null
 
