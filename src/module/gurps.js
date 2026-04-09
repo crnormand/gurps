@@ -109,6 +109,7 @@ if (!globalThis.GURPS) {
     PseudoDocument: {
       Types: {},
       SubTypes: {},
+      Sheets: {},
     },
   }
 

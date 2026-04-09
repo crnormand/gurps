@@ -264,9 +264,9 @@ const GurpsBaseActorSheet = <
       }
 
       if (type === ItemType.Equipment) {
-        const carried = target.closest<HTMLElement>('[data-carried]')?.dataset.carried === 'true'
+        const _carried = target.closest<HTMLElement>('[data-carried]')?.dataset.carried === 'true'
 
-        createData.system = { carried }
+        createData.system = { _carried }
       }
 
       await this.actor.createEmbeddedDocuments(documentName as any, [createData], { parent: this.actor })
@@ -316,7 +316,7 @@ const GurpsBaseActorSheet = <
       const sheet = 'sheet' in doc ? doc.sheet : null
 
       if (!sheet) {
-        console.error('Could not find sheet for document with UUID ${uuid}.')
+        console.error(`Could not find sheet for document with UUID ${doc.uuid}.`)
 
         return
       }
@@ -344,7 +344,7 @@ const GurpsBaseActorSheet = <
       if ('deleteDialog' in doc && typeof doc.deleteDialog === 'function') {
         await doc.deleteDialog?.()
       } else {
-        console.error('Could not find delete method for document with UUID ${uuid}.')
+        console.error(`Could not find delete method for document with UUID ${doc.uuid}.`)
 
         return
       }

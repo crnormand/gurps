@@ -1,7 +1,3 @@
-// Minimal DocumentSheet namespace providing a shared Configuration base type
-// for ActorSheet and ItemSheet. All properties are optional so subclasses can
-// declare DEFAULT_OPTIONS without satisfying required fvtt-types fields.
-
 import { DeepPartial, MaybePromise, ToMethod } from 'fvtt-types/utils'
 
 import { Application, HeaderControlsEntry } from './application.js'

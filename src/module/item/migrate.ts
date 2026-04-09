@@ -6,7 +6,7 @@ import { numberValidate } from '@module/data/validators/number-validator.js'
 import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.js'
 import { ItemType } from './types.js'
 
-type OldItemType = ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySpell | ItemType.LegacySpell
+type OldItemType = ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
 
 type NewItemType = ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell
 
@@ -31,7 +31,7 @@ async function runMigration() {
 
     console.log('GURPS | Migrating world items')
     const items = game.items!.filter(item =>
-      item.isOfType(ItemType.LegacyEquipment, ItemType.LegacyTrait, ItemType.LegacySpell, ItemType.LegacySpell)
+      item.isOfType(ItemType.LegacyEquipment, ItemType.LegacyTrait, ItemType.LegacySkill, ItemType.LegacySpell)
     )
     const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
 
