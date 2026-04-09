@@ -53,6 +53,7 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
+import { runSourceMigrations } from './migrate.js'
 import { ActorType, CanRollResult, CheckInfo } from './types.js'
 
 function DamageModule() {
@@ -702,6 +703,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const isTypeData = this.system instanceof foundry.abstract.TypeDataModel
 
     if (isTypeData) this.system.prepareEmbeddedDocuments()
+  }
+
+  /* ---------------------------------------- */
+  /*  Data Migration                          */
+  /* ---------------------------------------- */
+
+  static override migrateData(source: AnyMutableObject): AnyMutableObject {
+    // NOTE: Legacy Item Type
+    if (source.type === 'enemy') source.type = ActorType.Character
+
+    runSourceMigrations(source)
+
+    return super.migrateData(source)
   }
 
   /* ---------------------------------------- */

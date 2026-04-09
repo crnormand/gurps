@@ -1,7 +1,7 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { migrateTrackerInstanceToV2 } from './migration.js'
-import { migrate } from './migration.js'
+import { migrateTrackerInstanceToV2 } from './migrations/1_0_0.js'
+import { migrations } from './migrations/index.js'
 import { TrackerInstance } from './resource-tracker.js'
 import { initializeSettings } from './settings.js'
 import { IResourceTracker, IResourceTrackerTemplate } from './types.js'
@@ -13,7 +13,6 @@ function init() {
 
   Hooks.once('ready', async function () {
     await initializeSettings()
-    await migrate()
 
     GURPS.CONFIG.PseudoDocument.Types.ResourceTracker = TrackerInstance
 
@@ -67,7 +66,7 @@ interface ResourceTrackerModule extends GurpsModule {
 
 export const ResourceTrackerModule: ResourceTrackerModule = {
   init,
-  migrate,
+  migrations,
   updateResourceTracker,
   getAllTemplatesMap: ResourceTrackerManagerV2.getAllTemplatesMap,
   getMissingRequiredTemplates: ResourceTrackerManagerV2.getMissingRequiredTemplates,
@@ -77,11 +76,7 @@ export const ResourceTrackerModule: ResourceTrackerModule = {
 export type { IResourceTrackerThreshold, IResourceTracker, IResourceTrackerTemplate } from './types.js'
 
 export { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.js'
-export type {
-  ResourceTrackerSchema,
-  ResourceTrackerTemplateSchema,
-  ColoredThresholdDescriptor,
-} from './resource-tracker.js'
+export type { ResourceTrackerSchema, ResourceTrackerTemplateSchema } from './resource-tracker.js'
 export { TrackerInstance, ResourceTrackerTemplate } from './resource-tracker.js'
 export { OperatorFunctions, ComparisonFunctions } from './types.js'
 export { ResourceTrackerTemplateMapType } from './settings.js'

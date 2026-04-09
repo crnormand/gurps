@@ -2,7 +2,7 @@ import { Document } from '@gurps-types/foundry/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
 import { recurselist } from '@util/utilities.js'
-import { AnyObject, InexactPartial } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject, InexactPartial } from 'fvtt-types/utils'
 
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { IContainable, isContainable } from '../data/mixins/containable.js'
@@ -11,6 +11,7 @@ import { ModelCollection } from '../data/model-collection.js'
 import { BaseItemModel, ItemMetadata } from './data/base.js'
 import { EquipmentModel } from './data/equipment.js'
 import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
+import { runSourceMigrations } from './migrate.js'
 import { ItemType } from './types.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
@@ -277,6 +278,16 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
     for (const collection of Object.values(this.pseudoCollections))
       for (const pseudo of collection) pseudo.prepareDerivedData()
+  }
+
+  /* ---------------------------------------- */
+  /*  Data Migration                          */
+  /* ---------------------------------------- */
+
+  static override migrateData(source: AnyMutableObject): AnyMutableObject {
+    runSourceMigrations(source)
+
+    return super.migrateData(source)
   }
 
   /* ---------------------------------------- */

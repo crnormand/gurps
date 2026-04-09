@@ -1,4 +1,6 @@
+import { MigrationEntry } from '@module/migration/types.js'
+
 export interface GurpsModule {
   init: () => void
-  migrate?: () => void
+  migrations?: MigrationEntry[]
 }
