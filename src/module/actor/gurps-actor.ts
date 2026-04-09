@@ -326,12 +326,25 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     ids: Array<string>,
     operation?: object
   ): Promise<unknown[]> {
-    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+    const metadata = (this.system?.constructor as any).metadata as ActorMetadata
 
-    if (embeddedName in systemEmbeds) {
+    if (metadata.embedded && embeddedName in metadata.embedded) {
       const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
 
       return cls.deleteDocuments(ids, { parent: this, ...operation })
+    } else if (metadata.embeddedHolderField) {
+      const holderItem: Item.Implementation | null =
+        (this.system[metadata.embeddedHolderField as keyof typeof this.system] as Item.Implementation) ?? null
+
+      if (holderItem) {
+        const itemMetadata = (holderItem.system?.constructor as any).metadata as ItemMetadata
+
+        if (itemMetadata.embedded && embeddedName in itemMetadata.embedded) {
+          const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
+
+          return cls.deleteDocuments(ids, { parent: holderItem, ...operation })
+        }
+      }
     }
 
     return super.deleteEmbeddedDocuments(embeddedName as Actor.Embedded.Name, ids as never, operation as never)
@@ -652,7 +665,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
     if (this.isNewActorType) {
       for (const collection of Object.values(this.pseudoCollections))
-        for (const pseudo of collection) pseudo.prepareBaseData()
+        for (const pseudo of collection) pseudo.prepareDerivedData()
     } else {
       // Legacy V1 handling.
       if (this.type !== ActorType.LegacyCharacter) return

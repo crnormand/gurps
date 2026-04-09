@@ -276,7 +276,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     super.prepareDerivedData()
 
     for (const collection of Object.values(this.pseudoCollections))
-      for (const pseudo of collection) pseudo.prepareBaseData()
+      for (const pseudo of collection) pseudo.prepareDerivedData()
   }
 
   /* ---------------------------------------- */
