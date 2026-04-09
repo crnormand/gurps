@@ -8,6 +8,8 @@ import { Dev as ModuleDev } from '@module/dev/index.js'
 import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
 import { Pdf as ModulePdf } from '@module/pdf/index.js'
+import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { ResourceTrackerModule as ModuleResourceTracker } from '@module/resource-tracker/index.js'
 import { Token as ModuleToken } from '@module/token/index.js'
 import { UI as ModuleUI } from '@module/ui/index.js'
@@ -44,7 +46,11 @@ declare global {
        * manage complex data structures within the system. Each entry defines a type of pseudo-document, its label for
        * localization, and the class that implements its behavior.
        */
-      PseudoDocument: PseudoDocumentConfig.Types
+      PseudoDocument: {
+        Types: Record<gurps.Pseudo.Name, PseudoDocument.ConcreteConstructor | TypedPseudoDocument.ConcreteConstructor>
+        Sheets: Record<gurps.Pseudo.Name, typeof PseudoDocumentSheet>
+        SubTypes: PseudoDocumentConfig.Types
+      }
     }
   }
 

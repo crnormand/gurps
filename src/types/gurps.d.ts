@@ -156,20 +156,20 @@ declare global {
        */
       type Name =
         | 'Action'
-        | 'Attribute'
-        | 'AttributeDefinition'
-        | 'AttributeThreshold'
-        | 'Body'
+        | 'Attribute' // GCS
+        | 'AttributeDefinition' // GCS
+        | 'AttributeThreshold' // GCS
+        | 'Body' // GCS
         | 'ConditionalModifier'
-        | 'Feature'
-        | 'HitLocation'
-        | 'LocationSubTable'
+        | 'Feature' // GCS
+        | 'HitLocation' // GCS
+        | 'LocationSubTable' // GCS
         | 'MoveMode'
         | 'Note'
-        | 'Prereq'
+        | 'Prereq' // GCS
         | 'ReactionModifier'
         | 'ResourceTracker'
-        | 'Study'
+        | 'Study' // GCS
 
       /* ---------------------------------------- */
 

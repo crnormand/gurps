@@ -102,12 +102,7 @@ namespace Feature {
 function init() {
   console.log('GURPS | Initializing GURPS Features module.')
   Hooks.on('init', () => {
-    // @ts-expect-error: Invalid type
-    GURPS.CONFIG ||= {}
-    // @ts-expect-error: Invalid type
-    GURPS.CONFIG.PseudoDocument ||= {}
-
-    GURPS.CONFIG.PseudoDocument.Feature = {
+    GURPS.CONFIG.PseudoDocument.SubTypes.Feature = {
       [FeatureType.AttributeBonus]: { documentClass: AttributeBonus, label: 'TYPES.Feature.attributeBonus' },
       [FeatureType.ConditionalModifier]: {
         documentClass: ConditionalModifier,

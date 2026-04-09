@@ -103,6 +103,14 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
+  // Initialize config
+  GURPS.CONFIG = {
+    PseudoDocument: {
+      Types: {},
+      SubTypes: {},
+    },
+  }
+
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
     Action: ActionModule,
