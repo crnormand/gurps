@@ -5,7 +5,7 @@
     <div class='headermenu'>
       <span>{{localize "GURPS.conditionalMods"}}</span>
       {{#if isEditing}}
-        <i class='fas fa-caret-square-down'></i>
+        <i class='fa-solid fa-caret-square-down'></i>
       {{/if}}
     </div>
   </div>
@@ -13,7 +13,7 @@
   {{#each system.conditionalmods}}
     {{#if ../isEditing}}
       <div class='itemmenu condmodmenu' data-key='system.conditionalmods.{{@key}}'>
-        <i class='fas fa-times'></i>
+        <i class='fa-solid fa-times'></i>
       </div>
       <div class='modifier gga-right'>
         <input

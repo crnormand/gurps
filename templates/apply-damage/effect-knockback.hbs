@@ -6,19 +6,19 @@
     </div>
     <div id='test-knockback' class='with-send-button'>
       <button name='test-knockback' data-effect='{{jsonStringify this}}' title='{{testTitle}}'>
-        <span class='fa fa-dice'></span>
+        <span class='fa-solid fa-dice'></span>
       </button>
     </div>
     {{#each buttons as |button|}}
       <div id='add-knockback' class='with-send-button'>
         <button name='add-knockback' data-effect='{{jsonStringify this}}' title='{{effectTitle}}'>
-          <span class='fa {{spanClass}} {{effectName}}' data-actor='{{actorId}}'></span>
+          <span class='fa-solid {{spanClass}} {{effectName}}' data-actor='{{actorId}}'></span>
         </button>
       </div>
     {{/each}}
     <div class='with-send-button'>
       <button name='send-knockback' data-struct='{{jsonStringify this}}' title='{{localize "GURPS.sendToChat"}}'>
-        <span class='fa fa-comment-alt'></span>
+        <span class='fa-solid fa-comment-alt'></span>
       </button>
     </div>
     <div><span class='pdflink'>{{localize 'GURPS.pdfKnockback'}}</span></div>

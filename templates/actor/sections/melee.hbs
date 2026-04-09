@@ -3,7 +3,7 @@
   <div class='desc header'>
     <div class='headermenu'>
       <span>{{localize 'GURPS.meleeWeapons'}}</span>
-      <i class='fas fa-caret-square-down'></i>
+      <i class='fa-solid fa-caret-square-down'></i>
     </div>
   </div>
   <div class='usage header'>{{localize 'GURPS.usage'}}</div>
@@ -17,7 +17,7 @@
   {{#each (attackflatlist system.melee)}}
     {{#if ../isEditing}}
       <div class='itemmenu meleemenu' data-key='system.melee.{{@key}}'>
-        <i class='fas fa-times'></i>
+        <i class='fa-solid fa-times'></i>
       </div>
 
       <div class='desc indent{{indent}}' data-key='system.melee.{{@key}}'>
@@ -56,8 +56,8 @@
           <div class='desc dblclkedit indent{{indent}}'>
             <div class='gga-desc-text'>
               <div>
-                {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-                {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                {{#if hasContains}}<i class='fa-solid fa-caret-down expandcollapseicon'></i>{{/if}}
+                {{#if hasCollapsed}}<i class='fa-solid fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
               <div class='tooltip gga-manual'>
                 {{{gurpslink name}}}
@@ -67,7 +67,7 @@
               </div>
               <div>
                 {{#if (isFoundryItem this)}}
-                  <i class='fas fa-star tooltip gga-item'>
+                  <i class='fa-solid fa-star tooltip gga-item'>
                     <span class='tooltiptext'>{{localize 'GURPS.equipmentFoundryItem'}}</span>
                   </i>
                 {{/if}}

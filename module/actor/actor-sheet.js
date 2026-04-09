@@ -597,7 +597,7 @@ export class GurpsActorSheet extends ActorSheet {
     let notesMenuItems = [
       {
         name: 'Edit',
-        icon: "<i class='fas fa-edit'></i>",
+        icon: "<i class='fa-solid fa-edit'></i>",
         callback: e => {
           let path = e[0].dataset.key
           let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
@@ -606,7 +606,7 @@ export class GurpsActorSheet extends ActorSheet {
       },
       {
         name: 'Delete',
-        icon: "<i class='fas fa-trash'></i>",
+        icon: "<i class='fa-solid fa-trash'></i>",
         callback: async event => {
           const key = event[0].dataset.key
           await this.actor.deleteEntry(key)
@@ -1898,7 +1898,7 @@ export class GurpsActorSheet extends ActorSheet {
     return [
       {
         name: 'Delete',
-        icon: "<i class='fas fa-trash'></i>",
+        icon: "<i class='fa-solid fa-trash'></i>",
         callback: async event => {
           const key = event[0].dataset.key
           await this.actor.deleteEntry(key)

@@ -1,7 +1,7 @@
 {{!-- Points Summary Bar --}}
 <div class='ms-section ms-points-bar'>
   <h3 class='ms-section-header'>
-    <i class='fas fa-chart-pie'></i>
+    <i class='fa-solid fa-chart-pie'></i>
     {{localize 'GURPS.points'}}
   </h3>
   <div class='ms-points-row'>
@@ -60,7 +60,7 @@
 {{!-- Identity & Description Card --}}
 <div class='ms-section ms-identity-card'>
   <h3 class='ms-section-header'>
-    <i class='fas fa-id-card'></i>
+    <i class='fa-solid fa-id-card'></i>
     {{localize 'GURPS.sheet.personal.identity'}} & {{localize 'GURPS.description'}}
   </h3>
   <div class='ms-identity-grid'>
@@ -127,7 +127,7 @@
 <div class='ms-notes-columns'>
   <div class='ms-section'>
     <h3 class='ms-section-header'>
-      <i class='fas fa-sticky-note'></i>
+      <i class='fa-solid fa-sticky-note'></i>
       {{localize 'GURPS.notes'}}
     </h3>
     <div class='ms-notes-list'>
@@ -135,21 +135,21 @@
       {{#unless isCollapsed}}
       <div class='ms-note-row' data-key='system.notes.{{@key}}'>
         <div class='ms-note-content indent{{indent}}'>
-          {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon' data-key='system.notes.{{@key}}'></i>{{/if}}
-          {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon' data-key='system.notes.{{@key}}'></i>{{/if}}
+          {{#if hasContains}}<i class='fa-solid fa-caret-down expandcollapseicon' data-key='system.notes.{{@key}}'></i>{{/if}}
+          {{#if hasCollapsed}}<i class='fa-solid fa-caret-right expandcollapseicon' data-key='system.notes.{{@key}}'></i>{{/if}}
           {{#if this.notes}}
             {{#if title}}<strong>{{{gurpslinkbr this.title}}}</strong> {{/if}}{{{gurpslinkbr this.notes}}}
           {{else}}
             {{localize "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>
           {{/if}}
           {{#if (isUserCreated this)}}
-            <i class='fas fa-bookmark ms-user-created' title='{{localize "GURPS.equipmentUserCreated"}}'></i>
+            <i class='fa-solid fa-bookmark ms-user-created' title='{{localize "GURPS.equipmentUserCreated"}}'></i>
           {{/if}}
         </div>
         <span class='ms-note-ref'>{{{pdflinkext this}}}</span>
         <span class='ms-note-actions'>
-          <i class='fas fa-pen-to-square ms-action-btn' data-action='edit-note' data-key='system.notes.{{@key}}' title='Edit'></i>
-          <i class='fas fa-trash ms-action-btn ms-delete' data-action='delete-note' data-key='system.notes.{{@key}}' title='Delete'></i>
+          <i class='fa-solid fa-pen-to-square ms-action-btn' data-action='edit-note' data-key='system.notes.{{@key}}' title='Edit'></i>
+          <i class='fa-solid fa-trash ms-action-btn ms-delete' data-action='delete-note' data-key='system.notes.{{@key}}' title='Delete'></i>
         </span>
       </div>
       {{/unless}}
@@ -157,14 +157,14 @@
       <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
       {{/each}}
       <div class='ms-add-row'>
-        <span class='ms-add-btn' data-action='add-note'><i class='fas fa-plus'></i> {{localize 'GURPS.notes'}}</span>
+        <span class='ms-add-btn' data-action='add-note'><i class='fa-solid fa-plus'></i> {{localize 'GURPS.notes'}}</span>
       </div>
     </div>
   </div>
 
   <div class='ms-section'>
     <h3 class='ms-section-header'>
-      <i class='fas fa-dumbbell'></i>
+      <i class='fa-solid fa-dumbbell'></i>
       {{localize 'GURPS.liftingAndMovingThings'}}
     </h3>
     <div class='ms-lifting-list'>
@@ -192,9 +192,9 @@
 {{#if system.additionalresources.tracker}}
 <div class='ms-section'>
   <h3 class='ms-section-header'>
-    <i class='fas fa-heartbeat'></i>
+    <i class='fa-solid fa-heartbeat'></i>
     {{localize 'GURPS.resourceTrackers'}}
-    <i class='fas fa-plus ms-add-icon' data-action='add-tracker'></i>
+    <i class='fa-solid fa-plus ms-add-icon' data-action='add-tracker'></i>
   </h3>
   <div class='ms-trackers-list'>
     {{#each system.additionalresources.tracker}}
@@ -210,9 +210,9 @@
 {{else}}
 <div class='ms-section'>
   <h3 class='ms-section-header'>
-    <i class='fas fa-heartbeat'></i>
+    <i class='fa-solid fa-heartbeat'></i>
     {{localize 'GURPS.resourceTrackers'}}
-    <i class='fas fa-plus ms-add-icon' data-action='add-tracker'></i>
+    <i class='fa-solid fa-plus ms-add-icon' data-action='add-tracker'></i>
   </h3>
   <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
 </div>

@@ -32,11 +32,11 @@
             <label for='collapsible-{{id}}' class='roll-result {{#if hasExplanation}}label-toggleXXXX{{/if}}'>
               <span>{{#if target}}&nbsp;{{target}}:{{/if}} 
                 {{#if ../loaded}}
-                  <i style='color:darkred' class='fas fa-user'></i>
+                  <i style='color:darkred' class='fa-solid fa-user'></i>
                 {{else}}
-                  <i class='fas fa-dice'></i>
+                  <i class='fa-solid fa-dice'></i>
                 {{/if}}
-                <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
+                <i class='fa-solid fa-long-arrow-alt-right' style='color:dimgray'></i>
                 <span class='roll-detail'>
                   {{#if (eq damage 1)}}
                     {{{localize "GURPS.pointDamage" damage=damage}}}

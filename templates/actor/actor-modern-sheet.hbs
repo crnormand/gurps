@@ -32,7 +32,7 @@
             {{else if (eq system.conditions.posture 'crawl')}}<img src='systems/gurps/icons/statuses/condition-crawl.webp' />
             {{else}}<img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
             {{/if}}
-            <i class='fas fa-caret-down'></i>
+            <i class='fa-solid fa-caret-down'></i>
           </span>
         </div>
         <div class='ms-posture-options'>
@@ -55,7 +55,7 @@
           <span>{{localize maneuver.label}}</span>
           <span class='ms-maneuver-icons'>
             <img src='{{maneuver.icon}}' />
-            <i class='fas fa-caret-down'></i>
+            <i class='fa-solid fa-caret-down'></i>
           </span>
           {{/with}}
         </div>
@@ -79,7 +79,7 @@
         <span class='ms-effect-icon-wrapper'>
           {{#if this.icon}}<img src='{{this.icon}}' class='ms-effect-icon' />{{/if}}
           <button class='ms-effect-delete' data-action='delete-effect' data-effect-id='{{this.id}}' title='Delete'>
-            <i class='fas fa-trash'></i>
+            <i class='fa-solid fa-trash'></i>
           </button>
         </span>
         <span class='ms-tag-text'>{{this.name}}</span>
@@ -87,26 +87,26 @@
       {{/unless}}
       {{/each}}
       <button type='button' class='ms-effect-add' data-action='add-effect' title='Add Effect'>
-        <i class='fas fa-plus'></i>
+        <i class='fa-solid fa-plus'></i>
       </button>
     </div>
 
     {{!-- TAB NAVIGATION --}}
     <nav class='ms-tabs' data-group='modern-tabs'>
       <a class='ms-tab-item' data-tab='character' title='{{localize "GURPS.basic"}}'>
-        <i class='fas fa-user'></i>
+        <i class='fa-solid fa-user'></i>
         <span>{{localize "GURPS.basic"}}</span>
       </a>
       <a class='ms-tab-item' data-tab='combat' title='{{localize "GURPS.combatTab"}}'>
-        <i class='fas fa-swords'></i>
+        <i class='fa-solid fa-swords'></i>
         <span>{{localize "GURPS.combatTab"}}</span>
       </a>
       <a class='ms-tab-item' data-tab='equipment' title='{{localize "GURPS.equipmentTab"}}'>
-        <i class='fas fa-backpack'></i>
+        <i class='fa-solid fa-backpack'></i>
         <span>{{localize "GURPS.equipmentTab"}}</span>
       </a>
       <a class='ms-tab-item' data-tab='notes' title='{{localize "GURPS.description"}}'>
-        <i class='fas fa-book'></i>
+        <i class='fa-solid fa-book'></i>
         <span>{{localize "GURPS.description"}}</span>
       </a>
     </nav>

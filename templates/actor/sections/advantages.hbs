@@ -3,7 +3,7 @@
 	<div class='header desc'>
 		<div class='headermenu' data-key='system.ads'>
 			<span>{{localize 'GURPS.advDisadvPerkQuirks'}}</span>
-			<i class='fas fa-caret-square-down'></i>
+			<i class='fa-solid fa-caret-square-down'></i>
 		</div>
 	</div>
 	<div class='pts header'>{{localize "GURPS.abbrevPoints"}}</div>
@@ -12,7 +12,7 @@
 	{{#each (flatlist system.ads)}}
 	{{#if ../isEditing}}
 	<div class='itemmenu adsmenu' data-key='system.ads.{{@key}}'>
-		<i class='fas fa-times'></i>
+		<i class='fa-solid fa-times'></i>
 	</div>
 	<div class='desc indent{{indent}}' data-key='system.ads.{{@key}}'>
 		<input name='system.ads.{{@key}}.name' class='gcs-input' type='text' value='{{this.name}}' />
@@ -36,8 +36,8 @@
 		  <div class='desc dblclkedit indent{{indent}}' data-key='system.ads.{{@key}}'>
         <div class='gga-desc-text'>
           <div>
-            {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-            {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+            {{#if hasContains}}<i class='fa-solid fa-caret-down expandcollapseicon'></i>{{/if}}
+            {{#if hasCollapsed}}<i class='fa-solid fa-caret-right expandcollapseicon'></i>{{/if}}
           </div>
           <div class='tooltip gga-manual'>
             {{{gurpslink this.name}}}
@@ -47,14 +47,14 @@
           </div>
           <div>
             {{#if (isFoundryGlobalItem this)}}
-            <i class='fas fa-book tooltip gga-global-item'>
+            <i class='fa-solid fa-book tooltip gga-global-item'>
               <span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
             </i>
             {{/if}}
           </div>
           <div>
             {{#if (isImportedItem this)}}
-            <i class='fas fa-layer-group tooltip gga-child-item'>
+            <i class='fa-solid fa-layer-group tooltip gga-child-item'>
               <span class='tooltiptext'>{{{parentItemTooltip this}}}</span>
             </i>
             {{/if}}

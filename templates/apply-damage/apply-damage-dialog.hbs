@@ -30,7 +30,7 @@
               <button id='apply-publicly' class='split-button'>{{localize "GURPS.addApply"}}</button>
               <div class='dropdown'>
                 <button id='apply-split' class='split-button'>
-                  <i class='fa fa-caret-down'></i>
+                  <i class='fa-solid fa-caret-down'></i>
                 </button>
                 <div id='apply-dropdown' class="dropdown-content invisible">
                   <div id='apply-secretly' style='text-wrap: nowrap;'>{{localize "GURPS.addApplyQuietly"}}</div>
@@ -43,7 +43,7 @@
                 class='split-button'>{{localize "GURPS.addApplyQuietly"}}</button>
               <div class='dropdown'>
                 <button id='apply-split' class='split-button'>
-                  <i class='fa fa-caret-down'></i>
+                  <i class='fa-solid fa-caret-down'></i>
                 </button>
                 <div id='apply-dropdown' class="dropdown-content invisible">
                   <div id='apply-publicly'>{{localize "GURPS.addApply"}}</div>
@@ -116,7 +116,7 @@
             <hr /> <!-- Doesn't do much except add some space -->
 
             <button id='random-location' class='with-icon'>
-              <i class='fa fa-dice'><span>&nbsp;{{localize "GURPS.hitLocationRandom"}}</span></i>
+              <i class='fa-solid fa-dice'></i> {{localize "GURPS.hitLocationRandom"}}
             </button>
 
             <hr /> <!-- Doesn't do much except add some space -->
@@ -330,7 +330,7 @@
                   <input type='text' id='damage-reduction-level' class='decimal-digits-only'
                     value='{{CALC.damageReductionLevel}}' {{disabled (not CALC.useDamageReduction)}}
                     style='border: 1px solid #7a7971;'>
-                  <button name='clear'><span class='fas fa-times-circle'></button>
+                  <button name='clear'><span class='fa-solid fa-times-circle'></button>
                 </div>
                 <div class='vertical-center pdflink'>P53</div>
               </div>
@@ -361,7 +361,7 @@
                     <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
                       value='{{CALC.effectiveBluntTrauma}}' {{disabled (not CALC.isFlexibleArmor)}}
                       style='border: 1px solid #7a7971;'>
-                    <button name='clear'><span class='fas fa-times-circle'></button>
+                    <button name='clear'><span class='fa-solid fa-times-circle'></button>
                   </div>
                 </div>
               </div>
@@ -552,7 +552,7 @@
                 <button id='apply-injury-publicly' class='split-button'>{{localize "GURPS.addApplyInjury"}}</button>
                 <div class='dropdown'>
                   <button id='apply-injury-split' class='split-button'>
-                    <i class='fa fa-caret-down'></i>
+                    <i class='fa-solid fa-caret-down'></i>
                   </button>
                   <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
                     <div id='apply-injury-secretly'>{{localize "GURPS.addApplyInjuryQuietly"}}</div>
@@ -565,7 +565,7 @@
                 <button id='apply-injury-secretly' class='split-button'>{{localize "GURPS.addApplyQuietly"}}</button>
                 <div class='dropdown'>
                   <button id='apply-injury-split' class='split-button'>
-                    <i class='fa fa-caret-down'></i>
+                    <i class='fa-solid fa-caret-down'></i>
                   </button>
                   <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
                     <div id='apply-injury-publicly'>{{localize "GURPS.addApplyInjury"}}</div>

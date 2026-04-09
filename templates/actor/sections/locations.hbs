@@ -3,7 +3,7 @@
     <div class='header'>
       <div class='headermenu' data-key='system.hitlocations'>
         <span>{{localize 'GURPS.hitLocation'}}</span>
-        <i class='fas fa-caret-square-down'></i>
+        <i class='fa-solid fa-caret-square-down'></i>
       </div>
       <div class='option'>
         <input id='ignoreinputbodyplan' type='checkbox' {{checked system.additionalresources.ignoreinputbodyplan}}/>
@@ -23,7 +23,7 @@
   {{#each system.hitlocations as |this key|}}
     {{#if ../isEditing}}
       <div class='itemmenu hlmenu' data-key='system.hitlocations.{{@key}}'>
-        <i class='fas fa-times'></i>
+        <i class='fa-solid fa-times'></i>
       </div>
     {{else}}
       <div class='itemmenu' readonly></div>
