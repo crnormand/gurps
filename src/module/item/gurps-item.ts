@@ -278,6 +278,16 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   }
 
   /* ---------------------------------------- */
+  /*  Data Migration                          */
+  /* ---------------------------------------- */
+
+  static override migrateData(source: AnyMutableObject): AnyMutableObject {
+    runSourceMigrations(source)
+
+    return super.migrateData(source)
+  }
+
+  /* ---------------------------------------- */
   /*  Utilities                               */
   /* ---------------------------------------- */
 
