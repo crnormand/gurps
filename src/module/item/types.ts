@@ -1,0 +1,17 @@
+export enum ItemType {
+  LegacyTrait = 'feature',
+  LegacySkill = 'skill',
+  LegacySpell = 'spell',
+  LegacyEquipment = 'equipment',
+  Trait = 'featureV2',
+  Skill = 'skillV2',
+  Spell = 'spellV2',
+  Equipment = 'equipmentV2',
+  GcsTrait = 'gcsTrait',
+  GcsTraitModifier = 'gcsTraitModifier',
+  GcsSkill = 'gcsSkill',
+  GcsSpell = 'gcsSpell',
+  GcsEquipment = 'gcsEquipment',
+  GcsEquipmentModifier = 'gcsEquipmentModifier',
+  GcsNote = 'gcsNote',
+}

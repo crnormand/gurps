@@ -1,3 +1,12 @@
+export enum ActorType {
+  LegacyCharacter = 'character',
+  LegacyEnemy = 'enemy',
+  Character = 'characterV2',
+  GcsCharacter = 'gcsCharacter',
+}
+
+/* ---------------------------------------- */
+
 interface CheckInfo {
   img?: any
   symbol: string
@@ -10,6 +19,8 @@ interface CheckInfo {
   otfDamage?: string
   isOTF?: boolean
 }
+
+/* ---------------------------------------- */
 
 interface CanRollResult {
   canRoll: boolean
@@ -24,5 +35,7 @@ interface CanRollResult {
   maxParryMessage?: string
   rollBeforeStartMessage?: string
 }
+
+/* ---------------------------------------- */
 
 export { type CheckInfo, type CanRollResult }
