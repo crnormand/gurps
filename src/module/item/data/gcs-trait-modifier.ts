@@ -2,6 +2,8 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { featuresSchema, IFeatures } from '@module/data/mixins/features.js'
 import { INameable, INameableAccesser } from '@module/data/mixins/nameable.js'
 
+import { ItemType } from '../types.js'
+
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 class GcsTraitModifierModel
@@ -21,7 +23,7 @@ class GcsTraitModifierModel
   static override get metadata(): GcsItemMetadata {
     return {
       embedded: { Feature: 'system.features' },
-      type: 'gcsTraitModifier',
+      type: ItemType.GcsTraitModifier,
       invalidActorTypes: [],
       actions: {},
       childTypes: [],
@@ -31,8 +33,8 @@ class GcsTraitModifierModel
 
   /* ---------------------------------------- */
 
-  get trait(): Item.OfType<'gcsTrait'> | null {
-    return this.ancestors.find(item => item.isOfType('gcsTrait')) ?? null
+  get trait(): Item.OfType<ItemType.GcsTrait> | null {
+    return this.ancestors.find(item => item.isOfType(ItemType.GcsTrait)) ?? null
   }
 
   get enabled(): boolean {

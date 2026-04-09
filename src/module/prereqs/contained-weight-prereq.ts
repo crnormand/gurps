@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { WeightCriteriaField } from '@module/data/criteria/weight-criteria.js'
+import { ItemType } from '@module/item/types.js'
 
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType } from './types.js'
@@ -20,7 +21,7 @@ class ContainedWeightPrereq extends BasePrereq<ContainedWeightPrereqSchema> {
   override get isSatisfied(): boolean {
     const item = this.item
 
-    if (!item || !item.isOfType('gcsEquipment'))
+    if (!item || !item.isOfType(ItemType.GcsEquipment))
       throw new Error('ContainedWeightPrereq: No Item provided or invalid Item type.')
 
     if (!item.system.isContainer)

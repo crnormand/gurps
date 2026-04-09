@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { ActorType } from '@module/actor/types.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 
 import { BasePrereq } from './base-prereq.js'
@@ -20,7 +21,7 @@ class AttributePrereq extends BasePrereq<AttributePrereqSchema> {
   override get isSatisfied(): boolean {
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('gcsCharacter'))
+    if (!actor || !actor.isOfType(ActorType.GcsCharacter))
       throw new Error('AttributePrereq: No Actor provided or invalid Actor type.')
 
     let totalValue = 0

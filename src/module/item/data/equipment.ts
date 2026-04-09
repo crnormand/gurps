@@ -3,6 +3,8 @@ import { DisplayEquipment } from '@gurps-types/gurps/display-item.js'
 import { Weight } from '@module/data/common/weight.js'
 import { AnyObject } from 'fvtt-types/utils'
 
+import { ItemType } from '../types.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 
 class EquipmentModel extends BaseItemModel<EquipmentSchema> {
@@ -17,8 +19,8 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
 
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
-      type: 'equipmentV2',
-      childTypes: ['equipmentV2'],
+      type: ItemType.Equipment,
+      childTypes: [ItemType.Equipment],
       sortKeys: {
         quantity: 'system.count',
         value: 'system.cost',
@@ -41,7 +43,7 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
         return this._carried
       }
 
-      if (!container.isOfType('equipmentV2')) {
+      if (!container.isOfType(ItemType.Equipment)) {
         console.error(`Expected container of equipment item to be of type "equipmentV2", but got "${container.type}"`)
 
         return this._carried

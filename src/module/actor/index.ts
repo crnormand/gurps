@@ -18,6 +18,7 @@ import { runMigration } from './migrate.js'
 import { GurpsActorNpcModernSheet } from './modern/npc-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
 import * as sheets from './sheets/index.js'
+import { ActorType } from './types.js'
 
 interface ActorModule extends GurpsModule {
   dataModels: typeof dataModels
@@ -25,6 +26,7 @@ interface ActorModule extends GurpsModule {
   migrate: typeof runMigration
   HitLocationEntry: typeof HitLocationEntryV2
   MoveMode: typeof MoveModeV2
+  ActorType: typeof ActorType
 }
 
 function init() {
@@ -33,9 +35,9 @@ function init() {
     CONFIG.Actor.documentClass = GurpsActorV2
 
     CONFIG.Actor.dataModels = {
-      characterV2: dataModels.CharacterModel,
-      gcsCharacter: dataModels.GcsCharacterModel,
-      gcsLoot: dataModels.GcsLootModel,
+      [ActorType.Character]: dataModels.CharacterModel,
+      [ActorType.GcsCharacter]: dataModels.GcsCharacterModel,
+      [ActorType.GcsLoot]: dataModels.GcsLootModel,
     }
 
     foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet)
@@ -86,7 +88,7 @@ function init() {
       sheets.TestActorSheet as DocumentSheetV2.AnyConstructor,
       {
         makeDefault: true,
-        types: ['gcsCharacter'],
+        types: [ActorType.GcsCharacter],
         canConfigure: false,
       }
     )
@@ -97,7 +99,7 @@ function init() {
       sheets.GurpsActorGcsSheet as unknown as DocumentSheetV2.AnyConstructor,
       {
         makeDefault: true,
-        types: ['characterV2'],
+        types: [ActorType.Character],
         label: 'GURPS.sheet.gcsActorSheet.label',
       }
     )
@@ -111,4 +113,5 @@ export const Actor: ActorModule = {
   migrate: runMigration,
   HitLocationEntry: HitLocationEntryV2,
   MoveMode: MoveModeV2,
+  ActorType,
 }

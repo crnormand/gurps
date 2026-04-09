@@ -2,8 +2,10 @@ import { DataModel } from '@gurps-types/foundry/index.js'
 import { parseBlock, parseParry } from '@module/action/parse-attack.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
+import { ActorType } from '@module/actor/types.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { TraitSchema } from '@module/item/data/trait.js'
+import { ItemType } from '@module/item/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackSchema } from '../../action/melee-attack.js'
@@ -28,7 +30,7 @@ import { GcsTrait } from './schema/trait.js'
 import { GcsWeapon } from './schema/weapon.js'
 
 enum GcsImporterMode {
-  Character = 'character',
+  Character = ActorType.LegacyCharacter,
   ItemCompendium = 'itemCompendium',
 }
 
@@ -61,7 +63,7 @@ type GcsImporterInputType<Mode extends GcsImporterMode> = Mode extends 'characte
 class GcsImporter<Mode extends GcsImporterMode> {
   _mode: Mode
   input: GcsImporterInputType<Mode>
-  actor?: Actor.OfType<'characterV2'>
+  actor?: Actor.OfType<ActorType.Character>
   output: DataModel.CreateData<CharacterSchema> = {}
   items: Item.CreateData[]
   existingItems: Item.Stored[]
@@ -87,8 +89,8 @@ class GcsImporter<Mode extends GcsImporterMode> {
    */
   static async importCharacter(
     input: GcsCharacter,
-    actor?: Actor.OfType<'characterV2'>
-  ): Promise<Actor.OfType<'characterV2'>> {
+    actor?: Actor.OfType<ActorType.Character>
+  ): Promise<Actor.OfType<ActorType.Character>> {
     return await new GcsImporter({ input, mode: GcsImporterMode.Character }).#importCharacter(actor)
   }
 
@@ -107,12 +109,12 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
   /* ---------------------------------------- */
 
-  async #importCharacter(actor?: Actor.OfType<'characterV2'>): Promise<Actor.OfType<'characterV2'>> {
+  async #importCharacter(actor?: Actor.OfType<ActorType.Character>): Promise<Actor.OfType<ActorType.Character>> {
     if (!this._isMode(GcsImporterMode.Character))
       return Promise.reject(new Error('GcsImporter: Invalid mode for character import.'))
 
     const _id = actor ? actor._id : foundry.utils.randomID()
-    const type = 'characterV2'
+    const type = ActorType.Character
 
     const importedName = this.input.profile.name ?? game.i18n!.localize('GURPS.importer.defaultName')
     const name = ImportSettings.overwriteName ? importedName : (actor?.name ?? importedName)
@@ -137,7 +139,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     if (actor) {
       // When importing into existing actor, save count and uses for equipment with ignoreImportQty flag
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
-        actor.items.contents.filter(item => item.type === 'equipmentV2') as Item.OfType<'equipmentV2'>[]
+        actor.items.contents.filter(item => item.type === ItemType.Equipment) as Item.OfType<ItemType.Equipment>[]
       )
 
       // Update actor with new system data and create new items
@@ -201,7 +203,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
    *
    * @param actor - The affected actor
    */
-  async #deleteImportedItems(actor: Actor.OfType<'characterV2'>) {
+  async #deleteImportedItems(actor: Actor.OfType<ActorType.Character>) {
     const importedItems = actor.items.filter(item => {
       const system = item.system as { importFrom: string }
 
@@ -287,7 +289,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
   #restoreEquipmentCountsAndUses(savedEquipmentCounts: Map<string, { quantity: number; uses: number }>) {
     if (savedEquipmentCounts.size > 0) {
       for (const itemData of this.items) {
-        if (createDataIsOfType(itemData, 'equipmentV2')) {
+        if (createDataIsOfType(itemData, ItemType.Equipment)) {
           const system = itemData.system as DataModel.CreateData<EquipmentSchema>
 
           if (system && system.importid && savedEquipmentCounts.has(system.importid)) {
@@ -302,7 +304,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
 
   /* ---------------------------------------- */
 
-  #saveEquipmentCountsIfNecessary(items: Item.OfType<'equipmentV2'>[]) {
+  #saveEquipmentCountsIfNecessary(items: Item.OfType<ItemType.Equipment>[]) {
     const savedEquipmentCounts = new Map<string, { quantity: number; uses: number }>()
 
     items.forEach(item => {
@@ -987,7 +989,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importTrait(trait: GcsTrait, index: number, containedBy?: string | undefined): Item.CreateData {
-    const type = 'featureV2'
+    const type = ItemType.Trait
     // TODO: localize
     const name = trait.name ?? 'Trait'
 
@@ -1006,7 +1008,7 @@ Portrait will not be imported.`
     trait.childItems?.forEach((child: GcsTrait, childIndex: number) => this.#importTrait(child, childIndex, _id))
 
     // component.contains = children.map((c: Item.CreateData) => c._id as string)
-    const item: Item.CreateData<'featureV2'> = {
+    const item: Item.CreateData<ItemType.Trait> = {
       _id,
       type,
       name,
@@ -1022,7 +1024,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importSkill(skill: GcsSkill, index: number, containedBy?: string | undefined): Item.CreateData {
-    const type = 'skillV2'
+    const type = ItemType.Skill
     // TODO: localize
     const name = skill.name ?? 'Skill'
 
@@ -1041,7 +1043,7 @@ Portrait will not be imported.`
 
     skill.childItems?.forEach((child: GcsSkill, childIndex: number) => this.#importSkill(child, childIndex, _id))
 
-    const item: Item.CreateData<'skillV2'> = {
+    const item: Item.CreateData<ItemType.Skill> = {
       _id,
       type,
       name,
@@ -1057,7 +1059,7 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   #importSpell(spell: GcsSpell, index: number, containedBy?: string | undefined): Item.CreateData {
-    const type = 'spellV2'
+    const type = ItemType.Spell
     // TODO: localize
     const name = spell.name ?? 'Spell'
 
@@ -1082,7 +1084,7 @@ Portrait will not be imported.`
 
     spell.childItems?.forEach((child: GcsSpell, childIndex: number) => this.#importSpell(child, childIndex, _id))
 
-    const item: Item.CreateData<'spellV2'> = {
+    const item: Item.CreateData<ItemType.Spell> = {
       _id,
       type,
       name,
@@ -1103,7 +1105,7 @@ Portrait will not be imported.`
     _carried: boolean,
     containedBy?: string | undefined
   ): Item.CreateData {
-    const type = 'equipmentV2'
+    const type = ItemType.Equipment
     // TODO: localize
     const name = equipment.name ?? 'Equipment'
 
@@ -1136,7 +1138,7 @@ Portrait will not be imported.`
       this.#importEquipment(child, childIndex, _carried, _id)
     )
 
-    const item: Item.CreateData<'equipmentV2'> = {
+    const item: Item.CreateData<ItemType.Equipment> = {
       _id,
       type,
       name,

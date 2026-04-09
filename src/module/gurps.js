@@ -1571,7 +1571,7 @@ if (!globalThis.GURPS) {
 
     if (!actor) return item
     if (foundry.utils.isSubclass(actor, Actor)) actor = actor.system
-    if (actor.isOfType('characterV2')) return actor.findAttack(sname, isMelee, isRanged)
+    if (actor.isOfType(Actor.ActorType.Character)) return actor.findAttack(sname, isMelee, isRanged)
     let name = sanitize(sname)
     let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(name, false, false), 'i')
     let smode = ''

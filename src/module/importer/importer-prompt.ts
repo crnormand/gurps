@@ -1,3 +1,5 @@
+import { ActorType } from '@module/actor/types.js'
+import { ItemType } from '@module/item/types.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { GcaImporter } from './gca-importer/importer.js'
@@ -9,7 +11,7 @@ import { GcsSkillCollection } from './gcs-importer/schema/skill.js'
 import { GcsSpellCollection } from './gcs-importer/schema/spell.js'
 import { GcsTraitCollection } from './gcs-importer/schema/trait.js'
 
-async function actorImporterPrompt(actor?: Actor.OfType<'characterV2'>) {
+async function actorImporterPrompt(actor?: Actor.OfType<ActorType.Character>) {
   if (!game.i18n) {
     ui.notifications?.error('GURPS | Cannot open import dialog: game.i18n not available.')
 
@@ -187,7 +189,7 @@ async function itemImporterPrompt() {
               case 'skl': {
                 const collection = GcsSkillCollection.fromImportData({
                   ...jsonObject,
-                  type: 'skill',
+                  type: ItemType.LegacySkill,
                   name,
                 }) as GcsSkillCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -198,7 +200,7 @@ async function itemImporterPrompt() {
               case 'spl': {
                 const collection = GcsSpellCollection.fromImportData({
                   ...jsonObject,
-                  type: 'spell',
+                  type: ItemType.LegacySpell,
                   name,
                 }) as GcsSpellCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -209,7 +211,7 @@ async function itemImporterPrompt() {
               case 'eqp': {
                 const collection = GcsEquipmentCollection.fromImportData({
                   ...jsonObject,
-                  type: 'equipment',
+                  type: ItemType.LegacyEquipment,
                   name,
                 }) as GcsEquipmentCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)

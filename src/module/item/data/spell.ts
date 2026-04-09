@@ -4,6 +4,8 @@ import { parselink } from '@util/parselink.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
+import { ItemType } from '../types.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 
 class SpellModel extends BaseItemModel<SpellSchema> {
@@ -26,8 +28,8 @@ class SpellModel extends BaseItemModel<SpellSchema> {
 
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
-      type: 'spellV2',
-      childTypes: ['spellV2'],
+      type: ItemType.Spell,
+      childTypes: [ItemType.Spell],
       sortKeys: {
         points: 'system.points',
         level: 'system.level',

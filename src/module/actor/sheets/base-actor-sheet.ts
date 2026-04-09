@@ -8,6 +8,8 @@ import { ActorImporter } from '../actor-importer.js'
 import DragDrop = foundry.applications.ux.DragDrop
 import ActorSheet = gurps.applications.ActorSheet
 
+import { ActorType } from '../types.js'
+
 // See module/types/foundry/actor-sheet-v2.ts for why we need this type assertion
 const _InternalGurpsBaseActorSheet = <
   Type extends Actor.SubType,
@@ -202,7 +204,7 @@ const GurpsBaseActorSheet = <
     static async #onImportActor(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
       event.preventDefault()
 
-      if (this.actor.isOfType('characterV2')) {
+      if (this.actor.isOfType(ActorType.Character)) {
         await GURPS.modules.Importer.actorImporterPrompt(this.actor)
       } else {
         return new ActorImporter(this.actor).importActor()

@@ -4,6 +4,8 @@ import { INameable, INameableApplier, nameableSchema } from '@module/data/mixins
 import { IPrereqs, IPrereqsBaseData, preparePrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
 import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 
+import { ItemType } from '../types.js'
+
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 type TraitBaseData = INameable.AccesserBaseData & IPrereqsBaseData
@@ -27,7 +29,7 @@ class GcsTraitModel
   static override get metadata(): GcsItemMetadata {
     return {
       embedded: { Prereq: 'system._prereqs', Feature: 'system.features', Study: 'system.study' },
-      type: 'gcsTrait',
+      type: ItemType.GcsTrait,
       invalidActorTypes: [],
       actions: {},
       childTypes: [],

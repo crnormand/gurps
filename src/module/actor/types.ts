@@ -3,6 +3,7 @@ export enum ActorType {
   LegacyEnemy = 'enemy',
   Character = 'characterV2',
   GcsCharacter = 'gcsCharacter',
+  GcsLoot = 'gcsLoot',
 }
 
 /* ---------------------------------------- */

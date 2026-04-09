@@ -5,6 +5,7 @@ import { GurpsItemV2 } from './gurps-item.js'
 import { GurpsItemSheet } from './item-sheet.js'
 import { migrateItem, runMigration, migrateItemCompendium } from './migrate.js'
 import { TestItemSheet } from './test-item-sheet.js'
+import { ItemType } from './types.js'
 
 interface ItemModule extends GurpsModule {
   migrateItemCompendium: typeof migrateItemCompendium
@@ -18,17 +19,17 @@ function init() {
     CONFIG.Item.documentClass = GurpsItemV2
 
     CONFIG.Item.dataModels = {
-      featureV2: dataModels.TraitModel,
-      skillV2: dataModels.SkillModel,
-      spellV2: dataModels.SpellModel,
-      equipmentV2: dataModels.EquipmentModel,
-      gcsTrait: dataModels.GcsTraitModel,
-      gcsTraitModifier: dataModels.GcsTraitModifierModel,
-      gcsSkill: dataModels.GcsSkillModel,
-      gcsSpell: dataModels.GcsSpellModel,
-      gcsEquipment: dataModels.GcsEquipmentModel,
-      gcsEquipmentModifier: dataModels.GcsEquipmentModifierModel,
-      gcsNote: dataModels.GcsNoteModel,
+      [ItemType.Trait]: dataModels.TraitModel,
+      [ItemType.Skill]: dataModels.SkillModel,
+      [ItemType.Spell]: dataModels.SpellModel,
+      [ItemType.Equipment]: dataModels.EquipmentModel,
+      [ItemType.GcsTrait]: dataModels.GcsTraitModel,
+      [ItemType.GcsTraitModifier]: dataModels.GcsTraitModifierModel,
+      [ItemType.GcsSkill]: dataModels.GcsSkillModel,
+      [ItemType.GcsSpell]: dataModels.GcsSpellModel,
+      [ItemType.GcsEquipment]: dataModels.GcsEquipmentModel,
+      [ItemType.GcsEquipmentModifier]: dataModels.GcsEquipmentModifierModel,
+      [ItemType.GcsNote]: dataModels.GcsNoteModel,
     }
 
     foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
@@ -39,7 +40,7 @@ function init() {
     // @ts-expect-error: broken typing
     foundry.documents.collections.Items.registerSheet('gurps', TestItemSheet, {
       makeDefault: true,
-      types: ['gcsEquipment'],
+      types: [ItemType.GcsEquipment],
       canConfigure: false,
     })
   })

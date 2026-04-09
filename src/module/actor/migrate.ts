@@ -2,12 +2,14 @@ import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { numberValidate } from '@module/data/validators/number-validator.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrate.js'
+import { ItemType } from '@module/item/types.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { MoveModeV2 } from './data/move-mode.js'
 import { NoteV2 } from './data/note.js'
 import { ActorV1Model } from './legacy/actorv1-interface.js'
+import { ActorType } from './types.js'
 
 async function runMigration(): Promise<void> {
   if (!game.user || !game.user.isGM) return
@@ -62,8 +64,8 @@ async function migrateActorCompendium(pack: CompendiumCollection<'Actor'>) {
 
 /* ---------------------------------------- */
 
-async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'characterV2'> | void> {
-  if (!actor.isOfType('character', 'enemy')) {
+async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<ActorType.Character> | void> {
+  if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.LegacyEnemy)) {
     console.error(
       'Attempted to migrate actor that is not of type character. Actor name:',
       actor.name,
@@ -82,7 +84,9 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
     return
   }
 
-  const newActor = (await actor.update(updateData, { recursive: false })) as unknown as Actor.OfType<'characterV2'>
+  const newActor = (await actor.update(updateData, {
+    recursive: false,
+  })) as unknown as Actor.OfType<ActorType.Character>
 
   if (!newActor) {
     console.error('Failed to update actor with migrated data. Actor name:', actor.name)
@@ -97,14 +101,14 @@ async function migrateActor(actor: Actor.Implementation): Promise<Actor.OfType<'
 
 function getMigratedActorData(
   oldActor: Actor.Implementation | Actor.CreateData
-): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.OfType<'characterV2'>>> | null {
+): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.OfType<ActorType.Character>>> | null {
   if (!game.i18n) {
     console.error('GURPS | Cannot migrate actor because game.i18n is not initialized.')
 
     return null
   }
 
-  if (!['character', 'enemy'].includes(oldActor.type)) {
+  if (![ActorType.LegacyCharacter, ActorType.LegacyEnemy].includes(oldActor.type as any)) {
     console.error(
       'Attempted to migrate actor that is not of type character. Actor name:',
       oldActor.name,
@@ -127,7 +131,12 @@ function getMigratedActorData(
 
   traits.forEach(trait => {
     const newTrait = getMigratedItemData(
-      { _id: trait._id, type: 'feature', name: trait.name, system: { fea: trait } } as unknown as Item.Implementation,
+      {
+        _id: trait._id,
+        type: ItemType.LegacyTrait,
+        name: trait.name,
+        system: { fea: trait },
+      } as unknown as Item.Implementation,
       trait._parentId
     )
 
@@ -136,7 +145,12 @@ function getMigratedActorData(
 
   skills.forEach(skill => {
     const newSkill = getMigratedItemData(
-      { _id: skill._id, type: 'skill', name: skill.name, system: { ski: skill } } as unknown as Item.Implementation,
+      {
+        _id: skill._id,
+        type: ItemType.LegacySkill,
+        name: skill.name,
+        system: { ski: skill },
+      } as unknown as Item.Implementation,
       skill._parentId
     )
 
@@ -145,7 +159,12 @@ function getMigratedActorData(
 
   spells.forEach(spell => {
     const newSpell = getMigratedItemData(
-      { _id: spell._id, type: 'spell', name: spell.name, system: { spl: spell } } as unknown as Item.Implementation,
+      {
+        _id: spell._id,
+        type: ItemType.LegacySpell,
+        name: spell.name,
+        system: { spl: spell },
+      } as unknown as Item.Implementation,
       spell._parentId
     )
 
@@ -156,7 +175,7 @@ function getMigratedActorData(
     const newEquipment = getMigratedItemData(
       {
         _id: equipment._id,
-        type: 'equipment',
+        type: ItemType.LegacyEquipment,
         name: equipment.name,
         system: { eqt: equipment },
       } as unknown as Item.Implementation,
@@ -170,7 +189,7 @@ function getMigratedActorData(
     const newEquipment = getMigratedItemData(
       {
         _id: equipment._id,
-        type: 'equipment',
+        type: ItemType.LegacyEquipment,
         name: equipment.name,
         system: { eqt: equipment },
       } as unknown as Item.Implementation,
@@ -182,15 +201,15 @@ function getMigratedActorData(
 
   // ActorV1 has no concept of Reaction and Conditional Modifier ownership by items,
   // so reactions and conditional modifiers are moved to a single placeholder item.
-  const holderItem: Item.CreateData<'featureV2'> = {
+  const holderItem: Item.CreateData<ItemType.Trait> = {
     _id: foundry.utils.randomID(),
-    type: 'featureV2',
+    type: ItemType.Trait,
     name: game.i18n?.localize('GURPS.migration.holderItem.name'),
   }
 
   const holderItemFlags = { isMigratedItem: true }
 
-  const holderItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<'featureV2'>>> = {
+  const holderItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<ItemType.Trait>>> = {
     containedBy: null,
     // name: game.i18n?.localize('GURPS.migration.holderItem.name'),
     notes: game.i18n?.localize('GURPS.migration.holderItem.notes'),
@@ -254,9 +273,9 @@ function getMigratedActorData(
 
   items.push(holderItem)
 
-  const updateData: Actor.CreateData<'characterV2'> = {
+  const updateData: Actor.CreateData<ActorType.Character> = {
     _id: oldActor._id,
-    type: 'characterV2',
+    type: ActorType.Character,
     img: oldActor.img,
     name: oldActor.name,
     system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name, { holderItemId: holderItem._id! }),
@@ -271,8 +290,8 @@ function getMigratedActorData(
 function migrateActorSystem(
   oldData: ActorV1Model,
   actorName?: string,
-  injectedData?: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>>
-): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> {
+  injectedData?: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>>
+): fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>> {
   if (typeof oldData.conditions.move === 'string')
     console.warn(`MIGRATE: Actor ${actorName} oldData.conditions.move: ${oldData.conditions.move}`)
 
@@ -296,7 +315,7 @@ function migrateActorSystem(
 
   const holderItemId = injectedData?.holderItemId || ''
 
-  const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>> = {
+  const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>> = {
     ...injectedData,
     holderItemId,
     attributes: oldData.attributes,

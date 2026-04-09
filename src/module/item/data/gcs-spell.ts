@@ -3,6 +3,8 @@ import { INameable, INameableApplier, nameableSchema } from '@module/data/mixins
 import { IPrereqs, IPrereqsBaseData, preparePrereqs, prereqsSchema } from '@module/data/mixins/prereqs.js'
 import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 
+import { ItemType } from '../types.js'
+
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 type SpellBaseData = INameable.AccesserBaseData & IPrereqsBaseData
@@ -35,7 +37,7 @@ class GcsSpellModel
   static override get metadata(): GcsItemMetadata {
     return {
       embedded: { Prereq: 'system._prereqs', Study: 'system.study' },
-      type: 'gcsSpell',
+      type: ItemType.GcsSpell,
       invalidActorTypes: [],
       actions: {},
       childTypes: [],

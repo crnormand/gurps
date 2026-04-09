@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplayRangedAttack } from '@gurps-types/gurps/display-item.js'
+import { ActorType } from '@module/actor/types.js'
 import { LengthUnit } from '@module/data/common/length.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -285,7 +286,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('characterV2')) return
+    if (!actor || !actor.isOfType(ActorType.Character)) return
 
     const st = actor.system.attributes.ST.value
 

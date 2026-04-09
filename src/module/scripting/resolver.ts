@@ -1,3 +1,4 @@
+import { ActorType } from '@module/actor/types.js'
 import { Weight, WeightUnit } from '@module/data/common/weight.js'
 
 import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './adapters/index.js'
@@ -98,7 +99,7 @@ class ScriptResolver {
 
       let resolverCache = this.globalResolverCache
 
-      if (actor && actor.isOfType('gcsCharacter')) {
+      if (actor && actor.isOfType(ActorType.GcsCharacter)) {
         resolverCache = actor.system.resolverCache
       }
 
@@ -123,7 +124,7 @@ class ScriptResolver {
         environment['self'] = selfProvider.provider
       }
 
-      if (actor && actor.isOfType('gcsCharacter')) {
+      if (actor && actor.isOfType(ActorType.GcsCharacter)) {
         environment['entity'] = new ScriptEntity(actor.system)
 
         for (const attribute of Object.values(actor.system._attributes)) {

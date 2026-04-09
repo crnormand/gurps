@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/data-fields.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
+import { ItemType } from '@module/item/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { multiplyDice } from '@util/damage-utils.js'
 import { parseItemKey } from '@util/object-utils.js'
@@ -49,7 +50,7 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
-import { CanRollResult, CheckInfo } from './types.js'
+import { ActorType, CanRollResult, CheckInfo } from './types.js'
 
 function DamageModule() {
   return GURPS.modules.Damage
@@ -81,17 +82,17 @@ interface EquipmentDropData {
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> implements ActorV1Interface {
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
-    return this.system as Actor.SystemOfType<'characterV2'>
+    return this.system as Actor.SystemOfType<ActorType.Character>
   }
 
   // Narrowed view of this.system for characterV1 logic.
   private get modelV1(): ActorV1Model {
-    return this.system as Actor.SystemOfType<'character'>
+    return this.system as Actor.SystemOfType<ActorType.LegacyCharacter>
   }
 
   // Common guard for new actor subtypes.
   get isNewActorType(): boolean {
-    return this.isOfType('characterV2')
+    return this.isOfType(ActorType.Character)
   }
 
   // Settings getter with default fallback
@@ -169,7 +170,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (!isDevMode) {
       options ||= {}
       const allTypes = Actor.TYPES
-      const excludeTypes = ['base', 'character', 'enemy', 'gcsCharacter', 'gcsLoot']
+      const excludeTypes = [
+        'base',
+        ActorType.LegacyCharacter,
+        ActorType.LegacyEnemy,
+        ActorType.GcsCharacter,
+        ActorType.GcsLoot,
+      ]
 
       // Disable non-production Actor types if developer mode is off.
       // @ts-expect-error: Improper types
@@ -493,7 +500,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       //   }
       // }
 
-      if (this.type !== 'character') return
+      if (this.type !== ActorType.LegacyCharacter) return
 
       this.modelV1.conditions.posture = 'standing'
       this.modelV1.conditions.self = { modifiers: [] }
@@ -535,7 +542,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       this.doForEachEmbedded(pd => pd.prepareDerivedData())
     } else {
       // Legacy V1 handling.
-      if (this.type !== 'character') return
+      if (this.type !== ActorType.LegacyCharacter) return
 
       // Handle new move data -- if data.move exists, use the default value in that object to set the move
       // value in the first entry of the encumbrance object.
@@ -1410,17 +1417,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         // Apply ^ to each pattern
         .map(patternFragment => new RegExp('^' + patternFragment, 'i'))
 
-      const carriedItem = this.modelV2.equipmentV2.carried.find((equipmentItem: Item.OfType<'equipmentV2'>) =>
+      const carriedItem = this.modelV2.equipmentV2.carried.find((equipmentItem: Item.OfType<ItemType.Equipment>) =>
         patterns.some(pattern => pattern.test(equipmentItem.name))
       )
-      const otherItem = this.modelV2.equipmentV2.other.find((equipmentItem: Item.OfType<'equipmentV2'>) =>
+      const otherItem = this.modelV2.equipmentV2.other.find((equipmentItem: Item.OfType<ItemType.Equipment>) =>
         patterns.some(pattern => pattern.test(equipmentItem.name))
       )
 
-      const carriedResult: [Item.OfType<'equipmentV2'>, string] | null = carriedItem
+      const carriedResult: [Item.OfType<ItemType.Equipment>, string] | null = carriedItem
         ? [carriedItem ?? null, carriedItem.id ?? '']
         : null
-      const otherResult: [Item.OfType<'equipmentV2'>, string] | null = otherItem
+      const otherResult: [Item.OfType<ItemType.Equipment>, string] | null = otherItem
         ? [otherItem ?? null, otherItem.id ?? '']
         : null
 
@@ -1999,7 +2006,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       return false
     }
 
-    const srcActor = game.actors!.get(dragData.actorid) as GurpsActorV2<Actor.SubType> | undefined
+    const srcActor = game.actors!.get(dragData.actorid) as Actor.OfType<Actor.SubType> | undefined
 
     if (!srcActor) return false
     const eqt = foundry.utils.getProperty(srcActor, dragData.key) as EquipmentV1
@@ -2093,7 +2100,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  async #createEquipment(eqt: Record<string, any>, count: number, parent: Item.OfType<'equipmentV2'> | null = null) {
+  async #createEquipment(
+    eqt: Record<string, any>,
+    count: number,
+    parent: Item.OfType<ItemType.Equipment> | null = null
+  ) {
     const { _id: _omit, ...itemData } = foundry.utils.duplicate(eqt) as Record<string, any>
 
     itemData.system.containedBy = parent?.id ?? null
@@ -2243,7 +2254,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const item = foundry.utils.getProperty(this, sourcekey) as Item.Implementation
 
     // If Item is equipmentV2, check if we should split the item's quantity.
-    if (item && item.type === 'equipmentV2' && split) {
+    if (item && item.type === ItemType.Equipment && split) {
       if (await this.#splitEquipment(sourcekey, targetkey)) return
     }
 
@@ -2255,14 +2266,20 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     }
 
     // If the item is being dropped onto a same-named item, check if we should merge them.
-    if (item.type === 'equipmentV2' && (await this.checkForMerge(item as Item.OfType<'equipmentV2'>, targetkey))) return
+    if (
+      item.type === ItemType.Equipment &&
+      (await this.checkForMerge(item as Item.OfType<ItemType.Equipment>, targetkey))
+    )
+      return
 
     let where: 'before' | 'inside' | 'after' | null = null
 
     if (targetkey === targetCollection)
       where = 'after' // Dropping on the collection itself, so add to the end.
     else
-      where = await this.resolveDropPosition(item as Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>)
+      where = await this.resolveDropPosition(
+        item as Item.OfType<ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell>
+      )
 
     if (!where) return
 
@@ -2321,7 +2338,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       },
     } as Item.UpdateData
 
-    if (item.isOfType('equipmentV2')) {
+    if (item.isOfType(ItemType.Equipment)) {
       // @ts-expect-error: wrong type for _id provided by fvtt-types
       update.system!._carried = targetCollection === 'system.equipmentV2.carried'
     }
@@ -2347,7 +2364,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   }
 
   private async resolveDropPosition(
-    item: Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
+    item: Item.OfType<ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell>
   ): Promise<'before' | 'inside' | 'after' | null> {
     return await foundry.applications.api.DialogV2.wait({
       window: { title: item.name },
@@ -2398,7 +2415,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @returns true if split was handled.
    */
   async #splitEquipment(srckey: string, targetkey: string): Promise<boolean> {
-    const sourceItem = (foundry.utils.getProperty(this, srckey) as Item.OfType<'equipmentV2'>) ?? null
+    const sourceItem = (foundry.utils.getProperty(this, srckey) as Item.OfType<ItemType.Equipment>) ?? null
 
     if (!sourceItem || !sourceItem.system || sourceItem.system.count <= 1) return false // Nothing to split
 
@@ -2412,7 +2429,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     let parent = null
 
     if (!targetkey.match(/^system\.equipmentV2\.(other|carried)$/)) {
-      parent = (foundry.utils.getProperty(this, targetkey) as Item.OfType<'equipmentV2'>) ?? null
+      parent = (foundry.utils.getProperty(this, targetkey) as Item.OfType<ItemType.Equipment>) ?? null
     }
 
     // Copy item and save.
@@ -2451,11 +2468,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   /* ---------------------------------------- */
 
-  private async checkForMerge(item: Item.OfType<'equipmentV2'>, targetkey: string): Promise<boolean> {
+  private async checkForMerge(item: Item.OfType<ItemType.Equipment>, targetkey: string): Promise<boolean> {
     // If dropping on an item of the same name and type, ask if they want to merge.
-    const targetItem = (foundry.utils.getProperty(this, targetkey) as Item.OfType<'equipmentV2'>) ?? null
+    const targetItem = (foundry.utils.getProperty(this, targetkey) as Item.OfType<ItemType.Equipment>) ?? null
 
-    if (!targetItem || targetItem.type !== 'equipmentV2' || targetItem.name !== item.name) return false
+    if (!targetItem || targetItem.type !== ItemType.Equipment || targetItem.name !== item.name) return false
 
     const merge = await foundry.applications.api.DialogV2.wait({
       window: { title: `Merge Items` },
@@ -2523,9 +2540,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (this.isNewActorType) {
       if (targetKey) {
         targetKey = this.#convertLegacyItemKey(targetKey)
-        const parent = foundry.utils.getProperty(this, targetKey) as Item.OfType<'equipmentV2'> | null
+        const parent = foundry.utils.getProperty(this, targetKey) as Item.OfType<ItemType.Equipment> | null
 
-        if (parent && parent.isOfType('equipmentV2')) {
+        if (parent && parent.isOfType(ItemType.Equipment)) {
           itemData.system.containedBy = parent.id
         }
       }
@@ -2554,7 +2571,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       ])
 
       await this.addItemData(localItem, targetKey) // only created 1 item
-      const item = this.items.get(localItem._id) as Item.OfType<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>
+      const item = this.items.get(localItem._id) as Item.OfType<
+        'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
+      >
 
       return this._updateItemFromForm(item!)
     }
@@ -2566,8 +2585,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * NOTE: Both character and characterV2.
    */
   async setMoveDefault(value: string) {
-    if (this.isOfType('characterV2')) {
-      return (this.system as Actor.SystemOfType<'characterV2'>).setMoveDefault(value)
+    if (this.isOfType(ActorType.Character)) {
+      return (this.system as Actor.SystemOfType<ActorType.Character>).setMoveDefault(value)
     } else {
       // Legacy actor type.
       const move = this.modelV1.move
@@ -2689,17 +2708,17 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     this.calculateDerivedValues()
 
     // Convoluted code to add Items (and features) into the equipment list
-    let orig: Item.OfType<'equipment'>[] = this.items.contents
-      .filter(i => i.type === 'equipment')
+    let orig: Item.OfType<ItemType.LegacyEquipment>[] = this.items.contents
+      .filter(i => i.type === ItemType.LegacyEquipment)
       .slice()
-      .map(i => i as Item.OfType<'equipment'>)
+      .map(i => i as Item.OfType<ItemType.LegacyEquipment>)
       .sort((left, right) => right.name.localeCompare(left.name)) // in case items are in the same list... add them alphabetically
 
-    let good: Item.OfType<'equipment'>[] = []
+    let good: Item.OfType<ItemType.LegacyEquipment>[] = []
 
     while (orig.length > 0) {
       // We are trying to place 'parent' items before we place 'children' items
-      const left: Item.OfType<'equipment'>[] = []
+      const left: Item.OfType<ItemType.LegacyEquipment>[] = []
       let atLeastOne = false
 
       for (const i of orig) {
@@ -3242,13 +3261,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     const data = this.modelV1
 
     for (const item of this.items.contents) {
-      const itemData = (item as Item.OfType<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>).modelV1 as Record<
-        string,
-        any
-      >
+      const itemData = (
+        item as Item.OfType<
+          'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
+        >
+      ).modelV1 as Record<string, any>
 
       if (
-        (item.type !== 'equipment' || (itemData.equipped && itemData.carried)) &&
+        (item.type !== ItemType.LegacyEquipment || (itemData.equipped && itemData.carried)) &&
         !!itemData.bonuses &&
         !gids.includes(itemData.globalid)
       ) {
@@ -3463,7 +3483,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     // 2. Check if Actor Component exists
     const actorCompKey =
       // @ts-expect-error - custom item type properties not in base type
-      data.type === 'equipment'
+      data.type === ItemType.LegacyEquipment
         ? this._findEqtkeyForId('globalid', data.system.globalid)
         : // @ts-expect-error - custom item type properties not in base type
           this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
@@ -3478,19 +3498,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
       // @ts-expect-error - custom item type not in base Item type
       switch (data.type) {
-        case 'equipment':
+        case ItemType.LegacyEquipment:
           actorComp = Equipment.fromObject({ name: data.name, ...data.system.eqt }, this)
           targetKey = 'system.equipment.carried'
           break
-        case 'feature':
+        case ItemType.LegacyTrait:
           actorComp = Advantage.fromObject({ name: data.name, ...data.system.fea }, this)
           targetKey = 'system.ads'
           break
-        case 'skill':
+        case ItemType.LegacySkill:
           actorComp = Skill.fromObject({ name: data.name, ...data.system.ski }, this)
           targetKey = 'system.skills'
           break
-        case 'spell':
+        case ItemType.LegacySpell:
           actorComp = Spell.fromObject({ name: data.name, ...data.system.spl }, this)
           targetKey = 'system.spells'
           break
@@ -4304,7 +4324,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    * @param item
    */
-  async _updateItemFromForm(item: Item.OfType<'base' | 'equipment' | 'feature' | 'skill' | 'spell'>) {
+  async _updateItemFromForm(
+    item: Item.OfType<
+      'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
+    >
+  ) {
     if (this.isNewActorType) return
 
     const sysKey =
@@ -4331,7 +4355,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     // If originalCount exists, let's check if the count has changed
     // If changed and ignoreImportQty is true, we need to add the flag to the item
     if (
-      item.isOfType('equipment') &&
+      item.isOfType(ItemType.LegacyEquipment) &&
       ImportSettings.ignoreQuantityOnImport &&
       // @ts-expect-error - equipment system eqt property not fully typed
       !!item.system.eqt.originalCount &&
@@ -4365,7 +4389,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     })
     await this._addItemAdditions(item, sysKey)
 
-    if (item.type === 'equipment') {
+    if (item.type === ItemType.LegacyEquipment) {
       await this.updateParentOf(sysKey, true)
       await this._updateEquipmentCalc(sysKey)
     }
@@ -4610,7 +4634,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       const rawItem = this.items.get(srceqt.itemid)
 
       if (rawItem) {
-        const item = rawItem as Item.OfType<'equipment'>
+        const item = rawItem as Item.OfType<ItemType.LegacyEquipment>
 
         item.modelV1.eqt.count = count
         await this.addNewItemData(item, targetkey)
@@ -4801,7 +4825,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    */
   findAdvantage(name: string): Advantage | undefined {
     // This code is for when the actor is using Foundry items.
-    // let found = this.items.filter(it => it.type === 'feature').find(it => it.name.match(new RegExp(advname, 'i')))
+    // let found = this.items.filter(it => it.type === ItemType.LegacyTrait).find(it => it.name.match(new RegExp(advname, 'i')))
     // This code is for no Foundry items.
 
     // flatten the advantages into a single array. an advantage is a container if it has a `contains` property

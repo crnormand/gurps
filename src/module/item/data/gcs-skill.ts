@@ -5,6 +5,8 @@ import { IPrereqs, IPrereqsBaseData, preparePrereqs, prereqsSchema } from '@modu
 import { IStudies, studiesSchema } from '@module/data/mixins/studies.js'
 import { SkillDefault } from '@module/data/skill-default.js'
 
+import { ItemType } from '../types.js'
+
 import { GcsBaseItemModel, gcsBaseItemSchema, GcsItemMetadata } from './gcs-base.js'
 
 type SkillBaseData = INameable.AccesserBaseData & IPrereqsBaseData
@@ -28,7 +30,7 @@ class GcsSkillModel
   static override get metadata(): GcsItemMetadata {
     return {
       embedded: { Prereq: 'system._prereqs', Feature: 'system.features', Study: 'system.study' },
-      type: 'gcsSkill',
+      type: ItemType.GcsSkill,
       invalidActorTypes: [],
       actions: {},
       childTypes: [],

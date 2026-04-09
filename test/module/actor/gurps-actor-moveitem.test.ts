@@ -1,11 +1,13 @@
 import { CharacterModel } from '@module/actor/data/character.js'
 import { GurpsActorV2 } from '@module/actor/gurps-actor.js'
+import { ActorType } from '@module/actor/types.js'
 import { GurpsItemV2 } from '@module/item/gurps-item.js'
-import { vi, Mock } from 'vitest'
+import { ItemType } from '@module/item/types.js'
+import { Mock, vi } from 'vitest'
 
 describe('GurpsActorV2.moveItem', () => {
-  let actor: GurpsActorV2<'characterV2'>
-  let equipmentItems: GurpsItemV2<'equipmentV2'>[]
+  let actor: Actor.OfType<ActorType.Character>
+  let equipmentItems: Item.OfType<ItemType.Equipment>[]
   let EquipmentModel: any
   let equipmentData: any
 
@@ -28,7 +30,7 @@ describe('GurpsActorV2.moveItem', () => {
     }
 
     // Instantiate with minimal data that our test base Actor supports
-    actor = new GurpsActorV2({ name: 'Test Actor', type: 'characterV2' })
+    actor = new GurpsActorV2({ name: 'Test Actor', type: ActorType.Character })
     actor.system = new CharacterModel()
     // @ts-expect-error - _source is a private property being set for testing
     actor.system._source = { allNotes: [], moveV2: [] }
@@ -66,21 +68,21 @@ describe('GurpsActorV2.moveItem', () => {
       new GurpsItemV2({
         _id: 'eq1',
         name: 'Sword',
-        type: 'equipmentV2',
+        type: ItemType.Equipment,
         sort: 0,
         system: new EquipmentModel(equipmentData),
       }),
       new GurpsItemV2({
         _id: 'eq2',
         name: 'Backpack',
-        type: 'equipmentV2',
+        type: ItemType.Equipment,
         sort: 1,
         system: new EquipmentModel(equipmentData),
       }),
       new GurpsItemV2({
         _id: 'eq2.1',
         name: 'Rope',
-        type: 'equipmentV2',
+        type: ItemType.Equipment,
         sort: 0,
         system: new EquipmentModel({
           ...equipmentData,
@@ -90,7 +92,7 @@ describe('GurpsActorV2.moveItem', () => {
       new GurpsItemV2({
         _id: 'eq3',
         name: 'Helmet',
-        type: 'equipmentV2',
+        type: ItemType.Equipment,
         sort: 2,
         system: new EquipmentModel(equipmentData),
       }),
@@ -203,10 +205,10 @@ describe('GurpsActorV2.moveItem', () => {
   })
 
   it('updates carried status when moving from other to carried', async () => {
-    const otherItem = new GurpsItemV2<'equipmentV2'>({
+    const otherItem = new GurpsItemV2<ItemType.Equipment>({
       _id: 'eq4',
       name: 'Shield',
-      type: 'equipmentV2',
+      type: ItemType.Equipment,
       sort: 0,
       system: new EquipmentModel({
         ...equipmentData,
@@ -312,7 +314,7 @@ describe('GurpsActorV2.moveItem', () => {
     const otherItem = new GurpsItemV2({
       _id: 'eq4',
       name: 'Shield',
-      type: 'equipmentV2',
+      type: ItemType.Equipment,
       sort: 0,
       system: new EquipmentModel({
         ...equipmentData,
@@ -367,7 +369,7 @@ describe('GurpsActorV2.moveItem', () => {
         id: 'eq1-split',
         _id: 'eq1-split',
         name: 'Sword',
-        type: 'equipmentV2',
+        type: ItemType.Equipment,
       } as any,
     ])
 
@@ -380,7 +382,7 @@ describe('GurpsActorV2.moveItem', () => {
       expect.arrayContaining([
         expect.objectContaining({
           name: 'Sword',
-          type: 'equipmentV2',
+          type: ItemType.Equipment,
           system: expect.objectContaining({
             containedBy: 'eq2', // Inside the backpack
             count: 2, // The split quantity
@@ -462,11 +464,11 @@ describe('GurpsActorV2.moveItem', () => {
 })
 
 // Helper functions
-function setEquipmentQuantity(actor: GurpsActorV2<'characterV2'>, value: number) {
+function setEquipmentQuantity(actor: Actor.OfType<ActorType.Character>, value: number) {
   vi.spyOn(actor as any, 'promptEquipmentQuantity').mockResolvedValue(value)
 }
 
-function getUpdates(actor: GurpsActorV2<'characterV2'>) {
+function getUpdates(actor: Actor.OfType<ActorType.Character>) {
   const calls = (actor.updateEmbeddedDocuments as Mock).mock.calls[0]
   const updates = calls[1] as any[]
 
@@ -477,6 +479,6 @@ function expectItemIdAtSortIndex(updates: any[], itemId: string, sortIndex: numb
   expect(updates).toContainEqual(expect.objectContaining({ _id: itemId, sort: sortIndex }))
 }
 
-function setDropPosition(actor: GurpsActorV2<'characterV2'>, value: string | null) {
+function setDropPosition(actor: Actor.OfType<ActorType.Character>, value: string | null) {
   vi.spyOn(actor as any, 'resolveDropPosition').mockResolvedValue(value)
 }

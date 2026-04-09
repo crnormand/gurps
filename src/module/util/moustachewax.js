@@ -12,7 +12,7 @@ import { extractOtfs } from '@util/otf.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
 import { isArray, isEmpty, quotedAttackName, recurselist, stripBracketContents, zeroFill } from '@util/utilities.js'
 
-import { contrastColor } from './color-utils.ts'
+import { contrastColor } from './color-utils.js'
 import { i18nFallback } from './i18nFallback.js'
 import * as Settings from './miscellaneous-settings.js'
 
