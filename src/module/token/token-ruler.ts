@@ -51,7 +51,7 @@ class GurpsTokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
     const actor = this.token.actor
 
     if (!actor) return defaultColor
-    if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.Character, ActorType.LegacyEnemy)) return defaultColor
+    if (!actor.isOfType(ActorType.Character)) return defaultColor
 
     const units = Length.unitFromString(canvas?.scene?.grid.units ?? Length.Unit.Yard)
     const yards = Length.from(distance, units as LengthUnit)?.to(Length.Unit.Yard).value ?? 0

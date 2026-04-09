@@ -187,7 +187,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     // Add character v1/v2 type guard
     const actor = this.actor
 
-    if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.Character, ActorType.LegacyEnemy)) return
+    if (!actor.isOfType(ActorType.Character)) return
 
     const html = this.element
 

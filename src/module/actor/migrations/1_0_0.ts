@@ -27,6 +27,7 @@ async function migrate(): Promise<MigrationReport | void> {
   })
 
   const actors = game.actors.contents.filter(
+    // @ts-expect-error: no longer recognized as a valid Actor Type, but should be for the sake of this migration
     actor => actor.type === LEGACY_TYPE_ENEMY || actor.type === ActorType.Character
   ) as Actor[]
   const packs = game.packs!.filter(
@@ -55,6 +56,7 @@ async function migrate(): Promise<MigrationReport | void> {
       const docs = await pack.getDocuments()
 
       const docsToMigrate: Actor.Stored[] = docs.filter(
+        // @ts-expect-error: no longer recognized as a valid Actor Type, but should be for the sake of this migration
         doc => doc.type === LEGACY_TYPE_ENEMY || doc.type === ActorType.Character
       )
 

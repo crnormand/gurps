@@ -205,10 +205,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
       const allTypes = Item.TYPES
       const excludeTypes = [
         'base',
-        ItemType.LegacyEquipment,
-        ItemType.LegacyTrait,
-        ItemType.LegacySkill,
-        ItemType.LegacySpell,
         ItemType.GcsTrait,
         ItemType.GcsSkill,
         ItemType.GcsSpell,

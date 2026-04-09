@@ -32,7 +32,7 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
       return context
     }
 
-    if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.LegacyEnemy, ActorType.Character)) {
+    if (!actor.isOfType(ActorType.Character)) {
       console.warn('Actor is of unsupported type, cannot get current Maneuver!')
 
       return context

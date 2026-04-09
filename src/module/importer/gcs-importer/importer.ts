@@ -31,7 +31,7 @@ import { GcsTrait } from './schema/trait.js'
 import { GcsWeapon } from './schema/weapon.js'
 
 enum GcsImporterMode {
-  Character = ActorType.LegacyCharacter,
+  Character = 'character',
   ItemCompendium = 'itemCompendium',
 }
 

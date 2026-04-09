@@ -31,7 +31,6 @@ function init() {
 
     foundry.documents.collections.Items.registerSheet('gurps', sheets.GurpsItemSheet, {
       makeDefault: true,
-      types: [ItemType.LegacyTrait, ItemType.LegacySkill, ItemType.LegacySpell, ItemType.LegacyEquipment],
       canConfigure: false,
     })
   })

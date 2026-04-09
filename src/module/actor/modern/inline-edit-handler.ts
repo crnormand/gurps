@@ -109,7 +109,7 @@ const inlineEditConfigs: InlineEditConfigInternal[] = [
 
 export function buildOnBlurHandler(
   config: InlineEditConfigInternal,
-  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
+  actor: Actor.OfType<ActorType.Character>
 ): ((input: HTMLInputElement) => void) | undefined {
   if (config.fieldType === 'name') {
     return (input: HTMLInputElement) => {
@@ -139,10 +139,7 @@ export function buildOnBlurHandler(
   return undefined
 }
 
-export function bindAllInlineEdits(
-  html: HTMLElement,
-  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
-): void {
+export function bindAllInlineEdits(html: HTMLElement, actor: Actor.OfType<ActorType.Character>): void {
   inlineEditConfigs.forEach(config => {
     const onBlur = buildOnBlurHandler(config, actor)
 
@@ -150,10 +147,7 @@ export function bindAllInlineEdits(
   })
 }
 
-export function bindAttributeEdit(
-  html: HTMLElement,
-  actor: Actor.OfType<ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy>
-): void {
+export function bindAttributeEdit(html: HTMLElement, actor: Actor.OfType<ActorType.Character>): void {
   const wrapperSelector = '.ms-attr-wrapper'
   const badgeSelector = '.ms-attr-badge'
   const inputSelector = '.ms-attr-input'

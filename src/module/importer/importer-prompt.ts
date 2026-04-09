@@ -1,5 +1,4 @@
 import { ActorType } from '@module/actor/types.js'
-import { ItemType } from '@module/item/types.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { GcaImporter } from './gca-importer/importer.js'
@@ -189,7 +188,7 @@ async function itemImporterPrompt() {
               case 'skl': {
                 const collection = GcsSkillCollection.fromImportData({
                   ...jsonObject,
-                  type: ItemType.LegacySkill,
+                  type: 'skill',
                   name,
                 }) as GcsSkillCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -200,7 +199,7 @@ async function itemImporterPrompt() {
               case 'spl': {
                 const collection = GcsSpellCollection.fromImportData({
                   ...jsonObject,
-                  type: ItemType.LegacySpell,
+                  type: 'spell',
                   name,
                 }) as GcsSpellCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -211,7 +210,7 @@ async function itemImporterPrompt() {
               case 'eqp': {
                 const collection = GcsEquipmentCollection.fromImportData({
                   ...jsonObject,
-                  type: ItemType.LegacyEquipment,
+                  type: 'equipment',
                   name,
                 }) as GcsEquipmentCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)

@@ -24,10 +24,10 @@ import { ModelCollection } from '../data/model-collection.js'
 import { HitLocation } from '../hitlocation/hitlocation.js'
 import { ImportSettings } from '../importer/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
-import { IResourceTracker, IResourceTrackerTemplate } from '../resource-tracker/index.js'
+import { IResourceTracker } from '../resource-tracker/index.js'
 import { TokenActions } from '../token-actions.js'
 
-import { Advantage, Equipment, HitLocationEntry, Melee, Named, Ranged, Skill, Spell } from './actor-components.js'
+import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
 import { ActorMetadata } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
@@ -93,12 +93,14 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   // Narrowed view of this.system for characterV1 logic.
   private get modelV1(): ActorV1Model {
-    return this.system as Actor.SystemOfType<ActorType.LegacyCharacter>
+    throw new Error('modelV1 is deprecated and should not be used in new code.')
   }
 
   // Common guard for new actor subtypes.
   get isNewActorType(): boolean {
-    return this.isOfType(ActorType.Character)
+    // NOTE: This is always true after migration, so always return `true`
+    return true
+    // return this.isOfType(ActorType.Character)
   }
 
   // Settings getter with default fallback
@@ -199,13 +201,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
     if (!isDevMode) {
       options ||= {}
       const allTypes = Actor.TYPES
-      const excludeTypes = [
-        'base',
-        ActorType.LegacyCharacter,
-        ActorType.LegacyEnemy,
-        ActorType.GcsCharacter,
-        ActorType.GcsLoot,
-      ]
+      const excludeTypes = ['base', ActorType.GcsCharacter, ActorType.GcsLoot]
 
       // Disable non-production Actor types if developer mode is off.
       // @ts-expect-error: Improper types
@@ -626,7 +622,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       //   }
       // }
 
-      if (this.type !== ActorType.LegacyCharacter) return
+      if (this.isNewActorType) return
 
       this.modelV1.conditions.posture = 'standing'
       this.modelV1.conditions.self = { modifiers: [] }
@@ -669,7 +665,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
         for (const pseudo of collection) pseudo.prepareDerivedData()
     } else {
       // Legacy V1 handling.
-      if (this.type !== ActorType.LegacyCharacter) return
+      if (this.isNewActorType) return
 
       // Handle new move data -- if data.move exists, use the default value in that object to set the move
       // value in the first entry of the encumbrance object.
@@ -2000,17 +1996,19 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    *
    * @deprecated Use moveItem() instead
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async reorderItem(sourceKey: string, targetkey: string, object: any, isSrcFirst: boolean) {
     if (this.isNewActorType) return await this.moveItem(sourceKey, targetkey)
 
+    // NOTE: Deprecated. Method should never run past this point.
     // Legacy actor type.
-    if (!isSrcFirst) {
-      await this._removeKey(sourceKey)
-      await this._insertBeforeKey(targetkey, object)
-    } else {
-      await this._insertBeforeKey(targetkey, object)
-      await this._removeKey(sourceKey)
-    }
+    // if (!isSrcFirst) {
+    //   await this._removeKey(sourceKey)
+    //   await this._insertBeforeKey(targetkey, object)
+    // } else {
+    //   await this._insertBeforeKey(targetkey, object)
+    //   await this._removeKey(sourceKey)
+    // }
   }
 
   /* ---------------------------------------- */
@@ -2700,9 +2698,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
       ])
 
       await this.addItemData(localItem, targetKey) // only created 1 item
-      const item = this.items.get(localItem._id) as Item.OfType<
-        'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
-      >
+      const item = this.items.get(localItem._id) as Item.OfType<'base'>
 
       return this._updateItemFromForm(item!)
     }
@@ -2834,150 +2830,151 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   async postImport(): Promise<void> {
     if (this.isNewActorType) return
 
-    this.calculateDerivedValues()
-
-    // Convoluted code to add Items (and features) into the equipment list
-    let orig: Item.OfType<ItemType.LegacyEquipment>[] = this.items.contents
-      .filter(i => i.type === ItemType.LegacyEquipment)
-      .slice()
-      .map(i => i as Item.OfType<ItemType.LegacyEquipment>)
-      .sort((left, right) => right.name.localeCompare(left.name)) // in case items are in the same list... add them alphabetically
-
-    let good: Item.OfType<ItemType.LegacyEquipment>[] = []
-
-    while (orig.length > 0) {
-      // We are trying to place 'parent' items before we place 'children' items
-      const left: Item.OfType<ItemType.LegacyEquipment>[] = []
-      let atLeastOne = false
-
-      for (const i of orig) {
-        const equipmentParentUuid = (i as any).system.eqt!.parentuuid
-
-        if (
-          !equipmentParentUuid ||
-          good.find(existingEquipmentItem => (existingEquipmentItem as any).system.eqt!.uuid == equipmentParentUuid)
-        ) {
-          atLeastOne = true
-          good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
-        } else left.push(i)
-      }
-
-      if (atLeastOne) orig = left
-      else {
-        // if unable to move at least one, just copy the rest and hope for the best
-        good = [...good, ...left]
-        orig = []
-      }
-    }
-
-    for (const item of good) await this.addItemData(item, null) // re-add the item equipment and features
-
-    await this.internalUpdate({ '_stats.systemVersion': game.system!.version } as Actor.UpdateData, {
-      diff: false,
-      render: false,
-    })
-
-    // Set custom trackers based on templates.  should be last because it may need other data to initialize...
-    await this.setResourceTrackers()
-    await this.syncLanguages()
-
-    // If using Foundry Items we can remove Modifier Effects from Actor Components
-    const userMods: string[] = (foundry.utils.getProperty(this.system, 'conditions.usermods') as string[]) || []
-
-    const validMods = userMods.filter(mod => !mod.includes('@system.'))
-
-    await this.update({ 'system.conditions.usermods': validMods } as Actor.UpdateData)
-
-    // If Actor does not have system.conditions.actions, create it
-    if (!this.modelV1.conditions.actions) {
-      await this.internalUpdate({
-        'system.conditions.actions': {
-          maxActions: 1,
-          maxBlocks: 1,
-        },
-      } as Actor.UpdateData)
-    }
-
-    if (canvas!.tokens!.controlled.length > 0) {
-      // @ts-expect-error - TokenDocument.setFlag parameters not fully typed
-      await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
-    }
-  }
-
-  /**
-   * @deprecated Actor v1 only.
-   *
-   * Adds any assigned resource trackers to the actor data and sheet.
-   */
-  private async setResourceTrackers() {
-    /** @type {IResourceTracker[]} */
-    const currentTrackers: IResourceTracker[] = GurpsActorV2.getTrackersAsArray(this.system)
-
-    const newTrackers: IResourceTrackerTemplate[] =
-      GURPS.modules.ResourceTracker.getMissingRequiredTemplates(currentTrackers)
-
-    // If no new trackers were added, nothing to do.
-    if (newTrackers.length === 0) return
-
-    for (const template of newTrackers) {
-      this._initializeTrackerValues(template)
-      currentTrackers.push(template.tracker)
-    }
-
-    const data = arrayToObject(currentTrackers)
-
-    // Remove all trackers first. Add the new "array" of trackers.
-    if (data) {
-      await this.update({ 'system.additionalresources.-=tracker': null } as Actor.UpdateData)
-      await this.update({ 'system.additionalresources.tracker': data } as Actor.UpdateData)
-    }
+    // NOTE: Deprecated. Method should never run past this point.
+    //   this.calculateDerivedValues()
+    //
+    //   // Convoluted code to add Items (and features) into the equipment list
+    //   let orig: Item.OfType<ItemType.LegacyEquipment>[] = this.items.contents
+    //     .filter(i => i.type === ItemType.LegacyEquipment)
+    //     .slice()
+    //     .map(i => i as Item.OfType<ItemType.LegacyEquipment>)
+    //     .sort((left, right) => right.name.localeCompare(left.name)) // in case items are in the same list... add them alphabetically
+    //
+    //   let good: Item.OfType<ItemType.LegacyEquipment>[] = []
+    //
+    //   while (orig.length > 0) {
+    //     // We are trying to place 'parent' items before we place 'children' items
+    //     const left: Item.OfType<ItemType.LegacyEquipment>[] = []
+    //     let atLeastOne = false
+    //
+    //     for (const i of orig) {
+    //       const equipmentParentUuid = (i as any).system.eqt!.parentuuid
+    //
+    //       if (
+    //         !equipmentParentUuid ||
+    //         good.find(existingEquipmentItem => (existingEquipmentItem as any).system.eqt!.uuid == equipmentParentUuid)
+    //       ) {
+    //         atLeastOne = true
+    //         good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
+    //       } else left.push(i)
+    //     }
+    //
+    //     if (atLeastOne) orig = left
+    //     else {
+    //       // if unable to move at least one, just copy the rest and hope for the best
+    //       good = [...good, ...left]
+    //       orig = []
+    //     }
+    //   }
+    //
+    //   for (const item of good) await this.addItemData(item, null) // re-add the item equipment and features
+    //
+    //   await this.internalUpdate({ '_stats.systemVersion': game.system!.version } as Actor.UpdateData, {
+    //     diff: false,
+    //     render: false,
+    //   })
+    //
+    //   // Set custom trackers based on templates.  should be last because it may need other data to initialize...
+    //   await this.setResourceTrackers()
+    //   await this.syncLanguages()
+    //
+    //   // If using Foundry Items we can remove Modifier Effects from Actor Components
+    //   const userMods: string[] = (foundry.utils.getProperty(this.system, 'conditions.usermods') as string[]) || []
+    //
+    //   const validMods = userMods.filter(mod => !mod.includes('@system.'))
+    //
+    //   await this.update({ 'system.conditions.usermods': validMods } as Actor.UpdateData)
+    //
+    //   // If Actor does not have system.conditions.actions, create it
+    //   if (!this.modelV1.conditions.actions) {
+    //     await this.internalUpdate({
+    //       'system.conditions.actions': {
+    //         maxActions: 1,
+    //         maxBlocks: 1,
+    //       },
+    //     } as Actor.UpdateData)
+    //   }
+    //
+    //   if (canvas!.tokens!.controlled.length > 0) {
+    //     // @ts-expect-error - TokenDocument.setFlag parameters not fully typed
+    //     await canvas!.tokens!.controlled[0].document.setFlag('gurps', 'lastUpdate', new Date().getTime().toString())
+    //   }
+    // }
+    //
+    // /**
+    //  * @deprecated Actor v1 only.
+    //  *
+    //  * Adds any assigned resource trackers to the actor data and sheet.
+    //  */
+    // private async setResourceTrackers() {
+    //   /** @type {IResourceTracker[]} */
+    //   const currentTrackers: IResourceTracker[] = GurpsActorV2.getTrackersAsArray(this.system)
+    //
+    //   const newTrackers: IResourceTrackerTemplate[] =
+    //     GURPS.modules.ResourceTracker.getMissingRequiredTemplates(currentTrackers)
+    //
+    //   // If no new trackers were added, nothing to do.
+    //   if (newTrackers.length === 0) return
+    //
+    //   for (const template of newTrackers) {
+    //     this._initializeTrackerValues(template)
+    //     currentTrackers.push(template.tracker)
+    //   }
+    //
+    //   const data = arrayToObject(currentTrackers)
+    //
+    //   // Remove all trackers first. Add the new "array" of trackers.
+    //   if (data) {
+    //     await this.update({ 'system.additionalresources.-=tracker': null } as Actor.UpdateData)
+    //     await this.update({ 'system.additionalresources.tracker': data } as Actor.UpdateData)
+    //   }
   }
 
   /**
    * @deprecated Actor v1 only.
    * Ensure Language Advantages conform to a standard (for Polygot module)
    */
-  private async syncLanguages() {
-    if (this.modelV1.languages) {
-      let updated = false
-      const newads = { ...this.modelV1.ads }
-      const langn = /Language:?/i
-      const langt = new RegExp(game.i18n!.localize('GURPS.language') + ':?', 'i')
-
-      recurselist(this.modelV1.languages, (value, _k, _d) => {
-        const adv = GURPS.findAdDisad(this, '*' + value.name) // is there an Adv including the same name
-
-        if (adv) {
-          if (!adv.name.match(langn) && !adv.name.match(langt)) {
-            // GCA4/GCS style
-            adv.name = game.i18n!.localize('GURPS.language') + ': ' + adv.name
-            updated = true
-          }
-        } else {
-          // GCA5 style (Language without Adv)
-          let name = game.i18n!.localize('GURPS.language') + ': ' + value.name
-
-          if (value.spoken == value.written)
-            // If equal, then just report single level
-            name += ' (' + value.spoken + ')'
-          else if (value.spoken)
-            // Otherwise, report type and level (like GCA4)
-            name += ' (' + game.i18n!.localize('GURPS.spoken') + ') (' + value.spoken + ')'
-          else name += ' (' + game.i18n!.localize('GURPS.written') + ') (' + value.written + ')'
-          const adv = new Advantage()
-
-          adv.name = name
-          adv.points = value.points
-          GURPS.put(newads, adv)
-          updated = true
-        }
-      })
-
-      if (updated) {
-        await this.internalUpdate({ 'system.ads': newads } as Actor.UpdateData)
-      }
-    }
-  }
+  // private async syncLanguages() {
+  //   if (this.modelV1.languages) {
+  //     let updated = false
+  //     const newads = { ...this.modelV1.ads }
+  //     const langn = /Language:?/i
+  //     const langt = new RegExp(game.i18n!.localize('GURPS.language') + ':?', 'i')
+  //
+  //     recurselist(this.modelV1.languages, (value, _k, _d) => {
+  //       const adv = GURPS.findAdDisad(this, '*' + value.name) // is there an Adv including the same name
+  //
+  //       if (adv) {
+  //         if (!adv.name.match(langn) && !adv.name.match(langt)) {
+  //           // GCA4/GCS style
+  //           adv.name = game.i18n!.localize('GURPS.language') + ': ' + adv.name
+  //           updated = true
+  //         }
+  //       } else {
+  //         // GCA5 style (Language without Adv)
+  //         let name = game.i18n!.localize('GURPS.language') + ': ' + value.name
+  //
+  //         if (value.spoken == value.written)
+  //           // If equal, then just report single level
+  //           name += ' (' + value.spoken + ')'
+  //         else if (value.spoken)
+  //           // Otherwise, report type and level (like GCA4)
+  //           name += ' (' + game.i18n!.localize('GURPS.spoken') + ') (' + value.spoken + ')'
+  //         else name += ' (' + game.i18n!.localize('GURPS.written') + ') (' + value.written + ')'
+  //         const adv = new Advantage()
+  //
+  //         adv.name = name
+  //         adv.points = value.points
+  //         GURPS.put(newads, adv)
+  //         updated = true
+  //       }
+  //     })
+  //
+  //     if (updated) {
+  //       await this.internalUpdate({ 'system.ads': newads } as Actor.UpdateData)
+  //     }
+  //   }
+  // }
 
   /**
    * @deprecated Actor v1 only.
@@ -3384,173 +3381,173 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * Apply item bonuses to attributes, skills, attacks, etc.
    */
   private _applyItemBonuses() {
-    const pi = (num: string | undefined) => (num ? parseInt(num) : 0)
+    if (this.isNewActorType) return
 
-    const gids: string[] = [] //only allow each global bonus to add once
-    const data = this.modelV1
-
-    for (const item of this.items.contents) {
-      const itemData = (
-        item as Item.OfType<
-          'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
-        >
-      ).modelV1 as Record<string, any>
-
-      if (
-        (item.type !== ItemType.LegacyEquipment || (itemData.equipped && itemData.carried)) &&
-        !!itemData.bonuses &&
-        !gids.includes(itemData.globalid)
-      ) {
-        gids.push(itemData.globalid)
-        const bonuses = itemData.bonuses.split('\n')
-
-        for (let bonus of bonuses) {
-          let match = bonus.match(/\[(.*)\]/)
-
-          if (match) bonus = match[1] // remove extranious  [ ]
-          const link = parselink(bonus) // ATM, we only support attribute and skill
-
-          if (link.action) {
-            // start OTF
-            recurselist(data.melee, (weapon, _k, _d) => {
-              weapon.level = pi(weapon.level)
-
-              if (link.action.type == 'attribute' && link.action.attrkey == 'DX') {
-                // All melee attack skills affected by DX
-                weapon.level += pi(link.action.mod)
-
-                if (!isNaN(parseInt(weapon.parry))) {
-                  // handles '11f'
-                  const match = (weapon.parry + '').match(/(\d+)(.*)/)
-
-                  weapon.parry = 3 + Math.floor(weapon.level / 2)
-                  if (weapon.parrybonus) weapon.parry += pi(weapon.parrybonus)
-                  if (match) weapon.parry += match[2]
-                }
-
-                if (!isNaN(parseInt(weapon.block))) {
-                  // handles 'no'
-                  weapon.block = 3 + Math.floor(weapon.level / 2)
-                  if (weapon.blockbonus) weapon.block += pi(weapon.blockbonus)
-                }
-              }
-
-              if (link.action.type == 'attack' && !!link.action.isMelee) {
-                if (weapon.name.match(makeRegexPatternFrom(link.action.name, false))) {
-                  weapon.level += pi(link.action.mod)
-
-                  if (!isNaN(parseInt(weapon.parry))) {
-                    // handles '11f'
-                    const match = (weapon.parry + '').match(/(\d+)(.*)/)
-
-                    weapon.parry = 3 + Math.floor(weapon.level / 2)
-                    if (weapon.parrybonus) weapon.parry += pi(weapon.parrybonus)
-                    if (match) weapon.parry += match[2]
-                  }
-
-                  if (!isNaN(parseInt(weapon.block))) {
-                    // handles 'no'
-                    weapon.block = 3 + Math.floor(weapon.level / 2)
-                    if (weapon.blockbonus) weapon.block += pi(weapon.blockbonus)
-                  }
-                }
-              }
-            }) // end melee
-
-            recurselist(data.ranged, (rangedWeapon, _k, _d) => {
-              rangedWeapon.level = pi(rangedWeapon.level)
-              if (link.action.type == 'attribute' && link.action.attrkey == 'DX')
-                rangedWeapon.level += pi(link.action.mod)
-
-              if (link.action.type == 'attack' && !!link.action.isRanged) {
-                if (rangedWeapon.name.match(makeRegexPatternFrom(link.action.name, false)))
-                  rangedWeapon.level += pi(link.action.mod)
-              }
-            }) // end ranged
-
-            recurselist(data.skills, (skill, _k, _d) => {
-              skill.level = pi(skill.level)
-
-              if (link.action.type == 'attribute') {
-                // skills affected by attribute changes
-                if (skill.relativelevel?.toUpperCase().startsWith(link.action.attrkey))
-                  skill.level += pi(link.action.mod)
-              }
-
-              if (link.action.type == 'skill-spell' && !link.action.isSpellOnly) {
-                if (skill.name.match(makeRegexPatternFrom(link.action.name, false))) skill.level += pi(link.action.mod)
-              }
-            }) // end skills
-
-            recurselist(data.spells, (spell, _k, _d) => {
-              spell.level = pi(spell.level)
-
-              if (link.action.type == 'attribute') {
-                // spells affected by attribute changes
-                if (spell.relativelevel?.toUpperCase().startsWith(link.action.attrkey))
-                  spell.level += pi(link.action.mod)
-              }
-
-              if (link.action.type == 'skill-spell' && !link.action.isSkillOnly) {
-                if (spell.name.match(makeRegexPatternFrom(link.action.name, false))) spell.level += pi(link.action.mod)
-              }
-            }) // end spells
-
-            if (link.action.type == 'attribute') {
-              const paths = link.action.path.split('.')
-              const last = paths.pop()
-              let data = this.modelV1 as Record<string, any>
-
-              if (paths.length > 0) data = foundry.utils.getProperty(data, paths.join('.')) as Record<string, any>
-              // regular attributes have a path
-              else {
-                // only accept DODGE
-                if (link.action.attrkey != 'DODGE') break
-              }
-
-              data[last] = pi(data[last]) + pi(link.action.mod) // enforce that attribute is int
-            } // end attributes & Dodge
-          } // end OTF
-
-          // parse bonus for other forms, DR+x?
-          match = bonus.match(/DR *([+-]\d+) *(.*)/) // DR+1 *Arms "Left Leg" ...
-
-          if (match) {
-            const delta = parseInt(match[1])
-            let locpatterns = null
-
-            if (match[2]) {
-              const locs = splitArgs(match[2])
-
-              locpatterns = locs.map(loc => new RegExp(makeRegexPatternFrom(loc), 'i'))
-            }
-
-            recurselist(data.hitlocations, (hitLocation, _k, _d) => {
-              if (
-                !locpatterns ||
-                locpatterns.find(pattern => !!hitLocation.where && hitLocation.where.match(pattern)) != null
-              ) {
-                let dr = hitLocation.dr ?? ''
-
-                dr += ''
-                const match = dr.match(/(\d+) *([/|]) *(\d+)/) // check for split DR 5|3 or 5/3
-
-                if (match) {
-                  dr = parseInt(match[1]) + delta
-                  const dr2 = parseInt(match[3]) + delta
-
-                  hitLocation.dr = dr + match[2] + dr2
-                } else if (!isNaN(parseInt(dr))) {
-                  hitLocation.dr = parseInt(dr) + delta
-                  if (!!hitLocation.drCap && hitLocation.dr > hitLocation.drCap) hitLocation.dr = hitLocation.drCap
-                }
-                //console.warn(e.where, e.dr)
-              }
-            })
-          } // end DR
-        }
-      }
-    }
+    // NOTE: Deprecated. This method should never run past this point. In Actor v2, bonuses are applied automatically
+    // via derived data.
+    // const pi = (num: string | undefined) => (num ? parseInt(num) : 0)
+    //
+    // const gids: string[] = [] //only allow each global bonus to add once
+    // const data = this.modelV1
+    //
+    // for (const item of this.items.contents) {
+    //   const itemData = (item as Item.OfType<'base'>).modelV1 as Record<string, any>
+    //
+    //   if (
+    //     (item.type !== ItemType.LegacyEquipment || (itemData.equipped && itemData.carried)) &&
+    //     !!itemData.bonuses &&
+    //     !gids.includes(itemData.globalid)
+    //   ) {
+    //     gids.push(itemData.globalid)
+    //     const bonuses = itemData.bonuses.split('\n')
+    //
+    //     for (let bonus of bonuses) {
+    //       let match = bonus.match(/\[(.*)\]/)
+    //
+    //       if (match) bonus = match[1] // remove extranious  [ ]
+    //       const link = parselink(bonus) // ATM, we only support attribute and skill
+    //
+    //       if (link.action) {
+    //         // start OTF
+    //         recurselist(data.melee, (weapon, _k, _d) => {
+    //           weapon.level = pi(weapon.level)
+    //
+    //           if (link.action.type == 'attribute' && link.action.attrkey == 'DX') {
+    //             // All melee attack skills affected by DX
+    //             weapon.level += pi(link.action.mod)
+    //
+    //             if (!isNaN(parseInt(weapon.parry))) {
+    //               // handles '11f'
+    //               const match = (weapon.parry + '').match(/(\d+)(.*)/)
+    //
+    //               weapon.parry = 3 + Math.floor(weapon.level / 2)
+    //               if (weapon.parrybonus) weapon.parry += pi(weapon.parrybonus)
+    //               if (match) weapon.parry += match[2]
+    //             }
+    //
+    //             if (!isNaN(parseInt(weapon.block))) {
+    //               // handles 'no'
+    //               weapon.block = 3 + Math.floor(weapon.level / 2)
+    //               if (weapon.blockbonus) weapon.block += pi(weapon.blockbonus)
+    //             }
+    //           }
+    //
+    //           if (link.action.type == 'attack' && !!link.action.isMelee) {
+    //             if (weapon.name.match(makeRegexPatternFrom(link.action.name, false))) {
+    //               weapon.level += pi(link.action.mod)
+    //
+    //               if (!isNaN(parseInt(weapon.parry))) {
+    //                 // handles '11f'
+    //                 const match = (weapon.parry + '').match(/(\d+)(.*)/)
+    //
+    //                 weapon.parry = 3 + Math.floor(weapon.level / 2)
+    //                 if (weapon.parrybonus) weapon.parry += pi(weapon.parrybonus)
+    //                 if (match) weapon.parry += match[2]
+    //               }
+    //
+    //               if (!isNaN(parseInt(weapon.block))) {
+    //                 // handles 'no'
+    //                 weapon.block = 3 + Math.floor(weapon.level / 2)
+    //                 if (weapon.blockbonus) weapon.block += pi(weapon.blockbonus)
+    //               }
+    //             }
+    //           }
+    //         }) // end melee
+    //
+    //         recurselist(data.ranged, (rangedWeapon, _k, _d) => {
+    //           rangedWeapon.level = pi(rangedWeapon.level)
+    //           if (link.action.type == 'attribute' && link.action.attrkey == 'DX')
+    //             rangedWeapon.level += pi(link.action.mod)
+    //
+    //           if (link.action.type == 'attack' && !!link.action.isRanged) {
+    //             if (rangedWeapon.name.match(makeRegexPatternFrom(link.action.name, false)))
+    //               rangedWeapon.level += pi(link.action.mod)
+    //           }
+    //         }) // end ranged
+    //
+    //         recurselist(data.skills, (skill, _k, _d) => {
+    //           skill.level = pi(skill.level)
+    //
+    //           if (link.action.type == 'attribute') {
+    //             // skills affected by attribute changes
+    //             if (skill.relativelevel?.toUpperCase().startsWith(link.action.attrkey))
+    //               skill.level += pi(link.action.mod)
+    //           }
+    //
+    //           if (link.action.type == 'skill-spell' && !link.action.isSpellOnly) {
+    //             if (skill.name.match(makeRegexPatternFrom(link.action.name, false))) skill.level += pi(link.action.mod)
+    //           }
+    //         }) // end skills
+    //
+    //         recurselist(data.spells, (spell, _k, _d) => {
+    //           spell.level = pi(spell.level)
+    //
+    //           if (link.action.type == 'attribute') {
+    //             // spells affected by attribute changes
+    //             if (spell.relativelevel?.toUpperCase().startsWith(link.action.attrkey))
+    //               spell.level += pi(link.action.mod)
+    //           }
+    //
+    //           if (link.action.type == 'skill-spell' && !link.action.isSkillOnly) {
+    //             if (spell.name.match(makeRegexPatternFrom(link.action.name, false))) spell.level += pi(link.action.mod)
+    //           }
+    //         }) // end spells
+    //
+    //         if (link.action.type == 'attribute') {
+    //           const paths = link.action.path.split('.')
+    //           const last = paths.pop()
+    //           let data = this.modelV1 as Record<string, any>
+    //
+    //           if (paths.length > 0) data = foundry.utils.getProperty(data, paths.join('.')) as Record<string, any>
+    //           // regular attributes have a path
+    //           else {
+    //             // only accept DODGE
+    //             if (link.action.attrkey != 'DODGE') break
+    //           }
+    //
+    //           data[last] = pi(data[last]) + pi(link.action.mod) // enforce that attribute is int
+    //         } // end attributes & Dodge
+    //       } // end OTF
+    //
+    //       // parse bonus for other forms, DR+x?
+    //       match = bonus.match(/DR *([+-]\d+) *(.*)/) // DR+1 *Arms "Left Leg" ...
+    //
+    //       if (match) {
+    //         const delta = parseInt(match[1])
+    //         let locpatterns = null
+    //
+    //         if (match[2]) {
+    //           const locs = splitArgs(match[2])
+    //
+    //           locpatterns = locs.map(loc => new RegExp(makeRegexPatternFrom(loc), 'i'))
+    //         }
+    //
+    //         recurselist(data.hitlocations, (hitLocation, _k, _d) => {
+    //           if (
+    //             !locpatterns ||
+    //             locpatterns.find(pattern => !!hitLocation.where && hitLocation.where.match(pattern)) != null
+    //           ) {
+    //             let dr = hitLocation.dr ?? ''
+    //
+    //             dr += ''
+    //             const match = dr.match(/(\d+) *([/|]) *(\d+)/) // check for split DR 5|3 or 5/3
+    //
+    //             if (match) {
+    //               dr = parseInt(match[1]) + delta
+    //               const dr2 = parseInt(match[3]) + delta
+    //
+    //               hitLocation.dr = dr + match[2] + dr2
+    //             } else if (!isNaN(parseInt(dr))) {
+    //               hitLocation.dr = parseInt(dr) + delta
+    //               if (!!hitLocation.drCap && hitLocation.dr > hitLocation.drCap) hitLocation.dr = hitLocation.drCap
+    //             }
+    //             //console.warn(e.where, e.dr)
+    //           }
+    //         })
+    //       } // end DR
+    //     }
+    //   }
+    // }
   }
 
   /**
@@ -3568,150 +3565,154 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    *
    * The biggest trap here is to add something to Actor Component but not Foundry Item and vice-versa.
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleItemDrop(dragData: Record<string, any>): Promise<void> {
-    if (!this.isOwner) {
-      ui.notifications?.warn(game.i18n!.localize('GURPS.youDoNotHavePermission'))
+    if (this.isNewActorType) return
 
-      return
-    }
-
-    // New item created in Foundry v12.331 dragData:
-    // {
-    //   "type": "Item",
-    //   "uuid": "Item.542YuRvzxVx83kL1"
+    // NOTE: Deprecated. This method should never run past this point.
+    // if (!this.isOwner) {
+    //   ui.notifications?.warn(game.i18n!.localize('GURPS.youDoNotHavePermission'))
+    //
+    //   return
     // }
-    const global = await fromUuid(dragData.uuid)
-    const data = global ? global : dragData
-
-    if (!data) {
-      ui.notifications?.warn('NO ITEM DATA!')
-
-      return
-    }
-
-    // @ts-expect-error - globalid property not in base Item type
-    if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
-    this.ignoreRender = true
-
-    // Process Actor Component, Parent (dropped) Item and Child Items.
-
-    // 1. This global item was already dropped?
-    // @ts-expect-error - globalid property not in base Item type
-    const found = this.items.find(it => it.system.globalid === data.system.globalid)
-
-    if (found) {
-      ui.notifications?.warn(game.i18n!.localize('GURPS.cannotDropItemAlreadyExists'))
-
-      return
-    }
-
-    ui.notifications?.info(
-      game.i18n!.format('GURPS.droppingItemNotification', { actorName: this.name, itemName: data.name })
-    )
-
-    // 2. Check if Actor Component exists
-    const actorCompKey =
-      // @ts-expect-error - custom item type properties not in base type
-      data.type === ItemType.LegacyEquipment
-        ? this._findEqtkeyForId('globalid', data.system.globalid)
-        : // @ts-expect-error - custom item type properties not in base type
-          this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
-    const actorComp = foundry.utils.getProperty(this, actorCompKey!) as Named | undefined
-
-    if (actorComp) {
-      ui.notifications?.warn(game.i18n!.localize('GURPS.cannotDropItemAlreadyExists'))
-    } else {
-      // 3. Create Actor Component
-      let actorComp
-      let targetKey
-
-      // @ts-expect-error - custom item type not in base Item type
-      switch (data.type) {
-        case ItemType.LegacyEquipment:
-          actorComp = Equipment.fromObject({ name: data.name, ...data.system.eqt }, this)
-          targetKey = 'system.equipment.carried'
-          break
-        case ItemType.LegacyTrait:
-          actorComp = Advantage.fromObject({ name: data.name, ...data.system.fea }, this)
-          targetKey = 'system.ads'
-          break
-        case ItemType.LegacySkill:
-          actorComp = Skill.fromObject({ name: data.name, ...data.system.ski }, this)
-          targetKey = 'system.skills'
-          break
-        case ItemType.LegacySpell:
-          actorComp = Spell.fromObject({ name: data.name, ...data.system.spl }, this)
-          targetKey = 'system.spells'
-          break
-      }
-
-      // @ts-expect-error - dynamic property access on actor component
-      actorComp.itemInfo.img = data.img
-      // @ts-expect-error - dynamic property access via itemSysKey
-      actorComp.otf = data.system[data.itemSysKey].otf
-      // @ts-expect-error - dynamic property access via itemSysKey
-      actorComp.checkotf = data.system[data.itemSysKey].checkotf
-      // @ts-expect-error - dynamic property access via itemSysKey
-      actorComp.duringotf = data.system[data.itemSysKey].duringotf
-      // @ts-expect-error - dynamic property access via itemSysKey
-      actorComp.passotf = data.system[data.itemSysKey].passotf
-      // @ts-expect-error - dynamic property access via itemSysKey
-      actorComp.failotf = data.system[data.itemSysKey].failotf
-
-      // 4. Create Parent Item
-      const importer = new ActorImporter(this)
-
-      actorComp = await importer._processItemFrom(actorComp, '')
-      // @ts-expect-error - itemid property added by importer
-      const parentItem = this.items.get(actorComp.itemid)
-      const keys = ['melee', 'ranged', 'ads', 'spells', 'skills']
-
-      for (const key of keys) {
-        recurselist(data.system[key], actorComponentEntry => {
-          if (!actorComponentEntry.uuid) actorComponentEntry.uuid = foundry.utils.randomID(16)
-        })
-      }
-
-      await this.updateEmbeddedDocuments('Item', [
-        {
-          _id: parentItem!.id,
-          // @ts-expect-error - globalid property not in base Item type
-          'system.globalid': dragData.uuid,
-          'system.melee': data.system.melee,
-          'system.ranged': data.system.ranged,
-          'system.ads': data.system.ads,
-          'system.spells': data.system.spells,
-          'system.skills': data.system.skills,
-          'system.bonuses': data.system.bonuses,
-        },
-      ])
-
-      // 5. Update Actor System with new Component
-      const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey!) as Record<string, any>)
-      const removeKey = targetKey!.replace(/(\w+)$/, '-=$1')
-
-      await this.internalUpdate({ [removeKey]: null })
-      await GURPS.put(systemObject, actorComp)
-
-      await this.internalUpdate({ [targetKey!]: systemObject })
-
-      // @ts-expect-error - custom item type not in base Item type
-      if (data.type === 'equipment') await Equipment.calc(actorComp)
-
-      // 6. Process Child Items for created Item
-      const actorCompKey =
-        // @ts-expect-error - custom item type properties not in base type
-        data.type === 'equipment'
-          ? // @ts-expect-error - equipment system eqt property not fully typed
-            this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
-          : // @ts-expect-error - dynamic property access via itemSysKey
-            this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
-
-      // @ts-expect-error - parentItem type mismatch with method signature
-      await this._addItemAdditions(parentItem, actorCompKey)
-    }
-
-    this._forceRender()
+    //
+    // // New item created in Foundry v12.331 dragData:
+    // // {
+    // //   "type": "Item",
+    // //   "uuid": "Item.542YuRvzxVx83kL1"
+    // // }
+    // const global = await fromUuid(dragData.uuid)
+    // const data = global ? global : dragData
+    //
+    // if (!data) {
+    //   ui.notifications?.warn('NO ITEM DATA!')
+    //
+    //   return
+    // }
+    //
+    // // @ts-expect-error - globalid property not in base Item type
+    // if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
+    // this.ignoreRender = true
+    //
+    // // Process Actor Component, Parent (dropped) Item and Child Items.
+    //
+    // // 1. This global item was already dropped?
+    // // @ts-expect-error - globalid property not in base Item type
+    // const found = this.items.find(it => it.system.globalid === data.system.globalid)
+    //
+    // if (found) {
+    //   ui.notifications?.warn(game.i18n!.localize('GURPS.cannotDropItemAlreadyExists'))
+    //
+    //   return
+    // }
+    //
+    // ui.notifications?.info(
+    //   game.i18n!.format('GURPS.droppingItemNotification', { actorName: this.name, itemName: data.name })
+    // )
+    //
+    // // 2. Check if Actor Component exists
+    // const actorCompKey =
+    //   // @ts-expect-error - custom item type properties not in base type
+    //   data.type === ItemType.LegacyEquipment
+    //     ? this._findEqtkeyForId('globalid', data.system.globalid)
+    //     : // @ts-expect-error - custom item type properties not in base type
+    //       this._findSysKeyForId('globalid', data.system.globalid, data.actorComponentKey)
+    // const actorComp = foundry.utils.getProperty(this, actorCompKey!) as Named | undefined
+    //
+    // if (actorComp) {
+    //   ui.notifications?.warn(game.i18n!.localize('GURPS.cannotDropItemAlreadyExists'))
+    // } else {
+    //   // 3. Create Actor Component
+    //   let actorComp
+    //   let targetKey
+    //
+    //   // @ts-expect-error - custom item type not in base Item type
+    //   switch (data.type) {
+    //     case ItemType.LegacyEquipment:
+    //       actorComp = Equipment.fromObject({ name: data.name, ...data.system.eqt }, this)
+    //       targetKey = 'system.equipment.carried'
+    //       break
+    //     case ItemType.LegacyTrait:
+    //       actorComp = Advantage.fromObject({ name: data.name, ...data.system.fea }, this)
+    //       targetKey = 'system.ads'
+    //       break
+    //     case ItemType.LegacySkill:
+    //       actorComp = Skill.fromObject({ name: data.name, ...data.system.ski }, this)
+    //       targetKey = 'system.skills'
+    //       break
+    //     case ItemType.LegacySpell:
+    //       actorComp = Spell.fromObject({ name: data.name, ...data.system.spl }, this)
+    //       targetKey = 'system.spells'
+    //       break
+    //   }
+    //
+    //   // @ts-expect-error - dynamic property access on actor component
+    //   actorComp.itemInfo.img = data.img
+    //   // @ts-expect-error - dynamic property access via itemSysKey
+    //   actorComp.otf = data.system[data.itemSysKey].otf
+    //   // @ts-expect-error - dynamic property access via itemSysKey
+    //   actorComp.checkotf = data.system[data.itemSysKey].checkotf
+    //   // @ts-expect-error - dynamic property access via itemSysKey
+    //   actorComp.duringotf = data.system[data.itemSysKey].duringotf
+    //   // @ts-expect-error - dynamic property access via itemSysKey
+    //   actorComp.passotf = data.system[data.itemSysKey].passotf
+    //   // @ts-expect-error - dynamic property access via itemSysKey
+    //   actorComp.failotf = data.system[data.itemSysKey].failotf
+    //
+    //   // 4. Create Parent Item
+    //   const importer = new ActorImporter(this)
+    //
+    //   actorComp = await importer._processItemFrom(actorComp, '')
+    //   // @ts-expect-error - itemid property added by importer
+    //   const parentItem = this.items.get(actorComp.itemid)
+    //   const keys = ['melee', 'ranged', 'ads', 'spells', 'skills']
+    //
+    //   for (const key of keys) {
+    //     recurselist(data.system[key], actorComponentEntry => {
+    //       if (!actorComponentEntry.uuid) actorComponentEntry.uuid = foundry.utils.randomID(16)
+    //     })
+    //   }
+    //
+    //   await this.updateEmbeddedDocuments('Item', [
+    //     {
+    //       _id: parentItem!.id,
+    //       // @ts-expect-error - globalid property not in base Item type
+    //       'system.globalid': dragData.uuid,
+    //       'system.melee': data.system.melee,
+    //       'system.ranged': data.system.ranged,
+    //       'system.ads': data.system.ads,
+    //       'system.spells': data.system.spells,
+    //       'system.skills': data.system.skills,
+    //       'system.bonuses': data.system.bonuses,
+    //     },
+    //   ])
+    //
+    //   // 5. Update Actor System with new Component
+    //   const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey!) as Record<string, any>)
+    //   const removeKey = targetKey!.replace(/(\w+)$/, '-=$1')
+    //
+    //   await this.internalUpdate({ [removeKey]: null })
+    //   await GURPS.put(systemObject, actorComp)
+    //
+    //   await this.internalUpdate({ [targetKey!]: systemObject })
+    //
+    //   // @ts-expect-error - custom item type not in base Item type
+    //   if (data.type === 'equipment') await Equipment.calc(actorComp)
+    //
+    //   // 6. Process Child Items for created Item
+    //   const actorCompKey =
+    //     // @ts-expect-error - custom item type properties not in base type
+    //     data.type === 'equipment'
+    //       ? // @ts-expect-error - equipment system eqt property not fully typed
+    //         this._findEqtkeyForId('uuid', parentItem.system.eqt.uuid)
+    //       : // @ts-expect-error - dynamic property access via itemSysKey
+    //         this._findSysKeyForId('uuid', parentItem.system[parentItem.itemSysKey].uuid, parentItem.actorComponentKey)
+    //
+    //   // @ts-expect-error - parentItem type mismatch with method signature
+    //   await this._addItemAdditions(parentItem, actorCompKey)
+    // }
+    //
+    // this._forceRender()
   }
 
   /**
@@ -4453,75 +4454,74 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @deprecated Actor v1 only.
    * @param item
    */
-  async _updateItemFromForm(
-    item: Item.OfType<
-      'base' | ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
-    >
-  ) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async _updateItemFromForm(item: Item.OfType<'base'>) {
     if (this.isNewActorType) return
 
-    const sysKey =
-      item.type === 'equipment'
-        ? this._findEqtkeyForId('itemid', item.id)
-        : this._findSysKeyForId('itemid', item.id!, item.actorComponentKey)
+    // NOTE: Deprecated. Method should never run past this point.
 
-    if (!sysKey) {
-      console.warn(`GURPS | Could not find Actor Component for Item ${item.name} (${item.id})`)
-
-      return
-    }
-
-    const actorComp = foundry.utils.getProperty(this, sysKey) as any
-
-    if (!(await this._sanityCheckItemSettings(actorComp))) return
-
-    // @ts-expect-error - editingActor is a runtime property
-    if (item.editingActor) delete item.editingActor
-
-    await this._removeItemAdditions(item.id!)
-
-    // Check for Equipment changed count
-    // If originalCount exists, let's check if the count has changed
-    // If changed and ignoreImportQty is true, we need to add the flag to the item
-    if (
-      item.isOfType(ItemType.LegacyEquipment) &&
-      ImportSettings.ignoreQuantityOnImport &&
-      // @ts-expect-error - equipment system eqt property not fully typed
-      !!item.system.eqt.originalCount &&
-      // @ts-expect-error - equipment system eqt property not fully typed
-      !isNaN(item.system.eqt.originalCount) &&
-      // @ts-expect-error - equipment system eqt property not fully typed
-      item.system.eqt.originalCount !== item.modelV1.eqt.count
-    ) {
-      // @ts-expect-error - equipment system eqt property not fully typed
-      item.system.eqt.ignoreImportQty = true
-    }
-
-    // Update Item
-    item.modelV1.modifierTags = cleanTags(item.modelV1.modifierTags).join(', ')
-    await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
-
-    // Update Actor Component
-    const itemInfo = item.getItemInfo()
-
-    await this.internalUpdate({
-      [sysKey]: {
-        // @ts-expect-error - dynamic property access via itemSysKey
-        ...item.system[item.itemSysKey],
-        uuid: actorComp.uuid,
-        parentuuid: actorComp.parentuuid,
-        itemInfo,
-        addToQuickRoll: item.modelV1.addToQuickRoll,
-        modifierTags: item.modelV1.modifierTags,
-        itemModifiers: item.modelV1.itemModifiers,
-      },
-    })
-    await this._addItemAdditions(item, sysKey)
-
-    if (item.type === ItemType.LegacyEquipment) {
-      await this.updateParentOf(sysKey, true)
-      await this._updateEquipmentCalc(sysKey)
-    }
+    // const sysKey =
+    //   item.type === 'equipment'
+    //     ? this._findEqtkeyForId('itemid', item.id)
+    //     : this._findSysKeyForId('itemid', item.id!, item.actorComponentKey)
+    //
+    // if (!sysKey) {
+    //   console.warn(`GURPS | Could not find Actor Component for Item ${item.name} (${item.id})`)
+    //
+    //   return
+    // }
+    //
+    // const actorComp = foundry.utils.getProperty(this, sysKey) as any
+    //
+    // if (!(await this._sanityCheckItemSettings(actorComp))) return
+    //
+    // // @ts-expect-error - editingActor is a runtime property
+    // if (item.editingActor) delete item.editingActor
+    //
+    // await this._removeItemAdditions(item.id!)
+    //
+    // // Check for Equipment changed count
+    // // If originalCount exists, let's check if the count has changed
+    // // If changed and ignoreImportQty is true, we need to add the flag to the item
+    // if (
+    //   item.isOfType(ItemType.LegacyEquipment) &&
+    //   ImportSettings.ignoreQuantityOnImport &&
+    //   // @ts-expect-error - equipment system eqt property not fully typed
+    //   !!item.system.eqt.originalCount &&
+    //   // @ts-expect-error - equipment system eqt property not fully typed
+    //   !isNaN(item.system.eqt.originalCount) &&
+    //   // @ts-expect-error - equipment system eqt property not fully typed
+    //   item.system.eqt.originalCount !== item.modelV1.eqt.count
+    // ) {
+    //   // @ts-expect-error - equipment system eqt property not fully typed
+    //   item.system.eqt.ignoreImportQty = true
+    // }
+    //
+    // // Update Item
+    // item.modelV1.modifierTags = cleanTags(item.modelV1.modifierTags).join(', ')
+    // await this.updateEmbeddedDocuments('Item', [{ _id: item.id, system: item.system, name: item.name }])
+    //
+    // // Update Actor Component
+    // const itemInfo = item.getItemInfo()
+    //
+    // await this.internalUpdate({
+    //   [sysKey]: {
+    //     // @ts-expect-error - dynamic property access via itemSysKey
+    //     ...item.system[item.itemSysKey],
+    //     uuid: actorComp.uuid,
+    //     parentuuid: actorComp.parentuuid,
+    //     itemInfo,
+    //     addToQuickRoll: item.modelV1.addToQuickRoll,
+    //     modifierTags: item.modelV1.modifierTags,
+    //     itemModifiers: item.modelV1.itemModifiers,
+    //   },
+    // })
+    // await this._addItemAdditions(item, sysKey)
+    //
+    // if (item.type === ItemType.LegacyEquipment) {
+    //   await this.updateParentOf(sysKey, true)
+    //   await this._updateEquipmentCalc(sysKey)
+    // }
   }
 
   /**
@@ -4529,20 +4529,20 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
    * @param equipKey
    * @returns
    */
-  private async _updateEquipmentCalc(equipKey: string) {
-    if (!equipKey.includes('system.eqt.')) return
-    const equip = foundry.utils.getProperty(this, equipKey) as any
-
-    await Equipment.calc(equip)
-
-    if (equip.parentuuid) {
-      const parentKey = this._findEqtkeyForId('itemid', equip.parentuuid)
-
-      if (parentKey) {
-        await this._updateEquipmentCalc(parentKey)
-      }
-    }
-  }
+  // private async _updateEquipmentCalc(equipKey: string) {
+  //   if (!equipKey.includes('system.eqt.')) return
+  //   const equip = foundry.utils.getProperty(this, equipKey) as any
+  //
+  //   await Equipment.calc(equip)
+  //
+  //   if (equip.parentuuid) {
+  //     const parentKey = this._findEqtkeyForId('itemid', equip.parentuuid)
+  //
+  //     if (parentKey) {
+  //       await this._updateEquipmentCalc(parentKey)
+  //     }
+  //   }
+  // }
 
   /**
    * @deprecated Actor v1 only.
@@ -4687,105 +4687,112 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
   /**
    * @deprecated Actor v1 only.
    */
-  async _removeKey(sourceKey: string) {
-    // source key is the whole path, like 'system.melee.00001'
-    const components = sourceKey.split('.')
+  async _removeKey(_sourceKey: string) {
+    if (this.isNewActorType) return
 
-    const index = parseInt(components.pop()!)
-    const path = components.join('.')
-
-    let object = GURPS.decode<AnyObject>(this, path)
-    const array = objectToArray(object)
-
-    // Delete the whole object.
-    const last = components.pop()
-    const nullKey = `${components.join('.')}.-=${last}`
-
-    await this.internalUpdate({ [nullKey]: null })
-
-    // Remove the element from the array
-    array.splice(index, 1)
-
-    // Convert back to an object
-    object = arrayToObject(array, 5)
-
-    // update the actor
-    await this.internalUpdate({ [path]: object }, { diff: false })
+    // NOTE: Deprecated. Method should never run past this point.
+    //   // source key is the whole path, like 'system.melee.00001'
+    //   const components = sourceKey.split('.')
+    //
+    //   const index = parseInt(components.pop()!)
+    //   const path = components.join('.')
+    //
+    //   let object = GURPS.decode<AnyObject>(this, path)
+    //   const array = objectToArray(object)
+    //
+    //   // Delete the whole object.
+    //   const last = components.pop()
+    //   const nullKey = `${components.join('.')}.-=${last}`
+    //
+    //   await this.internalUpdate({ [nullKey]: null })
+    //
+    //   // Remove the element from the array
+    //   array.splice(index, 1)
+    //
+    //   // Convert back to an object
+    //   object = arrayToObject(array, 5)
+    //
+    //   // update the actor
+    //   await this.internalUpdate({ [path]: object }, { diff: false })
+    // }
+    //
+    // /**
+    //  * @deprecated Actor v1 only.
+    //  */
+    // async _insertBeforeKey(targetKey: string, element: any) {
+    //   // target key is the whole path, like 'system.melee.00001'
+    //   const components = targetKey.split('.')
+    //
+    //   const index = parseInt(components.pop()!)
+    //   const path = components.join('.')
+    //
+    //   let object = GURPS.decode<AnyObject>(this, path)
+    //   const array = objectToArray(object)
+    //
+    //   // Delete the whole object.
+    //   const last = components.pop()
+    //   const nullKey = `${components.join('.')}.-=${last}`
+    //
+    //   await this.internalUpdate({ [nullKey]: null })
+    //
+    //   // Insert the element into the array.
+    //   array.splice(index, 0, element)
+    //
+    //   // Convert back to an object
+    //   object = arrayToObject(array, 5)
+    //
+    //   // update the actor
+    //   await this.internalUpdate({ [path]: object }, { diff: false })
   }
 
   /**
    * @deprecated Actor v1 only.
    */
-  async _insertBeforeKey(targetKey: string, element: any) {
-    // target key is the whole path, like 'system.melee.00001'
-    const components = targetKey.split('.')
-
-    const index = parseInt(components.pop()!)
-    const path = components.join('.')
-
-    let object = GURPS.decode<AnyObject>(this, path)
-    const array = objectToArray(object)
-
-    // Delete the whole object.
-    const last = components.pop()
-    const nullKey = `${components.join('.')}.-=${last}`
-
-    await this.internalUpdate({ [nullKey]: null })
-
-    // Insert the element into the array.
-    array.splice(index, 0, element)
-
-    // Convert back to an object
-    object = arrayToObject(array, 5)
-
-    // update the actor
-    await this.internalUpdate({ [path]: object }, { diff: false })
-  }
-
-  /**
-   * @deprecated Actor v1 only.
-   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async _splitEquipment(srckey: string, targetkey: string) {
-    const srceqt = foundry.utils.getProperty(this, srckey) as any
+    if (this.isNewActorType) return
 
-    if (srceqt.count <= 1) return false // nothing to split
-
-    const count = await this.promptEquipmentQuantity(srceqt, game.i18n!.localize('GURPS.splitQuantity'))
-
-    if (!count || count <= 0) return true // didn't want to split
-    if (count >= srceqt.count) return false // not a split, but a move
-
-    if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0)
-
-    if (srceqt.globalid) {
-      this.ignoreRender = true
-      await this.updateEqtCount(srckey, srceqt.count - count)
-      const rawItem = this.items.get(srceqt.itemid)
-
-      if (rawItem) {
-        const item = rawItem as Item.OfType<ItemType.LegacyEquipment>
-
-        item.modelV1.eqt.count = count
-        await this.addNewItemData(item, targetkey)
-        await this.updateParentOf(targetkey, true)
-      }
-
-      this._forceRender()
-
-      return true
-    } else {
-      // simple eqt
-      const neqt = foundry.utils.duplicate(srceqt)
-
-      neqt.count = count
-      this.ignoreRender = true
-      await this.updateEqtCount(srckey, srceqt.count - count)
-      await GURPS.insertBeforeKey(this, targetkey, neqt)
-      await this.updateParentOf(targetkey, true)
-      this._forceRender()
-
-      return true
-    }
+    // NOTE: Deprecated. Method should never run past this point.
+    // const srceqt = foundry.utils.getProperty(this, srckey) as any
+    //
+    // if (srceqt.count <= 1) return false // nothing to split
+    //
+    // const count = await this.promptEquipmentQuantity(srceqt, game.i18n!.localize('GURPS.splitQuantity'))
+    //
+    // if (!count || count <= 0) return true // didn't want to split
+    // if (count >= srceqt.count) return false // not a split, but a move
+    //
+    // if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0)
+    //
+    // if (srceqt.globalid) {
+    //   this.ignoreRender = true
+    //   await this.updateEqtCount(srckey, srceqt.count - count)
+    //   const rawItem = this.items.get(srceqt.itemid)
+    //
+    //   if (rawItem) {
+    //     const item = rawItem as Item.OfType<ItemType.LegacyEquipment>
+    //
+    //     item.modelV1.eqt.count = count
+    //     await this.addNewItemData(item, targetkey)
+    //     await this.updateParentOf(targetkey, true)
+    //   }
+    //
+    //   this._forceRender()
+    //
+    //   return true
+    // } else {
+    //   // simple eqt
+    //   const neqt = foundry.utils.duplicate(srceqt)
+    //
+    //   neqt.count = count
+    //   this.ignoreRender = true
+    //   await this.updateEqtCount(srckey, srceqt.count - count)
+    //   await GURPS.insertBeforeKey(this, targetkey, neqt)
+    //   await this.updateParentOf(targetkey, true)
+    //   this._forceRender()
+    //
+    //   return true
+    // }
   }
 
   /**
