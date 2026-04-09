@@ -38,7 +38,7 @@ async function migrate(): Promise<MigrationReport | void> {
     const updateStep = 1 / length
     let updateProgress = 0
 
-    // NOTE: We don't need to run migrateItemSource against the documents, because is is already called
+    // NOTE: We don't need to run migrateItemSource against the documents, because it is already called
     // in GurpsItem.migrateData. We're running updateDocuments here to make the change permanent by saving the
     // documents to the DB.
     await foundry.documents.Item.updateDocuments(

@@ -98,9 +98,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> impleme
 
   // Common guard for new actor subtypes.
   get isNewActorType(): boolean {
-    // NOTE: This is always true after migration, so always return `true`
-    return true
-    // return this.isOfType(ActorType.Character)
+    return this.isOfType(ActorType.Character)
   }
 
   // Settings getter with default fallback

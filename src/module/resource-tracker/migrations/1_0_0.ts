@@ -19,6 +19,8 @@ const legacyMigrations: SettingMigration[] = [
   },
 ]
 
+/* ---------------------------------------- */
+
 function convertOldSettings(
   oldTemplates: Record<string, ResourceTrackerTemplate>
 ): Record<string, ResourceTrackerTemplate> {
@@ -34,6 +36,8 @@ function convertOldSettings(
 
   return newTemplates
 }
+
+/* ---------------------------------------- */
 
 /**
  * Given a legacy template object, creates a new ResourceTrackerTemplate instance with the appropriate properties.
@@ -56,6 +60,8 @@ export function migrateTemplateToV2(oldTemplate: any) {
   return template
 }
 
+/* ---------------------------------------- */
+
 /**
  * Given a legacy tracker instance object, creates a new IResourceTracker instance with the appropriate properties.
  * @param instanceV1
@@ -73,6 +79,8 @@ export function migrateTrackerInstanceToV2(instanceV1: AnyObject): IResourceTrac
         ? String(legacyMax)
         : null
 
+  const thresholds = migrateLegacyThresholds(instanceV1.thresholds as any[] | undefined)
+
   return {
     _id: foundry.utils.randomID(),
     name: instanceV1.name as string,
@@ -86,9 +94,25 @@ export function migrateTrackerInstanceToV2(instanceV1: AnyObject): IResourceTrac
     min: (instanceV1.min as number) ?? 0,
     currentValue: (instanceV1.value as number | null) ?? null,
     initialValue,
-    thresholds: (instanceV1.thresholds as IResourceTracker['thresholds']) ?? [],
+    thresholds,
   }
 }
+
+/* ---------------------------------------- */
+
+function migrateLegacyThresholds(legacyThresholds: any[] | undefined): IResourceTracker['thresholds'] {
+  if (!legacyThresholds) return []
+
+  return legacyThresholds.map(threshold => ({
+    comparison: threshold.comparison as string,
+    operator: threshold.operator as string,
+    value: threshold.value as number,
+    state: threshold.condition as string, // condition was renamed to state in the new version
+    color: (threshold.color as string) ?? null,
+  }))
+}
+
+/* ---------------------------------------- */
 
 async function migrate(): Promise<void> {
   await migrateLegacySettings(GURPS.SYSTEM_NAME, legacyMigrations)

@@ -366,8 +366,6 @@ class PseudoDocument<
       throw new Error('Source is not an object!')
     }
 
-    console.log('source object', source)
-
     return this.id in source
   }
 

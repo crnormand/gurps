@@ -1,4 +1,4 @@
-import { migrateTemplateToV2, migrateTrackerInstanceToV2 } from '@module/resource-tracker/migration.js'
+import { migrateTemplateToV2, migrateTrackerInstanceToV2 } from '@module/resource-tracker/migrations/1_0_0.js'
 import { IResourceTracker } from '@module/resource-tracker/types.js'
 import { vi } from 'vitest'
 
