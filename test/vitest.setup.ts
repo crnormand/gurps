@@ -1,21 +1,15 @@
 import showdown from 'showdown'
 
+import { getType, mergeObject, deepClone } from './foundry-utils/object-utils.js'
+
 export {}
-
-const typePrototypes: [new (...args: never[]) => unknown, string][] = [
-  [Array, 'Array'],
-  [Set, 'Set'],
-  [Map, 'Map'],
-  [Promise, 'Promise'],
-  [Error, 'Error'],
-
-  /* ---------------------------------------- */
-]
 
 class MockDataModel {
   constructor(data: Record<string, unknown>) {
     Object.assign(this, data)
   }
+
+  static LOCALIZATION_PREFIXES: string[] = []
 
   static cleanData = (source: unknown): unknown => source ?? {}
 }
@@ -354,16 +348,7 @@ global.foundry = {
       return ref
     },
     // Basic deep clone implementation for tests
-    deepClone: <T>(obj: T): T => {
-      try {
-        // Prefer structuredClone when available
-        if (typeof structuredClone === 'function') return structuredClone(obj)
-      } catch {
-        // fall through to JSON clone
-      }
-
-      return JSON.parse(JSON.stringify(obj)) as T
-    },
+    deepClone,
     // Foundry has both deepClone and duplicate; map duplicate to deepClone here
     duplicate: <T>(obj: T): T => {
       return global.foundry.utils.deepClone(obj)
@@ -390,27 +375,8 @@ global.foundry = {
 
       return flat
     },
-    getType: (variable: unknown): string => {
-      // Primitive types, handled with simple typeof check
-      const typeOf = typeof variable
-
-      if (typeOf !== 'object') return typeOf
-
-      // Special cases of object
-      if (variable === null) return 'null'
-      if (!(variable as object).constructor) return 'Object' // Object with the null prototype.
-      if ((variable as object).constructor === Object) return 'Object' // Simple objects
-
-      // Match prototype instances
-      for (const [cls, type] of typePrototypes) {
-        if (variable instanceof cls) return type
-      }
-
-      if ('HTMLElement' in globalThis && variable instanceof globalThis.HTMLElement) return 'HTMLElement'
-
-      // Unknown Object type
-      return 'Unknown'
-    },
+    getType,
+    mergeObject,
     isEmpty: (value: unknown): boolean => {
       const type = global.foundry.utils.getType(value)
 
