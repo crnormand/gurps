@@ -1,4 +1,4 @@
-import { ActionType, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { Action, ActionType, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
@@ -195,7 +195,7 @@ declare global {
        * image for a given pseudo-document type. It is used in the global GURPS.CONFIG object to define the available
        * pseudo-document types and their associated metadata.
        */
-      type ConfigEntry<Doc extends TypedPseudoDocument.AnyConstructor> = {
+      type ConfigEntry<Doc extends TypedPseudoDocument.ConcreteConstructor> = {
         /** Human-readable label. */
         label: string
         /** Default image used by documents of this type. */
@@ -282,7 +282,7 @@ declare global {
       }
 
       Item: {
-        Action: AnyAction
+        Action: Action.Any
         ReactionModifier: ReactionModifier
         ConditionalModifier: ConditionalModifierDocument
       }
