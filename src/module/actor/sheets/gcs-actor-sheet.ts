@@ -10,6 +10,7 @@ import {
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
 import { Weight } from '@module/data/common/weight.js'
+import type { ModelCollection } from '@module/data/model-collection.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { ItemType } from '@module/item/types.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
@@ -22,6 +23,7 @@ import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { AnyObject } from 'fvtt-types/utils'
 
+import type { MoveModeV2 } from '../data/move-mode.js'
 import Maneuvers from '../maneuver.js'
 import { ActorType } from '../types.js'
 
@@ -39,6 +41,7 @@ import {
 
 type PoolEntry = {
   type: 'pool' | 'resourceTracker' | 'conditionalInjury'
+  uuid?: string
   invertedDelta: boolean
   denominatorEditable: boolean
   editable: boolean
@@ -213,7 +216,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ): Promise<GurpsActorGcsSheet.RenderContext> {
     const superContext = await super._prepareContext(options)
 
-    const moveModeChoices = Object.fromEntries(this.actor.system.moveV2.map(mode => [mode._id, mode.mode]))
+    const moveModes = this.actor.pseudoCollections.MoveMode as ModelCollection<MoveModeV2> | null
+
+    const moveModeChoices = moveModes ? Object.fromEntries(moveModes.map(mode => [mode._id, mode.mode])) : {}
 
     const sortKeys = this._prepareSortKeys()
 
@@ -396,6 +401,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
       pools.push({
         type: 'resourceTracker',
+        uuid: tracker.uuid,
         invertedDelta: false,
         denominatorEditable: false,
         editable: true,
@@ -883,7 +889,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ): Promise<void> {
     event.preventDefault()
 
-    const tracker = this._getEmbedded(target)
+    const tracker = await this._getEmbedded(target)
 
     if (!(tracker instanceof TrackerInstance)) {
       console.error(

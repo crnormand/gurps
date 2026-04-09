@@ -44,40 +44,49 @@ function init() {
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorCombatSheet, {
       label: 'Combat',
       makeDefault: false,
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorEditorSheet, {
       label: 'Editor',
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
       label: 'Simple',
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
       makeDefault: false,
     })
     // @ts-expect-error: Not an ApplicationV2, we can safely ignore this though
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorNpcModernSheet, {
       label: 'NPC/mini',
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsInventorySheet, {
       label: 'Inventory Only',
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorTabSheet, {
       label: 'Tabbed Sheet',
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
       label: 'Reduced Mode',
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
       makeDefault: false,
     })
     // @ts-expect-error: Not an ApplicationV2, we can safely ignore this though
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorModernSheet, {
       label: 'Modern',
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {
       // Add this sheet last
       label: 'Full (GCS)',
+      types: [ActorType.LegacyCharacter, ActorType.LegacyEnemy],
       makeDefault: true,
     })
 
