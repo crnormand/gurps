@@ -24,7 +24,10 @@ class PrereqList extends BasePrereq<PrereqListSchema> {
   /* ---------------------------------------- */
 
   override prepareBaseData(): void {
-    this.children = this.parent?._prereqs?.filter(prereq => prereq.containerId === this._id) ?? []
+    this.children =
+      (this.parent as any)?._prereqs?.filter(
+        (prereq: BasePrereq<BasePrereq.Schema>) => prereq.containerId === this._id
+      ) ?? []
   }
 
   /* ---------------------------------------- */
