@@ -1,4 +1,6 @@
+import { HandlebarsApplicationMixin, ActorSheet } from '@gurps-types/foundry/index.js'
 import {
+  DisplayConditionalModifier,
   DisplayEquipment,
   DisplayMeleeAttack,
   DisplayNote,
@@ -10,7 +12,7 @@ import {
 import { Weight } from '@module/data/common/weight.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { ItemType } from '@module/item/types.js'
-import type { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
+import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { contrastColor, toHexColor } from '@module/util/color-utils.js'
 import { getCssVariable } from '@module/util/get-css-value.js'
@@ -34,12 +36,9 @@ import {
   resolveItemDropQuantity,
 } from './helpers.js'
 
-
-import ActorSheet = gurps.applications.ActorSheet
-
 /* ---------------------------------------- */
 
-type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>
+/* ---------------------------------------- */
 
 /* ---------------------------------------- */
 
@@ -98,20 +97,19 @@ type DragDataOf<T extends DragData['type']> = Extract<DragData, { type: T }>
 
 /* ---------------------------------------- */
 
-type DisplayConditionalModifier = {
-  modifier: number
-  situation: string
-}
-
-/* ---------------------------------------- */
-
 namespace GurpsActorGcsSheet {
+  export type Type = ActorType.Character
+
   export interface RenderContext extends ActorSheet.RenderContext {
     isPlay: boolean
-    actor: Actor.OfType<ActorType.Character>
-    system: Actor.SystemOfType<ActorType.Character>
-    systemFields?: foundry.data.fields.SchemaField<CharacterV2Schema>['fields']
-    systemSource?: foundry.data.fields.SchemaField.SourceData<CharacterV2Schema>
+    actor: Actor.OfType<Type>
+    system: Actor.SystemOfType<Type>
+    systemFields?: foundry.data.fields.SchemaField<
+      foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<Type>>
+    >['fields']
+    systemSource?: foundry.data.fields.SchemaField.SourceData<
+      foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<Type>>
+    >
     moveModeChoices?: Record<string, string>
     pools: PoolEntry[]
     liftingMoving: LiftingMovingEntry[]
@@ -145,7 +143,8 @@ const POOL_COLOR_FALLBACK = '#B1D175'
 /* ---------------------------------------- */
 
 class GurpsActorGcsSheet extends GurpsBaseActorSheet<
-  ActorType.Character,
+  GurpsActorGcsSheet.Type,
+  ActorSheet.Configuration,
   ActorSheet.RenderOptions,
   GurpsActorGcsSheet.RenderContext
 >() {
@@ -153,7 +152,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
+  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
     classes: ['gcs-sheet'],
     position: {
       width: 800,
@@ -179,7 +178,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static override PARTS: Record<string, gurps.applications.handlebars.TemplatePart> = {
+  static override PARTS: Record<string, HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     header: {
       template: systemPath('templates/actor/gcs/header.hbs'),
     },
@@ -267,8 +266,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       notes: this.actor.system.notesV2.map(note => note.toDisplayItem()),
       meleeAttacks: this.actor.system.meleeV2.map(action => action.toDisplayItem()),
       rangedAttacks: this.actor.system.rangedV2.map(action => action.toDisplayItem()),
-      reactionModifiers: this.actor.system.reactions,
-      conditionalModifiers: this.actor.system.conditionalmods,
+      reactionModifiers: this.actor.system.reactions.map(mod => mod.toDisplayItem()),
+      conditionalModifiers: this.actor.system.conditionalmods.map(mod => mod.toDisplayItem()),
       attributeFields: this._prepareAttributes(),
       maneuverChoices,
       postureChoices,

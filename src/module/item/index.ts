@@ -1,10 +1,10 @@
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
+import { ConditionalModifier, ReactionModifier } from './data/conditional-modifier.js'
 import * as dataModels from './data/index.js'
 import { GurpsItemV2 } from './gurps-item.js'
-import { GurpsItemSheet } from './item-sheet.js'
 import { migrateItem, runMigration, migrateItemCompendium } from './migrate.js'
-import { TestItemSheet } from './test-item-sheet.js'
+import * as sheets from './sheets/index.js'
 import { ItemType } from './types.js'
 
 interface ItemModule extends GurpsModule {
@@ -32,15 +32,12 @@ function init() {
       [ItemType.GcsNote]: dataModels.GcsNoteModel,
     }
 
-    foundry.documents.collections.Items.unregisterSheet('core', foundry.appv1.sheets.ItemSheet)
-    foundry.documents.collections.Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
+    GURPS.CONFIG.PseudoDocument.Types.ReactionModifier = ReactionModifier
+    GURPS.CONFIG.PseudoDocument.Types.ConditionalModifier = ConditionalModifier
 
-    // NOTE: This sheet is hidden from Users but can be set by invoking
-    // (item).setFlag("core","sheetClass","gurps.TestItemSheet")
-    // @ts-expect-error: broken typing
-    foundry.documents.collections.Items.registerSheet('gurps', TestItemSheet, {
+    foundry.documents.collections.Items.registerSheet('gurps', sheets.GurpsItemSheet, {
       makeDefault: true,
-      types: [ItemType.GcsEquipment],
+      types: [ItemType.LegacyTrait, ItemType.LegacySkill, ItemType.LegacySpell, ItemType.LegacyEquipment],
       canConfigure: false,
     })
   })

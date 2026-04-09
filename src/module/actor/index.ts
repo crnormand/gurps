@@ -81,18 +81,6 @@ function init() {
       makeDefault: true,
     })
 
-    // NOTE: This sheet is hidden from Users but can be set by invoking
-    // (actor).setFlag("core","sheetClass","gurps.TestActorSheet")
-    foundry.documents.collections.Actors.registerSheet(
-      'gurps',
-      sheets.TestActorSheet as DocumentSheetV2.AnyConstructor,
-      {
-        makeDefault: true,
-        types: [ActorType.GcsCharacter],
-        canConfigure: false,
-      }
-    )
-
     foundry.documents.collections.Actors.registerSheet(
       'gurps',
       // TODO: fix type

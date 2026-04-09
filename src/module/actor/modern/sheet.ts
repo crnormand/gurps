@@ -1,4 +1,4 @@
-import { Application } from '@gurps-types/foundry/application.js'
+import { Application, ActorSheet, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
@@ -42,7 +42,8 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
   }, 0)
 }
 
-import ActorSheet = gurps.applications.ActorSheet
+export namespace GurpsActorModernSheet {
+  export type Type = ActorType.Character
 
   export interface RenderContext extends ActorSheet.RenderContext {
     system: Actor.SystemOfType<Type>
@@ -66,12 +67,13 @@ import ActorSheet = gurps.applications.ActorSheet
   }
 }
 
-type RenderOptions = ActorSheet.RenderOptions & { isFirstRender: boolean }
-
 export class GurpsActorModernSheet extends GurpsBaseActorSheet<
-  ActorType.LegacyCharacter | ActorType.Character | ActorType.LegacyEnemy
+  GurpsActorModernSheet.Type,
+  GurpsBaseActorSheet.Configuration,
+  GurpsBaseActorSheet.RenderOptions,
+  GurpsActorModernSheet.RenderContext
 >() {
-  static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
+  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
     classes: ['modern-sheet'],
     position: {
       width: 768,
@@ -95,7 +97,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static override PARTS: Record<string, gurps.applications.handlebars.TemplatePart> = {
+  static override PARTS: Record<string, HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     header: {
       template: 'systems/gurps/templates/actor/modern/header.hbs',
     },
@@ -135,13 +137,15 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  protected override async _prepareContext(options: RenderOptions): Promise<ModernSheetContext> {
+  protected override async _prepareContext(
+    options: GurpsActorModernSheet.RenderOptions
+  ): Promise<GurpsActorModernSheet.RenderContext> {
     const baseContext = await super._prepareContext(options)
-    const actorSystem = this.actor.system as Actor.SystemOfType<ActorType.LegacyCharacter | ActorType.Character>
+    const actorSystem = this.actor.system as Actor.SystemOfType<GurpsActorModernSheet.Type>
 
     const effects = this.actor.effects.contents.filter(effect => !isPostureOrManeuver(effect))
 
-    const context: ModernSheetContext = {
+    const context: GurpsActorModernSheet.RenderContext = {
       ...baseContext,
       actor: this.actor,
       system: actorSystem,
@@ -164,9 +168,9 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
 
   protected override async _preparePartContext(
     partId: string,
-    context: ModernSheetContext,
+    context: GurpsActorModernSheet.RenderContext,
     options: DeepPartial<ActorSheet.RenderOptions>
-  ): Promise<ModernSheetContext> {
+  ): Promise<GurpsActorModernSheet.RenderContext> {
     await super._preparePartContext(partId, context, options)
 
     if (context.tabs && partId in context.tabs) context.tab = context.tabs[partId]
@@ -174,7 +178,10 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     return context
   }
 
-  protected override async _onRender(context: ActorSheet.RenderContext, options: RenderOptions): Promise<void> {
+  protected override async _onRender(
+    context: GurpsActorModernSheet.RenderContext,
+    options: GurpsActorModernSheet.RenderOptions
+  ): Promise<void> {
     super._onRender(context, options)
 
     // Add character v1/v2 type guard
@@ -321,7 +328,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   }
 
   async #openQuickNoteEditor(): Promise<void> {
-    const actorSystem = this.actor.system as Actor.SystemOfType<ActorType.LegacyCharacter | ActorType.Character>
+    const actorSystem = this.actor.system as Actor.SystemOfType<GurpsActorModernSheet.Type>
     const noteText = ((actorSystem.additionalresources as { qnotes?: string })?.qnotes || '').replace(/<br>/g, '\n')
     const actor = this.actor
 
