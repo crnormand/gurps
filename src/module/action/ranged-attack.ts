@@ -361,8 +361,8 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
       rof: this.rofText,
       shots: this.shotsText,
       otf: {
-        level: `R:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
-        damage: `D:"${fullName}` + (this.mode ? ` (${this.mode})"` : `"`),
+        level: `R:"${fullName}"`,
+        damage: `D:"${fullName}"`,
       },
     })
   }

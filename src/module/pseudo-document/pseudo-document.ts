@@ -1,4 +1,5 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
+import { type BaseDisplayPseudoDocument } from '@gurps-types/gurps/display-item.js'
 import { getGame, hasMetadata, isUpdatableDocument } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 import { AnyObject, Identity, InexactPartial } from 'fvtt-types/utils'
@@ -198,6 +199,14 @@ class PseudoDocument<
   }
 
   /* ---------------------------------------- */
+
+  toDisplayItem(): BaseDisplayPseudoDocument {
+    return {
+      id: this.id,
+      uuid: this.uuid,
+      documentName: this.documentName,
+    }
+  }
 
   /**
    * Does this pseudo-document exist in the document's source?

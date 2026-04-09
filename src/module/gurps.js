@@ -69,6 +69,7 @@ import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
 import { Prereqs } from './prereqs/index.js'
+import { Pseudo } from './pseudo-document/index.js'
 import { ResourceTrackerModule } from './resource-tracker/index.js'
 import { Scripting } from './scripting/index.js'
 import { Token } from './token/index.js'
@@ -126,6 +127,7 @@ if (!globalThis.GURPS) {
     Item,
     Pdf,
     Prereqs,
+    Pseudo,
     ResourceTracker: ResourceTrackerModule,
     Scripting,
     Token,

@@ -175,7 +175,11 @@ namespace TypedPseudoDocument {
   /* ---------------------------------------- */
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  declare class ConcreteTypedPseudoDocument extends TypedPseudoDocument<any, DataSchema, DataModel.Any> {}
+  declare class ConcreteTypedPseudoDocument extends TypedPseudoDocument<
+    gurps.Pseudo.WithTypes,
+    DataSchema,
+    DataModel.Any
+  > {}
 
   /* ---------------------------------------- */
 
