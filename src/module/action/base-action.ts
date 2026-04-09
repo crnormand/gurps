@@ -25,7 +25,7 @@ class BaseAction<
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.action.baseAction']
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.action.baseAction']
 
   /* ---------------------------------------- */
 
@@ -56,7 +56,11 @@ const baseActionSchema = () => {
     name: new fields.StringField({ initial: undefined }),
 
     /** Any images associated with this action. */
-    img: new fields.FilePathField({ initial: undefined, categories: ['IMAGE'], base64: false }),
+    img: new fields.FilePathField({
+      categories: ['IMAGE'],
+      base64: false,
+      initial: () => 'icons/svg/sword.svg',
+    }),
 
     /** The sort value of this action, used to determine its order in the list of actions. */
     sort: new fields.IntegerSortField(),

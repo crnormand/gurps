@@ -298,22 +298,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   override prepareBaseData(): void {
     super.prepareBaseData()
-    this.melee = this.actions.filter(action => action.isOfType(ActionType.MeleeAttack))
-    this.ranged = this.actions.filter(action => action.isOfType(ActionType.RangedAttack))
-
-    this.actions.forEach(action => {
-      action.prepareBaseData()
-    })
-  }
-
-  /* ---------------------------------------- */
-
-  override prepareDerivedData(): void {
-    super.prepareDerivedData()
-
-    this.actions.forEach(action => {
-      action.prepareDerivedData()
-    })
+    this.melee = this.actions?.filter(action => action.isOfType(ActionType.MeleeAttack))
+    this.ranged = this.actions?.filter(action => action.isOfType(ActionType.RangedAttack))
   }
 
   /* ---------------------------------------- */

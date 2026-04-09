@@ -278,7 +278,9 @@ function getMigratedActorData(
     type: ActorType.Character,
     img: oldActor.img,
     name: oldActor.name,
-    system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name, { holderItemId: holderItem._id! }),
+    system: migrateActorSystem(oldActor.system as ActorV1Model, oldActor.name, {
+      holderItemId: holderItem._id as string,
+    }),
     items,
   }
 

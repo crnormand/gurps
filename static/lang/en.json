@@ -25,44 +25,92 @@
     "action": {
       "baseAction": {
         "FIELDS": {
-          "addToQuickRoll": "Add to Quick Roll",
-          "disabled": "Disabled",
-          "name": "Name"
+          "addToQuickRoll": {
+            "label": "Add to Quick Roll"
+          },
+          "disabled": {
+            "label": "Disabled"
+          },
+          "name": {
+            "label": "Name"
+          }
         }
       },
       "baseAttack": {
         "FIELDS": {
-          "consumeAction": "Consume Action",
-          "damage": "Damage",
-          "extraAttacks": "Extra Attacks",
-          "import": "Base Level",
-          "itemModifiers": "Item Modifiers",
-          "mode": "Mode",
-          "modifierTags": "Modifier Tags",
-          "notes": "Notes",
-          "otf": "OTF Formula",
-          "st": "ST"
+          "consumeAction": {
+            "label": "Consume Action"
+          },
+          "damage": {
+            "label": "Damage"
+          },
+          "extraAttacks": {
+            "label": "Extra Attacks"
+          },
+          "import": {
+            "label": "Base Level"
+          },
+          "itemModifiers": {
+            "label": "Item Modifiers"
+          },
+          "mode": {
+            "label": "Mode"
+          },
+          "modifierTags": {
+            "label": "Modifier Tags"
+          },
+          "notes": {
+            "label": "Notes"
+          },
+          "otf": {
+            "label": "OTF Formula"
+          },
+          "st": {
+            "label": "ST"
+          }
         }
       },
       "meleeAttack": {
         "blockDisabled": "No",
         "FIELDS": {
-          "baseParryPenalty": "Base Parry Penalty",
+          "baseParryPenalty": {
+            "label": "Base Parry Penalty"
+          },
           "block": {
-            "canBlock": "Can Block",
-            "modifier": "Modifier"
+            "canBlock": {
+              "label": "Can Block"
+            },
+            "modifier": {
+              "label": "Modifier"
+            }
           },
           "parry": {
-            "canParry": "Can Parry",
-            "fencing": "Fencing",
-            "modifier": "Modifier",
-            "unbalanced": "Unbalanced"
+            "canParry": {
+              "label": "Can Parry"
+            },
+            "fencing": {
+              "label": "Fencing"
+            },
+            "modifier": {
+              "label": "Modifier"
+            },
+            "unbalanced": {
+              "label": "Unbalanced"
+            }
           },
           "reach": {
-            "changeRequiresReady": "Change Requires Ready",
-            "closeCombat": "Close Combat",
-            "max": "Max",
-            "min": "Min"
+            "changeRequiresReady": {
+              "label": "Change Requires Ready"
+            },
+            "closeCombat": {
+              "label": "Close Combat"
+            },
+            "max": {
+              "label": "Max"
+            },
+            "min": {
+              "label": "Min"
+            }
           }
         },
         "parryDisabled": "No"
@@ -70,44 +118,96 @@
       "rangedAttack": {
         "FIELDS": {
           "acc": {
-            "base": "Base",
-            "jet": "Jet",
-            "scope": "Scope"
+            "base": {
+              "label": "Base"
+            },
+            "jet": {
+              "label": "Jet"
+            },
+            "scope": {
+              "label": "Scope"
+            }
           },
-          "ammo": "Ammo",
+          "ammo": {
+            "label": "Ammo"
+          },
           "bulk": {
-            "giant": "Giant",
-            "normal": "Normal",
-            "retractingStock": "Retracting Stock"
+            "giant": {
+              "label": "Giant"
+            },
+            "normal": {
+              "label": "Normal"
+            },
+            "retractingStock": {
+              "label": "Retracting Stock"
+            }
           },
           "range": {
-            "halfDamage": "1/2D",
-            "inMiles": "In Miles",
-            "max": "Max",
-            "min": "Min",
-            "musclePowered": "Muscle-Powered"
+            "halfDamage": {
+              "label": "1/2D"
+            },
+            "inMiles": {
+              "label": "In Miles"
+            },
+            "max": {
+              "label": "Max"
+            },
+            "min": {
+              "label": "Min"
+            },
+            "musclePowered": {
+              "label": "Muscle-Powered"
+            }
           },
           "rateOfFire": {
-            "fullAutoOnly": "Full-Auto Only",
-            "highCyclicControlledBursts": "High-Cyclic Controlled Bursts",
-            "jet": "Jet",
-            "secondaryProjectiles": "Secondary Projectiles",
-            "shotsPerAttack": "Shots/Attack"
+            "fullAutoOnly": {
+              "label": "Full-Auto Only"
+            },
+            "highCyclicControlledBursts": {
+              "label": "High-Cyclic Controlled Bursts"
+            },
+            "jet": {
+              "label": "Jet"
+            },
+            "secondaryProjectiles": {
+              "label": "Secondary Projectiles"
+            },
+            "shotsPerAttack": {
+              "label": "Shots/Attack"
+            }
           },
           "recoil": {
-            "shot": "Shot",
-            "slug": "Slug"
+            "shot": {
+              "label": "Shot"
+            },
+            "slug": {
+              "label": "Slug"
+            }
           },
           "shots": {
-            "count": "Count",
-            "duration": "Duration (s)",
-            "inChamber": "In Chamber",
-            "reloadTime": "Reload Time",
-            "reloadTimeIsPerShot": "Per Shot",
-            "thrown": "Thrown"
+            "count": {
+              "label": "Count"
+            },
+            "duration": {
+              "label": "Duration (s)"
+            },
+            "inChamber": {
+              "label": "In Chamber"
+            },
+            "reloadTime": {
+              "label": "Reload Time"
+            },
+            "reloadTimeIsPerShot": {
+              "label": "Per Shot"
+            },
+            "thrown": {
+              "label": "Thrown"
+            }
           }
         },
-        "jet": "Jet"
+        "jet": {
+          "label": "Jet"
+        }
       }
     },
     "active": "Active",
@@ -485,10 +585,15 @@
     "chatYouMustBeGM": "You must be a GM to execute this command",
     "chatYouMustHaveACharacterSelected": "You must have a character selected",
     "check": "Check",
+    "check1": "Check #1",
+    "check2": "Check #2",
+    "check3": "Check #3",
+    "check4": "Check #4",
     "checkConditionals": "Add Actor Conditional Modifiers to Effect Modifiers Popout.",
     "checkReactions": "Add Actor Reaction Modifiers to Effect Modifiers Popout.",
     "clickToEdit": "Click to Edit",
     "clickToRemove": "click to remove",
+    "collapse": "Collapse",
     "color": "Color",
     "colorSheetMenuAreasAdsDisadsColor": "Ads/Disads Color",
     "colorSheetMenuAreasAdsDisadsHoverColor": "Ads/Disads Hover Color",
@@ -564,20 +669,15 @@
       },
       "RT": "RT",
       "severity": {
-        "Crippled1": "Crippled",
-        "Crippled2": "Crippled",
-        "InstantlyFatal1": "Instantly Fatal",
-        "InstantlyFatal2": "Instantly Fatal",
-        "MajorWound": "Major Wound",
-        "None": "None",
-        "MinorWound1": "Minor Wound",
-        "MinorWound2": "Minor Wound",
-        "MinorWound3": "Minor Wound",
-        "MortalWound1": "Mortal Wound",
-        "MortalWound2": "Mortal Wound",
-        "Reeling": "Reeling",
-        "Scratch": "Scratch",
-        "TotalDestruction": "Total Destruction"
+        "crippled": "Crippled",
+        "instantlyFatal": "Instantly Fatal",
+        "majorWound": "Major Wound",
+        "minorWound": "Minor Wound",
+        "mortalWound": "Mortal Wound",
+        "none": "None",
+        "reeling": "Reeling",
+        "scratch": "Scratch",
+        "totalDestruction": "Total Destruction"
       }
     },
     "conditionalModifier": "Conditional Modifier",
@@ -644,6 +744,7 @@
     "damageTypeToxic": "Toxic",
     "darkness": "Darkness",
     "days": "Days",
+    "dead": "Dead",
     "default": "Default",
     "defense": "Defense",
     "defenseRoll": "Defense Roll",
@@ -663,6 +764,7 @@
     "descriptionSizeModifier": "Size Modifier (SM)",
     "descriptionSkin": "Skin",
     "descriptionTechLevel": "Tech Level (TL)",
+    "destroyed": "Destroyed",
     "dialog": {
       "keep": "Keep",
       "overwrite": "Overwrite"
@@ -1518,6 +1620,16 @@
     "pointsSpells": "Spells",
     "pointsTotal": "Total Points",
     "pointsUnspent": "Unspent",
+    "pseudo": {
+      "FIELDS": {
+        "name": {
+          "label": "Name"
+        },
+        "type": {
+          "label": "Type"
+        }
+      }
+    },
     "publicRollAsDefault": "Public Roll as default",
     "quantity": "Quantity",
     "quickNotes": {
@@ -1908,7 +2020,6 @@
       "Bleed": "Bleeding",
       "Blind": "Blinded",
       "Burn": "Burning",
-      "Collapse": "Collapse",
       "Coughing": "Coughing",
       "Counter1": "Counter 1",
       "Counter10": "Counter 10",
@@ -1923,12 +2034,6 @@
       "Crawling": "Crawling",
       "Crouch": "Crouching",
       "Deaf": "Deafened",
-      "Dead": "Dead",
-      "DeathCheck1": "Check #1",
-      "DeathCheck2": "Check #2",
-      "DeathCheck3": "Check #3",
-      "DeathCheck4": "Check #4",
-      "Destroyed": "Destroyed",
       "Disable": "Disabled",
       "Disarmed": "Disarmed",
       "Drowsy": "Drowsy",
@@ -1964,7 +2069,6 @@
       "Tipsy": "Tipsy",
       "Tired": "Tired",
       "Tiring": "Tiring",
-      "Unconscious": "Unconscious",
       "Wait": "Waiting",
       "Wounded": "Wounded"
     },
@@ -2018,6 +2122,7 @@
     "transferAll": "Transfer All",
     "TransferTo": "Transfer to {name}",
     "twoHandLift": "Two-Hand Lift",
+    "unconscious": "Unconscious",
     "update": "Update",
     "usage": "Usage",
     "useBreakpoints": "Use Breakpoints",
@@ -2045,19 +2150,14 @@
       "rangedAttack": "Ranged Attack"
     },
     "Actor": {
-      "character": "Character (v1)",
-      "characterV2": "Character (v2)",
+      "character": "Character",
       "enemy": "Enemy"
     },
     "Item": {
-      "equipment": "Equipment (v1)",
-      "equipmentV2": "Equipment (v2)",
-      "feature": "Feature (v1)",
-      "featureV2": "Feature (v2)",
-      "skill": "Skill (v1)",
-      "skillV2": "Skill (v2)",
-      "spell": "Spell (v1)",
-      "spellV2": "Spell (v2)"
+      "equipment": "Equipment",
+      "feature": "Trait",
+      "skill": "Skill",
+      "spell": "Spell"
     }
   }
 }

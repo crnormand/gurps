@@ -1,11 +1,14 @@
+import { Document } from '@gurps-types/foundry/index.js'
+import { CollectionField } from '@module/data/fields/collection-field.js'
+import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
 import { recurselist } from '@util/utilities.js'
+import { AnyObject, InexactPartial } from 'fvtt-types/utils'
 
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { IContainable, isContainable } from '../data/mixins/containable.js'
 import { ModelCollection } from '../data/model-collection.js'
-import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 
-import { BaseItemModel } from './data/base.js'
+import { BaseItemModel, ItemMetadata } from './data/base.js'
 import { EquipmentModel } from './data/equipment.js'
 import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
 import { ItemType } from './types.js'
@@ -14,6 +17,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
   implements ItemV1Interface, IContainable<GurpsItemV2>
 {
+  declare pseudoCollections: Record<string, ModelCollection>
+
   /* ---------------------------------------- */
 
   // Narrowed view of this.system for GurpsItemV2 logic.
@@ -38,6 +43,29 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   isOfType<SubType extends Item.SubType>(...types: SubType[]): this is Item.OfType<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Item.SubType)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _configure(options = {}) {
+    super._configure(options)
+
+    const collections: Record<string, ModelCollection> = {}
+    const model = CONFIG[this.documentName].dataModels[this._source.type]
+    const embedded = (model as unknown as gurps.MetadataOwner)?.metadata?.embedded ?? {}
+
+    for (const [documentName, fieldPath] of Object.entries(embedded)) {
+      const data = foundry.utils.getProperty(this._source, fieldPath) as AnyObject
+      const field = model.schema.getField(fieldPath.slice('system.'.length)) as CollectionField
+
+      collections[documentName] = new (field.constructor as typeof CollectionField).implementation(
+        documentName as any,
+        this,
+        data
+      )
+    }
+
+    Object.defineProperty(this, 'pseudoCollections', { value: Object.seal(collections), writable: false })
   }
 
   /* ---------------------------------------- */
@@ -134,16 +162,32 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   ): gurps.Pseudo.EmbeddedDocument<'Item', EmbeddedName> {
     const { invalid = false, strict = true } = options ?? {}
 
-    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+    const metadata = (this.system?.constructor as any).metadata as ItemMetadata
+
+    const systemEmbeds = metadata.embedded ?? {}
 
     if (embeddedName in systemEmbeds) {
-      const path = systemEmbeds[embeddedName]
-      const document = foundry.utils.getProperty(this, path) as any
-
-      return (document.get(id, { invalid, strict }) ?? undefined) as any
+      return this.getEmbeddedCollection(embeddedName as keyof PseudoDocumentConfig.Embeds['Item']).get(id, {
+        invalid,
+        strict,
+      }) as any
     }
 
     return super.getEmbeddedDocument(embeddedName as Item.Embedded.CollectionName, id, { invalid, strict }) as any
+  }
+
+  /* ---------------------------------------- */
+
+  override getEmbeddedCollection<EmbeddedName extends Item.Embedded.CollectionName>(
+    embeddedName: EmbeddedName
+  ): Item.Embedded.CollectionFor<EmbeddedName>
+  override getEmbeddedCollection<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Item']>(
+    embeddedName: EmbeddedName
+  ): ModelCollection<PseudoDocumentConfig.Embeds['Item'][EmbeddedName]>
+  override getEmbeddedCollection(embeddedName: string): unknown {
+    return (
+      this.pseudoCollections[embeddedName] ?? super.getEmbeddedCollection(embeddedName as Item.Embedded.CollectionName)
+    )
   }
 
   /* ---------------------------------------- */
@@ -208,55 +252,13 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  override async deleteDialog(options = {}): Promise<this | false | null | undefined> {
-    // Display custom delete dialog when deleting a container with contents
-    const count = this.allContents.length
-
-    if (count) {
-      const response = await foundry.applications.api.Dialog.confirm({
-        window: {
-          title: `${game.i18n?.format('DOCUMENT.Delete', { type: game.i18n.localize('DOCUMENT.Item') })}: ${this.name}`,
-        },
-        content:
-          `<p>${game.i18n?.format('GURPS.item.deleteMessage', { name: this.name })}</p>` +
-          `<label>` +
-          `<input type="checkbox" name="deleteContents">` +
-          `${game.i18n?.format('GURPS.item.deleteContents', { count: count.toString() })}` +
-          `</label>`,
-        yes: {
-          action: '',
-          callback: (event: PointerEvent | SubmitEvent) => {
-            const deleteContents = (
-              (event.currentTarget as HTMLElement).querySelector('[name="deleteContents"]') as HTMLInputElement
-            )?.checked
-
-            this.delete({ deleteContents })
-          },
-        },
-        options: { ...options },
-      })
-
-      return response ? this : undefined
-    }
-
-    return super.deleteDialog(options)
-  }
-
-  /* ---------------------------------------- */
-
-  /**
-   * Obtain the embedded collection of a given pseudo-document type.
-   */
-  getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection<PseudoDocument> {
-    const collectionPath = this.modelV2?.metadata.embedded?.[embeddedName]
-
-    if (!collectionPath) {
-      throw new Error(
-        `${embeddedName} is not a valid embedded Pseudo-Document within the [${'type' in this ? this.type : 'base'}] ${this.documentName} subtype!`
-      )
-    }
-
-    return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
+  override async deleteDialog(
+    options?: InexactPartial<foundry.applications.api.DialogV2.ConfirmConfig>,
+    operation?: Document.Database.DeleteOperationForName<'Item'>
+  ): Promise<this | false | null | undefined> {
+    return (await deleteDialogWithContents.call(this, options, operation as any)) as unknown as Promise<
+      this | false | null | undefined
+    >
   }
 
   /* ---------------------------------------- */
@@ -264,13 +266,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   override prepareBaseData() {
     super.prepareBaseData()
 
-    const documentNames = Object.keys(this.modelV2?.metadata?.embedded ?? {})
-
-    for (const documentName of documentNames) {
-      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
-        pseudoDocument.prepareBaseData()
-      }
-    }
+    for (const collection of Object.values(this.pseudoCollections))
+      for (const pseudo of collection) pseudo.prepareBaseData()
   }
 
   /* ---------------------------------------- */
@@ -278,13 +275,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   override prepareDerivedData() {
     super.prepareDerivedData()
 
-    const documentNames = Object.keys(this.modelV2?.metadata?.embedded ?? {})
-
-    for (const documentName of documentNames) {
-      for (const pseudoDocument of this.getEmbeddedPseudoDocumentCollection(documentName)) {
-        pseudoDocument.prepareDerivedData()
-      }
-    }
+    for (const collection of Object.values(this.pseudoCollections))
+      for (const pseudo of collection) pseudo.prepareBaseData()
   }
 
   /* ---------------------------------------- */

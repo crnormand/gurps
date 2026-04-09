@@ -185,7 +185,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.action.rangedAttack']
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.action.rangedAttack']
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */

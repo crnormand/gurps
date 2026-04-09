@@ -65,7 +65,6 @@ const gcsSubTableSchema = () => {
     ...pseudoDocumentSchema(),
     // TODO: Replace with dice field
     roll: new fields.StringField({ required: true, nullable: false }),
-    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     // NOTE: If _owningLocation is null, the location is owned by the top-level table.
     _owningLocation: new fields.StringField({ required: true, nullable: false, readonly: true }),
   }
@@ -136,7 +135,6 @@ class GcsHitLocation extends PseudoDocument<GcsHitLocationSchema, DataModel.Any,
 const gcsHitLocationSchema = () => {
   return {
     ...pseudoDocumentSchema(),
-    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     // NOTE: If _owningTable is null, the location is owned by the top-level table.
     _owningTable: new fields.StringField({ required: true, nullable: true, readonly: true }),
     locationId: new fields.StringField({ required: true, nullable: false }),
@@ -178,11 +176,10 @@ class GcsBody extends PseudoDocument<GcsBody.Schema> {
 }
 
 const gcsBodySchema = () => {
+  // NOTE: name is used only for top-level tables
   return {
     // NOTE: _id is not used for BodyType but is required for the PseudoDocument spec.
     ...pseudoDocumentSchema(),
-    // NOTE: name is used only for top-level tables
-    name: new fields.StringField({ required: true, nullable: false }),
     roll: new fields.StringField({ required: true, nullable: false }),
     // NOTE: To avoid recursive DataModel errors, all locations are defined at the top-level table.
     // Sub-locations are assigned to subTable by ID. Locations are arranged in terms of position in the locations Array,

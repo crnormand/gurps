@@ -2,6 +2,7 @@ import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { migrateTrackerInstanceToV2 } from './migration.js'
 import { migrate } from './migration.js'
+import { TrackerInstance } from './resource-tracker.js'
 import { initializeSettings } from './settings.js'
 import { IResourceTracker, IResourceTrackerTemplate } from './types.js'
 import { ResourceTrackerManagerV2 } from './ui/resource-tracker-manager-v2.js'
@@ -13,6 +14,8 @@ function init() {
   Hooks.once('ready', async function () {
     await initializeSettings()
     await migrate()
+
+    GURPS.CONFIG.PseudoDocument.Types.ResourceTracker = TrackerInstance
 
     // get all aliases defined in the resource tracker templates and register them as damage types
     const resourceTrackers = Object.values(

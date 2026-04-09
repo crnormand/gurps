@@ -27,7 +27,6 @@ class AttributeThreshold extends PseudoDocument<AttributeThresholdSchema> {
 const attributeThresholdSchema = () => {
   return {
     ...pseudoDocumentSchema(),
-    sort: new fields.IntegerSortField({ required: true, nullable: false, initial: 0 }),
     state: new fields.StringField({ required: true, nullable: false }),
     value: new fields.StringField({ required: true, nullable: false }),
     explanation: new fields.StringField({ required: true, nullable: false }),

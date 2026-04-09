@@ -1,4 +1,4 @@
-import { HandlebarsApplicationMixin, ActorSheet } from '@gurps-types/foundry/index.js'
+import { DocumentSheet, HandlebarsApplicationMixin, ActorSheet } from '@gurps-types/foundry/index.js'
 import {
   DisplayConditionalModifier,
   DisplayEquipment,
@@ -12,7 +12,6 @@ import {
 import { Weight } from '@module/data/common/weight.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { ItemType } from '@module/item/types.js'
-import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { contrastColor, toHexColor } from '@module/util/color-utils.js'
 import { getCssVariable } from '@module/util/get-css-value.js'
@@ -35,12 +34,6 @@ import {
   resolveItemDropPosition,
   resolveItemDropQuantity,
 } from './helpers.js'
-
-/* ---------------------------------------- */
-
-/* ---------------------------------------- */
-
-/* ---------------------------------------- */
 
 /* ---------------------------------------- */
 
@@ -163,13 +156,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       decrementPool: GurpsActorGcsSheet.#onUpdatePool,
       resetPool: GurpsActorGcsSheet.#onUpdatePool,
       sortItems: GurpsActorGcsSheet.#onSortItems,
-      toggleItemContainer: GurpsActorGcsSheet.#onToggleItemContainer,
-      toggleActionContainer: GurpsActorGcsSheet.#onToggleActionContainer,
-      toggleItemNotes: GurpsActorGcsSheet.#onToggleItemNotes,
-      addModifier: GurpsActorGcsSheet.#onAddModifier,
-      rollOtf: GurpsActorGcsSheet.#onRollOtf,
-      addResourceTracker: GurpsActorGcsSheet.#onAddResourceTracker,
-      removeResourceTracker: GurpsActorGcsSheet.#onRemoveResourceTracker,
+      toggleNotes: GurpsActorGcsSheet.#onToggleNotes,
       editResourceTracker: GurpsActorGcsSheet.#onEditResourceTracker,
       setEncumbrance: GurpsActorGcsSheet.#onSetEncumbrance,
       editQuickNotes: GurpsActorGcsSheet.#onEditQuickNotes,
@@ -718,11 +705,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       {
         name: 'Delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        condition: target => target.dataset.itemId !== undefined,
+        condition: target => target.dataset.uuid !== undefined,
         callback: async target => {
-          const item = this.actor.items.get(target.dataset.itemId ?? '')
+          const handler = this.options.actions['deleteEmbedded'] as DocumentSheet.ClickAction | null
 
-          if (item) await item.deleteDialog()
+          if (handler) handler.call(this, null, target)
         },
       },
     ]
@@ -735,41 +722,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       {
         name: 'Delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        condition: target => target.dataset.actionId !== undefined,
+        condition: target => target.dataset.uuid !== undefined,
         callback: async target => {
-          const parentId = target.dataset.parentId
-          const documentName = target.dataset.documentName
+          const handler = this.options.actions['deleteEmbedded'] as DocumentSheet.ClickAction | null
 
-          if (!parentId && !documentName) {
-            console.error('No parent ID or document name found on pseudo-document context menu target')
-
-            return
-          }
-
-          let doc: PseudoDocument | null = null
-
-          if (parentId) {
-            const parent = this.actor.items.get(target.dataset.parentId ?? '')
-
-            if (!parent) {
-              console.error(`No item found for pseudo-document context menu with item id ${target.dataset.parentId}`)
-
-              return
-            }
-
-            doc = parent.getEmbeddedDocument('Action', target.dataset.actionId ?? '') ?? null
-          } else if (documentName) {
-            doc =
-              this.actor.getEmbeddedPseudoDocumentCollection(documentName)?.get(target.dataset.actionId ?? '') ?? null
-          }
-
-          if (!doc) {
-            console.error(`No pseudo-document found for action context menu with action id ${target.dataset.actionId}`)
-
-            return
-          }
-
-          await doc?.deleteDialog()
+          if (handler) handler.call(this, null, target)
         },
       },
     ]
@@ -833,57 +790,22 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static async #onToggleItemContainer(
-    this: GurpsActorGcsSheet,
-    event: PointerEvent,
-    target: HTMLElement
-  ): Promise<void> {
+  static async #onToggleNotes(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
+    const doc = await this._getEmbedded(target)
 
-    const itemId = target.closest<HTMLElement>('[data-item-id]')?.dataset.itemId
+    if (!doc) return
 
-    if (!itemId) return
+    if (!(doc instanceof Item)) {
+      console.error('Tried to toggle notes of a document, but the document is not an item')
 
-    const item = this.actor.items.get(itemId)
+      return
+    }
 
-    await item?.system.toggleOpen?.()
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onToggleActionContainer(
-    this: GurpsActorGcsSheet,
-    event: PointerEvent,
-    target: HTMLElement
-  ): Promise<void> {
-    event.preventDefault()
-
-    const documentName = target.closest<HTMLElement>('[data-document-name]')?.dataset.documentName
-    const actionId = target.closest<HTMLElement>('[data-action-id]')?.dataset.actionId
-
-    if (!documentName || !actionId) return
-
-    const action = this.actor.getEmbeddedPseudoDocumentCollection(documentName)?.get(actionId)
-
-    if (!action) return
-
-    if ('toggleOpen' in action && typeof action.toggleOpen === 'function') await action.toggleOpen()
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onToggleItemNotes(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-
-    const itemId = target.closest<HTMLElement>('[data-item-id]')?.dataset.itemId
     const isNowOpen = target.dataset.open === 'true'
 
-    if (!itemId) return
-
-    const item = this.actor.items.get(itemId)
-
-    if (item?.system && 'notesOpen' in item.system) {
-      await item?.update({ 'system.notesOpen': !isNowOpen } as Record<string, unknown>)
+    if (doc?.system && 'notesOpen' in doc.system) {
+      await doc?.update({ 'system.notesOpen': !isNowOpen } as Item.UpdateData)
     }
   }
 
@@ -954,46 +876,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static async #onAddModifier(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-
-    const value = target.dataset.value ?? '0'
-    const comment = target.dataset.comment ?? ''
-
-    GURPS.ModifierBucket.addModifier(value, comment)
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onRollOtf(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-
-    const value = target.dataset.value ?? ''
-
-    const parsed = GURPS.parselink(value)
-
-    if (!parsed.action) return
-
-    GURPS.performAction(parsed.action, this.actor, event)
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onAddResourceTracker(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
-    event.preventDefault()
-
-    if (!this.actor.isOwner) return
-
-    const createData = {
-      _id: foundry.utils.randomID(),
-      name: getGame().i18n.localize('GURPS.resourceTracker.placeholder'),
-    }
-
-    await TrackerInstance.create(createData, { parent: this.actor, renderSheet: true })
-  }
-
-  /* ---------------------------------------- */
-
   static async #onEditResourceTracker(
     this: GurpsActorGcsSheet,
     event: PointerEvent,
@@ -1001,51 +883,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ): Promise<void> {
     event.preventDefault()
 
-    const id = target.dataset.id
+    const tracker = this._getEmbedded(target)
 
-    if (!id) {
-      console.error('No resource tracker id provided')
-
-      return
-    }
-
-    const tracker = this.actor.system.additionalresources.tracker.get(id)
-
-    if (!tracker) {
-      console.error(`No resource tracker found with id ${id}`)
+    if (!(tracker instanceof TrackerInstance)) {
+      console.error(
+        'Resource tracker edit button was clicked, but no valid tracker instance could be found for the clicked element'
+      )
 
       return
     }
 
     await GURPS.modules.ResourceTracker.updateResourceTracker(this.actor, tracker)
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onRemoveResourceTracker(
-    this: GurpsActorGcsSheet,
-    event: PointerEvent,
-    target: HTMLElement
-  ): Promise<void> {
-    event.preventDefault()
-
-    const id = target.dataset.id
-
-    if (!id) {
-      console.error('No resource tracker id provided')
-
-      return
-    }
-
-    const tracker = this.actor.system.additionalresources.tracker.get(id)
-
-    if (!tracker) {
-      console.error(`No resource tracker found with id ${id}`)
-
-      return
-    }
-
-    await tracker.deleteDialog()
   }
 
   /* ---------------------------------------- */

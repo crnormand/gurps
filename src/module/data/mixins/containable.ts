@@ -7,7 +7,7 @@ import { fields } from '@gurps-types/foundry/index.js'
  */
 const containableSchema = () => {
   return {
-    containedBy: new fields.StringField({ required: true, nullable: true, initial: null }),
+    containedBy: new fields.DocumentIdField({ required: true, nullable: true, blank: false, initial: null }),
     open: new fields.BooleanField({ required: true, nullable: true, initial: true }),
   }
 }
@@ -76,8 +76,8 @@ function isContainable<T>(obj: any): obj is IContainable<T> {
     'contents' in obj &&
     'allContents' in obj &&
     'containerDepth' in obj &&
-    'contains' in obj &&
-    typeof obj.contains === 'function' &&
+    'containsItem' in obj &&
+    typeof obj.containsItem === 'function' &&
     'ancestors' in obj &&
     'getDescendants' in obj &&
     typeof obj.getDescendants === 'function' &&

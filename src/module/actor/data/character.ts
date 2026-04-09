@@ -4,8 +4,10 @@ import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { ActionType } from '@module/action/types.js'
+import { defaultHitLocations } from '@module/config/hit-locations.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import DiceField from '@module/data/fields/dice-field.js'
+import { ModelCollection } from '@module/data/model-collection.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
@@ -22,7 +24,7 @@ import { multiplyDice } from '@util/damage-utils.js'
 import { roundTo } from '@util/math.js'
 import { COSTS_REGEX } from '@util/parselink.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '@util/utilities.js'
-import { AnyObject, DeepPartial } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import { HitLocationEntry } from '../actor-components.js'
 import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
@@ -48,7 +50,7 @@ import {
   LiftingMovingSchema,
 } from './character-components.js'
 import { HitLocationEntryV2 } from './hit-location-entry.js'
-import { MoveModeV2 } from './move-mode.js'
+import { groundMoveForBasicMove, MoveModeV2 } from './move-mode.js'
 import { NoteV2 } from './note.js'
 
 class CharacterModel extends BaseActorModel<CharacterSchema> {
@@ -66,6 +68,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         MoveMode: `system.moveV2`,
         ResourceTracker: `system.additionalresources.tracker`,
       },
+      embeddedHolderField: 'holderItem',
       type: 'base',
     }
   }
@@ -83,9 +86,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     if (
       !data?.system?.holderItemId ||
-      (data?.system?.holderItemId && !data.items?.some(item => item._id === data.system.holderItemId))
+      (data?.system?.holderItemId &&
+        !data.items?.some((item: Item.Implementation) => item._id === data.system.holderItemId))
     ) {
-      const holderItemData: Item.CreateData = {
+      const holderItemData: Item.CreateData<ItemType.Trait> = {
         _id: foundry.utils.randomID(),
         type: ItemType.Trait,
         name: getGame().i18n.localize('GURPS.migration.holderItem.name'),
@@ -264,8 +268,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   protected override _initialize(options?: DataModel.InitializeOptions): void {
     super._initialize(options)
 
-    if (!this._currentMoveModeId || ![...this.moveV2.keys()].includes(this._currentMoveModeId)) {
-      this._currentMoveModeId = [...this.moveV2.keys()][0] ?? null
+    const moveTypes = this.moveV2
+
+    if (moveTypes && (!this._currentMoveModeId || ![...moveTypes.keys()].includes(this._currentMoveModeId))) {
+      console.warn(
+        `GURPS | Current move mode ID "${this._currentMoveModeId}" is invalid. Defaulting to first available move mode.`
+      )
+
+      this._currentMoveModeId = [...moveTypes.keys()][0] ?? null
     }
   }
 
@@ -429,17 +439,20 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #applyBonusesToHitLocations() {
-    for (const location of this.hitlocationsV2) {
-      location.drItem = this._drBonusesFromItems[location.where] ?? 0
-      const newDR = location.import + location.drItem + location.drMod
+    const hitLocations = this.parent.pseudoCollections.HitLocation as ModelCollection<HitLocationEntryV2>
 
-      // NOTE: I'm unsure as to whether drCap should ever apply.
-      // On the one hand, using the ! operator in the /dr command may imply
-      // that the DR of the location should always be set to the new value.
-      // On the other hand, this may not be the intended behavior.
-      // This is where documentation regarding intent would be helpful.
-      location._dr = location.drCap === null ? newDR : Math.max(location.drCap, newDR)
-    }
+    if (hitLocations)
+      for (const location of hitLocations) {
+        location.drItem = this._drBonusesFromItems[location.where] ?? 0
+        const newDR = location.import + location.drItem + location.drMod
+
+        // NOTE: I'm unsure as to whether drCap should ever apply.
+        // On the one hand, using the ! operator in the /dr command may imply
+        // that the DR of the location should always be set to the new value.
+        // On the other hand, this may not be the intended behavior.
+        // This is where documentation regarding intent would be helpful.
+        location._dr = location.drCap === null ? newDR : Math.max(location.drCap, newDR)
+      }
   }
 
   /* ---------------------------------------- */
@@ -751,17 +764,40 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get currentMoveMode(): MoveModeV2 {
-    const id = this._currentMoveModeId
-    const defaultMoveMode = [...this.moveV2.values()][0]
+  get equippedParry(): number {
+    let highest = 0
 
-    if (id) {
-      const moveMode = this.moveV2.get(id)
-
-      return moveMode ? moveMode : defaultMoveMode
+    for (const equipment of this.allEquipmentCarried) {
+      for (const weapon of equipment.system.actions.filter(action => action.isOfType(ActionType.MeleeAttack))) {
+        if (weapon.parryLevel && weapon.parryLevel > highest) highest = weapon.parryLevel
+      }
     }
 
-    return defaultMoveMode
+    return highest
+  }
+
+  /* ---------------------------------------- */
+
+  get currentMoveMode(): MoveModeV2 {
+    const id = this._currentMoveModeId
+
+    const moveTypes = this.moveV2
+
+    if (moveTypes) {
+      const defaultMoveMode = moveTypes?.contents[0]
+
+      if (id) {
+        const moveMode = moveTypes.get(id)
+
+        return moveMode ? moveMode : defaultMoveMode
+      }
+
+      return defaultMoveMode
+    }
+
+    console.warn('GURPS | No move modes found for actor. Defaulting to Ground Move', this)
+
+    return new MoveModeV2(groundMoveForBasicMove(this.basicmove.value), { parent: this })
   }
 
   /* ---------------------------------------- */
@@ -1938,16 +1974,16 @@ const characterSchema = () => {
       { required: true, nullable: false }
     ),
 
-    bodyplan: new fields.StringField({ required: true, nullable: false }),
+    bodyplan: new fields.StringField({ required: true, nullable: false, initial: 'Humanoid' }),
     hitlocationsV2: new CollectionField(HitLocationEntryV2, {
       required: true,
       nullable: false,
-      initial: {},
+      initial: () => defaultHitLocations(),
     }),
 
     conditions: new fields.SchemaField(conditionsSchema(), { required: true, nullable: false }),
 
-    // TODO Different move modes can be added based on Traits such as "Flight". Perhaps it's completely derived from Traits?
+    // TODO: Different move modes can be added based on Traits such as "Flight". Perhaps it's completely derived from Traits?
     // * "Normal" - Ground (Basic Move)/Air (0)/Water (Basic Move / 5)
     // * Amphibious = Ground (Basic Move)/Water (Basic Move)
     // * Aquatic = Ground (0) and Water (Basic Move)
@@ -1961,20 +1997,38 @@ const characterSchema = () => {
     //  Enhanced Move = (Basic Speed x level; half level x 1.5) For ONE move mode
     //
     // * Tunneling = Underground (1 yard per level)
-    moveV2: new CollectionField(MoveModeV2, { required: true, nullable: false, initial: {} }),
+    moveV2: new CollectionField(MoveModeV2, {
+      required: true,
+      nullable: false,
+      initial: (source: unknown) => {
+        const groundMove = groundMoveForBasicMove((source as any)?.basicmove.value ?? 0)
+
+        const allMoves: AnyMutableObject = {}
+
+        allMoves[groundMove._id as string] = groundMove
+
+        return allMoves
+      },
+    }),
 
     /** The currently selected move mode used to calculate move values */
     _currentMoveModeId: new fields.StringField({
       required: true,
-      nullable: false,
-      blank: true,
+      nullable: true,
+      blank: false,
+      initial: (source: unknown) => {
+        const moveKeys = Object.keys((source as any)?.moveV2 ?? {})
+
+        return moveKeys.length > 0 ? moveKeys[0] : null
+      },
     }),
 
     allNotes: new CollectionField(NoteV2, { required: true, nullable: false, initial: {} }),
 
-    holderItemId: new fields.DocumentIdField({
+    holderItemId: new fields.StringField({
       required: true,
       nullable: false,
+      blank: false,
       readonly: true,
       initial: () => foundry.utils.randomID(),
     }),
