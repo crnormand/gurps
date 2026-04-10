@@ -1,5 +1,5 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
-import { MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
+import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
 import { parseBlock } from '@module/action/parse-attack.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
@@ -506,9 +506,22 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   async #promptHitLocationOverwrite() {
-    // No need to run this if there is no existing actor or if this is the first import.
-    if (!this.actor || (!this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname))
+    // No need to run this if there is no existing actor
+    if (!this.actor) return
+
+    // On first import, always replace the hit location table
+    if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
+      const currentHitLocationNullifiers = Object.fromEntries(
+        this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+      )
+
+      this.output.hitlocationsV2 = {
+        ...this.output.hitlocationsV2,
+        ...currentHitLocationNullifiers,
+      }
+
       return
+    }
 
     const currentBodyPlan = this.actor.system.bodyplan
 
@@ -707,7 +720,7 @@ Portrait will not be imported.`
   #importMeleeWeapon(weapon: GCAAttackMode): DataModel.CreateData<MeleeAttackSchema> {
     // Set name to null so that it inherists the parent item's name by default.
     const name = null
-    const type = 'meleeAttack'
+    const type = ActionType.MeleeAttack
     const _id = foundry.utils.randomID()
 
     let damage = weapon.chardamage ?? ''
@@ -755,7 +768,7 @@ Portrait will not be imported.`
   #importRangedWeapon(weapon: GCAAttackMode): DataModel.CreateData<RangedAttackSchema> {
     // Set name to null so that it inherists the parent item's name by default.
     const name = null
-    const type = 'rangedAttack'
+    const type = ActionType.RangedAttack
     const _id = foundry.utils.randomID()
 
     let damage = weapon.chardamage ?? ''
