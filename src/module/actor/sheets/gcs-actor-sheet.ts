@@ -420,7 +420,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
           path: tracker._id,
           value: tracker.value,
           initial: tracker.isAccumulator ? 0 : tracker.max,
-          name: `${tracker.fieldPath}.${tracker._id}.value`,
+          name: `${tracker.fieldPath}.${tracker._id}.currentValue`,
         },
         denominator: {
           field: GurpsActorGcsSheet.#pseudoDenominator,
