@@ -958,6 +958,8 @@ Portrait will not be imported.`
 
     const [baseSystem, _id] = this.#importItem(equipment, containedBy)
 
+    const legalityclass = equipment.ref?.description?.match(/LC:(\d)/)?.[1] ?? ''
+
     const system: DataModel.CreateData<EquipmentSchema> = {
       ...baseSystem,
       count: equipment.count ?? 1,
@@ -966,6 +968,7 @@ Portrait will not be imported.`
       location: '',
       _carried: true,
       equipped: true,
+      legalityclass,
       techlevel: equipment.tl ?? '',
       categories: equipment.cat,
       costsum: parseFloat(equipment.calcs.postchildrencost || equipment.calcs.postformulacost || '0') || 0,
