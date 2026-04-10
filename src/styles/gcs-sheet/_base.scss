@@ -163,6 +163,10 @@ body {
     min-width: 0;
     width: 100%;
 
+    label {
+      text-align: end;
+    }
+
     .form-group:nth-child(odd) {
       @include gcs-banding;
     }
