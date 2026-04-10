@@ -542,6 +542,8 @@ Portrait will not be imported.`
 
         const totalDR = (location.calc.dr as Record<string, number>).all ?? 0
 
+        const totalDR = (location.calc.dr as Record<string, number>).all ?? 0
+
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
           where: location.table_name ?? '',
