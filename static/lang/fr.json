@@ -749,8 +749,8 @@
     "dodge": "Esquive",
     "dragDrop": {
       "equipmentTransferred": "{count}× {itemName} transféré(s) de {sourceName} vers {targetName}.",
-      "itemCopied": "{itemName} ajouté(e) à {targetName} depuis {sourceName}.",
       "itemContainerLoop": "Impossible de déplacer un objet dans l'un de ses propres conteneurs.",
+      "itemCopied": "{itemName} ajouté(e) à {targetName} depuis {sourceName}.",
       "itemTypeMismatch": "Type d'objet incompatible."
     },
     "dragSameContainer": "Impossible d'ajouter l'objet à ce conteneur, car il y est déjà.",
@@ -1808,6 +1808,12 @@
         "location": "Localisation",
         "roll": "Jet"
       },
+      "modernSheet": {
+        "label": "Fiche Moderne"
+      },
+      "npcSheet": {
+        "label": "Fiche PNJ"
+      },
       "personal": {
         "created": "Créé",
         "identity": "Identité",
@@ -1924,8 +1930,8 @@
       "Counter9": "Compteur 9",
       "Crawling": "À Quatre Pattes",
       "Crouch": "Accroupi",
-      "Deaf": "Sourd",
       "Dead": "Mort",
+      "Deaf": "Sourd",
       "DeathCheck1": "Jet #1",
       "DeathCheck2": "Jet #2",
       "DeathCheck3": "Jet #3",

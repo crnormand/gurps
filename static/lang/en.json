@@ -851,8 +851,8 @@
     "dodge": "Dodge",
     "dragDrop": {
       "equipmentTransferred": "Transferred {count}× {itemName} from {sourceName} to {targetName}.",
-      "itemCopied": "Added {itemName} to {targetName} from {sourceName}.",
       "itemContainerLoop": "Cannot drop item: target item is a descendant of the dropped item.",
+      "itemCopied": "Added {itemName} to {targetName} from {sourceName}.",
       "itemTypeMismatch": "Cannot drop item: target type does not match dropped item type."
     },
     "dragSameContainer": "Cannot add the object to this container, as it is already inside it.",
@@ -1919,6 +1919,12 @@
         "dr": "DR",
         "location": "Location",
         "roll": "Roll"
+      },
+      "modernSheet": {
+        "label": "Modern Sheet"
+      },
+      "npcSheet": {
+        "label": "NPC Sheet"
       },
       "personal": {
         "created": "Created",
