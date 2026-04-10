@@ -710,7 +710,9 @@ Portrait will not be imported.`
     const type = 'meleeAttack'
     const _id = foundry.utils.randomID()
 
-    const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
+    let damage = weapon.chardamage ?? ''
+
+    if (weapon.chardamtype) damage += ` ${weapon.chardamtype}`
 
     const level = weapon.charskillscore ?? 0
 
@@ -756,7 +758,11 @@ Portrait will not be imported.`
     const type = 'rangedAttack'
     const _id = foundry.utils.randomID()
 
-    const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
+    let damage = weapon.chardamage ?? ''
+
+    if (weapon.chardamtype) damage += ` ${weapon.chardamtype}`
+
+    const level = weapon.charskillscore ?? 0
 
     const halfDamageRange = weapon.charrangehalfdam ?? ''
     const maxRange = weapon.charrangemax ?? ''
@@ -768,7 +774,7 @@ Portrait will not be imported.`
       _id,
       acc: weapon.characc ?? '',
       damage,
-      import: weapon.charskillscore ?? 0,
+      import: level,
       itemModifiers: '',
       mode: weapon.name ?? '',
       modifierTags: '',
