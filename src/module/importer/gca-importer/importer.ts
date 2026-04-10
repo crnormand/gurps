@@ -796,6 +796,8 @@ Portrait will not be imported.`
       modifierTags: '',
       notes: weapon.notes ?? '',
       range,
+      bulk: weapon.charbulk ?? '',
+      rateOfFire: weapon.rof ?? '',
       recoil: weapon.charrcl ?? '',
       shots: weapon.charshots ?? '',
       st: weapon.charminst ?? '',
