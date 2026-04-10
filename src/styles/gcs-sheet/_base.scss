@@ -225,10 +225,15 @@ body {
   }
 
   .form-fields {
+    display: flex;
     height: 100%;
     grid-column: 2;
     min-width: 0;
     white-space: nowrap;
+
+    > * {
+      align-self: center;
+    }
 
     :is(input, textarea) {
       width: 100%;
