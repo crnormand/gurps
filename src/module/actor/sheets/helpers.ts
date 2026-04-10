@@ -49,14 +49,22 @@ export async function resolveItemDropPosition(target: Item.Implementation): Prom
 export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipment>): Promise<number | null> {
   const max = item.system.count
 
+  const rangePicker = foundry.applications.elements.HTMLRangePickerElement.create({
+    name: 'quantity',
+    min: 1,
+    max,
+    step: 1,
+    value: 1,
+  })
+
   const result = await foundry.applications.api.DialogV2.wait({
     window: { title: item.name },
     content: `
 <p>${game.i18n!.localize('GURPS.splitQuantity')}</p>
 <div class="form-group">
-<label>${game.i18n!.localize('GURPS.quantity')}</label>
+  <label>${game.i18n!.localize('GURPS.quantity')}</label>
   <div class="form-fields">
-    <input type="number" name="quantity" min="0" max="${max}"/>
+    ${rangePicker.outerHTML}
   </div>
 </div>`,
     buttons: [
@@ -66,10 +74,10 @@ export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipme
         label: 'GURPS.ok',
         default: true,
         callback: (_event, button, _dialog): number => {
-          const input = button.form?.elements.namedItem('quantity') as HTMLInputElement
+          const picker = button.form?.querySelector<HTMLInputElement>('[name="quantity"]')
 
-          // Return NaN for empty or non-numeric input; the caller treats NaN as cancellation.
-          return parseInt(input?.value ?? '')
+          // Return NaN for missing or non-numeric input; the caller treats NaN as cancellation.
+          return parseInt(picker?.value ?? '')
         },
       },
       {

@@ -748,6 +748,8 @@
     },
     "dodge": "Ausweichen",
     "dragDrop": {
+      "equipmentTransferred": "{count}× {itemName} von {sourceName} zu {targetName} übertragen.",
+      "itemCopied": "{itemName} von {sourceName} zu {targetName} hinzugefügt.",
       "itemContainerLoop": "Ein Gegenstand kann nicht in einen seiner eigenen Container verschoben werden.",
       "itemTypeMismatch": "Gegenstandstyp stimmt nicht überein."
     },

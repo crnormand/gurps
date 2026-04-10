@@ -850,6 +850,8 @@
     },
     "dodge": "Dodge",
     "dragDrop": {
+      "equipmentTransferred": "Transferred {count}× {itemName} from {sourceName} to {targetName}.",
+      "itemCopied": "Added {itemName} to {targetName} from {sourceName}.",
       "itemContainerLoop": "Cannot drop item: target item is a descendant of the dropped item.",
       "itemTypeMismatch": "Cannot drop item: target type does not match dropped item type."
     },
