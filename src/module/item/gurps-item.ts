@@ -61,6 +61,16 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   }
 
   /* ---------------------------------------- */
+
+  /**
+   * Toggle the open/collapsed state of the notes on this document.
+   */
+  async toggleNotes(): Promise<void> {
+    if ('toggleNotes' in this.system && typeof this.system.toggleNotes === 'function')
+      return await this.system.toggleNotes()
+  }
+
+  /* ---------------------------------------- */
   /*  IContainable Interface Implementation   */
   /* ---------------------------------------- */
 

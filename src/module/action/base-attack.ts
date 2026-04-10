@@ -17,6 +17,17 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
   static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.action.baseAttack']
 
   /* ---------------------------------------- */
+
+  /**
+   * Toggle the open/collapsed state of the notes on this document.
+   */
+  async toggleNotes(): Promise<void> {
+    const newValue = !this.notesOpen
+
+    await this.update({ notesOpen: newValue } as unknown as Item.UpdateData)
+  }
+
+  /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
