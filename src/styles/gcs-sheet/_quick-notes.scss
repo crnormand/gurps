@@ -1,0 +1,14 @@
+[data-application-part='quickNotes'] {
+  .gcs-section-header {
+    align-items: center;
+
+    span.gcs-title {
+      flex: 1;
+    }
+
+    [data-action='editQuickNotes'] {
+      margin-left: auto;
+      padding-right: 0.25rem;
+    }
+  }
+}
