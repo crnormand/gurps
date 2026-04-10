@@ -1,7 +1,6 @@
 export type { DeepPartial } from 'fvtt-types/utils'
 export { ActorSheet } from './actor-sheet.js'
 export { Application } from './application.js'
-// export type { HeaderControlsEntry } from './application.js'
 export { fields } from './data-fields.js'
 export { DataModel } from './data-model.js'
 export { DocumentSheet } from './document-sheet.js'
