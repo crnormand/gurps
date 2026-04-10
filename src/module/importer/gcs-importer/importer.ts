@@ -510,6 +510,8 @@ Portrait will not be imported.`
       createdon: this.input.created_date ?? '',
       modifiedon: this.input.modified_date ?? '',
       player: profile.player_name ?? '',
+      // @ts-expect-error: future addition
+      organization: profile.organization ?? '',
     }
   }
 
@@ -562,8 +564,22 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   async #promptHitLocationOverwrite() {
-    // No need to run this if there is no existing actor or if this is the first import.
-    if (!this.actor || !this.actor.system.profile.modifiedon) return
+    // No need to run this if there is no existing actor
+    if (!this.actor) return
+
+    // On first import, always replace the hit location table
+    if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
+      const currentHitLocationNullifiers = Object.fromEntries(
+        this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+      )
+
+      this.output.hitlocationsV2 = {
+        ...this.output.hitlocationsV2,
+        ...currentHitLocationNullifiers,
+      }
+
+      return
+    }
 
     const currentBodyPlan = this.actor.system.bodyplan
 
