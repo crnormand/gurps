@@ -69,6 +69,14 @@ section[data-application-part='resources'] {
     .gcs-section-content {
       padding: 0;
     }
+
+    .gcs-row-roll {
+      text-align: center;
+    }
+
+    .gcs-row-dr {
+      text-align: right;
+    }
   }
 
   .gcs-encumbrance {
@@ -76,6 +84,12 @@ section[data-application-part='resources'] {
 
     [data-action='setEncumbrance'] {
       cursor: pointer;
+    }
+
+    .gcs-row-enc-load,
+    .gcs-row-enc-move,
+    .gcs-row-enc-dodge {
+      text-align: right;
     }
   }
 
