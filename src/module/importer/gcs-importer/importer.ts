@@ -588,6 +588,10 @@ Portrait will not be imported.`
       this.actor.system.hitlocationsV2.map(hitLocation => {
         const location = hitLocation.toObject() as AnyMutableObject
 
+        delete location.flags
+        delete location.img
+        delete location.name
+        delete location.sort
         delete location._damageType
         delete location._dr
         delete location.drCap
