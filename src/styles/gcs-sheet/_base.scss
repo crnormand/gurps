@@ -328,6 +328,10 @@ body {
       background-color: var(--gcs-color-surface-bg);
     }
 
+    td + td {
+      border-left: 1px solid var(--gcs-color-section-border);
+    }
+
     tr:nth-child(odd) {
       @include gcs-banding;
     }
