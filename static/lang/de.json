@@ -569,12 +569,12 @@
         "InstantlyFatal1": "Sofort tödlich",
         "InstantlyFatal2": "Sofort tödlich",
         "MajorWound": "Schwere Wunde",
-        "None": "Keine",
         "MinorWound1": "Leichte Wunde",
         "MinorWound2": "Leichte Wunde",
         "MinorWound3": "Leichte Wunde",
         "MortalWound1": "Tödliche Wunde",
         "MortalWound2": "Tödliche Wunde",
+        "None": "Keine",
         "Reeling": "Taumelnd",
         "Scratch": "Kratzer",
         "TotalDestruction": "Vollständige Zerstörung"
@@ -749,8 +749,8 @@
     "dodge": "Ausweichen",
     "dragDrop": {
       "equipmentTransferred": "{count}× {itemName} von {sourceName} zu {targetName} übertragen.",
-      "itemCopied": "{itemName} von {sourceName} zu {targetName} hinzugefügt.",
       "itemContainerLoop": "Ein Gegenstand kann nicht in einen seiner eigenen Container verschoben werden.",
+      "itemCopied": "{itemName} von {sourceName} zu {targetName} hinzugefügt.",
       "itemTypeMismatch": "Gegenstandstyp stimmt nicht überein."
     },
     "dragSameContainer": "Der Gegenstand kann nicht zu diesem Container hinzugefügt werden, da es sich bereits darin befindet.",
@@ -1808,6 +1808,12 @@
         "location": "Trefferlage",
         "roll": "Wurf"
       },
+      "modernSheet": {
+        "label": "Modernes Charakterblatt"
+      },
+      "npcSheet": {
+        "label": "NSC-Charakterblatt"
+      },
       "personal": {
         "created": "Erstellt",
         "identity": "Identität",
@@ -1924,8 +1930,8 @@
       "Counter9": "Zähler 9",
       "Crawling": "Kriechend",
       "Crouch": "Hockend",
-      "Deaf": "Taub",
       "Dead": "Tot",
+      "Deaf": "Taub",
       "DeathCheck1": "Prüfe #1",
       "DeathCheck2": "Prüfe #2",
       "DeathCheck3": "Prüfe #3",

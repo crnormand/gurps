@@ -29,7 +29,27 @@ function init() {
     }
 
     foundry.documents.collections.Actors.registerSheet(
-      'gurps',
+      GURPS.SYSTEM_NAME,
+      // TODO: fix type
+      sheets.GurpsActorModernSheet as unknown as DocumentSheet.AnyConstructor,
+      {
+        types: [ActorType.Character],
+        label: 'GURPS.sheet.modernSheet.label',
+      }
+    )
+
+    foundry.documents.collections.Actors.registerSheet(
+      GURPS.SYSTEM_NAME,
+      // TODO: fix type
+      sheets.GurpsActorNpcModernSheet as unknown as DocumentSheet.AnyConstructor,
+      {
+        types: [ActorType.Character],
+        label: 'GURPS.sheet.npcSheet.label',
+      }
+    )
+
+    foundry.documents.collections.Actors.registerSheet(
+      GURPS.SYSTEM_NAME,
       // TODO: fix type
       sheets.GurpsActorGcsSheet as unknown as DocumentSheet.AnyConstructor,
       {
