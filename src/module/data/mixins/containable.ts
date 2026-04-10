@@ -7,7 +7,7 @@ import { fields } from '@gurps-types/foundry/index.js'
  */
 const containableSchema = () => {
   return {
-    containedBy: new fields.DocumentIdField({ required: true, nullable: true, blank: false, initial: null }),
+    containedBy: new fields.StringField({ required: true, nullable: true, blank: false, initial: null }),
     open: new fields.BooleanField({ required: true, nullable: true, initial: true }),
   }
 }

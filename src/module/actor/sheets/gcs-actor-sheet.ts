@@ -1,4 +1,4 @@
-import { DocumentSheet, HandlebarsApplicationMixin, ActorSheet } from '@gurps-types/foundry/index.js'
+import { HandlebarsApplicationMixin, ActorSheet, Application } from '@gurps-types/foundry/index.js'
 import {
   DisplayConditionalModifier,
   DisplayEquipment,
@@ -21,7 +21,7 @@ import { systemPath } from '@module/util/misc.js'
 import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import type { MoveModeV2 } from '../data/move-mode.js'
 import Maneuvers from '../maneuver.js'
@@ -87,14 +87,14 @@ type AttributeEntry = {
 
 /* ---------------------------------------- */
 
-type DragData = { type: 'Item'; id: string; uuid: string } | { type: 'damageItem'; payload: AnyObject }
-
-type DragDataOf<T extends DragData['type']> = Extract<DragData, { type: T }>
+type DragData = { type: 'Item'; [key: string]: unknown } | { type: 'damageItem'; payload: AnyObject }
 
 /* ---------------------------------------- */
 
 namespace GurpsActorGcsSheet {
   export type Type = ActorType.Character
+
+  /* ---------------------------------------- */
 
   export interface RenderContext extends ActorSheet.RenderContext {
     isPlay: boolean
@@ -143,12 +143,12 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ActorSheet.Configuration,
   ActorSheet.RenderOptions,
   GurpsActorGcsSheet.RenderContext
->() {
+> {
   static readonly #pseudoDenominator = new foundry.data.fields.NumberField({ readonly: true, nullable: true })
 
   /* ---------------------------------------- */
 
-  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
+  static override DEFAULT_OPTIONS: GurpsBaseActorSheet.DefaultOptions = {
     classes: ['gcs-sheet'],
     position: {
       width: 800,
@@ -556,8 +556,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   /* ---------------------------------------- */
 
   protected override async _onRender(
-    context: GurpsActorGcsSheet.RenderContext,
-    options: ActorSheet.RenderOptions
+    context: DeepPartial<GurpsActorGcsSheet.RenderContext>,
+    options: DeepPartial<GurpsBaseActorSheet.RenderOptions>
   ): Promise<void> {
     super._onRender(context, options)
 
@@ -682,8 +682,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   /* ---------------------------------------- */
 
   protected override async _onFirstRender(
-    context: GurpsActorGcsSheet.RenderContext,
-    options: ActorSheet.RenderOptions
+    context: DeepPartial<GurpsActorGcsSheet.RenderContext>,
+    options: DeepPartial<GurpsBaseActorSheet.RenderOptions>
   ): Promise<void> {
     super._onFirstRender(context, options)
 
@@ -713,9 +713,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
         condition: target => target.dataset.uuid !== undefined,
         callback: async target => {
-          const handler = this.options.actions['deleteEmbedded'] as DocumentSheet.ClickAction | null
+          const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
 
-          if (handler) handler.call(this, null, target)
+          if (handler) handler.call(this, {} as unknown as PointerEvent, target)
         },
       },
     ]
@@ -730,9 +730,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
         condition: target => target.dataset.uuid !== undefined,
         callback: async target => {
-          const handler = this.options.actions['deleteEmbedded'] as DocumentSheet.ClickAction | null
+          const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
 
-          if (handler) handler.call(this, null, target)
+          if (handler) handler.call(this, {} as unknown as PointerEvent, target)
         },
       },
     ]

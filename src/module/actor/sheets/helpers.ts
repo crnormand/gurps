@@ -24,9 +24,9 @@ export function buildItemCopyWithChildren(
 
 /* ---------------------------------------- */
 
-export async function resolveItemDropPosition(item: Item.Implementation): Promise<'before' | 'inside' | null> {
+export async function resolveItemDropPosition(target: Item.Implementation): Promise<'before' | 'inside' | null> {
   return await foundry.applications.api.DialogV2.wait({
-    window: { title: item.name },
+    window: { title: target.name },
     content: `<p>${game.i18n!.localize('GURPS.dropResolve')}</p>`,
     buttons: [
       {
@@ -49,7 +49,7 @@ export async function resolveItemDropPosition(item: Item.Implementation): Promis
 export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipment>): Promise<number | null> {
   const max = item.system.count
 
-  return await foundry.applications.api.DialogV2.wait({
+  const result = await foundry.applications.api.DialogV2.wait({
     window: { title: item.name },
     content: `
 <p>${game.i18n!.localize('GURPS.splitQuantity')}</p>
@@ -68,9 +68,8 @@ export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipme
         callback: (_event, button, _dialog): number => {
           const input = button.form?.elements.namedItem('quantity') as HTMLInputElement
 
-          if (!input) return 0
-
-          return parseInt(input.value) || 0
+          // Return NaN for empty or non-numeric input; the caller treats NaN as cancellation.
+          return parseInt(input?.value ?? '')
         },
       },
       {
@@ -81,6 +80,9 @@ export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipme
       },
     ],
   })
+
+  // null = dialog closed; NaN = user confirmed with an empty/invalid input — both cancel.
+  return result === null || !Number.isFinite(result) ? null : result
 }
 
 /* ---------------------------------------- */
