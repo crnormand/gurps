@@ -5,7 +5,8 @@
   border: 1px solid var(--gcs-color-section-border);
 }
 
-.gcs-item-table {
+.gcs-item-table,
+.gcs-combat-table {
   width: 100%;
   // Auto layout: columns size to content, min/max enforced via td rules below.
   // col width: 100% on the name column still acts as a "take remaining space" hint.
@@ -137,6 +138,7 @@
   .gcs-item-notes-container {
     font-size: var(--gcs-font-size-notes);
     min-height: 0;
+    padding: 0.1rem 0.25rem;
 
     @for $i from 0 through 8 {
       &.indent#{$i} {
