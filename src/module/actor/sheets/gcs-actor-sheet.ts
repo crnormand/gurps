@@ -762,46 +762,62 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         case 'spells':
           return this.actor.system.allSpellsV2
         case 'carriedEquipment':
-          return this.actor.system.equipmentV2.carried
+          return this.actor.system.allEquipmentCarried
         case 'otherEquipment':
-          return this.actor.system.equipmentV2.other
+          return this.actor.system.allEquipmentOther
         default:
           return []
       }
     }
 
     const tableId = target.closest<HTMLElement>('[data-table-id]')?.dataset.tableId ?? ''
-    const sortBy = target.dataset.sortBy
-    const itemList = getItemList(tableId)
+    const sortBy = target.dataset.sortBy ?? ''
+    const allItems = getItemList(tableId)
 
-    const unsortedIds = itemList.map(i => i._id)
+    if (allItems.length === 0) return
 
-    let sortedIds = itemList
-      .sort((left, right) => {
-        return left.name.localeCompare(right.name)
+    // Group items by their container so each containment level sorts independently.
+    const grouped = new Map<string | null, Item.Implementation[]>()
+
+    for (const item of allItems) {
+      const key = item.system.containedBy
+      const bucket = grouped.get(key)
+
+      if (bucket) bucket.push(item)
+      else grouped.set(key, [item])
+    }
+
+    // Primary sort by the requested field; fall back to name for stability.
+    const comparator = (left: Item.Implementation, right: Item.Implementation): number => {
+      const leftValue = foundry.utils.getProperty(left, sortBy) ?? ''
+      const rightValue = foundry.utils.getProperty(right, sortBy) ?? ''
+
+      const fieldResult =
+        typeof leftValue === 'number' && typeof rightValue === 'number'
+          ? leftValue - rightValue
+          : String(leftValue).localeCompare(String(rightValue))
+
+      return fieldResult !== 0 ? fieldResult : left.name.localeCompare(right.name)
+    }
+
+    // Toggle direction: if top-level items are already in ascending order, sort descending.
+    const topLevel = [...(grouped.get(null) ?? [])].sort((left, right) => left.sort - right.sort)
+    const topLevelAscending = [...topLevel].sort(comparator)
+    const alreadyAscending = topLevel.every((item, index) => item._id === topLevelAscending[index]._id)
+    const direction = alreadyAscending ? -1 : 1
+
+    // Sort each group independently and collect update payloads.
+    const updates: { _id: string; sort: number }[] = []
+
+    for (const group of grouped.values()) {
+      const sorted = [...group].sort((left, right) => direction * comparator(left, right))
+
+      sorted.forEach((item, index) => {
+        updates.push({ _id: item._id!, sort: (index + 1) * CONST.SORT_INTEGER_DENSITY })
       })
-      .sort((left, right) => {
-        const leftValue = foundry.utils.getProperty(left, sortBy ?? '') ?? 0
-        const rightValue = foundry.utils.getProperty(right, sortBy ?? '') ?? 0
+    }
 
-        switch (typeof leftValue) {
-          case 'number':
-            return leftValue - (rightValue as number)
-          case 'string':
-            return leftValue.localeCompare(rightValue as string)
-          default:
-            return 0
-        }
-      })
-      .map(item => item._id)
-
-    if (unsortedIds.equals(sortedIds)) sortedIds = sortedIds.reverse()
-
-    const sortUpdates = sortedIds.map((_id, index) => {
-      return { _id, sort: (index + 1) * CONST.SORT_INTEGER_DENSITY }
-    })
-
-    await this.actor.updateEmbeddedDocuments('Item', sortUpdates)
+    await this.actor.updateEmbeddedDocuments('Item', updates)
   }
 
   /* ---------------------------------------- */
