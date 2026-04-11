@@ -737,7 +737,7 @@ export class GurpsActorSheet extends ActorSheet {
       ),
       this._createMenu(
         game.i18n.localize('GURPS.sortContentsAscending'),
-        '<i class="fa-solid fa-arrow-down-short-wide"></i>',
+        '<i class="fa-solid fa-arrow-up-short-wide"></i>',
         this._sortContentAscending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
@@ -1437,7 +1437,7 @@ export class GurpsActorSheet extends ActorSheet {
   sortAscendingMenu(key) {
     return {
       name: game.i18n.localize('GURPS.sortAscending'),
-      icon: '<i class="fa-solid fa-arrow-down-short-wide"></i>',
+      icon: '<i class="fa-solid fa-arrow-up-short-wide"></i>',
       callback: e => this.sortAscending(key),
     }
   }
