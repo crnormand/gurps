@@ -3,7 +3,7 @@
   <div class='desc header'>
     <div class='headermenu'>
       <span>{{localize 'GURPS.meleeWeapons'}}</span>
-      <i class='fa-solid fa-caret-square-down'></i>
+      <i class='fa-solid fa-square-caret-down'></i>
     </div>
   </div>
   <div class='usage header'>{{localize 'GURPS.usage'}}</div>
@@ -17,7 +17,7 @@
   {{#each (attackflatlist system.melee)}}
     {{#if ../isEditing}}
       <div class='itemmenu meleemenu' data-key='system.melee.{{@key}}'>
-        <i class='fa-solid fa-times'></i>
+        <i class='fa-solid fa-xmark'></i>
       </div>
 
       <div class='desc indent{{indent}}' data-key='system.melee.{{@key}}'>

@@ -626,16 +626,18 @@ ul#result-effects li {
 }
 
 .gga-chat-message .label-toggle:after {
-  font: normal normal normal 12px/1;
   font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f078';
   color: lightgray;
   float: right;
 }
 
 .gga-chat-message .toggle:checked + .label-toggle:after {
-  font: normal normal normal 12px/1;
   font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f077';
   color: lightgray;
   float: right;

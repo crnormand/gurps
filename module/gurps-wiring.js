@@ -116,13 +116,13 @@ export default class GurpsWiring {
       [
         {
           name: 'GURPS.sendToEveryone',
-          icon: '<i class="fas fa-user-friends"></i>',
+          icon: '<i class="fa-solid fa-user-group"></i>',
           callback: () => GURPS.sendOtfMessage('[PDF:' + link.innerText + ']', false),
           condition: () => game.user.isGM,
         },
         {
           name: game.i18n.format('GURPS.whisperToNames', { names }),
-          icon: '<i class="fas fa-user-secret"></i>',
+          icon: '<i class="fa-solid fa-user-secret"></i>',
           callback: () => GURPS.sendOtfMessage('[PDF:' + link.innerText + ']', false, users),
           condition: () => {
             return game.user.isGM && users.length > 0
@@ -130,7 +130,7 @@ export default class GurpsWiring {
         },
         {
           name: 'GURPS.sendToChat',
-          icon: '<i class="far fa-comment"></i>',
+          icon: '<i class="fa-regular fa-comment"></i>',
           callback: () => {
             $(document)
               .find('#chat-message')

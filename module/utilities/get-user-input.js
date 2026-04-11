@@ -36,7 +36,7 @@ export default async function getUserInput(options) {
         {
           action: 'cancel',
           label: 'GURPS.cancel',
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-xmark',
           callback: () => undefined, // Resolve with undefined if cancelled
         },
       ],

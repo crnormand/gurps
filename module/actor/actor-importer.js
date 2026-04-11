@@ -84,7 +84,7 @@ export class ActorImporter {
         {
           action: 'import',
           label: 'GURPS.import',
-          icon: 'fas fa-file-import',
+          icon: 'fa-solid fa-file-import',
           default: true,
           callback: async (_, button, __) => {
             let files = button.form.elements.data.files
@@ -100,7 +100,7 @@ export class ActorImporter {
         {
           action: 'cancel',
           label: 'GURPS.cancel',
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-xmark',
           callback: () => undefined, // Resolve with undefined if cancelled
         },
       ],
@@ -622,14 +622,14 @@ export class ActorImporter {
             {
               action: 'save',
               label: game.i18n.localize('GURPS.save'),
-              icon: 'far fa-square',
+              icon: 'fa-regular fa-square',
               default: true,
               callback: () => true,
             },
             {
               action: 'overwrite',
               label: game.i18n.localize('GURPS.overwrite'),
-              icon: 'fas fa-edit',
+              icon: 'fa-solid fa-pen-to-square',
               callback: () => false,
             },
           ],
@@ -1334,14 +1334,14 @@ export class ActorImporter {
         {
           action: 'save',
           label: game.i18n.localize('GURPS.save'),
-          icon: 'far fa-square',
+          icon: 'fa-regular fa-square',
           default: true,
           callback: () => true,
         },
         {
           action: 'overwrite',
           label: game.i18n.localize('GURPS.overwrite'),
-          icon: 'fas fa-edit',
+          icon: 'fa-solid fa-pen-to-square',
           callback: () => false,
         },
       ],

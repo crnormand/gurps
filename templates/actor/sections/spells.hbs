@@ -3,7 +3,7 @@
 	<div class='desc header'>
 		<div class='headermenu'>
 			<span>{{localize 'GURPS.spells'}}</span>
-			<i class='fa-solid fa-caret-square-down'></i>
+			<i class='fa-solid fa-square-caret-down'></i>
 		</div>
 	</div>
 	<div class='cls header'>{{localize 'GURPS.spellClass'}}</div>
@@ -20,7 +20,7 @@
 	{{#each (flatlist system.spells)}}
 	{{#if ../isEditing}}
 	<div class='itemmenu spellmenu' data-key='system.spells.{{@key}}'>
-		<i class='fa-solid fa-times'></i>
+		<i class='fa-solid fa-xmark'></i>
 	</div>
 	<div class='desc indent{{indent}}' data-key='system.spells.{{@key}}'><input name='system.spells.{{@key}}.name'
 			class='gcs-input' type='text' value='{{this.name}}' />
