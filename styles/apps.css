@@ -589,15 +589,17 @@ ul#result-effects li {
 }
 
 .damage-message .label-toggle:after {
-  font: normal normal normal 12px/1;
   font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f078';
   float: right;
 }
 
 .damage-message .toggle:checked + .label-toggle:after {
-  font: normal normal normal 12px/1;
   font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f077';
   float: right;
 }
