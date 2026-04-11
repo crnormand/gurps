@@ -1,213 +1,69 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
+import { HitLocationTables } from '@rules/hit-locations/tables.js'
 
-export const defaultHitLocations = (): Record<
-  string,
-  Partial<DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>>>
-> => {
-  const locations: Partial<DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>>>[] = [
-    {
-      name: '',
-      where: 'Eyes',
-      import: 0,
-      penalty: -9,
-      rollText: '-',
-      role: 'eye',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 0,
-    },
-    {
-      name: '',
-      where: 'Skull',
-      import: 2,
-      penalty: -7,
-      rollText: '3-4',
-      role: 'skull',
-      _dr: 2,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 100000,
-    },
-    {
-      name: '',
-      where: 'Face',
-      import: 0,
-      penalty: -5,
-      rollText: '5',
-      role: 'face',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 200000,
-    },
-    {
-      name: '',
-      where: 'Right Leg',
-      import: 0,
-      penalty: -2,
-      rollText: '6-7',
-      role: 'limb',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 300000,
-    },
-    {
-      name: '',
-      where: 'Right Arm',
-      import: 0,
-      penalty: -2,
-      rollText: '8',
-      role: 'limb',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 400000,
-    },
-    {
-      name: '',
-      where: 'Torso',
-      import: 0,
-      penalty: 0,
-      rollText: '9-10',
-      role: 'chest',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 500000,
-    },
-    {
-      name: '',
-      where: 'Groin',
-      import: 0,
-      penalty: -3,
-      rollText: '11',
-      role: 'groin',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 600000,
-    },
-    {
-      name: '',
-      where: 'Left Arm',
-      import: 0,
-      penalty: -2,
-      rollText: '12',
-      role: 'limb',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 700000,
-    },
-    {
-      name: '',
-      where: 'Left Leg',
-      import: 0,
-      penalty: -2,
-      rollText: '13-14',
-      role: 'limb',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 800000,
-    },
-    {
-      name: '',
-      where: 'Hand',
-      import: 0,
-      penalty: -4,
-      rollText: '15',
-      role: 'extremity',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 900000,
-    },
-    {
-      name: '',
-      where: 'Foot',
-      import: 0,
-      penalty: -4,
-      rollText: '16',
-      role: 'extremity',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 1000000,
-    },
-    {
-      name: '',
-      where: 'Neck',
-      import: 0,
-      penalty: -5,
-      rollText: '17-18',
-      role: 'neck',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 1100000,
-    },
-    {
-      name: '',
-      where: 'Vitals',
-      import: 0,
-      penalty: -3,
-      rollText: '-',
-      role: 'vitals',
-      _dr: 0,
-      _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
-      drCap: 0,
-      sort: 1200000,
-    },
-  ]
+export function defaultHitLocations(): Record<string, DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>>> {
+  const locations: Record<string, DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>>> = {}
 
-  return Object.fromEntries(
-    locations.map(location => {
-      location._id = foundry.utils.randomID()
+  const table = HitLocationTables.humanoid
 
-      return [location._id, location]
-    })
+  const rollFormula = table.roll
+  const minRoller = new foundry.dice.Roll(rollFormula)
+  const maxRoller = new foundry.dice.Roll(rollFormula)
+  const minRoll = minRoller.evaluateSync({ minimize: true }).total
+  const maxRoll = maxRoller.evaluateSync({ maximize: true }).total
+
+  console.log(
+    `GURPS | Generating default hit locations for table "${table.name}" with roll "${rollFormula}" (min: ${minRoll}, max: ${maxRoll})`
   )
+
+  let currentRoll = minRoll
+
+  HitLocationTables.humanoid.locations.forEach(location => {
+    let rollMin: number | null = null
+    let rollMax: number | null = null
+    let slots = location.slots || 0
+
+    if (slots > 0) {
+      if (currentRoll + slots > maxRoll) {
+        console.warn(
+          `GURPS | Hit location "${location.name}" has more slots (${slots}) than remaining rolls (${maxRoll - currentRoll + 1}). Ignoring extra slots.`
+        )
+
+        slots = 0
+      }
+    }
+
+    if (slots > 0) {
+      rollMin = currentRoll
+      if (slots === 1) rollMax = currentRoll
+      else rollMax = currentRoll + slots - 1
+    }
+
+    const rollText = rollMin && rollMax ? (rollMin === rollMax ? `${rollMin}` : `${rollMin}-${rollMax}`) : '-'
+
+    currentRoll += slots
+
+    const locationData: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
+      _id: foundry.utils.randomID(),
+      name: '',
+      img: null,
+      sort: 0,
+      flags: {},
+      where: location.name,
+      import: location.dr,
+      _dr: location.dr,
+      penalty: location.penalty,
+      rollText,
+      _damageType: null,
+      split: {},
+      drMod: 0,
+      drItem: 0,
+      drCap: location.dr,
+    }
+
+    locations[locationData._id as string] = locationData
+  })
+
+  return locations
 }

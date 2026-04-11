@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
+import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { convertRangeTextToArray } from '@util/text-utilties.js'
 
 class HitLocationEntryV2 extends PseudoDocument<HitLocationSchemaV2> {
@@ -94,7 +95,12 @@ const hitLocationSchema = () => {
 
     // The role of the hitlocation for the purposes of applying damage: arms and legs are "limbs"; hands and feet,
     // "extremities", etc.
-    role: new fields.StringField({ required: false, nullable: false, initial: '' }),
+    role: new fields.StringField({
+      required: false,
+      nullable: true,
+      blank: false,
+      choices: Object.values(HitLocationRole),
+    }),
   }
 }
 

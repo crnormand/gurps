@@ -11,6 +11,7 @@ import { SkillSchema } from '@module/item/data/skill.js'
 import { SpellSchema } from '@module/item/data/spell.js'
 import { TraitSchema } from '@module/item/data/trait.js'
 import { ItemType } from '@module/item/types.js'
+import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { HitLocation, hitlocationDictionary } from '../../hitlocation/hitlocation.js'
@@ -476,7 +477,10 @@ Portrait will not be imported.`
         const entry = Object.values(tempEntry).find((entry: any) => entry.id === location.location) as
           | { id?: string; role?: string }
           | undefined
-        const role = entry?.role ?? entry?.id ?? ''
+
+        let role = entry?.role ?? entry?.id ?? null
+
+        if (!Object.values(HitLocationRole).includes(role as any)) role = null
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
@@ -486,7 +490,7 @@ Portrait will not be imported.`
           rollText: roll,
           penalty: Number(location.penalty) || 0,
           split: {},
-          role,
+          role: role as HitLocationRole | null,
         }
 
         acc[id] = newLocation

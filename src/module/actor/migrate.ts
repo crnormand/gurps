@@ -3,6 +3,7 @@ import { numberValidate } from '@module/data/validators/number-validator.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
 import { getMigratedItemData, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrate.js'
 import { ItemType } from '@module/item/types.js'
+import { HitLocationRole } from '@rules/hit-locations/types.js'
 
 import { Melee, Ranged, Note } from './actor-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
@@ -433,10 +434,15 @@ function migrateActorSystem(
     Object.values(oldData.hitlocations).forEach(hitlocation => {
       const id = foundry.utils.randomID()
 
+      let role: string | null = hitlocation?.role ?? null
+
+      if (!Object.values(HitLocationRole).includes(role as any)) role = null
+
       const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
         ...hitlocation,
         _id: id,
         rollText: hitlocation.roll,
+        role: role as HitLocationRole | null,
       }
 
       newData.hitlocationsV2 ||= {}
