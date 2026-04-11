@@ -554,8 +554,6 @@ Portrait will not be imported.`
         this.output.hitlocationsV2 as Record<string, foundry.data.fields.SchemaField.CreateData<HitLocationSchemaV2>>
       ).map(({ _id, ...rest }) => rest)
 
-      console.log(oldLocations, newLocations)
-
       if (oldLocations.length !== newLocations.length) return false
 
       for (let i = 0; i < oldLocations.length; i++) {
