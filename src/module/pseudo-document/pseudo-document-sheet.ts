@@ -1,4 +1,4 @@
-import { Application } from '@gurps-types/foundry/index.js'
+import { Application, DocumentSheet } from '@gurps-types/foundry/index.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import { PseudoDocument } from './pseudo-document.js'
@@ -17,10 +17,7 @@ namespace PseudoDocumentSheet {
     fields?: Record<string, { field: foundry.data.fields.DataField.Any; value: any; name: string }>
   }
 
-  export type DefaultOptions<Conf extends Configuration<PseudoDocument.Any>> = DeepPartial<Conf> &
-    object & {
-      document?: never
-    }
+  export type DefaultOptions = DocumentSheet.DefaultOptions
 }
 
 class PseudoDocumentSheet<
@@ -42,9 +39,7 @@ class PseudoDocumentSheet<
 
   /* ---------------------------------------- */
 
-  static override DEFAULT_OPTIONS: PseudoDocumentSheet.DefaultOptions<
-    PseudoDocumentSheet.Configuration<PseudoDocument.Any>
-  > = {
+  static override DEFAULT_OPTIONS: PseudoDocumentSheet.DefaultOptions = {
     id: '{id}',
     actions: {
       editImage: PseudoDocumentSheet.#onEditImage,
@@ -85,7 +80,6 @@ class PseudoDocumentSheet<
       const Cls = pseudoDocument.metadata.sheetClass
 
       if (!Cls) return null
-      // @ts-expect-error - No idea what is going on here.
       PseudoDocumentSheet.#sheets.get(doc)?.set(pseudoDocument.uuid, new Cls({ document: pseudoDocument }))
     }
 

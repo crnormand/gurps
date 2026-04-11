@@ -9,7 +9,6 @@ import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
 import { Migrator } from '@module/migration/migrator.js'
 import { Pdf as ModulePdf } from '@module/pdf/index.js'
-import { PseudoDocumentSheet } from '@module/pseudo-document/pseudo-document-sheet.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { ResourceTrackerModule as ModuleResourceTracker } from '@module/resource-tracker/index.js'
@@ -54,7 +53,7 @@ declare global {
        */
       PseudoDocument: {
         Types: Record<gurps.Pseudo.Name, PseudoDocument.ConcreteConstructor | TypedPseudoDocument.ConcreteConstructor>
-        Sheets: Record<gurps.Pseudo.Name, typeof PseudoDocumentSheet>
+        Sheets: Record<gurps.Pseudo.Name, foundry.applications.api.Application.AnyConstructor>
         SubTypes: PseudoDocumentConfig.Types
       }
     }

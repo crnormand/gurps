@@ -1,3 +1,4 @@
+import { DocumentSheet } from '@gurps-types/foundry/index.js'
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { ConditionalModifier, ReactionModifier } from './data/conditional-modifier.js'
@@ -35,7 +36,7 @@ function init() {
     })
     foundry.documents.collections.Items.registerSheet(
       'gurps',
-      sheets.GurpsItemModernSheet as unknown as foundry.applications.api.ApplicationV2.AnyConstructor,
+      sheets.GurpsItemModernSheet as unknown as DocumentSheet.AnyConstructor,
       {
         makeDefault: true,
         types: [ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment],

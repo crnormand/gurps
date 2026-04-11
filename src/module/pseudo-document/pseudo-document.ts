@@ -726,7 +726,7 @@ namespace PseudoDocument {
     /* Record of document names of pseudo-documents and the path to the collection. */
     embedded: Record<string, string>
     /* The class used to render this pseudo-document. */
-    sheetClass?: typeof PseudoDocumentSheet
+    sheetClass?: any
     /**
      * The sort keys for this pseudo-document type, used to determine
      * which property to look up when sorting items of this type.
