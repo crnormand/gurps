@@ -5,6 +5,7 @@ import { migrateItemSource, migrateMeleeWeapon, migrateRangedWeapon } from '@mod
 import { ItemType } from '@module/item/types.js'
 import { shouldMigrateCompendium } from '@module/migration/helpers.js'
 import { MigrationReport } from '@module/migration/types.js'
+import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
 import { Melee, Ranged, Note } from '../actor-components.js'
@@ -441,6 +442,10 @@ function migrateActorSystem(
       // NOTE: hitlocaiton.penalty is a string, but it is being treated as a number by the type system
       const penalty = parseInt(String(hitlocation.penalty)) ?? 0
 
+      let role: string | null = hitlocation?.role ?? null
+
+      if (!Object.values(HitLocationRole).includes(role as any)) role = null
+
       const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
         ...hitlocation,
         _id: id,
@@ -453,6 +458,7 @@ function migrateActorSystem(
         penalty,
         split: hitlocation.split ?? {},
         drMod: hitlocation.drMod ?? 0,
+        role: role as HitLocationRole | null,
       }
 
       newData.hitlocationsV2 ||= {}
