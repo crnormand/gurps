@@ -1,4 +1,6 @@
+import { HandlebarsApplicationMixin, ActorSheet } from '@gurps-types/foundry/index.js'
 import {
+  DisplayConditionalModifier,
   DisplayEquipment,
   DisplayMeleeAttack,
   DisplayNote,
@@ -9,7 +11,8 @@ import {
 } from '@gurps-types/gurps/display-item.js'
 import { Weight } from '@module/data/common/weight.js'
 import GurpsWiring from '@module/gurps-wiring.js'
-import type { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
+import { ItemType } from '@module/item/types.js'
+import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { contrastColor, toHexColor } from '@module/util/color-utils.js'
 import { getCssVariable } from '@module/util/get-css-value.js'
@@ -21,6 +24,7 @@ import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import Maneuvers from '../maneuver.js'
+import { ActorType } from '../types.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 import {
@@ -32,11 +36,9 @@ import {
   resolveItemDropQuantity,
 } from './helpers.js'
 
-import ActorSheet = gurps.applications.ActorSheet
-
 /* ---------------------------------------- */
 
-type CharacterV2Schema = foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<'characterV2'>>
+/* ---------------------------------------- */
 
 /* ---------------------------------------- */
 
@@ -95,20 +97,19 @@ type DragDataOf<T extends DragData['type']> = Extract<DragData, { type: T }>
 
 /* ---------------------------------------- */
 
-type DisplayConditionalModifier = {
-  modifier: number
-  situation: string
-}
-
-/* ---------------------------------------- */
-
 namespace GurpsActorGcsSheet {
+  export type Type = ActorType.Character
+
   export interface RenderContext extends ActorSheet.RenderContext {
     isPlay: boolean
-    actor: Actor.OfType<'characterV2'>
-    system: Actor.SystemOfType<'characterV2'>
-    systemFields?: foundry.data.fields.SchemaField<CharacterV2Schema>['fields']
-    systemSource?: foundry.data.fields.SchemaField.SourceData<CharacterV2Schema>
+    actor: Actor.OfType<Type>
+    system: Actor.SystemOfType<Type>
+    systemFields?: foundry.data.fields.SchemaField<
+      foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<Type>>
+    >['fields']
+    systemSource?: foundry.data.fields.SchemaField.SourceData<
+      foundry.abstract.DataModel.SchemaOf<Actor.SystemOfType<Type>>
+    >
     moveModeChoices?: Record<string, string>
     pools: PoolEntry[]
     liftingMoving: LiftingMovingEntry[]
@@ -142,7 +143,8 @@ const POOL_COLOR_FALLBACK = '#B1D175'
 /* ---------------------------------------- */
 
 class GurpsActorGcsSheet extends GurpsBaseActorSheet<
-  'characterV2',
+  GurpsActorGcsSheet.Type,
+  ActorSheet.Configuration,
   ActorSheet.RenderOptions,
   GurpsActorGcsSheet.RenderContext
 >() {
@@ -150,7 +152,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
+  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
     classes: ['gcs-sheet'],
     position: {
       width: 800,
@@ -176,7 +178,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static override PARTS: Record<string, gurps.applications.handlebars.TemplatePart> = {
+  static override PARTS: Record<string, HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     header: {
       template: systemPath('templates/actor/gcs/header.hbs'),
     },
@@ -264,8 +266,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       notes: this.actor.system.notesV2.map(note => note.toDisplayItem()),
       meleeAttacks: this.actor.system.meleeV2.map(action => action.toDisplayItem()),
       rangedAttacks: this.actor.system.rangedV2.map(action => action.toDisplayItem()),
-      reactionModifiers: this.actor.system.reactions,
-      conditionalModifiers: this.actor.system.conditionalmods,
+      reactionModifiers: this.actor.system.reactions.map(mod => mod.toDisplayItem()),
+      conditionalModifiers: this.actor.system.conditionalmods.map(mod => mod.toDisplayItem()),
       attributeFields: this._prepareAttributes(),
       maneuverChoices,
       postureChoices,
@@ -605,7 +607,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
         const item = this.actor.items.get(itemId)
 
-        if (!item || !item.isOfType('equipmentV2')) {
+        if (!item || !item.isOfType(ItemType.Equipment)) {
           console.error(`Item with id ${itemId} is not of type equipmentV2`)
 
           return
@@ -1153,7 +1155,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     let carried = true
 
     if (target) {
-      if (target.isOfType('equipmentV2')) carried = target.system.carried
+      if (target.isOfType(ItemType.Equipment)) carried = target.system.carried
     } else {
       const tableId = element.closest<HTMLElement>('[data-table-id]')?.dataset.tableId
 
@@ -1198,7 +1200,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     // Extract the new sort value for the dropped item from the sort updates returned by performIntegerSort
     const sort = sortUpdates.find(update => update.target._id === item.id)?.update.sort
 
-    if (item.isOfType('equipmentV2')) {
+    if (item.isOfType(ItemType.Equipment)) {
       return this._onDropEquipment({ item, target, targetContainer, sort, containedBy, carried })
     }
 
@@ -1249,7 +1251,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     containedBy,
     carried,
   }: {
-    item: Item.OfType<'equipmentV2'>
+    item: Item.OfType<ItemType.Equipment>
     target: Item.Implementation | null
     targetContainer: Item.Implementation | null
     sort: number | undefined
@@ -1270,7 +1272,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         sort,
       })
       const newChildData = item.system.children.flatMap(child =>
-        buildItemCopyWithChildren(child as Item.OfType<'equipmentV2'>, newItemData._id, carried)
+        buildItemCopyWithChildren(child as Item.OfType<ItemType.Equipment>, newItemData._id, carried)
       )
 
       await this.actor.createEmbeddedDocuments('Item', [newItemData, ...newChildData], { keepId: true })
@@ -1307,7 +1309,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       })
       // hey
       const newChildData = item.system.children.flatMap(child =>
-        buildItemCopyWithChildren(child as Item.OfType<'equipmentV2'>, newItemData._id, carried)
+        buildItemCopyWithChildren(child as Item.OfType<ItemType.Equipment>, newItemData._id, carried)
       )
 
       await this.actor.createEmbeddedDocuments('Item', [newItemData, ...newChildData], { keepId: true })

@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { DisplayConditionalModifier } from '@gurps-types/gurps/display-item.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 
 /**
@@ -38,6 +39,18 @@ class ConditionalModifier extends PseudoDocument<ConditionalModifier.Schema> {
   get actor(): Actor.Implementation | null {
     return this.item.parent
   }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayConditionalModifier {
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      situation: this.situation,
+      modifier: this.modifier,
+      otf: {
+        modifier: `${this.modifier.signedString()} ${this.situation}`,
+      },
+    })
+  }
 }
 
 /* ---------------------------------------- */
@@ -66,6 +79,18 @@ class ReactionModifier extends PseudoDocument<ConditionalModifier.Schema> {
 
   get actor(): Actor.Implementation | null {
     return this.item.parent
+  }
+
+  /* ---------------------------------------- */
+
+  override toDisplayItem(): DisplayConditionalModifier {
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
+      situation: this.situation,
+      modifier: this.modifier,
+      otf: {
+        modifier: `${this.modifier.signedString()} ${this.situation}`,
+      },
+    })
   }
 }
 

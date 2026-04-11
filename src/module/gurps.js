@@ -69,6 +69,7 @@ import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Pdf } from './pdf/index.js'
 import { Prereqs } from './prereqs/index.js'
+import { Pseudo } from './pseudo-document/index.js'
 import { ResourceTrackerModule } from './resource-tracker/index.js'
 import { Scripting } from './scripting/index.js'
 import { Token } from './token/index.js'
@@ -103,6 +104,15 @@ if (!globalThis.GURPS) {
     GURPS.parseDecimalNumber = parseDecimalNumber
   }
 
+  // Initialize config
+  GURPS.CONFIG = {
+    PseudoDocument: {
+      Types: {},
+      SubTypes: {},
+      Sheets: {},
+    },
+  }
+
   /** @type {{ [key: string]: GurpsModule }} */
   GURPS.modules = {
     Action: ActionModule,
@@ -118,6 +128,7 @@ if (!globalThis.GURPS) {
     Item,
     Pdf,
     Prereqs,
+    Pseudo,
     ResourceTracker: ResourceTrackerModule,
     Scripting,
     Token,
@@ -1563,7 +1574,7 @@ if (!globalThis.GURPS) {
 
     if (!actor) return item
     if (foundry.utils.isSubclass(actor, Actor)) actor = actor.system
-    if (actor.isOfType('characterV2')) return actor.findAttack(sname, isMelee, isRanged)
+    if (actor.isOfType(Actor.ActorType.Character)) return actor.findAttack(sname, isMelee, isRanged)
     let name = sanitize(sname)
     let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(name, false, false), 'i')
     let smode = ''

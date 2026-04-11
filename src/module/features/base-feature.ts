@@ -1,16 +1,15 @@
+import { DataModel } from '@gurps-types/foundry/index.js'
 import { INameableFiller } from '@module/data/mixins/nameable.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 
-import { IFeatures } from '../data/mixins/features.js'
-import { GcsBaseItemModel } from '../item/data/gcs-base.js'
 import { TypedPseudoDocument } from '../pseudo-document/typed-pseudo-document.js'
 
 import { FeatureType } from './types.js'
 
 /* ---------------------------------------- */
 
-class BaseFeature<Schema extends BaseFeature.Schema>
-  extends TypedPseudoDocument<'Feature', Schema, GcsBaseItemModel & IFeatures>
+class BaseFeature<Schema extends BaseFeature.Schema = BaseFeature.Schema>
+  extends TypedPseudoDocument<'Feature', Schema, DataModel.Any>
   implements INameableFiller
 {
   static override defineSchema(): BaseFeature.Schema {
@@ -35,13 +34,17 @@ class BaseFeature<Schema extends BaseFeature.Schema>
   /* ---------------------------------------- */
 
   get item(): Item.Implementation | null {
-    return this.parent?.item || null
+    const doc = this.document
+
+    if (doc instanceof Item) return doc
+
+    return null
   }
 
   /* ---------------------------------------- */
 
   get actor(): Actor.Implementation | null {
-    return this.parent?.actor || null
+    return this.item?.actor || null
   }
 
   // NOTE: STUB

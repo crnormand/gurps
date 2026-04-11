@@ -1,15 +1,13 @@
-import { fields } from '@gurps-types/foundry/index.js'
+import { DataModel, fields } from '@gurps-types/foundry/index.js'
 import { INameableFiller } from '@module/data/mixins/nameable.js'
 
-import { IPrereqs } from '../data/mixins/prereqs.js'
-import { GcsBaseItemModel } from '../item/data/gcs-base.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '../pseudo-document/typed-pseudo-document.js'
 
 /* ---------------------------------------- */
 
 class BasePrereq<Schema extends BasePrereq.Schema>
-  extends TypedPseudoDocument<'Prereq', Schema, GcsBaseItemModel & IPrereqs>
+  extends TypedPseudoDocument<'Prereq', Schema, DataModel.Any>
   implements INameableFiller
 {
   static override defineSchema(): BasePrereq.Schema {
@@ -28,13 +26,17 @@ class BasePrereq<Schema extends BasePrereq.Schema>
   /* ---------------------------------------- */
 
   get item(): Item.Implementation | null {
-    return this.parent?.item || null
+    const doc = this.document
+
+    if (doc instanceof Item) return doc
+
+    return null
   }
 
   /* ---------------------------------------- */
 
   get actor(): Actor.Implementation | null {
-    return this.parent?.actor || null
+    return this.item?.actor || null
   }
 
   /* ---------------------------------------- */

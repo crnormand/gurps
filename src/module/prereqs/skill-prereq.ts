@@ -1,7 +1,9 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { ActorType } from '@module/actor/types.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
 import { StringCriteriaField } from '@module/data/criteria/string-criteria.js'
 import { INameable } from '@module/data/mixins/nameable.js'
+import { ItemType } from '@module/item/types.js'
 
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType } from './types.js'
@@ -21,11 +23,11 @@ class SkillPrereq extends BasePrereq<SkillPrereqSchema> {
   override get isSatisfied(): boolean {
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('gcsCharacter'))
+    if (!actor || !actor.isOfType(ActorType.GcsCharacter))
       throw new Error('SkillPrereq: No Actor provided or invalid Actor type.')
 
     const hasSkill = actor.items.some(item => {
-      if (!item.isOfType('gcsSkill')) return false
+      if (!item.isOfType(ItemType.GcsSkill)) return false
       if (!this.name.matches(item.name)) return false
       if (!this.level.matches(item.system.level)) return false
 

@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { ActorType } from '@module/actor/types.js'
 import { INameable } from '@module/data/mixins/nameable.js'
 
 import { BasePrereq } from './base-prereq.js'
@@ -20,7 +21,7 @@ class ScriptPrereq extends BasePrereq<ScriptPrereqSchema> {
   override get isSatisfied(): boolean {
     const actor = this.actor
 
-    if (!actor || !actor.isOfType('gcsCharacter')) {
+    if (!actor || !actor.isOfType(ActorType.GcsCharacter)) {
       console.error('ScriptPrereq: No Actor provided or invalid Actor type.')
 
       return false

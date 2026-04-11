@@ -2,6 +2,7 @@ import { ActionType, AnyAction, MeleeAttackModel, RangedAttackModel } from '@mod
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
+import { EffectModifierControl } from '@module/actor/effect-modifier-control.js'
 import DamageChat from '@module/damage/damagechat.js'
 import { AttributeBonus } from '@module/features/attribute-bonus.js'
 import { ConditionalModifier } from '@module/features/conditional-modifier.js'
@@ -62,17 +63,7 @@ import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-docume
 import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import {
-  ActorSheetV2ActionHandler,
-  ActorSheetV2Configuration,
-  ActorSheetV2RenderContext,
-  ActorSheetV2RenderOptions,
-  HandlebarsActorSheetV2Constructor,
-  HandlebarsActorSheetV2Instance,
-  HandlebarsTemplatePart,
-  HeaderControlsEntry,
-} from './foundry/actor-sheet-v2.js'
-import { Application as ApplicationV2 } from './foundry/application.js'
+import { HandlebarsApplicationMixin as _HandlebarsApplicationMixin } from './foundry/handlebars.js'
 
 export {}
 
@@ -101,49 +92,6 @@ declare global {
 
     /* ---------------------------------------- */
 
-    namespace applications {
-      namespace api {
-        export type Application = ApplicationV2
-
-        /* ---------------------------------------- */
-
-        namespace Application {
-          export type ControlsEntry = HeaderControlsEntry
-        }
-      }
-
-      /* ---------------------------------------- */
-
-      namespace ActorSheet {
-        export type Configuration = ActorSheetV2Configuration & {
-          /** Custom dragDrop property */
-          dragDrop?: foundry.applications.ux.DragDrop.Configuration[]
-        }
-
-        export type ActionHandler = ActorSheetV2ActionHandler
-
-        export type RenderContext = ActorSheetV2RenderContext
-
-        export type RenderOptions = ActorSheetV2RenderOptions
-
-        export type HandlebarsConstructor<
-          TDocument extends Actor = Actor,
-          RenderOptions extends ActorSheetV2RenderOptions = ActorSheetV2RenderOptions,
-          RenderContext extends ActorSheetV2RenderContext = ActorSheetV2RenderContext,
-        > = HandlebarsActorSheetV2Constructor<TDocument, RenderOptions, RenderContext>
-
-        export type HandlebarsInstance<TDocument extends Actor = Actor> = HandlebarsActorSheetV2Instance<TDocument>
-      }
-
-      /* ---------------------------------------- */
-
-      namespace handlebars {
-        export type TemplatePart = HandlebarsTemplatePart
-      }
-    }
-
-    /* ---------------------------------------- */
-
     /**
      * Type configuration for pseudo-documents. This is used to define the expected document class, sheet class (if
      * any), and label
@@ -156,20 +104,20 @@ declare global {
        */
       type Name =
         | 'Action'
-        | 'Attribute'
-        | 'AttributeDefinition'
-        | 'AttributeThreshold'
-        | 'Body'
+        | 'Attribute' // GCS
+        | 'AttributeDefinition' // GCS
+        | 'AttributeThreshold' // GCS
+        | 'Body' // GCS
         | 'ConditionalModifier'
-        | 'Feature'
-        | 'HitLocation'
-        | 'LocationSubTable'
+        | 'Feature' // GCS
+        | 'HitLocation' // GCS
+        | 'LocationSubTable' // GCS
         | 'MoveMode'
         | 'Note'
-        | 'Prereq'
+        | 'Prereq' // GCS
         | 'ReactionModifier'
         | 'ResourceTracker'
-        | 'Study'
+        | 'Study' // GCS
 
       /* ---------------------------------------- */
 
@@ -261,6 +209,21 @@ declare global {
       interface CreateOperation extends foundry.abstract.types.DatabaseCreateOperation {
         parent: Pseudo.ParentDocument
       }
+
+      /* ---------------------------------------- */
+
+      /**
+       * The creation data type for a pseudo-document embedded in a parent document. Derived from the
+       * pseudo-document's DataModel schema so that callers get field-level type checking on create data.
+       */
+      type EmbeddedCreateData<
+        ParentType extends keyof PseudoDocumentConfig.Embeds,
+        EmbeddedName extends keyof PseudoDocumentConfig.Embeds[ParentType],
+      > = PseudoDocumentConfig.Embeds[ParentType][EmbeddedName] extends foundry.abstract.DataModel.Any
+        ? foundry.abstract.DataModel.CreateData<
+            foundry.abstract.DataModel.SchemaOf<PseudoDocumentConfig.Embeds[ParentType][EmbeddedName]>
+          >
+        : AnyObject
     }
   }
 
@@ -378,6 +341,8 @@ declare global {
     ClearLastActor(actor: Actor.Implementation): void
 
     /* ---------------------------------------- */
+
+    EffectModifierControl: typeof EffectModifierControl
 
     StatusEffect: {
       lookup(id: string): any

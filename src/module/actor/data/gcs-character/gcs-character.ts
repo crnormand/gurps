@@ -1,4 +1,5 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { ActorType } from '@module/actor/types.js'
 import { LengthField, LengthUnit } from '@module/data/common/length.js'
 import { WeightField, WeightUnit } from '@module/data/common/weight.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
@@ -41,7 +42,7 @@ class GcsCharacterModel extends BaseActorModel<GcsCharacterSchema, GcsCharacterB
         AttributeDefinition: 'system.settings._attributes',
         Body: 'system.settings.bodyType',
       },
-      type: 'gcsCharacter',
+      type: ActorType.GcsCharacter,
     }
   }
 

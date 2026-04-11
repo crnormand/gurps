@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { NumberCriteriaField } from '@module/data/criteria/number-criteria.js'
+import { ItemType } from '@module/item/types.js'
 
 import { BasePrereq } from './base-prereq.js'
 import { PrereqType } from './types.js'
@@ -20,7 +21,7 @@ class ContainedQuantityPrereq extends BasePrereq<ContainedQuantityPrereqSchema> 
   override get isSatisfied(): boolean {
     const item = this.item
 
-    if (!item || !item.isOfType('gcsEquipment', 'gcsTrait'))
+    if (!item || !item.isOfType(ItemType.GcsEquipment, ItemType.GcsTrait))
       throw new Error('ContainedQuantityPrereq: No Item provided or invalid Item type.')
 
     if (!item.system.isContainer)

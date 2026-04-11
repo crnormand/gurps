@@ -12,9 +12,10 @@ import { GgaContextMenuV2 } from '../ui/context-menu.js'
 
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
-import { prepareTrackerDataForSheet } from './modern/dialog-crud-handler.ts'
+import { prepareTrackerDataForSheet } from './modern/dialog-crud-handler.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
+import { ActorType } from './types.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1659,7 +1660,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         }
 
         // One of the few places we need to know the actor type.
-        if (this.actor.type === 'characterV2') {
+        if (this.actor.type === ActorType.Character) {
           this.actor.moveItem(sourceKey, targetkey)
         } else {
           let dialog = new Dialog({
@@ -1771,10 +1772,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     event.preventDefault()
 
     switch (this.actor.type) {
-      case 'enemy':
-      case 'character':
+      case ActorType.LegacyEnemy:
+      case ActorType.LegacyCharacter:
         return new ActorImporter(this.actor).importActor()
-      case 'characterV2':
+      case ActorType.Character:
         return GURPS.modules.Importer.actorImporterPrompt(this.actor)
       default:
         throw new Error(`Invalid actor type for import: ${this.actor.type}`)

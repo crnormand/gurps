@@ -1,6 +1,7 @@
 'use strict'
 
 import { Advantage, Melee, Ranged, Skill, Spell } from '@module/actor/actor-components.js'
+import { ItemType } from '@module/item/types.js'
 import { digitsAndDecimalOnly, digitsOnly } from '@util/jquery-helper.js'
 import { recurselist } from '@util/utilities.js'
 
@@ -179,7 +180,7 @@ export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
     srcData.collapsed = {}
     // if (!game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
     //   // Scenario 1: Only works for Equipment
-    //   if (dragData.type === 'equipment') {
+    //   if (dragData.type === ItemType.LegacyEquipment) {
     //     await this.item.update({
     //       name: srcData.name,
     //       'system.eqt': srcData,
@@ -220,14 +221,14 @@ export class GurpsItemSheet extends foundry.appv1.sheets.ItemSheet {
 
     if (!!actor && !this.item.isNewItemType) {
       const actorCompKey =
-        this.item.type === 'equipment'
+        this.item.type === ItemType.Equipment
           ? actor._findEqtkeyForId('itemid', this.item.id)
           : actor._findSysKeyForId('itemid', this.item.id, this.item.actorComponentKey)
       const actorComp = foundry.utils.getProperty(actor, actorCompKey)
 
       if (!(await actor._sanityCheckItemSettings(actorComp))) return
       // if (!this.useFoundryItems) {
-      //   if (this.item.type === 'equipment') {
+      //   if (this.item.type === ItemType.LegacyEquipment) {
       //     await actor.updateItem(this.item)
       //   } else {
       //     await this.item.update({

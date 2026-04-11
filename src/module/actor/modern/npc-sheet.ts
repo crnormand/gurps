@@ -1,26 +1,20 @@
-import {
-  ActorSheetV2Configuration,
-  ActorSheetV2RenderContext,
-  ActorSheetV2RenderOptions,
-  DeepPartial,
-  HandlebarsTemplatePart,
-} from '@gurps-types/foundry/actor-sheet-v2.js'
+import { HandlebarsApplicationMixin, ActorSheet } from '@gurps-types/foundry/index.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
-import { GurpsActorModernSheet, ModernSheetContext } from './sheet.js'
-
-type RenderOptions = ActorSheetV2RenderOptions & { isFirstRender: boolean }
+import { GurpsActorModernSheet } from './sheet.js'
 
 /* ---------------------------------------- */
 
-interface ModernNPCSheetContext extends ModernSheetContext {
-  parryblock?: string | number
-  defense?: { dr: string; split?: Record<string, number> } | Record<string, unknown>
-  useCI?: boolean
+namespace GurpsActorNpcModernSheet {
+  export interface RenderContext extends GurpsActorModernSheet.RenderContext {
+    parryblock?: string | number
+    defense?: { dr: string; split?: Record<string, number> } | Record<string, unknown>
+    useCI?: boolean
+  }
 }
 
 export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
-  static override DEFAULT_OPTIONS: DeepPartial<ActorSheetV2Configuration> = {
+  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions = {
     classes: ['gurps', 'sheet', 'actor', 'modern-sheet', 'ms-compact', 'ms-npc-modern-sheet'],
     position: {
       width: 650,
@@ -30,7 +24,7 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
 
   /* ---------------------------------------- */
 
-  static override PARTS: Record<string, HandlebarsTemplatePart> = {
+  static override PARTS: Record<string, HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     header: {
       template: 'systems/gurps/templates/actor/modern/npc-header.hbs',
     },
@@ -44,10 +38,12 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
 
   /* ---------------------------------------- */
 
-  protected override async _prepareContext(options: RenderOptions): Promise<ModernSheetContext> {
+  protected override async _prepareContext(
+    options: GurpsActorModernSheet.RenderOptions
+  ): Promise<GurpsActorModernSheet.RenderContext> {
     const baseContext = await super._prepareContext(options)
 
-    const context: ModernNPCSheetContext = {
+    const context: GurpsActorNpcModernSheet.RenderContext = {
       ...baseContext,
       defense: this.actor.getTorsoDr(),
       parryblock: this.actor.getEquippedParry(),
@@ -59,7 +55,10 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
 
   /* ---------------------------------------- */
 
-  protected override async _onRender(context: ActorSheetV2RenderContext, options: RenderOptions): Promise<void> {
+  protected override async _onRender(
+    context: GurpsActorNpcModernSheet.RenderContext,
+    options: GurpsActorModernSheet.RenderOptions
+  ): Promise<void> {
     const html = this.element
 
     const scrollContainer = html.querySelector('.ms-npc-body')

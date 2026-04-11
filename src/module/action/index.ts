@@ -25,12 +25,9 @@ namespace Action {
 
 function init() {
   console.log('GURPS | Initializing GURPS Action module.')
-  // @ts-expect-error: Invalid type
-  GURPS.CONFIG ||= {}
-  // @ts-expect-error: Invalid type
-  GURPS.CONFIG.PseudoDocument ||= {}
+  GURPS.CONFIG.PseudoDocument.Types.Action = BaseAction
 
-  GURPS.CONFIG.PseudoDocument.Action = {
+  GURPS.CONFIG.PseudoDocument.SubTypes.Action = {
     [ActionType.MeleeAttack]: {
       label: 'TYPES.Action.meleeAttack',
       documentClass: MeleeAttackModel,

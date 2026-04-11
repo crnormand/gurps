@@ -8,6 +8,7 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { BaseItemModel } from './data/base.js'
 import { EquipmentModel } from './data/equipment.js'
 import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
+import { ItemType } from './types.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
@@ -17,7 +18,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   // Narrowed view of this.system for GurpsItemV2 logic.
   get modelV2(): BaseItemModel {
-    return this.system as Item.SystemOfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'>
+    return this.system as Item.SystemOfType<ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell>
   }
 
   // Narrowed view of this.system for GurpsItem logic.
@@ -29,7 +30,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   // Common guard for new actor subtypes.
   get isNewItemType(): boolean {
-    return this.isOfType('equipmentV2', 'featureV2', 'skillV2', 'spellV2')
+    return this.isOfType(ItemType.Equipment, ItemType.Trait, ItemType.Skill, ItemType.Spell)
   }
 
   /* ---------------------------------------- */
@@ -159,16 +160,16 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
       const allTypes = Item.TYPES
       const excludeTypes = [
         'base',
-        'equipment',
-        'feature',
-        'skill',
-        'spell',
-        'gcsTrait',
-        'gcsSkill',
-        'gcsSpell',
-        'gcsEquipment',
-        'gcsTraitModifier',
-        'gcsEquipmentModifier',
+        ItemType.LegacyEquipment,
+        ItemType.LegacyTrait,
+        ItemType.LegacySkill,
+        ItemType.LegacySpell,
+        ItemType.GcsTrait,
+        ItemType.GcsSkill,
+        ItemType.GcsSpell,
+        ItemType.GcsEquipment,
+        ItemType.GcsTraitModifier,
+        ItemType.GcsEquipmentModifier,
       ]
 
       // Disable non-production Item types if developer mode is off.
@@ -339,7 +340,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   /* ---------------------------------------- */
 
   async toggleEnabled(enabled: boolean | null = null) {
-    if (!this.isOfType('equipmentV2')) {
+    if (!this.isOfType(ItemType.Equipment)) {
       console.warn(`Item of type "${this.type}" cannot be toggled.`)
 
       return

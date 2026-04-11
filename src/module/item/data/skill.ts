@@ -4,6 +4,8 @@ import { parselink } from '@util/parselink.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
+import { ItemType } from '../types.js'
+
 import { BaseItemModel, BaseItemModelSchema, ItemMetadata } from './base.js'
 
 class SkillModel extends BaseItemModel<SkillSchema> {
@@ -21,8 +23,8 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
-      type: 'skillV2',
-      childTypes: ['skillV2'],
+      type: ItemType.Skill,
+      childTypes: [ItemType.Skill],
       sortKeys: {
         points: 'system.points',
         level: 'system.level',

@@ -1,4 +1,4 @@
-import { Application } from '@gurps-types/foundry/application.js'
+import { Application, ActorSheet, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
@@ -7,9 +7,9 @@ import { DeepPartial } from 'fvtt-types/utils'
 
 import GurpsWiring from '../../gurps-wiring.js'
 import EffectPicker from '../effect-picker.js'
-import type { GurpsActorV2 } from '../gurps-actor.js'
 import MoveModeEditor from '../move-mode-editor.js'
 import { GurpsBaseActorSheet } from '../sheets/base-actor-sheet.js'
+import { ActorType } from '../types.js'
 
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
@@ -31,8 +31,6 @@ import {
 } from './inline-edit-handler.js'
 import { isPostureOrManeuver } from './utils/effect.js'
 
-import ActorSheet = gurps.applications.ActorSheet
-
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
   if (!record) return 0
 
@@ -44,27 +42,38 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
   }, 0)
 }
 
-export interface ModernSheetContext extends ActorSheet.RenderContext {
-  system: Actor.SystemOfType<'character' | 'characterV2'>
-  effects: ActiveEffect[]
-  skillCount: number
-  traitCount: number
-  meleeCount: number
-  rangedCount: number
-  modifierCount: number
-  showHPTinting: boolean
-  // Uses getter's union return type since it varies between v1/v2 actor models
-  moveMode: GurpsActorV2<Actor.SubType>['currentMoveMode']
-  resourceTrackers: PreparedTrackerData[]
-  hpThresholds: ThresholdDescriptor[]
-  fpThresholds: ThresholdDescriptor[]
-  tab?: Application.Tab
+export namespace GurpsActorModernSheet {
+  export type Type = ActorType.Character
+
+  export interface RenderContext extends ActorSheet.RenderContext {
+    system: Actor.SystemOfType<Type>
+    effects: ActiveEffect[]
+    skillCount: number
+    traitCount: number
+    meleeCount: number
+    rangedCount: number
+    modifierCount: number
+    showHPTinting: boolean
+    // Uses getter's union return type since it varies between v1/v2 actor models
+    moveMode: Actor.OfType<Actor.SubType>['currentMoveMode']
+    resourceTrackers: PreparedTrackerData[]
+    hpThresholds: ThresholdDescriptor[]
+    fpThresholds: ThresholdDescriptor[]
+    tab?: Application.Tab
+  }
+
+  export interface RenderOptions extends GurpsBaseActorSheet.RenderOptions {
+    isFirstRender: boolean
+  }
 }
 
-type RenderOptions = ActorSheet.RenderOptions & { isFirstRender: boolean }
-
-export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'characterV2' | 'enemy'>() {
-  static override DEFAULT_OPTIONS: ActorSheet.Configuration = {
+export class GurpsActorModernSheet extends GurpsBaseActorSheet<
+  GurpsActorModernSheet.Type,
+  GurpsBaseActorSheet.Configuration,
+  GurpsBaseActorSheet.RenderOptions,
+  GurpsActorModernSheet.RenderContext
+>() {
+  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
     classes: ['modern-sheet'],
     position: {
       width: 768,
@@ -88,7 +97,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
 
   /* ---------------------------------------- */
 
-  static override PARTS: Record<string, gurps.applications.handlebars.TemplatePart> = {
+  static override PARTS: Record<string, HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
     header: {
       template: 'systems/gurps/templates/actor/modern/header.hbs',
     },
@@ -128,13 +137,15 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
 
   /* ---------------------------------------- */
 
-  protected override async _prepareContext(options: RenderOptions): Promise<ModernSheetContext> {
+  protected override async _prepareContext(
+    options: GurpsActorModernSheet.RenderOptions
+  ): Promise<GurpsActorModernSheet.RenderContext> {
     const baseContext = await super._prepareContext(options)
-    const actorSystem = this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>
+    const actorSystem = this.actor.system as Actor.SystemOfType<GurpsActorModernSheet.Type>
 
     const effects = this.actor.effects.contents.filter(effect => !isPostureOrManeuver(effect))
 
-    const context: ModernSheetContext = {
+    const context: GurpsActorModernSheet.RenderContext = {
       ...baseContext,
       actor: this.actor,
       system: actorSystem,
@@ -157,9 +168,9 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
 
   protected override async _preparePartContext(
     partId: string,
-    context: ModernSheetContext,
+    context: GurpsActorModernSheet.RenderContext,
     options: DeepPartial<ActorSheet.RenderOptions>
-  ): Promise<ModernSheetContext> {
+  ): Promise<GurpsActorModernSheet.RenderContext> {
     await super._preparePartContext(partId, context, options)
 
     if (context.tabs && partId in context.tabs) context.tab = context.tabs[partId]
@@ -167,13 +178,16 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
     return context
   }
 
-  protected override async _onRender(context: ActorSheet.RenderContext, options: RenderOptions): Promise<void> {
+  protected override async _onRender(
+    context: GurpsActorModernSheet.RenderContext,
+    options: GurpsActorModernSheet.RenderOptions
+  ): Promise<void> {
     super._onRender(context, options)
 
     // Add character v1/v2 type guard
     const actor = this.actor
 
-    if (!actor.isOfType('character', 'characterV2', 'enemy')) return
+    if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.Character, ActorType.LegacyEnemy)) return
 
     const html = this.element
 
@@ -314,7 +328,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<'character' | 'ch
   }
 
   async #openQuickNoteEditor(): Promise<void> {
-    const actorSystem = this.actor.system as Actor.SystemOfType<'character' | 'characterV2'>
+    const actorSystem = this.actor.system as Actor.SystemOfType<GurpsActorModernSheet.Type>
     const noteText = ((actorSystem.additionalresources as { qnotes?: string })?.qnotes || '').replace(/<br>/g, '\n')
     const actor = this.actor
 

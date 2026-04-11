@@ -86,21 +86,23 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
 
   /* ---------------------------------------- */
 
-  toDisplayItem(): BaseDisplayAttack {
-    return {
-      id: this._id,
-      documentName: this.static.metadata.documentName,
+  override toDisplayItem(): BaseDisplayAttack {
+    let fullName = this._displayName ?? ''
+
+    if (fullName && this.mode) fullName += ` (${this.mode})`
+
+    return foundry.utils.mergeObject(super.toDisplayItem(), {
       parentId: this.document.id!,
-      name: this.item.name,
-      fullName: this._displayName ?? this.item.name,
-      usage: this.name ?? this.mode,
+      name: this._displayName ?? '',
+      fullName,
+      usage: this.mode,
       notes: this.notes,
       hasNotes: this.notes.trim().length > 0,
       notesOpen: this.notesOpen,
       level: this.level,
       damage: this.damage.join(', '),
       st: this.st,
-    }
+    })
   }
 
   /* ---------------------------------------- */

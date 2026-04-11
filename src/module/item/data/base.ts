@@ -213,7 +213,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
     const newValue = !this.open
 
-    await this.parent.update({ 'system.open': newValue } as Item.UpdateData)
+    await this.parent.update({ 'system.open': newValue } as unknown as Item.UpdateData)
   }
 
   /* ---------------------------------------- */
@@ -350,6 +350,9 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
     return {
       id: this.parent.id!,
+      uuid: this.parent.uuid,
+      documentName: 'Item',
+      type: this.metadata.type,
       children,
       hasChildren: this.children.length > 0,
       childrenOpen: this.open ?? false,
@@ -359,6 +362,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       hasNotes: this.notes.trim().length > 0,
       notesOpen: this.notesOpen,
       indent: this.ancestors.length,
+      reference: this.pageref,
     }
   }
 
@@ -374,7 +378,17 @@ const baseItemModelSchema = () => {
     /** Include containable functionality */
     ...containableSchema(),
 
-    /** The ModelCollection for an Item's Actions, which includes Melee and Ranged Attacks. */
+    /**
+     * The ModelCollection for an Item's Actions, which includes Melee and Ranged Attacks.
+     *
+     * NOTE: `BaseAction as Action.AnyConstructor` is intentional. Passing `BaseAction` directly
+     * causes a circular type: TypeScript evaluates `InstanceType<typeof BaseAction>` (abstract
+     * generic, so default type params are freshly instantiated), which includes the `item` getter
+     * returning `Item.Implementation` → `GurpsItemV2.modelV2` → `BaseItemModel` (default schema
+     * param) → `BaseItemModelSchema` = `ReturnType<typeof baseItemModelSchema>` → cycle.
+     * Using the concrete `Action.AnyConstructor` types avoids this because TypeScript reuses
+     * their already-resolved types rather than freshly evaluating the generic chain.
+     */
     actions: new CollectionField(BaseAction as Action.AnyConstructor, { required: true, nullable: false }),
 
     /**

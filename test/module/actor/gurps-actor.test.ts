@@ -1,9 +1,10 @@
 import { CharacterModel } from '@module/actor/data/character.js'
 import { GurpsActorV2 } from '@module/actor/gurps-actor.js'
+import { ActorType } from '@module/actor/types.js'
 import { parseItemKey } from '@util/object-utils.js'
 
 describe('GurpsActorV2', () => {
-  let actor: GurpsActorV2<'characterV2'>
+  let actor: Actor.OfType<ActorType.Character>
 
   beforeEach(() => {
     // Ensure minimal globals exist
@@ -12,7 +13,7 @@ describe('GurpsActorV2', () => {
     global.game = global.game || {}
 
     // Instantiate with minimal data that our test base Actor supports
-    actor = new GurpsActorV2({ name: 'Test Actor', type: 'characterV2' })
+    actor = new GurpsActorV2({ name: 'Test Actor', type: ActorType.Character })
     actor.system = new CharacterModel()
     // @ts-expect-error - mock for testing
     actor.system._source = { allNotes: [], moveV2: [] }
@@ -21,7 +22,7 @@ describe('GurpsActorV2', () => {
   it('can be instantiated', () => {
     expect(actor).toBeInstanceOf(GurpsActorV2)
     expect(actor.name).toBe('Test Actor')
-    expect(actor.type).toBe('characterV2')
+    expect(actor.type).toBe(ActorType.Character)
   })
 
   describe('parseItemKey', () => {

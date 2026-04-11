@@ -9,6 +9,12 @@ interface ISortableItem {
 interface BaseDisplayItem {
   /** The ID of this item */
   id: string
+  /** The UUID of this item */
+  uuid: string
+  /** The type of this item */
+  type: string
+  /** The document class of this item (always Item) */
+  documentName: string
   /** The list of child items contained within this item, if any */
   children: BaseDisplayItem[]
   /** Does this item have any children? */
@@ -27,6 +33,8 @@ interface BaseDisplayItem {
   notesOpen: boolean
   /** What is the indentation level of this item, for display purposes? */
   indent: number
+  /** The page reference for this item */
+  reference: string
 }
 
 /* ---------------------------------------- */
@@ -132,8 +140,12 @@ interface DisplayEquipment extends BaseDisplayItem {
 interface BaseDisplayPseudoDocument {
   /** The ID of this pseudo-document */
   id: string
+  /** The UUID of this item */
+  uuid: string
   /** The document class of this pseudo-document */
   documentName: string
+  /** The type (if any) of this pseudo-document */
+  type?: string
 }
 
 /* ---------------------------------------- */
@@ -224,6 +236,20 @@ interface DisplayNote extends BaseDisplayPseudoDocument {
   notes: string | Handlebars.SafeString
   /** What is the indentation level of this item, for display purposes? */
   indent: number
+  /** The page reference for this item */
+  reference: string
+}
+
+/* ---------------------------------------- */
+interface DisplayConditionalModifier extends BaseDisplayPseudoDocument {
+  /** The situation which triggers this modifier */
+  situation: string
+  /** The modifier value of this conditional modifier */
+  modifier: number
+  /** The OTF's associated with this modifier */
+  otf: {
+    modifier: string
+  }
 }
 
 export type {
@@ -234,7 +260,9 @@ export type {
   DisplayNote,
   DisplayRangedAttack,
   DisplaySkill,
+  BaseDisplayPseudoDocument,
   DisplaySpell,
   DisplayTrait,
+  DisplayConditionalModifier,
   ISortableItem,
 }

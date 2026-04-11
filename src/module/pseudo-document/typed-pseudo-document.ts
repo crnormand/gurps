@@ -61,7 +61,7 @@ class TypedPseudoDocument<
   /* ---------------------------------------- */
 
   static get documentConfig(): PseudoDocumentConfig.Types[gurps.Pseudo.WithTypes & typeof this.metadata.documentName] {
-    return GURPS.CONFIG.PseudoDocument[this.metadata.documentName] as any
+    return GURPS.CONFIG.PseudoDocument.SubTypes[this.metadata.documentName] as any
   }
 
   /* ---------------------------------------- */
@@ -175,7 +175,11 @@ namespace TypedPseudoDocument {
   /* ---------------------------------------- */
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  declare class ConcreteTypedPseudoDocument extends TypedPseudoDocument<any, DataSchema, DataModel.Any> {}
+  declare class ConcreteTypedPseudoDocument extends TypedPseudoDocument<
+    gurps.Pseudo.WithTypes,
+    DataSchema,
+    DataModel.Any
+  > {}
 
   /* ---------------------------------------- */
 

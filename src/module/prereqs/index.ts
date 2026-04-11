@@ -48,12 +48,7 @@ namespace Prereq {
 function init() {
   console.log('GURPS | Initializing GURPS Prereqs module.')
   Hooks.on('init', () => {
-    // @ts-expect-error: Invalid type
-    GURPS.CONFIG ||= {}
-    // @ts-expect-error: Invalid type
-    GURPS.CONFIG.PseudoDocument ||= {}
-
-    GURPS.CONFIG.PseudoDocument.Prereq = {
+    GURPS.CONFIG.PseudoDocument.SubTypes.Prereq = {
       [PrereqType.List]: { documentClass: PrereqList, label: 'TYPES.Prereq.prereqList' },
       [PrereqType.Trait]: { documentClass: TraitPrereq, label: 'TYPES.Prereq.traitPrereq' },
       [PrereqType.Attribute]: { documentClass: AttributePrereq, label: 'TYPES.Prereq.attributePrereq' },

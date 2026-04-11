@@ -4,10 +4,11 @@ import { Melee, Ranged } from '@module/actor/actor-components.js'
 import { numberValidate } from '@module/data/validators/number-validator.js'
 
 import { Equipment, Feature, Skill, Spell } from './legacy/itemv1-interface.js'
+import { ItemType } from './types.js'
 
-type OldItemType = 'equipment' | 'feature' | 'skill' | 'spell'
+type OldItemType = ItemType.LegacyEquipment | ItemType.LegacyTrait | ItemType.LegacySkill | ItemType.LegacySpell
 
-type NewItemType = 'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'
+type NewItemType = ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell
 
 type OldItemData = Equipment | Feature | Skill | Spell
 
@@ -29,7 +30,9 @@ async function runMigration() {
     })
 
     console.log('GURPS | Migrating world items')
-    const items = game.items!.filter(item => item.isOfType('equipment', 'feature', 'skill', 'spell'))
+    const items = game.items!.filter(item =>
+      item.isOfType(ItemType.LegacyEquipment, ItemType.LegacyTrait, ItemType.LegacySkill, ItemType.LegacySpell)
+    )
     const packs = game.packs!.filter(pack => pack.documentName === 'Item') as CompendiumCollection<'Item'>[]
 
     const length = items.length + packs.reduce((acc, pack) => acc + pack.index.size, 0)
@@ -78,7 +81,7 @@ async function migrateItemCompendium(pack: CompendiumCollection<'Item'>) {
 async function migrateItem(
   oldItem: Item.Implementation,
   operation?: Item.Database.UpdateOperation
-): Promise<Item.OfType<'equipmentV2' | 'featureV2' | 'skillV2' | 'spellV2'> | void> {
+): Promise<Item.OfType<ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell> | void> {
   const updateData = getMigratedItemData(oldItem, null)
 
   if (!updateData) {
@@ -95,7 +98,7 @@ async function migrateItem(
     return
   }
 
-  if (!newItem.isOfType('equipmentV2', 'featureV2', 'skillV2', 'spellV2')) {
+  if (!newItem.isOfType(ItemType.Equipment, ItemType.Trait, ItemType.Skill, ItemType.Spell)) {
     console.error(`Migrated Item has invalid type: ${newItem.type}`)
 
     return
@@ -135,14 +138,14 @@ function getMigratedItemData(
 
 function getNewItemType(oldType: OldItemType | string): NewItemType | null {
   switch (oldType) {
-    case 'equipment':
-      return 'equipmentV2'
-    case 'feature':
-      return 'featureV2'
-    case 'skill':
-      return 'skillV2'
-    case 'spell':
-      return 'spellV2'
+    case ItemType.LegacyEquipment:
+      return ItemType.Equipment
+    case ItemType.LegacyTrait:
+      return ItemType.Trait
+    case ItemType.LegacySkill:
+      return ItemType.Skill
+    case ItemType.LegacySpell:
+      return ItemType.Spell
     default:
       console.debug(`Not a valid Item type for migration: ${oldType}`)
 
@@ -154,13 +157,13 @@ function getNewItemType(oldType: OldItemType | string): NewItemType | null {
 
 function migrateItemSystem(type: string, oldData: OldItemData, parentId: string | null) {
   switch (type) {
-    case 'equipment':
+    case ItemType.LegacyEquipment:
       return migrateEquipmentSystem(oldData as Equipment, parentId)
-    case 'feature':
+    case ItemType.LegacyTrait:
       return migrateTraitSystem(oldData as Feature, parentId)
-    case 'skill':
+    case ItemType.LegacySkill:
       return migrateSkillSystem(oldData as Skill, parentId)
-    case 'spell':
+    case ItemType.LegacySpell:
       return migrateSpellSystem(oldData as Spell, parentId)
     default:
       throw new Error(`Invalid Item type submitted for migration: ${type}`)
@@ -342,14 +345,14 @@ function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField
 
 /* ---------------------------------------- */
 
-function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): NewDataWrapper<'equipmentV2'> {
+function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): NewDataWrapper<ItemType.Equipment> {
   if (!numberValidate(oldData.eqt.uses, { integerOnly: true, nonnegative: true }))
     console.warn(`MIGRATE: Equipment ${oldData.eqt.name} has invalid uses: ${oldData.eqt.uses}. Defaulting to 0.`)
 
   if (!numberValidate(oldData.eqt.maxuses, { integerOnly: true, nonnegative: true }))
     console.warn(`MIGRATE: Equipment ${oldData.eqt.name} has invalid maxuses: ${oldData.eqt.maxuses}. Defaulting to 0.`)
 
-  const newData: NewDataWrapper<'equipmentV2'> = {
+  const newData: NewDataWrapper<ItemType.Equipment> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.eqt,
     isContainer: Boolean(oldData.eqt.contains && Object.keys(oldData.eqt.contains).length > 0),
@@ -365,8 +368,8 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
 
 /* ---------------------------------------- */
 
-function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataWrapper<'featureV2'> {
-  const newData: NewDataWrapper<'featureV2'> = {
+function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataWrapper<ItemType.Trait> {
+  const newData: NewDataWrapper<ItemType.Trait> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.fea,
     isContainer: Boolean(oldData.fea.contains && Object.keys(oldData.fea.contains).length > 0),
@@ -378,14 +381,14 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
 
 /* ---------------------------------------- */
 
-function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWrapper<'skillV2'> {
+function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWrapper<ItemType.Skill> {
   if (!numberValidate(oldData.ski.import, { integerOnly: true, nonnegative: true }))
     console.warn(`MIGRATE: Skill ${oldData.ski.name} has invalid import value: ${oldData.ski.import}. Defaulting to 0.`)
 
   if (!oldData.ski.relativelevel)
     console.warn(`MIGRATE: Skill ${oldData.ski.name} is missing relative level. Defaulting to ''. ID: ${parentId}`)
 
-  const newData: NewDataWrapper<'skillV2'> = {
+  const newData: NewDataWrapper<ItemType.Skill> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.ski,
     isContainer: Boolean(oldData.ski.contains && Object.keys(oldData.ski.contains).length > 0),
@@ -399,14 +402,14 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
 
 /* ---------------------------------------- */
 
-function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWrapper<'spellV2'> {
+function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWrapper<ItemType.Spell> {
   if (!numberValidate(oldData.spl.import, { integerOnly: true, nonnegative: true }))
     console.warn(`MIGRATE: Spell ${oldData.spl.name} has invalid import value: ${oldData.spl.import}. Defaulting to 0.`)
 
   if (!oldData.spl.relativelevel)
     console.warn(`MIGRATE: Spell ${oldData.spl.name} is missing relative level. Defaulting to ''. ID: ${parentId}`)
 
-  const newData: NewDataWrapper<'spellV2'> = {
+  const newData: NewDataWrapper<ItemType.Spell> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.spl,
     isContainer: Boolean(oldData.spl.contains && Object.keys(oldData.spl.contains).length > 0),
