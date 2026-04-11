@@ -1,5 +1,7 @@
 import { DataModel, Document, fields } from '@gurps-types/foundry/index.js'
 import { type BaseDisplayPseudoDocument } from '@gurps-types/gurps/display-item.js'
+import { isContainable } from '@module/data/mixins/containable.js'
+import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
 import { getGame, hasMetadata, isUpdatableDocument } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 import { AnyObject, Identity, InexactPartial } from 'fvtt-types/utils'
@@ -11,9 +13,11 @@ import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 class PseudoDocument<
   Schema extends PseudoDocument.Schema = PseudoDocument.Schema,
   Parent extends DataModel.Any = DataModel.Any,
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  ExtraConstructorOptions extends AnyObject = {},
+  ExtraConstructorOptions extends PseudoDocument.ConstructorOptions = PseudoDocument.ConstructorOptions,
 > extends DataModel<Schema, Parent> {
+  // @ts-expect-error: `this` *should* be allowed here. TODO: look into.
+  declare collection: ModelCollection<this>
+
   constructor(...args: DataModel.ConstructorArgs<Schema, Parent, ExtraConstructorOptions>) {
     super(...args)
   }
@@ -31,22 +35,6 @@ class PseudoDocument<
     }
   }
 
-  protected get static() {
-    return this.constructor as typeof PseudoDocument
-  }
-
-  /* ---------------------------------------- */
-
-  get metadata(): PseudoDocument.Metadata<gurps.Pseudo.Name> {
-    return this.static.metadata
-  }
-
-  /* ---------------------------------------- */
-
-  static override defineSchema(): PseudoDocument.Schema {
-    return pseudoDocumentSchema()
-  }
-
   /* ---------------------------------------- */
 
   static override LOCALIZATION_PREFIXES: string[] = ['DOCUMENT']
@@ -57,6 +45,12 @@ class PseudoDocument<
    * Template for {@link createDialog}.
    */
   static CREATE_TEMPLATE = systemPath('templates/pseudo-document/base-create-dialog.hbs')
+
+  /* ---------------------------------------- */
+
+  protected get static() {
+    return this.constructor as typeof PseudoDocument
+  }
 
   /* ---------------------------------------- */
 
@@ -78,6 +72,94 @@ class PseudoDocument<
 
   /* ---------------------------------------- */
 
+  get metadata(): PseudoDocument.Metadata<gurps.Pseudo.Name> {
+    return this.static.metadata
+  }
+
+  /* ---------------------------------------- */
+
+  static override defineSchema(): PseudoDocument.Schema {
+    return pseudoDocumentSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  static getSchemaFields(
+    pseudo: PseudoDocument.Any
+  ): Record<string, { field: foundry.data.fields.DataField.Any; value: any; name: string }> {
+    return Object.fromEntries(
+      Object.keys(pseudo.schema.fields).map(key => [
+        key,
+        { field: pseudo.schema.getField(key)!, value: pseudo[key as keyof typeof pseudo], name: key },
+      ])
+    )
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Gets the default new name for a PsuedoDocument
+   * @param {object} context                    The context for which to create the Document name.
+   * @param {string} [context.type]             The sub-type of the document
+   * @param {Document|null} [context.parent]    A parent document within which the created Document should belong
+   * @param {string|null} [context.pack]        A compendium pack within which the Document should be created
+   * @returns {string}
+   */
+  static defaultName({
+    type,
+    parent,
+    pack,
+  }: {
+    type?: string
+    parent?: gurps.Pseudo.ParentDocument | null
+    pack?: string | null
+  } = {}): string {
+    const documentName = this.metadata.documentName
+
+    let collection: foundry.utils.Collection.Any | undefined
+
+    // @ts-expect-error: Document.prototype.getEmbeddedCollection documentName is typed as `never`, but subclasses override it.
+    if (parent) collection = parent.getEmbeddedCollection(documentName)
+    else if (pack) collection = getGame().packs.get(pack)?.index
+    else collection = getGame().collections.get(documentName)
+    const takenNames = new Set()
+
+    if (!collection) {
+      console.warn(
+        `GURPS | PseudoDocument.defaultName was unable to find a collection for document name '${documentName}'!`
+      )
+
+      return 'Document'
+    }
+
+    for (const document of collection) takenNames.add((document as PseudoDocument.Any).name)
+    let baseNameKey = this.metadata.label
+
+    if (type && 'documentConfig' in this && typeof this.documentConfig === 'object' && this.documentConfig !== null) {
+      const types = this.documentConfig as Record<string, gurps.Pseudo.ConfigEntry<any>>
+
+      if (type in types) {
+        const typeNameKey = types[type]?.label
+
+        if (typeNameKey && getGame().i18n.has(typeNameKey)) baseNameKey = typeNameKey
+      } else {
+        console.warn(
+          `GURPS | The type '${type}' is not valid for a '${this.metadata.documentName}' pseudo-document! Valid types are: ${Object.keys(types).join(', ')}`
+        )
+      }
+    }
+
+    const baseName = getGame().i18n.localize(baseNameKey)
+    let name = baseName
+    let index = 1
+
+    while (takenNames.has(name)) name = `${baseName} (${++index})`
+
+    return name
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * The uuid of this document.
    */
@@ -88,6 +170,8 @@ class PseudoDocument<
 
     return [parent.uuid, this.documentName, this.id].join('.')
   }
+
+  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
 
@@ -120,10 +204,19 @@ class PseudoDocument<
    * Reference to the sheet of this pseudo-document, registered in a static map.
    * A pseudo-document is temporary, unlike regular documents, so the relation here
    * is not one-to-one.
-   * @type {PseudoDocumentSheet | null}
    */
-  get sheet() {
-    return PseudoDocumentSheet.getSheet(this)
+  get sheet(): PseudoDocumentSheet | null {
+    return PseudoDocumentSheet.getSheet(this as PseudoDocument.Any)
+  }
+
+  /* ---------------------------------------- */
+
+  protected override _configure(options: DataModel.ConfigureOptions & ExtraConstructorOptions) {
+    super._configure(options)
+    Object.defineProperty(this, 'collection', {
+      value: options.collection ?? null,
+      writable: false,
+    })
   }
 
   /* ---------------------------------------- */
@@ -148,6 +241,33 @@ class PseudoDocument<
   /*   Instance Methods                       */
   /* ---------------------------------------- */
 
+  getRelativeUUID(relative: PseudoDocument.Any | gurps.Pseudo.ParentDocument): string {
+    // This PseudoDocument is a sibling of the relative Document.
+    if (this.collection === relative.collection) return `.${this.id}`
+
+    // This PseudoDocument may be a descendant of the relative Document, so walk up the hierarchy to check.
+    const parts = [this.documentName, this.id]
+    let parent: DataModel.Any = this.parent
+
+    while (parent) {
+      if (parent === relative) break
+
+      // Skip intermediate non-Document/PseudoDocument data models
+      if ('documentName' in parent)
+        parts.unshift((parent as PseudoDocument).documentName, (parent as PseudoDocument).id)
+
+      parent = parent.parent
+    }
+
+    // The relative Document was a parent or grandparent of this one.
+    if (parent === relative) return `.${parts.join('.')}`
+
+    // The relative Document was unrelated to this one.
+    return this.uuid
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * Retrieve an embedded pseudo-document.
    */
@@ -156,17 +276,7 @@ class PseudoDocument<
     id: string,
     { invalid = false, strict = false }: { invalid?: boolean; strict?: boolean } = {}
   ): PseudoDocument | null {
-    const embeds = this.metadata.embedded ?? {}
-
-    if (embeddedName in embeds) {
-      const path = embeds[embeddedName]
-
-      return (
-        (foundry.utils.getProperty(this, path) as ModelCollection<PseudoDocument>).get(id, { invalid, strict }) ?? null
-      )
-    }
-
-    return null
+    return this.getEmbeddedCollection(embeddedName).get(id, { invalid, strict }) ?? null
   }
 
   /* ---------------------------------------- */
@@ -174,7 +284,7 @@ class PseudoDocument<
   /**
    * Obtain the embedded collection of a given pseudo-document type.
    */
-  getEmbeddedPseudoDocumentCollection(embeddedName: string): ModelCollection {
+  getEmbeddedCollection(embeddedName: string): ModelCollection<PseudoDocument> {
     const collectionPath = this.metadata.embedded[embeddedName]
 
     if (!collectionPath) {
@@ -183,7 +293,7 @@ class PseudoDocument<
       )
     }
 
-    return foundry.utils.getProperty(this, collectionPath) as ModelCollection
+    return foundry.utils.getProperty(this, collectionPath) as ModelCollection<PseudoDocument>
   }
 
   /* ---------------------------------------- */
@@ -200,6 +310,31 @@ class PseudoDocument<
 
   /* ---------------------------------------- */
 
+  /**
+   * A helper function to handle obtaining the relevant PseudoDocument from dropped data provided via a DataTransfer event.
+   * The dropped data must have a UUID.
+   *
+   * @param   data The data object extracted from a DataTransfer event.
+   * @returns      The resolved PseudoDocument.
+   * @throws If a Document could not be retrieved from the provided data.
+   */
+  static async fromDropData(data: { uuid: string; type: string }): Promise<PseudoDocument> {
+    const pseudo = (await foundry.utils.fromUuid(data.uuid as string)) as PseudoDocument | null
+
+    // Ensure that we retrieved a valid document
+    if (!pseudo) {
+      throw new Error('Failed to resolve PseudoDocument from provided DragData. A valid UUID must be provided.')
+    }
+
+    if (pseudo.documentName !== this.metadata.documentName) {
+      throw new Error(`Invalid Document type '${pseudo.documentName}' provided to ${this.name}.fromDropData.`)
+    }
+
+    return pseudo
+  }
+
+  /* ---------------------------------------- */
+
   toDisplayItem(): BaseDisplayPseudoDocument {
     return {
       id: this.id,
@@ -207,6 +342,10 @@ class PseudoDocument<
       documentName: this.documentName,
     }
   }
+
+  /* ---------------------------------------- */
+  /*  CRUD Handlers                           */
+  /* ---------------------------------------- */
 
   /**
    * Does this pseudo-document exist in the document's source?
@@ -236,18 +375,37 @@ class PseudoDocument<
    * Create a new instance of this pseudo-document.
    * @returns a promise that resolves to the created pseudo-document instance, or `undefined` if it cannot be retrieved.
    */
-  static async create<T extends typeof PseudoDocument>(
-    data: fields.SchemaField.CreateData<PseudoDocument.Schema>,
+  static async create(
+    data: fields.SchemaField.CreateData<PseudoDocument.Schema> | fields.SchemaField.CreateData<PseudoDocument.Schema>[],
     { parent, renderSheet = true, ...operation }: Partial<gurps.Pseudo.CreateOperation>
-  ): Promise<InstanceType<T> | undefined> {
-    if (!parent) {
-      throw new Error('A parent document must be specified for the creation of a pseudo-document!')
+  ) {
+    const isArray = Array.isArray(data)
+    const createData = isArray ? data : [data]
+
+    const created = await this.createDocuments(createData, operation)
+
+    if (renderSheet && created) {
+      created.forEach(pseudo => pseudo.sheet?.render({ force: true }))
     }
 
-    const id: string =
-      operation.keepId && foundry.data.validators.isValidId((data._id as string | undefined) ?? '')
-        ? (data._id as string)
-        : foundry.utils.randomID()
+    return isArray ? created : created.shift()
+  }
+
+  /* ---------------------------------------- */
+
+  static async createDocuments<T extends typeof PseudoDocument>(
+    data: fields.SchemaField.CreateData<PseudoDocument.Schema> | fields.SchemaField.CreateData<PseudoDocument.Schema>[],
+    { parent, pack, ...operation }: Partial<gurps.Pseudo.CreateOperation>
+  ): Promise<InstanceType<T>[]> {
+    if (!parent) {
+      console.error('A parent document must be specified for the creation of pseudo-documents!')
+
+      return []
+    }
+
+    data = Array.isArray(data) ? data : [data]
+
+    const updates: Record<string, any> = {}
 
     const fieldPath = (parent.system?.constructor as unknown as gurps.MetadataOwner).metadata.embedded?.[
       this.metadata.documentName
@@ -256,25 +414,148 @@ class PseudoDocument<
     if (!fieldPath) {
       const type = 'type' in parent ? parent.type : 'base'
 
-      throw new Error(`A ${parent.documentName} of type '${type}' does not support ${this.metadata.documentName}!`)
+      console.error(`A ${parent.documentName} of type '${type}' does not support ${this.metadata.documentName}!`)
+
+      return []
     }
 
-    const update = { [`${fieldPath}.${id}`]: { ...data, _id: id } }
+    for (const dataEntry of data) {
+      const _id: string =
+        operation.keepId && foundry.data.validators.isValidId((dataEntry._id as string | undefined) ?? '')
+          ? (dataEntry._id as string)
+          : foundry.utils.randomID()
 
-    this._configureUpdates('create', parent, update, operation)
+      dataEntry._id = _id
 
-    await parent.update(update, operation)
+      if (!('name' in dataEntry) || typeof dataEntry.name !== 'string' || dataEntry.name.trim() === '') {
+        const type = 'type' in dataEntry ? String(dataEntry.type) : undefined
 
-    // HACK: There is really no cleaner way to define this.
-    const pseudo = (
-      parent as {
-        getEmbeddedDocument(name: string, id: string, options: object): InstanceType<T> | undefined
+        const defaultName = this.defaultName({ type, parent, pack })
+
+        dataEntry.name = defaultName
       }
-    ).getEmbeddedDocument(this.metadata.documentName, id, {})
 
-    if (renderSheet && pseudo) pseudo.sheet?.render({ force: true })
+      updates[`${fieldPath}.${_id}`] = { ...dataEntry, _id }
+    }
 
-    return pseudo
+    this._configureUpdates('create', parent, updates, operation)
+
+    await parent.update(updates, operation)
+
+    const created: InstanceType<T>[] = []
+
+    for (const dataEntry of data) {
+      const maybeCreated = (parent as any).getEmbeddedDocument(this.metadata.documentName, dataEntry._id as string, {})
+
+      if (maybeCreated) created.push(maybeCreated as InstanceType<T>)
+    }
+
+    return created
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Delete this pseudo-document.
+   * @returns a promise that resolves to the updated document.
+   */
+  async delete(operation?: PseudoDocument.DeleteOperation): Promise<this | undefined> {
+    operation ??= {}
+
+    if (!this.isSource) throw new Error('You cannot delete a non-source pseudo-document!')
+    if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
+
+    Object.assign(operation, { pseudo: { operation: 'delete', type: this.documentName, uuid: this.uuid } })
+
+    const deleted = await (this.constructor as typeof PseudoDocument).deleteDocuments(this.id, {
+      parent: this.document as gurps.Pseudo.ParentDocument,
+      ...operation,
+    })
+
+    return (deleted?.shift() as this) ?? undefined
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Present a Dialog form to confirm deletion of this PseudoDocument.
+   * @param [options] Additional options passed to `DialogV2.confirm`
+   * @param [operation]  Document deletion options.
+   * @returns A Promise that resolves to the deleted PseudoDocument
+   */
+  async deleteDialog(
+    options?: InexactPartial<foundry.applications.api.DialogV2.ConfirmConfig>,
+    operation?: PseudoDocument.DeleteOperation
+  ): Promise<this | false | null | undefined> {
+    return (await deleteDialogWithContents.call(
+      this as PseudoDocument.Any,
+      options,
+      operation as any
+    )) as unknown as Promise<this | false | null | undefined>
+  }
+
+  /* ---------------------------------------- */
+
+  static async deleteDocuments<T extends typeof PseudoDocument>(
+    ids: string | Array<string>,
+    { parent, ...operation }: Partial<PseudoDocument.DeleteOperation>
+  ): Promise<InstanceType<T>[]> {
+    if (!parent) {
+      console.error('A parent document must be specified for the deletion of pseudo-documents!')
+
+      return []
+    }
+
+    ids = Array.isArray(ids) ? ids : [ids]
+
+    const fieldPath = (parent.system?.constructor as unknown as gurps.MetadataOwner).metadata.embedded?.[
+      this.metadata.documentName
+    ]
+
+    if (!fieldPath) {
+      const type = 'type' in parent ? parent.type : 'base'
+
+      console.error(`A ${parent.documentName} of type '${type}' does not support ${this.metadata.documentName}!`)
+
+      return []
+    }
+
+    const updates: Record<string, any> = {}
+    const deleted: InstanceType<T>[] = []
+
+    for (const id of ids) {
+      const maybeDeleted = (parent as any).getEmbeddedDocument(this.metadata.documentName, id, {})
+
+      if (maybeDeleted) {
+        updates[`${fieldPath}.-=${id}`] = null
+        deleted.push(maybeDeleted as InstanceType<T>)
+
+        if (hasMetadata(this.constructor)) {
+          PseudoDocument._configureUpdates('delete', maybeDeleted, updates, operation)
+        }
+
+        if (isContainable(maybeDeleted) && maybeDeleted.contents.length > 0) {
+          if (operation && operation.deleteContents) {
+            const allContents = maybeDeleted.allContents as PseudoDocument[]
+
+            allContents.forEach((doc: PseudoDocument) => {
+              updates[`${doc.fieldPath}.-=${doc.id}`] = null
+            })
+          } else {
+            const containedBy = maybeDeleted.containedBy ?? null
+            const contents = maybeDeleted.contents as PseudoDocument[]
+
+            contents.forEach((doc: PseudoDocument) => {
+              updates[`${doc.fieldPath}.${doc.id}.containedBy`] = containedBy
+            })
+          }
+        }
+      }
+    }
+
+    await (parent as any).update(updates, operation)
+
+    return deleted
   }
 
   /* ---------------------------------------- */
@@ -308,7 +589,7 @@ class PseudoDocument<
 
     if (!result) return
 
-    return this.create({ ...data, ...result }, { parent, ...operation })
+    return this.create({ ...data, ...result }, { parent, ...operation }) as InstanceType<T> | undefined
   }
 
   /* ---------------------------------------- */
@@ -331,67 +612,6 @@ class PseudoDocument<
    * the choices for a select field based on the parent document.
    */
   protected static _createDialogRenderCallback(_event: Event, _dialog: foundry.applications.api.DialogV2): void {}
-
-  /* ---------------------------------------- */
-
-  /**
-   * Delete this pseudo-document.
-   * @returns a promise that resolves to the updated document.
-   */
-  async delete(
-    operation?: Document.Database.DeleteOperation<foundry.abstract.types.DatabaseDeleteOperation<Document.Any>>
-  ): Promise<Document.Any | undefined> {
-    operation ??= {}
-
-    if (!this.isSource) throw new Error('You cannot delete a non-source pseudo-document!')
-    if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
-
-    Object.assign(operation, { pseudo: { operation: 'delete', type: this.documentName, uuid: this.uuid } })
-    const update = { [`${this.fieldPath}.-=${this.id}`]: null }
-
-    if (hasMetadata(this.constructor)) {
-      PseudoDocument._configureUpdates('delete', this.document, update, operation)
-    }
-
-    return this.document.update(update, operation)
-  }
-
-  /**
-   * Present a Dialog form to confirm deletion of this PseudoDocument.
-   * @param [options] Additional options passed to `DialogV2.confirm`
-   * @param [operation]  Document deletion options.
-   * @returns A Promise that resolves to the deleted PseudoDocument
-   */
-  async deleteDialog(
-    options?: InexactPartial<foundry.applications.api.DialogV2.ConfirmConfig>,
-    operation?: PseudoDocument.DeleteOperation
-  ): Promise<this | false | null | undefined> {
-    let content = options?.content
-
-    const type = getGame().i18n.localize(this.metadata.label)
-    const name = ('name' in this ? this.name : null) as string | null
-
-    if (!content) {
-      const question = getGame().i18n.localize('AreYouSure')
-      const warning = getGame().i18n.format('SIDEBAR.DeleteWarning', { type })
-
-      content = `<p><strong>${question}</strong> ${warning}</p>`
-    }
-
-    return foundry.applications.api.DialogV2.confirm(
-      foundry.utils.mergeObject(
-        {
-          content,
-          yes: { callback: () => this.delete(operation) },
-          window: {
-            icon: 'fa-solid fa-trash',
-            title: `${getGame().i18n.format('DOCUMENT.Delete', { type })}: ${name}`,
-          },
-        },
-        options
-      ) as foundry.applications.api.DialogV2.ConfirmConfig
-    ) as Promise<this | false | null | undefined>
-  }
 
   /* ---------------------------------------- */
 
@@ -423,10 +643,22 @@ class PseudoDocument<
    */
   async update(
     change: AnyObject = {},
-    operation: Document.Database.UpdateOperation<foundry.abstract.types.DatabaseUpdateOperation> = {}
+    operation: PseudoDocument.UpdateOperation = {}
   ): Promise<gurps.UpdatableDocument> {
     if (!this.isSource) throw new Error('You cannot update a non-source pseudo-document!')
     if (!isUpdatableDocument(this.document)) throw new Error('Document does not support updates!')
+
+    // Do not update the _id of the pseudo-document, as it is used to track the document in the parent source data.
+    if ('_id' in change) {
+      console.warn('The _id of a pseudo-document cannot be updated! Ignoring _id change.', {
+        attemptedId: change._id,
+        documentId: this.id,
+      })
+
+      const { _id, ...rest } = change
+
+      change = rest
+    }
 
     const path = [this.fieldPath, this.id].join('.')
     const update = { [path]: change }
@@ -449,7 +681,7 @@ class PseudoDocument<
    */
   static _configureUpdates(
     _action: 'create' | 'update' | 'delete',
-    _document: Document.Any,
+    _document: gurps.Pseudo.ParentDocument,
     _update: AnyObject,
     _operation: Document.Database.UpdateOperation<foundry.abstract.types.DatabaseUpdateOperation>
   ) {}
@@ -460,6 +692,13 @@ class PseudoDocument<
 const pseudoDocumentSchema = () => {
   return {
     _id: new fields.DocumentIdField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
+    name: new fields.StringField({
+      required: true,
+      nullable: false,
+      initial: () => '',
+    }) as fields.StringField<{ required: true; nullable: false; initial: () => string }>,
+    img: new fields.FilePathField({ categories: ['IMAGE'] }),
+    sort: new fields.IntegerSortField({ required: true, initial: 0 }),
     flags: new fields.ObjectField({ required: false, nullable: false, initial: () => ({}) }),
   }
 }
@@ -493,9 +732,17 @@ namespace PseudoDocument {
 
   /* ---------------------------------------- */
 
-  export type DeleteOperation = Document.Database.DeleteOperation<
-    foundry.abstract.types.DatabaseDeleteOperation<Document.Any>
-  >
+  export type ConstructorOptions = AnyObject & {
+    collection?: ModelCollection<PseudoDocument>
+  }
+
+  /* ---------------------------------------- */
+
+  export interface DeleteOperation extends Document.Database.DeleteOperation<
+    foundry.abstract.types.DatabaseDeleteOperation<gurps.Pseudo.ParentDocument>
+  > {
+    deleteContents?: boolean
+  }
 
   /* ---------------------------------------- */
 
@@ -518,6 +765,10 @@ namespace PseudoDocument {
   export interface AnyConstructor extends Identity<typeof AnyPseudoDocument> {}
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface ConcreteConstructor extends Identity<typeof ConcretePseudoDocument> {}
+
+  /* ---------------------------------------- */
+
+  export type UpdateOperation = Document.Database.UpdateOperation<foundry.abstract.types.DatabaseUpdateOperation>
 }
 
 /* ---------------------------------------- */

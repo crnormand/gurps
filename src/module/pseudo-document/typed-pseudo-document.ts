@@ -6,7 +6,6 @@ import { PseudoDocument, pseudoDocumentSchema } from './pseudo-document.js'
 
 /* ---------------------------------------- */
 
-// @ts-expect-error - Polymorphic static create return type is incompatible with base class signature, this is a TS limitation
 class TypedPseudoDocument<
   DocumentName extends gurps.Pseudo.WithTypes = gurps.Pseudo.WithTypes,
   Schema extends TypedPseudoDocument.Schema = TypedPseudoDocument.Schema,

@@ -88,10 +88,6 @@ class GcsAttribute extends PseudoDocument<GcsAttributeSchema> {
 
   /* ---------------------------------------- */
 
-  get sort(): number {
-    return this._definition?.sort || 0
-  }
-
   /* ---------------------------------------- */
 
   get actor(): Actor.Implementation | null {

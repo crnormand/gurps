@@ -35,7 +35,7 @@ interface RollInfo {
 interface ActorV1Interface {
   // Properties
   _additionalResources: Record<string, any>
-  _hitLocationRolls: HitLocationEntry[] | Record<string, Record<string, HitLocationRecord>>
+  _hitLocationRolls: HitLocationEntry[] | Record<string, HitLocationEntryV1>
   defaultHitLocation: string
   displayname: string
   hitLocationByWhere: Record<string, HitLocationEntryV1>

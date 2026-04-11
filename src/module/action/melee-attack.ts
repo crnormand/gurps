@@ -87,7 +87,7 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES: string[] = ['GURPS.action.meleeAttack']
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.action.meleeAttack']
 
   /* ---------------------------------------- */
   /*  Data Preparation                        */

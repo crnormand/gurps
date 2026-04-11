@@ -17,7 +17,7 @@ import {
 /* ---------------------------------------- */
 
 class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements IResourceTracker {
-  static override defineSchema() {
+  static override defineSchema(): ResourceTrackerSchema {
     return resourceTrackerSchema()
   }
 
@@ -158,7 +158,6 @@ class TrackerInstance extends PseudoDocument<ResourceTrackerSchema> implements I
 const resourceTrackerSchema = () => {
   return {
     ...pseudoDocumentSchema(),
-    name: new fields.StringField({ required: true, nullable: false, initial: '' }),
 
     // The current value of the resource. If null, the value is derived (0 for accumulators, max for non-accumulators).
     // After the first update, this will always be a number.

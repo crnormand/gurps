@@ -6,6 +6,7 @@ import { ActorType } from '@module/actor/types.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { TraitSchema } from '@module/item/data/trait.js'
 import { ItemType } from '@module/item/types.js'
+import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { MeleeAttackSchema } from '../../action/melee-attack.js'
@@ -533,7 +534,10 @@ Portrait will not be imported.`
         const entry = Object.values(tempEntry).find((entry: any) => entry.id === location.id) as
           | { id?: string; role?: string }
           | undefined
-        const role = entry?.role ?? entry?.id ?? ''
+
+        let role = entry?.role ?? entry?.id ?? null
+
+        if (!Object.values(HitLocationRole).includes(role as any)) role = null
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
@@ -542,7 +546,7 @@ Portrait will not be imported.`
           penalty: location.hit_penalty ?? 0,
           rollText: location.calc.roll_range ?? '-',
           split,
-          role,
+          role: role as HitLocationRole | null,
         }
 
         acc[id] = newLocation
