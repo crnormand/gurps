@@ -32,7 +32,7 @@ export const AddImportEquipmentButton = async function (html) {
         {
           action: 'cancel',
           label: game.i18n.localize('GURPS.cancel'),
-          icon: 'fa-solid fa-times',
+          icon: 'fa-solid fa-xmark',
           callback: () => undefined, // Resolve with undefined if cancelled
         },
       ],

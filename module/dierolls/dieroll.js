@@ -207,7 +207,7 @@ export async function doRoll({
           `GURPS.damageType${GURPS.DamageTables.woundModifiers[damageType]?.label}`,
           damageType
         )
-        damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
+        damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fa-solid fa-dice-d6"></i>'
         damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
         usingDiceAdd = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
       }
@@ -230,10 +230,10 @@ export async function doRoll({
     if (settingsAllowAfterMaxActions !== 'Allow' && !dontShowMaxActions) {
       const canConsumeAction = actor.canConsumeAction(action, chatthing, optionalArgs.obj)
       consumeActionIcon = !result.hasActions
-        ? '<i class="fas fa-exclamation"></i>'
+        ? '<i class="fa-solid fa-exclamation"></i>'
         : canConsumeAction
-          ? '<i class="fas fa-plus"></i>'
-          : '<i class="fas fa-check"></i>'
+          ? '<i class="fa-solid fa-plus"></i>'
+          : '<i class="fa-solid fa-check"></i>'
       consumeActionLabel = !result.hasActions
         ? game.i18n.localize('GURPS.noActionsAvailable')
         : canConsumeAction
@@ -250,38 +250,38 @@ export async function doRoll({
     switch (action?.type || 'undefined') {
       case 'attack':
         if (action.isMelee) {
-          itemIcon = 'fas fa-sword'
+          itemIcon = 'fa-solid fa-sword'
           itemColor = 'rgba(12,79,119)'
           rollType = game.i18n.localize('GURPS.melee')
         } else {
-          itemIcon = 'fas fa-crosshairs'
+          itemIcon = 'fa-solid fa-crosshairs'
           itemColor = 'rgba(12,79,119)'
           rollType = game.i18n.localize('GURPS.ranged')
         }
         break
       case 'weapon-parry':
-        itemIcon = 'fas fa-swords'
+        itemIcon = 'fa-solid fa-swords'
         itemColor = '#9a5f16'
         rollType = game.i18n.localize('GURPS.parry')
         break
       case 'weapon-block':
-        itemIcon = 'fas fa-shield-halved'
+        itemIcon = 'fa-solid fa-shield-halved'
         itemColor = '#9a5f16'
         rollType = game.i18n.localize('GURPS.block')
         break
       case 'skill-spell':
         if (chatthing.toLowerCase().includes('@sk:')) {
-          itemIcon = 'fas fa-book'
+          itemIcon = 'fa-solid fa-book'
           itemColor = '#015401'
           rollType = game.i18n.localize('GURPS.skill')
         } else {
-          itemIcon = 'fa fa-wand-magic-sparkles'
+          itemIcon = 'fa-solid fa-wand-magic-sparkles'
           itemColor = '#6f63d9'
           rollType = game.i18n.localize('GURPS.spell')
         }
         break
       case 'controlroll':
-        itemIcon = 'fas fa-head-side-gear'
+        itemIcon = 'fa-solid fa-head-side-gear'
         itemColor = '#c5360b'
         rollType = game.i18n.localize('GURPS.ControlRoll')
         break
@@ -290,43 +290,43 @@ export async function doRoll({
         const ref = chatthing.split('@').pop().slice(0, -1)
         switch (ref) {
           case 'ST':
-            itemIcon = 'fas fa-dumbbell'
+            itemIcon = 'fa-solid fa-dumbbell'
             rollType = game.i18n.localize('GURPS.attributesSTNAME')
             break
           case 'DX':
-            itemIcon = 'fas fa-running'
+            itemIcon = 'fa-solid fa-person-running'
             rollType = game.i18n.localize('GURPS.attributesDXNAME')
             break
           case 'HT':
-            itemIcon = 'fas fa-heart'
+            itemIcon = 'fa-solid fa-heart'
             rollType = game.i18n.localize('GURPS.attributesHTNAME')
             break
           case 'IQ':
-            itemIcon = 'fas fa-brain'
+            itemIcon = 'fa-solid fa-brain'
             rollType = game.i18n.localize('GURPS.attributesIQNAME')
             break
           case 'WILL':
-            itemIcon = 'fas fa-brain'
+            itemIcon = 'fa-solid fa-brain'
             rollType = game.i18n.localize('GURPS.attributesWILLNAME')
             break
           case 'Vision':
-            itemIcon = 'fas fa-eye'
+            itemIcon = 'fa-solid fa-eye'
             rollType = game.i18n.localize('GURPS.vision')
             break
           case 'PER':
-            itemIcon = 'fas fa-signal-stream'
+            itemIcon = 'fa-solid fa-signal-stream'
             rollType = game.i18n.localize('GURPS.attributesPERNAME')
             break
           case 'Fright Check':
-            itemIcon = 'fas fa-face-scream'
+            itemIcon = 'fa-solid fa-face-scream'
             rollType = game.i18n.localize('GURPS.frightcheck')
             break
           case 'Hearing':
-            itemIcon = 'fas fa-ear'
+            itemIcon = 'fa-solid fa-ear'
             rollType = game.i18n.localize('GURPS.hearing')
             break
           case 'Taste Smell':
-            itemIcon = 'fas fa-nose'
+            itemIcon = 'fa-solid fa-nose'
             rollType = game.i18n.localize('GURPS.tastesmell')
             break
           case 'Touch':
@@ -334,11 +334,11 @@ export async function doRoll({
             rollType = game.i18n.localize('GURPS.touch')
             break
           case 'Dodge':
-            itemIcon = 'fas fa-person-running-fast'
+            itemIcon = 'fa-solid fa-person-running-fast'
             rollType = game.i18n.localize('GURPS.dodge')
             break
           default:
-            itemIcon = 'fas fa-dice'
+            itemIcon = 'fa-solid fa-dice'
             rollType = !!targetData?.name
               ? targetData.name
               : thing
@@ -347,7 +347,7 @@ export async function doRoll({
         }
         break
       default:
-        itemIcon = 'fas fa-dice'
+        itemIcon = 'fa-solid fa-dice'
         itemColor = '#015401'
         rollType = thing ? thing.charAt(0).toUpperCase() + thing.toLowerCase().slice(1) : formula
     }
@@ -419,7 +419,7 @@ export async function doRoll({
       buttons: [
         {
           action: 'roll',
-          icon: !!optionalArgs.blind ? 'fas fa-eye-slash' : 'fas fa-dice',
+          icon: !!optionalArgs.blind ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
           label: !!optionalArgs.blind ? 'GURPS.blindRoll' : 'GURPS.roll',
           default: true,
           callback: async (event, button, dialog) => {
@@ -439,7 +439,7 @@ export async function doRoll({
         },
         {
           action: 'cancel',
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-xmark',
           label: 'GURPS.cancel',
           callback: async (event, button, dialog) => {
             await GURPS.ModifierBucket.clearTaggedModifiers()

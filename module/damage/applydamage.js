@@ -544,8 +544,8 @@ export default class ApplyDamageDialog extends Application {
     const effect = button.data('effect')
     const token = canvas.tokens.get(tokenId)
     const actions = await TokenActions.fromToken(token)
-    const buttonAddClass = `fa-plus-circle`
-    const buttonAddedClass = `fa-check-circle`
+    const buttonAddClass = `fa-circle-plus`
+    const buttonAddedClass = `fa-circle-check`
 
     const toggleEffect = async (effect, span, starts = '', label = '') => {
       // Check if effect already exists in Token

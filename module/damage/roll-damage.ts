@@ -29,7 +29,7 @@ export async function rollDamage(
       `GURPS.damageTypes.${GURPS.DamageTables.woundModifiers[damageType]?.label}`,
       damageType
     )
-    const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fas fa-dice-d6"></i>'
+    const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fa-solid fa-dice-d6"></i>'
     const damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
     const targetRoll = action.orig
     const bucketTotal = GURPS.ModifierBucket.currentSum()
@@ -96,13 +96,13 @@ export async function rollDamage(
       buttons: [
         {
           action: 'roll',
-          icon: isBlindRoll ? 'fas fa-eye-slash' : 'fas fa-dice',
+          icon: isBlindRoll ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
           label: isBlindRoll ? 'GURPS.blindRoll' : 'GURPS.roll',
           default: true,
         },
         {
           action: 'cancel',
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-xmark',
           label: 'GURPS.cancel',
         },
       ],

@@ -344,7 +344,7 @@ export class CompositeDamageCalculator {
               ...effect,
               actorId: this._defender.id,
               isReady,
-              spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+              spanClass: isReady ? 'fa-circle-check green' : 'fa-circle-plus black',
               effectTitle: isReady
                 ? game.i18n.localize(`GURPS.removeShock${applyAt}Effect`)
                 : game.i18n.localize(`GURPS.addShock${applyAt}Effect`),
@@ -367,7 +367,7 @@ export class CompositeDamageCalculator {
                   actorId: this._defender.id,
                   stunIsReady,
                   effectName: 'stun',
-                  spanClass: stunIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+                  spanClass: stunIsReady ? 'fa-circle-check green' : 'fa-circle-plus black',
                   effectTitle: stunIsReady
                     ? game.i18n.localize('GURPS.removestunEffect')
                     : game.i18n.localize('GURPS.addstunEffect'),
@@ -377,7 +377,7 @@ export class CompositeDamageCalculator {
                   actorId: this._defender.id,
                   proneIsReady,
                   effectName: 'prone',
-                  spanClass: proneIsReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+                  spanClass: proneIsReady ? 'fa-circle-check green' : 'fa-circle-plus black',
                   effectTitle: proneIsReady
                     ? game.i18n.localize('GURPS.removeproneEffect')
                     : game.i18n.localize('GURPS.addproneEffect'),
@@ -395,7 +395,7 @@ export class CompositeDamageCalculator {
                   actorId: this._defender.id,
                   isReady,
                   effectName: 'prone',
-                  spanClass: isReady ? 'fa-check-circle green' : 'fa-plus-circle black',
+                  spanClass: isReady ? 'fa-circle-check green' : 'fa-circle-plus black',
                   effectTitle: isReady
                     ? game.i18n.localize('GURPS.removeproneEffect')
                     : game.i18n.localize('GURPS.addproneEffect'),

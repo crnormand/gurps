@@ -74,7 +74,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       {
         label: 'Import',
         class: 'import',
-        icon: 'fas fa-file-import',
+        icon: 'fa-solid fa-file-import',
         onclick: async (event: Event) => this._onFileImport(event),
       },
     ]
@@ -140,7 +140,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
           {
             action: 'save',
             label: 'Save',
-            icon: 'fas fa-save',
+            icon: 'fa-solid fa-floppy-disk',
             callback: (_event: Event, button: HTMLButtonElement) => {
               const form = button.form as HTMLFormElement
               const input = form.elements.namedItem('i') as HTMLTextAreaElement

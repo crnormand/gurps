@@ -1472,11 +1472,10 @@ div#other {
 .meleedraggable:before,
 .condmoddraggable:before,
 .reactdraggable:before {
-  content: '\f142';
-  font-family: var(--fontawesomefamily);
-  color: var(--lightgrey);
+  font: var(--fa-font-solid);
   font-size: var(--font-size-11);
-  font-weight: 600;
+  content: '\f142';
+  color: var(--lightgrey);
   padding-left: var(--smallemgap);
   padding-right: calc(2 * var(--smallemgap));
   cursor: grab;
@@ -1572,9 +1571,7 @@ div#other {
 
 .encmarker.current:after {
   content: '\f101';
-  /* this is your text. You can also use UTF-8 character codes as I do here */
-  font-family: var(--fontawesomefamily);
-  font-weight: 900;
+  font: var(--fa-font-solid);
   padding-right: 2px;
 }
 
