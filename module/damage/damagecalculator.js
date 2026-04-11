@@ -324,10 +324,7 @@ export class CompositeDamageCalculator {
   }
 
   async addEffectsContext() {
-    let tokenId = this._defender.token?.id
-    if (!tokenId) tokenId = canvas.tokens.placeables.find(it => it.actor === this._defender).id
-    const defenderToken = canvas.tokens.get(tokenId)
-    const actions = await TokenActions.fromToken(defenderToken)
+    const actions = await TokenActions.fromActor(this._defender)
     let isReady
     const data = this.effects.map(effect => {
       if (effect.type.includes('shock')) {
@@ -335,7 +332,7 @@ export class CompositeDamageCalculator {
         if (applyAt === 'AtNextTurn') {
           isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
         } else {
-          isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === `${effect.type}${effect.amount}`))
+          isReady = this._defender.effects.find(e => e.statuses.find(s => s === `${effect.type}${effect.amount}`))
         }
         return {
           ...effect,
@@ -356,8 +353,8 @@ export class CompositeDamageCalculator {
           case 'headvitalshit':
           case 'majorwound':
           case 'crippling':
-            const stunIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'stun'))
-            const proneIsReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+            const stunIsReady = this._defender.effects.find(e => e.statuses.find(s => s === 'stun'))
+            const proneIsReady = this._defender.effects.find(e => e.statuses.find(s => s === 'prone'))
             return {
               ...effect,
               testTitle: game.i18n.localize('GURPS.saveRollforEffect'),
@@ -385,7 +382,7 @@ export class CompositeDamageCalculator {
               ],
             }
           case 'knockback':
-            isReady = defenderToken.actor.effects.find(e => e.statuses.find(s => s === 'prone'))
+            isReady = this._defender.effects.find(e => e.statuses.find(s => s === 'prone'))
             return {
               ...effect,
               testTitle: game.i18n.localize('GURPS.saveRollforEffect'),
