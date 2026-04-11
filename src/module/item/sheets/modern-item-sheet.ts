@@ -1,6 +1,6 @@
-import { DeepPartial, HandlebarsApplicationMixin, ItemSheet, Application } from '@gurps-types/foundry/index.js'
+import { Application, DeepPartial, HandlebarsApplicationMixin, ItemSheet } from '@gurps-types/foundry/index.js'
 import { Action } from '@module/action/index.js'
-import { bindInlineEdit } from '@module/actor/modern/inline-edit-handler.js'
+import { bindInlineEdit } from '@module/actor/sheets/modern/inline-edit-handler.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { getGame } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
@@ -38,8 +38,8 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
   ItemSheet.Configuration,
   ItemSheet.RenderOptions,
   GurpsItemModernSheet.RenderContext
->() {
-  static override DEFAULT_OPTIONS: ItemSheet.DefaultOptions<GurpsBaseItemSheet.Configuration> = {
+> {
+  static override DEFAULT_OPTIONS: GurpsBaseItemSheet.DefaultOptions = {
     classes: ['modern-item-sheet'],
     position: {
       width: 600,
@@ -154,8 +154,8 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
   /* ---------------------------------------- */
 
   protected override async _onRender(
-    context: GurpsItemModernSheet.RenderContext,
-    options: ItemSheet.RenderOptions
+    context: DeepPartial<GurpsItemModernSheet.RenderContext>,
+    options: DeepPartial<GurpsBaseItemSheet.RenderOptions>
   ): Promise<void> {
     super._onRender(context, options)
     this._applyPlaceholderText()
@@ -184,15 +184,6 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
 
       input?.setAttribute('placeholder', getGame().i18n.localize(`GURPS.item.base.FIELDS.${fieldName}.placeholder`))
     }
-  }
-
-  /* ---------------------------------------- */
-
-  protected override async _onFirstRender(
-    context: GurpsItemModernSheet.RenderContext,
-    options: ItemSheet.RenderOptions
-  ): Promise<void> {
-    super._onFirstRender(context, options)
   }
 }
 

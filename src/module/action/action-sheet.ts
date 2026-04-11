@@ -1,5 +1,5 @@
-import { HandlebarsApplicationMixin, Application } from '@gurps-types/foundry/index.js'
-import { bindInlineEdit } from '@module/actor/modern/inline-edit-handler.js'
+import { Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
+import { bindInlineEdit } from '@module/actor/sheets/modern/inline-edit-handler.js'
 import { PseudoDocumentSheet } from '@module/pseudo-document/pseudo-document-sheet.js'
 import { systemPath } from '@module/util/misc.js'
 
@@ -11,6 +11,12 @@ namespace ActionSheet {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface Configuration extends PseudoDocumentSheet.Configuration<Action.Any> {}
 
+  /* ---------------------------------------- */
+
+  export type DefaultOptions = PseudoDocumentSheet.DefaultOptions
+
+  /* ---------------------------------------- */
+
   export interface RenderContext extends PseudoDocumentSheet.RenderContext<Action.Any> {
     action: Action.Any | null
   }
@@ -19,7 +25,7 @@ namespace ActionSheet {
 /* ---------------------------------------- */
 
 class ActionSheet extends PseudoDocumentSheet<Action.Any> {
-  static override DEFAULT_OPTIONS = {
+  static override DEFAULT_OPTIONS: PseudoDocumentSheet.DefaultOptions = {
     classes: ['action-sheet', 'modern-item-sheet'],
     position: {
       width: 600,
