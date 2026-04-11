@@ -312,13 +312,20 @@ function migrateActorSystem(
 
   const holderItemId = injectedData?.holderItemId || ''
 
+  let currentEncumbrance = 0
+  const encumbrance = Object.values(oldData.encumbrance)
+
+  encumbrance.forEach((data, index) => {
+    if (data.current) currentEncumbrance = index
+  })
+
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>> = {
     ...injectedData,
     holderItemId,
     attributes: oldData.attributes,
-    HP: oldData.HP,
-    FP: oldData.FP,
-    QP: oldData.QP,
+    HP: { ...oldData.HP, damage: oldData.HP.max - oldData.HP.value },
+    FP: { ...oldData.FP, damage: oldData.FP.max - oldData.FP.value },
+    QP: { ...oldData.QP, damage: oldData.QP.max - oldData.QP.value },
 
     // NOTE: This value represents "Basic Dodge", this being Math.floor(Basic Speed) + 3 + Modifiers (e.g. Enchanced
     // Dodge). It is the base value used to get the Actual Dodge value under encumbrance.
@@ -341,10 +348,11 @@ function migrateActorSystem(
     swing: oldData.swing,
 
     additionalresources: {
-      qnotes: oldData.additionalresources?.qnotes,
+      qnotes: oldData.additionalresources?.qnotes ?? '',
       tracker: {},
       importname: oldData.additionalresources?.importname ?? oldData.additionalresources?.importName,
-      importpath: oldData.additionalresources?.importpath,
+      importpath: oldData.additionalresources?.importpath ?? '',
+      currentEncumbrance,
     },
 
     conditionalinjury: {
@@ -353,7 +361,7 @@ function migrateActorSystem(
         points: oldData.conditionalinjury.RT.points,
       },
       injury: {
-        severity: (sev => (Number.isNaN(sev) ? null : sev))(parseInt(oldData.conditionalinjury.injury.severity)),
+        severity: (sev => (Number.isNaN(sev) ? -7 : sev))(parseInt(oldData.conditionalinjury.injury.severity)),
         daystoheal: oldData.conditionalinjury.injury.daystoheal,
       },
     },
@@ -376,6 +384,8 @@ function migrateActorSystem(
       createdon: oldData.traits.createdon,
       modifiedon: oldData.traits.modifiedon,
       player: oldData.traits.player,
+      // @ts-expect-error: Future addition
+      organization: '',
     },
 
     totalpoints: oldData.totalpoints,
@@ -386,7 +396,7 @@ function migrateActorSystem(
         maxBlocks: oldData.conditions.actions?.maxBlocks,
       },
       posture: oldData.conditions.posture,
-      maneuver: oldData.conditions.maneuver,
+      maneuver: oldData.conditions.maneuver ?? null,
       // TODO: Check why this is number | string -- perhaps it can contain number of yards of movement (number) or "STEP" (string)?
       move: String(oldData.conditions.move),
       self: {
@@ -397,8 +407,8 @@ function migrateActorSystem(
       },
       usermods: [],
 
-      reeling: oldData.conditions.reeling,
-      exhausted: oldData.conditions.exhausted,
+      reeling: oldData.conditions.reeling ?? false,
+      exhausted: oldData.conditions.exhausted ?? false,
 
       damageAccumulators: [],
     },
@@ -428,6 +438,9 @@ function migrateActorSystem(
     Object.values(oldData.hitlocations).forEach(hitlocation => {
       const id = foundry.utils.randomID()
 
+      // NOTE: hitlocaiton.penalty is a string, but it is being treated as a number by the type system
+      const penalty = parseInt(String(hitlocation.penalty)) ?? 0
+
       const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
         ...hitlocation,
         _id: id,
@@ -435,6 +448,11 @@ function migrateActorSystem(
         _dr: hitlocation.import,
         rollText: hitlocation.roll,
         _damageType: !hitlocation._damageType ? null : hitlocation._damageType,
+        name: '',
+        sort: 0,
+        penalty,
+        split: hitlocation.split ?? {},
+        drMod: hitlocation.drMod ?? 0,
       }
 
       newData.hitlocationsV2 ||= {}
@@ -453,6 +471,13 @@ function migrateActorSystem(
       markdown: data.notes,
       importid: data.uuid,
       _id: id,
+      open: true,
+      name: '',
+      sort: 0,
+      title: '',
+      reference: data.pageref ?? '',
+      reference_highlight: '',
+      save: false,
     }
 
     newData.allNotes![id] = note
