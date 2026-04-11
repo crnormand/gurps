@@ -791,7 +791,7 @@ export class GurpsActorSheet extends ActorSheet {
     let list = foundry.utils.getProperty(this.actor, key)
     let t = parentpath + '.' + objkey
 
-    await this.actor.internalUpdate({ [t]: _del }) // Delete the whole object
+    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
 
     let sortedobj = {}
     let index = 0
@@ -1448,7 +1448,7 @@ export class GurpsActorSheet extends ActorSheet {
     let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
     let t = parentpath + '.' + objkey
-    await this.actor.internalUpdate({ [t]: _del }) // Delete the whole object
+    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
@@ -1463,7 +1463,7 @@ export class GurpsActorSheet extends ActorSheet {
     let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
     let t = parentpath + '.' + objkey
-    await this.actor.internalUpdate({ [t]: _del }) // Delete the whole object
+    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
@@ -1603,7 +1603,7 @@ export class GurpsActorSheet extends ActorSheet {
     // Delete the whole object.
     let last = components.pop()
     let t = `${components.join('.')}.${last}`
-    await this.actor.internalUpdate({ [t]: _del })
+    await this.actor.internalUpdate({ [t]: globalThis._del })
 
     // Insert the element into the array.
     array.splice(index, 0, element)
@@ -1628,7 +1628,7 @@ export class GurpsActorSheet extends ActorSheet {
     // Delete the whole object.
     let last = components.pop()
     let t = `${components.join('.')}.${last}`
-    await this.actor.internalUpdate({ [t]: _del })
+    await this.actor.internalUpdate({ [t]: globalThis._del })
 
     // Remove the element from the array
     array.splice(index, 1)
@@ -2081,7 +2081,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             GURPS.put(hitlocations, it, count++)
           }
           await this.actor.update({
-            'system.hitlocations': _replace(hitlocations),
+            'system.hitlocations': globalThis._replace(hitlocations),
             'system.additionalresources.bodyplan': bodyplan,
           })
         }

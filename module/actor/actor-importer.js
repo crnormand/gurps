@@ -668,7 +668,7 @@ export class ActorImporter {
       console.log(this)
     }
     return {
-      'system.traits': _replace(ts),
+      'system.traits': globalThis._replace(ts),
     }
   }
 
@@ -698,7 +698,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.ads': _replace(this.foldList(list)),
+      'system.ads': globalThis._replace(this.foldList(list)),
     }
   }
 
@@ -773,7 +773,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.skills': _replace(this.foldList(temp)),
+      'system.skills': globalThis._replace(this.foldList(temp)),
     }
   }
 
@@ -834,7 +834,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.spells': _replace(this.foldList(temp)),
+      'system.spells': globalThis._replace(this.foldList(temp)),
     }
   }
 
@@ -882,7 +882,7 @@ export class ActorImporter {
       }
     }
     return {
-      'system.melee': _replace(melee),
+      'system.melee': globalThis._replace(melee),
     }
   }
 
@@ -941,7 +941,7 @@ export class ActorImporter {
       }
     }
     return {
-      'system.ranged': _replace(ranged),
+      'system.ranged': globalThis._replace(ranged),
     }
   }
 
@@ -982,7 +982,7 @@ export class ActorImporter {
       if (!!t.save) temp.push(t)
     })
     return {
-      'system.notes': _replace(this.foldList(temp)),
+      'system.notes': globalThis._replace(this.foldList(temp)),
     }
   }
 
@@ -1105,8 +1105,8 @@ export class ActorImporter {
       // After retrieve all relevant data
       // Lets remove equipments now
       await this.actor.internalUpdate({
-        'system.equipment.carried': _del,
-        'system.equipment.other': _del,
+        'system.equipment.carried': globalThis._del,
+        'system.equipment.other': globalThis._del,
       })
     }
 
@@ -1142,7 +1142,7 @@ export class ActorImporter {
       }
     }
     return {
-      'system.equipment': _replace(equipment),
+      'system.equipment': globalThis._replace(equipment),
     }
   }
 
@@ -1300,7 +1300,7 @@ export class ActorImporter {
     if (saveprot) return {}
     else
       return {
-        'system.hitlocations': _replace(prot),
+        'system.hitlocations': globalThis._replace(prot),
         'system.additionalresources.bodyplan': bodyplan,
       }
   }
@@ -1347,7 +1347,7 @@ export class ActorImporter {
       }
     }
     return {
-      'system.languages': _replace(langs),
+      'system.languages': globalThis._replace(langs),
     }
   }
 
@@ -1370,7 +1370,7 @@ export class ActorImporter {
       }
     })
     return {
-      'system.reactions': _replace(rs),
+      'system.reactions': globalThis._replace(rs),
     }
   }
 
@@ -1406,7 +1406,7 @@ export class ActorImporter {
     return {
       'system.currentmove': cm,
       'system.currentdodge': cd,
-      'system.encumbrance': _replace(es),
+      'system.encumbrance': globalThis._replace(es),
     }
   }
 
@@ -1558,7 +1558,7 @@ export class ActorImporter {
     ts.sizemod = p.SM || '+0'
 
     const r = {
-      'system.traits': _replace(ts),
+      'system.traits': globalThis._replace(ts),
     }
 
     if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_OVERWRITE_PORTRAITS)) {
@@ -1597,7 +1597,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.ads': _replace(this.foldList(temp)),
+      'system.ads': globalThis._replace(this.foldList(temp)),
     }
   }
 
@@ -1673,7 +1673,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.skills': _replace(this.foldList(temp)),
+      'system.skills': globalThis._replace(this.foldList(temp)),
     }
   }
 
@@ -1741,7 +1741,7 @@ export class ActorImporter {
     })
 
     return {
-      'system.spells': _replace(this.foldList(temp)),
+      'system.spells': globalThis._replace(this.foldList(temp)),
     }
   }
 
@@ -1816,8 +1816,8 @@ export class ActorImporter {
       // After retrieve all relevant data
       // Lets remove equipments now
       await this.actor.internalUpdate({
-        'system.equipment.carried': _del,
-        'system.equipment.other': _del,
+        'system.equipment.carried': globalThis._del,
+        'system.equipment.other': globalThis._del,
       })
     }
 
@@ -1851,7 +1851,7 @@ export class ActorImporter {
       }
     }
     return {
-      'system.equipment': _replace(equipment),
+      'system.equipment': globalThis._replace(equipment),
     }
   }
 
@@ -1928,7 +1928,7 @@ export class ActorImporter {
       if (!!t.save) temp.push(t)
     })
     return {
-      'system.notes': _replace(this.foldList(temp)),
+      'system.notes': globalThis._replace(this.foldList(temp)),
     }
   }
 
@@ -1969,7 +1969,7 @@ export class ActorImporter {
     }
     ts.sizemod = this.signedNum(final)
     return {
-      'system.traits': _replace(ts),
+      'system.traits': globalThis._replace(ts),
     }
   }
 
@@ -2093,7 +2093,7 @@ export class ActorImporter {
     if (saveprot) return {}
     else {
       return {
-        'system.hitlocations': _replace(prot),
+        'system.hitlocations': globalThis._replace(prot),
         'system.additionalresources.bodyplan': bodyplan,
       }
     }
@@ -2184,8 +2184,8 @@ export class ActorImporter {
       GURPS.put(cs, { ...c }, index_c++)
     }
     return {
-      'system.reactions': _replace(rs),
-      'system.conditionalmods': _replace(cs),
+      'system.reactions': globalThis._replace(rs),
+      'system.conditionalmods': globalThis._replace(cs),
     }
   }
 
@@ -2259,8 +2259,8 @@ export class ActorImporter {
       }
     }
     return {
-      'system.melee': _replace(melee),
-      'system.ranged': _replace(ranged),
+      'system.melee': globalThis._replace(melee),
+      'system.ranged': globalThis._replace(ranged),
     }
   }
 

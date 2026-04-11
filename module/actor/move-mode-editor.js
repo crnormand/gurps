@@ -160,7 +160,7 @@ export default class MoveModeEditor extends Application {
                 default: this.moveData[k].default,
               })
           }
-          await this.actor.update({ 'system.move': _replace(move) })
+          await this.actor.update({ 'system.move': globalThis._replace(move) })
         }
         break
 
