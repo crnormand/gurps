@@ -385,7 +385,6 @@ function migrateActorSystem(
       createdon: oldData.traits.createdon,
       modifiedon: oldData.traits.modifiedon,
       player: oldData.traits.player,
-      // @ts-expect-error: Future addition
       organization: '',
     },
 
