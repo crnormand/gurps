@@ -58,13 +58,13 @@ export class TokenActions {
   }
 
   static async fromActor(actor) {
-    if (actor.token) {
-      const tokenActions = new TokenActions(actor.token)
-      return await tokenActions.init()
+    let token = actor.token?.object
+
+    if (!token) {
+      const tokenDocument = await actor.getTokenDocument()
+      token = tokenDocument.object
     }
 
-    const tokenDocument = await actor.getTokenDocument()
-    const token = new Token(tokenDocument, { parent: canvas.scene })
     const tokenActions = new TokenActions(token)
     return await tokenActions.init()
   }
