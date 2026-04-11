@@ -12,8 +12,8 @@ import { GgaContextMenuV2 } from '../ui/context-menu.js'
 
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
-import { prepareTrackerDataForSheet } from './sheets/modern/dialog-crud-handler.ts'
 import MoveModeEditor from './move-mode-editor.js'
+import { prepareTrackerDataForSheet } from './sheets/modern/dialog-crud-handler.ts'
 import SplitDREditor from './splitdr-editor.js'
 import { ActorType } from './types.js'
 
