@@ -1952,6 +1952,7 @@ const characterSchema = () => {
         createdon: new fields.StringField({ required: true, nullable: false }),
         modifiedon: new fields.StringField({ required: true, nullable: false }),
         player: new fields.StringField({ required: true, nullable: false }),
+        organization: new fields.StringField({ required: true, nullable: false }),
       },
       { required: true, nullable: false }
     ),

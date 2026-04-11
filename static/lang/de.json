@@ -208,6 +208,9 @@
             "modifiedon": {
               "label": "Zuletzt geändert"
             },
+            "organization": {
+              "label": "Organizaton"
+            },
             "player": {
               "label": "Spieler"
             },

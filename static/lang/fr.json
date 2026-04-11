@@ -208,6 +208,9 @@
             "modifiedon": {
               "label": "Modifié le"
             },
+            "organization": {
+              "label": "Organizaton"
+            },
             "player": {
               "label": "Joueur"
             },

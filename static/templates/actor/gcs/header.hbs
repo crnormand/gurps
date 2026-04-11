@@ -11,16 +11,17 @@
 <section>
   <div class="gcs-portrait gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.portrait"}}</div>
-      <img
-        src='{{actor.img}}'
-        data-action='editImage'
-      />
+    <img
+      src='{{actor.img}}'
+      data-action='editImage'
+    />
   </div>
   <div class="gcs-identity gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.identity"}}</div>
     <div class="gcs-field-rows gcs-section-content">
       {{formField fields.name value=actor.name localize=true disabled=isPlay}}
       {{formField systemFields.profile.fields.title value=systemSource.profile.title localize=true disabled=isPlay}}
+      {{formField systemFields.profile.fields.organization value=systemSource.profile.organization localize=true disabled=isPlay}}
     </div>
   </div>
   <div class="gcs-miscellaneous gcs-section">
@@ -28,6 +29,7 @@
     <div class="gcs-field-rows gcs-section-content">
       {{formField systemFields.profile.fields.createdon value=createdDate localize=true disabled=true}}
       {{formField systemFields.profile.fields.modifiedon value=modifiedDate localize=true disabled=true}}
+      {{formField systemFields.profile.fields.player value=systemSource.profile.player localize=true disabled=isPlay}}
     </div>
   </div>
   <div class="gcs-description gcs-section">
