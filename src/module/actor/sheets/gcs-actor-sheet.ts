@@ -724,8 +724,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         condition: target => target.dataset.uuid !== undefined,
         callback: async target => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
+          const event = new PointerEvent('click', { bubbles: true })
 
-          if (handler) handler.call(this, {} as unknown as PointerEvent, target)
+          if (handler) handler.call(this, event, target)
         },
       },
     ]
@@ -741,8 +742,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         condition: target => target.dataset.uuid !== undefined,
         callback: async target => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
+          const event = new PointerEvent('click', { bubbles: true })
 
-          if (handler) handler.call(this, {} as unknown as PointerEvent, target)
+          if (handler) handler.call(this, event, target)
         },
       },
     ]
@@ -1113,18 +1115,20 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
           targetName: this.actor.name,
         })
 
-        // Remove the source item entirely, or reduce its count if only part of the stack moved.
-        if (remainingQuantity <= 0) {
-          // Delete the item and all its descendants — children are not automatically cascade-deleted
-          // when their container is removed, so we must include them explicitly.
-          const allSourceIds = [item.id!, ...item.system.allContents.map(descendant => descendant.id!)]
+        // If the user cannot modify the source item, fall back to a copy-only drop.
+        if (item.isOwner) {
+          if (remainingQuantity <= 0) {
+            // Delete the item and all its descendants — children are not automatically cascade-deleted
+            // when their container is removed, so we must include them explicitly.
+            const allSourceIds = [item.id!, ...item.system.allContents.map(descendant => descendant.id!)]
 
-          details.deletions.push({ ids: allSourceIds, operation: { parent: item.parent! } })
-        } else {
-          details.updates.push({
-            data: [{ _id: item._id, 'system.count': remainingQuantity } as Item.UpdateData],
-            operation: { parent: item.parent! },
-          })
+            details.deletions.push({ ids: allSourceIds, operation: { parent: item.parent! } })
+          } else {
+            details.updates.push({
+              data: [{ _id: item._id, 'system.count': remainingQuantity } as Item.UpdateData],
+              operation: { parent: item.parent! },
+            })
+          }
         }
       } else {
         // Same-actor move or stack split.
