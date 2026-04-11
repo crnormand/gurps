@@ -67,7 +67,7 @@ export default class SplitDREditor extends Application {
         {
           // remove existing entries
           let entry = {}
-          entry[`${this.key}.-=split`] = null
+          entry[`${this.key}.split`] = globalThis._del
           await this.actor.update(entry)
         }
         break
@@ -129,7 +129,7 @@ export default class SplitDREditor extends Application {
 
   async _updateSplitDRKey(existingValue, newKey) {
     let old = {}
-    old[`${this.key}.-=split`] = null
+    old[`${this.key}.split`] = globalThis._del
     await this.actor.update(old)
 
     let split = {}
