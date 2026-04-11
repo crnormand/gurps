@@ -1563,6 +1563,7 @@ export class GurpsActor extends Actor {
 
         // 5. Update Actor System with new Component
         const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey))
+        await GURPS.put(systemObject, actorComp)
         await this.internalUpdate({ [targetKey]: globalThis._replace(systemObject) })
         if (data.type === 'equipment') await Equipment.calc(actorComp)
 
