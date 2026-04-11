@@ -309,7 +309,7 @@
               "label": "Modified On"
             },
             "organization": {
-              "label": "Organizaton"
+              "label": "Organization"
             },
             "player": {
               "label": "Player"
@@ -677,12 +677,12 @@
         "InstantlyFatal1": "Instantly Fatal",
         "InstantlyFatal2": "Instantly Fatal",
         "MajorWound": "Major Wound",
-        "None": "None",
         "MinorWound1": "Minor Wound",
         "MinorWound2": "Minor Wound",
         "MinorWound3": "Minor Wound",
         "MortalWound1": "Mortal Wound",
         "MortalWound2": "Mortal Wound",
+        "None": "None",
         "Reeling": "Reeling",
         "Scratch": "Scratch",
         "TotalDestruction": "Total Destruction"
@@ -2050,8 +2050,8 @@
       "Counter9": "Counter 9",
       "Crawling": "Crawling",
       "Crouch": "Crouching",
-      "Deaf": "Deafened",
       "Dead": "Dead",
+      "Deaf": "Deafened",
       "DeathCheck1": "Check #1",
       "DeathCheck2": "Check #2",
       "DeathCheck3": "Check #3",
