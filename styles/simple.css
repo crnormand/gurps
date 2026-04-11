@@ -1473,6 +1473,7 @@ div#other {
 .condmoddraggable:before,
 .reactdraggable:before {
   font: var(--fa-font-solid);
+  font-size: var(--font-size-11);
   content: '\f142';
   color: var(--lightgrey);
   padding-left: var(--smallemgap);
