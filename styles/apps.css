@@ -2616,10 +2616,10 @@ details .popup.square5x4 {
 #result-extrastuff {
   min-width: 400px;
 }
-.fa.fa-circle-check.green {
+.fa-solid.fa-circle-check.green {
   color: green;
 }
-.fa.fa-circle-check.black {
+.fa-solid.fa-circle-check.black {
   color: black;
 }
 
