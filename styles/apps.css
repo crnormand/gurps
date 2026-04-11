@@ -2046,8 +2046,9 @@ details .popup.square5x4 {
 }
 
 .modtooltip .collapsible-wrapper > label:after {
-  font: normal normal normal 12px/1;
   font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f078';
   float: right;
 }
@@ -2058,8 +2059,9 @@ details .popup.square5x4 {
 }
 
 .modtooltip .collapsible-wrapper > input:checked + label:after {
-  font: normal normal normal 12px/1;
   font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f077';
   float: right;
 }
