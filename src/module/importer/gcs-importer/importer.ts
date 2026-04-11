@@ -510,7 +510,6 @@ Portrait will not be imported.`
       createdon: this.input.created_date ?? '',
       modifiedon: this.input.modified_date ?? '',
       player: profile.player_name ?? '',
-      // @ts-expect-error: future addition
       organization: profile.organization ?? '',
     }
   }

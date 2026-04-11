@@ -208,6 +208,9 @@
             "modifiedon": {
               "label": "Изменён"
             },
+            "organization": {
+              "label": "Organizaton"
+            },
             "player": {
               "label": "Игрок"
             },
