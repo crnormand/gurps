@@ -2089,7 +2089,8 @@ if (!globalThis.GURPS) {
           cmd = '[' + cmd + ']'
           let messageData = {
             user: game.user.id,
-            type: CONST.CHAT_MESSAGE_STYLES.OOC,
+            style: CONST.CHAT_MESSAGE_STYLES.OOC,
+            type: 'base',
             content: cmd,
           }
           ChatMessage.create(messageData, {})
