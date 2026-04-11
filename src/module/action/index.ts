@@ -1,5 +1,6 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
+import { ActionSheet } from './action-sheet.js'
 import { BaseAction } from './base-action.js'
 import { MeleeAttackModel } from './melee-attack.js'
 import { RangedAttackModel } from './ranged-attack.js'
@@ -26,6 +27,8 @@ namespace Action {
 function init() {
   console.log('GURPS | Initializing GURPS Action module.')
   GURPS.CONFIG.PseudoDocument.Types.Action = BaseAction
+
+  GURPS.CONFIG.PseudoDocument.Sheets.Action = ActionSheet
 
   GURPS.CONFIG.PseudoDocument.SubTypes.Action = {
     [ActionType.MeleeAttack]: {
