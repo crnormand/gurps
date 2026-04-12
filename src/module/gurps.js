@@ -2039,7 +2039,7 @@ if (!globalThis.GURPS) {
 
     buttons.push({
       action: 'everyone',
-      icon: 'fas fa-users',
+      icon: 'fa-solid fa-users',
       label: translate('To Everyone'),
       callback: () => GURPS.sendOtfMessage(otf, false),
     })
@@ -2047,7 +2047,7 @@ if (!globalThis.GURPS) {
     if (canblind)
       buttons.push({
         action: 'blind-everyone',
-        icon: 'fas fa-users-slash',
+        icon: 'fa-solid fa-users-slash',
         label: translate('Blindroll to Everyone'),
         callback: () => GURPS.sendOtfMessage(botf, true),
       })
@@ -2055,23 +2055,23 @@ if (!globalThis.GURPS) {
     if (users.length > 0) {
       buttons.push({
         action: 'whisper',
-        icon: 'fas fa-user',
-        label: 'Whisper to ' + users.map(user => user.name).join(' '),
+        icon: 'fa-solid fa-user',
+        label: 'Whisper to ' + users.map(u => u.name).join(' '),
         callback: () => GURPS.sendOtfMessage(otf, false, users),
       })
 
       if (canblind)
         buttons.push({
           action: 'blind-whisper',
-          icon: 'fas fa-user-slash',
-          label: 'Whisper Blindroll to ' + users.map(user => user.name).join(' '),
+          icon: 'fa-solid fa-user-slash',
+          label: 'Whisper Blindroll to ' + users.map(u => u.name).join(' '),
           callback: () => GURPS.sendOtfMessage(botf, true, users),
         })
     }
 
     buttons.push({
       action: 'chat',
-      icon: 'far fa-copy',
+      icon: 'fa-regular fa-copy',
       label: 'Copy to chat input',
       default: true,
       callback: () => {
@@ -2248,7 +2248,7 @@ if (!globalThis.GURPS) {
             },
             {
               action: 'cancel',
-              icon: 'fas fa-times',
+              icon: 'fa-solid fa-xmark',
               label: 'GURPS.migration.toV1_0_0.cancel',
             },
           ],

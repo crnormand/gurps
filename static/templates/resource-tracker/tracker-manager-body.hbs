@@ -15,14 +15,14 @@
           <label>{{tracker.alias}}</label>
           <input type='checkbox' data-action='autoApplyTemplate' data-key='{{@key}}' {{checked autoapply}} />
           <label>{{tracker.initialValue}}</label>
-          <i class='fas fa-trash ms-action-btn ms-delete' data-action='deleteTemplate' data-key='{{@key}}'
+          <i class='fa-solid fa-trash ms-action-btn ms-delete' data-action='deleteTemplate' data-key='{{@key}}'
             title='{{localize 'GURPS.delete'}}'></i>
         {{/each}}
       </div>
       <footer>
         <div class="ms-add-row">
           <span class="ms-add-btn" data-action="addTemplate"><i
-              class="fas fa-plus"></i>{{localize 'GURPS.resourceTracker.edit.addTemplate'}}</span>
+              class="fa-solid fa-plus"></i>{{localize 'GURPS.resourceTracker.edit.addTemplate'}}</span>
         </div>
       </footer>
     </section>

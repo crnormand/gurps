@@ -3,9 +3,9 @@
   <div class='condition-block tooltip-wrapper'>
     <div class='tooltip condition {{hpFpCondition name resource "style" }}'>{{localize (hpFpCondition name resource 'label')}}
       {{#if (eq name 'FP')}}
-      <i class='fas fa-lungs {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
+      <i class='fa-solid fa-lungs {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
       {{else}}
-      <i class='fas fa-heartbeat {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
+      <i class='fa-solid fa-heart-pulse {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
       {{/if}}
       <span class="tooltiptext">
         <div class="fieldblock">

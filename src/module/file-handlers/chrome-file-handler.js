@@ -53,7 +53,7 @@ export class ChromiumFileHandler {
         content: content,
         ok: {
           label: 'GURPS.import',
-          icon: 'fas fa-save',
+          icon: 'fa-solid fa-floppy-disk',
           callback: () => (handle ? resolve(handle) : reject(`no ${mode} were chosen`)),
         },
         render: (event, dialog) => {

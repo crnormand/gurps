@@ -598,16 +598,17 @@ ul#result-effects li {
 }
 
 .damage-message .label-toggle:after {
-  font: normal normal normal 12px/1;
-  font-family: var(--font-family-icons);
-  font-weight: 900;
+  font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f078';
   float: right;
 }
 
 .damage-message .toggle:checked + .label-toggle:after {
-  font: normal normal normal 12px/1;
-  font-weight: 900;
+  font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f077';
   float: right;
 }
@@ -634,18 +635,18 @@ ul#result-effects li {
 }
 
 .gga-chat-message .label-toggle:after {
-  font: normal normal normal 12px/1;
-  font-family: var(--font-family-icons);
-  font-weight: 900;
+  font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f078';
   color: lightgray;
   float: right;
 }
 
 .gga-chat-message .toggle:checked + .label-toggle:after {
-  font: normal normal normal 12px/1;
-  font-family: var(--font-family-icons);
-  font-weight: 900;
+  font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f077';
   color: lightgray;
   float: right;
@@ -695,6 +696,7 @@ ul#result-effects li {
 .gga-app button {
   text-transform: uppercase;
   background: rgba(255, 255, 240, 0.8);
+  color: black;
 }
 
 .gga-app button.default {
@@ -709,10 +711,6 @@ ul#result-effects li {
 .gga-app button.with-icon > i > span {
   /* font-family: var(--font-family-icons); */
   font-weight: 400;
-}
-
-.gga-app * {
-  font-family: Roboto, sans-serif, 'Font Awesome 6 Pro';
 }
 
 .gga-app .fa,
@@ -1542,16 +1540,13 @@ details .popup.square5x4 {
 
 .navigation-view > span:before {
   content: '\f101';
-  /* this is your text. You can also use UTF-8 character codes as I do here */
-  font-family: var(--font-family-icons);
-  font-weight: 900;
+  font: var(--fa-font-solid);
   color: white;
 }
 
 .navigate-area input:checked + .navigate-bar > .navigation-view > span:before {
   content: '\f100';
-  font-family: var(--font-family-icons);
-  font-weight: 900;
+  font: var(--fa-font-solid);
   color: white;
 }
 
@@ -1961,12 +1956,11 @@ details .popup.square5x4 {
 }
 
 .removemod:hover::after {
-  font-family: var(--font-family-icons);
+  font: var(--fa-font-solid);
   content: '\f1f8';
   display: inline-block;
   padding-right: 3px;
   vertical-align: middle;
-  /* font-weight: 900; */
   color: dimgrey;
 }
 
@@ -2060,9 +2054,9 @@ details .popup.square5x4 {
 }
 
 .modtooltip .collapsible-wrapper > label:after {
-  font: normal normal normal 12px/1;
-  font-family: var(--font-family-icons);
-  font-weight: 900;
+  font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f078';
   float: right;
 }
@@ -2073,9 +2067,9 @@ details .popup.square5x4 {
 }
 
 .modtooltip .collapsible-wrapper > input:checked + label:after {
-  font: normal normal normal 12px/1;
-  font-family: var(--font-family-icons);
-  font-weight: 900;
+  font: var(--fa-font-solid);
+  font-size: 12px;
+  line-height: 1;
   content: '\f077';
   float: right;
 }
@@ -2201,7 +2195,6 @@ details .popup.square5x4 {
 .modtooltip .glinkmodminus:hover {
   cursor: pointer;
   text-shadow: none;
-  font-weight: unset;
   background-color: rgba(255, 255, 240, 0.8) !important;
 }
 
@@ -2637,10 +2630,10 @@ details .popup.square5x4 {
 #result-extrastuff {
   min-width: 400px;
 }
-.fa.fa-check-circle.green {
+.fa-solid.fa-circle-check.green {
   color: green;
 }
-.fa.fa-check-circle.black {
+.fa-solid.fa-circle-check.black {
   color: black;
 }
 

@@ -67,7 +67,7 @@ export class EffectModifierControl {
         const newButton = {
           name: EffectModifierControl.EffectModName,
           title: game.i18n.localize('GURPS.tokenToolsTitle'),
-          icon: 'fas fa-list-alt',
+          icon: 'fa-solid fa-rectangle-list',
           toggle: true,
           active: this.showPopup,
           visible: true,

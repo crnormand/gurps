@@ -30,7 +30,7 @@
               <button id='apply-publicly' class='split-button'>{{localize "GURPS.apply"}}</button>
               <div class='dropdown'>
                 <button id='apply-split' class='split-button'>
-                  <i class='fa fa-caret-down'></i>
+                  <i class='fa-solid fa-caret-down'></i>
                 </button>
                 <div id='apply-dropdown' class="dropdown-content invisible">
                   <div id='apply-secretly' style='text-wrap: nowrap;'>{{localize "GURPS.dmg.add.applyQuietly"}}</div>
@@ -43,7 +43,7 @@
                 class='split-button'>{{localize "GURPS.dmg.add.applyQuietly"}}</button>
               <div class='dropdown'>
                 <button id='apply-split' class='split-button'>
-                  <i class='fa fa-caret-down'></i>
+                  <i class='fa-solid fa-caret-down'></i>
                 </button>
                 <div id='apply-dropdown' class="dropdown-content invisible">
                   <div id='apply-publicly'>{{localize "GURPS.apply"}}</div>
@@ -62,14 +62,14 @@
     {{#if (gt CALC.length 1)}}
       <div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%'>
         <nav class='pagination'>
-          <div id='pagination-left'><i class="fas fa-angle-double-left"></i></div>
+          <div id='pagination-left'><i class="fa-solid fa-angles-left"></i></div>
           <div id='pagination-all' class='{{#if (eq CALC.viewId "all")}}active{{else}}{{/if}}'>ALL</div>
           {{#each CALC.calculators}}
             <div id='pagination-{{@index}}' class='{{#if (eq ../CALC.viewId @index)}}active{{else}}{{/if}}'>
               {{basicDamage}}
             </div>
           {{/each}}
-          <div id='pagination-right'><i class="fas fa-angle-double-right"></i></div>
+          <div id='pagination-right'><i class="fa-solid fa-angles-right"></i></div>
         </nav>
 
         <aside id='pagination-single-select'
@@ -116,7 +116,7 @@
             <hr /> <!-- Doesn't do much except add some space -->
 
             <button id='random-location' class='with-icon'>
-              <i class='fa fa-dice'><span>&nbsp;{{localize "GURPS.hitLocationRandom"}}</span></i>
+              <i class='fa-solid fa-dice'></i> {{localize "GURPS.hitLocationRandom"}}
             </button>
 
             <hr /> <!-- Doesn't do much except add some space -->
@@ -139,7 +139,7 @@
               <div id='override-dr' class='with-button'>
                 <input type='text' class='digits-only' style='border: 1px solid #7a7971;'
                   value="{{#unless (eq CALC.userEnteredDR null)}}{{CALC.userEnteredDR}}{{/unless}}">
-                <button name="clear"><span class="fas fa-times-circle"></span></button>
+                <button name="clear"><span class="fa-solid fa-circle-xmark"></span></button>
               </div>
 
             </div>
@@ -330,7 +330,7 @@
                   <input type='text' id='damage-reduction-level' class='decimal-digits-only'
                     value='{{CALC.damageReductionLevel}}' {{disabled (not CALC.useDamageReduction)}}
                     style='border: 1px solid #7a7971;'>
-                  <button name='clear'><span class='fas fa-times-circle'></button>
+                  <button name='clear'><span class='fa-solid fa-circle-xmark'></span></button>
                 </div>
                 <div class='vertical-center pdflink'>P53</div>
               </div>
@@ -361,7 +361,7 @@
                     <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
                       value='{{CALC.effectiveBluntTrauma}}' {{disabled (not CALC.isFlexibleArmor)}}
                       style='border: 1px solid #7a7971;'>
-                    <button name='clear'><span class='fas fa-times-circle'></button>
+                    <button name='clear'><span class='fa-solid fa-circle-xmark'></span></button>
                   </div>
                 </div>
               </div>
@@ -404,7 +404,7 @@
                     <div
                       style='display: inline-flex; align-items: center; justify-content: space-evenly; border: 1px solid black; padding: 4px 8px; border-radius: 3px; margin-bottom: 4px; margin-right:4px;'>
                       <div>{{basicDamage}}</div>
-                      <div style='color: grey;'><i class="fas fa-arrow-right"></i></div>
+                      <div style='color: grey;'><i class="fa-solid fa-arrow-right"></i></div>
                       <div style='font-weight: bold; font-size: large;'>{{pointsToApply}}</div>
                     </div>
                   {{/each}}
@@ -552,7 +552,7 @@
                 <button id='apply-injury-publicly' class='split-button'>{{localize "GURPS.dmg.add.applyInjury"}}</button>
                 <div class='dropdown'>
                   <button id='apply-injury-split' class='split-button'>
-                    <i class='fa fa-caret-down'></i>
+                    <i class='fa-solid fa-caret-down'></i>
                   </button>
                   <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
                     <div id='apply-injury-secretly'>{{localize "GURPS.dmg.add.applyInjuryQuietly"}}</div>
@@ -565,7 +565,7 @@
                 <button id='apply-injury-secretly' class='split-button'>{{localize "GURPS.dmg.add.applyQuietly"}}</button>
                 <div class='dropdown'>
                   <button id='apply-injury-split' class='split-button'>
-                    <i class='fa fa-caret-down'></i>
+                    <i class='fa-solid fa-caret-down'></i>
                   </button>
                   <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
                     <div id='apply-injury-publicly'>{{localize "GURPS.dmg.add.applyInjury"}}</div>

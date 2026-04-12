@@ -2,7 +2,7 @@
   <div class='desc header' data-key='system.notes'>
     <div class='headermenu'>
       <span>{{localize 'GURPS.notes'}}</span>
-      <i class='fas fa-plus addnoteicon'></i>
+      <i class='fa-solid fa-plus addnoteicon'></i>
     </div>
   </div>
   <div class='ref header'>{{localize "GURPS.abbrevRef"}}</div>
@@ -31,8 +31,8 @@
           <div class='desc indent{{indent}} dblclkedit'>
             <div class='gga-desc-text'>
               <div>
-                {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-                {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                {{#if hasContains}}<i class='fa-solid fa-caret-down expandcollapseicon'></i>{{/if}}
+                {{#if hasCollapsed}}<i class='fa-solid fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
               <div class='tooltip gga-manual'>
                 {{#if (or this.notes this.markdown)}}
@@ -42,7 +42,7 @@
               </div>
               <div>
                 {{#if (isUserCreated this)}}
-                  <i class='fas fa-bookmark tooltip gga-usercreated'>
+                  <i class='fa-solid fa-bookmark tooltip gga-usercreated'>
                     <span class='tooltiptext'>{{localize "GURPS.equipmentUserCreated"}}</span>
                   </i>
                 {{/if}}

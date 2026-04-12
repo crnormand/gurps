@@ -672,17 +672,16 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let notesMenuItems = [
       {
         name: 'Edit',
-        icon: "<i class='fas fa-edit'></i>",
-        callback: noteElement => {
-          let path = noteElement.dataset.key
+        icon: "<i class='fa-solid fa-pen-to-square'></i>",
+        callback: e => {
+          let path = e[0].dataset.key
           let obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
-
           this.editNotes(this.actor, path, obj)
         },
       },
       {
         name: 'Delete',
-        icon: "<i class='fas fa-trash'></i>",
+        icon: "<i class='fa-solid fa-trash'></i>",
         callback: async event => {
           const key = event[0].dataset.key
 
@@ -732,7 +731,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         buttons: [
           {
             label: 'Save',
-            icon: 'fas fa-save',
+            icon: 'fa-solid fa-floppy-disk',
             callback: (event, button, _dialog) => {
               let value = button.form.elements.i.value
 
@@ -789,7 +788,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
         [
           {
             name: game.i18n.localize('GURPS.addTracker'),
-            icon: '<i class="fas fa-plus"></i>',
+            icon: '<i class="fa-solid fa-plus"></i>',
             callback: () => {
               this._addTracker().then()
             },
@@ -804,7 +803,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     let menus = [
       this._createMenu(
         game.i18n.localize('GURPS.delete'),
-        '<i class="fas fa-trash"></i>',
+        '<i class="fa-solid fa-trash"></i>',
         this._deleteItem.bind(this),
         this._isRemovable.bind(this)
       ),
@@ -818,26 +817,34 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   _createEquipmentItemMenus(html) {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
-    let menus = [
-      this._createMenu(game.i18n.localize('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
+    let opts = [
+      this._createMenu(
+        game.i18n.localize('GURPS.edit'),
+        '<i class="fa-solid fa-pen-to-square"></i>',
+        this._editEquipment.bind(this)
+      ),
       this._createMenu(
         game.i18n.localize('GURPS.sortContentsAscending'),
-        '<i class="fas fa-sort-amount-down-alt"></i>',
+        '<i class="fa-solid fa-arrow-up-short-wide"></i>',
         this._sortContentAscending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
       this._createMenu(
         game.i18n.localize('GURPS.sortContentsDescending'),
-        '<i class="fas fa-sort-amount-down"></i>',
+        '<i class="fa-solid fa-arrow-down-short-wide"></i>',
         this._sortContentDescending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
-      this._createMenu(game.i18n.localize('GURPS.delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
+      this._createMenu(
+        game.i18n.localize('GURPS.delete'),
+        '<i class="fa-solid fa-trash"></i>',
+        this._deleteItem.bind(this)
+      ),
     ]
 
     let movedown = this._createMenu(
       game.i18n.localize('GURPS.moveToOtherEquipment'),
-      '<i class="fas fa-level-down-alt"></i>',
+      '<i class="fa-solid fa-turn-down"></i>',
       this._moveEquipment.bind(this, 'system.equipment.other')
     )
 
@@ -845,7 +852,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
 
     let moveup = this._createMenu(
       game.i18n.localize('GURPS.moveToCarriedEquipment'),
-      '<i class="fas fa-level-up-alt"></i>',
+      '<i class="fa-solid fa-turn-up"></i>',
       this._moveEquipment.bind(this, 'system.equipment.carried')
     )
 
@@ -966,7 +973,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   addItemMenu(name, obj, path) {
     return {
       name: game.i18n.format('GURPS.editorAddItem', { name: name }),
-      icon: '<i class="fas fa-plus"></i>',
+      icon: '<i class="fa-solid fa-plus"></i>',
       callback: async () => {
         if (path.includes('system.equipment')) {
           obj.save = true
@@ -1521,7 +1528,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   sortAscendingMenu(key) {
     return {
       name: game.i18n.localize('GURPS.sortAscending'),
-      icon: '<i class="fas fa-sort-amount-down-alt"></i>',
+      icon: '<i class="fa-solid fa-arrow-up-short-wide"></i>',
       callback: () => this.sortAscending(key),
     }
   }
@@ -1529,7 +1536,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   sortDescendingMenu(key) {
     return {
       name: game.i18n.localize('GURPS.sortDescending'),
-      icon: '<i class="fas fa-sort-amount-down"></i>',
+      icon: '<i class="fa-solid fa-arrow-down-short-wide"></i>',
       callback: () => this.sortDescending(key),
     }
   }
@@ -1668,14 +1675,14 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
             content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
             buttons: {
               one: {
-                icon: '<i class="fas fa-level-up-alt"></i>',
+                icon: '<i class="fa-solid fa-turn-up"></i>',
                 label: `${game.i18n.localize('GURPS.dropBefore')}`,
                 callback: async () => {
                   await this.actor.reorderItem(sourceKey, targetkey, object, isSrcFirst)
                 },
               },
               two: {
-                icon: '<i class="fas fa-sign-in-alt"></i>',
+                icon: '<i class="fa-solid fa-right-to-bracket"></i>',
                 label: `${game.i18n.localize('GURPS.dropInside')}`,
                 callback: async () => {
                   let key = targetkey + '.contains.' + zeroFill(0)
@@ -1743,7 +1750,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       {
         label: isFull ? altsheet : 'Full View',
         class: 'toggle',
-        icon: 'fas fa-exchange-alt',
+        icon: 'fa-solid fa-right-left',
         onclick: ev => this._onToggleSheet(ev, altsheet),
       },
     ]
@@ -1752,7 +1759,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       button.push({
         label: 'Import',
         class: 'import',
-        icon: 'fas fa-file-import',
+        icon: 'fa-solid fa-file-import',
         onclick: ev => this._onFileImport(ev),
       })
 
@@ -1760,7 +1767,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       button.push({
         label: 'Editor',
         class: 'edit',
-        icon: 'fas fa-edit',
+        icon: 'fa-solid fa-pen-to-square',
         onclick: ev => this._onOpenEditor(ev),
       })
     }
@@ -1973,7 +1980,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
     return [
       {
         name: 'Delete',
-        icon: "<i class='fas fa-trash'></i>",
+        icon: "<i class='fa-solid fa-trash'></i>",
         callback: async event => {
           const key = event[0].dataset.key
 

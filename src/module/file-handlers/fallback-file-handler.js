@@ -33,7 +33,7 @@ export class FallbackFileHandler {
         content: content,
         ok: {
           label: 'GURPS.import',
-          icon: 'fas fa-save',
+          icon: 'fa-solid fa-floppy-disk',
           callback: (event, button, dialog) => {
             const html = dialog.element
             const inputElementObject = html.querySelector('#inputFiles')

@@ -92,7 +92,7 @@ export class ActorImporter {
         {
           action: 'import',
           label: 'GURPS.import',
-          icon: 'fas fa-file-import',
+          icon: 'fa-solid fa-file-import',
           default: true,
           callback: async (_, button, __) => {
             let files = button.form.elements.data.files
@@ -110,7 +110,7 @@ export class ActorImporter {
         {
           action: 'cancel',
           label: 'GURPS.cancel',
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-xmark',
           callback: () => undefined, // Resolve with undefined if cancelled
         },
       ],
@@ -705,15 +705,16 @@ export class ActorImporter {
           modal: true,
           buttons: [
             {
-              action: 'keep',
-              label: game.i18n.localize('GURPS.dialog.keep'),
-              icon: 'far fa-square',
+              action: 'save',
+              label: game.i18n.localize('GURPS.save'),
+              icon: 'fa-regular fa-square',
               default: true,
             },
             {
               action: 'overwrite',
-              label: game.i18n.localize('GURPS.dialog.overwrite'),
-              icon: 'fas fa-edit',
+              label: game.i18n.localize('GURPS.overwrite'),
+              icon: 'fa-solid fa-pen-to-square',
+              callback: () => false,
             },
           ],
         })
@@ -1445,15 +1446,16 @@ export class ActorImporter {
       modal: true,
       buttons: [
         {
-          action: 'keep',
-          label: game.i18n.localize('GURPS.dialog.keep'),
-          icon: 'far fa-square',
+          action: 'save',
+          label: game.i18n.localize('GURPS.save'),
+          icon: 'fa-regular fa-square',
           default: true,
         },
         {
           action: 'overwrite',
-          label: game.i18n.localize('GURPS.dialog.overwrite'),
-          icon: 'fas fa-edit',
+          label: game.i18n.localize('GURPS.overwrite'),
+          icon: 'fa-solid fa-pen-to-square',
+          callback: () => false,
         },
       ],
     })

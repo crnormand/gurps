@@ -294,7 +294,7 @@ export class AnimChatProcessor extends ChatProcessor {
         {
           action: 'cancel',
           label: 'GURPS.ok',
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-xmark',
           callback: () => undefined, // Resolve with undefined if cancelled
         },
       ],

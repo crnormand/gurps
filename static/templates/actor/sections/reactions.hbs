@@ -5,7 +5,7 @@
     <div class='headermenu' data-key='system.reactions'>
       <span>{{localize 'GURPS.reaction'}}</span>
       {{#if isEditing}}
-        <i class='fas fa-caret-square-down'></i>
+        <i class='fa-solid fa-square-caret-down'></i>
       {{/if}}
     </div>
   </div>
@@ -13,7 +13,7 @@
   {{#each system.reactions}}
     {{#if ../isEditing}}
       <div class='itemmenu reactmenu' data-key='system.reactions.{{@key}}'>
-        <i class='fas fa-times'></i>
+        <i class='fa-solid fa-xmark'></i>
       </div>
       <div class='modifier gga-right'>
         <input name='system.reactions.{{@key}}.modifier' class='gcs-input-sm4' type='text' value='{{modifier}}' />

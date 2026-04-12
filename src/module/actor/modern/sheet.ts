@@ -126,10 +126,10 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   static override TABS: Record<string, Application.TabsConfiguration> = {
     primary: {
       tabs: [
-        { id: 'character', label: 'GURPS.basic', icon: 'fas fa-user' },
-        { id: 'combat', label: 'GURPS.combatTab', icon: 'fas fa-swords' },
-        { id: 'equipment', label: 'GURPS.equipmentTab', icon: 'fas fa-backpack' },
-        { id: 'notes', label: 'GURPS.description', icon: 'fas fa-book' },
+        { id: 'character', label: 'GURPS.basic', icon: 'fa-solid fa-user' },
+        { id: 'combat', label: 'GURPS.combatTab', icon: 'fa-solid fa-swords' },
+        { id: 'equipment', label: 'GURPS.equipmentTab', icon: 'fa-solid fa-backpack' },
+        { id: 'notes', label: 'GURPS.description', icon: 'fa-solid fa-book' },
       ],
       initial: 'character',
     },
@@ -340,7 +340,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
         {
           action: 'save',
           label: 'Save',
-          icon: 'fas fa-save',
+          icon: 'fa-solid fa-floppy-disk',
           callback: (_event: Event, button: HTMLButtonElement) => {
             const form = button.form as HTMLFormElement
             const input = form.elements.namedItem('i') as HTMLTextAreaElement

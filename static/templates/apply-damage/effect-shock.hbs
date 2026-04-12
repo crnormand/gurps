@@ -7,13 +7,13 @@
     {{#each buttons as |button|}}
       <div id='add-shock-next' class='with-send-button'>
         <button name='add-shock-next' data-effect='{{jsonStringify this}}' title='{{effectTitle}}'>
-          <span class='fa {{spanClass}}'></span>
+          <span class='fa-solid {{spanClass}}'></span>
         </button>
       </div>
     {{/each}}
     <div class='with-send-button'>
       <button name='send-wound' data-struct='{{jsonStringify this}}' title='{{localize "GURPS.sendToChat"}}'>
-        <span class='fa fa-comment-alt'></span>
+        <span class='fa-solid fa-comment-dots'></span>
       </button>
     </div>
     <div class='pdflink'>{{localize 'GURPS.pdfShock'}}</div>

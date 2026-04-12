@@ -9,7 +9,7 @@
 
 ### Bugfixes
 
-## Release 0.18.15 03/04/2026
+## Release 0.18.15 03/04/2026 03/04/2026
 
 ### Bugfixes
 

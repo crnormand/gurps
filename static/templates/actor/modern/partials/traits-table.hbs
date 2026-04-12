@@ -12,7 +12,7 @@
       {{#each (flatlist system.ads)}}
       <div class='ms-traits-row {{pointsClass this.points}}' data-key='system.ads.{{@key}}' data-indent='{{indent}}' data-has-children='{{or hasContains hasCollapsed}}'>
         <span class='ms-col-name indent{{indent}}'>
-          {{#if (or hasContains hasCollapsed)}}<i class='fas fa-caret-down ms-container-icon'></i>{{/if}}
+          {{#if (or hasContains hasCollapsed)}}<i class='fa-solid fa-caret-down ms-container-icon'></i>{{/if}}
           <span class='ms-col-name-text'>{{stripOtfs this.name}}</span>
         </span>
         <span class='ms-col-otf'>

@@ -110,7 +110,7 @@ export function bindNoteCrudActions(
           {
             action: 'create',
             label: 'Create',
-            icon: 'fas fa-plus',
+            icon: 'fa-solid fa-plus',
             callback: (_event: Event, button: HTMLButtonElement) => {
               const form = button.form
 

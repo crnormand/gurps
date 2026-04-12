@@ -48,8 +48,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
   protected override _onDelete(options: ActiveEffect.Database.OnDeleteOperation, userId: string): void {
     // If ADD is opened for this actor, update the token effect buttons
-    const buttonAddClass = `fa-plus-circle`
-    const buttonAddedClass = `fa-check-circle`
+    const buttonAddClass = `fa-circle-plus`
+    const buttonAddedClass = `fa-circle-check`
 
     for (const status of this._source.statuses) {
       // @ts-expect-error - parent exists at runtime for embedded documents
@@ -74,10 +74,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
     }
 
     // If ADD is opened for this actor, update the token effect buttons
-    const buttonAddClass = `fa-plus-circle`
-    const buttonAddedClass = `fa-check-circle`
-
-    // @ts-expect-error - statuses is iterable at runtime, parent exists for embedded docs
+    const buttonAddClass = `fa-circle-plus`
+    const buttonAddedClass = `fa-circle-check`
     for (const status of data.statuses) {
       // @ts-expect-error - parent exists at runtime for embedded documents
       const selector = `span.${status}[data-actor="${this.parent._id}"]`

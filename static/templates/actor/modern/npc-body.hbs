@@ -88,24 +88,24 @@
 
   {{#if useCI}}
   <div class='ms-section ms-ci-section'>
-    {{>section-header icon="fa-heartbeat" title=(localize "GURPS.addInjury")}}
+    {{>section-header icon="fa-heart-pulse" title=(localize "GURPS.addInjury")}}
     <div class='ms-section-content'>
       <div class='ms-ci-controls'>
         <div class='ms-ci-control'>
           <span class='ms-ci-label'>Severity</span>
           <div class='ms-ci-spinner'>
-            <button type='button' data-operation='ci-severity-dec'><i class='fas fa-minus'></i></button>
+            <button type='button' data-operation='ci-severity-dec'><i class='fa-solid fa-minus'></i></button>
             <input name='system.conditionalinjury.injury.severity' type='text' value='{{system.conditionalinjury.injury.severity}}' data-dtype='String' data-operation='ci-severity-set' />
-            <button type='button' data-operation='ci-severity-inc'><i class='fas fa-plus'></i></button>
+            <button type='button' data-operation='ci-severity-inc'><i class='fa-solid fa-plus'></i></button>
           </div>
           <button type='button' class='ms-ci-reset' data-operation='ci-reset'><i class='fas fa-undo'></i></button>
         </div>
         <div class='ms-ci-control'>
           <span class='ms-ci-label'>Time to Heal</span>
           <div class='ms-ci-spinner'>
-            <button type='button' data-operation='ci-days-dec'><i class='fas fa-minus'></i></button>
+            <button type='button' data-operation='ci-days-dec'><i class='fa-solid fa-minus'></i></button>
             <input name='injury.daystoheal' type='text' value='{{system.conditionalinjury.injury.daystoheal}}' data-dtype='Number' data-operation='ci-days-set' />
-            <button type='button' data-operation='ci-days-inc'><i class='fas fa-plus'></i></button>
+            <button type='button' data-operation='ci-days-inc'><i class='fa-solid fa-plus'></i></button>
           </div>
           <span class='ms-ci-label'>{{localize 'GURPS.days'}}</span>
         </div>
