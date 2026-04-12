@@ -76,6 +76,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
     // If ADD is opened for this actor, update the token effect buttons
     const buttonAddClass = `fa-circle-plus`
     const buttonAddedClass = `fa-circle-check`
+
+    // @ts-expect-error - statuses is iterable at runtime, parent exists for embedded docs
     for (const status of data.statuses) {
       // @ts-expect-error - parent exists at runtime for embedded documents
       const selector = `span.${status}[data-actor="${this.parent._id}"]`

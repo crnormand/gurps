@@ -673,9 +673,10 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
       {
         name: 'Edit',
         icon: "<i class='fa-solid fa-pen-to-square'></i>",
-        callback: e => {
-          let path = e[0].dataset.key
+        callback: noteElement => {
+          let path = noteElement.dataset.key
           let obj = foundry.utils.duplicate(GURPS.decode(this.actor, path))
+
           this.editNotes(this.actor, path, obj)
         },
       },
@@ -817,7 +818,7 @@ export class GurpsActorSheet extends foundry.appv1.sheets.ActorSheet {
   _createEquipmentItemMenus(html) {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
-    let opts = [
+    let menus = [
       this._createMenu(
         game.i18n.localize('GURPS.edit'),
         '<i class="fa-solid fa-pen-to-square"></i>',

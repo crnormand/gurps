@@ -2056,7 +2056,7 @@ if (!globalThis.GURPS) {
       buttons.push({
         action: 'whisper',
         icon: 'fa-solid fa-user',
-        label: 'Whisper to ' + users.map(u => u.name).join(' '),
+        label: 'Whisper to ' + users.map(user => user.name).join(' '),
         callback: () => GURPS.sendOtfMessage(otf, false, users),
       })
 
@@ -2064,7 +2064,7 @@ if (!globalThis.GURPS) {
         buttons.push({
           action: 'blind-whisper',
           icon: 'fa-solid fa-user-slash',
-          label: 'Whisper Blindroll to ' + users.map(u => u.name).join(' '),
+          label: 'Whisper Blindroll to ' + users.map(user => user.name).join(' '),
           callback: () => GURPS.sendOtfMessage(botf, true, users),
         })
     }
