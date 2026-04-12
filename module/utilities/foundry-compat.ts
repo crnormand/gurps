@@ -61,14 +61,14 @@ export function deleteKey(key: string): Record<string, unknown> {
  * Apply a batched commit update to an actor, handling v13/v14 differences.
  *
  * On v14+, a single internalUpdate call suffices.
- * On v13-, deletes (.-= keys) must be applied first, then additions with { diff: false }.
+ * On v13-, delete entries (-= keys) must be applied first, then additions with { diff: false }.
  */
 export async function commitUpdate(actor: Actor, commit: Record<string, unknown>): Promise<void> {
   if (isAtLeastFoundryVersion(14)) {
     await actor.internalUpdate(commit)
   } else {
-    const deletes = Object.fromEntries(Object.entries(commit).filter(([key]) => key.includes('.-=')))
-    const adds = Object.fromEntries(Object.entries(commit).filter(([key]) => !key.includes('.-=')))
+    const deletes = Object.fromEntries(Object.entries(commit).filter(([key]) => key.includes('-=')))
+    const adds = Object.fromEntries(Object.entries(commit).filter(([key]) => !key.includes('-=')))
     await actor.internalUpdate(deletes, { diff: true })
     await actor.internalUpdate(adds, { diff: false })
   }
