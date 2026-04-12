@@ -1,7 +1,7 @@
 'use strict'
 
 import { collectDeletions } from './deletion.js'
-import { replaceValue, deleteKey, commitUpdate } from '../utilities/foundry-compat.ts'
+import { replaceValue } from '../utilities/foundry-compat.ts'
 import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
