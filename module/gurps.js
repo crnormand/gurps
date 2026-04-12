@@ -1,4 +1,5 @@
 // Import Modules
+import { deleteKey as deleteKeyCompat } from './utilities/foundry-compat.ts'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { Migration } from '../lib/migration.js'
 import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
@@ -1683,8 +1684,7 @@ if (!globalThis.GURPS) {
     let parentpath = objpath.substring(0, i)
     let objkey = objpath.substring(i + 1)
     let object = GURPS.decode(actor, objpath)
-    let t = parentpath + '.' + objkey
-    await actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
+    await actor.internalUpdate(deleteKeyCompat(objpath)) // Delete the whole object
     let start = parseInt(key)
 
     i = start + 1

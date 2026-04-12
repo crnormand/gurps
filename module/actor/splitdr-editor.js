@@ -1,3 +1,5 @@
+import { deleteKey } from '../utilities/foundry-compat.ts'
+
 export default class SplitDREditor extends Application {
   constructor(actor, key, options) {
     super(options)
@@ -66,9 +68,7 @@ export default class SplitDREditor extends Application {
       case 'delete':
         {
           // remove existing entries
-          let entry = {}
-          entry[`${this.key}.split`] = globalThis._del
-          await this.actor.update(entry)
+          await this.actor.update(deleteKey(`${this.key}.split`))
         }
         break
 
@@ -128,9 +128,7 @@ export default class SplitDREditor extends Application {
   }
 
   async _updateSplitDRKey(existingValue, newKey) {
-    let old = {}
-    old[`${this.key}.split`] = globalThis._del
-    await this.actor.update(old)
+    await this.actor.update(deleteKey(`${this.key}.split`))
 
     let split = {}
     split[newKey] = existingValue
