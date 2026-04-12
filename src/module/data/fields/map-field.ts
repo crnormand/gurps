@@ -145,8 +145,10 @@ class MapField<
   const InitializedValueType = MapField.InitializedValueType<ValueType>,
   const PersistedKeyType = MapField.PersistedKeyType<KeyType>,
   const PersistedValueType = MapField.PersistedValueType<ValueType>,
-  const PersistedType extends MapField.PersistedElementType<PersistedKeyType, PersistedValueType>[] | null | undefined =
-    MapField.PersistedType<PersistedKeyType, PersistedValueType, Options>,
+  const PersistedType extends
+    | MapField.PersistedElementType<PersistedKeyType, PersistedValueType>[]
+    | null
+    | undefined = MapField.PersistedType<PersistedKeyType, PersistedValueType, Options>,
 > extends fields.ArrayField<
   MapField.ElementFieldType<KeyType, ValueType>,
   Options,

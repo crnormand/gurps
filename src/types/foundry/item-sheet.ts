@@ -17,9 +17,8 @@ export namespace ItemSheet {
   /* ---------------------------------------- */
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export interface Configuration<Type extends Item.SubType = Item.SubType> extends DocumentSheet.Configuration<
-    Item.OfType<Type>
-  > {}
+  export interface Configuration<Type extends Item.SubType = Item.SubType>
+    extends DocumentSheet.Configuration<Item.OfType<Type>> {}
 
   /* ---------------------------------------- */
 
