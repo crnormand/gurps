@@ -1681,8 +1681,7 @@ if (!globalThis.GURPS) {
     let objpath = path.substring(0, i)
     let key = path.substring(i + 1)
     i = objpath.lastIndexOf('.')
-    let parentpath = objpath.substring(0, i)
-    let objkey = objpath.substring(i + 1)
+
     let object = GURPS.decode(actor, objpath)
     await actor.internalUpdate(deleteKeyCompat(objpath)) // Delete the whole object
     let start = parseInt(key)

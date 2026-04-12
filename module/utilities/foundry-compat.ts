@@ -6,10 +6,7 @@
  * was to use '.-=key': null to delete and then set the new value.
  */
 
-declare const _replace: (value: unknown) => unknown
-declare const _del: unknown
-
-interface Actor {
+interface InternalUpdatable {
   internalUpdate(data: Record<string, unknown>, options?: Record<string, unknown>): Promise<void>
 }
 
@@ -28,7 +25,7 @@ export function isAtLeastFoundryVersion(majorVersion: number): boolean {
  */
 export function replaceValue(key: string, value: unknown): Record<string, unknown> {
   if (isAtLeastFoundryVersion(14)) {
-    return { [key]: _replace(value) }
+    return { [key]: (globalThis as any)._replace(value) }
   }
 
   const lastDot = key.lastIndexOf('.')
@@ -48,7 +45,7 @@ export function replaceValue(key: string, value: unknown): Record<string, unknow
  */
 export function deleteKey(key: string): Record<string, unknown> {
   if (isAtLeastFoundryVersion(14)) {
-    return { [key]: _del }
+    return { [key]: (globalThis as any)._del }
   }
 
   const lastDot = key.lastIndexOf('.')
@@ -63,7 +60,7 @@ export function deleteKey(key: string): Record<string, unknown> {
  * On v14+, a single internalUpdate call suffices.
  * On v13-, delete entries (-= keys) must be applied first, then additions with { diff: false }.
  */
-export async function commitUpdate(actor: Actor, commit: Record<string, unknown>): Promise<void> {
+export async function commitUpdate(actor: InternalUpdatable, commit: Record<string, unknown>): Promise<void> {
   if (isAtLeastFoundryVersion(14)) {
     await actor.internalUpdate(commit)
   } else {

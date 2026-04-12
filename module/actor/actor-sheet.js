@@ -1452,8 +1452,6 @@ export class GurpsActorSheet extends ActorSheet {
 
   async sortAscending(key) {
     let i = key.lastIndexOf('.')
-    let parentpath = key.substring(0, i)
-    let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
     await this.actor.internalUpdate(deleteKey(key)) // Delete the whole object
     let sortedobj = {}
@@ -1466,8 +1464,6 @@ export class GurpsActorSheet extends ActorSheet {
 
   async sortDescending(key) {
     let i = key.lastIndexOf('.')
-    let parentpath = key.substring(0, i)
-    let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
     await this.actor.internalUpdate(deleteKey(key)) // Delete the whole object
     let sortedobj = {}

@@ -2892,9 +2892,6 @@ export class GurpsActor extends Actor {
       actorLocations[key] = this._changeDR(formula, actorLocations[key])
     }
     if (changed) {
-      // Exclude than rewrite the hitlocations on Actor
-
-      // await this.update(deleteKey('system.hitlocations'))
       await this.update({ 'system.hitlocations': actorLocations })
 
       const msg = `${this.name}: DR ${drFormula} applied to ${
