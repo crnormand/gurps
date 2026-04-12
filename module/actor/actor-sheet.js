@@ -797,9 +797,9 @@ export class GurpsActorSheet extends ActorSheet {
   async _sortContent(parentpath, objkey, reverse) {
     let key = parentpath + '.' + objkey
     let list = foundry.utils.getProperty(this.actor, key)
-    let t = parentpath + '.-=' + objkey
+    let t = parentpath + '.' + objkey
 
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
+    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
 
     let sortedobj = {}
     let index = 0
@@ -1455,8 +1455,8 @@ export class GurpsActorSheet extends ActorSheet {
     let parentpath = key.substring(0, i)
     let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
-    let t = parentpath + '.-=' + objkey
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
+    let t = parentpath + '.' + objkey
+    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
@@ -1470,8 +1470,8 @@ export class GurpsActorSheet extends ActorSheet {
     let parentpath = key.substring(0, i)
     let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
-    let t = parentpath + '.-=' + objkey
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
+    let t = parentpath + '.' + objkey
+    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
@@ -1610,8 +1610,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     // Delete the whole object.
     let last = components.pop()
-    let t = `${components.join('.')}.-=${last}`
-    await this.actor.internalUpdate({ [t]: null })
+    let t = `${components.join('.')}.${last}`
+    await this.actor.internalUpdate({ [t]: globalThis._del })
 
     // Insert the element into the array.
     array.splice(index, 0, element)
@@ -1635,8 +1635,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     // Delete the whole object.
     let last = components.pop()
-    let t = `${components.join('.')}.-=${last}`
-    await this.actor.internalUpdate({ [t]: null })
+    let t = `${components.join('.')}.${last}`
+    await this.actor.internalUpdate({ [t]: globalThis._del })
 
     // Remove the element from the array
     array.splice(index, 1)
@@ -2088,14 +2088,10 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
             GURPS.put(hitlocations, it, count++)
           }
-          this.actor.ignoreRender = true
           await this.actor.update({
-            'system.-=hitlocations': null,
+            'system.hitlocations': globalThis._replace(hitlocations),
             'system.additionalresources.bodyplan': bodyplan,
           })
-          await this.actor.update({ 'system.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
-          this.actor.ignoreRender = false
-          await this.actor.update({ 'system.hitlocations': hitlocations })
         }
       }
     })

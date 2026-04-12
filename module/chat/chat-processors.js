@@ -905,7 +905,7 @@ class LightChatProcessor extends ChatProcessor {
     }
 
     if (this.match.groups.off) {
-      data.light['-=color'] = null
+      data.light['color'] = globalThis._del
     } else {
       if (this.match.groups.color) data.light.color = this.match.groups.color
       if (this.match.groups.colorint) data.light.alpha = parseFloat(this.match.groups.colorint)

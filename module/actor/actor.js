@@ -1255,8 +1255,7 @@ export class GurpsActor extends Actor {
 
     // Remove all trackers first. Add the new "array" of trackers.
     if (data) {
-      await this.update({ 'system.additionalresources.-=tracker': null })
-      await this.update({ 'system.additionalresources.tracker': data })
+      await this.update({ 'system.additionalresources.tracker': globalThis._replace(data) })
     }
   }
 
@@ -1334,11 +1333,9 @@ export class GurpsActor extends Actor {
     let trackers = objectToArray(trackerData)
     let data = arrayToObject(trackers)
 
-    // remove all trackers
-    await this.update({ 'system.additionalresources.-=tracker': null })
     // add the new "array" of trackers
-    if (data) this.update({ 'system.additionalresources.tracker': data })
-    else this.update('system.additionalresources.tracker', {})
+    if (data) this.update({ 'system.additionalresources.tracker': globalThis._replace(data) })
+    else this.update('system.additionalresources.tracker', _replace({}))
 
     this._forceRender()
   }
@@ -1349,8 +1346,7 @@ export class GurpsActor extends Actor {
     let trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
     let data = GurpsActor.addTrackerToDataObject(this.system, trackerData)
 
-    await this.update({ 'system.additionalresources.-=tracker': null })
-    await this.update({ 'system.additionalresources.tracker': data })
+    await this.update({ 'system.additionalresources.tracker': globalThis._replace(data) })
 
     this._forceRender()
   }
@@ -1382,8 +1378,7 @@ export class GurpsActor extends Actor {
     for (const key in move) {
       move[key].default = value === key
     }
-    await this.update({ 'system.-=move': null })
-    await this.update({ 'system.move': move })
+    await this.update({ 'system.move': globalThis._replace(move) })
     this._forceRender()
   }
 
@@ -1568,10 +1563,8 @@ export class GurpsActor extends Actor {
 
         // 5. Update Actor System with new Component
         const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey))
-        const removeKey = targetKey.replace(/(\w+)$/, '-=$1')
-        await this.internalUpdate({ [removeKey]: null })
         await GURPS.put(systemObject, actorComp)
-        await this.internalUpdate({ [targetKey]: systemObject })
+        await this.internalUpdate({ [targetKey]: globalThis._replace(systemObject) })
         if (data.type === 'equipment') await Equipment.calc(actorComp)
 
         // 6. Process Child Items for created Item
@@ -2179,16 +2172,14 @@ export class GurpsActor extends Actor {
     if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
       let temp = { ...obj.contains, ...obj.collapsed }
       let update = {
-        [path + '.-=collapsed']: null,
-        [path + '.collapsed']: {},
+        [path + '.collapsed']: globalThis._replace({}),
         [path + '.contains']: temp,
       }
       await this.update(update)
     } else if (!expandOnly && !!obj.contains && Object.keys(obj.contains).length > 0) {
       let temp = { ...obj.contains, ...obj.collapsed }
       let update = {
-        [path + '.-=contains']: null,
-        [path + '.contains']: {},
+        [path + '.contains']: globalThis._replace({}),
         [path + '.collapsed']: temp,
       }
       await this.update(update)
@@ -2900,8 +2891,7 @@ export class GurpsActor extends Actor {
     }
     if (changed) {
       // Exclude than rewrite the hitlocations on Actor
-      await this.internalUpdate({ 'system.-=hitlocations': null })
-      await this.update({ 'system.hitlocations': actorLocations })
+      await this.update({ 'system.hitlocations': globalThis._replace(actorLocations) })
       const msg = `${this.name}: DR ${drFormula} applied to ${
         affectedLocations.length > 0 ? affectedLocations.join(', ') : 'all locations'
       }`

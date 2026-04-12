@@ -1683,8 +1683,8 @@ if (!globalThis.GURPS) {
     let parentpath = objpath.substring(0, i)
     let objkey = objpath.substring(i + 1)
     let object = GURPS.decode(actor, objpath)
-    let t = parentpath + '.-=' + objkey
-    await actor.internalUpdate({ [t]: null }) // Delete the whole object
+    let t = parentpath + '.' + objkey
+    await actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
     let start = parseInt(key)
 
     i = start + 1
@@ -2089,7 +2089,8 @@ if (!globalThis.GURPS) {
           cmd = '[' + cmd + ']'
           let messageData = {
             user: game.user.id,
-            type: CONST.CHAT_MESSAGE_STYLES.OOC,
+            style: CONST.CHAT_MESSAGE_STYLES.OOC,
+            type: 'base',
             content: cmd,
           }
           ChatMessage.create(messageData, {})
