@@ -1,7 +1,7 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { migrateTrackerInstanceToV2 } from './migrations/1_0_0.js'
 import { migrations } from './migrations/index.js'
+import { migrateTrackerInstanceToV2 } from './migrations/v1_0_0.js'
 import { TrackerInstance } from './resource-tracker.js'
 import { initializeSettings } from './settings.js'
 import { IResourceTracker, IResourceTrackerTemplate } from './types.js'

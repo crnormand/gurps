@@ -1,7 +1,7 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { numberValidate } from '@module/data/validators/number-validator.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
-import { migrateItemSource, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrations/1_0_0.js'
+import { migrateItemSource, migrateMeleeWeapon, migrateRangedWeapon } from '@module/item/migrations/v1_0_0.js'
 import { ItemType } from '@module/item/types.js'
 import { shouldMigrateCompendium } from '@module/migration/helpers.js'
 import { MigrationReport } from '@module/migration/types.js'

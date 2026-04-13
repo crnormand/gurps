@@ -1,7 +1,7 @@
 import { MigrationEntry } from '@module/migration/types.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
-import { v1_0_0 } from './1_0_0.js'
+import { v1_0_0 } from './v1_0_0.js'
 
 /* ---------------------------------------- */
 
