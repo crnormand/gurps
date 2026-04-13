@@ -1,7 +1,7 @@
 'use strict'
 
 import { collectDeletions } from './deletion.js'
-import { replaceValue } from '../utilities/foundry-compat.ts'
+import { commitUpdate, replaceValue } from '../utilities/foundry-compat.js'
 import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
@@ -1256,7 +1256,7 @@ export class GurpsActor extends Actor {
 
     // Remove all trackers first. Add the new "array" of trackers.
     if (data) {
-      await this.update(replaceValue('system.additionalresources.tracker', data))
+      await commitUpdate(this, replaceValue('system.additionalresources.tracker', data))
     }
   }
 
@@ -1335,8 +1335,8 @@ export class GurpsActor extends Actor {
     let data = arrayToObject(trackers)
 
     // add the new "array" of trackers
-    if (data) this.update(replaceValue('system.additionalresources.tracker', data))
-    else this.update(replaceValue('system.additionalresources.tracker', {}))
+    if (data) await commitUpdate(this, replaceValue('system.additionalresources.tracker', data))
+    else await commitUpdate(this, replaceValue('system.additionalresources.tracker', {}))
 
     this._forceRender()
   }
@@ -1347,7 +1347,7 @@ export class GurpsActor extends Actor {
     let trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
     let data = GurpsActor.addTrackerToDataObject(this.system, trackerData)
 
-    await this.update(replaceValue('system.additionalresources.tracker', data))
+    await commitUpdate(this, replaceValue('system.additionalresources.tracker', data))
 
     this._forceRender()
   }
@@ -1379,53 +1379,8 @@ export class GurpsActor extends Actor {
     for (const key in move) {
       move[key].default = value === key
     }
-    await this.update(replaceValue('system.move', move))
+    await commitUpdate(this, replaceValue('system.move', move))
     this._forceRender()
-  }
-
-  async addMoveMode(mode, basic, enhanced = basic, isDefault = false) {
-    // copy existing entries
-    let move = {}
-    const moveData = this.system.move
-    for (const k in moveData)
-      foundry.utils.setProperty(move, k, {
-        mode: moveData[k].mode,
-        basic: moveData[k].basic,
-        enhanced: moveData[k].enhanced,
-        default: moveData[k].default,
-      })
-
-    // if mode already exists, update.
-    for (const k in move) {
-      if (move[k].mode === mode) {
-        move[k].basic = basic ?? move[k].basic
-        move[k].enhanced = enhanced ?? move[k].enhanced
-        const isNewDefault = isDefault ? true : move[k].default
-        if (isNewDefault) Object.values(move).forEach(it => (it.default = false))
-        move[k].default = isNewDefault
-
-        // Remove existing entries and add the new ones.
-        await this.update({ 'system.move': move })
-
-        return
-      }
-    }
-
-    // When adding the first move mode, make it default unless overridden by "isDefault".
-    const isNewDefault = Object.values(moveData).length === 0 || isDefault
-    if (isNewDefault) Object.values(move).forEach(it => (it.default = false))
-
-    // add the new entry
-    GURPS.put(move, {
-      mode: mode,
-      // B18: If you have Flight (p.56), air Move equals Basic Speed × 2 (not Basic Move × 2).
-      basic: basic ?? this.system.basicspeed.value * 2,
-      enhanced: enhanced,
-      default: isNewDefault,
-    })
-
-    // Remove existing entries and add the new ones.
-    await this.update({ 'system.move': move })
   }
 
   // --- Functions to handle events on actor ---
@@ -1565,7 +1520,7 @@ export class GurpsActor extends Actor {
         // 5. Update Actor System with new Component
         const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey))
         await GURPS.put(systemObject, actorComp)
-        await this.internalUpdate(replaceValue(targetKey, systemObject))
+        await commitUpdate(this, replaceValue(targetKey, systemObject))
         if (data.type === 'equipment') await Equipment.calc(actorComp)
 
         // 6. Process Child Items for created Item
@@ -2176,14 +2131,14 @@ export class GurpsActor extends Actor {
         ...replaceValue(path + '.collapsed', {}),
         [path + '.contains']: temp,
       }
-      await this.update(update)
+      await commitUpdate(this, update)
     } else if (!expandOnly && !!obj.contains && Object.keys(obj.contains).length > 0) {
       let temp = { ...obj.contains, ...obj.collapsed }
       let update = {
         ...replaceValue(path + '.contains', {}),
         [path + '.collapsed']: temp,
       }
-      await this.update(update)
+      await commitUpdate(this, update)
     }
   }
 

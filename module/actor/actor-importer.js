@@ -1,4 +1,4 @@
-import { replaceValue, deleteKey, commitUpdate } from '../utilities/foundry-compat.ts'
+import { replaceValue, deleteKey, commitUpdate } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'

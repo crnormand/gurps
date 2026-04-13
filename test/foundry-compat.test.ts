@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals'
-import { replaceValue, deleteKey, isAtLeastFoundryVersion, commitUpdate } from '../module/utilities/foundry-compat.ts'
+import { replaceValue, deleteKey, isAtLeastFoundryVersion, commitUpdate } from '../module/utilities/foundry-compat.js'
 
 describe('foundry-compat', () => {
   afterEach(() => {

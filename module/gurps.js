@@ -1,5 +1,5 @@
 // Import Modules
-import { deleteKey as deleteKeyCompat } from './utilities/foundry-compat.ts'
+import { deleteKey as deleteKeyCompat } from './utilities/foundry-compat.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { Migration } from '../lib/migration.js'
 import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'

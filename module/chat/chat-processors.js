@@ -1,6 +1,6 @@
 'use strict'
 
-import { isAtLeastFoundryVersion } from '../utilities/foundry-compat.ts'
+import { isAtLeastFoundryVersion } from '../utilities/foundry-compat.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { parselink } from '../../lib/parselink.js'
 import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '../../lib/utilities.js'

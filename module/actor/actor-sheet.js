@@ -1,5 +1,5 @@
 import { DragDropType } from '../drag-drop-types.js'
-import { replaceValue, deleteKey } from '../utilities/foundry-compat.ts'
+import { commitUpdate, deleteKey, replaceValue } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -1452,24 +1452,26 @@ export class GurpsActorSheet extends ActorSheet {
 
   async sortAscending(key) {
     let i = key.lastIndexOf('.')
-    await this.actor.internalUpdate(deleteKey(key)) // Delete the whole object
+    let object = GURPS.decode(this.actor, key)
+    // await this.actor.internalUpdate(deleteKey(key)) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.internalUpdate({ [key]: sortedobj })
+    await this.actor.update({ [key]: sortedobj })
   }
 
   async sortDescending(key) {
     let i = key.lastIndexOf('.')
-    await this.actor.internalUpdate(deleteKey(key)) // Delete the whole object
+    let object = GURPS.decode(this.actor, key)
+    // await this.actor.internalUpdate(deleteKey(key)) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
       .sort((a, b) => b.name.localeCompare(a.name))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.internalUpdate({ [key]: sortedobj })
+    await this.actor.update({ [key]: sortedobj })
   }
 
   /* -------------------------------------------- */
@@ -2080,7 +2082,10 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
             GURPS.put(hitlocations, it, count++)
           }
-          await this.actor.update({
+          for (let key of Object.keys(oldlocations)) {
+            await this.actor.update({ [`system.hitlocations.${key}`]: deleteKey(`system.hitlocations.${key}`) })
+          }
+          await commitUpdate(this.actor, {
             ...replaceValue('system.hitlocations', hitlocations),
             'system.additionalresources.bodyplan': bodyplan,
           })

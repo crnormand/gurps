@@ -880,6 +880,7 @@ ul#result-effects li {
   font-size: 90%;
   margin: 2px 0;
   border: 1px solid var(--color-border-light-tertiary);
+  color: black;
 }
 
 #encumbrance #edit-move-modes {

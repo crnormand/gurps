@@ -1,4 +1,4 @@
-import { replaceValue } from '../utilities/foundry-compat.ts'
+import { commitUpdate, replaceValue } from '../utilities/foundry-compat.js'
 
 export default class MoveModeEditor extends Application {
   constructor(actor, options) {
@@ -127,7 +127,7 @@ export default class MoveModeEditor extends Application {
           GURPS.put(move, { mode: 'other', basic: 0, default: !!empty })
 
           // add the new entries
-          await this.actor.update(replaceValue('system.move', move))
+          await commitUpdate(this.actor, replaceValue('system.move', move))
         }
         break
 
@@ -162,7 +162,7 @@ export default class MoveModeEditor extends Application {
                 default: this.moveData[k].default,
               })
           }
-          await this.actor.update(replaceValue('system.move', move))
+          await commitUpdate(this.actor, replaceValue('system.move', move))
         }
         break
 

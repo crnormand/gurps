@@ -1,4 +1,4 @@
-import { deleteKey } from '../utilities/foundry-compat.ts'
+import { deleteKey } from '../utilities/foundry-compat.js'
 
 export default class SplitDREditor extends Application {
   constructor(actor, key, options) {
