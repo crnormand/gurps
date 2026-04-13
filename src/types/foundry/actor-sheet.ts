@@ -19,8 +19,9 @@ export namespace ActorSheet {
   /* ---------------------------------------- */
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export interface Configuration<Type extends Actor.SubType = Actor.SubType>
-    extends DocumentSheet.Configuration<Actor.OfType<Type>> {}
+  export interface Configuration<Type extends Actor.SubType = Actor.SubType> extends DocumentSheet.Configuration<
+    Actor.OfType<Type>
+  > {}
 
   /* ---------------------------------------- */
 
