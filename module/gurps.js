@@ -1677,16 +1677,15 @@ if (!globalThis.GURPS) {
    * @param {any} newobj
    */
   async function insertBeforeKey(actor, path, newobj) {
-    let i = path.lastIndexOf('.')
-    let objpath = path.substring(0, i)
-    let key = path.substring(i + 1)
-    i = objpath.lastIndexOf('.')
+    const indexPath = path.lastIndexOf('.')
+    let objpath = path.substring(0, indexPath)
+    let key = path.substring(indexPath + 1)
 
     let object = GURPS.decode(actor, objpath)
     await actor.internalUpdate(deleteKeyCompat(objpath)) // Delete the whole object
     let start = parseInt(key)
 
-    i = start + 1
+    let i = start + 1
     while (object.hasOwnProperty(zeroFill(i))) i++
     i = i - 1
     for (let z = i; z >= start; z--) {
