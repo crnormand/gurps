@@ -1,6 +1,5 @@
 'use strict'
 
-import { ItemImageSettings } from '@module/actor/actor-sheet.js'
 import { TaggedModifierSettings } from '@module/actor/effect-modifier-popout.js'
 import ModifierBucketJournals from '@module/modifier-bucket/select-journals.js'
 import { QuickRollSettings } from '@module/token/quick-roll-settings.js'
@@ -262,29 +261,6 @@ export function initializeSettings() {
       type: Boolean,
       default: true,
       onChange: value => console.log(`Mulitple ranged columns during import : ${value}`),
-    })
-
-    game.settings.register(SYSTEM_NAME, SETTING_SHOW_ITEM_IMAGE, {
-      name: game.i18n.localize('GURPS.settingShowItemImage'),
-      hint: game.i18n.localize('GURPS.settingHintShowItemImage'),
-      scope: 'client',
-      config: false,
-      type: Object,
-      default: {
-        feature: true,
-        skill: true,
-        spell: true,
-        equipment: true,
-      },
-      onChange: value => console.log(`Show item image in inventory : ${JSON.stringify(value)}`),
-    })
-
-    game.settings.registerMenu(SYSTEM_NAME, SETTING_SHOW_ITEM_IMAGE, {
-      name: game.i18n.localize('GURPS.settingShowItemImage'),
-      label: game.i18n.localize('GURPS.settingLabelShowItemImage'),
-      hint: game.i18n.localize('GURPS.settingHintShowItemImage'),
-      type: ItemImageSettings,
-      restricted: true,
     })
 
     // Modifier Bucket Configuration ----

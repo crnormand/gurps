@@ -48,24 +48,15 @@ export function getDisplayName(
 }
 
 export async function confirmAndDelete(
-  actor: Actor.Implementation,
-  key: string,
-  displayName: string | undefined,
-  fallbackLocaleKey: string,
-  deleteCallback: (key: string) => Promise<void> = async () => {
-    await actor.deleteEntry(key)
+  _actor: Actor.Implementation,
+  _key: string,
+  _displayName: string | undefined,
+  _fallbackLocaleKey: string,
+  _deleteCallback: (key: string) => Promise<void> = async () => {
+    // await actor.deleteEntry(key)
   }
 ): Promise<boolean> {
-  const confirmed = await foundry.applications.api.DialogV2.confirm({
-    window: { title: getGame().i18n.localize('GURPS.delete') },
-    content: `<p>${getGame().i18n.localize('GURPS.delete')}: <strong>${displayName || getGame().i18n.localize(fallbackLocaleKey)}</strong>?</p>`,
-  })
-
-  if (confirmed) {
-    await deleteCallback(key)
-  }
-
-  return confirmed ?? false
+  throw new Error('This function is deprecated. Please use the GurpsBaseActorSheet.deleteEmbedded method.')
 }
 
 export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
@@ -134,32 +125,22 @@ export function bindCrudActions<TSheet extends GurpsActorSheetEditMethods>(
 
 export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethods>(
   html: HTMLElement,
-  actor: Actor.Implementation,
-  sheet: TSheet,
-  editMethod: TSheet['editModifier'],
+  _actor: Actor.Implementation,
+  _sheet: TSheet,
+  // editMethod: TSheet['editModifier'],
   isReaction: boolean
 ): void {
   const entityName = isReaction ? 'reaction' : 'conditional'
-  const path = isReaction ? 'system.reactions' : 'system.conditionalmods'
-  const localeKey = isReaction ? 'GURPS.reaction' : 'GURPS.conditionalModifier'
+  // const path = isReaction ? 'system.reactions' : 'system.conditionalmods'
+  // const localeKey = isReaction ? 'GURPS.reaction' : 'GURPS.conditionalModifier'
 
   const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityName}"]`)
 
   addButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
-      const { Reaction, Modifier } = await import('../actor-components.js')
-      const ModifierClass = isReaction ? Reaction : Modifier
-      const newModifier = new ModifierClass('0', getGame().i18n.localize(localeKey))
-      const list = GURPS.decode<Record<string, ModifierComponent>>(actor, path) || {}
-      const key = GURPS.put(list, foundry.utils.duplicate(newModifier))
 
-      await actor.internalUpdate({ [path]: list })
-
-      const fullPath = buildEntityPath(path, key)
-      const duplicatedModifier = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, fullPath))
-
-      await editMethod.call(sheet, actor, fullPath, duplicatedModifier, isReaction)
+      throw new Error('This function is deprecated. Please use the GurpsBaseActorSheet.createEmbedded method.')
     })
   })
 
@@ -169,13 +150,8 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget
 
-      if (!isHTMLElement(target)) return
-      const modifierPath = target.dataset.key ?? ''
-      const modifierData = foundry.utils.duplicate(GURPS.decode<ModifierComponent>(actor, modifierPath))
-
-      await editMethod.call(sheet, actor, modifierPath, modifierData, isReaction)
+      throw new Error('This function is deprecated. Please use the GurpsBaseActorSheet.editEmbedded method.')
     })
   })
 
@@ -185,13 +161,8 @@ export function bindModifierCrudActions<TSheet extends GurpsActorSheetEditMethod
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
-      const target = event.currentTarget
 
-      if (!isHTMLElement(target)) return
-      const modifierKey = target.dataset.key ?? ''
-      const modifierData = GURPS.decode<ModifierComponent>(actor, modifierKey)
-
-      await confirmAndDelete(actor, modifierKey, modifierData?.situation, localeKey)
+      throw new Error('This function is deprecated. Please use the GurpsBaseActorSheet.deleteEmbedded method.')
     })
   })
 }

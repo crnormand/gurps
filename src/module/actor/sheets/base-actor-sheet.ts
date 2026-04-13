@@ -6,7 +6,6 @@ import { constructHTMLButton } from '@module/util/dom.js'
 import { getUser } from '@module/util/guards.js'
 import { AnyMutableObject, DeepPartial } from 'fvtt-types/utils'
 
-import { ActorImporter } from '../actor-importer.js'
 import { ActorType } from '../types.js'
 
 // See module/types/foundry/actor-sheet.ts for why we need this type assertion
@@ -212,8 +211,6 @@ const GurpsBaseActorSheet = <
 
       if (this.actor.isOfType(ActorType.Character)) {
         await GURPS.modules.Importer.actorImporterPrompt(this.actor)
-      } else {
-        return new ActorImporter(this.actor).importActor()
       }
     }
 

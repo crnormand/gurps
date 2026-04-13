@@ -41,7 +41,6 @@ import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
-import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import AddChatHooks from './chat.js'
@@ -2181,11 +2180,6 @@ if (!globalThis.GURPS) {
     Hooks.on('createRollTable', async function (entity, _options, _userId) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
       entity.img = 'systems/gurps/icons/single-die.webp'
-    })
-
-    Hooks.on('renderActorDirectory', (app, html) => {
-      // Add the Import Multiple Actors button to the Actors tab.
-      AddMultipleImportButton(html)
     })
 
     // TODO Move to a new 'bucket' module?

@@ -26,7 +26,6 @@ import { COSTS_REGEX } from '@util/parselink.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject, DeepPartial } from 'fvtt-types/utils'
 
-import { HitLocationEntry } from '../actor-components.js'
 import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
 import { NoteV1 } from '../legacy/note-adapter.js'
 import {
@@ -802,10 +801,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  get hitLocationsWithDR(): HitLocationEntry[] {
-    return this.hitlocationsV2.map(location => {
-      return new HitLocationEntry(location.where, location._dr ?? 0, location.rollText ?? '-', location.split)
-    })
+  get hitLocationsWithDR(): HitLocationEntryV2[] {
+    return this.hitlocationsV2.contents
   }
 
   /* ---------------------------------------- */
