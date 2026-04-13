@@ -2082,9 +2082,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
             GURPS.put(hitlocations, it, count++)
           }
-          for (let key of Object.keys(oldlocations)) {
-            await this.actor.update({ [`system.hitlocations.${key}`]: deleteKey(`system.hitlocations.${key}`) })
-          }
           await commitUpdate(this.actor, {
             ...replaceValue('system.hitlocations', hitlocations),
             'system.additionalresources.bodyplan': bodyplan,
