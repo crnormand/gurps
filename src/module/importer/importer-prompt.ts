@@ -3,7 +3,7 @@ import { AnyObject } from 'fvtt-types/utils'
 
 import { GcaImporter } from './gca-importer/importer.js'
 import { GCA5 } from './gca-importer/schema.js'
-import { GcsImporter } from './gcs-importer/importer.js'
+import { GcsImporter, GcsItemCollectionType } from './gcs-importer/importer.js'
 import { GcsCharacter } from './gcs-importer/schema/character.js'
 import { GcsEquipmentCollection } from './gcs-importer/schema/equipment.js'
 import { GcsSkillCollection } from './gcs-importer/schema/skill.js'
@@ -177,7 +177,7 @@ async function itemImporterPrompt() {
               case 'adq': {
                 const collection = GcsTraitCollection.fromImportData({
                   ...jsonObject,
-                  type: 'trait',
+                  type: GcsItemCollectionType.Trait,
                   name,
                 }) as GcsTraitCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -188,7 +188,7 @@ async function itemImporterPrompt() {
               case 'skl': {
                 const collection = GcsSkillCollection.fromImportData({
                   ...jsonObject,
-                  type: 'skill',
+                  type: GcsItemCollectionType.Skill,
                   name,
                 }) as GcsSkillCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -199,7 +199,7 @@ async function itemImporterPrompt() {
               case 'spl': {
                 const collection = GcsSpellCollection.fromImportData({
                   ...jsonObject,
-                  type: 'spell',
+                  type: GcsItemCollectionType.Spell,
                   name,
                 }) as GcsSpellCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)
@@ -210,7 +210,7 @@ async function itemImporterPrompt() {
               case 'eqp': {
                 const collection = GcsEquipmentCollection.fromImportData({
                   ...jsonObject,
-                  type: 'equipment',
+                  type: GcsItemCollectionType.Equipment,
                   name,
                 }) as GcsEquipmentCollection
                 const importedCompendium = await GcsImporter.importItemCompendium(collection)

@@ -35,7 +35,7 @@ enum GcsImporterMode {
   ItemCompendium = 'itemCompendium',
 }
 
-enum GcsItemCollectionType {
+export enum GcsItemCollectionType {
   Trait = 'trait',
   Skill = 'skill',
   Spell = 'spell',
