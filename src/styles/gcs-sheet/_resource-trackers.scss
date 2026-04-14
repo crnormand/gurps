@@ -17,26 +17,35 @@
 
   .gcs-pool-attribute {
     flex: 0 0 auto;
+
+    .gcs-section-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
   }
 
   /* ---------------------------------------- */
 
   button {
-    // All buttons except "add tracker" are square icon buttons.
     &:not([data-action='createEmbedded']) {
-      max-width: var(--gcs-input-height);
-      color: inherit;
-      background: none;
-      border: none;
-      padding: 0;
+      padding: 0 0.25rem;
       font: inherit;
-      cursor: pointer;
-      font-size: var(--gcs-font-size-header-icon);
 
       &:focus-visible {
         outline: 2px solid currentColor;
         outline-offset: 2px;
       }
+    }
+
+    &[data-action='decrementPool'] {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &[data-action='incrementPool'] {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
     }
 
     &[data-action='resetPool'] {
