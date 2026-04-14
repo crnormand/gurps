@@ -191,8 +191,6 @@ class GurpsBaseActorSheet<
 
     if (this.actor.isOfType(ActorType.Character)) {
       await GURPS.modules.Importer.actorImporterPrompt(this.actor)
-    } else {
-      return new ActorImporter(this.actor).importActor()
     }
   }
 
