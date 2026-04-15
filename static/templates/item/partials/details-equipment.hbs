@@ -1,16 +1,33 @@
 <fieldset class="ms-details">
   <legend>{{ localize "GURPS.sheet.details.equipment" }}</legend>
 
-  {{formGroup systemFields.categories value=system.categories classes="ms-double-field"}}
-  <hr>
-  {{formGroup systemFields.ignoreImportQty value=system.ignoreImportQty}}
-  {{formGroup systemFields.equipped value=system.equipped}}
-  {{formGroup systemFields.count value=system.count}}
-  {{formGroup systemFields.weight value=system.weight}}
-  {{formGroup systemFields.cost value=system.cost}}
-  {{formGroup systemFields.techlevel value=system.techlevel}}
-  {{formGroup systemFields.legalityclass value=system.legalityclass}}
-  {{formGroup systemFields.uses value=system.uses}}
-  {{formGroup systemFields.maxuses value=system.maxuses}}
-  {{formGroup systemFields.pageref value=system.pageref}}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.categories value=system.categories}}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup systemFields.ignoreImportQty value=system.ignoreImportQty}}
+    {{formGroup systemFields.equipped value=system.equipped}}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup systemFields.count value=system.count}}
+    {{formGroup systemFields.weight value=system.weight}}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup systemFields.cost value=system.cost}}
+    {{formGroup systemFields.techlevel value=system.techlevel}}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup systemFields.legalityclass value=system.legalityclass}}
+    {{formGroup systemFields.uses value=system.uses}}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup systemFields.maxuses value=system.maxuses}}
+    {{formGroup systemFields.pageref value=system.pageref}}
+  </div>
+
 </fieldset>

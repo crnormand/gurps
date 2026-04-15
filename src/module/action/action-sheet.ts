@@ -1,6 +1,7 @@
 import { HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import { bindInlineEdit } from '@module/actor/sheets/modern/inline-edit-handler.js'
 import { PseudoDocumentSheet } from '@module/pseudo-document/pseudo-document-sheet.js'
+import { syncLabelWidths } from '@module/util/dom.js'
 import { systemPath } from '@module/util/misc.js'
 
 import { Action } from './index.js'
@@ -27,6 +28,9 @@ namespace ActionSheet {
 class ActionSheet extends PseudoDocumentSheet<Action.Any> {
   static override DEFAULT_OPTIONS: PseudoDocumentSheet.DefaultOptions = {
     classes: ['action-sheet', 'modern-item-sheet'],
+    window: {
+      resizable: true,
+    },
     position: {
       width: 600,
       height: 600,
@@ -68,6 +72,7 @@ class ActionSheet extends PseudoDocumentSheet<Action.Any> {
     options: PseudoDocumentSheet.RenderOptions
   ): Promise<void> {
     super._onRender(context, options)
+    syncLabelWidths(this.element)
 
     bindInlineEdit(this.element, {
       displaySelector: '.ms-name-display',

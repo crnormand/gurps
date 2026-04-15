@@ -93,44 +93,57 @@ body {
   .ms-details {
     border-radius: 0.25rem;
 
-    display: grid;
-    grid-template-columns: auto 1fr auto 1fr; /* label | field | label | field */
-    gap: var(--ms-gap) calc(var(--ms-gap) * 2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ms-gap);
 
-    > h3,
-    > h4,
-    > hr {
-      grid-column: 1 / -1;
-    }
+    .ms-field-row {
+      display: grid;
+      grid-template-columns: repeat(var(--ms-cols, 2), var(--ms-label-width, 40px) 1fr);
+      column-gap: var(--ms-gap);
+      align-items: center;
 
-    > .form-group {
-      display: contents; /* dissolve into the parent grid */
-      grid-column: 1 / 2;
-      grid-template-columns: subgrid;
+      .form-group {
+        display: contents; /* dissolve into the row grid */
 
-      &.ms-double-field {
-        grid-column: 1 / -1;
+        label {
+          text-align: right;
+          align-self: center;
+          white-space: nowrap;
+        }
 
-        > .form-fields {
-          grid-column: 2 / -1;
+        .form-fields {
+          min-width: 0;
 
           textarea {
             width: 100%;
           }
         }
       }
+    }
+
+    /* Standalone form-groups (direct children of .ms-details, not in a row) */
+    > .form-group {
+      display: flex;
+      flex-direction: row;
+      gap: var(--ms-gap);
+      align-items: center;
 
       label {
+        flex: 0 0 var(--ms-label-width, 80px);
         text-align: right;
-        grid-column: auto; /* flows naturally */
+        white-space: nowrap;
         align-self: center;
       }
 
-      > .form-fields {
-        grid-column: auto;
-      }
+      .form-fields {
+        flex: 1;
+        min-width: 0;
 
-      gap: var(--ms-gap);
+        textarea {
+          width: 100%;
+        }
+      }
     }
   }
 

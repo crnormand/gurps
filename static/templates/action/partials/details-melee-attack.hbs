@@ -1,35 +1,53 @@
 <fieldset class="ms-details">
   <legend>{{ localize "GURPS.sheet.details.meleeAttack" }}</legend>
 
-  {{formGroup fields.mode value=source.mode}}
-  {{formGroup fields.import value=source.import}}
+  <div class="ms-field-row">
+    {{formGroup fields.mode value=source.mode}}
+    {{formGroup fields.import value=source.import}}
+  </div>
 
-  {{formGroup fields.st value=source.st}}
-  {{formGroup fields.consumeAction value=source.consumeAction}}
+  <div class="ms-field-row">
+    {{formGroup fields.st value=source.st}}
+    {{formGroup fields.consumeAction value=source.consumeAction}}
+  </div>
 
-  {{formGroup fields.damage value=source.damage classes="ms-double-field"}}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.damage value=source.damage classes="ms-double-field"}}
+  </div>
 
-  {{formGroup fields.modifierTags value=source.modifierTags classes="ms-double-field"}}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.modifierTags value=source.modifierTags classes="ms-double-field"}}
+  </div>
 
   <h3>Parry</h3>
 
-  {{formGroup fields.parry.fields.canParry value=source.parry.canParry }}
-  {{formGroup fields.parry.fields.fencing value=source.parry.fencing }}
+  <div class="ms-field-row">
+    {{formGroup fields.parry.fields.canParry value=source.parry.canParry }}
+    {{formGroup fields.parry.fields.fencing value=source.parry.fencing }}
+  </div>
 
-  {{formGroup fields.parry.fields.unbalanced value=source.parry.unbalanced }}
-  {{formGroup fields.parry.fields.modifier value=source.parry.modifier }}
+  <div class="ms-field-row">
+    {{formGroup fields.parry.fields.unbalanced value=source.parry.unbalanced }}
+    {{formGroup fields.parry.fields.modifier value=source.parry.modifier }}
+  </div>
 
   <h3>Block</h3>
 
-  {{formGroup fields.block.fields.canBlock value=source.block.canBlock }}
-  {{formGroup fields.block.fields.modifier value=source.block.modifier }}
+  <div class="ms-field-row">
+    {{formGroup fields.block.fields.canBlock value=source.block.canBlock }}
+    {{formGroup fields.block.fields.modifier value=source.block.modifier }}
+  </div>
 
   <h3>Reach</h3>
 
-  {{formGroup fields.reach.fields.closeCombat value=source.reach.closeCombat }}
-  {{formGroup fields.reach.fields.changeRequiresReady value=source.reach.changeRequiresReady }}
+  <div class="ms-field-row">
+    {{formGroup fields.reach.fields.closeCombat value=source.reach.closeCombat }}
+    {{formGroup fields.reach.fields.changeRequiresReady value=source.reach.changeRequiresReady }}
+  </div>
 
-  {{formGroup fields.reach.fields.min value=source.reach.min }}
-  {{formGroup fields.reach.fields.max value=source.reach.max }}
+  <div class="ms-field-row">
+    {{formGroup fields.reach.fields.min value=source.reach.min }}
+    {{formGroup fields.reach.fields.max value=source.reach.max }}
+  </div>
 
 </fieldset>

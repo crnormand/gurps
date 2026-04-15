@@ -2,6 +2,7 @@ import { Application, DeepPartial, HandlebarsApplicationMixin, ItemSheet } from 
 import { Action } from '@module/action/index.js'
 import { bindInlineEdit } from '@module/actor/sheets/modern/inline-edit-handler.js'
 import GurpsWiring from '@module/gurps-wiring.js'
+import { syncLabelWidths } from '@module/util/dom.js'
 import { getGame } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 
@@ -161,6 +162,7 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
   ): Promise<void> {
     super._onRender(context, options)
     this._applyPlaceholderText()
+    syncLabelWidths(this.element)
 
     const typeContext = this._getTypeContext()
 

@@ -1,66 +1,105 @@
 <fieldset class="ms-details">
   <legend>{{ localize "GURPS.sheet.details.rangedAttack" }}</legend>
 
-  {{formGroup fields.mode value=source.mode}}
-  {{formGroup fields.import value=source.import}}
+  <div class="ms-field-row">
+    {{formGroup fields.mode value=source.mode}}
+    {{formGroup fields.import value=source.import}}
+  </div>
 
-  {{formGroup fields.st value=source.st}}
-  {{formGroup fields.consumeAction value=source.consumeAction}}
+  <div class="ms-field-row">
+    {{formGroup fields.st value=source.st}}
+    {{formGroup fields.consumeAction value=source.consumeAction}}
+  </div>
 
-  {{formGroup fields.damage value=source.damage classes="ms-double-field"}}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.damage value=source.damage classes="ms-double-field"}}
+  </div>
 
-  {{formGroup fields.modifierTags value=source.modifierTags classes="ms-double-field"}}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.modifierTags value=source.modifierTags classes="ms-double-field"}}
+  </div>
 
   <h3>Accuracy</h3>
 
-  {{formGroup fields.acc.fields.base value=source.acc.base }}
-  {{formGroup fields.acc.fields.scope value=source.acc.scope }}
-  {{formGroup fields.acc.fields.jet value=source.acc.jet }}
+  <div class="ms-field-row" style="--ms-cols: 3;">
+    {{formGroup fields.acc.fields.base value=source.acc.base }}
+    {{formGroup fields.acc.fields.scope value=source.acc.scope }}
+    {{formGroup fields.acc.fields.jet value=source.acc.jet }}
+  </div>
 
   <h3>Bulk</h3>
 
+  <div class="ms-field-row" style="--ms-cols: 3;">
   {{formGroup fields.bulk.fields.normal value=source.bulk.normal }}
   {{formGroup fields.bulk.fields.giant value=source.bulk.giant }}
   {{formGroup fields.bulk.fields.retractingStock value=source.bulk.retractingStock }}
+  </div>
 
   <h3>Range</h3>
 
-  {{formGroup fields.range.fields.halfDamage value=source.range.halfDamage }}
-  {{formGroup fields.range.fields.min value=source.range.min }}
-  {{formGroup fields.range.fields.max value=source.range.max }}
-  {{formGroup fields.range.fields.musclePowered value=source.range.musclePowered }}
-  {{formGroup fields.range.fields.inMiles value=source.range.inMiles }}
+  <div class="ms-field-row" style="--ms-cols: 3;">
+    {{formGroup fields.range.fields.halfDamage value=source.range.halfDamage }}
+    {{formGroup fields.range.fields.min value=source.range.min }}
+    {{formGroup fields.range.fields.max value=source.range.max }}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup fields.range.fields.musclePowered value=source.range.musclePowered }}
+    {{formGroup fields.range.fields.inMiles value=source.range.inMiles }}
+  </div>
 
   <h3>Rate of Fire</h3>
 
-  {{formGroup fields.rateOfFire.fields.jet value=source.rateOfFire.jet }}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.rateOfFire.fields.jet value=source.rateOfFire.jet }}
+  </div>
 
   <h4>Mode 1</h4>
 
-  {{formGroup fields.rateOfFire.fields.mode1.fields.shotsPerAttack value=source.rateOfFire.mode1.shotsPerAttack localize=true }}
-  {{formGroup fields.rateOfFire.fields.mode1.fields.secondaryProjectiles value=source.rateOfFire.mode1.secondaryProjectiles localize=true }}
-  {{formGroup fields.rateOfFire.fields.mode1.fields.fullAutoOnly value=source.rateOfFire.mode1.fullAutoOnly localize=true }}
-  {{formGroup fields.rateOfFire.fields.mode1.fields.highCyclicControlledBursts value=source.rateOfFire.mode1.highCyclicControlledBursts localize=true }}
+  <div class="ms-field-row">
+    {{formGroup fields.rateOfFire.fields.mode1.fields.shotsPerAttack value=source.rateOfFire.mode1.shotsPerAttack localize=true }}
+    {{formGroup fields.rateOfFire.fields.mode1.fields.secondaryProjectiles value=source.rateOfFire.mode1.secondaryProjectiles localize=true }}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup fields.rateOfFire.fields.mode1.fields.fullAutoOnly value=source.rateOfFire.mode1.fullAutoOnly localize=true }}
+    {{formGroup fields.rateOfFire.fields.mode1.fields.highCyclicControlledBursts value=source.rateOfFire.mode1.highCyclicControlledBursts localize=true }}
+  </div>
 
   <h4>Mode 2</h4>
 
+  <div class="ms-field-row">
   {{formGroup fields.rateOfFire.fields.mode2.fields.shotsPerAttack value=source.rateOfFire.mode2.shotsPerAttack localize=true }}
   {{formGroup fields.rateOfFire.fields.mode2.fields.secondaryProjectiles value=source.rateOfFire.mode2.secondaryProjectiles localize=true }}
+  </div>
+
+  <div class="ms-field-row">
   {{formGroup fields.rateOfFire.fields.mode2.fields.fullAutoOnly value=source.rateOfFire.mode2.fullAutoOnly localize=true }}
   {{formGroup fields.rateOfFire.fields.mode2.fields.highCyclicControlledBursts value=source.rateOfFire.mode2.highCyclicControlledBursts localize=true }}
+  </div>
 
   <h3>Recoil</h3>
 
-  {{formGroup fields.recoil.fields.shot value=source.recoil.shot }}
-  {{formGroup fields.recoil.fields.slug value=source.recoil.slug }}
+  <div class="ms-field-row">
+    {{formGroup fields.recoil.fields.shot value=source.recoil.shot }}
+    {{formGroup fields.recoil.fields.slug value=source.recoil.slug }}
+  </div>
 
   <h3>Shots</h3>
 
-  {{formGroup fields.shots.fields.count value=source.shots.count }}
-  {{formGroup fields.shots.fields.inChamber value=source.shots.inChamber }}
-  {{formGroup fields.shots.fields.duration value=source.shots.duration }}
-  {{formGroup fields.shots.fields.reloadTime value=source.shots.reloadTime }}
-  {{formGroup fields.shots.fields.reloadTimeIsPerShot value=source.shots.reloadTimeIsPerShot }}
-  {{formGroup fields.shots.fields.thrown value=source.shots.thrown }}
+  <div class="ms-field-row">
+    {{formGroup fields.shots.fields.count value=source.shots.count }}
+    {{formGroup fields.shots.fields.inChamber value=source.shots.inChamber }}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup fields.shots.fields.reloadTime value=source.shots.reloadTime }}
+    {{formGroup fields.shots.fields.duration value=source.shots.duration }}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup fields.shots.fields.reloadTimeIsPerShot value=source.shots.reloadTimeIsPerShot }}
+    {{formGroup fields.shots.fields.thrown value=source.shots.thrown }}
+  </div>
 
 </fieldset>
