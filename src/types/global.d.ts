@@ -18,6 +18,8 @@ import { UI as ModuleUI } from '@module/ui/index.js'
 export {}
 
 declare global {
+  const _loc: (key: string) => string
+
   interface GurpsGlobal extends GurpsUtils {
     SYSTEM_NAME: 'gurps'
 

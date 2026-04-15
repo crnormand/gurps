@@ -45,6 +45,16 @@ class PseudoDocument<
 
   static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.pseudo']
 
+  /* ---------------------------------------- */
+
+  protected override _initialize(options?: DataModel.InitializeOptions | undefined): void {
+    super._initialize(options)
+
+    const cls = this.constructor as typeof PseudoDocument
+
+    foundry.helpers.Localization.localizeDataModel(cls, { prefixes: cls.LOCALIZATION_PREFIXES })
+  }
+
   /* -------------------------------------------------- */
 
   /**
@@ -86,19 +96,6 @@ class PseudoDocument<
 
   static override defineSchema(): PseudoDocument.Schema {
     return pseudoDocumentSchema()
-  }
-
-  /* ---------------------------------------- */
-
-  static getSchemaFields(
-    pseudo: PseudoDocument.Any
-  ): Record<string, { field: foundry.data.fields.DataField.Any; value: any; name: string }> {
-    return Object.fromEntries(
-      Object.keys(pseudo.schema.fields).map(key => [
-        key,
-        { field: pseudo.schema.getField(key)!, value: pseudo[key as keyof typeof pseudo], name: key },
-      ])
-    )
   }
 
   /* ---------------------------------------- */
@@ -761,6 +758,8 @@ namespace PseudoDocument {
      * value is the path to the property value.
      */
     sortKeys: Record<string, string>
+    /** Are there any partials to fill in the Details tab of the PseudoDocument? */
+    detailsPartial: string[]
   }
 
   /* ---------------------------------------- */
