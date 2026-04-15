@@ -241,28 +241,28 @@ const weaponRateOfFireModeSchema = () => {
       required: true,
       nullable: false,
       initial: 0,
-      label: 'GURPS.action.rangedAttack.FIELDS.rateOfFire.shotsPerAttack',
+      label: 'GURPS.action.rangedAttack.FIELDS.rateOfFire.shotsPerAttack.label',
     }),
     /** The number of secondary projectiles released by every attack (e.g. for a shotgun) */
     secondaryProjectiles: new fields.NumberField({
       required: true,
       nullable: false,
       initial: 0,
-      label: 'GURPS.action.rangedAttack.FIELDS.rateOfFire.secondaryProjectiles',
+      label: 'GURPS.action.rangedAttack.FIELDS.rateOfFire.secondaryProjectiles.label',
     }),
     /** Is this weapon only able to fire in fully automatic mode? */
     fullAutoOnly: new fields.BooleanField({
       required: true,
       nullable: false,
       initial: false,
-      label: 'GURPS.action.rangedAttack.FIELDS.rateOfFire.fullAutoOnly',
+      label: 'GURPS.action.rangedAttack.FIELDS.rateOfFire.fullAutoOnly.label',
     }),
     /** Does this weapon fire in high-cyclic controlled bursts? */
     highCyclicControlledBursts: new fields.BooleanField({
       required: true,
       nullable: false,
       initial: false,
-      label: 'GURPS.action.rangedAttack.FIELDS.rateOfFire.highCyclicControlledBursts',
+      label: 'GURPS.action.rangedAttack.FIELDS.rateOfFire.highCyclicControlledBursts.label',
     }),
   }
 }
