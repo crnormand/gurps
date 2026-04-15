@@ -20,6 +20,8 @@ namespace PseudoDocumentSheet {
   export type DefaultOptions = DocumentSheet.DefaultOptions
 }
 
+/* ---------------------------------------- */
+
 class PseudoDocumentSheet<
   Doc extends PseudoDocument.Any = PseudoDocument.Any,
   RenderOptions extends PseudoDocumentSheet.RenderOptions = PseudoDocumentSheet.RenderOptions,
@@ -148,7 +150,7 @@ class PseudoDocumentSheet<
     return options as PseudoDocumentSheet.Configuration<Doc>
   }
 
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
 
   override async _onFirstRender(
     context: DeepPartial<Application.RenderContext>,
@@ -158,14 +160,14 @@ class PseudoDocumentSheet<
     this.document.apps[this.id] = this
   }
 
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
 
   override _onClose(options: DeepPartial<Application.RenderOptions>): void {
     super._onClose(options)
     delete this.document.apps[this.id]
   }
 
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
 
   override async _renderFrame(options: DeepPartial<Application.RenderOptions>): Promise<HTMLElement> {
     const frame = await super._renderFrame(options)
@@ -187,7 +189,7 @@ class PseudoDocumentSheet<
     return frame
   }
 
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
 
   override _canRender(_options: DeepPartial<Application.RenderOptions>): false | void {
     if (!this.pseudoDocument) {
@@ -197,9 +199,9 @@ class PseudoDocumentSheet<
     }
   }
 
-  /* -------------------------------------------------- */
-  /*   Event handlers                                   */
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
+  /*   Event handlers                         */
+  /* ---------------------------------------- */
 
   /**
    * Handle form submission.

@@ -1,12 +1,12 @@
 {{#*inline ".action-entry"}}
-<div class="ms-action-entry" data-document-name="{{metadata.documentName}}" data-pseudo-id="{{_id}}">
+<div class="ms-action-entry" data-uuid="{{uuid}}">
   <img class="action-img" src="{{_source.img}}">
   <div class="action-name">{{name}}</div>
   <div class="action-usage">{{usage}}</div>
   <div class="action-damage">{{damageText}}</div>
   <span class='ms-row-actions'>
-    <i class='fas fa-pen-to-square ms-action-btn' data-action='editPseudo'></i>
-    <i class='fas fa-trash ms-action-btn' data-action='deletePseudo'></i>
+    <i class='fas fa-pen-to-square ms-action-btn' data-action='editEmbedded'></i>
+    <i class='fas fa-trash ms-action-btn' data-action='deleteEmbedded'></i>
   </span>
 </div>
 {{/inline}}
@@ -14,7 +14,7 @@
 <section class='tab {{tab.cssClass}}' data-tab='actions' data-group='primary'>
   <fieldset>
     <legend>{{localize "GURPS.sheet.actions.title"}}</legend>
-    <button data-action="createPseudo" data-document-name="Action" class="ms-action-btn"><i class="fa-solid fa-plus"></i>Add Action</button>
+    <button data-action="createEmbedded" data-document-name="Action" class="ms-action-btn"><i class="fa-solid fa-plus"></i>Add Action</button>
       <div class="ms-action-entries">
       {{#each actions}}
         {{> ".action-entry"}}

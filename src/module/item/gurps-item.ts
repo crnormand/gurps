@@ -1,5 +1,7 @@
 import { Document } from '@gurps-types/foundry/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
+import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
+import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
 import { AnyMutableObject, AnyObject, InexactPartial } from 'fvtt-types/utils'
 
@@ -190,6 +192,79 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     return (
       this.pseudoCollections[embeddedName] ?? super.getEmbeddedCollection(embeddedName as Item.Embedded.CollectionName)
     )
+  }
+
+  /* ---------------------------------------- */
+
+  override async createEmbeddedDocuments<EmbeddedName extends Item.Embedded.Name>(
+    embeddedName: EmbeddedName,
+    data: Document.CreateDataForName<EmbeddedName>[] | undefined,
+    operation?: Document.Database.CreateOperationForName<EmbeddedName>
+  ): Promise<Array<Document.StoredForName<EmbeddedName>>>
+  override async createEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Item']>(
+    embeddedName: EmbeddedName,
+    data: gurps.Pseudo.EmbeddedCreateData<'Item', EmbeddedName>[] | undefined,
+    operation?: Partial<gurps.Pseudo.CreateOperation>
+  ): Promise<Array<PseudoDocumentConfig.Embeds['Item'][EmbeddedName]>>
+  override async createEmbeddedDocuments(
+    embeddedName: string,
+    data?: unknown[],
+    operation?: object
+  ): Promise<unknown[]> {
+    data ||= []
+    const metadata = (this.system?.constructor as any).metadata as ItemMetadata
+
+    if (metadata.embedded && embeddedName in metadata.embedded) {
+      const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
+
+      // NOTE: If the PseudoDocument is typed but the type is not specified, fall back to a createDialog for the first entry.
+      if (foundry.utils.isSubclass(cls, TypedPseudoDocument)) {
+        if (data.length === 1) {
+          const dataEntry = data[0]
+
+          if (isObject(dataEntry)) {
+            const subTypes = Object.keys(
+              GURPS.CONFIG.PseudoDocument.SubTypes[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.SubTypes]
+            )
+
+            if (!('type' in dataEntry) || !subTypes.includes(dataEntry.type as string))
+              return [await cls.createDialog(dataEntry, { parent: this, ...operation })]
+          }
+        }
+      }
+
+      return cls.createDocuments(data as any[], { parent: this, ...operation })
+    }
+
+    return super.createEmbeddedDocuments(embeddedName as Item.Embedded.Name, data as never, operation as never)
+  }
+
+  /* ---------------------------------------- */
+
+  override async deleteEmbeddedDocuments<EmbeddedName extends Item.Embedded.Name>(
+    embeddedName: EmbeddedName,
+    ids: Array<string>,
+    operation?: Document.Database.DeleteOperationForName<EmbeddedName>
+  ): Promise<Array<Document.StoredForName<EmbeddedName>>>
+  override async deleteEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Item']>(
+    embeddedName: EmbeddedName,
+    ids: Array<string>,
+    operation?: Partial<PseudoDocument.DeleteOperation>
+  ): Promise<Array<PseudoDocumentConfig.Embeds['Item'][EmbeddedName]>>
+  override async deleteEmbeddedDocuments(
+    embeddedName: string,
+    ids: Array<string>,
+    operation?: object
+  ): Promise<unknown[]> {
+    const systemEmbeds = (this.system?.constructor as any).metadata.embedded ?? {}
+
+    if (embeddedName in systemEmbeds) {
+      const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
+
+      return cls.deleteDocuments(ids, { parent: this, ...operation })
+    }
+
+    return super.deleteEmbeddedDocuments(embeddedName as Item.Embedded.Name, ids as never, operation as never)
   }
 
   /* ---------------------------------------- */

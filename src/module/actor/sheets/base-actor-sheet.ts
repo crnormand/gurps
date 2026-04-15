@@ -185,6 +185,8 @@ class GurpsBaseActorSheet<
   }
 
   /* ---------------------------------------- */
+  /*   Event handlers                         */
+  /* ---------------------------------------- */
 
   static async #onImportActor(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
@@ -298,11 +300,7 @@ class GurpsBaseActorSheet<
       return
     }
 
-    if (sheet instanceof foundry.appv1.api.Application) {
-      sheet.render(true)
-    } else {
-      await sheet.render({ force: true })
-    }
+    await sheet.render({ force: true })
   }
 
   /* ---------------------------------------- */
