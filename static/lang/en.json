@@ -2044,7 +2044,9 @@
       "details": {
         "base": "General Details",
         "equipment": "Equipment Details",
+        "meleeAttack": "Melee Attack Details",
         "otf": "OTFs",
+        "rangedAttack": "Ranged Attack Details",
         "skill": "Skill Details",
         "spell": "Spell Details",
         "title": "Details",

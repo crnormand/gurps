@@ -2,6 +2,8 @@ import { systemPath } from './misc.js'
 
 async function registerPartials(): Promise<void> {
   const templates = [
+    'templates/action/partials/details-melee-attack.hbs',
+    'templates/action/partials/details-ranged-attack.hbs',
     'templates/common/partials/tab-navigation.hbs',
     'templates/item/partials/details-base.hbs',
     'templates/item/partials/details-equipment.hbs',

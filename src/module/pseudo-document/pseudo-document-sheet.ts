@@ -7,14 +7,18 @@ namespace PseudoDocumentSheet {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface RenderOptions extends Application.RenderOptions {}
 
-  export interface Configuration<Doc extends PseudoDocument.Any> extends Application.Configuration {
+  export interface Configuration<Doc extends PseudoDocument.Any = PseudoDocument.Any>
+    extends Application.Configuration {
     document: Doc
   }
 
-  export interface RenderContext<Doc extends PseudoDocument.Any> extends Application.RenderContext {
+  export interface RenderContext<Doc extends PseudoDocument.Any = PseudoDocument.Any>
+    extends Application.RenderContext {
     document: Doc | null
     source: foundry.data.fields.SchemaField.SourceData<foundry.abstract.DataModel.SchemaOf<Doc>>
     fields?: Record<string, { field: foundry.data.fields.DataField.Any; value: any; name: string }>
+    detailsPartial: string[]
+    tab?: Application.Tab
   }
 
   export type DefaultOptions = DocumentSheet.DefaultOptions
@@ -131,11 +135,30 @@ class PseudoDocumentSheet<
   protected override async _prepareContext(options: RenderOptions): Promise<RenderContext> {
     const superContext = await super._prepareContext(options)
 
+    if (!this.pseudoDocument) {
+      throw new Error('No pseudo-document found for this sheet!')
+    }
+
     return foundry.utils.mergeObject(superContext, {
-      document: this.pseudoDocument!,
-      source: this.pseudoDocument!._source as any,
-      fields: PseudoDocument.getSchemaFields(this.pseudoDocument!),
+      document: this.pseudoDocument,
+      source: this.pseudoDocument._source as any,
+      fields: this.pseudoDocument.schema.fields,
+      detailsPartial: this.pseudoDocument.metadata.detailsPartial,
     }) as unknown as RenderContext
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _preparePartContext(
+    partId: string,
+    context: PseudoDocumentSheet.RenderContext,
+    options: DeepPartial<PseudoDocumentSheet.RenderOptions>
+  ): Promise<PseudoDocumentSheet.RenderContext> {
+    await super._preparePartContext(partId, context, options)
+
+    if (context.tabs && partId in context.tabs) context.tab = context.tabs[partId]
+
+    return context
   }
 
   /* ---------------------------------------- */

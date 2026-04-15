@@ -111,7 +111,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
       hasNotes: this.notes.trim().length > 0,
       notesOpen: this.notesOpen,
       level: this.level,
-      damage: this.damage.join(', '),
+      damage: [...this.damage].join(', '),
       st: this.st,
     })
   }
@@ -131,7 +131,7 @@ const baseAttackSchema = () => {
     import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: Damage is an Array of strings to allow for multiple damage types dealing damage in one
     // attack, such as "2d-1cut and 1d+2 ctrl". Most of the time, this array has only one element.
-    damage: new fields.ArrayField(new fields.StringField({ required: true, nullable: false }), {
+    damage: new fields.SetField(new fields.StringField({ required: true, nullable: false }), {
       required: true,
       nullable: false,
       initial: [],
@@ -140,7 +140,7 @@ const baseAttackSchema = () => {
     extraAttacks: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     itemModifiers: new fields.StringField({ required: true, nullable: false }),
     mode: new fields.StringField({ required: true, nullable: false }),
-    modifierTags: new fields.StringField({ required: true, nullable: false }),
+    modifierTags: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
     notes: new fields.StringField({ required: true, nullable: false }),
     /** A boolean determining whether the Item notes are currently un-collapsed and visible on the character sheet. */
     notesOpen: new fields.BooleanField({ required: true, nullable: false, initial: true }),

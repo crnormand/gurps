@@ -43,25 +43,13 @@ class ActionSheet extends PseudoDocumentSheet<Action.Any> {
       template: systemPath('templates/action/tab-details.hbs'),
       scrollable: [''],
     },
-    actions: {
-      template: systemPath('templates/item/modern/tab-actions.hbs'),
-      scrollable: [''],
-    },
-    modifiers: {
-      template: systemPath('templates/item/modern/tab-modifiers.hbs'),
-      scrollable: [''],
-    },
   }
 
   /* ---------------------------------------- */
 
   static override TABS: Record<string, Application.TabsConfiguration> = {
     primary: {
-      tabs: [
-        { id: 'details', label: 'Details', icon: 'fas fa-user' },
-        { id: 'actions', label: 'Actions', icon: 'fas fa-swords' },
-        { id: 'modifiers', label: 'Modifiers', icon: 'fas fa-swords' },
-      ],
+      tabs: [{ id: 'details', label: 'Details', icon: 'fa-solid fa-table-list' }],
       initial: 'details',
     },
   }
