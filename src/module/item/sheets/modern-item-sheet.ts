@@ -72,9 +72,9 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
   static override TABS: Record<string, Application.TabsConfiguration> = {
     primary: {
       tabs: [
-        { id: 'details', label: 'Details', icon: 'fas fa-user' },
-        { id: 'actions', label: 'Actions', icon: 'fas fa-swords' },
-        { id: 'modifiers', label: 'Modifiers', icon: 'fas fa-swords' },
+        { id: 'details', label: 'GURPS.sheet.details.title', icon: 'fas fa-user' },
+        { id: 'actions', label: 'GURPS.sheet.actions.title', icon: 'fas fa-swords' },
+        { id: 'modifiers', label: 'GURPS.sheet.modifiers.title', icon: 'fas fa-swords' },
       ],
       initial: 'details',
     },

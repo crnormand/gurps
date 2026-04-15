@@ -214,7 +214,7 @@
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
     "actor": {
-      "characterV2": {
+      "character": {
         "FIELDS": {
           "_currentMoveModeId": {
             "label": "Move Mode"
@@ -1258,7 +1258,7 @@
       },
       "deleteContents": "Also delete contents ({count} items will be deleted!)",
       "deleteMessage": "Are you sure you want to delete <strong>{name}</strong>?",
-      "equipmentV2": {
+      "equipment": {
         "FIELDS": {
           "categories": {
             "label": "Tags"
@@ -1292,7 +1292,7 @@
           }
         }
       },
-      "featureV2": {
+      "feature": {
         "crChoices": {
           "0": "Never resist",
           "6": "6 (Resist Rarely)",
@@ -1322,7 +1322,7 @@
           }
         }
       },
-      "skillV2": {
+      "skill": {
         "FIELDS": {
           "difficulty": {
             "label": "Difficulty"
@@ -1344,7 +1344,7 @@
           }
         }
       },
-      "spellV2": {
+      "spell": {
         "FIELDS": {
           "casttime": {
             "label": "Casting Time"
@@ -2038,12 +2038,16 @@
     "severity": "Severity",
     "share": "Share",
     "sheet": {
+      "actions": {
+        "title": "Actions"
+      },
       "details": {
         "base": "General Details",
         "equipment": "Equipment Details",
         "otf": "OTFs",
         "skill": "Skill Details",
         "spell": "Spell Details",
+        "title": "Details",
         "trait": "Trait Details"
       },
       "encumbrance": {
@@ -2109,6 +2113,9 @@
       },
       "modernSheet": {
         "label": "Modern Sheet"
+      },
+      "modifiers": {
+        "title": "Modifiers"
       },
       "npcSheet": {
         "label": "NPC Sheet"
@@ -2353,8 +2360,7 @@
       "rangedAttack": "Ranged Attack"
     },
     "Actor": {
-      "character": "Character",
-      "enemy": "Enemy"
+      "character": "Character"
     },
     "Item": {
       "equipment": "Equipment",

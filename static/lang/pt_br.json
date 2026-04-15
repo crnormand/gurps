@@ -114,7 +114,7 @@
     "activeEffect": "Efeito Ativo",
     "activeEffects": "Efeitos Ativos",
     "actor": {
-      "characterV2": {
+      "character": {
         "FIELDS": {
           "_currentMoveModeId": {
             "label": "Modo de Movimento Atual"
@@ -2056,19 +2056,13 @@
       "rangedAttack": "Ataque à Distância"
     },
     "Actor": {
-      "character": "Personagem (v1)",
-      "characterV2": "Personagem (v2)",
-      "enemy": "Inimigo"
+      "character": "Personagem"
     },
     "Item": {
-      "equipment": "Equipamento (v1)",
-      "equipmentV2": "Equipamento (v2)",
-      "feature": "Característica (v1)",
-      "featureV2": "Característica (v2)",
-      "skill": "Perícia (v1)",
-      "skillV2": "Perícia (v2)",
-      "spell": "Mágica (v1)",
-      "spellV2": "Mágica (v2)"
+      "equipment": "Equipamento",
+      "feature": "Característica",
+      "skill": "Perícia",
+      "spell": "Mágica"
     }
   }
 }

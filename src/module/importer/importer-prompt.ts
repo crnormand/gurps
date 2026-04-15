@@ -17,7 +17,7 @@ async function actorImporterPrompt(actor?: Actor.OfType<ActorType.Character>) {
     return
   }
 
-  const name = actor ? actor.name : game.i18n.localize('TYPES.Actor.characterV2')
+  const name = actor ? actor.name : game.i18n.localize('TYPES.Actor.character')
 
   return new foundry.applications.api.DialogV2({
     window: {
