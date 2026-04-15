@@ -97,6 +97,8 @@ body {
     grid-template-columns: auto 1fr auto 1fr; /* label | field | label | field */
     gap: var(--ms-gap) calc(var(--ms-gap) * 2);
 
+    > h3,
+    > h4,
     > hr {
       grid-column: 1 / -1;
     }

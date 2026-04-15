@@ -53,9 +53,6 @@ class BaseAction<
 
 const baseActionSchema = () => {
   return {
-    /** The name of the action. */
-    name: new fields.StringField({ initial: undefined }),
-
     /** Any images associated with this action. */
     img: new fields.FilePathField({
       categories: ['IMAGE'],
@@ -63,21 +60,11 @@ const baseActionSchema = () => {
       initial: () => 'icons/svg/sword.svg',
     }),
 
-    /** The sort value of this action, used to determine its order in the list of actions. */
-    sort: new fields.IntegerSortField(),
-
     /** Should this Action show up in the quick roll menu in the combat tracker? */
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     /** Whether this Action is disabled. Disabled Actions are not shown in the UI. */
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
-
-    /**
-     * A reference to the Item which contains this Action. This has been deprecated and replaed with the `item`
-     * accessor. This field was previously used to disable an Action from the Item, but this is now handled by the
-     * "disabled" field above.
-     */
-    // containedBy: new fields.StringField({ required: true, nullable: false }),
   }
 }
 

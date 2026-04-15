@@ -1,0 +1,35 @@
+<fieldset class="ms-details">
+  <legend>{{ localize "GURPS.sheet.details.meleeAttack" }}</legend>
+
+  {{formGroup fields.mode value=source.mode}}
+  {{formGroup fields.import value=source.import}}
+
+  {{formGroup fields.st value=source.st}}
+  {{formGroup fields.consumeAction value=source.consumeAction}}
+
+  {{formGroup fields.damage value=source.damage classes="ms-double-field"}}
+
+  {{formGroup fields.modifierTags value=source.modifierTags classes="ms-double-field"}}
+
+  <h3>Parry</h3>
+
+  {{formGroup fields.parry.fields.canParry value=source.parry.canParry }}
+  {{formGroup fields.parry.fields.fencing value=source.parry.fencing }}
+
+  {{formGroup fields.parry.fields.unbalanced value=source.parry.unbalanced }}
+  {{formGroup fields.parry.fields.modifier value=source.parry.modifier }}
+
+  <h3>Block</h3>
+
+  {{formGroup fields.block.fields.canBlock value=source.block.canBlock }}
+  {{formGroup fields.block.fields.modifier value=source.block.modifier }}
+
+  <h3>Reach</h3>
+
+  {{formGroup fields.reach.fields.closeCombat value=source.reach.closeCombat }}
+  {{formGroup fields.reach.fields.changeRequiresReady value=source.reach.changeRequiresReady }}
+
+  {{formGroup fields.reach.fields.min value=source.reach.min }}
+  {{formGroup fields.reach.fields.max value=source.reach.max }}
+
+</fieldset>
