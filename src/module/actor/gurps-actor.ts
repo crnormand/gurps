@@ -2,6 +2,8 @@ import { fields, Document } from '@gurps-types/foundry/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { ItemMetadata } from '@module/item/data/base.js'
 import { ItemType } from '@module/item/types.js'
+import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
+import { isObject } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -209,10 +211,27 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     data?: unknown[],
     operation?: object
   ): Promise<unknown[]> {
+    data ||= []
     const metadata = (this.system?.constructor as any).metadata as ActorMetadata
 
     if (metadata.embedded && embeddedName in metadata.embedded) {
       const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
+
+      // NOTE: If the PseudoDocument is typed but the type is not specified, fall back to a createDialog for the first entry.
+      if (foundry.utils.isSubclass(cls, TypedPseudoDocument)) {
+        if (data.length === 1) {
+          const dataEntry = data[0]
+
+          if (isObject(dataEntry)) {
+            const subTypes = Object.keys(
+              GURPS.CONFIG.PseudoDocument.SubTypes[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.SubTypes]
+            )
+
+            if (!('type' in dataEntry) || !subTypes.includes(dataEntry.type as string))
+              return [await cls.createDialog(dataEntry, { parent: this, ...operation })]
+          }
+        }
+      }
 
       return cls.createDocuments(data as any[], { parent: this, ...operation })
     } else if (metadata.embeddedHolderField) {

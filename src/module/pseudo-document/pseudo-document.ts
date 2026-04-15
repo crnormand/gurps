@@ -388,7 +388,7 @@ class PseudoDocument<
     const isArray = Array.isArray(data)
     const createData = isArray ? data : [data]
 
-    const created = await this.createDocuments(createData, operation)
+    const created = await this.createDocuments(createData, { parent, ...operation })
 
     if (renderSheet && created) {
       created.forEach(pseudo => pseudo.sheet?.render({ force: true }))
@@ -575,7 +575,8 @@ class PseudoDocument<
    */
   static async createDialog<T extends typeof PseudoDocument>(
     data: DataModel.CreateData<PseudoDocument.Schema>,
-    { parent, ...operation }: Partial<gurps.Pseudo.CreateOperation>
+    { parent, pack, ...operation }: Partial<gurps.Pseudo.CreateOperation>,
+    options: PseudoDocument.CreateDialogOptions = {}
   ): Promise<InstanceType<T> | undefined> {
     const content = await foundry.applications.handlebars.renderTemplate(
       this.CREATE_TEMPLATE,
@@ -590,7 +591,7 @@ class PseudoDocument<
         }),
         icon: this.metadata.icon,
       },
-      render: (event, dialog) => this._createDialogRenderCallback(event, dialog),
+      render: (event, dialog) => this._createDialogRenderCallback(event, dialog, { parent, pack, ...options }),
     })
 
     if (!result) return
@@ -621,7 +622,33 @@ class PseudoDocument<
    * Render callback for dynamic handling of the create dialog. This can be used to, for example, dynamically populate
    * the choices for a select field based on the parent document.
    */
-  protected static _createDialogRenderCallback(_event: Event, _dialog: foundry.applications.api.DialogV2): void {}
+  protected static _createDialogRenderCallback(
+    _event: Event,
+    dialog: foundry.applications.api.DialogV2,
+    options: PseudoDocument.CreateDialogOptions = {}
+  ): void {
+    const hasTypes = 'documentConfig' in this && typeof this.documentConfig === 'object' && this.documentConfig !== null
+
+    if (!hasTypes) return
+
+    const { parent, pack } = options
+
+    dialog.element.querySelector<HTMLInputElement>('[name="type"]')?.addEventListener('change', ev => {
+      const target = ev.target as HTMLInputElement
+      const nameInput = dialog.element.querySelector<HTMLInputElement>('[name="name"]')
+
+      if (!nameInput) return
+
+      nameInput.placeholder = this.defaultName({ type: target.value, parent, pack })
+    })
+
+    const typeInput = dialog.element.querySelector<HTMLInputElement>('[name="type"]')
+    const nameInput = dialog.element.querySelector<HTMLInputElement>('[name="name"]')
+
+    if (nameInput && typeInput) {
+      nameInput.placeholder = this.defaultName({ type: typeInput.value, parent, pack })
+    }
+  }
 
   /* ---------------------------------------- */
 
@@ -754,6 +781,19 @@ namespace PseudoDocument {
     > {
     deleteContents?: boolean
   }
+
+  /* ---------------------------------------- */
+
+  export type CreateDialogOptions = InexactPartial<{
+    /** Override the type choices for this PseudoDocument create dialog */
+    types: string[]
+
+    /** A compendium pack within which the PseudoDocument should be created */
+    pack: string | null
+
+    /** A parent document within which the created PsuedoDocument should belong */
+    parent: gurps.Pseudo.ParentDocument | null
+  }>
 
   /* ---------------------------------------- */
 
