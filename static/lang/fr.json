@@ -114,7 +114,7 @@
     "activeEffect": "Effet Actif",
     "activeEffects": "Effets Actifs",
     "actor": {
-      "characterV2": {
+      "character": {
         "FIELDS": {
           "_currentMoveModeId": {
             "label": "Mode de déplacement actuel"
@@ -2056,19 +2056,13 @@
       "rangedAttack": "Attaque à distance"
     },
     "Actor": {
-      "character": "Personnage (v1)",
-      "characterV2": "Personnage (v2)",
-      "enemy": "Ennemi"
+      "character": "Personnage"
     },
     "Item": {
-      "equipment": "Équipement (v1)",
-      "equipmentV2": "Équipement (v2)",
-      "feature": "Trait (v1)",
-      "featureV2": "Trait (v2)",
-      "skill": "Compétence (v1)",
-      "skillV2": "Compétence (v2)",
-      "spell": "Sort (v1)",
-      "spellV2": "Sort (v2)"
+      "equipment": "Équipement",
+      "feature": "Trait",
+      "skill": "Compétence",
+      "spell": "Sort"
     }
   }
 }

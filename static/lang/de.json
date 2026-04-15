@@ -114,7 +114,7 @@
     "activeEffect": "Aktiver Effekt",
     "activeEffects": "Aktive Effekte",
     "actor": {
-      "characterV2": {
+      "character": {
         "FIELDS": {
           "_currentMoveModeId": {
             "label": "Aktueller Bewegungsmodus"
@@ -2056,19 +2056,13 @@
       "rangedAttack": "Fernkampfangriff"
     },
     "Actor": {
-      "character": "Charakter (v1)",
-      "characterV2": "Charakter (v2)",
-      "enemy": "Gegner"
+      "character": "Charakter"
     },
     "Item": {
-      "equipment": "Ausrüstung (v1)",
-      "equipmentV2": "Ausrüstung (v2)",
-      "feature": "Merkmal (v1)",
-      "featureV2": "Merkmal (v2)",
-      "skill": "Fertigkeit (v1)",
-      "skillV2": "Fertigkeit (v2)",
-      "spell": "Zauberspruch (v1)",
-      "spellV2": "Zauberspruch (v2)"
+      "equipment": "Ausrüstung",
+      "feature": "Merkmal",
+      "skill": "Fertigkeit",
+      "spell": "Zauberspruch"
     }
   }
 }
