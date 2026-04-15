@@ -1,4 +1,4 @@
-import { Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
+import { HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import { bindInlineEdit } from '@module/actor/sheets/modern/inline-edit-handler.js'
 import { PseudoDocumentSheet } from '@module/pseudo-document/pseudo-document-sheet.js'
 import { systemPath } from '@module/util/misc.js'
@@ -40,17 +40,8 @@ class ActionSheet extends PseudoDocumentSheet<Action.Any> {
       template: systemPath('templates/action/header.hbs'),
     },
     details: {
-      template: systemPath('templates/action/tab-details.hbs'),
+      template: systemPath('templates/action/details.hbs'),
       scrollable: [''],
-    },
-  }
-
-  /* ---------------------------------------- */
-
-  static override TABS: Record<string, Application.TabsConfiguration> = {
-    primary: {
-      tabs: [{ id: 'details', label: 'Details', icon: 'fa-solid fa-table-list' }],
-      initial: 'details',
     },
   }
 
