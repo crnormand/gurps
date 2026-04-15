@@ -71,7 +71,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
 const traitSchema = () => {
   const crChoices = Object.fromEntries(
-    [-1, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(key => [key, `GURPS.item.featureV2.crChoices.${key}`])
+    [-1, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(key => [key, `GURPS.item.feature.crChoices.${key}`])
   )
 
   return {

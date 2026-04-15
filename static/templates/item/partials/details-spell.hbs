@@ -1,18 +1,34 @@
 <fieldset class="ms-details">
   <legend>{{ localize "GURPS.sheet.details.spell" }}</legend>
 
-  {{formGroup systemFields.college value=system.college classes="ms-double-field"}}
-  <hr>
-  {{formGroup systemFields.import value=system.import}}
-  {{formGroup systemFields.relativelevel value=system.relativelevel}}
-  {{formGroup systemFields.difficulty value=system.difficulty}}
-  {{formGroup systemFields.points value=system.points}}
-  {{formGroup systemFields.class value=system.specialization}}
-  {{formGroup systemFields.techlevel value=system.techlevel}}
-  {{formGroup systemFields.casttime value=system.casttime}}
-  {{formGroup systemFields.duration value=system.duration}}
-  {{formGroup systemFields.cost value=system.cost}}
-  {{formGroup systemFields.maintain value=system.maintain}}
-  {{formGroup systemFields.resist value=system.resist}}
-  {{formGroup systemFields.pageref value=system.pageref}}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.college value=system.college}}
+  </div>
+
+  <div class="ms-field-row" style="--ms-cols: 3;">
+    {{formGroup systemFields.import value=system.import}}
+    {{formGroup systemFields.relativelevel value=system.relativelevel}}
+    {{formGroup systemFields.points value=system.points}}
+  </div>
+
+  <div class="ms-field-row" style="--ms-cols: 3;">
+    {{formGroup systemFields.techlevel value=system.techlevel}}
+    {{formGroup systemFields.difficulty value=system.difficulty}}
+    {{formGroup systemFields.class value=system.class}}
+  </div>
+
+  <div class="ms-field-row">
+    {{formGroup systemFields.casttime value=system.casttime}}
+    {{formGroup systemFields.cost value=system.cost}}
+  </div>
+
+  <div class="ms-field-row" style="--ms-cols: 3;">
+    {{formGroup systemFields.maintain value=system.maintain}}
+    {{formGroup systemFields.duration value=system.duration}}
+    {{formGroup systemFields.resist value=system.resist}}
+  </div>
+
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.pageref value=system.pageref}}
+  </div>
 </fieldset>

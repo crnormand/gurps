@@ -1,10 +1,16 @@
 <fieldset class="ms-details">
   <legend>{{ localize "GURPS.sheet.details.trait" }}</legend>
 
-  {{formGroup systemFields.level value=system.level}}
-  {{formGroup systemFields.points value=system.points}}
+  <div class="ms-field-row">
+    {{formGroup systemFields.level value=system.level}}
+    {{formGroup systemFields.points value=system.points}}
+  </div>
+
   {{formGroup systemFields.cr value=system.cr localize=true}}
   {{formGroup systemFields.pageref value=system.pageref}}
-  <hr>
+
+  <div class="ms-field-row" style="--ms-cols: 1;">
   {{formGroup systemFields.userdesc value=system.userdesc classes="ms-double-field" elementType="textarea"}}
+  </div>
+
 </fieldset>

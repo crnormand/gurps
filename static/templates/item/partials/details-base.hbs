@@ -1,21 +1,41 @@
 <fieldset class="ms-details">
   <legend>{{ localize "GURPS.sheet.details.base" }}</legend>
 
-  {{formGroup systemFields.consumeAction value=system.consumeAction}}
-  {{formGroup systemFields.addToQuickRoll value=system.addToQuickRoll}}
+  <div class="ms-field-row">
+    {{formGroup systemFields.consumeAction value=system.consumeAction}}
+    {{formGroup systemFields.addToQuickRoll value=system.addToQuickRoll}}
+  </div>
 
-  {{formGroup systemFields.modifierTags value=system.modifierTags classes="ms-double-field" elementType="textarea"}}
-  {{formGroup systemFields.notes value=system.notes classes="ms-double-field" elementType="textarea"}}
-  {{formGroup systemFields.vtt_notes value=system.vtt_notes classes="ms-double-field" elementType="textarea"}}
-  {{formGroup systemFields.bonuses value=system.bonuses classes="ms-double-field" elementType="textarea"}}
-  {{formGroup systemFields.itemModifiers value=system.itemModifiers classes="ms-double-field" elementType="textarea"}}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.modifierTags value=system.modifierTags elementType="textarea"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.notes value=system.notes elementType="textarea"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.vtt_notes value=system.vtt_notes elementType="textarea"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.bonuses value=system.bonuses elementType="textarea"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.itemModifiers value=system.itemModifiers elementType="textarea"}}
+  </div>
 </fieldset>
 
 <fieldset class="ms-details">
   <legend>{{ localize "GURPS.sheet.details.otf" }}</legend>
 
-  {{formGroup systemFields.checkotf value=system.checkotf classes="ms-double-field"}}
-  {{formGroup systemFields.duringotf value=system.duringotf classes="ms-double-field"}}
-  {{formGroup systemFields.passotf value=system.passotf classes="ms-double-field"}}
-  {{formGroup systemFields.failotf value=system.failotf classes="ms-double-field"}}
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.checkotf value=system.checkotf classes="ms-double-field"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.duringotf value=system.duringotf classes="ms-double-field"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.passotf value=system.passotf classes="ms-double-field"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup systemFields.failotf value=system.failotf classes="ms-double-field"}}
+  </div>
 </fieldset>
