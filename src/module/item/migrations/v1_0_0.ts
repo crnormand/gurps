@@ -1,5 +1,11 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
-import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
+import {
+  ActionType,
+  MeleeAttackModel,
+  MeleeAttackSchema,
+  RangedAttackModel,
+  RangedAttackSchema,
+} from '@module/action/index.js'
 import { Melee, Ranged } from '@module/actor/actor-components.js'
 import { numberValidate } from '@module/data/validators/number-validator.js'
 import { shouldMigrateCompendium } from '@module/migration/helpers.js'
@@ -214,6 +220,7 @@ export function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaF
 
   const newMelee: fields.SchemaField.CreateData<MeleeAttackSchema> = {
     _id,
+    img: MeleeAttackModel.getDefaultArtwork({}).img,
     type: ActionType.MeleeAttack,
     baseParryPenalty: Number(oldMelee.baseParryPenalty) || 0,
     block,
@@ -257,6 +264,7 @@ export function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.Sche
 
   const newRanged: fields.SchemaField.CreateData<RangedAttackSchema> = {
     _id,
+    img: RangedAttackModel.getDefaultArtwork({}).img,
     type: ActionType.RangedAttack,
     acc: oldRanged.acc,
     ammo: Number(oldRanged.ammo) || 0,

@@ -34,6 +34,12 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
 
   /* ---------------------------------------- */
 
+  static override getDefaultArtwork(_data: AnyObject): Record<string, string> {
+    return { img: 'icons/svg/sword.svg' }
+  }
+
+  /* ---------------------------------------- */
+
   static override cleanData(source?: AnyMutableObject, options?: fields.DataField.CleanOptions): AnyMutableObject {
     source = super.cleanData(source, options)
 

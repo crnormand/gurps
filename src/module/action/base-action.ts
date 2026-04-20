@@ -53,13 +53,6 @@ class BaseAction<
 
 const baseActionSchema = () => {
   return {
-    /** Any images associated with this action. */
-    img: new fields.FilePathField({
-      categories: ['IMAGE'],
-      base64: false,
-      initial: () => 'icons/svg/sword.svg',
-    }),
-
     /** Should this Action show up in the quick roll menu in the combat tracker? */
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 

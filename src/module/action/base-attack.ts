@@ -119,8 +119,9 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
   /* ---------------------------------------- */
   /*  Derived Values                          */
   /* ---------------------------------------- */
+
   get _displayName(): string | null {
-    return this._source.name ?? (this.item as any)?.name ?? null
+    return (this._source.name || (this.item as any)?.name) ?? null
   }
 
   level: number = 0
