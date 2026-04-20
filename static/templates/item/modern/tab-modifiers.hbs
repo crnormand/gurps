@@ -21,7 +21,7 @@
 <section class='tab {{tab.cssClass}}' data-tab='modifiers' data-group='primary'>
   <fieldset>
     <legend>{{localize "GURPS.sheet.reactionModifiers.title"}}</legend>
-    <button data-action="createEmbedded" data-document-name="ReactionModifier" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.ReactionModifier")}}</button>
+    <button type="button" data-action="createEmbedded" data-document-name="ReactionModifier" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.ReactionModifier")}}</button>
       <div class="ms-modifier-entries">
       {{#each reactionModifiers}}
         {{> ".modifier-entry"}}
@@ -33,7 +33,7 @@
 
   <fieldset>
     <legend>{{localize "GURPS.sheet.conditionalModifiers.title"}}</legend>
-    <button data-action="createEmbedded" data-document-name="ConditionalModifier" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.ConditionalModifier")}}</button>
+    <button type="button" data-action="createEmbedded" data-document-name="ConditionalModifier" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.ConditionalModifier")}}</button>
       <div class="ms-modifier-entries">
       {{#each conditionalModifiers}}
         {{> ".modifier-entry"}}

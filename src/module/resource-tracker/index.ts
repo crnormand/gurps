@@ -16,8 +16,6 @@ function init() {
 
     GURPS.CONFIG.PseudoDocument.Types.ResourceTracker = TrackerInstance
 
-    GURPS.CONFIG.PseudoDocument.Types.ResourceTracker = TrackerInstance
-
     // get all aliases defined in the resource tracker templates and register them as damage types
     const resourceTrackers = Object.values(
       ResourceTrackerManagerV2.getAllTemplatesMap() as Record<string, IResourceTrackerTemplate>
