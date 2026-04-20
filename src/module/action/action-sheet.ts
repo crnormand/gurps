@@ -2,6 +2,7 @@ import { DeepPartial, HandlebarsApplicationMixin } from '@gurps-types/foundry/in
 import { bindInlineEdit } from '@module/actor/sheets/modern/inline-edit-handler.js'
 import { PseudoDocumentSheet } from '@module/pseudo-document/pseudo-document-sheet.js'
 import { syncLabelWidths } from '@module/util/dom.js'
+import { getGame } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 
 import { Action, ActionType } from './index.js'
@@ -55,7 +56,7 @@ class ActionSheet extends PseudoDocumentSheet<Action.Any> {
   /* ---------------------------------------- */
 
   override get title(): string {
-    return this.pseudoDocument?.name ?? _loc('DOCUMENT.' + this.pseudoDocument?.documentName)
+    return this.pseudoDocument?.name ?? getGame().i18n.localize('DOCUMENT.' + this.pseudoDocument?.documentName)
   }
 
   /* ---------------------------------------- */

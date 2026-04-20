@@ -16,10 +16,6 @@ function init() {
 
     GURPS.CONFIG.PseudoDocument.Types.ResourceTracker = TrackerInstance
 
-    // @ts-expect-error: Invalid type
-    GURPS.CONFIG ||= {}
-    // @ts-expect-error: Invalid type
-    GURPS.CONFIG.PseudoDocument ||= {}
     GURPS.CONFIG.PseudoDocument.Types.ResourceTracker = TrackerInstance
 
     // get all aliases defined in the resource tracker templates and register them as damage types

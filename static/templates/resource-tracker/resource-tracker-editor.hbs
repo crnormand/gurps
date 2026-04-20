@@ -3,11 +3,11 @@
     <input type='text' value='{{tracker.name}}' class='ms-name-input' data-field='tracker.name' />
     <button id='clone-button' type='button' class='ms-button ms-reset-button' data-action='cloneTracker'
       data-tooltip='{{localize "GURPS.resourceTracker.edit.clone"}}'>
-      <i class='fas fa-copy'></i>
+      <i class='fa-solid fa-copy'></i>
     </button>
     <button id='clear-button' type='button' class='ms-button ms-delete-button' data-action='clearTracker'
       data-tooltip='{{localize "GURPS.resourceTracker.edit.clear"}}'>
-      <i class='fas fa-eraser'></i>
+      <i class='fa-solid fa-eraser'></i>
     </button>
   </header>
 
@@ -103,11 +103,11 @@
           <div class='color-input-group'>
             {{#if color}}
               <input type='color' name='color' data='{{@index}}' value='{{color}}' />
-              <i class='fas fa-multiply ms-action-btn' data-action='clearColor' data-key='{{@index}}'
+              <i class='fa-solid fa-multiply ms-action-btn' data-action='clearColor' data-key='{{@index}}'
                 data-tooltip='{{localize "GURPS.resourceTracker.edit.clearColor"}}'></i>
             {{else}}
               <span class='color-none'>{{localize "GURPS.resourceTracker.edit.noColor"}}</span>
-              <i class='fas fa-palette ms-action-btn' data-action='setColor' data-key='{{@index}}'
+              <i class='fa-solid fa-palette ms-action-btn' data-action='setColor' data-key='{{@index}}'
                 data-tooltip='{{localize "GURPS.resourceTracker.edit.setColor"}}'></i>
             {{/if}}
           </div>

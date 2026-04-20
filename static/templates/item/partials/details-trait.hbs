@@ -6,7 +6,14 @@
     {{formGroup systemFields.points value=system.points}}
   </div>
 
-  {{formGroup systemFields.cr value=system.cr localize=true}}
+  <div class="form-group">
+    <label>{{localize "GURPS.item.feature.FIELDS.cr.label"}}</label>
+    <div class="form-fields">
+      <select name="system.cr">
+        {{selectOptions systemFields.cr.choices selected=system.crKey localize=true}}
+      </select>
+    </div>
+  </div>
   {{formGroup systemFields.pageref value=system.pageref}}
 
   <div class="ms-field-row" style="--ms-cols: 1;">

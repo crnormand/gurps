@@ -474,7 +474,7 @@ Portrait will not be imported.`
         {
           action: 'overwrite',
           label: game.i18n!.localize('GURPS.dialog.overwrite'),
-          icon: 'fas fa-edit',
+          icon: 'fa-solid fa-edit',
         },
       ],
     })
@@ -667,7 +667,7 @@ Portrait will not be imported.`
         {
           action: 'overwrite',
           label: game.i18n!.localize('GURPS.dialog.overwrite'),
-          icon: 'fas fa-edit',
+          icon: 'fa-solid fa-edit',
         },
       ],
     })

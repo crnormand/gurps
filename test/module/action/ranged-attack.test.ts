@@ -12,7 +12,7 @@ const rangedDefaults = () => ({
   extraAttacks: 0,
   itemModifiers: '',
   mode: '',
-  modifierTags: '',
+  modifierTags: [],
   notes: '',
   st: '',
   acc: { base: 0, scope: 0, jet: false },

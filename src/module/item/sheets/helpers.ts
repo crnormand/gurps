@@ -37,7 +37,7 @@ export async function resolveItemDropPosition(item: Item.Implementation): Promis
       },
       {
         action: 'inside',
-        icon: 'fas fa-sign-in-alt',
+        icon: 'fa-solid fa-sign-in-alt',
         label: 'GURPS.dropInside',
       },
     ],

@@ -34,12 +34,12 @@ async function migrate(): Promise<MigrationReport | void> {
       buttons: [
         {
           action: 'proceed',
-          icon: 'fas fa-check',
+          icon: 'fa-solid fa-check',
           label: 'GURPS.migration.toV1_0_0.proceed',
         },
         {
           action: 'cancel',
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-times',
           label: 'GURPS.migration.toV1_0_0.cancel',
         },
       ],

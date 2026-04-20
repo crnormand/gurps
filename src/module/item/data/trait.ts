@@ -41,10 +41,17 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
   /* ---------------------------------------- */
 
+  /** Returns the cr value as a select-safe string key: '' for null, or the numeric string otherwise. */
+  get crKey(): string {
+    return this.cr?.toString() ?? ''
+  }
+
+  /* ---------------------------------------- */
+
   get selfControlNote(): string {
     if (this.cr === null) return ''
 
-    return getGame().i18n.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name
+    return '[' + getGame().i18n.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name + ']'
   }
 
   /* ---------------------------------------- */
@@ -65,7 +72,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
       level: this.level,
       fullName,
       points: this.points,
-      cr: this.cr ? `GURPS.CR${this.cr}` : null,
+      cr: this.cr !== null ? `GURPS.CR${this.cr}` : null,
       enabled: this.enabled,
       otf: {
         cr: this.selfControlNote,
@@ -78,7 +85,10 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
 const traitSchema = () => {
   const crChoices = Object.fromEntries(
-    [-1, 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(key => [key, `GURPS.item.feature.crChoices.${key}`])
+    ['', 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(key => [
+      key,
+      `GURPS.item.feature.crChoices.${key === '' ? 'none' : key}`,
+    ])
   )
 
   return {
@@ -92,7 +102,7 @@ const traitSchema = () => {
     points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The Control Roll value for this trait, which may be null if not applicable */
-    cr: new fields.NumberField({ required: true, nullable: false, initial: -1, choices: crChoices }),
+    cr: new fields.NumberField({ required: true, nullable: true, initial: null, choices: crChoices }),
   }
 }
 
