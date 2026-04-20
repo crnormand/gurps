@@ -431,6 +431,7 @@ class PseudoDocument<
           : foundry.utils.randomID()
 
       dataEntry._id = _id
+      dataEntry.img ||= this.getDefaultArtwork(dataEntry).img ?? null
 
       if (!('name' in dataEntry) || typeof dataEntry.name !== 'string' || dataEntry.name.trim() === '') {
         const type = 'type' in dataEntry ? String(dataEntry.type) : undefined

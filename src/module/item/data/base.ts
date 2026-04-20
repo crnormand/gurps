@@ -102,6 +102,13 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   }
 
   /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static getDefaultArtwork(itemData?: foundry.documents.BaseItem.CreateData): Item.GetDefaultArtworkReturn {
+    return { img: 'icons/svg/item-bag.svg' }
+  }
+
+  /* ---------------------------------------- */
   /*  Instance properties                     */
   /* ---------------------------------------- */
 

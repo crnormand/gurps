@@ -192,7 +192,7 @@ class PseudoDocumentSheet<
 
   /* ---------------------------------------- */
 
-  override async _renderFrame(options: DeepPartial<Application.RenderOptions>): Promise<HTMLElement> {
+  protected override async _renderFrame(options: DeepPartial<Application.RenderOptions>): Promise<HTMLElement> {
     const frame = await super._renderFrame(options)
     const copyLabel = game.i18n?.localize('SHEETS.CopyUuid') ?? ''
 

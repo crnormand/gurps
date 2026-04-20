@@ -3,6 +3,7 @@ import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
+import { isObject } from '@module/util/guards.js'
 import { AnyMutableObject, AnyObject, InexactPartial } from 'fvtt-types/utils'
 
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
@@ -36,6 +37,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
+  /* ---------------------------------------- */
+
   isOfType<SubType extends Item.SubType>(...types: SubType[]): this is Item.OfType<SubType>
   isOfType(...types: string[]): boolean {
     return types.includes(this.type as Item.SubType)
@@ -62,6 +65,21 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     }
 
     Object.defineProperty(this, 'pseudoCollections', { value: Object.seal(collections), writable: false })
+  }
+
+  /* ---------------------------------------- */
+
+  static override getDefaultArtwork(itemData?: foundry.documents.BaseItem.CreateData): Item.GetDefaultArtworkReturn {
+    const { type } = itemData as unknown as { type: ItemType } & AnyObject
+    const { img } = super.getDefaultArtwork(itemData)
+
+    const dataModel = CONFIG.Item.dataModels[type]
+
+    if (foundry.utils.isSubclass(dataModel, BaseItemModel)) {
+      return dataModel.getDefaultArtwork(itemData) as Item.GetDefaultArtworkReturn
+    }
+
+    return { img }
   }
 
   /* ---------------------------------------- */
@@ -290,6 +308,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
         ItemType.GcsEquipment,
         ItemType.GcsTraitModifier,
         ItemType.GcsEquipmentModifier,
+        ItemType.GcsNote,
       ]
 
       // Disable non-production Item types if developer mode is off.

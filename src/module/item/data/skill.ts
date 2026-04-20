@@ -36,6 +36,13 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
   /* ---------------------------------------- */
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static override getDefaultArtwork(itemData?: foundry.documents.BaseItem.CreateData): Item.GetDefaultArtworkReturn {
+    return { img: 'icons/svg/dice-target.svg' }
+  }
+
+  /* ---------------------------------------- */
+
   static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, `GURPS.item.${this.metadata.type}`]
 
   /* ---------------------------------------- */

@@ -25,6 +25,12 @@ class TypedPseudoDocument<
 
   /* ---------------------------------------- */
 
+  static override getDefaultArtwork(data: AnyObject): Record<string, string> {
+    return this.TYPES[data.type as keyof typeof this.TYPES]?.getDefaultArtwork(data) ?? super.getDefaultArtwork(data)
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * The type of this pseudo-document subclass.
    * @abstract

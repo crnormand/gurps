@@ -48,6 +48,12 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
+  static override getDefaultArtwork(_data: AnyObject): Record<string, string> {
+    return { img: 'icons/svg/acid.svg' }
+  }
+
+  /* ---------------------------------------- */
+
   static override cleanData(source?: AnyMutableObject, options?: fields.DataField.CleanOptions): AnyMutableObject {
     source = super.cleanData(source, options)
 

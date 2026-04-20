@@ -38,6 +38,12 @@ class SpellModel extends BaseItemModel<SpellSchema> {
       detailsPartial: ['item.partials.details-spell', 'item.partials.details-base'],
     })
   }
+  /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static override getDefaultArtwork(itemData?: foundry.documents.BaseItem.CreateData): Item.GetDefaultArtworkReturn {
+    return { img: 'icons/svg/daze.svg' }
+  }
 
   /* ---------------------------------------- */
 

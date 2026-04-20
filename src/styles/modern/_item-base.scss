@@ -3,17 +3,23 @@
 $ms-portrait-height: 92px;
 
 body {
+  .application.action-sheet,
   .application.modern-item-sheet {
     @include css-variables;
   }
 
+  &.theme-dark .application.action-sheet:not(.theme-light),
   &.theme-dark .application.modern-item-sheet:not(.theme-light),
+  .application.action-sheet.theme-dark,
   .application.modern-item-sheet.theme-dark {
     @include css-variables-dark;
   }
 
+  .application.action-sheet,
   .application.modern-item-sheet,
+  &.theme-dark .application.action-sheet:not(.theme-light),
   &.theme-dark .application.modern-item-sheet:not(.theme-light),
+  .application.action-sheet.theme-dark,
   .application.modern-item-sheet.theme-dark {
     &.ms-type-trait {
       --ms-accent: var(--ms-accent-trait);
@@ -30,9 +36,18 @@ body {
     &.ms-type-equipment {
       --ms-accent: var(--ms-accent-equipment);
     }
+
+    &.ms-type-melee-attack {
+      --ms-accent: var(--ms-accent-melee-attack);
+    }
+
+    &.ms-type-ranged-attack {
+      --ms-accent: var(--ms-accent-ranged-attack);
+    }
   }
 }
 
+.application.action-sheet,
 .application.modern-item-sheet {
   font-family: 'Roboto', sans-serif;
 

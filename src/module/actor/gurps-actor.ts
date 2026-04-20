@@ -15,7 +15,7 @@ import { ImportSettings } from '../importer/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { TokenActions } from '../token-actions.js'
 
-import { ActorMetadata } from './data/base.js'
+import { ActorMetadata, BaseActorModel } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import Maneuvers from './maneuver.js'
@@ -97,6 +97,21 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
 
     Object.defineProperty(this, 'pseudoCollections', { value: Object.seal(collections), writable: false })
+  }
+
+  /* ---------------------------------------- */
+
+  static override getDefaultArtwork(actorData?: foundry.documents.BaseActor.CreateData): Actor.GetDefaultArtworkReturn {
+    const { type } = actorData as unknown as { type: ActorType } & AnyObject
+    const { img, texture } = super.getDefaultArtwork(actorData)
+
+    const dataModel = CONFIG.Actor.dataModels[type]
+
+    if (foundry.utils.isSubclass(dataModel, BaseActorModel)) {
+      return dataModel.getDefaultArtwork(actorData)
+    }
+
+    return { img, texture }
   }
 
   /* ---------------------------------------- */
