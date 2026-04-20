@@ -1,11 +1,12 @@
 import { Application, DeepPartial, HandlebarsApplicationMixin, ItemSheet } from '@gurps-types/foundry/index.js'
-import { Action } from '@module/action/index.js'
+import { BaseDisplayAttack } from '@gurps-types/gurps/display-item.js'
 import { bindInlineEdit } from '@module/actor/sheets/modern/inline-edit-handler.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { syncLabelWidths } from '@module/util/dom.js'
 import { getGame } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 
+import { ConditionalModifier, ReactionModifier } from '../data/conditional-modifier.js'
 import { ItemType } from '../types.js'
 
 import { GurpsBaseItemSheet } from './base-item-sheet.js'
@@ -28,7 +29,9 @@ namespace GurpsItemModernSheet {
     >
     tab?: Application.Tab
     detailsPartial: string[]
-    actions: Action.Any[]
+    actions: BaseDisplayAttack[]
+    reactionModifiers: ReactionModifier[]
+    conditionalModifiers: ConditionalModifier[]
   }
 }
 
@@ -97,7 +100,9 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
       systemFields: this.item.system.schema.fields,
       systemSource: this.item.system._source,
       detailsPartial: this.item.system.metadata.detailsPartial,
-      actions: this.item.system.actions.contents,
+      actions: this.item.system.actions.contents.map(action => action.toDisplayItem()),
+      reactionModifiers: this.item.pseudoCollections.ReactionModifier.contents,
+      conditionalModifiers: this.item.pseudoCollections.ConditionalModifier.contents,
     }
   }
 

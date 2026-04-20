@@ -343,6 +343,8 @@ class PseudoDocument<
       id: this.id,
       uuid: this.uuid,
       documentName: this.documentName,
+      name: this.name,
+      img: this.img,
     }
   }
 

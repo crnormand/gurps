@@ -10,7 +10,7 @@
       </div>
       {{#each (flatlist system.reactions)}}
       <div class='ms-modifiers-row' data-key='system.reactions.{{@key}}'>
-        <span class='ms-col-type'><span class='ms-type-badge ms-type-reaction' title='{{localize "GURPS.reaction"}}'>R</span></span>
+        <span class='ms-col-type'><span class='ms-type-badge ms-type-reaction' title='{{localize "DOCUMENT.ReactionModifier"}}'>R</span></span>
         <span class='ms-col-situation'>{{{gurpslink this.situation}}}</span>
         <span class='ms-col-modifier'>{{>dice-button otf=(concat (displayNumber this.modifier) ' ' this.situation) level=this.modifier color=(modifierColor this.modifier)}}</span>
         {{>row-actions editAction="edit-reaction" deleteAction="delete-reaction" key=(concat "system.reactions." @key)}}
@@ -18,15 +18,15 @@
       {{/each}}
       {{#each (flatlist system.conditionalmods)}}
       <div class='ms-modifiers-row' data-key='system.conditionalmods.{{@key}}'>
-        <span class='ms-col-type'><span class='ms-type-badge ms-type-conditional' title='{{localize "GURPS.conditionalModifier"}}'>C</span></span>
+        <span class='ms-col-type'><span class='ms-type-badge ms-type-conditional' title='{{localize "DOCUMENT.ConditionalModifier"}}'>C</span></span>
         <span class='ms-col-situation'>{{{gurpslink this.situation}}}</span>
         <span class='ms-col-modifier'>{{>dice-button otf=(concat (displayNumber this.modifier) ' ' this.situation) level=this.modifier color=(modifierColor this.modifier)}}</span>
         {{>row-actions editAction="edit-conditional" deleteAction="delete-conditional" key=(concat "system.conditionalmods." @key)}}
       </div>
       {{/each}}
       <div class='ms-add-row'>
-        <span class='ms-add-btn' data-action='addReaction'><i class='fa-solid fa-plus'></i> {{localize 'GURPS.reaction'}}</span>
-        <span class='ms-add-btn' data-action='addConditional'><i class='fa-solid fa-plus'></i> {{localize 'GURPS.conditionalModifier'}}</span>
+        <span class='ms-add-btn' data-action='addReaction'><i class='fas fa-plus'></i> {{localize 'DOCUMENT.ReactionModifier'}}</span>
+        <span class='ms-add-btn' data-action='addConditional'><i class='fas fa-plus'></i> {{localize 'DOCUMENT.ConditionalModifier'}}</span>
       </div>
     </div>
   </div>

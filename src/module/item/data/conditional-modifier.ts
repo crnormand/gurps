@@ -30,6 +30,10 @@ class ConditionalModifier extends PseudoDocument<ConditionalModifier.Schema> {
 
   /* ---------------------------------------- */
 
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.conditionalModifier']
+
+  /* ---------------------------------------- */
+
   get item(): Item.Implementation {
     return this.parent.parent as Item.Implementation
   }
@@ -68,6 +72,10 @@ class ReactionModifier extends PseudoDocument<ConditionalModifier.Schema> {
       label: 'DOCUMENT.ReactionModifier',
     })
   }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.reactionModifier']
 
   /* ---------------------------------------- */
 

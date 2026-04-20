@@ -34,12 +34,18 @@ export const MoveModes = {
 }
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
-  declare pseudoCollections: Record<string, ModelCollection>
+  declare pseudoCollections: {
+    [K in keyof PseudoDocumentConfig.Embeds['Actor']]: ModelCollection<PseudoDocumentConfig.Embeds['Actor'][K]>
+  }
+
+  /* ---------------------------------------- */
 
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
     return this.system as Actor.SystemOfType<ActorType.Character>
   }
+
+  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
 
@@ -190,7 +196,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   ): ModelCollection<PseudoDocumentConfig.Embeds['Actor'][EmbeddedName]>
   override getEmbeddedCollection(embeddedName: string): unknown {
     return (
-      this.pseudoCollections[embeddedName] ?? super.getEmbeddedCollection(embeddedName as Actor.Embedded.CollectionName)
+      this.pseudoCollections[embeddedName as keyof PseudoDocumentConfig.Embeds['Actor']] ??
+      super.getEmbeddedCollection(embeddedName as Actor.Embedded.CollectionName)
     )
   }
 
