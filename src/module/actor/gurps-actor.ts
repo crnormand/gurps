@@ -163,11 +163,22 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor' | 'Item'>>(
+  override getEmbeddedDocument<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Actor']>(
     embeddedName: EmbeddedName,
     id: string,
     options?: Document.GetEmbeddedDocumentOptions
-  ): gurps.Pseudo.EmbeddedDocument<'Actor' | 'Item', EmbeddedName> {
+  ): PseudoDocumentConfig.Embeds['Actor'][EmbeddedName] | undefined
+  override getEmbeddedDocument<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Item']>(
+    embeddedName: EmbeddedName,
+    id: string,
+    options?: Document.GetEmbeddedDocumentOptions
+  ): PseudoDocumentConfig.Embeds['Item'][EmbeddedName] | undefined
+  override getEmbeddedDocument<EmbeddedName extends Actor.Embedded.CollectionName>(
+    embeddedName: EmbeddedName,
+    id: string,
+    options?: Document.GetEmbeddedDocumentOptions
+  ): Actor.Embedded.DocumentFor<EmbeddedName> | undefined
+  override getEmbeddedDocument(embeddedName: string, id: string, options?: Document.GetEmbeddedDocumentOptions): unknown {
     const { invalid = false, strict = true } = options ?? {}
 
     const metadata = (this.system?.constructor as any).metadata as ActorMetadata
@@ -178,7 +189,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       return this.getEmbeddedCollection(embeddedName as keyof PseudoDocumentConfig.Embeds['Actor']).get(id, {
         invalid,
         strict,
-      }) as any
+      })
     }
 
     const holderItem: Item.Implementation | null =
@@ -189,7 +200,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
       if (itemMetadata.embedded && embeddedName in itemMetadata.embedded) {
         const holderResult = holderItem.getEmbeddedDocument(
-          embeddedName as gurps.Pseudo.EmbeddedCollectionName<'Item'>,
+          embeddedName as keyof PseudoDocumentConfig.Embeds['Item'],
           id,
           { invalid, strict }
         )
@@ -198,7 +209,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       }
     }
 
-    return super.getEmbeddedDocument(embeddedName as Actor.Embedded.CollectionName, id, { invalid, strict }) as any
+    return super.getEmbeddedDocument(embeddedName as Actor.Embedded.CollectionName, id, { invalid, strict })
   }
 
   /* ---------------------------------------- */
