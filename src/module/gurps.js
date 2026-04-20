@@ -140,7 +140,6 @@ if (!globalThis.GURPS) {
   AddChatHooks()
   JQueryHelpers()
   MoustacheWax()
-  HandlebarsUtil.registerPartials()
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
@@ -2142,6 +2141,8 @@ if (!globalThis.GURPS) {
     console.log(GURPS.BANNER)
     console.log(`Initializing GURPS 4e Game Aid`)
     console.log(GURPS.LEGAL)
+
+    HandlebarsUtil.registerPartials()
 
     let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'
 

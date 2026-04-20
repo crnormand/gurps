@@ -15,7 +15,7 @@
 <section class='tab {{tab.cssClass}}' data-tab='actions' data-group='primary'>
   <fieldset>
     <legend>{{localize "GURPS.sheet.actions.title"}}</legend>
-    <button data-action="createEmbedded" data-document-name="Action" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.Action")}}</button>
+    <button type="button" data-action="createEmbedded" data-document-name="Action" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.Action")}}</button>
       <div class="ms-action-entries">
       {{#each actions}}
         {{> ".action-entry"}}
