@@ -12,7 +12,7 @@ const meleeDefaults = () => ({
   extraAttacks: 0,
   itemModifiers: '',
   mode: '',
-  modifierTags: '',
+  modifierTags: [],
   notes: '',
   st: '',
   reach: { closeCombat: false, min: 0, max: 0, changeRequiresReady: false },

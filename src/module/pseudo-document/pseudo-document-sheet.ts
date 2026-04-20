@@ -282,7 +282,7 @@ class PseudoDocumentSheet<
     }
 
     const defaultArtwork =
-      (this.pseudoDocument.constructor as typeof PseudoDocument).getDefaultArtwork?.(this.document._source) ?? {}
+      (this.pseudoDocument.constructor as typeof PseudoDocument).getDefaultArtwork?.(this.pseudoDocument._source) ?? {}
 
     const defaultImage = foundry.utils.getProperty(defaultArtwork, attr)
 

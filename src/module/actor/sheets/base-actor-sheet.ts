@@ -175,7 +175,7 @@ class GurpsBaseActorSheet<
 
     if (!blockImport || getUser().isTrusted) {
       controls.unshift({
-        icon: 'fas fa-file-import',
+        icon: 'fa-solid fa-file-import',
         label: 'Import',
         action: 'importActor',
       })

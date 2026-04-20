@@ -132,7 +132,7 @@ class SpellModel extends BaseItemModel<SpellSchema> {
       fullName,
       points: this.points,
       spellClass: this.class,
-      colleges: Array.from(this.college.map(college => college.trim())),
+      colleges: Array.from(this.college).map(college => college.trim()),
       castingCost: this.cost,
       maintenanceCost: this.maintain,
       duration: this.duration,

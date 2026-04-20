@@ -12,16 +12,15 @@ async function registerPartials(): Promise<void> {
     'templates/item/partials/details-trait.hbs',
   ]
 
-  templates.forEach(filename => {
-    // Name: 'templates/path/to/my/partial.hbs' -> 'path.to.my.partial'
-    const name = filename.replace('templates/', '').replace('.hbs', '').replace(/\//g, '.')
+  await Promise.all(
+    templates.map(async filename => {
+      // Name: 'templates/path/to/my/partial.hbs' -> 'path.to.my.partial'
+      const name = filename.replace('templates/', '').replace('.hbs', '').replace(/\//g, '.')
+      const content = await fetch(systemPath(filename)).then(file => file.text())
 
-    fetch(systemPath(filename))
-      .then(file => file.text())
-      .then(async content => {
-        Handlebars.registerPartial(name, content)
-      })
-  })
+      Handlebars.registerPartial(name, content)
+    })
+  )
 }
 
 export const HandlebarsUtil = {

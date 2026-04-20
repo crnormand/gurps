@@ -1316,7 +1316,7 @@
           "13": "13 (Resist Quite Often; non-standard)",
           "14": "14 (Resist Quite Often; non-standard)",
           "15": "15 (Resist Almost All The Time)",
-          "-1": "None required"
+          "none": "None required"
         },
         "FIELDS": {
           "cr": {

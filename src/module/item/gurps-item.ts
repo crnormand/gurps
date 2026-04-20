@@ -248,8 +248,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
               GURPS.CONFIG.PseudoDocument.SubTypes[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.SubTypes]
             )
 
-            if (!('type' in dataEntry) || !subTypes.includes(dataEntry.type as string))
-              return [await cls.createDialog(dataEntry, { parent: this, ...operation })]
+            if (!('type' in dataEntry) || !subTypes.includes(dataEntry.type as string)) {
+              const createdEntry = await cls.createDialog(dataEntry, { parent: this, ...operation })
+
+              return createdEntry ? [createdEntry] : []
+            }
           }
         }
       }
