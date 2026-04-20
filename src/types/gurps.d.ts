@@ -1,9 +1,10 @@
-import { ActionType, AnyAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { Action, ActionType, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
 import { EffectModifierControl } from '@module/actor/effect-modifier-control.js'
 import DamageChat from '@module/damage/damagechat.js'
+import { Length, Weight } from '@module/data/common/index.js'
 import { AttributeBonus } from '@module/features/attribute-bonus.js'
 import { ConditionalModifier } from '@module/features/conditional-modifier.js'
 import { ContainedWeightReduction } from '@module/features/contained-weight-reduction.js'
@@ -43,8 +44,8 @@ import {
   WeaponSwitch,
 } from '@module/features/weapon-bonus.js'
 import {
-  ReactionModifier,
   ConditionalModifier as ConditionalModifierDocument,
+  ReactionModifier,
 } from '@module/item/data/conditional-modifier.js'
 import { Feature } from '@module/item/legacy/itemv1-interface.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
@@ -61,9 +62,13 @@ import {
 } from '@module/prereqs/index.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
+import { contrastColor, toHexColor } from '@module/util/color-utils.js'
+import { getCssVariable } from '@module/util/get-css-value.js'
+import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
+import { Fatigue } from '@rules/injury/fatigue.js'
+import { HitPoints } from '@rules/injury/hit-points.js'
+import { SizeAndSpeedRangeTable } from '@rules/tables/size-speed-range-table.js'
 import { AnyObject } from 'fvtt-types/utils'
-
-import { HandlebarsApplicationMixin as _HandlebarsApplicationMixin } from './foundry/handlebars.js'
 
 export {}
 
@@ -245,7 +250,7 @@ declare global {
       }
 
       Item: {
-        Action: AnyAction
+        Action: Action.Any
         ReactionModifier: ReactionModifier
         ConditionalModifier: ConditionalModifierDocument
       }
@@ -317,7 +322,7 @@ declare global {
   /* ---------------------------------------- */
 
   /**
-   * GurpsUtils is a store of top-level utility functions and properties which are used throughout the codebase. It is
+   * GurpsLegacyGlobal is a store of top-level utility functions and properties which are used throughout the codebase. It is
    * accessible via the global GURPS object and serves as a central location for any helper functions or properties
    * which don't belong to a specific module or class.
    *
@@ -327,9 +332,7 @@ declare global {
    * TODO: Find a new home for some of these functions as the codebase is refactored and modularized, rather than having
    * them all in one interface which is not organized by module or functionality.
    */
-  interface GurpsUtils {
-    /* ---------------------------------------- */
-
+  interface GurpsLegacyGlobal {
     LastActor: Actor.Implementation | null
 
     /* ---------------------------------------- */
@@ -407,7 +410,11 @@ declare global {
       targets?: string[]
     ): Promise<any>
 
+    /* ---------------------------------------- */
+
     stopActions: boolean
+
+    /* ---------------------------------------- */
 
     ModifierBucket: {
       setTempRangeMod(mod: number): void
@@ -419,6 +426,8 @@ declare global {
       render(): Promise<void>
     }
 
+    /* ---------------------------------------- */
+
     DamageTables: {
       translate(damageType: string): string
       woundModifiers: Record<
@@ -428,21 +437,32 @@ declare global {
       damageTypeMap: Record<string, string>
     }
 
+    /* ---------------------------------------- */
+
     SSRT: {
       getModifier(yards: number): number
     }
+
+    /* ---------------------------------------- */
 
     rangeObject: {
       ranges: Array<{ modifier: number; max: number; penalty: number }>
     }
 
+    /* ---------------------------------------- */
+
     Maneuvers: {
       get(id: string): { icon?: string; label: string; move: string | null } | undefined
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
+
+    /* ---------------------------------------- */
+
     ApplyDamageDialog: new (actor: Actor.Implementation, damageData: DamageData[], options?: object) => Application
 
     DamageChat: typeof DamageChat
+
+    /* ---------------------------------------- */
 
     resolveDamageRoll: (
       event: Event,
@@ -453,8 +473,44 @@ declare global {
       isOtf?: boolean
     ) => Promise<void>
 
+    /* ---------------------------------------- */
+
     SJGProductMappings: Record<string, string>
 
     /* ---------------------------------------- */
+
+    Length: typeof Length
+
+    /* ---------------------------------------- */
+
+    Weight: typeof Weight
+
+    /* ---------------------------------------- */
+
+    HitPoints: typeof HitPoints
+
+    /* ---------------------------------------- */
+
+    Fatigue: typeof Fatigue
+
+    /* ---------------------------------------- */
+
+    ConditionalInjury: typeof ConditionalInjury
+
+    /* ---------------------------------------- */
+
+    SizeAndSpeedRangeTable: typeof SizeAndSpeedRangeTable
+
+    /* ---------------------------------------- */
+
+    getCssVariable: typeof getCssVariable
+
+    /* ---------------------------------------- */
+
+    contrastColor: typeof contrastColor
+
+    /* ---------------------------------------- */
+
+    toHexColor: typeof toHexColor
   }
 }

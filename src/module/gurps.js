@@ -13,6 +13,10 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
 import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
+import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
+import { Fatigue } from '@rules/injury/fatigue.js'
+import { HitPoints } from '@rules/injury/hit-points.js'
+import { SizeAndSpeedRangeTable } from '@rules/tables/size-speed-range-table.js'
 import { multiplyDice } from '@util/damage-utils.js'
 import { gurpslink } from '@util/gurpslink.js'
 import JQueryHelpers from '@util/jquery-helper.js'
@@ -53,7 +57,7 @@ import { Compendium } from './compendium/index.js'
 // @deprecated in favour of new conditional injury module.
 // import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
-import { Length } from './data/common/length.js'
+import { Length, Weight } from './data/common/index.js'
 import { Dev } from './dev/index.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
@@ -77,6 +81,8 @@ import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { UI } from './ui/index.js'
+import { contrastColor, toHexColor } from './util/color-utils.js'
+import { getCssVariable } from './util/get-css-value.js'
 
 export let GURPS = undefined
 
@@ -87,7 +93,6 @@ if (!globalThis.GURPS) {
   GURPS.DEBUG = true
   GURPS.stopActions = false
   GURPS.Migration = Migration
-  GURPS.Length = Length
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __
   / /_____|_____|_____|_____|_____|_____\\ \\
@@ -2141,6 +2146,16 @@ if (!globalThis.GURPS) {
     console.log(GURPS.BANNER)
     console.log(`Initializing GURPS 4e Game Aid`)
     console.log(GURPS.LEGAL)
+
+    GURPS.Length = Length
+    GURPS.Weight = Weight
+    GURPS.HitPoints = HitPoints
+    GURPS.Fatigue = Fatigue
+    GURPS.ConditionalInjury = ConditionalInjury
+    GURPS.SizeAndSpeedRangeTable = SizeAndSpeedRangeTable
+    GURPS.getCssVariable = getCssVariable
+    GURPS.contrastColor = contrastColor
+    GURPS.toHexColor = toHexColor
 
     HandlebarsUtil.registerPartials()
 

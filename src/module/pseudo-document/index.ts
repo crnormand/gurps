@@ -4,7 +4,7 @@ import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 import { PseudoDocument } from './pseudo-document.js'
 import { TypedPseudoDocument } from './typed-pseudo-document.js'
 
-interface ActorModule extends GurpsModule {
+interface PseudoModule extends GurpsModule {
   dataModels: {
     PseudoDocument: typeof PseudoDocument
     TypedPseudoDocument: typeof TypedPseudoDocument
@@ -20,7 +20,7 @@ function init() {
   Hooks.on('init', async () => {})
 }
 
-export const Pseudo: ActorModule = {
+export const Pseudo: PseudoModule = {
   init,
   dataModels: {
     PseudoDocument,

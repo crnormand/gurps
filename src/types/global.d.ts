@@ -3,15 +3,20 @@ import { Actor as ModuleActor } from '@module/actor/index.js'
 import { Canvas as ModuleCanvas } from '@module/canvas/index.js'
 import { Combat as ModuleCombat } from '@module/combat/index.js'
 import { CombatTracker as ModuleCombatTracker } from '@module/combat-tracker/index.js'
+import { Compendium as ModuleCompendium } from '@module/compendium/index.js'
 import { Damage as ModuleDamage } from '@module/damage/index.js'
 import { Dev as ModuleDev } from '@module/dev/index.js'
+import { Features as ModuleFeatures } from '@module/features/index.js'
 import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
 import { Migrator } from '@module/migration/migrator.js'
 import { Pdf as ModulePdf } from '@module/pdf/index.js'
+import { Prereqs as ModulePrereqs } from '@module/prereqs/index.js'
+import { Pseudo as ModulePseudo } from '@module/pseudo-document/index.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { ResourceTrackerModule as ModuleResourceTracker } from '@module/resource-tracker/index.js'
+import { Scripting as ModuleScripting } from '@module/scripting/index.js'
 import { Token as ModuleToken } from '@module/token/index.js'
 import { UI as ModuleUI } from '@module/ui/index.js'
 
@@ -20,7 +25,7 @@ export {}
 declare global {
   const _loc: (key: string) => string
 
-  interface GurpsGlobal extends GurpsUtils {
+  interface GurpsGlobal extends GurpsLegacyGlobal {
     SYSTEM_NAME: 'gurps'
 
     /* ---------------------------------------- */
@@ -31,12 +36,17 @@ declare global {
       Canvas: typeof ModuleCanvas
       Combat: typeof ModuleCombat
       CombatTracker: typeof ModuleCombatTracker
+      Compendium: typeof ModuleCompendium
       Damage: typeof ModuleDamage
       Dev: typeof ModuleDev
+      Features: typeof ModuleFeatures
       Importer: typeof ModuleImporter
       Item: typeof ModuleItem
       Pdf: typeof ModulePdf
+      Prereqs: typeof ModulePrereqs
+      Pseudo: typeof ModulePseudo
       ResourceTracker: typeof ModuleResourceTracker
+      Scripting: typeof ModuleScripting
       Token: typeof ModuleToken
       UI: typeof ModuleUI
     }
