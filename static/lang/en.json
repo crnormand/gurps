@@ -688,7 +688,18 @@
         "TotalDestruction": "Total Destruction"
       }
     },
-    "conditionalModifier": "Conditional Modifier",
+    "conditionalModifier": {
+      "FIELDS": {
+        "modifier": { "label": "Modifier" },
+        "situation": { "label": "Situation" }
+      }
+    },
+    "reactionModifier": {
+      "FIELDS": {
+        "modifier": { "label": "Modifier" },
+        "situation": { "label": "Situation" }
+      }
+    },
     "conditionalMods": "Conditional Modifiers",
     "conditions": "Status",
     "conditionsCombatMove": "Combat Move",
@@ -2040,6 +2051,12 @@
     "sheet": {
       "actions": {
         "title": "Actions"
+      },
+      "conditionalModifiers": {
+        "title": "Conditional Modifiers"
+      },
+      "reactionModifiers": {
+        "title": "Reaction Modifiers"
       },
       "details": {
         "base": "General Details",

@@ -18,7 +18,9 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
   implements IContainable<GurpsItemV2>
 {
-  declare pseudoCollections: Record<string, ModelCollection>
+  declare pseudoCollections: {
+    [K in keyof PseudoDocumentConfig.Embeds['Item']]: ModelCollection<PseudoDocumentConfig.Embeds['Item'][K]>
+  }
 
   /* ---------------------------------------- */
 
@@ -190,7 +192,8 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   ): ModelCollection<PseudoDocumentConfig.Embeds['Item'][EmbeddedName]>
   override getEmbeddedCollection(embeddedName: string): unknown {
     return (
-      this.pseudoCollections[embeddedName] ?? super.getEmbeddedCollection(embeddedName as Item.Embedded.CollectionName)
+      this.pseudoCollections[embeddedName as keyof PseudoDocumentConfig.Embeds['Item']] ??
+      super.getEmbeddedCollection(embeddedName as Item.Embedded.CollectionName)
     )
   }
 

@@ -144,6 +144,10 @@ interface BaseDisplayPseudoDocument {
   uuid: string
   /** The document class of this pseudo-document */
   documentName: string
+  /** The name of this pseudo-document */
+  name: string
+  /** The image source path of this pseudo-document, if any */
+  img: string | null
   /** The type (if any) of this pseudo-document */
   type?: string
 }
@@ -153,8 +157,6 @@ interface BaseDisplayPseudoDocument {
 interface BaseDisplayAttack extends BaseDisplayPseudoDocument {
   /** The ID of this action's parent */
   parentId: string
-  /** The simple name of this attack, without level or any other modifiers which may change the name */
-  name: string
   /** The name of this attack, with any modifiers which may change the name */
   fullName: string
   /** The plaintext notes for this item, without any markup */

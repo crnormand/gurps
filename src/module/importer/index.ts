@@ -1,4 +1,5 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
+import { ActorType } from '@module/actor/types.js'
 
 import { CharacterModel } from '../actor/data/character.js'
 
@@ -27,7 +28,7 @@ function init() {
   console.log('GURPS | Initializing GURPS Importer module.')
 
   Hooks.on('init', () => {
-    CONFIG.Actor.dataModels.characterV2 = CharacterModel
+    CONFIG.Actor.dataModels[ActorType.Character] = CharacterModel
 
     initializeGameSettings()
   })

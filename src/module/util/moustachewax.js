@@ -624,7 +624,7 @@ export default function () {
 
     if (!isNaN(number)) {
       if (number === 0) return showPlus ? '+0' : '0'
-      if (number < 0) return text.toString().replace(hyphen, '&minus;')
+      if (number < 0) return new Handlebars.SafeString(text.toString().replace(hyphen, '&minus;'))
       if (showPlus && text.toString()[0] !== '+') return `+${text}`
 
       return text.toString()

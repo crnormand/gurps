@@ -183,6 +183,12 @@ body {
       max-width: 246px;
       border-bottom: none;
       cursor: pointer;
+      min-height: var(--ms-font-title);
+      min-width: 50px;
+
+      &.placeholder {
+        color: var(--ms-text-dim);
+      }
 
       &:hover {
         color: var(--ms-accent);

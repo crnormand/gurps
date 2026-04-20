@@ -1,3 +1,45 @@
+{{#*inline ".modifier-entry"}}
+<div class="ms-modifier-entry" data-uuid="{{uuid}}">
+  <div class="ms-modifier-mod">{{formInput
+    schema.fields.modifier
+    value=_source.modifier
+    name=(concat fieldPath "." _id "." schema.fields.modifier.fieldPath)
+    placeholder=schema.fields.modifier.label
+    }}</div>
+  <div class="ms-modifier-situation">{{formInput
+    schema.fields.situation
+    value=_source.situation
+    name=(concat fieldPath "." _id "." schema.fields.situation.fieldPath)
+    placeholder=schema.fields.situation.label
+    }}</div>
+  <span class='ms-row-actions'>
+    <i class='fas fa-trash ms-action-btn' data-action='deleteEmbedded'></i>
+  </span>
+</div>
+{{/inline}}
+
 <section class='tab {{tab.cssClass}}' data-tab='modifiers' data-group='primary'>
-  Modifiers
+  <fieldset>
+    <legend>{{localize "GURPS.sheet.reactionModifiers.title"}}</legend>
+    <button data-action="createEmbedded" data-document-name="ReactionModifier" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.ReactionModifier")}}</button>
+      <div class="ms-modifier-entries">
+      {{#each reactionModifiers}}
+        {{> ".modifier-entry"}}
+      {{else}}
+        <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+      {{/each}}
+      </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>{{localize "GURPS.sheet.conditionalModifiers.title"}}</legend>
+    <button data-action="createEmbedded" data-document-name="ConditionalModifier" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.ConditionalModifier")}}</button>
+      <div class="ms-modifier-entries">
+      {{#each conditionalModifiers}}
+        {{> ".modifier-entry"}}
+      {{else}}
+        <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+      {{/each}}
+      </div>
+  </fieldset>
 </section>
