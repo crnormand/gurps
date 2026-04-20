@@ -321,9 +321,19 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
   // NOTE: If the component is not present, the item has alrady been migrated
   if (!oldData.fea) return oldData as unknown as NewDataWrapper<ItemType.Trait>
 
+  let notes = oldData.fea.notes
+  const cr = oldData.fea.cr
+
+  if (cr !== null) {
+    const crText = '[' + game.i18n?.localize('GURPS.CR' + cr.toString()) + ': ' + oldData.fea.name + ']'
+
+    notes = notes.replace(crText, '').trim() // Remove the CR note from the old notes
+  }
+
   const newData: NewDataWrapper<ItemType.Trait> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.fea,
+    notes,
     isContainer: Boolean(oldData.fea.contains && Object.keys(oldData.fea.contains).length > 0),
     importid: oldData.fea.uuid || '',
   }
