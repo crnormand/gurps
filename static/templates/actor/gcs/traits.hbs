@@ -25,6 +25,9 @@
         {{/if}}
       </div>
       <div class="gcs-item-notes-container indent{{indent}}">
+        {{#if otf.cr}}
+          {{gurpslink otf.cr}}
+        {{/if}}
         {{#if (and hasNotes notesOpen)}}
         <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
         {{/if}}
