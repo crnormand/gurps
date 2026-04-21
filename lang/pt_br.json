@@ -771,6 +771,15 @@
     "meleeAttack": "Ataque Corpo a Corpo",
     "meleeWeapons": "Armas de Combate Corpo a Corpo",
     "meters": " metros",
+    "migration": {
+      "0-18-16": {
+        "cancel": "Cancelar Atualização",
+        "cancellationMessage": "Atualização cancelada. Por favor, aguarde a versão estável do GURPS 0.18.16 antes de atualizar se você não estiver interessado em testar.",
+        "proceed": "Continuar com a Atualização",
+        "title": "Aviso Foundry v14 e GURPS 0.18.16-beta",
+        "warning": "GURPS 0.18.16-beta ainda está sendo testado com Foundry V14. Se você não estiver interessado em testar, por favor, aguarde a versão estável antes de atualizar e clique em 'Cancelar' abaixo."
+      }
+    },
     "minDamageRule": "Dano mín.:",
     "minimum": "Mínimo",
     "minimumDamageRule": "* — Regra de dano mínimo aplicada.",

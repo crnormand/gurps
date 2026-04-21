@@ -771,6 +771,15 @@
     "meleeAttack": "Attaque de Mêlée",
     "meleeWeapons": "Armes de Mêlée",
     "meters": " mètres",
+    "migration": {
+      "0-18-16": {
+        "cancel": "Annuler",
+        "cancellationMessage": "Mise à jour annulée. Veuillez attendre la version stable de GURPS 0.18.16 avant de mettre à jour si vous n'êtes pas intéressé par les tests.",
+        "proceed": "Continuer avec la mise à jour",
+        "title": "Avertissement Foundry v14 et GURPS 0.18.16-beta",
+        "warning": "GURPS 0.18.16-beta est encore en cours de test avec Foundry V14. Si vous n'êtes pas intéressé par les tests, veuillez attendre la version stable avant de mettre à jour et cliquez sur 'Annuler' ci-dessous."
+      }
+    },
     "minDamageRule": "Dégâts min.:",
     "minimum": "Minimum",
     "minimumDamageRule": "* — Règle de dégâts minimums appliquée.",
@@ -791,7 +800,7 @@
     "modifierAfflictionNausea": "-2 à tous les attributs (Nauséeux)",
     "modifierAfflictionNauseaDef": "-1 à toutes les défenses actives (Nauséeux)",
     "modifierAfflictionRetch": "-5 aux jets de QI/DX/Per (Haut-le-coeur)",
-    "modifierAfflictionSevere": "-4 aux jets de QI/DX/PC (Severe Pain)",
+    "modifierAfflictionSevere": "-4 aux jets de QI/DX/PC (Douleur sévère)",
     "modifierAfflictionSevereHPT": "-2 aux jets de QI/DX/PC (Douleur sévère a/PVT)",
     "modifierAfflictionTerrible": "-6 aux jets de QI/DX/PC (Douleur Terrible)",
     "modifierAfflictionTerribleHPT": "-3 aux jets de QI/DX/PC (Douleur Terrible a/PVT)",

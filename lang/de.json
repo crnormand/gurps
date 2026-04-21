@@ -771,6 +771,15 @@
     "meleeAttack": "Nahkampf Angriff",
     "meleeWeapons": "Nahkampfwaffe",
     "meters": " Meter",
+    "migration": {
+      "0-18-16": {
+        "cancel": "Abbrechen",
+        "cancellationMessage": "Update abgebrochen. Bitte warten Sie auf die stabile Version von GURPS 0.18.16, bevor Sie aktualisieren, wenn Sie nicht am Testen interessiert sind.",
+        "proceed": "Mit dem Update fortfahren",
+        "title": "Foundry v14 und GURPS 0.18.16-beta Warnung",
+        "warning": "GURPS 0.18.16-beta wird noch mit Foundry V14 getestet. Wenn Sie nicht am Testen interessiert sind, warten Sie bitte auf die stabile Version, bevor Sie aktualisieren, und klicken Sie unten auf 'Abbrechen'."
+      }
+    },
     "minDamageRule": "Min. Schaden:",
     "minimum": "Minimum",
     "minimumDamageRule": "* — Minimum damage Regel angewandt.",
