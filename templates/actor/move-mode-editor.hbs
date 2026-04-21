@@ -4,7 +4,7 @@
     <div class='label'>{{localize 'GURPS.basic'}}</div>
     <div class='label'>{{localize 'GURPS.enhanced'}}</div>
     <div class='label'>{{localize 'GURPS.default'}}</div>
-    <a id='template-add' class='move-mode-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
+    <a id='template-add' class='move-mode-control button icon' data-action='create'><i class='fa-solid fa-plus'></i></a>
 
     {{#each modes}}
       <div style='display: flex; flex-flow: column nowrap'>
@@ -28,7 +28,7 @@
       {{#unless default}}
         <a class='move-mode-control' data-action='delete' data-key='{{@key}}' title='{{localize "GURPS.delete"}}'
           style='padding: 6px 20px 0 10px;' {{disabled default}}>
-          <i class='fas fa-trash'></i>
+          <i class='fa-solid fa-trash'></i>
         </a>
       {{else}}
         <div></div>

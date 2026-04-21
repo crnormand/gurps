@@ -5,7 +5,7 @@
         <span class='first-cap'>{{localize 'GURPS.equipment'}}</span></div>
     {{/if}}
     {{#if (eq itemType 'feature')}}
-      <div><i class='fas fa-theater-masks itemdraggable'></i>
+      <div><i class='fa-solid fa-theater-masks itemdraggable'></i>
         <span class='first-cap'>{{localize 'GURPS.advDisadvPerkQuirks'}}</span>
       </div>
 
@@ -77,10 +77,10 @@
     <h2>{{localize 'GURPS.itemFeatures'}}</h2>
     <div class='flexcol'>
       <nav class='gurps-sheet-tabs tabs gurps-tabs' data-group='sections'>
-        <a class='item' data-tab='melee-tab'><i class='fas fa-fist-raised'></i>&nbsp;{{localize 'GURPS.melee'}}&nbsp;<span
+        <a class='item' data-tab='melee-tab'><i class='fa-solid fa-hand-fist'></i>&nbsp;{{localize 'GURPS.melee'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.melee)}}({{length system.melee}}){{/if}}</span></a>
-        <a class='item' data-tab='range-tab'><i class='fas fa-fighter-jet'></i>&nbsp;{{localize 'GURPS.ranged'}}&nbsp;<span
+        <a class='item' data-tab='range-tab'><i class='fa-solid fa-fighter-jet'></i>&nbsp;{{localize 'GURPS.ranged'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.ranged)}}({{length system.ranged}}){{/if}}</span></a>
         <a class='item' data-tab='spell-tab'><i class='fa-solid fa-wand-magic-sparkles'></i>&nbsp;{{localize
@@ -88,7 +88,7 @@
           }}&nbsp;<span style='font-size: 80%'>{{#if (length system.spells)}}({{length
                 system.spells
               }}){{/if}}</span></a>
-        <a class='item' data-tab='ads-tab'><i class='fas fa-theater-masks'></i>&nbsp;{{localize
+        <a class='item' data-tab='ads-tab'><i class='fa-solid fa-theater-masks'></i>&nbsp;{{localize
             'GURPS.advantages'
           }}&nbsp;<span style='font-size: 80%'>{{#if (length system.ads)}}({{length system.ads}}){{/if}}</span></a>
         <a class='item' data-tab='skill-tab'><i class='fa-solid fa-person-swimming'></i>&nbsp;{{localize
@@ -96,10 +96,10 @@
           }}&nbsp;<span style='font-size: 80%'>{{#if (length system.skills)}}({{length
                 system.skills
               }}){{/if}}</span></a>
-        <a class='item' data-tab='bonus-tab'><i class='fas fa-plus-minus'></i>&nbsp;{{localize 'GURPS.bonuses'}}&nbsp;<span
+        <a class='item' data-tab='bonus-tab'><i class='fa-solid fa-plus-minus'></i>&nbsp;{{localize 'GURPS.bonuses'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.bonuses)}}(&checkmark;){{/if}}</span></a>
-        <a class='item' data-tab='effect-tab'><i class='fas fa-dice'></i>&nbsp;{{localize 'GURPS.modifiers'}}&nbsp;<span
+        <a class='item' data-tab='effect-tab'><i class='fa-solid fa-dice'></i>&nbsp;{{localize 'GURPS.modifiers'}}&nbsp;<span
             style='font-size: 80%'
           >{{#if (length system.itemModifiers)}}(&checkmark;){{/if}}</span></a>
       </nav>
@@ -113,7 +113,7 @@
               <h4 class='with-button'>
                 {{localize 'GURPS.meleeAttack'}}
                 {{#if mode}}({{mode}}){{/if}}<span class='delete button' data-path='system.melee' name='{{key}}'><i
-                    class='fas fa-trash'
+                    class='fa-solid fa-trash'
                   ></i></span>
               </h4>
 
@@ -158,7 +158,7 @@
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-melee'><i class='fas fa-check'></i> {{localize 'GURPS.addMeleeAttack'}}</button>
+            <button id='add-melee'><i class='fa-solid fa-check'></i> {{localize 'GURPS.addMeleeAttack'}}</button>
           </div>
         </div>
 
@@ -169,7 +169,7 @@
               <h4 class='with-button'>
                 {{localize 'GURPS.rangedAttack'}}
                 {{#if mode}}({{mode}}){{/if}}<span class='delete button' data-path='system.ranged' name='{{key}}'><i
-                    class='fas fa-trash'
+                    class='fa-solid fa-trash'
                   ></i></span>
               </h4>
 
@@ -237,7 +237,7 @@
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-ranged'><i class='fas fa-check'></i> {{localize 'GURPS.addRangedAttack'}}</button>
+            <button id='add-ranged'><i class='fa-solid fa-check'></i> {{localize 'GURPS.addRangedAttack'}}</button>
           </div>
         </div>
 
@@ -268,7 +268,7 @@
               <h4 class='with-button'>
                 {{localize 'GURPS.spell'}}
                 {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='system.spells' name='{{key}}'><i
-                    class='fas fa-trash'
+                    class='fa-solid fa-trash'
                   ></i></span>
               </h4>
 
@@ -343,7 +343,7 @@
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-spell'><i class='fas fa-check'></i> {{localize 'GURPS.addSpell'}}</button>
+            <button id='add-spell'><i class='fa-solid fa-check'></i> {{localize 'GURPS.addSpell'}}</button>
           </div>
         </div>
 
@@ -354,7 +354,7 @@
               <h4 class='with-button'>
                 {{localize 'GURPS.skill'}}
                 {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='system.skills' name='{{key}}'><i
-                    class='fas fa-trash'
+                    class='fa-solid fa-trash'
                   ></i></span>
               </h4>
 
@@ -399,7 +399,7 @@
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-skill'><i class='fas fa-check'></i> {{localize 'GURPS.addSkill'}}</button>
+            <button id='add-skill'><i class='fa-solid fa-check'></i> {{localize 'GURPS.addSkill'}}</button>
           </div>
         </div>
 
@@ -410,7 +410,7 @@
               <h4 class='with-button'>
                 {{localize 'GURPS.advantage'}}
                 {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='system.ads' name='{{key}}'><i
-                    class='fas fa-trash'
+                    class='fa-solid fa-trash'
                   ></i></span>
               </h4>
 
@@ -435,7 +435,7 @@
             <div class='vertical-gap'></div>
           {{/each}}
           <div class='button-bar'>
-            <button id='add-ads'><i class='fas fa-check'></i> {{localize 'GURPS.addAdvantage'}}</button>
+            <button id='add-ads'><i class='fa-solid fa-check'></i> {{localize 'GURPS.addAdvantage'}}</button>
           </div>
         </div>
       </section>

@@ -1,6 +1,6 @@
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import { GurpsActor } from '../actor.js'
-import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.ts'
+import { confirmAndDelete, openItemSheetIfFoundryItem } from './crud-handler.js'
 
 export function bindEquipmentCrudActions(html: JQuery, actor: GurpsActor, sheet: GurpsActorSheetEditMethods): void {
   const entityType = 'equipment'

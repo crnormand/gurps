@@ -1,13 +1,13 @@
 import { GurpsActorSheet } from '../actor-sheet.js'
 import * as Settings from '../../../lib/miscellaneous-settings.js'
 import EffectPicker from '../effect-picker.js'
-import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.ts'
-import { bindCrudActions, bindModifierCrudActions } from './crud-handler.ts'
-import { entityConfigurations, modifierConfigurations } from './entity-config.ts'
-import { bindDropdownToggle } from './dropdown-handler.ts'
-import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.ts'
-import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.ts'
-import { isPostureOrManeuver } from './utils/effect.ts'
+import { bindAllInlineEdits, bindAttributeEdit, bindSecondaryStatsEdit, bindPointsEdit } from './inline-edit-handler.js'
+import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
+import { entityConfigurations, modifierConfigurations } from './entity-config.js'
+import { bindDropdownToggle } from './dropdown-handler.js'
+import { bindEquipmentCrudActions, bindNoteCrudActions, bindTrackerActions } from './dialog-crud-handler.js'
+import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
+import { isPostureOrManeuver } from './utils/effect.js'
 import MoveModeEditor from '../move-mode-editor.js'
 
 export function countItems(record: Record<string, EntityComponentBase> | undefined): number {
@@ -74,7 +74,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
       {
         label: 'Import',
         class: 'import',
-        icon: 'fas fa-file-import',
+        icon: 'fa-solid fa-file-import',
         onclick: async (event: Event) => this._onFileImport(event),
       },
     ]
@@ -140,7 +140,7 @@ export class GurpsActorModernSheet extends GurpsActorSheet {
           {
             action: 'save',
             label: 'Save',
-            icon: 'fas fa-save',
+            icon: 'fa-solid fa-floppy-disk',
             callback: (_event: Event, button: HTMLButtonElement) => {
               const form = button.form as HTMLFormElement
               const input = form.elements.namedItem('i') as HTMLTextAreaElement

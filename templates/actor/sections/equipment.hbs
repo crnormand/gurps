@@ -17,21 +17,21 @@
           (${{toLocaleString eqtsummary.othercost}})
         {{/if}}
       </span>
-      <i class='fas fa-caret-square-down'></i>
+      <i class='fa-solid fa-square-caret-down'></i>
     </div>
   </div>
 
   <div class='uses header'>{{localize 'GURPS.equipmentUses'}}</div>
   <div class='cost header'>$</div>
-  <div class='weight header'><i class='fas fa-weight-hanging'></i></div>
+  <div class='weight header'><i class='fa-solid fa-weight-hanging'></i></div>
   <div class='sum_cost header'>&sum; $</div>
-  <div class='sum_weight header'><span>&sum; <i class='fas fa-weight-hanging'></i></span></div>
+  <div class='sum_weight header'><span>&sum; <i class='fa-solid fa-weight-hanging'></i></span></div>
   <div class='ref header'>{{localize 'GURPS.pdfRef'}}</div>
 
   {{#each (flatlist (lookup system.equipment container))}}
     {{#if ../isEditing}}
       <div class='itemmenu equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
-        <i class='fas fa-caret-square-down'></i>
+        <i class='fa-solid fa-square-caret-down'></i>
       </div>
       <div class='equipped changeequip' data-key='system.equipment.{{../container}}.{{@key}}'>
         {{#if (eq container 'carried')}}
@@ -113,9 +113,9 @@
         <div class='equipped changeequip flex-center' data-key='system.equipment.{{../container}}.{{@key}}'>
           {{#if (eq ../container 'carried')}}
             {{#if this.equipped}}
-              <i class='fas fa-check-circle'></i>
+              <i class='fa-solid fa-circle-check'></i>
             {{else}}
-              <i class='far fa-circle gga-inactive'></i>
+              <i class='fa-regular fa-circle gga-inactive'></i>
             {{/if}}
           {{/if}}
         </div>
@@ -130,8 +130,8 @@
           <div class='desc indent{{indent}} dblclkedit'>
             <div class='gga-desc-text'>
               <div>
-                {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-                {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                {{#if hasContains}}<i class='fa-solid fa-caret-down expandcollapseicon'></i>{{/if}}
+                {{#if hasCollapsed}}<i class='fa-solid fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
               {{#if (showItemImage this)}}<div class='gga-thumb-top'><img
                     class='gga-item-image-thumb traits'
@@ -150,22 +150,22 @@
                   </div>
                   <div class="actor-sheet-icons">
                     {{#if (isFoundryGlobalItem this)}}
-                      <i class='fas fa-book tooltip gga-global-item'>
+                      <i class='fa-solid fa-book tooltip gga-global-item'>
                         <span class='tooltiptext'>{{{globalItemTooltip this}}}</span>
                       </i>
                     {{/if}}
                     {{#if (isUserCreated this)}}
-                      <i class='fas fa-bookmark tooltip gga-usercreated'>
+                      <i class='fa-solid fa-bookmark tooltip gga-usercreated'>
                         <span class='tooltiptext'>{{localize 'GURPS.equipmentUserCreated'}}</span>
                       </i>
                     {{/if}}
                     {{#if (isFoundryItem this)}}
-                      <i class='fas fa-star tooltip gga-item'>
+                      <i class='fa-solid fa-star tooltip gga-item'>
                         <span class='tooltiptext'>{{localize 'GURPS.equipmentFoundryItem'}}</span>
                       </i>
                     {{/if}}
                     {{#if (ignoreImportQty this)}}
-                      <i class='fas fa-hashtag tooltip gga-ignoreimport'>
+                      <i class='fa-solid fa-hashtag tooltip gga-ignoreimport'>
                         <span class='tooltiptext'>{{localize 'GURPS.equipmentIgnoreQtyImport'}} </span>
                       </i>
                     {{/if}}

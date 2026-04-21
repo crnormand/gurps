@@ -2,7 +2,7 @@
 
     <div class="col left">
         <div class="attribute elevation" data-tooltip="HUD.Elevation">
-            <i class="fas fa-angle-up"></i>
+            <i class="fa-solid fa-angle-up"></i>
             <input type="text" name="elevation" value="{{elevation}}" {{disabled (or locked (and isGamePaused (not isGM)))}}>
         </div>
 
@@ -16,7 +16,7 @@
 
         {{#if canConfigure}}
         <div class="control-icon" data-action="config" data-tooltip="HUD.OpenConfig">
-            <i class="fas fa-cog"></i>
+            <i class="fa-solid fa-gear"></i>
         </div>
         {{/if}}
     </div>
@@ -53,7 +53,7 @@
         </div>
 
         <div class="control-icon {{targetClass}}" data-action="target" data-tooltip="HUD.ToggleTargetState">
-            <i class="fas fa-bullseye"></i>
+            <i class="fa-solid fa-bullseye"></i>
         </div>
 
         {{#if canToggleCombat}}

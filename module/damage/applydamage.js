@@ -544,8 +544,8 @@ export default class ApplyDamageDialog extends Application {
     const effect = button.data('effect')
     const token = canvas.tokens.get(tokenId)
     const actions = await TokenActions.fromToken(token)
-    const buttonAddClass = `fa-plus-circle`
-    const buttonAddedClass = `fa-check-circle`
+    const buttonAddClass = `fa-circle-plus`
+    const buttonAddedClass = `fa-circle-check`
 
     const toggleEffect = async (effect, span, starts = '', label = '') => {
       // Check if effect already exists in Token
@@ -711,7 +711,8 @@ export default class ApplyDamageDialog extends Application {
     let msgData = {
       content: message,
       author: game.user.id,
-      type: CONST.CHAT_MESSAGE_STYLES.OOC,
+      style: CONST.CHAT_MESSAGE_STYLES.OOC,
+      type: 'base',
     }
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_WHISPER_STATUS_EFFECTS)) {
       let users = this.actor.getOwners()
@@ -795,7 +796,8 @@ export default class ApplyDamageDialog extends Application {
         user: game.user.id,
         speaker: speaker,
         content: html,
-        type: CONST.CHAT_MESSAGE_STYLES.OTHER,
+        style: CONST.CHAT_MESSAGE_STYLES.OTHER,
+        type: 'base',
       }
 
       if (!publicly) {

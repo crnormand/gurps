@@ -57,6 +57,18 @@ export class TokenActions {
     return await tokenActions.init()
   }
 
+  static async fromActor(actor) {
+    let token = actor.token?.object
+
+    if (!token) {
+      const tokenDocument = await actor.getTokenDocument()
+      token = tokenDocument.object
+    }
+
+    const tokenActions = new TokenActions(token)
+    return await tokenActions.init()
+  }
+
   _getNewLastManeuvers() {
     return {
       maneuver: 'do_nothing',

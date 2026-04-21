@@ -41,7 +41,7 @@
             },
             {
               "value": "currentmove",
-              "icon": "fa-running",
+              "icon": "fa-person-running",
               "isFunction": false,
               "expression": false,
               "isNumber": false,
@@ -78,7 +78,7 @@
             },
             {
               "value": "currentmove",
-              "icon": "fa-running",
+              "icon": "fa-person-running",
               "isFunction": false,
               "expression": false,
               "isNumber": false,
@@ -115,7 +115,7 @@
             },
             {
               "value": "currentmove",
-              "icon": "fa-running",
+              "icon": "fa-person-running",
               "isFunction": false,
               "expression": false,
               "isNumber": false,
@@ -167,7 +167,7 @@
             },
             {
               "value": "currentmove",
-              "icon": "fa-running",
+              "icon": "fa-person-running",
               "isFunction": false,
               "expression": false,
               "isNumber": false,
@@ -204,7 +204,7 @@
             },
             {
               "value": "currentmove",
-              "icon": "fa-running",
+              "icon": "fa-person-running",
               "isFunction": false,
               "expression": false,
               "isNumber": false,
@@ -241,7 +241,7 @@
             },
             {
               "value": "currentmove",
-              "icon": "fa-running",
+              "icon": "fa-person-running",
               "isFunction": false,
               "expression": false,
               "isNumber": false,
@@ -326,7 +326,7 @@
             },
             {
               "value": "currentmove",
-              "icon": "fa-running",
+              "icon": "fa-person-running",
               "isFunction": false,
               "expression": false,
               "isNumber": false,
@@ -416,7 +416,7 @@
             },
             {
               "value": "currentmove",
-              "icon": "fa-running",
+              "icon": "fa-person-running",
               "isFunction": false,
               "expression": false,
               "isNumber": false,

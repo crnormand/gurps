@@ -1,4 +1,5 @@
 import { DragDropType } from '../drag-drop-types.js'
+import { commitUpdate, deleteKey, replaceValue } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -597,7 +598,7 @@ export class GurpsActorSheet extends ActorSheet {
     let notesMenuItems = [
       {
         name: 'Edit',
-        icon: "<i class='fas fa-edit'></i>",
+        icon: "<i class='fa-solid fa-pen-to-square'></i>",
         callback: e => {
           let path = e[0].dataset.key
           let o = foundry.utils.duplicate(GURPS.decode(this.actor, path))
@@ -606,7 +607,7 @@ export class GurpsActorSheet extends ActorSheet {
       },
       {
         name: 'Delete',
-        icon: "<i class='fas fa-trash'></i>",
+        icon: "<i class='fa-solid fa-trash'></i>",
         callback: async event => {
           const key = event[0].dataset.key
           await this.actor.deleteEntry(key)
@@ -651,7 +652,7 @@ export class GurpsActorSheet extends ActorSheet {
         buttons: [
           {
             label: 'Save',
-            icon: 'fas fa-save',
+            icon: 'fa-solid fa-floppy-disk',
             callback: (event, button, dialog) => {
               let value = button.form.elements.i.value
               actor.internalUpdate({ 'system.additionalresources.qnotes': value.replace(/\n/g, '<br>') })
@@ -701,7 +702,7 @@ export class GurpsActorSheet extends ActorSheet {
         [
           {
             name: game.i18n.localize('GURPS.addTracker'),
-            icon: '<i class="fas fa-plus"></i>',
+            icon: '<i class="fa-solid fa-plus"></i>',
             callback: e => {
               this._addTracker().then()
             },
@@ -716,7 +717,7 @@ export class GurpsActorSheet extends ActorSheet {
     let opts = [
       this._createMenu(
         game.i18n.localize('GURPS.delete'),
-        '<i class="fas fa-trash"></i>',
+        '<i class="fa-solid fa-trash"></i>',
         this._deleteItem.bind(this),
         this._isRemovable.bind(this)
       ),
@@ -730,32 +731,40 @@ export class GurpsActorSheet extends ActorSheet {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
     let opts = [
-      this._createMenu(game.i18n.localize('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
+      this._createMenu(
+        game.i18n.localize('GURPS.edit'),
+        '<i class="fa-solid fa-pen-to-square"></i>',
+        this._editEquipment.bind(this)
+      ),
       this._createMenu(
         game.i18n.localize('GURPS.sortContentsAscending'),
-        '<i class="fas fa-sort-amount-down-alt"></i>',
+        '<i class="fa-solid fa-arrow-up-short-wide"></i>',
         this._sortContentAscending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
       this._createMenu(
         game.i18n.localize('GURPS.sortContentsDescending'),
-        '<i class="fas fa-sort-amount-down"></i>',
+        '<i class="fa-solid fa-arrow-down-short-wide"></i>',
         this._sortContentDescending.bind(this),
         this._isSortable.bind(this, includeCollapsed)
       ),
-      this._createMenu(game.i18n.localize('GURPS.delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
+      this._createMenu(
+        game.i18n.localize('GURPS.delete'),
+        '<i class="fa-solid fa-trash"></i>',
+        this._deleteItem.bind(this)
+      ),
     ]
 
     let movedown = this._createMenu(
       game.i18n.localize('GURPS.moveToOtherEquipment'),
-      '<i class="fas fa-level-down-alt"></i>',
+      '<i class="fa-solid fa-turn-down"></i>',
       this._moveEquipment.bind(this, 'system.equipment.other')
     )
     new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
 
     let moveup = this._createMenu(
       game.i18n.localize('GURPS.moveToCarriedEquipment'),
-      '<i class="fas fa-level-up-alt"></i>',
+      '<i class="fa-solid fa-turn-up"></i>',
       this._moveEquipment.bind(this, 'system.equipment.carried')
     )
     new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: 'contextmenu' })
@@ -789,9 +798,8 @@ export class GurpsActorSheet extends ActorSheet {
   async _sortContent(parentpath, objkey, reverse) {
     let key = parentpath + '.' + objkey
     let list = foundry.utils.getProperty(this.actor, key)
-    let t = parentpath + '.-=' + objkey
 
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
+    await this.actor.internalUpdate(deleteKey(key)) // Delete the whole object
 
     let sortedobj = {}
     let index = 0
@@ -799,6 +807,8 @@ export class GurpsActorSheet extends ActorSheet {
       .sort((a, b) => (reverse ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)))
       .forEach(o => GURPS.put(sortedobj, o, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
+
+    // TODO? commitUpdate(this.actor, ...replaceValue(key, sortedobj)) to avoid deleting the whole object and causing more re-renders than necessary?
   }
 
   _sortContentDescending(target) {
@@ -872,7 +882,7 @@ export class GurpsActorSheet extends ActorSheet {
   addItemMenu(name, obj, path) {
     return {
       name: game.i18n.format('GURPS.editorAddItem', { name: name }),
-      icon: '<i class="fas fa-plus"></i>',
+      icon: '<i class="fa-solid fa-plus"></i>',
       callback: async e => {
         if (path.includes('system.equipment')) {
           if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
@@ -1088,12 +1098,12 @@ export class GurpsActorSheet extends ActorSheet {
     // show dialog asking if they want to apply a standard tracker, or edit this tracker
     let buttons = {
       edit: {
-        icon: '<i class="fas fa-edit"></i>',
+        icon: '<i class="fa-solid fa-pen-to-square"></i>',
         label: game.i18n.localize('GURPS.resourceEditTracker'),
         callback: () => this._editTracker(path),
       },
       remove: {
-        icon: '<i class="fas fa-trash"></i>',
+        icon: '<i class="fa-solid fa-trash"></i>',
         label: game.i18n.localize('GURPS.resourceDeleteTracker'),
         callback: async () => await this.actor.removeTracker(path),
       },
@@ -1101,7 +1111,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     if (!!templates) {
       buttons.apply = {
-        icon: '<i class="far fa-copy"></i>',
+        icon: '<i class="fa-regular fa-copy"></i>',
         label: game.i18n.localize('GURPS.resourceCopyTemplate'),
         callback: selectTracker.bind(this),
       }
@@ -1429,7 +1439,7 @@ export class GurpsActorSheet extends ActorSheet {
   sortAscendingMenu(key) {
     return {
       name: game.i18n.localize('GURPS.sortAscending'),
-      icon: '<i class="fas fa-sort-amount-down-alt"></i>',
+      icon: '<i class="fa-solid fa-arrow-up-short-wide"></i>',
       callback: e => this.sortAscending(key),
     }
   }
@@ -1437,39 +1447,29 @@ export class GurpsActorSheet extends ActorSheet {
   sortDescendingMenu(key) {
     return {
       name: game.i18n.localize('GURPS.sortDescending'),
-      icon: '<i class="fas fa-sort-amount-down"></i>',
+      icon: '<i class="fa-solid fa-arrow-down-short-wide"></i>',
       callback: e => this.sortDescending(key),
     }
   }
 
   async sortAscending(key) {
-    let i = key.lastIndexOf('.')
-    let parentpath = key.substring(0, i)
-    let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
-    let t = parentpath + '.-=' + objkey
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.internalUpdate({ [key]: sortedobj })
+    await this.actor.update({ [key]: sortedobj })
   }
 
   async sortDescending(key) {
-    let i = key.lastIndexOf('.')
-    let parentpath = key.substring(0, i)
-    let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
-    let t = parentpath + '.-=' + objkey
-    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
       .sort((a, b) => b.name.localeCompare(a.name))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.internalUpdate({ [key]: sortedobj })
+    await this.actor.update({ [key]: sortedobj })
   }
 
   /* -------------------------------------------- */
@@ -1556,7 +1556,7 @@ export class GurpsActorSheet extends ActorSheet {
           content: `<p>${game.i18n.localize('GURPS.dropResolve')}</p>`,
           buttons: {
             one: {
-              icon: '<i class="fas fa-level-up-alt"></i>',
+              icon: '<i class="fa-solid fa-turn-up"></i>',
               label: `${game.i18n.localize('GURPS.dropBefore')}`,
               callback: async () => {
                 if (!isSrcFirst) {
@@ -1569,7 +1569,7 @@ export class GurpsActorSheet extends ActorSheet {
               },
             },
             two: {
-              icon: '<i class="fas fa-sign-in-alt"></i>',
+              icon: '<i class="fa-solid fa-right-to-bracket"></i>',
               label: `${game.i18n.localize('GURPS.dropInside')}`,
               callback: async () => {
                 let key = targetkey + '.contains.' + zeroFill(0)
@@ -1602,8 +1602,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     // Delete the whole object.
     let last = components.pop()
-    let t = `${components.join('.')}.-=${last}`
-    await this.actor.internalUpdate({ [t]: null })
+    let t = `${components.join('.')}.${last}`
+    await this.actor.internalUpdate(deleteKey(t))
 
     // Insert the element into the array.
     array.splice(index, 0, element)
@@ -1627,8 +1627,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     // Delete the whole object.
     let last = components.pop()
-    let t = `${components.join('.')}.-=${last}`
-    await this.actor.internalUpdate({ [t]: null })
+    let t = `${components.join('.')}.${last}`
+    await this.actor.internalUpdate(deleteKey(t))
 
     // Remove the element from the array
     array.splice(index, 1)
@@ -1685,7 +1685,7 @@ export class GurpsActorSheet extends ActorSheet {
       {
         label: isFull ? altsheet : 'Full View',
         class: 'toggle',
-        icon: 'fas fa-exchange-alt',
+        icon: 'fa-solid fa-right-left',
         onclick: ev => this._onToggleSheet(ev, altsheet),
       },
     ]
@@ -1694,7 +1694,7 @@ export class GurpsActorSheet extends ActorSheet {
       b.push({
         label: 'Import',
         class: 'import',
-        icon: 'fas fa-file-import',
+        icon: 'fa-solid fa-file-import',
         onclick: ev => this._onFileImport(ev),
       })
 
@@ -1702,7 +1702,7 @@ export class GurpsActorSheet extends ActorSheet {
       b.push({
         label: 'Editor',
         class: 'edit',
-        icon: 'fas fa-edit',
+        icon: 'fa-solid fa-pen-to-square',
         onclick: ev => this._onOpenEditor(ev),
       })
     }
@@ -1898,7 +1898,7 @@ export class GurpsActorSheet extends ActorSheet {
     return [
       {
         name: 'Delete',
-        icon: "<i class='fas fa-trash'></i>",
+        icon: "<i class='fa-solid fa-trash'></i>",
         callback: async event => {
           const key = event[0].dataset.key
           await this.actor.deleteEntry(key)
@@ -2047,6 +2047,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     html.find('#showflightmove').click(ev => {
       ev.preventDefault()
+      ev.stopPropagation()
       let element = ev.currentTarget
       let show = element.checked
       this.actor.update({ 'system.additionalresources.showflightmove': show })
@@ -2063,6 +2064,9 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeDeleteMenu(html, '.notemenu', new Note('???', true), 'contextmenu')
 
     html.find('#body-plan').change(async e => {
+      e.preventDefault()
+      e.stopPropagation()
+
       let bodyplan = e.currentTarget.value
       if (bodyplan !== this.actor.system.additionalresources.bodyplan) {
         let hitlocationTable = hitlocationDictionary[bodyplan]
@@ -2080,14 +2084,22 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
             GURPS.put(hitlocations, it, count++)
           }
-          this.actor.ignoreRender = true
-          await this.actor.update({
-            'system.-=hitlocations': null,
+
+          const removeEntries = {}
+          for (let key of Object.keys(oldlocations)) {
+            const entry = deleteKey(`system.hitlocations.${key}`)
+            // Add entry to removeEntries
+            Object.entries(entry).forEach(([path, value]) => {
+              removeEntries[path] = value
+            })
+          }
+
+          await commitUpdate(this.actor, {
+            ...replaceValue('system.hitlocations', hitlocations),
             'system.additionalresources.bodyplan': bodyplan,
           })
-          await this.actor.update({ 'system.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
-          this.actor.ignoreRender = false
-          await this.actor.update({ 'system.hitlocations': hitlocations })
+
+          // this.render()
         }
       }
     })

@@ -51,7 +51,7 @@ export class GGADebugger {
           content: `<div class="debug-content" style="max-height: 500px; overflow-y: auto;"><pre>${JSON.stringify(this.object, null, 2)}</pre></div>`,
           buttons: {
             copy: {
-              icon: '<i class="fas fa-copy"></i>',
+              icon: '<i class="fa-solid fa-copy"></i>',
               label: 'Copy',
               callback: () => {
                 let src = JSON.stringify(this.object, null, 2)
@@ -60,7 +60,7 @@ export class GGADebugger {
               },
             },
             close: {
-              icon: '<i class="fas fa-check"></i>',
+              icon: '<i class="fa-solid fa-check"></i>',
               label: 'Close',
               callback: () => {},
             },

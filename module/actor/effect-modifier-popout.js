@@ -276,17 +276,17 @@ export class EffectModifierPopout extends Application {
     let buttons = super._getHeaderButtons()
     buttons.unshift({
       class: 'trash',
-      icon: 'fas fa-trash',
+      icon: 'fa-solid fa-trash',
       onclick: async ev => this.clearUserMods(ev),
     })
     buttons.unshift({
       class: 'add',
-      icon: 'fas fa-plus',
+      icon: 'fa-solid fa-plus',
       onclick: ev => this.addUserMod(ev),
     })
     buttons.unshift({
       class: 'refresh',
-      icon: 'fas fa-sync',
+      icon: 'fa-solid fa-rotate',
       onclick: async ev => this.refreshUserMods(ev),
     })
     return buttons

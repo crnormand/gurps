@@ -1,3 +1,4 @@
+import { replaceValue, deleteKey, commitUpdate } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
@@ -84,7 +85,7 @@ export class ActorImporter {
         {
           action: 'import',
           label: 'GURPS.import',
-          icon: 'fas fa-file-import',
+          icon: 'fa-solid fa-file-import',
           default: true,
           callback: async (_, button, __) => {
             let files = button.form.elements.data.files
@@ -100,7 +101,7 @@ export class ActorImporter {
         {
           action: 'cancel',
           label: 'GURPS.cancel',
-          icon: 'fas fa-times',
+          icon: 'fa-solid fa-xmark',
           callback: () => undefined, // Resolve with undefined if cancelled
         },
       ],
@@ -227,13 +228,9 @@ export class ActorImporter {
 
     console.log('Starting commit')
 
-    let deletes = Object.fromEntries(Object.entries(commit).filter(([key, _value]) => key.includes('.-=')))
-    let adds = Object.fromEntries(Object.entries(commit).filter(([key, _value]) => !key.includes('.-=')))
-
     try {
       this.ignoreRender = true
-      await this.actor.internalUpdate(deletes, { diff: true })
-      await this.actor.internalUpdate(adds, { diff: false })
+      await commitUpdate(this.actor, commit)
       // This has to be done after everything is loaded
       await this.actor.postImport()
       this.actor._forceRender()
@@ -456,13 +453,9 @@ export class ActorImporter {
     }
     console.log('Starting commit')
 
-    let deletes = Object.fromEntries(Object.entries(commit).filter(([key, _value]) => key.includes('.-=')))
-    let adds = Object.fromEntries(Object.entries(commit).filter(([key, _value]) => !key.includes('.-=')))
-
     try {
       this.ignoreRender = true
-      await this.actor.internalUpdate(deletes, { diff: false })
-      await this.actor.internalUpdate(adds, { diff: false })
+      await commitUpdate(this.actor, commit)
       // This has to be done after everything is loaded
       await this.actor.postImport()
       this.actor._forceRender()
@@ -622,14 +615,14 @@ export class ActorImporter {
             {
               action: 'save',
               label: game.i18n.localize('GURPS.save'),
-              icon: 'far fa-square',
+              icon: 'fa-regular fa-square',
               default: true,
               callback: () => true,
             },
             {
               action: 'overwrite',
               label: game.i18n.localize('GURPS.overwrite'),
-              icon: 'fas fa-edit',
+              icon: 'fa-solid fa-pen-to-square',
               callback: () => false,
             },
           ],
@@ -676,8 +669,7 @@ export class ActorImporter {
       console.log(this)
     }
     return {
-      'system.-=traits': null,
-      'system.traits': ts,
+      ...replaceValue('system.traits', ts),
     }
   }
 
@@ -707,8 +699,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.-=ads': null,
-      'system.ads': this.foldList(list),
+      ...replaceValue('system.ads', this.foldList(list)),
     }
   }
 
@@ -783,8 +774,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.-=skills': null,
-      'system.skills': this.foldList(temp),
+      ...replaceValue('system.skills', this.foldList(temp)),
     }
   }
 
@@ -845,8 +835,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.-=spells': null,
-      'system.spells': this.foldList(temp),
+      ...replaceValue('system.spells', this.foldList(temp)),
     }
   }
 
@@ -888,14 +877,13 @@ export class ActorImporter {
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, readXmlText(j2.vtt_notes))
 
-            GURPS.put(melee, m, index++)
+            GURPS.put(melee, { ...m }, index++)
           }
         }
       }
     }
     return {
-      'system.-=melee': null,
-      'system.melee': melee,
+      ...replaceValue('system.melee', melee),
     }
   }
 
@@ -948,14 +936,13 @@ export class ActorImporter {
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, readXmlText(j2.vtt_notes))
 
-            GURPS.put(ranged, r, index++)
+            GURPS.put(ranged, { ...r }, index++)
           }
         }
       }
     }
     return {
-      'system.-=ranged': null,
-      'system.ranged': ranged,
+      ...replaceValue('system.ranged', ranged),
     }
   }
 
@@ -996,8 +983,7 @@ export class ActorImporter {
       if (!!t.save) temp.push(t)
     })
     return {
-      'system.-=notes': null,
-      'system.notes': this.foldList(temp),
+      ...replaceValue('system.notes', this.foldList(temp)),
     }
   }
 
@@ -1120,8 +1106,8 @@ export class ActorImporter {
       // After retrieve all relevant data
       // Lets remove equipments now
       await this.actor.internalUpdate({
-        'system.equipment.-=carried': null,
-        'system.equipment.-=other': null,
+        ...deleteKey('system.equipment.carried'),
+        ...deleteKey('system.equipment.other'),
       })
     }
 
@@ -1136,7 +1122,7 @@ export class ActorImporter {
       let parent = null
       if (!!eqt.parentuuid) {
         parent = temp.find(e => e.uuid === eqt.parentuuid)
-        if (!!parent) GURPS.put(parent.contains, eqt)
+        if (!!parent) GURPS.put(parent.contains, { ...eqt })
         else eqt.parentuuid = '' // Can't find a parent, so put it in the top list
       }
       await this._updateItemContains(eqt, parent)
@@ -1152,13 +1138,12 @@ export class ActorImporter {
     for (const eqt of temp) {
       await Equipment.calc(eqt)
       if (!eqt.parentuuid) {
-        if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
-        else GURPS.put(equipment.other, eqt, oindex++)
+        if (eqt.carried) GURPS.put(equipment.carried, { ...eqt }, cindex++)
+        else GURPS.put(equipment.other, { ...eqt }, oindex++)
       }
     }
     return {
-      'system.-=equipment': null,
-      'system.equipment': equipment,
+      ...replaceValue('system.equipment', equipment),
     }
   }
 
@@ -1301,7 +1286,7 @@ export class ActorImporter {
 
     let prot = {}
     let index = 0
-    temp.forEach(it => GURPS.put(prot, it, index++))
+    temp.forEach(it => GURPS.put(prot, { ...it }, index++))
 
     let saveprot = false
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
@@ -1316,8 +1301,7 @@ export class ActorImporter {
     if (saveprot) return {}
     else
       return {
-        'system.-=hitlocations': null,
-        'system.hitlocations': prot,
+        ...replaceValue('system.hitlocations', prot),
         'system.additionalresources.bodyplan': bodyplan,
       }
   }
@@ -1334,14 +1318,14 @@ export class ActorImporter {
         {
           action: 'save',
           label: game.i18n.localize('GURPS.save'),
-          icon: 'far fa-square',
+          icon: 'fa-regular fa-square',
           default: true,
           callback: () => true,
         },
         {
           action: 'overwrite',
           label: game.i18n.localize('GURPS.overwrite'),
-          icon: 'fas fa-edit',
+          icon: 'fa-solid fa-pen-to-square',
           callback: () => false,
         },
       ],
@@ -1360,12 +1344,11 @@ export class ActorImporter {
         let w = readXmlText(j.written)
         let p = readXmlText(j.points)
         let l = new Language(n, s, w, p)
-        GURPS.put(langs, l, index++)
+        GURPS.put(langs, { ...l }, index++)
       }
     }
     return {
-      'system.-=languages': null,
-      'system.languages': langs,
+      ...replaceValue('system.languages', langs),
     }
   }
 
@@ -1384,12 +1367,11 @@ export class ActorImporter {
         let mod = m.trim().substring(0, i)
         let sit = m.trim().substring(i + 1)
         let r = new Reaction(mod, sit)
-        GURPS.put(rs, r, index++)
+        GURPS.put(rs, { ...r }, index++)
       }
     })
     return {
-      'system.-=reactions': null,
-      'system.reactions': rs,
+      ...replaceValue('system.reactions', rs),
     }
   }
 
@@ -1420,13 +1402,12 @@ export class ActorImporter {
         cm = e.move
         cd = e.dodge
       }
-      GURPS.put(es, e, index++)
+      GURPS.put(es, { ...e }, index++)
     }
     return {
       'system.currentmove': cm,
       'system.currentdodge': cd,
-      'system.-=encumbrance': null,
-      'system.encumbrance': es,
+      ...replaceValue('system.encumbrance', es),
     }
   }
 
@@ -1578,8 +1559,7 @@ export class ActorImporter {
     ts.sizemod = p.SM || '+0'
 
     const r = {
-      'system.-=traits': null,
-      'system.traits': ts,
+      ...replaceValue('system.traits', ts),
     }
 
     if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_OVERWRITE_PORTRAITS)) {
@@ -1618,8 +1598,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.-=ads': null,
-      'system.ads': this.foldList(temp),
+      ...replaceValue('system.ads', this.foldList(temp)),
     }
   }
 
@@ -1695,8 +1674,7 @@ export class ActorImporter {
     }
 
     return {
-      'system.-=skills': null,
-      'system.skills': this.foldList(temp),
+      ...replaceValue('system.skills', this.foldList(temp)),
     }
   }
 
@@ -1764,8 +1742,7 @@ export class ActorImporter {
     })
 
     return {
-      'system.-=spells': null,
-      'system.spells': this.foldList(temp),
+      ...replaceValue('system.spells', this.foldList(temp)),
     }
   }
 
@@ -1840,8 +1817,8 @@ export class ActorImporter {
       // After retrieve all relevant data
       // Lets remove equipments now
       await this.actor.internalUpdate({
-        'system.equipment.-=carried': null,
-        'system.equipment.-=other': null,
+        ...deleteKey('system.equipment.carried'),
+        ...deleteKey('system.equipment.other'),
       })
     }
 
@@ -1854,7 +1831,7 @@ export class ActorImporter {
       let parent = null
       if (!!e.parentuuid) {
         parent = temp.find(f => f.uuid === e.parentuuid)
-        if (!!parent) GURPS.put(parent.contains, e)
+        if (!!parent) GURPS.put(parent.contains, { ...e })
         else e.parentuuid = ''
       }
       await this._updateItemContains(e, parent)
@@ -1870,13 +1847,12 @@ export class ActorImporter {
     for (const eqt of temp) {
       await Equipment.calc(eqt)
       if (!eqt.parentuuid) {
-        if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
-        else GURPS.put(equipment.other, eqt, oindex++)
+        if (eqt.carried) GURPS.put(equipment.carried, { ...eqt }, cindex++)
+        else GURPS.put(equipment.other, { ...eqt }, oindex++)
       }
     }
     return {
-      'system.-=equipment': null,
-      'system.equipment': equipment,
+      ...replaceValue('system.equipment', equipment),
     }
   }
 
@@ -1953,8 +1929,7 @@ export class ActorImporter {
       if (!!t.save) temp.push(t)
     })
     return {
-      'system.-=notes': null,
-      'system.notes': this.foldList(temp),
+      ...replaceValue('system.notes', this.foldList(temp)),
     }
   }
 
@@ -1995,8 +1970,7 @@ export class ActorImporter {
     }
     ts.sizemod = this.signedNum(final)
     return {
-      'system.-=traits': null,
-      'system.traits': ts,
+      ...replaceValue('system.traits', ts),
     }
   }
 
@@ -2105,7 +2079,7 @@ export class ActorImporter {
 
     let prot = {}
     let index = 0
-    temp.forEach(it => GURPS.put(prot, it, index++))
+    temp.forEach(it => GURPS.put(prot, { ...it }, index++))
 
     let saveprot = false
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
@@ -2118,12 +2092,12 @@ export class ActorImporter {
       }
     }
     if (saveprot) return {}
-    else
+    else {
       return {
-        'system.-=hitlocations': null,
-        'system.hitlocations': prot,
+        ...replaceValue('system.hitlocations', prot),
         'system.additionalresources.bodyplan': bodyplan,
       }
+    }
   }
 
   importPointTotalsFromGCS(total, atts, ads, skills, spells) {
@@ -2202,19 +2176,17 @@ export class ActorImporter {
       let r = new Reaction()
       r.modifier = i.modifier.toString()
       r.situation = i.situation
-      GURPS.put(rs, r, index_r++)
+      GURPS.put(rs, { ...r }, index_r++)
     }
     for (let i of temp_c2) {
       let c = new Modifier()
       c.modifier = i.modifier.toString()
       c.situation = i.situation
-      GURPS.put(cs, c, index_c++)
+      GURPS.put(cs, { ...c }, index_c++)
     }
     return {
-      'system.-=reactions': null,
-      'system.reactions': rs,
-      'system.-=conditionalmods': null,
-      'system.conditionalmods': cs,
+      ...replaceValue('system.reactions', rs),
+      ...replaceValue('system.conditionalmods', cs),
     }
   }
 
@@ -2254,7 +2226,7 @@ export class ActorImporter {
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, i.vtt_notes, w.usage_notes)
 
-            GURPS.put(melee, m, m_index++)
+            GURPS.put(melee, { ...m }, m_index++)
           } else if (w.type == 'ranged_weapon') {
             let r = new Ranged()
             r.name = i.name || i.description || ''
@@ -2282,16 +2254,14 @@ export class ActorImporter {
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, i.vtt_notes, w.usage_notes)
 
-            GURPS.put(ranged, r, r_index++)
+            GURPS.put(ranged, { ...r }, r_index++)
           }
         }
       }
     }
     return {
-      'system.-=melee': null,
-      'system.melee': melee,
-      'system.-=ranged': null,
-      'system.ranged': ranged,
+      ...replaceValue('system.melee', melee),
+      ...replaceValue('system.ranged', ranged),
     }
   }
 
@@ -2478,13 +2448,13 @@ export class ActorImporter {
         const parent = flat.find(o => o.uuid == obj.parentuuid)
         if (!!parent) {
           if (!parent.contains) parent.contains = {} // lazy init for older characters
-          GURPS.put(parent.contains, obj)
+          GURPS.put(parent.contains, { ...obj })
         } else obj.parentuuid = '' // Can't find a parent, so put it in the top list.  should never happen with GCS
       }
     })
     let index = 0
     flat.forEach(obj => {
-      if (!obj.parentuuid) GURPS.put(target, obj, index++)
+      if (!obj.parentuuid) GURPS.put(target, { ...obj }, index++)
     })
     return target
   }

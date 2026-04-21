@@ -1,5 +1,5 @@
 import { Length, LengthUnit } from '../data/common/length.js'
-import { tokenMoveColors } from './constants.ts'
+import { tokenMoveColors } from './constants.js'
 
 // COMPATIBILITY: v12
 function registerTokenRuler() {
