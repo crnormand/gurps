@@ -2148,7 +2148,10 @@ if (!globalThis.GURPS) {
 
       const confirmed = await foundry.applications.api.DialogV2.wait({
         window: { title: game.i18n.localize('GURPS.migration.0-18-16.title') },
-        content: `<p>${warningMessage}</p>`,
+        content: `<div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center;">
+          <div><i class="fa-solid fa-triangle-exclamation" style="color: darkred; font-size: 3rem;"></i></div>
+          <p>${warningMessage}</p>
+          </div>`,
         position: { height: 'auto', width: 600 },
         buttons: [
           {
