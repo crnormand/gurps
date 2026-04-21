@@ -189,7 +189,11 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     id: string,
     options?: Document.GetEmbeddedDocumentOptions
   ): Item.Embedded.DocumentFor<EmbeddedName> | undefined
-  override getEmbeddedDocument(embeddedName: string, id: string, options?: Document.GetEmbeddedDocumentOptions): unknown {
+  override getEmbeddedDocument(
+    embeddedName: string,
+    id: string,
+    options?: Document.GetEmbeddedDocumentOptions
+  ): unknown {
     const { invalid = false, strict = true } = options ?? {}
 
     const metadata = (this.system?.constructor as any).metadata as ItemMetadata

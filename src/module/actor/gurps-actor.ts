@@ -178,7 +178,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     id: string,
     options?: Document.GetEmbeddedDocumentOptions
   ): Actor.Embedded.DocumentFor<EmbeddedName> | undefined
-  override getEmbeddedDocument(embeddedName: string, id: string, options?: Document.GetEmbeddedDocumentOptions): unknown {
+  override getEmbeddedDocument(
+    embeddedName: string,
+    id: string,
+    options?: Document.GetEmbeddedDocumentOptions
+  ): unknown {
     const { invalid = false, strict = true } = options ?? {}
 
     const metadata = (this.system?.constructor as any).metadata as ActorMetadata
