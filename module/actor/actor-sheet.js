@@ -807,6 +807,8 @@ export class GurpsActorSheet extends ActorSheet {
       .sort((a, b) => (reverse ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)))
       .forEach(o => GURPS.put(sortedobj, o, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
+
+    // TODO? commitUpdate(this.actor, ...replaceValue(key, sortedobj)) to avoid deleting the whole object and causing more re-renders than necessary?
   }
 
   _sortContentDescending(target) {
@@ -2045,6 +2047,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     html.find('#showflightmove').click(ev => {
       ev.preventDefault()
+      ev.stopPropagation()
       let element = ev.currentTarget
       let show = element.checked
       this.actor.update({ 'system.additionalresources.showflightmove': show })
@@ -2061,6 +2064,9 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeDeleteMenu(html, '.notemenu', new Note('???', true), 'contextmenu')
 
     html.find('#body-plan').change(async e => {
+      e.preventDefault()
+      e.stopPropagation()
+
       let bodyplan = e.currentTarget.value
       if (bodyplan !== this.actor.system.additionalresources.bodyplan) {
         let hitlocationTable = hitlocationDictionary[bodyplan]
@@ -2079,10 +2085,21 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             GURPS.put(hitlocations, it, count++)
           }
 
+          const removeEntries = {}
+          for (let key of Object.keys(oldlocations)) {
+            const entry = deleteKey(`system.hitlocations.${key}`)
+            // Add entry to removeEntries
+            Object.entries(entry).forEach(([path, value]) => {
+              removeEntries[path] = value
+            })
+          }
+
           await commitUpdate(this.actor, {
             ...replaceValue('system.hitlocations', hitlocations),
             'system.additionalresources.bodyplan': bodyplan,
           })
+
+          // this.render()
         }
       }
     })
