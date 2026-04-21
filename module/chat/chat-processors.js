@@ -1,5 +1,6 @@
 'use strict'
 
+import { isAtLeastFoundryVersion } from '../utilities/foundry-compat.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { parselink } from '../../lib/parselink.js'
 import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '../../lib/utilities.js'
@@ -905,7 +906,11 @@ class LightChatProcessor extends ChatProcessor {
     }
 
     if (this.match.groups.off) {
-      data.light['color'] = globalThis._del
+      if (isAtLeastFoundryVersion(14)) {
+        data.light['color'] = globalThis._del
+      } else {
+        data.light['-=color'] = null
+      }
     } else {
       if (this.match.groups.color) data.light.color = this.match.groups.color
       if (this.match.groups.colorint) data.light.alpha = parseFloat(this.match.groups.colorint)

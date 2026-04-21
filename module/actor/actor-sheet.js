@@ -1,4 +1,5 @@
 import { DragDropType } from '../drag-drop-types.js'
+import { commitUpdate, deleteKey, replaceValue } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -797,9 +798,8 @@ export class GurpsActorSheet extends ActorSheet {
   async _sortContent(parentpath, objkey, reverse) {
     let key = parentpath + '.' + objkey
     let list = foundry.utils.getProperty(this.actor, key)
-    let t = parentpath + '.' + objkey
 
-    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
+    await this.actor.internalUpdate(deleteKey(key)) // Delete the whole object
 
     let sortedobj = {}
     let index = 0
@@ -807,6 +807,8 @@ export class GurpsActorSheet extends ActorSheet {
       .sort((a, b) => (reverse ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)))
       .forEach(o => GURPS.put(sortedobj, o, index++))
     await this.actor.internalUpdate({ [key]: sortedobj })
+
+    // TODO? commitUpdate(this.actor, ...replaceValue(key, sortedobj)) to avoid deleting the whole object and causing more re-renders than necessary?
   }
 
   _sortContentDescending(target) {
@@ -1451,33 +1453,23 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   async sortAscending(key) {
-    let i = key.lastIndexOf('.')
-    let parentpath = key.substring(0, i)
-    let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
-    let t = parentpath + '.' + objkey
-    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.internalUpdate({ [key]: sortedobj })
+    await this.actor.update({ [key]: sortedobj })
   }
 
   async sortDescending(key) {
-    let i = key.lastIndexOf('.')
-    let parentpath = key.substring(0, i)
-    let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
-    let t = parentpath + '.' + objkey
-    await this.actor.internalUpdate({ [t]: globalThis._del }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
       .sort((a, b) => b.name.localeCompare(a.name))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.internalUpdate({ [key]: sortedobj })
+    await this.actor.update({ [key]: sortedobj })
   }
 
   /* -------------------------------------------- */
@@ -1611,7 +1603,7 @@ export class GurpsActorSheet extends ActorSheet {
     // Delete the whole object.
     let last = components.pop()
     let t = `${components.join('.')}.${last}`
-    await this.actor.internalUpdate({ [t]: globalThis._del })
+    await this.actor.internalUpdate(deleteKey(t))
 
     // Insert the element into the array.
     array.splice(index, 0, element)
@@ -1636,7 +1628,7 @@ export class GurpsActorSheet extends ActorSheet {
     // Delete the whole object.
     let last = components.pop()
     let t = `${components.join('.')}.${last}`
-    await this.actor.internalUpdate({ [t]: globalThis._del })
+    await this.actor.internalUpdate(deleteKey(t))
 
     // Remove the element from the array
     array.splice(index, 1)
@@ -2055,6 +2047,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     html.find('#showflightmove').click(ev => {
       ev.preventDefault()
+      ev.stopPropagation()
       let element = ev.currentTarget
       let show = element.checked
       this.actor.update({ 'system.additionalresources.showflightmove': show })
@@ -2071,6 +2064,9 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeDeleteMenu(html, '.notemenu', new Note('???', true), 'contextmenu')
 
     html.find('#body-plan').change(async e => {
+      e.preventDefault()
+      e.stopPropagation()
+
       let bodyplan = e.currentTarget.value
       if (bodyplan !== this.actor.system.additionalresources.bodyplan) {
         let hitlocationTable = hitlocationDictionary[bodyplan]
@@ -2088,10 +2084,22 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
             GURPS.put(hitlocations, it, count++)
           }
-          await this.actor.update({
-            'system.hitlocations': globalThis._replace(hitlocations),
+
+          const removeEntries = {}
+          for (let key of Object.keys(oldlocations)) {
+            const entry = deleteKey(`system.hitlocations.${key}`)
+            // Add entry to removeEntries
+            Object.entries(entry).forEach(([path, value]) => {
+              removeEntries[path] = value
+            })
+          }
+
+          await commitUpdate(this.actor, {
+            ...replaceValue('system.hitlocations', hitlocations),
             'system.additionalresources.bodyplan': bodyplan,
           })
+
+          // this.render()
         }
       }
     })

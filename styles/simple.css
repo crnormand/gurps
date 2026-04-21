@@ -1116,7 +1116,7 @@ div#other {
     'header   header  header  header  header'
     'itemmenu roll    where   penalty dr   ';
   grid-template-columns: min-content min-content 1fr min-content min-content;
-  /* grid-template-rows: 0fr 0fr 1fr; */
+  align-content: start;
 }
 
 #melee .headermenu {
