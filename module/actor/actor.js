@@ -2336,6 +2336,7 @@ export class GurpsActor extends Actor {
     return [txt, val]
 
     function namesMatch(melee, equipment) {
+      if (!melee.name || !equipment.name) return false
       return melee.name.match(makeRegexPatternFrom(equipment.name, false))
     }
   }
