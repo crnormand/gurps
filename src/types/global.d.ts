@@ -18,7 +18,19 @@ import { UI as ModuleUI } from '@module/ui/index.js'
 export {}
 
 declare global {
-  const _loc: (key: string) => string
+  /* ---------------------------------------- */
+
+  const _loc: typeof game.i18n.localize
+
+  /* ---------------------------------------- */
+
+  var _del: Record<string, unknown>
+
+  /* ---------------------------------------- */
+
+  function _replace<T>(data: T): T
+
+  /* ---------------------------------------- */
 
   interface GurpsGlobal extends GurpsUtils {
     SYSTEM_NAME: 'gurps'
@@ -279,17 +291,15 @@ declare global {
 
   /* ---------------------------------------- */
 
-  // @deprecated: TODO: Remove. Legacy
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface GurpsActorSheetEditMethods {
-    // editEquipment(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
-    // editNotes(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
-    // editModifier(
-    //   actor: Actor.Implementation,
-    //   path: string,
-    //   obj: EntityComponentBase,
-    //   isReaction: boolean
-    // ): Promise<void>
+    editEquipment(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
+    editNotes(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
+    editModifier(
+      actor: Actor.Implementation,
+      path: string,
+      obj: EntityComponentBase,
+      isReaction: boolean
+    ): Promise<void>
   }
 
   /* ---------------------------------------- */

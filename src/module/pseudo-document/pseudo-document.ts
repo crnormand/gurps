@@ -533,7 +533,7 @@ class PseudoDocument<
       const maybeDeleted = (parent as any).getEmbeddedDocument(this.metadata.documentName, id, {})
 
       if (maybeDeleted) {
-        updates[`${fieldPath}.-=${id}`] = null
+        updates[`${fieldPath}.${id}`] = globalThis._del
         deleted.push(maybeDeleted as InstanceType<T>)
 
         if (hasMetadata(this.constructor)) {
@@ -545,7 +545,7 @@ class PseudoDocument<
             const allContents = maybeDeleted.allContents as PseudoDocument[]
 
             allContents.forEach((doc: PseudoDocument) => {
-              updates[`${doc.fieldPath}.-=${doc.id}`] = null
+              updates[`${doc.fieldPath}.${doc.id}`] = globalThis._del
             })
           } else {
             const containedBy = maybeDeleted.containedBy ?? null

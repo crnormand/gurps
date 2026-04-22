@@ -37,7 +37,6 @@ import {
 } from '@util/utilities.js'
 
 import { ActionModule } from './action/index.js'
-import { prepareRemoveKey } from './actor/deletion.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { Actor } from './actor/index.js'
@@ -1859,38 +1858,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.put = put
-
-  /**
-   * Convolutions to remove a key from an object and fill in the gaps, necessary
-   * because the default add behavior just looks for the first open gap
-   * @param {GurpsActorV2} actor
-   * @param {string} path
-   */
-  async function removeKey(actor, path) {
-    const targetActor = game.actors.get(actor.id) ?? actor
-    const objectData = foundry.utils.duplicate(GURPS.decode(targetActor, path.substring(0, path.lastIndexOf('.'))))
-    const { deleteKey, objectPath, updatedObject } = prepareRemoveKey(path, objectData)
-
-    const savedIgnoreRender = targetActor.ignoreRender
-
-    targetActor.ignoreRender = true
-
-    try {
-      await targetActor.update({ [deleteKey]: null })
-      await targetActor.update({ [objectPath]: updatedObject }, { diff: false })
-
-      if (Object.keys(updatedObject).length === 0) {
-        const parentPath = objectPath.substring(0, objectPath.lastIndexOf('.'))
-        const objectKey = objectPath.substring(objectPath.lastIndexOf('.') + 1)
-
-        GURPS.decode(targetActor, parentPath)[objectKey] = {}
-      }
-    } finally {
-      targetActor.ignoreRender = savedIgnoreRender
-    }
-  }
-
-  GURPS.removeKey = removeKey
 
   /**
    * Because the DB just merges keys, the best way to insert is to delete the whole colleciton object, fix it up, and then re-add it.
