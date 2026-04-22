@@ -1,6 +1,6 @@
 import { getGame } from '@module/util/guards.js'
 
-import { Advantage, Melee, Ranged, Skill, Spell } from '../actor-components.js'
+import { Advantage, Melee, Ranged, Skill, Spell } from '../../actor-components.js'
 
 export const entityConfigurations: EntityConfiguration[] = [
   {

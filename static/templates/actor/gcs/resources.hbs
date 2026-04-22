@@ -94,9 +94,9 @@
       <table class="gcs-table">
         <thead>
           <tr>
-            <th>{{localize "GURPS.sheet.hitLocation.roll"}}</th>
+            <th class="gcs-row-roll">{{localize "GURPS.sheet.hitLocation.roll"}}</th>
             <th colspan="2">{{localize "GURPS.sheet.hitLocation.location"}}</th>
-            <th>{{localize "GURPS.sheet.hitLocation.dr"}}</th>
+            <th class="gcs-row-dr">{{localize "GURPS.sheet.hitLocation.dr"}}</th>
           </tr>
         </thead>
         <tbody>
@@ -123,10 +123,10 @@
       <thead>
         <tr>
           <th></th>
-          <th>{{localize "GURPS.sheet.encumbrance.level"}}</th>
-          <th>{{localize "GURPS.sheet.encumbrance.maxLoad"}}</th>
-          <th>{{localize "GURPS.sheet.encumbrance.move"}}</th>
-          <th>{{localize "GURPS.sheet.encumbrance.dodge"}}</th>
+          <th >{{localize "GURPS.sheet.encumbrance.level"}}</th>
+          <th> {{localize "GURPS.sheet.encumbrance.maxLoad"}}</th>
+          <th> {{localize "GURPS.sheet.encumbrance.move"}}</th>
+          <th >{{localize "GURPS.sheet.encumbrance.dodge"}}</th>
         </tr>
       </thead>
       <tbody>
@@ -137,13 +137,13 @@
               <i class="fa-solid fa-weight-hanging"></i>
               {{/if}}
             </td>
-            <td>{{localize (concat "GURPS.encumbranceLevel-" enc.level)}}</td>
-            <td>{{ localize "GURPS.sheet.gcsActorSheet.pound" value=enc.weight }}</td>
-            <td>{{enc.move}}</td>
+            <td class="gcs-row-enc-level">{{localize (concat "GURPS.encumbranceLevel-" enc.level)}}</td>
+            <td class="gcs-row-enc-load">{{ localize "GURPS.sheet.gcsActorSheet.pound" value=enc.weight }}</td>
+            <td class="gcs-row-enc-move">{{enc.move}}</td>
             {{#if enc.current}}
-            <td data-action="rollOtf" data-value="Dodge" >{{enc.dodge}}</td>
+            <td class="gcs-row-enc-dodge" data-action="rollOtf" data-value="Dodge" >{{enc.dodge}}</td>
             {{else}}
-            <td>{{enc.dodge}}</td>
+            <td class="gcs-row-enc-dodge">{{enc.dodge}}</td>
             {{/if}}
           </tr>
         {{/each}}

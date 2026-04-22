@@ -1,2 +1,4 @@
 export * from './base-actor-sheet.js'
 export * from './gcs-actor-sheet.js'
+export * from './modern/npc-sheet.js'
+export * from './modern/sheet.js'

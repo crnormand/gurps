@@ -147,6 +147,17 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   }
 
   /* ---------------------------------------- */
+
+  /**
+   * Toggle the open/collapsed state of the notes on this document.
+   */
+  async toggleNotes(): Promise<void> {
+    const newValue = !this.notesOpen
+
+    await this.parent.update({ 'system.notesOpen': newValue } as unknown as Item.UpdateData)
+  }
+
+  /* ---------------------------------------- */
   /*  IContainable Interface Implementation   */
   /* ---------------------------------------- */
 
@@ -204,6 +215,8 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
   isContainedBy(container: Item.Implementation): boolean {
     return ContainerUtils.isContainedBy(this, container.system as BaseItemModel)
   }
+
+  /* ---------------------------------------- */
 
   /**
    * Toggle the open/collapsed state of this container

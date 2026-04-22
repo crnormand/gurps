@@ -1,5 +1,5 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
-import { MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
+import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
 import { parseBlock } from '@module/action/parse-attack.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
@@ -484,9 +484,9 @@ Portrait will not be imported.`
 
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
-          flags: {},
           where: location.location ?? '',
           import: Number.isNaN(dr) ? 0 : dr,
+          _dr: Number.isNaN(dr) ? 0 : dr,
           rollText: roll,
           penalty: Number(location.penalty) || 0,
           split: {},
@@ -506,9 +506,22 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   async #promptHitLocationOverwrite() {
-    // No need to run this if there is no existing actor or if this is the first import.
-    if (!this.actor || (!this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname))
+    // No need to run this if there is no existing actor
+    if (!this.actor) return
+
+    // On first import, always replace the hit location table
+    if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
+      const currentHitLocationNullifiers = Object.fromEntries(
+        this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+      )
+
+      this.output.hitlocationsV2 = {
+        ...this.output.hitlocationsV2,
+        ...currentHitLocationNullifiers,
+      }
+
       return
+    }
 
     const currentBodyPlan = this.actor.system.bodyplan
 
@@ -517,8 +530,11 @@ Portrait will not be imported.`
       this.actor.system.hitlocationsV2.map(hitLocation => {
         const location = hitLocation.toObject() as AnyMutableObject
 
+        delete location.flags
+        delete location.img
+        delete location.name
+        delete location.sort
         delete location._damageType
-        delete location._dr
         delete location.drCap
         delete location.drItem
         delete location.drMod
@@ -669,26 +685,21 @@ Portrait will not be imported.`
     if (existingItemId) id = existingItemId
 
     if (item.attackmodes) {
-      system.actions = item.attackmodes
-        .map((action: GCAAttackMode) => this.#importWeapon(action))
-        .reduce(
-          (
-            acc: Record<string, DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>>,
-            weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>
-          ) => {
+      system.actions = Object.fromEntries(
+        item.attackmodes
+          .map((action: GCAAttackMode) => this.#importWeapon(action))
+          .filter((weapon: DataModel.CreateData<MeleeAttackSchema | RangedAttackSchema>) => {
             if (!weapon._id || typeof weapon._id !== 'string') {
               console.error('GURPS | Failed to import weapon: No _id set.')
               console.error(weapon)
 
-              return acc
+              return false
             }
 
-            acc[weapon._id] = weapon
-
-            return acc
-          },
-          {}
-        )
+            return true
+          })
+          .map(action => [action._id, action])
+      )
     }
 
     return [system, id]
@@ -707,10 +718,12 @@ Portrait will not be imported.`
   #importMeleeWeapon(weapon: GCAAttackMode): DataModel.CreateData<MeleeAttackSchema> {
     // Set name to null so that it inherists the parent item's name by default.
     const name = null
-    const type = 'meleeAttack'
+    const type = ActionType.MeleeAttack
     const _id = foundry.utils.randomID()
 
-    const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
+    let damage = weapon.chardamage ?? ''
+
+    if (weapon.chardamtype) damage += ` ${weapon.chardamtype}`
 
     const level = weapon.charskillscore ?? 0
 
@@ -753,10 +766,14 @@ Portrait will not be imported.`
   #importRangedWeapon(weapon: GCAAttackMode): DataModel.CreateData<RangedAttackSchema> {
     // Set name to null so that it inherists the parent item's name by default.
     const name = null
-    const type = 'rangedAttack'
+    const type = ActionType.RangedAttack
     const _id = foundry.utils.randomID()
 
-    const damage = [`${weapon.chardamage} ${weapon.chardamtype}`]
+    let damage = weapon.chardamage ?? ''
+
+    if (weapon.chardamtype) damage += ` ${weapon.chardamtype}`
+
+    const level = weapon.charskillscore ?? 0
 
     const halfDamageRange = weapon.charrangehalfdam ?? ''
     const maxRange = weapon.charrangemax ?? ''
@@ -768,12 +785,14 @@ Portrait will not be imported.`
       _id,
       acc: weapon.characc ?? '',
       damage,
-      import: weapon.charskillscore ?? 0,
+      import: level,
       itemModifiers: '',
       mode: weapon.name ?? '',
       modifierTags: '',
       notes: weapon.notes ?? '',
       range,
+      bulk: weapon.charbulk ?? '',
+      rateOfFire: weapon.rof ?? '',
       recoil: weapon.charrcl ?? '',
       shots: weapon.charshots ?? '',
       st: weapon.charminst ?? '',
@@ -937,6 +956,8 @@ Portrait will not be imported.`
 
     const [baseSystem, _id] = this.#importItem(equipment, containedBy)
 
+    const legalityclass = equipment.ref?.description?.match(/LC:(\d)/)?.[1] ?? ''
+
     const system: DataModel.CreateData<EquipmentSchema> = {
       ...baseSystem,
       count: equipment.count ?? 1,
@@ -945,6 +966,7 @@ Portrait will not be imported.`
       location: '',
       _carried: true,
       equipped: true,
+      legalityclass,
       techlevel: equipment.tl ?? '',
       categories: equipment.cat,
       costsum: parseFloat(equipment.calcs.postchildrencost || equipment.calcs.postformulacost || '0') || 0,

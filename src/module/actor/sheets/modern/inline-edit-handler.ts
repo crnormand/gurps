@@ -1,7 +1,7 @@
 import { diceValidate } from '@module/data/validators/dice-validator.js'
 import { isHTMLElement, isHTMLInputElement } from '@module/util/guards.js'
 
-import { ActorType } from '../types.js'
+import { ActorType } from '../../types.js'
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()

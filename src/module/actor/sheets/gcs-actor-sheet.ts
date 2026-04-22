@@ -420,7 +420,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
           path: tracker._id,
           value: tracker.value,
           initial: tracker.isAccumulator ? 0 : tracker.max,
-          name: `${tracker.fieldPath}.${tracker._id}.value`,
+          name: `${tracker.fieldPath}.${tracker._id}.currentValue`,
         },
         denominator: {
           field: GurpsActorGcsSheet.#pseudoDenominator,
@@ -830,16 +830,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     if (!doc) return
 
-    if (!(doc instanceof Item)) {
-      console.error('Tried to toggle notes of a document, but the document is not an item')
-
-      return
-    }
-
-    const isNowOpen = target.dataset.open === 'true'
-
-    if (doc?.system && 'notesOpen' in doc.system) {
-      await doc?.update({ 'system.notesOpen': !isNowOpen } as Item.UpdateData)
+    if ('toggleNotes' in doc && typeof doc.toggleNotes === 'function') await doc.toggleNotes()
+    else {
+      console.warn('Tried to toggle notes on a document that does not have a toggleNotes method', doc)
     }
   }
 

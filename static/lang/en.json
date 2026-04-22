@@ -308,6 +308,9 @@
             "modifiedon": {
               "label": "Modified On"
             },
+            "organization": {
+              "label": "Organization"
+            },
             "player": {
               "label": "Player"
             },
@@ -669,15 +672,20 @@
       },
       "RT": "RT",
       "severity": {
-        "crippled": "Crippled",
-        "instantlyFatal": "Instantly Fatal",
-        "majorWound": "Major Wound",
-        "minorWound": "Minor Wound",
-        "mortalWound": "Mortal Wound",
-        "none": "None",
-        "reeling": "Reeling",
-        "scratch": "Scratch",
-        "totalDestruction": "Total Destruction"
+        "Crippled1": "Crippled",
+        "Crippled2": "Crippled",
+        "InstantlyFatal1": "Instantly Fatal",
+        "InstantlyFatal2": "Instantly Fatal",
+        "MajorWound": "Major Wound",
+        "MinorWound1": "Minor Wound",
+        "MinorWound2": "Minor Wound",
+        "MinorWound3": "Minor Wound",
+        "MortalWound1": "Mortal Wound",
+        "MortalWound2": "Mortal Wound",
+        "None": "None",
+        "Reeling": "Reeling",
+        "Scratch": "Scratch",
+        "TotalDestruction": "Total Destruction"
       }
     },
     "conditionalModifier": "Conditional Modifier",
@@ -851,8 +859,8 @@
     "dodge": "Dodge",
     "dragDrop": {
       "equipmentTransferred": "Transferred {count}× {itemName} from {sourceName} to {targetName}.",
-      "itemCopied": "Added {itemName} to {targetName} from {sourceName}.",
       "itemContainerLoop": "Cannot drop item: target item is a descendant of the dropped item.",
+      "itemCopied": "Added {itemName} to {targetName} from {sourceName}.",
       "itemTypeMismatch": "Cannot drop item: target type does not match dropped item type."
     },
     "dragSameContainer": "Cannot add the object to this container, as it is already inside it.",
@@ -1920,6 +1928,12 @@
         "location": "Location",
         "roll": "Roll"
       },
+      "modernSheet": {
+        "label": "Modern Sheet"
+      },
+      "npcSheet": {
+        "label": "NPC Sheet"
+      },
       "personal": {
         "created": "Created",
         "identity": "Identity",
@@ -2022,6 +2036,7 @@
       "Bleed": "Bleeding",
       "Blind": "Blinded",
       "Burn": "Burning",
+      "Collapse": "Collapse",
       "Coughing": "Coughing",
       "Counter1": "Counter 1",
       "Counter10": "Counter 10",
@@ -2035,7 +2050,13 @@
       "Counter9": "Counter 9",
       "Crawling": "Crawling",
       "Crouch": "Crouching",
+      "Dead": "Dead",
       "Deaf": "Deafened",
+      "DeathCheck1": "Check #1",
+      "DeathCheck2": "Check #2",
+      "DeathCheck3": "Check #3",
+      "DeathCheck4": "Check #4",
+      "Destroyed": "Destroyed",
       "Disable": "Disabled",
       "Disarmed": "Disarmed",
       "Drowsy": "Drowsy",
@@ -2071,6 +2092,7 @@
       "Tipsy": "Tipsy",
       "Tired": "Tired",
       "Tiring": "Tiring",
+      "Unconscious": "Unconscious",
       "Wait": "Waiting",
       "Wounded": "Wounded"
     },

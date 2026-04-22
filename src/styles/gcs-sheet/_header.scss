@@ -11,12 +11,11 @@ section[data-application-part='header'] {
 
   .gcs-portrait {
     grid-area: portrait;
-    width: max-content;
+    width: 12.5rem;
 
     img {
-      height: 10rem;
+      width: 100%;
       aspect-ratio: 1 / 1;
-
       object-fit: contain;
     }
   }

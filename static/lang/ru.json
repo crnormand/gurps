@@ -208,6 +208,9 @@
             "modifiedon": {
               "label": "Изменён"
             },
+            "organization": {
+              "label": "Организация"
+            },
             "player": {
               "label": "Игрок"
             },
@@ -749,8 +752,8 @@
     "dodge": "Уклон.",
     "dragDrop": {
       "equipmentTransferred": "{count}× {itemName} перенесено из {sourceName} в {targetName}.",
-      "itemCopied": "{itemName} добавлен(а) в {targetName} из {sourceName}.",
       "itemContainerLoop": "Невозможно переместить предмет в один из его собственных контейнеров.",
+      "itemCopied": "{itemName} добавлен(а) в {targetName} из {sourceName}.",
       "itemTypeMismatch": "Несовместимость типов предметов."
     },
     "dragSameContainer": "Невозможно добавить объект в этот контейнер, так как он уже находится внутри него.",
@@ -1808,6 +1811,12 @@
         "location": "Локация",
         "roll": "Бросок"
       },
+      "modernSheet": {
+        "label": "Современный лист"
+      },
+      "npcSheet": {
+        "label": "Лист НИП"
+      },
       "personal": {
         "created": "Создан",
         "identity": "Личность",
@@ -1927,8 +1936,8 @@
       "Counter9": "Счётчик 9",
       "Crawling": "Ползание",
       "Crouch": "Присел",
-      "Deaf": "Оглушён",
       "Dead": "Мёртв",
+      "Deaf": "Оглушён",
       "DeathCheck1": "Проверка №1",
       "DeathCheck2": "Проверка №2",
       "DeathCheck3": "Проверка №3",

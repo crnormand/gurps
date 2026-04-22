@@ -1,6 +1,6 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
 import { parseBlock, parseParry } from '@module/action/parse-attack.js'
-import { MoveModeV2 } from '@module/actor/data/move-mode.js'
+import { groundMoveForBasicMove, MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { ActorType } from '@module/actor/types.js'
 import { BaseItemModel } from '@module/item/data/base.js'
@@ -510,6 +510,7 @@ Portrait will not be imported.`
       createdon: this.input.created_date ?? '',
       modifiedon: this.input.modified_date ?? '',
       player: profile.player_name ?? '',
+      organization: profile.organization ?? '',
     }
   }
 
@@ -539,10 +540,13 @@ Portrait will not be imported.`
 
         if (!Object.values(HitLocationRole).includes(role as any)) role = null
 
+        const totalDR = (location.calc.dr as Record<string, number>).all ?? 0
+
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
           where: location.table_name ?? '',
-          import: (location.calc.dr as Record<string, number>).all ?? 0,
+          import: totalDR,
+          _dr: totalDR,
           penalty: location.hit_penalty ?? 0,
           rollText: location.calc.roll_range ?? '-',
           split,
@@ -562,8 +566,22 @@ Portrait will not be imported.`
   /* ---------------------------------------- */
 
   async #promptHitLocationOverwrite() {
-    // No need to run this if there is no existing actor or if this is the first import.
-    if (!this.actor || !this.actor.system.profile.modifiedon) return
+    // No need to run this if there is no existing actor
+    if (!this.actor) return
+
+    // On first import, always replace the hit location table
+    if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
+      const currentHitLocationNullifiers = Object.fromEntries(
+        this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+      )
+
+      this.output.hitlocationsV2 = {
+        ...this.output.hitlocationsV2,
+        ...currentHitLocationNullifiers,
+      }
+
+      return
+    }
 
     const currentBodyPlan = this.actor.system.bodyplan
 
@@ -572,8 +590,11 @@ Portrait will not be imported.`
       this.actor.system.hitlocationsV2.map(hitLocation => {
         const location = hitLocation.toObject() as AnyMutableObject
 
+        delete location.flags
+        delete location.img
+        delete location.name
+        delete location.sort
         delete location._damageType
-        delete location._dr
         delete location.drCap
         delete location.drItem
         delete location.drMod
@@ -724,12 +745,7 @@ Portrait will not be imported.`
     ): boolean =>
       newMode.mode === oldMode.mode && newMode.basic === oldMode.basic && newMode.enhanced === oldMode.enhanced
 
-    const groundMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      _id: foundry.utils.randomID(),
-      mode: 'GURPS.moveModeGround',
-      basic: this.output.basicmove?.value ?? 5,
-      enhanced: 0,
-    }
+    const groundMove = groundMoveForBasicMove(this.output.basicmove?.value ?? 5)
 
     const allModes = [groundMove]
 

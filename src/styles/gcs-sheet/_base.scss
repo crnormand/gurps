@@ -84,6 +84,7 @@ body {
   line-height: var(--gcs-input-height);
   cursor: pointer;
   padding-right: 0.25rem;
+  text-align: center;
 
   span {
     width: 100%;
@@ -163,6 +164,10 @@ body {
     min-width: 0;
     width: 100%;
 
+    label {
+      text-align: end;
+    }
+
     .form-group:nth-child(odd) {
       @include gcs-banding;
     }
@@ -220,10 +225,15 @@ body {
   }
 
   .form-fields {
+    display: flex;
     height: 100%;
     grid-column: 2;
     min-width: 0;
     white-space: nowrap;
+
+    > * {
+      align-self: center;
+    }
 
     :is(input, textarea) {
       width: 100%;
@@ -321,6 +331,10 @@ body {
 
     tr {
       background-color: var(--gcs-color-surface-bg);
+    }
+
+    td + td {
+      border-left: 1px solid var(--gcs-color-section-border);
     }
 
     tr:nth-child(odd) {

@@ -42,10 +42,10 @@
       <div class="tracker-tooltip">
         <label class="title">{{name}}</label>
         {{#each descriptors as |threshold|}}
-          <label>{{threshold.value}}</label><label>{{localize threshold.condition}}</label>
+          <label>{{threshold.value}}</label><label>{{localize threshold.state}}</label>
         {{/each}}
       </div>
-  '>{{{gurpslink condition}}}</span>
+  '>{{{gurpslink state}}}</span>
   </div>
 
   <div class='ms-tracker-footer'>

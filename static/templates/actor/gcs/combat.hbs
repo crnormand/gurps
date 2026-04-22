@@ -2,7 +2,7 @@
 <tr class="gcs-action-row" data-uuid="{{uuid}}">
     <td class="gcs-item-name-cell">
       <div class="gcs-item-name-line">
-        <span class="gcs-item-name-text">{{fullName}}</span>
+        <span class="gcs-item-name-text">{{name}}</span>
         {{#if hasNotes}}
         <i
           class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
@@ -11,9 +11,11 @@
         ></i>
         {{/if}}
       </div>
-      {{#if (and hasNotes notesOpen)}}
-      <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
-      {{/if}}
+      <div class="gcs-item-notes-container">
+        {{#if (and hasNotes notesOpen)}}
+        <div class="gcs-item-notes ">{{notes}}</div>
+        {{/if}}
+      </div>
     </td>
     <td class="gcs-item-usage">{{usage}}</td>
     <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
@@ -37,7 +39,7 @@
 <tr class="gcs-action-row" data-uuid="{{uuid}}">
     <td class="gcs-item-name-cell">
       <div class="gcs-item-name-line">
-        <span class="gcs-item-name-text">{{fullName}}</span>
+        <span class="gcs-item-name-text">{{name}}</span>
         {{#if hasNotes}}
         <i
           class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
@@ -47,7 +49,7 @@
         {{/if}}
       </div>
       {{#if (and hasNotes notesOpen)}}
-      <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+      <div class="gcs-item-notes">{{notes}}</div>
       {{/if}}
     </td>
     <td class="gcs-item-usage">{{usage}}</td>

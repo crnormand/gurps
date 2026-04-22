@@ -208,6 +208,9 @@
             "modifiedon": {
               "label": "Modificado em"
             },
+            "organization": {
+              "label": "Organização"
+            },
             "player": {
               "label": "Jogador(a)"
             },
@@ -749,8 +752,8 @@
     "dodge": "Esquiva",
     "dragDrop": {
       "equipmentTransferred": "{count}× {itemName} transferido(s) de {sourceName} para {targetName}.",
-      "itemCopied": "{itemName} adicionado(a) a {targetName} de {sourceName}.",
       "itemContainerLoop": "Não é possível mover um item para um de seus próprios contêineres.",
+      "itemCopied": "{itemName} adicionado(a) a {targetName} de {sourceName}.",
       "itemTypeMismatch": "Incompatibilidade de tipo de item."
     },
     "dragSameContainer": "Não é possível adicionar o objeto e este contêiner, pois ele já está dentro dele.",
@@ -1808,6 +1811,12 @@
         "location": "Localização",
         "roll": "Rolagem"
       },
+      "modernSheet": {
+        "label": "Ficha Moderna"
+      },
+      "npcSheet": {
+        "label": "Ficha de NPC"
+      },
       "personal": {
         "created": "Criação",
         "identity": "Identidade",
@@ -1924,8 +1933,8 @@
       "Counter9": "Contador 9",
       "Crawling": "Rastejando",
       "Crouch": "Agachado(a)",
-      "Deaf": "Ensurdecido(a)",
       "Dead": "Morto(a)",
+      "Deaf": "Ensurdecido(a)",
       "DeathCheck1": "Teste #1",
       "DeathCheck2": "Teste #2",
       "DeathCheck3": "Teste #3",
