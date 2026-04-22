@@ -1,5 +1,6 @@
 {{#*inline ".traitEntry"}}
   <tr class="gcs-item-row"
+      data-item-id="{{id}}"
       data-uuid="{{uuid}}"
       data-has-children="{{hasChildren}}"
       draggable="true">
@@ -9,7 +10,7 @@
         <i
           class="fa-solid fa-caret-down gcs-container-toggle"
           data-open="{{childrenOpen}}"
-          data-action="toggleItemContainer"
+          data-action="toggleContainer"
         ></i>
         {{else}}
         <span class="gcs-container-spacer"></span>
@@ -18,7 +19,7 @@
         {{#if hasNotes}}
         <i
           class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
-          data-action="toggleItemNotes"
+          data-action="toggleNotes"
           data-open="{{notesOpen}}"
         ></i>
         {{/if}}

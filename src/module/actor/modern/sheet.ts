@@ -39,7 +39,7 @@ export function countItems(record: Record<string, EntityComponentBase> | undefin
 export namespace GurpsActorModernSheet {
   export type Type = ActorType.Character
 
-  export interface RenderContext extends ActorSheet.RenderContext {
+  export interface RenderContext extends GurpsBaseActorSheet.RenderContext {
     system: Actor.SystemOfType<Type>
     effects: ActiveEffect[]
     skillCount: number
@@ -66,8 +66,8 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   GurpsBaseActorSheet.Configuration,
   GurpsBaseActorSheet.RenderOptions,
   GurpsActorModernSheet.RenderContext
->() {
-  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
+> {
+  static override DEFAULT_OPTIONS: GurpsBaseActorSheet.DefaultOptions = {
     classes: ['modern-sheet'],
     position: {
       width: 768,
@@ -173,8 +173,8 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   }
 
   protected override async _onRender(
-    context: GurpsActorModernSheet.RenderContext,
-    options: GurpsActorModernSheet.RenderOptions
+    context: DeepPartial<GurpsActorModernSheet.RenderContext>,
+    options: DeepPartial<GurpsActorModernSheet.RenderOptions>
   ): Promise<void> {
     super._onRender(context, options)
 

@@ -748,6 +748,8 @@
     },
     "dodge": "Уклон.",
     "dragDrop": {
+      "equipmentTransferred": "{count}× {itemName} перенесено из {sourceName} в {targetName}.",
+      "itemCopied": "{itemName} добавлен(а) в {targetName} из {sourceName}.",
       "itemContainerLoop": "Невозможно переместить предмет в один из его собственных контейнеров.",
       "itemTypeMismatch": "Несовместимость типов предметов."
     },

@@ -1,4 +1,4 @@
-import { HandlebarsApplicationMixin, ActorSheet } from '@gurps-types/foundry/index.js'
+import { HandlebarsApplicationMixin, ActorSheet, DeepPartial } from '@gurps-types/foundry/index.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import { GurpsActorModernSheet } from './sheet.js'
@@ -56,8 +56,8 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
   /* ---------------------------------------- */
 
   protected override async _onRender(
-    context: GurpsActorNpcModernSheet.RenderContext,
-    options: GurpsActorModernSheet.RenderOptions
+    context: DeepPartial<GurpsActorNpcModernSheet.RenderContext>,
+    options: DeepPartial<GurpsActorModernSheet.RenderOptions>
   ): Promise<void> {
     const html = this.element
 

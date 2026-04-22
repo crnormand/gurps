@@ -1,4 +1,4 @@
-import { DocumentSheet, HandlebarsApplicationMixin, ActorSheet } from '@gurps-types/foundry/index.js'
+import { HandlebarsApplicationMixin, ActorSheet, Application } from '@gurps-types/foundry/index.js'
 import {
   DisplayConditionalModifier,
   DisplayEquipment,
@@ -21,7 +21,7 @@ import { systemPath } from '@module/util/misc.js'
 import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import type { MoveModeV2 } from '../data/move-mode.js'
 import Maneuvers from '../maneuver.js'
@@ -87,14 +87,14 @@ type AttributeEntry = {
 
 /* ---------------------------------------- */
 
-type DragData = { type: 'Item'; id: string; uuid: string } | { type: 'damageItem'; payload: AnyObject }
-
-type DragDataOf<T extends DragData['type']> = Extract<DragData, { type: T }>
+type DragData = { type: 'Item'; [key: string]: unknown } | { type: 'damageItem'; payload: AnyObject }
 
 /* ---------------------------------------- */
 
 namespace GurpsActorGcsSheet {
   export type Type = ActorType.Character
+
+  /* ---------------------------------------- */
 
   export interface RenderContext extends ActorSheet.RenderContext {
     isPlay: boolean
@@ -131,6 +131,16 @@ namespace GurpsActorGcsSheet {
     otherValue: string
     otherWeight: string
   }
+
+  /* ---------------------------------------- */
+
+  export interface ItemDropDetails {
+    updates: { data: Item.UpdateData[]; operation: Item.Database.UpdateOperation }[]
+    creations: { data: Item.CreateData[]; operation: Item.Database.CreateOperation<false> }[]
+    deletions: { ids: string[]; operation: Item.Database.DeleteOperation }[]
+    /** Optional info notification to display to the user after operations are executed. */
+    notification?: string
+  }
 }
 
 const POOL_COLOR_VARIABLE = '--gcs-color-default-pool'
@@ -143,12 +153,12 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ActorSheet.Configuration,
   ActorSheet.RenderOptions,
   GurpsActorGcsSheet.RenderContext
->() {
+> {
   static readonly #pseudoDenominator = new foundry.data.fields.NumberField({ readonly: true, nullable: true })
 
   /* ---------------------------------------- */
 
-  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions<GurpsBaseActorSheet.Configuration> = {
+  static override DEFAULT_OPTIONS: GurpsBaseActorSheet.DefaultOptions = {
     classes: ['gcs-sheet'],
     position: {
       width: 800,
@@ -556,8 +566,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   /* ---------------------------------------- */
 
   protected override async _onRender(
-    context: GurpsActorGcsSheet.RenderContext,
-    options: ActorSheet.RenderOptions
+    context: DeepPartial<GurpsActorGcsSheet.RenderContext>,
+    options: DeepPartial<GurpsBaseActorSheet.RenderOptions>
   ): Promise<void> {
     super._onRender(context, options)
 
@@ -682,8 +692,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   /* ---------------------------------------- */
 
   protected override async _onFirstRender(
-    context: GurpsActorGcsSheet.RenderContext,
-    options: ActorSheet.RenderOptions
+    context: DeepPartial<GurpsActorGcsSheet.RenderContext>,
+    options: DeepPartial<GurpsBaseActorSheet.RenderOptions>
   ): Promise<void> {
     super._onFirstRender(context, options)
 
@@ -713,9 +723,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
         condition: target => target.dataset.uuid !== undefined,
         callback: async target => {
-          const handler = this.options.actions['deleteEmbedded'] as DocumentSheet.ClickAction | null
+          const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
+          const event = new PointerEvent('click', { bubbles: true })
 
-          if (handler) handler.call(this, null, target)
+          if (handler) handler.call(this, event, target)
         },
       },
     ]
@@ -730,9 +741,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
         condition: target => target.dataset.uuid !== undefined,
         callback: async target => {
-          const handler = this.options.actions['deleteEmbedded'] as DocumentSheet.ClickAction | null
+          const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
+          const event = new PointerEvent('click', { bubbles: true })
 
-          if (handler) handler.call(this, null, target)
+          if (handler) handler.call(this, event, target)
         },
       },
     ]
@@ -752,46 +764,62 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         case 'spells':
           return this.actor.system.allSpellsV2
         case 'carriedEquipment':
-          return this.actor.system.equipmentV2.carried
+          return this.actor.system.allEquipmentCarried
         case 'otherEquipment':
-          return this.actor.system.equipmentV2.other
+          return this.actor.system.allEquipmentOther
         default:
           return []
       }
     }
 
     const tableId = target.closest<HTMLElement>('[data-table-id]')?.dataset.tableId ?? ''
-    const sortBy = target.dataset.sortBy
-    const itemList = getItemList(tableId)
+    const sortBy = target.dataset.sortBy ?? ''
+    const allItems = getItemList(tableId)
 
-    const unsortedIds = itemList.map(i => i._id)
+    if (allItems.length === 0) return
 
-    let sortedIds = itemList
-      .sort((left, right) => {
-        return left.name.localeCompare(right.name)
+    // Group items by their container so each containment level sorts independently.
+    const grouped = new Map<string | null, Item.Implementation[]>()
+
+    for (const item of allItems) {
+      const key = item.system.containedBy
+      const bucket = grouped.get(key)
+
+      if (bucket) bucket.push(item)
+      else grouped.set(key, [item])
+    }
+
+    // Primary sort by the requested field; fall back to name for stability.
+    const comparator = (left: Item.Implementation, right: Item.Implementation): number => {
+      const leftValue = foundry.utils.getProperty(left, sortBy) ?? ''
+      const rightValue = foundry.utils.getProperty(right, sortBy) ?? ''
+
+      const fieldResult =
+        typeof leftValue === 'number' && typeof rightValue === 'number'
+          ? leftValue - rightValue
+          : String(leftValue).localeCompare(String(rightValue))
+
+      return fieldResult !== 0 ? fieldResult : left.name.localeCompare(right.name)
+    }
+
+    // Toggle direction: if top-level items are already in ascending order, sort descending.
+    const topLevel = [...(grouped.get(null) ?? [])].sort((left, right) => left.sort - right.sort)
+    const topLevelAscending = [...topLevel].sort(comparator)
+    const alreadyAscending = topLevel.every((item, index) => item._id === topLevelAscending[index]._id)
+    const direction = alreadyAscending ? -1 : 1
+
+    // Sort each group independently and collect update payloads.
+    const updates: { _id: string; sort: number }[] = []
+
+    for (const group of grouped.values()) {
+      const sorted = [...group].sort((left, right) => direction * comparator(left, right))
+
+      sorted.forEach((item, index) => {
+        updates.push({ _id: item._id!, sort: (index + 1) * CONST.SORT_INTEGER_DENSITY })
       })
-      .sort((left, right) => {
-        const leftValue = foundry.utils.getProperty(left, sortBy ?? '') ?? 0
-        const rightValue = foundry.utils.getProperty(right, sortBy ?? '') ?? 0
+    }
 
-        switch (typeof leftValue) {
-          case 'number':
-            return leftValue - (rightValue as number)
-          case 'string':
-            return leftValue.localeCompare(rightValue as string)
-          default:
-            return 0
-        }
-      })
-      .map(item => item._id)
-
-    if (unsortedIds.equals(sortedIds)) sortedIds = sortedIds.reverse()
-
-    const sortUpdates = sortedIds.map((_id, index) => {
-      return { _id, sort: (index + 1) * CONST.SORT_INTEGER_DENSITY }
-    })
-
-    await this.actor.updateEmbeddedDocuments('Item', sortUpdates)
+    await this.actor.updateEmbeddedDocuments('Item', updates)
   }
 
   /* ---------------------------------------- */
@@ -932,52 +960,20 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   /*  Drag & Drop Handling                    */
   /* ---------------------------------------- */
 
-  protected override _onDragStart(event: DragEvent) {
-    const element = event.currentTarget
-
-    if (!isHTMLElement(element)) {
-      console.error('Drag start event target is not an HTMLElement')
-
-      return
-    }
-
-    const itemRow = element?.closest<HTMLElement>('[data-item-id]')
-
-    if (!itemRow) {
-      console.error('No item row found for drag start target')
-
-      return
-    }
-
-    const itemId = itemRow.dataset.itemId
-
-    if (!itemId) {
-      console.error('No item id found on item row')
-
-      return
-    }
-
-    const item = this.actor.items.get(itemId)
-
-    if (!item) {
-      console.error(`No item found with id ${itemId}`)
-
-      return
-    }
-
-    event.dataTransfer?.setData('text/plain', JSON.stringify({ type: 'Item', id: itemId, uuid: item.uuid }))
-  }
-
-  /* ---------------------------------------- */
-
   protected override async _onDrop(event: DragEvent): Promise<void> {
     const data = foundry.applications.ux.TextEditor.getDragEventData(event) as DragData | null
 
     if (!data) return
 
-    switch (data?.type) {
+    switch (data.type) {
       case 'Item': {
-        return this._onDropItem(event, data)
+        // Resolve the item ourselves rather than delegating to super._onDrop, which would route
+        // same-actor drops through _onSortItem (bypassing our custom position/sort logic).
+        const item = await fromUuid<Item.Implementation>(data.uuid as string)
+
+        if (item) await this._onDropItem(event, item)
+
+        return
       }
       case 'damageItem': {
         return this.actor.handleDamageDrop(data.payload)
@@ -987,78 +983,215 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  protected async _onDropItem(event: DragEvent, itemData: DragDataOf<'Item'>): Promise<void> {
-    const element = event.target as HTMLElement
-    const targetId = element.closest<HTMLElement>('[data-item-id]')?.dataset.itemId ?? null
+  protected async _resolveItemDropDetails(
+    event: DragEvent,
+    item: Item.Implementation
+  ): Promise<GurpsActorGcsSheet.ItemDropDetails | null> {
+    if (!isHTMLElement(event.target)) return null
 
-    const item = await fromUuid<Item.Implementation>(itemData.uuid)
+    const element = event.target
 
-    if (!item || !item.isOwner) return
+    // Phase A: Resolve drop target from DOM. dropTarget may be null when the user drops onto
+    // an empty section — in that case the item becomes a top-level item (containedBy = null).
+    const dropTarget = element.closest<HTMLElement>('[data-item-id]')
+    let target: Item.Implementation | null = dropTarget
+      ? (this.actor.items.get(dropTarget.dataset.itemId!) ?? null)
+      : null
 
-    // target is the target item on which the dropped item is dropped.
-    let target: Item.Implementation | null = targetId ? (this.actor.items.get(targetId) ?? null) : null
-
+    // Phase B: Validate that the dropped item and the target item are the same type.
     if (target && target.type !== item.type) {
       ui.notifications?.warn('GURPS.dragDrop.itemTypeMismatch', { localize: true })
 
-      return
+      return null
     }
 
-    // If the target is an item, we need to find out whether it is carried to be able to put the dragged
-    // item in the right list
+    // Phase C: Determine whether the item will be "carried" or "other" equipment. When there is
+    // a target item, inherit its carried state. Otherwise read the section table from the DOM.
     let carried = true
 
-    if (target) {
-      if (target.isOfType(ItemType.Equipment)) carried = target.system.carried
+    if (target?.isOfType(ItemType.Equipment)) {
+      carried = target.system.carried
     } else {
       const tableId = element.closest<HTMLElement>('[data-table-id]')?.dataset.tableId
 
       carried = tableId === 'carriedEquipment'
     }
 
-    // Decide whether the dropped item should go inside or before the target item.
-    const dropPosition = target ? await resolveItemDropPosition(item) : null
+    // Phase D: When dropping onto an existing item, ask the user whether the dropped item should
+    // land before the target or inside it (as a child). Empty-section drops skip this dialog and
+    // go straight to the top level.
+    const dropPosition = target ? await resolveItemDropPosition(target) : null
 
-    if (dropPosition === null) return
+    // null means the user cancelled the dialog — abort. (For empty-section drops dropPosition is
+    // also null, but target is null too, so this guard only fires when the user had a choice.)
+    if (target && dropPosition === null) return null
 
-    /**
-     * Begin preparing the sort update. By default, the sort siblings of the dropped item
-     * are the top-level items in a given section corresponding to its item type (e.g. traits, skills, spells,
-     * equipment). If the item is dropped inside another item, then the siblings are the children of the target item.
-     */
+    // Phase E: Determine sort siblings, containedBy, and the target's container based on the
+    // chosen drop position.
+    //
+    // Default (null drop position, i.e. empty-section drop):
+    //   • siblings = all top-level items of this type in the target section
+    //   • containedBy = null (top-level)
+    //   • targetContainer = null
     let siblings = this.actor.system.getCollectionForItemType(item.type, carried)
-    let containedBy = target?.system.containedBy ?? null
-    let targetContainer = target?.system.container ?? null
+    let containedBy: string | null = null
+    let targetContainer: Item.Implementation | null = null
 
     if (dropPosition === 'inside') {
-      // If the user selected "inside", the target item is now the container to drop the dropped item
-      // into, and the new target is the first child of the container.
-      containedBy = targetId
+      // The target item becomes the new container. The first child becomes the sort anchor so
+      // the dropped item is inserted before it.
+      containedBy = dropTarget!.dataset.itemId!
       targetContainer = target
-
       siblings = target?.system.children ?? []
-      target = siblings[0]
-    } else {
-      // If the user did not select "inside", the container is the item which contains the target
-      // item, and the sivlings are the children of that container. If the target item is a top-level item, then the
-      // container is null and the siblings are the top-level items of the section.
+      target = siblings[0] ?? null
+    } else if (dropPosition === 'before') {
+      // Inherit the target item's container as the new parent, and sort among its siblings.
+      containedBy = target?.system.containedBy ?? null
       targetContainer = target?.system.container ?? null
-
       if (targetContainer) siblings = targetContainer.system.children
     }
 
-    // Sort the dropped item in relation to the target item, keeping the target's siblings as siblings.
-    // This should return an array containing a sort update for the dropped item.
-    const sortUpdates = foundry.utils.performIntegerSort(item, { target, siblings, sortBefore: true })
+    // Phase F: Calculate sort values.
+    //
+    // performIntegerSort uses strict reference equality (sib === target) to locate the target
+    // within the siblings array. Re-resolve the target from within siblings first to guarantee
+    // the reference matches, guarding against any staleness between data-preparation cycles.
+    const sortTarget = target
+      ? (siblings.find(sibling => sibling === target) ?? siblings.find(sibling => sibling.id === target.id) ?? null)
+      : null
 
-    // Extract the new sort value for the dropped item from the sort updates returned by performIntegerSort
-    const sort = sortUpdates.find(update => update.target._id === item.id)?.update.sort
+    const sortUpdates = foundry.utils.performIntegerSort(item, { target: sortTarget, siblings, sortBefore: true })
 
-    if (item.isOfType(ItemType.Equipment)) {
-      return this._onDropEquipment({ item, target, targetContainer, sort, containedBy, carried })
+    // Use reference equality (not _id vs id) to find item's own update entry.
+    const sort = sortUpdates.find(sortUpdate => sortUpdate.target === item)?.update.sort
+
+    // Phase G: Initialise the details accumulator.
+    const details: GurpsActorGcsSheet.ItemDropDetails = {
+      updates: [],
+      creations: [],
+      deletions: [],
     }
 
-    // If the item came from somewhere other than the current actor, create the item on the actor.
+    // Push sort updates for any siblings that need reindexing (the reindex case in
+    // performIntegerSort returns updates for all siblings, not just the dropped item).
+    const siblingSortData = sortUpdates
+      .filter(sortUpdate => sortUpdate.target !== item)
+      .map(sortUpdate => ({ _id: sortUpdate.target._id, sort: sortUpdate.update.sort }) as Item.UpdateData)
+
+    if (siblingSortData.length > 0) {
+      details.updates.push({ data: siblingSortData, operation: { parent: this.actor } })
+    }
+
+    // Phase H: Equipment-specific handling. Equipment requires a quantity prompt so the user can
+    // transfer only part of a stack. The behaviour then diverges based on actor origin.
+    if (item.isOfType(ItemType.Equipment)) {
+      // Skip the dialog when there is only one item — the entire stack is always transferred.
+      const transferredQuantity = item.system.count === 1 ? 1 : await resolveItemDropQuantity(item)
+
+      if (transferredQuantity === null) return null
+
+      const remainingQuantity = item.system.count - transferredQuantity
+
+      if (item.actor !== this.actor) {
+        // Cross-actor transfer: create a copy on this actor with the transferred quantity and
+        // fresh IDs for the item and all its descendants.
+        const newItemData = foundry.utils.mergeObject(item.toObject(), {
+          _id: foundry.utils.randomID(),
+          system: { count: transferredQuantity, containedBy, _carried: carried },
+          sort,
+        })
+        const newChildData = item.system.children.flatMap(child =>
+          buildItemCopyWithChildren(child as Item.OfType<ItemType.Equipment>, newItemData._id, carried)
+        ) as Item.CreateData[]
+
+        details.creations.push({
+          data: [newItemData, ...newChildData],
+          operation: { parent: this.actor, keepId: true },
+        })
+        details.notification = game.i18n!.format('GURPS.dragDrop.equipmentTransferred', {
+          count: String(transferredQuantity),
+          itemName: item.name,
+          sourceName: item.actor?.name ?? '?',
+          targetName: this.actor.name,
+        })
+
+        // If the user cannot modify the source item, fall back to a copy-only drop.
+        if (item.isOwner) {
+          if (remainingQuantity <= 0) {
+            // Delete the item and all its descendants — children are not automatically cascade-deleted
+            // when their container is removed, so we must include them explicitly.
+            const allSourceIds = [item.id!, ...item.system.allContents.map(descendant => descendant.id!)]
+
+            details.deletions.push({ ids: allSourceIds, operation: { parent: item.parent! } })
+          } else {
+            details.updates.push({
+              data: [{ _id: item._id, 'system.count': remainingQuantity } as Item.UpdateData],
+              operation: { parent: item.parent! },
+            })
+          }
+        }
+      } else {
+        // Same-actor move or stack split.
+
+        // Guard against circular containment before doing anything else.
+        if (
+          (target && item.system.containsItem(target)) ||
+          (targetContainer && item.system.containsItem(targetContainer))
+        ) {
+          ui.notifications?.warn('GURPS.dragDrop.itemContainerLoop', { localize: true })
+
+          return null
+        }
+
+        // Children always need their _carried state synced with the item's new location.
+        const childCarriedUpdates = item.system.children.map(child => ({
+          _id: child._id,
+          'system._carried': carried,
+        })) as Item.UpdateData[]
+
+        if (remainingQuantity > 0) {
+          // Splitting the stack: move the transferred portion to the drop location and leave the
+          // remainder in place. Children are duplicated so both stacks have copies.
+          const newItemData = foundry.utils.mergeObject(item.toObject(), {
+            _id: foundry.utils.randomID(),
+            system: { count: transferredQuantity, containedBy, _carried: carried },
+            sort,
+          })
+          const newChildData = item.system.children.flatMap(child =>
+            buildItemCopyWithChildren(child as Item.OfType<ItemType.Equipment>, newItemData._id, carried)
+          ) as Item.CreateData[]
+
+          details.creations.push({
+            data: [newItemData, ...newChildData],
+            operation: { parent: this.actor, keepId: true },
+          })
+          details.updates.push({
+            data: [{ _id: item._id, 'system.count': remainingQuantity } as Item.UpdateData, ...childCarriedUpdates],
+            operation: { parent: this.actor },
+          })
+        } else {
+          // Moving the full stack: one batched update covers the item and all its children.
+          details.updates.push({
+            data: [
+              {
+                _id: item._id,
+                'system.containedBy': containedBy,
+                'system.count': transferredQuantity,
+                'system._carried': carried,
+                sort,
+              } as Item.UpdateData,
+              ...childCarriedUpdates,
+            ],
+            operation: { parent: this.actor },
+          })
+        }
+      }
+
+      return details
+    }
+
+    // Phase I: Non-equipment items (traits, skills, spells). These are always copied when moving
+    // between actors — there is no quantity to transfer and no deletion on the source.
     if (item.actor !== this.actor) {
       const newItemData = foundry.utils.mergeObject(item.toObject(), {
         _id: foundry.utils.randomID(),
@@ -1067,124 +1200,62 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       })
       const newChildData = item.system.children.flatMap(child =>
         buildItemCopyWithChildren(child, newItemData._id, carried)
-      )
+      ) as Item.CreateData[]
 
-      await this.actor.createEmbeddedDocuments('Item', [newItemData, ...newChildData])
+      details.creations.push({ data: [newItemData, ...newChildData], operation: { parent: this.actor, keepId: true } })
+      details.notification = game.i18n!.format('GURPS.dragDrop.itemCopied', {
+        itemName: item.name,
+        targetName: this.actor.name,
+        sourceName: item.actor?.name ?? '?',
+      })
+    } else {
+      // Same actor: guard circular containment then update containedBy and sort position.
+      if (
+        (target && item.system.containsItem(target)) ||
+        (targetContainer && item.system.containsItem(targetContainer))
+      ) {
+        ui.notifications?.warn('GURPS.dragDrop.itemContainerLoop', { localize: true })
 
-      return
+        return null
+      }
+
+      details.updates.push({
+        data: [{ _id: item._id, 'system.containedBy': containedBy, sort } as Item.UpdateData],
+        operation: { parent: this.actor },
+      })
     }
 
-    // If the target or the new parent is a child of the dropped item, we cannot move the item
-    // into the target container, as that would create a circular containment relationship. In that case, we log a
-    // warning and do not move the item.
-    if (
-      (target && item.system.containsItem(target)) ||
-      (targetContainer && item.system.containsItem(targetContainer))
-    ) {
-      ui.notifications?.warn('GURPS.dragDrop.itemContainerLoop', { localize: true })
-
-      return
-    }
-
-    const baseUpdate: Record<string, unknown> = {
-      _id: item._id,
-      'system.containedBy': containedBy,
-      sort,
-    }
-
-    await this.actor.updateEmbeddedDocuments('Item', [baseUpdate])
+    return details
   }
 
   /* ---------------------------------------- */
 
-  protected async _onDropEquipment({
-    item,
-    target,
-    targetContainer,
-    sort,
-    containedBy,
-    carried,
-  }: {
-    item: Item.OfType<ItemType.Equipment>
-    target: Item.Implementation | null
-    targetContainer: Item.Implementation | null
-    sort: number | undefined
-    containedBy: string | null
-    carried: boolean
-  }): Promise<void> {
-    const transferredQuantity = await resolveItemDropQuantity(item)
+  protected override async _onDropItem(
+    event: DragEvent,
+    item: Item.Implementation
+  ): Promise<Item.Implementation | null> {
+    if (!this.actor.isOwner) return null
 
-    if (transferredQuantity === null) return
+    const details = await this._resolveItemDropDetails(event, item)
 
-    const remainingQuantity = item.system.count - transferredQuantity
+    if (!details) return null
 
-    // If the item came from a different actor, create a copy here with the transferred quantity.
-    if (item.actor !== this.actor) {
-      const newItemData = foundry.utils.mergeObject(item.toObject(), {
-        _id: foundry.utils.randomID(),
-        system: { count: transferredQuantity, containedBy, _carried: carried },
-        sort,
-      })
-      const newChildData = item.system.children.flatMap(child =>
-        buildItemCopyWithChildren(child as Item.OfType<ItemType.Equipment>, newItemData._id, carried)
-      )
-
-      await this.actor.createEmbeddedDocuments('Item', [newItemData, ...newChildData], { keepId: true })
-
-      // Remove or reduce the source item's quantity on the original actor.
-      if (remainingQuantity === 0) await item.delete()
-      else await item.update({ 'system.count': remainingQuantity } as Item.UpdateData)
-
-      return
+    // Execute batched operations. Order: deletions first to free IDs, then creations, then updates.
+    for (const { ids, operation } of details.deletions) {
+      await Item.deleteDocuments(ids, operation)
     }
 
-    // If the target or the new parent is a child of the dropped item, we cannot move the item
-    // into the target container, as that would create a circular containment relationship. In that
-    // case, we log a warning and do not move the item.
-    if (
-      (target && item.system.containsItem(target)) ||
-      (targetContainer && item.system.containsItem(targetContainer))
-    ) {
-      ui.notifications?.warn('GURPS.dragDrop.itemContainerLoop', { localize: true })
-
-      return
+    for (const { data, operation } of details.creations) {
+      await Item.createDocuments(data, operation)
     }
 
-    // Update every child's carried state to match the item's new location.
-    const childUpdates = item.system.children.map(child => ({ _id: child._id, 'system._carried': carried }))
-
-    if (remainingQuantity > 0) {
-      // Splitting the stack: create a new item with the transferred quantity and keep the original
-      // with the remainder. Children are duplicated alongside the new item.
-      const newItemData = foundry.utils.mergeObject(item.toObject(), {
-        _id: foundry.utils.randomID(),
-        system: { count: transferredQuantity, containedBy, _carried: carried },
-        sort,
-      })
-      // hey
-      const newChildData = item.system.children.flatMap(child =>
-        buildItemCopyWithChildren(child as Item.OfType<ItemType.Equipment>, newItemData._id, carried)
-      )
-
-      await this.actor.createEmbeddedDocuments('Item', [newItemData, ...newChildData], { keepId: true })
-      await this.actor.updateEmbeddedDocuments('Item', [
-        { _id: item._id, 'system.count': remainingQuantity } as Record<string, unknown>,
-        ...childUpdates,
-      ] as Item.UpdateData[])
-
-      return
+    for (const { data, operation } of details.updates) {
+      await Item.updateDocuments(data, operation)
     }
 
-    // Moving the full stack: update item and children in place.
-    const baseUpdate: Record<string, unknown> = {
-      _id: item._id,
-      'system.containedBy': containedBy,
-      'system.count': transferredQuantity,
-      'system._carried': carried,
-      sort,
-    }
+    if (details.notification) ui.notifications?.info(details.notification)
 
-    await this.actor.updateEmbeddedDocuments('Item', [baseUpdate, ...childUpdates] as Item.UpdateData[])
+    return item
   }
 }
 

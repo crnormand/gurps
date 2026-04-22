@@ -24,9 +24,9 @@ export function buildItemCopyWithChildren(
 
 /* ---------------------------------------- */
 
-export async function resolveItemDropPosition(item: Item.Implementation): Promise<'before' | 'inside' | null> {
+export async function resolveItemDropPosition(target: Item.Implementation): Promise<'before' | 'inside' | null> {
   return await foundry.applications.api.DialogV2.wait({
-    window: { title: item.name },
+    window: { title: target.name },
     content: `<p>${game.i18n!.localize('GURPS.dropResolve')}</p>`,
     buttons: [
       {
@@ -49,14 +49,22 @@ export async function resolveItemDropPosition(item: Item.Implementation): Promis
 export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipment>): Promise<number | null> {
   const max = item.system.count
 
-  return await foundry.applications.api.DialogV2.wait({
+  const rangePicker = foundry.applications.elements.HTMLRangePickerElement.create({
+    name: 'quantity',
+    min: 1,
+    max,
+    step: 1,
+    value: 1,
+  })
+
+  const result = await foundry.applications.api.DialogV2.wait({
     window: { title: item.name },
     content: `
 <p>${game.i18n!.localize('GURPS.splitQuantity')}</p>
 <div class="form-group">
-<label>${game.i18n!.localize('GURPS.quantity')}</label>
+  <label>${game.i18n!.localize('GURPS.quantity')}</label>
   <div class="form-fields">
-    <input type="number" name="quantity" min="0" max="${max}"/>
+    ${rangePicker.outerHTML}
   </div>
 </div>`,
     buttons: [
@@ -66,11 +74,10 @@ export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipme
         label: 'GURPS.ok',
         default: true,
         callback: (_event, button, _dialog): number => {
-          const input = button.form?.elements.namedItem('quantity') as HTMLInputElement
+          const picker = button.form?.querySelector<HTMLInputElement>('[name="quantity"]')
 
-          if (!input) return 0
-
-          return parseInt(input.value) || 0
+          // Return NaN for missing or non-numeric input; the caller treats NaN as cancellation.
+          return parseInt(picker?.value ?? '')
         },
       },
       {
@@ -81,6 +88,9 @@ export async function resolveItemDropQuantity(item: Item.OfType<ItemType.Equipme
       },
     ],
   })
+
+  // null = dialog closed; NaN = user confirmed with an empty/invalid input — both cancel.
+  return result === null || !Number.isFinite(result) ? null : result
 }
 
 /* ---------------------------------------- */

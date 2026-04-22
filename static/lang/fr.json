@@ -748,6 +748,8 @@
     },
     "dodge": "Esquive",
     "dragDrop": {
+      "equipmentTransferred": "{count}× {itemName} transféré(s) de {sourceName} vers {targetName}.",
+      "itemCopied": "{itemName} ajouté(e) à {targetName} depuis {sourceName}.",
       "itemContainerLoop": "Impossible de déplacer un objet dans l'un de ses propres conteneurs.",
       "itemTypeMismatch": "Type d'objet incompatible."
     },

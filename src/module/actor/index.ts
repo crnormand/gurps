@@ -1,4 +1,4 @@
-import { DocumentSheetV2 } from '@gurps-types/foundry/document-sheet-v2.js'
+import { DocumentSheet } from '@gurps-types/foundry/index.js'
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
@@ -31,7 +31,7 @@ function init() {
     foundry.documents.collections.Actors.registerSheet(
       'gurps',
       // TODO: fix type
-      sheets.GurpsActorGcsSheet as unknown as DocumentSheetV2.AnyConstructor,
+      sheets.GurpsActorGcsSheet as unknown as DocumentSheet.AnyConstructor,
       {
         makeDefault: true,
         types: [ActorType.Character],
