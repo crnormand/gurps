@@ -2001,7 +2001,7 @@ const characterSchema = () => {
       required: true,
       nullable: false,
       initial: (source: unknown) => {
-        const groundMove = groundMoveForBasicMove((source as any)?.basicmove.value ?? 0)
+        const groundMove = groundMoveForBasicMove((source as any)?.basicmove?.value ?? 0)
 
         const allMoves: AnyMutableObject = {}
 
