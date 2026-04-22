@@ -81,13 +81,17 @@ async function migrate(): Promise<MigrationReport | void> {
 
 export function migrateItemSource(source: AnyMutableObject, parentId: string | null = null): AnyMutableObject {
   if (!source.type || typeof source.type !== 'string') {
-    // Not sure what this Item type is, skip it
+    console.warn(
+      `MIGRATE: Item ${source.name} is missing a valid type. Skipping migration for this item. ID: ${source._id}`
+    )
 
     return source
   }
 
   if (![ItemType.Equipment, ItemType.Trait, ItemType.Skill, ItemType.Spell].includes(source.type as ItemType)) {
-    // Not an item type migrated by this migration, skip it
+    console.warn(
+      `MIGRATE: Item ${source.name} has unrecognized type ${source.type}. Skipping migration for this item. ID: ${source._id}`
+    )
 
     return source
   }
@@ -322,7 +326,7 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
   if (!oldData.fea) return oldData as unknown as NewDataWrapper<ItemType.Trait>
 
   let notes = oldData.fea.notes
-  const cr = oldData.fea.cr
+  const cr = oldData.fea.cr ?? null
 
   if (cr !== null) {
     const crText = '[' + game.i18n?.localize('GURPS.CR' + cr.toString()) + ': ' + oldData.fea.name + ']'
