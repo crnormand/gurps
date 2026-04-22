@@ -1,4 +1,5 @@
 // Import Modules
+import { Migrator } from '@module/migration/migrator.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
@@ -40,7 +41,6 @@ import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
-import { AddMultipleImportButton } from './actor/multiple-import-app.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import AddChatHooks from './chat.js'
@@ -1187,7 +1187,7 @@ if (!globalThis.GURPS) {
       }
 
       let mode = att.mode ? ` (${att.mode})` : ''
-      const target = parseInt(att.parry)
+      const target = att.parryLevel
 
       if (isNaN(target) || target == 0) {
         ui.notifications.warn(`No Parry for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
@@ -2183,11 +2183,6 @@ if (!globalThis.GURPS) {
       entity.img = 'systems/gurps/icons/single-die.webp'
     })
 
-    Hooks.on('renderActorDirectory', (app, html) => {
-      // Add the Import Multiple Actors button to the Actors tab.
-      AddMultipleImportButton(html)
-    })
-
     // TODO Move to a new 'bucket' module?
     Hooks.on('renderChatLog', (app, html) => {
       html.querySelector('.chat-scroll')?.addEventListener('drop', handleChatLogDrop)
@@ -2226,55 +2221,9 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
-    // Pop up a dialog informing the user about the one-way migration and asking them to confirm they want to proceed.
-    // If they cancel, shutdown the world (game.shutDown()) to prevent them from accidentally doing the migration.
-    const previousVersionString = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION)
-    const NEW_DATAMODEL_VERSION = '1.0.0'
-
-    // Only show the warning if the migration version is less than 1.0.0.
-    if (foundry.utils.isNewerVersion(NEW_DATAMODEL_VERSION, previousVersionString)) {
-      if (game.user.isGM) {
-        const warningText = game.i18n.localize('GURPS.migration.toV1_0_0.warningText')
-        const proceedText = game.i18n.localize('GURPS.migration.toV1_0_0.proceedText')
-
-        const confirmed = await foundry.applications.api.DialogV2.wait({
-          window: { title: game.i18n.localize('GURPS.migration.toV1_0_0.title') },
-          content: `<p>${warningText}</p><p>${proceedText}</p>`,
-          position: { height: 'auto', width: 600 },
-          buttons: [
-            {
-              action: 'proceed',
-              icon: 'fas fa-check',
-              label: 'GURPS.migration.toV1_0_0.proceed',
-            },
-            {
-              action: 'cancel',
-              icon: 'fa-solid fa-xmark',
-              label: 'GURPS.migration.toV1_0_0.cancel',
-            },
-          ],
-          default: 'cancel',
-        })
-
-        if (confirmed !== 'proceed') {
-          ui.notifications.warn(game.i18n.localize('GURPS.migration.toV1_0_0.cancellationMessage'))
-          await game.shutDown()
-
-          return
-        }
-      } else {
-        const notGMText = game.i18n.localize('GURPS.migration.toV1_0_0.notGMMessage')
-
-        await foundry.applications.api.DialogV2.prompt({
-          window: { title: game.i18n.localize('GURPS.migration.toV1_0_0.title') },
-          content: `<p>${notGMText}</p>`,
-        })
-
-        await game.logOut()
-
-        return
-      }
-    }
+    // Run any needed migrations.
+    Migration.run()
+    await Migrator.migrateWorld()
 
     // TODO Move to a new 'bucket' module?
     // Find the element with ID "chat-message".
@@ -2290,21 +2239,6 @@ if (!globalThis.GURPS) {
     HitLocation.ready()
 
     GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
-
-    if (foundry.utils.isNewerVersion(GURPS.currentVersion, previousVersionString)) {
-      console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
-    }
-
-    // Run any needed migrations.
-    Migration.run()
-
-    for (const module of Object.values(GURPS.modules)) {
-      if (module.migrate) await module.migrate()
-    }
-
-    // Allow for downgrading. Migrations can be created to downgrade the system. In this case, we need to set the
-    // migration version to the current version even if it is lower than the current version.
-    game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
 
     // Show changelog
     const version = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'

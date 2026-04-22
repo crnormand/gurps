@@ -738,10 +738,9 @@ namespace PseudoDocument {
 
   /* ---------------------------------------- */
 
-  export interface DeleteOperation
-    extends Document.Database.DeleteOperation<
-      foundry.abstract.types.DatabaseDeleteOperation<gurps.Pseudo.ParentDocument>
-    > {
+  export interface DeleteOperation extends Document.Database.DeleteOperation<
+    foundry.abstract.types.DatabaseDeleteOperation<gurps.Pseudo.ParentDocument>
+  > {
     deleteContents?: boolean
   }
 

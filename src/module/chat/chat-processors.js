@@ -1,6 +1,5 @@
 'use strict'
 
-import { ActorImporter } from '@module/actor/actor-importer.js'
 import { ChatProcessors } from '@module/chat.js'
 import { NpcInput } from '@module/util/npc-input.js'
 import { parselink } from '@util/parselink.js'
@@ -279,20 +278,8 @@ class ReimportChatProcessor extends ChatProcessor {
   }
   process(line) {
     this.priv(line)
-    let actornames = line.replace(/^\/reimport/, '').trim()
 
-    actornames = splitArgs(actornames)
-    let allPlayerActors = game.actors.entities.filter(actor => actor.hasPlayerOwner)
-    let actors = []
-
-    for (const name of actornames) {
-      let actor = allPlayerActors.find(actor => actor.name.match(makeRegexPattern(name, false)))
-
-      if (actor) actors.push(actor)
-    }
-
-    if (actornames.length == 0) actors = allPlayerActors
-    actors.forEach(actor => new ActorImporter(actor).importActor())
+    throw new Error('The ActorImporter class has been deprecated, necessitating reimplementation of this command.')
   }
 }
 
@@ -1204,7 +1191,7 @@ class DevChatProcessor extends ChatProcessor {
         // Open the full character sheet for an Actor
         let actor = game.actors.getName(match[2].trim())
 
-        if (actor) actor.openSheet('gurps.GurpsActorSheet')
+        if (actor) await actor.sheet.render({ force: true })
         else ui.notifications.warn("Can't find Actor named '" + match[2] + "'")
         break
       }

@@ -1,9 +1,10 @@
 {{#*inline ".poolTooltip"}}
-  <div class="tracker-tooltip">
-    <label class="title">{{localize name}}</label>
+  <div class="gcs-tooltip gcs-pool-tooltip">
     {{#each thresholds}}
-      <label>{{value}}</label>
-      <label>{{localize state}}</label>
+    <div class="threshold">
+      <span class="value">{{value}}</span>
+      <span class="condition">{{localize state}}</span>
+    </div>
     {{/each}}
   </div>
 {{/inline}}
@@ -53,16 +54,16 @@
 
 <section>
   {{#each pools as |pool|}}
-    {{> ".poolEntry" pool}}
+  {{> ".poolEntry" pool}}
   {{/each}}
   {{#unless isPlay}}
-    <div class="gcs-pool-attribute gcs-section">
+  <div class="gcs-pool-attribute gcs-section">
       <div class="gcs-section-header">
         ...
       </div>
       <div class="gcs-section-content">
         <div class="form-fields flexrow">
-          <button data-action="addResourceTracker" class="flexrow">
+          <button data-action="createEmbedded" data-document-name="ResourceTracker" class="flexrow">
             <i class="fa-solid fa-plus"></i>
             {{localize "GURPS.resourceTracker.create"}}
           </button>

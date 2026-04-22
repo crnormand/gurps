@@ -1,8 +1,7 @@
 import { Document } from '@gurps-types/foundry/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
-import { recurselist } from '@util/utilities.js'
-import { AnyObject, InexactPartial } from 'fvtt-types/utils'
+import { AnyMutableObject, AnyObject, InexactPartial } from 'fvtt-types/utils'
 
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { IContainable, isContainable } from '../data/mixins/containable.js'
@@ -10,12 +9,12 @@ import { ModelCollection } from '../data/model-collection.js'
 
 import { BaseItemModel, ItemMetadata } from './data/base.js'
 import { EquipmentModel } from './data/equipment.js'
-import { ItemV1Interface, ItemV1Model } from './legacy/itemv1-interface.js'
+import { runSourceMigrations } from './migrate.js'
 import { ItemType } from './types.js'
 
 class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   extends foundry.documents.Item<SubType>
-  implements ItemV1Interface, IContainable<GurpsItemV2>
+  implements IContainable<GurpsItemV2>
 {
   declare pseudoCollections: Record<string, ModelCollection>
 
@@ -24,13 +23,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   // Narrowed view of this.system for GurpsItemV2 logic.
   get modelV2(): BaseItemModel {
     return this.system as Item.SystemOfType<ItemType.Equipment | ItemType.Trait | ItemType.Skill | ItemType.Spell>
-  }
-
-  // Narrowed view of this.system for GurpsItem logic.
-  get modelV1() {
-    if (this.isNewItemType) throw new Error('Item subtype is not a V1 model')
-
-    return this.system as unknown as ItemV1Model<SubType>
   }
 
   // Common guard for new actor subtypes.
@@ -204,10 +196,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
       const allTypes = Item.TYPES
       const excludeTypes = [
         'base',
-        ItemType.LegacyEquipment,
-        ItemType.LegacyTrait,
-        ItemType.LegacySkill,
-        ItemType.LegacySpell,
         ItemType.GcsTrait,
         ItemType.GcsSkill,
         ItemType.GcsSpell,
@@ -280,6 +268,16 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   }
 
   /* ---------------------------------------- */
+  /*  Data Migration                          */
+  /* ---------------------------------------- */
+
+  static override migrateData(source: AnyMutableObject): AnyMutableObject {
+    runSourceMigrations(source)
+
+    return super.migrateData(source)
+  }
+
+  /* ---------------------------------------- */
   /*  Utilities                               */
   /* ---------------------------------------- */
 
@@ -326,7 +324,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
    * NOTE: Both GurpsItem and GurpsItemV2.
    */
   get hasAttacks(): boolean {
-    return this.isNewItemType ? this.getItemAttacks().length > 0 : this.getItemAttacksV1().length > 0
+    return this.getItemAttacks().length > 0
   }
 
   /* ---------------------------------------- */
@@ -360,37 +358,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   }
 
   /* ---------------------------------------- */
-  /* Legacy Functionality                     */
-  /* ---------------------------------------- */
-
-  /**
-   * NOTE: Both GurpsItem and GurpsItemV2.
-   *
-   * Find Actor Component Key for this Item Type.
-   * NOTE: May be removed after full migration; the output isn't really used for anything real.
-   * @returns {string} actor.system.<key>
-   */
-  get actorComponentKey() {
-    const keys = {
-      equipment: 'equipment',
-      feature: 'ads',
-      skill: 'skills',
-      spell: 'spells',
-      equipmentV2: 'equipment',
-      featureV2: 'ads',
-      skillV2: 'skills',
-      spellV2: 'spells',
-      meleeAtk: 'melee',
-      rangedAtk: 'ranged',
-    } as Record<string, string>
-    const sysKey = keys[this.type]
-
-    if (!sysKey) throw new Error(`No actor system key found for ${this.type}`)
-
-    return sysKey
-  }
-
-  /* ---------------------------------------- */
 
   toggleCollapsed(expandOnly: boolean = false): void {
     const newValue = !this.modelV2.open
@@ -399,149 +366,6 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
     // @ts-expect-error: system does not recognise Item SubType
     this.update({ 'system.open': newValue })
-  }
-
-  /* ---------------------------------------- */
-
-  /* ---------------------------------------- */
-  /* ItemV1Interface Implementation           */
-  /* ---------------------------------------- */
-
-  /**
-   * @deprecated GurpsItem only. Renamed from "getItemAttacks" because I couldn't overload that method properly.
-   * According to my search, this method is not called from anywhere inside the GURPS codebase outside of this
-   * class.
-   *
-   * Return Item Attacks from melee and ranged Actor Components
-   *
-   * This is intended for external libraries like Argon Combat HUD,
-   * but can be used anytime you have only the Item UUID and need
-   * to know if this Item has any Melee or Ranged attacks registered
-   * on Actor System.
-   *
-   * Because GCA import did not populate the `uuid` field on these Actor Components
-   * we need to compare the Item original name for both Item and Component.
-   *
-   * @param getAttOptions
-   * @returns {*[]|boolean}
-   */
-  getItemAttacksV1(getAttOptions: { attackType?: 'melee' | 'ranged' | 'both' } = {}) {
-    const { attackType = 'both' } = getAttOptions
-    const component = (this.modelV1 as Record<string, any>)[this.itemSysKey]
-    const originalName = component.originalName
-    const currentName = component.name
-    const actorComponentUUID = component.uuid
-
-    // Look at Melee and Ranged attacks in actor.system
-    const attacks: Record<string, any>[] = []
-    let attackTypes = ['melee', 'ranged']
-
-    if (attackType !== 'both') attackTypes = [attackType]
-
-    for (const type of attackTypes) {
-      recurselist((this.actor!.system as Record<string, any>)[type], (attackComponent, _k, _d) => {
-        let key = undefined
-
-        if (!!actorComponentUUID && attackComponent.uuid === actorComponentUUID) {
-          key = this.actor!._findSysKeyForId('uuid', attackComponent.uuid, type)
-        } else if (!!originalName && attackComponent.originalName === originalName) {
-          key = this.actor!._findSysKeyForId('originalName', attackComponent.originalName, type)
-        } else if (!!currentName && attackComponent.name === currentName) {
-          key = this.actor!._findSysKeyForId('name', attackComponent.name, type)
-        } else if (this.id === attackComponent.fromItem) {
-          key = this.actor!._findSysKeyForId('fromItem', attackComponent.fromItem, type)
-        }
-
-        if (key) {
-          attacks.push({
-            component: attackComponent,
-            key,
-          })
-        }
-      })
-    }
-
-    return attacks
-  }
-
-  /**
-   * @deprecated GurpsItem only.
-   */
-  // get hasOTFs(): boolean {
-  //   return !!this.getItemOTFs(true)
-  // }
-
-  /**
-   * @deprecated GurpsItem only.
-   */
-  get itemSysKey(): string {
-    const keys: Record<string, string> = {
-      equipment: 'eqt',
-      feature: 'fea',
-      skill: 'ski',
-      spell: 'spl',
-      meleeAtk: 'mel',
-      rangedAtk: 'rng',
-    }
-    const sysKey = keys[this.type]
-
-    if (!sysKey) throw new Error(`No item system key found for ${this.type}`)
-
-    return sysKey
-  }
-
-  /**
-   * @deprecated GurpsItem only.
-   */
-  // getItemOTFs(checkOnly?: boolean): Record<string, any> {
-  //   const { notes } = this.system[this.itemSysKey]
-  //   const action = parselink(notes || '')
-  //   if (!!checkOnly) return !!action.text
-  //   return action
-  // }
-
-  /**
-   * @deprecated GurpsItem only.
-   */
-  // async toggleEquip(state: boolean): Promise<void> {
-  //   if (this.type !== 'equipment' || !this.system.carried || this.system.equipped === equipped) return
-
-  //   const key = this.actor._findEqtkeyForId('itemid', this._id)
-  //   let eqt = foundry.utils.duplicate(GURPS.decode(this.actor, key))
-  //   if (eqt) {
-  //     eqt.equipped = !eqt.equipped
-  //     await this.actor.updateItemAdditionsBasedOn(eqt, key)
-  //     await this.actor.internalUpdate({ [key]: eqt })
-  //   }
-  //   this.system.equipped = eqt.equipped
-  //   this.system.eqt.equipped = eqt.equipped
-  //   await this.actor._updateItemFromForm(this)
-
-  //   console.log(`Change Equipment ${this.name} equipped status to ${equipped}`)
-  // }
-
-  /**
-   * @deprecated GurpsItem only.
-   */
-  // async internalUpdate(data: any, context?: any): Promise<void> {
-  //   let ctx = { render: !this.ignoreRender }
-  //   if (!!context) ctx = { ...context, ...ctx }
-  //   await this.update(data, ctx)
-  // }
-
-  /**
-   * @deprecated GurpsItem only.
-   */
-  getItemInfo(): Record<string, any> {
-    const data = foundry.utils.duplicate(this)
-    const itemSystem = data.system
-
-    return {
-      id: this._id,
-      img: this.img,
-      name: this.name,
-      system: itemSystem,
-    }
   }
 }
 

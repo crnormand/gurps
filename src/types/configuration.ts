@@ -1,6 +1,5 @@
 import type { CharacterModel, GcsCharacterModel } from '@module/actor/data/index.js'
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
-import type { ActorV1Model } from '@module/actor/legacy/actorv1-interface.js'
 import { ActorType } from '@module/actor/types.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
 import type { MapField } from '@module/data/fields/map-field.js'
@@ -19,7 +18,6 @@ import type {
   TraitModel,
 } from '@module/item/data/index.js'
 import type { GurpsItemV2 } from '@module/item/gurps-item.js'
-import type { Equipment, Feature, Skill, Spell } from '@module/item/legacy/itemv1-interface.js'
 import { ItemType } from '@module/item/types.js'
 import type { IResourceTrackerTemplate, ResourceTrackerManagerV2 } from '@module/resource-tracker/index.js'
 import type { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
@@ -63,16 +61,10 @@ declare module 'fvtt-types/configuration' {
 
   interface DataModelConfig {
     Actor: {
-      [ActorType.LegacyCharacter]: ActorV1Model
-      [ActorType.LegacyEnemy]: ActorV1Model
       [ActorType.Character]: typeof CharacterModel
       [ActorType.GcsCharacter]: typeof GcsCharacterModel
     }
     Item: {
-      [ItemType.LegacyEquipment]: Equipment
-      [ItemType.LegacyTrait]: Feature
-      [ItemType.LegacySkill]: Skill
-      [ItemType.LegacySpell]: Spell
       [ItemType.Equipment]: typeof EquipmentModel
       [ItemType.Trait]: typeof TraitModel
       [ItemType.Skill]: typeof SkillModel

@@ -125,8 +125,7 @@ const typedPseudoDocumentSchema = (document: DataModel.AnyConstructor) => {
 
 namespace TypedPseudoDocument {
   export interface CreateDialogOptions
-    extends foundry.config.ApplicationConfiguration,
-      foundry.applications.api.Dialog.WaitOptions {}
+    extends foundry.config.ApplicationConfiguration, foundry.applications.api.Dialog.WaitOptions {}
 
   /* ---------------------------------------- */
 

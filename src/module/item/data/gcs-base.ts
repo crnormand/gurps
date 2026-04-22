@@ -36,10 +36,10 @@ type ItemUseOptions = {
 /* ---------------------------------------- */
 
 abstract class GcsBaseItemModel<
-    Schema extends GcsBaseItemSchema = GcsBaseItemSchema,
-    BaseData extends AnyObject = EmptyObject,
-    DerivedData extends AnyObject = EmptyObject,
-  >
+  Schema extends GcsBaseItemSchema = GcsBaseItemSchema,
+  BaseData extends AnyObject = EmptyObject,
+  DerivedData extends AnyObject = EmptyObject,
+>
   extends TypeDataModel<Schema, Item.Implementation, BaseData, DerivedData>
   implements IContainable<Item.Implementation>
 {

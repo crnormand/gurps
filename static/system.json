@@ -25,7 +25,7 @@
   "compatibility": {
     "minimum": "13",
     "maximum": "14",
-    "verified": "14.359"
+    "verified": "14.360"
   },
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "scripts": ["lib/jquery.tinycolorpicker.js"],
@@ -69,16 +69,13 @@
   "documentTypes": {
     "Actor": {
       "character": {},
-      "characterV2": {},
       "enemy": {},
       "gcsCharacter": {},
       "gcsLoot": {}
     },
     "Item": {
       "equipment": {},
-      "equipmentV2": {},
       "feature": {},
-      "featureV2": {},
       "gcsEquipment": {},
       "gcsEquipmentModifier": {},
       "gcsNote": {},
@@ -87,9 +84,7 @@
       "gcsTrait": {},
       "gcsTraitModifier": {},
       "skill": {},
-      "skillV2": {},
-      "spell": {},
-      "spellV2": {}
+      "spell": {}
     }
   },
   "media": [

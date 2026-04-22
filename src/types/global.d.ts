@@ -7,6 +7,7 @@ import { Damage as ModuleDamage } from '@module/damage/index.js'
 import { Dev as ModuleDev } from '@module/dev/index.js'
 import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
+import { Migrator } from '@module/migration/migrator.js'
 import { Pdf as ModulePdf } from '@module/pdf/index.js'
 import { PseudoDocumentSheet } from '@module/pseudo-document/pseudo-document-sheet.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
@@ -38,6 +39,10 @@ declare global {
       Token: typeof ModuleToken
       UI: typeof ModuleUI
     }
+
+    /* ---------------------------------------- */
+
+    migrator?: Migrator
 
     /* ---------------------------------------- */
 
@@ -273,15 +278,17 @@ declare global {
 
   /* ---------------------------------------- */
 
+  // @deprecated: TODO: Remove. Legacy
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface GurpsActorSheetEditMethods {
-    editEquipment(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
-    editNotes(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
-    editModifier(
-      actor: Actor.Implementation,
-      path: string,
-      obj: EntityComponentBase,
-      isReaction: boolean
-    ): Promise<void>
+    // editEquipment(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
+    // editNotes(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
+    // editModifier(
+    //   actor: Actor.Implementation,
+    //   path: string,
+    //   obj: EntityComponentBase,
+    //   isReaction: boolean
+    // ): Promise<void>
   }
 
   /* ---------------------------------------- */

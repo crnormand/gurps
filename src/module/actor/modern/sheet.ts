@@ -13,13 +13,7 @@ import { ActorType } from '../types.js'
 
 import { bindRowExpand, bindSectionCollapse, bindResourceReset, bindContainerCollapse } from './collapse-handler.js'
 import { bindCrudActions, bindModifierCrudActions } from './crud-handler.js'
-import {
-  bindEquipmentCrudActions,
-  bindNoteCrudActions,
-  bindTrackerActions,
-  PreparedTrackerData,
-  prepareTrackerDataForSheet,
-} from './dialog-crud-handler.js'
+import { bindTrackerActions, PreparedTrackerData, prepareTrackerDataForSheet } from './dialog-crud-handler.js'
 import { bindDropdownToggle } from './dropdown-handler.js'
 import { entityConfigurations, modifierConfigurations } from './entity-config.js'
 import {
@@ -187,7 +181,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     // Add character v1/v2 type guard
     const actor = this.actor
 
-    if (!actor.isOfType(ActorType.LegacyCharacter, ActorType.Character, ActorType.LegacyEnemy)) return
+    if (!actor.isOfType(ActorType.Character)) return
 
     const html = this.element
 
@@ -239,8 +233,8 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     quickNotesContent?.addEventListener('dblclick', () => this.#openQuickNoteEditor())
 
     // Bind CRUD actions for entities
-    bindEquipmentCrudActions(html, this.actor, this)
-    bindNoteCrudActions(html, this.actor, this)
+    // bindEquipmentCrudActions(html, this.actor, this)
+    // bindNoteCrudActions(html, this.actor, this)
     bindTrackerActions(html, this.actor)
 
     // Bind dropdown handlers
@@ -405,316 +399,14 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     })
 
     modifierConfigurations.forEach(({ isReaction }) => {
-      bindModifierCrudActions(html, this.actor, this, this.editModifier.bind(this), isReaction)
+      // bindModifierCrudActions(html, this.actor, this, this.editModifier.bind(this), isReaction)
+      bindModifierCrudActions(html, this.actor, this, isReaction)
     })
   }
 
   #onClickRoll(event: MouseEvent): void {
     event.preventDefault()
     GURPS.handleRoll(event, this.actor)
-  }
-
-  async editSkills(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    if (obj.consumeAction === undefined) obj.consumeAction = false
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/skill-editor-popup.hbs',
-      'Skill Editor',
-      [
-        'name',
-        'import',
-        'relativelevel',
-        'pageref',
-        'notes',
-        'checkotf',
-        'duringotf',
-        'passotf',
-        'failotf',
-        'itemModifiers',
-        'modifierTags',
-      ],
-      ['points']
-    )
-  }
-
-  async editAds(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/advantage-editor-popup.hbs',
-      'Trait Editor',
-      ['name', 'notes', 'pageref', 'checkotf', 'duringotf', 'passotf', 'failotf', 'itemModifiers', 'modifierTags'],
-      ['points']
-    )
-  }
-
-  async editSpells(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    if (obj.consumeAction === undefined) obj.consumeAction = true
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/spell-editor-popup.hbs',
-      'Spell Editor',
-      [
-        'name',
-        'import',
-        'difficulty',
-        'pageref',
-        'notes',
-        'resist',
-        'class',
-        'cost',
-        'maintain',
-        'casttime',
-        'duration',
-        'college',
-        'checkotf',
-        'duringotf',
-        'passotf',
-        'failotf',
-        'itemModifiers',
-        'modifierTags',
-      ],
-      ['points']
-    )
-  }
-
-  async editMelee(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/melee-editor-popup.hbs',
-      'Melee Weapon Editor',
-      [
-        'name',
-        'import',
-        'reach',
-        'parry',
-        'block',
-        'damage',
-        'st',
-        'mode',
-        'notes',
-        'checkotf',
-        'duringotf',
-        'passotf',
-        'failotf',
-        'itemModifiers',
-        'modifierTags',
-      ],
-      []
-    )
-  }
-
-  async editRanged(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/ranged-editor-popup.hbs',
-      'Ranged Weapon Editor',
-      [
-        'name',
-        'import',
-        'acc',
-        'range',
-        'rof',
-        'shots',
-        'rcl',
-        'bulk',
-        'damage',
-        'st',
-        'mode',
-        'notes',
-        'checkotf',
-        'duringotf',
-        'passotf',
-        'failotf',
-        'itemModifiers',
-        'modifierTags',
-      ],
-      []
-    )
-  }
-
-  async editEquipment(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    const dlgHtml = await foundry.applications.handlebars.renderTemplate(
-      'systems/gurps/templates/equipment-editor-popup.hbs',
-      obj
-    )
-    const dialog = await new foundry.applications.api.DialogV2({
-      window: { title: 'Equipment Editor', resizable: true },
-      content: dlgHtml,
-      buttons: [
-        {
-          action: 'update',
-          label: 'Update',
-          icon: 'fas fa-save',
-          callback: (_event: Event, button: HTMLButtonElement) => {
-            const form = button.form
-
-            if (!form) return
-
-            const getValue = (selector: string): string => {
-              const el = form.querySelector(selector)
-
-              return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.value : ''
-            }
-
-            const isChecked = (selector: string): boolean => {
-              const el = form.querySelector(selector)
-
-              return el instanceof HTMLInputElement ? el.checked : false
-            }
-
-            obj.name = getValue('.name') || ''
-            obj.notes = getValue('.notes') || ''
-            obj.pageref = getValue('.pageref') || ''
-            obj.count = parseFloat(getValue('.count')) || 0
-            obj.cost = parseFloat(getValue('.cost')) || 0
-            obj.weight = parseFloat(getValue('.weight')) || 0
-            obj.carried = isChecked('.carried')
-            obj.equipped = isChecked('.equipped')
-            obj.save = isChecked('.save')
-            actor.editItem(path, obj)
-          },
-        },
-      ],
-      position: { width: 560 },
-    }).render({ force: true })
-
-    const element = dialog.element
-
-    element.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(textarea => {
-      textarea.addEventListener('drop', this.dropFoundryLinks.bind(this))
-    })
-    element.querySelectorAll<HTMLInputElement>('input').forEach(input => {
-      input.addEventListener('drop', this.dropFoundryLinks.bind(this))
-    })
-  }
-
-  async editNotes(actor: Actor.Implementation, path: string, obj: Record<string, unknown>): Promise<void> {
-    await this.editItem(
-      actor,
-      path,
-      obj,
-      'systems/gurps/templates/note-editor-popup.hbs',
-      'Note Editor',
-      ['pageref', 'notes', 'markdown', 'title'],
-      [],
-      730
-    )
-  }
-
-  async editModifier(
-    actor: Actor.Implementation,
-    path: string,
-    obj: Record<string, unknown>,
-    isReaction = true
-  ): Promise<void> {
-    const dlgHtml = await foundry.applications.handlebars.renderTemplate(
-      'systems/gurps/templates/modifier-editor-popup.hbs',
-      obj
-    )
-    const title = isReaction
-      ? getGame().i18n.localize('GURPS.reaction')
-      : getGame().i18n.localize('GURPS.conditionalModifier')
-
-    await foundry.applications.api.DialogV2.wait({
-      window: { title: `${title} Editor` },
-      content: dlgHtml,
-      buttons: [
-        {
-          action: 'update',
-          label: getGame().i18n.localize('GURPS.update'),
-          icon: 'fas fa-save',
-          callback: (_event: Event, button: HTMLButtonElement) => {
-            const form = button.form
-
-            if (!form) return
-            const modifierInput = form.querySelector('.modifier')
-            const situationInput = form.querySelector('.situation')
-
-            obj.modifier = modifierInput instanceof HTMLInputElement ? parseInt(modifierInput.value) || 0 : 0
-            obj.situation = situationInput instanceof HTMLInputElement ? situationInput.value : ''
-            actor.internalUpdate({ [path]: obj })
-          },
-        },
-      ],
-    })
-  }
-
-  async editItem(
-    actor: Actor.Implementation,
-    path: string,
-    obj: Record<string, unknown>,
-    template: string,
-    title: string,
-    strprops: string[],
-    numprops: string[],
-    width = 560
-  ): Promise<void> {
-    const dlgHtml = await foundry.applications.handlebars.renderTemplate(template, obj)
-    const dialog = await new foundry.applications.api.DialogV2({
-      window: { title, resizable: true },
-      content: dlgHtml,
-      buttons: [
-        {
-          action: 'update',
-          label: 'Update',
-          icon: 'fas fa-save',
-          callback: (_event: Event, button: HTMLButtonElement) => {
-            const form = button.form
-
-            if (!form) return
-
-            const getValue = (selector: string): string => {
-              const el = form.querySelector(selector)
-
-              return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.value : ''
-            }
-
-            const isChecked = (selector: string): boolean => {
-              const el = form.querySelector(selector)
-
-              return el instanceof HTMLInputElement ? el.checked : false
-            }
-
-            strprops.forEach(prop => (obj[prop] = getValue(`.${prop}`) || ''))
-            numprops.forEach(prop => (obj[prop] = parseFloat(getValue(`.${prop}`))))
-
-            const quickRoll = form.querySelector('.quick-roll')
-
-            if (quickRoll) obj.addToQuickRoll = isChecked('.quick-roll')
-
-            const consumeAction = form.querySelector('.consumeAction')
-
-            if (consumeAction) obj.consumeAction = isChecked('.consumeAction')
-
-            const save = form.querySelector('.save')
-
-            if (save) obj.save = isChecked('.save')
-
-            actor.editItem(path, obj)
-          },
-        },
-      ],
-      position: { width },
-    }).render({ force: true })
-
-    const element = dialog.element
-
-    element.querySelectorAll<HTMLTextAreaElement>('textarea').forEach(textarea => {
-      textarea.addEventListener('drop', this.dropFoundryLinks.bind(this))
-    })
-    element.querySelectorAll<HTMLInputElement>('input').forEach(input => {
-      input.addEventListener('drop', this.dropFoundryLinks.bind(this))
-    })
   }
 
   dropFoundryLinks(event: Event | JQuery.DropEvent, modelkey?: string): void {

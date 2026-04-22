@@ -46,7 +46,7 @@ export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
     const context: GurpsActorNpcModernSheet.RenderContext = {
       ...baseContext,
       defense: this.actor.getTorsoDr(),
-      parryblock: this.actor.getEquippedParry(),
+      parryblock: this.actor.system.equippedParry,
       useCI: game.settings!.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_CONDITIONAL_INJURY as never),
     }
 
