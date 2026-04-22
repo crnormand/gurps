@@ -2075,7 +2075,8 @@ if (!globalThis.GURPS) {
       label: 'Copy to chat input',
       default: true,
       callback: () => {
-        document.querySelector('#chat-message').value = otf
+        document.querySelector('.editor-content').focus()
+        document.querySelector('.editor-content').innerText = otf
       },
     })
 
@@ -2098,7 +2099,7 @@ if (!globalThis.GURPS) {
     if (users) {
       msgData.whisper = users.map(it => it.id || '')
     } else {
-      msgData.type = CONST.CHAT_MESSAGE_STYLES.OOC
+      msgData.style = CONST.CHAT_MESSAGE_STYLES.OOC
     }
 
     ChatMessage.create(msgData)
