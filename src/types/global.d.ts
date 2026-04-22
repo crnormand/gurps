@@ -291,16 +291,9 @@ declare global {
 
   /* ---------------------------------------- */
 
-  interface GurpsActorSheetEditMethods {
-    editEquipment(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
-    editNotes(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
-    editModifier(
-      actor: Actor.Implementation,
-      path: string,
-      obj: EntityComponentBase,
-      isReaction: boolean
-    ): Promise<void>
-  }
+  // NOTE: TODO: remove later
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface GurpsActorSheetEditMethods {}
 
   /* ---------------------------------------- */
 
