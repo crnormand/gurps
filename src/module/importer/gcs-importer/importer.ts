@@ -1,22 +1,21 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
+import { MeleeAttackModel, MeleeAttackSchema, RangedAttackModel, RangedAttackSchema } from '@module/action/index.js'
 import { parseBlock, parseParry } from '@module/action/parse-attack.js'
+import { CharacterSchema } from '@module/actor/data/character.js'
+import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
 import { groundMoveForBasicMove, MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2Schema } from '@module/actor/data/note.js'
 import { ActorType } from '@module/actor/types.js'
+import { hitlocationDictionary } from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
+import { EquipmentSchema } from '@module/item/data/equipment.js'
+import { SkillSchema } from '@module/item/data/skill.js'
+import { SpellSchema } from '@module/item/data/spell.js'
 import { TraitSchema } from '@module/item/data/trait.js'
 import { ItemType } from '@module/item/types.js'
 import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
-import { MeleeAttackSchema } from '../../action/melee-attack.js'
-import { RangedAttackSchema } from '../../action/ranged-attack.js'
-import { CharacterSchema } from '../../actor/data/character.js'
-import { HitLocationSchemaV2 } from '../../actor/data/hit-location-entry.js'
-import { hitlocationDictionary } from '../../hitlocation/hitlocation.js'
-import { EquipmentSchema } from '../../item/data/equipment.js'
-import { SkillSchema } from '../../item/data/skill.js'
-import { SpellSchema } from '../../item/data/spell.js'
 import { createDataIsOfType, createStandardTrackers, promptDeletionOfMigratedItems } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
@@ -475,7 +474,7 @@ Portrait will not be imported.`
         {
           action: 'overwrite',
           label: game.i18n!.localize('GURPS.dialog.overwrite'),
-          icon: 'fas fa-edit',
+          icon: 'fa-solid fa-edit',
         },
       ],
     })
@@ -668,7 +667,7 @@ Portrait will not be imported.`
         {
           action: 'overwrite',
           label: game.i18n!.localize('GURPS.dialog.overwrite'),
-          icon: 'fas fa-edit',
+          icon: 'fa-solid fa-edit',
         },
       ],
     })
@@ -962,6 +961,7 @@ Portrait will not be imported.`
     return {
       name,
       type,
+      img: MeleeAttackModel.getDefaultArtwork({}).img,
       _id,
       baseParryPenalty: -4,
       block,
@@ -989,6 +989,7 @@ Portrait will not be imported.`
     return {
       name,
       type,
+      img: RangedAttackModel.getDefaultArtwork({}).img,
       _id,
       acc: weapon.calc?.accuracy || weapon.accuracy || '',
       bulk: weapon.calc?.bulk || weapon.bulk || '0',

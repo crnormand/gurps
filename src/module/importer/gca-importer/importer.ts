@@ -1,5 +1,11 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
-import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
+import {
+  ActionType,
+  MeleeAttackSchema,
+  RangedAttackSchema,
+  MeleeAttackModel,
+  RangedAttackModel,
+} from '@module/action/index.js'
 import { parseBlock } from '@module/action/parse-attack.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
@@ -608,7 +614,7 @@ Portrait will not be imported.`
         {
           action: 'overwrite',
           label: game.i18n!.localize('GURPS.dialog.overwrite'),
-          icon: 'fas fa-edit',
+          icon: 'fa-solid fa-edit',
         },
       ],
     })
@@ -748,6 +754,7 @@ Portrait will not be imported.`
     return {
       name,
       type,
+      img: MeleeAttackModel.getDefaultArtwork({}).img,
       _id,
       baseParryPenalty: -4,
       block,
@@ -782,6 +789,7 @@ Portrait will not be imported.`
     return {
       name,
       type,
+      img: RangedAttackModel.getDefaultArtwork({}).img,
       _id,
       acc: weapon.characc ?? '',
       damage,

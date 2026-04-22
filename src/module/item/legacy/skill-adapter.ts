@@ -111,7 +111,7 @@ class SkillV1 {
   }
 
   get modifierTags(): string {
-    return this.skillV2.system.modifierTags
+    return [...this.skillV2.system.modifierTags].join(', ')
   }
 
   get name(): string {

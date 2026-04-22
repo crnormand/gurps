@@ -14,6 +14,7 @@
     <img
       src='{{actor.img}}'
       data-action='editImage'
+      data-edit='img'
     />
   </div>
   <div class="gcs-identity gcs-section">
@@ -46,12 +47,12 @@
         {{formField systemFields.profile.fields.weight value=systemSource.profile.weight localize=true disabled=isPlay}}
         {{#if isPlay}}
         <div class="form-group">
-          <label>{{localize "GURPS.actor.characterV2.FIELDS.profile.sizemod.label"}}</label>
+          <label>{{localize "GURPS.actor.character.FIELDS.profile.sizemod.label"}}</label>
           <div
             class="form-fields gcs-link-mod gcs-item-modifier {{ifThen (gte systemSource.profile.sizemod 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
             data-action="addModifier"
             data-value="{{systemSource.profile.sizemod}}"
-            data-comment="{{localize 'GURPS.actor.characterV2.FIELDS.profile.sizemod.label'}}"
+            data-comment="{{localize 'GURPS.actor.character.FIELDS.profile.sizemod.label'}}"
             >
             <span>{{{displayNumber systemSource.profile.sizemod}}}</span>
           </div>

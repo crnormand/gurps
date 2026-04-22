@@ -44,6 +44,13 @@ class BaseActorModel<
   get metadata(): ActorMetadata {
     return (this.constructor as typeof BaseActorModel).metadata
   }
+
+  /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static getDefaultArtwork(actorData?: foundry.documents.BaseActor.CreateData): Actor.GetDefaultArtworkReturn {
+    return { img: 'icons/svg/mystery-man.svg', texture: { src: 'icons/svg/mystery-man.svg' } }
+  }
 }
 
 /* ---------------------------------------- */

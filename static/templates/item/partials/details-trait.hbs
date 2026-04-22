@@ -1,0 +1,23 @@
+<fieldset class="ms-details">
+  <legend>{{ localize "GURPS.sheet.details.trait" }}</legend>
+
+  <div class="ms-field-row">
+    {{formGroup systemFields.level value=system.level}}
+    {{formGroup systemFields.points value=system.points}}
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "GURPS.item.feature.FIELDS.cr.label"}}</label>
+    <div class="form-fields">
+      <select name="system.cr">
+        {{selectOptions systemFields.cr.choices selected=system.crKey localize=true}}
+      </select>
+    </div>
+  </div>
+  {{formGroup systemFields.pageref value=system.pageref}}
+
+  <div class="ms-field-row" style="--ms-cols: 1;">
+  {{formGroup systemFields.userdesc value=system.userdesc classes="ms-double-field" elementType="textarea"}}
+  </div>
+
+</fieldset>

@@ -2,6 +2,8 @@ import { fields, Document } from '@gurps-types/foundry/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { ItemMetadata } from '@module/item/data/base.js'
 import { ItemType } from '@module/item/types.js'
+import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
+import { isObject } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
@@ -13,7 +15,7 @@ import { ImportSettings } from '../importer/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { TokenActions } from '../token-actions.js'
 
-import { ActorMetadata } from './data/base.js'
+import { ActorMetadata, BaseActorModel } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import Maneuvers from './maneuver.js'
@@ -32,12 +34,18 @@ export const MoveModes = {
 }
 
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
-  declare pseudoCollections: Record<string, ModelCollection>
+  declare pseudoCollections: {
+    [K in keyof PseudoDocumentConfig.Embeds['Actor']]: ModelCollection<PseudoDocumentConfig.Embeds['Actor'][K]>
+  }
+
+  /* ---------------------------------------- */
 
   // Narrowed view of this.system for characterV2 logic.
   private get modelV2() {
     return this.system as Actor.SystemOfType<ActorType.Character>
   }
+
+  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
 
@@ -89,6 +97,21 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     }
 
     Object.defineProperty(this, 'pseudoCollections', { value: Object.seal(collections), writable: false })
+  }
+
+  /* ---------------------------------------- */
+
+  static override getDefaultArtwork(actorData?: foundry.documents.BaseActor.CreateData): Actor.GetDefaultArtworkReturn {
+    const { type } = actorData as unknown as { type: ActorType } & AnyObject
+    const { img, texture } = super.getDefaultArtwork(actorData)
+
+    const dataModel = CONFIG.Actor.dataModels[type]
+
+    if (foundry.utils.isSubclass(dataModel, BaseActorModel)) {
+      return dataModel.getDefaultArtwork(actorData)
+    }
+
+    return { img, texture }
   }
 
   /* ---------------------------------------- */
@@ -188,7 +211,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   ): ModelCollection<PseudoDocumentConfig.Embeds['Actor'][EmbeddedName]>
   override getEmbeddedCollection(embeddedName: string): unknown {
     return (
-      this.pseudoCollections[embeddedName] ?? super.getEmbeddedCollection(embeddedName as Actor.Embedded.CollectionName)
+      this.pseudoCollections[embeddedName as keyof PseudoDocumentConfig.Embeds['Actor']] ??
+      super.getEmbeddedCollection(embeddedName as Actor.Embedded.CollectionName)
     )
   }
 
@@ -209,10 +233,30 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     data?: unknown[],
     operation?: object
   ): Promise<unknown[]> {
+    data ||= []
     const metadata = (this.system?.constructor as any).metadata as ActorMetadata
 
     if (metadata.embedded && embeddedName in metadata.embedded) {
       const cls = GURPS.CONFIG.PseudoDocument.Types[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.Types]
+
+      // NOTE: If the PseudoDocument is typed but the type is not specified, fall back to a createDialog for the first entry.
+      if (foundry.utils.isSubclass(cls, TypedPseudoDocument)) {
+        if (data.length === 1) {
+          const dataEntry = data[0]
+
+          if (isObject(dataEntry)) {
+            const subTypes = Object.keys(
+              GURPS.CONFIG.PseudoDocument.SubTypes[embeddedName as keyof typeof GURPS.CONFIG.PseudoDocument.SubTypes]
+            )
+
+            if (!('type' in dataEntry) || !subTypes.includes(dataEntry.type as string)) {
+              const createdEntry = await cls.createDialog(dataEntry, { parent: this, ...operation })
+
+              return createdEntry ? [createdEntry] : []
+            }
+          }
+        }
+      }
 
       return cls.createDocuments(data as any[], { parent: this, ...operation })
     } else if (metadata.embeddedHolderField) {

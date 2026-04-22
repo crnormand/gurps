@@ -31,6 +31,16 @@
   --ms-hp-overlay-7: rgba(40, 10, 10, 0.92);
   --ms-modifier-positive: #3e6a4d;
   --ms-modifier-positive-hover: #4f7d5f;
+
+  --ms-accent-trait: #3177b2;
+  --ms-accent-skill: #453c96;
+  --ms-accent-spell: #91241e;
+  --ms-accent-equipment: #35713e;
+  --ms-accent-melee-attack: #03517c;
+  --ms-accent-ranged-attack: #8f565b;
+
+  /** Sizes & Spacing */
+
   --ms-radius-sm: 3px;
   --ms-radius: 4px;
   --ms-radius-md: 6px;
@@ -44,6 +54,7 @@
   --ms-font-md: 0.875rem;
   --ms-font-lg: 1rem;
   --ms-font-xl: 1.125rem;
+  --ms-font-title: 2rem;
   --ms-weight-normal: 400;
   --ms-weight-medium: 500;
   --ms-weight-semibold: 600;
@@ -63,6 +74,7 @@
 }
 
 @mixin css-variables-dark {
+  /** Colors */
   --ms-bg: #1c1a17;
   --ms-bg-header: #252320;
   --ms-bg-card: #2a2825;
@@ -93,4 +105,11 @@
   --ms-fp-bg: rgba(90, 157, 216, 0.15);
   --ms-modifier-positive: #5cb378;
   --ms-modifier-positive-hover: #6dcf8a;
+
+  --ms-accent-trait: #5a9fd4;
+  --ms-accent-skill: #7a72d4;
+  --ms-accent-spell: #c95a54;
+  --ms-accent-equipment: #5cb378;
+  --ms-accent-melee-attack: #54a7d4;
+  --ms-accent-ranged-attack: #c5777e;
 }

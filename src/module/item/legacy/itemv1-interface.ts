@@ -54,6 +54,7 @@ interface Feature {
     note: string
     name: string
     originalName: string
+    cr: number | null
   }
   melee: Record<string, unknown>
   ranged: Record<string, unknown>

@@ -25,6 +25,12 @@ class TypedPseudoDocument<
 
   /* ---------------------------------------- */
 
+  static override getDefaultArtwork(data: AnyObject): Record<string, string> {
+    return this.TYPES[data.type as keyof typeof this.TYPES]?.getDefaultArtwork(data) ?? super.getDefaultArtwork(data)
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * The type of this pseudo-document subclass.
    * @abstract
@@ -104,9 +110,13 @@ class TypedPseudoDocument<
       })
     )
 
+    const schema = this.schema
+
+    foundry.helpers.Localization.localizeSchema(schema, this.LOCALIZATION_PREFIXES)
+
     return {
       typeOptions,
-      fields: this.schema.fields,
+      fields: schema.fields,
     }
   }
 }

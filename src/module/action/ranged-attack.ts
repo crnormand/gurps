@@ -2,6 +2,7 @@ import { fields } from '@gurps-types/foundry/index.js'
 import { DisplayRangedAttack } from '@gurps-types/gurps/display-item.js'
 import { ActorType } from '@module/actor/types.js'
 import { LengthUnit } from '@module/data/common/length.js'
+import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
@@ -35,6 +36,20 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   static override defineSchema(): RangedAttackSchema {
     return Object.assign(super.defineSchema(), rangedAttackSchema())
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocument.Metadata<'Action'> {
+    return foundry.utils.mergeObject(super.metadata, {
+      detailsPartial: ['action.partials.details-ranged-attack'],
+    })
+  }
+
+  /* ---------------------------------------- */
+
+  static override getDefaultArtwork(_data: AnyObject): Record<string, string> {
+    return { img: 'icons/svg/acid.svg' }
   }
 
   /* ---------------------------------------- */

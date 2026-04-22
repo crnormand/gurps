@@ -59,7 +59,6 @@ export function bindInlineEdit(html: HTMLElement, config: InlineEditConfig): voi
 
     input.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.key === 'Enter') {
-        event.preventDefault()
         const inputElement = event.currentTarget
 
         if (!isHTMLInputElement(inputElement)) return
@@ -67,7 +66,6 @@ export function bindInlineEdit(html: HTMLElement, config: InlineEditConfig): voi
 
         if (!isHTMLElement(container)) return
         container.classList.remove(editingClass)
-        inputElement.blur()
       }
     })
   })

@@ -214,7 +214,7 @@
     "activeEffect": "Active Effect",
     "activeEffects": "Active Effects",
     "actor": {
-      "characterV2": {
+      "character": {
         "FIELDS": {
           "_currentMoveModeId": {
             "label": "Move Mode"
@@ -688,7 +688,18 @@
         "TotalDestruction": "Total Destruction"
       }
     },
-    "conditionalModifier": "Conditional Modifier",
+    "conditionalModifier": {
+      "FIELDS": {
+        "modifier": { "label": "Modifier" },
+        "situation": { "label": "Situation" }
+      }
+    },
+    "reactionModifier": {
+      "FIELDS": {
+        "modifier": { "label": "Modifier" },
+        "situation": { "label": "Situation" }
+      }
+    },
     "conditionalMods": "Conditional Modifiers",
     "conditions": "Status",
     "conditionsCombatMove": "Combat Move",
@@ -1214,8 +1225,176 @@
     "invalidUserForDamageWarning": "Only GMs are allowed to Apply Damage.",
     "isFreeAction": "Is a Free Action",
     "item": {
+      "base": {
+        "FIELDS": {
+          "addToQuickRoll": {
+            "label": "Add to Quick Roll"
+          },
+          "bonuses": {
+            "label": "Bonuses",
+            "placeholder": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc."
+          },
+          "checkotf": {
+            "label": "Check"
+          },
+          "consumeAction": {
+            "label": "Consume Action"
+          },
+          "duringotf": {
+            "label": "During"
+          },
+          "failotf": {
+            "label": "Fail"
+          },
+          "itemModifiers": {
+            "label": "Item Modifiers",
+            "placeholder": "Enter Modifier Effect (one per line) using format: <modifier> <#tag> [<#tag>...].\nExamples: -1 to DX #DX #combat, +2 Per #resting, -1 to all DX-based rolls #disease #combat."
+          },
+          "modifierTags": {
+            "label": "Modifier Tags"
+          },
+          "notes": {
+            "label": "Notes"
+          },
+          "pageref": {
+            "label": "Reference"
+          },
+          "passotf": {
+            "label": "Pass"
+          },
+          "vtt_notes": {
+            "label": "VTT Notes"
+          }
+        }
+      },
       "deleteContents": "Also delete contents ({count} items will be deleted!)",
-      "deleteMessage": "Are you sure you want to delete <strong>{name}</strong>?"
+      "deleteMessage": "Are you sure you want to delete <strong>{name}</strong>?",
+      "equipment": {
+        "FIELDS": {
+          "categories": {
+            "label": "Tags"
+          },
+          "cost": {
+            "label": "Value"
+          },
+          "count": {
+            "label": "Quantity"
+          },
+          "equipped": {
+            "label": "Equipped"
+          },
+          "ignoreImportQty": {
+            "label": "Preserve Qty."
+          },
+          "legalityclass": {
+            "label": "LC"
+          },
+          "maxuses": {
+            "label": "Max Uses"
+          },
+          "techlevel": {
+            "label": "TL"
+          },
+          "uses": {
+            "label": "Uses"
+          },
+          "weight": {
+            "label": "Weight"
+          }
+        }
+      },
+      "feature": {
+        "crChoices": {
+          "0": "Never resist",
+          "6": "6 (Resist Rarely)",
+          "7": "7 (Resist Rarely; non-standard)",
+          "8": "8 (Resist Rarely; non-standard)",
+          "9": "9 (Resist Fairly Often)",
+          "10": "10 (Resist Fairly Often; non-standard)",
+          "11": "11 (Resist Fairly Often; non-standard)",
+          "12": "12 (Resist Quite Often)",
+          "13": "13 (Resist Quite Often; non-standard)",
+          "14": "14 (Resist Quite Often; non-standard)",
+          "15": "15 (Resist Almost All The Time)",
+          "none": "None required"
+        },
+        "FIELDS": {
+          "cr": {
+            "label": "Self-Control Roll"
+          },
+          "level": {
+            "label": "Level"
+          },
+          "points": {
+            "label": "Points"
+          },
+          "userdesc": {
+            "label": "User Description"
+          }
+        }
+      },
+      "skill": {
+        "FIELDS": {
+          "difficulty": {
+            "label": "Difficulty"
+          },
+          "import": {
+            "label": "Level"
+          },
+          "points": {
+            "label": "Points"
+          },
+          "relativelevel": {
+            "label": "RSL"
+          },
+          "specialization": {
+            "label": "Specialization"
+          },
+          "techlevel": {
+            "label": "TL"
+          }
+        }
+      },
+      "spell": {
+        "FIELDS": {
+          "casttime": {
+            "label": "Casting Time"
+          },
+          "class": {
+            "label": "Spell Class"
+          },
+          "college": {
+            "label": "College"
+          },
+          "cost": {
+            "label": "Casting Cost"
+          },
+          "difficulty": {
+            "label": "Difficulty"
+          },
+          "duration": {
+            "label": "Duration"
+          },
+          "import": {
+            "label": "Level"
+          },
+          "maintain": {
+            "label": "Maintenance Cost"
+          },
+          "points": {
+            "label": "Points"
+          },
+          "relativelevel": {
+            "label": "RSL"
+          },
+          "resist": {
+            "label": "Resist"
+          },
+          "techlevel": {
+            "label": "TL"
+          }
+        }
+      }
     },
     "itemBonusText": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc.",
     "itemFeatures": "Features",
@@ -1870,6 +2049,26 @@
     "severity": "Severity",
     "share": "Share",
     "sheet": {
+      "actions": {
+        "title": "Actions"
+      },
+      "conditionalModifiers": {
+        "title": "Conditional Modifiers"
+      },
+      "reactionModifiers": {
+        "title": "Reaction Modifiers"
+      },
+      "details": {
+        "base": "General Details",
+        "equipment": "Equipment Details",
+        "meleeAttack": "Melee Attack Details",
+        "otf": "OTFs",
+        "rangedAttack": "Ranged Attack Details",
+        "skill": "Skill Details",
+        "spell": "Spell Details",
+        "title": "Details",
+        "trait": "Trait Details"
+      },
       "encumbrance": {
         "dodge": "Dodge",
         "level": "Level",
@@ -1928,8 +2127,14 @@
         "location": "Location",
         "roll": "Roll"
       },
+      "modernItemSheet": {
+        "label": "Modern Item Sheet"
+      },
       "modernSheet": {
         "label": "Modern Sheet"
+      },
+      "modifiers": {
+        "title": "Modifiers"
       },
       "npcSheet": {
         "label": "NPC Sheet"
@@ -2174,8 +2379,7 @@
       "rangedAttack": "Ranged Attack"
     },
     "Actor": {
-      "character": "Character",
-      "enemy": "Enemy"
+      "character": "Character"
     },
     "Item": {
       "equipment": "Equipment",

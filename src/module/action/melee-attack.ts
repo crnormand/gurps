@@ -1,5 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplayMeleeAttack } from '@gurps-types/gurps/display-item.js'
+import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
@@ -21,6 +22,20 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
 
   static override defineSchema(): MeleeAttackSchema {
     return Object.assign(super.defineSchema(), meleeAttackSchema())
+  }
+
+  /* ---------------------------------------- */
+
+  static override get metadata(): PseudoDocument.Metadata<'Action'> {
+    return foundry.utils.mergeObject(super.metadata, {
+      detailsPartial: ['action.partials.details-melee-attack'],
+    })
+  }
+
+  /* ---------------------------------------- */
+
+  static override getDefaultArtwork(_data: AnyObject): Record<string, string> {
+    return { img: 'icons/svg/sword.svg' }
   }
 
   /* ---------------------------------------- */

@@ -37,7 +37,7 @@ import {
   MOVE_TWO_STEPS,
   MOVE_TWOTHIRDS,
 } from '../maneuver.js'
-import { CheckInfo } from '../types.js'
+import { ActorType, CheckInfo } from '../types.js'
 
 import { ActorMetadata, BaseActorModel } from './base.js'
 import {
@@ -60,7 +60,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   static override get metadata(): ActorMetadata {
-    return {
+    return foundry.utils.mergeObject(super.metadata, {
+      type: ActorType.Character,
       embedded: {
         HitLocation: 'system.hitlocationsV2',
         Note: 'system.allNotes',
@@ -68,8 +69,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         ResourceTracker: `system.additionalresources.tracker`,
       },
       embeddedHolderField: 'holderItem',
-      type: 'base',
-    }
+    })
   }
 
   /* ---------------------------------------- */
@@ -131,7 +131,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return (val ?? fallback) as T
   }
 
-  static override LOCALIZATION_PREFIXES = super.LOCALIZATION_PREFIXES.concat('GURPS.actor.characterV2')
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, `GURPS.actor.${this.metadata.type}`]
 
   /* ---------------------------------------- */
   /*  Instance properties                     */

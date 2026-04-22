@@ -24,7 +24,26 @@ class TraitModel extends BaseItemModel<TraitSchema> {
       sortKeys: {
         points: 'system.points',
       },
+      detailsPartial: ['item.partials.details-trait', 'item.partials.details-base'],
     })
+  }
+
+  /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static override getDefaultArtwork(itemData?: foundry.documents.BaseItem.CreateData): Item.GetDefaultArtworkReturn {
+    return { img: 'icons/svg/book.svg' }
+  }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, `GURPS.item.${this.metadata.type}`]
+
+  /* ---------------------------------------- */
+
+  /** Returns the cr value as a select-safe string key: '' for null, or the numeric string otherwise. */
+  get crKey(): string {
+    return this.cr?.toString() ?? ''
   }
 
   /* ---------------------------------------- */
@@ -32,7 +51,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
   get selfControlNote(): string {
     if (this.cr === null) return ''
 
-    return getGame().i18n.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name
+    return '[' + getGame().i18n.localize('GURPS.CR' + this.cr.toString()) + ': ' + this.parent.name + ']'
   }
 
   /* ---------------------------------------- */
@@ -53,7 +72,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
       level: this.level,
       fullName,
       points: this.points,
-      cr: this.cr ? `GURPS.CR${this.cr}` : null,
+      cr: this.cr !== null ? `GURPS.CR${this.cr}` : null,
       enabled: this.enabled,
       otf: {
         cr: this.selfControlNote,
@@ -65,6 +84,13 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 /* ---------------------------------------- */
 
 const traitSchema = () => {
+  const crChoices = Object.fromEntries(
+    ['', 0, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(key => [
+      key,
+      `GURPS.item.feature.crChoices.${key === '' ? 'none' : key}`,
+    ])
+  )
+
   return {
     /** The level of the trait, which may be null if the trait is not leveled */
     level: new fields.NumberField({ required: true, nullable: true, initial: null }),
@@ -76,7 +102,7 @@ const traitSchema = () => {
     points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The Control Roll value for this trait, which may be null if not applicable */
-    cr: new fields.NumberField({ required: true, nullable: true, initial: null }),
+    cr: new fields.NumberField({ required: true, nullable: true, initial: null, choices: crChoices }),
   }
 }
 

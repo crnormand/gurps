@@ -114,7 +114,7 @@
     "activeEffect": "Активный эффект",
     "activeEffects": "Активные эффекты",
     "actor": {
-      "characterV2": {
+      "character": {
         "FIELDS": {
           "_currentMoveModeId": {
             "label": "Текущий режим движения"
@@ -2059,19 +2059,13 @@
       "rangedAttack": "Дальняя атака"
     },
     "Actor": {
-      "character": "Персонаж (v1)",
-      "characterV2": "Персонаж (v2)",
-      "enemy": "Противник"
+      "character": "Персонаж"
     },
     "Item": {
       "equipment": "Снаряжение",
-      "equipmentV2": "Снаряжение (v2)",
       "feature": "Особенность",
-      "featureV2": "Особенность (v2)",
       "skill": "Навык",
-      "skillV2": "Навык (v2)",
-      "spell": "Заклинание",
-      "spellV2": "Заклинание (v2)"
+      "spell": "Заклинание"
     }
   }
 }

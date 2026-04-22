@@ -37,7 +37,23 @@ class PseudoDocument<
 
   /* ---------------------------------------- */
 
-  static override LOCALIZATION_PREFIXES: string[] = ['DOCUMENT']
+  static getDefaultArtwork(_data: AnyObject): Record<string, string> {
+    return { img: 'icons/svg/item-bag.svg' }
+  }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.pseudo']
+
+  /* ---------------------------------------- */
+
+  protected override _initialize(options?: DataModel.InitializeOptions | undefined): void {
+    super._initialize(options)
+
+    const cls = this.constructor as typeof PseudoDocument
+
+    foundry.helpers.Localization.localizeDataModel(cls, { prefixes: cls.LOCALIZATION_PREFIXES })
+  }
 
   /* -------------------------------------------------- */
 
@@ -80,19 +96,6 @@ class PseudoDocument<
 
   static override defineSchema(): PseudoDocument.Schema {
     return pseudoDocumentSchema()
-  }
-
-  /* ---------------------------------------- */
-
-  static getSchemaFields(
-    pseudo: PseudoDocument.Any
-  ): Record<string, { field: foundry.data.fields.DataField.Any; value: any; name: string }> {
-    return Object.fromEntries(
-      Object.keys(pseudo.schema.fields).map(key => [
-        key,
-        { field: pseudo.schema.getField(key)!, value: pseudo[key as keyof typeof pseudo], name: key },
-      ])
-    )
   }
 
   /* ---------------------------------------- */
@@ -340,6 +343,8 @@ class PseudoDocument<
       id: this.id,
       uuid: this.uuid,
       documentName: this.documentName,
+      name: this.name,
+      img: this.img,
     }
   }
 
@@ -382,7 +387,7 @@ class PseudoDocument<
     const isArray = Array.isArray(data)
     const createData = isArray ? data : [data]
 
-    const created = await this.createDocuments(createData, operation)
+    const created = await this.createDocuments(createData, { parent, ...operation })
 
     if (renderSheet && created) {
       created.forEach(pseudo => pseudo.sheet?.render({ force: true }))
@@ -426,6 +431,7 @@ class PseudoDocument<
           : foundry.utils.randomID()
 
       dataEntry._id = _id
+      dataEntry.img ||= this.getDefaultArtwork(dataEntry).img ?? null
 
       if (!('name' in dataEntry) || typeof dataEntry.name !== 'string' || dataEntry.name.trim() === '') {
         const type = 'type' in dataEntry ? String(dataEntry.type) : undefined
@@ -569,7 +575,8 @@ class PseudoDocument<
    */
   static async createDialog<T extends typeof PseudoDocument>(
     data: DataModel.CreateData<PseudoDocument.Schema>,
-    { parent, ...operation }: Partial<gurps.Pseudo.CreateOperation>
+    { parent, pack, ...operation }: Partial<gurps.Pseudo.CreateOperation>,
+    options: PseudoDocument.CreateDialogOptions = {}
   ): Promise<InstanceType<T> | undefined> {
     const content = await foundry.applications.handlebars.renderTemplate(
       this.CREATE_TEMPLATE,
@@ -584,7 +591,7 @@ class PseudoDocument<
         }),
         icon: this.metadata.icon,
       },
-      render: (event, dialog) => this._createDialogRenderCallback(event, dialog),
+      render: (event, dialog) => this._createDialogRenderCallback(event, dialog, { parent, pack, ...options }),
     })
 
     if (!result) return
@@ -600,8 +607,12 @@ class PseudoDocument<
    * @returns The prepared create dialog context.
    */
   protected static _prepareCreateDialogContext(_parent?: Document.Any | null): AnyObject {
+    const schema = this.schema
+
+    foundry.helpers.Localization.localizeSchema(schema, this.LOCALIZATION_PREFIXES)
+
     return {
-      fields: this.schema.fields,
+      fields: schema.fields,
     }
   }
 
@@ -611,7 +622,33 @@ class PseudoDocument<
    * Render callback for dynamic handling of the create dialog. This can be used to, for example, dynamically populate
    * the choices for a select field based on the parent document.
    */
-  protected static _createDialogRenderCallback(_event: Event, _dialog: foundry.applications.api.DialogV2): void {}
+  protected static _createDialogRenderCallback(
+    _event: Event,
+    dialog: foundry.applications.api.DialogV2,
+    options: PseudoDocument.CreateDialogOptions = {}
+  ): void {
+    const hasTypes = 'documentConfig' in this && typeof this.documentConfig === 'object' && this.documentConfig !== null
+
+    if (!hasTypes) return
+
+    const { parent, pack } = options
+
+    dialog.element.querySelector<HTMLInputElement>('[name="type"]')?.addEventListener('change', ev => {
+      const target = ev.target as HTMLInputElement
+      const nameInput = dialog.element.querySelector<HTMLInputElement>('[name="name"]')
+
+      if (!nameInput) return
+
+      nameInput.placeholder = this.defaultName({ type: target.value, parent, pack })
+    })
+
+    const typeInput = dialog.element.querySelector<HTMLInputElement>('[name="type"]')
+    const nameInput = dialog.element.querySelector<HTMLInputElement>('[name="name"]')
+
+    if (nameInput && typeInput) {
+      nameInput.placeholder = this.defaultName({ type: typeInput.value, parent, pack })
+    }
+  }
 
   /* ---------------------------------------- */
 
@@ -716,7 +753,7 @@ namespace PseudoDocument {
     /* Record of document names of pseudo-documents and the path to the collection. */
     embedded: Record<string, string>
     /* The class used to render this pseudo-document. */
-    sheetClass?: typeof PseudoDocumentSheet
+    sheetClass?: any
     /**
      * The sort keys for this pseudo-document type, used to determine
      * which property to look up when sorting items of this type.
@@ -724,6 +761,8 @@ namespace PseudoDocument {
      * value is the path to the property value.
      */
     sortKeys: Record<string, string>
+    /** Are there any partials to fill in the Details tab of the PseudoDocument? */
+    detailsPartial: string[]
   }
 
   /* ---------------------------------------- */
@@ -744,6 +783,19 @@ namespace PseudoDocument {
     > {
     deleteContents?: boolean
   }
+
+  /* ---------------------------------------- */
+
+  export type CreateDialogOptions = InexactPartial<{
+    /** Override the type choices for this PseudoDocument create dialog */
+    types: string[]
+
+    /** A compendium pack within which the PseudoDocument should be created */
+    pack: string | null
+
+    /** A parent document within which the created PsuedoDocument should belong */
+    parent: gurps.Pseudo.ParentDocument | null
+  }>
 
   /* ---------------------------------------- */
 

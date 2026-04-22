@@ -3,6 +3,7 @@ import { Migrator } from '@module/migration/migrator.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
+import { HandlebarsUtil } from '@module/util/handlebars.js'
 import HitFatPoints from '@module/util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
 import Initiative from '@module/util/initiative.js'
@@ -2141,6 +2142,8 @@ if (!globalThis.GURPS) {
     console.log(GURPS.BANNER)
     console.log(`Initializing GURPS 4e Game Aid`)
     console.log(GURPS.LEGAL)
+
+    HandlebarsUtil.registerPartials()
 
     let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'
 

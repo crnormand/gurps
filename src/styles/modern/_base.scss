@@ -1,17 +1,13 @@
 @use 'variables' as *;
 
 body {
-  @include css-variables;
+  .application.modern-sheet {
+    @include css-variables;
+  }
 
   &.theme-dark .application.modern-sheet:not(.theme-light),
   .application.modern-sheet.theme-dark {
     @include css-variables-dark;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    &:not(.theme-light) {
-      @include css-variables-dark;
-    }
   }
 }
 

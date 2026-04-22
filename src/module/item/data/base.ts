@@ -17,7 +17,7 @@ type ItemMetadata = Readonly<{
   /** Actor types that this item cannot be placed on */
   invalidActorTypes: string[]
   /** Are there any partials to fill in the Details tab of the item? */
-  detailsPartial?: string[]
+  detailsPartial: string[]
   /** Record of document names of pseudo-documents and the path to the collection. */
   embedded: Record<string, string>
   /** Record of actions the item can perform */
@@ -81,6 +81,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       childTypes: [],
       modifierTypes: [],
       sortKeys: { name: 'name' },
+      detailsPartial: [],
     }
   }
 
@@ -92,8 +93,19 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  static override LOCALIZATION_PREFIXES = [...super.LOCALIZATION_PREFIXES, 'GURPS.item.base']
+
+  /* ---------------------------------------- */
+
   static override defineSchema(): BaseItemModelSchema {
     return baseItemModelSchema()
+  }
+
+  /* ---------------------------------------- */
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static getDefaultArtwork(itemData?: foundry.documents.BaseItem.CreateData): Item.GetDefaultArtworkReturn {
+    return { img: 'icons/svg/item-bag.svg' }
   }
 
   /* ---------------------------------------- */
@@ -410,7 +422,7 @@ const baseItemModelSchema = () => {
     addToQuickRoll: new fields.BooleanField({ required: true, nullable: false }),
 
     /** Which modifier tags should automatically apply to this Item? */
-    modifierTags: new fields.StringField({ required: true, nullable: false }),
+    modifierTags: new fields.SetField(new fields.StringField({ required: true, nullable: false })),
 
     /** Reaction Bonuses applied by this Item. */
     _reactions: new CollectionField(ReactionModifier, { required: true, nullable: false }),

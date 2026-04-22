@@ -1,4 +1,4 @@
-import { Application } from '@gurps-types/foundry/index.js'
+import { Application, DocumentSheet } from '@gurps-types/foundry/index.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import { PseudoDocument } from './pseudo-document.js'
@@ -7,20 +7,24 @@ namespace PseudoDocumentSheet {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface RenderOptions extends Application.RenderOptions {}
 
-  export interface Configuration<Doc extends PseudoDocument.Any> extends Application.Configuration {
+  export interface Configuration<Doc extends PseudoDocument.Any = PseudoDocument.Any>
+    extends Application.Configuration {
     document: Doc
   }
 
-  export interface RenderContext<Doc extends PseudoDocument.Any> extends Application.RenderContext {
-    document: Doc
+  export interface RenderContext<Doc extends PseudoDocument.Any = PseudoDocument.Any>
+    extends Application.RenderContext {
+    document: Doc | null
+    source: foundry.data.fields.SchemaField.SourceData<foundry.abstract.DataModel.SchemaOf<Doc>>
     fields?: Record<string, { field: foundry.data.fields.DataField.Any; value: any; name: string }>
+    detailsPartial: string[]
+    tab?: Application.Tab
   }
 
-  export type DefaultOptions<Conf extends Configuration<PseudoDocument.Any>> = DeepPartial<Conf> &
-    object & {
-      document?: never
-    }
+  export type DefaultOptions = DocumentSheet.DefaultOptions
 }
+
+/* ---------------------------------------- */
 
 class PseudoDocumentSheet<
   Doc extends PseudoDocument.Any = PseudoDocument.Any,
@@ -41,13 +45,12 @@ class PseudoDocumentSheet<
 
   /* ---------------------------------------- */
 
-  static override DEFAULT_OPTIONS: PseudoDocumentSheet.DefaultOptions<
-    PseudoDocumentSheet.Configuration<PseudoDocument.Any>
-  > = {
+  static override DEFAULT_OPTIONS: PseudoDocumentSheet.DefaultOptions = {
     id: '{id}',
     actions: {
+      editImage: PseudoDocumentSheet.#onEditImage,
       copyUuid: {
-        handler: PseudoDocumentSheet.#copyUuid,
+        handler: PseudoDocumentSheet.#onCopyUuid,
         buttons: [0, 2],
       },
     },
@@ -83,7 +86,6 @@ class PseudoDocumentSheet<
       const Cls = pseudoDocument.metadata.sheetClass
 
       if (!Cls) return null
-      // @ts-expect-error - No idea what is going on here.
       PseudoDocumentSheet.#sheets.get(doc)?.set(pseudoDocument.uuid, new Cls({ document: pseudoDocument }))
     }
 
@@ -133,9 +135,30 @@ class PseudoDocumentSheet<
   protected override async _prepareContext(options: RenderOptions): Promise<RenderContext> {
     const superContext = await super._prepareContext(options)
 
+    if (!this.pseudoDocument) {
+      throw new Error('No pseudo-document found for this sheet!')
+    }
+
     return foundry.utils.mergeObject(superContext, {
-      fields: PseudoDocument.getSchemaFields(this.pseudoDocument!),
+      document: this.pseudoDocument,
+      source: this.pseudoDocument._source as any,
+      fields: this.pseudoDocument.schema.fields,
+      detailsPartial: this.pseudoDocument.metadata.detailsPartial,
     }) as unknown as RenderContext
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _preparePartContext(
+    partId: string,
+    context: PseudoDocumentSheet.RenderContext,
+    options: DeepPartial<PseudoDocumentSheet.RenderOptions>
+  ): Promise<PseudoDocumentSheet.RenderContext> {
+    await super._preparePartContext(partId, context, options)
+
+    if (context.tabs && partId in context.tabs) context.tab = context.tabs[partId]
+
+    return context
   }
 
   /* ---------------------------------------- */
@@ -150,7 +173,7 @@ class PseudoDocumentSheet<
     return options as PseudoDocumentSheet.Configuration<Doc>
   }
 
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
 
   override async _onFirstRender(
     context: DeepPartial<Application.RenderContext>,
@@ -160,16 +183,16 @@ class PseudoDocumentSheet<
     this.document.apps[this.id] = this
   }
 
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
 
   override _onClose(options: DeepPartial<Application.RenderOptions>): void {
     super._onClose(options)
     delete this.document.apps[this.id]
   }
 
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
 
-  override async _renderFrame(options: DeepPartial<Application.RenderOptions>): Promise<HTMLElement> {
+  protected override async _renderFrame(options: DeepPartial<Application.RenderOptions>): Promise<HTMLElement> {
     const frame = await super._renderFrame(options)
     const copyLabel = game.i18n?.localize('SHEETS.CopyUuid') ?? ''
 
@@ -189,7 +212,7 @@ class PseudoDocumentSheet<
     return frame
   }
 
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
 
   override _canRender(_options: DeepPartial<Application.RenderOptions>): false | void {
     if (!this.pseudoDocument) {
@@ -199,9 +222,9 @@ class PseudoDocumentSheet<
     }
   }
 
-  /* -------------------------------------------------- */
-  /*   Event handlers                                   */
-  /* -------------------------------------------------- */
+  /* ---------------------------------------- */
+  /*   Event handlers                         */
+  /* ---------------------------------------- */
 
   /**
    * Handle form submission.
@@ -220,7 +243,7 @@ class PseudoDocumentSheet<
 
   /* -------------------------------------------------- */
 
-  static #copyUuid(this: PseudoDocumentSheet, event: PointerEvent) {
+  static #onCopyUuid(this: PseudoDocumentSheet, event: PointerEvent) {
     event.preventDefault() // Don't open context menu
     event.stopPropagation() // Don't trigger other events
     if (event.detail > 1) return // Ignore repeated clicks
@@ -231,6 +254,66 @@ class PseudoDocumentSheet<
 
     game.clipboard?.copyPlainText(id)
     ui.notifications?.info('DOCUMENT.IdCopiedClipboard', { format: { label, type, id } })
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onEditImage(this: PseudoDocumentSheet, _event: PointerEvent, target: HTMLImageElement) {
+    if (target.nodeName !== 'IMG') {
+      throw new Error('The editImage action is available only for IMG elements.')
+    }
+
+    if (!this.pseudoDocument) {
+      console.warn('No pseudo-document found for this sheet!')
+
+      return
+    }
+
+    const attr = target.dataset.edit ?? ''
+
+    const current = foundry.utils.getProperty(this.pseudoDocument._source, attr)
+
+    if (typeof current !== 'string') {
+      console.error(
+        `The editImage action is only available for string properties, but the current value of '${attr}' is not a string!`
+      )
+
+      return
+    }
+
+    const defaultArtwork =
+      (this.pseudoDocument.constructor as typeof PseudoDocument).getDefaultArtwork?.(this.pseudoDocument._source) ?? {}
+
+    const defaultImage = foundry.utils.getProperty(defaultArtwork, attr)
+
+    if (typeof defaultImage !== 'string') {
+      console.error(
+        'The default artwork for this pseudo-document does not have a string property at the specified path!'
+      )
+
+      return
+    }
+
+    const fp = new foundry.applications.apps.FilePicker.implementation({
+      current,
+      type: 'image',
+      redirectToRoot: defaultImage ? [defaultImage] : [],
+      callback: path => {
+        target.src = path
+
+        if (this.options.form?.submitOnChange) {
+          const submit = new Event('submit', { cancelable: true })
+
+          this.form?.dispatchEvent(submit)
+        }
+      },
+      position: {
+        top: this.position.top + 40,
+        left: this.position.left + 10,
+      },
+    })
+
+    await fp.browse()
   }
 }
 /* -------------------------------------------------- */

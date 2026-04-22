@@ -175,7 +175,7 @@ class GurpsBaseActorSheet<
 
     if (!blockImport || getUser().isTrusted) {
       controls.unshift({
-        icon: 'fas fa-file-import',
+        icon: 'fa-solid fa-file-import',
         label: 'Import',
         action: 'importActor',
       })
@@ -184,6 +184,8 @@ class GurpsBaseActorSheet<
     return controls
   }
 
+  /* ---------------------------------------- */
+  /*   Event handlers                         */
   /* ---------------------------------------- */
 
   static async #onImportActor(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
@@ -298,11 +300,7 @@ class GurpsBaseActorSheet<
       return
     }
 
-    if (sheet instanceof foundry.appv1.api.Application) {
-      sheet.render(true)
-    } else {
-      await sheet.render({ force: true })
-    }
+    await sheet.render({ force: true })
   }
 
   /* ---------------------------------------- */

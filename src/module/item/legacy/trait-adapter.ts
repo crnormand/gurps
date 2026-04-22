@@ -109,7 +109,7 @@ class TraitV1 {
   }
 
   get modifierTags(): string {
-    return this.traitV2.system.modifierTags ?? ''
+    return [...this.traitV2.system.modifierTags].join(', ')
   }
 
   get name(): string {

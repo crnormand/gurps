@@ -1,0 +1,27 @@
+{{#*inline ".action-entry"}}
+<div class="ms-action-entry" data-uuid="{{uuid}}">
+  <div class="ms-action-img">
+    <img src="{{img}}">
+  </div>
+  <div class="ms-action-name">{{usage}}</div>
+  <div class="ms-action-damage">{{damage}}</div>
+  <span class='ms-row-actions'>
+    <i class='fa-solid fa-pen-to-square ms-action-btn' data-action='editEmbedded'></i>
+    <i class='fa-solid fa-trash ms-action-btn' data-action='deleteEmbedded'></i>
+  </span>
+</div>
+{{/inline}}
+
+<section class='tab {{tab.cssClass}}' data-tab='actions' data-group='primary'>
+  <fieldset>
+    <legend>{{localize "GURPS.sheet.actions.title"}}</legend>
+    <button type="button" data-action="createEmbedded" data-document-name="Action" class="ms-action-btn"><i class="fa-solid fa-plus"></i>{{localize "DOCUMENT.New" type=(localize "DOCUMENT.Action")}}</button>
+      <div class="ms-action-entries">
+      {{#each actions}}
+        {{> ".action-entry"}}
+      {{else}}
+        <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+      {{/each}}
+      </div>
+  </fieldset>
+</section>

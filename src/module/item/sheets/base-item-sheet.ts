@@ -1,4 +1,6 @@
-import { ItemSheet, DragDrop, DocumentSheet, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
+import { Document, DocumentSheet, DragDrop, HandlebarsApplicationMixin, ItemSheet } from '@gurps-types/foundry/index.js'
+import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
+import { AnyMutableObject } from 'fvtt-types/utils'
 
 /* ---------------------------------------- */
 
@@ -28,7 +30,7 @@ namespace GurpsBaseItemSheet {
 /* ---------------------------------------- */
 
 class GurpsBaseItemSheet<
-  Type extends Item.SubType,
+  Type extends Item.SubType = Item.SubType,
   Configuration extends GurpsBaseItemSheet.Configuration = GurpsBaseItemSheet.Configuration,
   RenderOptions extends GurpsBaseItemSheet.RenderOptions = GurpsBaseItemSheet.RenderOptions,
   RenderContext extends GurpsBaseItemSheet.RenderContext = GurpsBaseItemSheet.RenderContext,
@@ -171,7 +173,12 @@ class GurpsBaseItemSheet<
     form: {
       submitOnChange: true,
     },
-    actions: {},
+    actions: {
+      toggleMode: GurpsBaseItemSheet.#onToggleMode,
+      createEmbedded: GurpsBaseItemSheet.#onCreateEmbedded,
+      editEmbedded: GurpsBaseItemSheet.#onEditEmbedded,
+      deleteEmbedded: GurpsBaseItemSheet.#onDeleteEmbedded,
+    },
     dragDrop: [{ dragSelector: '[draggable]', dropSelector: null }],
   }
 
@@ -179,6 +186,122 @@ class GurpsBaseItemSheet<
 
   override get title(): string {
     return this.item.name
+  }
+
+  /* ---------------------------------------- */
+  /*   Event handlers                         */
+  /* ---------------------------------------- */
+
+  static async #onToggleMode(this: GurpsBaseItemSheet): Promise<void> {
+    if (!this.isEditable) {
+      console.error("You can't switch to Edit mode if the sheet is uneditable.")
+
+      return
+    }
+
+    await this.render({
+      mode: this.isPlayMode ? GurpsBaseItemSheet.MODES.EDIT : GurpsBaseItemSheet.MODES.PLAY,
+    } as GurpsBaseItemSheet.RenderOptions)
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onCreateEmbedded(
+    this: GurpsBaseItemSheet,
+    event: PointerEvent | null,
+    target: HTMLElement
+  ): Promise<void> {
+    event?.preventDefault()
+
+    const documentName = target.closest<HTMLElement>('[data-document-name]')?.dataset.documentName
+
+    if (!documentName) {
+      console.error('Could not find document name for embedded document to edit.')
+
+      return
+    }
+
+    const createData: AnyMutableObject = { _id: foundry.utils.randomID() }
+
+    const type = target.closest<HTMLElement>('[data-type]')?.dataset.type
+
+    if (type) createData.type = type
+
+    await this.item.createEmbeddedDocuments(documentName as any, [createData], { parent: this.item })
+  }
+
+  /* ---------------------------------------- */
+
+  protected async _getEmbedded(target: HTMLElement): Promise<Document.Any | PseudoDocument.Any | null> {
+    const uuid = target.closest<HTMLElement>('[data-uuid]')?.dataset.uuid
+
+    if (!uuid) {
+      console.error('Could not find UUID for embedded document to edit.')
+
+      return null
+    }
+
+    let doc: Document.Any | PseudoDocument.Any | null = null
+
+    if (uuid.startsWith('.')) {
+      doc = await fromUuid(uuid, { relative: this.item })
+    } else {
+      doc = await fromUuid(uuid)
+    }
+
+    if (!doc) {
+      console.error(`Could not find document for UUID ${uuid}.`)
+
+      return null
+    }
+
+    return doc
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onEditEmbedded(
+    this: GurpsBaseItemSheet,
+    event: PointerEvent | null,
+    target: HTMLElement
+  ): Promise<void> {
+    event?.preventDefault?.()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc) return
+
+    const sheet = 'sheet' in doc ? doc.sheet : null
+
+    if (!sheet) {
+      console.error(`Could not find sheet for document with UUID ${doc.uuid}.`)
+
+      return
+    }
+
+    await sheet.render({ force: true })
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onDeleteEmbedded(
+    this: GurpsBaseItemSheet,
+    event: PointerEvent | null,
+    target: HTMLElement
+  ): Promise<void> {
+    event?.preventDefault?.()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc) return
+
+    if ('deleteDialog' in doc && typeof doc.deleteDialog === 'function') {
+      await doc.deleteDialog?.()
+    } else {
+      console.error(`Could not find delete method for document with UUID ${doc.uuid}.`)
+
+      return
+    }
   }
 }
 
