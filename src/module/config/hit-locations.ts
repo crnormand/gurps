@@ -13,10 +13,6 @@ export function defaultHitLocations(): Record<string, DataModel.CreateData<DataM
   const minRoll = minRoller.evaluateSync({ minimize: true }).total
   const maxRoll = maxRoller.evaluateSync({ maximize: true }).total
 
-  console.log(
-    `GURPS | Generating default hit locations for table "${table.name}" with roll "${rollFormula}" (min: ${minRoll}, max: ${maxRoll})`
-  )
-
   let currentRoll = minRoll
 
   HitLocationTables.humanoid.locations.forEach(location => {

@@ -468,7 +468,7 @@ Portrait will not be imported.`
         {
           action: 'keep',
           label: game.i18n!.localize('GURPS.dialog.keep'),
-          icon: 'far fa-square',
+          icon: 'fa-regular fa-square',
           default: true,
         },
         {
@@ -550,6 +550,12 @@ Portrait will not be imported.`
           rollText: location.calc.roll_range ?? '-',
           split,
           role: role as HitLocationRole | null,
+          name: '',
+          sort: 0,
+          _damageType: null,
+          drMod: 0,
+          drItem: 0,
+          drCap: totalDR,
         }
 
         acc[id] = newLocation
@@ -571,7 +577,7 @@ Portrait will not be imported.`
     // On first import, always replace the hit location table
     if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
       const currentHitLocationNullifiers = Object.fromEntries(
-        this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+        this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
       )
 
       this.output.hitlocationsV2 = {
@@ -603,7 +609,7 @@ Portrait will not be imported.`
     )
 
     const currentHitLocationNullifiers = Object.fromEntries(
-      this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
     )
 
     const bodyPlansAreEqual = () => {
@@ -611,7 +617,7 @@ Portrait will not be imported.`
 
       const newLocations = Object.values(
         this.output.hitlocationsV2 as Record<string, foundry.data.fields.SchemaField.CreateData<HitLocationSchemaV2>>
-      ).map(({ _id, ...rest }) => rest)
+      ).map(({ _id, flags, img, name, sort, _damageType, drCap, drItem, drMod, ...rest }) => rest)
 
       if (oldLocations.length !== newLocations.length) return false
 
@@ -1196,6 +1202,10 @@ Portrait will not be imported.`
       calc: {
         resolved_notes: gcsNote.calc?.resolved_notes ?? null,
       },
+      name: '',
+      sort: 0,
+      title: '',
+      save: false,
     }
 
     const existingNote = (this.actor?.system.allNotes.contents ?? []).find(

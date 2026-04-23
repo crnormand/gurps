@@ -1,6 +1,7 @@
 import { ActionModule as ModuleAction } from '@module/action/index.js'
 import { Actor as ModuleActor } from '@module/actor/index.js'
 import { Canvas as ModuleCanvas } from '@module/canvas/index.js'
+import { ChatModule as ModuleChat } from '@module/chat/index.js'
 import { Combat as ModuleCombat } from '@module/combat/index.js'
 import { CombatTracker as ModuleCombatTracker } from '@module/combat-tracker/index.js'
 import { Damage as ModuleDamage } from '@module/damage/index.js'
@@ -18,7 +19,19 @@ import { UI as ModuleUI } from '@module/ui/index.js'
 export {}
 
 declare global {
-  const _loc: (key: string) => string
+  /* ---------------------------------------- */
+
+  const _loc: typeof game.i18n.localize
+
+  /* ---------------------------------------- */
+
+  var _del: Record<string, unknown>
+
+  /* ---------------------------------------- */
+
+  function _replace<T>(data: T): T
+
+  /* ---------------------------------------- */
 
   interface GurpsGlobal extends GurpsUtils {
     SYSTEM_NAME: 'gurps'
@@ -29,6 +42,7 @@ declare global {
       Action: typeof ModuleAction
       Actor: typeof ModuleActor
       Canvas: typeof ModuleCanvas
+      Chat: typeof ModuleChat
       Combat: typeof ModuleCombat
       CombatTracker: typeof ModuleCombatTracker
       Damage: typeof ModuleDamage
@@ -279,18 +293,9 @@ declare global {
 
   /* ---------------------------------------- */
 
-  // @deprecated: TODO: Remove. Legacy
+  // NOTE: TODO: remove later
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface GurpsActorSheetEditMethods {
-    // editEquipment(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
-    // editNotes(actor: Actor.Implementation, path: string, obj: EntityComponentBase): Promise<void>
-    // editModifier(
-    //   actor: Actor.Implementation,
-    //   path: string,
-    //   obj: EntityComponentBase,
-    //   isReaction: boolean
-    // ): Promise<void>
-  }
+  interface GurpsActorSheetEditMethods {}
 
   /* ---------------------------------------- */
 

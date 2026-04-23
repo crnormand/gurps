@@ -1,4 +1,4 @@
-import { migrateLegacySettings, SettingMigration } from '@module/util/migration/settings-migration.js'
+import { migrateLegacySettings, SettingMigration } from '@module/migration/settings-migration.js'
 import { vi, Mock } from 'vitest'
 
 const globalMock = globalThis as typeof globalThis & {

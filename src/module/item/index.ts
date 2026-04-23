@@ -30,10 +30,6 @@ function init() {
     GURPS.CONFIG.PseudoDocument.Types.ReactionModifier = ReactionModifier
     GURPS.CONFIG.PseudoDocument.Types.ConditionalModifier = ConditionalModifier
 
-    foundry.documents.collections.Items.registerSheet('gurps', sheets.GurpsItemSheet, {
-      makeDefault: true,
-      canConfigure: false,
-    })
     foundry.documents.collections.Items.registerSheet(
       'gurps',
       sheets.GurpsItemModernSheet as unknown as DocumentSheet.AnyConstructor,

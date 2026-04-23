@@ -1022,35 +1022,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * NOTE: Both character and characterV2.
    */
   async toggleExpand(path: string, expandOnly: boolean = false) {
-    if (this.isNewActorType) {
-      const obj = foundry.utils.getProperty(this, path) as any
+    const obj = foundry.utils.getProperty(this, path) as any
 
-      // Check if object implements IContainable interface and call toggleOpen
-      if (ContainerUtils.isToggleable(obj)) await obj.toggleOpen(expandOnly)
-    } else {
-      // Legacy actor type
-      const obj = foundry.utils.getProperty(this, path) as any
-
-      if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
-        const temp = { ...obj.contains, ...obj.collapsed }
-        const update = {
-          [path + '.-=collapsed']: null,
-          [path + '.collapsed']: {},
-          [path + '.contains']: temp,
-        }
-
-        await this.update(update)
-      } else if (!expandOnly && !!obj.contains && Object.keys(obj.contains).length > 0) {
-        const temp = { ...obj.contains, ...obj.collapsed }
-        const update = {
-          [path + '.-=contains']: null,
-          [path + '.contains']: {},
-          [path + '.collapsed']: temp,
-        }
-
-        await this.update(update)
-      }
-    }
+    // Check if object implements IContainable interface and call toggleOpen
+    if (ContainerUtils.isToggleable(obj)) await obj.toggleOpen(expandOnly)
   }
 
   /* ---------------------------------------- */

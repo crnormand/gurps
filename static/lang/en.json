@@ -588,15 +588,10 @@
     "chatYouMustBeGM": "You must be a GM to execute this command",
     "chatYouMustHaveACharacterSelected": "You must have a character selected",
     "check": "Check",
-    "check1": "Check #1",
-    "check2": "Check #2",
-    "check3": "Check #3",
-    "check4": "Check #4",
     "checkConditionals": "Add Actor Conditional Modifiers to Effect Modifiers Popout.",
     "checkReactions": "Add Actor Reaction Modifiers to Effect Modifiers Popout.",
     "clickToEdit": "Click to Edit",
     "clickToRemove": "click to remove",
-    "collapse": "Collapse",
     "color": "Color",
     "colorSheetMenuAreasAdsDisadsColor": "Ads/Disads Color",
     "colorSheetMenuAreasAdsDisadsHoverColor": "Ads/Disads Hover Color",
@@ -690,14 +685,12 @@
     },
     "conditionalModifier": {
       "FIELDS": {
-        "modifier": { "label": "Modifier" },
-        "situation": { "label": "Situation" }
-      }
-    },
-    "reactionModifier": {
-      "FIELDS": {
-        "modifier": { "label": "Modifier" },
-        "situation": { "label": "Situation" }
+        "modifier": {
+          "label": "Modifier"
+        },
+        "situation": {
+          "label": "Situation"
+        }
       }
     },
     "conditionalMods": "Conditional Modifiers",
@@ -763,7 +756,6 @@
     "damageTypeToxic": "Toxic",
     "darkness": "Darkness",
     "days": "Days",
-    "dead": "Dead",
     "default": "Default",
     "defense": "Defense",
     "defenseRoll": "Defense Roll",
@@ -783,7 +775,6 @@
     "descriptionSizeModifier": "Size Modifier (SM)",
     "descriptionSkin": "Skin",
     "descriptionTechLevel": "Tech Level (TL)",
-    "destroyed": "Destroyed",
     "dialog": {
       "keep": "Keep",
       "overwrite": "Overwrite"
@@ -1462,6 +1453,10 @@
         "progressMessage": "Applying Item migrations for version {version}, please wait...",
         "successMessage": "Successfully applied Item migrations for version {version}."
       },
+      "report": {
+        "message": "World migration is now complete. See the list below for details.",
+        "title": "Migration Report"
+      },
       "toV1_0_0": {
         "cancel": "Cancel Migration",
         "cancellationMessage": "Migration cancelled. Please back up your world and try again when you are ready.",
@@ -1845,6 +1840,16 @@
     "rcl": "Rcl",
     "reach": "Reach",
     "reaction": "Reaction",
+    "reactionModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Modifier"
+        },
+        "situation": {
+          "label": "Situation"
+        }
+      }
+    },
     "reactionMods": "Reaction Modifiers",
     "recalculate": "Recalculate",
     "reference": "Reference",
@@ -2055,9 +2060,6 @@
       "conditionalModifiers": {
         "title": "Conditional Modifiers"
       },
-      "reactionModifiers": {
-        "title": "Reaction Modifiers"
-      },
       "details": {
         "base": "General Details",
         "equipment": "Equipment Details",
@@ -2150,6 +2152,9 @@
         "portrait": "Portrait",
         "tab": "Personal",
         "title": "Title"
+      },
+      "reactionModifiers": {
+        "title": "Reaction Modifiers"
       },
       "toggleMode": "Toggle Play/Edit Mode"
     },
@@ -2351,7 +2356,6 @@
     "transferAll": "Transfer All",
     "TransferTo": "Transfer to {name}",
     "twoHandLift": "Two-Hand Lift",
-    "unconscious": "Unconscious",
     "update": "Update",
     "usage": "Usage",
     "useBreakpoints": "Use Breakpoints",

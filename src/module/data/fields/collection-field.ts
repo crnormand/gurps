@@ -195,6 +195,11 @@ class CollectionField<
         }
 
         id = id.slice(2)
+        // @ts-expect-error: fvtt-types not yet updated
+      } else if (doc instanceof foundry.data.operators.ForcedDeletion) {
+        // @ts-expect-error: this is difficult to type
+        delete source[key][id]
+        continue
       }
 
       const prior = src[id]

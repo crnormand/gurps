@@ -25,44 +25,92 @@
     "action": {
       "baseAction": {
         "FIELDS": {
-          "addToQuickRoll": "Добавить к быстрому броску",
-          "disabled": "Отключено",
-          "name": "Название"
+          "addToQuickRoll": {
+            "label": "Добавить к быстрому броску"
+          },
+          "disabled": {
+            "label": "Отключено"
+          },
+          "name": {
+            "label": "Название"
+          }
         }
       },
       "baseAttack": {
         "FIELDS": {
-          "consumeAction": "Использует действие",
-          "damage": "Урон",
-          "extraAttacks": "Дополнительные атаки",
-          "import": "Базовый уровень",
-          "itemModifiers": "Модификаторы предмета",
-          "mode": "Режим",
-          "modifierTags": "Теги модификаторов",
-          "notes": "Заметки",
-          "otf": "Формула OTF",
-          "st": "ST"
+          "consumeAction": {
+            "label": "Использует действие"
+          },
+          "damage": {
+            "label": "Урон"
+          },
+          "extraAttacks": {
+            "label": "Дополнительные атаки"
+          },
+          "import": {
+            "label": "Базовый уровень"
+          },
+          "itemModifiers": {
+            "label": "Модификаторы предмета"
+          },
+          "mode": {
+            "label": "Режим"
+          },
+          "modifierTags": {
+            "label": "Теги модификаторов"
+          },
+          "notes": {
+            "label": "Заметки"
+          },
+          "otf": {
+            "label": "Формула OTF"
+          },
+          "st": {
+            "label": "ST"
+          }
         }
       },
       "meleeAttack": {
         "blockDisabled": "Нет",
         "FIELDS": {
-          "baseParryPenalty": "Базовый штраф парирования",
+          "baseParryPenalty": {
+            "label": "Базовый штраф парирования"
+          },
           "block": {
-            "canBlock": "Может блокировать",
-            "modifier": "Модификатор"
+            "canBlock": {
+              "label": "Может блокировать"
+            },
+            "modifier": {
+              "label": "Модификатор"
+            }
           },
           "parry": {
-            "canParry": "Может парировать",
-            "fencing": "Фехтование",
-            "modifier": "Модификатор",
-            "unbalanced": "Несбалансированное"
+            "canParry": {
+              "label": "Может парировать"
+            },
+            "fencing": {
+              "label": "Фехтование"
+            },
+            "modifier": {
+              "label": "Модификатор"
+            },
+            "unbalanced": {
+              "label": "Несбалансированное"
+            }
           },
           "reach": {
-            "changeRequiresReady": "Смена требует готовности",
-            "closeCombat": "Ближний бой",
-            "max": "Макс",
-            "min": "Мин"
+            "changeRequiresReady": {
+              "label": "Смена требует готовности"
+            },
+            "closeCombat": {
+              "label": "Ближний бой"
+            },
+            "max": {
+              "label": "Макс"
+            },
+            "min": {
+              "label": "Мин"
+            }
           }
         },
         "parryDisabled": "Нет"
@@ -70,44 +118,96 @@
       "rangedAttack": {
         "FIELDS": {
           "acc": {
-            "base": "Базовая",
-            "jet": "Реактивный",
-            "scope": "Прицел"
+            "base": {
+              "label": "Базовая"
+            },
+            "jet": {
+              "label": "Реактивный"
+            },
+            "scope": {
+              "label": "Прицел"
+            }
           },
-          "ammo": "Боеприпасы",
+          "ammo": {
+            "label": "Боеприпасы"
+          },
           "bulk": {
-            "giant": "Великан",
-            "normal": "Обычный",
-            "retractingStock": "Складной приклад"
+            "giant": {
+              "label": "Великан"
+            },
+            "normal": {
+              "label": "Обычный"
+            },
+            "retractingStock": {
+              "label": "Складной приклад"
+            }
           },
           "range": {
-            "halfDamage": "1/2D",
-            "inMiles": "В милях",
-            "max": "Макс",
-            "min": "Мин",
-            "musclePowered": "Мышечная сила"
+            "halfDamage": {
+              "label": "1/2D"
+            },
+            "inMiles": {
+              "label": "В милях"
+            },
+            "max": {
+              "label": "Макс"
+            },
+            "min": {
+              "label": "Мин"
+            },
+            "musclePowered": {
+              "label": "Мышечная сила"
+            }
           },
           "rateOfFire": {
-            "fullAutoOnly": "Только автоматический",
-            "highCyclicControlledBursts": "Высокоцикличные управляемые очереди",
-            "jet": "Реактивный",
-            "secondaryProjectiles": "Вторичные снаряды",
-            "shotsPerAttack": "Выстрелов/Атака"
+            "fullAutoOnly": {
+              "label": "Только автоматический"
+            },
+            "highCyclicControlledBursts": {
+              "label": "Высокоцикличные управляемые очереди"
+            },
+            "jet": {
+              "label": "Реактивный"
+            },
+            "secondaryProjectiles": {
+              "label": "Вторичные снаряды"
+            },
+            "shotsPerAttack": {
+              "label": "Выстрелов/Атака"
+            }
           },
           "recoil": {
-            "shot": "Выстрел",
-            "slug": "Пуля"
+            "shot": {
+              "label": "Выстрел"
+            },
+            "slug": {
+              "label": "Пуля"
+            }
           },
           "shots": {
-            "count": "Количество",
-            "duration": "Длительность (с)",
-            "inChamber": "В патроннике",
-            "reloadTime": "Время перезарядки",
-            "reloadTimeIsPerShot": "За выстрел",
-            "thrown": "Брошено"
+            "count": {
+              "label": "Количество"
+            },
+            "duration": {
+              "label": "Длительность (с)"
+            },
+            "inChamber": {
+              "label": "В патроннике"
+            },
+            "reloadTime": {
+              "label": "Время перезарядки"
+            },
+            "reloadTimeIsPerShot": {
+              "label": "За выстрел"
+            },
+            "thrown": {
+              "label": "Брошено"
+            }
           }
         },
-        "jet": "Реактивный"
+        "jet": {
+          "label": "Реактивный"
+        }
       }
     },
     "active": "Активный",
@@ -583,7 +683,16 @@
         "TotalDestruction": "Полное уничтожение"
       }
     },
-    "conditionalModifier": "Условный модификатор",
+    "conditionalModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Модификатор"
+        },
+        "situation": {
+          "label": "Ситуация"
+        }
+      }
+    },
     "conditionalMods": "Условные модификаторы",
     "conditions": "Статус",
     "conditionsCombatMove": "Боевое движение",
@@ -1107,8 +1216,176 @@
     "invalidUserForDamageWarning": "Только Мастера игры могут наносить урон.",
     "isFreeAction": "Это свободное действие.",
     "item": {
+      "base": {
+        "FIELDS": {
+          "addToQuickRoll": {
+            "label": "Добавить к быстрому броску"
+          },
+          "bonuses": {
+            "label": "Бонусы",
+            "placeholder": "Введите «Бонусные» формулы на-лету (по одной в строке) для изменения значений атрибутов, навыков и т.д."
+          },
+          "checkotf": {
+            "label": "Бросок"
+          },
+          "consumeAction": {
+            "label": "Использует действие"
+          },
+          "duringotf": {
+            "label": "Во время"
+          },
+          "failotf": {
+            "label": "Провал"
+          },
+          "itemModifiers": {
+            "label": "Модификаторы предмета",
+            "placeholder": "Введите эффект модификатора (по одному в строке) в формате: <modifier> <#tag> [<#tag>...].\nПримеры: -1 к ЛВ #DX #combat, +2 Вним #resting, -1 ко всем броскам на основе ЛВ #disease #combat."
+          },
+          "modifierTags": {
+            "label": "Теги модификаторов"
+          },
+          "notes": {
+            "label": "Заметки"
+          },
+          "pageref": {
+            "label": "Ссылка"
+          },
+          "passotf": {
+            "label": "Успех"
+          },
+          "vtt_notes": {
+            "label": "Заметки VTT"
+          }
+        }
+      },
       "deleteContents": "Также удалить содержимое ({count} предметов будет удалено!)",
-      "deleteMessage": "Вы уверены, что хотите удалить <strong>{name}</strong>?"
+      "deleteMessage": "Вы уверены, что хотите удалить <strong>{name}</strong>?",
+      "equipment": {
+        "FIELDS": {
+          "categories": {
+            "label": "Теги"
+          },
+          "cost": {
+            "label": "Стоимость"
+          },
+          "count": {
+            "label": "Количество"
+          },
+          "equipped": {
+            "label": "Экипировано"
+          },
+          "ignoreImportQty": {
+            "label": "Сохранить кол-во"
+          },
+          "legalityclass": {
+            "label": "LC"
+          },
+          "maxuses": {
+            "label": "Макс. применений"
+          },
+          "techlevel": {
+            "label": "ТУ"
+          },
+          "uses": {
+            "label": "Применения"
+          },
+          "weight": {
+            "label": "Вес"
+          }
+        }
+      },
+      "feature": {
+        "crChoices": {
+          "0": "Никогда не сопротивляться",
+          "6": "6 (Сопротивляется редко)",
+          "7": "7 (Сопротивляется редко; нестандартно)",
+          "8": "8 (Сопротивляется редко; нестандартно)",
+          "9": "9 (Сопротивляется довольно часто)",
+          "10": "10 (Сопротивляется довольно часто; нестандартно)",
+          "11": "11 (Сопротивляется довольно часто; нестандартно)",
+          "12": "12 (Сопротивляется часто)",
+          "13": "13 (Сопротивляется часто; нестандартно)",
+          "14": "14 (Сопротивляется часто; нестандартно)",
+          "15": "15 (Сопротивляется почти всегда)",
+          "none": "Не требуется"
+        },
+        "FIELDS": {
+          "cr": {
+            "label": "Бросок самоконтроля"
+          },
+          "level": {
+            "label": "Уровень"
+          },
+          "points": {
+            "label": "Очки"
+          },
+          "userdesc": {
+            "label": "Описание пользователя"
+          }
+        }
+      },
+      "skill": {
+        "FIELDS": {
+          "difficulty": {
+            "label": "Сложность"
+          },
+          "import": {
+            "label": "Уровень"
+          },
+          "points": {
+            "label": "Очки"
+          },
+          "relativelevel": {
+            "label": "RSL"
+          },
+          "specialization": {
+            "label": "Специализация"
+          },
+          "techlevel": {
+            "label": "ТУ"
+          }
+        }
+      },
+      "spell": {
+        "FIELDS": {
+          "casttime": {
+            "label": "Время произнесения"
+          },
+          "class": {
+            "label": "Класс заклинания"
+          },
+          "college": {
+            "label": "Колледж"
+          },
+          "cost": {
+            "label": "Стоимость произнесения"
+          },
+          "difficulty": {
+            "label": "Сложность"
+          },
+          "duration": {
+            "label": "Длительность"
+          },
+          "import": {
+            "label": "Уровень"
+          },
+          "maintain": {
+            "label": "Стоимость поддержки"
+          },
+          "points": {
+            "label": "Очки"
+          },
+          "relativelevel": {
+            "label": "RSL"
+          },
+          "resist": {
+            "label": "Сопротивление"
+          },
+          "techlevel": {
+            "label": "ТУ"
+          }
+        }
+      }
     },
     "itemBonusText": "Введите формулы 'Бонус' On-the-Fly (по одной на строку) для изменения значений атрибутов, навыков и т. д.",
     "itemFeatures": "Особенности",
@@ -1175,6 +1452,10 @@
       "item": {
         "progressMessage": "Применяются миграции предмета для версии {version}, пожалуйста, подождите...",
         "successMessage": "Миграции предмета для версии {version} успешно применены."
+      },
+      "report": {
+        "message": "Миграция мира завершена. Подробности смотрите в списке ниже.",
+        "title": "Отчёт о миграции"
       },
       "toV1_0_0": {
         "cancel": "Отменить миграцию",
@@ -1523,6 +1804,16 @@
     "pointsSpells": "Заклинания",
     "pointsTotal": "Всего очков",
     "pointsUnspent": "Непотраченные",
+    "pseudo": {
+      "FIELDS": {
+        "name": {
+          "label": "Имя"
+        },
+        "type": {
+          "label": "Тип"
+        }
+      }
+    },
     "publicRollAsDefault": "Публичный бросок по умолчанию",
     "quantity": "Количество",
     "quickNotes": {
@@ -1549,6 +1840,16 @@
     "rcl": "Отд",
     "reach": "Досяг.",
     "reaction": "Реакция",
+    "reactionModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Модификатор"
+        },
+        "situation": {
+          "label": "Ситуация"
+        }
+      }
+    },
     "reactionMods": "Реакционные модификаторы",
     "recalculate": "Пересчитать",
     "reference": "Ссылка",
@@ -1753,6 +2054,23 @@
     "severity": "Тяжесть",
     "share": "Поделиться",
     "sheet": {
+      "actions": {
+        "title": "Действия"
+      },
+      "conditionalModifiers": {
+        "title": "Условные модификаторы"
+      },
+      "details": {
+        "base": "Общие сведения",
+        "equipment": "Сведения о снаряжении",
+        "meleeAttack": "Сведения об атаке в ближнем бою",
+        "otf": "OTFs",
+        "rangedAttack": "Сведения об атаке на расстоянии",
+        "skill": "Сведения о навыке",
+        "spell": "Сведения о заклинании",
+        "title": "Сведения",
+        "trait": "Сведения о черте"
+      },
       "encumbrance": {
         "dodge": "Уклонение",
         "level": "Уровень",
@@ -1811,8 +2129,14 @@
         "location": "Локация",
         "roll": "Бросок"
       },
+      "modernItemSheet": {
+        "label": "Современный лист предмета"
+      },
       "modernSheet": {
         "label": "Современный лист"
+      },
+      "modifiers": {
+        "title": "Модификаторы"
       },
       "npcSheet": {
         "label": "Лист НИП"
@@ -1829,8 +2153,8 @@
         "tab": "Личное",
         "title": "Статус"
       },
-      "tabSheet": {
-        "tabs": "ВКЛАДКИ"
+      "reactionModifiers": {
+        "title": "Модификаторы реакции"
       },
       "toggleMode": "Переключить режим редактирования"
     },

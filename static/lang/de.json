@@ -25,44 +25,92 @@
     "action": {
       "baseAction": {
         "FIELDS": {
-          "addToQuickRoll": "Zu Schnellwurf hinzufügen",
-          "disabled": "Deaktiviert",
-          "name": "Name"
+          "addToQuickRoll": {
+            "label": "Zu Schnellwurf hinzufügen"
+          },
+          "disabled": {
+            "label": "Deaktiviert"
+          },
+          "name": {
+            "label": "Name"
+          }
         }
       },
       "baseAttack": {
         "FIELDS": {
-          "consumeAction": "Aktion verbrauchen",
-          "damage": "Schaden",
-          "extraAttacks": "Zusätzliche Angriffe",
-          "import": "Grundstufe",
-          "itemModifiers": "Gegenstandsmodifikatoren",
-          "mode": "Modus",
-          "modifierTags": "Modifikator-Tags",
-          "notes": "Notizen",
-          "otf": "OTF-Formel",
-          "st": "ST"
+          "consumeAction": {
+            "label": "Aktion verbrauchen"
+          },
+          "damage": {
+            "label": "Schaden"
+          },
+          "extraAttacks": {
+            "label": "Zusätzliche Angriffe"
+          },
+          "import": {
+            "label": "Grundstufe"
+          },
+          "itemModifiers": {
+            "label": "Gegenstandsmodifikatoren"
+          },
+          "mode": {
+            "label": "Modus"
+          },
+          "modifierTags": {
+            "label": "Modifikator-Tags"
+          },
+          "notes": {
+            "label": "Notizen"
+          },
+          "otf": {
+            "label": "OTF-Formel"
+          },
+          "st": {
+            "label": "ST"
+          }
         }
       },
       "meleeAttack": {
         "blockDisabled": "Nein",
         "FIELDS": {
-          "baseParryPenalty": "Basis-Parier-Malus",
+          "baseParryPenalty": {
+            "label": "Basis-Parier-Malus"
+          },
           "block": {
-            "canBlock": "Kann blocken",
-            "modifier": "Modifikator"
+            "canBlock": {
+              "label": "Kann blocken"
+            },
+            "modifier": {
+              "label": "Modifikator"
+            }
           },
           "parry": {
-            "canParry": "Kann parieren",
-            "fencing": "Fechten",
-            "modifier": "Modifikator",
-            "unbalanced": "Unausgeglichen"
+            "canParry": {
+              "label": "Kann parieren"
+            },
+            "fencing": {
+              "label": "Fechten"
+            },
+            "modifier": {
+              "label": "Modifikator"
+            },
+            "unbalanced": {
+              "label": "Unausgeglichen"
+            }
           },
           "reach": {
-            "changeRequiresReady": "Wechsel erfordert Bereit",
-            "closeCombat": "Nahkampf",
-            "max": "Max",
-            "min": "Min"
+            "changeRequiresReady": {
+              "label": "Wechsel erfordert Bereit"
+            },
+            "closeCombat": {
+              "label": "Nahkampf"
+            },
+            "max": {
+              "label": "Max"
+            },
+            "min": {
+              "label": "Min"
+            }
           }
         },
         "parryDisabled": "Nein"
@@ -70,44 +118,96 @@
       "rangedAttack": {
         "FIELDS": {
           "acc": {
-            "base": "Basis",
-            "jet": "Strahl",
-            "scope": "Zielfernrohr"
+            "base": {
+              "label": "Basis"
+            },
+            "jet": {
+              "label": "Strahl"
+            },
+            "scope": {
+              "label": "Zielfernrohr"
+            }
           },
-          "ammo": "Munition",
+          "ammo": {
+            "label": "Munition"
+          },
           "bulk": {
-            "giant": "Riese",
-            "normal": "Normal",
-            "retractingStock": "Einklappbarer Schaft"
+            "giant": {
+              "label": "Riese"
+            },
+            "normal": {
+              "label": "Normal"
+            },
+            "retractingStock": {
+              "label": "Einklappbarer Schaft"
+            }
           },
           "range": {
-            "halfDamage": "1/2D",
-            "inMiles": "In Meilen",
-            "max": "Max",
-            "min": "Min",
-            "musclePowered": "Muskelkraft"
+            "halfDamage": {
+              "label": "1/2D"
+            },
+            "inMiles": {
+              "label": "In Meilen"
+            },
+            "max": {
+              "label": "Max"
+            },
+            "min": {
+              "label": "Min"
+            },
+            "musclePowered": {
+              "label": "Muskelkraft"
+            }
           },
           "rateOfFire": {
-            "fullAutoOnly": "Nur Vollautomatik",
-            "highCyclicControlledBursts": "Hochzyklische kontrollierte Feuerstöße",
-            "jet": "Strahl",
-            "secondaryProjectiles": "Sekundäre Projektile",
-            "shotsPerAttack": "Schuss/Angriff"
+            "fullAutoOnly": {
+              "label": "Nur Vollautomatik"
+            },
+            "highCyclicControlledBursts": {
+              "label": "Hochzyklische kontrollierte Feuerstöße"
+            },
+            "jet": {
+              "label": "Strahl"
+            },
+            "secondaryProjectiles": {
+              "label": "Sekundäre Projektile"
+            },
+            "shotsPerAttack": {
+              "label": "Schuss/Angriff"
+            }
           },
           "recoil": {
-            "shot": "Schuss",
-            "slug": "Slug"
+            "shot": {
+              "label": "Schuss"
+            },
+            "slug": {
+              "label": "Slug"
+            }
           },
           "shots": {
-            "count": "Anzahl",
-            "duration": "Dauer (s)",
-            "inChamber": "Im Patronenlager",
-            "reloadTime": "Ladezeit",
-            "reloadTimeIsPerShot": "Pro Schuss",
-            "thrown": "Geworfen"
+            "count": {
+              "label": "Anzahl"
+            },
+            "duration": {
+              "label": "Dauer (s)"
+            },
+            "inChamber": {
+              "label": "Im Patronenlager"
+            },
+            "reloadTime": {
+              "label": "Ladezeit"
+            },
+            "reloadTimeIsPerShot": {
+              "label": "Pro Schuss"
+            },
+            "thrown": {
+              "label": "Geworfen"
+            }
           }
         },
-        "jet": "Strahl"
+        "jet": {
+          "label": "Strahl"
+        }
       }
     },
     "active": "Aktiv",
@@ -583,7 +683,16 @@
         "TotalDestruction": "Vollständige Zerstörung"
       }
     },
-    "conditionalModifier": "Situativer Modifikator",
+    "conditionalModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Modifikator"
+        },
+        "situation": {
+          "label": "Situation"
+        }
+      }
+    },
     "conditionalMods": "Situative Modifikatoren",
     "conditions": "Zustände",
     "conditionsCombatMove": "Kampfbewegung",
@@ -1107,8 +1216,176 @@
     "invalidUserForDamageWarning": "Nur SL dürfen Schaden zufügen.",
     "isFreeAction": "Ist eine freie Aktion.",
     "item": {
+      "base": {
+        "FIELDS": {
+          "addToQuickRoll": {
+            "label": "Zu Schnellwurf hinzufügen"
+          },
+          "bonuses": {
+            "label": "Boni",
+            "placeholder": "Gib On-the-Fly 'Bonus'-Formeln ein (eine pro Zeile), um Attribute, Fertigkeiten usw. zu modifizieren."
+          },
+          "checkotf": {
+            "label": "Probe"
+          },
+          "consumeAction": {
+            "label": "Aktion verbrauchen"
+          },
+          "duringotf": {
+            "label": "Während"
+          },
+          "failotf": {
+            "label": "Misslungen"
+          },
+          "itemModifiers": {
+            "label": "Gegenstandsmodifikatoren",
+            "placeholder": "Gib Modifikator-Effekt ein (einer pro Zeile) im Format: <modifier> <#tag> [<#tag>...].\nBeispiele: -1 auf DX #DX #combat, +2 Per #resting, -1 auf alle DX-basierten Würfe #disease #combat."
+          },
+          "modifierTags": {
+            "label": "Modifikator-Tags"
+          },
+          "notes": {
+            "label": "Notizen"
+          },
+          "pageref": {
+            "label": "Referenz"
+          },
+          "passotf": {
+            "label": "Bestanden"
+          },
+          "vtt_notes": {
+            "label": "VTT-Notizen"
+          }
+        }
+      },
       "deleteContents": "Auch Inhalte löschen ({count} Gegenstände werden gelöscht!)",
-      "deleteMessage": "Sicher, dass du <strong>{name}</strong> löschen möchtest?"
+      "deleteMessage": "Sicher, dass du <strong>{name}</strong> löschen möchtest?",
+      "equipment": {
+        "FIELDS": {
+          "categories": {
+            "label": "Tags"
+          },
+          "cost": {
+            "label": "Wert"
+          },
+          "count": {
+            "label": "Anzahl"
+          },
+          "equipped": {
+            "label": "Ausgerüstet"
+          },
+          "ignoreImportQty": {
+            "label": "Anzahl beibehalten"
+          },
+          "legalityclass": {
+            "label": "LC"
+          },
+          "maxuses": {
+            "label": "Max. Nutzungen"
+          },
+          "techlevel": {
+            "label": "TL"
+          },
+          "uses": {
+            "label": "Nutzungen"
+          },
+          "weight": {
+            "label": "Gewicht"
+          }
+        }
+      },
+      "feature": {
+        "crChoices": {
+          "0": "Niemals widerstehen",
+          "6": "6 (Widerstehe selten)",
+          "7": "7 (Widerstehe selten; nicht standard)",
+          "8": "8 (Widerstehe selten; nicht standard)",
+          "9": "9 (Widerstehe häufig)",
+          "10": "10 (Widerstehe häufig; nicht standard)",
+          "11": "11 (Widerstehe häufig; nicht standard)",
+          "12": "12 (Widerstehe recht häufig)",
+          "13": "13 (Widerstehe recht häufig; nicht standard)",
+          "14": "14 (Widerstehe recht häufig; nicht standard)",
+          "15": "15 (Widerstehe fast immer)",
+          "none": "Kein Wurf erforderlich"
+        },
+        "FIELDS": {
+          "cr": {
+            "label": "Selbstkontrollwurf"
+          },
+          "level": {
+            "label": "Stufe"
+          },
+          "points": {
+            "label": "Punkte"
+          },
+          "userdesc": {
+            "label": "Benutzerbeschreibung"
+          }
+        }
+      },
+      "skill": {
+        "FIELDS": {
+          "difficulty": {
+            "label": "Schwierigkeit"
+          },
+          "import": {
+            "label": "Stufe"
+          },
+          "points": {
+            "label": "Punkte"
+          },
+          "relativelevel": {
+            "label": "RSL"
+          },
+          "specialization": {
+            "label": "Spezialisierung"
+          },
+          "techlevel": {
+            "label": "TL"
+          }
+        }
+      },
+      "spell": {
+        "FIELDS": {
+          "casttime": {
+            "label": "Zauberdauer"
+          },
+          "class": {
+            "label": "Zauberkategorie"
+          },
+          "college": {
+            "label": "Kollegium"
+          },
+          "cost": {
+            "label": "Zauberkosten"
+          },
+          "difficulty": {
+            "label": "Schwierigkeit"
+          },
+          "duration": {
+            "label": "Dauer"
+          },
+          "import": {
+            "label": "Stufe"
+          },
+          "maintain": {
+            "label": "Erhaltungskosten"
+          },
+          "points": {
+            "label": "Punkte"
+          },
+          "relativelevel": {
+            "label": "RSL"
+          },
+          "resist": {
+            "label": "Widerstand"
+          },
+          "techlevel": {
+            "label": "TL"
+          }
+        }
+      }
     },
     "itemBonusText": "Füge On-the-Fly 'Bonus' Formel ein (eine pro Reihe) um die Werte von Attributen, Fertigkeiten, etc. to modifizieren.",
     "itemFeatures": "Merkmal",
@@ -1175,6 +1452,10 @@
       "item": {
         "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",
         "successMessage": "Objekt-Migrationen für Version {version} erfolgreich angewendet."
+      },
+      "report": {
+        "message": "Die Weltmigration ist nun abgeschlossen. Siehe die Liste unten für Details.",
+        "title": "Migrationsbericht"
       },
       "toV1_0_0": {
         "cancel": "Migration abbrechen",
@@ -1523,6 +1804,16 @@
     "pointsSpells": "Zauber",
     "pointsTotal": "Gesamtpunkte",
     "pointsUnspent": "Unverbrauchte",
+    "pseudo": {
+      "FIELDS": {
+        "name": {
+          "label": "Name"
+        },
+        "type": {
+          "label": "Typ"
+        }
+      }
+    },
     "publicRollAsDefault": "Öffentlicher Wurf als Standard",
     "quantity": "Anzahl",
     "quickNotes": {
@@ -1549,6 +1840,16 @@
     "rcl": "Rückstoß",
     "reach": "Länge",
     "reaction": "Reaktion",
+    "reactionModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Modifikator"
+        },
+        "situation": {
+          "label": "Situation"
+        }
+      }
+    },
     "reactionMods": "Reaktionsmodifikatoren",
     "recalculate": "Neu berechnen",
     "reference": "Referenz",
@@ -1753,6 +2054,23 @@
     "severity": "Schwere",
     "share": "Teilen",
     "sheet": {
+      "actions": {
+        "title": "Aktionen"
+      },
+      "conditionalModifiers": {
+        "title": "Bedingte Modifikatoren"
+      },
+      "details": {
+        "base": "Allgemeine Details",
+        "equipment": "Ausrüstungsdetails",
+        "meleeAttack": "Nahkampfdetails",
+        "otf": "OTFs",
+        "rangedAttack": "Fernkampfdetails",
+        "skill": "Fertigkeitsdetails",
+        "spell": "Zauberdetails",
+        "title": "Details",
+        "trait": "Merkmaldetails"
+      },
       "encumbrance": {
         "dodge": "Ausweichen",
         "level": "Stufe",
@@ -1811,8 +2129,14 @@
         "location": "Trefferlage",
         "roll": "Wurf"
       },
+      "modernItemSheet": {
+        "label": "Modernes Gegenstandsblatt"
+      },
       "modernSheet": {
         "label": "Modernes Charakterblatt"
+      },
+      "modifiers": {
+        "title": "Modifikatoren"
       },
       "npcSheet": {
         "label": "NSC-Charakterblatt"
@@ -1828,6 +2152,9 @@
         "portrait": "Portrait",
         "tab": "Persönlich",
         "title": "Titel"
+      },
+      "reactionModifiers": {
+        "title": "Reaktionsmodifikatoren"
       },
       "toggleMode": "Bearbeitungsmodus umschalten"
     },

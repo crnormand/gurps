@@ -36,8 +36,8 @@ const config = {
   notesUrl: getArg('--notes-url'),
   dryRun: hasFlag('--dry-run'),
   compatibility: {
-    minimum: process.env.FVTT_COMPATIBILITY_MIN || '12',
-    verified: process.env.FVTT_COMPATIBILITY_VERIFIED || '13.351',
+    minimum: process.env.FVTT_COMPATIBILITY_MIN || '14',
+    verified: process.env.FVTT_COMPATIBILITY_VERIFIED || '14.360',
     maximum: process.env.FVTT_COMPATIBILITY_MAX || '',
   },
 }

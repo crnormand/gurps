@@ -97,7 +97,8 @@ export function initializeSettings() {
       scope: 'world',
       config: false,
       type: String,
-      default: '0.0.0',
+      // NOTE: Blank value should only be used for new worlds.
+      default: '',
       onChange: value => console.log(`Migration Log version : ${value}`),
     })
 

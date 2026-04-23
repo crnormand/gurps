@@ -376,14 +376,6 @@ declare global {
 
     /* ---------------------------------------- */
 
-    removeKey(actor: Actor.Implementation, key: string): void
-
-    /* ---------------------------------------- */
-
-    insertBeforeKey(actor: Actor.Implementation, path: string, newobj: AnyObject): Promise<void>
-
-    /* ---------------------------------------- */
-
     findAdDisad(actor: Actor.Implementation, adName: string): Feature['fea'] | undefined
 
     /* ---------------------------------------- */

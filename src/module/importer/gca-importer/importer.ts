@@ -1,11 +1,5 @@
 import { DataModel } from '@gurps-types/foundry/index.js'
-import {
-  ActionType,
-  MeleeAttackSchema,
-  RangedAttackSchema,
-  MeleeAttackModel,
-  RangedAttackModel,
-} from '@module/action/index.js'
+import { ActionType, MeleeAttackSchema, RangedAttackSchema } from '@module/action/index.js'
 import { parseBlock } from '@module/action/parse-attack.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
@@ -332,31 +326,23 @@ Portrait will not be imported.`
       newMode.mode === oldMode.mode && newMode.basic === oldMode.basic && newMode.enhanced === oldMode.enhanced
 
     // Import speeds for move modes(based on attributes in GGA)
-    const groundMove = {
-      _id: foundry.utils.randomID(),
+    const groundMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
       mode: 'GURPS.moveModeGround',
-      default: true,
       ...this.#importMoveType('Ground Move'),
     }
 
-    const airMove = {
-      _id: foundry.utils.randomID(),
+    const airMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
       mode: 'GURPS.moveModeAir',
-      default: false,
       ...this.#importMoveType('Air Move'),
     }
 
-    const waterMove = {
-      _id: foundry.utils.randomID(),
+    const waterMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
       mode: 'GURPS.moveModeWater',
-      default: false,
       ...this.#importMoveType('Water Move'),
     }
 
-    const spaceMove = {
-      _id: foundry.utils.randomID(),
+    const spaceMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
       mode: 'GURPS.moveModeSpace',
-      default: false,
       ...this.#importMoveType('Space Move'),
     }
 
@@ -391,8 +377,11 @@ Portrait will not be imported.`
     )
 
     return {
+      _id: foundry.utils.randomID(),
       basic: basicMove?.score ?? 0,
       enhanced: enhancedMove?.score ?? 0,
+      name: '',
+      sort: 0,
     }
   }
 
@@ -468,7 +457,7 @@ Portrait will not be imported.`
         let roll = ''
 
         if (table) {
-          const [_, standardEntry] = HitLocation.findTableEntry(table, bodyLocation.name)
+          const [_, standardEntry] = HitLocation.findTableEntry(table, location.location)
 
           if (standardEntry) {
             roll = standardEntry.roll
@@ -476,6 +465,8 @@ Portrait will not be imported.`
         }
 
         const dr = parseInt(bodyLocation.dr)
+
+        const totalDR = Number.isNaN(dr) ? 0 : dr
 
         // Try to determine the role of the hit location. This is used in the Damage Calculator to determine crippling
         // damage and other effects.
@@ -491,12 +482,18 @@ Portrait will not be imported.`
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
           where: location.location ?? '',
-          import: Number.isNaN(dr) ? 0 : dr,
-          _dr: Number.isNaN(dr) ? 0 : dr,
+          import: totalDR,
+          _dr: totalDR,
           rollText: roll,
           penalty: Number(location.penalty) || 0,
           split: {},
           role: role as HitLocationRole | null,
+          name: '',
+          sort: 0,
+          _damageType: null,
+          drMod: 0,
+          drItem: 0,
+          drCap: totalDR,
         }
 
         acc[id] = newLocation
@@ -518,7 +515,7 @@ Portrait will not be imported.`
     // On first import, always replace the hit location table
     if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
       const currentHitLocationNullifiers = Object.fromEntries(
-        this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+        this.actor.system.hitlocationsV2.map(location => [`${location._id}`, _del])
       )
 
       this.output.hitlocationsV2 = {
@@ -550,7 +547,7 @@ Portrait will not be imported.`
     )
 
     const currentHitLocationNullifiers = Object.fromEntries(
-      this.actor.system.hitlocationsV2.map(location => [`-=${location._id}`, null])
+      this.actor.system.hitlocationsV2.map(location => [`${location._id}`, _del])
     )
 
     const bodyPlansAreEqual = () => {
@@ -558,7 +555,7 @@ Portrait will not be imported.`
 
       const newLocations = Object.values(
         this.output.hitlocationsV2 as Record<string, foundry.data.fields.SchemaField.CreateData<HitLocationSchemaV2>>
-      ).map(({ _id, ...rest }) => rest)
+      ).map(({ _id, flags, img, name, sort, _damageType, drCap, drItem, drMod, ...rest }) => rest)
 
       if (oldLocations.length !== newLocations.length) return false
 
@@ -608,7 +605,7 @@ Portrait will not be imported.`
         {
           action: 'keep',
           label: game.i18n!.localize('GURPS.dialog.keep'),
-          icon: 'far fa-square',
+          icon: 'fa-regular fa-square',
           default: true,
         },
         {
@@ -754,7 +751,6 @@ Portrait will not be imported.`
     return {
       name,
       type,
-      img: MeleeAttackModel.getDefaultArtwork({}).img,
       _id,
       baseParryPenalty: -4,
       block,
@@ -789,7 +785,6 @@ Portrait will not be imported.`
     return {
       name,
       type,
-      img: RangedAttackModel.getDefaultArtwork({}).img,
       _id,
       acc: weapon.characc ?? '',
       damage,

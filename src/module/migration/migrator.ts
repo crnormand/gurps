@@ -1,7 +1,7 @@
 import { getGame } from '@module/util/guards.js'
 
-import { v1_0_0 } from './migrations/index.js'
-import { MigrationEntry, MigrationReport } from './types.js'
+import { migrations } from './migrations/index.js'
+import { MigrationReport } from './types.js'
 
 export class Migrator {
   #migrationReports: MigrationReport[]
@@ -9,10 +9,6 @@ export class Migrator {
   constructor() {
     this.#migrationReports = []
   }
-
-  /* ---------------------------------------- */
-
-  static migrations: MigrationEntry[] = [v1_0_0]
 
   /* ---------------------------------------- */
 
@@ -34,43 +30,52 @@ export class Migrator {
   /* ---------------------------------------- */
 
   async #migrateWorld(): Promise<void> {
-    const migrationVersion = getGame().settings.get(GURPS.SYSTEM_NAME, 'migration-version') ?? '0.0.0'
+    if (!game.settings || !game.system) {
+      throw new Error('Game is not initialized')
+    }
 
-    // Set the migration version now, so if any migrations fail, we won't be stuck in a loop of trying to run them every
-    // time the game is loaded.
-    getGame().settings.set(GURPS.SYSTEM_NAME, 'migration-version', getGame().system.version)
+    const migrationVersion = game.settings.get(GURPS.SYSTEM_NAME, 'migration-version')
+    let updateVersion = false
 
-    const migrationVersions = Object.values(GURPS.modules).reduce((versions, module) => {
-      if (module.migrations) {
-        module.migrations.forEach(migration => versions.add(migration.version))
-      }
-
-      return versions
-    }, new Set<string>())
-
-    for (const version of migrationVersions) {
-      if (foundry.utils.isNewerVersion(version, migrationVersion)) {
-        const migrationEntry = Migrator.migrations.find(migration => migration.version === version)
-
-        if (migrationEntry) {
-          await migrationEntry.migrate()
+    if (migrationVersion === '') {
+      // New world. Set the migration version, but skip all migration.
+      updateVersion = true
+    } else {
+      const migrationVersions = Object.values(GURPS.modules).reduce((versions, module) => {
+        if (module.migrations) {
+          module.migrations.forEach(migration => versions.add(migration.version))
         }
 
-        for (const [name, module] of Object.entries(GURPS.modules)) {
-          if (module.migrations) {
-            const migrationEntry = module.migrations.find(migration => migration.version === version)
+        return versions
+      }, new Set<string>())
 
-            if (migrationEntry) {
-              console.log(`GURPS | Running migration for module ${name} (version: ${migrationEntry.version})`)
+      for (const version of migrationVersions) {
+        if (foundry.utils.isNewerVersion(version, migrationVersion)) {
+          updateVersion = true
+          const migrationEntry = migrations.find(migration => migration.version === version)
 
-              const report = await migrationEntry.migrate()
+          if (migrationEntry) {
+            await migrationEntry.migrate()
+          }
 
-              if (report) this.#migrationReports.push(report)
+          for (const [name, module] of Object.entries(GURPS.modules)) {
+            if (module.migrations) {
+              const migrationEntry = module.migrations.find(migration => migration.version === version)
+
+              if (migrationEntry) {
+                console.log(`GURPS | Running migration for module ${name} (version: ${migrationEntry.version})`)
+
+                const report = await migrationEntry.migrate()
+
+                if (report) this.#migrationReports.push(report)
+              }
             }
           }
         }
       }
     }
+
+    if (updateVersion) game.settings.set(GURPS.SYSTEM_NAME, 'migration-version', game.system.version)
   }
 
   /* ---------------------------------------- */
@@ -79,9 +84,9 @@ export class Migrator {
     if (this.#migrationReports.length === 0) return
 
     await foundry.applications.api.DialogV2.prompt({
-      window: { title: 'GURPS.migration.migrationReport.title' },
+      window: { title: 'GURPS.migration.report.title' },
       content:
-        `<p>${getGame().i18n.localize('GURPS.migration.migrationReport.message')}</p>` +
+        `<p>${getGame().i18n.localize('GURPS.migration.report.message')}</p>` +
         this.#migrationReports
           .map(
             entry => `<p>${entry.success ? '✅' : '❌'} ${entry.module} (${entry.version}): ${entry.message ?? ''}</p>`
