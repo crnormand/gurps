@@ -1859,49 +1859,6 @@ if (!globalThis.GURPS) {
 
   GURPS.put = put
 
-  /**
-   * Because the DB just merges keys, the best way to insert is to delete the whole colleciton object, fix it up, and then re-add it.
-   * @param {Actor} actor
-   * @param {string} path
-   * @param {any} newobj
-   */
-  async function insertBeforeKey(actor, path, newobj) {
-    let i = path.lastIndexOf('.')
-    let objpath = path.substring(0, i)
-    let key = path.substring(i + 1)
-
-    i = objpath.lastIndexOf('.')
-    let parentpath = objpath.substring(0, i)
-    let objkey = objpath.substring(i + 1)
-    let object = GURPS.decode(actor, objpath)
-    let removalPath = parentpath + '.-=' + objkey
-
-    await actor.internalUpdate({ [removalPath]: null }) // Delete the whole object
-    let start = parseInt(key)
-
-    i = start + 1
-    while (Object.hasOwn(object, zeroFill(i))) i++
-    i = i - 1
-
-    for (let index = i; index >= start; index--) {
-      object[zeroFill(index + 1)] = object[zeroFill(index)]
-    }
-
-    object[key] = newobj
-    let sorted = Object.keys(object)
-      .sort()
-      .reduce((acc, value) => {
-        // @ts-expect-error - dynamic property access on accumulator object
-        acc[value] = object[value]
-
-        return acc
-      }, {}) // Enforced key order
-
-    await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
-  }
-
-  GURPS.insertBeforeKey = insertBeforeKey
-
   // TODO replace Record<string, any> with { [key: string]: any }
   /**
    * @param {Record<String,any>} obj
@@ -1923,52 +1880,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.decode = decode
-
-  /**
-   *  Funky helper function to be able to list hierarchical equipment in a linear list (with appropriate keys for editing)
-   * @param {Record<string, any>} eqts
-   * @param {{ fn: (arg0: any, arg1: { data: any; }) => string; }} options
-   * @param {number} level
-   * @param {{ indent: any; key: string; count: any; }} data
-   * @param {string=} parentkey
-   * @param {{ equipment: { carried: Object; }; }|null} src
-   */
-  function listeqtrecurse(eqts, options, level, data, parentkey = '', src = null) {
-    if (!eqts) return ''
-    let ret = ''
-    // let i = 0
-
-    for (let key in eqts) {
-      let eqt = eqts[key]
-
-      if (data) {
-        data.indent = level
-        data.key = parentkey + key
-        data.count = eqt.count
-      }
-
-      let display = true
-
-      if (!!src && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
-        // if an optional src is provided (which == actor.system) assume we are checking attacks to see if they are equipped
-        recurselist(src.equipment.carried, carriedEquipment => {
-          if (eqt.name.startsWith(carriedEquipment.name) && !carriedEquipment.equipped) display = false
-        })
-      }
-
-      if (display) {
-        let fragment = options.fn(eqt, { data: data })
-
-        ret = ret + fragment
-      }
-
-      ret = ret + listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + '.contains.')
-    }
-
-    return ret
-  }
-
-  GURPS.listeqtrecurse = listeqtrecurse
 
   GURPS.whisperOtfToOwner = function (otf, overridetxt, _event, blindcheck, actor) {
     if (!otf) return

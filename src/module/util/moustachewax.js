@@ -292,16 +292,6 @@ export default function () {
     return stripBracketContents(text)
   })
 
-  Handlebars.registerHelper('listeqt', function (context, options) {
-    var data
-
-    if (options.data) data = Handlebars.createFrame(options.data)
-
-    let ans = GURPS.listeqtrecurse(context, options, 0, data)
-
-    return ans
-  })
-
   /**
    * Convert a hierarchy of contained items into a flat map.
    *
@@ -389,17 +379,6 @@ export default function () {
       }
     }
   }
-
-  Handlebars.registerHelper('listattack', function (src, key, options) {
-    var data
-
-    if (options.data) data = Handlebars.createFrame(options.data)
-
-    let context = src[key]
-    let ans = GURPS.listeqtrecurse(context, options, 0, data, '', src)
-
-    return ans
-  })
 
   // Only necessary because of the FG import
   Handlebars.registerHelper('hitlocationroll', function (loc, roll, data) {
