@@ -25,44 +25,92 @@
     "action": {
       "baseAction": {
         "FIELDS": {
-          "addToQuickRoll": "Ajouter au jet rapide",
-          "disabled": "Désactivé",
-          "name": "Nom"
+          "addToQuickRoll": {
+            "label": "Ajouter au jet rapide"
+          },
+          "disabled": {
+            "label": "Désactivé"
+          },
+          "name": {
+            "label": "Nom"
+          }
         }
       },
       "baseAttack": {
         "FIELDS": {
-          "consumeAction": "Consommer une action",
-          "damage": "Dégâts",
-          "extraAttacks": "Attaques supplémentaires",
-          "import": "Niveau de base",
-          "itemModifiers": "Modificateurs d'objet",
-          "mode": "Mode",
-          "modifierTags": "Tags de modificateur",
-          "notes": "Notes",
-          "otf": "Formule OTF",
-          "st": "ST"
+          "consumeAction": {
+            "label": "Consommer une action"
+          },
+          "damage": {
+            "label": "Dégâts"
+          },
+          "extraAttacks": {
+            "label": "Attaques supplémentaires"
+          },
+          "import": {
+            "label": "Niveau de base"
+          },
+          "itemModifiers": {
+            "label": "Modificateurs d'objet"
+          },
+          "mode": {
+            "label": "Mode"
+          },
+          "modifierTags": {
+            "label": "Tags de modificateur"
+          },
+          "notes": {
+            "label": "Notes"
+          },
+          "otf": {
+            "label": "Formule OTF"
+          },
+          "st": {
+            "label": "ST"
+          }
         }
       },
       "meleeAttack": {
         "blockDisabled": "Non",
         "FIELDS": {
-          "baseParryPenalty": "Pénalité de parade de base",
+          "baseParryPenalty": {
+            "label": "Pénalité de parade de base"
+          },
           "block": {
-            "canBlock": "Peut bloquer",
-            "modifier": "Modificateur"
+            "canBlock": {
+              "label": "Peut bloquer"
+            },
+            "modifier": {
+              "label": "Modificateur"
+            }
           },
           "parry": {
-            "canParry": "Peut parer",
-            "fencing": "Escrime",
-            "modifier": "Modificateur",
-            "unbalanced": "Déséquilibré"
+            "canParry": {
+              "label": "Peut parer"
+            },
+            "fencing": {
+              "label": "Escrime"
+            },
+            "modifier": {
+              "label": "Modificateur"
+            },
+            "unbalanced": {
+              "label": "Déséquilibré"
+            }
           },
           "reach": {
-            "changeRequiresReady": "Changement nécessite Prêt",
-            "closeCombat": "Combat rapproché",
-            "max": "Max",
-            "min": "Min"
+            "changeRequiresReady": {
+              "label": "Changement nécessite Prêt"
+            },
+            "closeCombat": {
+              "label": "Combat rapproché"
+            },
+            "max": {
+              "label": "Max"
+            },
+            "min": {
+              "label": "Min"
+            }
           }
         },
         "parryDisabled": "Non"
@@ -70,44 +118,96 @@
       "rangedAttack": {
         "FIELDS": {
           "acc": {
-            "base": "Base",
-            "jet": "Jet",
-            "scope": "Lunette"
+            "base": {
+              "label": "Base"
+            },
+            "jet": {
+              "label": "Jet"
+            },
+            "scope": {
+              "label": "Lunette"
+            }
           },
-          "ammo": "Munitions",
+          "ammo": {
+            "label": "Munitions"
+          },
           "bulk": {
-            "giant": "Géant",
-            "normal": "Normal",
-            "retractingStock": "Crosse rétractable"
+            "giant": {
+              "label": "Géant"
+            },
+            "normal": {
+              "label": "Normal"
+            },
+            "retractingStock": {
+              "label": "Crosse rétractable"
+            }
           },
           "range": {
-            "halfDamage": "1/2D",
-            "inMiles": "En miles",
-            "max": "Max",
-            "min": "Min",
-            "musclePowered": "Propulsé par les muscles"
+            "halfDamage": {
+              "label": "1/2D"
+            },
+            "inMiles": {
+              "label": "En miles"
+            },
+            "max": {
+              "label": "Max"
+            },
+            "min": {
+              "label": "Min"
+            },
+            "musclePowered": {
+              "label": "Propulsé par les muscles"
+            }
           },
           "rateOfFire": {
-            "fullAutoOnly": "Automatique uniquement",
-            "highCyclicControlledBursts": "Rafales contrôlées à haute cadence",
-            "jet": "Jet",
-            "secondaryProjectiles": "Projectiles secondaires",
-            "shotsPerAttack": "Tirs/Attaque"
+            "fullAutoOnly": {
+              "label": "Automatique uniquement"
+            },
+            "highCyclicControlledBursts": {
+              "label": "Rafales contrôlées à haute cadence"
+            },
+            "jet": {
+              "label": "Jet"
+            },
+            "secondaryProjectiles": {
+              "label": "Projectiles secondaires"
+            },
+            "shotsPerAttack": {
+              "label": "Tirs/Attaque"
+            }
           },
           "recoil": {
-            "shot": "Tir",
-            "slug": "Slug"
+            "shot": {
+              "label": "Tir"
+            },
+            "slug": {
+              "label": "Slug"
+            }
           },
           "shots": {
-            "count": "Quantité",
-            "duration": "Durée (s)",
-            "inChamber": "En chambre",
-            "reloadTime": "Temps de rechargement",
-            "reloadTimeIsPerShot": "Par tir",
-            "thrown": "Lancé"
+            "count": {
+              "label": "Quantité"
+            },
+            "duration": {
+              "label": "Durée (s)"
+            },
+            "inChamber": {
+              "label": "En chambre"
+            },
+            "reloadTime": {
+              "label": "Temps de rechargement"
+            },
+            "reloadTimeIsPerShot": {
+              "label": "Par tir"
+            },
+            "thrown": {
+              "label": "Lancé"
+            }
           }
         },
-        "jet": "Jet"
+        "jet": {
+          "label": "Jet"
+        }
       }
     },
     "active": "Actif",
@@ -583,7 +683,16 @@
         "TotalDestruction": "Destruction totale"
       }
     },
-    "conditionalModifier": "Modificateur Conditionnel",
+    "conditionalModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Modificateur"
+        },
+        "situation": {
+          "label": "Situation"
+        }
+      }
+    },
     "conditionalMods": "Modificateurs Conditionnels",
     "conditions": "Statuts",
     "conditionsCombatMove": "Mouvement en Combat",
@@ -1107,8 +1216,176 @@
     "invalidUserForDamageWarning": "Seuls les MJ sont autorisés à Appliquer des Dégâts.",
     "isFreeAction": "Est une action gratuite.",
     "item": {
+      "base": {
+        "FIELDS": {
+          "addToQuickRoll": {
+            "label": "Ajouter au jet rapide"
+          },
+          "bonuses": {
+            "label": "Bonus",
+            "placeholder": "Saisissez les formules 'Bonus' à-la-volée (une par ligne) pour modifier les valeurs des attributs, compétences, etc."
+          },
+          "checkotf": {
+            "label": "Jet"
+          },
+          "consumeAction": {
+            "label": "Consommer une action"
+          },
+          "duringotf": {
+            "label": "Pendant"
+          },
+          "failotf": {
+            "label": "Échec"
+          },
+          "itemModifiers": {
+            "label": "Modificateurs d'objet",
+            "placeholder": "Saisissez l'effet du modificateur (un par ligne) au format : <modifier> <#tag> [<#tag>...].\nExemples : -1 à DX #DX #combat, +2 Per #resting, -1 à tous les jets basés sur DX #disease #combat."
+          },
+          "modifierTags": {
+            "label": "Tags de modificateur"
+          },
+          "notes": {
+            "label": "Notes"
+          },
+          "pageref": {
+            "label": "Référence"
+          },
+          "passotf": {
+            "label": "Réussite"
+          },
+          "vtt_notes": {
+            "label": "Notes VTT"
+          }
+        }
+      },
       "deleteContents": "Supprimer également le contenu ({count} objets seront supprimés !)",
-      "deleteMessage": "Êtes-vous sûr de vouloir supprimer <strong>{name}</strong> ?"
+      "deleteMessage": "Êtes-vous sûr de vouloir supprimer <strong>{name}</strong> ?",
+      "equipment": {
+        "FIELDS": {
+          "categories": {
+            "label": "Tags"
+          },
+          "cost": {
+            "label": "Valeur"
+          },
+          "count": {
+            "label": "Quantité"
+          },
+          "equipped": {
+            "label": "Équipé"
+          },
+          "ignoreImportQty": {
+            "label": "Préserver la qté."
+          },
+          "legalityclass": {
+            "label": "LC"
+          },
+          "maxuses": {
+            "label": "Utilisations max."
+          },
+          "techlevel": {
+            "label": "TL"
+          },
+          "uses": {
+            "label": "Utilisations"
+          },
+          "weight": {
+            "label": "Poids"
+          }
+        }
+      },
+      "feature": {
+        "crChoices": {
+          "0": "Ne jamais résister",
+          "6": "6 (Résiste rarement)",
+          "7": "7 (Résiste rarement ; non standard)",
+          "8": "8 (Résiste rarement ; non standard)",
+          "9": "9 (Résiste assez souvent)",
+          "10": "10 (Résiste assez souvent ; non standard)",
+          "11": "11 (Résiste assez souvent ; non standard)",
+          "12": "12 (Résiste souvent)",
+          "13": "13 (Résiste souvent ; non standard)",
+          "14": "14 (Résiste souvent ; non standard)",
+          "15": "15 (Résiste presque toujours)",
+          "none": "Aucun requis"
+        },
+        "FIELDS": {
+          "cr": {
+            "label": "Jet de maîtrise de soi"
+          },
+          "level": {
+            "label": "Niveau"
+          },
+          "points": {
+            "label": "Points"
+          },
+          "userdesc": {
+            "label": "Description de l'utilisateur"
+          }
+        }
+      },
+      "skill": {
+        "FIELDS": {
+          "difficulty": {
+            "label": "Difficulté"
+          },
+          "import": {
+            "label": "Niveau"
+          },
+          "points": {
+            "label": "Points"
+          },
+          "relativelevel": {
+            "label": "RSL"
+          },
+          "specialization": {
+            "label": "Spécialisation"
+          },
+          "techlevel": {
+            "label": "TL"
+          }
+        }
+      },
+      "spell": {
+        "FIELDS": {
+          "casttime": {
+            "label": "Temps d'incantation"
+          },
+          "class": {
+            "label": "Classe de sort"
+          },
+          "college": {
+            "label": "Collège"
+          },
+          "cost": {
+            "label": "Coût d'incantation"
+          },
+          "difficulty": {
+            "label": "Difficulté"
+          },
+          "duration": {
+            "label": "Durée"
+          },
+          "import": {
+            "label": "Niveau"
+          },
+          "maintain": {
+            "label": "Coût d'entretien"
+          },
+          "points": {
+            "label": "Points"
+          },
+          "relativelevel": {
+            "label": "RSL"
+          },
+          "resist": {
+            "label": "Résistance"
+          },
+          "techlevel": {
+            "label": "TL"
+          }
+        }
+      }
     },
     "itemBonusText": "Entrer les Formules A la Volée 'Bonus' (une par ligne) pour modifier les valeurs des caractéristiques, compétences, etc.",
     "itemFeatures": "Caractéristiques",
@@ -1175,6 +1452,10 @@
       "item": {
         "progressMessage": "Application des migrations d'Objet pour la version {version}, veuillez patienter...",
         "successMessage": "Migrations d'Objet appliquées avec succès pour la version {version}."
+      },
+      "report": {
+        "message": "La migration du monde est maintenant terminée. Voir la liste ci-dessous pour les détails.",
+        "title": "Rapport de migration"
       },
       "toV1_0_0": {
         "cancel": "Annuler la migration",
@@ -1523,6 +1804,16 @@
     "pointsSpells": "Sorts",
     "pointsTotal": "Total de points",
     "pointsUnspent": "Restants",
+    "pseudo": {
+      "FIELDS": {
+        "name": {
+          "label": "Nom"
+        },
+        "type": {
+          "label": "Type"
+        }
+      }
+    },
     "publicRollAsDefault": "Jet Public par défaut",
     "quantity": "Quantité",
     "quickNotes": {
@@ -1549,6 +1840,16 @@
     "rcl": "Recul",
     "reach": "Allonge",
     "reaction": "Réaction",
+    "reactionModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Modificateur"
+        },
+        "situation": {
+          "label": "Situation"
+        }
+      }
+    },
     "reactionMods": "Modificateurs de Réaction",
     "recalculate": "Recalculer",
     "reference": "Référence",
@@ -1753,6 +2054,23 @@
     "severity": "Gravité",
     "share": "Partager",
     "sheet": {
+      "actions": {
+        "title": "Actions"
+      },
+      "conditionalModifiers": {
+        "title": "Modificateurs conditionnels"
+      },
+      "details": {
+        "base": "Détails généraux",
+        "equipment": "Détails de l'équipement",
+        "meleeAttack": "Détails de l'attaque au corps à corps",
+        "otf": "OTFs",
+        "rangedAttack": "Détails de l'attaque à distance",
+        "skill": "Détails de la compétence",
+        "spell": "Détails du sort",
+        "title": "Détails",
+        "trait": "Détails du trait"
+      },
       "encumbrance": {
         "dodge": "Esquive",
         "level": "Niveau",
@@ -1811,8 +2129,14 @@
         "location": "Localisation",
         "roll": "Jet"
       },
+      "modernItemSheet": {
+        "label": "Feuille d'objet moderne"
+      },
       "modernSheet": {
         "label": "Fiche Moderne"
+      },
+      "modifiers": {
+        "title": "Modificateurs"
       },
       "npcSheet": {
         "label": "Fiche PNJ"
@@ -1828,6 +2152,9 @@
         "portrait": "Portrait",
         "tab": "Personnel",
         "title": "Titre"
+      },
+      "reactionModifiers": {
+        "title": "Modificateurs de réaction"
       },
       "toggleMode": "Basculer le Mode Édition"
     },
