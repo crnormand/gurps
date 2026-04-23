@@ -8,7 +8,6 @@ import HitFatPoints from '@module/util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
 import Initiative from '@module/util/initiative.js'
 import { ClearLastActor, SetLastActor } from '@module/util/last-actor.js'
-import { Migration } from '@module/util/migration/migration.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
 import { getTokenForActor } from '@module/util/token.js'
@@ -43,6 +42,7 @@ import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
+import { ChatModule } from './chat/index.js'
 import AddChatHooks from './chat.js'
 import { registerColorPickerSettings } from './color-character-sheet/color-character-sheet-settings.js'
 import { colorGurpsActorSheet } from './color-character-sheet/color-character-sheet.js'
@@ -85,7 +85,6 @@ if (!globalThis.GURPS) {
   GURPS.SYSTEM_NAME = 'gurps' // Use this global instead of importing miscellaneous-settings everywhere.
   GURPS.DEBUG = true
   GURPS.stopActions = false
-  GURPS.Migration = Migration
   GURPS.Length = Length
   GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __
@@ -118,6 +117,7 @@ if (!globalThis.GURPS) {
     Action: ActionModule,
     Actor,
     Canvas,
+    Chat: ChatModule,
     Combat,
     CombatTracker,
     Compendium,
@@ -2103,7 +2103,6 @@ if (!globalThis.GURPS) {
 
   Hooks.once('ready', async function () {
     // Run any needed migrations.
-    Migration.run()
     await Migrator.migrateWorld()
 
     // TODO Move to a new 'bucket' module?

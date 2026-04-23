@@ -1,4 +1,4 @@
-import { migrateLegacySettings, SettingMigration } from '@module/util/migration/settings-migration.js'
+import { migrateLegacySettings, SettingMigration } from '@module/migration/settings-migration.js'
 
 import { LEGACY_SHOW_DEBUG_INFO, SHOW_DEBUG_INFO } from './types.js'
 

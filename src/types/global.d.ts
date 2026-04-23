@@ -1,6 +1,7 @@
 import { ActionModule as ModuleAction } from '@module/action/index.js'
 import { Actor as ModuleActor } from '@module/actor/index.js'
 import { Canvas as ModuleCanvas } from '@module/canvas/index.js'
+import { ChatModule as ModuleChat } from '@module/chat/index.js'
 import { Combat as ModuleCombat } from '@module/combat/index.js'
 import { CombatTracker as ModuleCombatTracker } from '@module/combat-tracker/index.js'
 import { Damage as ModuleDamage } from '@module/damage/index.js'
@@ -41,6 +42,7 @@ declare global {
       Action: typeof ModuleAction
       Actor: typeof ModuleActor
       Canvas: typeof ModuleCanvas
+      Chat: typeof ModuleChat
       Combat: typeof ModuleCombat
       CombatTracker: typeof ModuleCombatTracker
       Damage: typeof ModuleDamage
