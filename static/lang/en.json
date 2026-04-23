@@ -1470,6 +1470,10 @@
         "proceedText": "Do you want to proceed with the migration?",
         "title": "GGA v1.0.0 Migration",
         "warningText": "GGA v1.0.0 has made significant changes to the underlying data structures in order to support new features and improve performance. As a result, there is a one-way migration process that will convert your existing world to the new format. This process cannot be undone, so please make sure to back up your world before proceeding."
+      },
+      "report": {
+        "title": "Migration Report",
+        "message": "World migration is now complete. See the list below for details."
       }
     },
     "minDamageRule": "Min. Damage:",

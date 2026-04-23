@@ -84,9 +84,9 @@ export class Migrator {
     if (this.#migrationReports.length === 0) return
 
     await foundry.applications.api.DialogV2.prompt({
-      window: { title: 'GURPS.migration.migrationReport.title' },
+      window: { title: 'GURPS.migration.report.title' },
       content:
-        `<p>${getGame().i18n.localize('GURPS.migration.migrationReport.message')}</p>` +
+        `<p>${getGame().i18n.localize('GURPS.migration.report.message')}</p>` +
         this.#migrationReports
           .map(
             entry => `<p>${entry.success ? '✅' : '❌'} ${entry.module} (${entry.version}): ${entry.message ?? ''}</p>`
