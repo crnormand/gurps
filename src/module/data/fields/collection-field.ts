@@ -112,6 +112,10 @@ class CollectionField<
 
   /* ---------------------------------------- */
 
+  static override hierarchical = true
+
+  /* ---------------------------------------- */
+
   /**
    * The Collection implementation to use when initializing the collection.
    */

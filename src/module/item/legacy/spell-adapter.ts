@@ -182,7 +182,7 @@ class SpellV1 {
     return this.spellV2.system?.resist ?? null
   }
 
-  get uuid(): string {
+  get uuid(): string | null {
     return this.spellV2.uuid
   }
 

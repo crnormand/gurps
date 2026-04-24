@@ -77,7 +77,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   protected override async _preCreate(
     data: TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>,
     options: foundry.abstract.Document.Database.PreCreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
-    user: User.Implementation
+    user: User.Stored
   ): Promise<boolean | void> {
     const result = await super._preCreate(data, options, user)
 
@@ -111,7 +111,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   protected override async _preUpdate(
     changes: DeepPartial<TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>>,
     options: foundry.abstract.Document.Database.PreUpdateOptions<foundry.abstract.types.DatabaseUpdateOperation>,
-    user: User.Implementation
+    user: User.Stored
   ): Promise<boolean | void> {
     // Change the "modifiedon" field to the time of last update. Necessary for some import functionality
     // which verifies that this filed has a value.
