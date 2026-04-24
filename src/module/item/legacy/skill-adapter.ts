@@ -155,7 +155,7 @@ class SkillV1 {
     return this.skillV2.type
   }
 
-  get uuid(): string {
+  get uuid(): string | null {
     return this.skillV2.uuid
   }
 

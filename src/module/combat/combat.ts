@@ -2,7 +2,7 @@ class GurpsCombat<SubType extends Combat.SubType = Combat.SubType> extends Comba
   // Remove maneuvers for all combatants on combat deletion
   protected override async _preDelete(
     options: Combat.Database.PreDeleteOptions,
-    user: User.Implementation
+    user: User.Stored
   ): Promise<boolean | void> {
     await super._preDelete(options, user)
 

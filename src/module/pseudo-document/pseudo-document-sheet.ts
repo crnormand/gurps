@@ -82,6 +82,12 @@ class PseudoDocumentSheet<
       PseudoDocumentSheet.#sheets.set(doc, new Map())
     }
 
+    if (!pseudoDocument.uuid) {
+      console.warn('The pseudo-document does not have a UUID and cannot be displayed in a sheet!')
+
+      return null
+    }
+
     if (!PseudoDocumentSheet.#sheets.get(doc)?.get(pseudoDocument.uuid)) {
       const Cls = pseudoDocument.metadata.sheetClass
 
@@ -252,8 +258,8 @@ class PseudoDocumentSheet<
     const type = event.button === 2 ? 'id' : 'uuid'
     const label = game.i18n?.localize(`DOCUMENT.${pseudo.documentName}`) ?? ''
 
-    game.clipboard?.copyPlainText(id)
-    ui.notifications?.info('DOCUMENT.IdCopiedClipboard', { format: { label, type, id } })
+    game.clipboard?.copyPlainText(id ?? '')
+    ui.notifications?.info('DOCUMENT.IdCopiedClipboard', { format: { label, type, id: String(id) } })
   }
 
   /* ---------------------------------------- */

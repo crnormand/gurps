@@ -41,7 +41,7 @@ import {
 
 type PoolEntry = {
   type: 'pool' | 'resourceTracker' | 'conditionalInjury'
-  uuid?: string
+  uuid?: string | null
   invertedDelta: boolean
   denominatorEditable: boolean
   editable: boolean
@@ -411,7 +411,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
       pools.push({
         type: 'resourceTracker',
-        uuid: tracker.uuid,
+        uuid: tracker.uuid || null,
         invertedDelta: false,
         denominatorEditable: false,
         editable: true,

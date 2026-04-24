@@ -166,9 +166,10 @@ class PseudoDocument<
   /**
    * The uuid of this document.
    */
-  get uuid(): string {
+  get uuid(): string | null {
     let parent = this.parent
 
+    if (!parent) return this.id ? `${this.documentName}.${this.id}` : null
     while (!(parent instanceof PseudoDocument) && !(parent instanceof Document)) parent = parent.parent
 
     return [parent.uuid, this.documentName, this.id].join('.')
@@ -244,7 +245,7 @@ class PseudoDocument<
   /*   Instance Methods                       */
   /* ---------------------------------------- */
 
-  getRelativeUUID(relative: PseudoDocument.Any | gurps.Pseudo.ParentDocument): string {
+  getRelativeUUID(relative: PseudoDocument.Any | gurps.Pseudo.ParentDocument): string | null {
     // This PseudoDocument is a sibling of the relative Document.
     if (this.collection === relative.collection) return `.${this.id}`
 
@@ -728,15 +729,13 @@ class PseudoDocument<
 
 const pseudoDocumentSchema = () => {
   return {
-    _id: new fields.DocumentIdField({ required: true, nullable: false, initial: () => foundry.utils.randomID() }),
+    _id: new fields.DocumentIdField({ nullable: false, initial: () => foundry.utils.randomID() }),
     name: new fields.StringField({
       required: true,
-      nullable: false,
-      initial: () => '',
-    }) as fields.StringField<{ required: true; nullable: false; initial: () => string }>,
+    }),
     img: new fields.FilePathField({ categories: ['IMAGE'] }),
-    sort: new fields.IntegerSortField({ required: true, initial: 0 }),
-    flags: new fields.ObjectField({ required: false, nullable: false, initial: () => ({}) }),
+    sort: new fields.IntegerSortField(),
+    flags: new fields.ObjectField({ required: false }),
   }
 }
 

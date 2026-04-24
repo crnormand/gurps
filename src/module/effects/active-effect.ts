@@ -28,7 +28,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
   protected override async _preUpdate(
     changed: ActiveEffect.UpdateData,
     options: ActiveEffect.Database.PreUpdateOptions,
-    user: User.Implementation
+    user: User.Stored
   ): Promise<boolean | void> {
     const effectIdTag = `@eft:${this._id}`
 
@@ -43,7 +43,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       }
     })
 
-    return await super._preUpdate(changed, options, user)
+    return super._preUpdate(changed, options, user)
   }
 
   protected override _onDelete(options: ActiveEffect.Database.OnDeleteOperation, userId: string): void {
