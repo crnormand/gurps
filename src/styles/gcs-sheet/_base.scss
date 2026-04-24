@@ -368,16 +368,3 @@ section[data-application-part='reactions'] {
     }
   }
 }
-
-/* ---------------------------------------- */
-
-// Pool threshold tooltip (rendered outside the sheet application).
-#tooltip:has(.gcs-tooltip) {
-  background: var(--gcs-color-tooltip-bg);
-  color: var(--gcs-color-tooltip-fg);
-
-  padding: 0.25rem;
-  border: 0.1rem solid rgba(0, 0, 0, 0.25);
-  border-radius: 0;
-  box-shadow: none;
-}
