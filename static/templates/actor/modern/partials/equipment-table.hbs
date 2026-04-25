@@ -1,57 +1,66 @@
+{{#*inline ".equipment"}}
+<div class='ms-eqt-row'
+    data-item-id='{{id}}'
+    data-uuid='{{uuid}}'
+    data-indent='{{indent}}'
+    data-has-children='{{hasChildren}}'
+    draggable='true'
+  >
+    {{#if flags.equipped}}
+    <span class='ms-eqt-equipped'>
+      {{#if this.equipped}}
+        <i class='fas fa-circle-check'></i>
+      {{else}}
+        <i class='far fa-circle ms-inactive'></i>
+      {{/if}}
+    </span>
+    {{/if}}
+    <span class='ms-eqt-qty'>
+      <i class='fa-solid fa-circle-minus equipmentbutton' data-action='decrementQuantity'></i>
+      <span>{{quantity}}</span>
+      <i class='fa-solid fa-circle-plus equipmentbutton' data-action='incrementQuantity'></i>
+    </span>
+    <span class='ms-col-name indent{{indent}}'>
+      {{#if hasChildren}}<i class='fas fa-caret-down ms-container-icon {{ifThen childrenOpen "" "container-collapsed"}}'></i>{{/if}}
+      {{{gurpslink name}}}
+    </span>
+    <span class='ms-eqt-cost'>{{value}}</span>
+    <span class='ms-eqt-weight'>{{weight.value}} {{weight.unit}}</span>
+    <span class='ms-eqt-ref'>{{{pdfReference reference}}}</span>
+      {{> "actor.modern.partials.row-actions"}}
+      {{> "actor.modern.partials.row-notes"}}
+  </div>
+  {{#if (and hasChildren childrenOpen)}}
+    {{#each children}}
+      {{> ".equipment" section=../section flags=../flags}}
+    {{/each}}
+  {{/if}}
+{{/inline}}
+
+
 {{!-- Equipment Table Partial --}}
 {{!-- Parameters: container (carried/other), items, showEquipped, title, icon --}}
-<div class='ms-section'>
-  <h3 class='ms-section-header'>
-    <i class='fa-solid {{icon}}'></i>
-    {{{title}}}
+<div class='ms-section'> <h3 class='ms-section-header'> <i class='fas {{icon}}'></i> {{{localize title}}}
   </h3>
-  <div class='ms-equipment-table'>
+  <div class='ms-equipment-table {{ifThen flags.carried "ms-equipment-carried" "ms-equipment-other"}}'>
     <div class='ms-eqt-header'>
-      <span class='ms-eqt-equipped'>{{#if showEquipped}}{{localize 'GURPS.equipmentEquipped'}}{{/if}}</span>
+      {{#if flags.equipped}}
+        <span class='ms-eqt-equipped'>{{localize 'GURPS.equipmentEquipped'}}</span>
+      {{/if}}
       <span class='ms-eqt-qty'>{{localize 'GURPS.equipmentQuantity'}}</span>
-      <span class='ms-eqt-name'>{{localize 'GURPS.equipment'}}</span>
+      <span class='ms-col-name'>{{localize 'GURPS.equipment'}}</span>
       <span class='ms-eqt-cost'>$</span>
-      <span class='ms-eqt-weight'><i class='fa-solid fa-weight-hanging'></i></span>
+      <span class='ms-eqt-weight'><i class='fas fa-weight-hanging'></i></span>
       <span class='ms-eqt-ref'>{{localize 'GURPS.pdfRef'}}</span>
       <span class='ms-eqt-actions'></span>
     </div>
-    {{#each (flatlist items)}}
-    {{#unless isCollapsed}}
-    <div class='ms-eqt-row equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
-      <span class='ms-eqt-equipped {{#if ../showEquipped}}changeequip{{/if}}' data-key='system.equipment.{{../container}}.{{@key}}'>
-        {{#if ../showEquipped}}
-          {{#if this.equipped}}
-            <i class='fa-solid fa-circle-check'></i>
-          {{else}}
-            <i class='fa-regular fa-circle ms-inactive'></i>
-          {{/if}}
-        {{/if}}
-      </span>
-      <span class='ms-eqt-qty'>
-        <i class='fa-solid fa-circle-minus equipmentbutton' data-key='system.equipment.{{../container}}.{{@key}}' data-operation='equipment-dec'></i>
-        <span>{{count}}</span>
-        <i class='fa-solid fa-circle-plus equipmentbutton' data-key='system.equipment.{{../container}}.{{@key}}' data-operation='equipment-inc'></i>
-      </span>
-      <span class='ms-eqt-name indent{{indent}}'>
-        {{#if hasContains}}<i class='fa-solid fa-caret-down expandcollapseicon' data-key='system.equipment.{{../container}}.{{@key}}'></i>{{/if}}
-        {{#if hasCollapsed}}<i class='fa-solid fa-caret-right expandcollapseicon' data-key='system.equipment.{{../container}}.{{@key}}'></i>{{/if}}
-        {{{gurpslink name}}}
-        {{#if notes}}<div class='ms-eqt-notes'>{{{gurpslinkbr notes}}}</div>{{/if}}
-      </span>
-      <span class='ms-eqt-cost'>{{toLocaleString (toNumber cost)}}</span>
-      <span class='ms-eqt-weight'>{{toLocaleString (toNumber weight)}}</span>
-      <span class='ms-eqt-ref'>{{{pdflinkext this}}}</span>
-      <span class='ms-eqt-actions'>
-        <i class='fa-solid fa-pen-to-square ms-action-btn' data-action='edit-equipment' data-key='system.equipment.{{../container}}.{{@key}}' title='Edit'></i>
-        <i class='fa-solid fa-trash ms-action-btn ms-delete' data-action='delete-equipment' data-key='system.equipment.{{../container}}.{{@key}}' title='Delete'></i>
-      </span>
-    </div>
-    {{/unless}}
+    {{#each items}}
+      {{> ".equipment" section=../section flags=../flags}}
     {{else}}
     <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
     {{/each}}
     <div class='ms-add-row'>
-      <span class='ms-add-btn' data-action='add-equipment' data-container='{{container}}'><i class='fa-solid fa-plus'></i> {{localize 'GURPS.equipment'}}</span>
+      {{> "actor.modern.partials.add-row"}}
     </div>
   </div>
 </div>

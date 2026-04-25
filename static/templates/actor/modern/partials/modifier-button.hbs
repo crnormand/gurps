@@ -1,4 +1,4 @@
-<button type='button' class='ms-use-button rollable' data-action="rollOtf" data-value='{{otf}}' title='{{otf}}' {{#if damage}}data-damage{{/if}}>
+<button type='button' class='ms-use-button rollable' data-action="addModifier" data-value='{{modifier}}' data-comment="{{comment}}" title='{{modifier}} {{title}}' {{#if damage}}data-damage{{/if}}>
   <i class='fas fa-dice'></i>
   {{#if level}}<span class='ms-btn-level' {{#if color}}style='color: {{color}}'{{/if}}>{{level}}</span>{{/if}}
   {{#if text}}<span class='ms-btn-text' {{#if color}}style='color: {{color}}'{{/if}}>{{text}}</span>{{/if}}

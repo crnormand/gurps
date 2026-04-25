@@ -2016,11 +2016,13 @@ if (!globalThis.GURPS) {
   /* -------------------------------------------- */
   /*  Foundry VTT Initialization                  */
   /* -------------------------------------------- */
+
   Hooks.once('init', async function () {
     console.log(GURPS.BANNER)
     console.log(`Initializing GURPS 4e Game Aid`)
     console.log(GURPS.LEGAL)
 
+    HandlebarsUtil.registerHelpers()
     HandlebarsUtil.registerPartials()
 
     let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'

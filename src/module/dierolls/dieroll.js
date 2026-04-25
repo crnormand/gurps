@@ -680,6 +680,8 @@ async function _doRoll({
     await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj, usingRapidStrike)
   }
 
+  console.log('chatdata', chatdata)
+
   let message = await foundry.applications.handlebars.renderTemplate(
     'systems/gurps/templates/die-roll-chat-message.hbs',
     chatdata

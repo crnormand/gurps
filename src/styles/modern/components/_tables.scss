@@ -5,7 +5,7 @@
 @include grid-table('traits', 1fr minmax(100px, auto) 50px 50px 50px);
 @include grid-table('modifiers', 30px 1fr 60px 50px);
 
-.container-collapsed .ms-container-icon {
+.ms-container-icon.container-collapsed {
   transform: rotate(-90deg);
 }
 

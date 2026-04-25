@@ -1526,8 +1526,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
       }
 
-      modifierTags =
-        (optionalArgs.obj.modifierTags as string)?.split(',').map((tag: string) => tag.trim().toLowerCase()) ?? []
+      modifierTags = [...(optionalArgs.obj.modifierTags as Set<string>)]
       allTags = [...modifierTags, ...allRollTags, ...refTags]
       itemRef = (optionalArgs.obj.name as string) ?? ''
     } else if (chatThing) {
