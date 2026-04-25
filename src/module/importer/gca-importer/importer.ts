@@ -380,8 +380,6 @@ Portrait will not be imported.`
       _id: foundry.utils.randomID(),
       basic: basicMove?.score ?? 0,
       enhanced: enhancedMove?.score ?? 0,
-      name: '',
-      sort: 0,
     }
   }
 
@@ -486,13 +484,8 @@ Portrait will not be imported.`
           _dr: totalDR,
           rollText: roll,
           penalty: Number(location.penalty) || 0,
-          split: {},
           role: role as HitLocationRole | null,
-          name: '',
-          sort: 0,
           _damageType: null,
-          drMod: 0,
-          drItem: 0,
           drCap: totalDR,
         }
 
@@ -512,12 +505,12 @@ Portrait will not be imported.`
     // No need to run this if there is no existing actor
     if (!this.actor) return
 
+    const currentHitLocationNullifiers = Object.fromEntries(
+      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
+    )
+
     // On first import, always replace the hit location table
     if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
-      const currentHitLocationNullifiers = Object.fromEntries(
-        this.actor.system.hitlocationsV2.map(location => [`${location._id}`, _del])
-      )
-
       this.output.hitlocationsV2 = {
         ...this.output.hitlocationsV2,
         ...currentHitLocationNullifiers,
@@ -544,10 +537,6 @@ Portrait will not be imported.`
 
         return [location._id, location]
       })
-    )
-
-    const currentHitLocationNullifiers = Object.fromEntries(
-      this.actor.system.hitlocationsV2.map(location => [`${location._id}`, _del])
     )
 
     const bodyPlansAreEqual = () => {

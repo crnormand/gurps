@@ -86,13 +86,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const embedded = (model as unknown as gurps.MetadataOwner)?.metadata?.embedded ?? {}
 
     for (const [documentName, fieldPath] of Object.entries(embedded)) {
-      const data = foundry.utils.getProperty(this._source, fieldPath) as AnyObject
       const field = model.schema.getField(fieldPath.slice('system.'.length)) as CollectionField
 
       collections[documentName] = new (field.constructor as typeof CollectionField).implementation(
         documentName as any,
         this,
-        data
+        fieldPath
       )
     }
 
@@ -552,6 +551,33 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     runSourceMigrations(source)
 
     return super.migrateData(source)
+  }
+
+  /* ---------------------------------------- */
+
+  // @ts-expect-error: Actor._cleanData is defined in v14 but not v13
+  static override _cleanData(
+    data: AnyMutableObject = {},
+    options: fields.DataField.CleanOptions = {},
+    _state: AnyMutableObject = {}
+  ): AnyMutableObject {
+    // @ts-expect-error: Actor._cleanData is defined in v14 but not v13
+    super._cleanData(data, options, _state)
+
+    // migrateData may change the document type (e.g. "enemy" → "character") after Foundry has
+    // already captured _state.documentType. TypeDataField._cleanType then uses the stale type
+    // and, finding no DataModel for it, skips CharacterData.cleanData entirely — leaving partial
+    // collection entries (hitlocationsV2, allNotes, …) without their schema defaults.
+    // _cleanData runs after the schema pass, so we can re-clean with the actual post-migration type.
+    if (data.type === _state.documentType || !isObject(data.system)) return data
+
+    const systemModel = CONFIG?.Actor?.dataModels?.[data.type as string] as
+      | { cleanData: (data: AnyMutableObject, opts: AnyObject) => void }
+      | undefined
+
+    systemModel?.cleanData(data.system as AnyMutableObject, { copy: false, partial: false })
+
+    return data
   }
 
   /* ---------------------------------------- */

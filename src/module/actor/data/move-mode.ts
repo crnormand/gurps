@@ -35,11 +35,9 @@ type MoveSchema = ReturnType<typeof moveSchema>
 function groundMoveForBasicMove(move: number): DataModel.CreateData<MoveSchema> {
   return {
     _id: foundry.utils.randomID(),
-    name: '',
     mode: 'GURPS.moveModeGround',
     basic: move,
     enhanced: 0,
-    sort: 0,
   }
 }
 

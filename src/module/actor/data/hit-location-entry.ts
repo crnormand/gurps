@@ -72,7 +72,7 @@ const hitLocationSchema = () => {
 
     // If this field is specified, the DR value of this hit location is only effective against the specified damage
     // type.
-    _damageType: new fields.StringField({ required: true, nullable: true, initial: null }),
+    _damageType: new fields.StringField({ required: true, nullable: true, initial: () => null }),
 
     // The displayed text for the hit location's roll range, e.g. "3-4" or "5".
     rollText: new fields.StringField({ required: true, nullable: false, initial: '' }),
@@ -82,6 +82,7 @@ const hitLocationSchema = () => {
     split: new fields.TypedObjectField(new fields.NumberField({ required: true, nullable: false }), {
       required: true,
       nullable: false,
+      initial: () => ({}),
     }),
 
     // drMod represent the DR bonus from the /dr command

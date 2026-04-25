@@ -2032,21 +2032,6 @@ const characterSchema = () => {
       readonly: true,
       initial: () => foundry.utils.randomID(),
     }),
-
-    // NOTE: the following have been replaced with Items or accessors in the new model, and thus should not be used.
-    // They are commented out but this note is kept here for reference.
-    // ads: new fields.ObjectField(),
-    // languages: new fields.ObjectField(),
-    // skills: new fields.ObjectField(),
-    // spells: new fields.ObjectField(),
-    // money: new fields.ObjectField(),
-    // melee: new fields.ObjectField(),
-    // ranged: new fields.ObjectField(),
-    // notes: new fields.ObjectField(),
-    // equipment: new fields.SchemaField({
-    // 	carried: new fields.ObjectField(),
-    // 	other: new fields.ObjectField(),
-    // }, { required: true, nullable: false }),
   }
 }
 

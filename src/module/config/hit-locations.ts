@@ -42,19 +42,12 @@ export function defaultHitLocations(): Record<string, DataModel.CreateData<DataM
 
     const locationData: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
       _id: foundry.utils.randomID(),
-      name: '',
-      img: null,
-      sort: 0,
-      flags: {},
       where: location.name,
       import: location.dr,
       _dr: location.dr,
       penalty: location.penalty,
       rollText,
       _damageType: null,
-      split: {},
-      drMod: 0,
-      drItem: 0,
       drCap: location.dr,
     }
 

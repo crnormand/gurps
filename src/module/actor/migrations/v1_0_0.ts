@@ -452,8 +452,6 @@ function migrateActorSystem(
         _dr: hitlocation.import,
         rollText: hitlocation.roll,
         _damageType: !hitlocation._damageType ? null : hitlocation._damageType,
-        name: '',
-        sort: 0,
         penalty,
         split: hitlocation.split ?? {},
         drMod: hitlocation.drMod ?? 0,
@@ -476,13 +474,8 @@ function migrateActorSystem(
       markdown: data.notes,
       importid: data.uuid,
       _id: id,
-      open: true,
-      name: '',
-      sort: 0,
-      title: '',
       reference: data.pageref ?? '',
       reference_highlight: '',
-      save: false,
     }
 
     newData.allNotes![id] = note

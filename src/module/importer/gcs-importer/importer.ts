@@ -385,7 +385,7 @@ Portrait will not be imported.`
         this.output[key] = {
           min: 0,
           max: attribute.calc.value,
-          damage: attribute.damage,
+          damage: attribute.damage || 0,
           points: attribute.calc.points,
         }
       } else {
@@ -550,11 +550,7 @@ Portrait will not be imported.`
           rollText: location.calc.roll_range ?? '-',
           split,
           role: role as HitLocationRole | null,
-          name: '',
-          sort: 0,
           _damageType: null,
-          drMod: 0,
-          drItem: 0,
           drCap: totalDR,
         }
 
@@ -574,12 +570,12 @@ Portrait will not be imported.`
     // No need to run this if there is no existing actor
     if (!this.actor) return
 
+    const currentHitLocationNullifiers = Object.fromEntries(
+      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
+    )
+
     // On first import, always replace the hit location table
     if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
-      const currentHitLocationNullifiers = Object.fromEntries(
-        this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
-      )
-
       this.output.hitlocationsV2 = {
         ...this.output.hitlocationsV2,
         ...currentHitLocationNullifiers,
@@ -606,10 +602,6 @@ Portrait will not be imported.`
 
         return [location._id, location]
       })
-    )
-
-    const currentHitLocationNullifiers = Object.fromEntries(
-      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
     )
 
     const bodyPlansAreEqual = () => {
@@ -1039,7 +1031,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      sort: index,
+      sort: index * CONST.SORT_INTEGER_DENSITY,
       system,
     }
 
@@ -1074,7 +1066,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      sort: index,
+      sort: index * CONST.SORT_INTEGER_DENSITY,
       system,
     }
 
@@ -1115,7 +1107,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      sort: index,
+      sort: index * CONST.SORT_INTEGER_DENSITY,
       system,
     }
 
@@ -1169,7 +1161,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      sort: index,
+      sort: index * CONST.SORT_INTEGER_DENSITY,
       system,
     }
 
@@ -1192,7 +1184,6 @@ Portrait will not be imported.`
   #importNote(gcsNote: GcsNote, containedBy: string | null): void {
     const note: DataModel.CreateData<NoteV2Schema> = {
       _id: foundry.utils.randomID(),
-      open: true,
       containedBy,
       markdown: gcsNote.markdown,
       text: gcsNote.text,
@@ -1202,10 +1193,6 @@ Portrait will not be imported.`
       calc: {
         resolved_notes: gcsNote.calc?.resolved_notes ?? null,
       },
-      name: '',
-      sort: 0,
-      title: '',
-      save: false,
     }
 
     const existingNote = (this.actor?.system.allNotes.contents ?? []).find(
