@@ -8,9 +8,9 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
     buttons.push({
       action: 'send',
       label: 'GURPS.resolveDamage.sendTo',
-      icon: 'fas fa-paper-plane',
+      icon: 'fa-solid fa-paper-plane',
       callback: (event, button, dialog) => {
-        const rolls = button.form.elementsnumber?.valueAsNumber || 1
+        const rolls = button.form.elements.number?.valueAsNumber || 1
         return { rolls: rolls, action: 'send' }
       },
     })
@@ -19,7 +19,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
   buttons.push({
     action: 'multiple',
     label: 'GURPS.resolveDamage.multiple',
-    icon: 'fas fa-clone',
+    icon: 'fa-solid fa-clone',
     callback: (event, button, dialog) => {
       return { rolls: button.form.elements.number?.valueAsNumber, action: 'multiple' }
     },
@@ -28,7 +28,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
   buttons.push({
     action: 'combine',
     label: 'GURPS.resolveDamage.combine',
-    icon: 'fas fa-plus',
+    icon: 'fa-solid fa-plus',
     callback: (event, button, dialog) => {
       return { rolls: button.form.elements.number?.valueAsNumber, action: 'combine' }
     },

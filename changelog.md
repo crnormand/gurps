@@ -1,6 +1,17 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.14
+## Release 0.18.16 04/21/2026
+
+### Bugfixes
+
+- Rework Russian lang file entries to fit available space in the Modern sheet.
+- Allow the system to be installed in Foundry v14.
+- Missing icons on damage calculation sheet (Foundry v14). \#2628
+- Bucket player names color incorrect in dark mode. \#2626
+- GM Send formula and copy to chat broken in Foundry v14. \#2644
+- Errors on GCS character file import in Foundry v14. \#2629
+
+## Release 0.18.14 03/22/2026
 
 ### Features
 
@@ -10,6 +21,9 @@
 ### Bugfixes
 
 - Feature Correction: All out Attack (Determined) Ranged +1 does not appear in the Modifier Bucket or Manoeuvre options (only the Melee +4 version does) \#2529
+- Damage roll from character sheet doesn't work if weapon name contains a comma \#2576
+- Bug: Modifiers clicked while the journal page's editor page is open will apply the modifier twice. \#2559
+- Bug: Mook Thrust/Swing New UI doesn't let you type dice (Only Integers) \#2556
 
 ## Release 0.18.13 02/05/2026
 

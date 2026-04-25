@@ -1,4 +1,5 @@
 // Import Modules
+import { deleteKey as deleteKeyCompat } from './utilities/foundry-compat.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { Migration } from '../lib/migration.js'
 import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
@@ -1647,18 +1648,15 @@ if (!globalThis.GURPS) {
    * @param {any} newobj
    */
   async function insertBeforeKey(actor, path, newobj) {
-    let i = path.lastIndexOf('.')
-    let objpath = path.substring(0, i)
-    let key = path.substring(i + 1)
-    i = objpath.lastIndexOf('.')
-    let parentpath = objpath.substring(0, i)
-    let objkey = objpath.substring(i + 1)
+    const indexPath = path.lastIndexOf('.')
+    let objpath = path.substring(0, indexPath)
+    let key = path.substring(indexPath + 1)
+
     let object = GURPS.decode(actor, objpath)
-    let t = parentpath + '.-=' + objkey
-    await actor.internalUpdate({ [t]: null }) // Delete the whole object
+    await actor.internalUpdate(deleteKeyCompat(objpath)) // Delete the whole object
     let start = parseInt(key)
 
-    i = start + 1
+    let i = start + 1
     while (object.hasOwnProperty(zeroFill(i))) i++
     i = i - 1
     for (let z = i; z >= start; z--) {
@@ -1760,7 +1758,7 @@ if (!globalThis.GURPS) {
     let buttons = []
     buttons.push({
       action: 'everyone',
-      icon: 'fas fa-users',
+      icon: 'fa-solid fa-users',
       label: translate('To Everyone'),
       callback: () => GURPS.sendOtfMessage(otf, false),
     })
@@ -1768,7 +1766,7 @@ if (!globalThis.GURPS) {
     if (canblind)
       buttons.push({
         action: 'blind-everyone',
-        icon: 'fas fa-users-slash',
+        icon: 'fa-solid fa-users-slash',
         label: translate('Blindroll to Everyone'),
         callback: () => GURPS.sendOtfMessage(botf, true),
       })
@@ -1776,7 +1774,7 @@ if (!globalThis.GURPS) {
     if (users.length > 0) {
       buttons.push({
         action: 'whisper',
-        icon: 'fas fa-user',
+        icon: 'fa-solid fa-user',
         label: 'Whisper to ' + users.map(u => u.name).join(' '),
         callback: () => GURPS.sendOtfMessage(otf, false, users),
       })
@@ -1784,18 +1782,19 @@ if (!globalThis.GURPS) {
       if (canblind)
         buttons.push({
           action: 'blind-whisper',
-          icon: 'fas fa-user-slash',
+          icon: 'fa-solid fa-user-slash',
           label: 'Whisper Blindroll to ' + users.map(u => u.name).join(' '),
           callback: () => GURPS.sendOtfMessage(botf, true, users),
         })
     }
     buttons.push({
       action: 'chat',
-      icon: 'far fa-copy',
+      icon: 'fa-regular fa-copy',
       label: 'Copy to chat input',
       default: true,
       callback: () => {
-        document.querySelector('#chat-message').value = otf
+        document.querySelector('.editor-content').focus()
+        document.querySelector('.editor-content').innerText = otf
       },
     })
 
@@ -1817,7 +1816,7 @@ if (!globalThis.GURPS) {
     if (!!users) {
       msgData.whisper = users.map(it => it.id || '')
     } else {
-      msgData.type = CONST.CHAT_MESSAGE_STYLES.OOC
+      msgData.style = CONST.CHAT_MESSAGE_STYLES.OOC
     }
     ChatMessage.create(msgData)
   }
@@ -2060,7 +2059,8 @@ if (!globalThis.GURPS) {
           cmd = '[' + cmd + ']'
           let messageData = {
             user: game.user.id,
-            type: CONST.CHAT_MESSAGE_STYLES.OOC,
+            style: CONST.CHAT_MESSAGE_STYLES.OOC,
+            type: 'base',
             content: cmd,
           }
           ChatMessage.create(messageData, {})
@@ -2103,6 +2103,52 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
+    const currentVersion = SemanticVersion.fromString(game.system.version)
+    const previousVersion = SemanticVersion.fromString(
+      game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
+    )
+    const betaVersion = SemanticVersion.fromString('0.18.16-beta')
+
+    // If the new version is 0.18.16 and the old version is before that, AND Foundry is v14+, show the following warning:
+    if (
+      game.release.generation >= 14 &&
+      currentVersion.isEqualTo(betaVersion) &&
+      previousVersion.isLowerThan(betaVersion)
+    ) {
+      const warningMessage = game.i18n.localize('GURPS.migration.0-18-16.warning')
+
+      const confirmed = await foundry.applications.api.DialogV2.wait({
+        window: { title: game.i18n.localize('GURPS.migration.0-18-16.title') },
+        content: `<div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center;">
+          <div><i class="fa-solid fa-triangle-exclamation" style="color: darkred; font-size: 3rem;"></i></div>
+          <p>${warningMessage}</p>
+          </div>`,
+        position: { height: 'auto', width: 600 },
+        buttons: [
+          {
+            action: 'proceed',
+            icon: 'fas fa-check',
+            label: 'GURPS.migration.0-18-16.proceed',
+          },
+          {
+            action: 'cancel',
+            icon: 'fa-solid fa-xmark',
+            label: 'GURPS.migration.0-18-16.cancel',
+          },
+        ],
+        default: 'cancel',
+      })
+
+      if (confirmed !== 'proceed') {
+        ui.notifications.warn(game.i18n.localize('GURPS.migration.0-18-16.cancellationMessage'))
+        game.user.isGM ? await game.shutDown() : await game.logOut()
+
+        return
+      }
+    }
+
+    GURPS.currentVersion = currentVersion
+
     // Set up SSRT
     GURPS.SSRT = setupRanges()
     GURPS.rangeObject = new GurpsRange()
@@ -2112,21 +2158,15 @@ if (!globalThis.GURPS) {
 
     HitLocation.ready()
 
-    // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
-    //   new ThreeD6({
-    //     popOut: false,
-    //     minimizable: false,
-    //     resizable: false,
-    //     id: 'ThreeD6',
-    //     template: 'systems/gurps/templates/threed6.hbs',
-    //     classes: [],
-    //   }).render(true)
-
-    GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
-    let previousVersionString = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
-
-    console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + previousVersionString)
-    const migrationVersion = SemanticVersion.fromString(previousVersionString)
+    console.log(
+      'Current Version: ' +
+        GURPS.currentVersion +
+        ', Migration version: ' +
+        (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1')
+    )
+    const migrationVersion = SemanticVersion.fromString(
+      game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
+    )
 
     // Run any needed migrations.
     Migration.run()

@@ -48,7 +48,7 @@
       <hr />
       {{#if (gt rofrcl 1)}}
         <div>
-          <span class='fa fa-bullseye'></span>
+          <span class='fa-solid fa-bullseye'></span>
           <span class='note'>
             {{{localize 'GURPS.combat.rollTotalHits' link=(gurpslink '[PDF:B373]') rof=rof rcl=rcl rofrcl=rofrcl}}}
           </span>
@@ -57,8 +57,10 @@
       {{/if}}
       {{#each multiples}}
         <div class='aside'>
-          {{#if loaded}}<i style='color:darkred' class='fas fa-user'></i>{{else}}<i class='fas fa-dice'></i>{{/if}}
-          <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
+          {{#if loaded}}<i style='color:darkred' class='fa-solid fa-user'></i>{{else}}<i
+              class='fa-solid fa-dice'
+            ></i>{{/if}}
+          <i class='fa-solid fa-right-long' style='color:dimgray'></i>
           <span class='aside-text'>{{localize 'GURPS.rollTotal' rolls=rolls rtotal=rtotal}}</span>
         </div>
       {{/each}}

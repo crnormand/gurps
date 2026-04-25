@@ -1,6 +1,6 @@
-import { GurpsModule } from '../gurps-module.ts'
+import { GurpsModule } from '../gurps-module.js'
 import { addManeuverListeners } from './maneuver-menu.js'
-import { renderCombatTracker } from './render-combat-tracker.ts'
+import { renderCombatTracker } from './render-combat-tracker.js'
 
 export const CombatTracker: GurpsModule = {
   init(): void {

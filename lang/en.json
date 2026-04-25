@@ -772,6 +772,15 @@
     "meleeAttack": "Melee Attack",
     "meleeWeapons": "Melee Weapons",
     "meters": " meters",
+    "migration": {
+      "0-18-16": {
+        "cancel": "Cancel",
+        "cancellationMessage": "Update cancelled. Please wait for the stable release of GURPS 0.18.16 before updating if you are not interested in testing.",
+        "proceed": "Proceed with Update",
+        "title": "Foundry v14 and GURPS 0.18.16-beta Warning",
+        "warning": "GURPS 0.18.16-beta is still being tested with Foundry V14. If you are not interested in testing, please wait for the stable release before updating and hit 'Cancel' below."
+      }
+    },
     "minDamageRule": "Min. Damage:",
     "minimum": "Minimum",
     "minimumDamageRule": "* — Minimum damage rule applied.",
@@ -1211,6 +1220,7 @@
     "selectTargetForEquipmentWarning": "Drop the equipment on a single target token",
     "selectToken": "Select Token",
     "sendToChat": "Send to chat",
+    "sendToEveryone": "Send to Everyone",
     "serverity": "Severity",
     "setManeuver": "Set Maneuver",
     "settingActiveEffects": "Turn on Active Effects",
@@ -1611,6 +1621,7 @@
     "warnRollsBeforeCombatStarted": "Combat not initiated.",
     "weight": "Weight",
     "whenApplicable": "When applicable",
+    "whisperToNames": "Whisper to {names}",
     "willConsumeAction": "Will consume an action.",
     "written": "Written",
     "yard": "yard",

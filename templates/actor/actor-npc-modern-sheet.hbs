@@ -30,7 +30,7 @@
             {{else if (eq system.conditions.posture 'crawl')}}<img src='systems/gurps/icons/statuses/condition-crawl.webp' />
             {{else}}<img src='systems/gurps/icons/statuses/dd-condition-standing.webp' />
             {{/if}}
-            <i class='fas fa-caret-down'></i>
+            <i class='fa-solid fa-caret-down'></i>
           </span>
         </div>
         <div class='ms-posture-options'>
@@ -53,7 +53,7 @@
           <span>{{localize maneuver.label}}</span>
           <span class='ms-maneuver-icons'>
             <img src='{{maneuver.icon}}' />
-            <i class='fas fa-caret-down'></i>
+            <i class='fa-solid fa-caret-down'></i>
           </span>
           {{/with}}
         </div>
@@ -76,7 +76,7 @@
         <span class='ms-effect-icon-wrapper'>
           {{#if this.icon}}<img src='{{this.icon}}' class='ms-effect-icon' />{{/if}}
           <button class='ms-effect-delete' data-action='delete-effect' data-effect-id='{{this.id}}' title='Delete'>
-            <i class='fas fa-trash'></i>
+            <i class='fa-solid fa-trash'></i>
           </button>
         </span>
         <span class='ms-tag-text'>{{this.name}}</span>
@@ -84,7 +84,7 @@
       {{/unless}}
       {{/each}}
       <button type='button' class='ms-effect-add' data-action='add-effect' title='Add Effect'>
-        <i class='fas fa-plus'></i>
+        <i class='fa-solid fa-plus'></i>
       </button>
     </div>
 
@@ -150,24 +150,24 @@
 
       {{#if useCI}}
       <div class='ms-section ms-ci-section'>
-        {{>section-header icon="fa-heartbeat" title=(localize "GURPS.addInjury")}}
+        {{>section-header icon="fa-heart-pulse" title=(localize "GURPS.addInjury")}}
         <div class='ms-section-content'>
           <div class='ms-ci-controls'>
             <div class='ms-ci-control'>
               <span class='ms-ci-label'>Severity</span>
               <div class='ms-ci-spinner'>
-                <button type='button' data-operation='ci-severity-dec'><i class='fas fa-minus'></i></button>
+                <button type='button' data-operation='ci-severity-dec'><i class='fa-solid fa-minus'></i></button>
                 <input name='system.conditionalinjury.injury.severity' type='text' value='{{system.conditionalinjury.injury.severity}}' data-dtype='String' data-operation='ci-severity-set' />
-                <button type='button' data-operation='ci-severity-inc'><i class='fas fa-plus'></i></button>
+                <button type='button' data-operation='ci-severity-inc'><i class='fa-solid fa-plus'></i></button>
               </div>
-              <button type='button' class='ms-ci-reset' data-operation='ci-reset'><i class='fas fa-undo'></i></button>
+              <button type='button' class='ms-ci-reset' data-operation='ci-reset'><i class='fa-solid fa-undo'></i></button>
             </div>
             <div class='ms-ci-control'>
               <span class='ms-ci-label'>Time to Heal</span>
               <div class='ms-ci-spinner'>
-                <button type='button' data-operation='ci-days-dec'><i class='fas fa-minus'></i></button>
+                <button type='button' data-operation='ci-days-dec'><i class='fa-solid fa-minus'></i></button>
                 <input name='injury.daystoheal' type='text' value='{{system.conditionalinjury.injury.daystoheal}}' data-dtype='Number' data-operation='ci-days-set' />
-                <button type='button' data-operation='ci-days-inc'><i class='fas fa-plus'></i></button>
+                <button type='button' data-operation='ci-days-inc'><i class='fa-solid fa-plus'></i></button>
               </div>
               <span class='ms-ci-label'>{{localize 'GURPS.days'}}</span>
             </div>

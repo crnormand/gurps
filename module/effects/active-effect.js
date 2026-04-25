@@ -75,8 +75,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
    */
   static _delete(_effect, _data, _userId) {
     // If ADD is opened for this actor, update the token effect buttons
-    const buttonAddClass = `fa-plus-circle`
-    const buttonAddedClass = `fa-check-circle`
+    const buttonAddClass = `fa-circle-plus`
+    const buttonAddedClass = `fa-circle-check`
     for (const status of _effect._source.statuses) {
       const selector = `span.${status}[data-actor="${_data.parent._id}"]`
       const spans = $(selector)
@@ -121,8 +121,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
     }
 
     // If ADD is opened for this actor, update the token effect buttons
-    const buttonAddClass = `fa-plus-circle`
-    const buttonAddedClass = `fa-check-circle`
+    const buttonAddClass = `fa-circle-plus`
+    const buttonAddedClass = `fa-circle-check`
     for (const status of data.statuses) {
       const selector = `span.${status}[data-actor="${this.parent._id}"]`
       const spans = $(selector)
