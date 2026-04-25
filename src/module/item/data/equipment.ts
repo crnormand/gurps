@@ -20,6 +20,7 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
       type: ItemType.Equipment,
+      icon: 'fa-solid fa-screwdriver-wrench',
       childTypes: [ItemType.Equipment],
       sortKeys: {
         quantity: 'system.count',

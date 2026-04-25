@@ -1,5 +1,6 @@
 import { GurpsModule } from '@gurps-types/gurps-module.js'
 
+import { GenericPseudoSheet } from './generic-pseudo-sheet.js'
 import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 import { PseudoDocument } from './pseudo-document.js'
 import { TypedPseudoDocument } from './typed-pseudo-document.js'
@@ -10,6 +11,7 @@ interface ActorModule extends GurpsModule {
     TypedPseudoDocument: typeof TypedPseudoDocument
   }
   sheets: {
+    GenericPseudoSheet: typeof GenericPseudoSheet
     PseudoDocumentSheet: typeof PseudoDocumentSheet
   }
 }
@@ -27,6 +29,7 @@ export const Pseudo: ActorModule = {
     TypedPseudoDocument,
   },
   sheets: {
+    GenericPseudoSheet,
     PseudoDocumentSheet,
   },
 }

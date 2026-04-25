@@ -29,7 +29,7 @@ class PseudoDocument<
       // @ts-expect-error: This should always be overridden
       documentName: null,
       label: '',
-      icon: '',
+      icon: 'fa-solid fa-question',
       embedded: {},
       sortKeys: {},
     }

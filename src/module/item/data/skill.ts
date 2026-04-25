@@ -24,6 +24,7 @@ class SkillModel extends BaseItemModel<SkillSchema> {
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
       type: ItemType.Skill,
+      icon: 'fa-solid fa-person-swimming',
       childTypes: [ItemType.Skill],
       sortKeys: {
         points: 'system.points',

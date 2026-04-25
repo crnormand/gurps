@@ -1,9 +1,11 @@
 import { DocumentSheet } from '@gurps-types/foundry/index.js'
 import { GurpsModule } from '@gurps-types/gurps-module.js'
+import { GenericPseudoSheet } from '@module/pseudo-document/generic-pseudo-sheet.js'
 
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import * as dataModels from './data/index.js'
 import { MoveModeV2 } from './data/move-mode.js'
+import { NoteV2 } from './data/note.js'
 import { GurpsActorV2 } from './gurps-actor.js'
 import { migrations } from './migrations/index.js'
 import * as sheets from './sheets/index.js'
@@ -27,6 +29,9 @@ function init() {
       [ActorType.GcsCharacter]: dataModels.GcsCharacterModel,
       [ActorType.GcsLoot]: dataModels.GcsLootModel,
     }
+
+    GURPS.CONFIG.PseudoDocument.Types.Note = NoteV2
+    GURPS.CONFIG.PseudoDocument.Sheets.Note = GenericPseudoSheet
 
     foundry.documents.collections.Actors.registerSheet(
       GURPS.SYSTEM_NAME,

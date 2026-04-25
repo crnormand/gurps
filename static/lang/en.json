@@ -1812,6 +1812,14 @@
         "type": {
           "label": "Type"
         }
+      },
+      "note": {
+        "FIELDS": {
+          "title": { "label": "Title" },
+          "markdown": { "label": "Text" },
+          "reference": { "label": "Reference" },
+          "reference_highlight": { "label": "Reference Highlight" }
+        }
       }
     },
     "publicRollAsDefault": "Public Roll as default",
@@ -2064,6 +2072,7 @@
         "base": "General Details",
         "equipment": "Equipment Details",
         "meleeAttack": "Melee Attack Details",
+        "note": "Note Details",
         "otf": "OTFs",
         "rangedAttack": "Ranged Attack Details",
         "skill": "Skill Details",

@@ -27,7 +27,6 @@ import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '@util/
 import { AnyMutableObject, AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
-import { NoteV1 } from '../legacy/note-adapter.js'
 import {
   MOVE_HALF,
   MOVE_NONE,
@@ -962,14 +961,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   // List of top-level notes (not contained in another note).
   get notesV2() {
     return this.allNotes.filter(item => item.containedBy === null)
-  }
-
-  // @deprecated Legacy collection.
-  get notes() {
-    return arrayToObject(
-      this.notesV2.map(item => new NoteV1(item)),
-      5
-    )
   }
 
   /* ---------------------------------------- */
