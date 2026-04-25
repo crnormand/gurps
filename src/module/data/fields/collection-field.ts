@@ -31,19 +31,6 @@ namespace CollectionField {
 
   export type Types = fields.TypedSchemaField.Types
 
-  // NOTE: This is technically possible but the types get very unwieldy and it's not clear if it's worth it. Revisit if we find a use case for it.
-  // export type Types<M extends TypedPseudoDocument.ConcreteConstructor> = [
-  //   TypedPseudoDocument.DocumentNameOf<M>,
-  // ] extends [infer DocumentName extends gurps.Pseudo.WithTypes]
-  //   ? {
-  //       [K in keyof PseudoDocumentConfig.Types[DocumentName]]: PseudoDocumentConfig.Types[DocumentName][K] extends gurps.Pseudo.ConfigEntry<
-  //         infer Doc
-  //       >
-  //         ? fields.EmbeddedDataField<Doc>
-  //         : never
-  //     }
-  //   : fields.TypedSchemaField.Types
-
   /* ---------------------------------------- */
 
   export type Options<BaseAssignmentType> = fields.TypedObjectField.Options<BaseAssignmentType>
@@ -55,11 +42,6 @@ namespace CollectionField {
   export type Element<M extends Model> = M extends TypedPseudoDocument.ConcreteConstructor
     ? LazyTypedSchemaField<Types>
     : fields.EmbeddedDataField<M>
-
-  // NOTE: This is technically possible but the types get very unwieldy and it's not clear if it's worth it. Revisit if we find a use case for it.
-  // export type Element<M extends Model> = M extends TypedPseudoDocument.ConcreteConstructor
-  //   ? LazyTypedSchemaField<Types<M>>
-  //   : fields.EmbeddedDataField<M>
 
   /* ---------------------------------------- */
 

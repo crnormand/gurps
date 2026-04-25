@@ -442,7 +442,7 @@ class PseudoDocument<
         dataEntry.name = defaultName
       }
 
-      updates[`${fieldPath}.${_id}`] = { ...dataEntry, _id }
+      updates[`${fieldPath}.${_id}`] = { ...this.cleanData(dataEntry), _id }
     }
 
     this._configureUpdates('create', parent, updates, operation)
