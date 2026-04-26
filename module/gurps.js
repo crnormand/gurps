@@ -2,7 +2,7 @@
 import { deleteKey as deleteKeyCompat } from './utilities/foundry-compat.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { Migration } from '../lib/migration.js'
-import { COSTS_REGEX, parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
+import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
 import { SemanticVersion } from '../lib/semver.js'
 import {
   arrayToObject,
@@ -88,6 +88,7 @@ import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { GetNumberInput } from './ui/get-number-input.js'
+import { applyModifierDesc } from './otf/description-utilities.js'
 
 export let GURPS = undefined
 
@@ -1563,36 +1564,6 @@ if (!globalThis.GURPS) {
   }
   GURPS.handleRoll = handleRoll
 
-  /**
-   * If the desc contains *Cost ?FP or *Max:9 then perform action
-   * @param {GurpsActor|User} actor
-   * @param {string} desc
-   */
-  async function applyModifierDesc(actor, desc) {
-    if (!desc) return null
-    let m = desc.match(COSTS_REGEX)
-
-    if (!!m && !!actor && !actor.isSelf) {
-      let delta = parseInt(m.groups.cost)
-      let target = m.groups.type
-      if (target.match(/^[hf]p/i)) {
-        let k = target.toUpperCase()
-        // @ts-ignore
-        delta = actor.system[k].value - delta
-        await actor.update({ ['system.' + k + '.value']: delta })
-      }
-      if (target.match(/^tr/i)) {
-        await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
-        return null
-      }
-    }
-
-    let parse = desc.replace(/.*\*max: ?(\d+).*/gi, '$1')
-    if (parse != desc) {
-      return parseInt(parse)
-    }
-    return null // indicating no overriding MAX value
-  }
   GURPS.applyModifierDesc = applyModifierDesc
 
   /**

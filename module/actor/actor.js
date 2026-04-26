@@ -1367,7 +1367,8 @@ export class GurpsActor extends Actor {
   get trackersByName() {
     // Convert this.system.additionalresources.tracker into an object keyed by tracker.name.
     const byName = {}
-    for (const [_key, value] of Object.entries(this.system.additionalresources.tracker ?? {})) {
+    for (const [key, value] of Object.entries(this.system.additionalresources.tracker ?? {})) {
+      value.key = key
       byName[`${value.name}`] = value
     }
     return byName
