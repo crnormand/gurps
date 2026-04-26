@@ -16,7 +16,7 @@ export async function applyModifierDesc(actor: Actor.Implementation, desc: strin
 }
 
 /**
- * Handle *Costs modifiers in the description. This can be in the form of "*Costs ?FP", "*Costs 5 HP", "*Costs 3 tr1",
+ * Handle *Costs modifiers in the description. This can be in the form of "*Costs ?FP" per point, "*Costs 5 HP", "*Costs 3 tr1",
  * or "*Costs 2 tr(TRACKER NAME)". If the actor is not provided, show a warning notification that the cost was not
  * applied. If the cost type is not recognized, prompt the user to select either HP, FP, or a Tracker from a dropdown
  * list of available resources on the actor.
@@ -29,7 +29,7 @@ async function applyCostsModifier(actor: Actor.Implementation, desc: string): Pr
 
   if (!match) return
 
-  let cost = parseInt(match.groups!.cost)
+  let cost = parseInt(match.groups!.cost ?? '1')
   let target = match.groups!.type
 
   if (!actor) {
