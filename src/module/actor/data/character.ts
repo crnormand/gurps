@@ -92,9 +92,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         _id: foundry.utils.randomID(),
         type: ItemType.Trait,
         name: getGame().i18n.localize('GURPS.migration.holderItem.name'),
-        system: {
-          notes: getGame().i18n.localize('GURPS.migration.holderItem.notes'),
-        },
       }
 
       this.parent.updateSource({

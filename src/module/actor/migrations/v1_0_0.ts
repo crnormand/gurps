@@ -206,7 +206,6 @@ function migrateActorSource(source: AnyMutableObject): AnyMutableObject {
 
       const holderItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<ItemType.Trait>>> = {
         containedBy: null,
-        notes: game.i18n?.localize('GURPS.migration.holderItem.notes'),
         points: 0,
         _reactions: {},
         _conditionalmods: {},

@@ -1446,8 +1446,7 @@
         "successMessage": "Successfully applied Actor migrations for version {version}."
       },
       "holderItem": {
-        "name": "Personal Actions & Modifiers",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+        "name": "Personal Actions & Modifiers"
       },
       "item": {
         "progressMessage": "Applying Item migrations for version {version}, please wait...",
