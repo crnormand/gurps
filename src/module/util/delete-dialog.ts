@@ -27,7 +27,7 @@ export async function deleteDialogWithContents<Doc extends Document.Any | Pseudo
   const name = ('name' in this ? this.name : null) as string | null
 
   if (!content) {
-    const question = getGame().i18n.localize('AreYouSure')
+    const question = getGame().i18n.localize('COMMON.AreYouSure')
     const warning = getGame().i18n.format('SIDEBAR.DeleteWarning', { documentName })
 
     content = `<p><strong>${question}</strong> ${warning}</p>`

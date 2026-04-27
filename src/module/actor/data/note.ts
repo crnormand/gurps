@@ -4,12 +4,11 @@ import { IContainable, containableSchema } from '@module/data/mixins/containable
 import { ContainerUtils } from '@module/data/mixins/container-utils.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
 import { MarkdownUtil } from '@module/util/markdown.js'
+import { AnyObject } from 'fvtt-types/utils'
 
 import { CharacterModel } from './character.js'
 
 /* ---------------------------------------- */
-
-// TODO: GCS now stores notes as MarkDown. Do we store the markdown text, or the rendered HTML?
 
 /**
  * Data model for character notes in GURPS V2 system.
@@ -25,12 +24,25 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
   static override get metadata(): PseudoDocument.Metadata<'Note'> {
     return foundry.utils.mergeObject(super.metadata, {
       documentName: 'Note',
+      icon: 'fa-solid fa-note',
       label: 'DOCUMENT.Note',
       sortKeys: {
         name: 'markdown',
       },
+      sheetClass: GURPS.CONFIG.PseudoDocument.Sheets.Note,
+      detailsPartial: ['pseudo-document.partials.details-note'],
     })
   }
+
+  /* ---------------------------------------- */
+
+  static override getDefaultArtwork(_data: AnyObject): Record<string, string> {
+    return { img: 'icons/svg/book.svg' }
+  }
+
+  /* ---------------------------------------- */
+
+  static override LOCALIZATION_PREFIXES: string[] = [...super.LOCALIZATION_PREFIXES, 'GURPS.pseudo.note']
 
   /* ---------------------------------------- */
 
@@ -52,8 +64,6 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
   override toObject(): fields.SchemaField.SourceData<NoteV2Schema> {
     return super.toObject()
   }
-
-  /* ---------------------------------------- */
 
   /* ---------------------------------------- */
   /*  IContainable Interface Implementation   */
@@ -127,7 +137,7 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
    * @returns The resolved markdown content
    */
   get resolvedContent(): string | null {
-    return this.calc?.resolved_notes ? this.calc.resolved_notes : this.text
+    return this.calc?.resolved_notes ? this.calc.resolved_notes : this.markdown
   }
 
   override toDisplayItem(): DisplayNote {
@@ -159,7 +169,6 @@ const noteV2Schema = () => {
 
     // NOTE: Change from GCS schema -- Nordlond bestiaries sometimes have a title field.
     title: new fields.StringField({ required: true, nullable: false, initial: '' }),
-    text: new fields.StringField({ required: true, nullable: true, initial: null }),
     markdown: new fields.StringField({ required: true, nullable: true, initial: null }),
     reference: new fields.StringField({ required: true, nullable: false, initial: '' }),
     reference_highlight: new fields.StringField({ required: true, nullable: false, initial: '' }),

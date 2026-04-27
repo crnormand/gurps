@@ -122,19 +122,8 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
 
   /* ---------------------------------------- */
 
-  protected _getTypeContext(): { class: string; icon: string } {
-    switch (this.item.type) {
-      case ItemType.Trait:
-        return { class: 'ms-type-trait', icon: 'fa-solid fa-theater-masks' }
-      case ItemType.Skill:
-        return { class: 'ms-type-skill', icon: 'fa-solid fa-person-swimming' }
-      case ItemType.Spell:
-        return { class: 'ms-type-spell', icon: 'fa-solid fa-wand-magic-sparkles' }
-      case ItemType.Equipment:
-        return { class: 'ms-type-equipment', icon: 'fa-solid fa-screwdriver-wrench' }
-      default:
-        return { class: '', icon: 'fa-solid fa-ban' }
-    }
+  protected _getTypeContext(): { type: string; icon: string } {
+    return { type: this.item.type, icon: this.item.system.metadata.icon }
   }
 
   /* ---------------------------------------- */
@@ -171,7 +160,7 @@ class GurpsItemModernSheet extends GurpsBaseItemSheet<
 
     const typeContext = this._getTypeContext()
 
-    this.element.classList.add(typeContext.class)
+    this.element.dataset.type = typeContext.type
 
     bindInlineEdit(this.element, {
       displaySelector: '.ms-name-display',

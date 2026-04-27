@@ -1,5 +1,6 @@
 import { DocumentSheet } from '@gurps-types/foundry/index.js'
 import { GurpsModule } from '@gurps-types/gurps-module.js'
+import { GenericPseudoSheet } from '@module/pseudo-document/generic-pseudo-sheet.js'
 
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import * as dataModels from './data/index.js'
@@ -31,6 +32,8 @@ function init() {
 
     GURPS.CONFIG.PseudoDocument.Types.Note = NoteV2
     GURPS.CONFIG.PseudoDocument.Types.MoveMode = MoveModeV2
+
+    GURPS.CONFIG.PseudoDocument.Sheets.Note = GenericPseudoSheet
 
     foundry.documents.collections.Actors.registerSheet(
       GURPS.SYSTEM_NAME,
