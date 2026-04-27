@@ -258,8 +258,14 @@ class PseudoDocumentSheet<
     const type = event.button === 2 ? 'id' : 'uuid'
     const label = game.i18n?.localize(`DOCUMENT.${pseudo.documentName}`) ?? ''
 
-    game.clipboard?.copyPlainText(id ?? '')
-    ui.notifications?.info('DOCUMENT.IdCopiedClipboard', { format: { label, type, id: String(id) } })
+    if (!id) {
+      ui.notifications?.warn('DOCUMENT.IdCopiedClipboard', { format: { label, type, id: '' } })
+
+      return
+    }
+
+    game.clipboard?.copyPlainText(id)
+    ui.notifications?.info('DOCUMENT.IdCopiedClipboard', { format: { label, type, id } })
   }
 
   /* ---------------------------------------- */
