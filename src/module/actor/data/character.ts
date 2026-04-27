@@ -1523,8 +1523,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
       }
 
-      modifierTags =
-        (optionalArgs.obj.modifierTags as string)?.split(',').map((tag: string) => tag.trim().toLowerCase()) ?? []
+      modifierTags = [...(optionalArgs.obj.modifierTags as Set<string>)]
       allTags = [...modifierTags, ...allRollTags, ...refTags]
       itemRef = (optionalArgs.obj.name as string) ?? ''
     } else if (chatThing) {
@@ -1797,7 +1796,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     const weapons = this.parent.getItemAttacks().filter(attack => attackType === 'both' || attack.type === attackType)
 
-    let weapon = weapons.find(attack => attack.item.name === nameWithoutUsage && (!usage || attack.mode === usage))
+    let weapon = weapons.find(attack => attack._displayName === nameWithoutUsage && (!usage || attack.mode === usage))
 
     if (!weapon) {
       // Account for the possibility that the usage was matched incorrectly as part of the name (e.g. "Guns (Pistol)")
