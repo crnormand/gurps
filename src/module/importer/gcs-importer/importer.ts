@@ -359,7 +359,7 @@ Portrait will not be imported.`
       const attribute = this.input.attributes.find(attr => attr.attr_id === key.toLowerCase())
 
       this.output.attributes[key] = {
-        import: attribute?.calc.value ?? 10,
+        importedValue: attribute?.calc.value ?? 10,
         points: attribute?.calc.points ?? 0,
       }
     }
@@ -544,7 +544,7 @@ Portrait will not be imported.`
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
           where: location.table_name ?? '',
-          import: totalDR,
+          importedDR: totalDR,
           _dr: totalDR,
           penalty: location.hit_penalty ?? 0,
           rollText: location.calc.roll_range ?? '-',
@@ -609,7 +609,15 @@ Portrait will not be imported.`
 
       const newLocations = Object.values(
         this.output.hitlocationsV2 as Record<string, foundry.data.fields.SchemaField.CreateData<HitLocationSchemaV2>>
-      ).map(({ _id, flags, img, name, sort, _damageType, drCap, drItem, drMod, ...rest }) => rest)
+      ).map(({ where, importedDR, penalty, _dr, rollText, split, role, ..._rest }) => ({
+        where,
+        importedDR,
+        penalty,
+        _dr,
+        rollText,
+        split,
+        role,
+      }))
 
       if (oldLocations.length !== newLocations.length) return false
 
@@ -964,7 +972,7 @@ Portrait will not be imported.`
       baseParryPenalty: -4,
       block,
       damage: [weapon.calc?.damage || ''],
-      import: weapon.calc?.level || 0,
+      importedLevel: weapon.calc?.level || 0,
       itemModifiers: '',
       mode: weapon.usage || '',
       modifierTags: '',
@@ -992,7 +1000,7 @@ Portrait will not be imported.`
       acc: weapon.calc?.accuracy || weapon.accuracy || '',
       bulk: weapon.calc?.bulk || weapon.bulk || '0',
       damage: [weapon.calc?.damage || ''],
-      import: weapon.calc?.level || 0,
+      importedLevel: weapon.calc?.level || 0,
       itemModifiers: '',
       modifierTags: '',
       notes: weapon.usage_notes || '',
@@ -1055,7 +1063,7 @@ Portrait will not be imported.`
       points: skill.points ?? 0,
       difficulty: skill.difficulty ?? '',
       relativelevel: skill.calc?.rsl ?? '',
-      import: skill.calc?.level ?? 0,
+      importedLevel: skill.calc?.level ?? 0,
       specialization: skill.specialization ?? '',
       techlevel: skill.tech_level ?? '',
     }
@@ -1090,7 +1098,7 @@ Portrait will not be imported.`
       points: spell.points ?? 0,
       difficulty: spell.difficulty ?? '',
       relativelevel: spell.calc?.rsl ?? '',
-      import: spell.calc?.level ?? 0,
+      importedLevel: spell.calc?.level ?? 0,
       class: spell.spell_class ?? '',
       college: spell.college?.join(', ') ?? '',
       cost: spell.casting_cost ?? '',

@@ -57,7 +57,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
     let otf = this.otf
 
     if (otf === '') {
-      this.level = this.import
+      this.level = this.importedLevel
 
       return
     }
@@ -67,8 +67,8 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
 
     // If the OTF is just a number, Set the level directly
     if (otf.match(/^\d+$/)) {
-      this.import = parseInt(otf)
-      this.level = this.import
+      this.importedLevel = parseInt(otf)
+      this.level = this.importedLevel
 
       return
     }
@@ -129,7 +129,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
 
 const baseAttackSchema = () => {
   return {
-    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    importedLevel: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     // NOTE: Damage is an Array of strings to allow for multiple damage types dealing damage in one
     // attack, such as "2d-1cut and 1d+2 ctrl". Most of the time, this array has only one element.
     damage: new fields.SetField(new fields.StringField({ required: true, nullable: false }), {

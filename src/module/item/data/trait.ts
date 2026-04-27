@@ -58,7 +58,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
   static override migrateData(source: AnyMutableObject): AnyMutableObject {
     super.migrateData(source)
-    if (source.import) source.level ??= source.import || null
+    if (source.importedLevel) source.level ??= source.importedLevel || null
 
     return source
   }

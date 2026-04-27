@@ -11,7 +11,7 @@
       <span>{{localize 'GURPS.hitLocationPenalty'}}</span>
       <span>{{localize 'GURPS.hitLocationDR'}}</span>
     </div>
-    {{#each system.hitlocations}}
+    {{#each system.hitlocationsV2}}
     <div class='ms-loc-row'>
       <span class='ms-loc-roll'>{{hitlocationroll where roll ../parent}}</span>
       <span class='ms-loc-where'>{{localize (concat 'GURPS.hitLocation' where) where}}</span>
@@ -21,7 +21,7 @@
           ??
         {{else}}
           <span class='ms-dr-display'>{{dr}}{{#each split as |value key|}}<span title='{{localize key}}'>/{{value}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}</span>
-          <input type='text' class='ms-dr-input' name='system.hitlocations.{{@key}}.import' value='{{import}}'/>
+          <input type='text' class='ms-dr-input' name='system.hitlocationsV2.{{_id}}.importedDR' value='{{importedDR}}'/>
         {{/if}}
       </div>
     </div>

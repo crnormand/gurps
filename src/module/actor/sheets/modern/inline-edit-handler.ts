@@ -200,7 +200,7 @@ export function bindAttributeEdit(html: HTMLElement, actor: Actor.OfType<ActorTy
       badge.classList.remove(editingClass)
 
       const attrName = badge.dataset.attr
-      const fieldPath = `system.attributes.${attrName}.import`
+      const fieldPath = `system.attributes.${attrName}.importedValue`
       const newValue = parseInt(inputElement.value, 10)
       const currentValue = foundry.utils.getProperty(actor, fieldPath) as number
 
@@ -227,7 +227,7 @@ export function bindAttributeEdit(html: HTMLElement, actor: Actor.OfType<ActorTy
         if (!isHTMLElement(badge)) return
         badge.classList.remove(editingClass)
         const attrName = badge.dataset.attr
-        const fieldPath = `system.attributes.${attrName}.import`
+        const fieldPath = `system.attributes.${attrName}.importedValue`
 
         inputElement.value = String(foundry.utils.getProperty(actor, fieldPath) ?? '')
         inputElement.blur()

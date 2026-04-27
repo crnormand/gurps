@@ -127,7 +127,7 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
     _conditionalmods: {},
     containedBy: parentId,
     points: 0, // Placeholder value
-    import: 0, // Placeholder value
+    importedLevel: 0, // Placeholder value
   }
 
   if (oldData.melee) {
@@ -231,7 +231,7 @@ export function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaF
     consumeAction: oldMelee.consumeAction,
     damage,
     extraAttacks: Number(oldMelee.extraAttacks) || 0,
-    import: importedLevel,
+    importedLevel,
     itemModifiers: '',
     mode: oldMelee.mode,
     modifierTags: oldMelee.modifierTags,
@@ -276,7 +276,7 @@ export function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.Sche
     consumeAction: oldRanged.consumeAction,
     damage,
     extraAttacks: Number(oldRanged.extraAttacks) || 0,
-    import: Number(oldRanged.import) || 0,
+    importedLevel: Number(oldRanged.import) || 0,
     itemModifiers: '',
     mode: oldRanged.mode,
     modifierTags: oldRanged.modifierTags,
@@ -361,7 +361,7 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.ski,
     isContainer: Boolean(oldData.ski.contains && Object.keys(oldData.ski.contains).length > 0),
-    import: Number(oldData.ski.import) || 0,
+    importedLevel: Number(oldData.ski.import) || 0,
     relativelevel: (oldData.ski.relativelevel ?? '').toString(),
     importid: oldData.ski.uuid || '',
   }
@@ -385,7 +385,7 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.spl,
     isContainer: Boolean(oldData.spl.contains && Object.keys(oldData.spl.contains).length > 0),
-    import: Number(oldData.spl.import) || 0,
+    importedLevel: Number(oldData.spl.import) || 0,
     relativelevel: (oldData.spl.relativelevel ?? '').toString(),
     importid: oldData.spl.uuid || '',
   }

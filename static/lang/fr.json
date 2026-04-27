@@ -47,7 +47,7 @@
           "extraAttacks": {
             "label": "Attaques supplémentaires"
           },
-          "import": {
+          "importedLevel": {
             "label": "Niveau de base"
           },
           "itemModifiers": {
@@ -221,37 +221,37 @@
           },
           "attributes": {
             "DX": {
-              "import": {
+              "importedValue": {
                 "label": "Dextérité (DX)"
               }
             },
             "HT": {
-              "import": {
+              "importedValue": {
                 "label": "Santé (HT)"
               }
             },
             "IQ": {
-              "import": {
+              "importedValue": {
                 "label": "Intelligence (IQ)"
               }
             },
             "PER": {
-              "import": {
+              "importedValue": {
                 "label": "Perception (Per)"
               }
             },
             "QN": {
-              "import": {
+              "importedValue": {
                 "label": "Quintessence (QN)"
               }
             },
             "ST": {
-              "import": {
+              "importedValue": {
                 "label": "Force (ST)"
               }
             },
             "WILL": {
-              "import": {
+              "importedValue": {
                 "label": "Volonté"
               }
             }
@@ -1329,7 +1329,7 @@
           "difficulty": {
             "label": "Difficulté"
           },
-          "import": {
+          "importedLevel": {
             "label": "Niveau"
           },
           "points": {
@@ -1366,7 +1366,7 @@
           "duration": {
             "label": "Durée"
           },
-          "import": {
+          "importedLevel": {
             "label": "Niveau"
           },
           "maintain": {

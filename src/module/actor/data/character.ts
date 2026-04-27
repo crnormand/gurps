@@ -325,7 +325,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     Object.keys(this.attributes).forEach(key => {
       const attribute = this.attributes[key as keyof typeof this.attributes]
 
-      this.attributes[key as keyof typeof this.attributes].value = attribute.import
+      this.attributes[key as keyof typeof this.attributes].value = attribute.importedValue
     })
   }
 
@@ -442,7 +442,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     if (hitLocations)
       for (const location of hitLocations) {
         location.drItem = this._drBonusesFromItems[location.where] ?? 0
-        const newDR = location.import + location.drItem + location.drMod
+        const newDR = location.importedDR + location.drItem + location.drMod
 
         // NOTE: I'm unsure as to whether drCap should ever apply.
         // On the one hand, using the ! operator in the /dr command may imply
@@ -1117,7 +1117,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     let drItem = value.drItem ?? 0
 
     if (formula === 'reset') {
-      dr = value.import
+      dr = value.importedDR
       drMod = 0
       drCap = null
       drItem = 0
@@ -1129,16 +1129,16 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           drMod += parseInt(formula)
           break
         case '*':
-          if (drCap === null) drCap = Math.max(0, value.import + drItem)
+          if (drCap === null) drCap = Math.max(0, value.importedDR + drItem)
           drCap *= parseInt(formula.slice(1))
           dr = drCap
-          drMod = drCap - drItem - value.import
+          drMod = drCap - drItem - value.importedDR
           break
         case '/':
-          if (drCap === null) drCap = Math.max(0, value.import + drItem)
+          if (drCap === null) drCap = Math.max(0, value.importedDR + drItem)
           drCap = Math.max(0, Math.floor(drCap / parseInt(formula.slice(1))))
           dr = drCap
-          drMod = drCap - drItem - value.import
+          drMod = drCap - drItem - value.importedDR
           break
         case '!': {
           const mod = parseInt(formula.slice(1))
@@ -1151,7 +1151,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
         default:
           drMod = parseInt(formula)
-          dr = Math.max(0, value.import, drMod, drItem)
+          dr = Math.max(0, value.importedDR, drMod, drItem)
           drCap = dr
       }
     }
@@ -1159,7 +1159,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     changes[`system.hitlocationsV2.${index}._dr`] = dr
     changes[`system.hitlocationsV2.${index}.drMod`] = drMod
     changes[`system.hitlocationsV2.${index}.drCap`] = drCap
-    changes[`system.hitlocationsV2.${index}.import`] = value.import
+    changes[`system.hitlocationsV2.${index}.importedDR`] = value.importedDR
   }
 
   /* ---------------------------------------- */
@@ -1298,7 +1298,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           checks.push({
             symbol: game.i18n?.localize(`GURPS.attributes${key}`) ?? '',
             label: game.i18n?.localize(`GURPS.attributes${key}NAME`) ?? '',
-            value: attribute.import,
+            value: attribute.importedValue,
             notes: '',
             otf: key,
             isOTF: true,
@@ -1384,7 +1384,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
                 img: attack.img ?? '',
                 symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
                 label: attack.name ?? '',
-                value: attack.import,
+                value: attack.importedLevel,
                 mode: attack.mode,
                 otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
                 isOTF: true,
@@ -1448,9 +1448,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             let value = 0
 
             if ((item as Item.Implementation).isOfType(ItemType.Skill))
-              value = (item as Item.OfType<ItemType.Skill>).system.import
+              value = (item as Item.OfType<ItemType.Skill>).system.importedLevel
             if ((item as Item.Implementation).isOfType(ItemType.Spell))
-              value = (item as Item.OfType<ItemType.Spell>).system.import
+              value = (item as Item.OfType<ItemType.Spell>).system.importedLevel
 
             checks.push({
               symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',

@@ -63,7 +63,7 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     let otf = this.otf
 
     if (otf === '') {
-      this.level = this.import
+      this.level = this.importedLevel
 
       return
     }
@@ -73,8 +73,8 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
     // If the OTF is just a number, Set the level directly
     if (otf.match(/^\d+$/)) {
-      this.import = parseInt(otf)
-      this.level = this.import
+      this.importedLevel = parseInt(otf)
+      this.level = this.importedLevel
 
       return
     }
@@ -149,7 +149,7 @@ const skillSchema = () => {
     points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The imported "original" level of this skill, which may be used for reference or as a fallback if OTF parsing fails. */
-    import: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
+    importedLevel: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
 
     /** The specialization of this skill, if any. */
     specialization: new fields.StringField({ required: true, nullable: true, initial: null }),

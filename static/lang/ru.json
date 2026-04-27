@@ -47,7 +47,7 @@
           "extraAttacks": {
             "label": "Дополнительные атаки"
           },
-          "import": {
+          "importedLevel": {
             "label": "Базовый уровень"
           },
           "itemModifiers": {
@@ -221,37 +221,37 @@
           },
           "attributes": {
             "DX": {
-              "import": {
+              "importedValue": {
                 "label": "Ловкость (ЛВ)"
               }
             },
             "HT": {
-              "import": {
+              "importedValue": {
                 "label": "Здоровье (ЗД)"
               }
             },
             "IQ": {
-              "import": {
+              "importedValue": {
                 "label": "Интеллект (ИН)"
               }
             },
             "PER": {
-              "import": {
+              "importedValue": {
                 "label": "Восприятие (ВС)"
               }
             },
             "QN": {
-              "import": {
+              "importedValue": {
                 "label": "Квинтэссенция (КВ)"
               }
             },
             "ST": {
-              "import": {
+              "importedValue": {
                 "label": "Сила (СЛ)"
               }
             },
             "WILL": {
-              "import": {
+              "importedValue": {
                 "label": "Воля"
               }
             }
@@ -1329,7 +1329,7 @@
           "difficulty": {
             "label": "Сложность"
           },
-          "import": {
+          "importedLevel": {
             "label": "Уровень"
           },
           "points": {
@@ -1366,7 +1366,7 @@
           "duration": {
             "label": "Длительность"
           },
-          "import": {
+          "importedLevel": {
             "label": "Уровень"
           },
           "maintain": {

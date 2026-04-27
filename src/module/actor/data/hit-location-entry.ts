@@ -62,7 +62,7 @@ const hitLocationSchema = () => {
     where: new fields.StringField({ required: true, nullable: false }),
 
     // The imported DR value for this hit location.
-    import: new fields.NumberField({ required: true, nullable: false }),
+    importedDR: new fields.NumberField({ required: true, nullable: false }),
 
     // The "to hit" penalty for this hit location
     penalty: new fields.NumberField({ required: true, nullable: false, initial: 0 }),

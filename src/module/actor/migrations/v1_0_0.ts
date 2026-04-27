@@ -322,7 +322,9 @@ function migrateActorSystem(
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>> = {
     ...injectedData,
     holderItemId,
-    attributes: oldData.attributes,
+    attributes: Object.fromEntries(
+      Object.entries(oldData.attributes).map(([key, val]) => [key, { ...val, importedValue: val.import }])
+    ),
     HP: { ...oldData.HP, damage: oldData.HP.max - oldData.HP.value },
     FP: { ...oldData.FP, damage: oldData.FP.max - oldData.FP.value },
     QP: { ...oldData.QP, damage: oldData.QP.max - oldData.QP.value },
@@ -447,7 +449,7 @@ function migrateActorSystem(
       const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
         ...hitlocation,
         _id: id,
-        import: hitlocation.import,
+        importedDR: hitlocation.import,
         _dr: hitlocation.import,
         rollText: hitlocation.roll,
         _damageType: !hitlocation._damageType ? null : hitlocation._damageType,

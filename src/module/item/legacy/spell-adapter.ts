@@ -109,7 +109,7 @@ class SpellV1 {
   }
 
   get import(): number {
-    return this.spellV2.system?.import ?? 0
+    return this.spellV2.system?.importedLevel ?? 0
   }
 
   get itemInfo(): {

@@ -43,7 +43,7 @@ export function defaultHitLocations(): Record<string, DataModel.CreateData<DataM
     const locationData: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
       _id: foundry.utils.randomID(),
       where: location.name,
-      import: location.dr,
+      importedDR: location.dr,
       _dr: location.dr,
       penalty: location.penalty,
       rollText,

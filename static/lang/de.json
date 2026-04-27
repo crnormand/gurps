@@ -47,7 +47,7 @@
           "extraAttacks": {
             "label": "Zusätzliche Angriffe"
           },
-          "import": {
+          "importedLevel": {
             "label": "Grundstufe"
           },
           "itemModifiers": {
@@ -221,37 +221,37 @@
           },
           "attributes": {
             "DX": {
-              "import": {
+              "importedValue": {
                 "label": "Geschicklichkeit (DX)"
               }
             },
             "HT": {
-              "import": {
+              "importedValue": {
                 "label": "Konstitution (HT)"
               }
             },
             "IQ": {
-              "import": {
+              "importedValue": {
                 "label": "Intelligenz (IQ)"
               }
             },
             "PER": {
-              "import": {
+              "importedValue": {
                 "label": "Wahrnehmung (Per)"
               }
             },
             "QN": {
-              "import": {
+              "importedValue": {
                 "label": "Quintessenz (QN)"
               }
             },
             "ST": {
-              "import": {
+              "importedValue": {
                 "label": "Stärke (ST)"
               }
             },
             "WILL": {
-              "import": {
+              "importedValue": {
                 "label": "Wille"
               }
             }
@@ -1329,7 +1329,7 @@
           "difficulty": {
             "label": "Schwierigkeit"
           },
-          "import": {
+          "importedLevel": {
             "label": "Stufe"
           },
           "points": {
@@ -1366,7 +1366,7 @@
           "duration": {
             "label": "Dauer"
           },
-          "import": {
+          "importedLevel": {
             "label": "Stufe"
           },
           "maintain": {

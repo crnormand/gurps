@@ -83,7 +83,7 @@ class SkillV1 {
   }
 
   get import(): number {
-    return this.skillV2.system?.import ?? 0
+    return this.skillV2.system?.importedLevel ?? 0
   }
 
   get itemInfo(): {

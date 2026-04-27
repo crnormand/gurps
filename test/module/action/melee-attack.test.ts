@@ -5,7 +5,7 @@ import { MeleeAttackModel } from '@module/action/melee-attack.js'
 /* ---------------------------------------- */
 
 const meleeDefaults = () => ({
-  import: 0,
+  importedLevel: 0,
   otf: '',
   damage: [],
   consumeAction: true,
@@ -134,7 +134,7 @@ describe('MeleeAttackModel', () => {
       ])('%s', (_desc, importLevel, modifier, fencing, unbalanced, expected) => {
         const model = makeMelee(
           {
-            import: importLevel,
+            importedLevel: importLevel,
             parry: { canParry: true, fencing, unbalanced, modifier },
             block: { canBlock: false, modifier: 0 },
           },
@@ -166,7 +166,7 @@ describe('MeleeAttackModel', () => {
       ])('%s', (_desc, importLevel, modifier, expected) => {
         const model = makeMelee(
           {
-            import: importLevel,
+            importedLevel: importLevel,
             parry: { canParry: false, fencing: false, unbalanced: false, modifier: 0 },
             block: { canBlock: true, modifier },
           },
