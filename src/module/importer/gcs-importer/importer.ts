@@ -621,6 +621,8 @@ Portrait will not be imported.`
 
       if (oldLocations.length !== newLocations.length) return false
 
+      console.log(oldLocations, newLocations)
+
       for (let i = 0; i < oldLocations.length; i++) {
         if (!foundry.utils.objectsEqual(oldLocations[i], newLocations[i] as AnyObject)) return false
       }
