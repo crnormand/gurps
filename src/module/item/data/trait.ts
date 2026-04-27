@@ -20,6 +20,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
       type: ItemType.Trait,
+      icon: 'fa-solid fa-theater-masks',
       childTypes: [ItemType.Trait],
       sortKeys: {
         points: 'system.points',

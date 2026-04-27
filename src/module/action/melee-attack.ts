@@ -28,6 +28,7 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
 
   static override get metadata(): PseudoDocument.Metadata<'Action'> {
     return foundry.utils.mergeObject(super.metadata, {
+      icon: 'fa-solid fa-sword',
       detailsPartial: ['action.partials.details-melee-attack'],
     })
   }

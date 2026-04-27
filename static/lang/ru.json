@@ -1811,6 +1811,14 @@
         "type": {
           "label": "Тип"
         }
+      },
+      "note": {
+        "FIELDS": {
+          "title": { "label": "Заголовок" },
+          "markdown": { "label": "Текст" },
+          "reference": { "label": "Ссылка" },
+          "reference_highlight": { "label": "Выделение ссылки" }
+        }
       }
     },
     "publicRollAsDefault": "Публичный бросок по умолчанию",
@@ -2063,6 +2071,7 @@
         "base": "Общие сведения",
         "equipment": "Сведения о снаряжении",
         "meleeAttack": "Сведения об атаке в ближнем бою",
+        "note": "Сведения о заметке",
         "otf": "OTFs",
         "rangedAttack": "Сведения об атаке на расстоянии",
         "skill": "Сведения о навыке",

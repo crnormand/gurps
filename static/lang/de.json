@@ -1811,6 +1811,14 @@
         "type": {
           "label": "Typ"
         }
+      },
+      "note": {
+        "FIELDS": {
+          "title": { "label": "Titel" },
+          "markdown": { "label": "Text" },
+          "reference": { "label": "Referenz" },
+          "reference_highlight": { "label": "Referenz-Hervorhebung" }
+        }
       }
     },
     "publicRollAsDefault": "Öffentlicher Wurf als Standard",
@@ -2063,6 +2071,7 @@
         "base": "Allgemeine Details",
         "equipment": "Ausrüstungsdetails",
         "meleeAttack": "Nahkampfdetails",
+        "note": "Notizdetails",
         "otf": "OTFs",
         "rangedAttack": "Fernkampfdetails",
         "skill": "Fertigkeitsdetails",

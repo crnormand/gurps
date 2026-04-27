@@ -470,7 +470,7 @@ function migrateActorSystem(
 
     const note: DataModel.CreateData<DataModel.SchemaOf<NoteV2>> = {
       ...data,
-      text: data.notes,
+      img: NoteV2.getDefaultArtwork({}).img,
       containedBy: parentId,
       markdown: data.notes,
       importid: data.uuid,

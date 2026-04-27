@@ -4,7 +4,7 @@ import { parseBlock, parseParry } from '@module/action/parse-attack.js'
 import { CharacterSchema } from '@module/actor/data/character.js'
 import { HitLocationSchemaV2 } from '@module/actor/data/hit-location-entry.js'
 import { groundMoveForBasicMove, MoveModeV2 } from '@module/actor/data/move-mode.js'
-import { NoteV2Schema } from '@module/actor/data/note.js'
+import { NoteV2, NoteV2Schema } from '@module/actor/data/note.js'
 import { ActorType } from '@module/actor/types.js'
 import { hitlocationDictionary } from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
@@ -1192,9 +1192,9 @@ Portrait will not be imported.`
   #importNote(gcsNote: GcsNote, containedBy: string | null): void {
     const note: DataModel.CreateData<NoteV2Schema> = {
       _id: foundry.utils.randomID(),
+      img: NoteV2.getDefaultArtwork({}).img,
       containedBy,
-      markdown: gcsNote.markdown,
-      text: gcsNote.text,
+      markdown: gcsNote.markdown || gcsNote.text || '',
       reference: gcsNote.reference,
       reference_highlight: gcsNote.reference_highlight,
       importid: gcsNote.id,
