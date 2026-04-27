@@ -2,7 +2,7 @@
   <fieldset class='ms-stat-box ms-editable-stats'>
     <legend>{{localize 'GURPS.attributesSecondary'}}</legend>
     <button class='ms-stat-box-edit' type='button' title='Edit'>
-      <i class='fa-solid fa-pen'></i>
+      <i class='fas fa-pen'></i>
     </button>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.basicspeed'}}</span>
@@ -18,21 +18,21 @@
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.dodge'}}</span>
-      {{>dice-button otf='Dodge' level=system.currentdodge}}
+      {{> "actor.modern.partials.dice-button" otf='Dodge' level=system.currentdodge}}
     </div>
     {{#if system.thrust}}
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.thrust'}}</span>
-      {{>dice-button otf=(concat system.thrust ' dmg') text=system.thrust damage=true}}
-      <input class='ms-stat-input' type='text' 
+      {{> "actor.modern.partials.dice-button" otf=(concat system.thrust ' dmg') text=system.thrust damage=true}}
+      <input class='ms-stat-input' type='text'
              name='system.thrust' value='{{system.thrust}}'/>
     </div>
     {{/if}}
     {{#if system.swing}}
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.swing'}}</span>
-      {{>dice-button otf=(concat system.swing ' dmg') text=system.swing damage=true}}
-      <input class='ms-stat-input' type='text' 
+      {{> "actor.modern.partials.dice-button" otf=(concat system.swing ' dmg') text=system.swing damage=true}}
+      <input class='ms-stat-input' type='text'
              name='system.swing' value='{{system.swing}}'/>
     </div>
     {{/if}}
@@ -40,35 +40,35 @@
   <fieldset class='ms-stat-box ms-editable-stats'>
     <legend>{{localize 'GURPS.effectPicker.senses'}}</legend>
     <button class='ms-stat-box-edit' type='button' title='Edit'>
-      <i class='fa-solid fa-pen'></i>
+      <i class='fas fa-pen'></i>
     </button>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.vision'}}</span>
-      {{>dice-button otf='Vision' level=system.vision}}
+      {{> "actor.modern.partials.dice-button" otf='Vision' level=system.vision}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.vision' value='{{system.vision}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.hearing'}}</span>
-      {{>dice-button otf='Hearing' level=system.hearing}}
+      {{> "actor.modern.partials.dice-button" otf='Hearing' level=system.hearing}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.hearing' value='{{system.hearing}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.tastesmell'}}</span>
-      {{>dice-button otf='Taste/Smell' level=system.tastesmell}}
+      {{> "actor.modern.partials.dice-button" otf='Taste/Smell' level=system.tastesmell}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.tastesmell' value='{{system.tastesmell}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.touch'}}</span>
-      {{>dice-button otf='Touch' level=system.touch}}
+      {{> "actor.modern.partials.dice-button" otf='Touch' level=system.touch}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.touch' value='{{system.touch}}'/>
     </div>
     <div class='ms-stat'>
       <span class='ms-stat-label'>{{localize 'GURPS.frightcheck'}}</span>
-      {{>dice-button otf='Fright Check' level=system.frightcheck}}
+      {{> "actor.modern.partials.dice-button" otf='Fright Check' level=system.frightcheck}}
       <input class='ms-stat-input' type='number' step='1'
              name='system.frightcheck' value='{{system.frightcheck}}'/>
     </div>
@@ -80,7 +80,7 @@
       <span class='ms-stat-label'>{{localize 'GURPS.parry'}}</span>
       {{#if (isNum parryblock)}}
       <button type='button' class='ms-use-button rollable' data-otf='Parry' title='Parry'>
-        <i class='fa-solid fa-dice'></i>
+        <i class='fas fa-dice'></i>
         <span class='ms-btn-level'>{{parryblock}}</span>
       </button>
       {{else}}
