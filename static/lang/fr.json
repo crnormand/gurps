@@ -1811,6 +1811,14 @@
         "type": {
           "label": "Type"
         }
+      },
+      "note": {
+        "FIELDS": {
+          "title": { "label": "Titre" },
+          "markdown": { "label": "Texte" },
+          "reference": { "label": "Référence" },
+          "reference_highlight": { "label": "Mise en évidence de la référence" }
+        }
       }
     },
     "publicRollAsDefault": "Jet Public par défaut",
@@ -2063,6 +2071,7 @@
         "base": "Détails généraux",
         "equipment": "Détails de l'équipement",
         "meleeAttack": "Détails de l'attaque au corps à corps",
+        "note": "Détails de la note",
         "otf": "OTFs",
         "rangedAttack": "Détails de l'attaque à distance",
         "skill": "Détails de la compétence",

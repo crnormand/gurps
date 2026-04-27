@@ -10,6 +10,7 @@ function registerPartials(): void {
     'templates/item/partials/details-skill.hbs',
     'templates/item/partials/details-spell.hbs',
     'templates/item/partials/details-trait.hbs',
+    'templates/pseudo-document/partials/details-note.hbs',
   ]
 
   const templatePaths = Object.fromEntries(

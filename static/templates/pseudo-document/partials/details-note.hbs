@@ -1,0 +1,16 @@
+<fieldset class="ms-details">
+  <legend>{{ localize "GURPS.sheet.details.note" }}</legend>
+
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.title value=source.title }}
+  </div>
+
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.reference value=source.reference }}
+  </div>
+
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.markdown value=source.markdown elementType="textarea" }}
+  </div>
+
+</fieldset>

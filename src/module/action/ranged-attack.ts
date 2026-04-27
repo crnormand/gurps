@@ -42,6 +42,7 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   static override get metadata(): PseudoDocument.Metadata<'Action'> {
     return foundry.utils.mergeObject(super.metadata, {
+      icon: 'fa-solid fa-gun',
       detailsPartial: ['action.partials.details-ranged-attack'],
     })
   }
