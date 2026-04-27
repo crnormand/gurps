@@ -8,40 +8,15 @@
       <span class='ms-quicknotes-placeholder'>Double click to edit Quick Note</span>
     {{/if}}
   </div>
-  <i class='fa-solid fa-pen-to-square ms-quicknotes-edit'></i>
+  <i data-action='editQuickNotes'  class='fas fa-pen-to-square ms-quicknotes-edit'></i>
 </div>
 
-{{>modifiers-table}}
+{{> "actor.modern.partials.modifiers-table"}}
 
-{{>data-table
-  section="skills"
-  icon="fa-graduation-cap"
-  title=(localize "GURPS.skills")
-  count=skillCount
-  items=(flatlist system.skills)
-  path="system.skills"
-  entityType="skills"
-  otfPrefix="Sk"
-  editAction="editSkill"
-  deleteAction="deleteSkill"
-  addAction="addSkill"
-  addLabel=(localize "GURPS.skill")
-}}
+{{> "actor.modern.partials.item-table" itemSections.skills }}
 
-{{>traits-table}}
+{{> "actor.modern.partials.item-table" itemSections.traits }}
 
-{{>data-table
-  section="spells"
-  icon="fa-hat-wizard"
-  title=(localize "GURPS.spells")
-  items=(flatlist system.spells)
-  path="system.spells"
-  entityType="spells"
-  otfPrefix="Sp"
-  editAction="editSpell"
-  deleteAction="deleteSpell"
-  addAction="addSpell"
-  addLabel=(localize "GURPS.spell")
-  hasCollege=true
-}}
+{{> "actor.modern.partials.item-table" itemSections.spells }}
+
 </section>
