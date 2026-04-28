@@ -20,22 +20,46 @@
     }
   }
 
-  colgroup {
-    col.gcs-col-name {
-      width: 100%;
-    }
-  }
-
   /* ---------------------------------------- */
 
   // Column sizing: min-width is enforced by the browser; max-width clips overflow.
   // Alignment is co-located here since it is tightly coupled to column identity.
+
+  td.gcs-item-name {
+    @include gcs-col(10rem, 100%);
+  }
 
   td.gcs-item-modifier {
     @include gcs-col(2rem, 3.5rem);
   }
 
   td.gcs-item-level {
+    @include gcs-col(2rem, 3.5rem);
+    text-align: center;
+  }
+
+  td.gcs-item-usage {
+    @include gcs-col(3rem, 6rem);
+    text-align: center;
+  }
+
+  td.gcs-item-damage {
+    @include gcs-col(3rem, 4rem);
+    text-align: center;
+  }
+
+  td.gcs-item-parry,
+  td.gcs-item-block {
+    @include gcs-col(2rem, 4.5rem);
+    text-align: center;
+  }
+
+  td.gcs-item-reach {
+    @include gcs-col(2rem, 3rem);
+    text-align: center;
+  }
+
+  td.gcs-item-st {
     @include gcs-col(2rem, 3.5rem);
     text-align: center;
   }
