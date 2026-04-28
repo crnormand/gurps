@@ -14,7 +14,7 @@ import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
-import { OtfActionType } from 'module/otf/types.ts'
+import { OtfActionType } from '../otf/types.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
