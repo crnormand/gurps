@@ -1,5 +1,5 @@
-import { gurpslink } from 'module/utilities/gurpslink.js'
-import { ParserResult } from './types.js'
+import { gurpslink } from '../utilities/gurpslink.js'
+import { OtfActionType, ParserResult } from './types.js'
 import { atou, utoa } from 'lib/utilities.js'
 
 export function extractOtfs(args: string[]) {
@@ -39,18 +39,18 @@ export function extractOtfs(args: string[]) {
       if (actionData.overridetxt) {
         displayText = actionData.overridetxt
       } else if (
-        actionData.type === 'skill-spell' ||
-        actionData.type === 'attack' ||
-        actionData.type === 'attackdamage' ||
-        actionData.type === 'weapon-parry' ||
-        actionData.type === 'weapon-block'
+        actionData.type === OtfActionType.skillSpell ||
+        actionData.type === OtfActionType.attack ||
+        actionData.type === OtfActionType.attackdamage ||
+        actionData.type === OtfActionType.weaponParry ||
+        actionData.type === OtfActionType.weaponBlock
       ) {
         displayText = actionData.name || ''
-      } else if (actionData.type === 'attribute') {
+      } else if (actionData.type === OtfActionType.attribute) {
         displayText = actionData.attribute || ''
-      } else if (actionData.type === 'controlroll') {
+      } else if (actionData.type === OtfActionType.controlroll) {
         displayText = actionData.desc || ''
-      } else if (actionData.type === 'chat') {
+      } else if (actionData.type === OtfActionType.chat) {
         displayText = 'Action'
       }
 
