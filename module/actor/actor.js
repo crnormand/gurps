@@ -35,6 +35,7 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from './maneuver.js'
+import { OtfActionType } from '../otf/types.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -3399,15 +3400,15 @@ export class GurpsActor extends Actor {
     const isCombatant = !!game.combat?.combatants.find(c => c.actor.id === this.id)
     if (!isCombatant && settingsUseMaxActions === 'AllCombatant') return false
     const actionType = chatThing.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase()
-    const isAttack = action?.type === 'attack' || [ROLL_TYPE.MELEE, ROLL_TYPE.RANGED].includes(actionType)
+    const isAttack = action?.type === OtfActionType.attack || [ROLL_TYPE.MELEE, ROLL_TYPE.RANGED].includes(actionType)
     const isDefense =
       action?.attribute === 'dodge' ||
-      action?.type === 'weapon-parry' ||
-      action?.type === 'weapon-block' ||
+      action?.type === OtfActionType.weaponParry ||
+      action?.type === OtfActionType.weaponBlock ||
       [ROLL_TYPE.DODGE, ROLL_TYPE.PARRY, ROLL_TYPE.BLOCK].includes(actionType)
     const isDodge = action?.attribute === 'dodge' || actionType === ROLL_TYPE.DODGE
-    const isSkill = (action?.type === 'skill-spell' && action.isSkillOnly) || actionType === ROLL_TYPE.SKILL
-    const isSpell = (action?.type === 'skill-spell' && action.isSpellOnly) || actionType === ROLL_TYPE.SPELL
+    const isSkill = (action?.type === OtfActionType.skillSpell && action.isSkillOnly) || actionType === ROLL_TYPE.SKILL
+    const isSpell = (action?.type === OtfActionType.skillSpell && action.isSpellOnly) || actionType === ROLL_TYPE.SPELL
     if ((isSpell || isAttack || isDefense) && !isDodge) {
       return actorComp.consumeAction !== undefined ? actorComp.consumeAction : true
     } else if (isSkill) {
@@ -3426,10 +3427,13 @@ export class GurpsActor extends Actor {
    * @returns {Promise<{canRoll: boolean, [message]: string, [targetMessage]: string, [maxActionMessage]: string, [maxBlockMessage]: string, [maxParryMessage]: string }>}
    */
   async canRoll(action, token, chatThing = '', actorComp = {}) {
-    const isAttack = action.type === 'attack'
-    const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
-    const isAttribute = action.type === 'attribute'
-    const isSlam = action.type === 'damage' && action.orig.includes('slam') && action.orig.includes('@')
+    const isAttack = action.type === OtfActionType.attack
+    const isDefense =
+      action.attribute === 'dodge' ||
+      action.type === OtfActionType.weaponParry ||
+      action.type === OtfActionType.weaponBlock
+    const isAttribute = action.type === OtfActionType.attribute
+    const isSlam = action.type === OtfActionType.damage && action.orig.includes('slam') && action.orig.includes('@')
     const combatIsActive = !!game.combat?.isActive
     const isCombatant = !!game.combat?.combatants.find(c => c.actor.id === this.id)
     const combatStarted = combatIsActive && game.combat?.turn !== null && game.combat?.turn !== undefined
@@ -3513,7 +3517,7 @@ export class GurpsActor extends Actor {
       const maxBlocks = foundry.utils.getProperty(this, 'system.conditions.actions.maxBlocks') || 1
       if (
         isDefense &&
-        action.type === 'weapon-block' &&
+        action.type === OtfActionType.weaponBlock &&
         actions.totalBlocks >= maxBlocks + (action.extraBlocks || 0) + actorExtraActions &&
         consumeAction
       ) {
@@ -3529,7 +3533,7 @@ export class GurpsActor extends Actor {
       // Check for Max Parries
       if (
         isDefense &&
-        action.type === 'weapon-parry' &&
+        action.type === OtfActionType.weaponParry &&
         actions.totalParries >= actorExtraActions + (actions.maxParries || 0) &&
         consumeAction
       ) {
@@ -3559,7 +3563,7 @@ export class GurpsActor extends Actor {
       }
     }
     // Check if roll need Target
-    const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
+    const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === OtfActionType.damage)
     const checkForTargetSettings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALLOW_TARGETED_ROLLS)
     if (isCombatant && needTarget && game.user.targets.size === 0) {
       result = {

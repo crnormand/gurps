@@ -90,6 +90,7 @@ import { UI } from './ui/index.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { applyModifierDesc } from './otf/description-utilities.js'
 import { findBestActionInChain } from './otf/best-action.ts'
+import { OtfActionType } from './otf/types.ts'
 
 export let GURPS = undefined
 
@@ -500,7 +501,7 @@ if (!globalThis.GURPS) {
      */
     modifier({ action }) {
       GURPS.ModifierBucket.addModifier(action.mod, action.desc)
-      if (action.next && action.next.type === 'modifier') {
+      if (action.next && action.next.type === OtfActionType.modifier) {
         return this.modifier({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
       }
       return true

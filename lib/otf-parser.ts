@@ -668,7 +668,7 @@ class SkillSpellParser extends OtfParser {
     // 2. TYPE
     let matches = match(/^(s|sk|sp)\s*:/i)
     if (!matches) return result
-    result.type = 'skill-spell'
+    result.type = OtfActionType.skillSpell
     result.isSpellOnly = !!matches[1].match(/^SP/i)
     result.isSkillOnly = !!matches[1].match(/^SK/i)
 
@@ -693,7 +693,7 @@ class SkillSpellParser extends OtfParser {
     if (matches) {
       result.floatingLabel = matches[1].trim()
       let attribute = parselink(result.floatingLabel)
-      if (attribute?.action?.type === 'attribute' || attribute?.action?.type === 'mapped') {
+      if (attribute?.action?.type === OtfActionType.attribute) {
         result.floatingAttribute = attribute.action.path
         result.floatingType = attribute.action.type
       } else {

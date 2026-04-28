@@ -1,5 +1,6 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
+import { OtfActionType } from './otf/types.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
@@ -202,7 +203,11 @@ export default class GurpsWiring {
     if (!!action) {
       action = JSON.parse(atou(action))
       // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
-      if (action.type === 'damage' || action.type === 'deriveddamage' || action.type === 'attackdamage')
+      if (
+        action.type === OtfActionType.damage ||
+        action.type === OtfActionType.deriveddamage ||
+        action.type === OtfActionType.attackdamage
+      )
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
       else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor)
     }

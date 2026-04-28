@@ -1,3 +1,4 @@
+import { OtfActionType } from '../otf/types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { displayMod, horiz } from '../../lib/utilities.js'
@@ -254,7 +255,7 @@ export default class ModifierBucketEditor extends Application {
     event.stopPropagation()
     let element = event.currentTarget
     let parsed = parselink(element.value)
-    if (!!parsed.action && parsed.action.type === 'modifier') {
+    if (!!parsed.action && parsed.action.type === OtfActionType.modifier) {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else {
       setTimeout(() => ui.notifications.info("Unable to determine modifier for '" + element.value + "'"), 200)

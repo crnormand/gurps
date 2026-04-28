@@ -20,6 +20,7 @@ import {
 } from './everything.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
 import { IfChatProcessor } from './if.js'
+import { OtfActionType } from '../otf/types.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -127,7 +128,7 @@ class QuickDamageChatProcessor extends ChatProcessor {
     this.match = line.match(/^[.\/](.*?)( +[xX*]?(?<num>\d+))?$/)
     if (!!this.match) {
       this.action = parselink(this.match[1])
-      return this.action?.action?.type === 'damage' || this.action?.action?.type === 'roll'
+      return this.action?.action?.type === OtfActionType.damage || this.action?.action?.type === OtfActionType.roll
     }
     return false
   }
@@ -671,7 +672,7 @@ class RollChatProcessor extends ChatProcessor {
     let m = this.match
     let action = parselink(m[2])
     if (!!action.action) {
-      if (action.action.type === 'modifier')
+      if (action.action.type === OtfActionType.modifier)
         // only need to show modifiers, everything else does something.
         this.priv(line)
       else this.send() // send what we have

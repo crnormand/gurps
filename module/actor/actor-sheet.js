@@ -14,6 +14,7 @@ import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
+import { OtfActionType } from 'module/otf/types.ts'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1746,7 +1747,7 @@ export class GurpsActorSheet extends ActorSheet {
     let action = el.dataset.action
     if (!!action) {
       action = JSON.parse(atou(action))
-      if (action.type === 'damage' || action.type === 'deriveddamage') {
+      if (action.type === OtfActionType.damage || action.type === OtfActionType.deriveddamage) {
         GURPS.resolveDamageRoll(event, this.actor, action.orig, action.overridetxt, game.user.isGM, true)
       } else {
         GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
