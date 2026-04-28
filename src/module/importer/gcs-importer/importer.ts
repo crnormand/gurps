@@ -1017,13 +1017,32 @@ Portrait will not be imported.`
 
   #importTrait(trait: GcsTrait, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Trait
-    // TODO: localize
-    const name = trait.name ?? 'Trait'
+    const name = trait.name || globalThis._loc('TYPES.Item.feature')
 
     const [baseSystem, _id] = this.#importItem(trait)
+    let modifierNotes = ''
+
+    const modifiers = trait.modifiers?.filter(mod => mod.isEnabled) ?? []
+
+    for (const modifier of modifiers) {
+      if (modifierNotes) modifierNotes += '; '
+
+      modifierNotes += modifier.name
+      const modNotes = modifier.calc?.resolved_notes || modifier.local_notes || ''
+
+      if (modifier.levels) modifierNotes += `${modifier.levels}`
+
+      if (modNotes) modifierNotes += ` (${modNotes})`
+    }
+
+    let notes = modifierNotes
+    const baseNotes = baseSystem.notes || ''
+
+    if (modifierNotes !== '' && baseNotes !== '') notes += '\n' + baseNotes
 
     const system: DataModel.CreateData<TraitSchema> = {
       ...baseSystem,
+      notes,
       disabled: trait.disabled,
       containedBy: containedBy ?? null,
       cr: trait.cr ?? null,
@@ -1034,7 +1053,6 @@ Portrait will not be imported.`
 
     trait.childItems?.forEach((child: GcsTrait, childIndex: number) => this.#importTrait(child, childIndex, _id))
 
-    // component.contains = children.map((c: Item.CreateData) => c._id as string)
     const item: Item.CreateData<ItemType.Trait> = {
       _id,
       type,
@@ -1052,8 +1070,7 @@ Portrait will not be imported.`
 
   #importSkill(skill: GcsSkill, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Skill
-    // TODO: localize
-    const name = skill.name ?? 'Skill'
+    const name = skill.name || globalThis._loc('TYPES.Item.skill')
 
     const [baseSystem, _id] = this.#importItem(skill)
 
@@ -1087,8 +1104,7 @@ Portrait will not be imported.`
 
   #importSpell(spell: GcsSpell, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Spell
-    // TODO: localize
-    const name = spell.name ?? 'Spell'
+    const name = spell.name || globalThis._loc('TYPES.Item.spell')
 
     const [baseSystem, _id] = this.#importItem(spell)
 
@@ -1133,17 +1149,34 @@ Portrait will not be imported.`
     containedBy?: string | undefined
   ): Item.CreateData {
     const type = ItemType.Equipment
-    // TODO: localize
-    const name = equipment.name ?? 'Equipment'
+    const name = equipment.name || globalThis._loc('TYPES.Item.equipment')
 
     const weight = equipment.calc?.weight
       ? parseFloat(equipment.calc.weight)
       : parseFloat(equipment.calc?.extended_weight || '0')
 
     const [baseSystem, _id] = this.#importItem(equipment)
+    let modifierNotes = ''
+
+    const modifiers = equipment.modifiers?.filter(mod => mod.isEnabled) ?? []
+
+    for (const modifier of modifiers) {
+      if (modifierNotes) modifierNotes += '; '
+
+      modifierNotes += modifier.name
+      const modNotes = modifier.calc?.resolved_notes || modifier.local_notes || ''
+
+      if (modNotes) modifierNotes += ` (${modNotes})`
+    }
+
+    let notes = modifierNotes
+    const baseNotes = baseSystem.notes || ''
+
+    if (modifierNotes !== '' && baseNotes !== '') notes += '\n' + baseNotes
 
     const system: DataModel.CreateData<EquipmentSchema> = {
       ...baseSystem,
+      notes,
       containedBy: containedBy ?? null,
       count: equipment.quantity ?? 1,
       weight,
