@@ -33,7 +33,6 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
 
   override prepareDerivedData(): void {
     super.prepareDerivedData()
-    this.#prepareLevelsFromOtf()
 
     if (Object.getOwnPropertyDescriptor(this, 'name') === undefined) {
       Object.defineProperty(this, 'name', {
@@ -43,6 +42,14 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
         configurable: true,
       })
     }
+  }
+
+  /* ---------------------------------------- */
+
+  override prepareSiblingData(): void {
+    super.prepareSiblingData()
+
+    this.#prepareLevelsFromOtf()
   }
 
   /* ---------------------------------------- */
@@ -85,14 +92,15 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
 
     action.action.calcOnly = true
     action.action.suppressWarnings = true
-    // TODO: verify that target is of type "number" (or replace this whole thing)
-    GURPS.performAction(action.action, this.actor).then(
-      (result: boolean | { target: number; thing: any } | undefined) => {
-        if (result && typeof result === 'object') {
-          this.level = result.target
-        }
-      }
-    )
+
+    const otfResult = GURPS.performAction(action.action, this.actor) as unknown as
+      | boolean
+      | { target: number; thing: any }
+      | undefined
+
+    if (otfResult && typeof otfResult === 'object') {
+      this.level = otfResult.target
+    }
   }
 
   /* ---------------------------------------- */
