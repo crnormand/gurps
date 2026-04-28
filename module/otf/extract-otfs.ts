@@ -1,5 +1,5 @@
 import { gurpslink } from 'module/utilities/gurpslink.js'
-import { ParserResult } from './types.ts'
+import { ParserResult } from './types.js'
 import { atou, utoa } from 'lib/utilities.js'
 
 export function extractOtfs(args: string[]) {
