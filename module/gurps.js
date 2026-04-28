@@ -89,6 +89,7 @@ import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { applyModifierDesc } from './otf/description-utilities.js'
+import { findBestActionInChain } from './otf/best-action.ts'
 
 export let GURPS = undefined
 
@@ -1098,12 +1099,17 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.calcOnly
      */
     async attribute({ action, actor, event, originalOtf, calcOnly }) {
-      // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
-      if (!actor && (!action || !action.target)) {
+      // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor).
+
+      // If no actor OR action.target, then we can't do anything, so error out.
+      if (!actor && !action?.target) {
         ui.notifications?.warn('You must have a character selected')
         return false
       }
-      let target = parseInt(action.target) // is it pre-targeted (ST12)
+
+      // Is it pre-targeted (e.g., ST12)? If no, target = NaN, and we'll try to find it on the actor.
+      let target = parseInt(action.target)
+
       if (!target && !!actor) {
         if (!!action.melee) {
           // Is it trying to match to an attack name (should only occur with Parry: & Block:
@@ -1115,18 +1121,22 @@ if (!globalThis.GURPS) {
           target = parseInt(foundry.utils.getProperty(actor.system, action.path))
         }
       }
+
       const thing = action.name
       if (!target) {
         return false
       }
+
       if (calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
         if (isNaN(modifier)) modifier = 0
         return { target: target + modifier, thing: thing }
       }
+
       let targetmods = []
       let aid = actor ? `@${actor.id}@` : ''
       const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}${thing}]`
+
       let opt = {
         blind: action.blindroll,
         event: event,
@@ -1134,12 +1144,17 @@ if (!globalThis.GURPS) {
         obj: action.obj,
         text: '',
       }
+
       if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+
       if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       opt.text = ''
+
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
+
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
       return doRoll({
@@ -1254,31 +1269,40 @@ if (!globalThis.GURPS) {
   }
   GURPS.actionFuncs = actionFuncs
 
-  async function findBestActionInChain({ action, actor, event, targets, originalOtf }) {
-    const actions = []
-    let overridetxt = action.overridetxt
-    while (action) {
-      action.overridetxt = overridetxt
-      actions.push(action)
-      action = action.next
-    }
-    const calculations = []
-    for (const a of actions) {
-      const func = GURPS.actionFuncs[a.type]
-      if (func.constructor.name === 'AsyncFunction') {
-        calculations.push(await func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
-      } else {
-        calculations.push(func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
-      }
-    }
-    const levels = calculations.map(result => (result ? result.target : 0))
-    if (!levels.some(level => level > 0)) {
-      ui.notifications.warn(game.i18n.localize('GURPS.noViableSkill'))
-      return null // actor does not have any of these skills
-    }
-    const bestLevel = Math.max(...levels)
-    return actions[levels.indexOf(bestLevel)]
-  }
+  // async function findBestActionInChain({ action, actor, event, targets, originalOtf }) {
+  //   const actions = []
+  //   let overridetxt = action.overridetxt
+  //   while (action) {
+  //     action.overridetxt = overridetxt
+  //     actions.push(action)
+  //     action = action.next
+  //   }
+  //   const calculations = []
+  //   let a
+  //   for (a of actions) {
+  //     const func = GURPS.actionFuncs[a.type]
+  //     if (func.constructor.name === 'AsyncFunction') {
+  //       calculations.push(await func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
+  //     } else {
+  //       calculations.push(func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
+  //     }
+  //   }
+  //   const levels = calculations.map(result => (result ? result.target : 0))
+  //   if (!levels.some(level => level > 0)) {
+  //     ui.notifications.warn(game.i18n.localize('GURPS.noViableSkill'))
+  //     console.warn(
+  //       'No viable skill found in chain of actions:',
+  //       actions,
+  //       'with calculated levels:',
+  //       levels,
+  //       'current action:',
+  //       a
+  //     )
+  //     return null // actor does not have any of these skills
+  //   }
+  //   const bestLevel = Math.max(...levels)
+  //   return actions[levels.indexOf(bestLevel)]
+  // }
 
   /**
    * @param {Action} action
