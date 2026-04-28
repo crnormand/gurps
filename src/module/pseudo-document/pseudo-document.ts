@@ -231,7 +231,7 @@ class PseudoDocument<
    * Prepare base data. This method is not called automatically; it is the responsibility
    * of the parent document to ensure pseudo-documents prepare base and derived data.
    */
-  prepareBaseData() {}
+  prepareBaseData(): void {}
 
   /* ---------------------------------------- */
 
@@ -239,7 +239,16 @@ class PseudoDocument<
    * Prepare derived data. This method is not called automatically; it is the responsibility
    * of the parent document to ensure pseudo-documents prepare base and derived data.
    */
-  prepareDerivedData() {}
+  prepareDerivedData(): void {}
+
+  /* ---------------------------------------- */
+
+  /**
+   * Prepare sibling data data. The siblings in question are siblings of the parent Document, rather than siblings of
+   * this pseudo-document. This method is not called automatically; it is the responsibility
+   * of the parent document to ensure pseudo-documents prepare base and derived data.
+   */
+  prepareSiblingData(): void {}
 
   /* ---------------------------------------- */
   /*   Instance Methods                       */

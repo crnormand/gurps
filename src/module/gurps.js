@@ -458,7 +458,7 @@ if (!globalThis.GURPS) {
       return 0
     }
 
-    let skillLevel = skill.level
+    let skillLevel = skill.system.level
 
     // @ts-expect-error - dynamically adding obj property to action
     action.obj = skill
@@ -467,7 +467,7 @@ if (!globalThis.GURPS) {
     if (action.floatingAttribute) {
       if (actor) {
         let value = foundry.utils.getProperty(actordata, action.floatingAttribute)
-        let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
+        let rsl = skill.system.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
         let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
 
         skillLevel = valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
@@ -1248,7 +1248,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.originalOtf
      * @param {boolean} data.calcOnly
      */
-    async attribute({ action, actor, event, originalOtf, calcOnly }) {
+    attribute({ action, actor, event, originalOtf, calcOnly }) {
       // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
       if (!actor && (!action || !action.target)) {
         ui.notifications?.warn('You must have a character selected')
@@ -1285,35 +1285,37 @@ if (!globalThis.GURPS) {
         return { target: target + modifier, thing: thing }
       }
 
-      let targetmods = []
-      let aid = actor ? `@${actor.id}@` : ''
-      const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}${thing}]`
-      let opt = {
-        blind: action.blindroll,
-        event: event,
-        action: action,
-        obj: action.obj,
-        text: '',
-      }
+      return (async () => {
+        let targetmods = []
+        let aid = actor ? `@${actor.id}@` : ''
+        const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}${thing}]`
+        let opt = {
+          blind: action.blindroll,
+          event: event,
+          action: action,
+          obj: action.obj,
+          text: '',
+        }
 
-      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
-      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
-      opt.text = ''
-      if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
-      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
+        if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+        if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
+        opt.text = ''
+        if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+        if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+        else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
+        if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return doRoll({
-        actor,
-        targetmods,
-        prefix: game.i18n.localize('GURPS.rollVs'),
-        thing,
-        chatthing,
-        origtarget: target,
-        optionalArgs: opt,
-        action,
-      })
+        return doRoll({
+          actor,
+          targetmods,
+          prefix: game.i18n.localize('GURPS.rollVs'),
+          thing,
+          chatthing,
+          origtarget: target,
+          optionalArgs: opt,
+          action,
+        })
+      })()
     },
     /**
      * @param {Object} data
@@ -1331,7 +1333,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.originalOtf
      * @param {boolean} data.calcOnly
      */
-    async ['skill-spell']({ action, actor, event, originalOtf, calcOnly }) {
+    ['skill-spell']({ action, actor, event, originalOtf, calcOnly }) {
       if (!actor && (!action || !action.target)) {
         ui.notifications?.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
 
@@ -1354,26 +1356,28 @@ if (!globalThis.GURPS) {
         return { target: target + modifier, thing: thing }
       }
 
-      let targetmods = []
-      let aid = actor ? `@${actor.id}@` : ''
-      let chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}S:"${thing}"]`
-      let opt = {
-        blind: action.blindroll,
-        event,
-        action,
-        obj: action.obj,
-        text: '',
-      }
+      return (async () => {
+        let targetmods = []
+        let aid = actor ? `@${actor.id}@` : ''
+        let chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}S:"${thing}"]`
+        let opt = {
+          blind: action.blindroll,
+          event,
+          action,
+          obj: action.obj,
+          text: '',
+        }
 
-      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
-      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
+        if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+        if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
 
-      if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
-      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
+        if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+        if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+        else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
+        if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return await doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action })
+        return await doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action })
+      })()
     },
 
     /*
@@ -1473,14 +1477,44 @@ if (!globalThis.GURPS) {
     return actions[levels.indexOf(bestLevel)]
   }
 
+  function findBestActionInChainSync({ action, actor, event, targets, originalOtf }) {
+    const actions = []
+    let overridetxt = action.overridetxt
+    const suppressWarnings = action.suppressWarnings
+
+    while (action) {
+      action.overridetxt = overridetxt
+      actions.push(action)
+      action = action.next
+    }
+
+    const calculations = actions.map(action =>
+      GURPS.actionFuncs[action.type]({ action: action, actor, event, targets, originalOtf, calcOnly: true })
+    )
+
+    const levels = calculations.map(result => (result ? result.target : 0))
+
+    if (!levels.some(level => level > 0)) {
+      if (!suppressWarnings) {
+        ui.notifications.warn(game.i18n.localize('GURPS.noViableSkill'))
+      }
+
+      return null
+    }
+
+    const bestLevel = Math.max(...levels)
+
+    return actions[levels.indexOf(bestLevel)]
+  }
+
   /**
    * @param {Action} action
    * @param {GurpsActorV2|null} actor
    * @param {JQuery.Event|null} [event]
-   * @param {string[] } [targets]
-   * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
+   * @param {string[]} [targets]
+   * @returns {MaybePromise<boolean | {target: any, thing: any} | undefined>}
    */
-  async function performAction(action, actor, event = null, targets = []) {
+  function performAction(action, actor, event = null, targets = []) {
     if (!action || !(action.type in actionFuncs)) return false
 
     if (action.sourceId) {
@@ -1490,17 +1524,26 @@ if (!globalThis.GURPS) {
       if (!actor || actor.id === originalActor.id) actor = originalActor
     }
 
-    // const origAction = action
     const originalOtf = action.orig
     const calcOnly = action.calcOnly
 
-    if (['attribute', 'skill-spell'].includes(action.type)) {
-      action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
+    if (calcOnly) {
+      if (['attribute', 'skill-spell'].includes(action.type)) {
+        action = findBestActionInChainSync({ action, event, actor, targets, originalOtf })
+      }
+
+      return !action ? false : GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
     }
 
-    return !action
-      ? false
-      : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+    return (async () => {
+      if (['attribute', 'skill-spell'].includes(action.type)) {
+        action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
+      }
+
+      return !action
+        ? false
+        : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+    })()
   }
 
   GURPS.performAction = performAction
@@ -1519,21 +1562,25 @@ if (!globalThis.GURPS) {
     let skillRegExp = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
     let best = 0
 
-    if (!isSpellOnly)
-      recurselist(actor.skills, skill => {
-        if (skill.name?.match(skillRegExp) && skill.level > best) {
+    if (!isSpellOnly) {
+      actor.allSkillsV2.forEach(skill => {
+        if (skill.name?.match(skillRegExp) && skill.system.level > best) {
           item = skill
-          best = parseInt(skill.level)
+          best = skill.system.level
         }
       })
-    if (!item)
-      if (!isSkillOnly)
-        recurselist(actor.spells, spell => {
-          if (spell.name?.match(skillRegExp) && spell.level > best) {
+    }
+
+    if (!item) {
+      if (!isSkillOnly) {
+        actor.allSpellsV2.forEach(spell => {
+          if (spell.name?.match(skillRegExp) && spell.system.level > best) {
             item = spell
-            best = parseInt(spell.level)
+            best = spell.system.level
           }
         })
+      }
+    }
 
     return item
   }

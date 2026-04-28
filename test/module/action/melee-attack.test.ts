@@ -118,6 +118,7 @@ describe('MeleeAttackModel', () => {
         const model = makeMelee({ parry: { canParry: false, fencing: false, unbalanced: false, modifier: 0 } })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.parryText).toBe('GURPS.action.meleeAttack.parryDisabled')
       })
@@ -142,6 +143,7 @@ describe('MeleeAttackModel', () => {
         )
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.parryText).toBe(expected)
       })
@@ -154,6 +156,7 @@ describe('MeleeAttackModel', () => {
         const model = makeMelee({ block: { canBlock: false, modifier: 0 } })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.blockText).toBe('GURPS.action.meleeAttack.blockDisabled')
       })
@@ -174,6 +177,7 @@ describe('MeleeAttackModel', () => {
         )
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.blockText).toBe(expected)
       })
@@ -196,6 +200,7 @@ describe('MeleeAttackModel', () => {
         const model = makeMelee({ reach })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.reachText).toBe(expected)
       })
