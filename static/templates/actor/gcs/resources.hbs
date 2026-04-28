@@ -102,7 +102,7 @@
         <tbody>
           {{#each systemSource.hitlocationsV2 as |location|}}
             <tr>
-              <td>{{location.rollText}}</td>
+              <td class="gcs-row-roll">{{location.rollText}}</td>
               <td>{{location.where}}</td>
               <td
                 class="form-fields {{ifThen (gte location.penalty 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
@@ -110,7 +110,7 @@
                 data-value="{{location.penalty}}"
                 data-comment="{{localize 'GURPS.hitLocationPenalty'}}: {{location.where}}"
                 >{{location.penalty}}</td>
-              <td>{{location._dr}}</td>
+              <td class="gcs-row-dr">{{location._dr}}</td>
             </tr>
           {{/each}}
         </tbody>
