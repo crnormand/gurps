@@ -1,6 +1,6 @@
 import { gurpslink } from '../utilities/gurpslink.js'
 import { OtfActionType, ParserResult } from './types.js'
-import { atou, utoa } from 'lib/utilities.js'
+import { atou, utoa } from '../../lib/utilities.js'
 
 export function extractOtfs(args: string[]) {
   const texts = args.slice(0, -1).filter(text => text)
