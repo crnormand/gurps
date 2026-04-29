@@ -116,6 +116,7 @@ declare global {
 
   interface GurpsAction {
     type: string
+    overridetxt?: string
     sourceId?: string
     orig?: string
     calcOnly?: boolean

@@ -160,8 +160,8 @@ class GurpsBaseActorSheet<
       editEmbedded: GurpsBaseActorSheet.#onEditEmbedded,
       deleteEmbedded: GurpsBaseActorSheet.#onDeleteEmbedded,
       toggleContainer: GurpsBaseActorSheet.#onToggleContainer,
-      addModifier: GurpsBaseActorSheet.#onAddModifier,
-      rollOtf: GurpsBaseActorSheet.#onRollOtf,
+      addModifier: { handler: GurpsBaseActorSheet.#onAddModifier, buttons: [0, 2] },
+      rollOtf: { handler: GurpsBaseActorSheet.#onRollOtf, buttons: [0, 2] },
     },
     dragDrop: [{ dragSelector: '[draggable]', dropSelector: null }],
   }
@@ -348,17 +348,29 @@ class GurpsBaseActorSheet<
 
   static async #onAddModifier(this: GurpsBaseActorSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
+    event.stopPropagation()
 
-    const value = target.dataset.value ?? '0'
+    let numValue = parseInt(target.dataset.value || '0')
+
+    if (isNaN(numValue)) numValue = 0
+    const value = numValue.signedString()
+
     const comment = target.dataset.comment ?? ''
 
-    GURPS.ModifierBucket.addModifier(value, comment)
+    switch (event.button) {
+      case 0:
+        return GURPS.ModifierBucket.addModifier(value, comment)
+      case 2: {
+        return GURPS.whisperOtfToOwner(value + ' ' + comment, null, event, false, this.actor)
+      }
+    }
   }
 
   /* ---------------------------------------- */
 
   static async #onRollOtf(this: GurpsBaseActorSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
+    event.stopPropagation()
 
     const value = target.dataset.value ?? ''
 
@@ -366,7 +378,24 @@ class GurpsBaseActorSheet<
 
     if (!parsed.action) return
 
-    GURPS.performAction(parsed.action, this.actor, event)
+    switch (event.button) {
+      case 0:
+        return GURPS.performAction(parsed.action, this.actor, event)
+      case 2: {
+        const isDamageRoll =
+          parsed.action.type === 'damage' ||
+          parsed.action.type === 'deriveddamage' ||
+          parsed.action.type === 'attackdamage'
+
+        return GURPS.whisperOtfToOwner(
+          parsed.action.orig || '',
+          parsed.action.overridetxt || null,
+          event,
+          isDamageRoll,
+          this.actor
+        )
+      }
+    }
   }
 
   /* ---------------------------------------- */
@@ -410,6 +439,26 @@ class GurpsBaseActorSheet<
       GURPS.SetLastActor(this.actor)
       this.element.addEventListener('click', () => GURPS.SetLastActor(this.actor))
     }
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _onFirstRender(
+    context: DeepPartial<RenderContext>,
+    options: DeepPartial<RenderOptions>
+  ): Promise<void> {
+    super._onFirstRender(context, options)
+
+    // Registered before _createContextMenu so this listener fires first and blocks
+    // the context menu via stopImmediatePropagation when the target is an action element.
+    this.element.addEventListener('contextmenu', event => {
+      const target = event.target as HTMLElement
+
+      if (target.closest('[data-action="rollOtf"], [data-action="addModifier"]')) {
+        event.stopImmediatePropagation()
+        event.preventDefault()
+      }
+    })
   }
 
   /* ---------------------------------------- */
