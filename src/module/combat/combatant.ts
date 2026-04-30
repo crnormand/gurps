@@ -24,7 +24,7 @@ class GurpsCombatant<SubType extends Combatant.SubType = Combatant.SubType> exte
   // Reset token actions and remove maneuver
   protected override async _preDelete(
     options: Combatant.Database.PreDeleteOptions,
-    user: User.Implementation
+    user: User.Stored
   ): Promise<boolean | void> {
     await super._preDelete(options, user)
 

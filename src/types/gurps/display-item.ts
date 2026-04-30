@@ -10,7 +10,7 @@ interface BaseDisplayItem {
   /** The ID of this item */
   id: string
   /** The UUID of this item */
-  uuid: string
+  uuid: string | null
   /** The type of this item */
   type: string
   /** The document class of this item (always Item) */
@@ -141,7 +141,7 @@ interface BaseDisplayPseudoDocument {
   /** The ID of this pseudo-document */
   id: string
   /** The UUID of this item */
-  uuid: string
+  uuid: string | null
   /** The document class of this pseudo-document */
   documentName: string
   /** The name of this pseudo-document */
