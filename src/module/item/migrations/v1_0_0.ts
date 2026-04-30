@@ -309,7 +309,6 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.eqt,
     isContainer: Boolean(oldData.eqt.contains && Object.keys(oldData.eqt.contains).length > 0),
-    weightsum: oldData.eqt.weightsum.toString(),
     uses: Number(oldData.eqt.uses) || 0,
     maxuses: Number(oldData.eqt.maxuses) || 0,
     importid: oldData.eqt.uuid || '',

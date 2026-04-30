@@ -1186,8 +1186,6 @@ Portrait will not be imported.`
       equipped: equipment.equipped ?? false,
       techlevel: equipment.tech_level ?? '',
       categories: equipment.tags?.join(', ') ?? '',
-      costsum: equipment.calc?.extended_value || 0,
-      weightsum: equipment.calc?.extended_weight,
       uses: equipment.uses ?? 0,
       maxuses: equipment.max_uses ?? 0,
       originalCount: String(equipment.quantity ?? 1),

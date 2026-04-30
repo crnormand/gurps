@@ -1,3 +1,4 @@
+import { Weight } from '@module/data/common/weight.js'
 import { defineGetterProperties } from '@util/object-utils.js'
 import { arrayToObject } from '@util/utilities.js'
 
@@ -85,7 +86,7 @@ class EquipmentV1 {
   }
 
   get costsum(): number {
-    return this.equipmentV2.system.costsum
+    return this.equipmentV2.system.totalCost
   }
 
   get count(): number {
@@ -182,7 +183,7 @@ class EquipmentV1 {
   }
 
   get weightsum(): string {
-    return this.equipmentV2.system.weightsum
+    return Weight.fromPounds(this.equipmentV2.system.totalWeight).toString()
   }
 
   toggleOpen(expandOnly: boolean = false) {

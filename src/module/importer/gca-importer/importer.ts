@@ -967,8 +967,6 @@ Portrait will not be imported.`
       legalityclass,
       techlevel: equipment.tl ?? '',
       categories: equipment.cat,
-      costsum: parseFloat(equipment.calcs.postchildrencost || equipment.calcs.postformulacost || '0') || 0,
-      weightsum: equipment.calcs.postchildrenweight || equipment.calcs.postformulaweight || '',
       uses: 0,
       maxuses: 0,
     }
