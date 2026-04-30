@@ -90,17 +90,14 @@ export default class DamageChat {
    * @param {{ type: string; x: number; y: number; payload: any; }} dropData
    */
   static async _dropCanvasData(canvas, dropData) {
-    const actor = game.actors.get(dropData.actorid)
-
     switch (dropData.type) {
       case DragDropType.DAMAGE:
         await DamageChat._calculateAndSelectTargets(canvas, dropData)
-        break
-      case 'Item':
-        await actor.handleItemDrop(dropData)
+
+        return false
     }
 
-    return false
+    return true
   }
 
   /**
