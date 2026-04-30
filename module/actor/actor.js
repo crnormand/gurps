@@ -1060,9 +1060,10 @@ export class GurpsActor extends Actor {
   }
 
   async internalUpdate(data, context) {
-    //let ctx = { render: !this.ignoreRender }
     let ctx = { render: false }
+
     if (!!context) ctx = { ...context, ...ctx }
+
     await this.update(data, ctx)
   }
 
@@ -1434,7 +1435,9 @@ export class GurpsActor extends Actor {
       ui.notifications?.warn('NO ITEM DATA!')
       return
     }
+
     if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': dragData.uuid })
+
     this.ignoreRender = true
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       // Scenario 1: Work only for Equipment dropped
@@ -1522,7 +1525,7 @@ export class GurpsActor extends Actor {
         // 5. Update Actor System with new Component
         const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey))
         await GURPS.put(systemObject, actorComp)
-        await commitUpdate(this, replaceValue(targetKey, systemObject))
+        await commitUpdate(this, replaceValue(targetKey, { ...systemObject }))
         if (data.type === 'equipment') await Equipment.calc(actorComp)
 
         // 6. Process Child Items for created Item
@@ -1760,6 +1763,7 @@ export class GurpsActor extends Actor {
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
     const subTypes = ['melee', 'ranged', 'ads', 'skills', 'spells']
+
     if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       for (const subType of subTypes) {
         commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, subType)) }
@@ -1767,8 +1771,10 @@ export class GurpsActor extends Actor {
     } else {
       const parentItem = await this.items.get(itemData._id)
       let newList = {}
+
       for (const subType of subTypes) {
         newList = { ...foundry.utils.getProperty(this, `system.${subType}`) }
+
         if (!!parentItem.system[subType] && typeof parentItem.system[subType] === 'object') {
           for (const key in parentItem.system[subType]) {
             if (parentItem.system[subType].hasOwnProperty(key)) {

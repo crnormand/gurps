@@ -127,7 +127,7 @@ export default class MoveModeEditor extends Application {
           GURPS.put(move, { mode: 'other', basic: 0, default: !!empty })
 
           // add the new entries
-          await commitUpdate(this.actor, replaceValue('system.move', move))
+          await commitUpdate(this.actor, ...replaceValue('system.move', move))
         }
         break
 
@@ -162,7 +162,7 @@ export default class MoveModeEditor extends Application {
                 default: this.moveData[k].default,
               })
           }
-          await commitUpdate(this.actor, replaceValue('system.move', move))
+          await commitUpdate(this.actor, ...replaceValue('system.move', move))
         }
         break
 
