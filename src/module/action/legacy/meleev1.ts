@@ -45,7 +45,7 @@ class MeleeV1 {
   }
 
   get import() {
-    return this.meleeV2.import
+    return this.meleeV2.importedLevel
   }
 
   get itemModifiers() {

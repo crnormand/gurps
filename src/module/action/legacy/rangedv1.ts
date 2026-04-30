@@ -55,7 +55,7 @@ class RangedV1 {
   }
 
   get import() {
-    return this.rangedV2.import
+    return this.rangedV2.importedLevel
   }
 
   get itemModifiers() {

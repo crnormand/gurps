@@ -54,13 +54,12 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     const embedded = (model as unknown as gurps.MetadataOwner)?.metadata?.embedded ?? {}
 
     for (const [documentName, fieldPath] of Object.entries(embedded)) {
-      const data = foundry.utils.getProperty(this._source, fieldPath) as AnyObject
       const field = model.schema.getField(fieldPath.slice('system.'.length)) as CollectionField
 
       collections[documentName] = new (field.constructor as typeof CollectionField).implementation(
         documentName as any,
         this,
-        data
+        fieldPath
       )
     }
 

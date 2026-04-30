@@ -22,7 +22,6 @@ const withThresholdId = (data: Omit<ThresholdData, '_id'>): [string, ThresholdDa
 const defaultAttributes = (): Record<string, AttrData> => {
   return Object.fromEntries([
     withId({
-      sort: 0,
       attrId: 'st',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -33,7 +32,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 10,
     }),
     withId({
-      sort: 1,
       attrId: 'dx',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -44,7 +42,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 2,
       attrId: 'iq',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -55,7 +52,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 3,
       attrId: 'ht',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -66,7 +62,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 4,
       attrId: 'will',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -77,7 +72,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 5,
       attrId: 'fright_check',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -88,7 +82,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 6,
       attrId: 'per',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -99,7 +92,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 7,
       attrId: 'hearing',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -110,7 +102,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 8,
       attrId: 'vision',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -121,7 +112,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 9,
       attrId: 'taste_smell',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -132,7 +122,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 10,
       attrId: 'touch',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -143,7 +132,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 11,
       attrId: 'basic_speed',
       type: GcsAttributeDefinition.TYPES.Decimal,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -154,7 +142,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 12,
       attrId: 'basic_move',
       type: GcsAttributeDefinition.TYPES.Integer,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -165,7 +152,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
     }),
     withId({
-      sort: 13,
       attrId: 'fp',
       type: GcsAttributeDefinition.TYPES.Pool,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -176,7 +162,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 0,
       _thresholds: Object.fromEntries([
         withThresholdId({
-          sort: 0,
           state: 'Unconscious',
           value: '-$fp',
           explanation: '',
@@ -187,7 +172,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
           ],
         }),
         withThresholdId({
-          sort: 1,
           state: 'Collapse',
           value: '0',
           explanation:
@@ -201,7 +185,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
           ],
         }),
         withThresholdId({
-          sort: 2,
           state: 'Tired',
           value: 'Math.ceil($fp / 3) - 1',
           explanation: 'Move, Dodge and ST are halved (B426)',
@@ -212,14 +195,12 @@ const defaultAttributes = (): Record<string, AttrData> => {
           ],
         }),
         withThresholdId({
-          sort: 3,
           state: 'Tiring',
           value: '$fp - 1',
           explanation: '',
           ops: [],
         }),
         withThresholdId({
-          sort: 4,
           state: 'Rested',
           value: '$fp',
           explanation: '',
@@ -228,7 +209,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
       ]),
     }),
     withId({
-      sort: 14,
       attrId: 'hp',
       type: GcsAttributeDefinition.TYPES.Pool,
       placement: GcsAttributeDefinition.PLACEMENTS.Automatic,
@@ -239,14 +219,12 @@ const defaultAttributes = (): Record<string, AttrData> => {
       costAdjustmentPerSizeMod: 10,
       _thresholds: Object.fromEntries([
         withThresholdId({
-          sort: 0,
           state: 'Dead',
           value: 'Math.round(-$hp * 5)',
           explanation: '',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         }),
         withThresholdId({
-          sort: 1,
           state: 'Dying #4',
           value: 'Math.round(-$hp * 4)',
           explanation:
@@ -256,7 +234,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         }),
         withThresholdId({
-          sort: 2,
           state: 'Dying #3',
           value: 'Math.round(-$hp * 3)',
           explanation:
@@ -266,7 +243,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         }),
         withThresholdId({
-          sort: 3,
           state: 'Dying #2',
           value: 'Math.round(-$hp * 2)',
           explanation:
@@ -276,7 +252,6 @@ const defaultAttributes = (): Record<string, AttrData> => {
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         }),
         withThresholdId({
-          sort: 4,
           state: 'Dying #1',
           value: 'Math.round(-$hp * 1)',
           explanation:
@@ -286,28 +261,24 @@ const defaultAttributes = (): Record<string, AttrData> => {
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         }),
         withThresholdId({
-          sort: 5,
           state: 'Collapse',
           value: '0',
           explanation: '- Roll vs. HT every second to avoid falling unconscious' + '- Move and Dodge are halved (B419)',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         }),
         withThresholdId({
-          sort: 6,
           state: 'Reeling',
           value: 'Math.ceil($hp / 3) - 1',
           explanation: 'Move and Dodge are halved (B419)',
           ops: [GcsAttributeDefinition.OPS.HalveMove, GcsAttributeDefinition.OPS.HalveDodge],
         }),
         withThresholdId({
-          sort: 7,
           state: 'Wounded',
           value: '$hp - 1',
           explanation: '',
           ops: [],
         }),
         withThresholdId({
-          sort: 8,
           state: 'Healthy',
           value: '$hp',
           explanation: '',

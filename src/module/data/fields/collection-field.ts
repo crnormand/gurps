@@ -31,19 +31,6 @@ namespace CollectionField {
 
   export type Types = fields.TypedSchemaField.Types
 
-  // NOTE: This is technically possible but the types get very unwieldy and it's not clear if it's worth it. Revisit if we find a use case for it.
-  // export type Types<M extends TypedPseudoDocument.ConcreteConstructor> = [
-  //   TypedPseudoDocument.DocumentNameOf<M>,
-  // ] extends [infer DocumentName extends gurps.Pseudo.WithTypes]
-  //   ? {
-  //       [K in keyof PseudoDocumentConfig.Types[DocumentName]]: PseudoDocumentConfig.Types[DocumentName][K] extends gurps.Pseudo.ConfigEntry<
-  //         infer Doc
-  //       >
-  //         ? fields.EmbeddedDataField<Doc>
-  //         : never
-  //     }
-  //   : fields.TypedSchemaField.Types
-
   /* ---------------------------------------- */
 
   export type Options<BaseAssignmentType> = fields.TypedObjectField.Options<BaseAssignmentType>
@@ -55,11 +42,6 @@ namespace CollectionField {
   export type Element<M extends Model> = M extends TypedPseudoDocument.ConcreteConstructor
     ? LazyTypedSchemaField<Types>
     : fields.EmbeddedDataField<M>
-
-  // NOTE: This is technically possible but the types get very unwieldy and it's not clear if it's worth it. Revisit if we find a use case for it.
-  // export type Element<M extends Model> = M extends TypedPseudoDocument.ConcreteConstructor
-  //   ? LazyTypedSchemaField<Types<M>>
-  //   : fields.EmbeddedDataField<M>
 
   /* ---------------------------------------- */
 
@@ -101,10 +83,16 @@ class CollectionField<
 > extends fields.TypedObjectField<Element, Options, AssignmentType, InitializedType, PersistedType> {
   /* ---------------------------------------- */
 
-  constructor(model: Model, options?: Options, context?: fields.DataField.ConstructionContext) {
+  constructor(model: Model, options: Options = {} as Options, context?: fields.DataField.ConstructionContext) {
+    if (!foundry.utils.isSubclass(model, PseudoDocument)) {
+      throw new Error('A CollectionField can only be instantiated with a PseudoDocument subclass.')
+    }
+
     const field = foundry.utils.isSubclass(model, TypedPseudoDocument)
       ? (new LazyTypedSchemaField(model.TYPES) as unknown as Element)
       : (new fields.EmbeddedDataField(model) as unknown as Element)
+
+    options.validateKey ||= key => foundry.data.validators.isValidId(key)
 
     super(field, options, context)
     this.#documentClass = model
@@ -137,6 +125,26 @@ class CollectionField<
    */
   get documentClass(): Model {
     return this.#documentClass
+  }
+
+  /* ---------------------------------------- */
+
+  override getInitialValue(data?: unknown): InitializedType {
+    const initial = super.getInitialValue(data) as InitializedType
+
+    if (!initial || typeof initial !== 'object') return initial
+
+    // DataField.clean() returns getInitialValue() as-is when value is undefined, bypassing _cleanType.
+    // This means partial initial objects would skip element-level cleaning and fail schema validation.
+    // We clean each entry through the element here so required fields with defaults are properly filled in.
+    const cloned = foundry.utils.deepClone(initial) as InitializedType
+
+    for (const key in cloned) {
+      // @ts-expect-error: element.clean signature varies between Foundry versions
+      cloned[key] = this.element.clean(cloned[key])
+    }
+
+    return cloned
   }
 
   /* ---------------------------------------- */
@@ -193,16 +201,14 @@ class CollectionField<
     for (let [id, doc] of Object.entries(diff)) {
       if (foundry.utils.isDeletionKey(id)) {
         if (id.startsWith('-')) {
-          // @ts-expect-error: this is difficult to type
-          delete source[key][id.slice(2)]
+          delete (source[key] as AnyMutableObject)[id.slice(2)]
           continue
         }
 
         id = id.slice(2)
         // @ts-expect-error: fvtt-types not yet updated
       } else if (doc instanceof foundry.data.operators.ForcedDeletion) {
-        // @ts-expect-error: this is difficult to type
-        delete source[key][id]
+        delete (source[key] as AnyMutableObject)[id]
         continue
       }
 
@@ -211,7 +217,10 @@ class CollectionField<
       if (prior) {
         this.element._updateCommit(src, id, value[id], doc, options)
         src[id] = prior
-      } else src[id] = doc
+      } else {
+        // @ts-expect-error: element.clean signature varies between Foundry versions
+        src[id] = this.element.clean(doc)
+      }
     }
   }
 }

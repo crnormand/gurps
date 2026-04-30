@@ -136,13 +136,13 @@ const gcsHitLocationSchema = () => {
   return {
     ...pseudoDocumentSchema(),
     // NOTE: If _owningTable is null, the location is owned by the top-level table.
-    _owningTable: new fields.StringField({ required: true, nullable: true, readonly: true }),
+    _owningTable: new fields.StringField({ required: true, nullable: true, readonly: true, initial: null }),
     locationId: new fields.StringField({ required: true, nullable: false }),
     choiceName: new fields.StringField({ required: true, nullable: false }),
     tableName: new fields.StringField({ required: true, nullable: false }),
     slots: new fields.NumberField({ required: true, nullable: false }),
     hitPenalty: new fields.NumberField({ required: true, nullable: false }),
-    drBonus: new fields.NumberField({ required: true, nullable: false }),
+    drBonus: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     description: new fields.StringField({ required: true, nullable: false }),
     notes: new fields.StringField({ required: true, nullable: false }),
   }

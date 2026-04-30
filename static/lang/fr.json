@@ -47,7 +47,7 @@
           "extraAttacks": {
             "label": "Attaques supplémentaires"
           },
-          "import": {
+          "importedLevel": {
             "label": "Niveau de base"
           },
           "itemModifiers": {
@@ -221,37 +221,37 @@
           },
           "attributes": {
             "DX": {
-              "import": {
+              "importedValue": {
                 "label": "Dextérité (DX)"
               }
             },
             "HT": {
-              "import": {
+              "importedValue": {
                 "label": "Santé (HT)"
               }
             },
             "IQ": {
-              "import": {
+              "importedValue": {
                 "label": "Intelligence (IQ)"
               }
             },
             "PER": {
-              "import": {
+              "importedValue": {
                 "label": "Perception (Per)"
               }
             },
             "QN": {
-              "import": {
+              "importedValue": {
                 "label": "Quintessence (QN)"
               }
             },
             "ST": {
-              "import": {
+              "importedValue": {
                 "label": "Force (ST)"
               }
             },
             "WILL": {
-              "import": {
+              "importedValue": {
                 "label": "Volonté"
               }
             }
@@ -1329,7 +1329,7 @@
           "difficulty": {
             "label": "Difficulté"
           },
-          "import": {
+          "importedLevel": {
             "label": "Niveau"
           },
           "points": {
@@ -1366,7 +1366,7 @@
           "duration": {
             "label": "Durée"
           },
-          "import": {
+          "importedLevel": {
             "label": "Niveau"
           },
           "maintain": {
@@ -1446,8 +1446,7 @@
         "successMessage": "Migrations d'Acteur appliquées avec succès pour la version {version}."
       },
       "holderItem": {
-        "name": "Actions & Modificateurs Personnels",
-        "notes": "Ceci est un objet temporaire utilisé pour contenir toutes les Réactions, Modificateurs Conditionnels et Armes après la migration du personnage. Pour déplacer ces éléments à leur place appropriée, veuillez réimporter ce personnage depuis GCS ou GCA."
+        "name": "Actions & Modificateurs Personnels"
       },
       "item": {
         "progressMessage": "Application des migrations d'Objet pour la version {version}, veuillez patienter...",

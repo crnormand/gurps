@@ -47,7 +47,7 @@
           "extraAttacks": {
             "label": "Extra Attacks"
           },
-          "import": {
+          "importedLevel": {
             "label": "Base Level"
           },
           "itemModifiers": {
@@ -221,37 +221,37 @@
           },
           "attributes": {
             "DX": {
-              "import": {
+              "importedValue": {
                 "label": "Dexterity (DX)"
               }
             },
             "HT": {
-              "import": {
+              "importedValue": {
                 "label": "Health (HT)"
               }
             },
             "IQ": {
-              "import": {
+              "importedValue": {
                 "label": "Intelligence (IQ)"
               }
             },
             "PER": {
-              "import": {
+              "importedValue": {
                 "label": "Perception (Per)"
               }
             },
             "QN": {
-              "import": {
+              "importedValue": {
                 "label": "Quintessence (QN)"
               }
             },
             "ST": {
-              "import": {
+              "importedValue": {
                 "label": "Strength (ST)"
               }
             },
             "WILL": {
-              "import": {
+              "importedValue": {
                 "label": "Will"
               }
             }
@@ -1329,7 +1329,7 @@
           "difficulty": {
             "label": "Difficulty"
           },
-          "import": {
+          "importedLevel": {
             "label": "Level"
           },
           "points": {
@@ -1366,7 +1366,7 @@
           "duration": {
             "label": "Duration"
           },
-          "import": {
+          "importedLevel": {
             "label": "Level"
           },
           "maintain": {
@@ -1446,8 +1446,7 @@
         "successMessage": "Successfully applied Actor migrations for version {version}."
       },
       "holderItem": {
-        "name": "Personal Actions & Modifiers",
-        "notes": "This is a temporary item used to hold all Reactions, Conditional Modifiers, and Weapons after Character migration. To move these entities back to their proper places, please re-import this Character from GCS or GCA."
+        "name": "Personal Actions & Modifiers"
       },
       "item": {
         "progressMessage": "Applying Item migrations for version {version}, please wait...",

@@ -5,7 +5,7 @@ import { RangedAttackModel } from '@module/action/ranged-attack.js'
 /* ---------------------------------------- */
 
 const rangedDefaults = () => ({
-  import: 0,
+  importedLevel: 0,
   otf: '',
   damage: [],
   consumeAction: true,

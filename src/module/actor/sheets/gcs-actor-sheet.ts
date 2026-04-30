@@ -292,29 +292,29 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     return {
       ST: {
-        field: attributeFields.ST.fields.import,
+        field: attributeFields.ST.fields.importedValue,
         name: 'ST',
-        value: attributeSource.ST.import,
+        value: attributeSource.ST.importedValue,
       },
       DX: {
-        field: attributeFields.DX.fields.import,
+        field: attributeFields.DX.fields.importedValue,
         name: 'DX',
-        value: attributeSource.DX.import,
+        value: attributeSource.DX.importedValue,
       },
       IQ: {
-        field: attributeFields.IQ.fields.import,
+        field: attributeFields.IQ.fields.importedValue,
         name: 'IQ',
-        value: attributeSource.IQ.import,
+        value: attributeSource.IQ.importedValue,
       },
       HT: {
-        field: attributeFields.HT.fields.import,
+        field: attributeFields.HT.fields.importedValue,
         name: 'HT',
-        value: attributeSource.HT.import,
+        value: attributeSource.HT.importedValue,
       },
       WILL: {
-        field: attributeFields.WILL.fields.import,
+        field: attributeFields.WILL.fields.importedValue,
         name: 'WILL',
-        value: attributeSource.WILL.import,
+        value: attributeSource.WILL.importedValue,
       },
       frightCheck: {
         field: systemFields.frightcheck,
@@ -322,9 +322,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         value: systemSource.frightcheck,
       },
       PER: {
-        field: attributeFields.PER.fields.import,
+        field: attributeFields.PER.fields.importedValue,
         name: 'PER',
-        value: attributeSource.PER.import,
+        value: attributeSource.PER.importedValue,
       },
       vision: {
         field: systemFields.vision,

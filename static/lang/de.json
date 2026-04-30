@@ -47,7 +47,7 @@
           "extraAttacks": {
             "label": "Zusätzliche Angriffe"
           },
-          "import": {
+          "importedLevel": {
             "label": "Grundstufe"
           },
           "itemModifiers": {
@@ -221,37 +221,37 @@
           },
           "attributes": {
             "DX": {
-              "import": {
+              "importedValue": {
                 "label": "Geschicklichkeit (DX)"
               }
             },
             "HT": {
-              "import": {
+              "importedValue": {
                 "label": "Konstitution (HT)"
               }
             },
             "IQ": {
-              "import": {
+              "importedValue": {
                 "label": "Intelligenz (IQ)"
               }
             },
             "PER": {
-              "import": {
+              "importedValue": {
                 "label": "Wahrnehmung (Per)"
               }
             },
             "QN": {
-              "import": {
+              "importedValue": {
                 "label": "Quintessenz (QN)"
               }
             },
             "ST": {
-              "import": {
+              "importedValue": {
                 "label": "Stärke (ST)"
               }
             },
             "WILL": {
-              "import": {
+              "importedValue": {
                 "label": "Wille"
               }
             }
@@ -1329,7 +1329,7 @@
           "difficulty": {
             "label": "Schwierigkeit"
           },
-          "import": {
+          "importedLevel": {
             "label": "Stufe"
           },
           "points": {
@@ -1366,7 +1366,7 @@
           "duration": {
             "label": "Dauer"
           },
-          "import": {
+          "importedLevel": {
             "label": "Stufe"
           },
           "maintain": {
@@ -1446,8 +1446,7 @@
         "successMessage": "Charakter-Migrationen für Version {version} erfolgreich angewendet."
       },
       "holderItem": {
-        "name": "Persönliche Aktionen & Modifikatoren",
-        "notes": "Dies ist ein temporäres Objekt, das alle Reaktionen, bedingten Modifikatoren und Waffen nach der Charaktermigration enthält. Um diese Elemente wieder an ihren richtigen Platz zu bringen, importieren Sie diesen Charakter bitte erneut aus GCS oder GCA."
+        "name": "Persönliche Aktionen & Modifikatoren"
       },
       "item": {
         "progressMessage": "Objekt-Migrationen für Version {version} werden angewendet, bitte warten...",

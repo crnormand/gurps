@@ -12,7 +12,7 @@ class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
       drItem: entry.drItem,
       drMod: entry.drMod,
       equipment: '',
-      import: entry.import,
+      import: entry.importedDR,
       penalty: entry.penalty,
       roll: entry.rollText,
       where: entry.where,
@@ -27,7 +27,7 @@ class HitLocationEntryV1 extends DataModel<HitLocationSchemaV1> {
     entryV2.drCap = newData.drCap ?? entryV2.drCap
     entryV2.drItem = newData.drItem ?? entryV2.drItem
     entryV2.drMod = newData.drMod ?? entryV2.drMod
-    entryV2.import = newData.import ?? entryV2.import
+    entryV2.importedDR = newData.import ?? entryV2.importedDR
     entryV2.penalty = newData.penalty ?? entryV2.penalty
     entryV2.rollText = newData.roll ?? entryV2.rollText
     entryV2.where = newData.where ?? entryV2.where

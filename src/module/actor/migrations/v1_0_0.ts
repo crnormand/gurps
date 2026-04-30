@@ -206,7 +206,6 @@ function migrateActorSource(source: AnyMutableObject): AnyMutableObject {
 
       const holderItemSystem: fields.SchemaField.CreateData<DataModel.SchemaOf<Item.SystemOfType<ItemType.Trait>>> = {
         containedBy: null,
-        notes: game.i18n?.localize('GURPS.migration.holderItem.notes'),
         points: 0,
         _reactions: {},
         _conditionalmods: {},
@@ -323,7 +322,9 @@ function migrateActorSystem(
   const newData: fields.SchemaField.CreateData<DataModel.SchemaOf<Actor.SystemOfType<ActorType.Character>>> = {
     ...injectedData,
     holderItemId,
-    attributes: oldData.attributes,
+    attributes: Object.fromEntries(
+      Object.entries(oldData.attributes).map(([key, val]) => [key, { ...val, importedValue: val.import }])
+    ),
     HP: { ...oldData.HP, damage: oldData.HP.max - oldData.HP.value },
     FP: { ...oldData.FP, damage: oldData.FP.max - oldData.FP.value },
     QP: { ...oldData.QP, damage: oldData.QP.max - oldData.QP.value },
@@ -448,12 +449,10 @@ function migrateActorSystem(
       const location: DataModel.CreateData<DataModel.SchemaOf<HitLocationEntryV2>> = {
         ...hitlocation,
         _id: id,
-        import: hitlocation.import,
+        importedDR: hitlocation.import,
         _dr: hitlocation.import,
         rollText: hitlocation.roll,
         _damageType: !hitlocation._damageType ? null : hitlocation._damageType,
-        name: '',
-        sort: 0,
         penalty,
         split: hitlocation.split ?? {},
         drMod: hitlocation.drMod ?? 0,
@@ -476,13 +475,8 @@ function migrateActorSystem(
       markdown: data.notes,
       importid: data.uuid,
       _id: id,
-      open: true,
-      name: '',
-      sort: 0,
-      title: '',
       reference: data.pageref ?? '',
       reference_highlight: '',
-      save: false,
     }
 
     newData.allNotes![id] = note

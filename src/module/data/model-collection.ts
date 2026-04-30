@@ -18,7 +18,7 @@ class ModelCollection<Model extends PseudoDocument.Any = PseudoDocument.Any> ext
 
   /* ---------------------------------------- */
 
-  constructor(documentName: gurps.Pseudo.Name, document: gurps.Pseudo.ParentDocument, data: AnyObject) {
+  constructor(documentName: gurps.Pseudo.Name, document: gurps.Pseudo.ParentDocument, fieldPath: string) {
     super()
     // @ts-expect-error: The types here are very difficult to express, and the properties are only used internally, so
     // we can ignore the type errors.
@@ -26,8 +26,16 @@ class ModelCollection<Model extends PseudoDocument.Any = PseudoDocument.Any> ext
 
     Object.defineProperties(this, {
       name: { value: name, writable: false },
-      _source: { value: data, writable: false },
       documentClass: { value: ModelCollection.documentClasses[documentName], writable: false },
+    })
+
+    // Use a live getter so that if the parent document's _source is replaced wholesale
+    // (e.g. by TypeDataField._updateCommit with ForcedReplacement during migration), the
+    // collection always reads through the current reference rather than a stale snapshot.
+    Object.defineProperty(this, '_source', {
+      get: () => foundry.utils.getProperty(document._source, fieldPath) as Record<string, object>,
+      configurable: false,
+      enumerable: false,
     })
   }
 
@@ -228,8 +236,7 @@ class ModelCollection<Model extends PseudoDocument.Any = PseudoDocument.Any> ext
     let doc = this.get(data._id as string)
 
     if (doc) {
-      // The document exists, reinitialize with new source data.
-      // @ts-expect-error: we know the source is mutable, but the type doesn't reflect that
+      // @ts-expect-error: Accessing protected property.
       doc._initialize(options)
 
       return doc

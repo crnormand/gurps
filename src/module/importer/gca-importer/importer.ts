@@ -233,7 +233,7 @@ Portrait will not be imported.`
       const attribute = this.input.traits.attributes.find(attr => attr.name.toLowerCase() === key.toLowerCase())
 
       this.output.attributes[key === 'PERCEPTION' ? 'PER' : key] = {
-        import: attribute?.score ?? 10,
+        importedValue: attribute?.score ?? 10,
         points: attribute?.points ?? 0,
       }
     }
@@ -302,7 +302,7 @@ Portrait will not be imported.`
     }
 
     // Import Basic Thrust and Basic Swing damage
-    const st = this.output.attributes?.ST?.import ?? 0
+    const st = this.output.attributes?.ST?.importedValue ?? 0
 
     let basicDamageEntry = this.input.basicdamages.find(damageEntry => damageEntry.st === st)
 
@@ -380,8 +380,6 @@ Portrait will not be imported.`
       _id: foundry.utils.randomID(),
       basic: basicMove?.score ?? 0,
       enhanced: enhancedMove?.score ?? 0,
-      name: '',
-      sort: 0,
     }
   }
 
@@ -482,17 +480,12 @@ Portrait will not be imported.`
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
           where: location.location ?? '',
-          import: totalDR,
+          importedDR: totalDR,
           _dr: totalDR,
           rollText: roll,
           penalty: Number(location.penalty) || 0,
-          split: {},
           role: role as HitLocationRole | null,
-          name: '',
-          sort: 0,
           _damageType: null,
-          drMod: 0,
-          drItem: 0,
           drCap: totalDR,
         }
 
@@ -512,12 +505,12 @@ Portrait will not be imported.`
     // No need to run this if there is no existing actor
     if (!this.actor) return
 
+    const currentHitLocationNullifiers = Object.fromEntries(
+      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
+    )
+
     // On first import, always replace the hit location table
     if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
-      const currentHitLocationNullifiers = Object.fromEntries(
-        this.actor.system.hitlocationsV2.map(location => [`${location._id}`, _del])
-      )
-
       this.output.hitlocationsV2 = {
         ...this.output.hitlocationsV2,
         ...currentHitLocationNullifiers,
@@ -546,16 +539,20 @@ Portrait will not be imported.`
       })
     )
 
-    const currentHitLocationNullifiers = Object.fromEntries(
-      this.actor.system.hitlocationsV2.map(location => [`${location._id}`, _del])
-    )
-
     const bodyPlansAreEqual = () => {
       const oldLocations = Object.values(currentHitLocations).map(({ _id, ...rest }) => rest)
 
       const newLocations = Object.values(
         this.output.hitlocationsV2 as Record<string, foundry.data.fields.SchemaField.CreateData<HitLocationSchemaV2>>
-      ).map(({ _id, flags, img, name, sort, _damageType, drCap, drItem, drMod, ...rest }) => rest)
+      ).map(({ where, importedDR, penalty, _dr, rollText, split, role, ..._rest }) => ({
+        where,
+        importedDR,
+        penalty,
+        _dr,
+        rollText,
+        split,
+        role,
+      }))
 
       if (oldLocations.length !== newLocations.length) return false
 
@@ -755,7 +752,7 @@ Portrait will not be imported.`
       baseParryPenalty: -4,
       block,
       damage,
-      import: level,
+      importedLevel: level,
       itemModifiers: '',
       mode: weapon.name ?? '',
       modifierTags: '',
@@ -788,7 +785,7 @@ Portrait will not be imported.`
       _id,
       acc: weapon.characc ?? '',
       damage,
-      import: level,
+      importedLevel: level,
       itemModifiers: '',
       mode: weapon.name ?? '',
       modifierTags: '',
@@ -873,7 +870,7 @@ Portrait will not be imported.`
       points: skill.points ?? 0,
       difficulty: skill.type ?? '',
       relativelevel: `${skill.stepoff}${skill.step}`,
-      import: skill.level ?? 0,
+      importedLevel: skill.level ?? 0,
     }
 
     skill.getChildren(this.input.traits.skills)?.forEach((child: GCATrait) => this.#importSkill(child, _id))
@@ -929,7 +926,7 @@ Portrait will not be imported.`
       points: spell.points ?? 0,
       difficulty: spell.type ?? '',
       relativelevel: `${spell.stepoff}${spell.step}`,
-      import: spell.level ?? 0,
+      importedLevel: spell.level ?? 0,
       class: spellClass,
       college,
       cost: spellCost,

@@ -359,7 +359,7 @@ Portrait will not be imported.`
       const attribute = this.input.attributes.find(attr => attr.attr_id === key.toLowerCase())
 
       this.output.attributes[key] = {
-        import: attribute?.calc.value ?? 10,
+        importedValue: attribute?.calc.value ?? 10,
         points: attribute?.calc.points ?? 0,
       }
     }
@@ -385,7 +385,7 @@ Portrait will not be imported.`
         this.output[key] = {
           min: 0,
           max: attribute.calc.value,
-          damage: attribute.damage,
+          damage: attribute.damage || 0,
           points: attribute.calc.points,
         }
       } else {
@@ -544,17 +544,13 @@ Portrait will not be imported.`
         const newLocation: DataModel.CreateData<HitLocationSchemaV2> = {
           _id: id,
           where: location.table_name ?? '',
-          import: totalDR,
+          importedDR: totalDR,
           _dr: totalDR,
           penalty: location.hit_penalty ?? 0,
           rollText: location.calc.roll_range ?? '-',
           split,
           role: role as HitLocationRole | null,
-          name: '',
-          sort: 0,
           _damageType: null,
-          drMod: 0,
-          drItem: 0,
           drCap: totalDR,
         }
 
@@ -574,12 +570,12 @@ Portrait will not be imported.`
     // No need to run this if there is no existing actor
     if (!this.actor) return
 
+    const currentHitLocationNullifiers = Object.fromEntries(
+      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
+    )
+
     // On first import, always replace the hit location table
     if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
-      const currentHitLocationNullifiers = Object.fromEntries(
-        this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
-      )
-
       this.output.hitlocationsV2 = {
         ...this.output.hitlocationsV2,
         ...currentHitLocationNullifiers,
@@ -608,16 +604,20 @@ Portrait will not be imported.`
       })
     )
 
-    const currentHitLocationNullifiers = Object.fromEntries(
-      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
-    )
-
     const bodyPlansAreEqual = () => {
       const oldLocations = Object.values(currentHitLocations).map(({ _id, ...rest }) => rest)
 
       const newLocations = Object.values(
         this.output.hitlocationsV2 as Record<string, foundry.data.fields.SchemaField.CreateData<HitLocationSchemaV2>>
-      ).map(({ _id, flags, img, name, sort, _damageType, drCap, drItem, drMod, ...rest }) => rest)
+      ).map(({ where, importedDR, penalty, _dr, rollText, split, role, ..._rest }) => ({
+        where,
+        importedDR,
+        penalty,
+        _dr,
+        rollText,
+        split,
+        role,
+      }))
 
       if (oldLocations.length !== newLocations.length) return false
 
@@ -972,7 +972,7 @@ Portrait will not be imported.`
       baseParryPenalty: -4,
       block,
       damage: [weapon.calc?.damage || ''],
-      import: weapon.calc?.level || 0,
+      importedLevel: weapon.calc?.level || 0,
       itemModifiers: '',
       mode: weapon.usage || '',
       modifierTags: '',
@@ -1000,7 +1000,7 @@ Portrait will not be imported.`
       acc: weapon.calc?.accuracy || weapon.accuracy || '',
       bulk: weapon.calc?.bulk || weapon.bulk || '0',
       damage: [weapon.calc?.damage || ''],
-      import: weapon.calc?.level || 0,
+      importedLevel: weapon.calc?.level || 0,
       itemModifiers: '',
       modifierTags: '',
       notes: weapon.usage_notes || '',
@@ -1039,7 +1039,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      sort: index,
+      sort: index * CONST.SORT_INTEGER_DENSITY,
       system,
     }
 
@@ -1063,7 +1063,7 @@ Portrait will not be imported.`
       points: skill.points ?? 0,
       difficulty: skill.difficulty ?? '',
       relativelevel: skill.calc?.rsl ?? '',
-      import: skill.calc?.level ?? 0,
+      importedLevel: skill.calc?.level ?? 0,
       specialization: skill.specialization ?? '',
       techlevel: skill.tech_level ?? '',
     }
@@ -1074,7 +1074,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      sort: index,
+      sort: index * CONST.SORT_INTEGER_DENSITY,
       system,
     }
 
@@ -1098,7 +1098,7 @@ Portrait will not be imported.`
       points: spell.points ?? 0,
       difficulty: spell.difficulty ?? '',
       relativelevel: spell.calc?.rsl ?? '',
-      import: spell.calc?.level ?? 0,
+      importedLevel: spell.calc?.level ?? 0,
       class: spell.spell_class ?? '',
       college: spell.college?.join(', ') ?? '',
       cost: spell.casting_cost ?? '',
@@ -1115,7 +1115,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      sort: index,
+      sort: index * CONST.SORT_INTEGER_DENSITY,
       system,
     }
 
@@ -1169,7 +1169,7 @@ Portrait will not be imported.`
       _id,
       type,
       name,
-      sort: index,
+      sort: index * CONST.SORT_INTEGER_DENSITY,
       system,
     }
 
@@ -1192,7 +1192,6 @@ Portrait will not be imported.`
   #importNote(gcsNote: GcsNote, containedBy: string | null): void {
     const note: DataModel.CreateData<NoteV2Schema> = {
       _id: foundry.utils.randomID(),
-      open: true,
       containedBy,
       markdown: gcsNote.markdown,
       text: gcsNote.text,
@@ -1202,10 +1201,6 @@ Portrait will not be imported.`
       calc: {
         resolved_notes: gcsNote.calc?.resolved_notes ?? null,
       },
-      name: '',
-      sort: 0,
-      title: '',
-      save: false,
     }
 
     const existingNote = (this.actor?.system.allNotes.contents ?? []).find(

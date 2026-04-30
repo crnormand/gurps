@@ -4,7 +4,7 @@ import { fields, DataModel } from '@gurps-types/foundry/index.js'
 
 const attributeSchema = () => {
   return {
-    import: new fields.NumberField({ required: true, nullable: false, initial: 10 }),
+    importedValue: new fields.NumberField({ required: true, nullable: false, initial: 10 }),
     value: new fields.NumberField({ required: true, nullable: false, initial: 10 }),
     points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
   }
