@@ -1524,8 +1524,8 @@ export class GurpsActor extends Actor {
 
         // 5. Update Actor System with new Component
         const systemObject = foundry.utils.duplicate(foundry.utils.getProperty(this, targetKey))
-        await GURPS.put(systemObject, actorComp)
-        await commitUpdate(this, replaceValue(targetKey, { ...systemObject }))
+        await GURPS.put(systemObject, { ...actorComp })
+        await commitUpdate(this, replaceValue(targetKey, systemObject))
         if (data.type === 'equipment') await Equipment.calc(actorComp)
 
         // 6. Process Child Items for created Item
@@ -1926,7 +1926,7 @@ export class GurpsActor extends Actor {
     actorComp.fromItem = parentItem._id
     const importer = new ActorImporter(this)
     actorComp = await importer._processItemFrom(actorComp, '')
-    GURPS.put(list, actorComp)
+    GURPS.put(list, { ...actorComp })
     return { ['system.' + key]: list }
   }
 

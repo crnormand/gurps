@@ -1695,7 +1695,7 @@ if (!globalThis.GURPS) {
         a[v] = object[v]
         return a
       }, {}) // Enforced key order
-    await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
+    await actor.internalUpdate({ [objpath]: { ...sorted } }, { diff: false })
   }
   GURPS.insertBeforeKey = insertBeforeKey
 
