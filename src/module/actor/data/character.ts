@@ -397,14 +397,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const onlyCountEquipped = this.getSetting(Settings.SETTING_CHECK_EQUIPPED, false)
 
     const carriedItems = onlyCountEquipped
-      ? this.allEquipmentCarried.filter(item => item.system.equipped)
-      : this.allEquipmentCarried
+      ? this.equipmentV2.carried.filter(item => item.system.equipped)
+      : this.equipmentV2.carried
 
     this.eqtsummary = {
-      eqtcost: roundTo(carriedItems.reduce((acc, item) => acc + item.system.cost * item.system.count, 0)),
-      eqtlbs: roundTo(carriedItems.reduce((acc, item) => acc + item.system.weight * item.system.count, 0)),
-      othercost: roundTo(this.allEquipmentOther.reduce((acc, item) => acc + item.system.cost * item.system.count, 0)),
-      otherlbs: roundTo(this.allEquipmentOther.reduce((acc, item) => acc + item.system.weight * item.system.count, 0)),
+      eqtcost: roundTo(carriedItems.reduce((acc, item) => acc + item.system.totalCost, 0)),
+      eqtlbs: roundTo(carriedItems.reduce((acc, item) => acc + item.system.totalWeight, 0)),
+      othercost: roundTo(this.equipmentV2.other.reduce((acc, item) => acc + item.system.totalCost, 0)),
+      otherlbs: roundTo(this.equipmentV2.other.reduce((acc, item) => acc + item.system.totalWeight, 0)),
     }
   }
 
