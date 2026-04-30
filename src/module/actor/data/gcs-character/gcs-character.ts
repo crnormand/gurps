@@ -149,7 +149,7 @@ const gcsCharacterSchema = () => {
       required: true,
       nullable: false,
       initial: (data: any) =>
-        data.settings?._attributes ? GcsAttribute.setFromDefinitions(data.settings._attributes) : {},
+        data?.settings?._attributes ? GcsAttribute.setFromDefinitions(data.settings._attributes) : {},
     }),
     createdOn: new fields.StringField({ required: true, nullable: false }),
     modifiedOn: new fields.StringField({ required: true, nullable: false }),
