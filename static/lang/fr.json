@@ -1455,15 +1455,6 @@
       "report": {
         "message": "La migration du monde est maintenant terminée. Voir la liste ci-dessous pour les détails.",
         "title": "Rapport de migration"
-      },
-      "toV1_0_0": {
-        "cancel": "Annuler la migration",
-        "cancellationMessage": "Migration annulée. Veuillez sauvegarder votre monde et réessayer lorsque vous serez prêt.",
-        "notGMMessage": "Le lancement de ce Monde déclenchera une migration à sens unique vers le nouveau modèle de données GGA v1.0.0. Cette action est réservée au MJ uniquement. Vous serez déconnecté immédiatement.",
-        "proceed": "Lancer la migration",
-        "proceedText": "Voulez-vous poursuivre la migration ?",
-        "title": "Migration GGA v1.0.0",
-        "warningText": "GGA v1.0.0 a apporté des changements importants aux structures de données sous-jacentes afin de prendre en charge de nouvelles fonctionnalités et d'améliorer les performances. En conséquence, un processus de migration à sens unique convertira votre monde existant vers le nouveau format. Cette opération ne peut pas être annulée. Veuillez sauvegarder votre monde avant de continuer."
       }
     },
     "minDamageRule": "Dégâts min.:",

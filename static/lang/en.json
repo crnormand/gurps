@@ -1455,15 +1455,6 @@
       "report": {
         "message": "World migration is now complete. See the list below for details.",
         "title": "Migration Report"
-      },
-      "toV1_0_0": {
-        "cancel": "Cancel Migration",
-        "cancellationMessage": "Migration cancelled. Please back up your world and try again when you are ready.",
-        "notGMMessage": "Launching this world will trigger a one-way migration to the new GGA v1.0.0 data model. This action should be reserved for the GM only. You will be logged out immediately.",
-        "proceed": "Proceed with Migration",
-        "proceedText": "Do you want to proceed with the migration?",
-        "title": "GGA v1.0.0 Migration",
-        "warningText": "GGA v1.0.0 has made significant changes to the underlying data structures in order to support new features and improve performance. As a result, there is a one-way migration process that will convert your existing world to the new format. This process cannot be undone, so please make sure to back up your world before proceeding."
       }
     },
     "minDamageRule": "Min. Damage:",
