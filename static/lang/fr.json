@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} pour Équilibre Parfait",
     "FP": "PF",
     "frightcheck": "Résistance à la peur",
+    "frightCheck": "Résistance à la peur",
     "fromEllipses": "De ...",
     "gameAidUsersGuide": "GURPS 4e GUIDE UTILISATEUR Aide de Jeu",
     "grapplingControlled": "Contrôlé",
@@ -1344,7 +1345,8 @@
           "techlevel": {
             "label": "TL"
           }
-        }
+        },
+        "techniqueDefaultNote": "Défaut : {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1805,10 +1807,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Titre" },
-          "markdown": { "label": "Texte" },
-          "reference": { "label": "Référence" },
-          "reference_highlight": { "label": "Mise en évidence de la référence" }
+          "markdown": {
+            "label": "Texte"
+          },
+          "reference": {
+            "label": "Référence"
+          },
+          "reference_highlight": {
+            "label": "Mise en évidence de la référence"
+          },
+          "title": {
+            "label": "Titre"
+          }
         }
       }
     },
