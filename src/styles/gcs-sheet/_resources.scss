@@ -106,27 +106,3 @@ section[data-application-part='resources'] {
     }
   }
 }
-
-/* ---------------------------------------- */
-
-// Pool threshold tooltip (rendered outside the sheet application).
-.gcs-pool-tooltip {
-  font-family: 'Roboto', sans-serif;
-
-  .threshold {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-
-    .value {
-      text-align: right;
-      font-weight: 700;
-    }
-
-    .condition {
-      text-align: left;
-      margin-left: 0.25rem;
-    }
-  }
-}

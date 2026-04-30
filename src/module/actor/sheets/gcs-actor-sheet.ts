@@ -480,7 +480,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       name: `GURPS.${key}`,
       state: text,
       color,
-      thresholds,
+      thresholds: thresholds.map(({ state, value }) => ({ state: `GURPS.status.${state}`, value })),
     }
   }
 
