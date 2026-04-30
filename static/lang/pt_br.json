@@ -1811,6 +1811,14 @@
         "type": {
           "label": "Tipo"
         }
+      },
+      "note": {
+        "FIELDS": {
+          "title": { "label": "Título" },
+          "markdown": { "label": "Texto" },
+          "reference": { "label": "Referência" },
+          "reference_highlight": { "label": "Destaque de Referência" }
+        }
       }
     },
     "publicRollAsDefault": "Rolagem Pública como padrão",
@@ -2063,6 +2071,7 @@
         "base": "Detalhes Gerais",
         "equipment": "Detalhes do Equipamento",
         "meleeAttack": "Detalhes do Ataque Corpo a Corpo",
+        "note": "Detalhes da Nota",
         "otf": "OTFs",
         "rangedAttack": "Detalhes do Ataque à Distância",
         "skill": "Detalhes da Perícia",

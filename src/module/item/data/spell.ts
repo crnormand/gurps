@@ -29,6 +29,7 @@ class SpellModel extends BaseItemModel<SpellSchema> {
   static override get metadata(): ItemMetadata {
     return foundry.utils.mergeObject(super.metadata, {
       type: ItemType.Spell,
+      icon: 'fa-solid fa-wand-magic-sparkles',
       childTypes: [ItemType.Spell],
       sortKeys: {
         points: 'system.points',

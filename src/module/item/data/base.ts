@@ -14,6 +14,8 @@ import { ConditionalModifier, ReactionModifier } from './conditional-modifier.js
 type ItemMetadata = Readonly<{
   /** The expected `type` value */
   type: string
+  /** The font-awesome icon for this Item type */
+  icon: string
   /** Actor types that this item cannot be placed on */
   invalidActorTypes: string[]
   /** Are there any partials to fill in the Details tab of the item? */
@@ -70,6 +72,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   static get metadata(): ItemMetadata {
     return {
+      icon: '',
       embedded: {
         Action: 'system.actions',
         ReactionModifier: 'system._reactions',

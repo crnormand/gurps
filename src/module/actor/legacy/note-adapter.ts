@@ -100,7 +100,6 @@ class NoteV1 {
     noteV2.title = this.title
     noteV2.reference = this.pageref
     noteV2.markdown = this.markdown
-    noteV2.text = this.notes
   }
 
   updateProperty(noteV2: NoteV2, property: string) {
@@ -113,9 +112,6 @@ class NoteV1 {
         break
       case 'markdown':
         noteV2.markdown = this.markdown
-        break
-      case 'notes':
-        noteV2.text = this.notes
         break
       default:
         console.warn(`NoteV1.updateProperty: Unknown property "${property}"`)
