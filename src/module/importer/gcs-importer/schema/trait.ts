@@ -116,7 +116,8 @@ class GcsTrait extends GcsItem<TraitModel> {
     return this.container_type === 'ancestry'
   }
 
-  /** @abstract */
+  /* ---------------------------------------- */
+
   override get isEnabled(): boolean {
     return !this.effectivelyDisabled
   }
@@ -141,7 +142,7 @@ const traitData = () => {
 
     // START: TraitEditData
     userdesc: new fields.StringField({ required: true, nullable: true, initial: null }),
-    modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
+    modifiers: new fields.ArrayField(new fields.EmbeddedDataField(GcsTraitModifier), {
       required: true,
       nullable: true,
       initial: null,
