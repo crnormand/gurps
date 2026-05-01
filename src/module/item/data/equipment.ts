@@ -81,6 +81,30 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   }
 
   /* ---------------------------------------- */
+
+  async incrementQuantity(): Promise<this['parent'] | undefined> {
+    const quantity = this.count + 1
+
+    return this.parent.update({ 'system.count': quantity } as Item.UpdateData)
+  }
+
+  /* ---------------------------------------- */
+
+  async decrementQuantity(): Promise<this['parent'] | undefined> {
+    const quantity = this.count - 1
+
+    // NOTE: A user can keep a 0 quantity of an item but if they decrement again after the quantity
+    // is already 0, it's safe to assume they want to delete the item so we'll prompt them for it.
+    if (quantity < 0) {
+      await this.parent.deleteDialog()
+
+      return
+    }
+
+    return this.parent.update({ 'system.count': quantity } as Item.UpdateData)
+  }
+
+  /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
