@@ -25,9 +25,9 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
       sortKeys: {
         quantity: 'system.count',
         value: 'system.cost',
-        extendedValue: 'system.costsum',
+        extendedValue: 'system.totalCost',
         weight: 'system.weight',
-        extendedWeight: 'system.weightsum',
+        extendedWeight: 'system.totalWeight',
       },
       detailsPartial: ['item.partials.details-equipment', 'item.partials.details-base'],
     })
@@ -68,8 +68,34 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
     return this._carried
   }
 
+  /* ---------------------------------------- */
+
   override get enabled(): boolean {
     return this.equipped && this.carried
+  }
+
+  /* ---------------------------------------- */
+
+  get totalWeight(): number {
+    let weight = this.weight * this.count
+
+    for (const child of this.children) {
+      if (child.isOfType(ItemType.Equipment)) weight += child.system.totalWeight
+    }
+
+    return weight
+  }
+
+  /* ---------------------------------------- */
+
+  get totalCost(): number {
+    let cost = this.cost * this.count
+
+    for (const child of this.children) {
+      if (child.isOfType(ItemType.Equipment)) cost += child.system.totalCost
+    }
+
+    return cost
   }
 
   /* ---------------------------------------- */
@@ -100,9 +126,9 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
       techLevel: this.techlevel,
       legalityClass: this.legalityclass,
       value: this.cost.toLocaleString(),
-      extendedValue: this.costsum.toLocaleString(),
+      extendedValue: this.totalCost.toLocaleString(),
       weight: Weight.from(this.weight, Weight.Unit.Pound, true).toLocaleObject(),
-      extendedWeight: Weight.from(this.weightsum, Weight.Unit.Pound, true).toLocaleObject(),
+      extendedWeight: Weight.from(this.totalWeight, Weight.Unit.Pound, true).toLocaleObject(),
     })
   }
 }
@@ -141,12 +167,6 @@ const equipmentSchema = () => {
 
     /** The Legality Class of this item, generally numeric. */
     legalityclass: new fields.StringField({ required: true, nullable: false }),
-
-    /** The summed cost of all units of this item and any contained items. */
-    costsum: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
-
-    /** The summed weight of all units of this item and any contained items. */
-    weightsum: new fields.StringField({ required: true, nullable: false }),
 
     /** The remaining uses of this item, if any. Used for things like ammunition, sips of a potion, etc. */
     uses: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
