@@ -1270,41 +1270,6 @@ if (!globalThis.GURPS) {
   }
   GURPS.actionFuncs = actionFuncs
 
-  // async function findBestActionInChain({ action, actor, event, targets, originalOtf }) {
-  //   const actions = []
-  //   let overridetxt = action.overridetxt
-  //   while (action) {
-  //     action.overridetxt = overridetxt
-  //     actions.push(action)
-  //     action = action.next
-  //   }
-  //   const calculations = []
-  //   let a
-  //   for (a of actions) {
-  //     const func = GURPS.actionFuncs[a.type]
-  //     if (func.constructor.name === 'AsyncFunction') {
-  //       calculations.push(await func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
-  //     } else {
-  //       calculations.push(func({ action: a, actor, event, targets, originalOtf, calcOnly: true }))
-  //     }
-  //   }
-  //   const levels = calculations.map(result => (result ? result.target : 0))
-  //   if (!levels.some(level => level > 0)) {
-  //     ui.notifications.warn(game.i18n.localize('GURPS.noViableSkill'))
-  //     console.warn(
-  //       'No viable skill found in chain of actions:',
-  //       actions,
-  //       'with calculated levels:',
-  //       levels,
-  //       'current action:',
-  //       a
-  //     )
-  //     return null // actor does not have any of these skills
-  //   }
-  //   const bestLevel = Math.max(...levels)
-  //   return actions[levels.indexOf(bestLevel)]
-  // }
-
   /**
    * @param {Action} action
    * @param {GurpsActor|null} actor
