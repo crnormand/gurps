@@ -380,7 +380,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /**
    * Called after individual data preparation for each Item is complete.
-   * Used to set varues that depend on the data of sibling items,
+   * Used to set values that depend on the data of sibling items.
    */
   prepareSiblingData() {
     for (const collection of Object.values(this.pseudoCollections))
