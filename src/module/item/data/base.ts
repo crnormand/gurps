@@ -334,7 +334,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /**
    * Called after individual data preparation for each Item is complete.
-   * Used to set varues that depend on the data of sibling items,
+   * Used to set values that depend on the data of sibling items.
    */
   prepareSiblingData(): void {}
 
