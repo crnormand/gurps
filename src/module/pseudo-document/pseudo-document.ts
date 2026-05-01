@@ -244,9 +244,9 @@ class PseudoDocument<
   /* ---------------------------------------- */
 
   /**
-   * Prepare sibling data data. The siblings in question are siblings of the parent Document, rather than siblings of
+   * Prepare sibling data. The siblings in question are siblings of the parent Document, rather than siblings of
    * this pseudo-document. This method is not called automatically; it is the responsibility
-   * of the parent document to ensure pseudo-documents prepare base and derived data.
+   * of the parent document to ensure pseudo-documents prepare sibling data.
    */
   prepareSiblingData(): void {}
 
