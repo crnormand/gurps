@@ -5,6 +5,8 @@
 ### Bugfixes
 
 - Removed Beta warning.
+- No viable skill found in chain of actions #2659.
+  This fixes the issue where the system would not find any viable skill from an OTF like "DX-5|S:Broadsword|S:Two-handed Sword-3"...
 
 ## Release 0.18.16 04/26/2026
 

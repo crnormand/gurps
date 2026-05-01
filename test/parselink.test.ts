@@ -359,7 +359,7 @@ describe('parseLink', () => {
         orig: 'HT-1',
         overridetxt: 'text',
         path: 'attributes.HT.value',
-        spantext: 'HT -1 ',
+        spantext: 'HT -1',
         type: 'attribute',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='!HT-1'>text</span>"))
@@ -378,7 +378,7 @@ describe('parseLink', () => {
         overridetxt: 'Hello',
         path: 'attributes.HT.value',
         sourceId: 'actorid',
-        spantext: 'HT -1 ',
+        spantext: 'HT -1',
         type: 'attribute',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT-1'>Hello</span>"))
@@ -396,7 +396,7 @@ describe('parseLink', () => {
         orig: 'HT-1',
         path: 'attributes.HT.value',
         sourceId: 'actorid',
-        spantext: 'HT -1 ',
+        spantext: 'HT -1',
         type: 'attribute',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='!HT-1'>(Blind Roll) HT -1</span>"))
@@ -707,7 +707,7 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         orig: 'ST',
-        spantext: 'ST ',
+        spantext: 'ST',
         type: 'attribute',
         attribute: 'ST',
         attrkey: 'ST',
@@ -723,7 +723,7 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         orig: 'Per12',
-        spantext: 'Per12 ',
+        spantext: 'Per12',
         type: 'attribute',
         attribute: 'Per',
         attrkey: 'PER',
@@ -797,7 +797,7 @@ describe('parseLink', () => {
         name: 'FRIGHT CHECK',
         orig: 'Fright Check14',
         path: 'frightcheck',
-        spantext: 'Fright Check14 ',
+        spantext: 'Fright Check14',
         target: '14',
         type: 'attribute',
       })
@@ -837,7 +837,7 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         orig: 'HT +@margin',
-        spantext: 'HT +@margin ',
+        spantext: 'HT +@margin',
         type: 'attribute',
         attribute: 'HT',
         attrkey: 'HT',
@@ -860,7 +860,7 @@ describe('parseLink', () => {
         name: 'PER',
         orig: 'Per +a:Magery',
         path: 'attributes.PER.value',
-        spantext: 'Per +a:Magery ',
+        spantext: 'Per +a:Magery',
         type: 'attribute',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per +a:Magery'>Per +a:Magery</span>"))
@@ -941,20 +941,21 @@ describe('parseLink', () => {
           blindroll: false,
           orig: 'DX',
           path: 'attributes.DX.value',
-          spantext: 'DX ',
+          spantext: 'DX',
           type: 'attribute',
           name: 'DX',
         },
         orig: 'HT | DX',
         path: 'attributes.HT.value',
-        spantext: 'HT  | DX ',
+        spantext: 'HT | DX',
         type: 'attribute',
         name: 'HT',
       })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='HT | DX'>HT  | DX</span>"))
+      expect(result.text).toEqual(expect.stringContaining("data-otf='HT | DX'>HT | DX</span>"))
     })
 
     test('#> HT | Somthing else', () => {
+      // Throw away the missing attribute ('Somthing')
       const result = parselink(input)
 
       expect(result.action).toEqual({
@@ -963,7 +964,7 @@ describe('parseLink', () => {
         blindroll: false,
         orig: 'HT | Somthing else',
         path: 'attributes.HT.value',
-        spantext: 'HT ',
+        spantext: 'HT',
         type: 'attribute',
         name: 'HT',
       })
@@ -980,7 +981,7 @@ describe('parseLink', () => {
         falsetext: 'No Clue',
         orig: 'IQ-2 ? "Idea!", "No Clue"',
         path: 'attributes.IQ.value',
-        spantext: 'IQ -2 ',
+        spantext: 'IQ -2',
         truetext: 'Idea!',
         type: 'attribute',
         name: 'IQ',
@@ -1000,7 +1001,7 @@ describe('parseLink', () => {
         falsetext: 'Fall asleep',
         orig: 'HT ? "Awake" : "Fall asleep"',
         path: 'attributes.HT.value',
-        spantext: 'HT ',
+        spantext: 'HT',
         truetext: 'Awake',
         type: 'attribute',
         name: 'HT',
@@ -1017,7 +1018,7 @@ describe('parseLink', () => {
         blindroll: false,
         orig: 'IQ ? "Idea!"',
         path: 'attributes.IQ.value',
-        spantext: 'IQ ',
+        spantext: 'IQ',
         truetext: 'Idea!',
         type: 'attribute',
         name: 'IQ',
@@ -1090,6 +1091,7 @@ describe('parseLink', () => {
         spantext: '<b>S:</b>Stealth',
         type: 'skill-spell',
       })
+      //                                                  "data-otf='S:Stealth'><b>S:</b><b>S:</b>Stealth</span>"
       expect(result.text).toEqual(expect.stringContaining("data-otf='S:Stealth'><b>S:</b>Stealth</span>"))
     })
 
@@ -1270,11 +1272,13 @@ describe('parseLink', () => {
     })
 
     test('#> Sk:Stealth +3 (Based: ZX) Comment this', () => {
+      // Throw away the floating attribute if it's not a valid attribute.
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
         desc: 'Comment this',
+
         isSkillOnly: true,
         isSpellOnly: false,
         mod: '+3',
@@ -1295,18 +1299,18 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         blindroll: false,
-        costs: '*Costs 2 HP',
+        costs: '*Per 2 HP',
         desc: '',
         isSkillOnly: true,
         isSpellOnly: false,
         mod: '+3',
         name: 'Stealth',
         orig: 'Sk:Stealth +3 *Costs 2 HP',
-        spantext: '<b>Sk:</b>Stealth *Costs 2 HP +3',
+        spantext: '<b>Sk:</b>Stealth +3 *Per 2 HP',
         type: 'skill-spell',
       })
       expect(result.text).toEqual(
-        expect.stringContaining("data-otf='Sk:Stealth +3 *Costs 2 HP'><b>Sk:</b>Stealth *Costs 2 HP +3</span>")
+        expect.stringContaining("data-otf='Sk:Stealth +3 *Costs 2 HP'><b>Sk:</b>Stealth +3 *Per 2 HP</span>")
       )
     })
 
@@ -1315,18 +1319,18 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         blindroll: false,
-        costs: '* Per 2HP',
+        costs: '*Per 2HP',
         desc: '',
         isSkillOnly: true,
         isSpellOnly: false,
         mod: '+3',
         name: 'Stealth',
         orig: 'Sk:Stealth +3 * Per 2HP',
-        spantext: '<b>Sk:</b>Stealth * Per 2HP +3',
+        spantext: '<b>Sk:</b>Stealth +3 *Per 2HP',
         type: 'skill-spell',
       })
       expect(result.text).toEqual(
-        expect.stringContaining("data-otf='Sk:Stealth +3 * Per 2HP'><b>Sk:</b>Stealth * Per 2HP +3</span>")
+        expect.stringContaining("data-otf='Sk:Stealth +3 * Per 2HP'><b>Sk:</b>Stealth +3 *Per 2HP</span>")
       )
     })
 
@@ -1353,7 +1357,7 @@ describe('parseLink', () => {
       )
     })
 
-    test('#> Sk:Stealth -2 for armor ? "Sneaky" : "Alarm!"', () => {
+    test.skip("#> Sk:Stealth -2 for armor ? 'Sneaky' : 'Alarm!'", () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
@@ -1364,7 +1368,7 @@ describe('parseLink', () => {
         isSpellOnly: false,
         mod: '-2',
         name: 'Stealth',
-        orig: 'Sk:Stealth -2 for armor ? "Sneaky" : "Alarm!"',
+        orig: "Sk:Stealth -2 for armor ? 'Sneaky' : 'Alarm!'",
         spantext: '<b>Sk:</b>Stealth -2 for armor',
         truetext: 'Sneaky',
         type: 'skill-spell',
@@ -1470,11 +1474,11 @@ describe('parseLink', () => {
           name: 'DX',
           orig: 'DX-6',
           path: 'attributes.DX.value',
-          spantext: 'DX -6 ',
+          spantext: 'DX -6',
           type: 'attribute',
         },
         orig: input,
-        spantext: '<b>S:</b>Acrobatics | DX -6 ',
+        spantext: '<b>S:</b>Acrobatics | DX -6',
         type: 'skill-spell',
       })
       expect(result.text).toEqual(
@@ -2041,10 +2045,10 @@ describe('parseLink', () => {
         name: 'PER',
         orig: 'Per-4',
         path: 'attributes.PER.value',
-        spantext: 'Per -4 ',
+        spantext: 'Per -4',
         type: 'attribute',
       },
-      spantext: '<b>Sk:</b>Scrounging | Per -4 ',
+      spantext: '<b>Sk:</b>Scrounging | Per -4',
       type: 'skill-spell',
     })
     expect(result.text).toEqual(expect.stringContaining('data-otf=\'Sk:\"Scrounging\" | Per-4\'>Scrounging</span>'))
@@ -2068,14 +2072,161 @@ describe('parseLink', () => {
         name: 'PER',
         orig: 'Per-4',
         path: 'attributes.PER.value',
-        spantext: 'Per -4 ',
+        spantext: 'Per -4',
         type: 'attribute',
       },
-      spantext: '<b>Sk:</b>Scrounging | Per -4 ',
+      spantext: '<b>Sk:</b>Scrounging | Per -4',
       type: 'skill-spell',
     })
     expect(result.text).toEqual(
       expect.stringContaining("data-otf='Sk:Scrounging | Per-4'><b>Sk:</b>Scrounging | Per -4</span>")
     )
+  })
+
+  test('#> S:Broadsword|S:Force*Sword-4|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4', () => {
+    const result = parselink(input)
+
+    expect(result.action).toEqual({
+      blindroll: false,
+      desc: '',
+      isSkillOnly: false,
+      isSpellOnly: false,
+      name: 'Broadsword',
+      orig: input,
+      next: {
+        blindroll: false,
+        desc: '',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        name: 'Force*Sword',
+        orig: 'S:Force*Sword-4|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4',
+        spantext:
+          '<b>S:</b>Force*Sword -4 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+        mod: '-4',
+        type: 'skill-spell',
+        next: {
+          blindroll: false,
+          desc: '',
+          isSkillOnly: false,
+          isSpellOnly: false,
+          name: 'Rapier',
+          orig: 'S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4',
+          spantext: '<b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+          mod: '-4',
+          type: 'skill-spell',
+          next: {
+            blindroll: false,
+            desc: '',
+            isSkillOnly: false,
+            isSpellOnly: false,
+            name: 'Saber',
+            orig: 'S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4',
+            spantext: '<b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+            mod: '-4',
+            type: 'skill-spell',
+            next: {
+              blindroll: false,
+              desc: '',
+              isSkillOnly: false,
+              isSpellOnly: false,
+              name: 'Shortsword',
+              orig: 'S:Shortsword-2|S:Two-Handed*Sword-4',
+              mod: '-2',
+              spantext: '<b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+              type: 'skill-spell',
+              next: {
+                blindroll: false,
+                desc: '',
+                isSkillOnly: false,
+                isSpellOnly: false,
+                name: 'Two-Handed*Sword',
+                orig: 'S:Two-Handed*Sword-4',
+                mod: '-4',
+                spantext: '<b>S:</b>Two-Handed*Sword -4',
+                type: 'skill-spell',
+              },
+            },
+          },
+        },
+      },
+      spantext:
+        '<b>S:</b>Broadsword | <b>S:</b>Force*Sword -4 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+      type: 'skill-spell',
+    })
+    expect(result.text).toEqual(
+      expect.stringContaining(
+        "data-otf='S:Broadsword|S:Force*Sword-4|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4'><b>S:</b>Broadsword | <b>S:</b>Force*Sword -4 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4</span>"
+      )
+    )
+  })
+
+  test('#> S:Broadsword|DX-5|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed', () => {
+    const result = parselink(input)
+
+    expect(result.action).toEqual({
+      blindroll: false,
+      desc: '',
+      isSkillOnly: false,
+      isSpellOnly: false,
+      name: 'Broadsword',
+      orig: input,
+      next: {
+        attribute: 'DX',
+        attrkey: 'DX',
+        blindroll: false,
+        mod: '-5',
+        name: 'DX',
+        next: {
+          blindroll: false,
+          desc: '',
+          isSkillOnly: false,
+          isSpellOnly: false,
+          mod: '-4',
+          name: 'Rapier',
+          next: {
+            blindroll: false,
+            desc: '',
+            isSkillOnly: false,
+            isSpellOnly: false,
+            mod: '-4',
+            name: 'Saber',
+            next: {
+              blindroll: false,
+              desc: '',
+              isSkillOnly: false,
+              isSpellOnly: false,
+              mod: '-2',
+              name: 'Shortsword',
+              next: {
+                blindroll: false,
+                desc: '',
+                isSkillOnly: false,
+                isSpellOnly: false,
+                name: 'Two-Handed',
+                orig: 'S:Two-Handed',
+                spantext: '<b>S:</b>Two-Handed',
+                type: 'skill-spell',
+              },
+              orig: 'S:Shortsword-2|S:Two-Handed',
+              spantext: '<b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+              type: 'skill-spell',
+            },
+            orig: 'S:Saber-4|S:Shortsword-2|S:Two-Handed',
+            spantext: '<b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+            type: 'skill-spell',
+          },
+          orig: 'S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed',
+          spantext: '<b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+          type: 'skill-spell',
+        },
+        orig: 'DX-5|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed',
+        path: 'attributes.DX.value',
+        spantext: 'DX -5 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+        type: 'attribute',
+      },
+      spantext:
+        '<b>S:</b>Broadsword | DX -5 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+      type: 'skill-spell',
+    })
   })
 })

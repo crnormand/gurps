@@ -1,3 +1,4 @@
+import { OtfActionType } from '../otf/types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { recurselist, sanitize } from '../../lib/utilities.js'
@@ -364,7 +365,7 @@ export class EffectModifierPopout extends Application {
         let mod = input.replace('@', ' ')
         if (!!mod) {
           let action = parselink(mod)
-          if (action.action?.type === 'modifier') this._addUserMod(mod)
+          if (action.action?.type === OtfActionType.modifier) this._addUserMod(mod)
           else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
         }
       }
