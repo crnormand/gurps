@@ -2097,45 +2097,6 @@ if (!globalThis.GURPS) {
     const previousVersion = SemanticVersion.fromString(
       game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
     )
-    const betaVersion = SemanticVersion.fromString('0.18.16-beta')
-
-    // If the new version is 0.18.16 and the old version is before that, AND Foundry is v14+, show the following warning:
-    if (
-      game.release.generation >= 14 &&
-      currentVersion.isEqualTo(betaVersion) &&
-      previousVersion.isLowerThan(betaVersion)
-    ) {
-      const warningMessage = game.i18n.localize('GURPS.migration.0-18-16.warning')
-
-      const confirmed = await foundry.applications.api.DialogV2.wait({
-        window: { title: game.i18n.localize('GURPS.migration.0-18-16.title') },
-        content: `<div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center;">
-          <div><i class="fa-solid fa-triangle-exclamation" style="color: darkred; font-size: 3rem;"></i></div>
-          <p>${warningMessage}</p>
-          </div>`,
-        position: { height: 'auto', width: 600 },
-        buttons: [
-          {
-            action: 'proceed',
-            icon: 'fas fa-check',
-            label: 'GURPS.migration.0-18-16.proceed',
-          },
-          {
-            action: 'cancel',
-            icon: 'fa-solid fa-xmark',
-            label: 'GURPS.migration.0-18-16.cancel',
-          },
-        ],
-        default: 'cancel',
-      })
-
-      if (confirmed !== 'proceed') {
-        ui.notifications.warn(game.i18n.localize('GURPS.migration.0-18-16.cancellationMessage'))
-        game.user.isGM ? await game.shutDown() : await game.logOut()
-
-        return
-      }
-    }
 
     GURPS.currentVersion = currentVersion
 
