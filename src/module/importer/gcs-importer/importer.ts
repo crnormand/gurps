@@ -13,6 +13,7 @@ import { SkillSchema } from '@module/item/data/skill.js'
 import { SpellSchema } from '@module/item/data/spell.js'
 import { TraitSchema } from '@module/item/data/trait.js'
 import { ItemType } from '@module/item/types.js'
+import { getGame } from '@module/util/guards.js'
 import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
@@ -1057,8 +1058,52 @@ Portrait will not be imported.`
 
     const [baseSystem, _id] = this.#importItem(skill)
 
+    let notes = baseSystem.notes || ''
+
+    if (skill.isTechnique && skill.default) {
+      let defaultName = ''
+
+      switch (skill.default.type) {
+        case 'parry':
+        case 'block':
+        case 'skill': {
+          defaultName = skill.default.name || ''
+
+          if (skill.default.specialization) defaultName += ` (${skill.default.specialization})`
+
+          if (skill.default.type === 'block') defaultName += ' ' + globalThis._loc('GURPS.block')
+          else if (skill.default.type === 'parry') defaultName += ' ' + globalThis._loc('GURPS.parry')
+
+          break
+        }
+
+        default: {
+          if (this._mode === GcsImporterMode.Character) {
+            const attribute = (this.input as GcsCharacter).settings.attributes.find(
+              att => att.id === skill.default!.type
+            )
+
+            defaultName = attribute?.fullName || ''
+          }
+        }
+      }
+
+      if (skill.default.modifier) {
+        defaultName += skill.default.modifier.signedString()
+      }
+
+      const defaultNote = getGame().i18n.format('GURPS.item.skill.techniqueDefaultNote', { defaultName })
+
+      if (notes) {
+        notes = defaultNote + '\n' + notes
+      } else {
+        notes = defaultNote
+      }
+    }
+
     const system: DataModel.CreateData<SkillSchema> = {
       ...baseSystem,
+      notes,
       containedBy: containedBy ?? null,
       points: skill.points ?? 0,
       difficulty: skill.difficulty ?? '',
