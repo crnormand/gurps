@@ -399,7 +399,21 @@ declare global {
       targets?: string[]
     ): Promise<any>
 
+    /* ---------------------------------------- */
+
+    whisperOtfToOwner(
+      otf: string,
+      overridetxt: string | null,
+      _event: PointerEvent,
+      blindcheck: boolean,
+      actor: Actor | Actor.Implementation | null
+    ): void
+
+    /* ---------------------------------------- */
+
     stopActions: boolean
+
+    /* ---------------------------------------- */
 
     ModifierBucket: {
       setTempRangeMod(mod: number): void
@@ -411,6 +425,8 @@ declare global {
       render(): Promise<void>
     }
 
+    /* ---------------------------------------- */
+
     DamageTables: {
       translate(damageType: string): string
       woundModifiers: Record<
@@ -420,21 +436,34 @@ declare global {
       damageTypeMap: Record<string, string>
     }
 
+    /* ---------------------------------------- */
+
     SSRT: {
       getModifier(yards: number): number
     }
+
+    /* ---------------------------------------- */
 
     rangeObject: {
       ranges: Array<{ modifier: number; max: number; penalty: number }>
     }
 
+    /* ---------------------------------------- */
+
     Maneuvers: {
       get(id: string): { icon?: string; label: string; move: string | null } | undefined
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
+
+    /* ---------------------------------------- */
+
     ApplyDamageDialog: new (actor: Actor.Implementation, damageData: DamageData[], options?: object) => Application
 
+    /* ---------------------------------------- */
+
     DamageChat: typeof DamageChat
+
+    /* ---------------------------------------- */
 
     resolveDamageRoll: (
       event: Event,
@@ -444,6 +473,8 @@ declare global {
       isGM: boolean,
       isOtf?: boolean
     ) => Promise<void>
+
+    /* ---------------------------------------- */
 
     SJGProductMappings: Record<string, string>
 
