@@ -23,7 +23,7 @@ export function evaluateExpression(node: ExprNode, ctx: EvalContext): number {
 
       if (!fn) throw new Error(`Unknown function ${node.name}`)
 
-      const args = node.args.map(a => evaluateExpression(a, ctx))
+      const args = node.args.map(arg => evaluateExpression(arg, ctx))
 
       return fn(...args)
     }

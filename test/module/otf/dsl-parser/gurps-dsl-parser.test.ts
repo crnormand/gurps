@@ -104,7 +104,7 @@ describe('GurpsDSLParser', () => {
     })
 
     test('supports escaped quotes inside quoted names', () => {
-      const parser = new GurpsDSLParser('S:"He said \\\"Run\\\""')
+      const parser = new GurpsDSLParser('S:"He said \\"Run\\""')
 
       expect(parser.parse()).toEqual({
         phrases: [
