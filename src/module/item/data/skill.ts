@@ -92,9 +92,19 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     const result = GURPS.performAction(action.action, this.actor) as unknown as
       | boolean
       | { target: number; thing: any }
+      | Promise<unknown>
       | undefined
 
-    if (result && typeof result === 'object') {
+    if (
+      result &&
+      typeof result === 'object' &&
+      'then' in result &&
+      typeof result.then === 'function'
+    ) {
+      return
+    }
+
+    if (result && typeof result === 'object' && typeof result.target === 'number') {
       this.level = result.target
     }
   }

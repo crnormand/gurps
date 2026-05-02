@@ -1532,7 +1532,13 @@ if (!globalThis.GURPS) {
         action = findBestActionInChainSync({ action, event, actor, targets, originalOtf })
       }
 
-      return !action ? false : GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+      if (!action) return false
+
+      const result = GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+      if (result && typeof result.then === 'function') {
+        throw new Error(`GURPS.performAction(calcOnly) requires a synchronous action handler for type "${action.type}"`)
+      }
+      return result
     }
 
     return (async () => {

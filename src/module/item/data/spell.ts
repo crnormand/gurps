@@ -91,12 +91,15 @@ class SpellModel extends BaseItemModel<SpellSchema> {
     action.action.calcOnly = true
     action.action.suppressWarnings = true
 
-    const result = GURPS.performAction(action.action, this.actor) as unknown as
-      | boolean
-      | { target: number; thing: any }
-      | undefined
+    const result = GURPS.performAction(action.action, this.actor) as unknown
 
-    if (result && typeof result === 'object') {
+    if (
+      result &&
+      typeof result === 'object' &&
+      typeof (result as PromiseLike<unknown>).then !== 'function' &&
+      'target' in result &&
+      typeof result.target === 'number'
+    ) {
       this.level = result.target
     }
   }

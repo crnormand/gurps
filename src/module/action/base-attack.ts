@@ -93,12 +93,15 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
     action.action.calcOnly = true
     action.action.suppressWarnings = true
 
-    const otfResult = GURPS.performAction(action.action, this.actor) as unknown as
-      | boolean
-      | { target: number; thing: any }
-      | undefined
+    const otfResult = GURPS.performAction(action.action, this.actor) as unknown
 
-    if (otfResult && typeof otfResult === 'object') {
+    if (
+      otfResult &&
+      typeof otfResult === 'object' &&
+      !('then' in otfResult) &&
+      'target' in otfResult &&
+      typeof otfResult.target === 'number'
+    ) {
       this.level = otfResult.target
     }
   }
