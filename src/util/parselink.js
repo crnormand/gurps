@@ -16,7 +16,7 @@ import { d6ify, sanitize, utoa } from './utilities.js'
   "ST12"
   "SW+1"/"THR-1"
   "PDF:B102"
-  	
+
   "modifier", "attribute", "selfcontrol", "damage", "roll", "skill", "pdf"
 
   (\(-?[\.\d]+\))? == (-.#)
@@ -1018,6 +1018,8 @@ export function parseForRollOrDamage(str, overridetxt) {
   // Straight roll 4d, 2d-1, etc. Is "damage" if it includes a damage type. Allows "!" suffix to indicate minimum of 1.
   // Supports:  2d+1x3(5), 4dX2(0.5), etc
   // Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
+  if (str instanceof Set) str = Array.from(str)
+
   str = str.toString() // convert possible array to single string
   let damageMatch = str.match(DAMAGE_REGEX)
 
