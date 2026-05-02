@@ -1523,7 +1523,21 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
       }
 
-      modifierTags = [...(optionalArgs.obj.modifierTags as Set<string>)]
+      switch (typeof optionalArgs.obj.modifierTags) {
+        case 'object': {
+          if (Array.isArray(optionalArgs.obj.modifierTags)) {
+            modifierTags = optionalArgs.obj.modifierTags
+          } else if (optionalArgs.obj.modifierTags instanceof Set) {
+            modifierTags = [...optionalArgs.obj.modifierTags]
+          }
+
+          break
+        }
+        case 'string': {
+          modifierTags = optionalArgs.obj.modifierTags.split(' ').map((tag: string) => tag.trim().toLowerCase())
+        }
+      }
+
       allTags = [...modifierTags, ...allRollTags, ...refTags]
       itemRef = (optionalArgs.obj.name as string) ?? ''
     } else if (chatThing) {
