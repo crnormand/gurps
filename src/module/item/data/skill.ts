@@ -1,7 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplaySkill } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@util/parselink.js'
-import { makeRegexPatternFrom } from '@util/utilities.js'
+import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemType } from '../types.js'
@@ -122,10 +122,9 @@ class SkillModel extends BaseItemModel<SkillSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplaySkill {
-    let fullName = this.parent.name
+    const fullName = this._displayName
 
-    if (this.techlevel) fullName += `/TL${this.techlevel}`
-    if (this.specialization) fullName += ` (${this.specialization})`
+    const baseOtf = quotedAttackName({ name: fullName })
 
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       techLevel: this.techlevel,
@@ -135,10 +134,23 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       fullName,
       points: this.points,
       otf: {
-        level: `Sk:"${this.parent.name}"`,
-        relativeLevel: `Sk:"${this.parent.name}"`,
+        level: `Sk:${baseOtf}`,
+        relativeLevel: `Sk:${baseOtf}`,
       },
     })
+  }
+
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  get _displayName(): string {
+    let fullName = this.parent.name
+
+    if (this.techlevel) fullName += `/TL${this.techlevel}`
+    if (this.specialization) fullName += ` (${this.specialization})`
+
+    return fullName
   }
 }
 
