@@ -329,13 +329,6 @@ export class StatusEffect {
           gurps: {
             effect: {
               pdfref: 'GURPS.pdfReeling',
-              // terminateActions: [
-              //   {
-              //     type: 'chat',
-              //     msg: 'GURPS.chatTurnOffReeling',
-              //     args: { name: '@displayname' },
-              //   },
-              // ],
             },
           },
         },

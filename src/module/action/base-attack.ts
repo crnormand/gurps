@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { BaseDisplayAttack } from '@gurps-types/gurps/display-item.js'
-import { parselink } from '@util/parselink.js'
+import { parselink } from '@module/otf/parselink.js'
 
 import { BaseAction } from './base-action.js'
 

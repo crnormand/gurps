@@ -73,6 +73,18 @@ declare global {
         SubTypes: PseudoDocumentConfig.Types
       }
     }
+
+    actionFuncs: Record<
+      string,
+      (params: {
+        action: GurpsAction
+        actor: Actor | GurpsActor | null
+        event?: Event
+        targets?: string[]
+        originalOtf: string
+        calcOnly?: boolean
+      }) => Promise<{ target: number } | false> | { target: number } | false
+    >
   }
 
   var GURPS: GurpsGlobal

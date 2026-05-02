@@ -8,6 +8,7 @@ import {
 } from '@gurps-types/foundry/index.js'
 import { ImportSettings } from '@module/importer/index.js'
 import { ItemType } from '@module/item/types.js'
+import { OtfActionType } from '@module/otf/types.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { constructHTMLButton } from '@module/util/dom.js'
 import { getUser } from '@module/util/guards.js'
@@ -383,9 +384,9 @@ class GurpsBaseActorSheet<
         return GURPS.performAction(parsed.action, this.actor, event)
       case 2: {
         const isDamageRoll =
-          parsed.action.type === 'damage' ||
-          parsed.action.type === 'deriveddamage' ||
-          parsed.action.type === 'attackdamage'
+          parsed.action.type === OtfActionType.damage ||
+          parsed.action.type === OtfActionType.deriveddamage ||
+          parsed.action.type === OtfActionType.attackdamage
 
         return GURPS.whisperOtfToOwner(
           parsed.action.orig || '',

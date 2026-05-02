@@ -1,5 +1,5 @@
+import { COSTS_REGEX } from '@module/otf/parselink.js'
 import type { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
-import { COSTS_REGEX } from '@util/parselink.js'
 
 /**
  * If the desc contains *Cost ?FP or *Max:? then perform action

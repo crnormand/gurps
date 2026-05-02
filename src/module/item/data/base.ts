@@ -2,7 +2,7 @@ import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { BaseDisplayItem } from '@gurps-types/gurps/display-item.js'
 import { Action, ActionType, BaseAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { MarkdownUtil } from '@module/util/markdown.js'
-import { parselink } from '@util/parselink.js'
+import { parselink } from '@module/otf/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { CollectionField } from '../../data/fields/collection-field.js'

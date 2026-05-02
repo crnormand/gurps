@@ -33,3 +33,14 @@ function parseRangeToken(token: string): number[] {
 
   return Array.from({ length: end - start + 1 }, (_, i) => start + i)
 }
+
+export function stripQuotes(text: string): string {
+  // Remove quotes around text, if any.
+  if (text[0] === '"' && text[text.length - 1] === '"') {
+    text = text.slice(1, -1)
+  } else if (text[0] === "'" && text[text.length - 1] === "'") {
+    text = text.slice(1, -1)
+  }
+
+  return text
+}
