@@ -89,14 +89,19 @@ class SpellModel extends BaseItemModel<SpellSchema> {
     if (!action.action) return
 
     action.action.calcOnly = true
-    // TODO: verify that target is of type "number" (or replace this whole thing)
-    GURPS.performAction(action.action, this.actor).then(
-      (result: boolean | { target: number; thing: any } | undefined) => {
-        if (result && typeof result === 'object') {
-          this.level = result.target
-        }
-      }
-    )
+    action.action.suppressWarnings = true
+
+    const result = GURPS.performAction(action.action, this.actor) as unknown
+
+    if (
+      result &&
+      typeof result === 'object' &&
+      typeof (result as PromiseLike<unknown>).then !== 'function' &&
+      'target' in result &&
+      typeof result.target === 'number'
+    ) {
+      this.level = result.target
+    }
   }
 
   /* ---------------------------------------- */
