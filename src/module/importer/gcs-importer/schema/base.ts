@@ -137,7 +137,7 @@ class GcsElement<
     }
 
     if (field instanceof fields.SchemaField) {
-      return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields, verbose)
+      return this.importSchema(data ?? field.getInitialValue(), (field as fields.SchemaField<any>).fields, verbose)
     }
 
     console.warn(`[GCS Import] Unsupported field type ${field.constructor.name} for key '${_name}'`)
