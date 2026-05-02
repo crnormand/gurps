@@ -480,7 +480,8 @@ export class EffectModifierPopout extends Application {
     if (dragData.otf) {
       let action = parselink(dragData.otf)
 
-      if (action.action?.type == OtfActionType.modifier || action.action?.type == OtfActionType.damage) add = dragData.otf
+      if (action.action?.type == OtfActionType.modifier || action.action?.type == OtfActionType.damage)
+        add = dragData.otf
     }
 
     if (dragData.bucket) {
