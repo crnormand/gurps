@@ -1535,9 +1535,11 @@ if (!globalThis.GURPS) {
       if (!action) return false
 
       const result = GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+
       if (result && typeof result.then === 'function') {
         throw new Error(`GURPS.performAction(calcOnly) requires a synchronous action handler for type "${action.type}"`)
       }
+
       return result
     }
 

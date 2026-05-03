@@ -96,10 +96,8 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       | undefined
 
     if (
-      result &&
-      typeof result === 'object' &&
-      'then' in result &&
-      typeof result.then === 'function'
+      (result && result instanceof Promise) ||
+      (typeof result === 'object' && 'then' in result && typeof result.then === 'function')
     ) {
       return
     }
