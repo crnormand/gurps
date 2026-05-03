@@ -75,8 +75,8 @@ export class IfChatProcessor extends ChatProcessor {
           OtfActionType.attack,
           OtfActionType.controlroll,
           OtfActionType.chat,
-          OtfActionType.testExists,
-          OtfActionType.ifTest,
+          OtfActionType.testexists,
+          OtfActionType.iftest,
         ].includes(action.action.type)
       ) {
         this.priv(line)

@@ -1,9 +1,4 @@
-export type Action = {
-  type: string
-  overridetxt?: string
-  target?: number
-  next?: Action
-}
+import { Action } from '@module/otf/types.js'
 
 export type ActionChain = {
   action: Action | undefined
@@ -64,7 +59,7 @@ export async function findBestActionInChain({
   const levels = resolvedActions.map(result => (result ? result.target : 0))
 
   if (!levels.some(level => level > 0)) {
-    ui.notifications!.warn(game.i18n!.localize('GURPS.noViableSkill'))
+    if (!action!.suppressWarnings) ui.notifications!.warn(game.i18n!.localize('GURPS.noViableSkill'))
     console.warn('No viable skill found in chain of actions:', actions)
 
     return null // actor does not have any of these skills

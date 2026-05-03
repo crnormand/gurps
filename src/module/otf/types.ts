@@ -24,7 +24,7 @@ export const OtfActionType = {
 export type OtfActionType = (typeof OtfActionType)[keyof typeof OtfActionType]
 
 /**
- * In the current state of the code, pretty much every attribure of this object is optional.
+ * In the current state of the code, pretty much every attribute of this object is optional.
  */
 type BaseAction = {
   attribute: string
@@ -47,6 +47,7 @@ type BaseAction = {
   overridetxt: string
   quiet: boolean
   spantext: string
+  suppressWarnings: boolean
   truetext: string
   type: OtfActionType
 }

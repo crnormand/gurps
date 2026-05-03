@@ -644,12 +644,12 @@ class SkillSpellParser extends OtfParser {
 
       if (result.isSpellOnly) prefix = blindrollText(args.blindroll ?? false) + '<b>Sp:</b>'
       if (result.isSkillOnly) prefix = blindrollText(args.blindroll ?? false) + '<b>Sk:</b>'
-      const spantext = result.spantext
+      const spantext = result.spantext ?? ''
 
       result.spantext = prefix + spantext
 
       return {
-        text: gspan(args.overridetxt, spantext!, result, prefix),
+        text: gspan(args.overridetxt, spantext, result, prefix),
         action: result,
       }
     }

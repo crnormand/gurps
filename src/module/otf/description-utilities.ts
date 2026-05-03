@@ -32,7 +32,7 @@ async function applyCostsModifier(actor: Actor.Implementation, description: stri
 
   if (!match) return
 
-  const cost = parseInt(match.groups!.cost, 10)
+  const cost = parseInt(match.groups!.cost ?? '1', 10)
   const target = match.groups!.type
 
   if (!actor) {

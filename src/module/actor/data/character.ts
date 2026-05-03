@@ -1236,7 +1236,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       const costs = accumulator.costs.match(COSTS_REGEX)
 
       if (costs)
-        accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '0')} ${costs.groups?.type}`
+        accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '1')} ${costs.groups?.type}`
     }
 
     accumulator.roll = roll ?? null

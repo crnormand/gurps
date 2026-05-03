@@ -37,7 +37,7 @@ export const DMG_INDEX_TYPE = 7
 export const DMG_INDEX_COST = 8
 
 export const DERIVED_DAMAGE_REGEX =
-  /^(?<accum>\+)?(?<att>swing|thrust|sw|thr)\s*(?<adds>[–\-+]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+])?(?<follow>,.*)?$/i
+  /^(?<accum>\+)?(?<att>swing|thrust|sw|thr)\s*(?<adds>[–\-+]@?\w+)?(?<mult>[×x*]\d+\.?\d*)? ?(?<div>\(-?[.\d]+\))?(?<min>!)? ?(?<other>[^*]*?)(?<costs>\*(costs|per)? \d+ ?[\w() ]+)?(?<follow>,.*)?$/i
 export const DMG_INDEX_BASICDAMAGE = 1
 
 export const PARSELINK_MAPPINGS = {
@@ -197,7 +197,7 @@ export function parseForRollOrDamage(str, overridetxt) {
         displayformula: array.groups.roll + DICE + adds + multiplier + bang,
         formula: array.groups.roll + dice + adds + multiplier + bang,
         desc: other, // Action description
-        costs: array.groups.cost,
+        costs: array.groups.costs,
         hitlocation: hitLocation,
         accumulate: !!array.groups.accum,
         next: next,
