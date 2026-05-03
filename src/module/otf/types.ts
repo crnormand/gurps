@@ -42,7 +42,7 @@ type BaseAction = {
   link: string
   mod: string
   name: string
-  next?: Action
+  next?: OtfAction
   orig: string
   overridetxt: string
   quiet: boolean
@@ -52,9 +52,9 @@ type BaseAction = {
   type: OtfActionType
 }
 
-export type Action = DeepPartial<BaseAction>
+export type OtfAction = DeepPartial<BaseAction>
 
 export type ParserResult = {
   text: string
-  action: Action
+  action: OtfAction
 }

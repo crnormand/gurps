@@ -17,7 +17,7 @@ import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { ItemType } from '@module/item/types.js'
 import { COSTS_REGEX } from '@module/otf/parselink.js'
-import { OtfActionType } from '@module/otf/types.js'
+import { OtfActionType, OtfAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { getGame } from '@module/util/guards.js'
@@ -1243,7 +1243,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
-    await GURPS.performAction(accumulator as unknown as GurpsAction, GURPS.LastActor)
+    await GURPS.performAction(accumulator as unknown as OtfAction, GURPS.LastActor)
   }
 
   /* ---------------------------------------- */

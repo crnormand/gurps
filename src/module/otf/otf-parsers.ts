@@ -1,9 +1,8 @@
 import { stripQuotes } from '@util/text-utilties.js'
 import { utoa } from '@util/utilities.js'
-import { DeepPartial } from 'fvtt-types/utils'
 
 import { parselink, PARSELINK_MAPPINGS } from './parselink.js'
-import { Action, OtfActionType, ParserResult } from './types.js'
+import { OtfAction, OtfActionType, ParserResult } from './types.js'
 
 type InputArgs = {
   str: string
@@ -660,10 +659,10 @@ class SkillSpellParser extends OtfParser {
     }
   }
 
-  parseSkill(input: string): DeepPartial<Action> | null {
+  parseSkill(input: string): OtfAction | null {
     if (!input) return null
 
-    const result: DeepPartial<Action> = {}
+    const result: OtfAction = {}
 
     // 1. Split phrases
     const first = input.split('|')[0].trim()
@@ -904,7 +903,7 @@ function resolveAttributePath(attrkey: string): string | undefined {
 export function gmspan(
   overridetxt: string | undefined,
   str: string,
-  action: DeepPartial<Action>,
+  action: OtfAction,
   plus: boolean,
   clrdmods: boolean
 ) {
@@ -958,7 +957,7 @@ export function gmspan(
 export function gspan(
   overridetxt: string | undefined,
   str: string,
-  action: DeepPartial<Action>,
+  action: OtfAction,
   prefix?: string,
   comment?: string
 ) {

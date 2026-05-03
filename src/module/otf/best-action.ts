@@ -1,7 +1,7 @@
-import { Action } from '@module/otf/types.js'
+import { OtfAction } from '@module/otf/types.js'
 
 export type ActionChain = {
-  action: Action | undefined
+  action: OtfAction | undefined
   actor: Actor.Implementation
   event: Event
   targets: string[]
@@ -28,7 +28,7 @@ export async function findBestActionInChain({
   event,
   targets,
   originalOtf,
-}: ActionChain): Promise<Action | null> {
+}: ActionChain): Promise<OtfAction | null> {
   if (!action) return null
 
   const actions = []
@@ -43,6 +43,12 @@ export async function findBestActionInChain({
   const resolvedActions: ({ target: number; thing?: string } | false)[] = []
 
   for (const action of actions) {
+    if (!action.type) {
+      console.warn('Action in chain is missing type:', action)
+      resolvedActions.push(false)
+      continue
+    }
+
     const func = GURPS.actionFuncs[action.type]
 
     if (func.constructor.name === 'AsyncFunction') {
