@@ -1,4 +1,4 @@
-export default class GurpsActiveEffect extends ActiveEffect {
+export class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffect<SubType> {
   /**
    * On Actor.applyEffect: Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM.
    */
@@ -12,11 +12,17 @@ export default class GurpsActiveEffect extends ActiveEffect {
     else if (change.key === 'system.conditions.posture') actor.replacePosture(change)
   }
 
+  /* ---------------------------------------- */
+
   chatmessages: string[] = []
+
+  /* ---------------------------------------- */
 
   get allUserModKeys() {
     return ['system.conditions.usermods', 'system.conditions.self.modifiers', 'system.conditions.target.modifiers']
   }
+
+  /* ---------------------------------------- */
 
   /**
    * Add origin tag to ActiveEffect which affects user mods.
@@ -46,6 +52,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
     return super._preUpdate(changed, options, user)
   }
 
+  /* ---------------------------------------- */
+
   protected override _onDelete(options: ActiveEffect.Database.OnDeleteOperation, userId: string): void {
     // If ADD is opened for this actor, update the token effect buttons
     const buttonAddClass = `fa-circle-plus`
@@ -65,12 +73,18 @@ export default class GurpsActiveEffect extends ActiveEffect {
     super._onDelete(options, userId)
   }
 
+  /* ---------------------------------------- */
+
   override _onCreate(data: ActiveEffect.CreateData, options: ActiveEffect.Database.OnCreateOperation, userId: string) {
     super._onCreate(data, options, userId)
 
     // @ts-expect-error - game.users exists at runtime in Foundry context
     if (game?.users?.get(userId).isSelf) {
-      if (!this.getFlag('gurps', 'duration')) this.setFlag('gurps', 'duration', { delaySeconds: null })
+      // setFlag internally calls update() without render:false, which triggers a second sheet
+      // render immediately after the create render. Use update() directly to suppress it.
+      if (!this.getFlag('gurps', 'duration'))
+        // @ts-expect-error - flat-path flag key not in generated UpdateInput types
+        this.update({ 'flags.gurps.duration': { delaySeconds: null } }, { render: false })
     }
 
     // If ADD is opened for this actor, update the token effect buttons
@@ -91,9 +105,13 @@ export default class GurpsActiveEffect extends ActiveEffect {
     }
   }
 
+  /* ---------------------------------------- */
+
   get endCondition() {
     return this.getFlag('gurps', 'endCondition')
   }
+
+  /* ---------------------------------------- */
 
   set endCondition(otf) {
     this.setFlag('gurps', 'endCondition', otf)
@@ -105,9 +123,21 @@ export default class GurpsActiveEffect extends ActiveEffect {
     }
   }
 
-  get isManeuver() {
-    return this.getFlag('gurps', 'statusId') === 'maneuver'
+  /* ---------------------------------------- */
+
+  get isManeuver(): boolean {
+    return this.getFlag(GURPS.SYSTEM_NAME, 'statusId') === 'maneuver'
   }
+
+  /* ---------------------------------------- */
+
+  get isPosture(): boolean {
+    const effectFlag = this.getFlag(GURPS.SYSTEM_NAME, 'effect')
+
+    return !!effectFlag && effectFlag.type === 'posture'
+  }
+
+  /* ---------------------------------------- */
 
   get terminateActions() {
     const data = this.getFlag('gurps', 'terminateActions')
@@ -115,9 +145,13 @@ export default class GurpsActiveEffect extends ActiveEffect {
     return data ?? []
   }
 
+  /* ---------------------------------------- */
+
   static getName(effect: ActiveEffect.Implementation): string | undefined {
     return effect.getFlag('gurps', 'name')
   }
+
+  /* ---------------------------------------- */
 
   static async clearEffectsOnSelectedToken() {
     // @ts-expect-error - GURPS.LastActor is checked for null at runtime
@@ -136,6 +170,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
       }
     }
   }
+
+  /* ---------------------------------------- */
 
   chat(actor: Actor.Implementation, value: any) {
     if (!!value?.frequency && value.frequency === 'once') {
@@ -181,6 +217,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
       })
   }
 
+  /* ---------------------------------------- */
+
   override updateDuration() {
     const value = super.updateDuration()
 
@@ -189,7 +227,3 @@ export default class GurpsActiveEffect extends ActiveEffect {
     return value
   }
 }
-
-/* ---------------------------------------- */
-
-export { GurpsActiveEffect }

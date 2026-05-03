@@ -11,6 +11,7 @@ import {
 } from '@gurps-types/gurps/display-item.js'
 import { Weight } from '@module/data/common/weight.js'
 import type { ModelCollection } from '@module/data/model-collection.js'
+import { PostureType } from '@module/effects/posture.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { ItemType } from '@module/item/types.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
@@ -640,30 +641,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       })
     }
 
-    // Change Maneuver
-
-    const maneuverSelect = this.element.querySelector<HTMLSelectElement>('select[name="maneuver"]')
-
-    maneuverSelect?.addEventListener('change', async event => {
-      event.preventDefault()
-
-      const value = event.currentTarget instanceof HTMLSelectElement ? event.currentTarget.value : 'do_nothing'
-
-      await this.actor.replaceManeuver(value)
-    })
-
-    // Change Posture
-
-    const postureSelect = this.element.querySelector<HTMLSelectElement>('select[name="posture"]')
-
-    postureSelect?.addEventListener('change', async event => {
-      event.preventDefault()
-
-      const value = event.currentTarget instanceof HTMLSelectElement ? event.currentTarget.value : 'standing'
-
-      await this.actor.replacePosture(value)
-    })
-
     // Color pool-state foreground based on background color.
 
     const poolStates = this.element.querySelectorAll<HTMLElement>('.pool-state')
@@ -705,6 +682,24 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       fixed: true,
       eventName: 'contextmenu',
     })
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _onChangeForm(formConfig: Application.FormConfiguration, event: Event): Promise<void> {
+    if (event.target instanceof HTMLSelectElement) {
+      const action = event.target.dataset.action
+
+      if (action === 'setPosture') {
+        return this.actor.replacePosture(event.target.value as PostureType)
+      }
+
+      if (action === 'setManeuver') {
+        return this.actor.replaceManeuver(event.target.value)
+      }
+    }
+
+    return super._onChangeForm(formConfig, event)
   }
 
   /* ---------------------------------------- */

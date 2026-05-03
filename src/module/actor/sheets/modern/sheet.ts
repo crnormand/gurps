@@ -1,4 +1,4 @@
-import { HandlebarsApplicationMixin, ActorSheet, Application } from '@gurps-types/foundry/index.js'
+import { ActorSheet, Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import {
   DisplayConditionalModifier,
   DisplayEquipment,
@@ -13,6 +13,7 @@ import { ActionType } from '@module/action/types.js'
 import EffectPicker from '@module/actor/effect-picker.js'
 import MoveModeEditor from '@module/actor/move-mode-editor.js'
 import { ActorType } from '@module/actor/types.js'
+import { PostureType } from '@module/effects/posture.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { ItemType } from '@module/item/types.js'
 import { getGame } from '@module/util/guards.js'
@@ -30,10 +31,10 @@ import { bindTrackerActions, PreparedTrackerData, prepareTrackerDataForSheet } f
 import { bindDropdownToggle } from './dropdown-handler.js'
 import {
   bindAllInlineEdits,
-  bindAttributeEdit,
-  bindSecondaryStatsEdit,
-  bindPointsEdit,
   bindAllTrackerEdits,
+  bindAttributeEdit,
+  bindPointsEdit,
+  bindSecondaryStatsEdit,
 } from './inline-edit-handler.js'
 import { isPostureOrManeuver } from './utils/effect.js'
 
@@ -517,7 +518,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       dropdownSelector: '.ms-posture-dropdown',
       toggleSelector: '.ms-posture-selected',
       optionSelector: '.ms-posture-option',
-      onSelect: (posture: string) => this.actor.replacePosture(posture),
+      onSelect: (posture: string) => this.actor.replacePosture(posture as PostureType),
     })
   }
 
