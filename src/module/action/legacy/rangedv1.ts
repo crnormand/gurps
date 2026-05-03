@@ -40,8 +40,8 @@ class RangedV1 {
     return [] // this.rangedV2.contains
   }
 
-  get damage() {
-    return this.rangedV2.damage
+  get damage(): string {
+    return [...this.rangedV2.damage].join(' ')
   }
 
   get extraAttacks() {
