@@ -127,6 +127,12 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  get isContainer(): boolean {
+    return this.children.length > 0
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * Return the consolidated list of conditional modifiers provided by this item, combining any modifiers with the same
    * situation by summing their modifier values. This allows for multiple conditional modifiers to be applied to an item
@@ -332,6 +338,14 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  /**
+   * Called after individual data preparation for each Item is complete.
+   * Used to set values that depend on the data of sibling items.
+   */
+  prepareSiblingData(): void {}
+
+  /* ---------------------------------------- */
+
   getGlobalBonuses(): AnyObject[] {
     const bonuses = []
 
@@ -404,13 +418,6 @@ const baseItemModelSchema = () => {
      * their already-resolved types rather than freshly evaluating the generic chain.
      */
     actions: new CollectionField(BaseAction as Action.AnyConstructor, { required: true, nullable: false }),
-
-    /**
-     * Is this Item a container that can hold other items? This should be toggleable in the UI for any Item,
-     * and allows for empty containers Items, which the previous accessor value based on the presence of contained
-     * Items did not.
-     */
-    isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     /** Is this Item active? This determined whether bonuses provided by the Item are applied to the Actor. */
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),

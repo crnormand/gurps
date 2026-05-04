@@ -2,6 +2,8 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import { MOVE_NONE, MOVE_ONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
 
+import { PostureType } from './posture.js'
+
 export class StatusEffect {
   static SETTING_USE_ACTIVE_EFFECTS = 'use-active-effects'
 
@@ -90,9 +92,9 @@ export class StatusEffect {
     }
 
     return {
-      prone: {
+      [PostureType.Prone]: {
         img: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
-        id: 'prone',
+        id: PostureType.Prone,
         name: 'GURPS.status.Prone',
         move: MOVE_ONE,
         // I'm sneakily using ActiveEffects to implement postures even if the system setting is turned off.
@@ -130,9 +132,9 @@ export class StatusEffect {
           },
         },
       },
-      kneel: {
+      [PostureType.Kneeling]: {
         img: 'systems/gurps/icons/statuses/condition-kneel.webp',
-        id: 'kneel',
+        id: PostureType.Kneeling,
         name: 'GURPS.status.Kneel',
         move: MOVE_ONETHIRD,
         changes: [
@@ -168,9 +170,9 @@ export class StatusEffect {
           },
         },
       },
-      crouch: {
+      [PostureType.Crouching]: {
         img: 'systems/gurps/icons/statuses/condition-crouch.webp',
-        id: 'crouch',
+        id: PostureType.Crouching,
         name: 'GURPS.status.Crouch',
         move: MOVE_TWOTHIRDS,
         changes: [
@@ -201,9 +203,9 @@ export class StatusEffect {
           },
         },
       },
-      sit: {
+      [PostureType.Sitting]: {
         img: 'systems/gurps/icons/statuses/condition-sit.webp',
-        id: 'sit',
+        id: PostureType.Sitting,
         name: 'GURPS.status.Sit',
         move: MOVE_NONE,
         changes: [
@@ -239,9 +241,9 @@ export class StatusEffect {
           },
         },
       },
-      crawl: {
+      [PostureType.Crawling]: {
         img: 'systems/gurps/icons/statuses/condition-crawl.webp',
-        id: 'crawl',
+        id: PostureType.Crawling,
         name: 'GURPS.status.Crawling',
         move: MOVE_ONETHIRD,
         changes: [

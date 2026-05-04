@@ -89,14 +89,19 @@ class SpellModel extends BaseItemModel<SpellSchema> {
     if (!action.action) return
 
     action.action.calcOnly = true
-    // TODO: verify that target is of type "number" (or replace this whole thing)
-    GURPS.performAction(action.action, this.actor).then(
-      (result: boolean | { target: number; thing: any } | undefined) => {
-        if (result && typeof result === 'object') {
-          this.level = result.target
-        }
-      }
-    )
+    action.action.suppressWarnings = true
+
+    const result = GURPS.performAction(action.action, this.actor) as unknown
+
+    if (
+      result &&
+      typeof result === 'object' &&
+      typeof (result as PromiseLike<unknown>).then !== 'function' &&
+      'target' in result &&
+      typeof result.target === 'number'
+    ) {
+      this.level = result.target
+    }
   }
 
   /* ---------------------------------------- */
@@ -123,9 +128,9 @@ class SpellModel extends BaseItemModel<SpellSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplaySpell {
-    let fullName = this.parent.name
+    const fullName = this._displayName
 
-    if (this.techlevel) fullName += `/TL${this.techlevel}`
+    const baseOtf = quotedAttackName({ name: fullName })
 
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       level: this.level,
@@ -141,10 +146,22 @@ class SpellModel extends BaseItemModel<SpellSchema> {
       castingTime: this.casttime,
       techLevel: this.techlevel,
       otf: {
-        level: `Sp:"${this.parent.name}"`,
-        relativeLevel: `Sp:"${this.parent.name}"`,
+        level: `Sp:${baseOtf}`,
+        relativeLevel: `Sp:${baseOtf}`,
       },
     })
+  }
+
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  get _displayName(): string {
+    let fullName = this.parent.name
+
+    if (this.techlevel) fullName += `/TL${this.techlevel}`
+
+    return fullName
   }
 }
 

@@ -1,5 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
+import { AnyObject } from 'fvtt-types/utils'
 
+import { GcsAttributeDefinition } from './attribute-definition.js'
 import { GcsAttribute } from './attribute.js'
 import { GcsElement } from './base.js'
 import { GcsBody } from './body.js'
@@ -17,27 +19,18 @@ class GcsCharacter extends GcsElement<GcsCharacterModel> {
 
   /* ---------------------------------------- */
 
-  protected static override _importField(data: any, field: fields.DataField.Any, name: string) {
-    switch (name) {
-      case 'body_type':
-        return GcsBody.importSchema(data, GcsBody.defineSchema())
-      case 'attributes':
-        return data?.map((attributeData: any) => GcsAttribute.importSchema(attributeData))
-      case 'advantages':
-      case 'traits':
-        return data?.map((traitData: any) => GcsTrait.importSchema(traitData))
-      case 'skills':
-        return data?.map((skillData: any) => GcsSkill.importSchema(skillData))
-      case 'spells':
-        return data?.map((spellData: any) => GcsSpell.importSchema(spellData))
-      case 'equipment':
-      case 'other_equipment':
-        return data?.map((equipmentData: any) => GcsEquipment.importSchema(equipmentData))
-      // case 'notes':
-      //   return data?.map((noteData: any) => GcsNote.importSchema(noteData))
-      default:
-        return super._importField(data, field, name)
-    }
+  static override importSchema<Schema extends fields.DataSchema>(
+    importData: Partial<Schema> & AnyObject,
+    schema: Schema = this.defineSchema() as unknown as Schema,
+    verbose = false
+  ) {
+    // Older GCS files use 'advantages' as the top-level traits key
+    const data: typeof importData =
+      'advantages' in importData && !('traits' in importData)
+        ? { ...importData, traits: (importData as AnyObject).advantages }
+        : importData
+
+    return super.importSchema(data, schema, verbose)
   }
 
   /* ---------------------------------------- */
@@ -163,6 +156,14 @@ const characterData = () => {
     settings: new fields.SchemaField(
       {
         body_type: new fields.EmbeddedDataField(GcsBody, { required: true, nullable: false }),
+        attributes: new fields.ArrayField(
+          new fields.EmbeddedDataField(GcsAttributeDefinition, { required: true, nullable: false }),
+
+          {
+            required: true,
+            nullable: false,
+          }
+        ),
       },
       { required: true, nullable: false }
     ),

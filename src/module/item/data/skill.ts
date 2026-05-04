@@ -87,14 +87,24 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     if (!action.action) return
 
     action.action.calcOnly = true
-    // TODO: verify that target is of type "number" (or replace this whole thing)
-    GURPS.performAction(action.action, this.actor).then(
-      (result: boolean | { target: number; thing: any } | undefined) => {
-        if (result && typeof result === 'object') {
-          this.level = result.target
-        }
-      }
-    )
+    action.action.suppressWarnings = true
+
+    const result = GURPS.performAction(action.action, this.actor) as unknown as
+      | boolean
+      | { target: number; thing: any }
+      | Promise<unknown>
+      | undefined
+
+    if (
+      (result && result instanceof Promise) ||
+      (typeof result === 'object' && 'then' in result && typeof result.then === 'function')
+    ) {
+      return
+    }
+
+    if (result && typeof result === 'object' && typeof result.target === 'number') {
+      this.level = result.target
+    }
   }
 
   /* ---------------------------------------- */
@@ -122,10 +132,9 @@ class SkillModel extends BaseItemModel<SkillSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplaySkill {
-    let fullName = this.parent.name
+    const fullName = this._displayName
 
-    if (this.techlevel) fullName += `/TL${this.techlevel}`
-    if (this.specialization) fullName += ` (${this.specialization})`
+    const baseOtf = quotedAttackName({ name: fullName })
 
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       techLevel: this.techlevel,
@@ -135,10 +144,23 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       fullName,
       points: this.points,
       otf: {
-        level: `Sk:"${this.parent.name}"`,
-        relativeLevel: `Sk:"${this.parent.name}"`,
+        level: `Sk:${baseOtf}`,
+        relativeLevel: `Sk:${baseOtf}`,
       },
     })
+  }
+
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  get _displayName(): string {
+    let fullName = this.parent.name
+
+    if (this.techlevel) fullName += `/TL${this.techlevel}`
+    if (this.specialization) fullName += ` (${this.specialization})`
+
+    return fullName
   }
 }
 

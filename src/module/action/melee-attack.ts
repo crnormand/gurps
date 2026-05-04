@@ -1,7 +1,8 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplayMeleeAttack } from '@gurps-types/gurps/display-item.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
-import { makeRegexPatternFrom } from '@util/utilities.js'
+import { getGame } from '@module/util/guards.js'
+import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { BaseAttack } from './base-attack.js'
@@ -109,8 +110,9 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
-  override prepareDerivedData(): void {
-    super.prepareDerivedData()
+  override prepareSiblingData(): void {
+    super.prepareSiblingData()
+
     this.#prepareDefenses()
     this.#prepareDisplayValues()
   }
@@ -183,21 +185,36 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplayMeleeAttack {
-    const fullName = super.toDisplayItem().fullName
+    const name = this._displayName || ''
+    const mode = this.mode || null
 
-    const block = this.block.canBlock ? `B:"${fullName}"` : null
+    const baseOtf = quotedAttackName({ name, mode })
 
-    const parry = this.parry.canParry ? `P:"${fullName}"` : null
+    const block = this.block.canBlock ? `B:${baseOtf}` : null
+
+    const parry = this.parry.canParry ? `P:${baseOtf}` : null
+
+    const parryFencing = this.parry.canParry
+      ? this.parry.fencing
+        ? `P:${baseOtf} +3 ${getGame().i18n.localize('GURPS.modifiers_.fencingRetreat')}`
+        : `P:${baseOtf} +1 ${getGame().i18n.localize('GURPS.modifiers_.blockRetreat')}`
+      : null
+
+    const blockRetreat = this.block.canBlock
+      ? `B:${baseOtf} +1 ${getGame().i18n.localize('GURPS.modifiers_.blockRetreat')}`
+      : null
 
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       reach: this.reachText,
       parry: this.parryText,
       block: this.blockText,
       otf: {
-        level: `M:"${fullName}"`,
-        damage: `D:"${fullName}"`,
+        level: `M:${baseOtf}`,
+        damage: `D:${baseOtf}`,
         block,
         parry,
+        parryFencing,
+        blockRetreat,
       },
     })
   }

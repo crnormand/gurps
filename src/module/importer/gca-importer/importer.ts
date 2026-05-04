@@ -815,7 +815,7 @@ Portrait will not be imported.`
   #importTrait(trait: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Trait
 
-    let name = trait.name ?? 'Trait'
+    let name = trait.name || globalThis._loc('TYPES.Item.feature')
     const crRegex = /\[\s*CR: (\d{1,2})\s*\]/i
 
     const isLeveled = trait.calcs.cost?.includes('/') ?? false
@@ -860,8 +860,7 @@ Portrait will not be imported.`
 
   #importSkill(skill: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Skill
-    // TODO: localize
-    const name = skill.name ?? 'Skill'
+    const name = skill.name || globalThis._loc('TYPES.Item.skill')
 
     const [baseSystem, _id] = this.#importItem(skill, containedBy)
 
@@ -889,8 +888,7 @@ Portrait will not be imported.`
 
   #importSpell(spell: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Spell
-    // TODO: localize
-    const name = spell.name ?? 'Spell'
+    const name = spell.name || globalThis._loc('TYPES.Item.spell')
 
     let spellClass = ''
     let spellResist = ''
@@ -952,7 +950,7 @@ Portrait will not be imported.`
 
   #importEquipment(equipment: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Equipment
-    const name = equipment.name ?? 'Equipment'
+    const name = equipment.name || globalThis._loc('TYPES.Item.equipment')
 
     const [baseSystem, _id] = this.#importItem(equipment, containedBy)
 

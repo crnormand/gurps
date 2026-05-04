@@ -5,6 +5,7 @@ import {
   gcsCollectionSchema,
   GcsCollectionSchema,
   GcsItem,
+  GcsLazyEmbeddedField,
   sourcedIdSchema,
   SourcedIdSchema,
 } from './base.js'
@@ -33,7 +34,8 @@ class GcsTrait extends GcsItem<TraitModel> {
     data: any,
     field: fields.DataField.Any,
     name: string,
-    replacements: Record<string, string> = {}
+    replacements: Record<string, string> = {},
+    verbose = false
   ): any {
     switch (name) {
       case 'name':
@@ -41,7 +43,7 @@ class GcsTrait extends GcsItem<TraitModel> {
       case 'userdesc':
         return this.processReplacements(data, replacements) ?? field.getInitialValue()
       default:
-        return super._importField(data, field, name, replacements)
+        return super._importField(data, field, name, replacements, verbose)
     }
   }
 
@@ -116,7 +118,8 @@ class GcsTrait extends GcsItem<TraitModel> {
     return this.container_type === 'ancestry'
   }
 
-  /** @abstract */
+  /* ---------------------------------------- */
+
   override get isEnabled(): boolean {
     return !this.effectivelyDisabled
   }
@@ -127,8 +130,7 @@ class GcsTrait extends GcsItem<TraitModel> {
 const traitData = () => {
   return {
     // START: TraitModel
-    // Change from Gcs' own schema, allowing for recursion of data models
-    children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
+    children: new fields.ArrayField(new GcsLazyEmbeddedField(() => GcsTrait, { required: true, nullable: false }), {
       required: true,
       nullable: true,
       initial: null,
@@ -141,11 +143,14 @@ const traitData = () => {
 
     // START: TraitEditData
     userdesc: new fields.StringField({ required: true, nullable: true, initial: null }),
-    modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
-      required: true,
-      nullable: true,
-      initial: null,
-    }),
+    modifiers: new fields.ArrayField(
+      new GcsLazyEmbeddedField(() => GcsTraitModifier, { required: true, nullable: false }),
+      {
+        required: true,
+        nullable: true,
+        initial: null,
+      }
+    ),
     cr: new fields.NumberField({ required: true, nullable: true, initial: null }),
     disabled: new fields.BooleanField({ required: true, nullable: true, initial: null }),
     // END: TraitEditData

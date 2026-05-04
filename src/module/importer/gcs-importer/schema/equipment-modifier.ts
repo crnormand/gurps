@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
+import { GcsItem, GcsLazyEmbeddedField, sourcedIdSchema, SourcedIdSchema } from './base.js'
 
 /* ---------------------------------------- */
 
@@ -25,6 +25,12 @@ class GcsEquipmentModifier extends GcsItem<EquipmentModifierData> {
   override get isContainer(): boolean {
     return this.id.startsWith('F')
   }
+
+  /* ---------------------------------------- */
+
+  override get isEnabled(): boolean {
+    return !this.disabled || this.isContainer
+  }
 }
 
 /* ---------------------------------------- */
@@ -33,11 +39,10 @@ const equipmentModifierData = () => {
   return {
     // START: EquipmentModifierData
     third_party: new fields.ObjectField(),
-    // Change from Gcs' own schema, allowing for recursion of data models
-    children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
-      required: true,
-      nullable: true,
-    }),
+    children: new fields.ArrayField(
+      new GcsLazyEmbeddedField(() => GcsEquipmentModifier, { required: true, nullable: false }),
+      { required: true, nullable: true }
+    ),
     // END: EquipmentModifierData
 
     // START: EquipmentModifierEditData
@@ -71,6 +76,15 @@ const equipmentModifierData = () => {
     weight: new fields.StringField({ required: true, nullable: true }),
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     // END: EquipmentModifierNonContainerSyncData
+
+    // START: calc
+    calc: new fields.SchemaField(
+      {
+        resolved_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+      },
+      { required: true, nullable: true, initial: null }
+    ),
+    // END: calc
   }
 }
 

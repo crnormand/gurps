@@ -1080,41 +1080,4 @@ ${content}
         }
       </style>`
   })
-
-  // === register Handlebars partials ===
-  // Partial name will be the last component of the path name, e.g.: 'systems/gurps/templates/actor/foo.hbs" -- the name is "foo".
-  // Use it in an HTML/HBS file like this: {{> foo }}.
-  // See https://handlebarsjs.com/guide/partials.html#partials for more documentation.
-  const templates = [
-    'systems/gurps/templates/actor/modern/partials/dice-button.hbs',
-    'systems/gurps/templates/actor/modern/partials/section-header.hbs',
-    'systems/gurps/templates/actor/modern/partials/row-actions.hbs',
-    'systems/gurps/templates/actor/modern/partials/row-notes.hbs',
-    'systems/gurps/templates/actor/modern/partials/add-row.hbs',
-    'systems/gurps/templates/actor/modern/partials/data-table.hbs',
-    'systems/gurps/templates/actor/modern/partials/attack-table.hbs',
-    'systems/gurps/templates/actor/modern/partials/resource-bar.hbs',
-    'systems/gurps/templates/actor/modern/partials/ms-resource-tracker.hbs',
-    'systems/gurps/templates/actor/modern/partials/attribute-badge.hbs',
-    'systems/gurps/templates/actor/modern/partials/traits-table.hbs',
-    'systems/gurps/templates/actor/modern/partials/modifiers-table.hbs',
-    'systems/gurps/templates/actor/modern/partials/hitlocations-table.hbs',
-    'systems/gurps/templates/actor/modern/partials/encumbrance-table.hbs',
-    'systems/gurps/templates/actor/modern/partials/equipment-table.hbs',
-    'systems/gurps/templates/actor/modern/partials/ms-portrait.hbs',
-    'systems/gurps/templates/actor/modern/partials/ms-identity.hbs',
-    'systems/gurps/templates/actor/modern/partials/ms-attributes.hbs',
-    'systems/gurps/templates/actor/modern/partials/ms-resources.hbs',
-    'systems/gurps/templates/actor/modern/partials/ms-secondary-stats.hbs',
-  ]
-
-  templates.forEach(filename => {
-    let name = filename.substr(filename.lastIndexOf('/') + 1).replace(/(.*)\.hbs/, '$1')
-
-    fetch(filename)
-      .then(it => it.text())
-      .then(async text => {
-        Handlebars.registerPartial(name, text)
-      })
-  })
 }

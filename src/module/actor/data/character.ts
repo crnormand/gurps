@@ -1524,8 +1524,24 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
       }
 
-      modifierTags =
-        (optionalArgs.obj.modifierTags as string)?.split(',').map((tag: string) => tag.trim().toLowerCase()) ?? []
+      switch (typeof optionalArgs.obj.modifierTags) {
+        case 'object': {
+          if (Array.isArray(optionalArgs.obj.modifierTags)) {
+            modifierTags = optionalArgs.obj.modifierTags
+          } else if (optionalArgs.obj.modifierTags instanceof Set) {
+            modifierTags = [...optionalArgs.obj.modifierTags]
+          }
+
+          break
+        }
+        case 'string': {
+          modifierTags = optionalArgs.obj.modifierTags
+            .split(/\s*,\s*|\s+/)
+            .map((tag: string) => tag.trim().toLowerCase())
+            .filter((tag: string) => tag.length > 0)
+        }
+      }
+
       allTags = [...modifierTags, ...allRollTags, ...refTags]
       itemRef = (optionalArgs.obj.name as string) ?? ''
     } else if (chatThing) {
@@ -1798,7 +1814,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     const weapons = this.parent.getItemAttacks().filter(attack => attackType === 'both' || attack.type === attackType)
 
-    let weapon = weapons.find(attack => attack.item.name === nameWithoutUsage && (!usage || attack.mode === usage))
+    let weapon = weapons.find(attack => attack._displayName === nameWithoutUsage && (!usage || attack.mode === usage))
 
     if (!weapon) {
       // Account for the possibility that the usage was matched incorrectly as part of the name (e.g. "Guns (Pistol)")

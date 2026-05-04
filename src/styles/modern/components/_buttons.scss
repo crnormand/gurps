@@ -115,11 +115,6 @@
   cursor: pointer;
   transition: background 0.15s;
 
-  i {
-    display: flex;
-    margin: 0;
-  }
-
   &:hover {
     background: var(--ms-accent-light);
     filter: brightness(0.95);

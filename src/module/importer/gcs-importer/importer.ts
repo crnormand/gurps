@@ -13,6 +13,7 @@ import { SkillSchema } from '@module/item/data/skill.js'
 import { SpellSchema } from '@module/item/data/spell.js'
 import { TraitSchema } from '@module/item/data/trait.js'
 import { ItemType } from '@module/item/types.js'
+import { getGame } from '@module/util/guards.js'
 import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
@@ -21,11 +22,13 @@ import { ImportSettings } from '../index.js'
 
 import { GcsCollection } from './schema/base.js'
 import { GcsCharacter } from './schema/character.js'
+import { GcsEquipmentModifier } from './schema/equipment-modifier.js'
 import { GcsEquipment } from './schema/equipment.js'
 import { AnyGcsItem, AnyGcsItemCollection } from './schema/index.js'
 import { GcsNote } from './schema/note.js'
 import { GcsSkill } from './schema/skill.js'
 import { GcsSpell } from './schema/spell.js'
+import { GcsTraitModifier } from './schema/trait-modifier.js'
 import { GcsTrait } from './schema/trait.js'
 import { GcsWeapon } from './schema/weapon.js'
 
@@ -1002,6 +1005,7 @@ Portrait will not be imported.`
       damage: [weapon.calc?.damage || ''],
       importedLevel: weapon.calc?.level || 0,
       itemModifiers: '',
+      mode: weapon.usage || '',
       modifierTags: '',
       notes: weapon.usage_notes || '',
       otf: this.#importWeaponDefaults(weapon),
@@ -1017,13 +1021,29 @@ Portrait will not be imported.`
 
   #importTrait(trait: GcsTrait, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Trait
-    // TODO: localize
-    const name = trait.name ?? 'Trait'
+    const name = trait.name || globalThis._loc('TYPES.Item.feature')
 
     const [baseSystem, _id] = this.#importItem(trait)
+    let modifierNotes = ''
 
+    const modifiers = trait.modifiers?.filter(mod => mod.isEnabled) ?? []
+
+    for (const modifier of modifiers as unknown as GcsTraitModifier[]) {
+      if (modifierNotes) modifierNotes += '; '
+
+      modifierNotes += modifier.name
+      const modNotes = modifier.calc?.resolved_notes || modifier.local_notes || ''
+
+      if (modifier.levels) modifierNotes += `${modifier.levels}`
+
+      if (modNotes) modifierNotes += ` (${modNotes})`
+    }
+
+    const baseNotes = baseSystem.notes || ''
+    const notes = [modifierNotes, baseNotes].filter(note => note !== '').join('\n')
     const system: DataModel.CreateData<TraitSchema> = {
       ...baseSystem,
+      notes,
       disabled: trait.disabled,
       containedBy: containedBy ?? null,
       cr: trait.cr ?? null,
@@ -1034,7 +1054,6 @@ Portrait will not be imported.`
 
     trait.childItems?.forEach((child: GcsTrait, childIndex: number) => this.#importTrait(child, childIndex, _id))
 
-    // component.contains = children.map((c: Item.CreateData) => c._id as string)
     const item: Item.CreateData<ItemType.Trait> = {
       _id,
       type,
@@ -1052,13 +1071,56 @@ Portrait will not be imported.`
 
   #importSkill(skill: GcsSkill, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Skill
-    // TODO: localize
-    const name = skill.name ?? 'Skill'
+    const name = skill.name || globalThis._loc('TYPES.Item.skill')
 
     const [baseSystem, _id] = this.#importItem(skill)
 
+    let notes = baseSystem.notes || ''
+
+    if (skill.isTechnique && skill.default) {
+      let defaultName = ''
+
+      switch (skill.default.type) {
+        case 'parry':
+        case 'block':
+        case 'skill': {
+          defaultName = skill.default.name || ''
+
+          if (skill.default.specialization) defaultName += ` (${skill.default.specialization})`
+
+          if (skill.default.type === 'block') defaultName += ' ' + globalThis._loc('GURPS.block')
+          else if (skill.default.type === 'parry') defaultName += ' ' + globalThis._loc('GURPS.parry')
+
+          break
+        }
+
+        default: {
+          if (this._mode === GcsImporterMode.Character) {
+            const attribute = (this.input as GcsCharacter).settings.attributes.find(
+              att => att.id === skill.default!.type
+            )
+
+            defaultName = attribute?.fullName || ''
+          }
+        }
+      }
+
+      if (skill.default.modifier) {
+        defaultName += skill.default.modifier.signedString()
+      }
+
+      const defaultNote = getGame().i18n.format('GURPS.item.skill.techniqueDefaultNote', { defaultName })
+
+      if (notes) {
+        notes = defaultNote + '\n' + notes
+      } else {
+        notes = defaultNote
+      }
+    }
+
     const system: DataModel.CreateData<SkillSchema> = {
       ...baseSystem,
+      notes,
       containedBy: containedBy ?? null,
       points: skill.points ?? 0,
       difficulty: skill.difficulty ?? '',
@@ -1087,8 +1149,7 @@ Portrait will not be imported.`
 
   #importSpell(spell: GcsSpell, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Spell
-    // TODO: localize
-    const name = spell.name ?? 'Spell'
+    const name = spell.name || globalThis._loc('TYPES.Item.spell')
 
     const [baseSystem, _id] = this.#importItem(spell)
 
@@ -1133,17 +1194,32 @@ Portrait will not be imported.`
     containedBy?: string | undefined
   ): Item.CreateData {
     const type = ItemType.Equipment
-    // TODO: localize
-    const name = equipment.name ?? 'Equipment'
+    const name = equipment.name || globalThis._loc('TYPES.Item.equipment')
 
     const weight = equipment.calc?.weight
       ? parseFloat(equipment.calc.weight)
       : parseFloat(equipment.calc?.extended_weight || '0')
 
     const [baseSystem, _id] = this.#importItem(equipment)
+    let modifierNotes = ''
+
+    const modifiers = equipment.modifiers?.filter(mod => mod.isEnabled) ?? []
+
+    for (const modifier of modifiers as unknown as GcsEquipmentModifier[]) {
+      if (modifierNotes) modifierNotes += '; '
+
+      modifierNotes += modifier.name
+      const modNotes = modifier.calc?.resolved_notes || modifier.local_notes || ''
+
+      if (modNotes) modifierNotes += ` (${modNotes})`
+    }
+
+    const baseNotes = baseSystem.notes || ''
+    const notes = [modifierNotes, baseNotes].filter(note => note !== '').join('\n')
 
     const system: DataModel.CreateData<EquipmentSchema> = {
       ...baseSystem,
+      notes,
       containedBy: containedBy ?? null,
       count: equipment.quantity ?? 1,
       weight,

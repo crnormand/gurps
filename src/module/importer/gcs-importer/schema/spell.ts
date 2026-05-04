@@ -5,6 +5,7 @@ import {
   GcsCollectionSchema,
   gcsCollectionSchema,
   GcsItem,
+  GcsLazyEmbeddedField,
   sourcedIdSchema,
   SourcedIdSchema,
 } from './base.js'
@@ -32,7 +33,8 @@ class GcsSpell extends GcsItem<SpellModel> {
     data: any,
     field: fields.DataField.Any,
     name: string,
-    replacements: Record<string, string>
+    replacements: Record<string, string>,
+    verbose = false
   ): any {
     switch (name) {
       case 'name':
@@ -48,7 +50,7 @@ class GcsSpell extends GcsItem<SpellModel> {
       case 'college':
         return this.processReplacements(data, replacements) ?? field.getInitialValue()
       default:
-        return super._importField(data, field, name, replacements)
+        return super._importField(data, field, name, replacements, verbose)
     }
   }
 
@@ -65,8 +67,7 @@ const spellData = () => {
   return {
     // START: SpellModel
     third_party: new fields.ObjectField(),
-    // Change from Gcs' own schema, allowing for recursion of data models
-    children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
+    children: new fields.ArrayField(new GcsLazyEmbeddedField(() => GcsSpell, { required: true, nullable: false }), {
       required: true,
       nullable: true,
       initial: null,

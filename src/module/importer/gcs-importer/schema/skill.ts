@@ -1,11 +1,11 @@
 import { fields } from '@gurps-types/foundry/index.js'
-import { AnyObject } from 'fvtt-types/utils'
 
 import {
   GcsCollection,
   GcsCollectionSchema,
   gcsCollectionSchema,
   GcsItem,
+  GcsLazyEmbeddedField,
   sourcedIdSchema,
   SourcedIdSchema,
 } from './base.js'
@@ -30,6 +30,12 @@ class GcsSkill extends GcsItem<SkillModel> {
 
   /* ---------------------------------------- */
 
+  get isTechnique(): boolean {
+    return this.id.startsWith('q')
+  }
+
+  /* ---------------------------------------- */
+
   override get isContainer(): boolean {
     return this.id.startsWith('S')
   }
@@ -40,17 +46,16 @@ class GcsSkill extends GcsItem<SkillModel> {
     data: any,
     field: fields.DataField.Any,
     name: string,
-    replacements: Record<string, string>
+    replacements: Record<string, string>,
+    verbose = false
   ): any {
     switch (name) {
-      case 'defaults':
-        return data?.map((defaultData: AnyObject) => GcsSkillDefault.fromImportData(defaultData as any))
       case 'name':
       case 'specialization':
       case 'local_notes':
         return this.processReplacements(data, replacements) ?? field.getInitialValue()
       default:
-        return super._importField(data, field, name, replacements)
+        return super._importField(data, field, name, replacements, verbose)
     }
   }
 }
@@ -60,9 +65,7 @@ class GcsSkill extends GcsItem<SkillModel> {
 const skillData = () => {
   return {
     // START: SkillModel
-
-    // Change from Gcs' own schema, allowing for recursion of data models
-    children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
+    children: new fields.ArrayField(new GcsLazyEmbeddedField(() => GcsSkill, { required: true, nullable: false }), {
       required: true,
       nullable: true,
       initial: null,

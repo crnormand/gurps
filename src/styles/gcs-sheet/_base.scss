@@ -73,49 +73,49 @@ body {
   label {
     padding: var(--gga-space-2);
   }
-}
 
-/* ---------------------------------------- */
+  /* ---------------------------------------- */
 
-// Roll and modifier buttons share base sizing; color is applied separately below.
-[data-action='rollOtf'],
-[data-action='addModifier'] {
-  height: var(--gcs-input-height);
-  line-height: var(--gcs-input-height);
-  cursor: pointer;
-  padding-right: 0.25rem;
-  text-align: center;
+  // Roll and modifier buttons share base sizing; color is applied separately below.
+  [data-action='rollOtf'],
+  [data-action='addModifier'] {
+    height: var(--gcs-input-height);
+    line-height: var(--gcs-input-height);
+    cursor: pointer;
+    padding-right: 0.25rem;
+    text-align: center;
 
-  span {
-    width: 100%;
-    padding: 0 0.5rem;
+    span {
+      width: 100%;
+      padding: 0 0.5rem;
+    }
   }
-}
 
-[data-action='rollOtf'] {
-  background-color: var(--gcs-color-roll-bg);
-  color: var(--gcs-color-roll-fg);
+  [data-action='rollOtf'] {
+    background-color: var(--gcs-color-roll-bg);
+    color: var(--gcs-color-roll-fg);
 
-  &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-roll-bg-hover) 40%);
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-roll-bg-hover) 40%);
+    }
   }
-}
 
-.gcs-mod-positive[data-action='addModifier'] {
-  background-color: var(--gcs-color-positive-bg);
-  color: var(--gcs-color-positive-fg);
+  .gcs-mod-positive[data-action='addModifier'] {
+    background-color: var(--gcs-color-positive-bg);
+    color: var(--gcs-color-positive-fg);
 
-  &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-positive-bg-hover) 40%);
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-positive-bg-hover) 40%);
+    }
   }
-}
 
-.gcs-mod-negative[data-action='addModifier'] {
-  background-color: var(--gcs-color-negative-bg);
-  color: var(--gcs-color-negative-fg);
+  .gcs-mod-negative[data-action='addModifier'] {
+    background-color: var(--gcs-color-negative-bg);
+    color: var(--gcs-color-negative-fg);
 
-  &:hover {
-    background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-negative-bg-hover) 15%);
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-negative-bg-hover) 15%);
+    }
   }
 }
 
@@ -316,7 +316,7 @@ body {
   }
 
   td {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   td,

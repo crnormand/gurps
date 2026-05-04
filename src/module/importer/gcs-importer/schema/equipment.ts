@@ -5,6 +5,7 @@ import {
   GcsCollectionSchema,
   gcsCollectionSchema,
   GcsItem,
+  GcsLazyEmbeddedField,
   sourcedIdSchema,
   SourcedIdSchema,
 } from './base.js'
@@ -33,14 +34,15 @@ class GcsEquipment extends GcsItem<EquipmentModel> {
     data: any,
     field: fields.DataField.Any,
     name: string,
-    replacements: Record<string, string>
+    replacements: Record<string, string>,
+    verbose = false
   ): any {
     switch (name) {
       case 'description':
       case 'local_notes':
         return this.processReplacements(data, replacements) ?? field.getInitialValue()
       default:
-        return super._importField(data, field, name, replacements)
+        return super._importField(data, field, name, replacements, verbose)
     }
   }
 
@@ -70,8 +72,7 @@ const equipmentData = () => {
   return {
     // START: EquipmentModel
     // third_party: new fields.ObjectField(),
-    // Change from Gcs' own schema, allowing for recursion of data models
-    children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
+    children: new fields.ArrayField(new GcsLazyEmbeddedField(() => GcsEquipment, { required: true, nullable: false }), {
       required: true,
       nullable: true,
     }),
@@ -82,11 +83,10 @@ const equipmentData = () => {
     // END: EquipmentModel
 
     // START: EquipmentEditData
-    modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
-      required: true,
-      nullable: true,
-      initial: null,
-    }),
+    modifiers: new fields.ArrayField(
+      new GcsLazyEmbeddedField(() => GcsEquipmentModifier, { required: true, nullable: false }),
+      { required: true, nullable: true, initial: null }
+    ),
     // rated_strength: new fields.NumberField({ required: true, nullable: true, initial: null }),
     quantity: new fields.NumberField({ required: true, nullable: true, initial: null }),
     // level: new fields.NumberField({ required: true, nullable: true, initial: null }),
