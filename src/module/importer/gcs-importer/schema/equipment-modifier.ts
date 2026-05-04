@@ -25,6 +25,12 @@ class GcsEquipmentModifier extends GcsItem<EquipmentModifierData> {
   override get isContainer(): boolean {
     return this.id.startsWith('F')
   }
+
+  /* ---------------------------------------- */
+
+  override get isEnabled(): boolean {
+    return !this.disabled || this.isContainer
+  }
 }
 
 /* ---------------------------------------- */
@@ -71,6 +77,15 @@ const equipmentModifierData = () => {
     weight: new fields.StringField({ required: true, nullable: true }),
     features: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false })),
     // END: EquipmentModifierNonContainerSyncData
+
+    // START: calc
+    calc: new fields.SchemaField(
+      {
+        resolved_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+      },
+      { required: true, nullable: true, initial: null }
+    ),
+    // END: calc
   }
 }
 

@@ -82,7 +82,7 @@ const equipmentData = () => {
     // END: EquipmentModel
 
     // START: EquipmentEditData
-    modifiers: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
+    modifiers: new fields.ArrayField(new fields.EmbeddedDataField(GcsEquipmentModifier), {
       required: true,
       nullable: true,
       initial: null,
