@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} for Perfect Balance",
     "FP": "FP",
     "frightcheck": "Fright Check",
+    "frightCheck": "Fright Check",
     "fromEllipses": "from ...",
     "gameAidUsersGuide": "GURPS 4e Game Aid USERS GUIDE",
     "grapplingControlled": "Controlled [-8 DX]",
@@ -1344,7 +1345,8 @@
           "techlevel": {
             "label": "TL"
           }
-        }
+        },
+        "techniqueDefaultNote": "Default: {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1805,10 +1807,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Title" },
-          "markdown": { "label": "Text" },
-          "reference": { "label": "Reference" },
-          "reference_highlight": { "label": "Reference Highlight" }
+          "markdown": {
+            "label": "Text"
+          },
+          "reference": {
+            "label": "Reference"
+          },
+          "reference_highlight": {
+            "label": "Reference Highlight"
+          },
+          "title": {
+            "label": "Title"
+          }
         }
       }
     },

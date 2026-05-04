@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} para Equilíbrio Perfeito",
     "FP": "PF",
     "frightcheck": "Verif. de Pânico",
+    "frightCheck": "Verif. de Pânico",
     "fromEllipses": "de ...",
     "gameAidUsersGuide": "Guia do Usuário do Auxílio de Jogo GURPS 4e",
     "grapplingControlled": "Sendo controlado(a)",
@@ -1344,7 +1345,8 @@
           "techlevel": {
             "label": "NT"
           }
-        }
+        },
+        "techniqueDefaultNote": "Padrão: {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1805,10 +1807,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Título" },
-          "markdown": { "label": "Texto" },
-          "reference": { "label": "Referência" },
-          "reference_highlight": { "label": "Destaque de Referência" }
+          "markdown": {
+            "label": "Texto"
+          },
+          "reference": {
+            "label": "Referência"
+          },
+          "reference_highlight": {
+            "label": "Destaque de Referência"
+          },
+          "title": {
+            "label": "Título"
+          }
         }
       }
     },

@@ -21,7 +21,7 @@ export {}
 declare global {
   /* ---------------------------------------- */
 
-  const _loc: typeof game.i18n.localize
+  var _loc: typeof game.i18n.localize
 
   /* ---------------------------------------- */
 

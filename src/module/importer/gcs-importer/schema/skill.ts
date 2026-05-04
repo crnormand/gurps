@@ -30,6 +30,12 @@ class GcsSkill extends GcsItem<SkillModel> {
 
   /* ---------------------------------------- */
 
+  get isTechnique(): boolean {
+    return this.id.startsWith('q')
+  }
+
+  /* ---------------------------------------- */
+
   override get isContainer(): boolean {
     return this.id.startsWith('S')
   }

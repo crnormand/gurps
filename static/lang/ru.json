@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} для Идеального равновесия",
     "FP": "ЕУ",
     "frightcheck": "Бросок страха",
+    "frightCheck": "Бросок страха",
     "fromEllipses": "из ...",
     "gameAidUsersGuide": "Руководство пользователя GURPS 4e Game Aid",
     "grapplingControlled": "Под контролем",
@@ -1344,7 +1345,8 @@
           "techlevel": {
             "label": "ТУ"
           }
-        }
+        },
+        "techniqueDefaultNote": "По умолчанию: {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1805,10 +1807,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Заголовок" },
-          "markdown": { "label": "Текст" },
-          "reference": { "label": "Ссылка" },
-          "reference_highlight": { "label": "Выделение ссылки" }
+          "markdown": {
+            "label": "Текст"
+          },
+          "reference": {
+            "label": "Ссылка"
+          },
+          "reference_highlight": {
+            "label": "Выделение ссылки"
+          },
+          "title": {
+            "label": "Заголовок"
+          }
         }
       }
     },
