@@ -1753,7 +1753,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           pageRef: null,
         }
       }
-      case OtfActionType.controlroll: {
+      case OtfActionType.controlRoll: {
         return {
           name: action.overridetxt || action.orig,
           uuid: null,

@@ -106,10 +106,6 @@ export function parselink(input, htmldesc, clrdmods = false) {
     let result
 
     if ((result = parser.parse_(args))) return result
-    // let matches, result
-    // if ((matches = args.str.match(f.regex))) {
-    //   if ((result = f.parse(matches, args))) return result
-    // }
   }
 
   return { text: args.str }
@@ -242,7 +238,7 @@ export function parseForRollOrDamage(str, overridetxt) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
       let action = {
         orig: str,
-        type: OtfActionType.derivedroll,
+        type: OtfActionType.derivedRoll,
         derivedformula: basic,
         formula: adds + multiplier + bang,
         desc: other,
@@ -258,7 +254,7 @@ export function parseForRollOrDamage(str, overridetxt) {
     } else {
       let action = {
         orig: str,
-        type: OtfActionType.deriveddamage,
+        type: OtfActionType.derivedDamage,
         derivedformula: basic,
         formula: adds + multiplier + divisor + bang,
         damagetype: actualType,

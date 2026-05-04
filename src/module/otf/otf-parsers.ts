@@ -264,7 +264,7 @@ class IfTestParser extends OtfParser {
    */
   override parse(match: RegExpMatchArray, args: InputArgs): ParserResult | null {
     const action = {
-      type: OtfActionType.iftest,
+      type: OtfActionType.ifTest,
       orig: match.input,
       name: match.groups!.keyword,
       equation: match.groups!.expression,
@@ -302,7 +302,7 @@ class FoundryLinkParser extends OtfParser {
    */
   override parse = (match: RegExpMatchArray, _: InputArgs): ParserResult | null => {
     const action = {
-      type: OtfActionType.dragdrop,
+      type: OtfActionType.dragDrop,
       orig: match.input,
       link: match.groups!.link,
       id: match.groups!.id,
@@ -410,7 +410,7 @@ class ControlRollParser extends OtfParser {
   override parse = (match: RegExpMatchArray, args: InputArgs): ParserResult | null => {
     const action = {
       orig: match.input,
-      type: OtfActionType.controlroll,
+      type: OtfActionType.controlRoll,
       target: parseInt(match.groups!.target),
       desc: match.groups!.desc,
       blindroll: args.blindroll,
@@ -447,7 +447,7 @@ class CheckExistsParser extends OtfParser {
   override parse(match: RegExpMatchArray, args: InputArgs): ParserResult | null {
     const action = {
       orig: match.input,
-      type: OtfActionType.testexists,
+      type: OtfActionType.testExists,
       prefix: match.groups!.type,
       name: match.groups!.name,
     }
@@ -857,7 +857,7 @@ class AttackDamageParser extends OtfParser {
     const isRanged = !!args.str.match(/^[ARD]/i)
     let type: OtfActionType = OtfActionType.attack
 
-    if (args.str.match(/^D/i)) type = OtfActionType.attackdamage
+    if (args.str.match(/^D/i)) type = OtfActionType.attackDamage
     if (args.str.match(/^P/i)) type = OtfActionType.weaponParry
     if (args.str.match(/^B/i)) type = OtfActionType.weaponBlock
     const action = {

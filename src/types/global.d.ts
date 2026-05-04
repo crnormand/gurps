@@ -127,20 +127,6 @@ declare global {
 
   /* ---------------------------------------- */
 
-  // interface GurpsAction {
-  //   type: string
-  //   overridetxt?: string
-  //   sourceId?: string
-  //   orig?: string
-  //   calcOnly?: boolean
-  //   // NOTE: not sure if this is accurate
-  //   action?: GurpsAction
-  //   next?: GurpsAction
-  //   [key: string]: unknown
-  // }
-
-  /* ---------------------------------------- */
-
   interface DamageData {
     attacker?: string
     dice?: string

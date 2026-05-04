@@ -6,14 +6,14 @@ const rollableTypes = [
   OtfActionType.attribute,
   OtfActionType.skillSpell,
   OtfActionType.attack,
-  OtfActionType.attackdamage,
+  OtfActionType.attackDamage,
   OtfActionType.weaponParry,
   OtfActionType.weaponBlock,
-  OtfActionType.controlroll,
+  OtfActionType.controlRoll,
   OtfActionType.roll,
   OtfActionType.damage,
-  OtfActionType.derivedroll,
-  OtfActionType.deriveddamage,
+  OtfActionType.derivedRoll,
+  OtfActionType.derivedDamage,
   OtfActionType.chat,
 ]
 
@@ -40,14 +40,14 @@ export function extractOtfs(text: string) {
       } else if (
         actionData.type === OtfActionType.skillSpell ||
         actionData.type === OtfActionType.attack ||
-        actionData.type === OtfActionType.attackdamage ||
+        actionData.type === OtfActionType.attackDamage ||
         actionData.type === OtfActionType.weaponParry ||
         actionData.type === OtfActionType.weaponBlock
       ) {
         displayText = actionData.name || ''
       } else if (actionData.type === OtfActionType.attribute) {
         displayText = actionData.attribute || ''
-      } else if (actionData.type === OtfActionType.controlroll) {
+      } else if (actionData.type === OtfActionType.controlRoll) {
         displayText = actionData.desc || ''
       } else if (actionData.type === OtfActionType.chat) {
         displayText = 'Action'

@@ -307,7 +307,7 @@ export async function doRoll({
         }
 
         break
-      case OtfActionType.controlroll:
+      case OtfActionType.controlRoll:
         itemIcon = 'fa-solid fa-head-side-gear'
         itemColor = '#c5360b'
         rollType = game.i18n.localize('GURPS.ControlRoll')

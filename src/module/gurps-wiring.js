@@ -228,8 +228,8 @@ export default class GurpsWiring {
       // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
       if (
         action.type === OtfActionType.damage ||
-        action.type === OtfActionType.deriveddamage ||
-        action.type === OtfActionType.attackdamage
+        action.type === OtfActionType.derivedDamage ||
+        action.type === OtfActionType.attackDamage
       )
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
       else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor)

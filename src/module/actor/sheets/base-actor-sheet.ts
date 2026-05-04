@@ -385,8 +385,8 @@ class GurpsBaseActorSheet<
       case 2: {
         const isDamageRoll =
           parsed.action.type === OtfActionType.damage ||
-          parsed.action.type === OtfActionType.deriveddamage ||
-          parsed.action.type === OtfActionType.attackdamage
+          parsed.action.type === OtfActionType.derivedDamage ||
+          parsed.action.type === OtfActionType.attackDamage
 
         return GURPS.whisperOtfToOwner(
           parsed.action.orig || '',
