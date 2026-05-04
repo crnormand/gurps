@@ -1,7 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplaySpell } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@util/parselink.js'
-import { makeRegexPatternFrom } from '@util/utilities.js'
+import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemType } from '../types.js'
@@ -128,9 +128,9 @@ class SpellModel extends BaseItemModel<SpellSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplaySpell {
-    let fullName = this.parent.name
+    const fullName = this._displayName
 
-    if (this.techlevel) fullName += `/TL${this.techlevel}`
+    const baseOtf = quotedAttackName({ name: fullName })
 
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       level: this.level,
@@ -146,10 +146,22 @@ class SpellModel extends BaseItemModel<SpellSchema> {
       castingTime: this.casttime,
       techLevel: this.techlevel,
       otf: {
-        level: `Sp:"${this.parent.name}"`,
-        relativeLevel: `Sp:"${this.parent.name}"`,
+        level: `Sp:${baseOtf}`,
+        relativeLevel: `Sp:${baseOtf}`,
       },
     })
+  }
+
+  /* ---------------------------------------- */
+  /*  Derived Values                          */
+  /* ---------------------------------------- */
+
+  get _displayName(): string {
+    let fullName = this.parent.name
+
+    if (this.techlevel) fullName += `/TL${this.techlevel}`
+
+    return fullName
   }
 }
 
