@@ -3,7 +3,7 @@ import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import { ActorType } from '@module/actor/types.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
 import type { MapField } from '@module/data/fields/map-field.js'
-import type GurpsActiveEffect from '@module/effects/active-effect.js'
+import type { GurpsActiveEffect } from '@module/effects/active-effect.js'
 import type {
   EquipmentModel,
   GcsEquipmentModel,
@@ -42,6 +42,12 @@ declare module 'fvtt-types/configuration' {
 
   interface ConfiguredActor<SubType extends Actor.SubType> {
     document: GurpsActorV2<SubType>
+  }
+
+  /* ---------------------------------------- */
+
+  interface ConfiguredActiveEffect<SubType extends ActiveEffect.SubType> {
+    document: GurpsActiveEffect<SubType>
   }
 
   /* ---------------------------------------- */
