@@ -109,8 +109,9 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
-  override prepareDerivedData(): void {
-    super.prepareDerivedData()
+  override prepareSiblingData(): void {
+    super.prepareSiblingData()
+
     this.#prepareDefenses()
     this.#prepareDisplayValues()
   }

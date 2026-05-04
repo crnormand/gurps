@@ -509,6 +509,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
+  /* ---------------------------------------- */
+
   /**
    * NOTE: Both character and characterV2.
    */
@@ -538,6 +540,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const isTypeData = this.system instanceof foundry.abstract.TypeDataModel
 
     if (isTypeData) this.system.prepareEmbeddedDocuments()
+
+    for (const item of this.items) item.prepareSiblingData()
   }
 
   /* ---------------------------------------- */

@@ -69,7 +69,6 @@
   "documentTypes": {
     "Actor": {
       "character": {},
-      "enemy": {},
       "gcsCharacter": {},
       "gcsLoot": {}
     },

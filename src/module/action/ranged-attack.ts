@@ -214,8 +214,9 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
-  override prepareDerivedData(): void {
-    super.prepareDerivedData()
+  override prepareSiblingData(): void {
+    super.prepareSiblingData()
+
     this.#prepareMusclePoweredRange()
     this.#prepareDisplayValues()
   }
