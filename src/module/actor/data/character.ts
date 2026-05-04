@@ -1534,7 +1534,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           break
         }
         case 'string': {
-          modifierTags = optionalArgs.obj.modifierTags.split(' ').map((tag: string) => tag.trim().toLowerCase())
+          modifierTags = optionalArgs.obj.modifierTags
+            .split(/\s*,\s*|\s+/)
+            .map((tag: string) => tag.trim().toLowerCase())
+            .filter((tag: string) => tag.length > 0)
         }
       }
 
