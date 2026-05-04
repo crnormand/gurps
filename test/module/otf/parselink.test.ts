@@ -195,7 +195,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'sw+1 cut',
-        type: OtfActionType.deriveddamage,
+        type: OtfActionType.derivedDamage,
       },
     ],
     [
@@ -208,7 +208,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'sw+1 ctrl',
-        type: OtfActionType.derivedroll,
+        type: OtfActionType.derivedRoll,
       },
     ],
     [
@@ -220,7 +220,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'sw +1 cut',
-        type: OtfActionType.deriveddamage,
+        type: OtfActionType.derivedDamage,
         extdamagetype: undefined,
         derivedformula: 'sw',
       },
@@ -234,7 +234,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'swing+1 cut',
-        type: OtfActionType.deriveddamage,
+        type: OtfActionType.derivedDamage,
         extdamagetype: undefined,
         derivedformula: 'swing',
       },
@@ -248,7 +248,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'THR+1 imp',
-        type: OtfActionType.deriveddamage,
+        type: OtfActionType.derivedDamage,
         extdamagetype: undefined,
         derivedformula: 'THR',
       },
@@ -262,7 +262,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'THRUST +1 imp',
-        type: OtfActionType.deriveddamage,
+        type: OtfActionType.derivedDamage,
         extdamagetype: undefined,
         derivedformula: 'THRUST',
       },
@@ -277,7 +277,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'swing +1 ctrl',
-        type: OtfActionType.derivedroll,
+        type: OtfActionType.derivedRoll,
       },
     ],
     [
@@ -603,7 +603,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: OtfActionType.iftest,
+        type: OtfActionType.ifTest,
         orig: '@margin > 1',
         name: 'margin',
         equation: '> 1',
@@ -615,7 +615,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: OtfActionType.iftest,
+        type: OtfActionType.ifTest,
         orig: '@margin >= 1',
         name: 'margin',
         equation: '>= 1',
@@ -627,7 +627,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: OtfActionType.iftest,
+        type: OtfActionType.ifTest,
         orig: '@margin >= 1.5',
         name: 'margin',
         equation: '>= 1.5',
@@ -639,7 +639,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: OtfActionType.iftest,
+        type: OtfActionType.ifTest,
         orig: '@isCritSuccess',
         name: 'isCritSuccess',
       })
@@ -650,7 +650,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: OtfActionType.iftest,
+        type: OtfActionType.ifTest,
         orig: '@isCritFailure = 0',
         name: 'isCritFailure',
         equation: '= 0',
@@ -664,7 +664,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: OtfActionType.dragdrop,
+        type: OtfActionType.dragDrop,
         orig: 'JournalEntry[1234]{some text}',
         link: 'JournalEntry',
         id: '1234',
@@ -679,7 +679,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: OtfActionType.dragdrop,
+        type: OtfActionType.dragDrop,
         orig: 'Actor[1234]{some text}',
         link: 'Actor',
         id: '1234',
@@ -692,7 +692,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: OtfActionType.dragdrop,
+        type: OtfActionType.dragDrop,
         orig: 'Actor[1234]{}',
         link: 'Actor',
         id: '1234',
@@ -1038,7 +1038,7 @@ describe('parseLink', () => {
       desc: 'to resist temptation',
       orig: 'CR: 9 to resist temptation',
       target: 9, // TODO target is sometimes a string, sometimes a number.
-      type: OtfActionType.controlroll,
+      type: OtfActionType.controlRoll,
     })
     expect(result.text).toEqual(
       expect.stringContaining("data-otf='CR: 9 to resist temptation'>CR: 9 to resist temptation</span>")
@@ -1053,7 +1053,7 @@ describe('parseLink', () => {
       desc: '',
       orig: 'CR: 15',
       target: 15,
-      type: OtfActionType.controlroll,
+      type: OtfActionType.controlRoll,
     })
     expect(result.text).toEqual(expect.stringContaining("data-otf='CR: 15'>CR: 15</span>"))
   })
@@ -1801,7 +1801,7 @@ describe('parseLink', () => {
         mod: '-2',
         name: 'Throwing Axe',
         orig: input,
-        type: OtfActionType.attackdamage,
+        type: OtfActionType.attackDamage,
       })
       expect(result.text).toEqual(
         expect.stringContaining('data-otf=\'D:"Throwing Axe"-2 stunned\'><b>D:</b>Throwing Axe-2 stunned</span>')
@@ -1902,7 +1902,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'A',
-        type: OtfActionType.testexists,
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?A:Broadsword'>?A:Broadsword</span>"))
     })
@@ -1914,7 +1914,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'M',
-        type: OtfActionType.testexists,
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?M:Broadsword'>?M:Broadsword</span>"))
     })
@@ -1926,7 +1926,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'R',
-        type: OtfActionType.testexists,
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?R:Broadsword'>?R:Broadsword</span>"))
     })
@@ -1938,7 +1938,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'S',
-        type: OtfActionType.testexists,
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?S:Broadsword'>?S:Broadsword</span>"))
     })
@@ -1950,7 +1950,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'AD',
-        type: OtfActionType.testexists,
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?AD:Broadsword'>?AD:Broadsword</span>"))
     })
@@ -1962,7 +1962,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'AT',
-        type: OtfActionType.testexists,
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?AT:Broadsword'>?AT:Broadsword</span>"))
     })
@@ -1974,7 +1974,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'SK',
-        type: OtfActionType.testexists,
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?SK:Broadsword'>?SK:Broadsword</span>"))
     })
@@ -1986,7 +1986,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'SP',
-        type: OtfActionType.testexists,
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?SP:Broadsword'>?SP:Broadsword</span>"))
     })
