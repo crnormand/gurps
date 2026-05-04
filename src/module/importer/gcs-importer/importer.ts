@@ -1002,6 +1002,7 @@ Portrait will not be imported.`
       damage: [weapon.calc?.damage || ''],
       importedLevel: weapon.calc?.level || 0,
       itemModifiers: '',
+      mode: weapon.usage || '',
       modifierTags: '',
       notes: weapon.usage_notes || '',
       otf: this.#importWeaponDefaults(weapon),
