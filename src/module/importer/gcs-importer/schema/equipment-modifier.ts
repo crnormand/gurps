@@ -1,6 +1,6 @@
 import { fields } from '@gurps-types/foundry/index.js'
 
-import { GcsItem, sourcedIdSchema, SourcedIdSchema } from './base.js'
+import { GcsItem, GcsLazyEmbeddedField, sourcedIdSchema, SourcedIdSchema } from './base.js'
 
 /* ---------------------------------------- */
 
@@ -39,11 +39,10 @@ const equipmentModifierData = () => {
   return {
     // START: EquipmentModifierData
     third_party: new fields.ObjectField(),
-    // Change from Gcs' own schema, allowing for recursion of data models
-    children: new fields.ArrayField(new fields.ObjectField({ required: true, nullable: false }), {
-      required: true,
-      nullable: true,
-    }),
+    children: new fields.ArrayField(
+      new GcsLazyEmbeddedField(() => GcsEquipmentModifier, { required: true, nullable: false }),
+      { required: true, nullable: true }
+    ),
     // END: EquipmentModifierData
 
     // START: EquipmentModifierEditData

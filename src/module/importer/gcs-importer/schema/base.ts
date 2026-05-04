@@ -12,16 +12,40 @@ type SourcedIdSchema = ReturnType<typeof sourcedIdSchema>
 
 /* ---------------------------------------- */
 
+interface GcsElementClass {
+  importSchema(data: any, schema?: any, verbose?: boolean): any
+}
+
+class GcsLazyEmbeddedField extends fields.ObjectField<fields.ObjectField.DefaultOptions> {
+  readonly #classGetter: () => GcsElementClass
+
+  constructor(classGetter: () => GcsElementClass, options?: fields.DataField.Options<AnyMutableObject>) {
+    super(options as fields.ObjectField.DefaultOptions)
+    this.#classGetter = classGetter
+  }
+
+  get modelClass(): GcsElementClass {
+    return this.#classGetter()
+  }
+}
+
+/* ---------------------------------------- */
+
 class GcsElement<
   Schema extends fields.DataSchema = fields.DataSchema,
   Parent extends DataModel.Any | null = DataModel.Any | null,
 > extends DataModel<Schema, Parent> {
   container: null | GcsElement<any> = null
 
-  static fromImportData<Schema extends fields.DataSchema>(importData: AnyObject, parent: null | GcsElement = null) {
+  static fromImportData<Schema extends fields.DataSchema>(
+    importData: AnyObject,
+    parent: null | GcsElement = null,
+    verbose = false
+  ) {
     const createData: DataModel.CreateData<Schema> = this.importSchema(
       importData as Partial<Schema> & AnyObject,
-      this.defineSchema() as Schema
+      this.defineSchema() as Schema,
+      verbose
     )
 
     return new this(createData as DataModel.CreateData<Schema>, { parent })
@@ -31,13 +55,21 @@ class GcsElement<
 
   static importSchema<Schema extends fields.DataSchema>(
     importData: Partial<Schema> & AnyObject,
-    schema: Schema = this.defineSchema() as Schema
+    schema: Schema = this.defineSchema() as Schema,
+    verbose = false
   ): DataModel.CreateData<Schema> {
     const data: AnyMutableObject = {}
     const replacements: Record<string, string> = (importData?.replacements as unknown as Record<string, string>) ?? {}
 
+    if (verbose) {
+      const schemaKeys = new Set(Object.keys(schema))
+      const unknownKeys = Object.keys(importData).filter(key => !schemaKeys.has(key) && key !== 'replacements')
+
+      if (unknownKeys.length) console.debug(`[GCS Import: ${this.name}] Unknown data keys:`, unknownKeys)
+    }
+
     for (const [key, field] of Object.entries(schema)) {
-      data[key] = this._importField(importData[key], field, key, replacements)
+      data[key] = this._importField(importData[key], field, key, replacements, verbose)
     }
 
     return data as DataModel.CreateData<Schema>
@@ -49,8 +81,15 @@ class GcsElement<
     data: any,
     field: fields.DataField.Any,
     _name: string,
-    _replacements: Record<string, string> = {}
+    _replacements: Record<string, string> = {},
+    verbose = false
   ): any {
+    if (verbose) {
+      if (data === undefined)
+        console.debug(`[GCS Import: ${this.name}] Field '${_name}' (${field.constructor.name}): missing from data`)
+      else console.debug(`[GCS Import: ${this.name}] Field '${_name}' (${field.constructor.name}):`, data)
+    }
+
     if (
       field instanceof fields.StringField ||
       field instanceof fields.NumberField ||
@@ -61,18 +100,47 @@ class GcsElement<
     }
 
     if (field instanceof fields.ArrayField) {
-      return (
-        data?.map(
-          (item: any) => item ?? (field as fields.ArrayField<fields.DataField.Any>).element.getInitialValue()
-        ) ?? []
-      )
+      const element = (field as fields.ArrayField<fields.DataField.Any>).element
+
+      if (element instanceof fields.EmbeddedDataField) {
+        const ModelClass = element.model as typeof GcsElement
+
+        if (verbose)
+          console.debug(
+            `[GCS Import: ${this.name}] Field '${_name}': dispatching ${ModelClass.name}.importSchema x${data?.length ?? 0}`
+          )
+
+        return data?.map((item: any) => ModelClass.importSchema(item, undefined, verbose)) ?? []
+      }
+
+      if (element instanceof GcsLazyEmbeddedField) {
+        const ModelClass = element.modelClass
+
+        if (verbose)
+          console.debug(
+            `[GCS Import: ${this.name}] Field '${_name}': dispatching (lazy) ${(ModelClass as any).name}.importSchema x${data?.length ?? 0}`
+          )
+
+        return data?.map((item: any) => ModelClass.importSchema(item, undefined, verbose)) ?? []
+      }
+
+      return data?.map((item: any) => item ?? element.getInitialValue()) ?? []
     }
 
-    if (field instanceof fields.EmbeddedDataField || field instanceof fields.SchemaField) {
-      return this.importSchema(data ?? {}, (field as fields.SchemaField<any>).fields)
+    if (field instanceof fields.EmbeddedDataField) {
+      const ModelClass = field.model as typeof GcsElement
+
+      if (verbose)
+        console.debug(`[GCS Import: ${this.name}] Field '${_name}': dispatching ${ModelClass.name}.importSchema`)
+
+      return ModelClass.importSchema(data ?? {}, undefined, verbose)
     }
 
-    console.warn(`Unsupported field type ${field.constructor.name} for import`)
+    if (field instanceof fields.SchemaField) {
+      return this.importSchema(data ?? field.getInitialValue(), (field as fields.SchemaField<any>).fields, verbose)
+    }
+
+    console.warn(`[GCS Import] Unsupported field type ${field.constructor.name} for key '${_name}'`)
   }
 
   /* ---------------------------------------- */
@@ -146,33 +214,6 @@ class GcsItem<Schema extends fields.DataSchema = fields.DataSchema> extends GcsE
 
   /* ---------------------------------------- */
 
-  protected static override _importField(
-    data: any,
-    field: fields.DataField.Any,
-    name: string,
-    _replacements: Record<string, string> = {}
-  ): any {
-    switch (name) {
-      case 'children':
-        if (this.metadata.childClass === null) return null
-
-        return data?.map((childData: any) => this.metadata.childClass?.importSchema(childData))
-      case 'modifiers':
-        if (this.metadata.modifierClass === null) return null
-
-        return data?.map((modifierData: any) => this.metadata.modifierClass?.importSchema(modifierData))
-
-      case 'weapons':
-        if (this.metadata.weaponClass === null) return null
-
-        return data?.map((weaponData: any) => this.metadata.weaponClass?.importSchema(weaponData))
-      default:
-        return super._importField(data, field, name)
-    }
-  }
-
-  /* ---------------------------------------- */
-
   get childItems() {
     if (this.metadata.childClass === null) return []
 
@@ -235,6 +276,7 @@ type GcsCollectionSchema<T extends DataModel.AnyConstructor> = ReturnType<typeof
 export {
   GcsElement,
   GcsItem,
+  GcsLazyEmbeddedField,
   sourcedIdSchema,
   type SourcedIdSchema,
   GcsCollection,

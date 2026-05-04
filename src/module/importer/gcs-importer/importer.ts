@@ -22,11 +22,13 @@ import { ImportSettings } from '../index.js'
 
 import { GcsCollection } from './schema/base.js'
 import { GcsCharacter } from './schema/character.js'
+import { GcsEquipmentModifier } from './schema/equipment-modifier.js'
 import { GcsEquipment } from './schema/equipment.js'
 import { AnyGcsItem, AnyGcsItemCollection } from './schema/index.js'
 import { GcsNote } from './schema/note.js'
 import { GcsSkill } from './schema/skill.js'
 import { GcsSpell } from './schema/spell.js'
+import { GcsTraitModifier } from './schema/trait-modifier.js'
 import { GcsTrait } from './schema/trait.js'
 import { GcsWeapon } from './schema/weapon.js'
 
@@ -1026,7 +1028,7 @@ Portrait will not be imported.`
 
     const modifiers = trait.modifiers?.filter(mod => mod.isEnabled) ?? []
 
-    for (const modifier of modifiers) {
+    for (const modifier of modifiers as unknown as GcsTraitModifier[]) {
       if (modifierNotes) modifierNotes += '; '
 
       modifierNotes += modifier.name
@@ -1203,7 +1205,7 @@ Portrait will not be imported.`
 
     const modifiers = equipment.modifiers?.filter(mod => mod.isEnabled) ?? []
 
-    for (const modifier of modifiers) {
+    for (const modifier of modifiers as unknown as GcsEquipmentModifier[]) {
       if (modifierNotes) modifierNotes += '; '
 
       modifierNotes += modifier.name
