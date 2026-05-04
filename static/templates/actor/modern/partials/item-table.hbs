@@ -1,0 +1,72 @@
+{{#*inline ".item"}}
+  <div
+    class='ms-{{section}}-row'
+    data-item-id='{{id}}'
+    data-uuid='{{uuid}}'
+    data-indent='{{indent}}'
+    data-has-children='{{hasChildren}}'
+    draggable='true'
+    {{#if hasChildren}}data-action='toggleContainer'{{/if}}
+    >
+    <span class='ms-col-name indent{{indent}} {{ifThen (eq section "traits") (pointsClass points) ""}}'>
+      {{#if hasChildren}}<i class='fas fa-caret-down ms-container-icon {{ifThen childrenOpen "" "container-collapsed"}}'></i>{{/if}}
+      <span class='ms-col-name-text'>{{stripOtfs this.name}}</span>
+    </span>
+    {{#if flags.college}}<span class='ms-col-college'>{{college}}</span>{{/if}}
+    {{#if flags.level}}
+    <span class='ms-col-level'>
+      {{#if level}}
+        {{> "actor.modern.partials.dice-button" otf=otf.level level=level}}
+      {{/if}}
+    </span>
+    {{/if}}
+    {{#if flags.rsl}}
+      <span class='ms-col-rsl'>{{relativeLevel}}</span>
+    {{/if}}
+    {{#if flags.otf}}
+      <span class='ms-col-otf'>
+        {{#each (extractOtfs name notes)}}
+        {{> "actor.modern.partials.dice-button" otf=formula text=text encodedAction=encodedAction}}
+        {{/each}}
+      </span>
+    {{/if}}
+    {{#if flags.points}}
+      <span class='ms-col-points {{pointsClass points}}'>[{{points}}]</span>
+    {{/if}}
+    {{#if flags.reference}}
+      <span class='ms-col-ref'>{{pdfReference reference}}</span>
+    {{/if}}
+    {{> "actor.modern.partials.row-actions"}}
+    {{> "actor.modern.partials.row-notes"}}
+  </div>
+  {{#if (and hasChildren childrenOpen)}}
+    {{#each children}}
+      {{> ".item" section=../section flags=../flags}}
+    {{/each}}
+  {{/if}}
+{{/inline}}
+
+<div class='ms-section' data-section='{{section}}'>
+  {{> "actor.modern.partials.section-header" icon=icon title=title count=count collapsible=true}}
+  <div class='ms-section-content'>
+
+    <div data-table-id='{{section}}' class='ms-{{section}}-table'>
+      <div class='ms-{{section}}-header'>
+        <span>{{localize 'GURPS.name'}}</span>
+        {{#if flags.college}}<span>{{localize 'GURPS.spellCollege'}}</span>{{/if}}
+        {{#if flags.level}}<span>{{localize 'GURPS.level'}}</span>{{/if}}
+        {{#if flags.rsl}}<span>RSL</span>{{/if}}
+        {{#if flags.otf}}<span>OTF</span>{{/if}}
+        {{#if flags.points}}<span>CP</span>{{/if}}
+        {{#if flags.reference}}<span>{{localize 'GURPS.pdfRef'}}</span>{{/if}}
+        <span></span>
+      </div>
+      {{#each items}}
+        {{> ".item" section=../section flags=../flags}}
+      {{else}}
+      <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+      {{/each}}
+      {{> "actor.modern.partials.add-row"}}
+    </div>
+  </div>
+</div>
