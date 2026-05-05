@@ -1,7 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplaySpell } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@module/otf/parselink.js'
-import { makeRegexPatternFrom } from '@util/utilities.js'
+import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { ItemType } from '../types.js'

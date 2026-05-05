@@ -1,7 +1,9 @@
 // Import Modules
 import { Migrator } from '@module/migration/migrator.js'
+import { findBestActionInChain, findBestActionInChainSync } from '@module/otf/best-action.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
 import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
 import { HandlebarsUtil } from '@module/util/handlebars.js'
@@ -67,8 +69,6 @@ import { Importer, ImportSettings } from './importer/index.js'
 import { Item } from './item/index.js'
 import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
-import { findBestActionInChain } from './otf/best-action.js'
-import { OtfActionType } from './otf/types.js'
 import { Pdf } from './pdf/index.js'
 import { Prereqs } from './prereqs/index.js'
 import { Pseudo } from './pseudo-document/index.js'
@@ -1251,7 +1251,7 @@ if (!globalThis.GURPS) {
      * @param {string} data.originalOtf
      * @param {boolean} data.calcOnly
      */
-    async attribute({ action, actor, event, originalOtf, calcOnly }) {
+    attribute({ action, actor, event, originalOtf, calcOnly }) {
       // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor).
 
       // If no actor OR action.target, then we can't do anything, so error out.
@@ -1465,14 +1465,31 @@ if (!globalThis.GURPS) {
     const originalOtf = action.orig
     const calcOnly = action.calcOnly
 
-    if ([OtfActionType.attribute, OtfActionType.skillSpell].includes(action.type)) {
-      action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
+    if (calcOnly) {
+      if (['attribute', 'skill-spell'].includes(action.type)) {
+        action = findBestActionInChainSync({ action, event, actor, targets, originalOtf })
+      }
+
+      if (!action) return false
+
+      const result = GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+
+      if (result && typeof result.then === 'function') {
+        throw new Error(`GURPS.performAction(calcOnly) requires a synchronous action handler for type "${action.type}"`)
+      }
+
+      return result
     }
+
+    return (async () => {
+      if (['attribute', 'skill-spell'].includes(action.type)) {
+        action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
+      }
 
       return !action
         ? false
         : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
-    }
+    })()
   }
 
   GURPS.performAction = performAction
