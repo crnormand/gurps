@@ -1,7 +1,8 @@
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
+import { parselink } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { gurpslink } from '@util/gurpslink.js'
-import { parselink } from '@util/parselink.js'
 import { displayMod, horiz } from '@util/utilities.js'
 
 import GurpsWiring from '../gurps-wiring.js'
@@ -279,7 +280,7 @@ export default class ModifierBucketEditor extends Application {
     let element = event.currentTarget
     let parsed = parselink(element.value)
 
-    if (!!parsed.action && parsed.action.type === 'modifier') {
+    if (!!parsed.action && parsed.action.type === OtfActionType.modifier) {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else {
       setTimeout(() => ui.notifications.info("Unable to determine modifier for '" + element.value + "'"), 200)

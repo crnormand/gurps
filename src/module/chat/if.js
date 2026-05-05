@@ -1,6 +1,7 @@
 'use strict'
 
-import { parselink } from '@util/parselink.js'
+import { parselink } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 
 import ChatProcessor from './chat-processor.js'
 
@@ -22,7 +23,7 @@ export class IfChatProcessor extends ChatProcessor {
       let action = parselink(match[1].trim())
 
       if (action.action) {
-        if (action.action.type === 'modifier')
+        if (action.action.type === OtfActionType.modifier)
           // only need to show modifiers, everything else does something.
           this.priv(then)
         else this.send() // send what we have
@@ -68,9 +69,15 @@ export class IfChatProcessor extends ChatProcessor {
 
     if (action.action) {
       if (
-        ['skill-spell', 'attribute', 'attack', 'controlroll', 'chat', 'test-exists', 'iftest'].includes(
-          action.action.type
-        )
+        [
+          OtfActionType.skillSpell,
+          OtfActionType.attribute,
+          OtfActionType.attack,
+          OtfActionType.controlRoll,
+          OtfActionType.chat,
+          OtfActionType.testExists,
+          OtfActionType.ifTest,
+        ].includes(action.action.type)
       ) {
         this.priv(line)
         this.send()

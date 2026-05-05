@@ -16,13 +16,14 @@ import { SkillV1 } from '@module/item/legacy/skill-adapter.js'
 import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { ItemType } from '@module/item/types.js'
+import { COSTS_REGEX } from '@module/otf/parselink.js'
+import { OtfActionType, OtfAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { multiplyDice } from '@util/damage-utils.js'
 import { roundTo } from '@util/math.js'
-import { COSTS_REGEX } from '@util/parselink.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject, DeepPartial } from 'fvtt-types/utils'
 
@@ -1235,14 +1236,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       const costs = accumulator.costs.match(COSTS_REGEX)
 
       if (costs)
-        accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '0')} ${costs.groups?.type}`
+        accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '1')} ${costs.groups?.type}`
     }
 
     accumulator.roll = roll ?? null
 
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
-    await GURPS.performAction(accumulator as unknown as GurpsAction, GURPS.LastActor)
+    await GURPS.performAction(accumulator as unknown as OtfAction, GURPS.LastActor)
   }
 
   /* ---------------------------------------- */
@@ -1683,12 +1684,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     let name: string, mode: string | undefined
 
     switch (originType) {
-      case 'attack': {
+      case OtfActionType.attack: {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+)\)/)?.[1]
         const attackType = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
         const weapon = this.parent
-          // @ts-expect-error: Not sure why this isn't resolving correctly.
+          // @ts-expect-error: not sure why this isn't resolving.
           .getItemAttacks({ attackType })
           .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.mode === mode))
 
@@ -1709,8 +1710,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
-      case 'weapon-block':
-      case 'weapon-parry': {
+      case OtfActionType.weaponBlock:
+      case OtfActionType.weaponParry: {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+?)\)/)?.[1]
         const weapon = this.parent
@@ -1734,7 +1735,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
-      case 'skill-spell': {
+      case OtfActionType.skillSpell: {
         const item = [...this.allSkillsV2, ...this.allSpellsV2].find(skillOrSpell => skillOrSpell.name === action.name)
 
         if (item)
@@ -1754,7 +1755,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
-      case 'attribute': {
+      case OtfActionType.attribute: {
         let attrName = action?.overridetxt
 
         if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.toLowerCase()}`) ?? ''
@@ -1768,7 +1769,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           pageRef: null,
         }
       }
-      case 'controlroll': {
+      case OtfActionType.controlRoll: {
         return {
           name: action.overridetxt || action.orig,
           uuid: null,

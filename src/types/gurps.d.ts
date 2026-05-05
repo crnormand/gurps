@@ -47,6 +47,7 @@ import {
   ConditionalModifier as ConditionalModifierDocument,
 } from '@module/item/data/conditional-modifier.js'
 import { Feature } from '@module/item/legacy/itemv1-interface.js'
+import { OtfAction } from '@module/otf/types.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
   ContainedQuantityPrereq,
@@ -372,7 +373,7 @@ declare global {
 
     /* ---------------------------------------- */
 
-    parselink(input: string): { text: string; action?: GurpsAction }
+    parselink(input: string): { text: string; action?: OtfAction }
 
     /* ---------------------------------------- */
 
@@ -393,7 +394,7 @@ declare global {
     /* ---------------------------------------- */
 
     performAction(
-      action: GurpsAction,
+      action: OtfAction,
       actor: Actor | Actor.Implementation | null,
       event?: Event | null,
       targets?: string[]

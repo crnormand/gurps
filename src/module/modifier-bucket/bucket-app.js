@@ -1,5 +1,6 @@
+import { parselink } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
-import { parselink } from '@util/parselink.js'
 import { displayMod, generateUniqueId } from '@util/utilities.js'
 
 import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
@@ -700,7 +701,7 @@ export class ModifierBucket extends Application {
 
         if (link.action) {
           link.action.blindroll = true
-          if (link.action.type == 'modifier' || !!dragData.actor)
+          if (link.action.type == OtfActionType.modifier || !!dragData.actor)
             GURPS.performAction(link.action, game.actors?.get(dragData.actor))
         }
       }
@@ -796,7 +797,7 @@ export class ModifierBucket extends Application {
   async _on3dClick(event) {
     event.preventDefault()
     let action = {
-      type: 'roll',
+      type: OtfActionType.roll,
       formula: '3d6',
       desc: '',
     }
@@ -807,7 +808,7 @@ export class ModifierBucket extends Application {
   async _on3dRightClick(event) {
     event.preventDefault()
     let action = {
-      type: 'roll',
+      type: OtfActionType.roll,
       formula: '1d6',
       desc: '',
     }

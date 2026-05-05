@@ -1,3 +1,4 @@
+import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
@@ -272,7 +273,7 @@ export async function doRoll({
 
     // Get Target Roll Info
     switch (action?.type || 'undefined') {
-      case 'attack':
+      case OtfActionType.attack:
         if (action.isMelee) {
           itemIcon = 'fa-solid fa-sword'
           itemColor = 'rgba(12,79,119)'
@@ -284,17 +285,17 @@ export async function doRoll({
         }
 
         break
-      case 'weapon-parry':
+      case OtfActionType.weaponParry:
         itemIcon = 'fa-solid fa-swords'
         itemColor = '#9a5f16'
         rollType = game.i18n.localize('GURPS.parry')
         break
-      case 'weapon-block':
+      case OtfActionType.weaponBlock:
         itemIcon = 'fa-solid fa-shield-halved'
         itemColor = '#9a5f16'
         rollType = game.i18n.localize('GURPS.block')
         break
-      case 'skill-spell':
+      case OtfActionType.skillSpell:
         if (chatthing.toLowerCase().includes('@sk:')) {
           itemIcon = 'fa-solid fa-book'
           itemColor = '#015401'
@@ -306,13 +307,13 @@ export async function doRoll({
         }
 
         break
-      case 'controlroll':
+      case OtfActionType.controlRoll:
         itemIcon = 'fa-solid fa-head-side-gear'
         itemColor = '#c5360b'
         rollType = game.i18n.localize('GURPS.ControlRoll')
         break
 
-      case 'attribute': {
+      case OtfActionType.attribute: {
         itemColor = '#620707'
         const ref = chatthing.split('@').pop().slice(0, -1)
 

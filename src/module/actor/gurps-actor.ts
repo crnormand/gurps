@@ -3,6 +3,7 @@ import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PostureType, statusIsPosture } from '@module/effects/posture.js'
 import { ItemMetadata } from '@module/item/data/base.js'
 import { ItemType } from '@module/item/types.js'
+import { OtfActionType } from '@module/otf/types.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { isObject } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
@@ -648,11 +649,16 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     chatThing?: string, // String representation of the action
     actorComponent?: AnyObject // Actor Component for the action
   ): Promise<CanRollResult> {
-    const isAttack = action.type === 'attack'
-    const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
-    const isAttribute = action.type === 'attribute'
+    const isAttack = action.type === OtfActionType.attack
+    const isDefense =
+      action.attribute === 'dodge' ||
+      action.type === OtfActionType.weaponParry ||
+      action.type === OtfActionType.weaponBlock
+    const isAttribute = action.type === OtfActionType.attribute
     const isSlam =
-      action.type === 'damage' && (action.orig as string).includes('slam') && (action.orig as string).includes('@')
+      action.type === OtfActionType.damage &&
+      (action.orig as string).includes('slam') &&
+      (action.orig as string).includes('@')
     const isCombatActive = game.combat?.active === true
     const isCombatant = this.inCombat
     const isCombatStarted = isCombatActive && game.combat.started === true
@@ -666,7 +672,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     if (!isCombatActive || !isCombatant || !this.isNewActorType) return result
 
-    const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
+    const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === OtfActionType.damage)
     const checkForTargetSettings = this.getSetting(Settings.SETTING_ALLOW_TARGETED_ROLLS, 'Allow')
 
     if (isCombatant && needTarget && game.user?.targets.size === 0) {
@@ -747,7 +753,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (
       isDefense &&
       canConsumeAction &&
-      action.type === 'weapon-block' &&
+      action.type === OtfActionType.weaponBlock &&
       actions.totalBlocks >= maxBlocks + (actions.extraBlocks ?? 0) + extraActions
     ) {
       result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
@@ -762,7 +768,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (
       isDefense &&
       canConsumeAction &&
-      action.type === 'weapon-parry' &&
+      action.type === OtfActionType.weaponParry &&
       actions.totalParries >= extraActions + (actions.maxParries ?? 0)
     ) {
       result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
@@ -807,15 +813,15 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (!isCombatant && useMaxActions === 'AllCombatant') return false
 
     const actionType = chatThing?.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase() ?? ''
-    const isAttack = action?.type === 'attack' || ['m', 'r'].includes(actionType)
+    const isAttack = action?.type === OtfActionType.attack || ['m', 'r'].includes(actionType)
     const isDefense =
       action?.attribute === 'dodge' ||
-      action?.type === 'weapon-parry' ||
-      action?.type === 'weapon-block' ||
+      action?.type === OtfActionType.weaponParry ||
+      action?.type === OtfActionType.weaponBlock ||
       ['dodge', 'p', 'b'].includes(actionType)
     const isDodge = action?.attribute === 'dodge' || actionType === 'dodge'
-    const isSkill = (action?.type === 'skill-spell' && action.isSkillOnly) || actionType === 'sk'
-    const isSpell = (action?.type === 'skill-spell' && action.isSpellOnly) || actionType === 'sp'
+    const isSkill = (action?.type === OtfActionType.skillSpell && action.isSkillOnly) || actionType === 'sk'
+    const isSpell = (action?.type === OtfActionType.skillSpell && action.isSpellOnly) || actionType === 'sp'
 
     const actionIsMarkedAsConsume: boolean | null = (actorComponent?.consumeAction as boolean | undefined) ?? null
 

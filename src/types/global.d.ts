@@ -9,6 +9,7 @@ import { Dev as ModuleDev } from '@module/dev/index.js'
 import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
 import { Migrator } from '@module/migration/migrator.js'
+import { OtfAction } from '@module/otf/types.js'
 import { Pdf as ModulePdf } from '@module/pdf/index.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
@@ -73,6 +74,18 @@ declare global {
         SubTypes: PseudoDocumentConfig.Types
       }
     }
+
+    actionFuncs: Record<
+      string,
+      (params: {
+        action: OtfAction
+        actor: Actor | GurpsActor | null
+        event?: Event
+        targets?: string[]
+        originalOtf: string
+        calcOnly?: boolean
+      }) => Promise<{ target: number } | false> | { target: number } | false
+    >
   }
 
   var GURPS: GurpsGlobal
@@ -110,20 +123,6 @@ declare global {
     desc: string
     plus: boolean
     tagged: boolean
-  }
-
-  /* ---------------------------------------- */
-
-  interface GurpsAction {
-    type: string
-    overridetxt?: string
-    sourceId?: string
-    orig?: string
-    calcOnly?: boolean
-    // NOTE: not sure if this is accurate
-    action?: GurpsAction
-    next?: GurpsAction
-    [key: string]: unknown
   }
 
   /* ---------------------------------------- */

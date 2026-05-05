@@ -1,6 +1,7 @@
+import { parselink } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { gurpslink } from '@util/gurpslink.js'
-import { parselink } from '@util/parselink.js'
 import { recurselist, sanitize } from '@util/utilities.js'
 
 import { Length } from '../data/common/length.js'
@@ -400,7 +401,7 @@ export class EffectModifierPopout extends Application {
         if (mod) {
           let action = parselink(mod)
 
-          if (action.action?.type === 'modifier') this._addUserMod(mod)
+          if (action.action?.type === OtfActionType.modifier) this._addUserMod(mod)
           else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
         }
       }
@@ -479,7 +480,8 @@ export class EffectModifierPopout extends Application {
     if (dragData.otf) {
       let action = parselink(dragData.otf)
 
-      if (action.action?.type == 'modifier' || action.action?.type == 'damage') add = dragData.otf
+      if (action.action?.type == OtfActionType.modifier || action.action?.type == OtfActionType.damage)
+        add = dragData.otf
     }
 
     if (dragData.bucket) {

@@ -1,8 +1,8 @@
 'use strict'
 
+import { parselink } from '@module/otf/parselink.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { gurpslink } from '@util/gurpslink.js'
-import { parselink } from '@util/parselink.js'
 
 import ChatProcessor from './chat/chat-processor.js'
 import GurpsWiring from './gurps-wiring.js'

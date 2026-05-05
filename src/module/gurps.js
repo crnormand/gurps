@@ -1,6 +1,9 @@
 // Import Modules
 import { Migrator } from '@module/migration/migrator.js'
+import { findBestActionInChain, findBestActionInChainSync } from '@module/otf/best-action.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
+import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
 import { HandlebarsUtil } from '@module/util/handlebars.js'
@@ -16,7 +19,6 @@ import { multiplyDice } from '@util/damage-utils.js'
 import { gurpslink } from '@util/gurpslink.js'
 import JQueryHelpers from '@util/jquery-helper.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
-import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@util/parselink.js'
 import { GurpsRange, setupRanges } from '@util/ranges.js'
 import { SemanticVersion } from '@util/semver.js'
 import {
@@ -484,6 +486,7 @@ if (!globalThis.GURPS) {
   const actionFuncs = {
     /**
      * @param {Object} data
+     * @param {Object} data.actor
      * @param {Object} data.action
      * @param {string} data.action.link
      */
@@ -540,7 +543,7 @@ if (!globalThis.GURPS) {
     modifier({ action }) {
       GURPS.ModifierBucket.addModifier(action.mod, action.desc)
 
-      if (action.next && action.next.type === 'modifier') {
+      if (action.next && action.next.type === OtfActionType.modifier) {
         return this.modifier({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
       }
 
@@ -1249,14 +1252,17 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.calcOnly
      */
     attribute({ action, actor, event, originalOtf, calcOnly }) {
-      // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
+      // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor).
+
+      // If no actor OR action.target, then we can't do anything, so error out.
       if (!actor && (!action || !action.target)) {
         ui.notifications?.warn('You must have a character selected')
 
         return false
       }
 
-      let target = parseInt(action.target) // is it pre-targeted (ST12)
+      // Is it pre-targeted (e.g., ST12)? If no, target = NaN, and we'll try to find it on the actor.
+      let target = parseInt(action.target)
 
       if (!target && !!actor) {
         if (action.melee) {
@@ -1438,74 +1444,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.actionFuncs = actionFuncs
-
-  async function findBestActionInChain({ action, actor, event, targets, originalOtf }) {
-    const actions = []
-    let overridetxt = action.overridetxt
-    const suppressWarnings = action.suppressWarnings
-
-    while (action) {
-      action.overridetxt = overridetxt
-      actions.push(action)
-      action = action.next
-    }
-
-    const calculations = []
-
-    for (const action of actions) {
-      const func = GURPS.actionFuncs[action.type]
-
-      if (func.constructor.name === 'AsyncFunction') {
-        calculations.push(await func({ action, actor, event, targets, originalOtf, calcOnly: true }))
-      } else {
-        calculations.push(func({ action, actor, event, targets, originalOtf, calcOnly: true }))
-      }
-    }
-
-    const levels = calculations.map(result => (result ? result.target : 0))
-
-    if (!levels.some(level => level > 0)) {
-      if (!suppressWarnings) {
-        ui.notifications.warn(game.i18n.localize('GURPS.noViableSkill'))
-      }
-
-      return null // actor does not have any of these skills
-    }
-
-    const bestLevel = Math.max(...levels)
-
-    return actions[levels.indexOf(bestLevel)]
-  }
-
-  function findBestActionInChainSync({ action, actor, event, targets, originalOtf }) {
-    const actions = []
-    let overridetxt = action.overridetxt
-    const suppressWarnings = action.suppressWarnings
-
-    while (action) {
-      action.overridetxt = overridetxt
-      actions.push(action)
-      action = action.next
-    }
-
-    const calculations = actions.map(action =>
-      GURPS.actionFuncs[action.type]({ action: action, actor, event, targets, originalOtf, calcOnly: true })
-    )
-
-    const levels = calculations.map(result => (result ? result.target : 0))
-
-    if (!levels.some(level => level > 0)) {
-      if (!suppressWarnings) {
-        ui.notifications.warn(game.i18n.localize('GURPS.noViableSkill'))
-      }
-
-      return null
-    }
-
-    const bestLevel = Math.max(...levels)
-
-    return actions[levels.indexOf(bestLevel)]
-  }
 
   /**
    * @param {Action} action
@@ -1730,7 +1668,7 @@ if (!globalThis.GURPS) {
       game.settings.get('core', 'rollMode') === 'blindroll' ||
       (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
 
-    if ('damage' in element.dataset) {
+    if (OtfActionType.damage in element.dataset) {
       // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
       let text = element.dataset.otf ? element.dataset.otf : element.innerText.trim()
 
@@ -1745,7 +1683,7 @@ if (!globalThis.GURPS) {
         let result = parselink(part.trim())
 
         if (result?.action) {
-          if (options?.combined && result.action.type == 'damage')
+          if (options?.combined && result.action.type == OtfActionType.damage)
             result.action.formula = multiplyDice(result.action.formula, options.combined)
           performAction({ ...result.action, blindroll }, actor, event, options?.targets)
         }

@@ -1,8 +1,9 @@
 'use strict'
 
 import { ChatProcessors } from '@module/chat.js'
+import { parselink } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 import { NpcInput } from '@module/util/npc-input.js'
-import { parselink } from '@util/parselink.js'
 import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '@util/utilities.js'
 
 import Maneuvers from '../actor/maneuver.js'
@@ -137,7 +138,7 @@ class QuickDamageChatProcessor extends ChatProcessor {
     if (this.match) {
       this.action = parselink(this.match[1])
 
-      return this.action?.action?.type === 'damage' || this.action?.action?.type === 'roll'
+      return this.action?.action?.type === OtfActionType.damage || this.action?.action?.type === OtfActionType.roll
     }
 
     return false
@@ -473,7 +474,7 @@ class SendMBChatProcessor extends ChatProcessor {
       let otf = match[1]
       let result = parselink(otf)
 
-      if (!!result.action && result.action.type == 'modifier') {
+      if (!!result.action && result.action.type == OtfActionType.modifier) {
         GURPS.ModifierBucket.sendToPlayers(result.action, splitArgs(match[2]))
 
         return
@@ -763,7 +764,7 @@ class RollChatProcessor extends ChatProcessor {
     let action = parselink(match[2])
 
     if (action.action) {
-      if (action.action.type === 'modifier')
+      if (action.action.type === OtfActionType.modifier)
         // only need to show modifiers, everything else does something.
         this.priv(line)
       else this.send() // send what we have
@@ -1472,7 +1473,7 @@ class ModChatProcessor extends ChatProcessor {
 
     let action = parselink(this.match[2].trim())
 
-    if (action.action?.type == 'modifier') {
+    if (action.action?.type == OtfActionType.modifier) {
       let mods = actor.system.conditions.usermods ? [...actor.system.conditions.usermods] : []
 
       mods.push(action.action.orig + ' ' + uc)

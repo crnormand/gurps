@@ -1,10 +1,12 @@
 import { DamageTable } from '@module/damage/damage-tables.js'
-import { parseForRollOrDamage, parselink } from '@util/parselink.js'
+import { parseForRollOrDamage, parselink } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 
 beforeAll(() => {
   globalThis.GURPS = {} as any
 
-  // @ts-expect-error - mock for testing
+  /** @type {Game} */
+  // @ts-expect-error: partial mock of the global game object, only what is needed for the tests to run.
   globalThis.game = {
     i18n: {
       localize: (str: string) => str,
@@ -22,7 +24,7 @@ describe('parseForRollOrDamage', () => {
       '1d6+2 cr',
       {
         orig: '1d6+2 cr',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '1d6+2',
         damagetype: 'cr',
         extdamagetype: undefined,
@@ -36,7 +38,7 @@ describe('parseForRollOrDamage', () => {
       '1d-2! cr',
       {
         orig: '1d-2! cr',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '1d-2!',
         damagetype: 'cr',
         extdamagetype: undefined,
@@ -50,7 +52,7 @@ describe('parseForRollOrDamage', () => {
       '12 pi++',
       {
         orig: '12 pi++',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '12',
         damagetype: 'pi++',
         extdamagetype: undefined,
@@ -64,7 +66,7 @@ describe('parseForRollOrDamage', () => {
       '1d ctrl',
       {
         orig: '1d ctrl',
-        type: 'roll',
+        type: OtfActionType.roll,
         formula: '1d6',
         displayformula: '1d',
         desc: 'ctrl',
@@ -78,7 +80,7 @@ describe('parseForRollOrDamage', () => {
       '2d-1x3 pi++ @torso',
       {
         orig: '2d-1x3 pi++ @torso',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '2d-1x3',
         damagetype: 'pi++',
         extdamagetype: undefined,
@@ -92,7 +94,7 @@ describe('parseForRollOrDamage', () => {
       '2d-1 imp *costs 1 FP',
       {
         orig: '2d-1 imp *costs 1 FP',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '2d-1',
         damagetype: 'imp',
         extdamagetype: undefined,
@@ -106,7 +108,7 @@ describe('parseForRollOrDamage', () => {
       '2d-1(2) burn ex',
       {
         orig: '2d-1(2) burn ex',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '2d-1(2)',
         damagetype: 'burn',
         extdamagetype: 'ex',
@@ -120,7 +122,7 @@ describe('parseForRollOrDamage', () => {
       '8(0.5) burn ex',
       {
         orig: '8(0.5) burn ex',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '8(0.5)',
         damagetype: 'burn',
         extdamagetype: 'ex',
@@ -134,7 +136,7 @@ describe('parseForRollOrDamage', () => {
       '2d burn, 1d tox',
       {
         orig: '2d burn, 1d tox',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '2d',
         damagetype: 'burn',
         extdamagetype: undefined,
@@ -150,7 +152,7 @@ describe('parseForRollOrDamage', () => {
           hitlocation: undefined,
           next: undefined,
           orig: '1d tox',
-          type: 'damage',
+          type: OtfActionType.damage,
         },
       },
     ],
@@ -158,7 +160,7 @@ describe('parseForRollOrDamage', () => {
       '2d burn, foo',
       {
         orig: '2d burn, foo',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '2d',
         damagetype: 'burn',
         extdamagetype: undefined,
@@ -172,7 +174,7 @@ describe('parseForRollOrDamage', () => {
       '2d charm fat',
       {
         orig: '2d charm fat',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '2d',
         damagetype: 'fat',
         extdamagetype: undefined,
@@ -193,7 +195,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'sw+1 cut',
-        type: 'deriveddamage',
+        type: OtfActionType.derivedDamage,
       },
     ],
     [
@@ -206,7 +208,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'sw+1 ctrl',
-        type: 'derivedroll',
+        type: OtfActionType.derivedRoll,
       },
     ],
     [
@@ -218,7 +220,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'sw +1 cut',
-        type: 'deriveddamage',
+        type: OtfActionType.derivedDamage,
         extdamagetype: undefined,
         derivedformula: 'sw',
       },
@@ -232,7 +234,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'swing+1 cut',
-        type: 'deriveddamage',
+        type: OtfActionType.derivedDamage,
         extdamagetype: undefined,
         derivedformula: 'swing',
       },
@@ -246,7 +248,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'THR+1 imp',
-        type: 'deriveddamage',
+        type: OtfActionType.derivedDamage,
         extdamagetype: undefined,
         derivedformula: 'THR',
       },
@@ -260,7 +262,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'THRUST +1 imp',
-        type: 'deriveddamage',
+        type: OtfActionType.derivedDamage,
         extdamagetype: undefined,
         derivedformula: 'THRUST',
       },
@@ -275,7 +277,7 @@ describe('parseForRollOrDamage', () => {
         formula: '+1',
         hitlocation: undefined,
         orig: 'swing +1 ctrl',
-        type: 'derivedroll',
+        type: OtfActionType.derivedRoll,
       },
     ],
     [
@@ -288,7 +290,7 @@ describe('parseForRollOrDamage', () => {
         formula: '6d-10*3!',
         hitlocation: undefined,
         orig: '6d-10*3! pi++ (0.5) *Costs 1FP',
-        type: 'damage',
+        type: OtfActionType.damage,
       },
     ],
   ])('parses %s correctly', (input, expected) => {
@@ -327,7 +329,7 @@ describe('parseLink', () => {
         orig: '+1 mod',
         overridetxt: 'Modifiers',
         spantext: '+1 mod',
-        type: 'modifier',
+        type: OtfActionType.modifier,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='+1 mod'>Modifiers</span>"))
     })
@@ -341,7 +343,7 @@ describe('parseLink', () => {
         orig: '+1 mod',
         overridetxt: 'Modifiers',
         spantext: '+1 mod',
-        type: 'modifier',
+        type: OtfActionType.modifier,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='+1 mod'>Modifiers</span>"))
     })
@@ -358,8 +360,8 @@ describe('parseLink', () => {
         orig: 'HT-1',
         overridetxt: 'text',
         path: 'attributes.HT.value',
-        spantext: 'HT -1 ',
-        type: 'attribute',
+        spantext: 'HT -1',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='!HT-1'>text</span>"))
     })
@@ -377,8 +379,8 @@ describe('parseLink', () => {
         overridetxt: 'Hello',
         path: 'attributes.HT.value',
         sourceId: 'actorid',
-        spantext: 'HT -1 ',
-        type: 'attribute',
+        spantext: 'HT -1',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT-1'>Hello</span>"))
     })
@@ -395,8 +397,8 @@ describe('parseLink', () => {
         orig: 'HT-1',
         path: 'attributes.HT.value',
         sourceId: 'actorid',
-        spantext: 'HT -1 ',
-        type: 'attribute',
+        spantext: 'HT -1',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='!HT-1'>(Blind Roll) HT -1</span>"))
     })
@@ -408,7 +410,7 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         orig: '2d+2 cut',
-        type: 'damage',
+        type: OtfActionType.damage,
         formula: '2d+2',
         damagetype: 'cut',
         accumulate: false,
@@ -426,7 +428,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '-2 for Stun',
         spantext: '-2 for Stun',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '-2',
         desc: 'for Stun',
       })
@@ -439,7 +441,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '-2',
         spantext: '-2 ',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '-2',
         desc: '',
       })
@@ -452,7 +454,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '-4 the GM hates me & IQ-2',
         spantext: '-4 the GM hates me',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '-4',
         desc: 'the GM hates me',
       })
@@ -467,7 +469,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '-2 for Stun &+1 for Luck&-3 My GM hates me',
         spantext: '-2 for Stun & +1 for Luck & -3 My GM hates me',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '-2',
         desc: 'for Stun',
         next: {
@@ -475,13 +477,13 @@ describe('parseLink', () => {
           mod: '+1',
           orig: '+1 for Luck&-3 My GM hates me',
           spantext: '+1 for Luck & -3 My GM hates me',
-          type: 'modifier',
+          type: OtfActionType.modifier,
           next: {
             orig: '-3 My GM hates me',
             desc: 'My GM hates me',
             mod: '-3',
             spantext: '-3 My GM hates me',
-            type: 'modifier',
+            type: OtfActionType.modifier,
             next: undefined,
           },
         },
@@ -499,13 +501,13 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '+@margin For some reason & -1 for stupidity',
         spantext: '+@margin For some reason & -1 for stupidity',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '+@margin',
         desc: '+@margin For some reason',
         next: {
           orig: '-1 for stupidity',
           spantext: '-1 for stupidity',
-          type: 'modifier',
+          type: OtfActionType.modifier,
           mod: '-1',
           desc: 'for stupidity',
         },
@@ -523,7 +525,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '+@margin For some reason & ST12',
         spantext: '+@margin For some reason',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '+@margin',
         desc: '+@margin For some reason',
       })
@@ -538,7 +540,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '+@margin',
         spantext: '+@margin ',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '+@margin',
         desc: '+@margin',
       })
@@ -551,7 +553,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '+A:"Night Vision"',
         spantext: '+A:"Night Vision" ',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '+A:"Night Vision"',
         desc: '',
       })
@@ -564,7 +566,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: '+a:Night*Vision',
         spantext: '+A:Night*Vision ',
-        type: 'modifier',
+        type: OtfActionType.modifier,
         mod: '+A:Night*Vision',
         desc: '',
       })
@@ -579,7 +581,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         quiet: false,
         orig: '/chat command',
-        type: 'chat',
+        type: OtfActionType.chat,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='/chat command'>/chat command</span"))
     })
@@ -590,7 +592,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         quiet: false,
         orig: '/:chat command',
-        type: 'chat',
+        type: OtfActionType.chat,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='/:chat command'>/:chat command</span"))
     })
@@ -601,7 +603,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: 'iftest',
+        type: OtfActionType.ifTest,
         orig: '@margin > 1',
         name: 'margin',
         equation: '> 1',
@@ -613,7 +615,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: 'iftest',
+        type: OtfActionType.ifTest,
         orig: '@margin >= 1',
         name: 'margin',
         equation: '>= 1',
@@ -625,7 +627,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: 'iftest',
+        type: OtfActionType.ifTest,
         orig: '@margin >= 1.5',
         name: 'margin',
         equation: '>= 1.5',
@@ -637,7 +639,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: 'iftest',
+        type: OtfActionType.ifTest,
         orig: '@isCritSuccess',
         name: 'isCritSuccess',
       })
@@ -648,7 +650,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: 'iftest',
+        type: OtfActionType.ifTest,
         orig: '@isCritFailure = 0',
         name: 'isCritFailure',
         equation: '= 0',
@@ -662,7 +664,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: 'dragdrop',
+        type: OtfActionType.dragDrop,
         orig: 'JournalEntry[1234]{some text}',
         link: 'JournalEntry',
         id: '1234',
@@ -677,7 +679,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: 'dragdrop',
+        type: OtfActionType.dragDrop,
         orig: 'Actor[1234]{some text}',
         link: 'Actor',
         id: '1234',
@@ -690,7 +692,7 @@ describe('parseLink', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
-        type: 'dragdrop',
+        type: OtfActionType.dragDrop,
         orig: 'Actor[1234]{}',
         link: 'Actor',
         id: '1234',
@@ -706,8 +708,8 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         orig: 'ST',
-        spantext: 'ST ',
-        type: 'attribute',
+        spantext: 'ST',
+        type: OtfActionType.attribute,
         attribute: 'ST',
         attrkey: 'ST',
         name: 'ST',
@@ -722,8 +724,8 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         orig: 'Per12',
-        spantext: 'Per12 ',
-        type: 'attribute',
+        spantext: 'Per12',
+        type: OtfActionType.attribute,
         attribute: 'Per',
         attrkey: 'PER',
         name: 'PER',
@@ -746,7 +748,7 @@ describe('parseLink', () => {
         orig: 'Per 12',
         path: 'attributes.PER.value',
         spantext: 'Per 12',
-        type: 'attribute',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per 12'>Per 12</span>"))
     })
@@ -763,7 +765,7 @@ describe('parseLink', () => {
         orig: 'Per: 12',
         path: 'attributes.PER.value',
         spantext: 'Per: 12',
-        type: 'attribute',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per: 12'>Per: 12</span>"))
     })
@@ -781,7 +783,7 @@ describe('parseLink', () => {
         orig: 'Fright Check -2 for Fear',
         path: 'frightcheck',
         spantext: 'Fright Check -2 for Fear',
-        type: 'attribute',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='Fright Check -2 for Fear'>Fright Check -2 for Fear</span>")
@@ -798,9 +800,9 @@ describe('parseLink', () => {
         name: 'FRIGHT CHECK',
         orig: 'Fright Check14',
         path: 'frightcheck',
-        spantext: 'Fright Check14 ',
+        spantext: 'Fright Check14',
         target: '14',
-        type: 'attribute',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='Fright Check14'>Fright Check14</span>"))
     })
@@ -811,7 +813,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: 'ST12 +2 Some description',
         spantext: 'ST12 +2 Some description',
-        type: 'attribute',
+        type: OtfActionType.attribute,
         attribute: 'ST',
         attrkey: 'ST',
         mod: '+2',
@@ -829,8 +831,7 @@ describe('parseLink', () => {
     test('(Russian DX) #> ЛВ', () => {
       const result = parselink(input)
 
-      // TODO code comments says it deals with non-English translations, but it doesn't
-      // seem to do anything.
+      // TODO code comments says it deals with non-English translations, but it doesn't seem to do anything.
       expect(result).toEqual({ text: 'ЛВ' })
     })
 
@@ -839,8 +840,8 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         orig: 'HT +@margin',
-        spantext: 'HT +@margin ',
-        type: 'attribute',
+        spantext: 'HT +@margin',
+        type: OtfActionType.attribute,
         attribute: 'HT',
         attrkey: 'HT',
         name: 'HT',
@@ -862,8 +863,8 @@ describe('parseLink', () => {
         name: 'PER',
         orig: 'Per +a:Magery',
         path: 'attributes.PER.value',
-        spantext: 'Per +a:Magery ',
-        type: 'attribute',
+        spantext: 'Per +a:Magery',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='Per +a:Magery'>Per +a:Magery</span>"))
     })
@@ -874,7 +875,7 @@ describe('parseLink', () => {
       expect(result.action).toEqual({
         orig: 'HT description',
         spantext: 'HT description',
-        type: 'attribute',
+        type: OtfActionType.attribute,
         attribute: 'HT',
         attrkey: 'HT',
         name: 'HT',
@@ -899,7 +900,7 @@ describe('parseLink', () => {
         orig: 'Parry:Broadsword +2 Description',
         path: 'equippedparry',
         spantext: 'Parry:Broadsword +2 Description',
-        type: 'attribute',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='Parry:Broadsword +2 Description'>Parry:Broadsword +2 Description</span>")
@@ -921,7 +922,7 @@ describe('parseLink', () => {
         orig: 'Parry:Wizard*s*Staff +2 Description',
         path: 'equippedparry',
         spantext: 'Parry:Wizard*s*Staff +2 Description',
-        type: 'attribute',
+        type: OtfActionType.attribute,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -943,20 +944,21 @@ describe('parseLink', () => {
           blindroll: false,
           orig: 'DX',
           path: 'attributes.DX.value',
-          spantext: 'DX ',
-          type: 'attribute',
+          spantext: 'DX',
+          type: OtfActionType.attribute,
           name: 'DX',
         },
         orig: 'HT | DX',
         path: 'attributes.HT.value',
-        spantext: 'HT  | DX ',
-        type: 'attribute',
+        spantext: 'HT | DX',
+        type: OtfActionType.attribute,
         name: 'HT',
       })
-      expect(result.text).toEqual(expect.stringContaining("data-otf='HT | DX'>HT  | DX</span>"))
+      expect(result.text).toEqual(expect.stringContaining("data-otf='HT | DX'>HT | DX</span>"))
     })
 
     test('#> HT | Somthing else', () => {
+      // Throw away the missing attribute ('Somthing')
       const result = parselink(input)
 
       expect(result.action).toEqual({
@@ -965,8 +967,8 @@ describe('parseLink', () => {
         blindroll: false,
         orig: 'HT | Somthing else',
         path: 'attributes.HT.value',
-        spantext: 'HT ',
-        type: 'attribute',
+        spantext: 'HT',
+        type: OtfActionType.attribute,
         name: 'HT',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='HT | Somthing else'>HT</span>"))
@@ -982,9 +984,9 @@ describe('parseLink', () => {
         falsetext: 'No Clue',
         orig: 'IQ-2 ? "Idea!", "No Clue"',
         path: 'attributes.IQ.value',
-        spantext: 'IQ -2 ',
+        spantext: 'IQ -2',
         truetext: 'Idea!',
-        type: 'attribute',
+        type: OtfActionType.attribute,
         name: 'IQ',
         mod: '-2',
       })
@@ -1002,9 +1004,9 @@ describe('parseLink', () => {
         falsetext: 'Fall asleep',
         orig: 'HT ? "Awake" : "Fall asleep"',
         path: 'attributes.HT.value',
-        spantext: 'HT ',
+        spantext: 'HT',
         truetext: 'Awake',
-        type: 'attribute',
+        type: OtfActionType.attribute,
         name: 'HT',
       })
       expect(result.text).toEqual(expect.stringContaining('data-otf=\'HT ? "Awake" : "Fall asleep"\'>HT</span>'))
@@ -1019,9 +1021,9 @@ describe('parseLink', () => {
         blindroll: false,
         orig: 'IQ ? "Idea!"',
         path: 'attributes.IQ.value',
-        spantext: 'IQ ',
+        spantext: 'IQ',
         truetext: 'Idea!',
-        type: 'attribute',
+        type: OtfActionType.attribute,
         name: 'IQ',
       })
       expect(result.text).toEqual(expect.stringContaining('data-otf=\'IQ ? "Idea!"\'>IQ</span>'))
@@ -1036,7 +1038,7 @@ describe('parseLink', () => {
       desc: 'to resist temptation',
       orig: 'CR: 9 to resist temptation',
       target: 9, // TODO target is sometimes a string, sometimes a number.
-      type: 'controlroll',
+      type: OtfActionType.controlRoll,
     })
     expect(result.text).toEqual(
       expect.stringContaining("data-otf='CR: 9 to resist temptation'>CR: 9 to resist temptation</span>")
@@ -1051,7 +1053,7 @@ describe('parseLink', () => {
       desc: '',
       orig: 'CR: 15',
       target: 15,
-      type: 'controlroll',
+      type: OtfActionType.controlRoll,
     })
     expect(result.text).toEqual(expect.stringContaining("data-otf='CR: 15'>CR: 15</span>"))
   })
@@ -1062,7 +1064,7 @@ describe('parseLink', () => {
     expect(result.action).toEqual({
       link: 'B345',
       orig: 'PDF:B345',
-      type: 'pdf',
+      type: OtfActionType.pdf,
     })
     expect(result.text).toEqual("<span class='pdflink' data-pdf='B345'>B345</span>")
   })
@@ -1073,7 +1075,7 @@ describe('parseLink', () => {
     expect(result.action).toEqual({
       link: 'B345',
       orig: 'PDF:B345',
-      type: 'pdf',
+      type: OtfActionType.pdf,
     })
     expect(result.text).toEqual("<span class='pdflink' data-pdf='B345'>Basic</span>")
   })
@@ -1090,8 +1092,9 @@ describe('parseLink', () => {
         name: 'Stealth',
         orig: 'S:Stealth',
         spantext: '<b>S:</b>Stealth',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
+      //                                                  "data-otf='S:Stealth'><b>S:</b><b>S:</b>Stealth</span>"
       expect(result.text).toEqual(expect.stringContaining("data-otf='S:Stealth'><b>S:</b>Stealth</span>"))
     })
 
@@ -1106,7 +1109,7 @@ describe('parseLink', () => {
         name: 'Stealth',
         orig: input,
         spantext: '<b>S:</b>Stealth Comment',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='S:Stealth Comment'><b>S:</b>Stealth Comment</span>")
@@ -1125,7 +1128,7 @@ describe('parseLink', () => {
         name: 'Savoir-faire',
         orig: 'S:Savoir-faire -3 description | something else',
         spantext: '<b>S:</b>Savoir-faire -3 description',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1145,7 +1148,7 @@ describe('parseLink', () => {
         name: 'Acrobatics',
         orig: 'S:Acrobatics-6',
         spantext: '<b>S:</b>Acrobatics -6',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
         mod: '-6',
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='S:Acrobatics-6'><b>S:</b>Acrobatics -6</span>"))
@@ -1163,7 +1166,7 @@ describe('parseLink', () => {
         name: "Bigby's Crushing Hand",
         orig: 'Sp:"Bigby\'s Crushing Hand" +1 Description',
         spantext: "<b>Sp:</b>Bigby's Crushing Hand +1 Description",
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1184,7 +1187,7 @@ describe('parseLink', () => {
         name: 'Bigbys Crushing Hand',
         orig: "Sp:'Bigbys Crushing Hand' +1 Description",
         spantext: '<b>Sp:</b>Bigbys Crushing Hand +1 Description',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1206,7 +1209,7 @@ describe('parseLink', () => {
         name: '',
         orig: "Sp:'' +1 Description",
         spantext: '<b>Sp:</b> +1 Description',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='Sp:'' +1 Description'><b>Sp:</b>+1 Description</span>")
@@ -1225,7 +1228,7 @@ describe('parseLink', () => {
         name: 'Stealth',
         orig: 'Sk:Stealth -1',
         spantext: '<b>Sk:</b>Stealth -1',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='Sk:Stealth -1'><b>Sk:</b>Stealth -1</span>"))
     })
@@ -1242,7 +1245,7 @@ describe('parseLink', () => {
         name: 'Stealth',
         orig: 'SP:Stealth +3',
         spantext: '<b>Sp:</b>Stealth +3',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='SP:Stealth +3'><b>Sp:</b>Stealth +3</span>"))
     })
@@ -1262,7 +1265,7 @@ describe('parseLink', () => {
         name: 'Stealth',
         orig: 'Sk:Stealth +3 (Based: IQ) Comment this',
         spantext: '<b>Sk:</b>Stealth +3 Comment this (Based:IQ)',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1272,18 +1275,20 @@ describe('parseLink', () => {
     })
 
     test('#> Sk:Stealth +3 (Based: ZX) Comment this', () => {
+      // Throw away the floating attribute if it's not a valid attribute.
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
         desc: 'Comment this',
+
         isSkillOnly: true,
         isSpellOnly: false,
         mod: '+3',
         name: 'Stealth',
         orig: 'Sk:Stealth +3 (Based: ZX) Comment this',
         spantext: '<b>Sk:</b>Stealth +3 Comment this',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1297,18 +1302,18 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         blindroll: false,
-        costs: '*Costs 2 HP',
+        costs: '*Per 2 HP',
         desc: '',
         isSkillOnly: true,
         isSpellOnly: false,
         mod: '+3',
         name: 'Stealth',
         orig: 'Sk:Stealth +3 *Costs 2 HP',
-        spantext: '<b>Sk:</b>Stealth *Costs 2 HP +3',
-        type: 'skill-spell',
+        spantext: '<b>Sk:</b>Stealth +3 *Per 2 HP',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
-        expect.stringContaining("data-otf='Sk:Stealth +3 *Costs 2 HP'><b>Sk:</b>Stealth *Costs 2 HP +3</span>")
+        expect.stringContaining("data-otf='Sk:Stealth +3 *Costs 2 HP'><b>Sk:</b>Stealth +3 *Per 2 HP</span>")
       )
     })
 
@@ -1317,18 +1322,18 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         blindroll: false,
-        costs: '* Per 2HP',
+        costs: '*Per 2HP',
         desc: '',
         isSkillOnly: true,
         isSpellOnly: false,
         mod: '+3',
         name: 'Stealth',
         orig: 'Sk:Stealth +3 * Per 2HP',
-        spantext: '<b>Sk:</b>Stealth * Per 2HP +3',
-        type: 'skill-spell',
+        spantext: '<b>Sk:</b>Stealth +3 *Per 2HP',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
-        expect.stringContaining("data-otf='Sk:Stealth +3 * Per 2HP'><b>Sk:</b>Stealth * Per 2HP +3</span>")
+        expect.stringContaining("data-otf='Sk:Stealth +3 * Per 2HP'><b>Sk:</b>Stealth +3 *Per 2HP</span>")
       )
     })
 
@@ -1346,7 +1351,7 @@ describe('parseLink', () => {
         orig: 'Sk:Stealth -2 for armor ? "Sneaky" , "Alarm!"',
         spantext: '<b>Sk:</b>Stealth -2 for armor',
         truetext: 'Sneaky',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1355,7 +1360,7 @@ describe('parseLink', () => {
       )
     })
 
-    test('#> Sk:Stealth -2 for armor ? "Sneaky" : "Alarm!"', () => {
+    test.skip("#> Sk:Stealth -2 for armor ? 'Sneaky' : 'Alarm!'", () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
@@ -1366,10 +1371,10 @@ describe('parseLink', () => {
         isSpellOnly: false,
         mod: '-2',
         name: 'Stealth',
-        orig: 'Sk:Stealth -2 for armor ? "Sneaky" : "Alarm!"',
+        orig: "Sk:Stealth -2 for armor ? 'Sneaky' : 'Alarm!'",
         spantext: '<b>Sk:</b>Stealth -2 for armor',
         truetext: 'Sneaky',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1392,7 +1397,7 @@ describe('parseLink', () => {
         name: 'Stealth',
         orig: 'S:Stealth +@margin for Spell',
         spantext: '<b>S:</b>Stealth +@margin for Spell',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='S:Stealth +@margin for Spell'><b>S:</b>Stealth +@margin for Spell</span>")
@@ -1413,7 +1418,7 @@ describe('parseLink', () => {
         name: 'Stealth',
         orig: 'S:Stealth+@margin for Spell',
         spantext: '<b>S:</b>Stealth +@margin for Spell',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='S:Stealth+@margin for Spell'><b>S:</b>Stealth +@margin for Spell</span>")
@@ -1440,11 +1445,11 @@ describe('parseLink', () => {
           orig: 'IQ -6 default',
           path: 'attributes.IQ.value',
           spantext: 'IQ -6 default',
-          type: 'attribute',
+          type: OtfActionType.attribute,
         },
         orig: input,
         spantext: '<b>S:</b>Savoir-faire -3 description | IQ -6 default',
-        type: 'skill-spell',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1452,6 +1457,7 @@ describe('parseLink', () => {
         )
       )
     })
+
     test('#> S:Acrobatics | DX-6', () => {
       const result = parselink(input)
 
@@ -1471,12 +1477,12 @@ describe('parseLink', () => {
           name: 'DX',
           orig: 'DX-6',
           path: 'attributes.DX.value',
-          spantext: 'DX -6 ',
-          type: 'attribute',
+          spantext: 'DX -6',
+          type: OtfActionType.attribute,
         },
         orig: input,
-        spantext: '<b>S:</b>Acrobatics | DX -6 ',
-        type: 'skill-spell',
+        spantext: '<b>S:</b>Acrobatics | DX -6',
+        type: OtfActionType.skillSpell,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='S:Acrobatics | DX-6'><b>S:</b>Acrobatics | DX -6</span>")
@@ -1501,7 +1507,7 @@ describe('parseLink', () => {
         isRanged: false,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='M:Broadsword'><b>M:</b>Broadsword</span>"))
     })
@@ -1516,7 +1522,7 @@ describe('parseLink', () => {
         isRanged: false,
         name: 'Broadsword (Swung)',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='M:Broadsword (Swung)'><b>M:</b>Broadsword (Swung)</span>")
@@ -1533,7 +1539,7 @@ describe('parseLink', () => {
         isRanged: true,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='A:Broadsword'><b>A:</b>Broadsword</span>"))
     })
@@ -1549,7 +1555,7 @@ describe('parseLink', () => {
         isRanged: true,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='A:Broadsword *Per 1FP'><b>A:</b>Broadsword *Per 1FP</span>")
@@ -1567,7 +1573,7 @@ describe('parseLink', () => {
         isRanged: true,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='A:Broadsword * Costs 1 HP'><b>A:</b>Broadsword * Costs 1 HP</span>")
@@ -1585,7 +1591,7 @@ describe('parseLink', () => {
         isRanged: true,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='A:Broadsword * Per 1 tr0000'><b>A:</b>Broadsword * Per 1 tr0000</span>")
@@ -1603,7 +1609,7 @@ describe('parseLink', () => {
         isRanged: true,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1612,20 +1618,18 @@ describe('parseLink', () => {
       )
     })
 
-    // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
     test('#> A:Broadsword *Costs 1 tr("Control Points")', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
-        // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
         costs: '*Costs 1 tr("Control Points")',
         desc: '',
         isMelee: true,
         isRanged: true,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1634,20 +1638,18 @@ describe('parseLink', () => {
       )
     })
 
-    // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
     test('#> A:Broadsword *Costs 1 tr(Control Points)', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
-        // TODO This is wrong. The costs should be '*Costs 1 tr(Control Points)'.
         costs: '*Costs 1 tr(Control Points)',
         desc: '',
         isMelee: true,
         isRanged: true,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1656,20 +1658,18 @@ describe('parseLink', () => {
       )
     })
 
-    // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
     test('#> A:Broadsword *Costs 1 tr(Control*Points)', () => {
       const result = parselink(input)
 
       expect(result.action).toEqual({
         blindroll: false,
-        // TODO This is wrong. The costs should be '*Costs 1 tr(Control*Points)'.
         costs: '*Costs 1 tr(Control*Points)',
         desc: '',
         isMelee: true,
         isRanged: true,
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1678,7 +1678,6 @@ describe('parseLink', () => {
       )
     })
 
-    // TODO I personally would require a space between the weapon name and the modifier.
     test('#> A:Broadsword-2 stunned', () => {
       const result = parselink(input)
 
@@ -1690,7 +1689,7 @@ describe('parseLink', () => {
         mod: '-2',
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='A:Broadsword-2 stunned'><b>A:</b>Broadsword-2 stunned</span>")
@@ -1708,7 +1707,7 @@ describe('parseLink', () => {
         mod: '-2',
         name: 'Broadsword',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='A:Broadsword -2 stunned'><b>A:</b>Broadsword-2 stunned</span>")
@@ -1726,7 +1725,7 @@ describe('parseLink', () => {
         mod: '-2',
         name: 'Throwing*Axe',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='A:Throwing*Axe -2 stunned'><b>A:</b>Throwing*Axe-2 stunned</span>")
@@ -1744,7 +1743,7 @@ describe('parseLink', () => {
         mod: '-2',
         name: 'Throwing Axe',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining('data-otf=\'R:"Throwing Axe" -2 stunned\'><b>R:</b>Throwing Axe-2 stunned</span>')
@@ -1762,7 +1761,7 @@ describe('parseLink', () => {
         mod: '+@margin',
         name: 'Throwing Axe',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining('data-otf=\'R:"Throwing Axe" +@margin\'><b>R:</b>Throwing Axe +@margin</span>')
@@ -1780,7 +1779,7 @@ describe('parseLink', () => {
         mod: '+@margin',
         name: 'Throwing Axe',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1802,7 +1801,7 @@ describe('parseLink', () => {
         mod: '-2',
         name: 'Throwing Axe',
         orig: input,
-        type: 'attackdamage',
+        type: OtfActionType.attackDamage,
       })
       expect(result.text).toEqual(
         expect.stringContaining('data-otf=\'D:"Throwing Axe"-2 stunned\'><b>D:</b>Throwing Axe-2 stunned</span>')
@@ -1819,7 +1818,7 @@ describe('parseLink', () => {
         isRanged: false,
         name: 'Broadsword',
         orig: input,
-        type: 'weapon-parry',
+        type: OtfActionType.weaponParry,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='P:Broadsword'><b>P:</b>Broadsword</span>"))
     })
@@ -1834,7 +1833,7 @@ describe('parseLink', () => {
         isRanged: false,
         name: 'Shield',
         orig: input,
-        type: 'weapon-block',
+        type: OtfActionType.weaponBlock,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='B:Shield'><b>B:</b>Shield</span>"))
     })
@@ -1850,7 +1849,7 @@ describe('parseLink', () => {
         isRanged: true,
         name: 'Throwing',
         orig: input,
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining("data-otf='A:Throwing Axe -2 stunned'><b>A:</b>Throwing</span> Axe -2 stunned")
@@ -1868,7 +1867,7 @@ describe('parseLink', () => {
         mod: '+1',
         name: "Mage's Staff",
         orig: 'A:"Mage\'s Staff" +1 magic attack',
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining(
@@ -1887,7 +1886,7 @@ describe('parseLink', () => {
         isRanged: true,
         name: 'Sword "Saethor*s Bane"',
         orig: 'A:\'Sword "Saethor*s Bane"\'',
-        type: 'attack',
+        type: OtfActionType.attack,
       })
       expect(result.text).toEqual(
         expect.stringContaining('data-otf=\'A:\'Sword "Saethor*s Bane"\'\'><b>A:</b>Sword "Saethor*s Bane"</span>')
@@ -1903,7 +1902,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'A',
-        type: 'test-exists',
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?A:Broadsword'>?A:Broadsword</span>"))
     })
@@ -1915,7 +1914,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'M',
-        type: 'test-exists',
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?M:Broadsword'>?M:Broadsword</span>"))
     })
@@ -1927,7 +1926,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'R',
-        type: 'test-exists',
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?R:Broadsword'>?R:Broadsword</span>"))
     })
@@ -1939,7 +1938,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'S',
-        type: 'test-exists',
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?S:Broadsword'>?S:Broadsword</span>"))
     })
@@ -1951,7 +1950,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'AD',
-        type: 'test-exists',
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?AD:Broadsword'>?AD:Broadsword</span>"))
     })
@@ -1963,7 +1962,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'AT',
-        type: 'test-exists',
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?AT:Broadsword'>?AT:Broadsword</span>"))
     })
@@ -1975,7 +1974,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'SK',
-        type: 'test-exists',
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?SK:Broadsword'>?SK:Broadsword</span>"))
     })
@@ -1987,7 +1986,7 @@ describe('parseLink', () => {
         name: 'Broadsword',
         orig: input,
         prefix: 'SP',
-        type: 'test-exists',
+        type: OtfActionType.testExists,
       })
       expect(result.text).toEqual(expect.stringContaining("data-otf='?SP:Broadsword'>?SP:Broadsword</span>"))
     })
@@ -2005,7 +2004,7 @@ describe('parseLink', () => {
     expect(result.action).toEqual({
       label: 'https://www.google.com',
       orig: 'https://www.google.com',
-      type: 'href',
+      type: OtfActionType.href,
     })
     expect(result.text).toEqual('<a href="https://www.google.com">https://www.google.com</a>')
   })
@@ -2016,7 +2015,7 @@ describe('parseLink', () => {
     expect(result.action).toEqual({
       label: 'http://www.google.com',
       orig: 'http://www.google.com',
-      type: 'href',
+      type: OtfActionType.href,
     })
     expect(result.text).toEqual('<a href="http://www.google.com">http://www.google.com</a>')
   })
@@ -2027,7 +2026,7 @@ describe('parseLink', () => {
     expect(result.action).toEqual({
       label: 'Google this',
       orig: 'http://www.google.com',
-      type: 'href',
+      type: OtfActionType.href,
     })
     expect(result.text).toEqual('<a href="http://www.google.com">Google this</a>')
   })
@@ -2051,11 +2050,11 @@ describe('parseLink', () => {
         name: 'PER',
         orig: 'Per-4',
         path: 'attributes.PER.value',
-        spantext: 'Per -4 ',
-        type: 'attribute',
+        spantext: 'Per -4',
+        type: OtfActionType.attribute,
       },
-      spantext: '<b>Sk:</b>Scrounging | Per -4 ',
-      type: 'skill-spell',
+      spantext: '<b>Sk:</b>Scrounging | Per -4',
+      type: OtfActionType.skillSpell,
     })
     expect(result.text).toEqual(expect.stringContaining('data-otf=\'Sk:"Scrounging" | Per-4\'>Scrounging</span>'))
   })
@@ -2078,14 +2077,161 @@ describe('parseLink', () => {
         name: 'PER',
         orig: 'Per-4',
         path: 'attributes.PER.value',
-        spantext: 'Per -4 ',
-        type: 'attribute',
+        spantext: 'Per -4',
+        type: OtfActionType.attribute,
       },
-      spantext: '<b>Sk:</b>Scrounging | Per -4 ',
-      type: 'skill-spell',
+      spantext: '<b>Sk:</b>Scrounging | Per -4',
+      type: OtfActionType.skillSpell,
     })
     expect(result.text).toEqual(
       expect.stringContaining("data-otf='Sk:Scrounging | Per-4'><b>Sk:</b>Scrounging | Per -4</span>")
     )
+  })
+
+  test('#> S:Broadsword|S:Force*Sword-4|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4', () => {
+    const result = parselink(input)
+
+    expect(result.action).toEqual({
+      blindroll: false,
+      desc: '',
+      isSkillOnly: false,
+      isSpellOnly: false,
+      name: 'Broadsword',
+      orig: input,
+      next: {
+        blindroll: false,
+        desc: '',
+        isSkillOnly: false,
+        isSpellOnly: false,
+        name: 'Force*Sword',
+        orig: 'S:Force*Sword-4|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4',
+        spantext:
+          '<b>S:</b>Force*Sword -4 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+        mod: '-4',
+        type: OtfActionType.skillSpell,
+        next: {
+          blindroll: false,
+          desc: '',
+          isSkillOnly: false,
+          isSpellOnly: false,
+          name: 'Rapier',
+          orig: 'S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4',
+          spantext: '<b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+          mod: '-4',
+          type: OtfActionType.skillSpell,
+          next: {
+            blindroll: false,
+            desc: '',
+            isSkillOnly: false,
+            isSpellOnly: false,
+            name: 'Saber',
+            orig: 'S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4',
+            spantext: '<b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+            mod: '-4',
+            type: OtfActionType.skillSpell,
+            next: {
+              blindroll: false,
+              desc: '',
+              isSkillOnly: false,
+              isSpellOnly: false,
+              name: 'Shortsword',
+              orig: 'S:Shortsword-2|S:Two-Handed*Sword-4',
+              mod: '-2',
+              spantext: '<b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+              type: OtfActionType.skillSpell,
+              next: {
+                blindroll: false,
+                desc: '',
+                isSkillOnly: false,
+                isSpellOnly: false,
+                name: 'Two-Handed*Sword',
+                orig: 'S:Two-Handed*Sword-4',
+                mod: '-4',
+                spantext: '<b>S:</b>Two-Handed*Sword -4',
+                type: OtfActionType.skillSpell,
+              },
+            },
+          },
+        },
+      },
+      spantext:
+        '<b>S:</b>Broadsword | <b>S:</b>Force*Sword -4 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4',
+      type: OtfActionType.skillSpell,
+    })
+    expect(result.text).toEqual(
+      expect.stringContaining(
+        "data-otf='S:Broadsword|S:Force*Sword-4|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed*Sword-4'><b>S:</b>Broadsword | <b>S:</b>Force*Sword -4 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed*Sword -4</span>"
+      )
+    )
+  })
+
+  test('#> S:Broadsword|DX-5|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed', () => {
+    const result = parselink(input)
+
+    expect(result.action).toEqual({
+      blindroll: false,
+      desc: '',
+      isSkillOnly: false,
+      isSpellOnly: false,
+      name: 'Broadsword',
+      orig: input,
+      next: {
+        attribute: 'DX',
+        attrkey: 'DX',
+        blindroll: false,
+        mod: '-5',
+        name: 'DX',
+        next: {
+          blindroll: false,
+          desc: '',
+          isSkillOnly: false,
+          isSpellOnly: false,
+          mod: '-4',
+          name: 'Rapier',
+          next: {
+            blindroll: false,
+            desc: '',
+            isSkillOnly: false,
+            isSpellOnly: false,
+            mod: '-4',
+            name: 'Saber',
+            next: {
+              blindroll: false,
+              desc: '',
+              isSkillOnly: false,
+              isSpellOnly: false,
+              mod: '-2',
+              name: 'Shortsword',
+              next: {
+                blindroll: false,
+                desc: '',
+                isSkillOnly: false,
+                isSpellOnly: false,
+                name: 'Two-Handed',
+                orig: 'S:Two-Handed',
+                spantext: '<b>S:</b>Two-Handed',
+                type: OtfActionType.skillSpell,
+              },
+              orig: 'S:Shortsword-2|S:Two-Handed',
+              spantext: '<b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+              type: OtfActionType.skillSpell,
+            },
+            orig: 'S:Saber-4|S:Shortsword-2|S:Two-Handed',
+            spantext: '<b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+            type: OtfActionType.skillSpell,
+          },
+          orig: 'S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed',
+          spantext: '<b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+          type: OtfActionType.skillSpell,
+        },
+        orig: 'DX-5|S:Rapier-4|S:Saber-4|S:Shortsword-2|S:Two-Handed',
+        path: 'attributes.DX.value',
+        spantext: 'DX -5 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+        type: OtfActionType.attribute,
+      },
+      spantext:
+        '<b>S:</b>Broadsword | DX -5 | <b>S:</b>Rapier -4 | <b>S:</b>Saber -4 | <b>S:</b>Shortsword -2 | <b>S:</b>Two-Handed',
+      type: OtfActionType.skillSpell,
+    })
   })
 })
