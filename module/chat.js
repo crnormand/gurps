@@ -72,7 +72,8 @@ class ChatProcessorRegistry {
    * @param {string} message
    */
   willTryToHandle(message) {
-    let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
+    let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later.
+
     for (const line of lines)
       for (const p of this._processors) {
         if (p.matches(line) || (line[0] === '!' ? p.matches(line.substring(1)) : p.matches(line))) return true
@@ -326,56 +327,26 @@ export default function addChatHooks() {
       // @ts-ignore
       if (!!chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
 
-      if (GURPS.ChatCommandsInProcess.includes(message)) {
-        GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(
-          (/** @type {string} */ item) => item !== message
-        )
+      // In Foundry v14, the message may be surrounded by <p> tags, so we need to remove those before checking for matches.
+      const msg = message.replace(/<p>/g, '').replace(/<\/p>/g, '\n')
+      const match = GURPS.ChatCommandsInProcess.find(item => item === msg)
+
+      if (GURPS.ChatCommandsInProcess.includes(msg)) {
+        GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(item => item !== msg)
         return true // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
       }
 
       // Due to Foundry's non-async way of handling the 'chatMessage' response, we have to decide beforehand
       // if we are going to process this message, and if so, return false so Foundry doesn't
-      if (ChatProcessors.willTryToHandle(message)) {
+      if (ChatProcessors.willTryToHandle(msg)) {
         // Now we can handle the processing of each line in an async method, so we can ensure a single thread
         // @ts-ignore
-        ChatProcessors.startProcessingLines(message, chatmsgData)
+        ChatProcessors.startProcessingLines(msg, chatmsgData)
         return false
       } else return true
     })
 
-    // Look for blind messages with .message-results and remove them
-    /*  Hooks.on("renderChatMessage", (log, content, data) => {
-			  if (!!data.message.blind) {
-				  if (data.author?.isSelf && !data.author.isGm) {   // We are rendering the chat message for the sender (and they are not the GM)
-					$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
-				  }
-				}
-			  });  */
-
-    // TODO Add the "for" attribute to a collapsible panel label. This is needed
-    // because the server in 0.7.8 strips the "for" attribute in an attempt
-    // to guard against weird security hacks. When "for" is whitelisted as
-    // a valid attribute (future) we can remove this.
-    Hooks.on('renderChatMessage', (_app, html, _msg) => {
-      // this is a fucking hack
-      let wrapper = html.find('.collapsible-wrapper')
-      if (GURPS.lastTargetedRoll && !GURPS.lastTargetedRoll.msgId) {
-        GURPS.lastTargetedRoll.msgId = _msg.message._id
-      }
-      if (wrapper.length > 0) {
-        //console.log($(wrapper).hbs())
-        let input = $(wrapper).find('input.toggle')[0]
-        let label = $(input).siblings('label.label-toggle')[0]
-        let id = input.id
-        let labelFor = $(label).attr('for')
-        if (labelFor !== id) {
-          $(label).attr('for', id)
-          console.log(`add the 'for' attribute if needed: ${$(wrapper).html()}`)
-        }
-      }
-    })
-
-    // Look for RESULTS from a RollTable.   RollTables do not generate regular chat messages
+    // Look for RESULTS from a RollTable. RollTables do not generate regular chat messages.
     Hooks.on(
       'preCreateChatMessage',
       (/** @type {ChatMessage} */ chatMessage, /** @type {any} */ _options, /** @type {any} */ _userId) => {
