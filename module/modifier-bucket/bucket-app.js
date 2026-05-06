@@ -44,7 +44,7 @@ export class GurpsRoll extends Roll {
    * @param {*} data
    * @param {*} options
    */
-  constructor(formula, data = {}, options = {}) {
+  constructor(formula, data = {}, options = { warn: false }) {
     super(formula, data, options)
   }
 
@@ -77,6 +77,20 @@ export class GurpsRoll extends Roll {
     _data.margin = GURPS.lastTargetedRoll?.margin
 
     return _data
+  }
+
+  /**
+   * Replace referenced data attributes in the roll formula with values from the provided data.
+   * Data references in the formula use the \@attr syntax and would reference the corresponding attr key.
+   *
+   * @param {string} formula                 The original formula within which to replace
+   * @param {object} data                    The data object which provides replacements
+   * @param {ReplaceFormulaDataOptions} [options] Options which modify formula replacement
+   * @param {number} _r                      An internal recursion tracker
+   * @returns {string}
+   */
+  static replaceFormulaData(formula, data, options = {}, _r = 0) {
+    return super.replaceFormulaData(formula, data, { ...options, warn: false }, _r)
   }
 }
 
