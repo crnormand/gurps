@@ -172,7 +172,7 @@ export default class GurpsWiring {
    */
   static handleGurpslink(event, actor, desc, options) {
     event.preventDefault()
-    let element = event.currentTarget
+    let element = event.currentTarget ?? event.target
     let action = element.dataset?.action // If we have already parsed
     if (!!action) action = JSON.parse(atou(action))
     else action = parselink(element.innerText, desc).action

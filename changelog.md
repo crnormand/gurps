@@ -9,7 +9,6 @@
   This fixes the issue where the system would not find any viable skill from an OTF like "DX-5|S:Broadsword|S:Two-handed Sword-3"...
 - /sound chat command broken in v14 \#2705.
 - Remove @combatmod error message \#2693.
-- No viable skill found in chain of actions \#2661.
 
 ## Release 0.18.16 04/26/2026
 
