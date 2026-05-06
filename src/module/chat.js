@@ -78,7 +78,7 @@ class ChatProcessorRegistry {
    * @param {string} message
    */
   willTryToHandle(message) {
-    let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
+    let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later.
 
     for (const line of lines)
       for (const processor of this._processors) {
@@ -367,26 +367,27 @@ export default function addChatHooks() {
       // @ts-expect-error - custom property added to chat message data
       if (chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
 
-      if (GURPS.ChatCommandsInProcess.includes(message)) {
-        GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(
-          (/** @type {string} */ item) => item !== message
-        )
+      // In Foundry v14, the message may be surrounded by <p> tags, so we need to remove those before checking for matches.
+      const msg = message.replace(/<p>/g, '').replace(/<\/p>/g, '\n')
+
+      if (GURPS.ChatCommandsInProcess.includes(msg)) {
+        GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(item => item !== msg)
 
         return true // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
       }
 
       // Due to Foundry's non-async way of handling the 'chatMessage' response, we have to decide beforehand
       // if we are going to process this message, and if so, return false so Foundry doesn't
-      if (ChatProcessors.willTryToHandle(message)) {
+      if (ChatProcessors.willTryToHandle(msg)) {
         // Now we can handle the processing of each line in an async method, so we can ensure a single thread
         // @ts-expect-error - chatmsgData type mismatch with expected parameter
-        ChatProcessors.startProcessingLines(message, chatmsgData)
+        ChatProcessors.startProcessingLines(msg, chatmsgData)
 
         return false
       } else return true
     })
 
-    // Look for RESULTS from a RollTable.   RollTables do not generate regular chat messages
+    // Look for RESULTS from a RollTable. RollTables do not generate regular chat messages.
     Hooks.on(
       'preCreateChatMessage',
       (/** @type {ChatMessage} */ chatMessage, /** @type {any} */ _options, /** @type {any} */ _userId) => {
