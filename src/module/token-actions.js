@@ -55,7 +55,19 @@ export class TokenActions {
 
   static async fromToken(token) {
     const tokenActions = new TokenActions(token)
+    return await tokenActions.init()
+  }
 
+  static async fromActor(actor) {
+    let token = actor.token?.object
+
+    if (!token) {
+      const tokenDocument = await actor.getTokenDocument()
+      token = tokenDocument.object
+      if (!token) return null
+    }
+
+    const tokenActions = new TokenActions(token)
     return await tokenActions.init()
   }
 

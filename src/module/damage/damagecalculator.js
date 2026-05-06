@@ -58,6 +58,7 @@ export class CompositeDamageCalculator {
     this._useBodyHits = useHighTechBodyHits()
 
     this._defender = defender
+    this._defenderToken = damageData[0].token
 
     // The CompositeDamageCalculator has multiple DamageCalculators -- create one per DamageData
     // and give it a back pointer to the Composite.
@@ -346,13 +347,10 @@ export class CompositeDamageCalculator {
   }
 
   async addEffectsContext() {
-    let tokenId = this._defender.token?.id
+    const actions = this._defenderToken
+      ? await TokenActions.fromToken(this._defenderToken)
+      : await TokenActions.fromActor(this._defender)
 
-    if (!tokenId) tokenId = canvas.tokens.placeables.find(it => it.actor === this._defender)?.id
-    if (!tokenId) return // TODO Need to handle this in a better way.
-
-    const defenderToken = canvas.tokens.get(tokenId)
-    const actions = await TokenActions.fromToken(defenderToken)
     let isReady
     const data = this.effects.map(effect => {
       if (effect.type.includes('shock')) {
@@ -361,7 +359,7 @@ export class CompositeDamageCalculator {
         if (applyAt === 'AtNextTurn') {
           isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
         } else {
-          isReady = defenderToken.actor.effects.find(activeEffect =>
+          isReady = this._defenderToken.actor.effects.find(activeEffect =>
             activeEffect.statuses.find(status => status === `${effect.type}${effect.amount}`)
           )
         }
@@ -385,10 +383,10 @@ export class CompositeDamageCalculator {
           case 'headvitalshit':
           case 'majorwound':
           case 'crippling': {
-            const stunIsReady = defenderToken.actor.effects.find(activeEffect =>
+            const stunIsReady = this._defenderToken.actor.effects.find(activeEffect =>
               activeEffect.statuses.find(status => status === 'stun')
             )
-            const proneIsReady = defenderToken.actor.effects.find(activeEffect =>
+            const proneIsReady = this._defenderToken.actor.effects.find(activeEffect =>
               activeEffect.statuses.find(status => status === 'prone')
             )
 
@@ -421,7 +419,7 @@ export class CompositeDamageCalculator {
           }
 
           case 'knockback':
-            isReady = defenderToken.actor.effects.find(activeEffect =>
+            isReady = this._defenderToken.actor.effects.find(activeEffect =>
               activeEffect.statuses.find(status => status === 'prone')
             )
 
