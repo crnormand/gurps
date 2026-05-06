@@ -92,7 +92,7 @@ class SoundChatProcessor extends ChatProcessor {
     }
 
     if (!data.src.endsWith('.txt')) {
-      AudioHelper.play(data, true).then(sound => {
+      game.audio.play(data.src, data, true).then(sound => {
         if (sound.failed) ui.notifications.warn('Unable to play: ' + data.src)
       })
 
@@ -116,7 +116,7 @@ class SoundChatProcessor extends ChatProcessor {
 
           console.log(`Loaded ${list.length} sounds, picked: ${index}:${filepath}`)
           data.src = filepath
-          AudioHelper.play(data, true).then(sound => {
+          game.audio.play(data.src, data, true).then(sound => {
             if (sound.failed) ui.notifications.warn('Unable to play: ' + data.src)
           })
         }
