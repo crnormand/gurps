@@ -35,9 +35,11 @@
         <i class='fa-solid fa-circle-plus equipmentbutton' data-key='system.equipment.{{../container}}.{{@key}}' data-operation='equipment-inc'></i>
       </span>
       <span class='ms-eqt-name indent{{indent}}'>
-        {{#if hasContains}}<i class='fa-solid fa-caret-down expandcollapseicon' data-key='system.equipment.{{../container}}.{{@key}}'></i>{{/if}}
-        {{#if hasCollapsed}}<i class='fa-solid fa-caret-right expandcollapseicon' data-key='system.equipment.{{../container}}.{{@key}}'></i>{{/if}}
-        {{{gurpslink name}}}
+        <span class='ms-eqt-name-line'>
+          {{#if hasContains}}<i class='fa-solid fa-caret-down expandcollapseicon' data-key='system.equipment.{{../container}}.{{@key}}'></i>{{/if}}
+          {{#if hasCollapsed}}<i class='fa-solid fa-caret-right expandcollapseicon' data-key='system.equipment.{{../container}}.{{@key}}'></i>{{/if}}
+          <span class='name'>{{{gurpslink name}}}</span>
+        </span>
         {{#if notes}}<div class='ms-eqt-notes'>{{{gurpslinkbr notes}}}</div>{{/if}}
       </span>
       <span class='ms-eqt-cost'>{{toLocaleString (toNumber cost)}}</span>
