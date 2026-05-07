@@ -7,6 +7,7 @@
   </h3>
   <div class='ms-equipment-table'>
     <div class='ms-eqt-header'>
+      <span class='ms-eqt-drag'></span>
       <span class='ms-eqt-equipped'>{{#if showEquipped}}{{localize 'GURPS.equipmentEquipped'}}{{/if}}</span>
       <span class='ms-eqt-qty'>{{localize 'GURPS.equipmentQuantity'}}</span>
       <span class='ms-eqt-name'>{{localize 'GURPS.equipment'}}</span>
@@ -17,7 +18,8 @@
     </div>
     {{#each (flatlist items)}}
     {{#unless isCollapsed}}
-    <div class='ms-eqt-row equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
+    <div class='ms-eqt-row eqtdragtarget equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
+      <span class='ms-eqt-drag eqtdraggable' data-key='system.equipment.{{../container}}.{{@key}}'><i class='fa-solid fa-grip-dots'></i></span>
       <span class='ms-eqt-equipped {{#if ../showEquipped}}changeequip{{/if}}' data-key='system.equipment.{{../container}}.{{@key}}'>
         {{#if ../showEquipped}}
           {{#if this.equipped}}

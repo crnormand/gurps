@@ -544,7 +544,7 @@ $locations-columns: 50px 1fr 60px 60px;
   }
 }
 
-$equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
+$equipment-columns: 24px 32px 85px 1fr 60px 60px 40px 50px;
 
 .ms-equipment-table {
   @include table-container;
@@ -572,6 +572,18 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
 
   >span {
     padding: var(--ms-space-3) var(--ms-space-2);
+  }
+}
+
+.ms-eqt-drag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ms-text-muted);
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
   }
 }
 
