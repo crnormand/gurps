@@ -10,6 +10,10 @@
 - /sound chat command broken in v14 \#2705.
 - Remove @combatmod error message \#2693.
 - No viable skill found in chain of actions \#2661.
+- Add Spanish language support \#2723.
+- Multiple RoF resolution fails \#2715.
+- You can't apply damage wiht the new update in v13 \#2679.
+- Modern sheet issues \#2650.
 
 ## Release 0.18.16 04/26/2026
 
