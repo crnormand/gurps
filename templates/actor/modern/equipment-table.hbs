@@ -19,7 +19,7 @@
     {{#each (flatlist items)}}
     {{#unless isCollapsed}}
     <div class='ms-eqt-row eqtdragtarget equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
-      <span class='ms-eqt-drag eqtdraggable' data-key='system.equipment.{{../container}}.{{@key}}'><i class='fa-solid fa-grip-dots'></i></span>
+      <span class='ms-eqt-drag eqtdraggable' data-key='system.equipment.{{../container}}.{{@key}}'></span>
       <span class='ms-eqt-equipped {{#if ../showEquipped}}changeequip{{/if}}' data-key='system.equipment.{{../container}}.{{@key}}'>
         {{#if ../showEquipped}}
           {{#if this.equipped}}
