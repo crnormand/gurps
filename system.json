@@ -57,8 +57,14 @@
     },
     {
       "lang": "fr",
-      "name": "French",
+      "name": "Français (French)",
       "path": "lang/fr.json",
+      "flags": {}
+    },
+    {
+      "lang": "es",
+      "name": "Español (Spanish)",
+      "path": "lang/es.json",
       "flags": {}
     }
   ],

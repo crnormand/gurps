@@ -450,6 +450,10 @@ export default class ApplyDamageDialog extends Application {
     if (!roll) return
 
     roll.toMessage(options).then(() => this.updateUI())
+
+    if (!isNiceDiceEnabled() && foundry.utils.isNewerVersion(14, game.version, { majorOnly: true })) {
+      AudioHelper.play({ src: CONFIG.sounds.dice })
+    }
   }
 
   /**
