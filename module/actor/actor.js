@@ -2425,12 +2425,14 @@ export class GurpsActor extends Actor {
     let list2 = otherFirst ? this.system.equipment.carried : this.system.equipment.other
     let pkey1 = otherFirst ? 'system.equipment.other.' : 'system.equipment.carried.'
     let pkey2 = otherFirst ? 'system.equipment.carried.' : 'system.equipment.other.'
+    let actor = this
     recurselist(
       list1,
       (e, k, d) => {
         let l = pats.length - 1
         let p = pats[Math.min(d, l)]
-        if (e.name.match(p)) {
+        if (!e.name) console.log(`missing name:`, e, 'actor:', actor)
+        else if (e.name.match(p)) {
           if (!eqt && (d == l || pats.length == 1)) {
             eqt = e
             key = k
@@ -2444,7 +2446,8 @@ export class GurpsActor extends Actor {
       (e, k, d) => {
         let l = pats.length - 1
         let p = pats[Math.min(d, l)]
-        if (e.name.match(p)) {
+        if (!e.name) console.log(`missing name:`, e, 'actor:', actor)
+        else if (e.name.match(p)) {
           if (!eqt && (d == l || pats.length == 1)) {
             eqt = e
             key = k
