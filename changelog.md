@@ -2,6 +2,10 @@
 
 ## Release 0.18.17
 
+## Features
+
+- Add Spanish language support \#2723.
+
 ### Bugfixes
 
 - Removed Beta warning.
@@ -9,6 +13,9 @@
   This fixes the issue where the system would not find any viable skill from an OTF like "DX-5|S:Broadsword|S:Two-handed Sword-3"...
 - /sound chat command broken in v14 \#2705.
 - Remove @combatmod error message \#2693.
+- Multiple RoF resolution fails \#2715.
+- You can't apply damage wiht the new update in v13 \#2679.
+- Modern sheet issues \#2650.
 
 ## Release 0.18.16 04/26/2026
 

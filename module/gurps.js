@@ -1783,8 +1783,12 @@ if (!globalThis.GURPS) {
       label: 'Copy to chat input',
       default: true,
       callback: () => {
-        document.querySelector('.editor-content').focus()
-        document.querySelector('.editor-content').innerText = otf
+        if (foundry.utils.isNewerVersion(14, game.version, { majorOnly: true })) {
+          document.querySelector('#chat-message').value = otf
+        } else {
+          document.querySelector('.editor-content').focus()
+          document.querySelector('.editor-content').innerText = otf
+        }
       },
     })
 
