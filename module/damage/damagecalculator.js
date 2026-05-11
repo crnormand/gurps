@@ -47,6 +47,7 @@ export class CompositeDamageCalculator {
     this._useBodyHits = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BODY_HITS)
 
     this._defender = defender
+    this._defenderToken = damageData[0].token
 
     // The CompositeDamageCalculator has multiple DamageCalculators -- create one per DamageData
     // and give it a back pointer to the Composite.
@@ -324,13 +325,21 @@ export class CompositeDamageCalculator {
   }
 
   async addEffectsContext() {
-    const actions = await TokenActions.fromActor(this._defender)
+    const actions = this._defenderToken
+      ? await TokenActions.fromToken(this._defenderToken)
+      : await TokenActions.fromActor(this._defender)
+
+    // const actions = await TokenActions.fromActor(this._defender)
     let isReady
     const data = this.effects.map(effect => {
       if (effect.type.includes('shock')) {
         const applyAt = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ADD_SHOCK_AT_TURN)
         if (applyAt === 'AtNextTurn') {
-          isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
+          if (actions) {
+            isReady = actions.getNextTurnEffects().includes(`${effect.type}${effect.amount}`)
+          } else {
+            isReady = false
+          }
         } else {
           isReady = this._defender.effects.find(e => e.statuses.find(s => s === `${effect.type}${effect.amount}`))
         }
