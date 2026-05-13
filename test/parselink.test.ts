@@ -2229,4 +2229,23 @@ describe('parseLink', () => {
       type: 'skill-spell',
     })
   })
+
+  test('#> S:Default=12', () => {
+    const result = parselink(input)
+
+    expect(result.action).toEqual({
+      blindroll: false,
+      desc: '',
+      isSkillOnly: false,
+      isSpellOnly: false,
+      mod: undefined,
+      name: 'Default',
+      next: undefined,
+      orig: input,
+      spantext: '<b>S:</b>Default=12',
+      target: 12,
+      type: 'skill-spell',
+    })
+    expect(result.text).toEqual(expect.stringContaining("data-otf='S:Default=12'><b>S:</b>Default=12</span>"))
+  })
 })

@@ -675,9 +675,16 @@ class SkillSpellParser extends OtfParser {
     skipWS()
 
     // 3. NAME
+
     matches = match(/^("[^"]+"|'[^']+'|[^ ]+?)(?=[+-](\d+\s|\d+$|@margin)|\s|$)/)
     if (!matches) return result
     result.name = stripQuotes(matches[1]).trim()
+
+    let target = result.name.match(/(?<name>.*)=(?<target>\d+)/) // Targeted rolls 'Skill=12'
+    if (target && target.groups) {
+      result.name = target.groups.name.trim()
+      result.target = parseInt(target.groups.target.trim(), 10)
+    }
 
     skipWS()
 
@@ -732,7 +739,7 @@ class SkillSpellParser extends OtfParser {
     // 9. spantext
     // Span text is result.name + (result.mod ? ' ' + result.mod : '') + (result.desc ? ' ' + result.desc : '') + the spantext of result.next, separated by '|'
     result.spantext =
-      result.name +
+      (result.target ? `${result.name}=${result.target}` : result.name) +
       (result.mod ? ' ' + result.mod : '') +
       (result.desc ? ' ' + result.desc : '') +
       (result.floatingLabel ? ' (Based:' + result.floatingLabel + ')' : '') +
