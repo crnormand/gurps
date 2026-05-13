@@ -47,6 +47,7 @@ type BaseAction = {
   overridetxt: string
   quiet: boolean
   spantext: string
+  target: string | number
   truetext: string
   type: OtfActionType
 }
