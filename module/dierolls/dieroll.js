@@ -638,7 +638,7 @@ async function _doRoll({
   }
 
   let isCtrl = false
-  let creatOptions = {}
+  let createOptions = {}
   try {
     isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
   } catch {}
@@ -654,10 +654,11 @@ async function _doRoll({
     messageData.blind = true
   }
 
-  creatOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
+  createOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
+  ChatMessage.applyRollMode(messageData, createOptions.rollMode)
 
   messageData.sound = CONFIG.sounds.dice
-  ChatMessage.create(messageData, creatOptions)
+  ChatMessage.create(messageData, createOptions)
 
   if (isTargeted && !!optionalArgs.action) {
     let users = actor.isSelf ? [] : actor.getOwners()
