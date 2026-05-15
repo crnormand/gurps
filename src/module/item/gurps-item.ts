@@ -178,11 +178,23 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Item'>>(
+  override getEmbeddedDocument<
+    EmbeddedName extends Item.Embedded.CollectionName,
+    Options extends foundry.abstract.Document.GetEmbeddedDocumentOptions | undefined = undefined,
+  >(embeddedName: EmbeddedName, id: string, options?: Options): Item.Embedded.GetReturn<EmbeddedName, Options>
+  override getEmbeddedDocument<
+    EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Item'>,
+    Options extends foundry.abstract.Document.GetEmbeddedDocumentOptions | undefined = undefined,
+  >(
     embeddedName: EmbeddedName,
     id: string,
+    options?: Options
+  ): gurps.Pseudo.EmbeddedDocument<'Item', EmbeddedName, Options>
+  override getEmbeddedDocument(
+    embeddedName: string,
+    id: string,
     options?: foundry.abstract.Document.GetEmbeddedDocumentOptions
-  ): gurps.Pseudo.EmbeddedDocument<'Item', EmbeddedName> {
+  ): unknown {
     const { invalid = false, strict = true } = options ?? {}
 
     const metadata = (this.system?.constructor as any).metadata as ItemMetadata
@@ -272,7 +284,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   override async deleteEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Item']>(
     embeddedName: EmbeddedName,
     ids: Array<string>,
-    operation?: Partial<PseudoDocument.DeleteOperation>
+    operation?: Partial<PseudoDocument.DeleteManyDocumentsOperation>
   ): Promise<Array<PseudoDocumentConfig.Embeds['Item'][EmbeddedName]>>
   override async deleteEmbeddedDocuments(
     embeddedName: string,

@@ -8,7 +8,7 @@ import { getGame } from './guards.js'
 type DeleteOperationFor<Doc extends Document.Any | PseudoDocument.Any> =
   Doc extends Document<infer Type, infer _Schema, infer _Parent>
     ? Document.Database.DeleteOperationForName<Type>
-    : PseudoDocument.DeleteOperation
+    : PseudoDocument.DeleteManyDocumentsOperation
 
 /**
  * Present a Dialog form to confirm deletion of this PseudoDocument or Document.

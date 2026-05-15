@@ -1,4 +1,4 @@
-import { DataModel, fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { Document, DataModel, fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { MeleeV1 } from '@module/action/legacy/meleev1.js'
 import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
@@ -704,7 +704,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   protected override _onUpdate(
     changed: DeepPartial<foundry.abstract.TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>>,
-    options: foundry.abstract.Document.Database.UpdateOptions<foundry.abstract.types.DatabaseUpdateOperation>,
+    options: Document.Database.OnUpdateOptionsForName<'Actor'>,
     userId: string
   ): void {
     super._onUpdate(changed, options, userId)

@@ -164,11 +164,23 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor' | 'Item'>>(
+  override getEmbeddedDocument<
+    EmbeddedName extends Actor.Embedded.CollectionName,
+    Options extends Document.GetEmbeddedDocumentOptions | undefined = undefined,
+  >(embeddedName: EmbeddedName, id: string, options?: Options): Actor.Embedded.GetReturn<EmbeddedName, Options>
+  override getEmbeddedDocument<
+    EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor' | 'Item'>,
+    Options extends Document.GetEmbeddedDocumentOptions | undefined = undefined,
+  >(
     embeddedName: EmbeddedName,
     id: string,
+    options?: Options
+  ): gurps.Pseudo.EmbeddedDocument<'Actor' | 'Item', EmbeddedName, Options>
+  override getEmbeddedDocument(
+    embeddedName: string,
+    id: string,
     options?: Document.GetEmbeddedDocumentOptions
-  ): gurps.Pseudo.EmbeddedDocument<'Actor' | 'Item', EmbeddedName> {
+  ): unknown {
     const { invalid = false, strict = true } = options ?? {}
 
     const metadata = (this.system?.constructor as any).metadata as ActorMetadata
@@ -222,7 +234,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   override async createEmbeddedDocuments<EmbeddedName extends Actor.Embedded.Name>(
     embeddedName: EmbeddedName,
     data: Document.CreateDataForName<EmbeddedName>[] | undefined,
-    operation?: Document.Database.CreateOperationForName<EmbeddedName>
+    operation?: Document.Database.CreateDocumentsOperationForName<EmbeddedName>
   ): Promise<Array<Document.StoredForName<EmbeddedName>>>
   override async createEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Actor']>(
     embeddedName: EmbeddedName,
@@ -283,12 +295,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   override async deleteEmbeddedDocuments<EmbeddedName extends Actor.Embedded.Name>(
     embeddedName: EmbeddedName,
     ids: Array<string>,
-    operation?: Document.Database.DeleteOperationForName<EmbeddedName>
+    operation?: Document.Database.DeleteManyDocumentsOperationForName<EmbeddedName>
   ): Promise<Array<Document.StoredForName<EmbeddedName>>>
   override async deleteEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Actor']>(
     embeddedName: EmbeddedName,
     ids: Array<string>,
-    operation?: Partial<PseudoDocument.DeleteOperation>
+    operation?: Partial<PseudoDocument.DeleteManyDocumentsOperation>
   ): Promise<Array<PseudoDocumentConfig.Embeds['Actor'][EmbeddedName]>>
   override async deleteEmbeddedDocuments(
     embeddedName: string,

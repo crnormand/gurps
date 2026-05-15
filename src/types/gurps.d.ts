@@ -186,17 +186,27 @@ declare global {
        * The return type when accessing an embedded document on a parent document, which can be either a default
        * embedded document type provided by Foundry (e.g. ActiveEffect, Item) or a pseudo-document type defined in the
        * {@link PseudoDocumentConfig.Embeds} configuration object for that parent document type.
+       *
+       * The optional `Options` parameter mirrors {@link EmbeddedCollection.GetOptions}: when `strict: true` is passed,
+       * `undefined` is excluded from the return type; for pseudo-documents only `strict` is meaningful (no `invalid`
+       * support).
        */
       type EmbeddedDocument<
         Type extends foundry.abstract.Document.Type,
         EmbeddedName extends EmbeddedCollectionName<Type>,
+        Options extends EmbeddedCollection.GetOptions | undefined = undefined,
       > =
         EmbeddedName extends DefaultEmbeddedCollectionName<Type>
           ? EmbeddedName extends Actor.Embedded.CollectionName
-            ? Actor.Embedded.DocumentFor<EmbeddedName> | undefined
-            : never
+            ? Actor.Embedded.GetReturn<EmbeddedName, Options>
+            : EmbeddedName extends Item.Embedded.CollectionName
+              ? Item.Embedded.GetReturn<EmbeddedName, Options>
+              : never
           : EmbeddedName extends keyof PseudoDocumentConfig.Embeds[Type & keyof PseudoDocumentConfig.Embeds]
-            ? PseudoDocumentConfig.Embeds[Type & keyof PseudoDocumentConfig.Embeds][EmbeddedName] | undefined
+            ? Collection.GetReturn<
+                PseudoDocumentConfig.Embeds[Type & keyof PseudoDocumentConfig.Embeds][EmbeddedName],
+                Options
+              >
             : never
 
       /* ---------------------------------------- */
