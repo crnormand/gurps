@@ -1,5 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.18
+
+## Features
+
+### Bugfixes
+
+- Fixed RollMode for ChatMessages in v14 \#2654.
+
 ## Release 0.18.17 05/11/2026
 
 ## Features
