@@ -6,6 +6,7 @@
 
 ### Bugfixes
 
+- /ra command not working in 0.18.17 \#2728.
 - Fixed RollMode for ChatMessages in v14 \#2654.
 
 ## Release 0.18.17 05/11/2026
