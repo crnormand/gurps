@@ -4,13 +4,14 @@ import { CharacterModel } from '@module/actor/data/character.js'
 import { ActorType } from '@module/actor/types.js'
 import { ItemType } from '@module/item/types.js'
 
-type CharacterOrActor = Actor.Implementation | CharacterModel
+type CharacterOrActor = Actor.Implementation | CharacterModel | null | undefined
 
 function resolveCharacterModel(actor: CharacterOrActor): CharacterModel | null {
+  if (!actor) return null
   if (actor instanceof CharacterModel) return actor
-  const actorDoc = actor as Actor.Implementation
+  if (!(actor instanceof Actor)) return null
 
-  return actorDoc.isOfType(ActorType.Character) ? actorDoc.system : null
+  return actor.isOfType(ActorType.Character) ? actor.system : null
 }
 
 /* ---------------------------------------- */
