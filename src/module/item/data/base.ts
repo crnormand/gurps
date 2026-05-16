@@ -458,7 +458,7 @@ const baseItemModelSchema = () => {
     pageref: new fields.StringField({ required: true, nullable: false }),
 
     /** VTT-specific notes about this item, not visible in external programs but useful for storing OTF and the like. */
-    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+    vttNotes: new fields.StringField({ required: true, nullable: true, initial: null }),
 
     /** The OTF to run when running an OTF check against this item, such as for a skill or attribute check. */
     checkotf: new fields.StringField({ required: true, nullable: false }),

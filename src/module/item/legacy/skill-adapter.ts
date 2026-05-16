@@ -122,7 +122,7 @@ class SkillV1 {
   }
 
   get notes(): string {
-    const vttNotes = this.skillV2.system.vtt_notes
+    const vttNotes = this.skillV2.system.vttNotes
     const notes = this.skillV2.system?.notes
 
     return [notes, vttNotes]
