@@ -6,6 +6,7 @@ import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@module/otf
 import { OtfActionType } from '@module/otf/types.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
+import { findAdDisad, findAttack, findSkill, findSkillSpell, findSpell } from '@module/util/find-item.js'
 import { HandlebarsUtil } from '@module/util/handlebars.js'
 import HitFatPoints from '@module/util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
@@ -26,11 +27,9 @@ import {
   atou,
   d6ify,
   flattenContainedList,
-  makeRegexPatternFrom,
   objectToArray,
   quotedAttackName,
   recurselist,
-  sanitize,
   stripBracketContents,
   utoa,
   wait,
@@ -39,7 +38,6 @@ import {
 
 import { ActionModule } from './action/index.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
-import { GurpsActorV2 } from './actor/gurps-actor.js'
 import { Actor } from './actor/index.js'
 import Maneuvers from './actor/maneuver.js'
 import { Canvas } from './canvas/index.js'
@@ -1401,36 +1399,36 @@ if (!globalThis.GURPS) {
     ['test-exists']({ action, actor }) {
       switch (action.prefix) {
         case 'A':
-          if (findAdDisad(actor, action.name)) return true
-          if (findAttack(actor, action.name, true, true)) return true
+          if (GURPS.findAdDisad(actor, action.name)) return true
+          if (GURPS.findAttack(actor, action.name, true, true)) return true
 
           return false
         case 'AD':
-          if (findAdDisad(actor, action.name)) return true
+          if (GURPS.findAdDisad(actor, action.name)) return true
 
           return false
         case 'AT':
-          if (findAttack(actor, action.name, true, true)) return true
+          if (GURPS.findAttack(actor, action.name, true, true)) return true
 
           return false
         case 'M':
-          if (findAttack(actor, action.name, true, false)) return true
+          if (GURPS.findAttack(actor, action.name, true, false)) return true
 
           return false
         case 'R':
-          if (findAttack(actor, action.name, false, true)) return true
+          if (GURPS.findAttack(actor, action.name, false, true)) return true
 
           return false
         case 'S':
-          if (findSkillSpell(actor, action.name, false, false)) return true
+          if (GURPS.findSkillSpell(actor, action.name, false, false)) return true
 
           return false
         case 'SK':
-          if (findSkillSpell(actor, action.name, true, false)) return true
+          if (GURPS.findSkillSpell(actor, action.name, true, false)) return true
 
           return false
         case 'SP':
-          if (findSkillSpell(actor, action.name, false, true)) return true
+          if (GURPS.findSkillSpell(actor, action.name, false, true)) return true
 
           return false
       }
@@ -1494,129 +1492,14 @@ if (!globalThis.GURPS) {
 
   GURPS.performAction = performAction
 
-  /**
-   * Find the skill or spell. if isSkillOnly or isSpellOnly set, only check that list.
-   * @param {GurpsActorV2|GurpsActorData} actor
-   * @param {string} sname
-   */
-  function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) {
-    const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
-    var item
-
-    if (!actor) return item
-    if (actor instanceof GurpsActorV2) actor = actor.system
-    let skillRegExp = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
-    let best = 0
-
-    if (!isSpellOnly) {
-      actor.allSkillsV2.forEach(skill => {
-        if (skill.name?.match(skillRegExp) && skill.system.level > best) {
-          item = skill
-          best = skill.system.level
-        }
-      })
-    }
-
-    if (!item) {
-      if (!isSkillOnly) {
-        actor.allSpellsV2.forEach(spell => {
-          if (spell.name?.match(skillRegExp) && spell.system.level > best) {
-            item = spell
-            best = spell.system.level
-          }
-        })
-      }
-    }
-
-    return item
-  }
-
+  GURPS.findAdDisad = findAdDisad
+  GURPS.findAttack = findAttack
   GURPS.findSkillSpell = findSkillSpell
+  GURPS.findSkill = findSkill
+  GURPS.findSpell = findSpell
 
   GURPS.arrayToObject = arrayToObject
   GURPS.objectToArray = objectToArray
-
-  /**
-   * @param {GurpsActorV2} actor
-   * @param {string} sname
-   * @returns {any}
-   */
-  function findAdDisad(actor, adName) {
-    if (!actor) return null
-
-    return actor.findAdvantage(adName)
-  }
-
-  GURPS.findAdDisad = findAdDisad
-
-  function findSkill(actor, skillName) {
-    if (!actor) return null
-
-    return actor.findSkill(skillName)
-  }
-
-  GURPS.findSkill = findSkill
-
-  /**
-   * @param {GurpsActorV2 | GurpsActorData} actor
-   * @param {string} sname
-   */
-  function findAttack(actor, sname, isMelee = true, isRanged = true) {
-    const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
-    var item
-
-    if (!actor) return item
-    if (foundry.utils.isSubclass(actor, Actor)) actor = actor.system
-    if (actor.isOfType(Actor.ActorType.Character)) return actor.findAttack(sname, isMelee, isRanged)
-    let name = sanitize(sname)
-    let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(name, false, false), 'i')
-    let smode = ''
-    let match = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', {
-      unbalanced: 'skip-lazy',
-      valueNames: ['between', null, 'match', null],
-    })
-
-    if (match.length == 2) {
-      // Found a mode "(xxx)" in the search name
-      smode = match[1].value.trim().toLowerCase()
-    }
-
-    let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(name, false, false), 'i')
-
-    if (isMelee)
-      // @ts-expect-error - actor.melee type not fully typed
-      recurselist(actor.melee, (melee, _k, _d) => {
-        if (!item) {
-          let full = melee.name
-
-          if (melee.mode) full += ' (' + melee.mode + ')'
-          let em = melee.mode ? melee.mode.toLowerCase() : ''
-
-          if (melee.name.match(nameregex) && (smode == '' || em == smode)) item = melee
-          else if (melee.name.match(fullregex)) item = melee
-          else if (full.match(fullregex)) item = melee
-        }
-      })
-    //    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
-    if (isRanged && !item)
-      // @ts-expect-error - actor.ranged type not fully typed
-      recurselist(actor.ranged, (ranged, _k, _d) => {
-        if (!item) {
-          let full = ranged.name
-
-          if (ranged.mode) full += ' (' + ranged.mode + ')'
-          let em = ranged.mode ? ranged.mode.toLowerCase() : ''
-
-          if (ranged.name.match(nameregex) && (smode == '' || em == smode)) item = ranged
-          else if (ranged.name.match(fullregex)) item = ranged
-          else if (full.match(fullregex)) item = ranged
-        }
-      })
-
-    return item
-  }
-
-  GURPS.findAttack = findAttack
 
   /**
    * Find lastTargetedRoll using MessageId.
