@@ -101,6 +101,13 @@ export class _Base {
     }
     return actorComp
   }
+
+  /**
+   * @returns a plain old JS object with all enumerable properties of the final class.
+   */
+  toObject() {
+    return Object.assign({}, this)
+  }
 }
 
 export class Named extends _Base {
