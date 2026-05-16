@@ -66,10 +66,22 @@ class GcsElement<
       const unknownKeys = Object.keys(importData).filter(key => !schemaKeys.has(key) && key !== 'replacements')
 
       if (unknownKeys.length) console.debug(`[GCS Import: ${this.name}] Unknown data keys:`, unknownKeys)
+
+      if (!importData)
+        console.debug(`[GCS Import: ${this.name}] No import data provided, using default values for all fields`)
     }
 
-    for (const [key, field] of Object.entries(schema)) {
-      data[key] = this._importField(importData[key], field, key, replacements, verbose)
+    if (importData) {
+      for (const [key, field] of Object.entries(schema)) {
+        if (verbose) {
+          if (importData[key] === undefined)
+            console.debug(`[GCS Import: ${this.name}] Key '${key}' is missing from import data, using default value`)
+        }
+
+        const value = importData?.[key] ?? null
+
+        data[key] = this._importField(value, field, key, replacements, verbose)
+      }
     }
 
     return data as DataModel.CreateData<Schema>
