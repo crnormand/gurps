@@ -1233,17 +1233,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     isSkillOnly = false,
     isSpellOnly = false
   ): Item.OfType<ItemType.Skill | ItemType.Spell> | null {
-    if (!isSpellOnly) {
-      const skill = this.findSkill(name)
+    const skill = !isSpellOnly ? this.findSkill(name) : null
+    const spell = !isSkillOnly ? this.findSpell(name) : null
 
-      if (skill) return skill
+    if (skill && spell) {
+      return spell.system.level > skill.system.level ? spell : skill
     }
 
-    if (!isSkillOnly) {
-      return this.findSpell(name)
-    }
-
-    return null
+    return skill ?? spell
   }
 
   /* ---------------------------------------- */
