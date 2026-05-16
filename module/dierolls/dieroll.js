@@ -640,7 +640,12 @@ async function _doRoll({
   let isCtrl = false
   let createOptions = {}
   try {
-    isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+    // If this is a MacOS system, the Option key is used as Ctrl for blind rolls, but Foundry doesn't recognize it as a modifier key, so we need to check the event directly.
+    if (navigator.platform.includes('Mac')) {
+      isCtrl = !!optionalArgs.event && optionalArgs.event.altKey
+    } else {
+      isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+    }
   } catch {}
 
   if (

@@ -1008,6 +1008,7 @@
     "modifierVeryUnfavorable": "Muito Desfavorável",
     "modifierViewScale": "Balde: Fator de Escala (EXPERIMENTAL)",
     "modifierViewScaleHint": "Utilize esta opção para aumentar ou diminuir o tamanho do Balde de Modificadores.",
+    "mookGeneratorInvalidDamageInput": "Entrada de dano inválida. Insira um ou dois valores no formato padrão de dados do GURPS, separados por '/'.",
     "move": "Desl.",
     "moveConstant": "{value} {unit}/seg ({reason})",
     "moveFull": "Cheio",
@@ -1052,9 +1053,9 @@
       "costNotApplied": "O custo ({points} energia) não foi aplicado a nenhum recurso.",
       "costNotAppliedNoActor": "O custo ({points} energia) não foi aplicado. Nenhum ator selecionado.",
       "costNotAppliedNoPools": "Nenhum pool de recursos válido encontrado para aplicar o custo ({points} pontos).",
+      "resourceNotFound": "Recurso '{resource}' não encontrado neste ator.",
       "selectEnergyPool": "Selecionar Reserva de Energia",
       "selectEnergyPoolDetail": "Selecione o recurso para aplicar o custo:",
-      "resourceNotFound": "Recurso '{resource}' não encontrado neste ator.",
       "trackerNotFound": "Rastreador '{tracker}' não encontrado neste ator."
     },
     "OTFormulasEvent": "Fórmulas OTF",

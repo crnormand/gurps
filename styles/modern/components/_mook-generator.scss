@@ -127,7 +127,7 @@
 
   input {
     width: 100%;
-    max-width: 4em;
+    max-width: 6em;
     text-align: center;
     background: var(--ms-bg);
     border: 1px solid var(--ms-border);
@@ -244,7 +244,7 @@
     flex-direction: column;
     background: var(--ms-bg);
 
-    > form {
+    >form {
       flex: 1;
       display: flex;
       flex-direction: column;
