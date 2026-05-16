@@ -385,11 +385,20 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   protected _preparePools(): PoolEntry[] {
     const pools: PoolEntry[] = []
+    const systemSource = this.actor.system._source
 
     const useConditionalInjury = getGame().settings.get('gurps', 'useConditionalInjury')
 
     if (useConditionalInjury) pools.push(...this._prepareConditionalInjuryPools())
-    else pools.push(...this._prepareDefaultPools())
+    else {
+      const hpThresholds = HitPoints.getThresholds(systemSource.HP.max).reverse()
+
+      pools.push(this.#prepareAttributePool('HP', hpThresholds))
+    }
+
+    const fpThresholds = Fatigue.getThresholds(systemSource.FP.max).reverse()
+
+    pools.push(this.#prepareAttributePool('FP', fpThresholds))
 
     const useQuintessence = getGame().settings.get('gurps', 'use-quintessence')
 
@@ -434,15 +443,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   }
 
   /* ---------------------------------------- */
-
-  protected _prepareDefaultPools(): PoolEntry[] {
-    const systemSource = this.actor.system._source
-
-    const hpThresholds = HitPoints.getThresholds(systemSource.HP.max).reverse()
-    const fpThresholds = Fatigue.getThresholds(systemSource.FP.max).reverse()
-
-    return [this.#prepareAttributePool('HP', hpThresholds), this.#prepareAttributePool('FP', fpThresholds)]
-  }
 
   #prepareAttributePool(key: 'HP' | 'FP' | 'QP', thresholds: ThresholdDescriptor[]): PoolEntry {
     const systemFields = this.actor.system.schema.fields
