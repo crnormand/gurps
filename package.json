@@ -8,6 +8,8 @@
     "tdd": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage --config=jest.config.mjs",
     "handlebars": "handlebars",
     "prettier": "prettier --write .",
+    "lint:scss": "prettier --check \"**/*.scss\"",
+    "format:scss": "prettier --write \"**/*.scss\"",
     "clean": "rimraf dist",
     "build": "run-s clean build:code build:styles build:static",
     "build:code": "tsc || true",

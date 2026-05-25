@@ -644,7 +644,7 @@ async function _doRoll({
     const hasControlModifier = hasEvent && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
     // On macOS, allow the Option key as an additional blind-roll shortcut without removing the existing Ctrl/Command shortcut.
     if (navigator.platform.includes('Mac')) {
-      isCtrl = hasControlModifier || optionalArgs.event.altKey
+      isCtrl = hasControlModifier || optionalArgs.event?.altKey
     } else {
       isCtrl = hasControlModifier
     }

@@ -11,7 +11,7 @@ $compact-attr-min-width: 32px;
     flex-direction: column;
     background: var(--ms-bg);
 
-    >form {
+    > form {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -260,7 +260,7 @@ $compact-attr-min-width: 32px;
     grid-template-columns: 14px 20px 50px 1fr 45px 45px 25px 30px;
     gap: 2px;
 
-    >span {
+    > span {
       padding: 0;
     }
   }
@@ -351,7 +351,6 @@ $compact-attr-min-width: 32px;
   }
 
   .ms-ci-spinner {
-
     button,
     input {
       height: 20px;
