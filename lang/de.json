@@ -1008,6 +1008,7 @@
     "modifierVeryUnfavorable": "Sehr Unvorteilhaft",
     "modifierViewScale": "Bucket: Skalierungsfaktor",
     "modifierViewScaleHint": "Verwende dies, um die Größe des Modifier-Buckets zu vergrößern oder zu verkleinern.",
+    "mookGeneratorInvalidDamageInput": "Ungültige Schadenseingabe. Bitte gib einen oder zwei Werte im standardmäßigen GURPS-Würfelformat ein, getrennt durch '/'.",
     "move": "Bewegung",
     "moveConstant": "{value} {unit}/sek ({reason})",
     "moveFull": "Volle",
@@ -1052,9 +1053,9 @@
       "costNotApplied": "Die Kosten ({points} Energie) wurden auf keine Ressource angewendet.",
       "costNotAppliedNoActor": "Die Kosten ({points} Energie) wurden nicht angewendet. Kein Akteur ausgewählt.",
       "costNotAppliedNoPools": "Kein brauchbarer Ressourcenpool gefunden, um die Kosten ({points} Punkte) anzuwenden.",
+      "resourceNotFound": "Ressource '{resource}' auf diesem Akteur nicht gefunden.",
       "selectEnergyPool": "Energiepuffer auswählen",
       "selectEnergyPoolDetail": "Wählen Sie die Ressource aus, auf die die Kosten angewendet werden sollen:",
-      "resourceNotFound": "Ressource '{resource}' auf diesem Akteur nicht gefunden.",
       "trackerNotFound": "Tracker '{tracker}' auf diesem Akteur nicht gefunden."
     },
     "OTFormulasEvent": "OTF Formeln",

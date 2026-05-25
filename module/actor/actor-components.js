@@ -101,6 +101,13 @@ export class _Base {
     }
     return actorComp
   }
+
+  /**
+   * @returns a plain old JS object with all enumerable properties of the final class.
+   */
+  toObject() {
+    return Object.assign({}, this)
+  }
 }
 
 export class Named extends _Base {
@@ -968,6 +975,13 @@ export class Encumbrance {
     this.move = 0
     this.current = false
   }
+
+  /**
+   * @returns a plain old JS object with all enumerable properties of the final class.
+   */
+  toObject() {
+    return Object.assign({}, this)
+  }
 }
 
 export class Equipment extends Named {
@@ -1185,6 +1199,13 @@ export class Reaction {
     this.situation = s || ''
     this.modifierTags = ''
   }
+
+  /**
+   * @returns a plain old JS object with all enumerable properties of the final class.
+   */
+  toObject() {
+    return Object.assign({}, this)
+  }
 }
 
 export class Modifier extends Reaction {}
@@ -1195,6 +1216,13 @@ export class Language {
     this.spoken = s || ''
     this.written = w || ''
     this.points = p || ''
+  }
+
+  /**
+   * @returns a plain old JS object with all enumerable properties of the final class.
+   */
+  toObject() {
+    return Object.assign({}, this)
   }
 }
 
@@ -1243,5 +1271,12 @@ export class HitLocationEntry {
 
   set damageType(damageType) {
     this._damageType = damageType
+  }
+
+  /**
+   * @returns a plain old JS object with all enumerable properties of the final class.
+   */
+  toObject() {
+    return Object.assign({}, this)
   }
 }

@@ -1,3 +1,6 @@
 {
-  "http.proxyStrictSSL": false
+  "http.proxyStrictSSL": false,
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

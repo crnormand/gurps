@@ -8,6 +8,8 @@
 
 - /ra command not working in 0.18.17 \#2728.
 - Fixed RollMode for ChatMessages in v14 \#2654.
+- /mook UI "Damage" Field Requires "integer" Despite Expecting Dice Format \#2731.
+- /mook Parses but Fields For Weapons/Skills/Spells/Advantages All Empty \#2732.
 
 ## Release 0.18.17 05/11/2026
 

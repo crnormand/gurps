@@ -1008,6 +1008,7 @@
     "modifierVeryUnfavorable": "Very Unfavorable",
     "modifierViewScale": "Bucket: Scale Factor",
     "modifierViewScaleHint": "Use this to scale up or down the size of the Modifier Bucket.",
+    "mookGeneratorInvalidDamageInput": "Invalid damage input. Please enter one or two values in standard GURPS dice format, separated by a '/'.",
     "move": "Move",
     "moveConstant": "{value} {unit}/sec ({reason})",
     "moveFull": "Full",
@@ -1052,9 +1053,9 @@
       "costNotApplied": "The cost ({points} energy) was not applied to any resource.",
       "costNotAppliedNoActor": "The cost ({points} energy) was not applied. No actor selected.",
       "costNotAppliedNoPools": "No candid resource pool found to apply the cost ({points} points).",
+      "resourceNotFound": "Resource '{resource}' not found on this actor.",
       "selectEnergyPool": "Select Energy Pool",
       "selectEnergyPoolDetail": "Select the resource to apply the cost to:",
-      "resourceNotFound": "Resource '{resource}' not found on this actor.",
       "trackerNotFound": "Tracker '{tracker}' not found on this actor."
     },
     "OTFormulasEvent": "OTF Formulas",

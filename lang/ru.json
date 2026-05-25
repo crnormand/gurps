@@ -1008,6 +1008,7 @@
     "modifierVeryUnfavorable": "Очень Неблагоприятный",
     "modifierViewScale": "Корзина: Масштабный коэффициент",
     "modifierViewScaleHint": "Используйте это, чтобы увеличить или уменьшить размер Корзины модификаторов.",
+    "mookGeneratorInvalidDamageInput": "Некорректный ввод урона. Введите одно или два значения в стандартном формате кубиков GURPS, разделённых '/'.",
     "move": "Движ.",
     "moveConstant": "{value} {unit}/сек ({reason})",
     "moveFull": "Полный",
@@ -1052,9 +1053,9 @@
       "costNotApplied": "Стоимость ({points} энергии) не была применена ни к одному ресурсу.",
       "costNotAppliedNoActor": "Стоимость ({points} энергии) не была применена. Актер не выбран.",
       "costNotAppliedNoPools": "Не найден подходящий пул ресурсов для применения стоимости ({points} очков).",
+      "resourceNotFound": "Ресурс '{resource}' не найден у этого актёра.",
       "selectEnergyPool": "Выбрать пул энергии",
       "selectEnergyPoolDetail": "Выберите ресурс для применения стоимости:",
-      "resourceNotFound": "Ресурс '{resource}' не найден у этого актёра.",
       "trackerNotFound": "Счётчик '{tracker}' не найден на этом актёре."
     },
     "OTFormulasEvent": "Формулы OTF",

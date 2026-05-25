@@ -1008,6 +1008,7 @@
     "modifierVeryUnfavorable": "Muy Desfavorable",
     "modifierViewScale": "Cubo: Factor de Escala",
     "modifierViewScaleHint": "Usa esto para ampliar o reducir el tamaño del Cubo de Modificadores.",
+    "mookGeneratorInvalidDamageInput": "Entrada de daño no válida. Introduce uno o dos valores en formato estándar de dados de GURPS, separados por '/'.",
     "move": "Movimiento",
     "moveConstant": "{value} {unit}/seg ({reason})",
     "moveFull": "Completo",
@@ -1052,9 +1053,9 @@
       "costNotApplied": "El coste ({points} energía) no se aplicó a ningún recurso.",
       "costNotAppliedNoActor": "El coste ({points} energía) no se aplicó. Ningún personaje seleccionado.",
       "costNotAppliedNoPools": "No se encontró reserva de recursos candidata para aplicar el coste ({points} puntos).",
+      "resourceNotFound": "Recurso '{resource}' no encontrado en este personaje.",
       "selectEnergyPool": "Seleccionar Reserva de Energía",
       "selectEnergyPoolDetail": "Selecciona el recurso al que aplicar el coste:",
-      "resourceNotFound": "Recurso '{resource}' no encontrado en este personaje.",
       "trackerNotFound": "Rastreador '{tracker}' no encontrado en este personaje."
     },
     "OTFormulasEvent": "Fórmulas OTF",
