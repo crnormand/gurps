@@ -706,7 +706,8 @@ class SkillSpellParser extends OtfParser {
     if (!matches) return result
     result.name = stripQuotes(matches[1]).trim()
 
-    let target = result.name.match(/(?<name>.*)=(?<target>\d+)/) // Targeted rolls 'Skill=12'
+    const target = result.name.match(/(?<name>.*)=(?<target>\d+)/) // Targeted rolls 'Skill=12'
+
     if (target && target.groups) {
       result.name = target.groups.name.trim()
       result.target = parseInt(target.groups.target.trim(), 10)

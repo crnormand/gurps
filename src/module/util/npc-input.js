@@ -124,6 +124,7 @@ export class NpcInput extends FormApplication {
     html.find('input[type=text][data-key="damage"]').on('paste keyup', event => {
       const element = event.currentTarget
       const key = element.dataset.key
+
       if (key) {
         // If the input is valid, update the mook. If not, don't update but also don't set testing to false since they might just be in the middle of typing.
         if (this.isValidDamageInput(element.value)) {
@@ -136,6 +137,7 @@ export class NpcInput extends FormApplication {
     html.find('input[type=text][data-key="damage"]').on('change', event => {
       const element = event.currentTarget
       const key = element.dataset.key
+
       if (key) {
         if (this.isValidDamageInput(element.value)) {
           this.mook[key] = element.value
@@ -188,6 +190,7 @@ export class NpcInput extends FormApplication {
     const gurpsDieRollPattern = /\d+d(?:[+\-–]\d+)?/
     const normalizedValue = value.trim()
     const gurpsDamagePattern = new RegExp(`^${gurpsDieRollPattern.source}(?:\\s*/\\s*${gurpsDieRollPattern.source})?$`)
+
     return gurpsDamagePattern.test(normalizedValue)
   }
 
