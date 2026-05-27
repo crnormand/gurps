@@ -1009,6 +1009,7 @@
     "modifierViewScale": "Bucket: Scale Factor",
     "modifierViewScaleHint": "Use this to scale up or down the size of the Modifier Bucket.",
     "mookGeneratorInvalidDamageInput": "Invalid damage input. Please enter one or two values in standard GURPS dice format, separated by a '/'.",
+    "mookGeneratorInvalidSMInput": "Invalid SM input. Please enter a signed integer value.",
     "move": "Move",
     "moveConstant": "{value} {unit}/sec ({reason})",
     "moveFull": "Full",

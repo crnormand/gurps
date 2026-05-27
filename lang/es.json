@@ -1009,6 +1009,7 @@
     "modifierViewScale": "Cubo: Factor de Escala",
     "modifierViewScaleHint": "Usa esto para ampliar o reducir el tamaño del Cubo de Modificadores.",
     "mookGeneratorInvalidDamageInput": "Entrada de daño no válida. Introduce uno o dos valores en formato estándar de dados de GURPS, separados por '/'.",
+    "mookGeneratorInvalidSMInput": "Entrada de SM inválida. Por favor, ingresa un valor entero con signo.",
     "move": "Movimiento",
     "moveConstant": "{value} {unit}/seg ({reason})",
     "moveFull": "Completo",

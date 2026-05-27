@@ -1009,6 +1009,7 @@
     "modifierViewScale": "Balde: Fator de Escala (EXPERIMENTAL)",
     "modifierViewScaleHint": "Utilize esta opção para aumentar ou diminuir o tamanho do Balde de Modificadores.",
     "mookGeneratorInvalidDamageInput": "Entrada de dano inválida. Insira um ou dois valores no formato padrão de dados do GURPS, separados por '/'.",
+    "mookGeneratorInvalidSMInput": "Entrada SM inválida. Por favor, insira um valor inteiro com sinal.",
     "move": "Desl.",
     "moveConstant": "{value} {unit}/seg ({reason})",
     "moveFull": "Cheio",

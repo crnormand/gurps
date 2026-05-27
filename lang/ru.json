@@ -1009,6 +1009,7 @@
     "modifierViewScale": "Корзина: Масштабный коэффициент",
     "modifierViewScaleHint": "Используйте это, чтобы увеличить или уменьшить размер Корзины модификаторов.",
     "mookGeneratorInvalidDamageInput": "Некорректный ввод урона. Введите одно или два значения в стандартном формате кубиков GURPS, разделённых '/'.",
+    "mookGeneratorInvalidSMInput": "Неверный ввод СМ. Пожалуйста, введите целое число со знаком.",
     "move": "Движ.",
     "moveConstant": "{value} {unit}/сек ({reason})",
     "moveFull": "Полный",
