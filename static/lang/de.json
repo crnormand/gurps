@@ -1681,6 +1681,7 @@
     "modifierVeryUnfavorable": "Sehr Unvorteilhaft",
     "modifierViewScale": "Bucket: Skalierungsfaktor",
     "modifierViewScaleHint": "Verwende dies, um die Größe des Modifier-Buckets zu vergrößern oder zu verkleinern.",
+    "mookGeneratorInvalidDamageInput": "Ungültige Schadenseingabe. Bitte gib einen oder zwei Werte im standardmäßigen GURPS-Würfelformat ein, getrennt durch '/'.",
     "move": "Bewegung",
     "moveConstant": "{value} {unit}/sek ({reason})",
     "moveFull": "Volle",

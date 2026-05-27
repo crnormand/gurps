@@ -48,6 +48,7 @@ type BaseAction = {
   quiet: boolean
   spantext: string
   suppressWarnings: boolean
+  target: string | number
   truetext: string
   type: OtfActionType
 }
