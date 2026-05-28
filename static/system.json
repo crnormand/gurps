@@ -38,6 +38,12 @@
       "flags": {}
     },
     {
+      "lang": "es",
+      "name": "Español (Spanish)",
+      "path": "lang/es.json",
+      "flags": {}
+    },
+    {
       "lang": "pt-BR",
       "name": "Português (Brasil)",
       "path": "lang/pt_br.json",
@@ -57,7 +63,7 @@
     },
     {
       "lang": "fr",
-      "name": "French",
+      "name": "Français (French)",
       "path": "lang/fr.json",
       "flags": {}
     }
