@@ -697,7 +697,9 @@ async function _doRoll({
   let creatOptions = {}
 
   try {
-    isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+    isCtrl =
+      !!optionalArgs.event &&
+      game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL)
   } catch {
     // Keyboard manager may not be available during initialization
   }

@@ -604,7 +604,7 @@ export class ModifierBucket extends Application {
     if (game.user?.hasRole('GAMEMASTER'))
       // Only actual GMs can update other user's flags
       users.forEach(user => user.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
-    let ctrl = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+    let ctrl = game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL)
 
     game.socket?.emit('system.gurps', {
       type: 'updatebucket',
