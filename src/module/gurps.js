@@ -2486,7 +2486,7 @@ const handleChatLogDrop = function (event) {
     const cmd = buildCommandFromDragData(data)
     let messageData = {
       user: game.user.id,
-      type: CONST.CHAT_MESSAGE_STYLES.OOC,
+      style: CONST.CHAT_MESSAGE_STYLES.OOC,
       content: cmd,
     }
 

@@ -215,7 +215,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     )
 
     await ChatMessage.create({
-      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
+      style: CONST.CHAT_MESSAGE_STYLES.ROLL,
       speaker: ChatMessage.getSpeaker(actor),
       content: content,
       roll: JSON.stringify(roll),
