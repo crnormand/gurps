@@ -370,3 +370,11 @@ section[data-application-part='reactions'] {
     }
   }
 }
+
+/* ---------------------------------------- */
+
+.gcs-point-totals {
+  input[type='number'] {
+    text-align: right;
+  }
+}
