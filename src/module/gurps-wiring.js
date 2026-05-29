@@ -124,7 +124,7 @@ export default class GurpsWiring {
   static #createPdfLinkMenu(link) {
     const options = {
       fixed: true,
-      JQuery: false,
+      jQuery: false,
     }
 
     if (!(link instanceof HTMLElement)) link = link[0]
