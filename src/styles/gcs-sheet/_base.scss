@@ -44,7 +44,7 @@ body {
     flex-direction: row;
     flex-wrap: wrap;
 
-    > * {
+    >* {
       flex: 0 0 100%;
     }
 
@@ -58,7 +58,7 @@ body {
       gap: var(--gga-space-1);
       background-color: var(--gcs-color-surface-bg);
 
-      > table {
+      >table {
         align-self: start;
       }
     }
@@ -177,12 +177,12 @@ body {
       grid-template-columns: minmax(4ch, 1fr) max-content;
 
       .form-group {
-        > .form-fields {
+        >.form-fields {
           grid-column: 1;
           min-width: 6ch;
         }
 
-        > label {
+        >label {
           grid-column: 2;
           text-align: start;
         }
@@ -214,7 +214,7 @@ body {
     }
   }
 
-  > label {
+  >label {
     grid-column: 1;
     justify-self: stretch;
     text-align: end;
@@ -231,7 +231,7 @@ body {
     min-width: 0;
     white-space: nowrap;
 
-    > * {
+    >* {
       align-self: center;
     }
 
@@ -310,6 +310,7 @@ body {
   tfoot {
     th {
       @include gcs-header;
+      font-size: var(--gcs-font-size-content);
     }
 
     justify-content: space-evenly;
@@ -334,7 +335,7 @@ body {
       font-size: var(--gcs-font-size-content);
     }
 
-    td + td {
+    td+td {
       border-left: 1px solid var(--gcs-color-section-border);
     }
 

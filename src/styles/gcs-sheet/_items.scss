@@ -59,6 +59,12 @@
     text-align: center;
   }
 
+  td.gcs-item-range,
+  td.gcs-item-shots,
+  td.gcs-item-rof {
+    text-align: center;
+  }
+
   td.gcs-item-st {
     @include gcs-col(2rem, 3.5rem);
     text-align: center;

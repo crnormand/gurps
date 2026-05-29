@@ -9,7 +9,11 @@
 
     input,
     span {
-      max-width: 8ch;
+      max-width: 7ch;
+    }
+
+    input {
+      text-align: center;
     }
   }
 
@@ -22,6 +26,10 @@
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
+    }
+
+    .notes {
+      font-size: var(--gcs-font-size-notes);
     }
   }
 
@@ -54,7 +62,7 @@
   }
 
   pool-value {
-    min-width: 8ch;
+    min-width: 7ch;
   }
 
   /* ---------------------------------------- */
