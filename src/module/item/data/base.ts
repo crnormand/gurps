@@ -374,7 +374,15 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       .filter(child => !!child && !!child.system)
       .map(child => child!.system!.toDisplayItem!())
 
-    const notes = MarkdownUtil.toHTML(this.notes)
+    let unformattedNotes = this.notes.trim()
+
+    if (unformattedNotes.length > 0) unformattedNotes += '\n'
+
+    const vttNotesTrimmed = this.vttNotes?.trim() ?? ''
+
+    unformattedNotes += vttNotesTrimmed
+
+    const notes = MarkdownUtil.toHTML(unformattedNotes)
 
     return {
       id: this.parent.id!,
@@ -387,7 +395,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       name: this.parent.name,
       fullName: this.parent.name,
       notes,
-      hasNotes: this.notes.trim().length > 0,
+      hasNotes: unformattedNotes.trim().length > 0,
       notesOpen: this.notesOpen,
       indent: this.ancestors.length,
       reference: this.pageref,
@@ -458,7 +466,7 @@ const baseItemModelSchema = () => {
     pageref: new fields.StringField({ required: true, nullable: false }),
 
     /** VTT-specific notes about this item, not visible in external programs but useful for storing OTF and the like. */
-    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+    vttNotes: new fields.StringField({ required: true, nullable: true, initial: null }),
 
     /** The OTF to run when running an OTF check against this item, such as for a skill or attribute check. */
     checkotf: new fields.StringField({ required: true, nullable: false }),
