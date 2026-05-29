@@ -529,7 +529,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
           value: ciState.days,
           label: 'GURPS.conditionalInjury.daysToHeal.max',
         },
-        atMin: systemSource.conditionalinjury.injury.severity <= 0,
+        atMin: systemSource.conditionalinjury.injury.daystoheal <= 0,
         atMax: systemSource.conditionalinjury.injury.daystoheal >= ciState.days,
         name: 'GURPS.conditionalInjury.daysToHeal.title',
         thresholds: [],
