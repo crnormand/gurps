@@ -120,7 +120,7 @@ class TraitV1 {
     const notes = [
       this.cr ? `[${game.i18n!.localize('GURPS.CR' + this.cr)}: ${this.traitV2.name}]` : '',
       this.traitV2.system.notes ?? '',
-      this.traitV2.system.vtt_notes ?? '',
+      this.traitV2.system.vttNotes ?? '',
     ]
       .filter(it => it)
       .join('<br>')

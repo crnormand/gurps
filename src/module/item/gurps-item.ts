@@ -4,7 +4,7 @@ import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
 import { isObject } from '@module/util/guards.js'
-import { AnyMutableObject, AnyObject, InexactPartial } from 'fvtt-types/utils'
+import { AnyMutableObject, InexactPartial } from 'fvtt-types/utils'
 
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { IContainable, isContainable } from '../data/mixins/containable.js'
@@ -69,7 +69,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   /* ---------------------------------------- */
 
   static override getDefaultArtwork(itemData?: foundry.documents.BaseItem.CreateData): Item.GetDefaultArtworkReturn {
-    const { type } = itemData as unknown as { type: ItemType } & AnyObject
+    // If itemData is not provided, default to equipment icon for the purposes of getting default artwork.
+    itemData ||= { type: ItemType.Equipment, name: '' }
+
+    const { type } = itemData
     const { img } = super.getDefaultArtwork(itemData)
 
     const dataModel = CONFIG.Item.dataModels[type]

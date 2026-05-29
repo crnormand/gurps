@@ -385,11 +385,20 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   protected _preparePools(): PoolEntry[] {
     const pools: PoolEntry[] = []
+    const systemSource = this.actor.system._source
 
     const useConditionalInjury = getGame().settings.get('gurps', 'useConditionalInjury')
 
     if (useConditionalInjury) pools.push(...this._prepareConditionalInjuryPools())
-    else pools.push(...this._prepareDefaultPools())
+    else {
+      const hpThresholds = HitPoints.getThresholds(systemSource.HP.max).reverse()
+
+      pools.push(this.#prepareAttributePool('HP', hpThresholds))
+    }
+
+    const fpThresholds = Fatigue.getThresholds(systemSource.FP.max).reverse()
+
+    pools.push(this.#prepareAttributePool('FP', fpThresholds))
 
     const useQuintessence = getGame().settings.get('gurps', 'use-quintessence')
 
@@ -434,15 +443,6 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   }
 
   /* ---------------------------------------- */
-
-  protected _prepareDefaultPools(): PoolEntry[] {
-    const systemSource = this.actor.system._source
-
-    const hpThresholds = HitPoints.getThresholds(systemSource.HP.max).reverse()
-    const fpThresholds = Fatigue.getThresholds(systemSource.FP.max).reverse()
-
-    return [this.#prepareAttributePool('HP', hpThresholds), this.#prepareAttributePool('FP', fpThresholds)]
-  }
 
   #prepareAttributePool(key: 'HP' | 'FP' | 'QP', thresholds: ThresholdDescriptor[]): PoolEntry {
     const systemFields = this.actor.system.schema.fields
@@ -529,7 +529,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
           value: ciState.days,
           label: 'GURPS.conditionalInjury.daysToHeal.max',
         },
-        atMin: systemSource.conditionalinjury.injury.severity <= 0,
+        atMin: systemSource.conditionalinjury.injury.daystoheal <= 0,
         atMax: systemSource.conditionalinjury.injury.daystoheal >= ciState.days,
         name: 'GURPS.conditionalInjury.daysToHeal.title',
         thresholds: [],
@@ -569,7 +569,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       element => element.children.length === 0 && /\[([^[\]]+)\]/.test(element.innerText)
     )
 
-    elements.push(this.element.querySelector<HTMLElement>('.quick-notes')!)
+    const quickNotesElement = this.element.querySelector<HTMLElement>('.quick-notes')
+
+    if (quickNotesElement) {
+      elements.push(quickNotesElement)
+    }
 
     for (const otfElement of elements) {
       const otfTextMatches = [...otfElement.innerText.matchAll(/\[([^[\]]+)\]/gi)]
@@ -707,9 +711,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected _createItemContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
     return [
       {
-        name: 'Delete',
+        // @ts-expect-error: label replaces name in FoundryVTT v14 but fvtt-types is not up to date
+        label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        condition: target => target.dataset.uuid !== undefined,
+        // @ts-expect-error: visible replaces condition in FoundryVTT v14 but fvtt-types is not up to date
+        visible: target => target.dataset.uuid !== undefined,
         callback: async target => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
           const event = new PointerEvent('click', { bubbles: true })
@@ -725,9 +731,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected _createPseudoDocumentContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
     return [
       {
-        name: 'Delete',
+        // @ts-expect-error: label replaces name in FoundryVTT v14 but fvtt-types is not up to date
+        label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        condition: target => target.dataset.uuid !== undefined,
+        // @ts-expect-error: visible replaces condition in FoundryVTT v14 but fvtt-types is not up to date
+        visible: target => target.dataset.uuid !== undefined,
         callback: async target => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
           const event = new PointerEvent('click', { bubbles: true })

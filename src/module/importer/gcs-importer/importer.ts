@@ -815,7 +815,7 @@ Portrait will not be imported.`
       _conditionalmods: {},
       notes: item.calc?.resolved_notes || item.local_notes || item.notes || '',
       pageref: item.reference ?? '',
-      vtt_notes: item.vtt_notes ?? null,
+      vttNotes: item.vtt_notes ?? null,
       importFrom: 'GCS',
       importid: item.id ?? '',
     }

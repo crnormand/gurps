@@ -1,0 +1,2404 @@
+{
+  "DOCUMENT": {
+    "Action": "Acción",
+    "Attribute": "Atributo",
+    "AttributeDefinition": "Definición de Atributo",
+    "AttributeThreshold": "Umbral de Atributo",
+    "Body": "Plan Corporal",
+    "ConditionalModifier": "Modificador Condicional",
+    "Feature": "Característica",
+    "GcsSubTable": "Subtabla de Ubicación de Impacto",
+    "HitLocation": "Ubicación de Impacto",
+    "MoveMode": "Modo de Movimiento",
+    "Note": "Nota",
+    "Prereq": "Prerrequisito",
+    "ReactionModifier": "Modificador de Reacción",
+    "ResourceTracker": "Rastreador de Recursos",
+    "Study": "Entrada de Estudio"
+  },
+  "GURPS": {
+    "abbrevPoints": "Pts",
+    "abbrevRef": "Ref",
+    "abbrevReference": "Ref",
+    "acc": "Pre",
+    "accForWeapon": "Pre para {weapon}",
+    "action": {
+      "baseAction": {
+        "FIELDS": {
+          "addToQuickRoll": {
+            "label": "Agregar al Tiro Rápido"
+          },
+          "disabled": {
+            "label": "Deshabilitado"
+          },
+          "name": {
+            "label": "Nombre"
+          }
+        }
+      },
+      "baseAttack": {
+        "FIELDS": {
+          "consumeAction": {
+            "label": "Consumir Acción"
+          },
+          "damage": {
+            "label": "Daño"
+          },
+          "extraAttacks": {
+            "label": "Ataques Extra"
+          },
+          "importedLevel": {
+            "label": "Nivel Base"
+          },
+          "itemModifiers": {
+            "label": "Modificadores de Objeto"
+          },
+          "mode": {
+            "label": "Modo"
+          },
+          "modifierTags": {
+            "label": "Etiquetas de Modificador"
+          },
+          "notes": {
+            "label": "Notas"
+          },
+          "otf": {
+            "label": "Fórmula OTF"
+          },
+          "st": {
+            "label": "FU"
+          }
+        }
+      },
+      "meleeAttack": {
+        "blockDisabled": "No",
+        "FIELDS": {
+          "baseParryPenalty": {
+            "label": "Penalización Base de Parada"
+          },
+          "block": {
+            "canBlock": {
+              "label": "Puede Bloquear"
+            },
+            "modifier": {
+              "label": "Modificador"
+            }
+          },
+          "parry": {
+            "canParry": {
+              "label": "Puede Parar"
+            },
+            "fencing": {
+              "label": "Esgrima"
+            },
+            "modifier": {
+              "label": "Modificador"
+            },
+            "unbalanced": {
+              "label": "Desequilibrado"
+            }
+          },
+          "reach": {
+            "changeRequiresReady": {
+              "label": "Cambio Requiere Preparación"
+            },
+            "closeCombat": {
+              "label": "Combate Cercano"
+            },
+            "max": {
+              "label": "Máx"
+            },
+            "min": {
+              "label": "Mín"
+            }
+          }
+        },
+        "parryDisabled": "No"
+      },
+      "rangedAttack": {
+        "FIELDS": {
+          "acc": {
+            "base": {
+              "label": "Base"
+            },
+            "jet": {
+              "label": "Chorro"
+            },
+            "scope": {
+              "label": "Mira"
+            }
+          },
+          "ammo": {
+            "label": "Munición"
+          },
+          "bulk": {
+            "giant": {
+              "label": "Gigante"
+            },
+            "normal": {
+              "label": "Normal"
+            },
+            "retractingStock": {
+              "label": "Culata Retráctil"
+            }
+          },
+          "range": {
+            "halfDamage": {
+              "label": "1/2D"
+            },
+            "inMiles": {
+              "label": "En Millas"
+            },
+            "max": {
+              "label": "Máx"
+            },
+            "min": {
+              "label": "Mín"
+            },
+            "musclePowered": {
+              "label": "Propulsado Muscularmente"
+            }
+          },
+          "rateOfFire": {
+            "fullAutoOnly": {
+              "label": "Solo Disparo Automático"
+            },
+            "highCyclicControlledBursts": {
+              "label": "Ráfagas Controladas de Alto Ciclo"
+            },
+            "jet": {
+              "label": "Chorro"
+            },
+            "secondaryProjectiles": {
+              "label": "Proyectiles Secundarios"
+            },
+            "shotsPerAttack": {
+              "label": "Disparos/Ataque"
+            }
+          },
+          "recoil": {
+            "shot": {
+              "label": "Disparo"
+            },
+            "slug": {
+              "label": "Bala"
+            }
+          },
+          "shots": {
+            "count": {
+              "label": "Cantidad"
+            },
+            "duration": {
+              "label": "Duración (s)"
+            },
+            "inChamber": {
+              "label": "En Recámara"
+            },
+            "reloadTime": {
+              "label": "Tiempo de Recarga"
+            },
+            "reloadTimeIsPerShot": {
+              "label": "Por Disparo"
+            },
+            "thrown": {
+              "label": "Arrojado"
+            }
+          }
+        },
+        "jet": {
+          "label": "Chorro"
+        }
+      }
+    },
+    "active": "Activo",
+    "activeEffect": "Efecto Activo",
+    "activeEffects": "Efectos Activos",
+    "actor": {
+      "character": {
+        "FIELDS": {
+          "_currentMoveModeId": {
+            "label": "Modo de Movimiento"
+          },
+          "attributes": {
+            "DX": {
+              "importedValue": {
+                "label": "Destreza (DX)"
+              }
+            },
+            "HT": {
+              "importedValue": {
+                "label": "Salud (SL)"
+              }
+            },
+            "IQ": {
+              "importedValue": {
+                "label": "Inteligencia (CI)"
+              }
+            },
+            "PER": {
+              "importedValue": {
+                "label": "Percepción (Per)"
+              }
+            },
+            "QN": {
+              "importedValue": {
+                "label": "Quintaesencia (QN)"
+              }
+            },
+            "ST": {
+              "importedValue": {
+                "label": "Fuerza (FU)"
+              }
+            },
+            "WILL": {
+              "importedValue": {
+                "label": "Voluntad"
+              }
+            }
+          },
+          "basicmove": {
+            "value": {
+              "label": "Movimiento Básico"
+            }
+          },
+          "basicspeed": {
+            "value": {
+              "label": "Velocidad Básica"
+            }
+          },
+          "conditions": {
+            "maneuver": {
+              "label": "Maniobra"
+            },
+            "posture": {
+              "label": "Postura"
+            }
+          },
+          "frightcheck": {
+            "label": "Tirada de Miedo"
+          },
+          "hearing": {
+            "label": "Oído"
+          },
+          "profile": {
+            "age": {
+              "label": "Edad"
+            },
+            "birthday": {
+              "label": "Cumpleaños"
+            },
+            "createdon": {
+              "label": "Creado El"
+            },
+            "eyes": {
+              "label": "Ojos"
+            },
+            "gender": {
+              "label": "Género"
+            },
+            "hair": {
+              "label": "Cabello"
+            },
+            "hand": {
+              "label": "Mano"
+            },
+            "height": {
+              "label": "Altura"
+            },
+            "modifiedon": {
+              "label": "Modificado El"
+            },
+            "organization": {
+              "label": "Organización"
+            },
+            "player": {
+              "label": "Jugador"
+            },
+            "race": {
+              "label": "Ascendencia"
+            },
+            "religion": {
+              "label": "Religión"
+            },
+            "sizemod": {
+              "label": "MT"
+            },
+            "skin": {
+              "label": "Piel"
+            },
+            "techlevel": {
+              "label": "NT"
+            },
+            "title": {
+              "label": "Título"
+            },
+            "weight": {
+              "label": "Peso"
+            }
+          },
+          "swing": {
+            "label": "Golpe Básico"
+          },
+          "tastesmell": {
+            "label": "Gusto y Olfato"
+          },
+          "thrust": {
+            "label": "Empuje Básico"
+          },
+          "totalpoints": {
+            "ads": {
+              "label": "Ventajas"
+            },
+            "attributes": {
+              "label": "Atributos"
+            },
+            "disads": {
+              "label": "Desventajas"
+            },
+            "quirks": {
+              "label": "Rarezas"
+            },
+            "race": {
+              "label": "Ascendencia"
+            },
+            "skills": {
+              "label": "Habilidades"
+            },
+            "spells": {
+              "label": "Hechizos"
+            },
+            "total": {
+              "label": "Total"
+            },
+            "unspent": {
+              "label": "Sin Gastar"
+            }
+          },
+          "touch": {
+            "label": "Tacto"
+          },
+          "vision": {
+            "label": "Visión"
+          }
+        }
+      }
+    },
+    "addAbbrev": "Abrev",
+    "addAdditionalStackingModifier": "Modificador adicional",
+    "addAdjustedForDamageType": "‡ - Ajustado por Modificador de Daño",
+    "addAdjustedForHitLocation": "* - Ajustado por ubicación de impacto",
+    "addAdjustedForInjuryTolerance": "† - Ajustado por Tolerancia al Daño",
+    "addAdvantage": "Agregar una Ventaja",
+    "adDisad": "Ventaja/Desventaja",
+    "adDisadQuirkPerk": "Ventaja/Desventaja/Rareza/Perk",
+    "additionalModifier": "Modificador Adicional",
+    "addMeleeAttack": "Agregar un Ataque de Combate",
+    "addproneEffect": "Agregar efecto Derribado en el objetivo.",
+    "addRangedAttack": "Agregar un Ataque a Distancia",
+    "addShockEffect": "Agregar efecto de Choque en la próxima ronda.",
+    "addSkill": "Agregar una Habilidad",
+    "addSpell": "Agregar un Hechizo",
+    "addstunEffect": "Agregar efecto de Aturdimiento en el objetivo.",
+    "addToQuickRoll": "Agregar al Tiro Rápido",
+    "addTracker": "Agregar Rastreador de Recursos al final",
+    "addWHard": "c/Duro",
+    "advantage": "Ventaja",
+    "advantages": "Ventajas",
+    "advantagesTab": "Rasgos",
+    "advDisadvPerkQuirks": "Ventajas, Desventajas, Perks y Rarezas",
+    "AllAttacksTab": "Ataque",
+    "allAttackTags": "Todas las Etiquetas de Tiro de Ataque",
+    "AllAttributesTab": "Atributo",
+    "allAttributeTags": "Todas las Etiquetas de Tiros de Atributo",
+    "allBlockTags": "Todas las Etiquetas de Tiro de Bloqueo",
+    "AllChecksTab": "Otro",
+    "allCombatants": "Todas las Fichas en Combate",
+    "allControlRollTags": "Todas las Etiquetas de Tiro de Control",
+    "allDamage": "TODO EL DAÑO",
+    "allDamageTags": "Todas las Etiquetas de Tiros de Daño",
+    "AllDefensesTab": "Defensa",
+    "allDefenseTags": "Todas las Etiquetas de Tiro de Defensa",
+    "allDodgeTags": "Todas las Etiquetas de Tiro de Esquiva",
+    "allDXTags": "Todas las Etiquetas de Tiros de DX",
+    "allFrightCheckTags": "Todas las Etiquetas de Tiros de Tirada de Miedo",
+    "allHearingTags": "Todas las Etiquetas de Tiro de Oído",
+    "allHTTags": "Todas las Etiquetas de Tiros de SL",
+    "allIQTags": "Todas las Etiquetas de Tiros de CI",
+    "allMeleeTags": "Todas las Etiquetas de Tiro de Ataque de Combate",
+    "allow": "Permitir",
+    "allParryTags": "Todas las Etiquetas de Tiro de Parada",
+    "allPerTags": "Todas las Etiquetas de Tiros de Per",
+    "allRangedTags": "Todas las Etiquetas de Tiro de Ataque a Distancia",
+    "AllRollsTab": "Todos",
+    "allRollsTags": "Todas las Etiquetas de Tiros",
+    "AllSkillsTab": "Habilidad",
+    "allSkillTags": "Todas las Etiquetas de Tiro de Habilidad",
+    "AllSpecialTab": "Especial",
+    "allSpellTags": "Todas las Etiquetas de Tiro de Hechizo",
+    "allSTTags": "Todas las Etiquetas de Tiros de FU",
+    "allTasteSmellTags": "Todas las Etiquetas de Tiro de Gusto/Olfato",
+    "allTheDamage": "¡¡TODO EL DAÑO!!",
+    "allTokens": "Todas las Fichas",
+    "allTokensInScene": "Todas las Fichas en la Escena",
+    "allTouchTags": "Todas las Etiquetas de Tiro de Tacto",
+    "allVisionTags": "Todas las Etiquetas de Tiro de Visión",
+    "allWillTags": "Todas las Etiquetas de Tiros de Voluntad",
+    "andHalfMove": "y la mitad del Movimiento.",
+    "apply": "Aplicar",
+    "applyAllToTarget": "Aplicar Todo a {name}",
+    "applySelectedTokens": "Aplicar a fichas seleccionadas",
+    "applyTo": "Aplicar a",
+    "armorDivisor": "Divisor de Armadura",
+    "atLeast": "Al menos",
+    "atNextTurn": "En el Próximo Turno",
+    "attackRoll": "Tiro de Ataque",
+    "attackTab": "Ataques",
+    "attributes": "Atributos",
+    "attributesDX": "DX",
+    "attributesDXNAME": "Destreza",
+    "attributesFPNAME": "Fatiga",
+    "attributesHPNAME": "Puntos de Golpe",
+    "attributesHT": "SL",
+    "attributesHTNAME": "Salud",
+    "attributesIQ": "CI",
+    "attributesIQNAME": "Inteligencia",
+    "attributesPER": "Per",
+    "attributesPERNAME": "Percepción",
+    "attributesPrimary": "Atributos Básicos",
+    "attributesQN": "QN",
+    "attributesQNNAME": "Quintaesencia",
+    "attributesSecondary": "Atributos Secundarios",
+    "attributesST": "FU",
+    "attributesSTNAME": "Fuerza",
+    "attributesWILL": "Vol",
+    "attributesWILLNAME": "Voluntad",
+    "attributeTab": "Atributos",
+    "autoAdd": "Agregar automáticamente modificadores etiquetados al tiro.",
+    "autoApply": "Aplicar Automáticamente",
+    "autoEncumbrance": "Encumbramiento Automático",
+    "basic": "Básico",
+    "basicLift": "Levantamiento Básico",
+    "basicmove": "Movimiento Básico",
+    "basicspeed": "Velocidad Básica",
+    "blindRoll": "Tiro Ciego",
+    "blindRollAsDefault": "Tiro Ciego como predeterminado",
+    "block": "Bloqueo",
+    "blockbonus": "Bono de Bloqueo",
+    "bluntTrauma": "Trauma Contundente",
+    "bodies": "Cadáveres",
+    "BODYPLANarachnoid": "Arácnido",
+    "BODYPLANavian": "Aviano",
+    "BODYPLANcancroid": "Cancroide",
+    "BODYPLANcentaur": "Centauro",
+    "BODYPLANhexapod": "Hexápodo",
+    "BODYPLANhexapodWinged": "Hexápodo, Alado",
+    "BODYPLANhumanoid": "Humanoide",
+    "BODYPLANhumanoid expanded": "Humanoide, Ampliado (GCA)",
+    "BODYPLANichthyoid": "Ictiode",
+    "BODYPLANoctopod": "Octópodo",
+    "BODYPLANquadruped": "Cuadrúpedo",
+    "BODYPLANquadrupedWinged": "Cuadrúpedo, Alado",
+    "BODYPLANscorpion": "Escorpión",
+    "BODYPLANsnakeman": "Hombre Serpiente",
+    "BODYPLANsquid": "Calamar",
+    "BODYPLANvermiform": "Vermiforme",
+    "BODYPLANvermiformWinged": "Serpiente, Alada",
+    "BODYPLANwinged humanoid": "Humanoide, Alado",
+    "bonuses": "Bonos",
+    "bulk": "Bulto",
+    "bulkForWeapon": "Bulto para {weapon}",
+    "cancel": "Cancelar",
+    "cannotDragNonFoundryEqt": "No puedes arrastrar equipo no-Foundry a otro personaje.",
+    "cannotDropItemAlreadyExists": "Ya tienes este objeto.",
+    "carryOnBack": "Llevar en la Espalda",
+    "changelog": {
+      "dontShowAgain": "No mostrar LÉAME de nuevo",
+      "readme": "LÉAME",
+      "title": "GURPS"
+    },
+    "chatClearing": "Limpiando",
+    "chatClearingLastActor": "Limpiando Último Actor",
+    "chatDamageResultEnd": "en {location}",
+    "chatDamageResultMiddle": "de daño {type}",
+    "chatDamageResultShowMath": "Mostrar el cálculo",
+    "chatDamageResultStart": "hiere a {defender} por {injury}",
+    "chatDoesNotHaveEnough": "no tiene suficientes 'USOS'",
+    "chatExceededMax": "Excedió el MÁX",
+    "chatExceededMaxUses": "Excedió 'MÁX USOS'",
+    "chatFixedDamage": "daño [{dice} {damageTypeText}].",
+    "chatHelpAnim": "Reproduce una animación centrada o en movimiento.\n<hr>parámetros (para ambas)\nlist: muestra la lista de animaciones disponibles\nwX: espera X segundos antes de mostrar la animación\n&lt;patrón de archivo&gt;: el patrón puede contener <b>*</b>\nXx:Y: repite la animación X veces (2x, 3x, etc.) con Y segundos entre animaciones\n<hr>parámetros para animaciones centradas:\nc: indica una animación centrada\n*X: escala la animación por X\n@self: usa el propio token como centro en lugar del objetivo\nLas siguientes opciones se pueden añadir después de 'c'\n f: voltea la animación en el eje x (izquierda a derecha)\n m: mueve la animación centrada hacia el objetivo\n n: no rota la animación centrada en movimiento\n X: grados para rotar la animación\n :Y,Z: desplaza la animación (predeterminado 0.5,0.5)\n<hr>ejemplos de animaciones centradas:\n/anim &lt;patrón&gt; c *0.5 3x\n'centrada, escala 1/2, 3 veces'\n\n/anim &lt;patrón&gt; cf *2 3x:4\n'centrada, volteada (izq-der), escala 2x, 3 veces con 4 segundos de retraso\n\n/anim &lt;patrón&gt; cm\n'centrada, mover animación desde self hacia objetivo'\n\n/anim &lt;patrón&gt; cmn\n'centrada, mover animación desde self hacia objetivo, sin rotar'\n\n/anim &lt;patrón&gt; cfm\n'centrada, volteada, mover animación desde self hacia objetivo'\n\n/anim &lt;patrón&gt; c90\n'centrada, rotar 90 grados'\n\n/anim &lt;patrón&gt; cf180 *.333\n'centrada, volteada, rotar 180 grados, escala 1/3'\n\n/anim &lt;patrón&gt; cm45\n/anim &lt;patrón&gt; c:0,1\n/anim &lt;patrón&gt; cf:0.5,1\n/anim &lt;patrón&gt; cmn:0.9,1 *2\n<hr>parámetros para animaciones en movimiento:\n-X: desplaza a la izquierda (0.0-1.0) hacia el inicio de la animación\n+X: estira a la derecha (0.0-infinito) hacia el destino\n<hr>ejemplos de animaciones en movimiento:\n/anim &lt;patrón&gt; -0.1 +0.1 2x\n'animación en movimiento, desplazamiento izquierdo 10%, estiramiento derecho 10%, 2 veces'",
+    "chatHelpDR": "Modifica la Resistencia al Daño del Actor<hr>parámetros:\n&lt;fórmula&gt;&lt;ubicaciones&gt;: usa una fórmula (ej. +2, -2, *2 o /2) o un valor definido (ej. 2, 100) y opcionalmente las ubicaciones de impacto afectadas (ej. torso, brazo, pierna izquierda, etc.)\nreset: Reinicia la RD al valor inicial<hr>ejemplos:\n/dr +1 (+1 a todas las ubicaciones de impacto)\n/dr -2 torso,pierna (-2 al torso y ambas piernas)\n/dr 20 (establece RD 20 en todas las ubicaciones. Sumará bonos de Objeto después)\n/dr !20 (fuerza RD 20 en todas las ubicaciones. Ignora bonos de Objeto)\n/dr reset (reinicia a valores originales)",
+    "chatHelpEveryone": "Aplica fórmula a PF o PG de todos los personajes jugadores o ejecuta la fórmula En-el-Acto localmente contra todos los personajes jugadores<hr>parámetros:\nfp &lt;fórmula&gt;\nhp &lt;fórmula&gt;\n [OtF]: ejecuta OtF (localmente) para todos los personajes jugadores\nfp reset: Reinicia PF a los valores iniciales\nhp reset: Reinicia PG a los valores iniciales<hr>ejemplos:\n/ev fp +1\n/ev hp -1\n/ev fp +1d\n/ev hp +1d-3!\n/ev fp reset\n/ev [&rlm;PER]",
+    "chatHelpFpHp": "Aplica fórmula a PF o PG de los personajes seleccionados<hr>parámetros:\n&lt;fórmula&gt;\nreset: Reinicia PF o PG al valor inicial<hr>ejemplos:\n/fp +1\n/hp -1\n/fp +1d\n/hp +1d-3!\n/fp reset\n",
+    "chatHelpHelp": "<b>/help <i>comando-chat</i></b> O\n\n<b>?<i>comando-chat</i></b>: para ver la ayuda de ese comando",
+    "chatHelpLight": "Establece el nivel de luz del token<hr>parámetros:\nnone|off: apaga la luz\nX: radio de luz tenue\nY: radio de luz brillante\nZ: ángulo de emisión de luz\n#RRGGBB: color de la luz\nW: intensidad del color (0.0-1.0)\n&lt;anim&gt;: patrón de animación (torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole)\nSPEED: velocidad de la animación (1-10)\nINT: intensidad de la animación (1-10)<hr>ejemplos:\n/li 6 2\n/li 8 3 90\n/li 6 2 #ff0000\n/li 6 2 #ff1111 0.5\n/li 6 2 torch\n/li 8 4 90 #ff7777 0.5 pulse 5 5\nhttps://foundryvtt.com/article/lighting/",
+    "chatHelpManeuver": "Establece las siguientes maniobras en el personaje actual. Puedes usar * para coincidir con nombres de Maniobra, ejemplo: '/man Todo Ataque*Doble'<hr>",
+    "chatHelpQty": "Modifica la columna CANT del equipo<hr>parámetros:\n&lt;fórmula&gt;\n&lt;equipo&gt;\no:&lt;equipo&gt;: busca solo en la lista 'otro'<hr>ejemplos:\n/qty +1 equipo\n/qty -2 equipo\n/qty =20 equipo\n/qty +1 o:equipo",
+    "chatHelpRa": "Tirar Contra (o Tirada Privada Contra)<hr>parámetros:\nX: Nivel de Habilidad contra el que tirar\nNombreHabilidad-X: Tirar contra X, pero mostrar 'NombreHabilidad' en lugar de 'Predeterminado'\n<hr>ejemplos:\n/ra 12\n.ra 13\n/pra 11\n.pra 10\n/ra Sigilo-12\n.ra Pelea-13\n/pra Trampa-11\n.pra SacadaRápida-10",
+    "chatHelpRemote": "Ejecuta una fórmula En-el-Acto de forma remota<hr>parámetros:\n[OtF]: fórmula En-el-Acto\n&lt;nombres de jugadores&gt;|<i>vacío</i>: lista de nombres de jugadores (o <i>vacío</i> para enviar a todos los jugadores)<hr>ejemplos:\n/rem &#91;&rlm;PER] Chris\n/rem [&rlm;ST+2]",
+    "chatHelpRepeat": "Repite el siguiente comando /anim con un retraso de X segundos entre repeticiones.<hr>ejemplos:\n/repeat /anim 1.2 heal*blue c",
+    "chatHelpSelect": "Selecciona ficha(s)<hr>parámetros:\n&lt;nombre del personaje (puede usar '*')&gt;\n@self: selecciona la ficha del personaje actual\n!: selecciona en todas las escenas, no solo en la actual<hr>ejemplos:\n/select Bog\n/select @self\n/select Bog !",
+    "chatHelpShow": "Muestra varios valores de los tokens en la escena<hr>parámetros:\n-a: ordenar alfabéticamente\n-pc: mostrar solo PJs\n-npc: mostrar solo PNJs\n&lt;Atributos (primarios y secundarios)&gt;\n&lt;Nombres de Habilidades&gt;\nparada\nbloqueo\nvoluntad\nmiedo\nper\nvisión\noído\ngusto\nolfato\nmovimiento\nvelocidad<hr>ejemplos:\n/show -pc PG PF CI\n/show -a Sigilo PER\n/show per movimiento velocidad\n/show -npc visión oído",
+    "chatHelpSound": "Reproduce un sonido en el fondo<hr>parámetros:\nw: segundos de espera antes de iniciar el sonido\nv: volumen\n&lt;ruta completa del archivo&gt;<hr>ejemplos:\n/sound w2.5 /ruta/archivo\n/sound v0.6 /ruta/archivo\n/sound w3 v2 /ruta/archivo",
+    "chatHelpStatus": "Establece los efectos de estado del token<hr>parámetros:\ntoggle|t: alternar el estado\non|+|set: activar el estado\noff|-|unset: desactivar el estado\nclear: eliminar todos los estados\n@self O :nombredeltokens\nlist: mostrar todos los nombres de estado\n{datos JSON}: datos opcionales 'duration.combat'<hr>ejemplos:\n/st on prone :Bog\n/st - shock1 @self\n/st list",
+    "chatHelpTracker": "Modifica el Rastreador de Recursos<hr>formato de comando:\n/tr0-3\n/tracker0-3\n/resource0-3\n/rt0-3\n/tr(nombre)\n/tracker(nombre)\n/resource(nombre)\n/rt(nombre)<hr>parámetros:\n&lt;fórmula&gt;\nreset: reinicia el Rastreador al valor inicial<hr>ejemplos:\n/tr0 +1\n/tr0 -2\n/tracker1 =20\n/tr(flechas) +1\n/resource(rondas) reset",
+    "chatHelpUses": "Modifica la columna USOS del equipo<hr>parámetros:\n&lt;fórmula&gt;\n&lt;equipo&gt;\no:&lt;equipo&gt;: busca solo en la lista 'otro'\nreset: establece USOS a MÁX_USOS<hr>ejemplos:\n/uses +1 equipo\n/uses -2 equipo\n/uses =20 equipo\n/uses +1 o:equipo\n/uses reset equipo",
+    "chatHelpW": "Susurra a jugadores o propietarios de los tokens seleccionados<hr>parámetros:\n&lt;[nombres de jugadores]&gt;\n@: susurrar a los propietarios de los tokens seleccionados\n<hr>ejemplos:\n/w [Chris] mensaje enviado al Jugador Chris\n/w @ mensaje enviado a los propietarios de los tokens seleccionados",
+    "chatHelpWait": "Espera X milisegundos antes de ejecutar el siguiente comando de chat<hr>parámetros:\nX: el número de milisegundos a esperar\n<hr>ejemplos:\n/wait 500",
+    "chatMoreThanOneActor": "Se encontró más de un Actor que coincide",
+    "chatMoreThanOneToken": "Se encontró más de una Ficha que coincide",
+    "chatMultipleOwnedFound": "Posees más de una ficha en esta escena. Puedes seleccionar una y reintentar este comando sin la palabra clave '@self', o usar la opción ':nombre'.",
+    "chatMultipleTokensFound": "Se encontraron múltiples Fichas que coinciden con {name}",
+    "chatMustBeACheck": "La fórmula En-el-Acto debe ser algún tipo de tirada",
+    "chatNoActorFound": "No se encontró Actor/Ficha que coincida",
+    "chatNoEquipmentMatched": "Ningún equipo coincidió",
+    "chatNoOwnedTokenFound": "No posees ninguna ficha en esta escena.",
+    "chatNoResourceTracker": "Ningún Rastreador de Recursos coincidió",
+    "chatNoStatusMatched": "Ningún estado coincidió",
+    "chatNotInCombat": "Solo puedes establecer la Maniobra si la ficha está en combate",
+    "chatNoTokenFound": "No se encontró Actor/Ficha que coincida con {name}",
+    "chatQty": "CANT",
+    "chatQtySetTo": "CANT establecido en",
+    "chatResetTo": "reiniciado a",
+    "chatResourceTracker": "Rastreador de Recursos",
+    "chatResultBelowZero": "Resultado por debajo de cero",
+    "chatRolling": "Tirando [{dice}{desc}]",
+    "chatRollingCR": "Tirada de Control",
+    "chatRollingDamage": "Tirando daño [{dice} {damageTypeText}]{numtimes}.",
+    "chatSelectSelfOrNameTokens": "Debes seleccionar fichas, usar '{self}', o usar ':&lt;<i>nombre-ficha</i>&gt;' para aplicar efectos de estado.",
+    "chatSentTo": "Comando [{cmd}] enviado a {name}",
+    "chatSetTo": "establecido en",
+    "chatShock": "{name} sufre {modifier} puntos de Choque ",
+    "chatSuffersCripplingInjury": "{name} sufre una lesión incapacitante {classStart}([PDF:{pdfref}]){classEnd} en la ubicación {location}.",
+    "chatToggling": "Alternando",
+    "chatTurnOffReeling": "{name} ya no está Tambaleando.",
+    "chatTurnOffTired": "{name} ya no está Cansado.",
+    "chatTurnOnReeling": "{name} está Tambaleando. Movimiento y Esquiva se reducen a la mitad. ([PDF:{pdfref}])",
+    "chatTurnOnTired": "{name} está Cansado. Movimiento, Esquiva y FU se reducen a la mitad. ([PDF:{pdfref}])",
+    "chatUnableToFindMacro": "No se puede encontrar la macro llamada",
+    "chatUnableToFindManeuver": "No se puede encontrar la maniobra llamada",
+    "chatUnrecognizedFormat": "Formato no reconocido",
+    "chatUses": "'USOS'",
+    "chatUsesIsNaN": "'USOS' no es un número",
+    "chatUsesReset": "'USOS' reiniciado a 'MÁX USOS'",
+    "chatUsesSet": "'USOS' establecido en",
+    "chatWantsToExecute": "{source} quiere ejecutar <b>{command}</b> en {name}. ¿Está bien?",
+    "chatYouDoNotHaveEnough": "No tienes suficiente",
+    "chatYouMayOnlySendMod": "Solo puedes enviar modificadores",
+    "chatYouMustBeGM": "Debes ser un DM para ejecutar este comando",
+    "chatYouMustHaveACharacterSelected": "Debes tener un personaje seleccionado",
+    "check": "Tirada",
+    "checkConditionals": "Agregar Modificadores Condicionales del Actor al Popout de Modificadores de Efecto.",
+    "checkReactions": "Agregar Modificadores de Reacción del Actor al Popout de Modificadores de Efecto.",
+    "clickToEdit": "Clic para Editar",
+    "clickToRemove": "clic para eliminar",
+    "color": "Color",
+    "colorSheetMenuAreasAdsDisadsColor": "Color de Vent/Desvent",
+    "colorSheetMenuAreasAdsDisadsHoverColor": "Color de Hover de Vent/Desvent",
+    "colorSheetMenuAreasAdsDisadsHoverTextColor": "Color de Texto en Hover de Vent/Desvent",
+    "colorSheetMenuAreasAdsDisadsTextColor": "Color de Texto de Vent/Desvent",
+    "colorSheetMenuAreasAttributesColor": "Color de Atributos",
+    "colorSheetMenuAreasAttributesHoverColor": "Color de Hover de Atributos",
+    "colorSheetMenuAreasAttributesHoverTextColor": "Color de Texto en Hover de Atributos",
+    "colorSheetMenuAreasAttributesTextColor": "Color de Texto de Atributos",
+    "colorSheetMenuAreasBlockColor": "Color de Bloqueo",
+    "colorSheetMenuAreasBlockHoverColor": "Color de Hover de Bloqueo",
+    "colorSheetMenuAreasBlockHoverTextColor": "Color de Texto en Hover de Bloqueo",
+    "colorSheetMenuAreasBlockTextColor": "Color de Texto de Bloqueo",
+    "colorSheetMenuAreasDamageColor": "Color de Daño",
+    "colorSheetMenuAreasDamageHoverColor": "Color de Hover de Daño",
+    "colorSheetMenuAreasDamageHoverTextColor": "Color de Texto en Hover de Daño",
+    "colorSheetMenuAreasDamageTextColor": "Color de Texto de Daño",
+    "colorSheetMenuAreasDodgeColor": "Color de Esquiva",
+    "colorSheetMenuAreasDodgeHoverColor": "Color de Hover de Esquiva",
+    "colorSheetMenuAreasDodgeHoverTextColor": "Color de Texto en Hover de Esquiva",
+    "colorSheetMenuAreasDodgeTextColor": "Color de Texto de Esquiva",
+    "colorSheetMenuAreasOtfNotesColor": "Color de Notas OtF",
+    "colorSheetMenuAreasOtfNotesHoverColor": "Color de Hover de Notas OtF",
+    "colorSheetMenuAreasOtfNotesHoverTextColor": "Color de Texto en Hover de Notas OtF",
+    "colorSheetMenuAreasOtfNotesTextColor": "Color de Texto de Notas OtF",
+    "colorSheetMenuAreasParryColor": "Color de Parada",
+    "colorSheetMenuAreasParryHoverColor": "Color de Hover de Parada",
+    "colorSheetMenuAreasParryHoverTextColor": "Color de Texto en Hover de Parada",
+    "colorSheetMenuAreasParryTextColor": "Color de Texto de Parada",
+    "colorSheetMenuAreasSkillsColor": "Color de Habilidades",
+    "colorSheetMenuAreasSkillsHoverColor": "Color de Hover de Habilidades",
+    "colorSheetMenuAreasSkillsHoverTextColor": "Color de Texto en Hover de Habilidades",
+    "colorSheetMenuAreasSkillsTextColor": "Color de Texto de Habilidades",
+    "colorSheetMenuAreasSpellsColor": "Color de Hechizos",
+    "colorSheetMenuAreasSpellsHoverColor": "Color de Hover de Hechizos",
+    "colorSheetMenuAreasSpellsHoverTextColor": "Color de Texto en Hover de Hechizos",
+    "colorSheetMenuAreasSpellsTextColor": "Color de Texto de Hechizos",
+    "colorSheetMenuAreasWeaponsColor": "Color de Armas",
+    "colorSheetMenuAreasWeaponsHoverColor": "Color de Hover de Armas",
+    "colorSheetMenuAreasWeaponsHoverTextColor": "Color de Texto en Hover de Armas",
+    "colorSheetMenuAreasWeaponsTextColor": "Color de Texto de Armas",
+    "colorSheetMenuColorAreas": "Áreas de Color",
+    "colorSheetMenuCustomColors": "Colores Personalizados",
+    "colorSheetMenuOverride": "Anular Colores",
+    "combat": {
+      "rof": {
+        "bonusLabel": "CdF {shots}",
+        "numberOfShotsLabel": "Ingresa el número de disparos (1-{max}):",
+        "numberOfShotsPrompt": "¿Cuántos disparos quieres realizar?",
+        "numberOfShotsTitle": "Número de Disparos"
+      },
+      "rollTotalHits": "El total de impactos por CdF ({rof}) y Rtr ({rcl}) es <span class='roll-value'>{rofrcl}</span>. ({link})",
+      "setting": {
+        "useRelativeSizeInMelee": "Combate: Usar Diferencia de Modificador de Tamaño en Combate",
+        "useRelativeSizeInMeleeHint": "Aplica la diferencia en Modificador de Tamaño (MT) entre atacante y defensor en los tiros de ataque de combate."
+      },
+      "ui": {
+        "noActiveTokensToUpdateManeuver": "No hay fichas activas para el actor {name} para actualizar la maniobra."
+      }
+    },
+    "combatInfo": "Información de Combate",
+    "CombatOnlyTag": "Etiqueta Solo de Combate",
+    "combatTab": "Combate",
+    "combatTracker": {
+      "initiative": "Iniciativa: {value}"
+    },
+    "concentrationCheck": "Tirada de Concentración",
+    "condition": "Condición",
+    "conditionalInjury": {
+      "daysToHeal": {
+        "max": "Máx",
+        "title": "Días para Sanar"
+      },
+      "RT": "TR",
+      "severity": {
+        "Crippled1": "Lisiado",
+        "Crippled2": "Lisiado",
+        "InstantlyFatal1": "Instantáneamente Fatal",
+        "InstantlyFatal2": "Instantáneamente Fatal",
+        "MajorWound": "Herida Mayor",
+        "MinorWound1": "Herida Menor",
+        "MinorWound2": "Herida Menor",
+        "MinorWound3": "Herida Menor",
+        "MortalWound1": "Herida Mortal",
+        "MortalWound2": "Herida Mortal",
+        "None": "Ninguno",
+        "Reeling": "Tambaleando",
+        "Scratch": "Rasguño",
+        "TotalDestruction": "Destrucción Total"
+      }
+    },
+    "conditionalModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Modificador"
+        },
+        "situation": {
+          "label": "Situación"
+        }
+      }
+    },
+    "conditionalMods": "Modificadores Condicionales",
+    "conditions": "Estado",
+    "conditionsCombatMove": "Movimiento de Combate",
+    "confirmClearHintUserMods": "¿Estás seguro de que quieres borrar todos los Mods de Usuario?",
+    "confirmClearUserMods": "¿Eliminar todos los Mods de Usuario?",
+    "confirmRemoveItem": "¿Eliminar {name} de la Lista de Equipo?",
+    "confirmRoll": "Confirmación de Tiro",
+    "consumeAction": "Consumir Acción",
+    "contextmenu": {
+      "pdf": {
+        "copyToChat": "Copiar PDF:{text} al Chat",
+        "sendToEveryone": "Enviar PDF:{text} a Todos",
+        "whisperToOwners": "Susurrar PDF:{text} a {owners}"
+      }
+    },
+    "ControlRoll": "Tirada de Control",
+    "copyright": "GURPS es una marca registrada de Steve Jackson Games, y sus reglas y arte tienen derechos de autor de Steve Jackson Games. Todos los derechos son reservados por Steve Jackson Games. Esta ayuda de juego es la creación original de Chris Normand/Nose66 y se lanza para distribución gratuita, no para reventa, bajo los permisos otorgados por http://www.sjgames.com/general/online_policy.html",
+    "CR0": "CR: N/A (No Puede Resistir)",
+    "CR10": "CR: 10 (no estándar)",
+    "CR11": "CR: 11 (no estándar)",
+    "CR12": "CR: 12 (Resiste Bastante Seguido)",
+    "CR13": "CR: 13 (no estándar)",
+    "CR14": "CR: 14 (no estándar)",
+    "CR15": "CR: 15 (Resiste Casi Siempre)",
+    "CR6": "CR: 6 (Resiste Raramente)",
+    "CR7": "CR: 7 (no estándar)",
+    "CR8": "CR: 8 (no estándar)",
+    "CR9": "CR: 9 (Resiste Con Bastante Frecuencia)",
+    "crippling": "Lesión Incapacitante, ",
+    "current": "Actual",
+    "damage": "Daño",
+    "damageAbbrevburn": "que",
+    "damageAbbrevcor": "cor",
+    "damageAbbrevcr": "cnt",
+    "damageAbbrevcut": "crt",
+    "damageAbbrevdmg": "daño",
+    "damageAbbrevfat": "fat",
+    "damageAbbrevimp": "emp",
+    "damageAbbrevinjury": "les",
+    "damageAbbrevkb": "rtr",
+    "damageAbbrevpi": "per",
+    "damageAbbrevpi-": "per-",
+    "damageAbbrevpi+": "per+",
+    "damageAbbrevpi++": "per++",
+    "damageAbbrevtox": "tox",
+    "damageAbove": "Daño sobre ",
+    "damageCosts": "Costos:",
+    "damageType": "Tipo de Daño",
+    "damageTypeBurning": "Quemadura",
+    "damageTypeCorrosive": "Corrosivo",
+    "damageTypeCrushing": "Contundente",
+    "damageTypeCutting": "Corte",
+    "damageTypeDamage": "Daño",
+    "damageTypeFatigue": "Fatiga",
+    "damageTypeHuge Piercing": "Perforante Enorme",
+    "damageTypeImpaling": "Empalamiento",
+    "damageTypeInjury": "Lesión",
+    "damageTypeLarge Piercing": "Perforante Grande",
+    "damageTypePiercing": "Perforante",
+    "damageTypeSmall Piercing": "Perforante Pequeño",
+    "damageTypeToxic": "Tóxico",
+    "darkness": "Oscuridad",
+    "days": "Días",
+    "default": "Predeterminado",
+    "defense": "Defensa",
+    "defenseRoll": "Tiro de Defensa",
+    "defenseTab": "Defensas",
+    "delete": "Eliminar",
+    "description": "Descripción",
+    "descriptionAge": "Edad",
+    "descriptionAppearance": "Apariencia",
+    "descriptionBirthday": "Cumpleaños",
+    "descriptionBodyPlan": "Plan Corporal",
+    "descriptionEyes": "Ojos",
+    "descriptionGender": "Género",
+    "descriptionHair": "Cabello",
+    "descriptionHand": "Mano",
+    "descriptionHeight": "Altura",
+    "descriptionReligion": "Religión",
+    "descriptionSizeModifier": "Modificador de Tamaño (MT)",
+    "descriptionSkin": "Piel",
+    "descriptionTechLevel": "Nivel Tecnológico (NT)",
+    "dialog": {
+      "keep": "Mantener",
+      "overwrite": "Sobrescribir"
+    },
+    "Dice": "Dados",
+    "diceAddDamageRule": "Regla de Dados+Bonus:",
+    "disable": "Deshabilitar",
+    "dmg": {
+      "add": {
+        "abbrev": "Abrev",
+        "adjustedForDamageType": "‡ - Ajustado por Modificador de Daño",
+        "adjustedForHitLocation": "* - Ajustado por ubicación de impacto",
+        "adjustedForInjuryTolerance": "† - Ajustado por Tolerancia al Daño",
+        "applyAndKeep": "Aplicar/Mantener Abierto",
+        "applyDamageDialog": "Diálogo de Aplicar Daño",
+        "applyInjury": "Aplicar Lesión",
+        "applyInjuryAndKeep": "Aplicar Lesión/Mantener Abierto",
+        "applyInjuryQuietly": "Aplicar Lesión (Silenciosamente)",
+        "applyInjuryQuietlyAndKeep": "Aplicar Lesión (Silenciosamente)/Mantener Abierto",
+        "applyMultipleTimes": "Aplicar múltiples veces",
+        "applyOptions": "OPCIONES DE APLICAR DAÑO",
+        "applyOptionsToAll": "Estas opciones se aplican a todo el daño",
+        "applyQuietly": "Aplicar (Silenciosamente)",
+        "applyQuietlyAndKeep": "Aplicar (Silenciosamente)/Mantener Abierto",
+        "basicDamage": "Daño Básico",
+        "calculationResults": "Cálculo y Resultados",
+        "damageModifier": "Modificador de Daño",
+        "damageReduction": "Reducción de Daño",
+        "diffuse": "Difuso",
+        "diffuseMax": "Difuso, máx",
+        "directlyApply": "APLICAR DIRECTAMENTE",
+        "enterModifier": "Ingresar Modificador",
+        "explosionHex": "{hex} hex desde el centro",
+        "explosionHexes": "{hex} hexes desde el centro",
+        "flexibleArmor": "Armadura Flexible",
+        "hardenedDRLevel": "Nivel de RD Endurecida",
+        "hitLocationAndDR": "Ubicación de Impacto y RD",
+        "hitLocationWoundModifiers": "Modificadores de Herida por Ubicación",
+        "homogenous": "Homogéneo",
+        "injuryTolerance": "Tolerancia al Daño",
+        "largeAreaInjury": "Lesión de Gran Área",
+        "locationMax": "Máx de Ubicación",
+        "overrideDR": "Anular RD para Ubicación",
+        "penetrating": "Penetrante",
+        "rangedHalfDamage": "A Distancia, Medio Daño (1/2D)",
+        "rangedHalfDamageShort": "A Distancia (1/2D)",
+        "shotgunCloseRange": "Escopeta, Extremadamente Cerca",
+        "shotgunDamage": "Daño de Escopeta",
+        "shotgunRofMultiplier": "Multiplicador de CdF",
+        "singleRollSelected": "Tiro de daño único seleccionado",
+        "specialCombatSituations": "Situaciones Especiales",
+        "tacticalRules": "Reglas Tácticas",
+        "tacticalRulesDefaults": "Usar configuración del sistema para establecer predeterminados",
+        "title": "Aplicar {basic} punto(s) de daño [{damage}] a {name}",
+        "typeAndWoundingModifiers": "Modificadores de Tipo y Herida",
+        "unliving": "No Viviente",
+        "vulnerability": "Vulnerabilidad"
+      },
+      "explosion": "Explosión",
+      "settings": {
+        "applyBasedOnTarget": "Objetivo",
+        "armorDivisors": "Divisores de Armadura",
+        "armorDivisorsHint": "Si se marca, ajusta la RD del objetivo por el divisor de armadura del ataque.",
+        "bluntTrauma": "Trauma Contundente",
+        "bluntTraumaHint": "Si se marca, usa las reglas de Trauma Contundente para calcular el daño en armadura flexible.",
+        "defaultADDAction": "Acción predeterminada para el Diálogo de Aplicar Daño",
+        "defaultADDActionHint": "Cuando se establece en 'Objetivo' elegirá 'Aplicar' para Personajes Jugadores y 'Aplicar Silenciosamente' para PNJs.",
+        "defaultLocation": "Ubicación de impacto predeterminada",
+        "defaultLocationHint": "Establece la ubicación de impacto predeterminada para aplicar daño.",
+        "htBodyHits": "Impactos Corporales de Alta Tecnología",
+        "htBodyHitsHint": "De High Tech 162: los impactos corporales limitan el daño perforante, de empalamiento y quemadura de rayo en el torso a 2× PG máximo, y añaden 1/6 de probabilidad de impactar en los vitales al apuntar al torso.",
+        "locationMods": "Modificadores de Herida por Ubicación",
+        "locationModsHint": "Si se marca, modifica los Modificadores de Herida según la Ubicación de Impacto.",
+        "restrictADDToGM": "Restringir Diálogo de Aplicar Daño al DM",
+        "restrictADDToGMHint": "Si se marca, solo los DMs pueden ver/usar el Diálogo de Aplicar Daño. Los jugadores que arrastren y suelten daño recibirán solo un mensaje.",
+        "showTheMath": "Mostrar el cálculo",
+        "showTheMathHint": "Si se marca, la sección 'MOSTRAR EL CÁLCULO' del mensaje de daño en el chat se expandirá por defecto. Si no se marca, puedes hacer clic en el título 'MOSTRAR EL CÁLCULO' para expandirlo. NOTA: Si este es el último mensaje en el registro de chat, puede expandirse debajo del fondo del registro y quizás debas desplazarte hacia abajo para verlo.",
+        "title": "Configuración de la Calculadora de Daño",
+        "titleHint": "Configura opciones para el Diálogo de Aplicar Daño (DAD).",
+        "useSimpleADD": "Usar Diálogo Simplificado de Aplicar Daño",
+        "useSimpleADDHint": "Si se marca, solo muestra la opción 'Aplicar Directamente' en el Diálogo de Aplicar Daño."
+      }
+    },
+    "dodge": "Esquiva",
+    "dragDrop": {
+      "equipmentTransferred": "Transferido {count}× {itemName} de {sourceName} a {targetName}.",
+      "itemContainerLoop": "No se puede soltar el objeto: el objeto objetivo es descendiente del objeto soltado.",
+      "itemCopied": "Agregado {itemName} a {targetName} desde {sourceName}.",
+      "itemTypeMismatch": "No se puede soltar el objeto: el tipo objetivo no coincide con el tipo del objeto soltado."
+    },
+    "dragSameContainer": "No se puede agregar el objeto a este contenedor, ya que ya está dentro de él.",
+    "dropBefore": "Antes del objetivo",
+    "dropInside": "Dentro del objetivo",
+    "droppedItem": "Objeto Arrastrado",
+    "droppingItemNotification": "{actorName} obtiene {itemName}",
+    "dropPlacement": "¿Dónde quieres colocar el objeto?",
+    "dropResolve": "¿Dónde quieres soltar este objeto?",
+    "drSplitEditorTitle": "Dividir RD ({where})",
+    "during": "Durante",
+    "dxCheckOrFallApplyProne": "{name}: ¡tira DX o cae!",
+    "dxJudoAcrobaticsCheckToRemainStanding": "Tira [DX, Judo o Acrobacia] {modifierText} para mantenerse de pie.",
+    "easyRoll": "Buena oportunidad",
+    "edit": "Editar",
+    "editorAddItem": "Agregar {name} al final",
+    "effect": {
+      "listTitle": "Efectos Activos para {name}"
+    },
+    "effectConfig": "Configuración de Efecto Activo",
+    "effectHintBlind": "-6 para impactar si está acostumbrado a ser ciego; éxito en Oído -2 reduce la penalización de impacto a -4.",
+    "effectManagerPopout": "Gestor de Efectos Activos",
+    "effectModifierPopout": "Modificadores de Efecto",
+    "effectModNoTokenSelected": "Ninguna ficha seleccionada",
+    "effectNew": "Nuevo Efecto",
+    "effectPicker": {
+      "combat": "Combate",
+      "conditions": "Condiciones",
+      "counters": "Contadores",
+      "modifiers": "Modificadores",
+      "noEffects": "No hay efectos disponibles",
+      "pain": "Dolor",
+      "postures": "Posturas",
+      "search": "Buscar efectos...",
+      "senses": "Sentidos",
+      "status": "Estado",
+      "title": "Agregar Efecto",
+      "utility": "Utilidad"
+    },
+    "effects": "Efectos",
+    "effectsEffect": "Efecto",
+    "effectsNotApplicableDefenses": "No se aplica a Defensas Activas u otras reacciones defensivas.",
+    "effectsTemporaryAttributePenalties": "Ver Penalizaciones de Atributo Temporales",
+    "effectsTermination": "Condición de Terminación (OtF)",
+    "encumbranceLevel-0": "Ninguna (0)",
+    "encumbranceLevel-00000": "Ninguna (0)",
+    "encumbranceLevel-00001": "Ligera (1)",
+    "encumbranceLevel-00002": "Media (2)",
+    "encumbranceLevel-00003": "Pesada (3)",
+    "encumbranceLevel-00004": "Muy Pesada (4)",
+    "encumbranceLevel-1": "Ligera (1)",
+    "encumbranceLevel-2": "Media (2)",
+    "encumbranceLevel-3": "Pesada (3)",
+    "encumbranceLevel-4": "Muy Pesada (4)",
+    "encumbranceMoveDodge": "Encumbramiento, Movimiento y Esquiva",
+    "enhanced": "Mejorado",
+    "enterTextHere": "Ingresa texto aquí",
+    "equipment": "Equipo",
+    "equipmentCarried": "Equipo Portado",
+    "equipmentCost": "Costo",
+    "equipmentEquipped": "E",
+    "equipmentFoundryItem": "Objeto de Foundry",
+    "equipmentIgnoreQtyImport": "La importación no actualiza la cantidad.",
+    "equipmentMaxUses": "Usos Máximos",
+    "equipmentOther": "Otro Equipo",
+    "equipmentQuantity": "Cant",
+    "equipmentTab": "Equipo",
+    "equipmentTechlevel": "Nivel Tecnológico",
+    "equipmentUserCreated": "Creado por Usuario",
+    "equipmentUses": "Usos",
+    "fail": "Fallo",
+    "fairRoll": "Oportunidad regular",
+    "fallsDownApplyProne": "{name}: ¡cae al suelo!",
+    "fc": {
+      "areaIsolated": "El área está aislada",
+      "beastly": "Bestial",
+      "believeAlone": "Si crees que estás solo",
+      "bloodCurdling": "Aterrador",
+      "corpseDependent": "El cadáver era un dependiente",
+      "cosmicallyHorrific": "Cósmicamente horrífico",
+      "encounteredAtDistance": "Encontrado a distancia",
+      "exposuresToThreat": "Número de exposiciones a <i>esta particular</i> amenaza en 24 horas",
+      "frightening": "Aterrador",
+      "fullyBriefed": "Completamente informado",
+      "ghastly": "Espantoso",
+      "heatOfBattle": "Calor de la batalla",
+      "horriblyMutilated": "Horriblemente mutilado",
+      "horrifying": "Horroroso",
+      "inhuman": "Inhumano",
+      "monsters": "Monstruos",
+      "mutilated": "Mutilado",
+      "noCorpse": "Sin cadáver",
+      "noKnowledge": "Sin conocimiento",
+      "noSignOfViolence": "Sin signos de violencia",
+      "peaceful": "Pacífico/preparado para el entierro",
+      "petrifying": "Petrificante",
+      "physicalCircumstances": "Circunstancias físicas",
+      "preparation": "Preparación",
+      "previousExperience": "Experiencia previa con este tipo de amenaza",
+      "research": "Investigación",
+      "rumorsGossip": "Rumores, chismes",
+      "scary": "Escalofriante",
+      "someKnowledge": "Algo de conocimiento",
+      "terriblyMutilated": "Terriblemente mutilado",
+      "terrifying": "Terrorífico",
+      "touches": "El cadáver o monstruo te toca",
+      "victimsOfViolence": "La mayoría de víctimas de violencia",
+      "viewedRemotely": "Visto a distancia"
+    },
+    "for": "para",
+    "forbid": "Prohibir",
+    "forHighPainThreshold": "{mod} por Umbral de Dolor Alto",
+    "forLowPainThreshold": "{mod} por Umbral de Dolor Bajo",
+    "forPerfectBalance": "{mod} por Equilibrio Perfecto",
+    "FP": "PF",
+    "frightcheck": "Tirada de Miedo",
+    "frightCheck": "Tirada de Miedo",
+    "fromEllipses": "de ...",
+    "gameAidUsersGuide": "GUÍA DE USUARIO de Ayuda de Juego GURPS 4ª Ed.",
+    "grapplingControlled": "Controlado [-8 DX]",
+    "grapplingControlPoints": "Puntos de Control",
+    "grapplingCPAbbrev": "ctrl",
+    "grapplingGrabbed": "Agarrado [-2 DX]",
+    "grapplingGrappled": "Trabado [-4 DX]",
+    "grapplingPinned": "Inmovilizado [-12 DX]",
+    "grapplingRestrained": "Sujetado [-6 DX]",
+    "grapplingUnrestrained": "Sin Sujeción",
+    "groundCreatures": "Criaturas terrestres",
+    "groundCreaturesSuffer": "Las criaturas terrestres sufren",
+    "half": "Mitad",
+    "hardRoll": "Oportunidad difícil",
+    "headVitalsHit": "Impacto en Cabeza o Vitales ",
+    "hearing": "Oído",
+    "highPainThresholdNoPenalty": "Umbral de Dolor Alto niega la penalización",
+    "hitLocation": "Ubicación de Impacto",
+    "hitLocationArm": "Brazo",
+    "hitLocationArm 1-2": "Brazo 1-2",
+    "hitLocationArm 3-4": "Brazo 3-4",
+    "hitLocationArm 5-6": "Brazo 5-6",
+    "hitLocationArm 7-8": "Brazo 7-8",
+    "hitLocationArm, holding shield": "Brazo, con escudo",
+    "hitLocationArm*": "Brazo",
+    "hitLocationBaseDR": "RD Base",
+    "hitLocationBrain": "Cerebro",
+    "hitLocationChest": "Pecho",
+    "hitLocationChinks in Other": "Ranuras en armadura (otro)",
+    "hitLocationChinks in Torso": "Ranuras en armadura (torso)",
+    "hitLocationDescChest": "*impacto en pecho",
+    "hitLocationDescFront": "solo frente",
+    "hitLocationDescHalfDR": "&half; RD",
+    "hitLocationDescImp": "solo emp o per(cualquier)",
+    "hitLocationDescLimb": "*impacto en extremidad",
+    "hitLocationDescNeck": "*impacto en cuello",
+    "hitLocationDR": "RD",
+    "hitLocationDRFromItems": "De Objetos",
+    "hitLocationDRItems": "Objetos",
+    "hitLocationDRModifiers": "De modificadores",
+    "hitLocationDRWithDivisor": "RD Efectiva",
+    "hitLocationExtremity": "Extremidad",
+    "hitLocationEye": "Ojo",
+    "hitLocationEyes": "Ojos",
+    "hitLocationFace": "Cara",
+    "hitLocationFace, from behind": "Cara, desde atrás",
+    "hitLocationFin": "Aleta",
+    "hitLocationFin*": "Aleta",
+    "hitLocationFoot": "Pie",
+    "hitLocationForeleg": "Pata Delantera",
+    "hitLocationGroin": "Ingle",
+    "hitLocationHand": "Mano",
+    "hitLocationHind Leg": "Pata Trasera",
+    "hitLocationJaw": "Mandíbula",
+    "hitLocationLeft Arm": "Brazo Izquierdo",
+    "hitLocationLeft Arm, holding shield": "Brazo Izquierdo, con escudo",
+    "hitLocationLeft Leg": "Pierna Izquierda",
+    "hitLocationLeg": "Pierna",
+    "hitLocationLeg 1-2": "Pierna 1-2",
+    "hitLocationLeg 3-4": "Pierna 3-4",
+    "hitLocationLeg 5-6": "Pierna 5-6",
+    "hitLocationLeg 7-8": "Pierna 7-8",
+    "hitLocationLimb Vein/Artery": "Vena/Arteria de Extremidad",
+    "hitLocationMid Leg": "Pierna Media",
+    "hitLocationMid Leg*": "Pierna Media",
+    "hitLocationNeck": "Cuello",
+    "hitLocationNeck Vein/Artery": "Vena/Arteria del Cuello",
+    "hitLocationNose": "Nariz",
+    "hitLocationPenalty": "Penalización",
+    "hitLocationRandom": "Aleatoria",
+    "hitLocationRight Arm": "Brazo Derecho",
+    "hitLocationRight Arm, holding shield": "Brazo Derecho, con escudo",
+    "hitLocationRight Leg": "Pierna Derecha",
+    "hitLocationSkull": "Cráneo",
+    "hitLocationSkull, from behind": "Cráneo, desde atrás",
+    "hitLocationTail": "Cola",
+    "hitLocationTorso": "Torso",
+    "hitLocationTorso*": "Torso",
+    "hitLocationVitals": "Vitales",
+    "hitLocationVitals, Heart": "Vitales, Corazón",
+    "hitLocationWhere": "Dónde",
+    "hitLocationWing": "Ala",
+    "HP": "PG",
+    "hpIgnored": " PG ignorados.",
+    "htCheck": "Tirar SL",
+    "ID": "ID",
+    "ifConfrontingMonster": "si enfrentas un Monstruo",
+    "ignoreBodyPlan": "Ignorar Plan Corporal Importado",
+    "ignoreImportQtyLabel": "Preservar Cant",
+    "immediately": "Inmediatamente",
+    "import": "Importar",
+    "importCancel": "Cancelar Importación",
+    "importCannotImportGCADirectly": "No podemos importar un archivo GCA directamente. Por favor, exporta el archivo usando el script 'export to Foundry VTT.gce'.",
+    "importCharacterData": "Importar Datos del Personaje para {name}",
+    "importCreate": "Crear",
+    "importCurrentActor": "Actor Actual",
+    "importCurrentVersions": "Versiones Actuales: '{GCAVersion}' y '{GCSVersion}'.",
+    "importEmptyDirectory": "El directorio está vacío. No se importarán archivos.",
+    "importer": {
+      "actor": {
+        "button": "Importar",
+        "description": "Selecciona un archivo GCS 5 o GCA 5.",
+        "note": "Esta importación sobrescribirá los datos de: <strong>{name}</strong>.",
+        "source": "Datos de Origen",
+        "successMessage": "Personaje \"{name}\" importado exitosamente.",
+        "title": "Importar Datos del Personaje para {name}",
+        "warning": "<span class='fas fa-exclamation-triangle'></span>&nbsp;<strong>Nota</strong>: ¡Esta acción no se puede deshacer!"
+      },
+      "defaultName": "Personaje Importado",
+      "error": {
+        "noFilesSelected": "No se seleccionaron archivos para importar."
+      },
+      "item": {
+        "button": "Importar",
+        "description": "Selecciona un archivo de biblioteca GCS 5 (.adq, .skl, .spl, .eqp).",
+        "sidebarButton": "Importar Compendio GCS",
+        "source": "Datos de Origen",
+        "successMessage": "Compendio \"{name}\" importado exitosamente ({num} objetos importados).",
+        "title": "Importar Objetos del Compendio GCS"
+      },
+      "migratedItemsPrompt": {
+        "cancel": "No Eliminar",
+        "confirmDeletions": "Eliminar Seleccionados",
+        "message": "Antes de importar, encontramos algunos objetos sobrantes de una migración anterior que probablemente son duplicados. En la mayoría de los casos, es seguro eliminarlos todos.<br><strong>Sin embargo:</strong> si agregaste manualmente alguno de los objetos de abajo en Foundry <em>antes</em> de la migración, déjalos sin marcar — no se pueden recuperar una vez eliminados.<br>Marca los objetos que deseas eliminar, o marca todos si estás seguro de que ninguno fue agregado manualmente. Cualquier cosa sin marcar no volverá a aparecer como advertencia.",
+        "selectAll": "Seleccionar Todos",
+        "title": "¿Eliminar Objetos Migrados Huérfanos?"
+      },
+      "promptBodyPlan": {
+        "content": "<p>¿Quieres <strong>Mantener</strong> el plan corporal actual (<strong>{currentBodyPlan}</strong>), o <strong>Sobrescribir</strong> con el plan corporal del archivo de importación (<strong>{bodyplan}</strong>)?</p>",
+        "title": "¿Sobrescribir Plan Corporal Actual?"
+      },
+      "promptHPandFP": {
+        "content": "<p>¿Quieres <strong>Mantener</strong> los PG actuales (<strong>{currentHP}</strong>) y PF (<strong>{currentFP}</strong>), o <strong>Sobrescribir</strong> con los valores del archivo de importación (PG: <strong>{hp}</strong>, PF: <strong>{fp}</strong>)?</p>",
+        "title": "¿Sobrescribir PG y PF Actuales?"
+      },
+      "settings": {
+        "autoIgnoreImportQty": {
+          "hint": "Si se marca, establecerá automáticamente el indicador 'Preservar Cantidad' en el equipo cuando se actualice la Cantidad para preservar tanto la Cantidad como los Usos. NOTA: Esto no detecta automáticamente cambios en el campo 'Usos'. Si el recuento de 'Usos' debe preservarse, establece el indicador manualmente para ese equipo.",
+          "name": "Mantener Automáticamente la Cantidad y Usos del Equipo"
+        },
+        "displayPreserveQtyIndicator": {
+          "hint": "Si se marca, muestra un indicador en el equipo que tiene el indicador 'Preservar Cantidad'.",
+          "name": "Mostrar Indicador de 'Preservar Cantidad'"
+        },
+        "fileEncoding": {
+          "hint": "Selecciona la codificación de archivo a usar al importar archivos GCS o GCA. La mayoría de archivos usan codificación UTF-8, pero algunos archivos más antiguos pueden requerir codificación ISO-8859-1 (Latin-1).",
+          "name": "Codificación del Archivo de Importación",
+          "options": {
+            "ISO-8859-1": "ISO-8859-1 (Latin-1)",
+            "UTF-8": "UTF-8"
+          }
+        },
+        "hint": "Configuración para el Importador de Personajes GURPS",
+        "importGcsLibExtendedValues": {
+          "hint": "Si se marca, el sistema importará valores extendidos de Costo y Peso al importar bibliotecas de Equipo GCS.",
+          "name": "Importar Valores Extendidos del Compendio GCS"
+        },
+        "onlyTrustedPlayersAllowed": {
+          "hint": "Si se marca, el botón 'Importar' solo se mostrará en la hoja del personaje si el nivel de permiso del jugador es 'De Confianza', 'Asistente' o 'Maestro de Juego'.",
+          "name": "Solo Jugadores de Confianza Pueden Importar"
+        },
+        "overwriteBodyPlan": {
+          "ask": "Preguntar cada vez durante la importación",
+          "hint": "NOTA: El plan corporal actual siempre se lee del archivo durante la importación inicial.",
+          "name": "Sobrescribir Plan Corporal",
+          "no": "Nunca sobrescribir desde el archivo",
+          "yes": "Siempre sobrescribir desde el archivo"
+        },
+        "overwriteHPandFP": {
+          "ask": "Preguntar cada vez durante la importación",
+          "hint": "NOTA: Los PG y PF actuales siempre se leen del archivo durante la importación inicial.",
+          "name": "Sobrescribir PG y PF",
+          "no": "Nunca sobrescribir desde el archivo",
+          "yes": "Siempre sobrescribir desde el archivo"
+        },
+        "overwriteName": {
+          "hint": "Si se marca, el sistema reemplazará el nombre del Actor durante las importaciones. Establece en falso (desmarcado) si el nombre que usas en Foundry difiere de GCA/GCS y no quieres que se sobrescriba en cada importación.",
+          "name": "Sobrescribir Nombre desde Importación"
+        },
+        "overwritePortrait": {
+          "hint": "Si se marca, el sistema sobrescribirá la imagen de retrato del Actor durante las importaciones.",
+          "name": "Sobrescribir Imagen de Retrato"
+        },
+        "title": "Configuración del Importador",
+        "useBrowserImporter": {
+          "hint": "Si se marca, usa el explorador de archivos 'inteligente'. Este diálogo de importación puede recordar la ubicación del archivo de importación durante la sesión (lo que significa que si importas el personaje de nuevo, en la misma sesión, no tendrá que abrir el diálogo de Archivo).",
+          "name": "Usar Explorador de Archivos Inteligente"
+        }
+      }
+    },
+    "importErrorParsingXML": "Error al analizar XML: {text}.",
+    "importFantasyGroundUnsupported": "Ya no soportamos la importación de Fantasy Grounds.",
+    "importFile": "Archivo",
+    "importFileVersion": "La versión del archivo: '{version}'.",
+    "importGCA5ImprovedBlock": "Este archivo fue creado con una versión anterior de la exportación GCA5 que no calcula correctamente el bloqueo para armas de combate.",
+    "importGCA5ImprovedInventoryHandling": "Este archivo fue creado con una versión anterior de la exportación GCA5 que no maneja bien el texto del inventario.",
+    "importGCAAdvMods": "Este archivo fue creado con una versión anterior de la Exportación GCA que concatena los modificadores de Ventaja en el nombre de la Ventaja, lo que puede crear nombres de Ventaja muy largos (y afectar el diseño de la hoja del personaje).",
+    "importGCABadBlockForDB": "Este archivo fue creado con una versión anterior de la Exportación GCA que calcula incorrectamente el valor de Bloqueo para objetos con DB (ej. Escudos).",
+    "importGCAChildrenWeights": "Este archivo fue creado con una versión anterior de la Exportación GCA que calculaba incorrectamente los pesos del equipo que contiene otro equipo.",
+    "importGCAConditionalModifiers": "Este archivo fue creado con una versión anterior de la Exportación GCA que no exporta Modificadores Condicionales.",
+    "importGCANoBodyPlan": "Este archivo fue creado con una versión anterior de la Exportación GCA que no contiene el atributo 'Plan Corporal'. Intentaremos adivinar el Plan Corporal, pero podríamos equivocarnos.",
+    "importGCANoHideFlag": "Este archivo fue creado con una versión anterior de la Exportación GCA que ignoraba el indicador 'ocultar' para ventajas/desventajas/rarezas/perks.",
+    "importGCANoInnateRangedAndParent": "Este archivo fue creado con una versión anterior de la Exportación GCA que no exporta ataques a distancia innatos y no contiene el Atributo 'Padre' para equipo. Pueden faltar ataques a distancia o el equipo puede no aparecer en el contenedor correcto.",
+    "importGCANoMeleeIfAlsoRanged": "Este archivo fue creado con una versión anterior de la Exportación GCA que puede no exportar un ataque de combate si también existe en ataques a distancia (ej. Lanzas).",
+    "importGCANoParent": "Este archivo fue creado con una versión anterior de la Exportación GCA que no contiene los atributos 'Padre' para Ventajas/Desventajas, Habilidades o Hechizos.",
+    "importGCANoSanitizedEquipmentPageRefs": "Este archivo fue creado con una versión anterior de la Exportación GCA que puede poner incorrectamente ataques a distancia en la lista de combate y no sanitiza las referencias de página del equipo.",
+    "importGCANoSanitizeNotes": "Este archivo fue creado con una versión anterior de la Exportación GCA que no sanitiza las Notas ni los nombres de Ventajas/Desventajas.",
+    "importGenericError": "Ocurrió un error al importar {name}, {error}:{message}.",
+    "importMultiple": "Importación Múltiple",
+    "importMultipleActors": "Importar Múltiples Actores",
+    "importNoCharacterFormat": "No se puede detectar el formato 'personaje'. Lo más probable es que estés intentando importar el formato 'pnj'.",
+    "importNoJSONDetected": "No se puede analizar JSON. Tu archivo GCS parece estar corrupto.",
+    "importNoXMLDetected": "No se detectó XML. ¿Estás importando el archivo XML correcto?",
+    "importOldGCSFile": "Tu personaje fue guardado con una versión anterior de GCS, que no genera algunos atributos requeridos. Actualiza GCS a al menos la versión 4.36, abre y guarda el archivo del personaje, luego inténtalo de nuevo.",
+    "importOnImport": "Al Importar",
+    "importReplace": "Reemplazar",
+    "importSeeUsersGuide": "Consulta la Guía de Usuario para obtener detalles sobre dónde conseguir la última versión.",
+    "importSelected": "Importar Seleccionados",
+    "importSelectFileDescribeAction": "Esta importación:",
+    "importSelectFileItemAction": "Importará Equipo como: <span style='color: {equipColor}'><b>{equipType}</b>.</span>",
+    "importSelectFileNote": "NOTA: Esto no se puede deshacer.",
+    "importSelectFileOverwriteAction": "Sobrescribirá los datos de: <b>{name}</b>.",
+    "importSelectFileSource": "Datos de Origen",
+    "importSelectFileTitle": "Selecciona un archivo exportado desde GCS o GCA.",
+    "importSheetHint": "Importando datos para {name} usando {generator}. Por favor espera...",
+    "importSource": "Origen",
+    "importSuccessful": "{name} importado exitosamente.",
+    "importTooManyContainers": "Tienes demasiados niveles de contenedores. La importación de Foundry solo admite hasta 3 niveles de subcontenedores.",
+    "importTraitToClassicData": "Datos Clásicos",
+    "importTraitToFoundryItem": "Objeto de Foundry",
+    "importUpdate": "Actualizar",
+    "injury": "Lesión",
+    "invalidDice": "Expresión de dados inválida",
+    "invalidDiceText": "El texto proporcionado ({text}) no coincide con ningún patrón de dados.",
+    "invalidUserForDamageWarning": "Solo los DMs pueden Aplicar Daño.",
+    "isFreeAction": "Es una Acción Libre",
+    "item": {
+      "base": {
+        "FIELDS": {
+          "addToQuickRoll": {
+            "label": "Agregar al Tiro Rápido"
+          },
+          "bonuses": {
+            "label": "Bonos",
+            "placeholder": "Ingresa Fórmulas de 'Bono' En-el-Acto (una por línea) para modificar valores de atributos, habilidades, etc."
+          },
+          "checkotf": {
+            "label": "Tirada"
+          },
+          "consumeAction": {
+            "label": "Consumir Acción"
+          },
+          "duringotf": {
+            "label": "Durante"
+          },
+          "failotf": {
+            "label": "Fallo"
+          },
+          "itemModifiers": {
+            "label": "Modificadores de Objeto",
+            "placeholder": "Ingresa el Efecto del Modificador (uno por línea) usando el formato: <modificador> <#etiqueta> [<#etiqueta>...].\nEjemplos: -1 a DX #DX #combate, +2 Per #descansando, -1 a todos los tiros basados en DX #enfermedad #combate."
+          },
+          "modifierTags": {
+            "label": "Etiquetas de Modificador"
+          },
+          "notes": {
+            "label": "Notas"
+          },
+          "pageref": {
+            "label": "Referencia"
+          },
+          "passotf": {
+            "label": "Éxito"
+          },
+          "vtt_notes": {
+            "label": "Notas VTT"
+          }
+        }
+      },
+      "deleteContents": "También eliminar contenido (¡{count} objetos serán eliminados!)",
+      "deleteMessage": "¿Estás seguro de que quieres eliminar <strong>{name}</strong>?",
+      "equipment": {
+        "FIELDS": {
+          "categories": {
+            "label": "Etiquetas"
+          },
+          "cost": {
+            "label": "Valor"
+          },
+          "count": {
+            "label": "Cantidad"
+          },
+          "equipped": {
+            "label": "Equipado"
+          },
+          "ignoreImportQty": {
+            "label": "Preservar Cant."
+          },
+          "legalityclass": {
+            "label": "CL"
+          },
+          "maxuses": {
+            "label": "Usos Máximos"
+          },
+          "techlevel": {
+            "label": "NT"
+          },
+          "uses": {
+            "label": "Usos"
+          },
+          "weight": {
+            "label": "Peso"
+          }
+        }
+      },
+      "feature": {
+        "crChoices": {
+          "0": "Nunca resistir",
+          "6": "6 (Resiste Raramente)",
+          "7": "7 (Resiste Raramente; no estándar)",
+          "8": "8 (Resiste Raramente; no estándar)",
+          "9": "9 (Resiste Con Bastante Frecuencia)",
+          "10": "10 (Resiste Con Bastante Frecuencia; no estándar)",
+          "11": "11 (Resiste Con Bastante Frecuencia; no estándar)",
+          "12": "12 (Resiste Bastante Seguido)",
+          "13": "13 (Resiste Bastante Seguido; no estándar)",
+          "14": "14 (Resiste Bastante Seguido; no estándar)",
+          "15": "15 (Resiste Casi Siempre)",
+          "none": "Ninguno requerido"
+        },
+        "FIELDS": {
+          "cr": {
+            "label": "Tirada de Autocontrol"
+          },
+          "level": {
+            "label": "Nivel"
+          },
+          "points": {
+            "label": "Puntos"
+          },
+          "userdesc": {
+            "label": "Descripción del Usuario"
+          }
+        }
+      },
+      "skill": {
+        "FIELDS": {
+          "difficulty": {
+            "label": "Dificultad"
+          },
+          "importedLevel": {
+            "label": "Nivel"
+          },
+          "points": {
+            "label": "Puntos"
+          },
+          "relativelevel": {
+            "label": "NRH"
+          },
+          "specialization": {
+            "label": "Especialización"
+          },
+          "techlevel": {
+            "label": "NT"
+          }
+        },
+        "techniqueDefaultNote": "Predeterminado: {defaultName}"
+      },
+      "spell": {
+        "FIELDS": {
+          "casttime": {
+            "label": "Tiempo de Lanzamiento"
+          },
+          "class": {
+            "label": "Clase de Hechizo"
+          },
+          "college": {
+            "label": "Colegio"
+          },
+          "cost": {
+            "label": "Costo de Lanzamiento"
+          },
+          "difficulty": {
+            "label": "Dificultad"
+          },
+          "duration": {
+            "label": "Duración"
+          },
+          "importedLevel": {
+            "label": "Nivel"
+          },
+          "maintain": {
+            "label": "Costo de Mantenimiento"
+          },
+          "points": {
+            "label": "Puntos"
+          },
+          "relativelevel": {
+            "label": "NRH"
+          },
+          "resist": {
+            "label": "Resistir"
+          },
+          "techlevel": {
+            "label": "NT"
+          }
+        }
+      }
+    },
+    "itemBonusText": "Ingresa Fórmulas de 'Bono' En-el-Acto (una por línea) para modificar valores de atributos, habilidades, etc.",
+    "itemFeatures": "Características",
+    "itemModifiersText": "Ingresa el Efecto del Modificador (uno por línea) usando el formato: &lt;modificador&gt; &lt;#etiqueta&gt; [&lt;#etiqueta&gt;...].<br>Ejemplos: -1 a DX #DX #combate, +2 Per #descansando, -1 a todos los tiros basados en DX #enfermedad #combate.",
+    "knockback": "Retroceso, {amount} {unit}",
+    "knockbackCheck": "{name}: ¡tira {dx}, {acrobatics} o {judo} o cae!",
+    "language": "Idioma",
+    "lbs": "lbs",
+    "lessThan": "Menos que",
+    "level": "Nivel",
+    "liftingAndMovingThings": "Levantar y Mover Cosas",
+    "lighting": "Iluminación",
+    "location": "Ubicación",
+    "lowPainThresholdDoubles": "Umbral de Dolor Bajo <i>duplica</i> la penalización",
+    "majorWound": "Herida Mayor",
+    "majorWoundEffect": " para evitar Aturdimiento/Derribo.",
+    "majorWoundEffectLabel": "{name}: tira {htCheck} para evitar Aturdimiento/Derribo.",
+    "maneuver": "Maniobra",
+    "maneuverAim": "Apuntar",
+    "maneuverAllOutAim": "Apunte Total",
+    "maneuverAllOutAttack": "Ataque Total",
+    "maneuverAllOutAttackDetermined": "Ataque Total (Decidido)",
+    "maneuverAllOutAttackDouble": "Ataque Total (Doble)",
+    "maneuverAllOutAttackFeint": "Ataque Total (Finta)",
+    "maneuverAllOutAttackRanged": "Ataque Total (A Distancia Decidido)",
+    "maneuverAllOutAttackStrong": "Ataque Total (Fuerte)",
+    "maneuverAllOutAttackSuppressFire": "Ataque Total (Fuego de Supresión)",
+    "maneuverAllOutDefense": "Defensa Total",
+    "maneuverAllOutDefenseBlock": "Defensa Total (Bloqueo)",
+    "maneuverAllOutDefenseDodge": "Defensa Total (Esquiva)",
+    "maneuverAllOutDefenseDouble": "Defensa Total (Doble)",
+    "maneuverAllOutDefenseParry": "Defensa Total (Parada)",
+    "maneuverAttack": "Ataque",
+    "maneuverChangePosture": "Cambiar Postura",
+    "maneuverCommittedAim": "Apunte Comprometido",
+    "maneuverCommittedAttackRanged": "Ataque Comprometido (A Distancia)",
+    "maneuverConcentrate": "Concentrarse",
+    "maneuverDoNothing": "No Hacer Nada",
+    "maneuverEvaluate": "Evaluar",
+    "maneuverFeint": "Finta",
+    "maneuverMove": "Mover",
+    "maneuverMoveAttack": "Mover y Atacar",
+    "maneuverReady": "Preparar",
+    "maneuverWait": "Esperar",
+    "markedTab": "Habilidades y Hechizos",
+    "max": "Máx",
+    "maxActionsPerTurn": "Acciones por Turno",
+    "maxBlocksPerTurn": "Bloqueos por Turno",
+    "maximum": "Máximo",
+    "maxload": "Máx",
+    "maxMove": "Movimiento Máx",
+    "melee": "Combate",
+    "meleeAttack": "Ataque de Combate",
+    "meleeWeapons": "Armas de Combate",
+    "migration": {
+      "actor": {
+        "progressMessage": "Aplicando migraciones de Actor para la versión {version}, por favor espera...",
+        "successMessage": "Se aplicaron exitosamente las migraciones de Actor para la versión {version}."
+      },
+      "holderItem": {
+        "name": "Acciones y Modificadores Personales"
+      },
+      "item": {
+        "progressMessage": "Aplicando migraciones de Objeto para la versión {version}, por favor espera...",
+        "successMessage": "Se aplicaron exitosamente las migraciones de Objeto para la versión {version}."
+      },
+      "report": {
+        "message": "La migración del mundo ya está completa. Consulta la lista a continuación para más detalles.",
+        "title": "Informe de Migración"
+      }
+    },
+    "minDamageRule": "Daño Mín.:",
+    "minimum": "Mínimo",
+    "minimumDamageRule": "* — Regla de daño mínimo aplicada.",
+    "modifier": "Modificador",
+    "modifier3d6Image": "Cubo: Cambiar Imagen 3d6",
+    "modifier3d6ImageHint": "Selecciona la imagen a mostrar en el Cubo de Modificadores para el botón 3d6.",
+    "modifierAddRangeRuler": "Cubo: Agregar modificador de Regla de Distancia",
+    "modifierAddRangeRulerHint": "Si se marca, el sistema agregará automáticamente el último modificador de Distancia medido al Cubo de Modificadores.",
+    "modifierAffliction": "Aflicciones",
+    "modifierAfflictionCough": "-3 a tiradas de DX (Tosiendo)",
+    "modifierAfflictionCoughIQ": "-1 a tiradas de CI (Tosiendo)",
+    "modifierAfflictionDrowsy": "-2 a tiradas de CI/DX/CR (Somnoliento)",
+    "modifierAfflictionDrunk": "-2 a tiradas de CI/DX (Ebrio)",
+    "modifierAfflictionDrunkCR": "-4 a tiradas de CR (Ebrio)",
+    "modifierAfflictionEuphoria": "-3 a tiradas de CI/DX/CR (Euforia)",
+    "modifierAfflictionModerate": "-2 a tiradas de CI/DX/CR (Dolor Moderado)",
+    "modifierAfflictionModerateHPT": "-1 a tiradas de CI/DX/CR (Dolor Moderado c/UDA)",
+    "modifierAfflictionNausea": "-2 a todos los atributos (Nauseabundo)",
+    "modifierAfflictionNauseaDef": "-1 a las defensas activas (Nauseabundo)",
+    "modifierAfflictionRetch": "-5 a tiradas de CI/DX/Per (Arcadas)",
+    "modifierAfflictionSevere": "-4 a tiradas de CI/DX/CR (Dolor Severo)",
+    "modifierAfflictionSevereHPT": "-2 a tiradas de CI/DX/CR (Dolor Severo c/UDA)",
+    "modifierAfflictionTerrible": "-6 a tiradas de CI/DX/CR (Dolor Terrible)",
+    "modifierAfflictionTerribleHPT": "-3 a tiradas de CI/DX/CR (Dolor Terrible c/UDA)",
+    "modifierAfflictionTipsy": "-1 a tiradas de CI/DX (Achispado)",
+    "modifierAfflictionTipsyCR": "-2 a tiradas de CR (Achispado)",
+    "modifierAppearBelow": "Aparecerán en la lista de Modificadores Actuales a continuación.",
+    "modifierAutomatic": "Automático",
+    "modifierClickToAdd": "Haz clic en los modificadores de arriba y la derecha para agregar a tu próximo tiro.",
+    "modifierCommon": "Modificadores Comunes",
+    "modifierCover": "Cobertura",
+    "modifierCoverBehindFigure": "-4 para impactar (Detrás de figura de igual tamaño)",
+    "modifierCoverCrouch": "-2 para impactar (Agachado o Arrodillado, sin cobertura)",
+    "modifierCoverHalfExposed": "-3 para impactar (Cuerpo medio expuesto)",
+    "modifierCoverHead": "-5 para impactar (Solo cabeza)",
+    "modifierCoverHeadShoulder": "-4 para impactar (Cabeza y hombros)",
+    "modifierCoverLight": "-2 para impactar (Detrás de cobertura ligera)",
+    "modifierCoverPosture": "Cobertura y Postura",
+    "modifierCoverProne": "-4 para impactar (Tendido, sin cobertura)",
+    "modifierCoverProneHeadDown": "-7 para impactar (Tendido, algo de cobertura, cabeza abajo)",
+    "modifierCoverProneHeadUp": "-5 para impactar (Tendido, algo de cobertura, cabeza arriba)",
+    "modifierCoverThroughHex": "-4 para impactar (Disparando a través de hex ocupado)",
+    "modifierCurrentEffects": "Efectos Actuales",
+    "modifierCurrentModifiers": "Modificadores Actuales",
+    "modifierD6Image": "Cubo: Cambiar Imagen 1d6",
+    "modifierD6ImageHint": "Selecciona la imagen a mostrar en el Cubo de Modificadores para el botón 1d6.",
+    "modifierDangerous": "Peligroso",
+    "modifierEasy": "Fácil",
+    "modifierFavorable": "Favorable",
+    "modifierGrappling": "-4 a DX y habilidades basadas en DX (Trabado)",
+    "modifierHard": "Difícil",
+    "modifierHitLocation": "Ubicaciones de Impacto (si falla por 1, entonces *)",
+    "modifierImpossible": "Imposible",
+    "modifierJournalManager": "Diarios del Cubo de Modificadores",
+    "modifierJournals": "Lista de Diarios del Cubo de Modificadores",
+    "modifierLightDeepTwilight": "Crepúsculo profundo / luz de vela",
+    "modifierLightDim": "Fuego grande / antorcha / atardecer / amanecer",
+    "modifierLightFullMoon": "Luna llena",
+    "modifierLightHalfMoon": "Media luna",
+    "modifierLightMoonless": "Noche sin luna cubierta",
+    "modifierLightNone": "Oscuridad total",
+    "modifierLightQuarterMoon": "Cuarto de luna",
+    "modifierLightStarlight": "Luz de estrellas",
+    "modifierLightStarlightClouds": "Luz de estrellas a través de nubes",
+    "modifierLightTwilight": "Crepúsculo / luz de gas / linterna",
+    "modifierOthers": "Otros Modificadores",
+    "modifierPosition": "Cubo: Cambiar Posición",
+    "modifierPositionHint": "Selecciona la posición del Cubo de Modificadores.",
+    "modifierPositionLeft": "Izquierda, cerca de la barra de herramientas del usuario.",
+    "modifierPositionRight": "Derecha, cerca de la ventana de chat.",
+    "modifierPosture": "Postura",
+    "modifierPostureCrouchMelee": "-2 para impactar en combate cuerpo a cuerpo (Agachado)",
+    "modifierPostureCrouchRanged": "-2 para ser impactado en combate a distancia (Agachado/Arrodillado)",
+    "modifierPostureKneelDefend": "-2 a defensas activas (Arrodillado/Sentado)",
+    "modifierPostureKneelMelee": "-2 para impactar en combate cuerpo a cuerpo (Arrodillado/Sentado)",
+    "modifierPostureProneDefend": "-3 a defensas activas (Arrastrándose/Tumbado)",
+    "modifierPostureProneMelee": "-4 para impactar en combate cuerpo a cuerpo (Arrastrándose/Tumbado)",
+    "modifierPostureProneRanged": "-2 para ser impactado en combate a distancia (Sentado/Arrastrándose/Tumbado)",
+    "modifierQuality": "Calidad del Equipo",
+    "modifierQualityBest": "La Mejor Posible",
+    "modifierQualityFine": "Calidad Fina (20× costo)",
+    "modifierQualityGood": "Buena Calidad (5× costo)",
+    "modifierQualityImprovised": "Improvisado",
+    "modifierQualityImprovTech": "Improvisado (tecnológico)",
+    "modifierQualityMissing": "Componentes Faltantes/Dañados",
+    "modifierQualityNone": "Ninguna",
+    "modifierQualityNoneTech": "Ninguna (tecnológica)",
+    "modifierRange": "para distancia/velocidad {range} yds",
+    "modifierRangeMHClose": "Distancia corta (5 yds)",
+    "modifierRangeMHCloseDesc": "Puede tocar o golpear al enemigo",
+    "modifierRangeMHExtreme": "Distancia extrema (500+ yds)",
+    "modifierRangeMHExtremeDesc": "El rival es difícil de ver incluso; distancia de francotirador",
+    "modifierRangeMHLong": "Distancia larga (500 yds)",
+    "modifierRangeMHLongDesc": "Oponente fuera del alcance auditivo; distancia de rifle",
+    "modifierRangeMHMedium": "Distancia media (100 yds)",
+    "modifierRangeMHMediumDesc": "Solo puede gritar al enemigo; distancia de escopeta o SMG",
+    "modifierRangeMHShort": "Distancia corta (20 yds)",
+    "modifierRangeMHShortDesc": "Puede hablar con el enemigo; distancia de pistola o proyectil de fuerza muscular",
+    "modifierRangeTitle": "Velocidad / Distancia",
+    "modifiers": "Modificadores",
+    "modifiers_": {
+      "aim": "para impactar (Apuntando)",
+      "allOutAim": "al Apunte (Apunte Total)",
+      "allOutAimBraced": "al Apunte (Apunte Total: Firme)",
+      "aoaDetermined": "para impactar (AT: Decidido)",
+      "aoaRanged": "para impactar (AT: A Distancia)",
+      "aoaRangedDetermined": "para impactar (AT: Decidido)",
+      "aoaStrong": "de daño (AT: Fuerte)",
+      "aodIncreased": "a la defensa (DT: Aumentada)",
+      "blockRetreat": "a Bloqueo/Parada (Retirada)",
+      "committedAim": "al Apunte (Apunte Comprometido)",
+      "committedAimBraced": "al Apunte (Apunte Comprometido: Firme)",
+      "committedAimDefense": "a la defensa (Apunte Comprometido)",
+      "committedAttackRanged": "para impactar (Ataque Comprometido (A Distancia))",
+      "committedDetermined": "para impactar (Comprometido: Decidido)",
+      "committedRanged": "para impactar (Comprometido: A Distancia)",
+      "committedStrong": "de daño (Comprometido: Fuerte)",
+      "deceptive": "para impactar (Ataque Engañoso)",
+      "deceptiveDefense": "a la defensa (Ataque Engañoso)",
+      "defenseSide": "a la defensa (atacado de costado)",
+      "defensive": "de daño (Ataque Defensivo)",
+      "defensiveDefense": "a Parada/Bloqueo (Defensivo)",
+      "dodgeAcrobatic": "a la Esquiva (Acrobático, éxito)",
+      "dodgeAcrobaticFail": "a la Esquiva (Acrobático, fallo)",
+      "dodgeAndDrop": "a la Esquiva (Esquivar y Caer)",
+      "dodgeRetreat": "a la Esquiva (Retirada)",
+      "extraEffort": "Esfuerzo Extra",
+      "fencingRetreat": "a la Parada (Esgrima, etc. Retirada)",
+      "feverishDefense": "a la defensa (Febril)",
+      "heroicCharge": "Carga Heroica",
+      "mightyBlow": "de daño (Golpe Poderoso)",
+      "moveAndAttack": "para impactar (Mover y Atacar)",
+      "moveAndAttackBulkPenaltyApplied": "Penalización de bulto aplicada (Mover y Atacar)",
+      "moveAndAttackRangedBulk": "o Bulto del arma, lo que sea peor",
+      "onTargetAiming": "En el Blanco",
+      "pdf": {
+        "aim": "B364",
+        "allOutAim": "PY77:25",
+        "allOutAimBraced": "PY77:25",
+        "aoaDetermined": "B365",
+        "aoaRanged": "PY77:26",
+        "aoaRangedDetermined": "B365",
+        "aoaStrong": "B365",
+        "aodIncreased": "B366",
+        "blockRetreat": "B377",
+        "committedAim": "PY77:25",
+        "committedAimBraced": "PY77:25",
+        "committedAimDefense": "PY77:25",
+        "committedAttackRanged": "PY77:26",
+        "committedDetermined": "MA99",
+        "committedRanged": "PY77:26",
+        "committedStrong": "MA99",
+        "deceptive": "B369",
+        "deceptiveDefense": "B369",
+        "defenseSide": "B390",
+        "defensive": "MA100",
+        "defensiveDefense": "MA100",
+        "dodgeAcrobatic": "B374",
+        "dodgeAcrobaticFail": "B374",
+        "dodgeAndDrop": "B377",
+        "dodgeRetreat": "B377",
+        "extraEffort": "B357",
+        "fencingRetreat": "B377",
+        "feverishDefense": "B357",
+        "heroicCharge": "MA131",
+        "mightyBlow": "MA131",
+        "moveAndAttack": "B365",
+        "parryRear": "B390",
+        "popup": "B390",
+        "rapidStrike": "B370",
+        "riposte": "MA124",
+        "shieldDB": "B374",
+        "telegraphic": "MA113"
+      },
+      "popup": "para impactar (Ataque Emergente)",
+      "rapidStrike": "para impactar (Ataque Rápido)",
+      "riposte": "para atacar o defender (Riposte)",
+      "shieldDB": "a la defensa (BE de Escudo)",
+      "telegraphic": "para impactar (Ataque Telegráfico)"
+    },
+    "modifiersBlindAttack": "-10 para impactar (Ciego)",
+    "modifiersBlindDefend": "-4 en Defensas Activas (Ciego)",
+    "modifierScaleLarge": "Grande (110%)",
+    "modifierScaleNormal": "Normal (100%)",
+    "modifierScaleSmall": "Pequeño (90%)",
+    "modifierScaleVeryLarge": "Muy Grande (120%)",
+    "modifierScaleVerySmall": "Muy Pequeño (80%)",
+    "modifierSelectJournalButton": "Seleccionar Diarios del Cubo",
+    "modifierSelectJournals": "Cubo: Entradas de Diario",
+    "modifierSelectJournalsAside": "Solo los diarios 'estándar' (HTML) son válidos para ver en el Cubo de Modificadores. Los PDFs, por ejemplo, no se pueden mostrar.",
+    "modifierSelectJournalsHint": "Selecciona las entradas de Diario a mostrar en el Cubo de Modificadores.",
+    "modifierSelectJournalsTitle": "Seleccionar Diarios del Cubo de Modificadores",
+    "modifierSendTo": "Enviar Cubo de Modificadores a:",
+    "modifierShowOnMouseOver": "Cubo: Mostrar al pasar el ratón",
+    "modifierShowOnMouseOverHint": "Si se marca, la ventana de Modificadores se muestra como un tooltip: cuando el ratón pasa sobre el Cubo de Modificadores. Si se desactiva, puedes abrir el Tooltip haciendo clic izquierdo en el Cubo de Modificadores. Debes reiniciar Foundry para que este ajuste tenga efecto.",
+    "modifierSize": "Modificador de Tamaño",
+    "modifierSizeDetail": "Diferencia en Combate; Absoluto en A Distancia",
+    "modifierSizeEntry": "{SM} Tamaño {us} ({metric})",
+    "modifiersSize": "{sm} por Modificador de Tamaño",
+    "modifiersSizeDifference": "{sm} por diferencia de Modificador de Tamaño (fuente {sourceSM}, objetivo {targetSM})",
+    "modifierStatus": "Estado",
+    "modifierStatusAffliction": "Estado y Aflicciones",
+    "modifierStatusShock1": "-1 a tiradas de CI/DX (Choque 1)",
+    "modifierStatusShock2": "-2 a tiradas de CI/DX (Choque 2)",
+    "modifierStatusShock3": "-3 a tiradas de CI/DX (Choque 3)",
+    "modifierStatusShock4": "-4 a tiradas de CI/DX (Choque 4)",
+    "modifierStatusStunned": "-4 a defensas activas (Aturdido)",
+    "modifierSuffocate": "Pierde 1 PF por turno por sofocación.",
+    "modifierTabAside": "Usa la Configuración del Sistema para definir las Entradas de Diario a mostrar aquí.",
+    "modifierTags": "Etiquetas de Modificador",
+    "modifierTaskDifficulty": "Dificultad de la Tarea",
+    "modifierTitle": "Modificadores",
+    "modifierToHit": "para impactar",
+    "modifierTrivial": "Trivial",
+    "modifierUnfavorable": "Desfavorable",
+    "modifierUserEntered": "O puedes ingresar un modificador",
+    "modifierVeryEasy": "Muy Fácil",
+    "modifierVeryFavorable": "Muy Favorable",
+    "modifierVeryHard": "Muy Difícil",
+    "modifierVeryUnfavorable": "Muy Desfavorable",
+    "modifierViewScale": "Cubo: Factor de Escala",
+    "modifierViewScaleHint": "Usa esto para aumentar o disminuir el tamaño del Cubo de Modificadores.",
+    "move": "Movimiento",
+    "moveConstant": "{value} {unit}/seg ({reason})",
+    "moveFull": "Completo",
+    "moveHalf": "Mitad ({reason})",
+    "moveMode": "Modo",
+    "moveModeAir": "Aire",
+    "moveModeEditorTitle": "Modos de Movimiento para {name}",
+    "moveModeGround": "Tierra",
+    "moveModeOther": "Otro...",
+    "moveModeSpace": "Espacio",
+    "moveModeSpiderClimb": "Trepar como Araña",
+    "moveModeType": "Tipo de Movimiento",
+    "moveModeWater": "Agua",
+    "moveNone": "Ninguno ({reason})",
+    "moveOneThird": "×1/3 ({reason})",
+    "moveStep": "Paso ({reason})",
+    "moveToCarriedEquipment": "Mover a Equipo Portado",
+    "moveToOtherEquipment": "Mover a Otro Equipo",
+    "moveTwoSteps": "Paso o dos pasos ({reason})",
+    "moveTwoThirds": "×2/3 ({reason})",
+    "multiplyAfterRoll": "Después del tiro:",
+    "name": "Nombre",
+    "night": "Noche",
+    "noActionsAvailable": "No hay acciones disponibles.",
+    "noCheckRequired": "No se requiere tirada",
+    "NoCombatTag": "Etiqueta Fuera de Combate",
+    "noFile": "¡No se eligió ningún archivo!",
+    "noModifier": "Sin Modificador",
+    "none": "Ninguno",
+    "normal": "Normal",
+    "notAffected": "{name} no se ve afectado.",
+    "noTargetSelected": "Ningún Objetivo seleccionado",
+    "notes": "Notas",
+    "noUserForDamageWarning": "No puedes aplicar daño a un objetivo usando daño para otro usuario.",
+    "noViableSkill": "Este personaje no tiene una habilidad viable (nivel efectivo 3 o superior) que pueda tirarse",
+    "number": "Número",
+    "ok": "OK",
+    "oneHandLift": "Levantamiento con Una Mano",
+    "otf": {
+      "costNotApplied": "El costo ({points} energía) no se aplicó a ningún recurso.",
+      "costNotAppliedNoActor": "El costo ({points} energía) no se aplicó. Sin actor seleccionado.",
+      "costNotAppliedNoPools": "No se encontró reserva de recursos válida para aplicar el costo ({points} puntos).",
+      "resourceNotFound": "Recurso '{resource}' no encontrado en este actor.",
+      "selectEnergyPool": "Seleccionar Reserva de Energía",
+      "selectEnergyPoolDetail": "Selecciona el recurso al que aplicar el costo:",
+      "trackerNotFound": "Rastreador '{tracker}' no encontrado en este actor."
+    },
+    "OTFormulasEvent": "Fórmulas OTF",
+    "otherTab": "Tiradas",
+    "overridden": "anulado",
+    "parentItemTooltip": "<div>De {type}:<br>{name}</div>",
+    "parry": "Parada",
+    "parryBasePenalty": "Penalización base de Parada",
+    "parrybonus": "Bono de Parada",
+    "pass": "Éxito",
+    "pdf": {
+      "code": "Código de Libro PDF",
+      "codePlaceholder": "Código PDF: (ej., 'B' o 'MA')",
+      "offset": "Desplazamiento de Página",
+      "offsetChangeHint": "Cuando cambias este valor, el visor se ajusta para que la página mostrada corresponda al desplazamiento ingresado (ej., página 5).",
+      "offsetPlaceholder": "Desplazamiento: (ej., -5, 0 o 2)",
+      "settings": {
+        "basicPDFs": "PDF(s) del Set Básico",
+        "basicPDFsCombined": "Set Básico Combinado (código 'B')",
+        "basicPDFsHint": "Selecciona 'Combinado' o 'Separados' y usa los códigos PDF asociados. Nota: Si seleccionas 'Separados', el PDF de Campañas del Set Básico debería abrirse en la página 340 durante la prueba.",
+        "basicPDFsSeparate": "Separados (Personajes, 'B'; Campañas, 'BX')",
+        "button": "Configuración de PDF",
+        "hint": "Configura cómo se manejan los PDFs.",
+        "name": "PDFs",
+        "openFirst": "Abrir el primer PDF encontrado",
+        "openFirstHint": "Si se marca, el sistema abrirá el primer PDF encontrado cuando se ingresen múltiples PDFs. Si no se marca, el sistema abrirá todos los PDFs ingresados."
+      }
+    },
+    "pdfCrippling": "B420",
+    "pdfDamageRoll": "B378",
+    "pdfGrappling": "B370",
+    "pdfHazardCoughing": "B428",
+    "pdfHazardDrowsy": "B428",
+    "pdfHazardDrunk": "B428",
+    "pdfHazardEuphoria": "B428",
+    "pdfHazardNausea": "B428",
+    "pdfHazardPain": "B428",
+    "pdfHazardRetching": "B429",
+    "pdfHazardTipsy": "B428",
+    "pdfHPT": "B59",
+    "pdfKnockback": "B378",
+    "pdfKnockdownStun": "B420",
+    "pdfLPT": "B142",
+    "pdfMajorWound": "B420",
+    "pdfPageReference": "Ref. de Pág.",
+    "pdfPostureCrawling": "B551",
+    "pdfPostureCrouching": "B551",
+    "pdfPostureKneeling": "B551",
+    "pdfPostureLyingDown": "B551",
+    "pdfPostureSitting": "B551",
+    "pdfReeling": "B419",
+    "pdfRef": "Ref",
+    "pdfShieldRush": "B372",
+    "pdfShock": "B419",
+    "pdfSuffocation": "B436",
+    "pdfTempAttribPenalties": "B421",
+    "pdfTired": "B426",
+    "pdfVisibility": "B394",
+    "pointDamage": "<span class='roll-value'>{damage}</span> punto de daño",
+    "points": "Puntos",
+    "pointsAdvantages": "Ventajas",
+    "pointsAttributes": "Atributos",
+    "pointsDamage": "<span class='roll-value'>{damage}</span> puntos de daño.",
+    "pointsDisadvantages": "Desventajas",
+    "pointsQuirks": "Rarezas",
+    "pointsRace": "Raza",
+    "pointsSkills": "Habilidades",
+    "pointsSpells": "Hechizos",
+    "pointsTotal": "Puntos Totales",
+    "pointsUnspent": "Sin Gastar",
+    "pseudo": {
+      "FIELDS": {
+        "name": {
+          "label": "Nombre"
+        },
+        "type": {
+          "label": "Tipo"
+        }
+      },
+      "note": {
+        "FIELDS": {
+          "markdown": {
+            "label": "Texto"
+          },
+          "reference": {
+            "label": "Referencia"
+          },
+          "reference_highlight": {
+            "label": "Referencia Destacada"
+          },
+          "title": {
+            "label": "Título"
+          }
+        }
+      }
+    },
+    "publicRollAsDefault": "Tiro Público como predeterminado",
+    "quantity": "Cantidad",
+    "quickNotes": {
+      "examples": "<b>Ejemplos:</b> [+1 por escudo]<br>[Esquiva +3 retirada]<br>[Esquiva +2 Defensa Febril *Costo 1PF]",
+      "save": "Guardar",
+      "text": "Ingresa una Nota Rápida (¡un gran lugar para poner una fórmula En-el-Acto!):",
+      "title": "Notas Rápidas"
+    },
+    "quickRoll": "Tiro Rápido",
+    "quickRollMenu": "Menú de Tiro Rápido",
+    "quickRollShowAttacks": "Mostrar Tiros de Ataque",
+    "quickRollShowAttributes": "Mostrar Tiros de Atributo",
+    "quickRollShowDefenses": "Mostrar Tiros de Defensa",
+    "quickRollShowMarked": "Mostrar Habilidades y Hechizos Seleccionados de la Hoja del Personaje",
+    "quickRollShowOther": "Mostrar Tiradas de Verificación Secundarias",
+    "quickRollUse": "Activar/Desactivar Botón de Tiro Rápido",
+    "random": "Aleatorio",
+    "range": "Alcance",
+    "ranged": "A Distancia",
+    "rangedAttack": "Ataque a Distancia",
+    "rangedWeapons": "Armas a Distancia",
+    "rangeToTarget": "{modifier} de alcance al objetivo {name} ({distance} {unit})",
+    "rateOfFire": "Cadencia de Fuego",
+    "rcl": "Rtr",
+    "reach": "Alcance",
+    "reaction": "Reacción",
+    "reactionModifier": {
+      "FIELDS": {
+        "modifier": {
+          "label": "Modificador"
+        },
+        "situation": {
+          "label": "Situación"
+        }
+      }
+    },
+    "reactionMods": "Modificadores de Reacción",
+    "recalculate": "Recalcular",
+    "reference": "Referencia",
+    "removedShockEffect": "Efecto de Choque eliminado del objetivo.",
+    "removeItem": "Eliminar Objeto",
+    "removeproneEffect": "Efecto Derribado eliminado del objetivo.",
+    "reset": "Limpiar Configuración",
+    "resolve": "Resolver",
+    "resolveDamage": {
+      "combine": "Combinar",
+      "multiple": "Múltiples tiros",
+      "prompt": "¿Qué quieres hacer con este tiro de Daño?",
+      "quantity": "Número de tiros:",
+      "sendTo": "Enviar OtF a...",
+      "title": "Resolver Tiro de Daño"
+    },
+    "resolveDiceRoll": "¿Qué Tiraste?",
+    "resourcesModsTab": "Recursos y Modificadores",
+    "resourceTracker": {
+      "create": "Agregar Rastreador de Recursos",
+      "current": "Valor Actual",
+      "edit": {
+        "addTemplate": "Agregar Plantilla de Rastreador de Recursos",
+        "alias": "Alias",
+        "clear": "Limpiar Configuración del Rastreador",
+        "clearColor": "Limpiar Color",
+        "clone": "Clonar una Plantilla",
+        "damageType": "Usar como Tipo de Daño",
+        "enforceMax": "Aplicar Máximo",
+        "enforceMin": "Aplicar Mínimo",
+        "invalidAlias": "Alias inválido [{alias}].<br/>Solo se permiten caracteres alfabéticos y numéricos, más ('+', '_' y '-').",
+        "isAccumulator": "Es Acumulador",
+        "maximum": "Máximo",
+        "minimum": "Mínimo",
+        "noColor": "(ninguno)",
+        "setColor": "Establecer Color",
+        "templates": "Gestionar Plantillas de Rastreador de Recursos",
+        "threshold": "Umbral",
+        "thresholds": "Umbrales",
+        "title": "Editor de Rastreador de Recursos",
+        "useBreakpoints": "Usar Puntos de Interrupción"
+      },
+      "gcsInitialValueUnsupported": "Los Personajes GCS no soportan actualmente Rastreadores de Recursos con valores iniciales. Esto puede añadirse en una actualización futura. Rastreador: \"{name}\", valorInicial: {initialValue}",
+      "initializationError": "Error al inicializar el Rastreador de Recursos \"{name}\" — no se pudo establecer valorInicial ({initialValue}): {error}",
+      "placeholder": "Recurso",
+      "template": {
+        "add": "Haz clic en el botón '+' para agregar una plantilla.",
+        "button": "Ver y Editar Rastreadores",
+        "hint": "Usa esto para crear, reutilizar y aplicar automáticamente Rastreadores de Recursos a las hojas del personaje.",
+        "initializer": "Inicializador",
+        "name": "Nombre de Plantilla",
+        "title": "Gestor de Rastreadores de Recursos"
+      },
+      "trackerNamed": "Rastreador de Recursos '{name}'",
+      "trackerNotFound": "Rastreador de recursos '{key}' no encontrado.",
+      "undefined": "Ninguno Definido",
+      "view": {
+        "decrement": "-1",
+        "increment": "+1",
+        "reset": "Reiniciar",
+        "title": "Rastreadores de Recursos"
+      }
+    },
+    "rof": "CdF",
+    "roll": "Tirar",
+    "rollableTableName": "Nombre de la Tabla de Tirada a usar",
+    "rollCriticalFailure": "¡Fallo Crítico!",
+    "rollCriticalSuccess": "¡Éxito Crítico!",
+    "rolled": "Tirado",
+    "rollFail17": "17 y 18 siempre fallan.",
+    "rollFailure": "¡Fallo!",
+    "rollForMe": "Tirar por mí",
+    "rollJustMadeIt": "Justo lo logró",
+    "rollMadeBy": "Lo logró por {margin}.",
+    "rollMissedBy": "Falló por {margin}.",
+    "rollNewTarget": "Nuevo Objetivo: ({target})",
+    "rollSuccess": "¡Éxito!",
+    "rollTotal": "Tirado ({rolls}) = {rtotal}.",
+    "rollVs": "Tirar contra",
+    "rsl": "NRH",
+    "rt": "TR",
+    "runningShoveAndKnockOver": "Empujón Corriendo y Derribar",
+    "saveRollforEffect": "Tirada Salvadora para evitar efectos",
+    "selectTargetForDamageWarning": "Suelta el daño en el/los objetivo(s), o suéltalo en el canvas para aplicar al/los token(s) objetivo(s).",
+    "selectTargetForEquipmentWarning": "Suelta el equipo en una única ficha objetivo",
+    "selectToken": "Seleccionar Ficha",
+    "sendToChat": "Enviar al chat",
+    "sendToEveryone": "Enviar a Todos",
+    "setManeuver": "Establecer Maniobra",
+    "settingActiveEffects": "Activar Efectos Activos",
+    "settingAddCumulativeParryPenalties": "Agregar Automáticamente Penalizaciones de Parada Acumulativas",
+    "settingAddShockAtTurn": "Cuándo agregar efecto de Choque",
+    "settingAllowAfterMaxActions": "Permitir Acción después de Acciones Máximas",
+    "settingAllowRollBasedOnManeuver": "Permitir Tiro basado en Maniobra",
+    "settingAllowRollsBeforeCombatStart": "Permitir Tiros antes del Inicio del Combate",
+    "settingAllowTargetedRolls": "Verificar Objetivos antes del tiro",
+    "settingCalculateEnc": "Actor: Calcular Encumbramiento",
+    "settingColorSheetMenuHint": "Configuración de Color de Hoja del Personaje",
+    "settingColorSheetMenuTitle": "Color de Hoja del Personaje",
+    "settingCombatInitiative": "Combate: Fórmula de Secuencia de Turnos",
+    "settingConvertRanged": "Actor: Convertir rango 'x2/x5' a yardas",
+    "settingDamageCondInjury": "Daño: Lesión Condicional",
+    "settingEnhancedInput": "Actor: Entradas numéricas mejoradas",
+    "settingFlagItems": "Actor: Mostrar Indicador de Objeto de Foundry",
+    "settingFlagUserCreated": "Actor: Mostrar Indicador Creado por Usuario",
+    "settingGlobalItems": "Actor: Mostrar Indicador de Objeto Global de Foundry",
+    "settingHintActiveEffects": "Permite al DM crear y aplicar Efectos Activos",
+    "settingHintAddCumulativeParryPenalties": "Si se marca, el sistema agregará automáticamente penalizaciones de parada acumulativas al tiro para las fichas seleccionadas en la Verificación de Acciones Máximas.",
+    "settingHintAddShockAtTurn": "Cuándo agregar efecto de Choque al objetivo.",
+    "settingHintAllowAfterMaxActions": "Si se marca, el sistema permitirá al jugador realizar una acción después del máximo de acciones por ronda.",
+    "settingHintAllowRollBasedOnManeuver": "Durante el combate, el sistema verificará que el tiro sea válido según la maniobra seleccionada.",
+    "settingHintAllowRollsBeforeCombatStart": "Si se marca, el sistema permitirá al jugador realizar tiros antes de que comience el combate.",
+    "settingHintAllowTargetedRolls": "Si se marca, el sistema verificará si hay un objetivo seleccionado antes de realizar un tiro.",
+    "settingHintCalculateEnc": "Si se marca, el nivel de Encumbramiento se establecerá automáticamente según el equipo portado (y no podrás cambiar el nivel de Encumbramiento manualmente). Si se desactiva, puedes cambiar el nivel de Encumbramiento haciendo clic en el nuevo nivel.",
+    "settingHintCombatInitiative": "Esta es la fórmula utilizada por Foundry para determinar el orden de turnos en combate. Advertencia: ¡Solo cambia esto si sabes lo que estás haciendo! No verificamos la corrección de este campo. Déjalo en blanco para restablecer la fórmula a la Secuencia de Combate GURPS, B362.",
+    "settingHintConvertRanged": "Si se marca, los campos de rango en la forma 'xN' o 'xN/xM' se multiplicarán por la FU del personaje para determinar el rango real de un arma arrojadiza. NOTA: Esto solo ocurre durante la importación.",
+    "settingHintDamagCondInjury": "De Pyramid #3/120: La Lesión Condicional elimina los Puntos de Golpe del juego como base para el seguimiento de heridas, y los reemplaza con un método basado en efectos para las lesiones.",
+    "settingHintEnhancedInput": "Si se marca, ciertos campos (como PF) mostrarán botones de acceso directo de suma y resta cuando tengan el foco.",
+    "settingHintFlagItems": "Si se marca, aparecerá un pequeño ícono después del equipo (y características) creado desde Objetos de Foundry",
+    "settingHintFlagUserCreated": "Si se marca, aparecerá un pequeño ícono después del equipo creado por el usuario (no importado) y antes de las notas creadas por el usuario.",
+    "settingHintGlobalItems": "Si se marca, aparecerá un pequeño ícono después del equipo (y características) soltado desde Compendios de Foundry",
+    "settingHintManeuverDetail": "Determina qué maniobra es visible para los jugadores que no son el DM o el Propietario. 'Detalle Completo': ej., mostrar \"Ataque Total (Decidido)\" y \"Finta\" exactamente como se muestran. 'Sin Finta': Como 'Detalle Completo' excepto que Finta se muestra como \"Ataque\". 'General': Como 'Completo, Sin Finta' excepto que la opción no se muestra — ej., Ataque Total (Fuerte) se muestra como \"Ataque Total\". (El DM y el Propietario siempre ven Detalle Completo.)",
+    "settingHintManeuverMove": "Establecer la maniobra (en combate) actualiza el valor de movimiento del actor al máximo permitido por la maniobra (ej., ninguno, paso, mitad, etc.).",
+    "settingHintManeuverVisibility": "Determina quién puede ver el ícono de maniobra de una ficha.",
+    "settingHintModifyDicePlusAdds": "Si se marca, el sistema usará la regla opcional 'Modificar Dados + Bonus' cuando agregues modificadores del cubo para tiros de daño, según B269.",
+    "settingHintMookGenerator": "Editar los valores iniciales del Generador de Secuaces",
+    "settingHintOnTarget": "Agrega maniobras adicionales relacionadas con el apunte del artículo On Target de Pyramid #3/120.",
+    "settingHintPlayerBlindRoll": "Si no se marca, mantener presionada la tecla MAYÚS al hacer un tiro realizará un Tiro Personal (solo tú puedes verlo, sin importar quién seas). Si se marca, cuando los jugadores mantengan presionada la tecla MAYÚS, se convertirá en un Tiro Ciego (los DMs aún obtienen un Tiro Personal).",
+    "settingHintPlayerChatPrivate": "Si se marca, la mayoría de los comandos de chat (ej. /hp, /fp, /qty, etc.) se mostrarán como un susurro al jugador (en lugar de un mensaje Fuera de Personaje). Si confías en tus jugadores y no quieres ver el chat lleno de sus comandos de chat, activa esto.",
+    "settingHintPortraitHPTinting": "Mostrar superposición de tinte rojo en los retratos del personaje según la pérdida de PG en la hoja Moderna.",
+    "settingHintQtyItems": "Si se marca, aparecerá un pequeño ícono después del equipo donde se guardará la CANT/Cantidad durante las importaciones",
+    "settingHintRangeStrategy": "Establece la fórmula a usar para calcular las penalizaciones de alcance.",
+    "settingHintRemoveUnequipped": "Si se marca, los nombres de los ataques Cuerpo a Cuerpo y A Distancia se compararán con la lista de equipo portado, y si se encuentra una coincidencia de nombre, el ataque solo se listará si el equipo está Equipado",
+    "settingHintSheetDetail": "Selecciona la hoja del personaje que quieres como la 'Hoja Rápida'. Se mostrará en la barra de título, y el usuario puede hacer clic entre ella y la hoja 'Completa (GCS)'",
+    "settingHintShowChatReeling": "Cuando se marca, los cambios en el estado de Tambaleando o Cansado de cualquier actor se mostrarán como un mensaje de chat.",
+    "settingHintShowConfirmationRoll": "Si se marca, el sistema mostrará un diálogo para confirmar el tiro antes de realizarlo.",
+    "settingHintShowDebugInfo": "Para los diálogos de Documento (Actores, Objetos, etc.), muestra el ícono de depuración en el título de la ventana. Al presionarlo, mostrará los datos del documento en un diálogo.",
+    "settingHintShowDiceRoller": "Si se marca, el sistema mostrará el acceso directo al lanzador de dados a la derecha del Cubo de Modificadores. Debes recargar para que este cambio tenga efecto.",
+    "settingHintShowItemImage": "El sistema mostrará la imagen del Objeto de Foundry en la hoja del Actor para los rasgos seleccionados.",
+    "settingHintShowNavigation": "Si se marca, se mostrará un pie de navegación en la hoja de personaje GCS completa.",
+    "settingHintShowReadMe": "Si se marca, el sistema mostrará el archivo 'LÉAME' cada vez que se detecte un cambio de versión.",
+    "settingHintStatusReeling": "Si se marca, Tambaleando (1/2 movimiento/esquiva) y Cansado (1/2 movimiento/esquiva/FU) se activarán automáticamente cuando el personaje baje de 1/3 PG y 1/3 PF.",
+    "settingHintStatusWhisper": "Si se marca, los mensajes de Efectos de Estado (Choque, Herida Mayor, etc.) se enviarán al propietario del objetivo como un Susurro. De lo contrario, se enviarán como un mensaje Fuera de Personaje (FdP) a todos.",
+    "settingHintTokenToolsShowEffectMods": "Si se marca, se mostrará el Popup de Modificadores de Efecto.",
+    "settingHintUseEquipped": "Si se marca, SOLO los objetos 'Equipados' se incluirán en el cálculo del peso. Si no se marca, todos los objetos de la lista de Equipo se incluyen en el cálculo del peso. Desmarcar permite a los jugadores usar el indicador 'Equipado' para indicar que han soltado el objeto.",
+    "settingHintUseFoundryItems": "Si se marca, el sistema creará Objetos de Foundry para el inventario del jugador, características, habilidades y hechizos al importar hojas de personaje. Al importar la hoja de personaje desde GCA/GCS por primera vez, el sistema creará cada objeto intentando preservar la información actual del jugador en la hoja del actor, incluyendo nombre, imagen, cantidad, usos y notas. Esta puede ser una operación muy larga, especialmente para hojas GCS.",
+    "settingHintUseMaxActions": "Activa para que el sistema verifique, para cada ficha seleccionada, si el jugador está usando más acciones de las permitidas por turno. Todos los Combatientes = el sistema verificará solo las fichas en el rastreador de combate; Todas las Fichas = el sistema verificará todas las fichas en la escena.",
+    "settingHintUsePhysicalDice": "Si se activa, a los jugadores DE CONFIANZA se les pedirá ingresar todos los valores de tirada de dados. Esto permite a los jugadores tirar dados físicos e ingresar los resultados en Foundry.",
+    "settingHintUseQuickRolls": "Cuando se activa, el sistema mostrará un botón de Tiro Rápido en el Rastreador de Combate.",
+    "settingHintUseQuintessence": "Si se activa, agrega el atributo de Quintaesencia, y los Puntos de Quintaesencia estarán disponibles para usarse como Rastreador de Recursos.",
+    "settingHintUseTaggedModifiers": "Si se marca, el sistema agregará automáticamente los modificadores etiquetados al tiro.",
+    "settingLabelMookGenerator": "Editor de Valores Predeterminados del Generador de Secuaces",
+    "settingLabelShowItemImage": "Seleccionar Rasgos para mostrar Imágenes",
+    "settingLabelUseQuickRolls": "Configuración de Tiro Rápido",
+    "settingLabelUseTaggedModifiers": "Configuración de Modificadores Etiquetados",
+    "settingManeuverDetail": "Detalles de Visibilidad de Maniobra",
+    "settingManeuverDetailFull": "Detalle Completo",
+    "settingManeuverDetailGeneral": "General",
+    "settingManeuverDetailNoFeint": "Sin Finta",
+    "settingManeuverEveryone": "Todos",
+    "settingManeuverGMOnly": "Solo DM y Propietario",
+    "settingManeuverMove": "Maniobra Actualiza Movimiento",
+    "settingManeuverNoOne": "Nadie",
+    "settingManeuverVisibility": "Visibilidad del Ícono de Maniobra",
+    "settingModifyDicePlusAdds": "Usar Regla Modificar Dados + Bonus",
+    "settingMookGenerator": "Valores Predeterminados del Generador de Secuaces",
+    "settingNoEditAllowed": "No se Permite Editar el Equipo",
+    "settingNoEquipAllowedHint": "Advertencia: estás intentando editar un equipo que no está vinculado a un Objeto de Foundry cuando el ajuste 'Usar Objetos de Foundry para Equipo' está activo. Por favor, reimporta la hoja del personaje para recrear el Objeto de Foundry para este actor.",
+    "settingNoItemAllowedHint": "Advertencia: estás intentando editar un Objeto importado cuando el ajuste 'Usar Objetos de Foundry para Equipo' está desactivado. Por favor, reimporta la hoja del personaje para recrear el Equipo para este actor.",
+    "settingOnTarget": "Usar Modificadores de Distancia \"En el Blanco\"",
+    "settingPlayerBlindRoll": "Activar Tiros Ciegos para Jugadores",
+    "settingPlayerChatPrivate": "Comandos de chat del jugador privados",
+    "settingPortraitHPTinting": "Tinte de PG en Retrato",
+    "settingQtyItems": "Actor: Mostrar Indicador de CANT/Cantidad guardada",
+    "settingRangeStrategy": "Combate: Estrategia de modificador de alcance",
+    "settingRangeStrategyRangeBands": "Bandas de Alcance de Cazadores de Monstruos 2",
+    "settingRangeStrategyStandard": "Tabla de Tamaño y Velocidad/Alcance",
+    "settingRangeStrategyTenPenalties": "-1 por cada 10 hexes/yardas/metros",
+    "settingRemoveUnequipped": "Actor: Eliminar armas No Equipadas de las listas de Combate y A Distancia",
+    "settings": {
+      "physicalDiceTooltip": "ej: 1,2,3 o 6"
+    },
+    "settingSheetDetail": "Hoja Rápida",
+    "settingShowChatReeling": "Mostrar Estado Tambaleando/Cansado en el Chat",
+    "settingShowConfirmationRollDialog": "Mostrar Diálogo de Confirmación de Tiro",
+    "settingShowDebugInfo": "Mostrar Información de Depuración del Documento",
+    "settingShowDiceRoller": "IU: Mostrar 3D6 (junto al Cubo de Modificadores)",
+    "settingShowItemImage": "Mostrar Imagen del Objeto en la hoja del Personaje",
+    "settingShowNavigation": "Actor: Mostrar navegación",
+    "settingShowReadMe": "Mostrar 'LÉAME' al cambiar versión",
+    "settingStatusReeling": "Efectos de Estado: Tambaleando y Cansado Automáticos",
+    "settingStatusWhisper": "Efectos de Estado: Susurro",
+    "settingTokenToolsShowEffectMods": "Mostrar Popup de Modificadores de Efecto",
+    "settingUseEquipped": "Actor: Peso basado en 'Equipado'",
+    "settingUseFoundryItems": "Usar Objetos de Foundry para Datos del Jugador",
+    "settingUseMaxActions": "Usar Verificación de Acciones Máximas",
+    "settingUsePhysicalDice": "Usar Dados Físicos",
+    "settingUseQuickRolls": "Usar Botón de Tiro Rápido",
+    "settingUseQuintessence": "Usar Quintaesencia",
+    "settingUseTaggedModifiers": "Usar Modificadores Etiquetados",
+    "severities": "Gravedades",
+    "severity": "Gravedad",
+    "share": "Compartir",
+    "sheet": {
+      "actions": {
+        "title": "Acciones"
+      },
+      "conditionalModifiers": {
+        "title": "Modificadores Condicionales"
+      },
+      "details": {
+        "base": "Detalles Generales",
+        "equipment": "Detalles de Equipo",
+        "meleeAttack": "Detalles de Ataque de Combate",
+        "note": "Detalles de Nota",
+        "otf": "OTFs",
+        "rangedAttack": "Detalles de Ataque a Distancia",
+        "skill": "Detalles de Habilidad",
+        "spell": "Detalles de Hechizo",
+        "title": "Detalles",
+        "trait": "Detalles de Rasgo"
+      },
+      "encumbrance": {
+        "dodge": "Esquiva",
+        "level": "Nivel",
+        "maxLoad": "Carga Máxima",
+        "move": "Movimiento"
+      },
+      "gcs": {
+        "copyright": "GCS tiene derechos de autor 1998-2026 de Richard A. Wilkes. Todos los derechos reservados."
+      },
+      "gcsActorSheet": {
+        "basicDamage": "Daño Básico",
+        "conditionalModifiers": "Condiciones",
+        "description": "Descripción",
+        "encumbrance": "Encumbramiento, Movimiento y Esquiva",
+        "equipmentCarried": "Equipo Portado ({weight}; {value})",
+        "equipmentOther": "Otro Equipo ({weight}; {value})",
+        "identity": "Identidad",
+        "label": "Hoja de Actor GCS",
+        "legalityClass": "CL",
+        "maneuverStatus": "Maniobra / Estado",
+        "miscellaneous": "Miscelánea",
+        "moving": "Levantar y Mover Cosas",
+        "notes": "Notas",
+        "points": "Pts",
+        "pointTotals": "{total} Puntos",
+        "poolAttributes": "Atributos de Reserva",
+        "poolBase": "Base",
+        "portrait": "Retrato",
+        "pound": "{value} lb",
+        "primaryAttributes": "Atributos Primarios",
+        "reactionModifiers": "Reacciones",
+        "secondaryAttributes": "Atributos Secundarios",
+        "skillLevel": "NH",
+        "skillRelativeLevel": "NRH",
+        "skills": "Habilidades / Técnicas",
+        "spells": "Hechizos",
+        "techLevel": "NT",
+        "traits": "Rasgos",
+        "weaponAccuracy": "Pre",
+        "weaponBlock": "Bloqueo",
+        "weaponBulk": "Bulto",
+        "weaponDamage": "Daño",
+        "weaponMelee": "Armas de Combate",
+        "weaponParry": "Parada",
+        "weaponRange": "Alcance",
+        "weaponRanged": "Armas a Distancia",
+        "weaponReach": "Alcance",
+        "weaponRecoil": "Retroceso",
+        "weaponROF": "CdF",
+        "weaponShots": "Disparos",
+        "weaponST": "FU",
+        "weaponUsage": "Uso"
+      },
+      "hitLocation": {
+        "dr": "RD",
+        "location": "Ubicación",
+        "roll": "Tirada"
+      },
+      "modernItemSheet": {
+        "label": "Hoja de Objeto Moderna"
+      },
+      "modernSheet": {
+        "label": "Hoja Moderna"
+      },
+      "modifiers": {
+        "title": "Modificadores"
+      },
+      "npcSheet": {
+        "label": "Hoja de PNJ"
+      },
+      "personal": {
+        "created": "Creado",
+        "identity": "Identidad",
+        "miscellaneous": "Miscelánea",
+        "modified": "Modificado",
+        "name": "Nombre",
+        "options": "Opciones",
+        "player": "Jugador",
+        "portrait": "Retrato",
+        "tab": "Personal",
+        "title": "Título"
+      },
+      "reactionModifiers": {
+        "title": "Modificadores de Reacción"
+      },
+      "toggleMode": "Alternar Modo Jugar/Editar"
+    },
+    "shiftSlightly": "Desplazar Ligeramente",
+    "shock": "Choque",
+    "shock1": "Choque 1",
+    "shock2": "Choque 2",
+    "shock3": "Choque 3",
+    "shock4": "Choque 4",
+    "shockPenalty": "Penalización (–{amount}) a DX y CI.",
+    "shockPenaltyNextTurnOnly": "{name}: –{modifier} a DX y CI solo en el próximo turno.",
+    "shots": "Disparos",
+    "shoveAndKnockOver": "Empujar y Derribar",
+    "showFlightMove": "Mostrar Movimiento/Movimiento de Vuelo",
+    "showQuestion": "¿Mostrar?",
+    "skill": "Habilidad",
+    "skillAcrobatics": "Acrobacia",
+    "SkillDXA": "DX/P",
+    "SkillDXE": "DX/F",
+    "SkillDXH": "DX/D",
+    "SkillDXVH": "DX/MD",
+    "SkillHTA": "SL/P",
+    "SkillHTE": "SL/F",
+    "SkillHTH": "SL/D",
+    "SkillHTVH": "SL/MD",
+    "SkillIQA": "CI/P",
+    "SkillIQE": "CI/F",
+    "SkillIQH": "CI/D",
+    "SkillIQVH": "CI/MD",
+    "skillJudo": "Judo",
+    "skillLevel": "Nivel de Habilidad",
+    "SkillPerA": "Per/P",
+    "SkillPerE": "Per/F",
+    "SkillPerH": "Per/D",
+    "SkillPerVH": "Per/MD",
+    "SkillQNA": "QN/P",
+    "SkillQNE": "QN/F",
+    "SkillQNH": "QN/D",
+    "SkillQNVH": "QN/MD",
+    "skillRelativeLevel": "Nivel Relativo",
+    "skills": "Habilidades",
+    "skillsTab": "Habilidades",
+    "skillType": "Tipo de Habilidad",
+    "SkillWillA": "Vol/P",
+    "SkillWillE": "Vol/F",
+    "SkillWillH": "Vol/D",
+    "SkillWillVH": "Vol/MD",
+    "sl": "NH",
+    "slamAOAStrong": "Ataque Total (Fuerte)",
+    "slamCalculator": "Calculadora de Embestida",
+    "slamDFRPGRules": "Usar las reglas de Dungeon Fantasy RPG",
+    "slamForShieldDB": "BE de Escudo (Arremetida con Escudo)",
+    "slamRelativeVelocity": "Velocidad Relativa",
+    "slams": "embestidas",
+    "slamShieldDB": "BE de Escudo",
+    "slamVelocity": "Hexes movidos",
+    "sortAscending": "Ordenar Ascendente",
+    "sortContentsAscending": "Ordenar Contenido (Ascendente)",
+    "sortContentsDescending": "Ordenar Contenido (Descendente)",
+    "sortDescending": "Ordenar Descendente",
+    "speed": "Velocidad",
+    "spell": "Hechizo",
+    "spellClass": "Clase",
+    "spellCollege": "Colegio",
+    "spellCost": "Costo",
+    "spellDifficulty": "Dificultad",
+    "spellDuration": "Duración",
+    "spellMaintain": "Mantener",
+    "spellResist": "Resistido Por",
+    "spells": "Hechizos",
+    "spellsTab": "Hechizos",
+    "spellTime": "Tiempo de Lanzamiento",
+    "splitDrValue": "Valor de RD",
+    "splitQuantity": "Dividir Cantidad",
+    "spoken": "Hablado",
+    "statsTab": "Estadísticas",
+    "status": {
+      "Agony": "Agonía",
+      "Bad-1": "-1 Dificultad Abstracta Básica",
+      "Bad-2": "-2 Dificultad Abstracta Básica",
+      "Bad-3": "-3 Dificultad Abstracta Básica",
+      "Bad-4": "-4 Dificultad Abstracta Básica",
+      "Bad-5": "-5 Dificultad Abstracta Básica",
+      "Bad+1": "+1 Dificultad Abstracta Básica",
+      "Bad+2": "+2 Dificultad Abstracta Básica",
+      "Bad+3": "+3 Dificultad Abstracta Básica",
+      "Bad+4": "+4 Dificultad Abstracta Básica",
+      "Bad+5": "+5 Dificultad Abstracta Básica",
+      "Bleed": "Sangrando",
+      "Blind": "Cegado",
+      "Burn": "Quemando",
+      "Collapse": "Colapso",
+      "Coughing": "Tosiendo",
+      "Counter1": "Contador 1",
+      "Counter10": "Contador 10",
+      "Counter2": "Contador 2",
+      "Counter3": "Contador 3",
+      "Counter4": "Contador 4",
+      "Counter5": "Contador 5",
+      "Counter6": "Contador 6",
+      "Counter7": "Contador 7",
+      "Counter8": "Contador 8",
+      "Counter9": "Contador 9",
+      "Crawling": "Arrastrándose",
+      "Crouch": "Agachado",
+      "Dead": "Muerto",
+      "Deaf": "Sordo",
+      "DeathCheck1": "Verificación #1",
+      "DeathCheck2": "Verificación #2",
+      "DeathCheck3": "Verificación #3",
+      "DeathCheck4": "Verificación #4",
+      "Destroyed": "Destruido",
+      "Disable": "Deshabilitado",
+      "Disarmed": "Desarmado",
+      "Drowsy": "Somnoliento",
+      "Drunk": "Ebrio",
+      "Euphoria": "Euforia",
+      "Exhausted": "Fatigado",
+      "Fall": "Cayendo",
+      "Fly": "Volando",
+      "Grapple": "Trabado",
+      "Healthy": "Sano",
+      "Kneel": "Arrodillado",
+      "MildPain": "Dolor Leve",
+      "ModeratePain2": "Dolor Moderado (-2)",
+      "ModeratePain3": "Dolor Moderado (-3)",
+      "Nauseated": "Nauseabundo",
+      "Pin": "Inmovilizado",
+      "Poison": "Envenenado",
+      "Prone": "Tumbado",
+      "Reeling": "Tambaleando",
+      "Rested": "Descansado",
+      "Retching": "Con Arcadas",
+      "SeverePain4": "Dolor Severo (-4)",
+      "SeverePain5": "Dolor Severo (-5)",
+      "Silence": "Silenciado",
+      "Sit": "Sentado",
+      "Sleep": "Durmiendo",
+      "Sprint": "Corriendo",
+      "Standing": "De Pie",
+      "Stealth": "Sigiloso/Ocultándose",
+      "StunnedMental": "Aturdimiento Mental",
+      "Suffocate": "Sofocándose",
+      "TerriblePain": "Dolor Terrible",
+      "Tipsy": "Achispado",
+      "Tired": "Cansado",
+      "Tiring": "Agotándose",
+      "Unconscious": "Inconsciente",
+      "Wait": "Esperando",
+      "Wounded": "Herido"
+    },
+    "step": "Paso",
+    "stepOrTwo": "Paso o Dos",
+    "submit": "Enviar",
+    "suffersAMajorWound": "{name} sufre una Herida Mayor",
+    "suffersHeadVitalsWound": "{name} fue golpeado en {location} con una penalización de Choque.",
+    "suffersKnockback": "{name} sufre Retroceso ([PDF:{pdfref}]) de {yards} {unit}.",
+    "swimmerFlyer": "Nadador / Volador",
+    "swing": "Golpe Básico",
+    "tabSheet": {
+      "tabs": "PESTAÑAS"
+    },
+    "taggedModifierTips": "Agrega cada etiqueta separada por una coma. Usa solo letras, números y guiones bajos. Ej.: patrulla, enfermedad, maná_bajo, etc.",
+    "target": "Objetivo",
+    "targetedModifiers": "Modificadores Dirigidos",
+    "targeting": "Apuntando a {name}",
+    "targetModifiers": "Objetivo:",
+    "tastesmell": "Gusto/Olfato",
+    "temporaryCombatTag": "Etiqueta de Combate Temporal",
+    "thresholds": "Umbrales",
+    "thrust": "Empuje Básico",
+    "tired": "Cansado",
+    "TL": "NT",
+    "toAimBonus": "Bono al Apunte",
+    "toAimPenalty": "Penalización al Apunte",
+    "toDefenseBonus": "a Bono de Defensa",
+    "toDefensePenalty": "a Penalización de Defensa",
+    "toHitBonus": "Bono para Impactar",
+    "toHitPenalty": "Penalización para Impactar",
+    "tokenToolsActiveEffects": "Gestor de Efectos Activos",
+    "tokenToolsTitle": "Abrir Popup de Modificadores de Efecto",
+    "toParryBonus": "Bono a la Parada",
+    "toParryPenalty": "Penalización a la Parada",
+    "torso": "Torso",
+    "touch": "Tacto",
+    "traits": {
+      "alteredTimeRate": "Tasa de Tiempo Alterada",
+      "combatParalysis": "Parálisis de Combate",
+      "combatReflexes": "Reflejos de Combate",
+      "cowardice": "Cobardía",
+      "daredevil": "Temerario",
+      "fearfulness": "Miedoso",
+      "fearlessness": "Intrépido",
+      "higherPurpose": "Propósito Superior",
+      "unfazeable": "Imperturbable",
+      "weaponMaster": "Maestro de Armas",
+      "xenophilia": "Xenofilia"
+    },
+    "transferAll": "Transferir Todo",
+    "TransferTo": "Transferir a {name}",
+    "twoHandLift": "Levantamiento con Dos Manos",
+    "update": "Actualizar",
+    "usage": "Uso",
+    "useBreakpoints": "Usar Puntos de Interrupción",
+    "userModInputPlaceholder": "Ej.: +1 Suerte del DM #impacto #daño #tirada #combate",
+    "userModsRefreshed": "Mods de Usuario del Actor actualizados",
+    "useSpellCollegeAsTag": "Usar Colegio de Hechizo como Etiquetas",
+    "veryEasyRoll": "Muy buena oportunidad",
+    "veryHardRoll": "Oportunidad muy difícil",
+    "vision": "Visión",
+    "warn": "Advertir",
+    "warning": "ADVERTENCIA",
+    "weight": "Peso",
+    "whenApplicable": "Cuando aplique",
+    "whisperToNames": "Susurrar a {names}",
+    "willConsumeAction": "Consumirá una acción.",
+    "written": "Escrito",
+    "yard": "yarda",
+    "yards": "yardas",
+    "years": "años",
+    "youDoNotHavePermission": "No tienes permiso para hacer eso."
+  },
+  "TYPES": {
+    "Action": {
+      "meleeAttack": "Ataque de Combate",
+      "rangedAttack": "Ataque a Distancia"
+    },
+    "Actor": {
+      "character": "Personaje"
+    },
+    "Item": {
+      "equipment": "Equipo",
+      "feature": "Rasgo",
+      "skill": "Habilidad",
+      "spell": "Hechizo"
+    }
+  }
+}

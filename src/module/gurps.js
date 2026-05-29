@@ -559,7 +559,7 @@ if (!globalThis.GURPS) {
     async chat({ action, actor, event }) {
       // @ts-expect-error - Foundry VTT API not fully typed
       const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(
-        KeyboardManager.MODIFIER_KEYS.CONTROL
+        foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL
       )}\n${action.orig}`
 
       if (action.overridetxt) {
@@ -2486,7 +2486,7 @@ const handleChatLogDrop = function (event) {
     const cmd = buildCommandFromDragData(data)
     let messageData = {
       user: game.user.id,
-      type: CONST.CHAT_MESSAGE_STYLES.OOC,
+      style: CONST.CHAT_MESSAGE_STYLES.OOC,
       content: cmd,
     }
 
