@@ -124,9 +124,10 @@ export default class GurpsWiring {
   static #createPdfLinkMenu(link) {
     const options = {
       fixed: true,
+      jQuery: false,
     }
 
-    if (link instanceof HTMLElement) options.JQuery = false
+    if (!(link instanceof HTMLElement)) link = link[0]
 
     let users = GURPS.LastActor?.getOwners()?.filter(user => !user.isGM) || []
     let names = users.map(user => user.name).join(' ')

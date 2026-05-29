@@ -4,9 +4,6 @@ import { addManeuverMenu } from './maneuver-menu.js'
 import { addQuickRollButton, addQuickRollListeners } from './quick-roll-menu.js'
 
 export async function renderCombatTracker(_app: any, element: HTMLElement, _options: any, _context: any) {
-  // @ts-expect-error: FVTT v12 compatibility
-  if ((game.release?.generation ?? 12) < 13) element = element[0] // FVTT v12 compatibility
-
   if (!element.classList.contains('bound')) {
     element.classList.add('bound')
 
