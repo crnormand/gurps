@@ -569,7 +569,11 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       element => element.children.length === 0 && /\[([^[\]]+)\]/.test(element.innerText)
     )
 
-    elements.push(this.element.querySelector<HTMLElement>('.quick-notes')!)
+    const quickNotesElement = this.element.querySelector<HTMLElement>('.quick-notes')
+
+    if (quickNotesElement) {
+      elements.push(quickNotesElement)
+    }
 
     for (const otfElement of elements) {
       const otfTextMatches = [...otfElement.innerText.matchAll(/\[([^[\]]+)\]/gi)]
