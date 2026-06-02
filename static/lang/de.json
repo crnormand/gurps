@@ -1254,7 +1254,7 @@
           "passotf": {
             "label": "Bestanden"
           },
-          "vtt_notes": {
+          "vttNotes": {
             "label": "VTT-Notizen"
           }
         }

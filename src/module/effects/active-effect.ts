@@ -1,6 +1,6 @@
 export class GurpsActiveEffect<SubType extends ActiveEffect.SubType> extends ActiveEffect<SubType> {
   /**
-   * On Actor.applyEffect: Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM.
+   * On Actor.applyEffect: Applies only to changes that have mode: CONST.ACTIVE_EFFECT_CHANGE_TYPES.custom.
    */
   static _apply(
     actor: Actor.Implementation | Actor.Implementation,

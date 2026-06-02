@@ -752,7 +752,7 @@ export default class ApplyDamageDialog extends Application {
     let msgData = {
       content: message,
       author: game.user.id,
-      type: CONST.CHAT_MESSAGE_STYLES.OOC,
+      style: CONST.CHAT_MESSAGE_STYLES.OOC,
     }
 
     if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_WHISPER_STATUS_EFFECTS)) {
@@ -850,7 +850,7 @@ export default class ApplyDamageDialog extends Application {
         user: game.user.id,
         speaker: speaker,
         content: html,
-        type: CONST.CHAT_MESSAGE_STYLES.OTHER,
+        style: CONST.CHAT_MESSAGE_STYLES.OTHER,
       }
 
       if (!publicly) {

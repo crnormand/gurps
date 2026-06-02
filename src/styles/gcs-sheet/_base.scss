@@ -246,6 +246,7 @@ body {
       background-color: var(--gcs-color-input-bg);
       color: var(--gcs-color-input-fg);
       box-shadow: none;
+      text-overflow: ellipsis;
 
       &:disabled {
         background-color: transparent;
@@ -310,6 +311,7 @@ body {
   tfoot {
     th {
       @include gcs-header;
+      font-size: var(--gcs-font-size-content);
     }
 
     justify-content: space-evenly;
@@ -331,6 +333,7 @@ body {
 
     tr {
       background-color: var(--gcs-color-surface-bg);
+      font-size: var(--gcs-font-size-content);
     }
 
     td + td {
@@ -366,5 +369,13 @@ section[data-application-part='reactions'] {
     thead {
       border: 1px solid var(--gcs-color-section-border);
     }
+  }
+}
+
+/* ---------------------------------------- */
+
+.gcs-point-totals {
+  input[type='number'] {
+    text-align: right;
   }
 }

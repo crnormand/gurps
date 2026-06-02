@@ -44,7 +44,7 @@
   }
 
   td.gcs-item-damage {
-    @include gcs-col(3rem, 4rem);
+    @include gcs-col(3rem, 5rem);
     text-align: center;
   }
 
@@ -56,6 +56,12 @@
 
   td.gcs-item-reach {
     @include gcs-col(2rem, 3rem);
+    text-align: center;
+  }
+
+  td.gcs-item-range,
+  td.gcs-item-shots,
+  td.gcs-item-rof {
     text-align: center;
   }
 

@@ -154,8 +154,8 @@ export function parseForRollOrDamage(str, overridetxt) {
   // Straight roll 4d, 2d-1, etc. Is "damage" if it includes a damage type. Allows "!" suffix to indicate minimum of 1.
   // Supports:  2d+1x3(5), 4dX2(0.5), etc
   // Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
-  str = str.toString() // convert possible array to single string
   if (str instanceof Set) str = Array.from(str)
+  str = str.toString() // convert possible array to single string
 
   let array = str.match(DAMAGE_REGEX)
 
