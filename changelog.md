@@ -9,6 +9,47 @@
 
 ### Bugfixes
 
+## Release 0.18.18 05/27/2026
+
+## Features
+
+### Bugfixes
+
+- /ra command not working in 0.18.17 \#2728.
+- Fixed RollMode for ChatMessages in v14 \#2654.
+- /mook UI "Damage" Field Requires "integer" Despite Expecting Dice Format \#2731.
+- /mook Parses but Fields For Weapons/Skills/Spells/Advantages All Empty \#2732.
+- Adjust css styling for glinkmod classes on mook sheet \#2745.
+- Fix SM entry on mook sheet.
+
+## Release 0.18.17 05/11/2026
+
+## Features
+
+- Add Spanish language support \#2723.
+
+### Bugfixes
+
+- Removed Beta warning.
+- No viable skill found in chain of actions \#2659.
+  This fixes the issue where the system would not find any viable skill from an OTF like "DX-5|S:Broadsword|S:Two-handed Sword-3"...
+- /sound chat command broken in v14 \#2705.
+- Remove @combatmod error message \#2693.
+- Multiple RoF resolution fails \#2715.
+- You can't apply damage wiht the new update in v13 \#2679.
+- Modern sheet issues \#2650.
+
+## Release 0.18.16 04/26/2026
+
+### Bugfixes
+
+- Rework Russian lang file entries to fit available space in the Modern sheet.
+- Allow the system to be installed in Foundry v14.
+- Missing icons on damage calculation sheet (Foundry v14). \#2628
+- Bucket player names color incorrect in dark mode. \#2626
+- GM Send formula and copy to chat broken in Foundry v14. \#2644
+- Errors on GCS character file import in Foundry v14. \#2629
+
 ## Release 0.18.15 03/04/2026 03/04/2026
 
 ### Bugfixes

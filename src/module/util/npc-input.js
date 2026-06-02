@@ -86,6 +86,7 @@ export class NpcInput extends FormApplication {
       title: 'Mook Generator',
     })
   }
+
   getData(options) {
     let data = super.getData(options)
 
@@ -105,14 +106,47 @@ export class NpcInput extends FormApplication {
     super.activateListeners(html)
 
     html.find('.ms-attr-pair input[data-key="speed"]').inputFilter(value => digitsAndDecimalOnly.test(value))
-    html.find('.ms-attr-pair input:not([data-key="speed"])').inputFilter(value => digitsOnly.test(value))
-    html.find('input[type=text]').on('change paste keyup', event => {
+
+    html
+      .find('.ms-attr-pair input:not([data-key="speed"]):not([data-key="damage"])')
+      .inputFilter(value => digitsOnly.test(value))
+
+    html.find('input[type=text]:not([data-key="damage"])').on('change paste keyup', event => {
       const element = event.currentTarget
       const key = element.dataset.key
 
       if (key) {
         this.mook[key] = element.value
         this.setTesting()
+      }
+    })
+
+    html.find('input[type=text][data-key="damage"]').on('paste keyup', event => {
+      const element = event.currentTarget
+      const key = element.dataset.key
+
+      if (key) {
+        // If the input is valid, update the mook. If not, don't update but also don't set testing to false since they might just be in the middle of typing.
+        if (this.isValidDamageInput(element.value)) {
+          this.mook[key] = element.value
+          this.setTesting()
+        }
+      }
+    })
+
+    html.find('input[type=text][data-key="damage"]').on('change', event => {
+      const element = event.currentTarget
+      const key = element.dataset.key
+
+      if (key) {
+        if (this.isValidDamageInput(element.value)) {
+          this.mook[key] = element.value
+          this.setTesting()
+        } else {
+          ui.notifications.warn(game.i18n.localize('GURPS.mookGeneratorInvalidDamageInput'))
+          // Reset the input to the last valid value.
+          element.value = this.mook[key] || '1d/2d'
+        }
       }
     })
 
@@ -133,9 +167,11 @@ export class NpcInput extends FormApplication {
         $(html).find('#npc-input-name').focus()
       }
     })
+
     html.find('#npc-input-import').on('click keydown', event => {
       if (event.type == 'click' || (event.type == 'keydown' && event.which == 13)) this.importStatBlock(event)
     })
+
     this.createButton = html.find('#npc-input-create')[0]
 
     const frame = html[0]?.querySelector('.ms-mook-generator')
@@ -146,6 +182,16 @@ export class NpcInput extends FormApplication {
         if (event.originalEvent) event = event.originalEvent
         this.applyDrop(JSON.parse(event.dataTransfer.getData('text/plain')))
       })
+  }
+
+  // Make it match two GURPS die rolls separated by a "/".
+  isValidDamageInput(value) {
+    // A GURPS die roll: one or more digits, followed by "d", with an optional modifier of the format +/- followed by digits.
+    const gurpsDieRollPattern = /\d+d(?:[+\-–]\d+)?/
+    const normalizedValue = value.trim()
+    const gurpsDamagePattern = new RegExp(`^${gurpsDieRollPattern.source}(?:\\s*/\\s*${gurpsDieRollPattern.source})?$`)
+
+    return gurpsDamagePattern.test(normalizedValue)
   }
 
   applyDrop(data) {
@@ -269,7 +315,7 @@ export class NpcInput extends FormApplication {
     data.FP.value = +mook.fp
 
     data.basicmove.value = parseInt(mook.move)
-    data.basicspeed.value = mook.speed
+    data.basicspeed.value = parseFloat(mook.speed)
     data.frightcheck = mook.will
     if (mook.check) data.frightcheck = mook.check // Imported "fright check"
 

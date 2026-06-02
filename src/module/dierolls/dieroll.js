@@ -694,12 +694,18 @@ async function _doRoll({
   }
 
   let isCtrl = false
-  let creatOptions = {}
+  let createOptions = {}
 
   try {
-    isCtrl =
-      !!optionalArgs.event &&
-      game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL)
+    const hasEvent = !!optionalArgs.event
+    const hasControlModifier = hasEvent && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+
+    // On macOS, allow the Option key as an additional blind-roll shortcut without removing the existing Ctrl/Command shortcut.
+    if (navigator.platform.includes('Mac')) {
+      isCtrl = hasControlModifier || optionalArgs.event?.altKey
+    } else {
+      isCtrl = hasControlModifier
+    }
   } catch {
     // Keyboard manager may not be available during initialization
   }
@@ -715,10 +721,11 @@ async function _doRoll({
     messageData.blind = true
   }
 
-  creatOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
+  createOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
+  ChatMessage.applyRollMode(messageData, createOptions.rollMode)
 
   messageData.sound = CONFIG.sounds.dice
-  ChatMessage.create(messageData, creatOptions)
+  ChatMessage.create(messageData, createOptions)
 
   if (isTargeted && !!optionalArgs.action) {
     let users = actor.isSelf ? [] : actor.getOwners()

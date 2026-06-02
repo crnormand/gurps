@@ -109,6 +109,15 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
   .glinkmodplus,
   .glinkmodminus {
     color: var(--ms-text);
+    background-color: var(--ms-accent-light);
+  }
+
+  .glinkmodplus {
+    background-color: var(--ms-modifier-positive);
+  }
+
+  .glinkmodminus {
+    background-color: var(--ms-modifier-negative);
   }
 }
 
