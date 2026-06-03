@@ -6,7 +6,6 @@ import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '@module/otf
 import { OtfActionType } from '@module/otf/types.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
-import { findAdDisad, findAttack, findSkill, findSkillSpell, findSpell } from '@module/util/find-item.js'
 import { HandlebarsUtil } from '@module/util/handlebars.js'
 import HitFatPoints from '@module/util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
@@ -49,8 +48,6 @@ import { colorGurpsActorSheet } from './color-character-sheet/color-character-sh
 import { Combat } from './combat/index.js'
 import { CombatTracker } from './combat-tracker/index.js'
 import { Compendium } from './compendium/index.js'
-// @deprecated in favour of new conditional injury module.
-// import GurpsConditionalInjury from './conditional-injury.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { Dev } from './dev/index.js'
@@ -76,6 +73,7 @@ import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { UI } from './ui/index.js'
+import { Util } from './util/index.js'
 
 export let GURPS = undefined
 
@@ -133,6 +131,7 @@ if (!globalThis.GURPS) {
     Scripting,
     Token,
     UI,
+    Util,
   }
   Object.values(GURPS.modules).forEach(mod => mod.init())
 
@@ -1491,12 +1490,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.performAction = performAction
-
-  GURPS.findAdDisad = findAdDisad
-  GURPS.findAttack = findAttack
-  GURPS.findSkillSpell = findSkillSpell
-  GURPS.findSkill = findSkill
-  GURPS.findSpell = findSpell
 
   GURPS.arrayToObject = arrayToObject
   GURPS.objectToArray = objectToArray

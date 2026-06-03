@@ -16,6 +16,7 @@ import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-docume
 import { ResourceTrackerModule as ModuleResourceTracker } from '@module/resource-tracker/index.js'
 import { Token as ModuleToken } from '@module/token/index.js'
 import { UI as ModuleUI } from '@module/ui/index.js'
+import { Util as ModuleUtil } from '@module/util/index.js'
 
 export {}
 
@@ -54,6 +55,7 @@ declare global {
       ResourceTracker: typeof ModuleResourceTracker
       Token: typeof ModuleToken
       UI: typeof ModuleUI
+      Util: typeof ModuleUtil
     }
 
     /* ---------------------------------------- */
