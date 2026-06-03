@@ -1167,6 +1167,10 @@
         "useBrowserImporter": {
           "hint": "Wenn aktiviert, verwenden Sie den 'intelligenten' Dateibrowser. Dieser Importdialog kann sich den Speicherort Ihrer Importdatei während der Sitzung merken (was bedeutet, dass Sie den Charakter bei erneutem Importieren in derselben Sitzung nicht den Dateibrowser öffnen müssen).",
           "name": "Intelligenten Dateibrowser verwenden"
+        },
+        "useVerboseImporterLog": {
+          "hint": "Wenn aktiviert, wird während des Imports ein ausführliches Importprotokoll in der Konsole ausgegeben.",
+          "name": "Ausführliches Importprotokoll verwenden"
         }
       }
     },

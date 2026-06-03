@@ -1167,6 +1167,10 @@
         "useBrowserImporter": {
           "hint": "Si se marca, usa el explorador de archivos 'inteligente'. Este diálogo de importación puede recordar la ubicación del archivo de importación durante la sesión (lo que significa que si importas el personaje de nuevo, en la misma sesión, no tendrá que abrir el diálogo de Archivo).",
           "name": "Usar Explorador de Archivos Inteligente"
+        },
+        "useVerboseImporterLog": {
+          "hint": "Si se marca, esto generará un registro detallado del importador en la consola durante la importación.",
+          "name": "Usar registro detallado del importador"
         }
       }
     },
