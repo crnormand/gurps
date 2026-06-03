@@ -31,3 +31,4 @@ export const OVERWRITE_HP_FP = `${MODULE_NAME}.overwrite-hp-fp`
 export const OVERWRITE_NAME = `${MODULE_NAME}.overwrite-name`
 export const OVERWRITE_PORTRAITS = `${MODULE_NAME}.overwrite-portraits`
 export const USE_BROWSER_IMPORTER = `${MODULE_NAME}.use-browser-importer`
+export const USE_VERBOSE_IMPORTER_LOG = `${MODULE_NAME}.useVerboseImporterLog`
