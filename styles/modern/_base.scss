@@ -88,14 +88,15 @@ body {
   .glinkmodminus {
     color: var(--ms-text);
     background-color: var(--ms-accent-light);
+    font-size: var(--ms-font-xs);
   }
 
   .glinkmodplus {
-    background-color: var(--ms-modifier-positive);
+    background-color: var(--gga-glinkmodplus-background);
   }
 
   .glinkmodminus {
-    background-color: var(--ms-modifier-negative);
+    background-color: var(--gga-glinkmodminus-background);
   }
 }
 
@@ -114,7 +115,4 @@ body {
       text-decoration: underline;
     }
   }
-}
-
-.ms-equipment-grid {
 }
