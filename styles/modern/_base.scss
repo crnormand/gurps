@@ -67,14 +67,14 @@ body {
   }
 
   .gurpslink {
-    color: var(--ms-text);
-    background-color: var(--ms-accent-light);
-    border-color: var(--ms-border);
+    // color: var(--ms-text);
+    // background-color: var(--ms-accent-light);
+    // border-color: var(--ms-border);
 
     &:hover,
     &.test {
-      color: var(--ms-text);
-      background-color: var(--ms-accent-light);
+      // color: var(--ms-text);
+      // background-color: var(--ms-accent-light);
     }
 
     &:active {
@@ -92,11 +92,13 @@ body {
   }
 
   .glinkmodplus {
-    background-color: var(--gga-glinkmodplus-background);
+    background-color: var(--ms-advantage);
+    color: var(--ms-bg-muted);
   }
 
   .glinkmodminus {
-    background-color: var(--gga-glinkmodminus-background);
+    background-color: var(--ms-disadvantage);
+    color: var(--ms-bg-muted);
   }
 }
 

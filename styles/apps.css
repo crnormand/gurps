@@ -35,7 +35,7 @@ Global Override body {
   --gga-gurpslink-color: rgb(121, 107, 73);
   --gga-gurpslink-color-hover: #252320;
   --gga-gurpslink-background: lightgoldenrodyellow;
-  --gga-gurpslink-bordercolor: darkgoldenrod;
+  --gga-gurpslink-bordercolor: hsl(43, 89%, 38%);
 
   --gga-glinkmod-background: #e0e0e0;
   --gga-glinkmod-bordercolor: grey;
@@ -54,6 +54,13 @@ Global Override body {
 }
 
 .system-gurps.theme-dark {
+  --gga-pdflink-color: #6cb4ee;
+
+  --gga-gurpslink-color: hsl(43, 25%, 10%);
+  --gga-gurpslink-color-hover: hsl(43, 25%, 20%);
+  --gga-gurpslink-background: hsl(43, 70%, 70%);
+  --gga-gurpslink-bordercolor: hsl(43, 25%, 20%);
+
   --gga-glinkmodplus-color: #d0ffd0;
   --gga-glinkmodplus-background-hover: #43825a;
   --gga-glinkmodplus-background: #2e5a3e;
@@ -63,8 +70,6 @@ Global Override body {
   --gga-glinkmodminus-background-hover: #7a1515;
   --gga-glinkmodminus-background: #b22222;
   --gga-glinkmodminus-bordercolor: #300707;
-
-  --gga-pdflink-color: #6cb4ee;
 }
 .system-gurps .control-icon[data-palette='maneuvers'] img,
 .system-gurps .token-effect,
@@ -2130,7 +2135,7 @@ details .popup.square5x4 {
 .system-gurps .sheet.actor .glinkmod {
   padding: 1px 4px;
   line-height: inherit;
-  color: inherit;
+  /* color: inherit; */
 }
 
 .system-gurps .gurpslink {
