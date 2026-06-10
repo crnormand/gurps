@@ -9,6 +9,7 @@ import { GcsEquipmentCollection } from './gcs-importer/schema/equipment.js'
 import { GcsSkillCollection } from './gcs-importer/schema/skill.js'
 import { GcsSpellCollection } from './gcs-importer/schema/spell.js'
 import { GcsTraitCollection } from './gcs-importer/schema/trait.js'
+import { USE_VERBOSE_IMPORTER_LOG } from './types.js'
 
 async function actorImporterPrompt(actor?: Actor.OfType<ActorType.Character>) {
   if (!game.i18n) {
@@ -80,7 +81,9 @@ async function actorImporterPrompt(actor?: Actor.OfType<ActorType.Character>) {
                   return
                 }
 
-                const char = GcsCharacter.fromImportData(jsonObject) as GcsCharacter
+                const verbose = game.settings.get(GURPS.SYSTEM_NAME, USE_VERBOSE_IMPORTER_LOG)
+
+                const char = GcsCharacter.fromImportData(jsonObject, null, verbose) as GcsCharacter
                 const importedActor = await GcsImporter.importCharacter(char, actor)
 
                 console.debug('Imported data:', importedActor)

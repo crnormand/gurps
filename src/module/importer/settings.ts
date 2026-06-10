@@ -13,6 +13,7 @@ import {
   AUTOMATICALLY_SET_IGNORE_QTY,
   OVERWRITE_NAME,
   DISPLAY_PRESERVE_QTY_FLAG,
+  USE_VERBOSE_IMPORTER_LOG,
 } from './types.js'
 
 const SETTINGS = 'GURPS.importer.settings.title'
@@ -29,7 +30,6 @@ export function initializeGameSettings() {
     hint: 'GURPS.importer.settings.fileEncoding.hint',
     scope: 'world',
     config: false,
-    default: 'UTF8',
     type: new fields.StringField({
       required: true,
       nullable: false,
@@ -49,8 +49,7 @@ export function initializeGameSettings() {
     hint: 'GURPS.importer.settings.useBrowserImporter.hint',
     scope: 'world',
     config: false,
-    type: new fields.BooleanField(),
-    default: false,
+    type: new fields.BooleanField({ initial: false }),
     onChange: value => console.log(`Using non-locally hosted import dialog : ${value}`),
   })
 
@@ -61,8 +60,7 @@ export function initializeGameSettings() {
     hint: 'GURPS.importer.settings.onlyTrustedPlayersAllowed.hint',
     scope: 'world',
     config: false,
-    type: new fields.BooleanField(),
-    default: false,
+    type: new fields.BooleanField({ initial: false }),
     onChange: value => console.log(`Block import : ${value}`),
   })
 
@@ -85,8 +83,7 @@ export function initializeGameSettings() {
     hint: 'GURPS.importer.settings.overwriteName.hint',
     scope: 'world',
     config: false,
-    type: new fields.BooleanField(),
-    default: true,
+    type: new fields.BooleanField({ initial: true }),
     onChange: value => console.log(`Ignore import name : ${value}`),
   })
 
@@ -108,7 +105,6 @@ export function initializeGameSettings() {
     hint: 'GURPS.importer.settings.overwriteBodyPlan.hint',
     scope: 'world',
     config: false,
-    default: 'ask',
     type: new fields.StringField({
       required: true,
       nullable: false,
@@ -129,7 +125,6 @@ export function initializeGameSettings() {
     hint: 'GURPS.importer.settings.overwriteHPandFP.hint',
     scope: 'world',
     config: false,
-    default: 'ask',
     type: new fields.StringField({
       required: true,
       nullable: false,
@@ -150,9 +145,19 @@ export function initializeGameSettings() {
     hint: 'GURPS.importer.settings.autoIgnoreImportQty.hint',
     scope: 'world',
     config: false,
-    type: new fields.BooleanField(),
-    default: true,
+    type: new fields.BooleanField({ initial: true }),
     onChange: value => console.log(`Automatically set ignore QTY : ${value}`),
+  })
+
+  /* ---------------------------------------- */
+
+  game.settings.register(GURPS.SYSTEM_NAME, USE_VERBOSE_IMPORTER_LOG, {
+    name: 'GURPS.importer.settings.useVerboseImporterLog.name',
+    hint: 'GURPS.importer.settings.useVerboseImporterLog.hint',
+    scope: 'world',
+    config: false,
+    type: new fields.BooleanField(),
+    onChange: value => console.log(`Use verbose importer log : ${value}`),
   })
 
   /* ---------------------------------------- */

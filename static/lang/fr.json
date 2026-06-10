@@ -1167,6 +1167,10 @@
         "useBrowserImporter": {
           "hint": "Si coché, utilisez le 'navigateur de fichiers intelligent'. Cette boîte de dialogue d'importation peut mémoriser l'emplacement de votre fichier d'importation pendant la session (ce qui signifie que si vous importez le personnage à nouveau, dans la même session, il n'aura pas à faire apparaître la boîte de dialogue de fichier).",
           "name": "Utiliser le Navigateur de Fichiers Intelligent"
+        },
+        "useVerboseImporterLog": {
+          "hint": "Si coché, cela affichera un journal d'importation détaillé dans la console pendant l'importation.",
+          "name": "Utiliser le journal d'importation détaillé"
         }
       }
     },

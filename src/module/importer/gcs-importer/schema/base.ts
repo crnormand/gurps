@@ -61,6 +61,15 @@ class GcsElement<
     const data: AnyMutableObject = {}
     const replacements: Record<string, string> = (importData?.replacements as unknown as Record<string, string>) ?? {}
 
+    // Check if object exists. If not, return empty objec early (keys within use default values)
+    if (!importData) {
+      if (verbose)
+        console.debug(`[GCS Import: ${this.name}] No import data provided, using default values for all fields`)
+
+      return data as DataModel.CreateData<Schema>
+    }
+
+    // Logging only: check for unknown fields and return to console.
     if (verbose) {
       const schemaKeys = new Set(Object.keys(schema))
       const unknownKeys = Object.keys(importData).filter(key => !schemaKeys.has(key) && key !== 'replacements')
@@ -68,8 +77,18 @@ class GcsElement<
       if (unknownKeys.length) console.debug(`[GCS Import: ${this.name}] Unknown data keys:`, unknownKeys)
     }
 
+    // Attempt to import each field.
     for (const [key, field] of Object.entries(schema)) {
-      data[key] = this._importField(importData[key], field, key, replacements, verbose)
+      let value = field.getInitialValue()
+
+      if (importData[key] === undefined) {
+        if (verbose)
+          console.debug(`[GCS Import: ${this.name}] Key '${key}' is missing from import data, using default value`)
+      } else {
+        value = importData?.[key]
+      }
+
+      data[key] = this._importField(value, field, key, replacements, verbose)
     }
 
     return data as DataModel.CreateData<Schema>
