@@ -46,7 +46,6 @@ import {
   ReactionModifier,
   ConditionalModifier as ConditionalModifierDocument,
 } from '@module/item/data/conditional-modifier.js'
-import { Feature } from '@module/item/legacy/itemv1-interface.js'
 import { OtfAction } from '@module/otf/types.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
@@ -62,6 +61,7 @@ import {
 } from '@module/prereqs/index.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
+import { findAdDisad, findSkillSpell, findSkill, findSpell, findAttack } from '@module/util/find-item.ts'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { HandlebarsApplicationMixin as _HandlebarsApplicationMixin } from './foundry/handlebars.js'
@@ -387,7 +387,23 @@ declare global {
 
     /* ---------------------------------------- */
 
-    findAdDisad(actor: Actor.Implementation, adName: string): Feature['fea'] | undefined
+    findAdDisad: typeof findAdDisad
+
+    /* ---------------------------------------- */
+
+    findAttack: typeof findAttack
+
+    /* ---------------------------------------- */
+
+    findSkillSpell: typeof findSkillSpell
+
+    /* ---------------------------------------- */
+
+    findSkill: typeof findSkill
+
+    /* ---------------------------------------- */
+
+    findSpell: typeof findSpell
 
     /* ---------------------------------------- */
 

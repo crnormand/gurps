@@ -1171,8 +1171,76 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.allAdsV2.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
   }
 
+  /* ---------------------------------------- */
+
   findAdvantage(name: string): Item.OfType<ItemType.Trait> | null {
     return this.findTrait(name)
+  }
+
+  /* ---------------------------------------- */
+
+  private static buildNameRegex(name: string): RegExp {
+    const cleanName = name.replace(/^ *(\[ ?["'])?/, '')
+
+    return new RegExp(makeRegexPatternFrom(cleanName, false, false), 'i')
+  }
+
+  /* ---------------------------------------- */
+
+  findSkill(name: string): Item.OfType<ItemType.Skill> | null {
+    const nameRegex = CharacterModel.buildNameRegex(name)
+    let best: Item.OfType<ItemType.Skill> | null = null
+    let bestLevel = 0
+
+    for (const skill of this.allSkillsV2) {
+      if (skill.name?.match(nameRegex) && skill.system.level > bestLevel) {
+        best = skill
+        bestLevel = skill.system.level
+      }
+    }
+
+    return best
+  }
+
+  /* ---------------------------------------- */
+
+  findSpell(name: string): Item.OfType<ItemType.Spell> | null {
+    const nameRegex = CharacterModel.buildNameRegex(name)
+    let best: Item.OfType<ItemType.Spell> | null = null
+    let bestLevel = 0
+
+    for (const spell of this.allSpellsV2) {
+      if (spell.name?.match(nameRegex) && spell.system.level > bestLevel) {
+        best = spell
+        bestLevel = spell.system.level
+      }
+    }
+
+    return best
+  }
+
+  /* ---------------------------------------- */
+
+  findSkillSpell(name: string, isSkillOnly: true, isSpellOnly?: false): Item.OfType<ItemType.Skill> | null
+  findSkillSpell(name: string, isSkillOnly: false | undefined, isSpellOnly: true): Item.OfType<ItemType.Spell> | null
+  findSkillSpell(
+    name: string,
+    isSkillOnly?: boolean,
+    isSpellOnly?: boolean
+  ): Item.OfType<ItemType.Skill | ItemType.Spell> | null
+  findSkillSpell(
+    name: string,
+    isSkillOnly = false,
+    isSpellOnly = false
+  ): Item.OfType<ItemType.Skill | ItemType.Spell> | null {
+    const skill = !isSpellOnly ? this.findSkill(name) : null
+    const spell = !isSkillOnly ? this.findSpell(name) : null
+
+    if (skill && spell) {
+      return spell.system.level > skill.system.level ? spell : skill
+    }
+
+    return skill ?? spell
   }
 
   /* ---------------------------------------- */
