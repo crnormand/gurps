@@ -1,5 +1,6 @@
 'use strict'
 
+import { Foundry } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import ChatProcessor from './chat-processor.js'
@@ -194,14 +195,18 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       rolls: roll.dice[0].results.map(it => it.result).join(),
     })
 
-    await ChatMessage.create({
-      style: CONST.CHAT_MESSAGE_STYLES.ROLL,
-      type: 'base',
-      speaker: ChatMessage.getSpeaker(actor),
-      content: content,
-      roll: JSON.stringify(roll),
-      rollMode: game.settings.get('core', 'rollMode'),
-    }).then(async html => {
+    const options = Foundry.applyMessageMode({}, Foundry.getMessageMode())
+
+    await ChatMessage.create(
+      {
+        style: CONST.CHAT_MESSAGE_STYLES.ROLL,
+        type: 'base',
+        speaker: ChatMessage.getSpeaker(actor),
+        content: content,
+        roll: JSON.stringify(roll),
+      },
+      options
+    ).then(async html => {
       GURPS.setLastTargetedRoll({ margin: -margin }, actor)
       if (failure) {
         // Draw results using a custom roll formula. Use the negated margin for the rolltable only
