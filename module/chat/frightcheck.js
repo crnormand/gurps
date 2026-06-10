@@ -195,18 +195,19 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       rolls: roll.dice[0].results.map(it => it.result).join(),
     })
 
-    const options = Foundry.applyMessageMode({}, Foundry.getMessageMode())
+    const messageMode = Foundry.getMessageMode()
+    const options = Foundry.applyMessageMode({}, messageMode)
 
-    await ChatMessage.create(
-      {
-        style: CONST.CHAT_MESSAGE_STYLES.ROLL,
-        type: 'base',
-        speaker: ChatMessage.getSpeaker(actor),
-        content: content,
-        roll: JSON.stringify(roll),
-      },
-      options
-    ).then(async html => {
+    const messageData = {
+      style: CONST.CHAT_MESSAGE_STYLES.ROLL,
+      type: 'base',
+      speaker: ChatMessage.getSpeaker(actor),
+      content: content,
+      roll: JSON.stringify(roll),
+    }
+    ChatMessage.applyRollMode(messageData, messageMode.value)
+
+    await ChatMessage.create(messageData, options).then(async html => {
       GURPS.setLastTargetedRoll({ margin: -margin }, actor)
       if (failure) {
         // Draw results using a custom roll formula. Use the negated margin for the rolltable only
