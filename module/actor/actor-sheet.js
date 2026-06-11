@@ -1,5 +1,5 @@
 import { DragDropType } from '../drag-drop-types.js'
-import { commitUpdate, deleteKey, replaceValue } from '../utilities/foundry-compat.js'
+import { commitUpdate, deleteKey, Foundry, replaceValue } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
@@ -1790,8 +1790,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (event.currentTarget.dataset.hasOwnProperty('damage')) {
       let otf = event.currentTarget.dataset.otf
       if (otf && otf.startsWith('D:')) {
-        const rollMode = game.settings.get('core', 'rollMode')
-        let blindroll = rollMode === CONST.DICE_ROLL_MODES.BLIND
+        let blindroll = Foundry.getMessageMode().isBlind()
 
         const isShiftClickBlindEnabled = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND)
 
