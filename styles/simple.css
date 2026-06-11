@@ -187,7 +187,7 @@
 }
 
 .system-gurps .pdflink {
-  color: var(--gga-color-pdflink);
+  color: var(--gga-pdflink-color);
 }
 
 .gurps.sheet.actor .pdflink,
@@ -210,7 +210,7 @@
 .gurpsactorsheet .rollable:hover {
   cursor: pointer;
   text-decoration: none;
-  background-color: var(--gga-background-rollable-hover) !important;
+  background-color: var(--gga-rollable-background-hover) !important;
   color: black;
   border-radius: 3px;
   overflow: visible;
@@ -220,7 +220,7 @@
 .npc-sheet .rollable,
 .gurpsactorsheet .rollable {
   color: black;
-  background-color: var(--gga-background-rollable) !important;
+  background-color: var(--gga-rollable-background) !important;
   min-width: max-content;
 }
 
@@ -229,7 +229,7 @@
   cursor: pointer;
   text-decoration: none;
   color: black;
-  background-color: var(--gga-background-rollable) !important;
+  background-color: var(--gga-rollable-background) !important;
 }
 
 .dodge span,
@@ -250,7 +250,7 @@
 .npc-sheet .gmod,
 .gurpsactorsheet .gmod {
   color: black;
-  background-color: var(--gga-background-gmod) !important;
+  background-color: var(--gga-gmod-background) !important;
 }
 
 .npc-sheet .gmod.test,
@@ -260,7 +260,7 @@
   cursor: pointer;
   text-decoration: none;
   background-image: none;
-  background-color: var(--gga-background-gmod-hover) !important;
+  background-color: var(--gga-gmod-background-hover) !important;
   color: black;
   border-radius: 3px;
 }
@@ -271,14 +271,14 @@
   text-decoration: none;
   color: black;
   background-image: none;
-  background-color: var(--gga-background-gmod) !important;
+  background-color: var(--gga-gmod-background) !important;
   overflow: visible;
   z-index: 99;
 }
 
 .npc-sheet .glinkmod:hover,
 .gurpsactorsheet .glinkmod:hover {
-  background-color: var(--gga-background-gmod-hover) !important;
+  background-color: var(--gga-gmod-background-hover) !important;
   border-color: darkorange;
 }
 
@@ -2152,7 +2152,7 @@ div#other {
   text-shadow: none;
   font-size: 1.5rem;
   border-radius: calc(1rem / 3);
-  background: var(--gga-background-gmod-hover);
+  background: var(--gga-gmod-background-hover);
   color: white;
 }
 

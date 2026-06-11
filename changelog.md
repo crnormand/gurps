@@ -1,5 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.19
+
+## Features
+
+### Bugfixes
+
+- Reimplement colored OTF modifiers \#2758
+
 ## Release 0.18.18 05/27/2026
 
 ## Features
