@@ -1875,23 +1875,29 @@ export class GurpsActorSheet extends ActorSheet {
     ev.preventDefault()
     let element = ev.currentTarget
     let key = element.dataset.key
+
     if (!(await this.actor._sanityCheckItemSettings(GURPS.decode(this.actor, key)))) return
+
     let eqt = foundry.utils.duplicate(GURPS.decode(this.actor, key))
     eqt.equipped = !eqt.equipped
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     await this.actor.internalUpdate({ [key]: eqt })
+
     if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
       let item = this.actor.items.get(eqt.itemid)
       item.system.equipped = eqt.equipped
       item.system.eqt.equipped = eqt.equipped
-      await this.actor._updateItemFromForm(item)
+      await this.actor._updateEqtStatus(item, key, eqt.carried, eqt.equipped)
     }
+
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
+
     await this.actor.internalUpdate({
       'system.equippedparry': p,
       'system.equippedblock': b,
     })
+
     this.actor._forceRender()
   }
 
