@@ -7,6 +7,7 @@
 ### Bugfixes
 
 - Reimplement colored OTF modifiers \#2758
+- V14 Damage rolls are still public despite roll option \#2754.
 
 ## Release 0.18.18 05/27/2026
 

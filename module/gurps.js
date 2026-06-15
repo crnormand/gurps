@@ -1,5 +1,5 @@
 // Import Modules
-import { deleteKey as deleteKeyCompat } from './utilities/foundry-compat.js'
+import { deleteKey as deleteKeyCompat, Foundry, MessageMode } from './utilities/foundry-compat.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { Migration } from '../lib/migration.js'
 import { parseForRollOrDamage, parselink, PARSELINK_MAPPINGS } from '../lib/parselink.js'
@@ -1446,7 +1446,7 @@ if (!globalThis.GURPS) {
 
     const blindroll =
       event.ctrlKey ||
-      game.settings.get('core', 'rollMode') === 'blindroll' ||
+      Foundry.getMessageMode().isBlind() ||
       (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
 
     if ('damage' in element.dataset) {
@@ -2079,13 +2079,14 @@ if (!globalThis.GURPS) {
       uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
       onDown: () => {
         if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) {
-          GURPS.savedRollMode = game.settings.get('core', 'rollMode')
-          game.settings.set('core', 'rollMode', game.user?.isGM ? 'gmroll' : 'blindroll')
+          GURPS.savedRollMode = Foundry.getMessageMode()
+          const newRollMode = game.user?.isGM ? MessageMode.GM : MessageMode.Blind
+          Foundry.setMessageMode(newRollMode)
         }
       },
       onUp: () => {
         if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CTRL_KEY))
-          game.settings.set('core', 'rollMode', GURPS.savedRollMode)
+          Foundry.setMessageMode(GURPS.savedRollMode)
       },
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
       // "ControlLeft", "ControlRight"

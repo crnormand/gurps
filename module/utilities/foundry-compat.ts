@@ -70,3 +70,85 @@ export async function commitUpdate(actor: InternalUpdatable, commit: Record<stri
     await actor.internalUpdate(adds, { diff: false })
   }
 }
+
+export class Foundry {
+  static isAtLeastVersion = isAtLeastFoundryVersion
+  static replaceValue = replaceValue
+  static deleteKey = deleteKey
+  static commitUpdate = commitUpdate
+
+  static getMessageMode(): MessageMode {
+    if (!game.settings) throw new Error('game.settings is not available')
+
+    // In Foundry 14+, the message mode is stored in game.settings under 'core.messageMode'. In v13-, it's under 'core.rollMode'.
+    const value = Foundry.isAtLeastVersion(14)
+      ? // @ts-expect-error - messageMode is not typed in Foundry 14's settings yet
+        (game.settings.get('core', 'messageMode') as string)
+      : (game.settings.get('core', 'rollMode') as string)
+
+    return new MessageMode(value)
+  }
+
+  static setMessageMode(mode: MessageMode): void {
+    if (!game.settings) throw new Error('game.settings is not available')
+
+    if (Foundry.isAtLeastVersion(14)) {
+      // @ts-expect-error - treating messageMode as any to avoid TypeScript errors
+      game.settings.set('core', 'messageMode', mode.value as any)
+    } else {
+      game.settings.set('core', 'rollMode', mode.value as any)
+    }
+  }
+
+  static applyMessageMode(data: Record<string, unknown>, mode: MessageMode): Record<string, unknown> {
+    if (Foundry.isAtLeastVersion(14)) {
+      return { ...data, messageMode: mode.value }
+    } else {
+      return { ...data, rollMode: mode.value }
+    }
+  }
+}
+
+export class MessageMode {
+  constructor(public value: string) {}
+
+  isPublic(): boolean {
+    return this.value === 'public' || this.value === 'publicroll'
+  }
+
+  isGM(): boolean {
+    return this.value === 'gm' || this.value === 'gmroll'
+  }
+
+  isBlind(): boolean {
+    return this.value === 'blind' || this.value === 'blindroll'
+  }
+
+  isSelf(): boolean {
+    return this.value === 'self' || this.value === 'selfroll'
+  }
+
+  isIC(): boolean {
+    return this.value === 'ic'
+  }
+
+  static get GM() {
+    return Foundry.isAtLeastVersion(14) ? new MessageMode('gm') : new MessageMode('gmroll')
+  }
+
+  static get Blind() {
+    return Foundry.isAtLeastVersion(14) ? new MessageMode('blind') : new MessageMode('blindroll')
+  }
+
+  static get Self() {
+    return Foundry.isAtLeastVersion(14) ? new MessageMode('self') : new MessageMode('selfroll')
+  }
+
+  static get Public() {
+    return Foundry.isAtLeastVersion(14) ? new MessageMode('public') : new MessageMode('publicroll')
+  }
+
+  static get IC() {
+    return new MessageMode('ic')
+  }
+}

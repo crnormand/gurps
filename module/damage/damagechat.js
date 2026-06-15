@@ -6,6 +6,7 @@ import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from
 import { GurpsActor } from '../actor/actor.js'
 import { addBucketToDamage } from '../dierolls/dieroll.js'
 import selectTarget from '../utilities/select-target.js'
+import { Foundry } from '../utilities/foundry-compat.js'
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -442,7 +443,9 @@ export default class DamageChat {
       messageData.sound = CONFIG.sounds.dice
     }
 
-    ChatMessage.create(messageData, { rollMode: game.settings.get('core', 'rollMode') })
+    const options = Foundry.applyMessageMode({}, Foundry.getMessageMode())
+
+    ChatMessage.create(messageData, options)
   }
 
   static async _calculateAndSelectTargets(canvas, dropData) {

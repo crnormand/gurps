@@ -1,3 +1,4 @@
+import { Foundry, MessageMode } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
@@ -651,7 +652,7 @@ async function _doRoll({
   } catch {}
 
   if (
-    game.settings.get('core', 'rollMode') === 'blindroll' ||
+    Foundry.getMessageMode().isBlind() ||
     !!optionalArgs.blind ||
     !!optionalArgs.event?.blind ||
     isCtrl ||
@@ -661,11 +662,13 @@ async function _doRoll({
     messageData.blind = true
   }
 
-  createOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
-  ChatMessage.applyRollMode(messageData, createOptions.rollMode)
+  const messageMode = messageData.blind ? MessageMode.Blind : Foundry.getMessageMode()
+  const options = Foundry.applyMessageMode(createOptions, messageMode)
+
+  ChatMessage.applyRollMode(messageData, messageMode.value)
 
   messageData.sound = CONFIG.sounds.dice
-  ChatMessage.create(messageData, createOptions)
+  ChatMessage.create(messageData, options)
 
   if (isTargeted && !!optionalArgs.action) {
     let users = actor.isSelf ? [] : actor.getOwners()
