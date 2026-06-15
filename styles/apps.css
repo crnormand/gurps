@@ -24,31 +24,52 @@ Global Override body {
 }
 
 .system-gurps {
-  --gga-color-pdflink: blue;
-  --gga-background-rollable: #ffffbe;
-  --gga-background-rollable-hover: gold;
-  --gga-background-gmod: rgb(255, 230, 190);
-  --gga-background-gmod-hover: orange;
-  --gga-color-gurpslink: rgb(121, 107, 73);
-  --gga-background-gurpslink: lightgoldenrodyellow;
-  --gga-bordercolor-gurpslink: darkgoldenrod;
-  --gga-color-gurpslink-hover: #252320;
-  --gga-background-glinkmod: #e0e0e0;
-  --gga-bordercolor-glinkmod: grey;
-  --gga-color-glinkmod-hover: #252320;
-  --gga-background-glinkmodplus: #d0ffd0;
-  --gga-bordercolor-glinkmodplus: darkgreen;
-  --gga-color-glinkmodplus: #2e5a3e;
-  --gga-background-glinkmodplus-hover: lightgreen;
-  --gga-background-glinkmodminus: rgb(255, 207, 214);
-  --gga-bordercolor-glinkmodminus: rgb(122, 21, 21);
-  --gga-color-glinkmodminus: firebrick;
-  --gga-background-glinkmodminus-hover: #ff999f;
-  --gga-color-popup-glinkmodminus: hotpink;
+  --gga-pdflink-color: #003c6d;
+
+  --gga-rollable-background: #ffffbe;
+  --gga-rollable-background-hover: gold;
+
+  --gga-gmod-background: rgb(255, 230, 190);
+  --gga-gmod-background-hover: orange;
+
+  --gga-gurpslink-color: rgb(121, 107, 73);
+  --gga-gurpslink-color-hover: #252320;
+  --gga-gurpslink-background: lightgoldenrodyellow;
+  --gga-gurpslink-bordercolor: hsl(43, 89%, 38%);
+
+  --gga-glinkmod-background: #e0e0e0;
+  --gga-glinkmod-bordercolor: grey;
+  --gga-glinkmod-color-hover: #252320;
+
+  --gga-glinkmodplus-background: #d0ffd0;
+  --gga-glinkmodplus-bordercolor: darkgreen;
+  --gga-glinkmodplus-color: #2e5a3e;
+  --gga-glinkmodplus-background-hover: lightgreen;
+
+  --gga-glinkmodminus-background: rgb(255, 207, 214);
+  --gga-glinkmodminus-bordercolor: rgb(122, 21, 21);
+  --gga-glinkmodminus-color: firebrick;
+  --gga-glinkmodminus-background-hover: #ff999f;
+  --gga-glinkmodminus-popup-color: hotpink;
 }
 
 .system-gurps.theme-dark {
-  --gga-color-pdflink: #6cb4ee;
+  --gga-pdflink-color: #6cb4ee;
+
+  --gga-gurpslink-color: hsl(43, 25%, 10%);
+  --gga-gurpslink-color-hover: hsl(43, 25%, 20%);
+  --gga-gurpslink-background: hsl(43, 70%, 70%);
+  --gga-gurpslink-bordercolor: hsl(43, 25%, 20%);
+
+  --gga-glinkmodplus-color: #d0ffd0;
+  --gga-glinkmodplus-background-hover: #43825a;
+  --gga-glinkmodplus-background: #2e5a3e;
+  --gga-glinkmodplus-bordercolor: #093515;
+
+  --gga-glinkmodminus-color: #ffd6d6;
+  --gga-glinkmodminus-background-hover: #7a1515;
+  --gga-glinkmodminus-background: #b22222;
+  --gga-glinkmodminus-bordercolor: #300707;
 }
 .system-gurps .control-icon[data-palette='maneuvers'] img,
 .system-gurps .token-effect,
@@ -2114,20 +2135,20 @@ details .popup.square5x4 {
 .system-gurps .sheet.actor .glinkmod {
   padding: 1px 4px;
   line-height: inherit;
-  color: inherit;
+  /* color: inherit; */
 }
 
 .system-gurps .gurpslink {
-  border: 1px solid var(--gga-bordercolor-gurpslink);
-  background: var(--gga-background-gurpslink);
-  color: var(--gga-color-gurpslink);
+  border: 1px solid var(--gga-gurpslink-bordercolor);
+  background: var(--gga-gurpslink-background);
+  color: var(--gga-gurpslink-color);
 }
 
 .system-gurps .gurpslink:hover,
 .system-gurps .glinkmodplus:hover,
 .system-gurps .glinkmodminus:hover,
 .system-gurps .glinkmod:hover {
-  color: var(--gga-color-gurpslink-hover);
+  color: var(--gga-gurpslink-color-hover);
   cursor: pointer;
 }
 
@@ -2139,33 +2160,33 @@ details .popup.square5x4 {
 }
 
 .system-gurps .gurpslink:hover {
-  background-color: var(--gga-background-rollable-hover);
+  background-color: var(--gga-rollable-background-hover);
 }
 
 .system-gurps .glinkmod {
-  background-color: var(--gga-background-glinkmod);
-  border: 1px solid var(--gga-bordercolor-glinkmod);
+  background-color: var(--gga-glinkmod-background);
+  border: 1px solid var(--gga-glinkmod-bordercolor);
   color: black;
 }
 
 .system-gurps .glinkmodplus {
-  background-color: var(--gga-background-glinkmodplus);
-  border: 1px solid var(--gga-bordercolor-glinkmodplus);
-  color: var(--gga-color-glinkmodplus);
+  background-color: var(--gga-glinkmodplus-background);
+  border: 1px solid var(--gga-glinkmodplus-bordercolor);
+  color: var(--gga-glinkmodplus-color);
 }
 
 .system-gurps .glinkmodplus:hover {
-  background-color: var(--gga-background-glinkmodplus-hover);
+  background-color: var(--gga-glinkmodplus-background-hover);
 }
 
 .system-gurps .glinkmodminus {
-  background-color: var(--gga-background-glinkmodminus);
-  border: 1px solid var(--gga-bordercolor-glinkmodminus);
-  color: var(--gga-color-glinkmodminus);
+  background-color: var(--gga-glinkmodminus-background);
+  border: 1px solid var(--gga-glinkmodminus-bordercolor);
+  color: var(--gga-glinkmodminus-color);
 }
 
 .system-gurps .glinkmodminus:hover {
-  background-color: var(--gga-background-glinkmodminus-hover);
+  background-color: var(--gga-glinkmodminus-background-hover);
 }
 
 .modtooltip .glinkmod,
@@ -2198,8 +2219,8 @@ details .popup.square5x4 {
 
 .gga-popup-window .glinkmodminus {
   background-color: transparent;
-  color: var(--gga-color-popup-glinkmodminus);
-  border-color: var(--gga-color-glinkmodminus);
+  color: var(--gga-glinkmodminus-popup-color);
+  border-color: var(--gga-glinkmodminus-color);
 }
 
 .gga-popup-window .glinkmodplus {
