@@ -6,6 +6,7 @@
 
 ### Bugfixes
 
+- Weapons can't be equipped \#2756
 - Reimplement colored OTF modifiers \#2758
 - V14 Damage rolls are still public despite roll option \#2754.
 
