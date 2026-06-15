@@ -1882,15 +1882,6 @@ export class GurpsActorSheet extends ActorSheet {
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     await this.actor.internalUpdate({ [key]: eqt })
 
-    // TODO This seems to fix #2756 but I'm leaving the code in place for now since I'm not sure if it is actually the right solution.
-
-    // if (!!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_FOUNDRY_ITEMS)) {
-    //   let item = this.actor.items.get(eqt.itemid)
-    //   item.system.equipped = eqt.equipped
-    //   item.system.eqt.equipped = eqt.equipped
-    //   await this.actor._updateItemFromForm(item)
-    // }
-
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
 
