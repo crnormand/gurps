@@ -1700,7 +1700,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       const userModsTags: string[] = (mod.match(/#(\S+)/g) ?? [])?.map((tag: string) => tag.slice(1).toLowerCase())
 
       for (const tag of userModsTags) {
-        let canApply = true
+        let canApply = allTags.includes(tag)
 
         if (mod.includes('#maneuver'))
           canApply = allTags.includes(tag) && (mod.includes(itemRef) || mod.includes('@man:'))
