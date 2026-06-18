@@ -1,5 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.20 06/18/2026
+
+## Features
+
+### Bugfixes
+
+- Dark mode fix for modifier bucket.
+
 ## Release 0.18.19 06/16/2026
 
 ## Features

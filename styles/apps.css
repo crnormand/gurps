@@ -24,6 +24,8 @@ Global Override body {
 }
 
 .system-gurps {
+  --gga-darkgreen-color: #2f5b3f;
+
   --gga-pdflink-color: #003c6d;
 
   --gga-rollable-background: #ffffbe;
@@ -43,7 +45,7 @@ Global Override body {
 
   --gga-glinkmodplus-background: #d0ffd0;
   --gga-glinkmodplus-bordercolor: darkgreen;
-  --gga-glinkmodplus-color: #2e5a3e;
+  --gga-glinkmodplus-color: var(--gga-darkgreen-color);
   --gga-glinkmodplus-background-hover: lightgreen;
 
   --gga-glinkmodminus-background: rgb(255, 207, 214);
@@ -2173,6 +2175,10 @@ details .popup.square5x4 {
   background-color: var(--gga-glinkmodplus-background);
   border: 1px solid var(--gga-glinkmodplus-bordercolor);
   color: var(--gga-glinkmodplus-color);
+}
+
+.system-gurps #modtooltip .glinkmodplus {
+  color: var(--gga-darkgreen-color);
 }
 
 .system-gurps .glinkmodplus:hover {
