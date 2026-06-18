@@ -2,7 +2,7 @@
 
 ## Release 0.18.20 06/18/2026
 
-## Features
+### Features
 
 ### Bugfixes
 
@@ -10,7 +10,7 @@
 
 ## Release 0.18.19 06/16/2026
 
-## Features
+### Features
 
 ### Bugfixes
 
@@ -20,7 +20,7 @@
 
 ## Release 0.18.18 05/27/2026
 
-## Features
+### Features
 
 ### Bugfixes
 
@@ -33,7 +33,7 @@
 
 ## Release 0.18.17 05/11/2026
 
-## Features
+### Features
 
 - Add Spanish language support \#2723.
 
