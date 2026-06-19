@@ -1,5 +1,6 @@
 'use strict'
 
+import { FoundryUtils } from '@module/util/foundry-utils.ts'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 
@@ -214,13 +215,19 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       }
     )
 
-    await ChatMessage.create({
+    const messageMode = FoundryUtils.MessageMode
+    const options = { messageMode: messageMode }
+    const messageData = {
       style: CONST.CHAT_MESSAGE_STYLES.ROLL,
       speaker: ChatMessage.getSpeaker(actor),
       content: content,
       roll: JSON.stringify(roll),
-      rollMode: game.settings.get('core', 'rollMode'),
-    }).then(async () => {
+      messageMode: messageMode.value,
+    }
+
+    ChatMessage.applyRollMode(messageData, messageMode.value)
+
+    await ChatMessage.create(messageData, options).then(async () => {
       GURPS.setLastTargetedRoll({ margin: -margin }, actor)
 
       if (failure) {

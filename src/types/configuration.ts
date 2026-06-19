@@ -103,6 +103,8 @@ declare module 'fvtt-types/configuration' {
   /* ---------------------------------------- */
 
   interface SettingConfig {
+    'core.messageMode': 'gm' | 'public' | 'self' | 'blind' | 'ic'
+
     /** Bucket */
     'gurps.bucket-position': 'left' | 'right'
 
