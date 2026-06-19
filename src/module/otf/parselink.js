@@ -66,11 +66,11 @@ export const PARSELINK_MAPPINGS = {
 /**
  * @param {string} str
  * @param {string | null} [htmldesc]
- * @param {boolean} clrdmods
+ * @param {boolean | null} [_clrdmods]
  * @returns {{text: string, action?: Action}}
  */
-export function parselink(input, htmldesc, clrdmods = false) {
-  let args = { str: sanitize(input), htmldesc: htmldesc, clrdmods: clrdmods }
+export function parselink(input, htmldesc = null, _clrdmods = null) {
+  let args = { str: sanitize(input), htmldesc: htmldesc, clrdmods: true }
 
   // Allow display of long hyphen for minus
   args.str = args.str.replace('–', '-').replace('\u2212', '-')
