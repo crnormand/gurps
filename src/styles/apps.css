@@ -24,6 +24,7 @@ Global Override body {
 }
 
 .system-gurps,
+.system-gurps.theme-light,
 .system-gurps .theme-light {
   --gga-color-pdflink: blue;
 
