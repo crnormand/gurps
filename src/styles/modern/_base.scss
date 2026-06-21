@@ -89,15 +89,7 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
   }
 
   .gurpslink {
-    color: var(--ms-text);
-    background-color: var(--ms-accent-light);
-    border-color: var(--ms-border);
-
-    &:hover,
-    &.test {
-      color: var(--ms-text);
-      background-color: var(--ms-accent-light);
-    }
+    font-size: var(--ms-font-xs);
 
     &:active {
       color: var(--ms-text);
@@ -110,14 +102,15 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
   .glinkmodminus {
     color: var(--ms-text);
     background-color: var(--ms-accent-light);
+    font-size: var(--ms-font-xs);
   }
 
   .glinkmodplus {
-    background-color: var(--ms-modifier-positive);
+    background-color: var(--gga-background-glinkmodplus);
   }
 
   .glinkmodminus {
-    background-color: var(--ms-modifier-negative);
+    background-color: var(--gga-background-glinkmodminus);
   }
 }
 
@@ -132,6 +125,7 @@ body.theme-dark .app.window-app.sheet.actor.modern-sheet {
   a {
     color: var(--ms-accent);
     text-decoration: none;
+
     &:hover {
       text-decoration: underline;
     }
