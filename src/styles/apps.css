@@ -56,6 +56,7 @@ Global Override body {
   --gga-color-popup-glinkmodminus: hsl(5, 68%, 12%);
 }
 
+.system-gurps.theme-dark,
 .system-gurps .theme-dark {
   --gga-color-pdflink: #6cb4ee;
 
