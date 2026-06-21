@@ -1,6 +1,6 @@
 'use strict'
 
-import { FoundryUtils } from '@module/util/foundry-utils.ts'
+import { FoundryUtils } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { makeRegexPatternFrom } from '@util/utilities.js'
 
