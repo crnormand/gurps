@@ -73,8 +73,8 @@ import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { UI } from './ui/index.js'
-import { FoundryUtils, MessageMode } from './util/foundry-utils.ts'
-import { getUser } from './util/guards.ts'
+import { FoundryUtils, MessageMode } from './util/foundry-utils.js'
+import { getUser } from './util/guards.js'
 import { Util } from './util/index.js'
 
 export let GURPS = undefined
