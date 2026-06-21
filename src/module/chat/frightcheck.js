@@ -216,7 +216,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     )
 
     const messageMode = FoundryUtils.MessageMode
-    const options = { messageMode: messageMode }
+    const options = { messageMode: messageMode.value }
     const messageData = {
       style: CONST.CHAT_MESSAGE_STYLES.ROLL,
       speaker: ChatMessage.getSpeaker(actor),
