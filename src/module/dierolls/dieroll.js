@@ -1,5 +1,5 @@
 import { OtfActionType } from '@module/otf/types.js'
-import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.ts'
+import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
