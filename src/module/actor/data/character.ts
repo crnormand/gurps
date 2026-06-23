@@ -20,6 +20,7 @@ import { COSTS_REGEX } from '@module/otf/parselink.js'
 import { OtfActionType, OtfAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
+import { taggedModToApply } from '@module/tagged-modifiers/tagged-modifiers.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { multiplyDice } from '@util/damage-utils.js'
@@ -1545,126 +1546,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  async addTaggedRollModifiers(
-    chatThing: string,
-    optionalArgs: { obj?: AnyObject },
-    attack?: MeleeAttackModel | RangedAttackModel
-  ): Promise<boolean> {
-    let isDamageRoll = false
-
-    const taggedSettings = this.getSetting(
-      Settings.SETTING_USE_TAGGED_MODIFIERS,
-      null
-    ) as TaggedModifiersSettings | null
-
-    if (!taggedSettings) return false
-
-    const allRollTags: string[] = taggedSettings.allRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
-
-    let itemRef = ''
-    let allTags: string[] = []
-    let refTags: string[] = []
-    let modifierTags: string[] = []
-
-    if (optionalArgs.obj) {
-      // Get modifiers from action object
-      const correspondingTags: Record<string, (keyof typeof taggedSettings)[]> = {
-        m: ['allAttackRolls', 'allMeleeRolls'],
-        r: ['allAttackRolls', 'allRangedRolls'],
-        p: ['allDefenseRolls', 'allDefenseRolls'],
-        b: ['allDefenseRolls', 'allBlockRolls'],
-        d: ['allDamageRolls'],
-        sk: ['allSkillRolls'],
-        sp: ['allSpellRolls'],
-      }
-
-      const ref = chatThing
-        .split('@')
-        .pop()!
-        .match(/(\S+):/)?.[1]
-        .toLowerCase()
-
-      if (ref && correspondingTags[ref]) {
-        if (ref === 'd') isDamageRoll = true
-
-        for (const tag of correspondingTags[ref]) {
-          refTags.push(
-            ...(taggedSettings[tag] as string).split(',').map((tagValue: string) => tagValue.trim().toLowerCase())
-          )
-        }
-      }
-
-      switch (typeof optionalArgs.obj.modifierTags) {
-        case 'object': {
-          if (Array.isArray(optionalArgs.obj.modifierTags)) {
-            modifierTags = optionalArgs.obj.modifierTags
-          } else if (optionalArgs.obj.modifierTags instanceof Set) {
-            modifierTags = [...optionalArgs.obj.modifierTags]
-          }
-
-          break
-        }
-        case 'string': {
-          modifierTags = optionalArgs.obj.modifierTags
-            .split(/\s*,\s*|\s+/)
-            .map((tag: string) => tag.trim().toLowerCase())
-            .filter((tag: string) => tag.length > 0)
-        }
-      }
-
-      allTags = [...modifierTags, ...allRollTags, ...refTags]
-      itemRef = (optionalArgs.obj.name as string) ?? ''
-    } else if (chatThing) {
-      // Get modifiers from chat string
-      const correspondingTags: Record<string, (keyof typeof taggedSettings)[]> = {
-        st: ['allAttributesRolls', 'allSTRolls'],
-        dx: ['allAttributesRolls', 'allDXRolls'],
-        iq: ['allAttributesRolls', 'allIQRolls'],
-        ht: ['allAttributesRolls', 'allHTRolls'],
-        will: ['allWILLRolls'],
-        per: ['allPERRolls'],
-        frightcheck: ['allFRIGHTCHECKRolls'],
-        vision: ['allVISIONRolls'],
-        hearing: ['allHEARINGRolls'],
-        tastesmell: ['allTASTESMELLRolls'],
-        touch: ['allTOUCHRolls'],
-        cr: ['allCRRolls'],
-        dodge: ['allDefenseRolls', 'allDODGERolls'],
-        p: ['allDefenseRolls', 'allParryRolls'],
-        b: ['allDefenseRolls', 'allBlockRolls'],
-      }
-
-      const ref = chatThing.split('@').pop()!.toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
-      const regex = /(?<="|:).+(?=\s\(|"|])/gm
-
-      if (ref && correspondingTags[ref]) {
-        if (ref === 'p' || ref === 'b') {
-          itemRef = chatThing.match(regex)?.[0] ?? ''
-          if (itemRef !== '') itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
-        }
-
-        for (const tag of correspondingTags[ref]) {
-          refTags.push(
-            ...(taggedSettings[tag] as string).split(',').map((tagValue: string) => tagValue.trim().toLowerCase())
-          )
-        }
-      }
-    } else {
-      // Get modifiers from attack/damage roll
-      if (!attack) {
-        refTags = taggedSettings.allDamageRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
-        isDamageRoll = true
-      } else {
-        refTags = taggedSettings.allAttackRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
-      }
-
-      const attackMods = attack?.modifierTags ?? []
-
-      modifierTags = [...allRollTags, ...attackMods, ...refTags]
-      itemRef = attack?.name ?? ''
-    }
-
-    // Get modifiers from user mods
+  
+allModifiers() :  string[] {
+      // Get modifiers from user mods
     const userMods = this.conditions.usermods ?? []
 
     // Get modifiers from self mods
@@ -1693,36 +1577,29 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return acc
       }, []) ?? []
 
+    return [...userMods, ...selfMods, ...targetMods]
+}
+
+  async addTaggedRollModifiers(
+    chatThing: string,
+    optionalArgs: { obj?: AnyObject },
+    attack?: MeleeAttackModel | RangedAttackModel
+  ): Promise<boolean> {
+    const taggedSettings = (game.settings as any)?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS) ?? null as TaggedModifiersSettings | null
+
+    if (!taggedSettings) return false;
     const actorInCombat = this.parent.inCombat
-    const allMods: string[] = [...userMods, ...selfMods, ...targetMods]
+    const allMods = this.allModifiers()
+    
+    const { modsToApply, isDamageRoll } = taggedModToApply(chatThing, attack, optionalArgs, taggedSettings, allMods, actorInCombat)
 
-    for (const mod of allMods) {
-      const userModsTags: string[] = (mod.match(/#(\S+)/g) ?? [])?.map((tag: string) => tag.slice(1).toLowerCase())
-
-      for (const tag of userModsTags) {
-        let canApply = true
-
-        if (mod.includes('#maneuver'))
-          canApply = allTags.includes(tag) && (mod.includes(itemRef) || mod.includes('@man:'))
-
-        // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
-        if ('itemPath' in optionalArgs && typeof optionalArgs.itemPath === 'string')
-          canApply = canApply && (mod.includes(optionalArgs.itemPath) || !mod.includes('@system'))
-
-        if (actorInCombat)
-          canApply =
-            canApply && (!taggedSettings.nonCombatOnlyTag || !allTags.includes(taggedSettings.nonCombatOnlyTag))
-        else canApply = canApply && (!taggedSettings.combatOnlyTag || !allTags.includes(taggedSettings.combatOnlyTag))
-
-        if (canApply) {
+    for (const mod of modsToApply) {          
           const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
           const desc = mod.match(regex)?.[1].trim() || ''
           const effectiveMod = mod.match(/[-+]\d+/)?.[0] || '0'
 
           // TODO: evaluate whether this causes too many data preparation cycles
           await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
-        }
-      }
     }
 
     return isDamageRoll
