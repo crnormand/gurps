@@ -589,7 +589,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
                         .split('\n')
                         .map(line => line.trim())
                         .filter( (line : string) => line.length > 0)
-                        .map( (mod : string) => `${mod} @${item.id}`)                                              
+                        .map( (mod : string) => `${mod} @${item.id === this.holderItemId ? 'custom' : item.id}`)                                              
         )
         .forEach( mod => this.conditions.usermods.add(mod))
 

@@ -2,11 +2,10 @@ import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { gurpslink } from '@util/gurpslink.js'
-import { recurselist, sanitize } from '@util/utilities.js'
+import {  sanitize } from '@util/utilities.js'
 
 import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
-import { TokenActions } from '../token-actions.js'
 
 import Maneuvers from './maneuver.js'
 
@@ -317,54 +316,7 @@ export class EffectModifierPopout extends Application {
   }
 
   async refreshUserMods() {
-    const actor = this.getToken()?.actor
-
-    if (actor) {
-      const userMods = foundry.utils.getProperty(actor, 'system.conditions.usermods') || []
-      const customMods = userMods.filter(it => it.includes('@custom'))
-      const itemMods = actor.applyItemModEffects({})
-      let sheetMods = []
-
-      const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-
-      if (taggedSettings.checkConditionals) {
-        const conditionalMods = foundry.utils.getProperty(actor, 'system.conditionalmods') || {}
-
-        recurselist(conditionalMods, (conditionalModifier, _k, _d) => {
-          const mod = parseInt(conditionalModifier.modifier) || 0
-          const signal = mod > 0 ? '+' : '-'
-          const source = `system.conditionalmods.${_k}`
-
-          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${conditionalModifier.situation} @${source}`)
-        })
-      }
-
-      if (taggedSettings.checkReactions) {
-        const reactionMods = foundry.utils.getProperty(actor, 'system.reactions') || {}
-
-        recurselist(reactionMods, (reaction, _k, _d) => {
-          const mod = parseInt(reaction.modifier) || 0
-          const signal = mod > 0 ? '+' : '-'
-          const source = `system.reactions.${_k}`
-
-          if (mod !== 0) sheetMods.push(`${signal}${Math.abs(mod)} ${reaction.situation} @${source}`)
-        })
-      }
-
-      const newMods = [...itemMods['system.conditions.usermods'], ...customMods, ...sheetMods]
-
-      await actor.internalUpdate({ 'system.conditions.usermods': newMods })
-
-      // Check if combat
-      if (game.combat?.isActive) {
-        const actions = await TokenActions.fromToken(this.getToken())
-
-        await actions.addModifiers()
-      }
-
       await this.render(true)
-      ui.notifications.info(game.i18n.localize('GURPS.userModsRefreshed'))
-    }
   }
 
   async clearUserMods() {
@@ -377,7 +329,7 @@ export class EffectModifierPopout extends Application {
 
     if (proceed) {
       if (actor) {
-        await actor.update({ 'system.conditions.usermods': [] })
+        await this._deleteAllUserMod()
         await this.render(true)
       }
     }
@@ -402,7 +354,8 @@ export class EffectModifierPopout extends Application {
         if (mod) {
           let action = parselink(mod)
 
-          if (action.action?.type === OtfActionType.modifier) this._addUserMod(mod)
+          if (action.action?.type === OtfActionType.modifier)
+             await this._addUserMod(mod)
           else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
         }
       }
@@ -457,17 +410,10 @@ export class EffectModifierPopout extends Application {
       return
     }
 
-    let token = this.getToken()
+    if (itemId === 'custom'){
+        this._deleteUserMod (this.getDescription(text))
 
-    if (token && token.actor) {
-      let umods = token.actor.system.conditions.usermods
-
-      if (umods) {
-        let mods = umods.filter(i => !sanitize(i).includes(this.getDescription(text)))
-
-        if (umods.length !== mods.length)
-          token.actor.update({ 'system.conditions.usermods': mods }).then(() => this.render(true))
-      }
+        return
     }
   }
 
@@ -498,15 +444,49 @@ export class EffectModifierPopout extends Application {
     this._addUserMod(add)
   }
 
-  _addUserMod(mod) {
-    let token = this.getToken()
+  async _addUserMod(mod) {
+    const token = this.getToken()
 
-    if (token && token.actor) {
-      mod += ' (' + game.i18n.localize('GURPS.equipmentUserCreated') + ')'
-      let mods = token.actor.system.conditions.usermods ? [...token.actor.system.conditions.usermods] : []
+    if (token && token.actor?.system?.holderItem) {
+      const modifier = `${mod} (${game.i18n.localize('GURPS.equipmentUserCreated')})`
 
-      mods.push(`${mod} @custom`)
-      token.actor.update({ 'system.conditions.usermods': mods }).then(() => this.render(true))
+      const item = token.actor.system.holderItem
+
+      const mods = item.system.itemModifiers
+        .split('\n')
+        .filter( it => it ==! modifier)
+        .concat([modifier])
+        .join('\n')
+
+      item.update({ 'system.itemModifiers': mods }).then(() => this.render(true))
+    } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+  }
+
+  async _deleteUserMod(mod) {
+    const token = this.getToken()
+
+    if (token && token.actor?.system?.holderItem) {
+      
+      const item = token.actor.system.holderItem
+
+      const mods = item.system.itemModifiers
+        .split('\n')
+        .filter( it => it ==! mod)
+        .join('\n')
+
+      item.update({ 'system.itemModifiers': mods }).then(() => this.render(true))
+    } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+  }
+
+  async _deleteAllUserMod() {
+    const token = this.getToken()
+
+    if (token && token.actor?.system?.holderItem) {
+      
+      const item = token.actor.system.holderItem
+
+
+      item.update({ 'system.itemModifiers': '' }).then(() => this.render(true))
     } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
