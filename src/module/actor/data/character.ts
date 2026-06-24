@@ -581,27 +581,37 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   #prepareUserModifiers() {
-    this.parent.items.forEach(item => {
-      if (!(item as Item.Implementation).isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment))
-        return
+    
+    this.parent.items
+        .filter( (item : Item.Implementation) => item.isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment))
+        .flatMap( 
+            item => item.system.itemModifiers
+                        .split('\n')
+                        .map(line => line.trim())
+                        .filter( (line : string) => line.length > 0)
+                        .map( (mod : string) => `${mod} @${item.id}`)                                              
+        )
+        .forEach( mod => this.conditions.usermods.add(mod))
 
-      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(line => line.trim())) {
-        const modifierDescription = `${modifier} ${item.id}`
+    this.meleeV2.flatMap(
+        (attack, index) => attack.itemModifiers
+            .split('\n')
+            .map(line => line.trim())
+            .filter( (line : string) => line.length > 0)
+            .map( (mod : string) => `${mod} @system.meleeV2.${index}`)                                
+        )
+        .forEach( mod => this.conditions.usermods.add(mod))
 
-        if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
-      }
+    this.rangedV2.flatMap(
+        (attack, index) => attack.itemModifiers
+            .split('\n')
+            .map(line => line.trim())
+            .filter( (line : string) => line.length > 0)
+            .map( (mod : string) => `${mod} @system.rangedV2.${index}`)                                
+        )
+        .forEach( mod => this.conditions.usermods.add(mod))
 
-      for (const attack of (item as Item.Implementation).getItemAttacks()) {
-        if ((item.system as BaseItemModel).itemModifiers === '') continue
-
-        for (const modifier of attack.itemModifiers.split('\n').map(line => line.trim())) {
-          const modifierDescription = `${modifier} ${item.id}`
-
-          if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
-        }
-      }
-    })
-  }
+    }
 
   #getCurrentMove(base: number): number {
     const doUpdateMove = this.getSetting(Settings.SETTING_MANEUVER_UPDATES_MOVE, false) && this.parent.inCombat

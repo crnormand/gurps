@@ -115,7 +115,7 @@ export class EffectModifierPopout extends Application {
     let selfMods = []
 
     selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
-    selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
+    selfMods.push(...this.convertModifiers([...this._token.actor.system.conditions.usermods]))
     selfMods.sort((left, right) => {
       if (left.itemName === right.itemName) {
         return left.desc.localeCompare(right.desc)
@@ -237,7 +237,8 @@ export class EffectModifierPopout extends Application {
             obj = this._token?.actor.items.get(itemReference) || {}
           }
 
-          const itemName = obj?.name || itemReference
+          const attackName = obj?.item?.name && obj?.mode ? `${obj?.item?.name} (${obj?.mode})` : undefined
+          const itemName = attackName ?? obj?.name ?? itemReference
           const itemType = obj?.type
             ? obj.type
             : it.includes('#maneuver')
