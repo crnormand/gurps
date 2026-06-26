@@ -110,7 +110,7 @@ class ModifierParser extends OtfParser {
     }
 
     return {
-      text: gmspan(args.overridetxt, spantext, action, sign == '+', args.clrdmods ?? false),
+      text: gmspan(args.overridetxt, spantext, action, sign == '+', args.clrdmods ?? true),
       action: action,
     }
   }
@@ -912,7 +912,7 @@ export function gmspan(
   str: string,
   action: OtfAction,
   plus: boolean,
-  clrdmods: boolean
+  clrdmods: boolean = true
 ) {
   if (overridetxt) {
     str = overridetxt
