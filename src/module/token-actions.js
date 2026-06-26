@@ -704,6 +704,10 @@ export class TokenActions {
     }
 
     await this.save()
+    
+    if (this.token?.actor?.system?.refreshUserModifier) {
+        await this.token.actor.system.refreshUserModifier()
+    }
   }
 
   static getManeuverIcons(maneuverName) {
@@ -867,7 +871,11 @@ export class TokenActions {
         break
     }
 
-     await this.save()
+    await this.save()
+    
+     if (this.token?.actor?.system?.refreshUserModifier) {
+        await this.token.actor.system.refreshUserModifier()
+    }
   }
 
   /**
@@ -892,7 +900,7 @@ export class TokenActions {
     }
 
     await this.save()
-  }
+}
 
   getNextTurnEffects() {
     return this.lastManeuvers[this.currentTurn]?.nextTurnEffects || []

@@ -635,6 +635,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     }
   }
 
+  async refreshUserModifier() {
+    this.conditions.usermods.clear()
+
+    await this.#prepareUserModifiers()
+  }
+
   #getCurrentMove(base: number): number {
     const doUpdateMove = this.getSetting(Settings.SETTING_MANEUVER_UPDATES_MOVE, false) && this.parent.inCombat
 
