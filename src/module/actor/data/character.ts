@@ -626,6 +626,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
     }
 
+    //don't know why ts doesn't recognizes the refresh method on the EffectModifierControl type
+    (GURPS.EffectModifierControl as any)?.refresh()
+
     function getTokenFromCombat(actor: Actor) {
         //we need to find the token from then combatant, because we don't get the actual token from the actor  
         return game.combats?.active?.combatants.find(combatant => combatant.actor === actor)?.token?.object as GurpsToken
