@@ -21,6 +21,8 @@ import { OtfActionType, OtfAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { taggedModToApply } from '@module/tagged-modifiers/tagged-modifiers.js'
+import { GurpsToken } from '@module/token/index.js'
+import { TokenActions } from '@module/token-actions.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { multiplyDice } from '@util/damage-utils.js'
@@ -580,7 +582,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  #prepareUserModifiers() {
+  async #prepareUserModifiers() {
     
     this.parent.items
         .filter( (item : Item.Implementation) => item.isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment))
@@ -611,7 +613,24 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         )
         .forEach( mod => this.conditions.usermods.add(mod))
 
+
+    //if this actor has a token in combat, we need to get the modifiers from the TokenActions
+    const token = getTokenFromCombat(this.parent)
+
+    if (token){
+        const actions = await TokenActions.fromToken(token)
+
+        if (actions) {
+            actions.getModifiers()
+            .forEach( mod => this.conditions.usermods.add(mod))
+        }
     }
+
+    function getTokenFromCombat(actor: Actor) {
+        //we need to find the token from then combatant, because we don't get the actual token from the actor  
+        return game.combats?.active?.combatants.find(combatant => combatant.actor === actor)?.token?.object as GurpsToken
+    }
+  }
 
   #getCurrentMove(base: number): number {
     const doUpdateMove = this.getSetting(Settings.SETTING_MANEUVER_UPDATES_MOVE, false) && this.parent.inCombat
