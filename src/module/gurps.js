@@ -73,6 +73,8 @@ import { Token } from './token/index.js'
 import { TokenActions } from './token-actions.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 import { UI } from './ui/index.js'
+import { FoundryUtils, MessageMode } from './util/foundry-utils.js'
+import { getUser } from './util/guards.js'
 import { Util } from './util/index.js'
 
 export let GURPS = undefined
@@ -1541,7 +1543,7 @@ if (!globalThis.GURPS) {
 
     const blindroll =
       event.ctrlKey ||
-      game.settings.get('core', 'rollMode') === 'blindroll' ||
+      FoundryUtils.MessageMode.isBlind ||
       (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
 
     if (OtfActionType.damage in element.dataset) {
@@ -1956,13 +1958,15 @@ if (!globalThis.GURPS) {
       uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
       onDown: () => {
         if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) {
-          GURPS.savedRollMode = game.settings.get('core', 'rollMode')
-          game.settings.set('core', 'rollMode', game.user?.isGM ? 'gmroll' : 'blindroll')
+          GURPS.savedRollMode = FoundryUtils.MessageMode
+          const mode = getUser()?.isGM ? MessageMode.GMOnly : MessageMode.Blind
+
+          FoundryUtils.MessageMode = mode
         }
       },
       onUp: () => {
         if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY))
-          game.settings.set('core', 'rollMode', GURPS.savedRollMode)
+          FoundryUtils.MessageMode = GURPS.savedRollMode
       },
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
       // "ControlLeft", "ControlRight"

@@ -1,5 +1,6 @@
 'use strict'
 
+import { FoundryUtils } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import selectTarget from '@module/util/select-target.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '@util/utilities.js'
@@ -482,7 +483,9 @@ export default class DamageChat {
       messageData.sound = CONFIG.sounds.dice
     }
 
-    ChatMessage.create(messageData, { rollMode: game.settings.get('core', 'rollMode') })
+    const options = { messageMode: FoundryUtils.MessageMode.value }
+
+    ChatMessage.create(messageData, options)
   }
 
   static async _calculateAndSelectTargets(canvas, dropData) {

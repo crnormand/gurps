@@ -1,4 +1,5 @@
 import { OtfActionType } from '@module/otf/types.js'
+import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
@@ -711,7 +712,7 @@ async function _doRoll({
   }
 
   if (
-    game.settings.get('core', 'rollMode') === 'blindroll' ||
+    FoundryUtils.MessageMode.isBlind ||
     !!optionalArgs.blind ||
     !!optionalArgs.event?.blind ||
     isCtrl ||
@@ -721,11 +722,12 @@ async function _doRoll({
     messageData.blind = true
   }
 
-  createOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
-  ChatMessage.applyRollMode(messageData, createOptions.rollMode)
+  const messageMode = messageData.blind ? MessageMode.Blind : FoundryUtils.MessageMode
+  const options = { ...createOptions, messageMode: messageMode.value }
 
+  ChatMessage.applyRollMode(messageData, messageMode.value)
   messageData.sound = CONFIG.sounds.dice
-  ChatMessage.create(messageData, createOptions)
+  ChatMessage.create(messageData, options)
 
   if (isTargeted && !!optionalArgs.action) {
     let users = actor.isSelf ? [] : actor.getOwners()
