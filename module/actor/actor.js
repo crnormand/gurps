@@ -3711,4 +3711,33 @@ export class GurpsActor extends Actor {
     }
     return result
   }
+
+  async addMoveMode(mode, basic, enhanced, default_ = false) {
+    // this.system.move is an object where the keys are "stringified" indices (e.g., "0000", "0001", "0002") and the values
+    // are objects with properties: mode, value, enhanced, default.
+    const modes = objectToArray(this.system.move)
+
+    // if default_ is true, set all other modes' default to false
+    if (default_) {
+      for (const m of modes) {
+        m.default = false
+      }
+    }
+
+    // If the mode already exists, update its value and enhancedMoveValue.
+    const existingMode = modes.find(m => m.mode === mode)
+    if (existingMode) {
+      existingMode.basic = basic
+      existingMode.enhanced = enhanced
+      existingMode.default = default_
+    } else {
+      // If the mode doesn't exist, add a new entry.
+      modes.push({ mode, basic, enhanced, default: default_ })
+    }
+
+    // Convert the array back to an object with stringified indices.
+    const updatedModes = arrayToObject(modes)
+
+    await this.update({ 'system.move': updatedModes })
+  }
 }
