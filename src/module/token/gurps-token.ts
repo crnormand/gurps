@@ -41,6 +41,10 @@ class GurpsToken extends foundry.canvas.placeables.Token {
 
     maneuver.name = game.i18n?.localize(maneuver.name ?? maneuver.label) ?? maneuver.name
 
+    const actions = await TokenActions.fromToken(this)
+
+    await actions.selectManeuver(maneuver, game.combat?.round)
+
     const activeManeuvers = Maneuvers.getActiveEffectManeuvers(
       Array.from(this.actor?.effects.values() ?? []) as ActiveEffect.Implementation[]
     )
@@ -62,10 +66,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
       await this.actor?.createEmbeddedDocuments('ActiveEffect', [maneuver])
     }
 
-    const actions = await TokenActions.fromToken(this)
-
-    await actions.selectManeuver(maneuver, game.combat?.round)
-  }
+   }
 
   /* ---------------------------------------- */
 
