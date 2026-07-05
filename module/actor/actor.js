@@ -3736,7 +3736,7 @@ export class GurpsActor extends Actor {
     }
 
     // Convert the array back to an object with stringified indices.
-    const updatedModes = arrayToObject(modes)
+    const updatedModes = arrayToObject(modes, 5)
 
     await this.update({ 'system.move': updatedModes })
   }

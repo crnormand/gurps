@@ -25,6 +25,11 @@ export function multiplyDice(diceterm, factor) {
 
     return `${dice}d${sides}${sign}${adds}${remainder}`.trim()
   }
+
+  if (diceterm.match(/^\d+$/)) {
+    let value = parseInt(diceterm) * factor
+    return `${value}`
+  }
 }
 
 export function isValidDiceTerm(diceterm) {
