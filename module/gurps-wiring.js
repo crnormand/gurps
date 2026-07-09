@@ -1,6 +1,6 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import { OtfActionType } from './otf/types.js'
+import { OtfActionType } from './otf/index.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {

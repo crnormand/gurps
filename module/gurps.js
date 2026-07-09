@@ -88,9 +88,9 @@ import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { UI } from './ui/index.js'
 import { GetNumberInput } from './ui/get-number-input.js'
-import { applyModifierDesc } from './otf/description-utilities.js'
-import { findBestActionInChain } from './otf/best-action.ts'
-import { OtfActionType } from './otf/types.ts'
+
+import { OtfActionType } from './otf/index.ts'
+import { OtfModule } from './otf/index.ts'
 
 export let GURPS = undefined
 
@@ -125,6 +125,7 @@ if (!globalThis.GURPS) {
     Combat,
     CombatTracker,
     Damage,
+    OtfModule,
     Pdf,
     ResourceTracker,
     Token,
@@ -1290,7 +1291,7 @@ if (!globalThis.GURPS) {
     const originalOtf = action.orig
     const calcOnly = action.calcOnly
     if (['attribute', 'skill-spell'].includes(action.type)) {
-      action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
+      action = await GURPS.modules.OtfModule.findBestActionInChain({ action, event, actor, targets, originalOtf })
     }
 
     return !action
@@ -1553,8 +1554,6 @@ if (!globalThis.GURPS) {
     })
   }
   GURPS.handleRoll = handleRoll
-
-  GURPS.applyModifierDesc = applyModifierDesc
 
   /**
    * TODO Move to i18n.js.

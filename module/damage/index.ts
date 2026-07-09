@@ -27,3 +27,5 @@ export const Damage: DamageModule = {
   init,
   rollDamage,
 }
+
+export { DamageTermParser } from './damage-parser.js'

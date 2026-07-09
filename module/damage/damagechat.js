@@ -147,7 +147,7 @@ export default class DamageChat {
       const descriptions = targetmods.filter(it => !!it.desc).map(it => it.desc)
 
       for (const it of descriptions) {
-        await GURPS.applyModifierDesc(actor, it)
+        await GURPS.modules.OtfModule.applyModifierDesc(actor, it)
       }
     }
 

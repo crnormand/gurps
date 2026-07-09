@@ -301,6 +301,47 @@ describe('parseForRollOrDamage', () => {
   test('#> 8', () => {
     expect(parseForRollOrDamage('8')).toBeUndefined()
   })
+
+  test('sets accumulate=true for leading + damage', () => {
+    const result = parseForRollOrDamage('+2d burn')
+
+    expect(result?.action).toMatchObject({
+      orig: '+2d burn',
+      type: 'damage',
+      formula: '2d',
+      damagetype: 'burn',
+      accumulate: true,
+    })
+  })
+
+  test('extracts +@margin from trailing text when adds group is empty', () => {
+    const result = parseForRollOrDamage('2d cut +@margin')
+
+    expect(result?.action).toMatchObject({
+      orig: '2d cut +@margin',
+      type: 'damage',
+      formula: '2d+@margin',
+      damagetype: 'cut',
+      extdamagetype: '+',
+      accumulate: false,
+    })
+  })
+
+  test('uses override text in span output when provided', () => {
+    const result = parseForRollOrDamage('2d burn', 'Fireball')
+
+    expect(result?.action).toMatchObject({
+      orig: '2d burn',
+      type: 'damage',
+      formula: '2d',
+      damagetype: 'burn',
+    })
+    expect(result?.text).toEqual(expect.stringContaining('>Fireball</span>'))
+  })
+
+  test('returns undefined for scalar plus unknown descriptor with no dice', () => {
+    expect(parseForRollOrDamage('12 ctrl')).toBeUndefined()
+  })
 })
 
 describe('parseLink', () => {

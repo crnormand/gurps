@@ -1,4 +1,4 @@
-import { OtfActionType } from '../otf/types.js'
+import { OtfActionType } from '../otf/index.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { recurselist, sanitize } from '../../lib/utilities.js'

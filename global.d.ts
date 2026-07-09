@@ -71,6 +71,7 @@ declare global {
     }
 
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
+
     DamageChat: {
       _renderDamageChat(
         app: { data: { flags: { transfer: string } }; flags: { gurps: { transfer: object } } },
@@ -78,6 +79,9 @@ declare global {
         msg: object
       ): Promise<void>
     }
+
+    applyModifierDesc: (actor: Actor.Implementation, desc: string) => Promise<number | null>
+
     resolveDamageRoll: (
       event: Event,
       actor: GurpsActor,

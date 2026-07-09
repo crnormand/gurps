@@ -509,7 +509,7 @@ async function _doRoll({
 
   for (let m of targetmods) {
     modifier += m.modint
-    maxtarget = (await GURPS.applyModifierDesc(actor, m.desc)) || maxtarget
+    maxtarget = (await GURPS.modules.OtfModule.applyModifierDesc(actor, m.desc)) || maxtarget
   }
 
   actor = actor || game.user
