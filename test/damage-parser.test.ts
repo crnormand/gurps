@@ -8,8 +8,8 @@ const baseDamageTerm = {
   derivedRoll: null,
   bang: false,
   modifier: 0,
-  multiplier: null,
-  divisor: null,
+  multiplier: 1,
+  divisor: 1,
   type: '',
   extendedType: null,
   cost: null,
@@ -57,6 +57,36 @@ describe('damage term parser', () => {
       expect(DamageTermParser.isValid(input)).toBe(true)
     })
 
+    test('#> 3d6 cut', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result).toMatchObject({
+        ...baseDamageTerm,
+        dice: 3,
+        usesD: true,
+        sides: null,
+        type: 'cut',
+      })
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('3d cut')
+    })
+
+    test('#> 2d3 cut', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result).toMatchObject({
+        ...baseDamageTerm,
+        dice: 2,
+        usesD: true,
+        sides: 3,
+        type: 'cut',
+      })
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d3 cut')
+    })
+
     test('#> 2d burn explosive', () => {
       const result = DamageTermParser.parse(input)
       expect(result).not.toBeNull()
@@ -102,8 +132,10 @@ describe('damage term parser', () => {
 
     test.each([
       ['sw+1 cut', 'sw', false, 'sw+1 cut', 1, false, 'cut'],
+      ['sw +1 cut', 'sw', false, 'sw+1 cut', 1, false, 'cut'],
       ['swing-2 imp', 'sw', false, 'sw-2 imp', -2, false, 'imp'],
       ['thr+3 pi-', 'thr', false, 'thr+3 pi-', 3, false, 'pi-'],
+      ['thr +3 pi-', 'thr', false, 'thr+3 pi-', 3, false, 'pi-'],
       ['thrust+1 cr', 'thr', false, 'thr+1 cr', 1, false, 'cr'],
       ['SWING-2 imp', 'sw', false, 'sw-2 imp', -2, false, 'imp'],
       ['SW+1 cut', 'sw', false, 'sw+1 cut', 1, false, 'cut'],
@@ -156,6 +188,7 @@ describe('damage term parser', () => {
 
     test.each([
       ['*2', 2, '2d+1×2 cut'],
+      [' x2', 2, '2d+1×2 cut'],
       ['x2', 2, '2d+1×2 cut'],
       ['X2', 2, '2d+1×2 cut'],
       ['×2', 2, '2d+1×2 cut'],
@@ -202,6 +235,21 @@ describe('damage term parser', () => {
       expect(parser.toCanonicalString()).toBe('2d(0.5) cut')
     })
 
+    test('#> 2d (0.5) cut', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result).toMatchObject({
+        ...baseDamageTerm,
+        dice: 2,
+        usesD: true,
+        divisor: 0.5,
+        type: 'cut',
+      })
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d(0.5) cut')
+    })
+
     test('#> 2d+1! cut', () => {
       const result = DamageTermParser.parse(input)
       expect(result).not.toBeNull()
@@ -235,6 +283,66 @@ describe('damage term parser', () => {
       })
     })
 
+    test('#> 2d burn /2FP', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result?.cost).toEqual({
+        flag: '*per',
+        amount: 2,
+        pool: 'FP',
+      })
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d burn *per 2 FP')
+    })
+
+    test('#> 8(0.5) burn ex', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result).toMatchObject({
+        ...baseDamageTerm,
+        dice: 8,
+        usesD: false,
+        divisor: 0.5,
+        type: 'burn',
+        extendedType: 'ex',
+      })
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('8(0.5) burn ex')
+    })
+
+    test('#> 8 (0.5) burn ex', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result).toMatchObject({
+        ...baseDamageTerm,
+        dice: 8,
+        usesD: false,
+        divisor: 0.5,
+        type: 'burn',
+        extendedType: 'ex',
+      })
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('8(0.5) burn ex')
+    })
+
+    test('#> 12(2) cut', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result).toMatchObject({
+        ...baseDamageTerm,
+        dice: 12,
+        usesD: false,
+        divisor: 2,
+        type: 'cut',
+      })
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('12(2) cut')
+    })
+
     test('#> 2d burn *cost 2 FP', () => {
       const result = DamageTermParser.parse(input)
       expect(result).not.toBeNull()
@@ -266,6 +374,19 @@ describe('damage term parser', () => {
         amount: 3,
         pool: 'HP',
       })
+    })
+
+    test('#> 2d tox *costs3HP', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result?.cost).toEqual({
+        flag: '*costs',
+        amount: 3,
+        pool: 'HP',
+      })
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d tox *costs 3 HP')
     })
 
     test('#> 4d cr / FP', () => {
@@ -322,7 +443,7 @@ describe('damage term parser', () => {
       expect(DamageTermParser.parse(input)).toBeNull()
     })
 
-    test('#> 3d6 cut', () => {
+    test('#> 3d0 cut', () => {
       expect(DamageTermParser.parse(input)).toBeNull()
     })
 
@@ -338,7 +459,7 @@ describe('damage term parser', () => {
       expect(DamageTermParser.parse(input)).toBeNull()
     })
 
-    test('#> 12(2) cut', () => {
+    test('#> 12(0) cut', () => {
       expect(DamageTermParser.parse(input)).toBeNull()
     })
 
@@ -350,15 +471,7 @@ describe('damage term parser', () => {
       expect(DamageTermParser.parse(input)).toBeNull()
     })
 
-    test('#> 2d burn /2FP', () => {
-      expect(DamageTermParser.parse(input)).toBeNull()
-    })
-
     test('#> 2d cut @', () => {
-      expect(DamageTermParser.parse(input)).toBeNull()
-    })
-
-    test('#> 2d tox *costs3HP', () => {
       expect(DamageTermParser.parse(input)).toBeNull()
     })
 
