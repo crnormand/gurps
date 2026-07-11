@@ -361,7 +361,7 @@ describe('parseForRollOrDamage', () => {
     })
   })
 
-  test.skip('extracts +@margin from trailing text when adds group is empty', () => {
+  test('extracts +@margin from trailing text when adds group is empty', () => {
     const result = parseForRollOrDamage('2d cut +@margin')
 
     expect(result?.action).toMatchObject({
@@ -369,7 +369,7 @@ describe('parseForRollOrDamage', () => {
       type: 'damage',
       formula: '2d+@margin',
       damagetype: 'cut',
-      extdamagetype: '+',
+      extdamagetype: null,
       accumulate: false,
     })
   })

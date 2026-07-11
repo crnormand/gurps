@@ -13,6 +13,7 @@ const baseDamageTerm = {
   type: '',
   extendedType: null,
   cost: null,
+  addMargin: false,
   hitLocation: null,
 }
 
@@ -72,6 +73,7 @@ describe('damage term parser', () => {
       expect(parser.toCanonicalString()).toBe('3d cut')
     })
 
+    // TODO Rolling non-d6 damage doesn't really work.
     test('#> 2d3 cut', () => {
       const result = DamageTermParser.parse(input)
       expect(result).not.toBeNull()
@@ -420,6 +422,25 @@ describe('damage term parser', () => {
 
       const parser = new DamageTermParser(input)
       expect(parser.toCanonicalString()).toBe('2d burn *per 2 FP @arm')
+    })
+
+    test('#> 2d cut +@margin', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result?.addMargin).toBe(true)
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d+@margin cut')
+    })
+
+    test('#> 2d-1 cut +@margin @arm', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result?.addMargin).toBe(true)
+      expect(result?.hitLocation).toBe('arm')
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d-1+@margin cut @arm')
     })
 
     test('#> 2d tox *costs HP', () => {

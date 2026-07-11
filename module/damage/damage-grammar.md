@@ -3,7 +3,7 @@
 The following describes the grammar of a damage term in GURPS and GGA.
 
 ```
-damage-term = damage-roll, white-space, type, [ white-space, extended-type ], [ { space }, cost-phrase ], [ hitlocation ] ;
+damage-term = damage-roll, white-space, type, [ white-space, extended-type ], [ { space }, cost-phrase ], [ {space}, margin ], [ { space }, hitlocation ] ;
 
 damage-roll = [ "+" ], dieroll, [ { space }, divisor ] ;
 
@@ -24,6 +24,8 @@ type = identifier ;
 extended-type = identifier ;
 
 cost-phrase = cost-flag, { space }, [ positive-integer ], { space },  pool ;
+
+margin = "+@margin"
 
 hitlocation = "@", character excluding space, { character excluding space } ;
 
@@ -87,6 +89,7 @@ This table is a quick checklist to keep grammar, parser behavior, and tests in s
 | cost-phrase spacing around cost-flag and amount | Yes                   | Yes              | Supports zero or more spaces after the flag and before pool (for example /2FP, / 2FP, *costs3HP, *costs 3 HP).                                   |
 | cost-flag alternatives                          | Yes                   | Yes              | Supports slash, star-per, star-cost, and star-costs forms.                                                                                       |
 | pool as non-space token                         | Yes                   | Yes              | Pool is parsed as a token with no spaces.                                                                                                        |
+| margin token `+@margin`                         | Yes                   | Yes              | When present, parser output sets `addMargin=true`; otherwise `addMargin=false`.                                                                  |
 | modifier sign plus or minus variants            | Yes                   | Yes              | Supports plus, hyphen-minus, en dash, and unicode minus.                                                                                         |
 | multiplier operator alternatives                | Yes                   | Yes              | Supports star, x, and multiplication sign with decimal multiplier values.                                                                        |
 | decimal in divisor                              | Yes                   | Yes              | Accepts positive decimals and zero-prefixed decimals (for example 0.5), but not plain 0.                                                         |

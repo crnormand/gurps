@@ -39,6 +39,7 @@ export type DamageTerm = {
   type: string
   extendedType: string | null
   cost: DamageCostPhrase | null
+  addMargin: boolean
   hitLocation: string | null
 }
 
@@ -57,6 +58,7 @@ const DAMAGE_TERM_REGEX = new RegExp(
     `\\s+(?<type>${IDENTIFIER_PATTERN})`,
     `(?:\\s+(?<extendedType>${IDENTIFIER_PATTERN}))?`,
     '(?:\\s*(?<costTail>(?:\\/|\\*per|\\*costs|\\*cost(?!s))\\s*[^@\\s]+(?:\\s*[^@\\s]+)?))?',
+    '(?:\\s*(?<margin>\\+?@margin))?',
     '(?:\\s*(?<hitLocation>@[^\\s]+))?',
     '\\s*$',
   ].join(''),
@@ -167,6 +169,7 @@ export class DamageTermParser {
       type: parseDamageType(match.groups.type),
       extendedType,
       cost,
+      addMargin: !!match.groups.margin,
       hitLocation,
     }
 
@@ -206,9 +209,15 @@ export class DamageTermParser {
   }
 
   get modifierString() {
-    if (!this.output || this.output.modifier === 0) return ''
+    if (!this.output) return ''
+    if (this.output.modifier === 0 && this.output.addMargin === false) return ''
 
-    return this.output.modifier >= 0 ? `+${this.output.modifier}` : `${this.output.modifier}`
+    let result =
+      this.output.modifier > 0 ? `+${this.output.modifier}` : this.output.modifier < 0 ? `${this.output.modifier}` : ''
+
+    if (this.output.addMargin) result += '+@margin'
+
+    return result
   }
 
   get multiplierString(): string {
