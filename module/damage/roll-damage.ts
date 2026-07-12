@@ -1,5 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { i18nFallback } from '../utilities/i18nFallback.js'
+import { DamageTermParser } from './damage-parser.js'
 import DamageChat from './damagechat.js'
 
 export async function rollDamage(
@@ -31,18 +32,34 @@ export async function rollDamage(
     )
     const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fa-solid fa-dice-d6"></i>'
     const damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
-    const targetRoll = action.orig
+    const targetRoll = action.displayformula ?? action.orig
     const bucketTotal = GURPS.ModifierBucket.currentSum()
     const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
     const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
     const isBlindRoll = action.blindroll
-    const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
-    // Armor divisor can be (0.5) or (2) - need to regex to get the number
-    const armorDivisorRegex = /\((\d*\.?\d+)\)/
-    const armorDivisorNumber = action.extdamagetype?.match(armorDivisorRegex)?.[1]
-    // Multiplier damage is x2, X3 or *4 - need to regex to get the number
-    const multiplierRegex = /(?<=[xX*])\d+(\.\d+)?/
-    const multiplierNumber = displayFormula.match(multiplierRegex)?.[0]
+
+    // @ts-expect-error: feature.damageTermParser may not be defined in the type definitions
+    const useNewParser = game.settings.get(Settings.SYSTEM_NAME, 'feature.damageTermParser')
+
+    let armorDivisorNumber: number | null = null
+    let multiplierNumber: number | string | null | undefined = null
+    let useMinDamage: boolean | null = null
+    if (useNewParser) {
+      const damageTerm = DamageTermParser.parse(action.orig)
+      if (!damageTerm) return false
+      useMinDamage = damageTerm.bang
+      armorDivisorNumber = damageTerm.divisor
+      multiplierNumber = damageTerm.multiplier
+    } else {
+      useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
+      // Armor divisor can be (0.5) or (2) - need to regex to get the number
+      const armorDivisorRegex = /\((\d*\.?\d+)\)/
+      armorDivisorNumber = action.extdamagetype?.match(armorDivisorRegex)?.[1]
+      // Multiplier damage is x2, X3 or *4 - need to regex to get the number
+      const multiplierRegex = /(?<=[xX*])\d+(\.\d+)?/
+      multiplierNumber = displayFormula.match(multiplierRegex)?.[0]
+    }
+
     // Simple formula is dice+add, examples: 1d, 2d+3, 1d-1
     const simpleFormula = displayFormula.match(/\d+d[+-]?\d*/)?.[0]
     const originalFormula = action.formula.match(/\d+d[+-]?\d*/)?.[0]

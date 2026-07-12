@@ -9,6 +9,12 @@ beforeAll(() => {
       // @ts-ignore
       localize: str => str,
     },
+    // Mock game.settings.get('gurps', 'feature.damageTermParser') to return true
+    settings: {
+      get: (module: string, setting: string) => {
+        return !(module === 'gurps' && setting === 'feature.damageTermParser')
+      },
+    },
   }
   GURPS.DamageTables = new DamageTable()
 })

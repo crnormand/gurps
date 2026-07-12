@@ -1,9 +1,9 @@
-import { DAMAGE_TYPES, DamageTermParser } from '../module/damage/damage-parser.ts'
+import { DAMAGE_TYPES, DamageTermParser } from '../module/damage/damage-parser.js'
 
 const baseDamageTerm = {
   accumulator: false,
   dice: null,
-  usesD: false,
+  usesDice: false,
   sides: null,
   derivedRoll: null,
   bang: false,
@@ -39,7 +39,7 @@ describe('damage term parser', () => {
         ...baseDamageTerm,
         accumulator: false,
         dice: 2,
-        usesD: true,
+        usesDice: true,
         type: 'cut',
       })
       expect(DamageTermParser.isValid(input)).toBe(true)
@@ -51,7 +51,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 2,
-        usesD: true,
+        usesDice: true,
         type: 'fire',
         extendedType: null,
       })
@@ -64,7 +64,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 3,
-        usesD: true,
+        usesDice: true,
         sides: null,
         type: 'cut',
       })
@@ -80,7 +80,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 2,
-        usesD: true,
+        usesDice: true,
         sides: 3,
         type: 'cut',
       })
@@ -95,7 +95,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 2,
-        usesD: true,
+        usesDice: true,
         type: 'burn',
         extendedType: 'explosive',
       })
@@ -111,7 +111,7 @@ describe('damage term parser', () => {
         ...baseDamageTerm,
         accumulator: true,
         dice: 2,
-        usesD: true,
+        usesDice: true,
         type: 'cut',
       })
 
@@ -188,6 +188,7 @@ describe('damage term parser', () => {
       expect(parser.toCanonicalString()).toBe(expectedCanonical)
     })
 
+    // TODO: New parser is not handling decimal multipliers correctly yet. Need to fix that.
     test.each([
       ['*2', 2, '2d+1×2 cut'],
       [' x2', 2, '2d+1×2 cut'],
@@ -212,7 +213,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 3,
-        usesD: true,
+        usesDice: true,
         modifier: 2,
         multiplier: 5,
         divisor: 5,
@@ -227,7 +228,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 2,
-        usesD: true,
+        usesDice: true,
         bang: false,
         divisor: 0.5,
         type: 'cut',
@@ -243,7 +244,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 2,
-        usesD: true,
+        usesDice: true,
         divisor: 0.5,
         type: 'cut',
       })
@@ -258,7 +259,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 2,
-        usesD: true,
+        usesDice: true,
         modifier: 1,
         bang: true,
         type: 'cut',
@@ -304,7 +305,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 8,
-        usesD: false,
+        usesDice: false,
         divisor: 0.5,
         type: 'burn',
         extendedType: 'ex',
@@ -320,7 +321,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 8,
-        usesD: false,
+        usesDice: false,
         divisor: 0.5,
         type: 'burn',
         extendedType: 'ex',
@@ -336,7 +337,7 @@ describe('damage term parser', () => {
       expect(result).toMatchObject({
         ...baseDamageTerm,
         dice: 12,
-        usesD: false,
+        usesDice: false,
         divisor: 2,
         type: 'cut',
       })
@@ -433,6 +434,35 @@ describe('damage term parser', () => {
       expect(parser.toCanonicalString()).toBe('2d+@margin cut')
     })
 
+    test('#> 2d +@margin cut', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result?.addMargin).toBe(true)
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d+@margin cut')
+    })
+
+    test('#> 2d-1+@margin cut @arm', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result?.addMargin).toBe(true)
+      expect(result?.hitLocation).toBe('arm')
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d-1+@margin cut @arm')
+    })
+
+    test('#> 2d-1 cut @arm +@margin', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result?.addMargin).toBe(true)
+      expect(result?.hitLocation).toBe('arm')
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d-1+@margin cut @arm')
+    })
+    
     test('#> 2d-1 cut +@margin @arm', () => {
       const result = DamageTermParser.parse(input)
       expect(result).not.toBeNull()
@@ -441,6 +471,16 @@ describe('damage term parser', () => {
 
       const parser = new DamageTermParser(input)
       expect(parser.toCanonicalString()).toBe('2d-1+@margin cut @arm')
+    })
+    
+    test('#> 2d-1 cut *costs HP +@margin @arm', () => {
+      const result = DamageTermParser.parse(input)
+      expect(result).not.toBeNull()
+      expect(result?.addMargin).toBe(true)
+      expect(result?.hitLocation).toBe('arm')
+
+      const parser = new DamageTermParser(input)
+      expect(parser.toCanonicalString()).toBe('2d-1+@margin cut *costs 1 HP @arm')
     })
 
     test('#> 2d tox *costs HP', () => {

@@ -3,6 +3,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
 import { computePotentialHits } from './compute-potential-hits.js'
+import { DamageTermParser } from '../damage/damage-parser.js'
 
 export const rollData = target => {
   let targetColor, rollChance
@@ -53,13 +54,32 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
     value = parseInt(formula.match(/^(?<number>\d+)/).groups.number)
   }
 
-  const add = parseInt(formula.match(/([+-]\d+)/)?.[1] || 0)
-  const damageType = formula.match(/\s(\w+)/)?.[1] || ''
+  let add = 0
+  let damageType = ''
+  let armorDivisor = ''
+  let hasMinDamage = false
+  let multiplier = ''
+  let costFormula = ''
 
-  const armorDivisor = formula.match(/(?<=\()\S+(?=\))/)?.[0]
-  const hasMinDamage = formula.includes('!')
-  const multiplier = formula.match(/(?<=[xX*])\d+(\.\d+)?/)?.[0] || ''
-  const costFormula = formula.match(/(?<=\*)\D.+/)?.[0] || ''
+  if (game.settings.get('gurps', 'feature.damageTermParser')) {
+    // Use the new damage term parser
+    const damageTerm = new DamageTermParser(formula)
+
+    add = damageTerm.output.modifier
+    damageType = damageTerm.output.type
+    armorDivisor = damageTerm.divisorString
+    hasMinDamage = damageTerm.output.bang
+    multiplier = damageTerm.multiplierString
+    costFormula = damageTerm.cost
+  } else {
+    add = parseInt(formula.match(/([+-]\d+)/)?.[1] || 0)
+    damageType = formula.match(/\s(\w+)/)?.[1] || ''
+
+    armorDivisor = formula.match(/(?<=\()\S+(?=\))/)?.[0]
+    hasMinDamage = formula.includes('!')
+    multiplier = formula.match(/(?<=[xX*])\d+(\.\d+)?/)?.[0] || ''
+    costFormula = formula.match(/(?<=\*)\D.+/)?.[0] || ''
+  }
 
   const bucketMod = GURPS.ModifierBucket.currentSum()
   let newAdd = add + bucketMod

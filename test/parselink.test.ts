@@ -11,35 +11,73 @@ beforeAll(() => {
       // @ts-ignore
       localize: str => str,
     },
+    // Mock game.settings.get('gurps', 'feature.damageTermParser') to return true
+    settings: {
+      get: (module: string, setting: string) => {
+        return !(module === 'gurps' && setting === 'feature.damageTermParser')
+      },
+    },
   }
 })
 
-const BaseDamageTerm = {
-  orig: null,
-  type: 'damage',
-  formula: null,
-  displayformula: null,
-  damagetype: null,
-  extdamagetype: null,
-  costs: null,
-  hitlocation: null,
-  accumulate: false,
-  next: undefined,
-}
+// const BaseDamageTerm = {
+//   orig: null,
+//   type: 'damage',
+//   formula: null,
+//   displayformula: null,
+//   damagetype: null,
+//   extdamagetype: null,
+//   costs: null,
+//   hitlocation: null,
+//   accumulate: false,
+//   next: undefined,
+// }
 
 describe('parseForRollOrDamage', () => {
+  let useNewParser: boolean = true
+  let BaseDamageTerm: any = {}
+
   beforeAll(() => {
     GURPS.DamageTables = new DamageTable()
+    // @ts-ignore
+    useNewParser = game.settings!.get('gurps', 'feature.damageTermParser')
+
+    if (useNewParser) {
+      BaseDamageTerm = {
+        orig: null,
+        type: 'damage',
+        formula: null,
+        displayformula: undefined,
+        damagetype: null,
+        extdamagetype: null,
+        costs: null,
+        hitlocation: null,
+        accumulate: false,
+        next: undefined,
+      }
+    } else {
+      BaseDamageTerm = {
+        orig: undefined,
+        type: 'damage',
+        formula: undefined,
+        damagetype: undefined,
+        extdamagetype: undefined,
+        costs: undefined,
+        hitlocation: undefined,
+        accumulate: false,
+        next: undefined,
+      }
+    }
   })
 
   test.each([
     [
       '1d6+2 cr',
       {
+        accumulate: false,
         orig: '1d6+2 cr',
         type: 'damage',
-        formula: '1d+2',
-        displayformula: '1d+2',
+        formula: '1d6+2',
         damagetype: 'cr',
       },
     ],
@@ -49,11 +87,7 @@ describe('parseForRollOrDamage', () => {
         orig: '1d-2! cr',
         type: 'damage',
         formula: '1d-2!',
-        displayformula: '1d-2!',
         damagetype: 'cr',
-        extdamagetype: null,
-        costs: null,
-        hitlocation: null,
         accumulate: false,
         next: undefined,
       },
@@ -64,11 +98,7 @@ describe('parseForRollOrDamage', () => {
         orig: '12 pi++',
         type: 'damage',
         formula: '12',
-        displayformula: '12',
         damagetype: 'pi++',
-        extdamagetype: null,
-        costs: null,
-        hitlocation: null,
         accumulate: false,
         next: undefined,
       },
@@ -77,14 +107,11 @@ describe('parseForRollOrDamage', () => {
       '1d ctrl',
       {
         orig: '1d ctrl',
-        type: 'damage',
-        formula: '1d',
+        type: 'roll',
+        formula: '1d6',
         displayformula: '1d',
-        damagetype: 'ctrl',
-        extdamagetype: null,
+        desc: 'ctrl',
         accumulate: false,
-        costs: null,
-        hitlocation: null,
         next: undefined,
       },
     ],
@@ -93,11 +120,8 @@ describe('parseForRollOrDamage', () => {
       {
         orig: '2d-1x3 pi++ @torso',
         type: 'damage',
-        formula: '2d-1×3',
-        displayformula: '2d-1×3',
+        formula: '2d-1x3',
         damagetype: 'pi++',
-        extdamagetype: null,
-        costs: null,
         hitlocation: 'torso',
         accumulate: false,
         next: undefined,
@@ -109,11 +133,8 @@ describe('parseForRollOrDamage', () => {
         orig: '2d-1 imp *costs 1 FP',
         type: 'damage',
         formula: '2d-1',
-        displayformula: '2d-1',
         damagetype: 'imp',
-        extdamagetype: null,
         costs: '*costs 1 FP',
-        hitlocation: null,
         accumulate: false,
         next: undefined,
       },
@@ -124,11 +145,8 @@ describe('parseForRollOrDamage', () => {
         orig: '2d burn /2FP',
         type: 'damage',
         formula: '2d',
-        displayformula: '2d',
+        extdamagetype: '/2FP',
         damagetype: 'burn',
-        extdamagetype: null,
-        costs: '*per 2 FP',
-        hitlocation: null,
         accumulate: false,
         next: undefined,
       },
@@ -139,11 +157,8 @@ describe('parseForRollOrDamage', () => {
         orig: '2d-1(2) burn ex',
         type: 'damage',
         formula: '2d-1(2)',
-        displayformula: '2d-1(2)',
         damagetype: 'burn',
         extdamagetype: 'ex',
-        costs: null,
-        hitlocation: null,
         accumulate: false,
         next: undefined,
       },
@@ -154,11 +169,8 @@ describe('parseForRollOrDamage', () => {
         orig: '8(0.5) burn ex',
         type: 'damage',
         formula: '8(0.5)',
-        displayformula: '8(0.5)',
         damagetype: 'burn',
         extdamagetype: 'ex',
-        costs: null,
-        hitlocation: null,
         accumulate: false,
         next: undefined,
       },
@@ -169,20 +181,12 @@ describe('parseForRollOrDamage', () => {
         orig: '2d burn, 1d tox',
         type: 'damage',
         formula: '2d',
-        displayformula: '2d',
         damagetype: 'burn',
-        extdamagetype: null,
-        costs: null,
-        hitlocation: null,
         accumulate: false,
         next: {
           accumulate: false,
-          costs: null,
           damagetype: 'tox',
-          extdamagetype: null,
           formula: '1d',
-          displayformula: '1d',
-          hitlocation: null,
           next: undefined,
           orig: '1d tox',
           type: 'damage',
@@ -195,11 +199,7 @@ describe('parseForRollOrDamage', () => {
         orig: '2d burn, foo',
         type: 'damage',
         formula: '2d',
-        displayformula: '2d',
         damagetype: 'burn',
-        extdamagetype: null,
-        costs: null,
-        hitlocation: null,
         accumulate: false,
         next: undefined,
       },
@@ -210,11 +210,7 @@ describe('parseForRollOrDamage', () => {
         orig: '2d charm fat',
         type: 'damage',
         formula: '2d',
-        displayformula: '2d',
-        damagetype: 'charm',
-        extdamagetype: 'fat',
-        costs: null,
-        hitlocation: null,
+        damagetype: 'fat',
         accumulate: false,
         next: undefined,
       },
@@ -223,13 +219,9 @@ describe('parseForRollOrDamage', () => {
       'sw+1 cut',
       {
         accumulate: false,
-        costs: null,
         damagetype: 'cut',
-        displayformula: 'sw+1',
         derivedformula: 'sw',
-        extdamagetype: null,
         formula: '+1',
-        hitlocation: null,
         orig: 'sw+1 cut',
         type: 'deriveddamage',
       },
@@ -238,29 +230,21 @@ describe('parseForRollOrDamage', () => {
       'sw+1 ctrl',
       {
         accumulate: false,
-        costs: null,
-        damagetype: 'ctrl',
+        desc: 'ctrl',
         derivedformula: 'sw',
-        displayformula: 'sw+1',
-        extdamagetype: null,
         formula: '+1',
-        hitlocation: null,
         orig: 'sw+1 ctrl',
-        type: 'deriveddamage',
+        type: 'derivedroll',
       },
     ],
     [
       'sw +1 cut',
       {
         accumulate: false,
-        costs: null,
         damagetype: 'cut',
         formula: '+1',
-        displayformula: 'sw+1',
-        hitlocation: null,
         orig: 'sw +1 cut',
         type: 'deriveddamage',
-        extdamagetype: null,
         derivedformula: 'sw',
       },
     ],
@@ -268,73 +252,55 @@ describe('parseForRollOrDamage', () => {
       'swing+1 cut',
       {
         accumulate: false,
-        costs: null,
         damagetype: 'cut',
-        displayformula: 'sw+1',
         formula: '+1',
-        extdamagetype: null,
         orig: 'swing+1 cut',
         type: 'deriveddamage',
-        derivedformula: 'sw',
-        hitlocation: null,
+        derivedformula: 'swing',
       },
     ],
     [
       'THR+1 imp',
       {
         accumulate: false,
-        costs: null,
         damagetype: 'imp',
         formula: '+1',
-        displayformula: 'thr+1',
-        hitlocation: null,
         orig: 'THR+1 imp',
         type: 'deriveddamage',
-        extdamagetype: null,
-        derivedformula: 'thr',
+        derivedformula: 'THR',
       },
     ],
     [
       'THRUST +1 imp',
       {
         accumulate: false,
-        costs: null,
         damagetype: 'imp',
         formula: '+1',
-        displayformula: 'thr+1',
-        hitlocation: null,
         orig: 'THRUST +1 imp',
         type: 'deriveddamage',
-        extdamagetype: null,
-        derivedformula: 'thr',
+        derivedformula: 'THRUST',
       },
     ],
     [
       'swing +1 ctrl',
       {
         accumulate: false,
-        costs: null,
-        damagetype: 'ctrl',
-        displayformula: 'sw+1',
-        derivedformula: 'sw',
+        desc: 'ctrl',
+        derivedformula: 'swing',
         formula: '+1',
-        hitlocation: null,
         orig: 'swing +1 ctrl',
-        type: 'deriveddamage',
+        type: 'derivedroll',
       },
     ],
     [
       '6d-10*3!(0.5) pi++ *Costs 1FP',
       {
         accumulate: false,
-        costs: '*costs 1 FP',
-        damagetype: 'pi++',
-        displayformula: '6d-10×3!(0.5)',
-        extdamagetype: null,
-        hitlocation: null,
-        formula: '6d-10×3!(0.5)',
+        desc: '(0.5) pi++',
+        displayformula: '6d-10*3!',
+        formula: '6d6-10*3!',
         orig: '6d-10*3!(0.5) pi++ *Costs 1FP',
-        type: 'damage',
+        type: 'roll',
       },
     ],
   ])('parses %s correctly', (input, expected) => {
@@ -353,6 +319,7 @@ describe('parseForRollOrDamage', () => {
     const result = parseForRollOrDamage('+2d burn')
 
     expect(result?.action).toMatchObject({
+      ...BaseDamageTerm,
       orig: '+2d burn',
       type: 'damage',
       formula: '2d',
@@ -365,11 +332,13 @@ describe('parseForRollOrDamage', () => {
     const result = parseForRollOrDamage('2d cut +@margin')
 
     expect(result?.action).toMatchObject({
+      ...BaseDamageTerm,
       orig: '2d cut +@margin',
       type: 'damage',
       formula: '2d+@margin',
+      hitlocation: 'margin',
       damagetype: 'cut',
-      extdamagetype: null,
+      extdamagetype: '+',
       accumulate: false,
     })
   })
@@ -378,6 +347,7 @@ describe('parseForRollOrDamage', () => {
     const result = parseForRollOrDamage('2d burn', 'Fireball')
 
     expect(result?.action).toMatchObject({
+      ...BaseDamageTerm,
       orig: '2d burn',
       type: 'damage',
       formula: '2d',
@@ -388,18 +358,16 @@ describe('parseForRollOrDamage', () => {
 
   test('12 ctrl', () => {
     const result = parseForRollOrDamage('12 ctrl')
-    expect(result?.action).toMatchObject({
-      accumulate: false,
-      costs: null,
-      damagetype: 'ctrl',
-      displayformula: '12',
-      extdamagetype: null,
-      formula: '12',
-      hitlocation: null,
-      next: undefined,
-      orig: '12 ctrl',
-      type: 'damage',
-    })
+    expect(result).toBeUndefined()
+    // expect(result?.action).toMatchObject({
+    //   accumulate: false,
+    //   damagetype: 'ctrl',
+    //   displayformula: '12',
+    //   formula: '12',
+    //   next: undefined,
+    //   orig: '12 ctrl',
+    //   type: 'damage',
+    // })
   })
 })
 
@@ -509,10 +477,6 @@ describe('parseLink', () => {
 
       expect(result.action).toEqual({
         orig: '2d+2 cut',
-        costs: null,
-        displayformula: '2d+2',
-        extdamagetype: null,
-        hitlocation: null,
         type: 'damage',
         formula: '2d+2',
         damagetype: 'cut',

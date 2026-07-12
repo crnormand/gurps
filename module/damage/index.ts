@@ -4,9 +4,11 @@ import { DamageTable } from './damage-tables.js'
 import DamageChat from './damagechat.js'
 import { resolveDamageRollAction } from './resolve-damage-roll-action.js'
 import { rollDamage } from './roll-damage.js'
+import { DamageTermParser } from './damage-parser.js'
 
 interface DamageModule extends GurpsModule {
   rollDamage: typeof rollDamage
+  DamageTermParser: typeof DamageTermParser
 }
 
 function init() {
@@ -26,6 +28,7 @@ function init() {
 export const Damage: DamageModule = {
   init,
   rollDamage,
+  DamageTermParser,
 }
 
 export { DamageTermParser } from './damage-parser.js'

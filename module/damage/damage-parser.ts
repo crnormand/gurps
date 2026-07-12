@@ -29,7 +29,7 @@ export type DamageTerm = {
   original: string
   accumulator: boolean
   dice: number | null
-  usesD: boolean
+  usesDice: boolean
   sides: number | null
   derivedRoll: 'sw' | 'thr' | null
   bang: boolean
@@ -52,13 +52,13 @@ const DAMAGE_TERM_REGEX = new RegExp(
     '(?<accumulator>\\+)?',
     `(?:(?<derivedRoll>${DERIVED_ROLL_PATTERN})|(?<dice>[1-9]\\d*)(?<hasD>d(?<sides>[1-9]\\d*)?)?)`,
     '(?:\\s*(?<modifier>[+\\-\\u2013\\u2212]\\d+))?',
+    '(?:\\s*(?<margin>\\+?@margin))?',
     `(?:\\s*(?<multiplier>[*x\\u00D7]${DECIMAL_PATTERN}))?`,
     '(?<bang>!)?',
     `(?:\\s*(?<divisor>\\(${DECIMAL_PATTERN}\\)))?`,
     `\\s+(?<type>${IDENTIFIER_PATTERN})`,
     `(?:\\s+(?<extendedType>${IDENTIFIER_PATTERN}))?`,
     '(?:\\s*(?<costTail>(?:\\/|\\*per|\\*costs|\\*cost(?!s))\\s*[^@\\s]+(?:\\s*[^@\\s]+)?))?',
-    '(?:\\s*(?<margin>\\+?@margin))?',
     '(?:\\s*(?<hitLocation>@[^\\s]+))?',
     '\\s*$',
   ].join(''),
@@ -121,7 +121,9 @@ export class DamageTermParser {
   parse(): DamageTerm | null {
     if (this.output) return this.output
 
-    const match = this.input.match(DAMAGE_TERM_REGEX)
+    const addMargin = /\+@margin\b/i.test(this.input)
+    const normalizedInput = this.input.replace(/\s*\+@margin\b/gi, ' ')
+    const match = normalizedInput.match(DAMAGE_TERM_REGEX)
     if (!match?.groups) return null
 
     const hasDerivedRoll = !!match.groups.derivedRoll
@@ -160,7 +162,7 @@ export class DamageTermParser {
       accumulator: !!match.groups.accumulator,
       dice,
       derivedRoll,
-      usesD: !!match.groups.hasD,
+      usesDice: !!match.groups.hasD,
       bang: !!match.groups.bang,
       sides,
       modifier,
@@ -169,7 +171,7 @@ export class DamageTermParser {
       type: parseDamageType(match.groups.type),
       extendedType,
       cost,
-      addMargin: !!match.groups.margin,
+      addMargin,
       hitLocation,
     }
 
@@ -183,10 +185,8 @@ export class DamageTermParser {
   toCanonicalString(): string | null {
     if (!this.output) return null
 
-    const rollPart = this.rollString
-
     const parts = [
-      `${this.output.accumulator ? '+' : ''}${rollPart}${this.divisorString}`,
+      `${this.output.accumulator ? '+' : ''}${this.rollString}${this.divisorString}`,
       this.output.type,
       this.output.extendedType,
       this.output.cost !== null ? `${this.output.cost.flag} ${this.output.cost.amount} ${this.output.cost.pool}` : null,
@@ -196,18 +196,34 @@ export class DamageTermParser {
     return parts.join(' ')
   }
 
+  get damageRollString(): string {
+    if (!this.output) return ''
+
+    const type = this.output.type ? ' ' + this.output.type : ''
+    const extendedType = this.output.extendedType ? ' ' + this.output.extendedType : ''
+    return `${this.rollString}${type}${extendedType}`
+  }
+
+  /**
+   * Returns the die roll portion of the damage formula -- i.e., the die roll, modifier, multiplier, and bang if present.
+   * Handles standard dice notation, flat damage, and derived rolls.
+   * E.g., "2d+1×2" or "sw+1×2" or "2+1×2"
+   */
   get rollString(): string {
     if (!this.output) return ''
 
-    const d = this.output.usesD ? 'd' : ''
-
+    const d = this.output.usesDice ? 'd' : ''
     const sides = this.output.sides !== null ? this.output.sides : ''
-
     const roll = this.output.dice !== null ? `${this.output.dice}` : (this.output.derivedRoll ?? '')
 
     return `${roll}${d}${sides}${this.modifierString}${this.multiplierString}${this.output.bang ? '!' : ''}`
   }
 
+  /**
+   * Returns the modifier portion of the damage formula, including +@margin if present.
+   * If the modifier is zero and there is no +@margin, it returns an empty string.
+   * E.g., "+1" or "-1+@margin".
+   */
   get modifierString() {
     if (!this.output) return ''
     if (this.output.modifier === 0 && this.output.addMargin === false) return ''
@@ -220,32 +236,38 @@ export class DamageTermParser {
     return result
   }
 
+  /**
+   * Returns the multiplier portion of the damage formula, e.g., "×2".
+   * If the multiplier is 1 or not present, it returns an empty string.
+   */
   get multiplierString(): string {
     if (!this.output || this.output.multiplier === 1) return ''
     return this.output.multiplier !== null ? `×${this.output.multiplier}` : ''
   }
 
+  /**
+   * Returns the armor divisor portion of the damage formula, e.g., "(0.5)" or "(2)".
+   * If the divisor is 1 or not present, it returns an empty string.
+   */
   get divisorString(): string {
     if (!this.output || this.output.divisor === null || this.output.divisor === 1) return ''
     return `(${this.output.divisor})`
   }
 
+  /**
+   * Returns the cost portion of the damage formula, e.g., "*costs 2 FP".
+   * If there is no cost, it returns null.
+   */
   get cost(): string | null {
     if (!this.output || !this.output.cost) return null
     return `${this.output.cost.flag} ${this.output.cost.amount} ${this.output.cost.pool}`
   }
 
-  get derivedRollString(): string {
-    if (!this.output || !this.output.derivedRoll) return ''
-    return this.output.derivedRoll
-  }
-
+  /**
+   * Returns the canonical formula string for the damage dice formula, e.g., "2d+1×2(0.5)"
+   */
   get formulaString(): string {
     if (!this.output) return ''
-
-    if (this.output.derivedRoll) {
-      return `${this.modifierString}${this.multiplierString}${this.output.bang ? '!' : ''}${this.divisorString}`
-    }
 
     return `${this.rollString}${this.divisorString}`
   }
