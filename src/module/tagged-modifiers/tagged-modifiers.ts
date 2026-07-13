@@ -7,7 +7,7 @@ import { AnyObject } from "fvtt-types/utils"
 import { TaggedModifiersSettings } from "./index.js"
 
 
-enum ROLL_TYPE {
+export enum ROLL_TYPE {
   MELEE = 'm',
   RANGED = 'r',
   PARRY = 'p',
@@ -91,7 +91,7 @@ function extractRollTypeFromChatThing(chatThing: string) : ROLL_TYPE {
     return toValidRoleType(ref)
 }
 
-function getRollTypeFromData(chatThing: string, attack: MeleeAttackModel | RangedAttackModel | undefined) {
+export function getRollTypeFromData(chatThing: string, attack: MeleeAttackModel | RangedAttackModel | undefined) {
     function defaultRef() {
         return attack ? attack.isOfType(ActionType.MeleeAttack) ? ROLL_TYPE.MELEE : ROLL_TYPE.RANGED : ROLL_TYPE.DAMAGE
     }
@@ -122,7 +122,7 @@ export function getTagsForRoll(
 
     const spellTags = 
         (rollType === ROLL_TYPE.SPELL && taggedSettings.useSpellCollegeAsTag && optionalArgs.obj?.system?.colleges instanceof Set) 
-        ? Array.from(optionalArgs.obj?.system?.colleges).map(college => cleanTags(college))
+        ? Array.from(optionalArgs.obj?.system?.colleges).map(college => cleanTags(college)).flatMap(it => it)
         : []
 
     return new Set([...rollTypeTags, ...itemTags, ...itemTags, ...spellTags])
@@ -165,16 +165,14 @@ function canModApply(
     const tagHit = userModsTags.some( tag => allTags.has(tag))
     
     //mods that include '#maneuver' are added by then TokenActions to the . If they include '@man:' they ar from the current manuever should be applied if a tag matches
-    //otherwise they are from multiple parrys oder previous aim manuevers, exists per attack row and haf the system path of the attack as source. 
+    //otherwise they are from multiple parrys oder previous aim manuevers, exists per attack row and has the system path of the attack as source. 
     // These should be applied only, if the attack of the roll matches the item reference.
-    // ToDo: In V1.0.0 the item references from the roll don't match, because the rolls uses the names, and TockenActions use keys.
-    // To fix this I have to fix the UserModifiers first.
     // This whole logic here is quite fragile, the item matching should use item IDs.  
     const tokenActionModsFits = !mod.includes('#maneuver') || mod.includes('@man:') || mod.includes(itemRef)
 
     //check for combat/noncombat
-    const nonCombatModFits =  !actorInCombat || !taggedSettings.nonCombatOnlyTag || !allTags.has(taggedSettings.nonCombatOnlyTag)
-    const combatModFits =  actorInCombat || !taggedSettings.combatOnlyTag || !allTags.has(taggedSettings.combatOnlyTag)
+    const nonCombatModFits =  !actorInCombat || !taggedSettings.nonCombatOnlyTag || !userModsTags.includes(taggedSettings.nonCombatOnlyTag)
+    const combatModFits =  actorInCombat || !taggedSettings.combatOnlyTag || !userModsTags.includes(taggedSettings.combatOnlyTag)
     
     //ToDo: the original code has the following code. I have no clear idea how this is supposed to work and I can find on documentation of such a feature
     /*
@@ -183,7 +181,7 @@ function canModApply(
           canApply = canApply && (mod.includes(optionalArgs.itemPath) || !mod.includes('@system')
     */
    // It seem to assume that be the intention, if the optional args include a itemPath (but the code path that set this property seem never to be called in V1)
-   // and the source of the mod dont't starts with @system (what his never then case in V1)  
+   // and the source of the mod dont't starts with @system (what is never then case in V1)  
    // then the mod should ony apply to rolls originating from this item. 
 
     return tagHit && tokenActionModsFits && nonCombatModFits && combatModFits
@@ -213,7 +211,24 @@ export function taggedModToApply(
     const itemRef = getItemRef(chatThing, optionalArgs, attack)
     const isDamageRoll = rollType === ROLL_TYPE.DAMAGE
 
-    const modsToApply = allMods.filter(mod => canModApply(taggedSettings, itemRef, actorInCombat, allTags, mod))
+    let modsToApply = allMods.filter(mod => canModApply(taggedSettings, itemRef, actorInCombat, allTags, mod))
+
+    if (rollType === ROLL_TYPE.RANGED) {
+
+        const bulkMod = modsToApply.find(mod => mod.includes('#maneuver') && mod.includes('@man:move_and_attack') )
+       
+        if (bulkMod) {
+          const parsedBulk = parseInt((optionalArgs?.obj as unknown as RangedAttackModel)?.bulkText ?? '0', 10)
+          const bulkPenalty = Number.isNaN(parsedBulk) ? 0 : parsedBulk
+          const DEFAULT_PENALTY = -2
+
+          const maneuverMod = bulkPenalty < DEFAULT_PENALTY ? bulkPenalty : DEFAULT_PENALTY
+          const rangedBulkLabel = game.i18n?.localize('GURPS.modifiers_.moveAndAttackRangedBulk')
+          const mod = `${maneuverMod} ${rangedBulkLabel} #ranged #maneuver @man:move_and_attack`
+
+          modsToApply = [...modsToApply.filter(it => it !== bulkMod), mod]
+        }
+    }
 
     return { modsToApply, isDamageRoll }
 }
