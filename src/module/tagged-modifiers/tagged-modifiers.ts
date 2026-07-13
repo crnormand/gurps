@@ -122,7 +122,7 @@ export function getTagsForRoll(
 
     const spellTags = 
         (rollType === ROLL_TYPE.SPELL && taggedSettings.useSpellCollegeAsTag && optionalArgs.obj?.system?.colleges instanceof Set) 
-        ? Array.from(optionalArgs.obj?.system?.colleges).map(college => cleanTags(college)).flatMap(it => it)
+        ? Array.from(optionalArgs.obj?.system?.colleges).flatMap(college => cleanTags(college))
         : []
 
     return new Set([...rollTypeTags, ...itemTags, ...itemTags, ...spellTags])
