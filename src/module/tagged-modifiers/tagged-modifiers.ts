@@ -145,7 +145,7 @@ function getItemRef(
     optionalArgs: { obj?: {uuid?: string, system?: AnyObject}}, 
     attack?: MeleeAttackModel | RangedAttackModel,
 ): string {
-   return optionalArgs?.obj?.uuid as string ?? getItemRefFromChatThing(chatThing) ?? attack?.id ?? ''
+   return optionalArgs?.obj?.uuid as string ?? getItemRefFromChatThing(chatThing) ?? attack?.uuid ?? ''
 }
 
 
