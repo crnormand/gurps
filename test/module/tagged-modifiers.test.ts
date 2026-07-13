@@ -256,4 +256,43 @@ describe('taggedModToApply', () => {
 
         expect(result.modsToApply.sort()).toEqual((expected as Array<string>).sort())
     })
+
+    test('Parry penalty is only applied for parrys from the matching attack', () => {
+        const allMods = [
+            "-8 To Parry Penalty Katana #parry #maneuver #Swung @Actor.TKhYpsMQ4KmECA5z.Item.7VGrPxDSS5epo5dD.Action.1P8If0c1CNiqZZu5",
+            "-8 To Parry Penalty Katana #parry #maneuver #Swung @Actor.TKhYpsMQ4KmECA5z.Item.7VGrPxDSS5epo5dD.Action.SHcLDishtHhB4ogm",
+            "-4 To Parry Penalty Shortsword #parry #maneuver #Swung @Actor.TKhYpsMQ4KmECA5z.Item.pZeb5FKgKp4IXkTh.Action.0YpHKdr0uDH6JGgp"
+        ]
+
+        const result = taggedModToApply(
+            '[@TKhYpsMQ4KmECA5z@P:"Katana (Thrust)"]', 
+            undefined, 
+            {obj: {uuid: 'Actor.TKhYpsMQ4KmECA5z.Item.7VGrPxDSS5epo5dD.Action.1P8If0c1CNiqZZu5'}},
+            defaultSettings, 
+            allMods, 
+            true
+        )
+
+        expect(result.modsToApply.sort()).toEqual( ["-8 To Parry Penalty Katana #parry #maneuver #Swung @Actor.TKhYpsMQ4KmECA5z.Item.7VGrPxDSS5epo5dD.Action.1P8If0c1CNiqZZu5"].sort())
+    })
+
+    test('Aim bonus is only applied for attacks from the matching attack', () => {
+        const allMods =[
+            "+2 To Aim Bonus Large Knife #hit #maneuver @Actor.TKhYpsMQ4KmECA5z.Item.T6jZE3aTfcbGIAb0.Action.Xx6F0fLdynnNhQon",
+            "+2 To Aim Bonus Small Knife #hit #maneuver @Actor.TKhYpsMQ4KmECA5z.Item.wcpf8ECgHkRXrrZU.Action.naD36DRPlLu3nipH",
+            "+5 To Aim Bonus Longbow #hit #maneuver @Actor.TKhYpsMQ4KmECA5z.Item.cNHH6Dg8ZgutjuJf.Action.KhneGcNd0UkRhP2n"
+        ]
+
+        const result = taggedModToApply(
+            '[@TKhYpsMQ4KmECA5z@R:"Large Knife (Thrown)"]', 
+            undefined, 
+            {obj: {uuid: '@Actor.TKhYpsMQ4KmECA5z.Item.T6jZE3aTfcbGIAb0.Action.Xx6F0fLdynnNhQon'}},
+            defaultSettings, 
+            allMods, 
+            true
+        )
+
+        expect(result.modsToApply.sort()).toEqual( ["+2 To Aim Bonus Large Knife #hit #maneuver @Actor.TKhYpsMQ4KmECA5z.Item.T6jZE3aTfcbGIAb0.Action.Xx6F0fLdynnNhQon"].sort())
+    })
+
 })

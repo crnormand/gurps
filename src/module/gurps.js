@@ -1010,7 +1010,7 @@ if (!globalThis.GURPS) {
 
       if (!!action.isMelee && !action.isRanged) prefix = 'M:'
       if (!action.isMelee && !!action.isRanged) prefix = 'R:'
-      let thing = stripBracketContents(att.name)
+      let thing = stripBracketContents(att.name ? att.name : att.item.name) 
       let qn = quotedAttackName({ name: thing, mode: att.mode })
       let aid = actor ? `@${actor.id}@` : ''
       const chatthing = `[${aid}${prefix}${qn}]`
@@ -1122,7 +1122,7 @@ if (!globalThis.GURPS) {
         return false
       }
 
-      const thing = stripBracketContents(att.name)
+      const thing = stripBracketContents(att.name ? att.name : att.item.name)
 
       if (action.calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
@@ -1197,7 +1197,7 @@ if (!globalThis.GURPS) {
         return false
       }
 
-      const thing = stripBracketContents(att.name)
+      const thing = stripBracketContents(att.name ? att.name : att.item.name)
 
       if (action.calcOnly) {
         let modifier = parseInt(action.mod) ?? 0
@@ -1221,7 +1221,7 @@ if (!globalThis.GURPS) {
         thing,
         chatthing,
         origtarget: target,
-        optionalArgs: { blind: action.blindroll, event },
+        optionalArgs: { blind: action.blindroll, event, obj: att },
         action,
       })
         .then(result => {

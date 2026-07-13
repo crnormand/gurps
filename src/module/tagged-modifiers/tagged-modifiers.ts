@@ -142,10 +142,10 @@ function getItemRefFromChatThing(chatThing: string): string | undefined {
 
 function getItemRef(
     chatThing: string, 
-    optionalArgs: { obj?: {name?: string, system?: AnyObject}}, 
+    optionalArgs: { obj?: {uuid?: string, system?: AnyObject}}, 
     attack?: MeleeAttackModel | RangedAttackModel,
 ): string {
-   return optionalArgs?.obj?.name as string ?? getItemRefFromChatThing(chatThing) ?? attack?.name ?? ''
+   return optionalArgs?.obj?.uuid as string ?? getItemRefFromChatThing(chatThing) ?? attack?.id ?? ''
 }
 
 
