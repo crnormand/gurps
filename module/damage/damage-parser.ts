@@ -201,7 +201,7 @@ export class DamageTermParser {
 
     const type = this.output.type ? ' ' + this.output.type : ''
     const extendedType = this.output.extendedType ? ' ' + this.output.extendedType : ''
-    return `${this.rollString}${type}${extendedType}`
+    return `${this.formulaString}${type}${extendedType}`
   }
 
   /**
