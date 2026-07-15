@@ -65,8 +65,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
       maneuver.statuses = Array.from(new Set([maneuver.id, ...(maneuver.statuses ?? [])]))
       await this.actor?.createEmbeddedDocuments('ActiveEffect', [maneuver])
     }
-
-   }
+  }
 
   /* ---------------------------------------- */
 

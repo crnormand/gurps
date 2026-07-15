@@ -384,15 +384,14 @@ export class TokenActions {
     return Math.min(skillLevel - Math.max(2, weaponBulk), 9)
   }
 
-    /**
+  /**
    * Get Effect Modifiers created by the Maneuver.
    *
    * We mark the maneuver modifiers with the '#maneuver' tag in effect description.
    * And to the source reference, we use the '@man:<maneuverName>' identifier.
    *
-    */
-   getModifiers() {
-
+   */
+  getModifiers() {
     const maneuverModifiers = []
 
     if (this.toHitBonus !== 0) {
@@ -409,12 +408,16 @@ export class TokenActions {
           `${signal}${Math.abs(this.toHitBonus / 2)} ${rangedBulkLabel} #ranged #maneuver @man:${this.currentManeuver}`
         )
       } else {
-        maneuverModifiers.push(`${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`)
+        maneuverModifiers.push(
+          `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`
+        )
       }
     }
 
     if (this.evaluateTurns > 0) {
-      maneuverModifiers.push(`+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
+      maneuverModifiers.push(
+        `+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`
+      )
     }
 
     if (this.defenseBonus !== 0) {
@@ -446,7 +449,9 @@ export class TokenActions {
         const signal = aim.aimBonus > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toAimBonus' : 'GURPS.toAimPenalty')
 
-        maneuverModifiers.push(`${signal}${Math.abs(aim.aimBonus)} ${signalLabel} ${aim.name} #hit #maneuver @${aim.key}`)
+        maneuverModifiers.push(
+          `${signal}${Math.abs(aim.aimBonus)} ${signalLabel} ${aim.name} #hit #maneuver @${aim.key}`
+        )
       }
     })
 
@@ -704,9 +709,9 @@ export class TokenActions {
     }
 
     await this.save()
-    
+
     if (this.token?.actor?.system?.refreshUserModifier) {
-        await this.token.actor.system.refreshUserModifier()
+      await this.token.actor.system.refreshUserModifier()
     }
   }
 
@@ -774,7 +779,7 @@ export class TokenActions {
     return icon
   }
 
-    /**
+  /**
    * Remove user defined custom modifiers marked as temporary.
    * Called when combat ends
    *
@@ -791,16 +796,15 @@ export class TokenActions {
     if (combatTempTags.length < 1) return
 
     if (this.actor.system?.holderItem) {
-      
       const item = this.actor.system.holderItem
 
       const mods = item.system.itemModifiers
         .split('\n')
-        .filter( mod => {
-            const tags = mod.match(/#(\S+)/g) || []
+        .filter(mod => {
+          const tags = mod.match(/#(\S+)/g) || []
 
-            return tags.every(tag => !combatTempTags.includes(tag.toLowerCase()))
-            })
+          return tags.every(tag => !combatTempTags.includes(tag.toLowerCase()))
+        })
         .join('\n')
 
       await item.update({ 'system.itemModifiers': mods })
@@ -872,9 +876,9 @@ export class TokenActions {
     }
 
     await this.save()
-    
-     if (this.token?.actor?.system?.refreshUserModifier) {
-        await this.token.actor.system.refreshUserModifier()
+
+    if (this.token?.actor?.system?.refreshUserModifier) {
+      await this.token.actor.system.refreshUserModifier()
     }
   }
 
@@ -900,7 +904,7 @@ export class TokenActions {
     }
 
     await this.save()
-}
+  }
 
   getNextTurnEffects() {
     return this.lastManeuvers[this.currentTurn]?.nextTurnEffects || []

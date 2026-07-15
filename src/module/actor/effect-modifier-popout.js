@@ -2,7 +2,7 @@ import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { gurpslink } from '@util/gurpslink.js'
-import {  sanitize } from '@util/utilities.js'
+import { sanitize } from '@util/utilities.js'
 
 import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
@@ -233,10 +233,14 @@ export class EffectModifierPopout extends Application {
               }
             }
           } else {
-            obj = this._token?.actor.items.get(itemReference) ?? this._token?.actor.getItemAttacks('both').find( it => it.uuid === itemReference) ?? {}
+            obj =
+              this._token?.actor.items.get(itemReference) ??
+              this._token?.actor.getItemAttacks('both').find(it => it.uuid === itemReference) ??
+              {}
           }
 
-          const attackName = obj?.item?.name && obj?.mode !== undefined ? `${obj?.item?.name} (${obj?.mode})` : undefined
+          const attackName =
+            obj?.item?.name && obj?.mode !== undefined ? `${obj?.item?.name} (${obj?.mode})` : undefined
           const itemName = attackName ?? obj?.name ?? itemReference
           const itemType = obj?.type
             ? obj.type
@@ -316,7 +320,7 @@ export class EffectModifierPopout extends Application {
   }
 
   async refreshUserMods() {
-      await this.render(true)
+    await this.render(true)
   }
 
   async clearUserMods() {
@@ -354,8 +358,7 @@ export class EffectModifierPopout extends Application {
         if (mod) {
           let action = parselink(mod)
 
-          if (action.action?.type === OtfActionType.modifier)
-             await this._addUserMod(mod)
+          if (action.action?.type === OtfActionType.modifier) await this._addUserMod(mod)
           else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
         }
       }
@@ -410,10 +413,10 @@ export class EffectModifierPopout extends Application {
       return
     }
 
-    if (itemId === 'custom'){
-        this._deleteUserMod (this.getDescription(text))
+    if (itemId === 'custom') {
+      this._deleteUserMod(this.getDescription(text))
 
-        return
+      return
     }
   }
 
@@ -454,7 +457,7 @@ export class EffectModifierPopout extends Application {
 
       const mods = item.system.itemModifiers
         .split('\n')
-        .filter( it => it ==! modifier)
+        .filter(it => it == !modifier)
         .concat([modifier])
         .join('\n')
 
@@ -466,12 +469,11 @@ export class EffectModifierPopout extends Application {
     const token = this.getToken()
 
     if (token && token.actor?.system?.holderItem) {
-      
       const item = token.actor.system.holderItem
 
       const mods = item.system.itemModifiers
         .split('\n')
-        .filter( it => it ==! mod)
+        .filter(it => it == !mod)
         .join('\n')
 
       item.update({ 'system.itemModifiers': mods }).then(() => this.render(true))
@@ -482,9 +484,7 @@ export class EffectModifierPopout extends Application {
     const token = this.getToken()
 
     if (token && token.actor?.system?.holderItem) {
-      
       const item = token.actor.system.holderItem
-
 
       item.update({ 'system.itemModifiers': '' }).then(() => this.render(true))
     } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))

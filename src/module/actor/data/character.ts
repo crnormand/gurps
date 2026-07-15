@@ -583,55 +583,56 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   async #prepareUserModifiers() {
-    
     this.parent.items
-        .filter( (item : Item.Implementation) => item.isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment))
-        .flatMap( 
-            item => item.system.itemModifiers
-                        .split('\n')
-                        .map(line => line.trim())
-                        .filter( (line : string) => line.length > 0)
-                        .map( (mod : string) => `${mod} @${item.id === this.holderItemId ? 'custom' : item.id}`)                                              
-        )
-        .forEach( mod => this.conditions.usermods.add(mod))
+      .filter((item: Item.Implementation) =>
+        item.isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment)
+      )
+      .flatMap(item =>
+        item.system.itemModifiers
+          .split('\n')
+          .map(line => line.trim())
+          .filter((line: string) => line.length > 0)
+          .map((mod: string) => `${mod} @${item.id === this.holderItemId ? 'custom' : item.id}`)
+      )
+      .forEach(mod => this.conditions.usermods.add(mod))
 
-    this.meleeV2.flatMap(
-        (attack, index) => attack.itemModifiers
-            .split('\n')
-            .map(line => line.trim())
-            .filter( (line : string) => line.length > 0)
-            .map( (mod : string) => `${mod} @system.meleeV2.${index}`)                                
-        )
-        .forEach( mod => this.conditions.usermods.add(mod))
+    this.meleeV2
+      .flatMap((attack, index) =>
+        attack.itemModifiers
+          .split('\n')
+          .map(line => line.trim())
+          .filter((line: string) => line.length > 0)
+          .map((mod: string) => `${mod} @system.meleeV2.${index}`)
+      )
+      .forEach(mod => this.conditions.usermods.add(mod))
 
-    this.rangedV2.flatMap(
-        (attack, index) => attack.itemModifiers
-            .split('\n')
-            .map(line => line.trim())
-            .filter( (line : string) => line.length > 0)
-            .map( (mod : string) => `${mod} @system.rangedV2.${index}`)                                
-        )
-        .forEach( mod => this.conditions.usermods.add(mod))
-
+    this.rangedV2
+      .flatMap((attack, index) =>
+        attack.itemModifiers
+          .split('\n')
+          .map(line => line.trim())
+          .filter((line: string) => line.length > 0)
+          .map((mod: string) => `${mod} @system.rangedV2.${index}`)
+      )
+      .forEach(mod => this.conditions.usermods.add(mod))
 
     //if this actor has a token in combat, we need to get the modifiers from the TokenActions
     const token = getTokenFromCombat(this.parent)
 
-    if (token){
-        const actions = await TokenActions.fromToken(token)
+    if (token) {
+      const actions = await TokenActions.fromToken(token)
 
-        if (actions) {
-            actions.getModifiers()
-            .forEach( mod => this.conditions.usermods.add(mod))
-        }
+      if (actions) {
+        actions.getModifiers().forEach(mod => this.conditions.usermods.add(mod))
+      }
     }
 
     //don't know why ts doesn't recognizes the refresh method on the EffectModifierControl type
-    (GURPS.EffectModifierControl as any)?.refresh()
+    ;(GURPS.EffectModifierControl as any)?.refresh()
 
     function getTokenFromCombat(actor: Actor) {
-        //we need to find the token from then combatant, because we don't get the actual token from the actor  
-        return game.combats?.active?.combatants.find(combatant => combatant.actor === actor)?.token?.object as GurpsToken
+      //we need to find the token from then combatant, because we don't get the actual token from the actor
+      return game.combats?.active?.combatants.find(combatant => combatant.actor === actor)?.token?.object as GurpsToken
     }
   }
 
@@ -1584,9 +1585,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  
-allModifiers() :  string[] {
-      // Get modifiers from user mods
+  allModifiers(): string[] {
+    // Get modifiers from user mods
     const userMods = this.conditions.usermods ?? []
 
     // Get modifiers from self mods
@@ -1616,28 +1616,37 @@ allModifiers() :  string[] {
       }, []) ?? []
 
     return [...userMods, ...selfMods, ...targetMods]
-}
+  }
 
   async addTaggedRollModifiers(
     chatThing: string,
     optionalArgs: { obj?: AnyObject },
     attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
-    const taggedSettings = (game.settings as any)?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS) ?? null as TaggedModifiersSettings | null
+    const taggedSettings =
+      (game.settings as any)?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS) ??
+      (null as TaggedModifiersSettings | null)
 
-    if (!taggedSettings) return false;
+    if (!taggedSettings) return false
     const actorInCombat = this.parent.inCombat
     const allMods = this.allModifiers()
-    
-    const { modsToApply, isDamageRoll } = taggedModToApply(chatThing, attack, optionalArgs, taggedSettings, allMods, actorInCombat)
 
-    for (const mod of modsToApply) {          
-          const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
-          const desc = mod.match(regex)?.[1].trim() || ''
-          const effectiveMod = mod.match(/[-+]\d+/)?.[0] || '0'
+    const { modsToApply, isDamageRoll } = taggedModToApply(
+      chatThing,
+      attack,
+      optionalArgs,
+      taggedSettings,
+      allMods,
+      actorInCombat
+    )
 
-          // TODO: evaluate whether this causes too many data preparation cycles
-          await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
+    for (const mod of modsToApply) {
+      const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
+      const desc = mod.match(regex)?.[1].trim() || ''
+      const effectiveMod = mod.match(/[-+]\d+/)?.[0] || '0'
+
+      // TODO: evaluate whether this causes too many data preparation cycles
+      await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
     }
 
     return isDamageRoll
