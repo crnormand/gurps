@@ -16,3 +16,4 @@ simple.css.map
 
 # Build
 dist/
+.tsbuildinfo

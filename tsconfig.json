@@ -43,7 +43,11 @@
     "noImplicitOverride": true /* Ensure overriding members in derived classes are marked with an override modifier. */,
 
     /* Completeness */
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true, /* Skip type checking all .d.ts files. */
+
+    /* Performance */
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": ["./**/*"],
   "exclude": [
