@@ -875,7 +875,11 @@ class LightChatProcessor extends ChatProcessor {
   }
   async process(line) {
     if (line.match(/^\/(light|li) *$/i)) {
-      this.priv('Possible animations: ' + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
+      try {
+        this.priv('Possible animations: ' + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
+      } catch (e) {
+        this.priv(this.usage())
+      }
       return
     }
     if (canvas.tokens.controlled.length == 0) {
