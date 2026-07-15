@@ -1991,6 +1991,9 @@ export class ActorImporter {
           l.split[damtype] = +l.import + value
         }
       l.penalty = i.hit_penalty?.toString() || '0'
+      if (i.calc?.roll_range && i.calc.roll_range !== HitLocations.HitLocation.DEFAULT) {
+        l.roll = i.calc.roll_range
+      }
       while (locations.filter(it => it.where == l.where).length > 0) {
         l.where = l.where + '*'
       }
@@ -2010,6 +2013,7 @@ export class ActorImporter {
     let bodyplan = hls.name.toLowerCase() // Was a body plan actually in the import?
     if (bodyplan === 'snakemen') bodyplan = 'snakeman'
     let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
+    let tableFromName = !!table // track whether the table was found by exact name match
 
     /** @type {HitLocations.HitLocation[]}  */
     let locs = []
@@ -2070,8 +2074,10 @@ export class ActorImporter {
         }
         temp.push(results[0])
         locations = locations.filter(it => it.where !== key)
-      } else {
-        // Didn't find loc that should be in the table. Make a default entry
+      } else if (tableFromName) {
+        // Didn't find loc that should be in the table.
+        // Make a default entry if the body plan matched a
+        // known table by name
         temp.push(new HitLocations.HitLocation(key, '0', table[key].penalty, table[key].roll))
       }
     })
