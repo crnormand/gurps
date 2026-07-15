@@ -1263,17 +1263,17 @@ export class GurpsActor extends Actor {
   }
 
   _initializeTrackerValues(template) {
-    let value = template.tracker.value
     if (!!template.initialValue) {
-      value = parseInt(template.initialValue, 10)
+      let value = parseInt(template.initialValue, 10)
       if (Number.isNaN(value)) {
         // try to use initialValue as a path to another value
         value = foundry.utils.getProperty(this, 'system.' + template.initialValue) ?? template.tracker.value
       }
+      template.tracker.max = value
+      template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
+    } else {
+      template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : template.tracker.value
     }
-
-    template.tracker.max = value
-    template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
   }
 
   /**
