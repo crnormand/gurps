@@ -1,6 +1,10 @@
 import { AnyObject } from 'fvtt-types/utils'
 
-class GurpsSidebar extends Sidebar {
+class GurpsSidebar<
+  RenderContext extends Sidebar.RenderContext = Sidebar.RenderContext,
+  Configuration extends Sidebar.Configuration = Sidebar.Configuration,
+  RenderOptions extends Sidebar.RenderOptions = Sidebar.RenderOptions,
+> extends Sidebar<RenderContext, Configuration, RenderOptions> {
   override toggleExpanded(expanded: boolean): void {
     super.toggleExpanded(expanded)
     GURPS.ModifierBucket.refreshPosition()

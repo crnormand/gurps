@@ -2,14 +2,12 @@ import Maneuvers from '../actor/maneuver.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 
-// COMPATIBILITY: v12
-// export default class GurpsToken extends foundry.canvas.placeables.Token {
-class GurpsToken extends Token {
+export default class GurpsToken extends Token {
   /* ---------------------------------------- */
 
   protected override _onCreate(
     data: foundry.data.fields.SchemaField.CreateData<Token.Schema>,
-    options: foundry.abstract.Document.Database.CreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
+    options: foundry.abstract.Document.Database.OnCreateOptionsForName<'Token'>,
     userId: string
   ): void {
     super._onCreate(data, options, userId)
@@ -61,7 +59,7 @@ class GurpsToken extends Token {
   /* ---------------------------------------- */
 
   protected override _onDelete(
-    options: foundry.abstract.Document.Database.DeleteOptions<foundry.abstract.types.DatabaseDeleteOperation>,
+    options: foundry.abstract.Document.Database.OnDeleteOptionsForName<'Token'>,
     userId: string
   ): void {
     this.removeManeuver()
