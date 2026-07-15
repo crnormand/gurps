@@ -38,7 +38,7 @@ const defaultSettings = {
 
 describe('getTagsForRoll', () => {
 
-    test.for([
+    test.each([
         [ROLL_TYPE.IQ, 'iq'],
         [ROLL_TYPE.ST, 'st'],
         [ROLL_TYPE.DX, 'dx'],
