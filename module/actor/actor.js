@@ -511,9 +511,9 @@ export class GurpsActor extends Actor {
       if (
         (item.type !== 'equipment' || (itemData.equipped && itemData.carried)) &&
         !!itemData.bonuses &&
-        !gids.includes(itemData.globalid)
+        (!itemData.globalid || !gids.includes(itemData.globalid))
       ) {
-        gids.push(itemData.globalid)
+        if (itemData.globalid) gids.push(itemData.globalid)
         let bonuses = itemData.bonuses.split('\n')
 
         for (let bonus of bonuses) {
