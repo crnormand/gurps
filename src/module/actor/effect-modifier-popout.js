@@ -233,10 +233,10 @@ export class EffectModifierPopout extends Application {
               }
             }
           } else {
-            obj = this._token?.actor.items.get(itemReference) || {}
+            obj = this._token?.actor.items.get(itemReference) ?? this._token?.actor.getItemAttacks('both').find( it => it.uuid === itemReference) ?? {}
           }
 
-          const attackName = obj?.item?.name && obj?.mode ? `${obj?.item?.name} (${obj?.mode})` : undefined
+          const attackName = obj?.item?.name && obj?.mode !== undefined ? `${obj?.item?.name} (${obj?.mode})` : undefined
           const itemName = attackName ?? obj?.name ?? itemReference
           const itemType = obj?.type
             ? obj.type

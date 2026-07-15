@@ -256,7 +256,7 @@ export class TokenActions {
         originalName: rangedAttack.originalName,
         startAt: null,
         targetToken: null,
-        key: `system.ranged.${_k}`,
+        key: rangedAttack.uuid,
       }
     })
 
@@ -276,7 +276,7 @@ export class TokenActions {
           mode: meleeAttack.mode,
           startAt: null,
           basePenalty: meleeAttack.baseParryPenalty,
-          key: `system.melee.${_k}`,
+          key: meleeAttack.uuid,
         }
       }
     })

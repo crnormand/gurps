@@ -1,3 +1,5 @@
+import { TokenActions } from "@module/token-actions.js"
+
 class GurpsCombat<SubType extends Combat.SubType = Combat.SubType> extends Combat<SubType> {
   // Remove maneuvers for all combatants on combat deletion
   protected override async _preDelete(
@@ -14,6 +16,11 @@ class GurpsCombat<SubType extends Combat.SubType = Combat.SubType> extends Comba
         const token = canvas?.tokens?.get(tokenId)
 
         if (token) {
+          // Reset token actions
+          const actions = await TokenActions.fromToken(token)
+
+          await actions.clear()
+    
           await token.removeManeuver()
         }
       }
