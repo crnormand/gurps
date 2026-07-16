@@ -24,6 +24,7 @@ export class DamageParser {
     const type = this.readIdentifier(ctx, 'Expected damage type').toLowerCase()
 
     let extendedType: string | undefined
+
     if (this.hasWhitespaceAndIdentifier(ctx)) {
       this.readOptionalWhitespace(ctx)
       extendedType = this.readIdentifier(ctx, 'Expected extended damage type')
@@ -113,6 +114,7 @@ export class DamageParser {
     }
 
     let sides: number | null = null
+
     if (this.isAt(ctx, 'integer')) {
       const rawSides = this.readPositiveInteger(ctx)
 
