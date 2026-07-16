@@ -32,18 +32,21 @@ export class DamageTokenizer {
       }
 
       const margin = this.readMatch(/^\+@margin/i)
+
       if (margin) {
         tokens.push({ type: 'margin', lexeme: margin, position: start })
         continue
       }
 
       const hitLocation = this.readMatch(HIT_LOCATION_REGEX)
+
       if (hitLocation) {
         tokens.push({ type: 'hitLocation', lexeme: hitLocation, position: start })
         continue
       }
 
       const costFlag = this.readMatch(COST_FLAG_REGEX)
+
       if (costFlag) {
         tokens.push({ type: 'costFlag', lexeme: costFlag.toLowerCase(), position: start })
         continue
@@ -86,37 +89,43 @@ export class DamageTokenizer {
       }
 
       const nextChar = remaining[1] ?? ''
-      if ((char === 'd' || char === 'D') && /^(?:$|\d|\s|[+\-\u2212\u2013*xX\u00D7!()\/])$/.test(nextChar)) {
+
+      if ((char === 'd' || char === 'D') && /^(?:$|\d|\s|[+\-\u2212\u2013*xX\u00D7!()/])$/.test(nextChar)) {
         this.i++
         tokens.push({ type: 'd', lexeme: 'd', position: start })
         continue
       }
 
       const decimal = this.readMatch(DECIMAL_REGEX)
+
       if (decimal) {
         tokens.push({ type: decimal.includes('.') ? 'decimal' : 'integer', lexeme: decimal, position: start })
         continue
       }
 
       const integer = this.readMatch(INTEGER_REGEX)
+
       if (integer) {
         tokens.push({ type: 'integer', lexeme: integer, position: start })
         continue
       }
 
       const derived = this.readMatch(DERIVED_ALIAS_REGEX)
+
       if (derived) {
         tokens.push({ type: 'identifier', lexeme: derived, position: start })
         continue
       }
 
       const identifier = this.readMatch(IDENTIFIER_REGEX)
+
       if (identifier) {
         tokens.push({ type: 'identifier', lexeme: identifier, position: start })
         continue
       }
 
       const pool = this.readMatch(POOL_REGEX)
+
       if (pool) {
         tokens.push({ type: 'pool', lexeme: pool, position: start })
         continue
