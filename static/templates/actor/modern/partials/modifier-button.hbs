@@ -1,0 +1,5 @@
+<button type='button' class='ms-use-button rollable' data-action="addModifier" data-value='{{modifier}}' data-comment="{{comment}}" title='{{modifier}} {{comment}}' {{#if damage}}data-damage{{/if}}>
+  <i class='fas fa-dice'></i>
+  {{#if level}}<span class='ms-btn-level' {{#if color}}style='color: {{color}}'{{/if}}>{{level}}</span>{{/if}}
+  {{#if text}}<span class='ms-btn-text' {{#if color}}style='color: {{color}}'{{/if}}>{{text}}</span>{{/if}}
+</button>

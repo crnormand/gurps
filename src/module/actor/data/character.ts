@@ -1,4 +1,4 @@
-import { DataModel, fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { Document, DataModel, fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { MeleeV1 } from '@module/action/legacy/meleev1.js'
 import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
@@ -16,13 +16,17 @@ import { SkillV1 } from '@module/item/legacy/skill-adapter.js'
 import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { ItemType } from '@module/item/types.js'
+import { COSTS_REGEX } from '@module/otf/parselink.js'
+import { OtfActionType, OtfAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
+import { taggedModToApply } from '@module/tagged-modifiers/tagged-modifiers.js'
+import { GurpsToken } from '@module/token/index.js'
+import { TokenActions } from '@module/token-actions.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { multiplyDice } from '@util/damage-utils.js'
 import { roundTo } from '@util/math.js'
-import { COSTS_REGEX } from '@util/parselink.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject, DeepPartial } from 'fvtt-types/utils'
 
@@ -76,7 +80,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   protected override async _preCreate(
     data: TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>,
-    options: foundry.abstract.Document.Database.PreCreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
+    options: Document.Database.PreCreateOptionsForName<'Actor'>,
     user: User.Stored
   ): Promise<boolean | void> {
     const result = await super._preCreate(data, options, user)
@@ -94,8 +98,10 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         name: getGame().i18n.localize('GURPS.migration.holderItem.name'),
       }
 
+      const items = [...(data.items ?? []), holderItemData]
+
       this.parent.updateSource({
-        items: [...(data.items ?? []), holderItemData],
+        items,
         system: {
           holderItemId: holderItemData._id,
         },
@@ -107,7 +113,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   protected override async _preUpdate(
     changes: DeepPartial<TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>>,
-    options: foundry.abstract.Document.Database.PreUpdateOptions<foundry.abstract.types.DatabaseUpdateOperation>,
+    options: Document.Database.PreUpdateOptionsForName<'Actor'>,
     user: User.Stored
   ): Promise<boolean | void> {
     // Change the "modifiedon" field to the time of last update. Necessary for some import functionality
@@ -576,27 +582,64 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  #prepareUserModifiers() {
-    this.parent.items.forEach(item => {
-      if (!(item as Item.Implementation).isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment))
-        return
+  async #prepareUserModifiers() {
+    this.parent.items
+      .filter((item: Item.Implementation) =>
+        item.isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell, ItemType.Equipment)
+      )
+      .flatMap(item =>
+        item.system.itemModifiers
+          .split('\n')
+          .map(line => line.trim())
+          .filter((line: string) => line.length > 0)
+          .map((mod: string) => `${mod} @${item.id === this.holderItemId ? 'custom' : item.id}`)
+      )
+      .forEach(mod => this.conditions.usermods.add(mod))
 
-      for (const modifier of (item.system as BaseItemModel).itemModifiers.split('\n').map(line => line.trim())) {
-        const modifierDescription = `${modifier} ${item.id}`
+    this.meleeV2
+      .flatMap((attack, index) =>
+        attack.itemModifiers
+          .split('\n')
+          .map(line => line.trim())
+          .filter((line: string) => line.length > 0)
+          .map((mod: string) => `${mod} @system.meleeV2.${index}`)
+      )
+      .forEach(mod => this.conditions.usermods.add(mod))
 
-        if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
+    this.rangedV2
+      .flatMap((attack, index) =>
+        attack.itemModifiers
+          .split('\n')
+          .map(line => line.trim())
+          .filter((line: string) => line.length > 0)
+          .map((mod: string) => `${mod} @system.rangedV2.${index}`)
+      )
+      .forEach(mod => this.conditions.usermods.add(mod))
+
+    //if this actor has a token in combat, we need to get the modifiers from the TokenActions
+    const token = getTokenFromCombat(this.parent)
+
+    if (token) {
+      const actions = await TokenActions.fromToken(token)
+
+      if (actions) {
+        actions.getModifiers().forEach(mod => this.conditions.usermods.add(mod))
       }
+    }
 
-      for (const attack of (item as Item.Implementation).getItemAttacks()) {
-        if ((item.system as BaseItemModel).itemModifiers === '') continue
+    //don't know why ts doesn't recognizes the refresh method on the EffectModifierControl type
+    ;(GURPS.EffectModifierControl as any)?.refresh()
 
-        for (const modifier of attack.itemModifiers.split('\n').map(line => line.trim())) {
-          const modifierDescription = `${modifier} ${item.id}`
+    function getTokenFromCombat(actor: Actor) {
+      //we need to find the token from then combatant, because we don't get the actual token from the actor
+      return game.combats?.active?.combatants.find(combatant => combatant.actor === actor)?.token?.object as GurpsToken
+    }
+  }
 
-          if (!this.conditions.usermods.has(modifierDescription)) this.conditions.usermods.add(modifierDescription)
-        }
-      }
-    })
+  async refreshUserModifier() {
+    this.conditions.usermods.clear()
+
+    await this.#prepareUserModifiers()
   }
 
   #getCurrentMove(base: number): number {
@@ -703,7 +746,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   protected override _onUpdate(
     changed: DeepPartial<foundry.abstract.TypeDataModel.ParentAssignmentType<CharacterSchema, Actor.Implementation>>,
-    options: foundry.abstract.Document.Database.UpdateOptions<foundry.abstract.types.DatabaseUpdateOperation>,
+    options: Document.Database.OnUpdateOptionsForName<'Actor'>,
     userId: string
   ): void {
     super._onUpdate(changed, options, userId)
@@ -1168,8 +1211,76 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     return this.allAdsV2.find(trait => trait.name.toLowerCase().includes(name.toLowerCase())) ?? null
   }
 
+  /* ---------------------------------------- */
+
   findAdvantage(name: string): Item.OfType<ItemType.Trait> | null {
     return this.findTrait(name)
+  }
+
+  /* ---------------------------------------- */
+
+  private static buildNameRegex(name: string): RegExp {
+    const cleanName = name.replace(/^ *(\[ ?["'])?/, '')
+
+    return new RegExp(makeRegexPatternFrom(cleanName, false, false), 'i')
+  }
+
+  /* ---------------------------------------- */
+
+  findSkill(name: string): Item.OfType<ItemType.Skill> | null {
+    const nameRegex = CharacterModel.buildNameRegex(name)
+    let best: Item.OfType<ItemType.Skill> | null = null
+    let bestLevel = 0
+
+    for (const skill of this.allSkillsV2) {
+      if (skill.name?.match(nameRegex) && skill.system.level > bestLevel) {
+        best = skill
+        bestLevel = skill.system.level
+      }
+    }
+
+    return best
+  }
+
+  /* ---------------------------------------- */
+
+  findSpell(name: string): Item.OfType<ItemType.Spell> | null {
+    const nameRegex = CharacterModel.buildNameRegex(name)
+    let best: Item.OfType<ItemType.Spell> | null = null
+    let bestLevel = 0
+
+    for (const spell of this.allSpellsV2) {
+      if (spell.name?.match(nameRegex) && spell.system.level > bestLevel) {
+        best = spell
+        bestLevel = spell.system.level
+      }
+    }
+
+    return best
+  }
+
+  /* ---------------------------------------- */
+
+  findSkillSpell(name: string, isSkillOnly: true, isSpellOnly?: false): Item.OfType<ItemType.Skill> | null
+  findSkillSpell(name: string, isSkillOnly: false | undefined, isSpellOnly: true): Item.OfType<ItemType.Spell> | null
+  findSkillSpell(
+    name: string,
+    isSkillOnly?: boolean,
+    isSpellOnly?: boolean
+  ): Item.OfType<ItemType.Skill | ItemType.Spell> | null
+  findSkillSpell(
+    name: string,
+    isSkillOnly = false,
+    isSpellOnly = false
+  ): Item.OfType<ItemType.Skill | ItemType.Spell> | null {
+    const skill = !isSpellOnly ? this.findSkill(name) : null
+    const spell = !isSkillOnly ? this.findSpell(name) : null
+
+    if (skill && spell) {
+      return spell.system.level > skill.system.level ? spell : skill
+    }
+
+    return skill ?? spell
   }
 
   /* ---------------------------------------- */
@@ -1235,14 +1346,14 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       const costs = accumulator.costs.match(COSTS_REGEX)
 
       if (costs)
-        accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '0')} ${costs.groups?.type}`
+        accumulator.costs = `*${costs.groups?.verb} ${accumulator?.count ?? 0 * parseInt(costs.groups?.cost ?? '1')} ${costs.groups?.type}`
     }
 
     accumulator.roll = roll ?? null
 
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
-    await GURPS.performAction(accumulator as unknown as GurpsAction, GURPS.LastActor)
+    await GURPS.performAction(accumulator as unknown as OtfAction, GURPS.LastActor)
   }
 
   /* ---------------------------------------- */
@@ -1474,109 +1585,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  async addTaggedRollModifiers(
-    chatThing: string,
-    optionalArgs: { obj?: AnyObject },
-    attack?: MeleeAttackModel | RangedAttackModel
-  ): Promise<boolean> {
-    let isDamageRoll = false
-
-    const taggedSettings = this.getSetting(
-      Settings.SETTING_USE_TAGGED_MODIFIERS,
-      null
-    ) as TaggedModifiersSettings | null
-
-    if (!taggedSettings) return false
-
-    const allRollTags: string[] = taggedSettings.allRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
-
-    let itemRef = ''
-    let allTags: string[] = []
-    let refTags: string[] = []
-    let modifierTags: string[] = []
-
-    if (optionalArgs.obj) {
-      // Get modifiers from action object
-      const correspondingTags: Record<string, (keyof typeof taggedSettings)[]> = {
-        m: ['allAttackRolls', 'allMeleeRolls'],
-        r: ['allAttackRolls', 'allRangedRolls'],
-        p: ['allDefenseRolls', 'allDefenseRolls'],
-        b: ['allDefenseRolls', 'allBlockRolls'],
-        d: ['allDamageRolls'],
-        sk: ['allSkillRolls'],
-        sp: ['allSpellRolls'],
-      }
-
-      const ref = chatThing
-        .split('@')
-        .pop()!
-        .match(/(\S+):/)?.[1]
-        .toLowerCase()
-
-      if (ref && correspondingTags[ref]) {
-        if (ref === 'd') isDamageRoll = true
-
-        for (const tag of correspondingTags[ref]) {
-          refTags.push(
-            ...(taggedSettings[tag] as string).split(',').map((tagValue: string) => tagValue.trim().toLowerCase())
-          )
-        }
-      }
-
-      modifierTags =
-        (optionalArgs.obj.modifierTags as string)?.split(',').map((tag: string) => tag.trim().toLowerCase()) ?? []
-      allTags = [...modifierTags, ...allRollTags, ...refTags]
-      itemRef = (optionalArgs.obj.name as string) ?? ''
-    } else if (chatThing) {
-      // Get modifiers from chat string
-      const correspondingTags: Record<string, (keyof typeof taggedSettings)[]> = {
-        st: ['allAttributesRolls', 'allSTRolls'],
-        dx: ['allAttributesRolls', 'allDXRolls'],
-        iq: ['allAttributesRolls', 'allIQRolls'],
-        ht: ['allAttributesRolls', 'allHTRolls'],
-        will: ['allWILLRolls'],
-        per: ['allPERRolls'],
-        frightcheck: ['allFRIGHTCHECKRolls'],
-        vision: ['allVISIONRolls'],
-        hearing: ['allHEARINGRolls'],
-        tastesmell: ['allTASTESMELLRolls'],
-        touch: ['allTOUCHRolls'],
-        cr: ['allCRRolls'],
-        dodge: ['allDefenseRolls', 'allDODGERolls'],
-        p: ['allDefenseRolls', 'allParryRolls'],
-        b: ['allDefenseRolls', 'allBlockRolls'],
-      }
-
-      const ref = chatThing.split('@').pop()!.toLowerCase().replace(' ', '').slice(0, -1).toLowerCase().split(':')[0]
-      const regex = /(?<="|:).+(?=\s\(|"|])/gm
-
-      if (ref && correspondingTags[ref]) {
-        if (ref === 'p' || ref === 'b') {
-          itemRef = chatThing.match(regex)?.[0] ?? ''
-          if (itemRef !== '') itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
-        }
-
-        for (const tag of correspondingTags[ref]) {
-          refTags.push(
-            ...(taggedSettings[tag] as string).split(',').map((tagValue: string) => tagValue.trim().toLowerCase())
-          )
-        }
-      }
-    } else {
-      // Get modifiers from attack/damage roll
-      if (!attack) {
-        refTags = taggedSettings.allDamageRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
-        isDamageRoll = true
-      } else {
-        refTags = taggedSettings.allAttackRolls.split(',').map((tag: string) => tag.trim().toLowerCase())
-      }
-
-      const attackMods = attack?.modifierTags ?? []
-
-      modifierTags = [...allRollTags, ...attackMods, ...refTags]
-      itemRef = attack?.name ?? ''
-    }
-
+  allModifiers(): string[] {
     // Get modifiers from user mods
     const userMods = this.conditions.usermods ?? []
 
@@ -1606,36 +1615,38 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         return acc
       }, []) ?? []
 
+    return [...userMods, ...selfMods, ...targetMods]
+  }
+
+  async addTaggedRollModifiers(
+    chatThing: string,
+    optionalArgs: { obj?: AnyObject },
+    attack?: MeleeAttackModel | RangedAttackModel
+  ): Promise<boolean> {
+    const taggedSettings =
+      (game.settings as any)?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS) ??
+      (null as TaggedModifiersSettings | null)
+
+    if (!taggedSettings) return false
     const actorInCombat = this.parent.inCombat
-    const allMods: string[] = [...userMods, ...selfMods, ...targetMods]
+    const allMods = this.allModifiers()
 
-    for (const mod of allMods) {
-      const userModsTags: string[] = (mod.match(/#(\S+)/g) ?? [])?.map((tag: string) => tag.slice(1).toLowerCase())
+    const { modsToApply, isDamageRoll } = taggedModToApply(
+      chatThing,
+      attack,
+      optionalArgs,
+      taggedSettings,
+      allMods,
+      actorInCombat
+    )
 
-      for (const tag of userModsTags) {
-        let canApply = true
+    for (const mod of modsToApply) {
+      const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
+      const desc = mod.match(regex)?.[1].trim() || ''
+      const effectiveMod = mod.match(/[-+]\d+/)?.[0] || '0'
 
-        if (mod.includes('#maneuver'))
-          canApply = allTags.includes(tag) && (mod.includes(itemRef) || mod.includes('@man:'))
-
-        // If the modifier should apply only to a specific item (e.g. specific usage of a weapon) account for this
-        if ('itemPath' in optionalArgs && typeof optionalArgs.itemPath === 'string')
-          canApply = canApply && (mod.includes(optionalArgs.itemPath) || !mod.includes('@system'))
-
-        if (actorInCombat)
-          canApply =
-            canApply && (!taggedSettings.nonCombatOnlyTag || !allTags.includes(taggedSettings.nonCombatOnlyTag))
-        else canApply = canApply && (!taggedSettings.combatOnlyTag || !allTags.includes(taggedSettings.combatOnlyTag))
-
-        if (canApply) {
-          const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
-          const desc = mod.match(regex)?.[1].trim() || ''
-          const effectiveMod = mod.match(/[-+]\d+/)?.[0] || '0'
-
-          // TODO: evaluate whether this causes too many data preparation cycles
-          await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
-        }
-      }
+      // TODO: evaluate whether this causes too many data preparation cycles
+      await GURPS.ModifierBucket.addModifier(effectiveMod, desc, undefined, true)
     }
 
     return isDamageRoll
@@ -1667,12 +1678,12 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     let name: string, mode: string | undefined
 
     switch (originType) {
-      case 'attack': {
+      case OtfActionType.attack: {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+)\)/)?.[1]
         const attackType = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
         const weapon = this.parent
-          // @ts-expect-error: Not sure why this isn't resolving correctly.
+          // @ts-expect-error: not sure why this isn't resolving.
           .getItemAttacks({ attackType })
           .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.mode === mode))
 
@@ -1693,8 +1704,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
-      case 'weapon-block':
-      case 'weapon-parry': {
+      case OtfActionType.weaponBlock:
+      case OtfActionType.weaponParry: {
         name = action.name.split('(')[0].trim()
         mode = action.name.match(/\((.+?)\)/)?.[1]
         const weapon = this.parent
@@ -1718,7 +1729,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
-      case 'skill-spell': {
+      case OtfActionType.skillSpell: {
         const item = [...this.allSkillsV2, ...this.allSpellsV2].find(skillOrSpell => skillOrSpell.name === action.name)
 
         if (item)
@@ -1738,7 +1749,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
             pageRef: null,
           }
       }
-      case 'attribute': {
+      case OtfActionType.attribute: {
         let attrName = action?.overridetxt
 
         if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.toLowerCase()}`) ?? ''
@@ -1752,7 +1763,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
           pageRef: null,
         }
       }
-      case 'controlroll': {
+      case OtfActionType.controlRoll: {
         return {
           name: action.overridetxt || action.orig,
           uuid: null,
@@ -1797,7 +1808,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     const weapons = this.parent.getItemAttacks().filter(attack => attackType === 'both' || attack.type === attackType)
 
-    let weapon = weapons.find(attack => attack.item.name === nameWithoutUsage && (!usage || attack.mode === usage))
+    let weapon = weapons.find(attack => attack._displayName === nameWithoutUsage && (!usage || attack.mode === usage))
 
     if (!weapon) {
       // Account for the possibility that the usage was matched incorrectly as part of the name (e.g. "Guns (Pistol)")

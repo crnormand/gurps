@@ -5,7 +5,7 @@
 @include grid-table('traits', 1fr minmax(100px, auto) 50px 50px 50px);
 @include grid-table('modifiers', 30px 1fr 60px 50px);
 
-.container-collapsed .ms-container-icon {
+.ms-container-icon.container-collapsed {
   transform: rotate(-90deg);
 }
 
@@ -544,14 +544,34 @@ $locations-columns: 50px 1fr 60px 60px;
   }
 }
 
-$equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
+$other-equipment-columns: 85px 1fr 60px 60px 40px 50px;
+$carried-equipment-columns: 32px $other-equipment-columns;
 
 .ms-equipment-table {
   @include table-container;
+
+  &[data-table-id='equipmentCarried'] {
+    .ms-eqt-header {
+      @include grid-header($carried-equipment-columns);
+    }
+
+    .ms-eqt-row {
+      grid-template-columns: $carried-equipment-columns;
+    }
+  }
+
+  &[data-table-id='equipmentOther'] {
+    .ms-eqt-header {
+      @include grid-header($other-equipment-columns);
+    }
+
+    .ms-eqt-row {
+      grid-template-columns: $other-equipment-columns;
+    }
+  }
 }
 
 .ms-eqt-header {
-  @include grid-header($equipment-columns);
   padding-left: 0;
   padding-right: 0;
 
@@ -562,7 +582,6 @@ $equipment-columns: 32px 85px 1fr 60px 60px 40px 50px;
 
 .ms-eqt-row {
   display: grid;
-  grid-template-columns: $equipment-columns;
   gap: 4px;
   align-items: center;
   background: var(--ms-bg-card);

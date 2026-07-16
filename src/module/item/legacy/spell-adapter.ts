@@ -149,7 +149,7 @@ class SpellV1 {
   }
 
   get notes(): string {
-    const vttNotes = this.spellV2.system.vtt_notes
+    const vttNotes = this.spellV2.system.vttNotes
     const notes = this.spellV2.system.notes
 
     return [notes, vttNotes]

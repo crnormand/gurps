@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} pour Équilibre Parfait",
     "FP": "PF",
     "frightcheck": "Résistance à la peur",
+    "frightCheck": "Résistance à la peur",
     "fromEllipses": "De ...",
     "gameAidUsersGuide": "GURPS 4e GUIDE UTILISATEUR Aide de Jeu",
     "grapplingControlled": "Contrôlé",
@@ -1166,6 +1167,10 @@
         "useBrowserImporter": {
           "hint": "Si coché, utilisez le 'navigateur de fichiers intelligent'. Cette boîte de dialogue d'importation peut mémoriser l'emplacement de votre fichier d'importation pendant la session (ce qui signifie que si vous importez le personnage à nouveau, dans la même session, il n'aura pas à faire apparaître la boîte de dialogue de fichier).",
           "name": "Utiliser le Navigateur de Fichiers Intelligent"
+        },
+        "useVerboseImporterLog": {
+          "hint": "Si coché, cela affichera un journal d'importation détaillé dans la console pendant l'importation.",
+          "name": "Utiliser le journal d'importation détaillé"
         }
       }
     },
@@ -1253,7 +1258,7 @@
           "passotf": {
             "label": "Réussite"
           },
-          "vtt_notes": {
+          "vttNotes": {
             "label": "Notes VTT"
           }
         }
@@ -1344,7 +1349,8 @@
           "techlevel": {
             "label": "TL"
           }
-        }
+        },
+        "techniqueDefaultNote": "Défaut : {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1805,10 +1811,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Titre" },
-          "markdown": { "label": "Texte" },
-          "reference": { "label": "Référence" },
-          "reference_highlight": { "label": "Mise en évidence de la référence" }
+          "markdown": {
+            "label": "Texte"
+          },
+          "reference": {
+            "label": "Référence"
+          },
+          "reference_highlight": {
+            "label": "Mise en évidence de la référence"
+          },
+          "title": {
+            "label": "Titre"
+          }
         }
       }
     },

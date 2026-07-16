@@ -308,7 +308,6 @@ function migrateEquipmentSystem(oldData: Equipment, parentId: string | null): Ne
   const newData: NewDataWrapper<ItemType.Equipment> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.eqt,
-    isContainer: Boolean(oldData.eqt.contains && Object.keys(oldData.eqt.contains).length > 0),
     uses: Number(oldData.eqt.uses) || 0,
     maxuses: Number(oldData.eqt.maxuses) || 0,
     importid: oldData.eqt.uuid || '',
@@ -337,7 +336,6 @@ function migrateTraitSystem(oldData: Feature, parentId: string | null): NewDataW
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.fea,
     notes,
-    isContainer: Boolean(oldData.fea.contains && Object.keys(oldData.fea.contains).length > 0),
     importid: oldData.fea.uuid || '',
   }
 
@@ -359,7 +357,6 @@ function migrateSkillSystem(oldData: Skill, parentId: string | null): NewDataWra
   const newData: NewDataWrapper<ItemType.Skill> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.ski,
-    isContainer: Boolean(oldData.ski.contains && Object.keys(oldData.ski.contains).length > 0),
     importedLevel: Number(oldData.ski.import) || 0,
     relativelevel: (oldData.ski.relativelevel ?? '').toString(),
     importid: oldData.ski.uuid || '',
@@ -383,7 +380,6 @@ function migrateSpellSystem(oldData: Spell, parentId: string | null): NewDataWra
   const newData: NewDataWrapper<ItemType.Spell> = {
     ...migrateBaseItemSystem(oldData, parentId),
     ...oldData.spl,
-    isContainer: Boolean(oldData.spl.contains && Object.keys(oldData.spl.contains).length > 0),
     importedLevel: Number(oldData.spl.import) || 0,
     relativelevel: (oldData.spl.relativelevel ?? '').toString(),
     importid: oldData.spl.uuid || '',

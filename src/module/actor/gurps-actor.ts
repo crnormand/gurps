@@ -1,7 +1,9 @@
 import { fields, Document } from '@gurps-types/foundry/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
+import { PostureType, statusIsPosture } from '@module/effects/posture.js'
 import { ItemMetadata } from '@module/item/data/base.js'
 import { ItemType } from '@module/item/types.js'
+import { OtfActionType } from '@module/otf/types.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { isObject } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
@@ -162,11 +164,23 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor' | 'Item'>>(
+  override getEmbeddedDocument<
+    EmbeddedName extends Actor.Embedded.CollectionName,
+    Options extends Document.GetEmbeddedDocumentOptions | undefined = undefined,
+  >(embeddedName: EmbeddedName, id: string, options?: Options): Actor.Embedded.GetReturn<EmbeddedName, Options>
+  override getEmbeddedDocument<
+    EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Actor' | 'Item'>,
+    Options extends Document.GetEmbeddedDocumentOptions | undefined = undefined,
+  >(
     embeddedName: EmbeddedName,
     id: string,
+    options?: Options
+  ): gurps.Pseudo.EmbeddedDocument<'Actor' | 'Item', EmbeddedName, Options>
+  override getEmbeddedDocument(
+    embeddedName: string,
+    id: string,
     options?: Document.GetEmbeddedDocumentOptions
-  ): gurps.Pseudo.EmbeddedDocument<'Actor' | 'Item', EmbeddedName> {
+  ): unknown {
     const { invalid = false, strict = true } = options ?? {}
 
     const metadata = (this.system?.constructor as any).metadata as ActorMetadata
@@ -220,7 +234,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   override async createEmbeddedDocuments<EmbeddedName extends Actor.Embedded.Name>(
     embeddedName: EmbeddedName,
     data: Document.CreateDataForName<EmbeddedName>[] | undefined,
-    operation?: Document.Database.CreateOperationForName<EmbeddedName>
+    operation?: Document.Database.CreateDocumentsOperationForName<EmbeddedName>
   ): Promise<Array<Document.StoredForName<EmbeddedName>>>
   override async createEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Actor']>(
     embeddedName: EmbeddedName,
@@ -281,12 +295,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   override async deleteEmbeddedDocuments<EmbeddedName extends Actor.Embedded.Name>(
     embeddedName: EmbeddedName,
     ids: Array<string>,
-    operation?: Document.Database.DeleteOperationForName<EmbeddedName>
+    operation?: Document.Database.DeleteManyDocumentsOperationForName<EmbeddedName>
   ): Promise<Array<Document.StoredForName<EmbeddedName>>>
   override async deleteEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Actor']>(
     embeddedName: EmbeddedName,
     ids: Array<string>,
-    operation?: Partial<PseudoDocument.DeleteOperation>
+    operation?: Partial<PseudoDocument.DeleteManyDocumentsOperation>
   ): Promise<Array<PseudoDocumentConfig.Embeds['Actor'][EmbeddedName]>>
   override async deleteEmbeddedDocuments(
     embeddedName: string,
@@ -346,8 +360,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /**
    * NOTE: Both character and characterV2.
    *
-   * Special GURPS logic: Only one Posture effect can be active at a time. If a new Posture effect is applied,
-   * the existing one will be toggled (off).
+   * Posture effects are mutually exclusive. Clears all other posture effects atomically
+   * with any create so the sheet renders exactly once. Non-posture statuses delegate to super.
    */
   override async toggleStatusEffect(
     statusId: string,
@@ -357,43 +371,30 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to GurpsActorV2#toggleStatusEffect`)
 
-    // TODO See if isPostureEffect can be moved to status.
-    if (this.isPostureEffect(status)) {
-      // If the status effect is a posture, remove all other postures first
-      const postureEffects = this.getAllActivePostureEffects().filter(postureEffect =>
-        postureEffect.statuses.find(effectStatus => effectStatus !== statusId)
-      )
+    if (!statusIsPosture(status)) return super.toggleStatusEffect(statusId, options)
 
-      for (const it of postureEffects) {
-        await super.toggleStatusEffect(it.statuses.first()!, options)
-      }
+    // No-op when the requested posture is already active and we're told to force it on.
+    if (options?.active && this.effects.some(effect => effect.isPosture && effect.statuses.has(statusId))) return true
 
-      await this.deleteEmbeddedDocuments(
-        'ActiveEffect',
-        postureEffects.map(postureEffect => postureEffect.id!),
-        { parent: this }
-      )
+    // Create unless explicitly told not to. Postures have no toggle-off behaviour.
+    const shouldCreate = options?.active !== false
+
+    // Always clear every posture effect. The early-return above guarantees that when
+    // options.active is true and any matching effect exists, we never reach this point.
+    const toDelete = this.effects.filter(effect => effect.isPosture).map(effect => effect.id!)
+
+    if (toDelete.length > 0) {
+      // Suppress the render here; the create below is the single render for the whole operation.
+      // deleteEmbeddedDocuments is used directly because modifyBatch does not reliably forward render:false.
+      await this.deleteEmbeddedDocuments('ActiveEffect', toDelete, { render: !shouldCreate })
     }
 
-    return super.toggleStatusEffect(statusId, options)
-  }
+    if (!shouldCreate) return false
 
-  /* ---------------------------------------- */
+    const effect = await ActiveEffect.fromStatusEffect(statusId)
+    const [result] = await this.createEmbeddedDocuments('ActiveEffect', [effect.toObject()])
 
-  /**
-   * NOTE: Both character and characterV2.
-   */
-  private isPostureEffect(status: object): boolean {
-    return foundry.utils.getProperty(status, 'flags.gurps.effect.type') === 'posture'
-  }
-
-  /* ---------------------------------------- */
-
-  /**
-   * NOTE: Both character and characterV2.
-   */
-  private getAllActivePostureEffects() {
-    return this.effects.filter(activeEffect => this.isPostureEffect(activeEffect))
+    return result as ActiveEffect.Implementation
   }
 
   /* ---------------------------------------- */
@@ -509,6 +510,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
+  /* ---------------------------------------- */
+
   /**
    * NOTE: Both character and characterV2.
    */
@@ -538,6 +541,8 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const isTypeData = this.system instanceof foundry.abstract.TypeDataModel
 
     if (isTypeData) this.system.prepareEmbeddedDocuments()
+
+    for (const item of this.items) item.prepareSiblingData()
   }
 
   /* ---------------------------------------- */
@@ -656,11 +661,16 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     chatThing?: string, // String representation of the action
     actorComponent?: AnyObject // Actor Component for the action
   ): Promise<CanRollResult> {
-    const isAttack = action.type === 'attack'
-    const isDefense = action.attribute === 'dodge' || action.type === 'weapon-parry' || action.type === 'weapon-block'
-    const isAttribute = action.type === 'attribute'
+    const isAttack = action.type === OtfActionType.attack
+    const isDefense =
+      action.attribute === 'dodge' ||
+      action.type === OtfActionType.weaponParry ||
+      action.type === OtfActionType.weaponBlock
+    const isAttribute = action.type === OtfActionType.attribute
     const isSlam =
-      action.type === 'damage' && (action.orig as string).includes('slam') && (action.orig as string).includes('@')
+      action.type === OtfActionType.damage &&
+      (action.orig as string).includes('slam') &&
+      (action.orig as string).includes('@')
     const isCombatActive = game.combat?.active === true
     const isCombatant = this.inCombat
     const isCombatStarted = isCombatActive && game.combat.started === true
@@ -674,7 +684,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
     if (!isCombatActive || !isCombatant || !this.isNewActorType) return result
 
-    const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === 'damage')
+    const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === OtfActionType.damage)
     const checkForTargetSettings = this.getSetting(Settings.SETTING_ALLOW_TARGETED_ROLLS, 'Allow')
 
     if (isCombatant && needTarget && game.user?.targets.size === 0) {
@@ -755,7 +765,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (
       isDefense &&
       canConsumeAction &&
-      action.type === 'weapon-block' &&
+      action.type === OtfActionType.weaponBlock &&
       actions.totalBlocks >= maxBlocks + (actions.extraBlocks ?? 0) + extraActions
     ) {
       result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
@@ -770,7 +780,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (
       isDefense &&
       canConsumeAction &&
-      action.type === 'weapon-parry' &&
+      action.type === OtfActionType.weaponParry &&
       actions.totalParries >= extraActions + (actions.maxParries ?? 0)
     ) {
       result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
@@ -815,15 +825,15 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     if (!isCombatant && useMaxActions === 'AllCombatant') return false
 
     const actionType = chatThing?.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase() ?? ''
-    const isAttack = action?.type === 'attack' || ['m', 'r'].includes(actionType)
+    const isAttack = action?.type === OtfActionType.attack || ['m', 'r'].includes(actionType)
     const isDefense =
       action?.attribute === 'dodge' ||
-      action?.type === 'weapon-parry' ||
-      action?.type === 'weapon-block' ||
+      action?.type === OtfActionType.weaponParry ||
+      action?.type === OtfActionType.weaponBlock ||
       ['dodge', 'p', 'b'].includes(actionType)
     const isDodge = action?.attribute === 'dodge' || actionType === 'dodge'
-    const isSkill = (action?.type === 'skill-spell' && action.isSkillOnly) || actionType === 'sk'
-    const isSpell = (action?.type === 'skill-spell' && action.isSpellOnly) || actionType === 'sp'
+    const isSkill = (action?.type === OtfActionType.skillSpell && action.isSkillOnly) || actionType === 'sk'
+    const isSpell = (action?.type === OtfActionType.skillSpell && action.isSpellOnly) || actionType === 'sp'
 
     const actionIsMarkedAsConsume: boolean | null = (actorComponent?.consumeAction as boolean | undefined) ?? null
 
@@ -850,13 +860,36 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /**
    * NOTE: Both character and characterV2.
    *
-   * TODO The behavior of replacePosture and replaceManeuver are different. The maneuver one updates tokens, while this
-   * one toggles status effects. Consider unifying the behavior.
+   * Sets the character's posture by managing the exclusive posture ActiveEffect.
+   * Standing is the default state with no associated effect; selecting it simply removes
+   * any active posture effect so that system.conditions.posture reverts to "standing".
+   * For all other postures, toggleStatusEffect is called with active: true so that
+   * conflicting posture effects are removed in the same batch as the new one.
    */
-  async replacePosture(postureId: string) {
-    const id = postureId === GURPS.StatusEffectStanding ? this.modelV2.conditions.posture : postureId
+  async replacePosture(postureId: PostureType) {
+    if (!Object.values(PostureType).includes(postureId)) {
+      console.error(`Invalid posture ID: ${postureId}`)
 
-    this.toggleStatusEffect(id)
+      return
+    }
+
+    if (postureId === PostureType.Standing) {
+      // Standing has no ActiveEffect — remove whichever posture effect is currently active.
+      const postureIds = this.effects
+        .filter(effect => effect.isPosture)
+        .map(effect => effect.id)
+        .filter((id): id is string => !!id)
+
+      if (postureIds.length > 0) {
+        await this.deleteEmbeddedDocuments('ActiveEffect', postureIds)
+      }
+
+      return
+    }
+
+    // Activate the target posture. toggleStatusEffect will remove any conflicting ones in the
+    // same batch so there is only one render cycle.
+    await this.toggleStatusEffect(postureId, { active: true })
   }
 
   /* ---------------------------------------- */

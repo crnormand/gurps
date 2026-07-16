@@ -19,3 +19,4 @@ simple.css.map
 
 # Build
 dist/
+dev/scripts/install.sh

@@ -1,3 +1,5 @@
+import { OtfActionType } from '@module/otf/types.js'
+import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
@@ -272,7 +274,7 @@ export async function doRoll({
 
     // Get Target Roll Info
     switch (action?.type || 'undefined') {
-      case 'attack':
+      case OtfActionType.attack:
         if (action.isMelee) {
           itemIcon = 'fa-solid fa-sword'
           itemColor = 'rgba(12,79,119)'
@@ -284,17 +286,17 @@ export async function doRoll({
         }
 
         break
-      case 'weapon-parry':
+      case OtfActionType.weaponParry:
         itemIcon = 'fa-solid fa-swords'
         itemColor = '#9a5f16'
         rollType = game.i18n.localize('GURPS.parry')
         break
-      case 'weapon-block':
+      case OtfActionType.weaponBlock:
         itemIcon = 'fa-solid fa-shield-halved'
         itemColor = '#9a5f16'
         rollType = game.i18n.localize('GURPS.block')
         break
-      case 'skill-spell':
+      case OtfActionType.skillSpell:
         if (chatthing.toLowerCase().includes('@sk:')) {
           itemIcon = 'fa-solid fa-book'
           itemColor = '#015401'
@@ -306,13 +308,13 @@ export async function doRoll({
         }
 
         break
-      case 'controlroll':
+      case OtfActionType.controlRoll:
         itemIcon = 'fa-solid fa-head-side-gear'
         itemColor = '#c5360b'
         rollType = game.i18n.localize('GURPS.ControlRoll')
         break
 
-      case 'attribute': {
+      case OtfActionType.attribute: {
         itemColor = '#620707'
         const ref = chatthing.split('@').pop().slice(0, -1)
 
@@ -693,16 +695,24 @@ async function _doRoll({
   }
 
   let isCtrl = false
-  let creatOptions = {}
+  let createOptions = {}
 
   try {
-    isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+    const hasEvent = !!optionalArgs.event
+    const hasControlModifier = hasEvent && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+
+    // On macOS, allow the Option key as an additional blind-roll shortcut without removing the existing Ctrl/Command shortcut.
+    if (navigator.platform.includes('Mac')) {
+      isCtrl = hasControlModifier || optionalArgs.event?.altKey
+    } else {
+      isCtrl = hasControlModifier
+    }
   } catch {
     // Keyboard manager may not be available during initialization
   }
 
   if (
-    game.settings.get('core', 'rollMode') === 'blindroll' ||
+    FoundryUtils.MessageMode.isBlind ||
     !!optionalArgs.blind ||
     !!optionalArgs.event?.blind ||
     isCtrl ||
@@ -712,10 +722,12 @@ async function _doRoll({
     messageData.blind = true
   }
 
-  creatOptions.rollMode = messageData.blind ? 'blindroll' : game.settings.get('core', 'rollMode')
+  const messageMode = messageData.blind ? MessageMode.Blind : FoundryUtils.MessageMode
+  const options = { ...createOptions, messageMode: messageMode.value }
 
+  ChatMessage.applyRollMode(messageData, messageMode.value)
   messageData.sound = CONFIG.sounds.dice
-  ChatMessage.create(messageData, creatOptions)
+  ChatMessage.create(messageData, options)
 
   if (isTargeted && !!optionalArgs.action) {
     let users = actor.isSelf ? [] : actor.getOwners()

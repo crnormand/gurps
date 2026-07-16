@@ -4,7 +4,7 @@ import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { deleteDialogWithContents } from '@module/util/delete-dialog.js'
 import { isObject } from '@module/util/guards.js'
-import { AnyMutableObject, AnyObject, InexactPartial } from 'fvtt-types/utils'
+import { AnyMutableObject, InexactPartial } from 'fvtt-types/utils'
 
 import { MeleeAttackModel, RangedAttackModel } from '../action/index.js'
 import { IContainable, isContainable } from '../data/mixins/containable.js'
@@ -69,7 +69,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   /* ---------------------------------------- */
 
   static override getDefaultArtwork(itemData?: foundry.documents.BaseItem.CreateData): Item.GetDefaultArtworkReturn {
-    const { type } = itemData as unknown as { type: ItemType } & AnyObject
+    // If itemData is not provided, default to equipment icon for the purposes of getting default artwork.
+    itemData ||= { type: ItemType.Equipment, name: '' }
+
+    const { type } = itemData
     const { img } = super.getDefaultArtwork(itemData)
 
     const dataModel = CONFIG.Item.dataModels[type]
@@ -178,11 +181,23 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   /* ---------------------------------------- */
 
-  override getEmbeddedDocument<EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Item'>>(
+  override getEmbeddedDocument<
+    EmbeddedName extends Item.Embedded.CollectionName,
+    Options extends foundry.abstract.Document.GetEmbeddedDocumentOptions | undefined = undefined,
+  >(embeddedName: EmbeddedName, id: string, options?: Options): Item.Embedded.GetReturn<EmbeddedName, Options>
+  override getEmbeddedDocument<
+    EmbeddedName extends gurps.Pseudo.EmbeddedCollectionName<'Item'>,
+    Options extends foundry.abstract.Document.GetEmbeddedDocumentOptions | undefined = undefined,
+  >(
     embeddedName: EmbeddedName,
     id: string,
+    options?: Options
+  ): gurps.Pseudo.EmbeddedDocument<'Item', EmbeddedName, Options>
+  override getEmbeddedDocument(
+    embeddedName: string,
+    id: string,
     options?: foundry.abstract.Document.GetEmbeddedDocumentOptions
-  ): gurps.Pseudo.EmbeddedDocument<'Item', EmbeddedName> {
+  ): unknown {
     const { invalid = false, strict = true } = options ?? {}
 
     const metadata = (this.system?.constructor as any).metadata as ItemMetadata
@@ -272,7 +287,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   override async deleteEmbeddedDocuments<EmbeddedName extends keyof PseudoDocumentConfig.Embeds['Item']>(
     embeddedName: EmbeddedName,
     ids: Array<string>,
-    operation?: Partial<PseudoDocument.DeleteOperation>
+    operation?: Partial<PseudoDocument.DeleteManyDocumentsOperation>
   ): Promise<Array<PseudoDocumentConfig.Embeds['Item'][EmbeddedName]>>
   override async deleteEmbeddedDocuments(
     embeddedName: string,
@@ -374,6 +389,19 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
     for (const collection of Object.values(this.pseudoCollections))
       for (const pseudo of collection) pseudo.prepareDerivedData()
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * Called after individual data preparation for each Item is complete.
+   * Used to set values that depend on the data of sibling items.
+   */
+  prepareSiblingData() {
+    for (const collection of Object.values(this.pseudoCollections))
+      for (const pseudo of collection) pseudo.prepareSiblingData()
+
+    this.modelV2.prepareSiblingData()
   }
 
   /* ---------------------------------------- */

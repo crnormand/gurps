@@ -25,7 +25,7 @@
   "compatibility": {
     "minimum": "14",
     "maximum": "14",
-    "verified": "14.360"
+    "verified": "14.361"
   },
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "scripts": ["lib/jquery.tinycolorpicker.js"],
@@ -35,6 +35,12 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json",
+      "flags": {}
+    },
+    {
+      "lang": "es",
+      "name": "Español (Spanish)",
+      "path": "lang/es.json",
       "flags": {}
     },
     {
@@ -57,7 +63,7 @@
     },
     {
       "lang": "fr",
-      "name": "French",
+      "name": "Français (French)",
       "path": "lang/fr.json",
       "flags": {}
     }
@@ -69,7 +75,6 @@
   "documentTypes": {
     "Actor": {
       "character": {},
-      "enemy": {},
       "gcsCharacter": {},
       "gcsLoot": {}
     },

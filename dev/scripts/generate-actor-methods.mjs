@@ -12,7 +12,7 @@ const repoRoot = path.resolve(__dirname, '..')
 
 const FILES = [
   { file: path.join(repoRoot, 'module/actor/actor.js'), className: 'GurpsActor' },
-  { file: path.join(repoRoot, 'module/actor/gurps-actor.ts'), className: 'GurpsActorV2' },
+  { file: path.join(repoRoot, 'module/actor/gurps-actor.js'), className: 'GurpsActorV2' },
 ]
 
 /**

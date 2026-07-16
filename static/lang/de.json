@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} für Perfekte Standfestigkeit",
     "FP": "AP",
     "frightcheck": "Schreckprobe",
+    "frightCheck": "Schreckprobe",
     "fromEllipses": "von ...",
     "gameAidUsersGuide": "GURPS 4e Spielhilfe BENUTZERHANDBUCH",
     "grapplingControlled": "Kontrolliert",
@@ -1166,6 +1167,10 @@
         "useBrowserImporter": {
           "hint": "Wenn aktiviert, verwenden Sie den 'intelligenten' Dateibrowser. Dieser Importdialog kann sich den Speicherort Ihrer Importdatei während der Sitzung merken (was bedeutet, dass Sie den Charakter bei erneutem Importieren in derselben Sitzung nicht den Dateibrowser öffnen müssen).",
           "name": "Intelligenten Dateibrowser verwenden"
+        },
+        "useVerboseImporterLog": {
+          "hint": "Wenn aktiviert, wird während des Imports ein ausführliches Importprotokoll in der Konsole ausgegeben.",
+          "name": "Ausführliches Importprotokoll verwenden"
         }
       }
     },
@@ -1253,7 +1258,7 @@
           "passotf": {
             "label": "Bestanden"
           },
-          "vtt_notes": {
+          "vttNotes": {
             "label": "VTT-Notizen"
           }
         }
@@ -1344,7 +1349,8 @@
           "techlevel": {
             "label": "TL"
           }
-        }
+        },
+        "techniqueDefaultNote": "Standard: {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1679,6 +1685,7 @@
     "modifierVeryUnfavorable": "Sehr Unvorteilhaft",
     "modifierViewScale": "Bucket: Skalierungsfaktor",
     "modifierViewScaleHint": "Verwende dies, um die Größe des Modifier-Buckets zu vergrößern oder zu verkleinern.",
+    "mookGeneratorInvalidDamageInput": "Ungültige Schadenseingabe. Bitte gib einen oder zwei Werte im standardmäßigen GURPS-Würfelformat ein, getrennt durch '/'.",
     "move": "Bewegung",
     "moveConstant": "{value} {unit}/sek ({reason})",
     "moveFull": "Volle",
@@ -1805,10 +1812,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Titel" },
-          "markdown": { "label": "Text" },
-          "reference": { "label": "Referenz" },
-          "reference_highlight": { "label": "Referenz-Hervorhebung" }
+          "markdown": {
+            "label": "Text"
+          },
+          "reference": {
+            "label": "Referenz"
+          },
+          "reference_highlight": {
+            "label": "Referenz-Hervorhebung"
+          },
+          "title": {
+            "label": "Titel"
+          }
         }
       }
     },

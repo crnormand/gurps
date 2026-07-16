@@ -1,118 +1,29 @@
+import { type TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { getGame, isHTMLElement } from '@module/util/guards.js'
 import { ThresholdDescriptor } from '@rules/injury/hit-points.js'
-
-export function bindEquipmentCrudActions(
-  html: HTMLElement,
-  _actor: Actor.Implementation,
-  _sheet: GurpsActorSheetEditMethods
-): void {
-  const entityType = 'Equipment'
-
-  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityType}"]`)
-
-  addButtons.forEach(button => {
-    button.addEventListener('click', async (event: MouseEvent) => {
-      event.preventDefault()
-
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.createEmbedded method instead.')
-    })
-  })
-
-  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit${entityType}"]`)
-
-  editButtons.forEach(button => {
-    button.addEventListener('click', async (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.editEmbedded method instead.')
-    })
-  })
-
-  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete${entityType}"]`)
-
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', async (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.deleteEmbedded method instead.')
-    })
-  })
-}
-
-export function bindNoteCrudActions(
-  html: HTMLElement,
-  _actor: Actor.Implementation,
-  _sheet: GurpsActorSheetEditMethods
-): void {
-  const entityType = 'Note'
-
-  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityType}"]`)
-
-  addButtons.forEach(button => {
-    button.addEventListener('click', async (event: MouseEvent) => {
-      event.preventDefault()
-
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.createEmbedded method instead.')
-    })
-  })
-
-  const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit${entityType}"]`)
-
-  editButtons.forEach(button => {
-    button.addEventListener('click', async (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.editEmbedded method instead.')
-    })
-  })
-
-  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete${entityType}"]`)
-
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', async (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.deleteEmbedded method instead.')
-    })
-  })
-}
 
 export function bindTrackerActions(html: HTMLElement, actor: Actor.Implementation): void {
   const entityType = 'Tracker'
 
-  const addButtons = html.querySelectorAll<HTMLElement>(`[data-action="add${entityType}"]`)
-
-  addButtons.forEach(button => {
-    button.addEventListener('click', (event: MouseEvent) => {
-      event.preventDefault()
-
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.createEmbedded method instead.')
-    })
-  })
-
-  const deleteButtons = html.querySelectorAll<HTMLElement>(`[data-action="delete${entityType}"]`)
-
-  deleteButtons.forEach(button => {
-    button.addEventListener('click', async (event: MouseEvent) => {
-      event.preventDefault()
-      event.stopPropagation()
-
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.deleteEmbedded method instead.')
-    })
-  })
-
   const editButtons = html.querySelectorAll<HTMLElement>(`[data-action="edit${entityType}"]`)
 
   editButtons.forEach(button => {
     button.addEventListener('click', async (event: MouseEvent) => {
       event.preventDefault()
       event.stopPropagation()
+      const target = event.currentTarget
 
-      throw new Error('This function is deprectated. Please use the GurpsBaseActorSheet.editEmbedded method instead.')
+      if (!isHTMLElement(target)) return
+      const uuid = target.closest<HTMLElement>('[data-uuid]')?.dataset.uuid ?? ''
+      const tracker = (await fromUuid(uuid)) as TrackerInstance | null
+
+      if (!tracker) {
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: uuid }))
+
+        return
+      }
+
+      await GURPS.modules.ResourceTracker.updateResourceTracker(actor, tracker)
     })
   })
 
@@ -125,11 +36,11 @@ export function bindTrackerActions(html: HTMLElement, actor: Actor.Implementatio
       const target = event.currentTarget
 
       if (!isHTMLElement(target)) return
-      const trackerKey = target.dataset.key ?? ''
-      const tracker = actor.system.additionalresources?.tracker?.get(trackerKey)
+      const uuid = target.closest<HTMLElement>('[data-uuid]')?.dataset.uuid ?? ''
+      const tracker = (await fromUuid(uuid)) as TrackerInstance | null
 
       if (!tracker) {
-        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: trackerKey }))
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: uuid }))
 
         return
       }
@@ -147,11 +58,11 @@ export function bindTrackerActions(html: HTMLElement, actor: Actor.Implementatio
       const target = event.currentTarget
 
       if (!isHTMLElement(target)) return
-      const trackerKey = target.dataset.key ?? ''
-      const tracker = actor.system.additionalresources?.tracker?.get(trackerKey)
+      const uuid = target.closest<HTMLElement>('[data-uuid]')?.dataset.uuid ?? ''
+      const tracker = (await fromUuid(uuid)) as TrackerInstance | null
 
       if (!tracker) {
-        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: trackerKey }))
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: uuid }))
 
         return
       }
@@ -169,11 +80,11 @@ export function bindTrackerActions(html: HTMLElement, actor: Actor.Implementatio
       const target = event.currentTarget
 
       if (!isHTMLElement(target)) return
-      const trackerKey = target.dataset.key ?? ''
-      const tracker = actor.system.additionalresources?.tracker?.get(trackerKey)
+      const uuid = target.closest<HTMLElement>('[data-uuid]')?.dataset.uuid ?? ''
+      const tracker = (await fromUuid(uuid)) as TrackerInstance | null
 
       if (!tracker) {
-        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: trackerKey }))
+        ui.notifications?.warn(getGame().i18n.format('GURPS.resourceTracker.trackerNotFound', { key: uuid }))
 
         return
       }
@@ -185,6 +96,7 @@ export function bindTrackerActions(html: HTMLElement, actor: Actor.Implementatio
 
 export type PreparedTrackerData = {
   id: string
+  uuid: string | null
   name: string
   value: number
   min: number
@@ -218,6 +130,7 @@ export function prepareTrackerDataForSheet(actor: Actor.Implementation): Prepare
 
     preparedData.push({
       id: trackerId,
+      uuid: tracker.uuid,
       name: tracker.name
         ? game.i18n!.localize(tracker.name)
         : `${game.i18n!.localize('GURPS.resourceTracker.placeholder')}[${index}]`,

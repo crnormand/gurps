@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} for Perfect Balance",
     "FP": "FP",
     "frightcheck": "Fright Check",
+    "frightCheck": "Fright Check",
     "fromEllipses": "from ...",
     "gameAidUsersGuide": "GURPS 4e Game Aid USERS GUIDE",
     "grapplingControlled": "Controlled [-8 DX]",
@@ -1166,6 +1167,10 @@
         "useBrowserImporter": {
           "hint": "If checked, use the 'smart' file browser. This import dialog can remember the location of your import file during the session (which means that if you import the character again, in the same session, it will not have to bring up the File dialog).",
           "name": "Use Smart File Browser"
+        },
+        "useVerboseImporterLog": {
+          "hint": "If checked, this will output a verbose importer log to the console during import.",
+          "name": "Use verbose importer log"
         }
       }
     },
@@ -1253,7 +1258,7 @@
           "passotf": {
             "label": "Pass"
           },
-          "vtt_notes": {
+          "vttNotes": {
             "label": "VTT Notes"
           }
         }
@@ -1344,7 +1349,8 @@
           "techlevel": {
             "label": "TL"
           }
-        }
+        },
+        "techniqueDefaultNote": "Default: {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1679,6 +1685,7 @@
     "modifierVeryUnfavorable": "Very Unfavorable",
     "modifierViewScale": "Bucket: Scale Factor",
     "modifierViewScaleHint": "Use this to scale up or down the size of the Modifier Bucket.",
+    "mookGeneratorInvalidDamageInput": "Invalid damage input. Please enter one or two values in standard GURPS dice format, separated by a '/'.",
     "move": "Move",
     "moveConstant": "{value} {unit}/sec ({reason})",
     "moveFull": "Full",
@@ -1805,10 +1812,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Title" },
-          "markdown": { "label": "Text" },
-          "reference": { "label": "Reference" },
-          "reference_highlight": { "label": "Reference Highlight" }
+          "markdown": {
+            "label": "Text"
+          },
+          "reference": {
+            "label": "Reference"
+          },
+          "reference_highlight": {
+            "label": "Reference Highlight"
+          },
+          "title": {
+            "label": "Title"
+          }
         }
       }
     },

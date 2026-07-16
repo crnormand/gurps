@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} para Equilíbrio Perfeito",
     "FP": "PF",
     "frightcheck": "Verif. de Pânico",
+    "frightCheck": "Verif. de Pânico",
     "fromEllipses": "de ...",
     "gameAidUsersGuide": "Guia do Usuário do Auxílio de Jogo GURPS 4e",
     "grapplingControlled": "Sendo controlado(a)",
@@ -1166,6 +1167,10 @@
         "useBrowserImporter": {
           "hint": "Se marcado, use o 'navegador de arquivos inteligente'. Este diálogo de importação pode lembrar a localização do seu arquivo de importação durante a sessão (o que significa que se você importar o personagem novamente, na mesma sessão, não precisará abrir o diálogo de Arquivo).",
           "name": "Usar Navegador de Arquivos Inteligente"
+        },
+        "useVerboseImporterLog": {
+          "hint": "Se marcado, isso exibirá um log detalhado do importador no console durante a importação.",
+          "name": "Usar log detalhado do importador"
         }
       }
     },
@@ -1253,7 +1258,7 @@
           "passotf": {
             "label": "Sucesso"
           },
-          "vtt_notes": {
+          "vttNotes": {
             "label": "Notas VTT"
           }
         }
@@ -1344,7 +1349,8 @@
           "techlevel": {
             "label": "NT"
           }
-        }
+        },
+        "techniqueDefaultNote": "Padrão: {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1679,6 +1685,7 @@
     "modifierVeryUnfavorable": "Muito Desfavorável",
     "modifierViewScale": "Balde: Fator de Escala (EXPERIMENTAL)",
     "modifierViewScaleHint": "Utilize esta opção para aumentar ou diminuir o tamanho do Balde de Modificadores.",
+    "mookGeneratorInvalidDamageInput": "Entrada de dano inválida. Insira um ou dois valores no formato padrão de dados do GURPS, separados por '/'.",
     "move": "Desl.",
     "moveConstant": "{value} {unit}/seg ({reason})",
     "moveFull": "Cheio",
@@ -1805,10 +1812,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Título" },
-          "markdown": { "label": "Texto" },
-          "reference": { "label": "Referência" },
-          "reference_highlight": { "label": "Destaque de Referência" }
+          "markdown": {
+            "label": "Texto"
+          },
+          "reference": {
+            "label": "Referência"
+          },
+          "reference_highlight": {
+            "label": "Destaque de Referência"
+          },
+          "title": {
+            "label": "Título"
+          }
         }
       }
     },

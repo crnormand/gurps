@@ -142,7 +142,7 @@ class EquipmentV1 {
   }
 
   get notes(): string {
-    const notes = [this.equipmentV2.system.notes ?? '', this.equipmentV2.system.vtt_notes ?? '']
+    const notes = [this.equipmentV2.system.notes ?? '', this.equipmentV2.system.vttNotes ?? '']
       .filter(it => it)
       .join('<br>')
       .trim()

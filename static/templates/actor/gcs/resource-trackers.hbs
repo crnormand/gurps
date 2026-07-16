@@ -40,7 +40,7 @@
         style="background-color: {{color}}; color: var(--gcs-color-surface-fg);"
       >{{localize state}}</div>
     {{/if}}
-    <div class="form-fields flexrow">
+    <div class="form-fields flexrow notes">
       <label>{{localize denominator.label}}</label>
       {{#if denominator.name}}
         {{formInput denominator.field name=denominator.name value=denominator.value disabled=(or (not denominatorEditable) @root.isPlay)}}

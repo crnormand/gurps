@@ -283,6 +283,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ acc: { base: 0, scope: 0, jet: true } })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.accText).toBe('GURPS.action.rangedAttack.jet')
       })
@@ -297,6 +298,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ acc })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.accText).toBe(expected)
       })
@@ -317,6 +319,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ bulk })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.bulkText).toBe(expected)
       })
@@ -340,6 +343,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ range })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.rangeText).toBe(expected)
       })
@@ -352,6 +356,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ rateOfFire: rofWith({}, {}, true) })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.rofText).toBe('GURPS.action.rangedAttack.jet')
       })
@@ -360,6 +365,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ rateOfFire: rofWith() })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.rofText).toBe('')
       })
@@ -378,6 +384,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ rateOfFire: rofWith(mode1Overrides) })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.rofText).toBe(expected)
       })
@@ -386,6 +393,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ rateOfFire: rofWith({ shotsPerAttack: 3 }, { shotsPerAttack: 20 }) })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.rofText).toBe('3/20')
       })
@@ -394,6 +402,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ rateOfFire: rofWith({}, { shotsPerAttack: 20 }) })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.rofText).toBe('20')
       })
@@ -410,6 +419,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ recoil })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.recoilText).toBe(expected)
       })
@@ -424,6 +434,7 @@ describe('RangedAttackModel', () => {
         })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.shotsText).toBe('T')
       })
@@ -449,6 +460,7 @@ describe('RangedAttackModel', () => {
         const model = makeRanged({ shots: { ...shotsDefaults, ...shotsOverrides } })
 
         model.prepareDerivedData()
+        model.prepareSiblingData()
 
         expect(model.shotsText).toBe(expected)
       })

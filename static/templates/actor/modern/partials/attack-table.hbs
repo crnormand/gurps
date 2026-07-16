@@ -1,9 +1,9 @@
 <div class='ms-section' data-section='{{section}}'>
-  {{>section-header icon=icon title=title count=count collapsible=true}}
+  {{> "actor.modern.partials.section-header" icon=icon title=title count=count collapsible=true}}
   <div class='ms-section-content'>
     <div class='ms-attacks-list ms-{{attackType}}-attacks'>
       <div class='ms-attack-header'>
-        <span class='ms-attack-name'>{{title}}</span>
+        <span class='ms-attack-name'>{{localize title}}</span>
         <span class='ms-attack-usage'>{{localize 'GURPS.usage'}}</span>
         <span class='ms-attack-level'>{{localize 'GURPS.level'}}</span>
         <span class='ms-attack-damage'>{{localize 'GURPS.damage'}}</span>
@@ -16,27 +16,27 @@
         {{/if}}
         <span></span>
       </div>
-      {{#each (attackflatlist items)}}
+      {{#each items}}
         <div class='ms-attack-row' data-key='{{../path}}.{{@key}}'>
-          <span class='ms-attack-name'>{{>dice-button otf=(quotedAttackName ../otfPrefix this) text=this.name damage=false}}</span>
-          <span class='ms-attack-usage'>{{this.mode}}</span>
-          <span class='ms-attack-level'>{{this.level}}</span>
+          <span class='ms-attack-name'>{{> "actor.modern.partials.dice-button" otf=otf.level text=name damage=false}}</span>
+          <span class='ms-attack-usage'>{{usage}}</span>
+          <span class='ms-attack-level'>{{level}}</span>
           <span
-            class='ms-attack-damage'>{{>dice-button otf=(quotedAttackName "D" this) level=null text=this.damage damage=true color='var(--ms-hp)'}}</span>
+            class='ms-attack-damage'>{{> "actor.modern.partials.dice-button" otf=otf.damage level=null text=damage damage=true color='var(--ms-hp)'}}</span>
           {{#if ../isMelee}}
-            <span class='ms-attack-reach'>{{this.reach}}</span>
+            <span class='ms-attack-reach'>{{reach}}</span>
             <span
-              class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry damage=false color='var(--ms-text-muted)'}}{{/if}}</span>
+              class='ms-attack-parry'>{{#if otf.parry}}{{> "actor.modern.partials.dice-button" otf=otf.parry level=null text=parry damage=false color='var(--ms-text-muted)'}}{{/if}}</span>
           {{else}}
-            <span class='ms-attack-acc {{gmod this.acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=this.name}}" data-otf='{{{displayNumber this.acc}}} Acc'>{{this.acc}}</span>
-            <span class='ms-attack-range'>{{this.range}}</span>
+          <span class='ms-attack-acc {{gmod acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=fullName}}" data-otf='{{acc}} Acc'>{{acc}}</span>
+            <span class='ms-attack-range'>{{range}}</span>
           {{/if}}
-          {{>row-actions editAction=../editAction deleteAction=../deleteAction key=(concat ../path '.' @key)}}
+          {{> "actor.modern.partials.row-actions"}}
         </div>
       {{else}}
         <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
       {{/each}}
-      {{>add-row action=addAction label=addLabel}}
+      {{> "actor.modern.partials.add-row"}}
     </div>
   </div>
 </div>

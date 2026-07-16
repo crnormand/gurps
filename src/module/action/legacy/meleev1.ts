@@ -36,8 +36,8 @@ class MeleeV1 {
     return []
   }
 
-  get damage() {
-    return this.meleeV2.damage
+  get damage(): string {
+    return [...this.meleeV2.damage].join(' ')
   }
 
   get extraAttacks() {

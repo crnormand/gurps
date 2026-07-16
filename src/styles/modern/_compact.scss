@@ -200,13 +200,13 @@ $compact-attr-min-width: 32px;
   .ms-attack-header {
     padding: var(--ms-space-1) var(--ms-space-2);
     font-size: 9px;
-    grid-template-columns: 1fr 35px 55px 35px 35px 30px;
+    grid-template-columns: 1fr 35px 85px 35px 35px 30px;
   }
 
   .ms-attack-row {
     padding: var(--ms-space-1) var(--ms-space-2);
     font-size: 11px;
-    grid-template-columns: 1fr 35px 55px 35px 35px 30px;
+    grid-template-columns: 1fr 35px 85px 35px 35px 30px;
     gap: 2px;
   }
 

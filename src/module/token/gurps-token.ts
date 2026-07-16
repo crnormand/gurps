@@ -1,3 +1,4 @@
+import { Document } from '@gurps-types/foundry/index.js'
 import { ActorType } from '@module/actor/types.js'
 
 import Maneuvers from '../actor/maneuver.js'
@@ -9,7 +10,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
 
   protected override _onCreate(
     data: foundry.data.fields.SchemaField.CreateData<Token.Schema>,
-    options: foundry.abstract.Document.Database.CreateOptions<foundry.abstract.types.DatabaseCreateOperation>,
+    options: Document.Database.OnCreateOptionsForName<'Scene'>,
     userId: string
   ): void {
     super._onCreate(data, options, userId)
@@ -40,6 +41,10 @@ class GurpsToken extends foundry.canvas.placeables.Token {
 
     maneuver.name = game.i18n?.localize(maneuver.name ?? maneuver.label) ?? maneuver.name
 
+    const actions = await TokenActions.fromToken(this)
+
+    await actions.selectManeuver(maneuver, game.combat?.round)
+
     const activeManeuvers = Maneuvers.getActiveEffectManeuvers(
       Array.from(this.actor?.effects.values() ?? []) as ActiveEffect.Implementation[]
     )
@@ -60,18 +65,11 @@ class GurpsToken extends foundry.canvas.placeables.Token {
       maneuver.statuses = Array.from(new Set([maneuver.id, ...(maneuver.statuses ?? [])]))
       await this.actor?.createEmbeddedDocuments('ActiveEffect', [maneuver])
     }
-
-    const actions = await TokenActions.fromToken(this)
-
-    await actions.selectManeuver(maneuver, game.combat?.round)
   }
 
   /* ---------------------------------------- */
 
-  protected override _onDelete(
-    options: foundry.abstract.Document.Database.DeleteOptions<foundry.abstract.types.DatabaseDeleteOperation>,
-    userId: string
-  ): void {
+  protected override _onDelete(options: Document.Database.OnDeleteOptionsForName<'Scene'>, userId: string): void {
     this.removeManeuver()
     super._onDelete(options, userId)
   }

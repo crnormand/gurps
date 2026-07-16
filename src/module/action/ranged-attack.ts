@@ -3,7 +3,7 @@ import { DisplayRangedAttack } from '@gurps-types/gurps/display-item.js'
 import { ActorType } from '@module/actor/types.js'
 import { LengthUnit } from '@module/data/common/length.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
-import { makeRegexPatternFrom } from '@util/utilities.js'
+import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { BaseAttack } from './base-attack.js'
@@ -214,8 +214,9 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
-  override prepareDerivedData(): void {
-    super.prepareDerivedData()
+  override prepareSiblingData(): void {
+    super.prepareSiblingData()
+
     this.#prepareMusclePoweredRange()
     this.#prepareDisplayValues()
   }
@@ -364,7 +365,10 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
   /* ---------------------------------------- */
 
   override toDisplayItem(): DisplayRangedAttack {
-    const fullName = super.toDisplayItem().fullName
+    const name = this._displayName || ''
+    const mode = this.mode || null
+
+    const baseOtf = quotedAttackName({ name, mode })
 
     return foundry.utils.mergeObject(super.toDisplayItem(), {
       acc: this.accText,
@@ -377,8 +381,8 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
       rof: this.rofText,
       shots: this.shotsText,
       otf: {
-        level: `R:"${fullName}"`,
-        damage: `D:"${fullName}"`,
+        level: `R:${baseOtf}`,
+        damage: `D:${baseOtf}`,
       },
     })
   }

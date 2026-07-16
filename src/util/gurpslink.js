@@ -1,4 +1,4 @@
-import { parselink } from '@util/parselink.js'
+import { parselink } from '@module/otf/parselink.js'
 
 /**
  * Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>.

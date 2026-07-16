@@ -189,7 +189,9 @@ interface DisplayMeleeAttack extends BaseDisplayAttack {
     level: string
     damage: string
     parry: string | null
+    parryFencing: string | null
     block: string | null
+    blockRetreat: string | null
   }
 }
 

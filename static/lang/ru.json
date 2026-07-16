@@ -979,6 +979,7 @@
     "forPerfectBalance": "{mod} для Идеального равновесия",
     "FP": "ЕУ",
     "frightcheck": "Бросок страха",
+    "frightCheck": "Бросок страха",
     "fromEllipses": "из ...",
     "gameAidUsersGuide": "Руководство пользователя GURPS 4e Game Aid",
     "grapplingControlled": "Под контролем",
@@ -1166,6 +1167,10 @@
         "useBrowserImporter": {
           "hint": "Если выбрано, используйте 'умный' файловый браузер. Этот диалог импорта может запомнить местоположение вашего файла импорта в течение сессии (что означает, что если вы импортируете персонажа снова в той же сессии, он не должен будет открывать диалоговое окно файла).",
           "name": "Использовать умный файловый браузер"
+        },
+        "useVerboseImporterLog": {
+          "hint": "Если выбрано, во время импорта в консоль будет выводиться подробный журнал импортера.",
+          "name": "Использовать подробный журнал импортера"
         }
       }
     },
@@ -1253,7 +1258,7 @@
           "passotf": {
             "label": "Успех"
           },
-          "vtt_notes": {
+          "vttNotes": {
             "label": "Заметки VTT"
           }
         }
@@ -1344,7 +1349,8 @@
           "techlevel": {
             "label": "ТУ"
           }
-        }
+        },
+        "techniqueDefaultNote": "По умолчанию: {defaultName}"
       },
       "spell": {
         "FIELDS": {
@@ -1679,6 +1685,7 @@
     "modifierVeryUnfavorable": "Очень Неблагоприятный",
     "modifierViewScale": "Корзина: Масштабный коэффициент",
     "modifierViewScaleHint": "Используйте это, чтобы увеличить или уменьшить размер Корзины модификаторов.",
+    "mookGeneratorInvalidDamageInput": "Некорректный ввод урона. Введите одно или два значения в стандартном формате кубиков GURPS, разделённых '/'.",
     "move": "Движ.",
     "moveConstant": "{value} {unit}/сек ({reason})",
     "moveFull": "Полный",
@@ -1805,10 +1812,18 @@
       },
       "note": {
         "FIELDS": {
-          "title": { "label": "Заголовок" },
-          "markdown": { "label": "Текст" },
-          "reference": { "label": "Ссылка" },
-          "reference_highlight": { "label": "Выделение ссылки" }
+          "markdown": {
+            "label": "Текст"
+          },
+          "reference": {
+            "label": "Ссылка"
+          },
+          "reference_highlight": {
+            "label": "Выделение ссылки"
+          },
+          "title": {
+            "label": "Заголовок"
+          }
         }
       }
     },

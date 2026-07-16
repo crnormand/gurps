@@ -59,6 +59,21 @@ export class TokenActions {
     return await tokenActions.init()
   }
 
+  static async fromActor(actor) {
+    let token = actor.token?.object
+
+    if (!token) {
+      const tokenDocument = await actor.getTokenDocument()
+
+      token = tokenDocument.object
+      if (!token) return null
+    }
+
+    const tokenActions = new TokenActions(token)
+
+    return await tokenActions.init()
+  }
+
   _getNewLastManeuvers() {
     return {
       maneuver: 'do_nothing',
@@ -121,18 +136,10 @@ export class TokenActions {
 
   async clear() {
     this.initValues()
-    await this.removeManeuverModifiers()
     await this.removeCombatTempMods()
     await this.token.document.unsetFlag('gurps', 'tokenActions')
     await this.save()
     await this.token.setManeuver('do_nothing')
-  }
-
-  async removeManeuverModifiers() {
-    const allModifiers = await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')
-    const validModifiers = allModifiers.filter(modifierText => !modifierText.includes('#maneuver'))
-
-    await this.actor.update({ 'system.conditions.usermods': validModifiers })
   }
 
   async init() {
@@ -249,7 +256,7 @@ export class TokenActions {
         originalName: rangedAttack.originalName,
         startAt: null,
         targetToken: null,
-        key: `system.ranged.${_k}`,
+        key: rangedAttack.uuid,
       }
     })
 
@@ -269,7 +276,7 @@ export class TokenActions {
           mode: meleeAttack.mode,
           startAt: null,
           basePenalty: meleeAttack.baseParryPenalty,
-          key: `system.melee.${_k}`,
+          key: meleeAttack.uuid,
         }
       }
     })
@@ -378,38 +385,13 @@ export class TokenActions {
   }
 
   /**
-   * Remove Effect Modifiers created by the Maneuver.
-   *
-   * We found the maneuver modifiers by the '#maneuver' tag in effect description.
-   *
-   * @returns {Promise<void>}
-   */
-  async removeModifiers() {
-    const allModifiers = (await foundry.utils.getProperty(this.actor, 'system.conditions.usermods')) || []
-    const nonManeuverModifiers = allModifiers.filter(modifierText => !modifierText.includes('#maneuver'))
-
-    await this.actor.update({ 'system.conditions.usermods': nonManeuverModifiers })
-  }
-
-  /**
-   * Add Effect Modifiers created by the Maneuver.
+   * Get Effect Modifiers created by the Maneuver.
    *
    * We mark the maneuver modifiers with the '#maneuver' tag in effect description.
    * And to the source reference, we use the '@man:<maneuverName>' identifier.
    *
-   * @returns {Promise<void>}
    */
-  async addModifiers() {
-    const addModifier = mod => {
-      if (!maneuverModifiers.includes(mod) && !allModifiers.includes(mod)) {
-        maneuverModifiers.push(mod)
-      }
-    }
-
-    const allModifiers = await [...foundry.utils.getProperty(this.actor, 'system.conditions.usermods')].filter(
-      modifierText => !modifierText.includes('#maneuver') && !modifierText.includes('@eft:')
-    )
-
+  getModifiers() {
     const maneuverModifiers = []
 
     if (this.toHitBonus !== 0) {
@@ -419,26 +401,30 @@ export class TokenActions {
       if (this.currentManeuver === 'move_and_attack') {
         const rangedBulkLabel = game.i18n.localize('GURPS.modifiers_.moveAndAttackRangedBulk')
 
-        addModifier(
+        maneuverModifiers.push(
           `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} *Max:9 #melee #maneuver @man:${this.currentManeuver}`
         )
-        addModifier(
+        maneuverModifiers.push(
           `${signal}${Math.abs(this.toHitBonus / 2)} ${rangedBulkLabel} #ranged #maneuver @man:${this.currentManeuver}`
         )
       } else {
-        addModifier(`${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`)
+        maneuverModifiers.push(
+          `${signal}${Math.abs(this.toHitBonus)} ${signalLabel} #hit #maneuver @man:${this.currentManeuver}`
+        )
       }
     }
 
     if (this.evaluateTurns > 0) {
-      addModifier(`+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`)
+      maneuverModifiers.push(
+        `+${this.evaluateTurns} ${game.i18n.localize('GURPS.toHitBonus')} #hit #maneuver @man:evaluate`
+      )
     }
 
     if (this.defenseBonus !== 0) {
       const signal = this.defenseBonus > 0 ? '+' : '-'
       const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toDefenseBonus' : 'GURPS.toDefensePenalty')
 
-      addModifier(
+      maneuverModifiers.push(
         `${signal}${Math.abs(this.defenseBonus)} ${signalLabel} #parry #block #dodge #maneuver @man:${this.currentManeuver}`
       )
     }
@@ -450,7 +436,7 @@ export class TokenActions {
         const signal = parry.currentPenalty > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toParryBonus' : 'GURPS.toParryPenalty')
 
-        addModifier(
+        maneuverModifiers.push(
           `${signal}${Math.abs(parry.currentPenalty)} ${signalLabel} ${parry.name} #parry #maneuver #${parry.mode} @${parry.key}`
         )
       }
@@ -463,13 +449,13 @@ export class TokenActions {
         const signal = aim.aimBonus > 0 ? '+' : '-'
         const signalLabel = game.i18n.localize(signal === '+' ? 'GURPS.toAimBonus' : 'GURPS.toAimPenalty')
 
-        addModifier(`${signal}${Math.abs(aim.aimBonus)} ${signalLabel} ${aim.name} #hit #maneuver @${aim.key}`)
+        maneuverModifiers.push(
+          `${signal}${Math.abs(aim.aimBonus)} ${signalLabel} ${aim.name} #hit #maneuver @${aim.key}`
+        )
       }
     })
 
-    await this.actor.update({
-      'system.conditions.usermods': [...allModifiers, ...maneuverModifiers],
-    })
+    return maneuverModifiers
   }
 
   resetTurnValues() {
@@ -506,8 +492,6 @@ export class TokenActions {
 
     this.lastManeuvers[round].maneuver = maneuver.flags.gurps.name
     console.info(`Select Maneuver: '${this.currentManeuver}' for Token: ${this.token.name}`)
-
-    await this.removeModifiers()
 
     this.maxMove = this.getMaxMove()
     this.maxParries = Infinity
@@ -609,7 +593,6 @@ export class TokenActions {
         break
     }
 
-    await this.addModifiers()
     await this.save()
   }
 
@@ -725,8 +708,11 @@ export class TokenActions {
       await this.token.actor.toggleStatusEffect(effect, { active: true })
     }
 
-    await this.addModifiers()
     await this.save()
+
+    if (this.token?.actor?.system?.refreshUserModifier) {
+      await this.token.actor.system.refreshUserModifier()
+    }
   }
 
   static getManeuverIcons(maneuverName) {
@@ -792,22 +778,37 @@ export class TokenActions {
 
     return icon
   }
+
+  /**
+   * Remove user defined custom modifiers marked as temporary.
+   * Called when combat ends
+   *
+   * @returns {Promise<void>}
+   */
   async removeCombatTempMods() {
     const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
     const combatTempTags = taggedSettings.combatTempTag
       .split(',')
       .map(it => it.trim().toLowerCase())
       .filter(it => !!it)
+      .map(it => `#${it}`)
 
-    if (!combatTempTags.length) return
-    const userMods = foundry.utils.getProperty(this.actor, 'system.conditions.usermods')
-    const validMods = userMods.filter(mod => {
-      const tags = mod.match(/#(\S+)/g) || []
+    if (combatTempTags.length < 1) return
 
-      return tags.every(tag => !combatTempTags.includes(tag.toLowerCase()))
-    })
+    if (this.actor.system?.holderItem) {
+      const item = this.actor.system.holderItem
 
-    await this.actor.update({ 'system.conditions.usermods': validMods })
+      const mods = item.system.itemModifiers
+        .split('\n')
+        .filter(mod => {
+          const tags = mod.match(/#(\S+)/g) || []
+
+          return tags.every(tag => !combatTempTags.includes(tag.toLowerCase()))
+        })
+        .join('\n')
+
+      await item.update({ 'system.itemModifiers': mods })
+    }
   }
 
   /**
@@ -874,8 +875,11 @@ export class TokenActions {
         break
     }
 
-    await this.addModifiers()
     await this.save()
+
+    if (this.token?.actor?.system?.refreshUserModifier) {
+      await this.token.actor.system.refreshUserModifier()
+    }
   }
 
   /**

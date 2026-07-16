@@ -3,7 +3,7 @@ import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import { ActorType } from '@module/actor/types.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
 import type { MapField } from '@module/data/fields/map-field.js'
-import type GurpsActiveEffect from '@module/effects/active-effect.js'
+import type { GurpsActiveEffect } from '@module/effects/active-effect.js'
 import type {
   EquipmentModel,
   GcsEquipmentModel,
@@ -42,6 +42,12 @@ declare module 'fvtt-types/configuration' {
 
   interface ConfiguredActor<SubType extends Actor.SubType> {
     document: GurpsActorV2<SubType>
+  }
+
+  /* ---------------------------------------- */
+
+  interface ConfiguredActiveEffect<SubType extends ActiveEffect.SubType> {
+    document: GurpsActiveEffect<SubType>
   }
 
   /* ---------------------------------------- */
@@ -97,6 +103,8 @@ declare module 'fvtt-types/configuration' {
   /* ---------------------------------------- */
 
   interface SettingConfig {
+    'core.messageMode': 'gm' | 'public' | 'self' | 'blind' | 'ic'
+
     /** Bucket */
     'gurps.bucket-position': 'left' | 'right'
 
@@ -112,22 +120,23 @@ declare module 'fvtt-types/configuration' {
     'gurps.damage.show-the-math': foundry.data.fields.BooleanField
 
     /** Importer */
-    'gurps.importer.auto-ignore-qty': foundry.data.fields.BooleanField
+    'gurps.importer.auto-ignore-qty': foundry.data.fields.BooleanField<{ initial: true }>
     'gurps.importer.display-preserve-qty-flag': foundry.data.fields.BooleanField
     'gurps.importer.import-extended-values-gcs': foundry.data.fields.BooleanField
     'gurps.importer.import-file-encoding': foundry.data.fields.StringField<{
       choices: { Latin1: string; UTF8: string }
     }>
-    'gurps.importer.only-trusted-import': foundry.data.fields.BooleanField
+    'gurps.importer.only-trusted-import': foundry.data.fields.BooleanField<{ initial: false }>
     'gurps.importer.overwrite-bodyplan': foundry.data.fields.StringField<{
       choices: { overwrite: string; keep: string; ask: string }
     }>
     'gurps.importer.overwrite-hp-fp': foundry.data.fields.StringField<{
       choices: { overwrite: string; keep: string; ask: string }
     }>
-    'gurps.importer.overwrite-name': foundry.data.fields.BooleanField
+    'gurps.importer.overwrite-name': foundry.data.fields.BooleanField<{ initial: true }>
     'gurps.importer.overwrite-portraits': foundry.data.fields.BooleanField<{ initial: true }>
-    'gurps.importer.use-browser-importer': foundry.data.fields.BooleanField
+    'gurps.importer.use-browser-importer': foundry.data.fields.BooleanField<{ initial: false }>
+    'gurps.importer.useVerboseImporterLog': foundry.data.fields.BooleanField<{ initial: false }>
 
     /** PDF */
     'gurps.pdf.basicset': 'Combined' | 'Separate'

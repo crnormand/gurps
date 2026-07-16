@@ -231,7 +231,7 @@ class PseudoDocument<
    * Prepare base data. This method is not called automatically; it is the responsibility
    * of the parent document to ensure pseudo-documents prepare base and derived data.
    */
-  prepareBaseData() {}
+  prepareBaseData(): void {}
 
   /* ---------------------------------------- */
 
@@ -239,7 +239,16 @@ class PseudoDocument<
    * Prepare derived data. This method is not called automatically; it is the responsibility
    * of the parent document to ensure pseudo-documents prepare base and derived data.
    */
-  prepareDerivedData() {}
+  prepareDerivedData(): void {}
+
+  /* ---------------------------------------- */
+
+  /**
+   * Prepare sibling data. The siblings in question are siblings of the parent Document, rather than siblings of
+   * this pseudo-document. This method is not called automatically; it is the responsibility
+   * of the parent document to ensure pseudo-documents prepare sibling data.
+   */
+  prepareSiblingData(): void {}
 
   /* ---------------------------------------- */
   /*   Instance Methods                       */
@@ -466,7 +475,7 @@ class PseudoDocument<
    * Delete this pseudo-document.
    * @returns a promise that resolves to the updated document.
    */
-  async delete(operation?: PseudoDocument.DeleteOperation): Promise<this | undefined> {
+  async delete(operation?: PseudoDocument.DeleteOneDocumentOperation): Promise<this | undefined> {
     operation ??= {}
 
     if (!this.isSource) throw new Error('You cannot delete a non-source pseudo-document!')
@@ -492,7 +501,7 @@ class PseudoDocument<
    */
   async deleteDialog(
     options?: InexactPartial<foundry.applications.api.DialogV2.ConfirmConfig>,
-    operation?: PseudoDocument.DeleteOperation
+    operation?: PseudoDocument.DeleteOneDocumentOperation
   ): Promise<this | false | null | undefined> {
     return (await deleteDialogWithContents.call(
       this as PseudoDocument.Any,
@@ -505,7 +514,7 @@ class PseudoDocument<
 
   static async deleteDocuments<T extends typeof PseudoDocument>(
     ids: string | Array<string>,
-    { parent, ...operation }: Partial<PseudoDocument.DeleteOperation>
+    { parent, ...operation }: Partial<PseudoDocument.DeleteManyDocumentsOperation>
   ): Promise<InstanceType<T>[]> {
     if (!parent) {
       console.error('A parent document must be specified for the deletion of pseudo-documents!')
@@ -774,9 +783,18 @@ namespace PseudoDocument {
 
   /* ---------------------------------------- */
 
-  export interface DeleteOperation
-    extends Document.Database.DeleteOperation<
-      foundry.abstract.types.DatabaseDeleteOperation<gurps.Pseudo.ParentDocument>
+  export interface DeleteOneDocumentOperation
+    extends Document.Database.DeleteOneDocumentOperation<
+      foundry.abstract.DatabaseBackend.DeleteOperation<gurps.Pseudo.ParentDocument>
+    > {
+    deleteContents?: boolean
+  }
+
+  /* ---------------------------------------- */
+
+  export interface DeleteManyDocumentsOperation
+    extends Document.Database.DeleteManyDocumentsOperation<
+      foundry.abstract.DatabaseBackend.DeleteOperation<gurps.Pseudo.ParentDocument>
     > {
     deleteContents?: boolean
   }

@@ -1,5 +1,6 @@
+import { parselink } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
-import { parselink } from '@util/parselink.js'
 import { displayMod, generateUniqueId } from '@util/utilities.js'
 
 import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
@@ -426,9 +427,7 @@ class ModifierStack {
  * This class owns the modifierStack, while the ModifierBucketEditor
  * modifies it.
  */
-// export class ModifierBucket extends foundry.appv1.api.Application {
-// COMPATIBILITY: v12
-export class ModifierBucket extends Application {
+export class ModifierBucket extends foundry.appv1.api.Application {
   constructor(options = {}) {
     super(options)
 
@@ -603,7 +602,7 @@ export class ModifierBucket extends Application {
     if (game.user?.hasRole('GAMEMASTER'))
       // Only actual GMs can update other user's flags
       users.forEach(user => user.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
-    let ctrl = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
+    let ctrl = game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL)
 
     game.socket?.emit('system.gurps', {
       type: 'updatebucket',
@@ -700,7 +699,7 @@ export class ModifierBucket extends Application {
 
         if (link.action) {
           link.action.blindroll = true
-          if (link.action.type == 'modifier' || !!dragData.actor)
+          if (link.action.type == OtfActionType.modifier || !!dragData.actor)
             GURPS.performAction(link.action, game.actors?.get(dragData.actor))
         }
       }
@@ -796,7 +795,7 @@ export class ModifierBucket extends Application {
   async _on3dClick(event) {
     event.preventDefault()
     let action = {
-      type: 'roll',
+      type: OtfActionType.roll,
       formula: '3d6',
       desc: '',
     }
@@ -807,7 +806,7 @@ export class ModifierBucket extends Application {
   async _on3dRightClick(event) {
     event.preventDefault()
     let action = {
-      type: 'roll',
+      type: OtfActionType.roll,
       formula: '1d6',
       desc: '',
     }
@@ -861,7 +860,7 @@ export class ModifierBucket extends Application {
       if (!game.user?.isGM) {
         let messageData = {
           content: this.chatString(this.modifierStack),
-          type: CONST.CHAT_MESSAGE_STYLES.OOC,
+          style: CONST.CHAT_MESSAGE_STYLES.OOC,
         }
 
         ChatMessage.create(messageData, {})

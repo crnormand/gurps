@@ -1,12 +1,12 @@
 import { fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { BaseDisplayItem } from '@gurps-types/gurps/display-item.js'
 import { Action, ActionType, BaseAction, MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
+import { parselink } from '@module/otf/parselink.js'
 import { MarkdownUtil } from '@module/util/markdown.js'
-import { parselink } from '@util/parselink.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { CollectionField } from '../../data/fields/collection-field.js'
-import { IContainable, containableSchema } from '../../data/mixins/containable.js'
+import { containableSchema, IContainable } from '../../data/mixins/containable.js'
 import { ContainerUtils } from '../../data/mixins/container-utils.js'
 
 import { ConditionalModifier, ReactionModifier } from './conditional-modifier.js'
@@ -123,6 +123,12 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   get actor(): Actor.Implementation | null {
     return this.parent.actor || null
+  }
+
+  /* ---------------------------------------- */
+
+  get isContainer(): boolean {
+    return this.children.length > 0
   }
 
   /* ---------------------------------------- */
@@ -332,6 +338,14 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  /**
+   * Called after individual data preparation for each Item is complete.
+   * Used to set values that depend on the data of sibling items.
+   */
+  prepareSiblingData(): void {}
+
+  /* ---------------------------------------- */
+
   getGlobalBonuses(): AnyObject[] {
     const bonuses = []
 
@@ -360,7 +374,15 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       .filter(child => !!child && !!child.system)
       .map(child => child!.system!.toDisplayItem!())
 
-    const notes = MarkdownUtil.toHTML(this.notes)
+    let unformattedNotes = this.notes.trim()
+
+    if (unformattedNotes.length > 0) unformattedNotes += '\n'
+
+    const vttNotesTrimmed = this.vttNotes?.trim() ?? ''
+
+    unformattedNotes += vttNotesTrimmed
+
+    const notes = MarkdownUtil.toHTML(unformattedNotes)
 
     return {
       id: this.parent.id!,
@@ -373,7 +395,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       name: this.parent.name,
       fullName: this.parent.name,
       notes,
-      hasNotes: this.notes.trim().length > 0,
+      hasNotes: unformattedNotes.trim().length > 0,
       notesOpen: this.notesOpen,
       indent: this.ancestors.length,
       reference: this.pageref,
@@ -404,13 +426,6 @@ const baseItemModelSchema = () => {
      * their already-resolved types rather than freshly evaluating the generic chain.
      */
     actions: new CollectionField(BaseAction as Action.AnyConstructor, { required: true, nullable: false }),
-
-    /**
-     * Is this Item a container that can hold other items? This should be toggleable in the UI for any Item,
-     * and allows for empty containers Items, which the previous accessor value based on the presence of contained
-     * Items did not.
-     */
-    isContainer: new fields.BooleanField({ required: true, nullable: false, initial: false }),
 
     /** Is this Item active? This determined whether bonuses provided by the Item are applied to the Actor. */
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
@@ -451,7 +466,7 @@ const baseItemModelSchema = () => {
     pageref: new fields.StringField({ required: true, nullable: false }),
 
     /** VTT-specific notes about this item, not visible in external programs but useful for storing OTF and the like. */
-    vtt_notes: new fields.StringField({ required: true, nullable: true, initial: null }),
+    vttNotes: new fields.StringField({ required: true, nullable: true, initial: null }),
 
     /** The OTF to run when running an OTF check against this item, such as for a skill or attribute check. */
     checkotf: new fields.StringField({ required: true, nullable: false }),

@@ -36,13 +36,14 @@ export const addManeuverMenu = async (html, combatant, token) => {
   const maxMove = actions.getMaxMove()
   const label = Maneuvers.getManeuver(actions.currentManeuver).label
   const allIcons = TokenActions.getManeuverIcons(actions.currentManeuver)
-  // COMPATIBILITY: Foundry v12 and earlier
-  // const tooltipHtmlString = await foundry.applications.handlebars.renderTemplate(
-  const tooltipHtmlString = await renderTemplate('systems/gurps/templates/maneuver-button-tooltip.hbs', {
-    label,
-    maxMove,
-    allIcons,
-  })
+  const tooltipHtmlString = await foundry.applications.handlebars.renderTemplate(
+    'systems/gurps/templates/maneuver-button-tooltip.hbs',
+    {
+      label,
+      maxMove,
+      allIcons,
+    }
+  )
 
   currentManeuver.setAttribute('aria-label', 'Maneuver Badge')
   currentManeuver.setAttribute('data-tooltip-html', tooltipHtmlString)
@@ -85,12 +86,13 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   // Build the maneuvers menu from template.
   const maneuvers = Maneuvers.getAll()
-  // COMPATIBILITY: Foundry v12 and earlier
-  // const menuHtmlString = await foundry.applications.handlebars.renderTemplate(
-  const menuHtmlString = await renderTemplate('systems/gurps/templates/maneuver-menu.hbs', {
-    combatant,
-    maneuvers,
-  })
+  const menuHtmlString = await foundry.applications.handlebars.renderTemplate(
+    'systems/gurps/templates/maneuver-menu.hbs',
+    {
+      combatant,
+      maneuvers,
+    }
+  )
 
   // Convert HTML string to DOM element and append to html.
   const tempDiv = document.createElement('div')

@@ -1,6 +1,7 @@
 'use strict'
 
-import { parselink } from '@util/parselink.js'
+import { parselink } from '@module/otf/parselink.js'
+import { OtfActionType } from '@module/otf/types.js'
 import { isNiceDiceEnabled, splitArgs } from '@util/utilities.js'
 
 import ChatProcessor from './chat-processor.js'
@@ -66,7 +67,7 @@ export class EveryoneBChatProcessor extends ChatProcessor {
     let action = parselink(match[2].trim())
 
     if (action.action) {
-      if (!['modifier', 'chat', 'pdf'].includes(action.action.type)) {
+      if (![OtfActionType.modifier, OtfActionType.chat, OtfActionType.pdf].includes(action.action.type)) {
         for (const token of canvas.tokens.ownedTokens) {
           let actor = token.actor
 

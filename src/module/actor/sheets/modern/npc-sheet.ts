@@ -1,5 +1,7 @@
-import { HandlebarsApplicationMixin, ActorSheet, DeepPartial } from '@gurps-types/foundry/index.js'
+import { DeepPartial, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+
+import { GurpsBaseActorSheet } from '../base-actor-sheet.js'
 
 import { GurpsActorModernSheet } from './sheet.js'
 
@@ -14,7 +16,7 @@ namespace GurpsActorNpcModernSheet {
 }
 
 export class GurpsActorNpcModernSheet extends GurpsActorModernSheet {
-  static override DEFAULT_OPTIONS: ActorSheet.DefaultOptions = {
+  static override DEFAULT_OPTIONS: GurpsBaseActorSheet.DefaultOptions = {
     classes: ['gurps', 'sheet', 'actor', 'modern-sheet', 'ms-compact', 'ms-npc-modern-sheet'],
     position: {
       width: 650,

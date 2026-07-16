@@ -46,7 +46,7 @@ import {
   ReactionModifier,
   ConditionalModifier as ConditionalModifierDocument,
 } from '@module/item/data/conditional-modifier.js'
-import { Feature } from '@module/item/legacy/itemv1-interface.js'
+import { OtfAction } from '@module/otf/types.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
   ContainedQuantityPrereq,
@@ -61,6 +61,7 @@ import {
 } from '@module/prereqs/index.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
+import { findAdDisad, findSkillSpell, findSkill, findSpell, findAttack } from '@module/util/find-item.ts'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { HandlebarsApplicationMixin as _HandlebarsApplicationMixin } from './foundry/handlebars.js'
@@ -185,17 +186,27 @@ declare global {
        * The return type when accessing an embedded document on a parent document, which can be either a default
        * embedded document type provided by Foundry (e.g. ActiveEffect, Item) or a pseudo-document type defined in the
        * {@link PseudoDocumentConfig.Embeds} configuration object for that parent document type.
+       *
+       * The optional `Options` parameter mirrors {@link EmbeddedCollection.GetOptions}: when `strict: true` is passed,
+       * `undefined` is excluded from the return type; for pseudo-documents only `strict` is meaningful (no `invalid`
+       * support).
        */
       type EmbeddedDocument<
         Type extends foundry.abstract.Document.Type,
         EmbeddedName extends EmbeddedCollectionName<Type>,
+        Options extends EmbeddedCollection.GetOptions | undefined = undefined,
       > =
         EmbeddedName extends DefaultEmbeddedCollectionName<Type>
           ? EmbeddedName extends Actor.Embedded.CollectionName
-            ? Actor.Embedded.DocumentFor<EmbeddedName> | undefined
-            : never
+            ? Actor.Embedded.GetReturn<EmbeddedName, Options>
+            : EmbeddedName extends Item.Embedded.CollectionName
+              ? Item.Embedded.GetReturn<EmbeddedName, Options>
+              : never
           : EmbeddedName extends keyof PseudoDocumentConfig.Embeds[Type & keyof PseudoDocumentConfig.Embeds]
-            ? PseudoDocumentConfig.Embeds[Type & keyof PseudoDocumentConfig.Embeds][EmbeddedName] | undefined
+            ? Collection.GetReturn<
+                PseudoDocumentConfig.Embeds[Type & keyof PseudoDocumentConfig.Embeds][EmbeddedName],
+                Options
+              >
             : never
 
       /* ---------------------------------------- */
@@ -372,11 +383,27 @@ declare global {
 
     /* ---------------------------------------- */
 
-    parselink(input: string): { text: string; action?: GurpsAction }
+    parselink(input: string): { text: string; action?: OtfAction }
 
     /* ---------------------------------------- */
 
-    findAdDisad(actor: Actor.Implementation, adName: string): Feature['fea'] | undefined
+    findAdDisad: typeof findAdDisad
+
+    /* ---------------------------------------- */
+
+    findAttack: typeof findAttack
+
+    /* ---------------------------------------- */
+
+    findSkillSpell: typeof findSkillSpell
+
+    /* ---------------------------------------- */
+
+    findSkill: typeof findSkill
+
+    /* ---------------------------------------- */
+
+    findSpell: typeof findSpell
 
     /* ---------------------------------------- */
 
@@ -393,7 +420,7 @@ declare global {
     /* ---------------------------------------- */
 
     performAction(
-      action: GurpsAction,
+      action: OtfAction,
       actor: Actor | Actor.Implementation | null,
       event?: Event | null,
       targets?: string[]
