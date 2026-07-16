@@ -1608,7 +1608,9 @@ if (!globalThis.GURPS) {
    * @param {string} path
    */
   async function removeKey(actor, path) {
-    const targetActor = game.actors.get(actor.id) ?? actor
+    // For synthetic (unlinked token) actors, game.actors.get(actor.id) returns the base world
+    // actor, not the synthetic one. Always use the actor passed in for token actors.
+    const targetActor = actor.isToken ? actor : (game.actors.get(actor.id) ?? actor)
     const objectData = foundry.utils.duplicate(GURPS.decode(targetActor, path.substring(0, path.lastIndexOf('.'))))
     const { deleteKey, objectPath, updatedObject } = prepareRemoveKey(path, objectData)
 

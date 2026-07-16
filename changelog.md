@@ -1,5 +1,17 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.21
+
+### Features
+
+### Bugfixes
+
+- 17.17 The /light command has multiple bugs \#2134
+- Inventory of unlinked tokens \#2052
+- Multiple Foundry Native Items with Features + Bonuses negate one Bonus \#1861
+- GCS Body Plan not uploaded correctly \#1832
+- Max in resource tracker template not being copied to characters \#1796
+
 ## Release 0.18.20 06/18/2026
 
 ### Features

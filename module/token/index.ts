@@ -1,7 +1,6 @@
 import { GurpsModule } from 'module/gurps-module.js'
 import { GurpsToken } from './gurps-token.js'
-import { GurpsTokenHUD } from './token-hud-12.js'
-import { registerTokenHUD } from './token-hud.js'
+import { GurpsTokenHUDV2 } from './token-hud.js'
 import { registerTokenRuler } from './token-ruler.js'
 
 export * from './gurps-token.js'
@@ -11,15 +10,9 @@ function init(): void {
   console.log('GURPS | Initializing GURPS Token module.')
   Hooks.once('init', () => {
     CONFIG.Token.objectClass = GurpsToken
+    CONFIG.Token.hudClass = GurpsTokenHUDV2
 
-    if (!game.release) return
-    if (game.release?.generation >= 13) {
-      // COMPATIBILITY: v12
-      registerTokenHUD()
-      registerTokenRuler()
-    } else {
-      CONFIG.Token.hudClass = GurpsTokenHUD
-    }
+    registerTokenRuler()
   })
 }
 
