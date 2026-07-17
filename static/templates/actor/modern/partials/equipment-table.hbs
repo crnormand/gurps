@@ -25,6 +25,13 @@
       {{#if hasChildren}}<i class='fas fa-caret-down ms-container-icon {{ifThen childrenOpen "" "container-collapsed"}}'></i>{{/if}}
       {{{gurpslink name}}}
     </span>
+    <span class='ms-eqt-uses'>
+       {{#if (gt maxUses 0) }} 
+        <i class='fa-solid fa-circle-minus equipmentbutton{{#if (lt uses 1)}} disabled{{/if}}' {{#if (gt uses 0)}}data-action='decrementUses'{{/if}}></i>
+        <span>{{uses}} / {{maxUses}}</span>
+        <i class='fa-solid fa-circle-plus equipmentbutton{{#if (gte uses maxUses)}} disabled{{/if}}' {{#if (lt uses maxUses)}}data-action='incrementUses'{{/if}}></i>
+      {{/if}}
+    </span>
     <span class='ms-eqt-cost'>{{value}}</span>
     <span class='ms-eqt-weight'>{{weight.value}} {{weight.unit}}</span>
     <span class='ms-eqt-ref'>{{{pdfReference reference}}}</span>
@@ -50,6 +57,7 @@
       {{/if}}
       <span class='ms-eqt-qty'>{{localize 'GURPS.equipmentQuantity'}}</span>
       <span class='ms-col-name'>{{localize 'GURPS.equipment'}}</span>
+      <span class='ms-col-uses'>{{localize 'GURPS.equipmentUses'}}</span>
       <span class='ms-eqt-cost'>$</span>
       <span class='ms-eqt-weight'><i class='fas fa-weight-hanging'></i></span>
       <span class='ms-eqt-ref'>{{localize 'GURPS.pdfRef'}}</span>

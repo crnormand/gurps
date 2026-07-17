@@ -11,7 +11,11 @@
       {{/if}}
     </td>
     {{/if}}
-    <td class="gcs-item-quantity">{{quantity}}</td>
+    <td class="gcs-item-quantity">
+        <i class='fa-solid fa-circle-minus equipmentbutton' data-action='decrementQuantity'></i>
+        {{quantity}}
+        <i class='fa-solid fa-circle-plus equipmentbutton' data-action='incrementQuantity'></i>
+    </td>
     <td class="gcs-item-name-cell">
       <div class="gcs-item-name-line indent{{indent}}">
         {{#if hasChildren}}
@@ -38,6 +42,13 @@
         {{/if}}
       </div>
     </td>
+    <td class="gcs-item-uses">
+        {{#if (gt maxUses 0) }}
+          <i class='fa-solid fa-circle-minus equipmentbutton{{#if (lt uses 1)}} disabled{{/if}}' {{#if (gt uses 0)}}data-action='decrementUses'{{/if}}></i>
+          {{uses}} / {{maxUses}}
+          <i class='fa-solid fa-circle-plus equipmentbutton{{#if (gte uses maxUses)}} disabled{{/if}}' {{#if (lt uses maxUses)}}data-action='incrementUses'{{/if}}></i>
+        {{/if}}
+    </td>
     <td class="gcs-item-tl">{{techLevel}}</td>
     <td class="gcs-item-lc">{{legalityClass}}</td>
     <td class="gcs-item-value">{{value}}</td>
@@ -58,6 +69,7 @@
       <col class="gcs-col-equipped">
       <col class="gcs-col-quantity">
       <col class="gcs-col-name">
+      <col class="gcs-col-uses">
       <col class="gcs-col-tl">
       <col class="gcs-col-lc">
       <col class="gcs-col-value">
@@ -75,6 +87,9 @@
         </th>
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.name}}">
           {{localize "GURPS.sheet.gcsActorSheet.equipmentCarried" value=carriedValue weight=carriedWeight}}
+        </th>
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.uses}}">
+          {{localize "GURPS.sheet.gcsActorSheet.uses"}}
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.techLevel}}">

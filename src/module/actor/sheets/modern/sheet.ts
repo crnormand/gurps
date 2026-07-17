@@ -131,6 +131,8 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
       decrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
       incrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
+      decrementUses: GurpsActorModernSheet.#onChangeUses,
+      incrementUses: GurpsActorModernSheet.#onChangeUses,
       setEncumbrance: GurpsActorModernSheet.#onSetEncumbrance,
     },
   }
@@ -474,6 +476,34 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       await doc.system.incrementQuantity()
     } else {
       await doc.system.decrementQuantity()
+    }
+  }
+
+  static async #onChangeUses(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event?.preventDefault()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc) return
+
+    if (!(doc instanceof CONFIG.Item.documentClass)) {
+      console.error('Expected document to be an Item, but got', doc)
+
+      return
+    }
+
+    if (!doc.isOfType(ItemType.Equipment)) {
+      console.error('Expected document to be of type Equipment, but got', doc)
+
+      return
+    }
+
+    const action = target.dataset.action
+
+    if (action === 'incrementUses') {
+      await doc.system.incrementUses()
+    } else {
+      await doc.system.decrementUses()
     }
   }
 
