@@ -38,7 +38,7 @@ export class PoolValueElement extends foundry.applications.elements.AbstractForm
   /* ---------------------------------------- */
 
   protected override _setValue(value: number): void {
-    this._value = Math.max(Number(value) || 0, 0)
+    this._value = Number(value) || 0
   }
 
   /* ---------------------------------------- */

@@ -26,7 +26,7 @@ class CharacterPool extends DataModel<PoolSchema> {
 
 const poolSchema = () => {
   return {
-    damage: new fields.NumberField({ required: true, nullable: false, initial: 0, min: 0 }),
+    damage: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     min: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     max: new fields.NumberField({ required: true, nullable: false, initial: 0 }),
     points: new fields.NumberField({ required: true, nullable: false, initial: 0 }),

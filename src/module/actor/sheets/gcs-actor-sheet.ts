@@ -470,7 +470,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         value: systemSource[key].max,
         label: 'GURPS.sheet.gcsActorSheet.poolBase',
       },
-      atMax: systemSource[key].damage === 0,
+      atMax: false,
       name: `GURPS.${key}`,
       state: text,
       color,
