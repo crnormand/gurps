@@ -449,7 +449,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const systemSource = this.actor.system._source
 
     const currentValue = this.actor.system[key].value
-    const state = thresholds.find(threshold => threshold.value >= currentValue)
+    const state = thresholds.find(threshold => threshold.value >= currentValue) ?? thresholds.at(-1) //treat the last bin as unlimited, when the value is above max (for temporary hit points or such)
 
     const color = getColorForState(key, state?.state, this.options.classes?.includes('theme-dark') ? 'dark' : 'light')
     const text = getTextForState(key, state?.state)
