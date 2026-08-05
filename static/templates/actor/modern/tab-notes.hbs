@@ -144,6 +144,31 @@
   {{/if}}
 {{/inline}}
 
+{{!-- Trackers --}}
+{{#if resourceTrackers}}
+<div class='ms-section'>
+  <h3 class='ms-section-header'>
+    <i class='fas fa-heartbeat'></i>
+    {{localize 'GURPS.resourceTracker.view.title'}}
+    <i class='fas fa-plus ms-add-icon' data-action='addTracker'></i>
+  </h3>
+  <div class='ms-trackers-list'>
+    {{#each resourceTrackers}}
+      {{> "actor.partials.resource-tracker" }}
+    {{/each}}
+  </div>
+</div>
+{{else}}
+<div class='ms-section'>
+  <h3 class='ms-section-header'>
+    <i class='fas fa-heartbeat'></i>
+    {{localize 'GURPS.resourceTracker.view.title'}}
+    <i class='fas fa-plus ms-add-icon' data-action='createEmbedded' data-document-name="ResourceTracker"></i>
+  </h3>
+  <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
+</div>
+{{/if}}
+
 {{!-- Notes + Lifting --}}
 <div class='ms-notes-columns'>
   <div class='ms-section'>
@@ -188,29 +213,4 @@
     </div>
   </div>
 </div>
-
-{{!-- Trackers --}}
-{{#if resourceTrackers}}
-<div class='ms-section'>
-  <h3 class='ms-section-header'>
-    <i class='fas fa-heartbeat'></i>
-    {{localize 'GURPS.resourceTracker.view.title'}}
-    <i class='fas fa-plus ms-add-icon' data-action='addTracker'></i>
-  </h3>
-  <div class='ms-trackers-list'>
-    {{#each resourceTrackers}}
-      {{> "actor.partials.resource-tracker" }}
-    {{/each}}
-  </div>
-</div>
-{{else}}
-<div class='ms-section'>
-  <h3 class='ms-section-header'>
-    <i class='fas fa-heartbeat'></i>
-    {{localize 'GURPS.resourceTracker.view.title'}}
-    <i class='fas fa-plus ms-add-icon' data-action='createEmbedded' data-document-name="ResourceTracker"></i>
-  </h3>
-  <div class='ms-empty'>{{localize 'GURPS.none'}}</div>
-</div>
-{{/if}}
 </section>
