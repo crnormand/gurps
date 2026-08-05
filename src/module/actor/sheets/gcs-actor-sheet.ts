@@ -167,6 +167,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       editResourceTracker: GurpsActorGcsSheet.#onEditResourceTracker,
       setEncumbrance: GurpsActorGcsSheet.#onSetEncumbrance,
       editQuickNotes: GurpsActorGcsSheet.#onEditQuickNotes,
+      decrementQuantity: GurpsActorGcsSheet.#onChangeQuantity,
+      incrementQuantity: GurpsActorGcsSheet.#onChangeQuantity,
+      decrementUses: GurpsActorGcsSheet.#onChangeUses,
+      incrementUses: GurpsActorGcsSheet.#onChangeUses,
     },
   }
 
@@ -449,7 +453,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const systemSource = this.actor.system._source
 
     const currentValue = this.actor.system[key].value
-    const state = thresholds.find(threshold => threshold.value >= currentValue)
+    const state = thresholds.find(threshold => threshold.value >= currentValue) ?? thresholds.at(-1) //treat the last bin as unlimited, when the value is above max (for temporary hit points or such)
 
     const color = getColorForState(key, state?.state, this.options.classes?.includes('theme-dark') ? 'dark' : 'light')
     const text = getTextForState(key, state?.state)
@@ -470,7 +474,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         value: systemSource[key].max,
         label: 'GURPS.sheet.gcsActorSheet.poolBase',
       },
-      atMax: systemSource[key].damage === 0,
+      atMax: false,
       name: `GURPS.${key}`,
       state: text,
       color,
@@ -582,7 +586,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
       for (const match of otfTextMatches) {
         const otfText = match[1]
-        const parsedOtf = GURPS.parselink(otfText)
+        const parsedOtf = GURPS.parselink(otfText, null, true)
 
         if (parsedOtf.text) {
           otfElement.innerHTML = otfElement.innerHTML.replace(`[${otfText}]`, parsedOtf.text)
@@ -943,6 +947,68 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     event.preventDefault()
 
     await openQuickNotesEditor(this.actor)
+  }
+
+  /* ---------------------------------------- */
+
+  //maybe this should be moved to the base sheet, as it is nearly identical on the modern sheet
+  static async #onChangeQuantity(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event?.preventDefault()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc) return
+
+    if (!(doc instanceof CONFIG.Item.documentClass)) {
+      console.error('Expected document to be an Item, but got', doc)
+
+      return
+    }
+
+    if (!doc.isOfType(ItemType.Equipment)) {
+      console.error('Expected document to be of type Equipment, but got', doc)
+
+      return
+    }
+
+    const action = target.dataset.action
+
+    if (action === 'incrementQuantity') {
+      await doc.system.incrementQuantity()
+    } else {
+      await doc.system.decrementQuantity()
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  //maybe this should be moved to the base sheet, as it is nearly identical on the modern sheet
+  static async #onChangeUses(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+    event?.preventDefault()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc) return
+
+    if (!(doc instanceof CONFIG.Item.documentClass)) {
+      console.error('Expected document to be an Item, but got', doc)
+
+      return
+    }
+
+    if (!doc.isOfType(ItemType.Equipment)) {
+      console.error('Expected document to be of type Equipment, but got', doc)
+
+      return
+    }
+
+    const action = target.dataset.action
+
+    if (action === 'incrementUses') {
+      await doc.system.incrementUses()
+    } else {
+      await doc.system.decrementUses()
+    }
   }
 
   /* ---------------------------------------- */
