@@ -86,8 +86,27 @@
   }
 
   td.gcs-item-quantity {
-    @include gcs-col(2rem, 3.5rem);
+    @include gcs-col(2rem, 5rem);
     text-align: right;
+    white-space: nowrap;
+    .equipmentbutton {
+      cursor: pointer;
+      &.disabled {
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  td.gcs-item-uses {
+    @include gcs-col(2rem, 8rem);
+    text-align: right;
+    white-space: nowrap;
+    .equipmentbutton {
+      cursor: pointer;
+      &.disabled {
+        cursor: not-allowed;
+      }
+    }
   }
 
   td.gcs-item-tl {

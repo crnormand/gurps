@@ -133,6 +133,10 @@ interface DisplayEquipment extends BaseDisplayItem {
     value: string
     unit: WeightUnit
   }
+  /** The remaining uses of this item, if any. Used for things like ammunition, sips of a potion, etc. */
+  uses: number | null
+  /** The maximum uses of this item, if any. Used for things like ammunition, sips of a potion, etc. */
+  maxUses: number
 }
 
 /* ---------------------------------------- */
