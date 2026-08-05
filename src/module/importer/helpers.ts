@@ -183,9 +183,9 @@ export async function promptDeletionOfMigratedItems(actor?: Actor.Implementation
     const docsToDelete = pseudoDocuments.filter(doc => response.toDelete.includes(doc._id))
     const docsToKeep = pseudoDocuments.filter(doc => !response.toDelete.includes(doc._id))
 
-    const deleteUpdates = Object.fromEntries(docsToDelete.map(doc => [`${doc.fieldPath}.${doc._id}`, globalThis._del]))
+    const deleteUpdates = Object.fromEntries(docsToDelete.map(doc => [`${doc.fieldPath}.${doc._id}`, _del]))
     const keepUpdates = Object.fromEntries(
-      docsToKeep.map(doc => [`${doc.fieldPath}.${doc._id}.flags.isMigratedItem`, globalThis._del])
+      docsToKeep.map(doc => [`${doc.fieldPath}.${doc._id}.flags.isMigratedItem`, _del])
     )
 
     await holderItem.update({ ...deleteUpdates, ...keepUpdates })

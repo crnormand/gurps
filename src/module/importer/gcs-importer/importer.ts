@@ -68,6 +68,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
   input: GcsImporterInputType<Mode>
   actor?: Actor.OfType<ActorType.Character>
   output: DataModel.CreateData<CharacterSchema> = {}
+  hitLocationsToDelete: string[]
   items: Item.CreateData[]
   existingItems: Item.Stored[]
   img: string
@@ -78,6 +79,7 @@ class GcsImporter<Mode extends GcsImporterMode> {
     this._mode = options.mode
     this.input = options.input
     this.output = {}
+    this.hitLocationsToDelete = []
     this.existingItems = []
 
     this.items = []
@@ -144,6 +146,13 @@ class GcsImporter<Mode extends GcsImporterMode> {
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
         actor.items.contents.filter(item => item.type === ItemType.Equipment) as Item.OfType<ItemType.Equipment>[]
       )
+
+      // Remove obsolete collection entries before applying the imported data.
+      const hitLocationDeletions: Actor.UpdateData = Object.fromEntries(
+        this.hitLocationsToDelete.map(id => [`system.hitlocationsV2.${id}`, _del])
+      )
+
+      if (this.hitLocationsToDelete.length > 0) await actor.update(hitLocationDeletions, { render: false })
 
       // Update actor with new system data and create new items
       await actor.update({
@@ -573,16 +582,11 @@ Portrait will not be imported.`
     // No need to run this if there is no existing actor
     if (!this.actor) return
 
-    const currentHitLocationNullifiers = Object.fromEntries(
-      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
-    )
+    const currentHitLocationIds = this.actor.system.hitlocationsV2.map(location => location._id)
 
     // On first import, always replace the hit location table
     if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
-      this.output.hitlocationsV2 = {
-        ...this.output.hitlocationsV2,
-        ...currentHitLocationNullifiers,
-      }
+      this.hitLocationsToDelete = currentHitLocationIds
 
       return
     }
@@ -643,10 +647,7 @@ Portrait will not be imported.`
     const automaticOverwrite = ImportSettings.overwriteBodyPlan
 
     if (automaticOverwrite === 'overwrite') {
-      this.output.hitlocationsV2 = {
-        ...this.output.hitlocationsV2,
-        ...currentHitLocationNullifiers,
-      }
+      this.hitLocationsToDelete = currentHitLocationIds
 
       return // Automatically overwrite from file.
     } else if (automaticOverwrite === 'keep') {
@@ -685,10 +686,7 @@ Portrait will not be imported.`
       this.output.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations
     } else {
-      this.output.hitlocationsV2 = {
-        ...this.output.hitlocationsV2,
-        ...currentHitLocationNullifiers,
-      }
+      this.hitLocationsToDelete = currentHitLocationIds
     }
   }
 
@@ -1021,7 +1019,7 @@ Portrait will not be imported.`
 
   #importTrait(trait: GcsTrait, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Trait
-    const name = trait.name || globalThis._loc('TYPES.Item.feature')
+    const name = trait.name || _loc('TYPES.Item.feature')
 
     const [baseSystem, _id] = this.#importItem(trait)
     let modifierNotes = ''
@@ -1071,7 +1069,7 @@ Portrait will not be imported.`
 
   #importSkill(skill: GcsSkill, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Skill
-    const name = skill.name || globalThis._loc('TYPES.Item.skill')
+    const name = skill.name || _loc('TYPES.Item.skill')
 
     const [baseSystem, _id] = this.#importItem(skill)
 
@@ -1088,8 +1086,8 @@ Portrait will not be imported.`
 
           if (skill.default.specialization) defaultName += ` (${skill.default.specialization})`
 
-          if (skill.default.type === 'block') defaultName += ' ' + globalThis._loc('GURPS.block')
-          else if (skill.default.type === 'parry') defaultName += ' ' + globalThis._loc('GURPS.parry')
+          if (skill.default.type === 'block') defaultName += ' ' + _loc('GURPS.block')
+          else if (skill.default.type === 'parry') defaultName += ' ' + _loc('GURPS.parry')
 
           break
         }
@@ -1149,7 +1147,7 @@ Portrait will not be imported.`
 
   #importSpell(spell: GcsSpell, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Spell
-    const name = spell.name || globalThis._loc('TYPES.Item.spell')
+    const name = spell.name || _loc('TYPES.Item.spell')
 
     const [baseSystem, _id] = this.#importItem(spell)
 
@@ -1194,7 +1192,7 @@ Portrait will not be imported.`
     containedBy?: string | undefined
   ): Item.CreateData {
     const type = ItemType.Equipment
-    const name = equipment.name || globalThis._loc('TYPES.Item.equipment')
+    const name = equipment.name || _loc('TYPES.Item.equipment')
 
     const weight = equipment.calc?.weight
       ? parseFloat(equipment.calc.weight)

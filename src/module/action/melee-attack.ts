@@ -1,7 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplayMeleeAttack } from '@gurps-types/gurps/display-item.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
-import { getGame } from '@module/util/guards.js'
+import { getGame, isObject } from '@module/util/guards.js'
 import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
@@ -42,8 +42,11 @@ class MeleeAttackModel extends BaseAttack<MeleeAttackSchema> {
 
   /* ---------------------------------------- */
 
-  static override cleanData(source?: AnyMutableObject, options?: fields.DataField.CleanOptions): AnyMutableObject {
-    source = super.cleanData(source, options)
+  static override cleanData(source?: AnyMutableObject, options?: fields.DataField.CleanOptions): object {
+    const cleaned = super.cleanData(source, options)
+
+    if (!isObject(cleaned)) return cleaned
+    source = cleaned
 
     // Clean the parry field to ensure it is normalized.
     // If parrying is disabled, the other parry fields are also reset to their default values.

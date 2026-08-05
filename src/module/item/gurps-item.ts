@@ -50,8 +50,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     super._configure(options)
 
     const collections: Record<string, ModelCollection> = {}
-    const model = CONFIG[this.documentName].dataModels[this._source.type]
+    const model = Object.entries(CONFIG[this.documentName].dataModels).find(([type]) => type === this._source.type)?.[1]
     const embedded = (model as unknown as gurps.MetadataOwner)?.metadata?.embedded ?? {}
+
+    if (!model) return
 
     for (const [documentName, fieldPath] of Object.entries(embedded)) {
       const field = model.schema.getField(fieldPath.slice('system.'.length)) as CollectionField
@@ -75,10 +77,10 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
     const { type } = itemData
     const { img } = super.getDefaultArtwork(itemData)
 
-    const dataModel = CONFIG.Item.dataModels[type]
+    const dataModel = Object.entries(CONFIG.Item.dataModels).find(([modelType]) => modelType === type)?.[1]
 
-    if (foundry.utils.isSubclass(dataModel, BaseItemModel)) {
-      return dataModel.getDefaultArtwork(itemData) as Item.GetDefaultArtworkReturn
+    if (dataModel && foundry.utils.isSubclass(dataModel, BaseItemModel)) {
+      return dataModel.getDefaultArtwork(itemData)
     }
 
     return { img }
@@ -309,13 +311,13 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
   static override async createDialog(
     data?: Item.CreateDialogData,
-    createOptions?: Item.Database.DialogCreateOptions,
+    createOptions?: Item.Database.CreateDocumentsOperation,
     options?: Item.CreateDialogOptions
-  ): Promise<Item.Stored | null | undefined> {
+  ) {
     const isDevMode = GURPS.modules.Dev?.settings.enableNonProductionDocumentTypes ?? false
 
     if (!isDevMode) {
-      options ||= {}
+      options = { ...options }
       const allTypes = Item.TYPES
       const excludeTypes = [
         'base',
@@ -408,7 +410,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
   /*  Data Migration                          */
   /* ---------------------------------------- */
 
-  static override migrateData(source: AnyMutableObject): AnyMutableObject {
+  static override migrateData(source: AnyMutableObject): object {
     runSourceMigrations(source)
 
     return super.migrateData(source)
