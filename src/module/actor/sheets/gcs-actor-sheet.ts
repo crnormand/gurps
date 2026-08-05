@@ -582,7 +582,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
       for (const match of otfTextMatches) {
         const otfText = match[1]
-        const parsedOtf = GURPS.parselink(otfText)
+        const parsedOtf = GURPS.parselink(otfText, null, true)
 
         if (parsedOtf.text) {
           otfElement.innerHTML = otfElement.innerHTML.replace(`[${otfText}]`, parsedOtf.text)
