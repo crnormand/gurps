@@ -609,7 +609,8 @@ $carried-equipment-columns: 32px $other-equipment-columns;
   }
 }
 
-.ms-eqt-qty, .ms-eqt-uses {
+.ms-eqt-qty,
+.ms-eqt-uses {
   display: flex;
   align-items: center;
   justify-content: center;
