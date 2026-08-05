@@ -1,7 +1,7 @@
 import { ActorType } from '@module/actor/types.js'
 import { diceValidate } from '@module/data/validators/dice-validator.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
-import { isHTMLElement, isHTMLInputElement } from '@module/util/guards.js'
+import { isHTMLElement, isHTMLInputElement, isPoolValueElement } from '@module/util/guards.js'
 
 export function shouldUpdateName(newName: string, currentName: string): boolean {
   const trimmedName = newName.trim()
@@ -62,7 +62,7 @@ export function bindInlineEdit(html: HTMLElement, config: InlineEditConfig): voi
         event.preventDefault()
         const inputElement = event.currentTarget
 
-        if (!isHTMLInputElement(inputElement)) return
+        if (!isHTMLInputElement(inputElement) && !isPoolValueElement(inputElement)) return
         const container = inputElement.closest(containerSelector)
 
         if (!isHTMLElement(container)) return
