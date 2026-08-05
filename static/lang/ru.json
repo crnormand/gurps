@@ -2393,7 +2393,7 @@
     "warnMaxBlocksReached": "Все блоки в этом раунде использованы.",
     "warnNoTargetSelected": "Цель не выбрана.",
     "warnRollsBeforeCombatStarted": "Бой не начат.",
-   "weight": "Вес",
+    "weight": "Вес",
     "whenApplicable": "Когда применимо",
     "whisperToNames": "Шепнуть {names}",
     "willConsumeAction": "Потребует действия.",
