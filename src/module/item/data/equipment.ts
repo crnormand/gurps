@@ -28,6 +28,7 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
         extendedValue: 'system.totalCost',
         weight: 'system.weight',
         extendedWeight: 'system.totalWeight',
+        uses: 'system.uses',
       },
       detailsPartial: ['item.partials.details-equipment', 'item.partials.details-base'],
     })
@@ -131,6 +132,26 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
   }
 
   /* ---------------------------------------- */
+
+  async incrementUses(): Promise<this['parent'] | undefined> {
+    const quantity = this.uses + 1
+
+    if (quantity > this.maxuses) return
+
+    return this.parent.update({ 'system.uses': quantity } as Item.UpdateData)
+  }
+
+  /* ---------------------------------------- */
+
+  async decrementUses(): Promise<this['parent'] | undefined> {
+    const quantity = this.uses - 1
+
+    if (quantity < 0) return
+
+    return this.parent.update({ 'system.uses': quantity } as Item.UpdateData)
+  }
+
+  /* ---------------------------------------- */
   /*  Data Preparation                        */
   /* ---------------------------------------- */
 
@@ -153,6 +174,8 @@ class EquipmentModel extends BaseItemModel<EquipmentSchema> {
       extendedValue: this.totalCost.toLocaleString(),
       weight: Weight.from(this.weight, Weight.Unit.Pound, true).toLocaleObject(),
       extendedWeight: Weight.from(this.totalWeight, Weight.Unit.Pound, true).toLocaleObject(),
+      uses: this.maxuses > 0 ? this.uses : null,
+      maxUses: this.maxuses,
     })
   }
 }

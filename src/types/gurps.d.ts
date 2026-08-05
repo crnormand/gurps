@@ -383,7 +383,7 @@ declare global {
 
     /* ---------------------------------------- */
 
-    parselink(input: string): { text: string; action?: OtfAction }
+    parselink(input: string, htmldesc?: string | null, _clrdmods?: boolean | null): { text: string; action?: OtfAction }
 
     /* ---------------------------------------- */
 

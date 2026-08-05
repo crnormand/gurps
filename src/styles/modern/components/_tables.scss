@@ -609,11 +609,12 @@ $carried-equipment-columns: 32px $other-equipment-columns;
   }
 }
 
-.ms-eqt-qty {
+.ms-eqt-qty, .ms-eqt-uses {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--ms-space-2);
+  white-space: nowrap;
 
   .equipmentbutton {
     color: var(--ms-text-muted);
@@ -622,6 +623,13 @@ $carried-equipment-columns: 32px $other-equipment-columns;
 
     &:hover {
       color: var(--ms-accent);
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+      &:hover {
+        color: var(--ms-text-muted);
+      }
     }
   }
 }
