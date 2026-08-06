@@ -557,7 +557,7 @@ class FpHpChatProcessor extends ChatProcessor {
     const max = actor.system[attr].max
 
     if (match[5]) {
-      await actor.update({ ['system.' + attr + '.value']: max })
+      await actor.update({ ['system.' + attr + '.damage']: 0 })
       this.prnt(`${actor.displayname} reset to ${max} ${attr}`)
     } else if (isNaN(delta) && !!match[3]) {
       // only happens with '='
@@ -568,12 +568,14 @@ class FpHpChatProcessor extends ChatProcessor {
         let mtxt = ''
 
         if (delta > max) {
-          delta = max
+          delta = 0
           mtxt = ` (max: ${max})`
+        } else {
+          delta = max - delta
         }
 
-        await actor.update({ ['system.' + attr + '.value']: delta })
-        this.prnt(`${actor.displayname} ${game.i18n.localize('GURPS.chatSetTo')} ${delta} ${attr}${mtxt}`)
+        await actor.update({ ['system.' + attr + '.damage']: delta })
+        this.prnt(`${actor.displayname} ${game.i18n.localize('GURPS.chatSetTo')} ${max - delta} ${attr}${mtxt}`)
       }
     } else if (!!match[2] || !!match[3]) {
       let mtxt = ''
@@ -630,14 +632,14 @@ class FpHpChatProcessor extends ChatProcessor {
         txt = `(${delta}) `
       }
 
-      delta += actor.system[attr].value
+      delta = actor.system[attr].damage - delta
 
-      if (delta > max) {
-        delta = max
+      if (delta < 0) {
+        delta = 0
         mtxt = ` (max: ${max})`
       }
 
-      await actor.update({ ['system.' + attr + '.value']: delta })
+      await actor.update({ ['system.' + attr + '.damage']: delta })
       this.prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
     } else ui.notifications.warn(`${game.i18n.localize('GURPS.chatUnrecognizedFormat')} '${line}'`)
   }
