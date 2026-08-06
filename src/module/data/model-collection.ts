@@ -235,7 +235,10 @@ class ModelCollection<Model extends PseudoDocument.Any = PseudoDocument.Any> ext
   #initializeDocument(data: AnyMutableObject, options: AnyMutableObject): Model | null {
     let doc = this.get(data._id as string)
 
-    if (doc) {
+    // if the parent is the synthetic actor of an unlinked token, the source of the stored document can be out of sync with the source of the synthetic actor.
+    // I am unclear why this happens.
+    // but in this case we cannot just reinitialize the document, we need to create a new one.
+    if (doc && doc._source === data) {
       // @ts-expect-error: Accessing protected property.
       doc._initialize(options)
 
