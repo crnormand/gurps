@@ -80,6 +80,72 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
+  /**
+   * Ensure an unlinked Token's ActorDelta stores complete pseudo-document
+   * sources rather than patches which depend on the base Actor's source.
+   */
+  override async update(
+    data: Actor.UpdateInput,
+    operation: Actor.Database.UpdateOneDocumentOperation = {}
+  ): Promise<this | undefined> {
+    const touchedPseudoDocuments = new Map<string, Set<string>>()
+
+    if (this.isToken) {
+      const paths = Object.values(this.modelV2.metadata.embedded)
+      const updateData = data instanceof foundry.abstract.DataModel ? data.toObject() : data
+      const changedPaths = Object.keys(foundry.utils.flattenObject(updateData))
+
+      for (const fieldPath of paths) {
+        const prefix = `${fieldPath}.`
+
+        for (const changedPath of changedPaths) {
+          if (!changedPath.startsWith(prefix)) continue
+
+          const id = changedPath.slice(prefix.length).split('.')[0]
+
+          if (id) {
+            const ids = touchedPseudoDocuments.get(fieldPath) ?? new Set<string>()
+
+            ids.add(id)
+            touchedPseudoDocuments.set(fieldPath, ids)
+          }
+        }
+      }
+    }
+
+    const updated = await super.update(data, operation)
+
+    if (!updated?.isToken || touchedPseudoDocuments.size === 0) return updated
+
+    const deltaUpdates: Record<string, object> = {}
+
+    for (const [fieldPath, ids] of touchedPseudoDocuments) {
+      const collectionSource = foundry.utils.getProperty(updated._source, fieldPath)
+
+      if (!isObject(collectionSource)) continue
+
+      for (const id of ids) {
+        const source = collectionSource[id]
+
+        if (isObject(source)) deltaUpdates[`${fieldPath}.${id}`] = foundry.utils.deepClone(source)
+      }
+    }
+
+    const delta = updated.token?.delta
+
+    if (delta && !foundry.utils.isEmpty(deltaUpdates)) {
+      await delta.update(deltaUpdates, {
+        diff: false,
+        recursive: true,
+        render: operation.render,
+      })
+    }
+
+    return updated
+  }
+
+  /* ---------------------------------------- */
+
   protected override _configure(options = {}) {
     super._configure(options)
 

@@ -26,16 +26,12 @@ class ModelCollection<Model extends PseudoDocument.Any = PseudoDocument.Any> ext
 
     Object.defineProperties(this, {
       name: { value: name, writable: false },
+      _source: {
+        get: () => foundry.utils.getProperty(document._source, fieldPath) as Record<string, object>,
+        configurable: false,
+        enumerable: false,
+      },
       documentClass: { value: ModelCollection.documentClasses[documentName], writable: false },
-    })
-
-    // Use a live getter so that if the parent document's _source is replaced wholesale
-    // (e.g. by TypeDataField._updateCommit with ForcedReplacement during migration), the
-    // collection always reads through the current reference rather than a stale snapshot.
-    Object.defineProperty(this, '_source', {
-      get: () => foundry.utils.getProperty(document._source, fieldPath) as Record<string, object>,
-      configurable: false,
-      enumerable: false,
     })
   }
 
@@ -235,9 +231,6 @@ class ModelCollection<Model extends PseudoDocument.Any = PseudoDocument.Any> ext
   #initializeDocument(data: AnyMutableObject, options: AnyMutableObject): Model | null {
     let doc = this.get(data._id as string)
 
-    // if the parent is the synthetic actor of an unlinked token, the source of the stored document can be out of sync with the source of the synthetic actor.
-    // I am unclear why this happens.
-    // but in this case we cannot just reinitialize the document, we need to create a new one.
     if (doc && doc._source === data) {
       // @ts-expect-error: Accessing protected property.
       doc._initialize(options)
