@@ -425,6 +425,9 @@ global.foundry = {
     },
   },
   applications: {
+    elements: {
+      AbstractFormInputElement: class {},
+    },
     api: {
       Application: class {
         options: unknown
