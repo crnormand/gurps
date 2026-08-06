@@ -25,6 +25,91 @@ describe('GurpsActorV2', () => {
     expect(actor.type).toBe(ActorType.Character)
   })
 
+  describe('updating synthetic Actor pseudo-documents', () => {
+    const trackerId = 'TRACKER_ID'
+    const trackerSource = {
+      _id: trackerId,
+      name: 'Energy Reserve',
+      alias: 'ER',
+      currentValue: 8,
+      max: 10,
+      min: 0,
+    }
+
+    function configureSyntheticActor() {
+      const deltaUpdate = vi.fn().mockResolvedValue(undefined)
+
+      Object.defineProperties(actor, {
+        isToken: { value: true, configurable: true },
+        token: {
+          value: { delta: { update: deltaUpdate } },
+          configurable: true,
+        },
+        _source: {
+          value: {
+            system: {
+              additionalresources: {
+                tracker: { [trackerId]: trackerSource },
+              },
+            },
+          },
+          configurable: true,
+        },
+      })
+
+      return deltaUpdate
+    }
+
+    it('hydrates a changed pseudo-document directly into the ActorDelta', async () => {
+      const deltaUpdate = configureSyntheticActor()
+
+      // @ts-expect-error - LSP doesn't like the path but it's valid.
+      await actor.update({ [`system.additionalresources.tracker.${trackerId}.currentValue`]: 8 })
+
+      expect(deltaUpdate).toHaveBeenCalledOnce()
+      expect(deltaUpdate).toHaveBeenCalledWith(
+        { [`system.additionalresources.tracker.${trackerId}`]: trackerSource },
+        { diff: false, recursive: true, render: undefined }
+      )
+    })
+
+    it('recognizes nested update data', async () => {
+      const deltaUpdate = configureSyntheticActor()
+
+      await actor.update({
+        system: {
+          additionalresources: {
+            tracker: { [trackerId]: { currentValue: 8 } },
+          },
+        },
+      })
+
+      expect(deltaUpdate).toHaveBeenCalledOnce()
+    })
+
+    it('does not hydrate unrelated Actor changes', async () => {
+      const deltaUpdate = configureSyntheticActor()
+
+      await actor.update({ name: 'Changed Name' })
+
+      expect(deltaUpdate).not.toHaveBeenCalled()
+    })
+
+    it('does not hydrate a deleted pseudo-document', async () => {
+      const deltaUpdate = configureSyntheticActor()
+
+      Object.defineProperty(actor, '_source', {
+        value: { system: { additionalresources: { tracker: {} } } },
+        configurable: true,
+      })
+
+      // @ts-expect-error - LSP doesn't like the path but it's valid.
+      await actor.update({ [`system.additionalresources.tracker.${trackerId}`]: null })
+
+      expect(deltaUpdate).not.toHaveBeenCalled()
+    })
+  })
+
   describe('parseItemKey', () => {
     it('parses a simple collection path', () => {
       const result = parseItemKey('system.ads')
