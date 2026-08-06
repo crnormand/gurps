@@ -256,7 +256,7 @@ class IfTestParser extends OtfParser {
    *  text: string,
    *  action: {
    *    orig: string,
-   *    type: OtfActionType.iftest,
+   *    type: OtfActionType.ifTest,
    *    name: string,
    *    equation: string
    *  }
@@ -438,7 +438,7 @@ class CheckExistsParser extends OtfParser {
    *  text: string,
    *  action: {
    *    orig: string,
-   *    type: OtfActionType.testexists,
+   *    type: OtfActionType.testExists,
    *    prefix: string,
    *    name: string
    *  }
@@ -798,7 +798,7 @@ class AttackDamageParser extends OtfParser {
    *  text: string,
    *  action: {
    *    orig: string,
-   *    type: OtfActionType.attack | OtfActionType.attackdamage | OtfActionType.weaponParry | OtfActionType.weaponBlock,
+   *    type: OtfActionType.attack | OtfActionType.attackDamage | OtfActionType.weaponParry | OtfActionType.weaponBlock,
    *    name: string,
    *    mod: string,
    *    desc: string,
