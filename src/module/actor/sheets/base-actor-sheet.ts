@@ -164,7 +164,7 @@ class GurpsBaseActorSheet<
       addModifier: { handler: GurpsBaseActorSheet.#onAddModifier, buttons: [0, 2] },
       rollOtf: { handler: GurpsBaseActorSheet.#onRollOtf, buttons: [0, 2] },
     },
-    dragDrop: [{ dragSelector: '[draggable]', dropSelector: null }],
+    dragDrop: [{ dragSelector: '[draggable] .gcs-drag-handle', dropSelector: null }],
   }
 
   /* ---------------------------------------- */

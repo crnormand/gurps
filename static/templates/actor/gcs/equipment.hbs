@@ -1,53 +1,48 @@
 {{#*inline ".equipmentEntry"}}
-  <tr class="gcs-item-row"
-      data-item-id="{{id}}"
-      data-uuid="{{uuid}}"
-      data-has-children="{{hasChildren}}"
-      draggable="true">
+  <tr class="gcs-item-row" data-item-id="{{id}}" data-uuid="{{uuid}}" data-has-children="{{hasChildren}}"
+    draggable="true">
     {{#if carriedTable}}
-    <td class="gcs-item-equipped">
-      {{#if equipped}}
-      <i class="fa-solid fa-check"></i>
-      {{/if}}
-    </td>
+      <td class="gcs-item-equipped">
+        {{#if equipped}}
+          <i class="fa-solid fa-check"></i>
+        {{/if}}
+      </td>
     {{/if}}
     <td class="gcs-item-quantity">
-        <i class='fa-solid fa-circle-minus equipmentbutton' data-action='decrementQuantity'></i>
-        {{quantity}}
-        <i class='fa-solid fa-circle-plus equipmentbutton' data-action='incrementQuantity'></i>
+      <i class='fa-solid fa-circle-minus equipmentbutton' data-action='decrementQuantity'></i>
+      {{quantity}}
+      <i class='fa-solid fa-circle-plus equipmentbutton' data-action='incrementQuantity'></i>
     </td>
     <td class="gcs-item-name-cell">
+      <div class="gcs-drag-handle" data-item-id="{{id}}" data-uuid="{{uuid}}"><i class="fa-solid fa-grip-vertical"></i>
+      </div>
       <div class="gcs-item-name-line indent{{indent}}">
         {{#if hasChildren}}
-        <i
-          class="fa-solid fa-caret-down gcs-container-toggle"
-          data-open="{{childrenOpen}}"
-          data-action="toggleContainer"
-        ></i>
+          <i class="fa-solid fa-caret-down gcs-container-toggle" data-open="{{childrenOpen}}"
+            data-action="toggleContainer"></i>
         {{else}}
-        <span class="gcs-container-spacer"></span>
+          <span class="gcs-container-spacer"></span>
         {{/if}}
         <span class="gcs-item-name-text">{{fullName}}</span>
         {{#if hasNotes}}
-        <i
-          class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
-          data-action="toggleNotes"
-          data-open="{{notesOpen}}"
-        ></i>
+          <i class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle" data-action="toggleNotes"
+            data-open="{{notesOpen}}"></i>
         {{/if}}
       </div>
       <div class="gcs-item-notes-container indent{{indent}}">
         {{#if (and hasNotes notesOpen)}}
-        <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+          <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
         {{/if}}
       </div>
     </td>
     <td class="gcs-item-uses">
-        {{#if (gt maxUses 0) }}
-          <i class='fa-solid fa-circle-minus equipmentbutton{{#if (lt uses 1)}} disabled{{/if}}' {{#if (gt uses 0)}}data-action='decrementUses'{{/if}}></i>
-          {{uses}} / {{maxUses}}
-          <i class='fa-solid fa-circle-plus equipmentbutton{{#if (gte uses maxUses)}} disabled{{/if}}' {{#if (lt uses maxUses)}}data-action='incrementUses'{{/if}}></i>
-        {{/if}}
+      {{#if (gt maxUses 0) }}
+        <i class='fa-solid fa-circle-minus equipmentbutton{{#if (lt uses 1)}} disabled{{/if}}'
+          {{#if (gt uses 0)}}data-action='decrementUses' {{/if}}></i>
+        {{uses}} / {{maxUses}}
+        <i class='fa-solid fa-circle-plus equipmentbutton{{#if (gte uses maxUses)}} disabled{{/if}}'
+          {{#if (lt uses maxUses)}}data-action='incrementUses' {{/if}}></i>
+      {{/if}}
     </td>
     <td class="gcs-item-tl">{{techLevel}}</td>
     <td class="gcs-item-lc">{{legalityClass}}</td>
@@ -57,9 +52,9 @@
     <td class="gcs-item-extended-weight">{{localize "GURPS.sheet.gcsActorSheet.pound" value=extendedWeight.value}}</td>
   </tr>
   {{#if (and hasChildren childrenOpen)}}
-  {{#each children}}
-    {{> ".equipmentEntry" carriedTable=../carriedTable}}
-  {{/each}}
+    {{#each children}}
+      {{> ".equipmentEntry" carriedTable=../carriedTable}}
+    {{/each}}
   {{/if}}
 {{/inline}}
 
@@ -91,29 +86,23 @@
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.uses}}">
           {{localize "GURPS.sheet.gcsActorSheet.uses"}}
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.techLevel}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.techLevel}}">
           {{localize "GURPS.sheet.gcsActorSheet.techLevel"}}
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.legalityClass}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.legalityClass}}">
           {{localize "GURPS.sheet.gcsActorSheet.legalityClass"}}
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.value}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.value}}">
           <i class="fa-solid fa-coins"></i>
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.weight}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.weight}}">
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.extendedValue}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.extendedValue}}">
           <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-coins"></i>
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.extendedWeight}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.extendedWeight}}">
           <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
@@ -123,9 +112,9 @@
       {{#each carriedEquipment}}
         {{> ".equipmentEntry" carriedTable=true}}
       {{else}}
-      <tr class="gcs-item-empty">
-        <td colspan="9">{{localize "GURPS.none"}}</td>
-      </tr>
+        <tr class="gcs-item-empty">
+          <td colspan="9">{{localize "GURPS.none"}}</td>
+        </tr>
       {{/each}}
     </tbody>
   </table>
@@ -149,29 +138,23 @@
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.name}}">
           {{localize "GURPS.sheet.gcsActorSheet.equipmentOther" value=otherValue weight=otherWeight}}
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.techLevel}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.techLevel}}">
           {{localize "GURPS.sheet.gcsActorSheet.techLevel"}}
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.legalityClass}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.legalityClass}}">
           {{localize "GURPS.sheet.gcsActorSheet.legalityClass"}}
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.value}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.value}}">
           <i class="fa-solid fa-coins"></i>
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.weight}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.weight}}">
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.extendedValue}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.extendedValue}}">
           <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-coins"></i>
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.extendedWeight}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.extendedWeight}}">
           <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
@@ -181,9 +164,9 @@
       {{#each otherEquipment}}
         {{> ".equipmentEntry" carriedTable=false}}
       {{else}}
-      <tr class="gcs-item-empty">
-        <td colspan="8">{{localize "GURPS.none"}}</td>
-      </tr>
+        <tr class="gcs-item-empty">
+          <td colspan="8">{{localize "GURPS.none"}}</td>
+        </tr>
       {{/each}}
     </tbody>
   </table>
