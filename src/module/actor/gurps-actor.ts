@@ -88,60 +88,82 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     data: Actor.UpdateInput,
     operation: Actor.Database.UpdateOneDocumentOperation = {}
   ): Promise<this | undefined> {
-    const touchedPseudoDocuments = new Map<string, Set<string>>()
-
-    if (this.isToken) {
-      const paths = Object.values(this.modelV2.metadata.embedded)
-      const updateData = data instanceof foundry.abstract.DataModel ? data.toObject() : data
-      const changedPaths = Object.keys(foundry.utils.flattenObject(updateData))
-
-      for (const fieldPath of paths) {
-        const prefix = `${fieldPath}.`
-
-        for (const changedPath of changedPaths) {
-          if (!changedPath.startsWith(prefix)) continue
-
-          const id = changedPath.slice(prefix.length).split('.')[0]
-
-          if (id) {
-            const ids = touchedPseudoDocuments.get(fieldPath) ?? new Set<string>()
-
-            ids.add(id)
-            touchedPseudoDocuments.set(fieldPath, ids)
-          }
-        }
-      }
-    }
-
+    const touchedPseudoDocuments = this.isToken ? this._getTouchedPseudoDocuments(data) : new Map()
     const updated = await super.update(data, operation)
 
     if (!updated?.isToken || touchedPseudoDocuments.size === 0) return updated
 
+    const deltaUpdates = updated._getPseudoDocumentDeltaUpdates(touchedPseudoDocuments)
+
+    await updated._updatePseudoDocumentDeltas(deltaUpdates, operation)
+
+    return updated
+  }
+
+  protected _getTouchedPseudoDocuments(
+    data: foundry.abstract.DataModel.Any | AnyObject,
+    fieldPaths: Iterable<string> = Object.values(this.modelV2.metadata.embedded)
+  ): Map<string, Set<string>> {
+    const touchedPseudoDocuments = new Map<string, Set<string>>()
+    const updateData = data instanceof foundry.abstract.DataModel ? data.toObject() : data
+    const changedPaths = Object.keys(foundry.utils.flattenObject(updateData))
+
+    for (const fieldPath of fieldPaths) {
+      const prefix = `${fieldPath}.`
+
+      for (const changedPath of changedPaths) {
+        if (!changedPath.startsWith(prefix)) continue
+
+        const id = changedPath.slice(prefix.length).split('.')[0]
+
+        if (id) {
+          const ids = touchedPseudoDocuments.get(fieldPath) ?? new Set<string>()
+
+          ids.add(id)
+          touchedPseudoDocuments.set(fieldPath, ids)
+        }
+      }
+    }
+
+    return touchedPseudoDocuments
+  }
+
+  protected _getPseudoDocumentDeltaUpdates(
+    touchedPseudoDocuments: ReadonlyMap<string, ReadonlySet<string>>,
+    source: AnyObject = this._source
+  ): Record<string, object> {
     const deltaUpdates: Record<string, object> = {}
 
     for (const [fieldPath, ids] of touchedPseudoDocuments) {
-      const collectionSource = foundry.utils.getProperty(updated._source, fieldPath)
+      const collectionSource = foundry.utils.getProperty(source, fieldPath)
 
       if (!isObject(collectionSource)) continue
 
       for (const id of ids) {
-        const source = collectionSource[id]
+        const pseudoDocumentSource = collectionSource[id]
 
-        if (isObject(source)) deltaUpdates[`${fieldPath}.${id}`] = foundry.utils.deepClone(source)
+        if (isObject(pseudoDocumentSource)) {
+          deltaUpdates[`${fieldPath}.${id}`] = foundry.utils.deepClone(pseudoDocumentSource)
+        }
       }
     }
 
-    const delta = updated.token?.delta
+    return deltaUpdates
+  }
 
-    if (delta && !foundry.utils.isEmpty(deltaUpdates)) {
-      await delta.update(deltaUpdates, {
-        diff: false,
-        recursive: true,
-        render: operation.render,
-      })
-    }
+  protected async _updatePseudoDocumentDeltas(
+    deltaUpdates: AnyObject,
+    operation: Pick<Actor.Database.UpdateOneDocumentOperation, 'render'> = {}
+  ): Promise<void> {
+    const delta = this.token?.delta
 
-    return updated
+    if (!delta || foundry.utils.isEmpty(deltaUpdates)) return
+
+    await delta.update(deltaUpdates, {
+      diff: false,
+      recursive: true,
+      render: operation.render,
+    })
   }
 
   /* ---------------------------------------- */
