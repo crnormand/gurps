@@ -380,13 +380,9 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     const action = target.dataset.action
 
     if (action === 'resetHp' || action === 'reset-hp') {
-      const maxValue = foundry.utils.getProperty(this.actor, 'system.HP.max') as number
-
-      await this.actor.internalUpdate({ 'system.HP.value': maxValue } as Actor.UpdateData)
+      await this.actor.update({ 'system.HP.damage': 0 } as Actor.UpdateData)
     } else if (action === 'resetFp' || action === 'reset-fp') {
-      const maxValue = foundry.utils.getProperty(this.actor, 'system.FP.max') as number
-
-      await this.actor.internalUpdate({ 'system.FP.value': maxValue } as Actor.UpdateData)
+      await this.actor.update({ 'system.FP.damage': 0 } as Actor.UpdateData)
     }
   }
 

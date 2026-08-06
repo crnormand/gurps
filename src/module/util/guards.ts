@@ -2,6 +2,8 @@
  * This module contains type guards and assertion functions for various Foundry and GURPS-specific types.
  */
 
+import { PoolValueElement } from '@module/ui/pool-value.js'
+
 const isDefined = <T>(value: T | undefined | null): value is T => value !== undefined && value !== null
 
 /* ---------------------------------------- */
@@ -70,6 +72,10 @@ const isHTMLInputElement = (value: unknown): value is HTMLInputElement => value 
 
 /* ---------------------------------------- */
 
+const isPoolValueElement = (value: unknown): value is PoolValueElement => value instanceof PoolValueElement
+
+/* ---------------------------------------- */
+
 export const isObject = (value: unknown): value is Record<string, unknown> =>
   isDefined(value) && typeof value === 'object'
 
@@ -99,6 +105,7 @@ export {
   isGameReady,
   isHTMLElement,
   isHTMLInputElement,
+  isPoolValueElement,
   isUpdatableDocument,
   requireDataset,
 }
