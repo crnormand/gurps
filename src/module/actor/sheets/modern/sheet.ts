@@ -241,7 +241,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
         title: 'GURPS.skills',
         count: this.actor.system.allSkillsV2.length,
         items: this.actor.system.skillsV2.map(item => item.system.toDisplayItem()),
-        flags: { level: true, rsl: true },
+        flags: { level: true, rsl: true, reference: true },
       },
       spells: {
         section: 'spells',
@@ -251,7 +251,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
         title: 'GURPS.spells',
         count: this.actor.system.allSpellsV2.length,
         items: this.actor.system.spellsV2.map(item => item.system.toDisplayItem()),
-        flags: { level: true, rsl: true, college: true },
+        flags: { level: true, rsl: true, college: true, reference: true },
       },
       equipmentCarried: {
         section: 'equipmentCarried',
