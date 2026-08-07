@@ -2122,6 +2122,7 @@
         "pound": "{value} lb",
         "primaryAttributes": "Primary Attributes",
         "reactionModifiers": "Reactions",
+        "reference": "Ref",
         "secondaryAttributes": "Secondary Attributes",
         "skillLevel": "SL",
         "skillRelativeLevel": "RSL",

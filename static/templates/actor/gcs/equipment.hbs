@@ -55,6 +55,7 @@
     <td class="gcs-item-weight">{{localize "GURPS.sheet.gcsActorSheet.pound" value=weight.value}}</td>
     <td class="gcs-item-extended-value">{{extendedValue}}</td>
     <td class="gcs-item-extended-weight">{{localize "GURPS.sheet.gcsActorSheet.pound" value=extendedWeight.value}}</td>
+    <td class="gcs-item-reference">{{pdfReference reference}}</td>
   </tr>
   {{#if (and hasChildren childrenOpen)}}
   {{#each children}}
@@ -76,6 +77,7 @@
       <col class="gcs-col-weight">
       <col class="gcs-col-extended-value">
       <col class="gcs-col-extended-weight">
+      <col class="gcs-col-reference">
     </colgroup>
     <thead>
       <tr>
@@ -117,6 +119,10 @@
           <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.reference}}">
+          {{localize "GURPS.sheet.gcsActorSheet.reference"}}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -134,12 +140,14 @@
     <colgroup>
       <col class="gcs-col-quantity">
       <col class="gcs-col-name">
+      <col class="gcs-col-uses">
       <col class="gcs-col-tl">
       <col class="gcs-col-lc">
       <col class="gcs-col-value">
       <col class="gcs-col-weight">
       <col class="gcs-col-extended-value">
       <col class="gcs-col-extended-weight">
+      <col class="gcs-col-reference">
     </colgroup>
     <thead>
       <tr>
@@ -148,6 +156,9 @@
         </th>
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.name}}">
           {{localize "GURPS.sheet.gcsActorSheet.equipmentOther" value=otherValue weight=otherWeight}}
+        </th>
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.uses}}">
+          {{localize "GURPS.sheet.gcsActorSheet.uses"}}
         </th>
         <th class="gcs-sortable" data-action="sortItems"
           data-sort-by="{{sortKeys.equipment.techLevel}}">
@@ -174,6 +185,10 @@
           data-sort-by="{{sortKeys.equipment.extendedWeight}}">
           <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-weight-hanging"></i>
+        </th>
+        <th class="gcs-sortable" data-action="sortItems"
+          data-sort-by="{{sortKeys.equipment.reference}}">
+          {{localize "GURPS.sheet.gcsActorSheet.reference"}}
         </th>
       </tr>
     </thead>

@@ -38,6 +38,7 @@
       <td data-action="rollOtf"  data-value="{{otf.relativeLevel}}" class="gcs-item-rsl">{{relativeLevel}}</td>
     {{/if}}
     <td class="gcs-item-points">{{points}}</td>
+    <td class="gcs-item-reference">{{pdfReference reference}}</td>
   </tr>
   {{#if (and hasChildren childrenOpen)}}
   {{#each children}}
@@ -52,6 +53,7 @@
     <col class="gcs-col-level">
     <col class="gcs-col-rsl">
     <col class="gcs-col-points">
+    <col class="gcs-col-reference">
   </colgroup>
   <thead>
     <tr>
@@ -62,6 +64,8 @@
         data-sort-by="{{sortKeys.spells.rsl}}">{{localize "GURPS.sheet.gcsActorSheet.skillRelativeLevel"}}</th>
       <th class="gcs-sortable" data-action="sortItems"
         data-sort-by="{{sortKeys.spells.points}}">{{localize "GURPS.sheet.gcsActorSheet.points"}}</th>
+      <th class="gcs-sortable" data-action="sortItems"
+        data-sort-by="{{sortKeys.spells.reference}}">{{localize "GURPS.sheet.gcsActorSheet.reference"}}</th>
     </tr>
   </thead>
   <tbody>

@@ -34,6 +34,7 @@
       </div>
     </td>
     <td class="gcs-item-points">{{points}}</td>
+    <td class="gcs-item-reference">{{pdfReference reference}}</td>
   </tr>
   {{#if (and hasChildren childrenOpen)}}
   {{#each children}}
@@ -47,11 +48,13 @@
   <colgroup>
     <col class="gcs-col-name">
     <col class="gcs-col-points">
+    <col class="gcs-col-reference">
   </colgroup>
   <thead>
     <tr>
       <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.traits.name}}">{{localize "GURPS.sheet.gcsActorSheet.traits"}}</th>
       <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.traits.points}}">{{localize "GURPS.sheet.gcsActorSheet.points"}}</th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.traits.reference}}">{{localize "GURPS.sheet.gcsActorSheet.reference"}}</th>
     </tr>
   </thead>
   <tbody>
@@ -59,7 +62,7 @@
       {{> ".traitEntry"}}
     {{else}}
     <tr class="gcs-item-empty">
-      <td colspan="2">{{localize "GURPS.none"}}</td>
+      <td colspan="3">{{localize "GURPS.none"}}</td>
     </tr>
     {{/each}}
   </tbody>

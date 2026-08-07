@@ -1,6 +1,11 @@
 import showdown from 'showdown'
+import { vi } from 'vitest'
 
 import { getType, mergeObject, deepClone } from './foundry-utils/object-utils.js'
+
+vi.mock('@module/ui/pool-value.js', () => ({
+  PoolValueElement: class PoolValueElement {},
+}))
 
 export {}
 
@@ -437,6 +442,11 @@ global.foundry = {
       DocumentSheetV2: class {},
       HandlebarsApplicationMixin: <T extends abstract new (...args: unknown[]) => object>(Base: T): T =>
         class extends (Base as abstract new (...args: unknown[]) => object) {} as unknown as T,
+    },
+    elements: {
+      AbstractFormInputElement: class {
+        static tagName = 'mock-form-input'
+      },
     },
     handlebars: {
       renderTemplate: async (): Promise<string> => '',
