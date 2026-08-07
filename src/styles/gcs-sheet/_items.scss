@@ -149,6 +149,12 @@
     white-space: nowrap;
   }
 
+  td.gcs-item-reference {
+    @include gcs-col(2.5rem, 4rem);
+    text-align: left;
+    white-space: normal;
+  }
+
   /* ---------------------------------------- */
 
   th.gcs-sortable {

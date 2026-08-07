@@ -197,10 +197,6 @@ body {
 
     &.form-group-inverse {
       grid-template-columns: max-content minmax(4ch, 1fr);
-
-      input {
-        padding-right: 0.75rem;
-      }
     }
 
     &.flexrow {
@@ -337,7 +333,7 @@ body {
     }
 
     td + td {
-      border-left: 1px solid var(--gcs-color-section-border);
+      border-left: 1px solid var(--gcs-color-section-border-inner);
     }
 
     tr:nth-child(odd) {

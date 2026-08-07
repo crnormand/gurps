@@ -241,7 +241,7 @@ class AdvLevelModParser extends OtfParser {
 class IfTestParser extends OtfParser {
   /**
    * Matches an IfTest:
-   *  • iftest = keyword [ " " ] [ expression ]
+   *  • ifTest = keyword [ " " ] [ expression ]
    * Where:
    *  • keyword = "@margin" | "isCritSuccess" | "IsCritFailure"
    *  • sign = "+" | "-"
