@@ -556,25 +556,6 @@ export default function () {
       : ''
   })
 
-  // Allows handling of multiple page refs, e.g."B101,MA150" and external links
-  Handlebars.registerHelper('pdflinkext', function (obj) {
-    if (!obj) return ''
-    let txt = obj.pageref
-
-    if (Array.isArray(txt)) txt = txt.join(',')
-    if (!txt) return ''
-
-    return txt
-      .split(',')
-      .map((/** @type {string} */ pageRef) => {
-        if (obj.externallink) return `<a href="${obj.externallink}">*Link</a>`
-        else if (pageRef.match(/https?:\/\//i)) {
-          return `<a href="${pageRef}">*Link</a>`
-        } else return gurpslink(`[PDF:${pageRef}]`)
-      })
-      .join(', ')
-  })
-
   Handlebars.registerHelper('round', function (num) {
     // remove any commas, the grab any leading signed number
     let temp = (num + '')
