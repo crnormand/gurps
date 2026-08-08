@@ -1725,6 +1725,7 @@
     "notAffected": "{name} ist nicht betroffen.",
     "noTargetSelected": "Kein Ziel ausgewählt",
     "notes": "Notizen",
+    "noteBlank": "Diese Notiz wurde absichtlich leer gelassen.",
     "noUserForDamageWarning": "Du kannst keinen Schaden an einem Ziel verursachen, der von einem anderen Benutzer stammt.",
     "noViableSkill": "Dieser Charakter hat keine geeignete Fertigkeit (Effektivwert 3 oder höher), die gewürfelt werden kann",
     "number": "Nummer",

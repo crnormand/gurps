@@ -156,6 +156,7 @@ class NoteV2 extends PseudoDocument<NoteV2Schema> implements IContainable<NoteV2
       notes,
       indent: this.ancestors.length,
       reference: this.reference,
+      isEmpty: (!this.markdown || this.markdown.trim().length === 0) && (!this.title || this.title.trim().length === 0),
     })
   }
 }

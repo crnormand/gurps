@@ -14,7 +14,14 @@
         {{else}}
         <span class="gcs-container-spacer"></span>
         {{/if}}
-        <span class="gcs-item-name-text">{{notes}}</span>
+
+        <span class="gcs-item-name-text">
+            {{#unless isEmpty}}
+                {{#if fullName}}<strong>{{{gurpslinkbr fullName}}}</strong> {{/if}}{{{gurpslinkbr notes}}}
+            {{else}}
+                {{localize "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>            
+            {{/unless}}
+        </span>
       </div>
     </td>
   </tr>
@@ -34,6 +41,9 @@
     <tr>
       <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.notes.name}}">
         {{localize "GURPS.sheet.gcsActorSheet.notes"}}
+        <button type="button" data-action="createEmbedded" data-document-name="Note">
+            <i class="fa-solid fa-plus"></i>
+        </button>
       </th>
     </tr>
   </thead>

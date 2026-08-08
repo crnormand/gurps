@@ -246,6 +246,8 @@ interface DisplayNote extends BaseDisplayPseudoDocument {
   indent: number
   /** The page reference for this item */
   reference: string
+  /** Is this note empty? */
+  isEmpty: boolean
 }
 
 /* ---------------------------------------- */

@@ -1725,6 +1725,7 @@
     "notAffected": "{name} is not affected.",
     "noTargetSelected": "No Target selected",
     "notes": "Notes",
+    "noteBlank": "This note was intentionally left blank.",
     "noUserForDamageWarning": "You cant apply damage to a target using damage for another user.",
     "noViableSkill": "This character does not have a viable skill (effective level 3 or higher) that can be rolled",
     "number": "Number",
