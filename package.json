@@ -45,5 +45,10 @@
     "watch:styles": "sass --watch --update src/styles/gurps.scss:dist/styles/gurps.css"
   },
   "type": "module",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "allowScripts": {
+    "@parcel/watcher": true,
+    "fsevents@2.3.3": true,
+    "unrs-resolver@1.11.1": true
+  }
 }
