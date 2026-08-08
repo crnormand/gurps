@@ -10,7 +10,7 @@ namespace GurpsTokenHUDV2 {
   }
 
   export interface RenderContext extends foundry.applications.hud.TokenHUD.RenderContext {
-    icons: { maneuvers: string }
+    icons: foundry.applications.hud.TokenHUD.RenderContext['icons'] & { maneuvers: string }
     maneuvers: ManeuverRenderData[]
   }
 }
@@ -46,7 +46,7 @@ class GurpsTokenHUDV2<
   ): Promise<RenderContext> {
     const context = await super._prepareContext(options)
 
-    const actor = this.object.actor
+    const actor = this.object?.actor
 
     if (!actor) {
       console.error('TokenHUD has no assigned Actor!')
@@ -96,7 +96,6 @@ class GurpsTokenHUDV2<
   /* ---------------------------------------- */
 
   static async #onSetManeuver(this: GurpsTokenHUDV2, _event: PointerEvent, target: HTMLElement): Promise<void> {
-    // @ts-expect-error: waiting for types to catch up
     if (!this.actor) {
       ui.notifications?.warn('HUD.WarningEffectNoActor', { localize: true })
 
@@ -105,7 +104,7 @@ class GurpsTokenHUDV2<
 
     const maneuverId = target.dataset.statusId || 'do_nothing'
 
-    await this.object.setManeuver(maneuverId)
+    await this.object?.setManeuver(maneuverId)
   }
 }
 
