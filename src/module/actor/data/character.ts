@@ -379,11 +379,11 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.#applyCharacterBonuses()
     this.#prepareLiftingMoving()
     this.#prepareEquipmentSummary()
+    this.#setCurrentManeuver()
     this.#prepareEncumbrance()
     this.#prepareDefenses()
     this.#prepareUserModifiers()
 
-    this.#setCurrentManeuver()
   }
 
   /* ---------------------------------------- */
