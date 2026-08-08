@@ -24,7 +24,7 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
   ): Promise<foundry.applications.hud.BasePlaceableHUD.RenderContext> {
     const context = await super._prepareContext(options)
 
-    const actor = this.object.actor
+    const actor = this.object?.actor
 
     if (!actor) {
       console.error('TokenHUD has no assigned Actor!')
@@ -69,7 +69,6 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
   /* ---------------------------------------- */
 
   static async #onSetManeuver(this: GurpsTokenHUDV2, _event: PointerEvent, target: HTMLElement): Promise<void> {
-    // @ts-expect-error: waiting for types to catch up
     if (!this.actor) {
       ui.notifications?.warn('HUD.WarningEffectNoActor', { localize: true })
 
@@ -78,6 +77,6 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
 
     const maneuverId = target.dataset.statusId || 'do_nothing'
 
-    await this.object.setManeuver(maneuverId)
+    await this.object?.setManeuver(maneuverId)
   }
 }

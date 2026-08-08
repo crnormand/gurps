@@ -51,5 +51,11 @@
     "watch:styles": "sass --watch --update src/styles/gurps.scss:dist/styles/gurps.css"
   },
   "type": "module",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "allowScripts": {
+    "@parcel/watcher": true,
+    "fsevents@2.3.3": true,
+    "unrs-resolver@1.11.1": true,
+    "github:League-of-Foundry-Developers/foundry-vtt-types#ccb7a91948bc245591dd581091e1808284428eaf": true
+  }
 }
