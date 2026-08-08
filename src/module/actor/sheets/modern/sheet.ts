@@ -241,7 +241,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
         title: 'GURPS.skills',
         count: this.actor.system.allSkillsV2.length,
         items: this.actor.system.skillsV2.map(item => item.system.toDisplayItem()),
-        flags: { level: true, rsl: true },
+        flags: { level: true, rsl: true, reference: true },
       },
       spells: {
         section: 'spells',
@@ -251,7 +251,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
         title: 'GURPS.spells',
         count: this.actor.system.allSpellsV2.length,
         items: this.actor.system.spellsV2.map(item => item.system.toDisplayItem()),
-        flags: { level: true, rsl: true, college: true },
+        flags: { level: true, rsl: true, college: true, reference: true },
       },
       equipmentCarried: {
         section: 'equipmentCarried',
@@ -380,13 +380,9 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     const action = target.dataset.action
 
     if (action === 'resetHp' || action === 'reset-hp') {
-      const maxValue = foundry.utils.getProperty(this.actor, 'system.HP.max') as number
-
-      await this.actor.internalUpdate({ 'system.HP.value': maxValue } as Actor.UpdateData)
+      await this.actor.update({ 'system.HP.damage': 0 } as Actor.UpdateData)
     } else if (action === 'resetFp' || action === 'reset-fp') {
-      const maxValue = foundry.utils.getProperty(this.actor, 'system.FP.max') as number
-
-      await this.actor.internalUpdate({ 'system.FP.value': maxValue } as Actor.UpdateData)
+      await this.actor.update({ 'system.FP.damage': 0 } as Actor.UpdateData)
     }
   }
 

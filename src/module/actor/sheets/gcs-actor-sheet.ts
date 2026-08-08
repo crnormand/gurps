@@ -130,7 +130,7 @@ namespace GurpsActorGcsSheet {
 
   export interface ItemDropDetails {
     updates: { data: Item.UpdateData[]; operation: Item.Database.UpdateManyDocumentsOperation }[]
-    creations: { data: Item.CreateData[]; operation: Item.Database.CreateDocumentsOperation<false> }[]
+    creations: { data: Item.CreateData[]; operation: Item.Database.CreateDocumentsOperation }[]
     deletions: { ids: string[]; operation: Item.Database.DeleteManyDocumentsOperation }[]
     /** Optional info notification to display to the user after operations are executed. */
     notification?: string
@@ -597,6 +597,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const itemRows = this.element.querySelectorAll<HTMLElement>('.gcs-item-row')
 
     for (const itemRow of itemRows) {
+      const dragHandle = itemRow.querySelector<HTMLElement>('.gcs-drag-handle')
+
+      dragHandle?.addEventListener('dragstart', event => {
+        const dataTransfer = event.dataTransfer
+
+        if (!dataTransfer) return
+
+        dataTransfer.setData('text/plain', JSON.stringify({ type: 'Item', uuid: itemRow.dataset.uuid }))
+        dataTransfer.setDragImage(itemRow, 0, 0)
+      })
+
       const equippedColumn = itemRow.querySelector<HTMLElement>('.gcs-item-equipped')
 
       equippedColumn?.addEventListener('click', async event => {

@@ -38,7 +38,7 @@ export class EveryoneAChatProcessor extends ChatProcessor {
         let attr = match[2].toUpperCase()
         let max = actor.system[attr].max
 
-        await actor.update({ ['system.' + attr + '.value']: max })
+        await actor.update({ ['system.' + attr + '.damage']: 0 })
         this.priv(`${actor.displayname} ${attr} reset to ${max}`)
       }
     }
@@ -164,7 +164,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             txt = `(${value}) `
           }
 
-          let cur = actor.system[attr].value
+          let max = actor.system[attr].max
           let newval = parseInt(value)
 
           if (isNaN(newval)) {
@@ -175,17 +175,17 @@ export class EveryoneCChatProcessor extends ChatProcessor {
               ui.notifications.warn(`Unrecognized format for '${line}'`)
 
               return
-            }
-          } else newval += cur
+            } else newval = max - newval
+          } else newval = cur - newval
           let mtxt = ''
           let max = actor.system[attr].max
 
-          if (newval > max) {
-            newval = max
+          if (newval < 0) {
+            newval = 0
             mtxt = `(max: ${max})`
           }
 
-          await actor.update({ ['system.' + attr + '.value']: newval })
+          await actor.update({ ['system.' + attr + '.damage']: newval })
           this.priv(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
         }
       }
