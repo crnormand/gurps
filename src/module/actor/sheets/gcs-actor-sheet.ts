@@ -597,6 +597,17 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const itemRows = this.element.querySelectorAll<HTMLElement>('.gcs-item-row')
 
     for (const itemRow of itemRows) {
+      const dragHandle = itemRow.querySelector<HTMLElement>('.gcs-drag-handle')
+
+      dragHandle?.addEventListener('dragstart', event => {
+        const dataTransfer = event.dataTransfer
+
+        if (!dataTransfer) return
+
+        dataTransfer.setData('text/plain', JSON.stringify({ type: 'Item', uuid: itemRow.dataset.uuid }))
+        dataTransfer.setDragImage(itemRow, 0, 0)
+      })
+
       const equippedColumn = itemRow.querySelector<HTMLElement>('.gcs-item-equipped')
 
       equippedColumn?.addEventListener('click', async event => {

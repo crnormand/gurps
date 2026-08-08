@@ -89,8 +89,10 @@
     @include gcs-col(2rem, 5rem);
     text-align: right;
     white-space: nowrap;
+
     .equipmentbutton {
       cursor: pointer;
+
       &.disabled {
         cursor: not-allowed;
       }
@@ -101,8 +103,10 @@
     @include gcs-col(2rem, 8rem);
     text-align: right;
     white-space: nowrap;
+
     .equipmentbutton {
       cursor: pointer;
+
       &.disabled {
         cursor: not-allowed;
       }
@@ -175,6 +179,9 @@
   // Name cell layout: icon + text + optional notes-toggle on the right.
   .gcs-item-name-cell {
     padding: 0;
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    grid-template-rows: auto;
   }
 
   .gcs-item-name-line {
@@ -182,6 +189,8 @@
     align-items: center;
     gap: 0.25rem;
     padding: 0.1rem 0.25rem;
+    grid-column: 2;
+    grid-row: 1;
 
     @for $i from 0 through 8 {
       &.indent#{$i} {
@@ -190,10 +199,27 @@
     }
   }
 
+  .gcs-drag-handle {
+    display: inline-block;
+    cursor: grab;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center;
+    color: var(--gga-color-med-grey);
+    opacity: 0;
+    transition: opacity 0.25s ease-in;
+  }
+
+  .gcs-item-name-cell:hover .gcs-drag-handle {
+    opacity: 1;
+  }
+
   .gcs-item-notes-container {
     font-size: var(--gcs-font-size-notes);
     min-height: 0;
     padding: 0.1rem 0.25rem;
+    grid-column: 2;
+    grid-row: 2;
 
     @for $i from 0 through 8 {
       &.indent#{$i} {
@@ -252,7 +278,7 @@
     display: none;
   }
 
-  tr[draggable='true'] {
+  tr[draggable='true'] .gcs-drag-handle {
     cursor: grab;
   }
 

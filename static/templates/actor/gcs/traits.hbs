@@ -2,9 +2,11 @@
   <tr class="gcs-item-row"
       data-item-id="{{id}}"
       data-uuid="{{uuid}}"
-      data-has-children="{{hasChildren}}"
-      draggable="true">
+      data-has-children="{{hasChildren}}">
     <td class="gcs-item-name-cell">
+      <div class="gcs-drag-handle" data-item-id="{{id}}" data-uuid="{{uuid}}" draggable="true"><i
+          class="fa-solid fa-grip-vertical"></i>
+      </div>
       <div class="gcs-item-name-line indent{{indent}}">
         {{#if hasChildren}}
         <i
