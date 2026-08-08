@@ -1,6 +1,5 @@
 {{#*inline ".equipmentEntry"}}
-  <tr class="gcs-item-row" data-item-id="{{id}}" data-uuid="{{uuid}}" data-has-children="{{hasChildren}}"
-    draggable="true">
+  <tr class="gcs-item-row" data-item-id="{{id}}" data-uuid="{{uuid}}" data-has-children="{{hasChildren}}">
     {{#if carriedTable}}
       <td class="gcs-item-equipped">
         {{#if equipped}}
@@ -14,7 +13,8 @@
       <i class='fa-solid fa-circle-plus equipmentbutton' data-action='incrementQuantity'></i>
     </td>
     <td class="gcs-item-name-cell">
-      <div class="gcs-drag-handle" data-item-id="{{id}}" data-uuid="{{uuid}}"><i class="fa-solid fa-grip-vertical"></i>
+      <div class="gcs-drag-handle" data-item-id="{{id}}" data-uuid="{{uuid}}" draggable="true"><i
+          class="fa-solid fa-grip-vertical"></i>
       </div>
       <div class="gcs-item-name-line indent{{indent}}">
         {{#if hasChildren}}
@@ -108,8 +108,7 @@
           <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.reference}}">
+        <th>
           {{localize "GURPS.sheet.gcsActorSheet.reference"}}
         </th>
       </tr>
@@ -149,8 +148,7 @@
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.uses}}">
           {{localize "GURPS.sheet.gcsActorSheet.uses"}}
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.techLevel}}">
+        <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.techLevel}}">
           {{localize "GURPS.sheet.gcsActorSheet.techLevel"}}
         </th>
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.legalityClass}}">
@@ -170,8 +168,7 @@
           <i class="fa-solid fa-layer-group"></i>
           <i class="fa-solid fa-weight-hanging"></i>
         </th>
-        <th class="gcs-sortable" data-action="sortItems"
-          data-sort-by="{{sortKeys.equipment.reference}}">
+        <th>
           {{localize "GURPS.sheet.gcsActorSheet.reference"}}
         </th>
       </tr>

@@ -1,32 +1,26 @@
 {{#*inline ".spellEntry"}}
-  <tr class="gcs-item-row"
-      data-item-id="{{id}}"
-      data-uuid="{{uuid}}"
-      data-has-children="{{hasChildren}}"
-      draggable="true">
+  <tr class="gcs-item-row" data-item-id="{{id}}" data-uuid="{{uuid}}" data-has-children="{{hasChildren}}">
     <td class="gcs-item-name-cell">
+      <div class="gcs-drag-handle" data-item-id="{{id}}" data-uuid="{{uuid}}" draggable="true"><i
+          class="fa-solid fa-grip-vertical"></i>
+      </div>
       <div class="gcs-item-name-line indent{{indent}}">
+
         {{#if hasChildren}}
-        <i
-          class="fa-solid fa-caret-down gcs-container-toggle"
-          data-open="{{childrenOpen}}"
-          data-action="toggleContainer"
-        ></i>
+          <i class="fa-solid fa-caret-down gcs-container-toggle" data-open="{{childrenOpen}}"
+            data-action="toggleContainer"></i>
         {{else}}
-        <span class="gcs-container-spacer"></span>
+          <span class="gcs-container-spacer"></span>
         {{/if}}
         <span class="gcs-item-name-text">{{fullName}}</span>
         {{#if hasNotes}}
-        <i
-          class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle"
-          data-action="toggleNotes"
-          data-open="{{notesOpen}}"
-        ></i>
+          <i class="fa-solid {{ifThen notesOpen 'fa-book-open' 'fa-book'}} gcs-notes-toggle" data-action="toggleNotes"
+            data-open="{{notesOpen}}"></i>
         {{/if}}
       </div>
       <div class="gcs-item-notes-container indent{{indent}}">
         {{#if (and hasNotes notesOpen)}}
-        <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
+          <div class="gcs-item-notes indent{{indent}}">{{notes}}</div>
         {{/if}}
       </div>
     </td>
@@ -35,15 +29,15 @@
       <td class="gcs-item-rsl"></td>
     {{else}}
       <td data-action="rollOtf" data-value="{{otf.level}}" class="gcs-item-level">{{level}}</td>
-      <td data-action="rollOtf"  data-value="{{otf.relativeLevel}}" class="gcs-item-rsl">{{relativeLevel}}</td>
+      <td data-action="rollOtf" data-value="{{otf.relativeLevel}}" class="gcs-item-rsl">{{relativeLevel}}</td>
     {{/if}}
     <td class="gcs-item-points">{{points}}</td>
     <td class="gcs-item-reference">{{pdfReference reference}}</td>
   </tr>
   {{#if (and hasChildren childrenOpen)}}
-  {{#each children}}
-    {{> ".spellEntry"}}
-  {{/each}}
+    {{#each children}}
+      {{> ".spellEntry"}}
+    {{/each}}
   {{/if}}
 {{/inline}}
 
@@ -57,24 +51,30 @@
   </colgroup>
   <thead>
     <tr>
-      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.spells.name}}">{{localize "GURPS.sheet.gcsActorSheet.spells"}}</th>
-      <th class="gcs-sortable" data-action="sortItems"
-        data-sort-by="{{sortKeys.spells.level}}">{{localize "GURPS.sheet.gcsActorSheet.skillLevel"}}</th>
-      <th class="gcs-sortable" data-action="sortItems"
-        data-sort-by="{{sortKeys.spells.rsl}}">{{localize "GURPS.sheet.gcsActorSheet.skillRelativeLevel"}}</th>
-      <th class="gcs-sortable" data-action="sortItems"
-        data-sort-by="{{sortKeys.spells.points}}">{{localize "GURPS.sheet.gcsActorSheet.points"}}</th>
-      <th class="gcs-sortable" data-action="sortItems"
-        data-sort-by="{{sortKeys.spells.reference}}">{{localize "GURPS.sheet.gcsActorSheet.reference"}}</th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.spells.name}}">
+        {{localize "GURPS.sheet.gcsActorSheet.spells"}}
+      </th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.spells.level}}">
+        {{localize "GURPS.sheet.gcsActorSheet.skillLevel"}}
+      </th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.spells.rsl}}">
+        {{localize "GURPS.sheet.gcsActorSheet.skillRelativeLevel"}}
+      </th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.spells.points}}">
+        {{localize "GURPS.sheet.gcsActorSheet.points"}}
+      </th>
+      <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.spells.reference}}">
+        {{localize "GURPS.sheet.gcsActorSheet.reference"}}
+      </th>
     </tr>
   </thead>
   <tbody>
     {{#each spells}}
       {{> ".spellEntry"}}
     {{else}}
-    <tr class="gcs-item-empty">
-      <td colspan="4">{{localize "GURPS.none"}}</td>
-    </tr>
+      <tr class="gcs-item-empty">
+        <td colspan="4">{{localize "GURPS.none"}}</td>
+      </tr>
     {{/each}}
   </tbody>
 </table>
