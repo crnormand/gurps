@@ -80,12 +80,102 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
+  /**
+   * Ensure an unlinked Token's ActorDelta stores complete pseudo-document
+   * sources rather than patches which depend on the base Actor's source.
+   */
+  override async update(
+    data: Actor.UpdateInput,
+    operation: Actor.Database.UpdateOneDocumentOperation = {}
+  ): Promise<this | undefined> {
+    const touchedPseudoDocuments = this.isToken ? this._getTouchedPseudoDocuments(data) : new Map()
+    const updated = await super.update(data, operation)
+
+    if (!updated?.isToken || touchedPseudoDocuments.size === 0) return updated
+
+    const deltaUpdates = updated._getPseudoDocumentDeltaUpdates(touchedPseudoDocuments)
+
+    await updated._updatePseudoDocumentDeltas(deltaUpdates, operation)
+
+    return updated
+  }
+
+  protected _getTouchedPseudoDocuments(
+    data: foundry.abstract.DataModel.Any | AnyObject,
+    fieldPaths: Iterable<string> = Object.values(this.modelV2.metadata.embedded)
+  ): Map<string, Set<string>> {
+    const touchedPseudoDocuments = new Map<string, Set<string>>()
+    const updateData = data instanceof foundry.abstract.DataModel ? data.toObject() : data
+    const changedPaths = Object.keys(foundry.utils.flattenObject(updateData))
+
+    for (const fieldPath of fieldPaths) {
+      const prefix = `${fieldPath}.`
+
+      for (const changedPath of changedPaths) {
+        if (!changedPath.startsWith(prefix)) continue
+
+        const id = changedPath.slice(prefix.length).split('.')[0]
+
+        if (id) {
+          const ids = touchedPseudoDocuments.get(fieldPath) ?? new Set<string>()
+
+          ids.add(id)
+          touchedPseudoDocuments.set(fieldPath, ids)
+        }
+      }
+    }
+
+    return touchedPseudoDocuments
+  }
+
+  protected _getPseudoDocumentDeltaUpdates(
+    touchedPseudoDocuments: ReadonlyMap<string, ReadonlySet<string>>,
+    source: AnyObject = this._source
+  ): Record<string, object> {
+    const deltaUpdates: Record<string, object> = {}
+
+    for (const [fieldPath, ids] of touchedPseudoDocuments) {
+      const collectionSource = foundry.utils.getProperty(source, fieldPath)
+
+      if (!isObject(collectionSource)) continue
+
+      for (const id of ids) {
+        const pseudoDocumentSource = collectionSource[id]
+
+        if (isObject(pseudoDocumentSource)) {
+          deltaUpdates[`${fieldPath}.${id}`] = foundry.utils.deepClone(pseudoDocumentSource)
+        }
+      }
+    }
+
+    return deltaUpdates
+  }
+
+  protected async _updatePseudoDocumentDeltas(
+    deltaUpdates: AnyObject,
+    operation: Pick<Actor.Database.UpdateOneDocumentOperation, 'render'> = {}
+  ): Promise<void> {
+    const delta = this.token?.delta
+
+    if (!delta || foundry.utils.isEmpty(deltaUpdates)) return
+
+    await delta.update(deltaUpdates, {
+      diff: false,
+      recursive: true,
+      render: operation.render,
+    })
+  }
+
+  /* ---------------------------------------- */
+
   protected override _configure(options = {}) {
     super._configure(options)
 
     const collections: Record<string, ModelCollection> = {}
-    const model = CONFIG[this.documentName].dataModels[this._source.type]
+    const model = Object.entries(CONFIG[this.documentName].dataModels).find(([type]) => type === this._source.type)?.[1]
     const embedded = (model as unknown as gurps.MetadataOwner)?.metadata?.embedded ?? {}
+
+    if (!model) return
 
     for (const [documentName, fieldPath] of Object.entries(embedded)) {
       const field = model.schema.getField(fieldPath.slice('system.'.length)) as CollectionField
@@ -103,12 +193,12 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   static override getDefaultArtwork(actorData?: foundry.documents.BaseActor.CreateData): Actor.GetDefaultArtworkReturn {
-    const { type } = actorData as unknown as { type: ActorType } & AnyObject
+    const type = actorData?.type
     const { img, texture } = super.getDefaultArtwork(actorData)
 
-    const dataModel = CONFIG.Actor.dataModels[type]
+    const dataModel = Object.entries(CONFIG.Actor.dataModels).find(([modelType]) => modelType === type)?.[1]
 
-    if (foundry.utils.isSubclass(dataModel, BaseActorModel)) {
+    if (dataModel && foundry.utils.isSubclass(dataModel, BaseActorModel)) {
       return dataModel.getDefaultArtwork(actorData)
     }
 
@@ -144,13 +234,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   static override async createDialog(
     data?: Actor.CreateDialogData,
-    createOptions?: Actor.Database.DialogCreateOptions,
+    createOptions?: Actor.Database.CreateDocumentsOperation,
     options?: Actor.CreateDialogOptions
-  ): Promise<Actor.Stored | null | undefined> {
+  ) {
     const isDevMode = GURPS.modules.Dev?.settings.enableNonProductionDocumentTypes ?? false
 
     if (!isDevMode) {
-      options ||= {}
+      options = { ...options }
       const allTypes = Actor.TYPES
       const excludeTypes = ['base', ActorType.GcsCharacter, ActorType.GcsLoot]
 
@@ -366,7 +456,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   override async toggleStatusEffect(
     statusId: string,
     options?: Actor.ToggleStatusEffectOptions
-  ): Promise<ActiveEffect.Implementation | boolean | undefined> {
+  ): Promise<ActiveEffect.Stored | boolean | undefined> {
     const status = CONFIG.statusEffects.find(effect => effect.id === statusId)
 
     if (!status) throw new Error(`Invalid status ID "${statusId}" provided to GurpsActorV2#toggleStatusEffect`)
@@ -394,7 +484,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     const effect = await ActiveEffect.fromStatusEffect(statusId)
     const [result] = await this.createEmbeddedDocuments('ActiveEffect', [effect.toObject()])
 
-    return result as ActiveEffect.Implementation
+    return result
   }
 
   /* ---------------------------------------- */
@@ -493,7 +583,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * This is overriden for CharacterModel where maneuvers are moved to the top of the
    * array.
    */
-  override get temporaryEffects(): ActiveEffect.Implementation[] {
+  override get temporaryEffects(): ActiveEffect.Stored[] {
     return this.modelV2.getTemporaryEffects(super.temporaryEffects)
   }
 
@@ -549,7 +639,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /*  Data Migration                          */
   /* ---------------------------------------- */
 
-  static override migrateData(source: AnyMutableObject): AnyMutableObject {
+  static override migrateData(source: AnyMutableObject): object {
     // NOTE: Legacy Item Type
     if (source.type === 'enemy') source.type = ActorType.Character
 
@@ -576,11 +666,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // _cleanData runs after the schema pass, so we can re-clean with the actual post-migration type.
     if (data.type === _state.documentType || !isObject(data.system)) return data
 
-    const systemModel = CONFIG?.Actor?.dataModels?.[data.type as string] as
-      | { cleanData: (data: AnyMutableObject, opts: AnyObject) => void }
-      | undefined
+    const systemModel = Object.entries(CONFIG.Actor.dataModels).find(([type]) => type === data.type)?.[1]
 
-    systemModel?.cleanData(data.system as AnyMutableObject, { copy: false, partial: false })
+    systemModel?.cleanData(data.system, { partial: false })
 
     return data
   }

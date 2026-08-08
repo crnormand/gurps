@@ -1026,7 +1026,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
    * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in
    * the array.
    */
-  getTemporaryEffects(effects: ActiveEffect.Implementation[]): ActiveEffect.Implementation[] {
+  getTemporaryEffects(effects: ActiveEffect.Stored[]): ActiveEffect.Stored[] {
     const maneuver = effects.find(effect => effect.isManeuver)
 
     if (!maneuver) return effects

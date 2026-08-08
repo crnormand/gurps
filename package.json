@@ -21,12 +21,6 @@
     "vitest": "^4.1.0"
   },
   "name": "gurps",
-  "overrides": {
-    "fvtt-types": {
-      "tinymce": "8.3.1"
-    },
-    "minimatch": "^10.2.2"
-  },
   "scripts": {
     "build": "npm run clean && npm run build:static && npm run build:code && npm run build:styles",
     "build:code": "tsc && tsc-alias -p tsconfig.json",

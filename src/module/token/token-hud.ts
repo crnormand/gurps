@@ -1,8 +1,30 @@
 import { ActorType } from '@module/actor/types.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
-export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
-  static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
+namespace GurpsTokenHUDV2 {
+  interface ManeuverRenderData {
+    cssClass: string
+    id: string
+    src: string
+    title: string
+  }
+
+  export interface RenderContext extends foundry.applications.hud.TokenHUD.RenderContext {
+    icons: { maneuvers: string }
+    maneuvers: ManeuverRenderData[]
+  }
+}
+
+/* ---------------------------------------- */
+
+class GurpsTokenHUDV2<
+  RenderContext extends foundry.applications.hud.TokenHUD.RenderContext = GurpsTokenHUDV2.RenderContext,
+  Configuration extends
+    foundry.applications.hud.TokenHUD.Configuration = foundry.applications.hud.TokenHUD.Configuration,
+  RenderOptions extends
+    foundry.applications.hud.TokenHUD.RenderOptions = foundry.applications.hud.TokenHUD.RenderOptions,
+> extends foundry.applications.hud.TokenHUD<RenderContext, Configuration, RenderOptions> {
+  static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.hud.TokenHUD.Configuration> = {
     actions: {
       maneuver: GurpsTokenHUDV2.#onSetManeuver,
     },
@@ -20,8 +42,8 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
   /* ---------------------------------------- */
 
   protected override async _prepareContext(
-    options: DeepPartial<foundry.applications.api.ApplicationV2.RenderOptions> & { isFirstRender: boolean }
-  ): Promise<foundry.applications.hud.BasePlaceableHUD.RenderContext> {
+    options: DeepPartial<RenderOptions> & { isFirstRender: boolean }
+  ): Promise<RenderContext> {
     const context = await super._prepareContext(options)
 
     const actor = this.object.actor
@@ -46,23 +68,28 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
       ? (GURPS.Maneuvers.get(currentManeuverId)?.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png')
       : 'systems/gurps/icons/maneuvers/man-nothing.png'
 
-    return foundry.utils.mergeObject(context, {
+    const maneuvers = Object.keys(GURPS.Maneuvers.getAll()).flatMap(id => {
+      const maneuver = GURPS.Maneuvers.get(id)
+
+      return maneuver
+        ? [
+            {
+              cssClass: activeEffects.some(effect =>
+                effect.changes.some(change => change.key === 'system.conditions.maneuver' && change.value === id)
+              )
+                ? 'active'
+                : '',
+              src: maneuver.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png',
+              title: game.i18n?.localize(maneuver.label) ?? maneuver.label,
+              id,
+            },
+          ]
+        : []
+    })
+
+    return Object.assign(context, {
       icons: { maneuvers: maneuverIcon },
-      // TODO: revise any to specific type
-      maneuvers: Object.entries(GURPS.Maneuvers.getAll()).map(([id, maneuver]: [string, any]) => {
-        return {
-          cssClass: activeEffects.some(effect =>
-            effect.changes.some(
-              change => change.key === 'system.conditions.maneuver' && change.value === maneuver._data.name
-            )
-          )
-            ? 'active'
-            : '',
-          src: maneuver._data.icon,
-          title: game.i18n?.localize(maneuver._data.label) ?? maneuver._data.label,
-          id,
-        }
-      }),
+      maneuvers,
     })
   }
 
@@ -81,3 +108,7 @@ export class GurpsTokenHUDV2 extends foundry.applications.hud.TokenHUD {
     await this.object.setManeuver(maneuverId)
   }
 }
+
+/* ---------------------------------------- */
+
+export { GurpsTokenHUDV2 }

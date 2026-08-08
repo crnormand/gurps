@@ -130,7 +130,7 @@ namespace GurpsActorGcsSheet {
 
   export interface ItemDropDetails {
     updates: { data: Item.UpdateData[]; operation: Item.Database.UpdateManyDocumentsOperation }[]
-    creations: { data: Item.CreateData[]; operation: Item.Database.CreateDocumentsOperation<false> }[]
+    creations: { data: Item.CreateData[]; operation: Item.Database.CreateDocumentsOperation }[]
     deletions: { ids: string[]; operation: Item.Database.DeleteManyDocumentsOperation }[]
     /** Optional info notification to display to the user after operations are executed. */
     notification?: string

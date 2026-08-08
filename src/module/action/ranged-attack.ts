@@ -3,6 +3,7 @@ import { DisplayRangedAttack } from '@gurps-types/gurps/display-item.js'
 import { ActorType } from '@module/actor/types.js'
 import { LengthUnit } from '@module/data/common/length.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
+import { isObject } from '@module/util/guards.js'
 import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
@@ -55,8 +56,11 @@ class RangedAttackModel extends BaseAttack<RangedAttackSchema> {
 
   /* ---------------------------------------- */
 
-  static override cleanData(source?: AnyMutableObject, options?: fields.DataField.CleanOptions): AnyMutableObject {
-    source = super.cleanData(source, options)
+  static override cleanData(source?: object, options?: fields.DataField.CleanOptions): object {
+    const cleaned = super.cleanData(source, options)
+
+    if (!isObject(cleaned)) return cleaned
+    source = cleaned
 
     // Clean the accuracy field to ensure it is normalized.
     if ('acc' in source && typeof source.acc === 'object' && source.acc !== null) {
