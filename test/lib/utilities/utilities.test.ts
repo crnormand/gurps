@@ -1,11 +1,6 @@
-vi.mock('@module/ui/pool-value.js', () => ({
-  PoolValueElement: class PoolValueElement {},
-}))
-
 import { ComparisonFunctions, OperatorFunctions } from '@module/resource-tracker/index.js'
 import * as utilities from '@util/utilities.js'
 import { displayMod, makeSelect } from '@util/utilities.js'
-import { vi } from 'vitest'
 
 describe('utilities', () => {
   describe('displayMod', () => {

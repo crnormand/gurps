@@ -1,9 +1,4 @@
-vi.mock('@module/ui/pool-value.js', () => ({
-  PoolValueElement: class PoolValueElement {},
-}))
-
 import { shouldUpdateName, shouldUpdateField } from '@module/actor/sheets/modern/inline-edit-handler.js'
-import { vi } from 'vitest'
 
 describe('shouldUpdateName', () => {
   test('returns true when name is different', () => {
