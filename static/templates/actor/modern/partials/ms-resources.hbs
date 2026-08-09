@@ -15,7 +15,7 @@
       <span class='ms-resource-text {{#if (isNegative system.HP.value)}}ms-hp-negative{{/if}}'>{{system.HP.value}}/{{system.HP.max}}</span>
     </div>
     <div class='ms-resource-edit'>
-      <input type='number' name='system.HP.value' value='{{system.HP.value}}' class='ms-resource-input'/>
+      <pool-value name='system.HP.damage' value='{{system.HP.damage}}' data-max='{{system.HP.max}}' class='ms-resource-input'></pool-value>
       <span class='ms-resource-separator'>/</span>
       <input type='number' name='system.HP.max' value='{{system.HP.max}}' class='ms-resource-input'/>
     </div>
@@ -39,7 +39,7 @@
       <span class='ms-resource-text'>{{system.FP.value}}/{{system.FP.max}}</span>
     </div>
     <div class='ms-resource-edit'>
-      <input type='number' name='system.FP.value' value='{{system.FP.value}}' class='ms-resource-input'/>
+      <pool-value name='system.FP.damage' value='{{system.FP.damage}}' data-max='{{system.FP.max}}' class='ms-resource-input'></pool-value>
       <span class='ms-resource-separator'>/</span>
       <input type='number' name='system.FP.max' value='{{system.FP.max}}' class='ms-resource-input'/>
     </div>

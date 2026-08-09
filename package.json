@@ -21,12 +21,6 @@
     "vitest": "^4.1.0"
   },
   "name": "gurps",
-  "overrides": {
-    "fvtt-types": {
-      "tinymce": "8.3.1"
-    },
-    "minimatch": "^10.2.2"
-  },
   "scripts": {
     "build": "npm run clean && npm run build:static && npm run build:code && npm run build:styles",
     "build:code": "tsc && tsc-alias -p tsconfig.json",
@@ -55,7 +49,6 @@
   "allowScripts": {
     "@parcel/watcher": true,
     "fsevents@2.3.3": true,
-    "unrs-resolver@1.11.1": true,
-    "github:League-of-Foundry-Developers/foundry-vtt-types#ccb7a91948bc245591dd581091e1808284428eaf": true
+    "unrs-resolver@1.11.1": true
   }
 }
