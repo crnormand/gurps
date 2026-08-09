@@ -24,7 +24,7 @@ class GurpsTokenHUDV2<
   RenderOptions extends
     foundry.applications.hud.TokenHUD.RenderOptions = foundry.applications.hud.TokenHUD.RenderOptions,
 > extends foundry.applications.hud.TokenHUD<RenderContext, Configuration, RenderOptions> {
-  static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
+  static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.hud.TokenHUD.Configuration> = {
     actions: {
       maneuver: GurpsTokenHUDV2.#onSetManeuver,
     },

@@ -1,4 +1,4 @@
-import type { CharacterModel, GcsCharacterModel } from '@module/actor/data/index.js'
+import type { CharacterModel, GcsCharacterModel, GcsLootModel } from '@module/actor/data/index.js'
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import { ActorType } from '@module/actor/types.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
@@ -69,6 +69,7 @@ declare module 'fvtt-types/configuration' {
     Actor: {
       [ActorType.Character]: typeof CharacterModel
       [ActorType.GcsCharacter]: typeof GcsCharacterModel
+      [ActorType.GcsLoot]: typeof GcsLootModel
     }
     Item: {
       [ItemType.Equipment]: typeof EquipmentModel
