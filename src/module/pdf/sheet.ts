@@ -1,4 +1,10 @@
 class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet {
+  static override DEFAULT_OPTIONS = {
+    form: {
+      closeOnSubmit: true,
+    },
+  }
+
   // @ts-expect-error: Wait for FVTT types to catch up.
   static override EDIT_PARTS = foundry.utils.mergeObject(super.EDIT_PARTS, {
     content: {
@@ -22,7 +28,7 @@ class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPage
       // @ts-expect-error: Wait for FVTT types to catch up.
       params: this._getViewerParams(),
       // @ts-expect-error: I'm sure I'm missing something on how to declared the options.
-      pageNumber: (this.options.pageNumber || 0) + (this.document.system.offset || 0),
+      pageNumber: (this.options.pageNumber || 5) + (this.document.system.offset || 0),
     })
   }
 }
