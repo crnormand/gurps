@@ -34,6 +34,7 @@ class GcaImporter {
   actor?: Actor.OfType<ActorType.Character>
   input: GCACharacter
   output: DataModel.CreateData<CharacterSchema>
+  hitLocationsToDelete: string[]
   items: Item.CreateData[]
   existingItems: Item.Stored[]
   img: string
@@ -43,6 +44,7 @@ class GcaImporter {
   constructor(input: GCACharacter) {
     this.input = input
     this.output = {}
+    this.hitLocationsToDelete = []
     this.existingItems = []
 
     this.items = []
@@ -86,6 +88,13 @@ class GcaImporter {
       const savedEquipmentCounts = this.#saveEquipmentCountsIfNecessary(
         actor.items.contents.filter(item => item.isOfType(ItemType.Equipment))
       )
+
+      // Remove obsolete collection entries before applying the imported data.
+      const hitLocationDeletions: Actor.UpdateData = Object.fromEntries(
+        this.hitLocationsToDelete.map(id => [`system.hitlocationsV2.${id}`, _del])
+      )
+
+      if (this.hitLocationsToDelete.length > 0) await actor.update(hitLocationDeletions, { render: false })
 
       // Update actor with new system data and create new items
       await actor.update({
@@ -505,16 +514,11 @@ Portrait will not be imported.`
     // No need to run this if there is no existing actor
     if (!this.actor) return
 
-    const currentHitLocationNullifiers = Object.fromEntries(
-      this.actor.system.hitlocationsV2.map(location => [location._id, globalThis._del])
-    )
+    const currentHitLocationIds = this.actor.system.hitlocationsV2.map(location => location._id)
 
     // On first import, always replace the hit location table
     if (this.actor && !this.actor.system.profile.modifiedon && !this.actor.system.additionalresources.importname) {
-      this.output.hitlocationsV2 = {
-        ...this.output.hitlocationsV2,
-        ...currentHitLocationNullifiers,
-      }
+      this.hitLocationsToDelete = currentHitLocationIds
 
       return
     }
@@ -575,10 +579,7 @@ Portrait will not be imported.`
     const automaticOverwrite = ImportSettings.overwriteBodyPlan
 
     if (automaticOverwrite === 'overwrite') {
-      this.output.hitlocationsV2 = {
-        ...this.output.hitlocationsV2,
-        ...currentHitLocationNullifiers,
-      }
+      this.hitLocationsToDelete = currentHitLocationIds
 
       return // Automatically overwrite from file.
     } else if (automaticOverwrite === 'keep') {
@@ -617,10 +618,7 @@ Portrait will not be imported.`
       this.output.bodyplan = currentBodyPlan
       this.output.hitlocationsV2 = currentHitLocations
     } else {
-      this.output.hitlocationsV2 = {
-        ...this.output.hitlocationsV2,
-        ...currentHitLocationNullifiers,
-      }
+      this.hitLocationsToDelete = currentHitLocationIds
     }
   }
 
@@ -815,7 +813,7 @@ Portrait will not be imported.`
   #importTrait(trait: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Trait
 
-    let name = trait.name || globalThis._loc('TYPES.Item.feature')
+    let name = trait.name || _loc('TYPES.Item.feature')
     const crRegex = /\[\s*CR: (\d{1,2})\s*\]/i
 
     const isLeveled = trait.calcs.cost?.includes('/') ?? false
@@ -860,7 +858,7 @@ Portrait will not be imported.`
 
   #importSkill(skill: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Skill
-    const name = skill.name || globalThis._loc('TYPES.Item.skill')
+    const name = skill.name || _loc('TYPES.Item.skill')
 
     const [baseSystem, _id] = this.#importItem(skill, containedBy)
 
@@ -888,7 +886,7 @@ Portrait will not be imported.`
 
   #importSpell(spell: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Spell
-    const name = spell.name || globalThis._loc('TYPES.Item.spell')
+    const name = spell.name || _loc('TYPES.Item.spell')
 
     let spellClass = ''
     let spellResist = ''
@@ -950,7 +948,7 @@ Portrait will not be imported.`
 
   #importEquipment(equipment: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Equipment
-    const name = equipment.name || globalThis._loc('TYPES.Item.equipment')
+    const name = equipment.name || _loc('TYPES.Item.equipment')
 
     const [baseSystem, _id] = this.#importItem(equipment, containedBy)
 

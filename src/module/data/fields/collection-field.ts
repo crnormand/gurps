@@ -206,7 +206,6 @@ class CollectionField<
         }
 
         id = id.slice(2)
-        // @ts-expect-error: fvtt-types not yet updated
       } else if (doc instanceof foundry.data.operators.ForcedDeletion) {
         delete (source[key] as AnyMutableObject)[id]
         continue
