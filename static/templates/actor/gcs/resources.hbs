@@ -153,11 +153,11 @@
             </td>
             <td class="gcs-row-enc-level">{{localize (concat "GURPS.encumbranceLevel-" enc.level)}}</td>
             <td class="gcs-row-enc-load">{{ localize "GURPS.sheet.gcsActorSheet.pound" value=enc.weight }}</td>
-            <td class="gcs-row-enc-move">{{enc.move}}</td>
+            <td class="gcs-row-enc-move">{{enc.currentmove}}</td>
             {{#if enc.current}}
-            <td class="gcs-row-enc-dodge" data-action="rollOtf" data-value="Dodge" >{{enc.dodge}}</td>
+            <td class="gcs-row-enc-dodge" data-action="rollOtf" data-value="Dodge" >{{enc.currentdodge}}</td>
             {{else}}
-            <td class="gcs-row-enc-dodge">{{enc.dodge}}</td>
+            <td class="gcs-row-enc-dodge">{{enc.currentdodge}}</td>
             {{/if}}
           </tr>
         {{/each}}
