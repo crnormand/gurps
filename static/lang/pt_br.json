@@ -1725,6 +1725,7 @@
     "notAffected": "não é afetado(a).",
     "noTargetSelected": "Nenhum Alvo selecionado",
     "notes": "Notas",
+    "noteBlank": "Esta nota foi intencionalmente deixada em branco.",
     "noUserForDamageWarning": "Você não pode aplicar dano a um alvo usando o dano de outro usuário.",
     "noViableSkill": "Este personagem não possui uma habilidade viável (nível efetivo 3 ou superior) que possa ser rolada",
     "number": "Número",

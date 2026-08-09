@@ -660,6 +660,27 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       })
     }
 
+    const noteRows = this.element.querySelectorAll<HTMLElement>('.gcs-note-table .gcs-action-row')
+
+    for (const noteRow of noteRows) {
+      noteRow.addEventListener('dblclick', async event => {
+        event.preventDefault()
+        const target = event.currentTarget as HTMLElement
+        const doc = await this._getEmbedded(target)
+
+        if (!doc) return
+
+        const sheet = 'sheet' in doc ? doc.sheet : null
+
+        if (!sheet) {
+          console.error(`Could not find sheet for document with UUID ${doc.uuid}.`)
+
+          return
+        }
+
+        sheet.render({ force: true })
+      })
+    }
     // Color pool-state foreground based on background color.
 
     const poolStates = this.element.querySelectorAll<HTMLElement>('.pool-state')

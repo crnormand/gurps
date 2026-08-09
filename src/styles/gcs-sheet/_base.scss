@@ -375,3 +375,12 @@ section[data-application-part='reactions'] {
     text-align: right;
   }
 }
+
+/* ---------------------------------------- */
+
+.gcs-note-table > thead button {
+    min-height: unset;
+    height: unset;
+    display: inline;
+    float: right;
+}

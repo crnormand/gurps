@@ -1724,6 +1724,7 @@
     "notAffected": "{name} n'est pas affecté.",
     "noTargetSelected": "Aucune cible sélectionnée",
     "notes": "Notes",
+    "noteBlank": "Cette note est intentionnellement vide.",
     "noUserForDamageWarning": "Vous ne pouvez pas appliquer de dégâts à une cible en utilisant les dégâts d'un autre utilisateur.",
     "noViableSkill": "Ce personnage n'a pas de compétence viable (niveau effectif 3 ou plus) pouvant être utilisée",
     "number": "Nombre",

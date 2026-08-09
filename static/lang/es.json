@@ -1724,6 +1724,7 @@
     "notAffected": "{name} no se ve afectado.",
     "noTargetSelected": "Ningún Objetivo seleccionado",
     "notes": "Notas",
+    "noteBlank": "Esta nota se dejó intencionalmente en blanco.",
     "noUserForDamageWarning": "No puedes aplicar daño a un objetivo usando daño para otro usuario.",
     "noViableSkill": "Este personaje no tiene una habilidad viable (nivel efectivo 3 o superior) que pueda tirarse",
     "number": "Número",
