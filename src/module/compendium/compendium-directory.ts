@@ -1,4 +1,11 @@
-class GurpsCompendiumDirectory extends foundry.applications.sidebar.tabs.CompendiumDirectory {
+class GurpsCompendiumDirectory<
+  RenderContext extends
+    foundry.applications.sidebar.tabs.CompendiumDirectory.RenderContext = foundry.applications.sidebar.tabs.CompendiumDirectory.RenderContext,
+  Configuration extends
+    foundry.applications.sidebar.tabs.CompendiumDirectory.Configuration = foundry.applications.sidebar.tabs.CompendiumDirectory.Configuration,
+  RenderOptions extends
+    foundry.applications.sidebar.tabs.CompendiumDirectory.RenderOptions = foundry.applications.sidebar.tabs.CompendiumDirectory.RenderOptions,
+> extends foundry.applications.sidebar.tabs.CompendiumDirectory<RenderContext, Configuration, RenderOptions> {
   static override DEFAULT_OPTIONS = {
     actions: {
       importItems: GurpsCompendiumDirectory.#onImportItems,

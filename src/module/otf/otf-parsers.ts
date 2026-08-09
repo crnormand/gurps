@@ -241,7 +241,7 @@ class AdvLevelModParser extends OtfParser {
 class IfTestParser extends OtfParser {
   /**
    * Matches an IfTest:
-   *  • iftest = keyword [ " " ] [ expression ]
+   *  • ifTest = keyword [ " " ] [ expression ]
    * Where:
    *  • keyword = "@margin" | "isCritSuccess" | "IsCritFailure"
    *  • sign = "+" | "-"
@@ -256,7 +256,7 @@ class IfTestParser extends OtfParser {
    *  text: string,
    *  action: {
    *    orig: string,
-   *    type: OtfActionType.iftest,
+   *    type: OtfActionType.ifTest,
    *    name: string,
    *    equation: string
    *  }
@@ -438,7 +438,7 @@ class CheckExistsParser extends OtfParser {
    *  text: string,
    *  action: {
    *    orig: string,
-   *    type: OtfActionType.testexists,
+   *    type: OtfActionType.testExists,
    *    prefix: string,
    *    name: string
    *  }
@@ -798,7 +798,7 @@ class AttackDamageParser extends OtfParser {
    *  text: string,
    *  action: {
    *    orig: string,
-   *    type: OtfActionType.attack | OtfActionType.attackdamage | OtfActionType.weaponParry | OtfActionType.weaponBlock,
+   *    type: OtfActionType.attack | OtfActionType.attackDamage | OtfActionType.weaponParry | OtfActionType.weaponBlock,
    *    name: string,
    *    mod: string,
    *    desc: string,

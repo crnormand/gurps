@@ -165,6 +165,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
           }
 
           let max = actor.system[attr].max
+          let cur = actor.system[attr].damage
           let newval = parseInt(value)
 
           if (isNaN(newval)) {
@@ -178,7 +179,6 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             } else newval = max - newval
           } else newval = cur - newval
           let mtxt = ''
-          let max = actor.system[attr].max
 
           if (newval < 0) {
             newval = 0

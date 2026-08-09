@@ -73,6 +73,13 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
+  isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
+  isOfType(...types: string[]): boolean {
+    return types.includes(this.type as Actor.SubType)
+  }
+
+  /* ---------------------------------------- */
+
   /**
    * Ensure an unlinked Token's ActorDelta stores complete pseudo-document
    * sources rather than patches which depend on the base Actor's source.
@@ -157,13 +164,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
       recursive: true,
       render: operation.render,
     })
-  }
-
-  /* ---------------------------------------- */
-
-  isOfType<SubType extends Actor.SubType>(...types: SubType[]): this is Actor.OfType<SubType>
-  isOfType(...types: string[]): boolean {
-    return types.includes(this.type as Actor.SubType)
   }
 
   /* ---------------------------------------- */
