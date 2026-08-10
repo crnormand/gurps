@@ -2143,7 +2143,9 @@
         "weaponROF": "Cad.",
         "weaponShots": "Tiros",
         "weaponST": "ST",
-        "weaponUsage": "Uso"
+        "weaponUsage": "Uso",
+        "reference": "Ref",
+        "uses": "Uses"
       },
       "hitLocation": {
         "dr": "DR",

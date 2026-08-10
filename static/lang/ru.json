@@ -2143,7 +2143,9 @@
         "weaponROF": "СкС",
         "weaponShots": "Выстр.",
         "weaponST": "СТ",
-        "weaponUsage": "Применение"
+        "weaponUsage": "Применение",
+        "reference": "Ref",
+        "uses": "Uses"
       },
       "hitLocation": {
         "dr": "ДР",
