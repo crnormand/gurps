@@ -10,7 +10,7 @@
     >
     <span class='ms-col-name indent{{indent}} {{ifThen (eq section "traits") (pointsClass points) ""}}'>
       {{#if hasChildren}}<i class='fas fa-caret-down ms-container-icon {{ifThen childrenOpen "" "container-collapsed"}}'></i>{{/if}}
-      <span class='ms-col-name-text'>{{stripOtfs this.name}}</span>
+      <span class='ms-col-name-text'>{{stripOtfs this.fullName}}</span>
     </span>
     {{#if flags.college}}<span class='ms-col-college'>{{college}}</span>{{/if}}
     {{#if flags.level}}
