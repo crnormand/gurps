@@ -378,9 +378,6 @@ section[data-application-part='reactions'] {
 
 /* ---------------------------------------- */
 
-.gcs-note-table > thead button {
-    min-height: unset;
-    height: unset;
-    display: inline;
+.gcs-note-table > thead a {
     float: right;
 }
