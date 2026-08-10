@@ -390,7 +390,17 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
 
   static async #onAddEffect(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
-    new EffectPicker(this.actor).render(true)
+    const theme = this.options.classes.includes('theme-dark')
+      ? 'theme-dark'
+      : this.options.classes.includes('theme-light')
+        ? 'theme-light'
+        : undefined
+
+    console.log('Opening EffectPicker with theme:', theme)
+
+    const dialog = new EffectPicker(this.actor, { parentTheme: theme })
+
+    dialog.render(true)
   }
 
   /* ---------------------------------------- */

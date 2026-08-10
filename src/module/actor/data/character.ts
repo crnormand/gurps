@@ -383,7 +383,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     this.#prepareEncumbrance()
     this.#prepareDefenses()
     this.#prepareUserModifiers()
-
   }
 
   /* ---------------------------------------- */

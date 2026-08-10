@@ -1,4 +1,14 @@
 @use '../mixins' as *;
+@use '../variables' as *;
+
+body {
+  @include css-variables;
+
+  &.theme-dark .effect-picker:not(.theme-light),
+  .effect-picker.theme-dark {
+    @include css-variables-dark;
+  }
+}
 
 .effect-picker {
   .window-content {

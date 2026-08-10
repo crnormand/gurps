@@ -57,10 +57,11 @@ export default class EffectPicker extends Application {
   constructor(actor, options = {}) {
     super(options)
     this.actor = actor
+    this.parentTheme = options.parentTheme
   }
 
   static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
+    const options = foundry.utils.mergeObject(super.defaultOptions, {
       id: 'effect-picker',
       classes: ['gurps', 'effect-picker'],
       template: 'systems/gurps/templates/actor/effect-picker.hbs',
@@ -69,9 +70,13 @@ export default class EffectPicker extends Application {
       resizable: true,
       title: game.i18n.localize('GURPS.effectPicker.title'),
     })
+
+    return options
   }
 
   getData() {
+    const sheetData = super.getData()
+
     const activeEffectIds = new Set(
       this.actor.effects
         .filter(effect => !effect.disabled)
@@ -100,13 +105,15 @@ export default class EffectPicker extends Application {
       })
       .filter(category => category.hasEffects)
 
-    return {
-      categories,
-    }
+    sheetData.categories = categories
+
+    return sheetData
   }
 
   activateListeners(html) {
     super.activateListeners(html)
+
+    html.closest('.effect-picker-container').removeClass('theme-light theme-dark').addClass(this.parentTheme)
 
     html.find('.effect-picker-search').on('input', event => {
       this.filterEffects(event.currentTarget.value)

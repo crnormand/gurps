@@ -2142,7 +2142,9 @@
         "weaponROF": "Cad.",
         "weaponShots": "Coups",
         "weaponST": "ST",
-        "weaponUsage": "Usage"
+        "weaponUsage": "Usage",
+        "reference": "Ref",
+        "uses": "Util."
       },
       "hitLocation": {
         "dr": "DR",
@@ -2401,7 +2403,8 @@
     "yard": "mètre",
     "yards": "mètres",
     "years": "années",
-    "youDoNotHavePermission": "Vous n'avez pas la permission de faire cela."
+    "youDoNotHavePermission": "Vous n'avez pas la permission de faire cela.",
+    "mookGeneratorInvalidDamageInput": "Invalid damage input. Please enter one or two values in standard GURPS dice format, separated by a '/'."
   },
   "TYPES": {
     "Action": {

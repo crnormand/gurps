@@ -2143,7 +2143,9 @@
         "weaponROF": "FGS",
         "weaponShots": "Schuss",
         "weaponST": "ST",
-        "weaponUsage": "Verwendung"
+        "weaponUsage": "Verwendung",
+        "reference": "Ref",
+        "uses": "Verw."
       },
       "hitLocation": {
         "dr": "DR",

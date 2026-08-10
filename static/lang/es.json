@@ -1264,8 +1264,9 @@
           "passotf": {
             "label": "Éxito"
           },
-          "vtt_notes": {
-            "label": "Notas VTT"
+          "vtt_notes": {},
+          "vttNotes": {
+            "label": "VTT Notes"
           }
         }
       },
@@ -2142,7 +2143,9 @@
         "weaponROF": "CdF",
         "weaponShots": "Disparos",
         "weaponST": "FU",
-        "weaponUsage": "Uso"
+        "weaponUsage": "Uso",
+        "reference": "Ref",
+        "uses": "Usos"
       },
       "hitLocation": {
         "dr": "RD",
@@ -2401,7 +2404,8 @@
     "yard": "yarda",
     "yards": "yardas",
     "years": "años",
-    "youDoNotHavePermission": "No tienes permiso para hacer eso."
+    "youDoNotHavePermission": "No tienes permiso para hacer eso.",
+    "mookGeneratorInvalidDamageInput": "Invalid damage input. Please enter one or two values in standard GURPS dice format, separated by a '/'."
   },
   "TYPES": {
     "Action": {
