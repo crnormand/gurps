@@ -2144,7 +2144,7 @@
         "weaponST": "ST",
         "weaponUsage": "Usage",
         "reference": "Ref",
-        "uses": "Uses"
+        "uses": "Util."
       },
       "hitLocation": {
         "dr": "DR",
