@@ -79,8 +79,8 @@ class SlamCalculatorForm extends FormApplication {
       sizeAndSpeedRangeTable: GURPS.SSRT,
       isNiceDiceEnabled: isNiceDiceEnabled,
       roll: Roll,
-      localize: game.i18n.localize,
-      format: game.i18n.format,
+      localize: text => game.i18n.localize(text), //must warp the function in a closure to avoid the "this" context being lost when called from the calculator
+      format: (text, data) => game.i18n.format(text, data), //must warp the function in a closure to avoid the "this" context being lost when called from the calculator
     })
 
     this._attackerHp = attacker ? attacker.actor.system.HP.max : 10
