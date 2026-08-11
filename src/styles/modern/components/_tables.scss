@@ -180,7 +180,7 @@
   font-size: var(--ms-font-sm);
 }
 
-$attack-columns: 1fr 72px 36px 128px 50px 55px 50px;
+$attack-columns: 1fr 96px 36px 128px 50px 55px 50px 50px;
 
 .ms-attack-header {
   @include grid-header($attack-columns);
@@ -216,7 +216,6 @@ $attack-columns: 1fr 72px 36px 128px 50px 55px 50px;
   .ms-attack-level {
     font-weight: var(--ms-weight-bold);
     @include tabular-nums;
-    color: var(--ms-accent);
   }
 
   .ms-attack-damage {
@@ -228,24 +227,42 @@ $attack-columns: 1fr 72px 36px 128px 50px 55px 50px;
   .ms-attack-reach,
   .ms-attack-acc,
   .ms-attack-parry,
+  .ms-attack-bulk,
   .ms-attack-range {
     color: var(--ms-text-muted);
   }
 
-  .ms-attack-acc {
-    color: var(--ms-modifier-positive);
+  .ms-attack-acc,
+  .ms-attack-bulk {
     cursor: pointer;
     font-weight: var(--ms-weight-semibold);
   }
 
+  .ms-attack-acc {
+    color: var(--ms-modifier-positive);
+  }
+
+  .ms-attack-bulk {
+    color: var(--ms-modifier-negative);
+  }
+
+  .ms-attack-bulk:hover,
+  .ms-attack-acc:hover {
+    text-decoration: underline;
+  }
+
   .ms-attack-acc:hover {
     color: var(--ms-modifier-positive-hover);
-    text-decoration: underline;
+  }
+
+  .ms-attack-bulk:hover {
+    color: var(--ms-modifier-negative-hover);
   }
 }
 
 .ms-attack-usage {
   text-align: center;
+  font-family: var(--font-sans);
   font-size: var(--ms-font-xs);
   color: var(--ms-text-muted);
 }

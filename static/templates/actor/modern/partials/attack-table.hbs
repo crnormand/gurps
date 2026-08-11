@@ -10,15 +10,18 @@
         {{#if isMelee}}
           <span class='ms-attack-reach'>{{localize 'GURPS.reach'}}</span>
           <span class='ms-attack-parry'>{{localize 'GURPS.parry'}}</span>
+          <span class='ms-attack-block'>{{localize 'GURPS.block'}}</span>
         {{else}}
           <span class='ms-attack-acc'>{{localize 'GURPS.acc'}}</span>
           <span class='ms-attack-range'>{{localize 'GURPS.range'}}</span>
+          <span class='ms-attack-bulk'>{{localize 'GURPS.bulk'}}</span>
         {{/if}}
         <span></span>
       </div>
       {{#each items}}
         <div class='ms-attack-row' data-key='{{../path}}.{{@key}}'>
-          <span class='ms-attack-name'>{{> "actor.modern.partials.dice-button" otf=otf.level text=name damage=false}}</span>
+          <span
+            class='ms-attack-name'>{{> "actor.modern.partials.dice-button" otf=otf.level text=name damage=false}}</span>
           <span class='ms-attack-usage'>{{usage}}</span>
           <span class='ms-attack-level'>{{level}}</span>
           <span
@@ -27,9 +30,14 @@
             <span class='ms-attack-reach'>{{reach}}</span>
             <span
               class='ms-attack-parry'>{{#if otf.parry}}{{> "actor.modern.partials.dice-button" otf=otf.parry level=null text=parry damage=false color='var(--ms-text-muted)'}}{{/if}}</span>
+            <span
+              class='ms-attack-block'>{{#if otf.block}}{{> "actor.modern.partials.dice-button" otf=otf.block level=null text=block damage=false color='var(--ms-text-muted)'}}{{/if}}</span>
           {{else}}
-          <span class='ms-attack-acc {{gmod acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=fullName}}" data-otf='{{acc}} Acc'>{{acc}}</span>
+            <span class='ms-attack-acc {{gmod acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=fullName}}"
+              data-otf='{{displayNumber acc}} Acc'>{{displayNumber acc}}</span>
             <span class='ms-attack-range'>{{range}}</span>
+            <span class='ms-attack-bulk {{gmod bulk}}' data-name="{{localize 'GURPS.bulkForWeapon' weapon=fullName}}"
+              data-otf='{{displayNumber bulk}} Bulk'>{{displayNumber bulk}}</span>
           {{/if}}
           {{> "actor.modern.partials.row-actions"}}
         </div>

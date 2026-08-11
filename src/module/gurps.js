@@ -1114,9 +1114,10 @@ if (!globalThis.GURPS) {
       }
 
       let mode = att.mode ? ` (${att.mode})` : ''
-      const target = parseInt(att.block)
 
-      if (isNaN(target) || target == 0) {
+      const target = att.block.canBlock ? parseInt(att.blockLevel) : 0
+
+      if (isNaN(target) || target === 0) {
         ui.notifications.warn(`No Block for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
         return false
