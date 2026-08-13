@@ -10,9 +10,11 @@
         {{#if isMelee}}
           <span class='ms-attack-reach'>{{localize 'GURPS.reach'}}</span>
           <span class='ms-attack-parry'>{{localize 'GURPS.parry'}}</span>
+          <span class='ms-attack-block'>{{localize 'GURPS.block'}}</span>
         {{else}}
           <span class='ms-attack-acc'>{{localize 'GURPS.acc'}}</span>
           <span class='ms-attack-range'>{{localize 'GURPS.range'}}</span>
+          <span class='ms-attack-bulk'>{{localize 'GURPS.bulk'}}</span>
         {{/if}}
         <span></span>
       </div>
@@ -27,10 +29,14 @@
             <span class='ms-attack-reach'>{{this.reach}}</span>
             <span
               class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry color='var(--ms-text-muted)'}}{{/if}}</span>
+            <span
+              class='ms-attack-block'>{{#if otf.block}}{{> "actor.modern.partials.dice-button" otf=otf.block level=null text=block damage=false color='var(--ms-text-muted)'}}{{/if}}</span>
           {{else}}
-            <span class='ms-attack-acc {{gmod this.acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=this.name}}" data-otf='{{{displayNumber this.acc}}} Acc'>{{this.acc}}</span>
+            <span class='ms-attack-acc {{gmod this.acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=this.name}}"
+              data-otf='{{{displayNumber this.acc}}} Acc'>{{this.acc}}</span>
             <span class='ms-attack-range'>{{this.range}}</span>
-          {{/if}}
+            <span class='ms-attack-bulk {{gmod bulk}}' data-name="{{localize 'GURPS.bulkForWeapon' weapon=fullName}}"
+              data-otf='{{displayNumber bulk}} Bulk'>{{displayNumber bulk}}</span> {{/if}}
           {{>row-actions editAction=../editAction deleteAction=../deleteAction key=(concat ../path '.' @key)}}
         </div>
       {{else}}
