@@ -159,6 +159,12 @@ $compact-attr-min-width: 32px;
     padding: 0 var(--ms-space-1);
   }
 
+  /* Allow damage-column buttons to expand vertically in compact layout */
+  .ms-attack-damage .ms-use-button {
+    min-height: 16px;
+    height: auto;
+  }
+
   .ms-status-bar {
     padding: var(--ms-space-1) var(--ms-space-2);
     gap: var(--ms-space-2);
@@ -200,13 +206,13 @@ $compact-attr-min-width: 32px;
   .ms-attack-header {
     padding: var(--ms-space-1) var(--ms-space-2);
     font-size: 9px;
-    grid-template-columns: 1fr 35px 85px 35px 35px 30px;
+    grid-template-columns: 1fr 35px 85px 35px 35px 30px 30px;
   }
 
   .ms-attack-row {
     padding: var(--ms-space-1) var(--ms-space-2);
     font-size: 11px;
-    grid-template-columns: 1fr 35px 85px 35px 35px 30px;
+    grid-template-columns: 1fr 35px 85px 35px 35px 30px 30px;
     gap: 2px;
   }
 
