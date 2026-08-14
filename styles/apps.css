@@ -106,7 +106,7 @@ Global Override body {
   min-height: 3em;
 }
 
-section.journal-page-content {
+.journal-page-content {
   font-family: 'Signika', sans-serif;
   font-size: 14px;
 }
