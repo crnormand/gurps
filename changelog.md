@@ -14,6 +14,7 @@
 - `/slam` does not output after clicking Resolve \#2809
 - Modern sheet does not show melee attack's Block score \#2824
 - NPC Mini Sheet - Nowhere to Roll Block \#2780
+- Ordered lists in Journal Entries clip two-digit list markers \#2777
 
 ## Release 0.18.20 06/18/2026
 
