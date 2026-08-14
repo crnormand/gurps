@@ -11,6 +11,9 @@
 - Multiple Foundry Native Items with Features + Bonuses negate one Bonus \#1861
 - GCS Body Plan not uploaded correctly \#1832
 - Max in resource tracker template not being copied to characters \#1796
+- `/slam` does not output after clicking Resolve \#2809
+- Modern sheet does not show melee attack's Block score \#2824
+- NPC Mini Sheet - Nowhere to Roll Block \#2780
 
 ## Release 0.18.20 06/18/2026
 
