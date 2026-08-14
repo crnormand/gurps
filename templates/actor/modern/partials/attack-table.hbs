@@ -19,7 +19,7 @@
         <span></span>
       </div>
       {{#each (attackflatlist items)}}
-        <div class='ms-attack-row' data-key='{{../path}}.{{@key}}'>
+        <div class='ms-attack-row'>
           <span class='ms-attack-name'>{{>dice-button otf=(quotedAttackName ../otfPrefix this) text=this.name}}</span>
           <span class='ms-attack-usage'>{{this.mode}}</span>
           <span class='ms-attack-level'>{{this.level}}</span>
@@ -30,13 +30,13 @@
             <span
               class='ms-attack-parry'>{{#if this.parry}}{{>dice-button otf=(quotedAttackName "P" this) level=null text=this.parry color='var(--ms-text-muted)'}}{{/if}}</span>
             <span
-              class='ms-attack-block'>{{#if otf.block}}{{> "actor.modern.partials.dice-button" otf=otf.block level=null text=block damage=false color='var(--ms-text-muted)'}}{{/if}}</span>
+              class='ms-attack-block'>{{#if this.block}}{{>dice-button otf=(quotedAttackName "B" this) level=null text=this.block damage=false color='var(--ms-text-muted)'}}{{/if}}</span>
           {{else}}
             <span class='ms-attack-acc {{gmod this.acc}}' data-name="{{localize 'GURPS.accForWeapon' weapon=this.name}}"
               data-otf='{{{displayNumber this.acc}}} Acc'>{{this.acc}}</span>
             <span class='ms-attack-range'>{{this.range}}</span>
-            <span class='ms-attack-bulk {{gmod bulk}}' data-name="{{localize 'GURPS.bulkForWeapon' weapon=fullName}}"
-              data-otf='{{displayNumber bulk}} Bulk'>{{displayNumber bulk}}</span> {{/if}}
+            <span class='ms-attack-bulk {{gmod this.bulk}}' data-name="{{localize 'GURPS.bulkForWeapon' weapon=fullName}}"
+              data-otf='{{displayNumber this.bulk}} Bulk'>{{{displayNumber this.bulk}}}</span> {{/if}}
           {{>row-actions editAction=../editAction deleteAction=../deleteAction key=(concat ../path '.' @key)}}
         </div>
       {{else}}

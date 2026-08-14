@@ -206,16 +206,23 @@ $compact-attr-min-width: 32px;
   .ms-attack-header {
     padding: var(--ms-space-1) var(--ms-space-2);
     font-size: 9px;
-    grid-template-columns: 1fr 35px 85px 35px 35px 30px 30px;
+    grid-template-columns: 1fr 85px 35px 35px 40px 40px;
   }
 
   .ms-attack-row {
     padding: var(--ms-space-1) var(--ms-space-2);
     font-size: 11px;
-    grid-template-columns: 1fr 35px 85px 35px 35px 30px 30px;
+    grid-template-columns: 1fr 85px 35px 35px 40px 40px;
     gap: 2px;
+
+    .ms-attack-range {
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+    }
   }
 
+  .ms-attack-level,
   .ms-attack-usage {
     display: none;
   }

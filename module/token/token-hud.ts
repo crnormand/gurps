@@ -1,9 +1,12 @@
 import { DeepPartial } from 'fvtt-types/utils'
 
 export class GurpsTokenHUDV2<
-  RenderContext extends foundry.applications.hud.BasePlaceableHUD.RenderContext = foundry.applications.hud.BasePlaceableHUD.RenderContext,
-  Configuration extends foundry.applications.hud.BasePlaceableHUD.Configuration = foundry.applications.hud.BasePlaceableHUD.Configuration,
-  RenderOptions extends foundry.applications.hud.BasePlaceableHUD.RenderOptions = foundry.applications.hud.BasePlaceableHUD.RenderOptions,
+  RenderContext extends
+    foundry.applications.hud.TokenHUD.RenderContext = foundry.applications.hud.TokenHUD.RenderContext,
+  Configuration extends
+    foundry.applications.hud.TokenHUD.Configuration = foundry.applications.hud.TokenHUD.Configuration,
+  RenderOptions extends
+    foundry.applications.hud.TokenHUD.RenderOptions = foundry.applications.hud.TokenHUD.RenderOptions,
 > extends foundry.applications.hud.TokenHUD<RenderContext, Configuration, RenderOptions> {
   static override DEFAULT_OPTIONS: DeepPartial<foundry.applications.api.ApplicationV2.Configuration> = {
     actions: {
@@ -27,7 +30,7 @@ export class GurpsTokenHUDV2<
   ): Promise<RenderContext> {
     const context = await super._prepareContext(options)
 
-    const activeEffects = this.object.actor?.effects.contents ?? []
+    const activeEffects = this.object?.actor?.effects.contents ?? []
 
     // @ts-expect-error: Waiting for DataModel migration for actor
     const currentManeuverId = this.object.actor?.system.conditions.maneuver
@@ -57,13 +60,12 @@ export class GurpsTokenHUDV2<
   /* ---------------------------------------- */
 
   static async #onSetManeuver(this: GurpsTokenHUDV2, _event: PointerEvent, target: HTMLElement): Promise<void> {
-    // @ts-expect-error: waiting for types to catch up
     if (!this.actor) {
       ui.notifications?.warn('HUD.WarningEffectNoActor', { localize: true })
       return
     }
 
     const maneuverId = target.dataset.statusId || 'do_nothing'
-    this.object.setManeuver(maneuverId)
+    this.object?.setManeuver(maneuverId)
   }
 }
