@@ -96,6 +96,9 @@
       </div>
 
       <div class='ms-npc-skills-row'>
+
+        {{>traits-table}}
+
         {{>data-table
           section="skills"
           icon="fa-graduation-cap"
@@ -111,25 +114,24 @@
           addLabel=(localize "GURPS.skill")
         }}
 
-        {{#if (notEmpty system.spells)}}
-        {{>data-table
-          section="spells"
-          icon="fa-hat-wizard"
-          title=(localize "GURPS.spells")
-          items=(flatlist system.spells)
-          path="system.spells"
-          entityType="spells"
-          otfPrefix="Sp"
-          editAction="edit-spell"
-          deleteAction="delete-spell"
-          addAction="add-spell"
-          addLabel=(localize "GURPS.spell")
-          hasCollege=true
-        }}
-        {{/if}}
       </div>
 
-      {{>traits-table}}
+      {{#if (notEmpty system.spells)}}
+      {{>data-table
+        section="spells"
+        icon="fa-hat-wizard"
+        title=(localize "GURPS.spells")
+        items=(flatlist system.spells)
+        path="system.spells"
+        entityType="spells"
+        otfPrefix="Sp"
+        editAction="edit-spell"
+        deleteAction="delete-spell"
+        addAction="add-spell"
+        addLabel=(localize "GURPS.spell")
+        hasCollege=true
+      }}
+      {{/if}}
 
       {{>equipment-table container="carried" items=system.equipment.carried showEquipped=true title=(localize "GURPS.equipment") icon="fa-box"}}
 
