@@ -153,19 +153,19 @@ describe('getRollTypeFromData', () => {
     ['[@TKhYpsMQ4KmECA5z@R:" (Thrown)"]', ROLL_TYPE.RANGED],
     ['[@TKhYpsMQ4KmECA5z@D:" (Swung)"]', ROLL_TYPE.DAMAGE],
   ])('Extracts Roll Type from chat thing', ([chatThing, expected]) => {
-    const result = getRollTypeFromData(chatThing, undefined)
+    const result = getRollTypeFromData(chatThing, undefined, {})
 
     expect(result).toBe(expected)
   })
 
   test('Returns unknown for invalid chat thing', () => {
-    const result = getRollTypeFromData('invalid_chat_thing', undefined)
+    const result = getRollTypeFromData('invalid_chat_thing', undefined, {})
 
     expect(result).toBe(ROLL_TYPE.UNKNOWN)
   })
 
   test('Assumes damage roll if no chatthing and no attack is provided', () => {
-    const result = getRollTypeFromData('', undefined)
+    const result = getRollTypeFromData('', undefined, {})
 
     expect(result).toBe(ROLL_TYPE.DAMAGE)
   })
@@ -173,18 +173,46 @@ describe('getRollTypeFromData', () => {
   test('Tests for melee attack if no chatthing is provided', () => {
     const result = getRollTypeFromData('', {
       isOfType: (type: ActionType) => type === ActionType.MeleeAttack,
-    } as unknown as MeleeAttackModel)
+    } as unknown as MeleeAttackModel, {})
 
     expect(result).toBe(ROLL_TYPE.MELEE)
   })
 
   test('Tests for ranged attack if no chatthing is provided', () => {
-    const result = getRollTypeFromData('', {
-      isOfType: (type: ActionType) => type === ActionType.RangedAttack,
-    } as unknown as RangedAttackModel)
+    const result = getRollTypeFromData(
+      '',
+      {
+        isOfType: (type: ActionType) => type === ActionType.RangedAttack,
+      } as unknown as RangedAttackModel,
+      {}
+    )
 
     expect(result).toBe(ROLL_TYPE.RANGED)
   })
+
+   test('Tests for damage action if no chatthing is provided', () => {
+     const result = getRollTypeFromData(
+       '',
+       {
+         isOfType: (type: ActionType) => type === ActionType.RangedAttack,
+       } as unknown as RangedAttackModel,
+       { action: { type: 'damage' } }
+     )
+
+     expect(result).toBe(ROLL_TYPE.DAMAGE)
+   })
+
+   test('Tests for deriveddamage action if no chatthing is provided', () => {
+     const result = getRollTypeFromData(
+       '',
+       {
+         isOfType: (type: ActionType) => type === ActionType.RangedAttack,
+       } as unknown as RangedAttackModel,
+       { action: { type: 'deriveddamage' } }
+     )
+
+     expect(result).toBe(ROLL_TYPE.DAMAGE)
+   })
 })
 
 vi.stubGlobal('game', {
