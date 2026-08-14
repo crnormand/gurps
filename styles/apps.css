@@ -73,6 +73,7 @@ Global Override body {
   --gga-glinkmodminus-background: #b22222;
   --gga-glinkmodminus-bordercolor: #300707;
 }
+
 .system-gurps .control-icon[data-palette='maneuvers'] img,
 .system-gurps .token-effect,
 .system-gurps .effect-control {
@@ -103,6 +104,11 @@ Global Override body {
 
 .list_note > textarea {
   min-height: 3em;
+}
+
+section.journal-page-content {
+  font-family: 'Signika', sans-serif;
+  font-size: 14px;
 }
 
 /* GURPS App CSS */
