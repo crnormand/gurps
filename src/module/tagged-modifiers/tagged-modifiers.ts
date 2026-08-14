@@ -79,8 +79,14 @@ function extractRollTypeFromChatThing(chatThing: string): ROLL_TYPE {
   return toValidRoleType(ref)
 }
 
-export function getRollTypeFromData(chatThing: string, attack: MeleeAttackModel | RangedAttackModel | undefined) {
+export function getRollTypeFromData(
+  chatThing: string,
+  attack: MeleeAttackModel | RangedAttackModel | undefined,
+  optionalArgs: { action?: { type?: string } }
+): ROLL_TYPE {
   function defaultRef() {
+    if (optionalArgs?.action?.type === 'damage') return ROLL_TYPE.DAMAGE
+
     return attack ? (attack.isOfType(ActionType.MeleeAttack) ? ROLL_TYPE.MELEE : ROLL_TYPE.RANGED) : ROLL_TYPE.DAMAGE
   }
 
@@ -190,12 +196,12 @@ function canModApply(
 export function taggedModToApply(
   chatThing: string,
   attack: MeleeAttackModel | RangedAttackModel | undefined,
-  optionalArgs: { obj?: AnyObject },
+  optionalArgs: { obj?: AnyObject; action?: { type?: string } },
   taggedSettings: TaggedModifiersSettings,
   allMods: string[],
   actorInCombat: boolean
 ): { modsToApply: string[]; isDamageRoll: boolean } {
-  const rollType = getRollTypeFromData(chatThing, attack)
+  const rollType = getRollTypeFromData(chatThing, attack, optionalArgs)
   const allTags = getTagsForRoll(taggedSettings, rollType, optionalArgs)
   const itemRef = getItemRef(chatThing, optionalArgs, attack)
   const isDamageRoll = rollType === ROLL_TYPE.DAMAGE
