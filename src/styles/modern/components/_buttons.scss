@@ -38,6 +38,19 @@
   }
 }
 
+/* Buttons in the attack damage column may need to wrap when space is constrained */
+.ms-attack-damage .ms-use-button {
+  flex-wrap: wrap;
+  min-height: 16px;
+  height: auto;
+}
+
+.ms-attack-damage .ms-use-button .ms-btn-text {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .ms-eqt-actions,
 .ms-note-actions,
 .ms-row-actions {
