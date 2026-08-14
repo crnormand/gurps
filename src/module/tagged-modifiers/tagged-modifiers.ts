@@ -85,7 +85,8 @@ export function getRollTypeFromData(
   optionalArgs: { action?: { type?: string } }
 ): ROLL_TYPE {
   function defaultRef() {
-    if (optionalArgs?.action?.type === 'damage') return ROLL_TYPE.DAMAGE
+    if (optionalArgs?.action?.type === 'damage' || optionalArgs?.action?.type === 'deriveddamage')
+      return ROLL_TYPE.DAMAGE
 
     return attack ? (attack.isOfType(ActionType.MeleeAttack) ? ROLL_TYPE.MELEE : ROLL_TYPE.RANGED) : ROLL_TYPE.DAMAGE
   }

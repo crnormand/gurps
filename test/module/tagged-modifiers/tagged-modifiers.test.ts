@@ -191,12 +191,28 @@ describe('getRollTypeFromData', () => {
   })
 
    test('Tests for damage action if no chatthing is provided', () => {
-    const result = getRollTypeFromData('', {
-      isOfType: (type: ActionType) => type === ActionType.RangedAttack,
-    } as unknown as RangedAttackModel, { action: { type: 'damage' } })
+     const result = getRollTypeFromData(
+       '',
+       {
+         isOfType: (type: ActionType) => type === ActionType.RangedAttack,
+       } as unknown as RangedAttackModel,
+       { action: { type: 'damage' } }
+     )
 
-    expect(result).toBe(ROLL_TYPE.DAMAGE)
-  })
+     expect(result).toBe(ROLL_TYPE.DAMAGE)
+   })
+
+   test('Tests for deriveddamage action if no chatthing is provided', () => {
+     const result = getRollTypeFromData(
+       '',
+       {
+         isOfType: (type: ActionType) => type === ActionType.RangedAttack,
+       } as unknown as RangedAttackModel,
+       { action: { type: 'deriveddamage' } }
+     )
+
+     expect(result).toBe(ROLL_TYPE.DAMAGE)
+   })
 })
 
 vi.stubGlobal('game', {
