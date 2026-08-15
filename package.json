@@ -16,7 +16,7 @@
     "prettier": "prettier --write .",
     "lint:scss": "prettier --check \"**/*.scss\"",
     "format:scss": "prettier --write \"**/*.scss\"",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist .tsbuildinfo",
     "build": "run-s clean build:styles build:static build:code",
     "build:code": "tsc",
     "build:styles": "sass --no-source-map --style=compressed gurps.scss:dist/gurps.css",
