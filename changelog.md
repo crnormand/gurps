@@ -15,6 +15,8 @@
 - Modern sheet does not show melee attack's Block score \#2824
 - NPC Mini Sheet - Nowhere to Roll Block \#2780
 - Ordered lists in Journal Entries clip two-digit list markers \#2777
+- Offset Problem with Basic Revised \#2829
+  - After installing the update, go to the settings for `GURPS 4e Game Aid > PDF Settings`, and change `Basic Set PDFs` to "Basic Revised ('B')".
 
 ## Release 0.18.20 06/18/2026
 
