@@ -19,6 +19,8 @@
   - After installing the update, go to the settings for `GURPS 4e Game Aid > PDF Settings`, and change `Basic Set PDFs` to "Basic Revised ('B')".
 - Detached combat tracker window/popout! window not allowing updates to maneuvers. \#2796
 - GCS v5 import: spell points inside containers are not summed (+ minor: importSp never sets spl.level) \#2772
+- Techniques include "[object Object]" string literal since recent GCS update \#2781
+  - You may need to delete the techniques and reimport to apply the fix.
 
 ## Release 0.18.20 06/18/2026
 
