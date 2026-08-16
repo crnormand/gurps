@@ -17,7 +17,7 @@
 - Ordered lists in Journal Entries clip two-digit list markers \#2777
 - Offset Problem with Basic Revised \#2829
   - After installing the update, go to the settings for `GURPS 4e Game Aid > PDF Settings`, and change `Basic Set PDFs` to "Basic Revised ('B')".
-- allow combat tracker to update maneuver when popped out
+- Detached combat tracker window/popout! window not allowing updates to maneuvers. \#2796
 
 ## Release 0.18.20 06/18/2026
 
