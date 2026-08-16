@@ -25,7 +25,7 @@
   "compatibility": {
     "minimum": "13",
     "maximum": "14",
-    "verified": "14.364"
+    "verified": "14.366"
   },
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "scripts": ["scripts/jquery.tinycolorpicker.js"],
