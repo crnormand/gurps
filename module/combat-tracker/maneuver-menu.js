@@ -131,6 +131,7 @@ export const addManeuverListeners = () => {
     document.querySelectorAll('.maneuver-combat-tracker-menu').forEach(menu => {
       menu.style.display = 'none'
       menu.closest('.combatant').querySelector('.maneuver-badge').classList.remove('open')
+      menu.closest('.combat-tracker').style.minHeight = ''
     })
   })
 
@@ -189,6 +190,8 @@ export const addManeuverListeners = () => {
       if (menu.style.display === 'block') {
         menu.style.display = 'none'
         badge.classList.remove('open')
+        menu.closest('.combat-tracker').style.minHeight = ''
+
         return
       } else {
         menu.style.display = 'block'
@@ -197,13 +200,21 @@ export const addManeuverListeners = () => {
 
       if (menu.style.display === 'none') return
       // Set menu top to badge bottom
-      const badgeRect = badge.getBoundingClientRect()
-      const menuRect = menu.getBoundingClientRect()
+      // Ensure menu is within the bounds of the combat tracker
+      const badgeTop = badge.offsetTop
+      const badgeBottom = badgeTop + badge.offsetHeight
+      const trackerHeight = menu.closest('.combat-tracker').offsetHeight
+      const menuHeight = menu.offsetHeight
 
-      if (badgeRect.bottom + menuRect.height > window.innerHeight) {
-        menu.style.top = `${badgeRect.top - menuRect.height}px`
+      if (badgeBottom + menuHeight > trackerHeight) {
+        if (badgeTop - menuHeight < 0) {
+          menu.closest('.combat-tracker').style.minHeight = `${badgeBottom + menuHeight}px`
+          menu.style.top = `${badgeBottom}px`
+        } else {
+          menu.style.top = `${badgeTop - menuHeight}px`
+        }
       } else {
-        menu.style.top = `${badgeRect.bottom}px`
+        menu.style.top = `${badgeBottom}px`
       }
     }
   })
