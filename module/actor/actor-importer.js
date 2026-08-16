@@ -1768,6 +1768,7 @@ export class ActorImporter {
       s.points = i.points || ''
       s.casttime = i.casting_time || ''
       s.import = i.calc?.level || 0
+      s.level = s.import
     }
 
     s = this._substituteItemReplacements(s, i)
@@ -2367,9 +2368,15 @@ export class ActorImporter {
       if (i.id.startsWith('p')) i.type = 'spell'
       if (i.id.startsWith('P')) i.type = 'spell_container'
     }
-    if (i.type == ('skill_container' || 'spell_container') && i.children?.length)
-      for (let j of i.children) skills = this.skPointCount(j, skills)
-    else skills += i.points ?? 0
+
+    if ((i.type == 'skill_container' || i.type == 'spell_container') && i.children?.length) {
+      for (let j of i.children) {
+        skills = this.skPointCount(j, skills)
+      }
+    } else {
+      skills += i.points ?? 0
+    }
+
     return skills
   }
 
