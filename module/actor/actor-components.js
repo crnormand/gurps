@@ -439,8 +439,10 @@ export class Skill extends Leveled {
         itemData.import !== this['import'] ||
         itemData.relativelevel !== this.relativelevel ||
         itemData['type'] !== this['type']
+
       if (!!result) console.log(`Foundry Item: ${this.name} needs update`)
     }
+
     return result
   }
   findDefaultImage() {
