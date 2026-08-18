@@ -1,5 +1,5 @@
 'use strict'
-import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
+import { digitsAndDecimalOnly, digitsAndNegOnly, digitsOnly } from '../lib/jquery-helper.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import { recurselist } from '../lib/utilities.js'
 import { Advantage, Melee, Ranged, Skill, Spell } from './actor/actor-components.js'
@@ -46,6 +46,7 @@ export class GurpsItemSheet extends ItemSheet {
 
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
+    html.find('.integer-only').inputFilter(value => digitsAndNegOnly.test(value))
     html.find('#itemname').change(async ev => {
       let nm = ev.currentTarget.value
       let commit = {
