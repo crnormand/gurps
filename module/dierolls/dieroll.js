@@ -271,7 +271,13 @@ export async function doRoll({
         rollType = game.i18n.localize('GURPS.block')
         break
       case 'skill-spell':
-        if (chatthing.toLowerCase().includes('@sk:')) {
+        if (item) {
+          const isSkill = item.type === 'skill'
+
+          rollType = isSkill ? game.i18n.localize('GURPS.skill') : game.i18n.localize('GURPS.spell')
+          itemIcon = isSkill ? 'fa-solid fa-book' : 'fa-solid fa-wand-magic-sparkles'
+          itemColor = isSkill ? '#015401' : '#6f63d9'
+        } else if (chatthing.toLowerCase().includes('@sk:')) {
           itemIcon = 'fa-solid fa-book'
           itemColor = '#015401'
           rollType = game.i18n.localize('GURPS.skill')
