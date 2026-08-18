@@ -23,6 +23,7 @@
   - You may need to delete the techniques and reimport to apply the fix.
 - Can't modify Advantage points to be negative. \#2844
 - Roll Confirmation dialog shows "Spell" if the OTF has "S:" even if the item is a Skill \#2851
+- /showmbs is not working \#2853
 
 ## Release 0.18.20 06/18/2026
 
