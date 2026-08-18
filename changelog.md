@@ -21,6 +21,7 @@
 - GCS v5 import: spell points inside containers are not summed (+ minor: importSp never sets spl.level) \#2772
 - Techniques include "[object Object]" string literal since recent GCS update \#2781
   - You may need to delete the techniques and reimport to apply the fix.
+- Can't modify Advantage points to be negative. \#2844
 
 ## Release 0.18.20 06/18/2026
 
