@@ -250,7 +250,7 @@ class ReimportChatProcessor extends ChatProcessor {
     this.priv(line)
     let actornames = line.replace(/^\/reimport/, '').trim()
     actornames = splitArgs(actornames)
-    let allPlayerActors = game.actors.entities.filter(a => a.hasPlayerOwner)
+    let allPlayerActors = game.actors.contents.filter(a => a.hasPlayerOwner)
     let actors = []
     for (const name of actornames) {
       let actor = allPlayerActors.find(a => a.name.match(makeRegexPattern(name, false)))
@@ -634,7 +634,7 @@ class SelectChatProcessor extends ChatProcessor {
           return game.actors.get(t.actorId)
         }) || []
 
-      if (!!m[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
+      if (!!m[4]) list = game.actors.contents // ! means check all actors, not just ones on scene
       let a = list.filter(a => a?.name?.match(pat))
       let msg = game.i18n.localize('GURPS.chatMoreThanOneActor') + " '" + m[3] + "': " + a.map(e => e.name).join(', ')
       if (a.length == 0 || a.length > 1) {
@@ -857,7 +857,7 @@ class LightChatProcessor extends ChatProcessor {
   }
   matches(line) {
     this.match = line.match(
-/^\/(light|li)(?: +|$)(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<luminosity>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li)(?: +|$)(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<luminosity>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
     return !!this.match
   }

@@ -6,7 +6,7 @@
 
 ### Bugfixes
 
-- 17.17 The /light command has multiple bugs \#2134
+- 17.17 The `/light` command has multiple bugs \#2134
 - Inventory of unlinked tokens \#2052
 - Multiple Foundry Native Items with Features + Bonuses negate one Bonus \#1861
 - GCS Body Plan not uploaded correctly \#1832
@@ -23,7 +23,8 @@
   - You may need to delete the techniques and reimport to apply the fix.
 - Can't modify Advantage points to be negative. \#2844
 - Roll Confirmation dialog shows "Spell" if the OTF has "S:" even if the item is a Skill \#2851
-- /showmbs is not working \#2853
+- `/showmbs` is not working \#2853
+- `/reimport` fails with "Cannot read properties of undefined (reading 'filter')" \#2856
 
 ## Release 0.18.20 06/18/2026
 
