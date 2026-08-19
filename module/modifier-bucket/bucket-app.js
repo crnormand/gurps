@@ -215,7 +215,7 @@ class ModifierStack {
     this.displaySum = displayMod(this.currentSum)
     this.plus = this.currentSum > 0 || this.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
     this.minus = this.currentSum < 0
-    game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
+    game.user?.setFlag('gurps', 'modifierstack', { modifierList: this.modifierList, displaySum: this.displaySum }) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
     let rs = this.modifierList.find(m => m.desc.includes(game.i18n.localize('GURPS.modifiers_.rapidStrike')))
@@ -566,9 +566,11 @@ export class ModifierBucket extends Application {
       return
     }
     let mb = GURPS.ModifierBucket.modifierStack
-    if (game.user?.hasRole('GAMEMASTER'))
+    if (game.user?.isGM)
       // Only actual GMs can update other user's flags
-      users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
+      users.forEach(u =>
+        u.setFlag('gurps', 'modifierstack', { modifierList: mb.modifierList, displaySum: mb.displaySum })
+      ) // Only used by /showmbs.   Not used by local users.
     let ctrl = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
     game.socket?.emit('system.gurps', {
       type: 'updatebucket',
