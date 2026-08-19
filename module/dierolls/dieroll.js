@@ -277,14 +277,14 @@ export async function doRoll({
           rollType = isSkill ? game.i18n.localize('GURPS.skill') : game.i18n.localize('GURPS.spell')
           itemIcon = isSkill ? 'fa-solid fa-book' : 'fa-solid fa-wand-magic-sparkles'
           itemColor = isSkill ? '#015401' : '#6f63d9'
-        } else if (chatthing.toLowerCase().includes('@sk:')) {
-          itemIcon = 'fa-solid fa-book'
-          itemColor = '#015401'
-          rollType = game.i18n.localize('GURPS.skill')
-        } else {
+        } else if (action?.isSpellOnly) {
           itemIcon = 'fa-solid fa-wand-magic-sparkles'
           itemColor = '#6f63d9'
           rollType = game.i18n.localize('GURPS.spell')
+        } else {
+          itemIcon = 'fa-solid fa-book'
+          itemColor = '#015401'
+          rollType = game.i18n.localize('GURPS.skill')
         }
         break
       case 'controlroll':

@@ -430,6 +430,8 @@ if (!globalThis.GURPS) {
     let skillLevel = skill.level
     // @ts-ignore
     action.obj = skill
+    if (skill?.type === 'SKILL') action.isSkillOnly = true
+    if (skill?.class) action.isSpellOnly = true
 
     // on a floating skill check, we want the skill with the highest relative skill level
     if (!!action.floatingAttribute) {
