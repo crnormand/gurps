@@ -31,6 +31,14 @@ function getGurpsPDFSheetV2() {
 
   class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet {
     /** @inheritDoc */
+    constructor(options) {
+      options = foundry.utils.mergeObject(options, {
+        position: { width: 600, height: 780 },
+      })
+      super(options)
+    }
+
+    /** @inheritDoc */
     static EDIT_PARTS = {
       header: super.EDIT_PARTS?.header,
       content: {
