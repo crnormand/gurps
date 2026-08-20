@@ -1,5 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.22
+
+### Features
+
+### Bugfixes
+
+- v0.18.21: Token HUD images are mising /#2864
+
 ## Release 0.18.21 08/19/2026
 
 ### Features

@@ -37,8 +37,8 @@ export class GurpsTokenHUDV2<
     const maneuverIcon = GURPS.Maneuvers.get(currentManeuverId)?.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png'
 
     Object.assign(context, {
-      icons: { maneuvers: maneuverIcon },
-      // TODO: revise any to specific type
+      icons: { maneuvers: maneuverIcon, ...context.icons },
+
       maneuvers: Object.entries(GURPS.Maneuvers.getAll()).map(([id, maneuver]: [string, any]) => {
         return {
           cssClass: activeEffects.some(effect =>
