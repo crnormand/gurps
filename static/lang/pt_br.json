@@ -1308,16 +1308,16 @@
       "feature": {
         "crChoices": {
           "0": "Nunca resistir",
-          "6": "6 (Resiste raramente)",
-          "7": "7 (Resiste raramente; não padrão)",
-          "8": "8 (Resiste raramente; não padrão)",
-          "9": "9 (Resiste com alguma frequência)",
           "10": "10 (Resiste com alguma frequência; não padrão)",
           "11": "11 (Resiste com alguma frequência; não padrão)",
           "12": "12 (Resiste frequentemente)",
           "13": "13 (Resiste frequentemente; não padrão)",
           "14": "14 (Resiste frequentemente; não padrão)",
           "15": "15 (Resiste quase sempre)",
+          "6": "6 (Resiste raramente)",
+          "7": "7 (Resiste raramente; não padrão)",
+          "8": "8 (Resiste raramente; não padrão)",
+          "9": "9 (Resiste com alguma frequência)",
           "none": "Nenhum necessário"
         },
         "FIELDS": {
@@ -1724,8 +1724,8 @@
     "normal": "Normal",
     "notAffected": "não é afetado(a).",
     "noTargetSelected": "Nenhum Alvo selecionado",
-    "notes": "Notas",
     "noteBlank": "Esta nota foi intencionalmente deixada em branco.",
+    "notes": "Notas",
     "noUserForDamageWarning": "Você não pode aplicar dano a um alvo usando o dano de outro usuário.",
     "noViableSkill": "Este personagem não possui uma habilidade viável (nível efetivo 3 ou superior) que possa ser rolada",
     "number": "Número",
@@ -1756,8 +1756,9 @@
       "offsetPlaceholder": "Ajuste: (ex.: -5, 0 ou 2)",
       "settings": {
         "basicPDFs": "PDFs do Basic Set",
-        "basicPDFsCombined": "Basic Set Combinado (código 'B')",
-        "basicPDFsHint": "Selecione 'Combinado' ou 'Separado' e use os códigos de PDF associados. Nota: Se você selecionar 'Separado', o PDF de Campanhas do Basic Set deve abrir na página 340 durante o teste.",
+        "basicPDFsCombined": "Basic Set Combinado ('B')",
+        "basicPDFsHint": "Selecione 'Combinado' ou 'Separado' e use os códigos de PDF correspondentes. Observação: se você selecionar 'Separado', o PDF de Campanhas do Basic Set deve abrir até a página 340 durante o teste. Se você selecionar 'Basic Revised', use um ajuste de 10.",
+        "basicPDFsRevised": "Basic Revised (B)",
         "basicPDFsSeparate": "Separado (Personagens, 'B'; Campanhas, 'BX')",
         "button": "Configurações de PDF",
         "hint": "Configure como os PDFs são manipulados.",
@@ -2123,6 +2124,7 @@
         "pound": "kg.",
         "primaryAttributes": "Atributos Primários",
         "reactionModifiers": "Reações",
+        "reference": "Ref",
         "secondaryAttributes": "Atributos Secundários",
         "skillLevel": "SL",
         "skillRelativeLevel": "RSL",
@@ -2130,6 +2132,7 @@
         "spells": "Magias",
         "techLevel": "TL",
         "traits": "Características",
+        "uses": "Usos",
         "weaponAccuracy": "Prec.",
         "weaponBlock": "Bloco",
         "weaponBulk": "Bulk",
@@ -2143,9 +2146,7 @@
         "weaponROF": "Cad.",
         "weaponShots": "Tiros",
         "weaponST": "ST",
-        "weaponUsage": "Uso",
-        "reference": "Ref",
-        "uses": "Usos"
+        "weaponUsage": "Uso"
       },
       "hitLocation": {
         "dr": "DR",

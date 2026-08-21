@@ -1,7 +1,12 @@
 class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet {
+  /** @inheritDoc */
   static override DEFAULT_OPTIONS = {
     form: {
       closeOnSubmit: true,
+    },
+    position: {
+      width: 600,
+      height: 780,
     },
   }
 
