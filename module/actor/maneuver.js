@@ -22,11 +22,11 @@ const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target'
 const MANEUVER_NAME_AIM = 'aim'
 
 /**
- * @typedef {{id: string, flags: { gurps: { name: string, move?: string, defense?: string, fullturn?: Boolean, img: string, alt?: string|null} } }} ManeuverEffect
+ * @typedef {{id: string, flags: { gurps: { name: string, move?: string, defense?: string, fullturn?: Boolean, img: string, altImg?: string|null} } }} ManeuverEffect
  * @typedef {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData').ActiveEffectDataConstructorData & ManeuverEffect} ManeuverData
  */
 
-/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, img: string, alt?: string|null, introducedBy?: string|null}} _data */
+/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, img: string, altImg?: string|null, introducedBy?: string|null}} _data */
 
 /**
  * The purpose of this class is to help generate data that can be used in an ActiveEffect.
@@ -41,7 +41,7 @@ class Maneuver {
     data.defense = data.defense || DEFENSE_ANY
     data.fullturn = !!data.fullturn
     data.img = Maneuver.filepath + data.img
-    data.alt = !!data.alt ? Maneuver.filepath + data.alt : null
+    data.altImg = !!data.altImg ? Maneuver.filepath + data.altImg : null
     data.introducedBy = data.introducedBy ?? null
     this._data = data
   }
@@ -72,7 +72,8 @@ class Maneuver {
           defense: this._data.defense,
           fullturn: this._data.fullturn,
           img: this._data.img,
-          alt: this._data.alt,
+          altImg: this._data.altImg,
+          altLabel: this._data.altLabel,
           statusId: MANEUVER,
         },
       },
@@ -170,13 +171,16 @@ const maneuvers = {
     name: 'feint',
     img: 'man-feint.png',
     label: 'GURPS.maneuverFeint',
-    alt: 'man-attack.png',
+    altImg: 'man-attack.png',
+    altLabel: 'GURPS.maneuverAttack',
   }),
   committed_attack_ranged: new Maneuver({
     name: 'committed_attack_ranged',
     move: MOVE_TWO_STEPS,
     img: 'man-aoa-suppress.png',
     label: 'GURPS.maneuverCommittedAttackRanged',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
     introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
   }),
   allout_attack: new Maneuver({
@@ -192,14 +196,17 @@ const maneuvers = {
     defense: DEFENSE_NONE,
     img: 'man-aoa-determined.png',
     label: 'GURPS.maneuverAllOutAttackDetermined',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_ranged: new Maneuver({
     name: 'aoa_ranged',
     move: MOVE_NONE,
     defense: DEFENSE_NONE,
     img: 'man-aoa-suppress.png',
+    altImg: 'man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackRanged',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_double: new Maneuver({
     name: 'aoa_double',
@@ -207,7 +214,8 @@ const maneuvers = {
     defense: DEFENSE_NONE,
     img: 'man-aoa-double.png',
     label: 'GURPS.maneuverAllOutAttackDouble',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_feint: new Maneuver({
     name: 'aoa_feint',
@@ -215,23 +223,26 @@ const maneuvers = {
     defense: DEFENSE_NONE,
     img: 'man-aoa-feint.png',
     label: 'GURPS.maneuverAllOutAttackFeint',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_strong: new Maneuver({
     name: 'aoa_strong',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
     img: 'man-aoa-strong.png',
     label: 'GURPS.maneuverAllOutAttackStrong',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_suppress: new Maneuver({
     name: 'aoa_suppress',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
     img: 'man-aoa-suppress.png',
     label: 'GURPS.maneuverAllOutAttackSuppressFire',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   move_and_attack: new Maneuver({
     name: 'move_and_attack',
@@ -249,27 +260,32 @@ const maneuvers = {
   aod_dodge: new Maneuver({
     name: 'aod_dodge',
     move: MOVE_HALF,
-    alt: 'man-defense.png',
+    altImg: 'man-defense.png',
     img: 'man-def-dodge.png',
     label: 'GURPS.maneuverAllOutDefenseDodge',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_parry: new Maneuver({
     name: 'aod_parry',
-    alt: 'man-defense.png',
+    altImg: 'man-defense.png',
     img: 'man-def-parry.png',
     label: 'GURPS.maneuverAllOutDefenseParry',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_block: new Maneuver({
     name: 'aod_block',
-    alt: 'man-defense.png',
+    altImg: 'man-defense.png',
     img: 'man-def-block.png',
     label: 'GURPS.maneuverAllOutDefenseBlock',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_double: new Maneuver({
     name: 'aod_double',
-    alt: 'man-defense.png',
+    altImg: 'man-defense.png',
     img: 'man-def-double.png',
+    img: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDouble',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   ready: new Maneuver({
     name: 'ready',

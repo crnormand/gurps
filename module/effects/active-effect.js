@@ -133,6 +133,10 @@ export default class GurpsActiveEffect extends ActiveEffect {
     }
   }
 
+  isPosture() {
+    return this.getFlag('gurps', 'effect.type') === 'posture'
+  }
+
   get endCondition() {
     return this.getFlag('gurps', 'endCondition')
   }
