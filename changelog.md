@@ -6,8 +6,9 @@
 
 ### Bugfixes
 
-- v0.18.21: Token HUD images are mising /#2864
+- v0.18.21: Token HUD images are mising \#2864
 - Tweak the initial size of the PDF Journal Page to show a whole page \#2866
+- v0.18.21: Maneuver icons do not display \#2870
 
 ## Release 0.18.21 08/19/2026
 
