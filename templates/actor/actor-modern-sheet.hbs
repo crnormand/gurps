@@ -54,7 +54,7 @@
           {{#with (getManeuver system.conditions.maneuver) as |maneuver|}}
           <span>{{localize maneuver.label}}</span>
           <span class='ms-maneuver-icons'>
-            <img src='{{maneuver.icon}}' />
+            <img src='{{maneuver.img}}' />
             <i class='fa-solid fa-caret-down'></i>
           </span>
           {{/with}}
@@ -63,7 +63,7 @@
           {{#each (listAllManeuvers) as |this key|}}
           <div class='ms-maneuver-option' data-value='{{key}}'>
             <span>{{localize this.label}}</span>
-            <img src='{{this.icon}}' />
+            <img src='{{this.img}}' />
           </div>
           {{/each}}
         </div>
@@ -77,7 +77,7 @@
       {{#unless this.disabled}}
       <span class='ms-effect-tag {{effectTagClass this}}' data-effect-id='{{this.id}}' title='{{this.name}}'>
         <span class='ms-effect-icon-wrapper'>
-          {{#if this.icon}}<img src='{{this.icon}}' class='ms-effect-icon' />{{/if}}
+          {{#if this.img}}<img src='{{this.img}}' class='ms-effect-icon' />{{/if}}
           <button class='ms-effect-delete' data-action='delete-effect' data-effect-id='{{this.id}}' title='Delete'>
             <i class='fa-solid fa-trash'></i>
           </button>

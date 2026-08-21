@@ -48,7 +48,7 @@ export class GurpsTokenHUDV2<
           )
             ? 'active'
             : '',
-          src: maneuver._data.icon,
+          src: maneuver._data.img,
           title: game.i18n?.localize(maneuver._data.label) ?? maneuver._data.label,
           id,
         }
