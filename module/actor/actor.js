@@ -133,21 +133,70 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * Retrieve the list of ActiveEffects that are currently applied to this Actor.
+   * @type {ActiveEffect[]}
+   */
+  get appliedEffects() {
+    let effects = super.appliedEffects.sort((a, b) => a.sort - b.sort)
+
+    if (effects.length > 0) {
+      // Move Maneuver and Posture effects to the front of the list, if they exist.
+      const maneuverEffect = effects.find(e => e.getFlag('gurps', 'statusId') === 'maneuver')
+      const postureEffect = effects.find(e => e.getFlag('gurps', 'effect.type') === 'posture')
+      const remaining = effects.filter(e => e !== maneuverEffect && e !== postureEffect)
+
+      if ((maneuverEffect || postureEffect) && remaining.length > 0) {
+        const sortedArray = []
+        if (maneuverEffect) sortedArray.push(maneuverEffect)
+        if (postureEffect) sortedArray.push(postureEffect)
+        effects = [...sortedArray, ...remaining]
+      }
+
+      if (maneuverEffect) {
+        // If there is a maneuver effect, set what's visible to the user based on his role and the world settings.
+        const visibility = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
+        if (visibility === 'NoOne') maneuverEffect.showIcon = 0
+        if (visibility === 'GMAndOwner') {
+          if (!game.user?.isGM && !maneuverEffect.isOwner) {
+            maneuverEffect.showIcon = 0
+          } else {
+            maneuverEffect.showIcon = 2
+          }
+        }
+
+        // If the current user is neither GM nor actor owner, display the alternate image if available UNLESS the
+        // detail setting is "Full".
+        const detail = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
+        if (detail !== 'Full' && !game.user?.isGM && !maneuverEffect.isOwner) {
+          maneuverEffect.img = maneuverEffect.getFlag('gurps', 'altImg') ?? maneuverEffect.img
+          maneuverEffect.name = maneuverEffect.getFlag('gurps', 'altLabel') ?? maneuverEffect.name
+        }
+      }
+    }
+
+    return effects
+  }
+
+  /**
+   * @override Sort Maneuvers to the front of the temporary effects.
+   * @since Foundry v12
+   * @returns {ActiveEffect.Implementation[]} The temporary effects of the actor.
+   */
+  get temporaryEffects() {
+    const effects = []
+    for (const effect of this.appliedEffects) {
+      if (effect.isTemporary) effects.push(effect)
+    }
+    return effects
+  }
+
   /** @override */
   _onUpdate(changed, options, userId) {
     if (changed.flags?.core?.sheetClass !== undefined && game.user.id !== userId) {
       delete changed.flags.core.sheetClass
     }
     super._onUpdate(changed, options, userId)
-  }
-
-  prepareData() {
-    super.prepareData()
-    // By default, it does this:
-    // this.data.reset()
-    // this.prepareBaseData()
-    // this.prepareEmbeddedEntities()
-    // this.prepareDerivedData()
   }
 
   prepareBaseData() {
@@ -193,11 +242,6 @@ export class GurpsActor extends Actor {
     }
 
     this.system.trackersByName = this.trackersByName
-  }
-
-  prepareEmbeddedEntities() {
-    // Calls this.applyActiveEffects()
-    super.prepareEmbeddedEntities()
   }
 
   prepareDerivedData() {
@@ -2378,33 +2422,6 @@ export class GurpsActor extends Actor {
     }
 
     return defenses
-  }
-
-  /**
-   * @override Sort Maneuvers to the front of the temporary effects.
-   * @since Foundry v12
-   * @returns {ActiveEffect.Implementation[]} The temporary effects of the actor.
-   */
-  get temporaryEffects() {
-    const allEffects = super.temporaryEffects
-    const maneuver = allEffects.find(e => e.isManeuver)
-    if (!maneuver) return allEffects
-
-    const effects = allEffects.filter(e => !e.isManeuver)
-
-    const visibility = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
-    if (visibility === 'NoOne') return effects
-
-    if (!game.user?.isGM && !this.isOwner) {
-      if (visibility === 'GMAndOwner') return effects
-
-      const detail = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
-      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
-        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
-      }
-    }
-
-    return [maneuver, ...effects]
   }
 
   /**
