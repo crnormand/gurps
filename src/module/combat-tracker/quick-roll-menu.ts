@@ -1,15 +1,16 @@
+import { GurpsToken } from '@module/token/gurps-token.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import { TokenActions } from '../token-actions.js'
 
-export const addQuickRollButton = async (html, combatant, token) => {
-  const quickRollSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
-  const canShowButtons = quickRollSettings.enabled && (game.user.isGM || combatant.isOwner)
+export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant, token: GurpsToken) => {
+  const quickRollSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
+  const canShowButtons = quickRollSettings?.enabled && (game.user?.isGM || combatant.isOwner)
 
   if (!canShowButtons || !token?.actor) return html
 
   const buttonClass = `combatant-control`
-  let quickRollButton = $(
+  const quickRollButton = $(
     `<a class="${buttonClass}"
           aria-label="Quick Roll"
           role="button"
@@ -54,9 +55,9 @@ export const addQuickRollButton = async (html, combatant, token) => {
       // Count the number of <li> elements below the selected one
       const lisBelow = allLis.slice(selectedIndex + 1).length
       const popout = $('#combat-popout')
-      const menuHeight = menu.outerHeight(true)
-      const trackerHeight = popout.outerHeight(true)
-      const additionalHeight = lisBelow * selectedLi.outerHeight(true)
+      const menuHeight = menu.outerHeight(true) ?? 0
+      const trackerHeight = popout.outerHeight(true) ?? 0
+      const additionalHeight = lisBelow * (selectedLi.outerHeight(true) ?? 0)
 
       popout.css('min-height', `${menuHeight + trackerHeight - additionalHeight}px`)
     } else {
@@ -92,7 +93,7 @@ export const addQuickRollButton = async (html, combatant, token) => {
 }
 
 export const addQuickRollListeners = () => {
-  const updateText = event => {
+  const updateText = (event : any) => {
     // find all buttons and make the change
     const buttons = $(document).find('.quick-roll-button.sm.atk')
 
@@ -114,8 +115,15 @@ export const addQuickRollListeners = () => {
       event.preventDefault()
       event.stopPropagation()
       const combatantId = $(this).data('combatant-id')
-      const combatant = game.combat.combatants.get(combatantId)
-      const token = canvas.tokens.get(combatant.token.id)
+      const combatant = game.combat?.combatants.get(combatantId)
+
+      if (!combatant || !combatant.token?.id) {
+        console.warn(`Combatant not found for id: ${combatantId}`)
+
+        return
+      }
+
+      const token = canvas?.tokens?.get(combatant.token.id)
       const actions = await TokenActions.fromToken(token)
 
       actions.blindAsDefault = !actions.blindAsDefault
@@ -157,8 +165,22 @@ export const addQuickRollListeners = () => {
 
       const button = $(this)
       const combatantId = button.data('combatant-id')
-      const combatant = game.combat.combatants.get(combatantId)
-      const token = canvas.tokens.get(combatant.token.id)
+      const combatant = game.combat?.combatants.get(combatantId)
+
+     if (!combatant || !combatant.token?.id) {
+              console.warn(`Combatant not found for id: ${combatantId}`)
+
+              return
+            }
+
+      const token = canvas?.tokens?.get(combatant.token.id)
+
+      if (!token || !token.actor) {
+        console.warn(`Token or actor not found for combatant: ${combatant.name ?? 'unknown'}`)
+
+        return
+      }
+
       const actions = await TokenActions.fromToken(token)
       const actor = token.actor
 
