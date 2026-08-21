@@ -1,5 +1,35 @@
 {
+  "name": "gurps",
+  "version": "1.0.0",
   "description": "GURPS Game Aid",
+  "type": "module",
+  "allowScripts": {
+    "@parcel/watcher": true,
+    "fsevents@2.3.3": true,
+    "unrs-resolver@1.11.1": true
+  },
+  "scripts": {
+    "build": "npm run clean && npm run build:static && npm run build:code && npm run build:styles",
+    "build:code": "tsc && tsc-alias -p tsconfig.json",
+    "build:static": "node build/sync-static-files.js",
+    "build:styles": "sass --no-source-map src/styles/gurps.scss:dist/styles/gurps.css",
+    "clean": "node build/clean.js",
+    "dev": "npm run clean && npm run watch",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "foundry:release": "node build/foundry-release.cjs",
+    "foundry:release:dry-run": "node build/foundry-release.cjs --dry-run",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky",
+    "tdd": "vitest --coverage",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test",
+    "watch": "node build/watch.mjs",
+    "watch:code": "tsc-watch -p tsconfig.json --onSuccess \"tsc-alias -p tsconfig.json\" --onFailure \"tsc-alias -p tsconfig.json\"",
+    "watch:styles": "sass --watch --update src/styles/gurps.scss:dist/styles/gurps.css"
+  },
   "devDependencies": {
     "@types/jquery": "^3.5.32",
     "@types/node": "^22.14.1",
@@ -19,36 +49,5 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.50.0",
     "vitest": "^4.1.0"
-  },
-  "name": "gurps",
-  "scripts": {
-    "build": "npm run clean && npm run build:static && npm run build:code && npm run build:styles",
-    "build:code": "tsc && tsc-alias -p tsconfig.json",
-    "build:static": "node build/sync-static-files.js",
-    "build:styles": "sass --no-source-map src/styles/gurps.scss:dist/styles/gurps.css",
-    "clean": "node build/clean.js",
-    "dev": "npm run clean && npm run watch",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "foundry:release": "node build/foundry-release.cjs",
-    "foundry:release:dry-run": "node build/foundry-release.cjs --dry-run",
-    "gen:actor-methods": "node dev/scripts/generate-actor-methods.mjs",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "prepare": "husky",
-    "tdd": "vitest --coverage",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit",
-    "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test",
-    "watch": "node build/watch.mjs",
-    "watch:code": "tsc-watch -p tsconfig.json --onSuccess \"tsc-alias -p tsconfig.json\" --onFailure \"tsc-alias -p tsconfig.json\"",
-    "watch:styles": "sass --watch --update src/styles/gurps.scss:dist/styles/gurps.css"
-  },
-  "type": "module",
-  "version": "1.0.0",
-  "allowScripts": {
-    "@parcel/watcher": true,
-    "fsevents@2.3.3": true,
-    "unrs-resolver@1.11.1": true
   }
 }
