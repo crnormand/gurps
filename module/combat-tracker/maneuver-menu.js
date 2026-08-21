@@ -21,7 +21,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   const currentManeuver = document.createElement('img')
   currentManeuver.className = 'token-effect maneuver-badge'
-  currentManeuver.src = actorManeuver.icon
+  currentManeuver.src = actorManeuver.img
 
   // Add active class if initialized.
   const initiative = combatant?.initiative
