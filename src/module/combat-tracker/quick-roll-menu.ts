@@ -43,7 +43,7 @@ export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant
     // Let the #combat-popout has the correct height based on opened menu
     if (menu.is(':visible')) {
       // Set menu top position to quick roll button position + offset
-      const menuOffset = $(this).position().top + 40
+      const menuOffset = this.offsetTop + this.offsetHeight
 
       menu.css('top', `${menuOffset}px`)
 
