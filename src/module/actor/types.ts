@@ -17,8 +17,8 @@ interface CheckInfo {
   otf: string
   otfDamage?: string
   isOTF?: boolean
+  type?: string
 }
-
 /* ---------------------------------------- */
 
 interface CanRollResult {
