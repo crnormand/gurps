@@ -1498,6 +1498,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
                 value: displayItem.level,
                 mode: displayItem.usage,
                 otf: displayItem.otf.level,
+                damage: displayItem.damage,
                 isOTF: true,
                 otfDamage: displayItem.otf.damage,
                 type: attack.type === 'meleeAttack' ? 'melee' : 'ranged',
