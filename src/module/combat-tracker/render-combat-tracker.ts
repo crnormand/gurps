@@ -1,7 +1,7 @@
 import { DragDropType } from '../drag-drop-types.js'
 
 import { addManeuverMenu } from './maneuver-menu.js'
-import { addQuickRollButton, addQuickRollListeners } from './quick-roll-menu.js'
+import { addQuickRollButton } from './quick-roll-menu.js'
 
 export async function renderCombatTracker(_app: any, element: HTMLElement, _options: any, _context: any) {
   if (!element.classList.contains('bound')) {
@@ -156,6 +156,4 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
     await addManeuverMenu(combatantElement, combatant, token)
   }
 
-  // Add Quick Roll Listeners.
-  addQuickRollListeners()
 }

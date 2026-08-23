@@ -183,7 +183,10 @@ export class TokenActions {
     this.evaluateTurns = savedTokenData.evaluateTurns || 0
     this.readyTurns = savedTokenData.readyTurns || 0
     this.moveTurns = savedTokenData.moveTurns || 0
-    this.blindAsDefault = savedTokenData.blindAsDefault !== null ? savedTokenData.blindAsDefault : game.user.isGM
+    this.blindAsDefault =
+      savedTokenData.blindAsDefault !== null && savedTokenData.blindAsDefault !== undefined
+        ? savedTokenData.blindAsDefault
+        : game.user.isGM
 
     return this
   }

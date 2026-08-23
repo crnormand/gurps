@@ -10,7 +10,7 @@ export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant
   if (!canShowButtons || !token?.actor) return html
 
   const buttonClass = `combatant-control`
-  const quickRollButton = $(
+  const quickRollButton = foundry.utils.parseHTML(
     `<a class="${buttonClass}"
           aria-label="Quick Roll"
           role="button"
@@ -18,56 +18,81 @@ export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant
           data-combatant-id="${combatant.id}"
           data-tooltip="GURPS.quickRollMenu"
           id="quick-roll-${combatant.id}">
-          <i class="fa-solid fa-dice-five"></i>`
-  )
+          <i class="fa-solid fa-dice-five"></i>
+    </a>`
+  ) as HTMLElement
 
   // Add Quick Button and Menu Listeners
-  quickRollButton.on('click', async function (event) {
+  quickRollButton.addEventListener('click', async function (event) {
     event.preventDefault()
     event.stopPropagation()
 
-    const clickedMenuId = $(this).data('combatant-id')
+    const clickedMenuId = this.dataset.combatantId
 
-    $(`.${buttonClass}`).each(function () {
-      const menuId = $(this).data('combatant-id')
+    document.querySelectorAll(`.${buttonClass}`).forEach(function (element) {
+      const menuId = (element as HTMLElement).dataset.combatantId
 
       if (!!menuId && clickedMenuId !== menuId) {
-        $(this).parents().siblings('.quick-roll-menu').hide()
+        const otherMenu = (element as HTMLElement).closest('li')?.querySelector('.quick-roll-menu')
+
+        if (otherMenu) (otherMenu as HTMLElement).style.display = 'none'
       }
     })
 
-    const menu = $(this).parents().siblings('.quick-roll-menu')
+    const menu = this.closest('li')?.querySelector('.quick-roll-menu') as HTMLElement | null
 
-    menu.toggle()
+    if (!menu) {
+      console.warn(`Quick Roll Menu not found for combatant: ${combatant.name ?? 'unknown'}`)
 
-    // Let the #combat-popout has the correct height based on opened menu
-    if (menu.is(':visible')) {
+      return
+    }
+
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none'
+
+    if (menu.style.display !== 'none') {
       // Set menu top position to quick roll button position + offset
       const menuOffset = this.offsetTop + this.offsetHeight
 
-      menu.css('top', `${menuOffset}px`)
+      menu.style.top = `${menuOffset}px`
+    }
 
-      // Find the selected <li> element
-      const selectedLi = $(this).closest('[class*="combatant actor directory-item flexrow"]')
-      const allLis = $('#combat-tracker [class*="combatant actor directory-item flexrow"]')
-      const selectedIndex = allLis.index(selectedLi)
+    const popOut = this.closest('#combat-popout') as HTMLElement | null
 
-      // Count the number of <li> elements below the selected one
-      const lisBelow = allLis.slice(selectedIndex + 1).length
-      const popout = $('#combat-popout')
-      const menuHeight = menu.outerHeight(true) ?? 0
-      const trackerHeight = popout.outerHeight(true) ?? 0
-      const additionalHeight = lisBelow * (selectedLi.outerHeight(true) ?? 0)
+    if (popOut) {
+      // Let the #combat-popout has the correct height based on opened menu
+      if (menu.style.display !== 'none') {
+        // Find the selected <li> element
+        const selectedLi = this.closest('li.combatant')
 
-      popout.css('min-height', `${menuHeight + trackerHeight - additionalHeight}px`)
-    } else {
-      $('#combat-popout').css('min-height', `unset`).css('height', `auto`)
+        if (!selectedLi) {
+          console.warn(`Selected <li> element not found for combatant: ${combatant.name ?? 'unknown'}`)
+
+          return
+        }
+
+        const allLis = popOut.querySelectorAll('li.combatant')
+        const selectedIndex = Array.from(allLis).indexOf(selectedLi)
+
+        // Count the number of <li> elements below the selected one
+        const lisBelow = allLis.length - selectedIndex - 1
+        const menuHeight = menu.offsetHeight ?? 0
+        const trackerHeight = popOut.offsetHeight ?? 0
+        const additionalHeight =
+          lisBelow *
+          ((selectedLi as HTMLElement)?.offsetHeight +
+            (parseInt(getComputedStyle(selectedLi as HTMLElement).marginBottom) || 0))
+
+        popOut.style.minHeight = `${menuHeight + trackerHeight - additionalHeight}px`
+      } else {
+        popOut.style.minHeight = `unset`
+        popOut.style.height = `auto`
+      }
     }
   })
 
-  const combatantControlsDiv = $(html).find('.combatant-controls').first()
+  const combatantControlsDiv = html.querySelector('.combatant-controls')
 
-  combatantControlsDiv.prepend(quickRollButton)
+  combatantControlsDiv?.prepend(quickRollButton)
 
   // Add Quick Roll Menu
   const actions = await TokenActions.fromToken(token)
@@ -77,7 +102,7 @@ export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant
     {
       actor,
       combatant,
-      blindRoll: actions.blindAsDefault,
+      blindRoll: actions.blindAsDefault ?? true,
       attributeChecks: actor.getChecks('attributeChecks'),
       otherChecks: actor.getChecks('otherChecks'),
       attackChecks: actor.getChecks('attackChecks'),
@@ -85,36 +110,43 @@ export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant
       markedChecks: actor.getChecks('markedChecks'),
     }
   )
-  const quickMenu = $(quickRollMenu)
 
-  $(html).append(quickMenu)
+  const quickRollMenuElement = foundry.utils.parseHTML(quickRollMenu) as HTMLElement
+
+  quickRollMenuElement.style.display = 'none'
+
+  addQuickRollListeners(quickRollMenuElement)
+
+  html.append(quickRollMenuElement)
 
   return html
 }
 
-export const addQuickRollListeners = () => {
-  const updateText = (event : any) => {
+export const addQuickRollListeners = (html: HTMLElement) => {
+  const updateText = (event: any) => {
     // find all buttons and make the change
-    const buttons = $(document).find('.quick-roll-button.sm.atk')
+    const buttons = html.querySelectorAll('.quick-roll-button.lg.atk') as NodeListOf<HTMLElement>
 
-    buttons.each(function () {
-      const attackValue = $(this).find('.qr-attack-value')
+    buttons.forEach(function (button) {
+      const attackValue = button.querySelector('.qr-attack-value') as HTMLSpanElement
 
       if (event.ctrlKey) {
-        attackValue.text($(this).data('damage'))
+        attackValue.textContent = button.dataset.damage ?? ''
       } else {
-        attackValue.text($(this).data('skill'))
+        attackValue.textContent = button.dataset.skill ?? ''
       }
     })
   }
 
   // Resolve Roll Type Toggle
-  $(document)
-    .off('click', '.quick-roll-blind-toggle')
-    .on('click', '.quick-roll-blind-toggle', async function (event) {
+  html.querySelectorAll('.quick-roll-blind-toggle').forEach(element =>
+    element.addEventListener('click', async function (event: Event) {
       event.preventDefault()
       event.stopPropagation()
-      const combatantId = $(this).data('combatant-id')
+      const combatantId = (event.target as HTMLElement).dataset.combatantId
+
+      if (!combatantId) return
+
       const combatant = game.combat?.combatants.get(combatantId)
 
       if (!combatant || !combatant.token?.id) {
@@ -127,51 +159,53 @@ export const addQuickRollListeners = () => {
       const actions = await TokenActions.fromToken(token)
 
       actions.blindAsDefault = !actions.blindAsDefault
+
       await actions.save()
-      $(this)
-        .find('.qr-blind')
-        .each(function () {
-          $(this).toggleClass('active')
-        })
+      ;(event.target as HTMLElement).querySelectorAll('.qr-blind').forEach(function (element: Element) {
+        element.classList.toggle('active')
+      })
     })
+  )
 
   // Resolve Ctrl Key when hovering Quick Roll menu
-  $(document)
-    .off('mouseover', '.quick-roll-menu')
-    .on('mouseover', '.quick-roll-menu', function (event) {
-      $(document).on('keydown', updateText)
-      $(document).on('keyup', updateText)
+  html.addEventListener('mouseover', function (event: Event) {
+    document.addEventListener('keydown', updateText)
+    document.addEventListener('keyup', updateText)
 
-      updateText(event)
-    })
-  $(document)
-    .off('mouseout', '.quick-roll-menu')
-    .on('mouseout', '.quick-roll-menu', function () {
-      const button = $(this)
-      const attackValue = button.find('.qr-attack-value')
+    updateText(event)
+  })
 
-      attackValue.text(button.data('skill'))
+  html.addEventListener('mouseout', function (event: Event) {
+    if (!event.currentTarget) return
+    const button = (event.currentTarget as HTMLElement).querySelectorAll(
+      '.quick-roll-button.lg.atk'
+    ) as NodeListOf<HTMLElement>
 
-      $(document).off('keydown', updateText)
-      $(document).off('keyup', updateText)
-    })
+    for (const btn of button) {
+      const attackValue = btn.querySelector('.qr-attack-value') as HTMLSpanElement
+
+      attackValue.textContent = btn.dataset.skill ?? ''
+    }
+
+    document.removeEventListener('keydown', updateText)
+    document.removeEventListener('keyup', updateText)
+  })
 
   // Resolve Quick Roll Menu Button Click
-  $(document)
-    .off('click', '.quick-roll-button')
-    .on('click', '.quick-roll-button', async function (event) {
+  html.querySelectorAll('.quick-roll-button').forEach(item => {
+    ;(item as HTMLElement).addEventListener('click', async function (event: PointerEvent) {
       event.preventDefault()
       event.stopPropagation()
 
-      const button = $(this)
-      const combatantId = button.data('combatant-id')
-      const combatant = game.combat?.combatants.get(combatantId)
+      const button = event.currentTarget as HTMLElement
+      const combatantId = button.dataset.combatantId
+      const combatant = game.combat?.combatants.get(combatantId ?? '')
 
-     if (!combatant || !combatant.token?.id) {
-              console.warn(`Combatant not found for id: ${combatantId}`)
+      if (!combatant || !combatant.token?.id) {
+        console.warn(`Combatant not found for id: ${combatantId}`)
 
-              return
-            }
+        return
+      }
 
       const token = canvas?.tokens?.get(combatant.token.id)
 
@@ -184,10 +218,11 @@ export const addQuickRollListeners = () => {
       const actions = await TokenActions.fromToken(token)
       const actor = token.actor
 
-      const otf = button.data('otf')
-      const damage = button.data('otf-damage')
+      const otf = button.dataset.otf
+      const damage = button.dataset.otfDamage
       const formula = event.ctrlKey && damage ? damage : otf
 
       await actor.runOTF(`${actions.blindAsDefault ? '!' : ''}${formula}`)
     })
+  })
 }
