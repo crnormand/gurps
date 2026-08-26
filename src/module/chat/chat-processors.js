@@ -711,7 +711,7 @@ class SelectChatProcessor extends ChatProcessor {
           return game.actors.get(token.actorId)
         }) || []
 
-      if (match[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
+      if (match[4]) list = game.actors.contents // ! means check all actors, not just ones on scene
       let actors = list.filter(actor => actor?.name?.match(pat))
       let msg =
         game.i18n.localize('GURPS.chatMoreThanOneActor') +
@@ -973,15 +973,11 @@ class QtyChatProcessor extends ChatProcessor {
 
 class LightChatProcessor extends ChatProcessor {
   help() {
-    return '/li &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off '
+    return '/li &lt;dim&gt; &lt;bright&gt; [angle] [#rrggbb] [luminosity] [anim [speed [intensity]]]|off'
   }
   matches(line) {
-    // Could be this:
-    // /^\/(light|li) *(?<off>none|off)? *(?<dim>\d+)? *(?<bright>\d+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
-
     this.match = line.match(
-      //      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
-      /^\/(light|li) +(?<off>none|off)? *(?<dim>[\d.]+)? *(?<bright>[\d.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<colorint>[\d.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li)(?: +|$)(?<off>none|off)? *(?<dim>[\d.]+)? *(?<bright>[\d.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<luminosity>[\d.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
 
     return !!this.match
@@ -990,9 +986,27 @@ class LightChatProcessor extends ChatProcessor {
     return line.match(/^[/?](light|li)$/i)
   }
   usage() {
-    return game.i18n.localize('GURPS.chatHelpLight')
+    const help = game.i18n.localize('GURPS.chatHelpLight')
+
+    try {
+      const animNames = Object.keys(CONFIG.Canvas.lightAnimations).join(', ')
+
+      return help.replace(/\([a-z]+(?:, [a-z]+)+\)?/, `(${animNames})`)
+    } catch (_error) {
+      return help
+    }
   }
   async process(line) {
+    if (line.match(/^\/(light|li) *$/i)) {
+      try {
+        this.priv('Possible animations: ' + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
+      } catch (_error) {
+        this.priv(this.usage())
+      }
+
+      return
+    }
+
     if (canvas.tokens.controlled.length == 0) {
       ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
 
@@ -1040,7 +1054,7 @@ class LightChatProcessor extends ChatProcessor {
       data.light['-=color'] = null
     } else {
       if (this.match.groups.color) data.light.color = this.match.groups.color
-      if (this.match.groups.colorint) data.light.alpha = parseFloat(this.match.groups.colorint)
+      if (this.match.groups.luminosity) data.light.luminosity = parseFloat(this.match.groups.luminosity)
       data.light.dim = parseFloat(this.match.groups.dim || 0)
       data.light.bright = parseFloat(this.match.groups.bright || 0)
       data.light.angle = parseFloat(this.match.groups.angle || 360)

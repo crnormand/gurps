@@ -114,6 +114,11 @@ Global Override body {
   min-height: 3em;
 }
 
+.journal-page-content {
+  font-family: 'Signika', sans-serif;
+  font-size: 14px;
+}
+
 /* GURPS App CSS */
 .gga-app {
   justify-items: center;

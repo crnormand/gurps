@@ -463,6 +463,8 @@ if (!globalThis.GURPS) {
 
     // @ts-expect-error - dynamically adding obj property to action
     action.obj = skill
+    if (skill?.type === 'SKILL') action.isSkillOnly = true
+    if (skill?.class) action.isSpellOnly = true
 
     // on a floating skill check, we want the skill with the highest relative skill level
     if (action.floatingAttribute) {

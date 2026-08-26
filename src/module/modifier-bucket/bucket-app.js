@@ -229,7 +229,10 @@ class ModifierStack {
     this.displaySum = displayMod(this.currentSum)
     this.plus = this.currentSum > 0 || this.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
     this.minus = this.currentSum < 0
-    game.user?.setFlag('gurps', 'modifierstack', { modifierList: this.modifierList, displaySum: this.displaySum }) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
+    game.user?.setFlag(GURPS.SYSTEM_NAME, 'modifierstack', {
+      modifierList: this.modifierList,
+      displaySum: this.displaySum,
+    }) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
 
     // Check if Rapid Strike is on list.
     let rs = this.modifierList.find(mod => mod.desc.includes(game.i18n.localize('GURPS.modifiers_.rapidStrike')))
