@@ -824,6 +824,7 @@ if (!globalThis.GURPS) {
       dam.action.mod = action.mod
       dam.action.desc = action.desc
       dam.action.att = att
+      dam.action.blindroll = action.blindroll
 
       return performAction(dam.action, actor, event, targets)
     },

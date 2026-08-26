@@ -21,7 +21,7 @@ export async function rollDamage(
 
   const showRollDialog = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
 
-  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, action.blindRoll, event) as MessageMode
+  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, action.blindroll, event) as MessageMode
 
   if (showRollDialog && !canRoll.isSlam) {
     // Get Actor Info
