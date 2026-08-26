@@ -1,5 +1,13 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.23
+
+### Features
+
+### Bugfixes
+
+- v0.18.22: Fix broken maneuver menu in Tabbed character sheet \#2881
+
 ## Release 0.18.22 08/21/2026
 
 ### Features

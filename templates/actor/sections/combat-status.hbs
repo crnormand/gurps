@@ -7,12 +7,12 @@
         <details id='maneuver'>
           <summary>
             {{#with (getManeuver system.conditions.maneuver) as |maneuver|}}
-              <img class='button' src='{{maneuver.icon}}' title='{{localize maneuver.label}}' alt='{{maneuver.name}}' />
+              <img class='button' src='{{maneuver.img}}' title='{{localize maneuver.label}}' alt='{{maneuver.name}}' />
             {{/with}}
           </summary>
           <div class='popup square5x4'>
             {{#each (listAllManeuvers) as |this key|}}
-              <img class='button' src='{{icon}}' title='{{localize label}}' alt='{{key}}' />
+              <img class='button' src='{{img}}' title='{{localize label}}' alt='{{key}}' />
             {{/each}}
           </div>
         </details>
