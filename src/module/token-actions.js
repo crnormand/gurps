@@ -122,7 +122,6 @@ export class TokenActions {
     this.readyTurns = 0
     this.moveTurns = 0
 
-    this.blindAsDefault = game.user.isGM
     this.lastAttack = {}
   }
 
@@ -183,10 +182,6 @@ export class TokenActions {
     this.evaluateTurns = savedTokenData.evaluateTurns || 0
     this.readyTurns = savedTokenData.readyTurns || 0
     this.moveTurns = savedTokenData.moveTurns || 0
-    this.blindAsDefault =
-      savedTokenData.blindAsDefault !== null && savedTokenData.blindAsDefault !== undefined
-        ? savedTokenData.blindAsDefault
-        : game.user.isGM
 
     return this
   }
@@ -222,7 +217,6 @@ export class TokenActions {
       evaluateTurns: this.evaluateTurns,
       readyTurns: this.readyTurns,
       moveTurns: this.moveTurns,
-      blindAsDefault: this.blindAsDefault,
     }
 
     await this.token.document.setFlag('gurps', 'tokenActions', newData)

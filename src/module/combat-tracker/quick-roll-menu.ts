@@ -1,8 +1,6 @@
 import { GurpsToken } from '@module/token/gurps-token.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
-import { TokenActions } from '../token-actions.js'
-
 export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant, token: GurpsToken) => {
   const quickRollSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_QUICK_ROLLS)
   const canShowButtons = quickRollSettings?.enabled && (game.user?.isGM || combatant.isOwner)
@@ -95,14 +93,12 @@ export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant
   combatantControlsDiv?.prepend(quickRollButton)
 
   // Add Quick Roll Menu
-  const actions = await TokenActions.fromToken(token)
   const { actor } = token
   const quickRollMenu = await foundry.applications.handlebars.renderTemplate(
     'systems/gurps/templates/quick-roll-menu.hbs',
     {
       actor,
       combatant,
-      blindRoll: actions.blindAsDefault ?? true,
       attributeChecks: actor.getChecks('attributeChecks'),
       otherChecks: actor.getChecks('otherChecks'),
       attackChecks: actor.getChecks('attackChecks'),
@@ -137,35 +133,6 @@ export const addQuickRollListeners = (html: HTMLElement) => {
       }
     })
   }
-
-  // Resolve Roll Type Toggle
-  html.querySelectorAll('.quick-roll-blind-toggle').forEach(element =>
-    element.addEventListener('click', async function (event: Event) {
-      event.preventDefault()
-      event.stopPropagation()
-      const combatantId = (event.target as HTMLElement).dataset.combatantId
-
-      if (!combatantId) return
-
-      const combatant = game.combat?.combatants.get(combatantId)
-
-      if (!combatant || !combatant.token?.id) {
-        console.warn(`Combatant not found for id: ${combatantId}`)
-
-        return
-      }
-
-      const token = canvas?.tokens?.get(combatant.token.id)
-      const actions = await TokenActions.fromToken(token)
-
-      actions.blindAsDefault = !actions.blindAsDefault
-
-      await actions.save()
-      ;(event.target as HTMLElement).querySelectorAll('.qr-blind').forEach(function (element: Element) {
-        element.classList.toggle('active')
-      })
-    })
-  )
 
   // Resolve Ctrl Key when hovering Quick Roll menu
   html.addEventListener('mouseover', function (event: Event) {
@@ -215,14 +182,13 @@ export const addQuickRollListeners = (html: HTMLElement) => {
         return
       }
 
-      const actions = await TokenActions.fromToken(token)
       const actor = token.actor
 
       const otf = button.dataset.otf
       const damage = button.dataset.otfDamage
       const formula = event.ctrlKey && damage ? damage : otf
 
-      await actor.runOTF(`${actions.blindAsDefault ? '!' : ''}${formula}`)
+      await actor.runOTF(formula ?? '')
     })
   })
 }
