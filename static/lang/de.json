@@ -1308,16 +1308,16 @@
       "feature": {
         "crChoices": {
           "0": "Niemals widerstehen",
-          "6": "6 (Widerstehe selten)",
-          "7": "7 (Widerstehe selten; nicht standard)",
-          "8": "8 (Widerstehe selten; nicht standard)",
-          "9": "9 (Widerstehe häufig)",
           "10": "10 (Widerstehe häufig; nicht standard)",
           "11": "11 (Widerstehe häufig; nicht standard)",
           "12": "12 (Widerstehe recht häufig)",
           "13": "13 (Widerstehe recht häufig; nicht standard)",
           "14": "14 (Widerstehe recht häufig; nicht standard)",
           "15": "15 (Widerstehe fast immer)",
+          "6": "6 (Widerstehe selten)",
+          "7": "7 (Widerstehe selten; nicht standard)",
+          "8": "8 (Widerstehe selten; nicht standard)",
+          "9": "9 (Widerstehe häufig)",
           "none": "Kein Wurf erforderlich"
         },
         "FIELDS": {
@@ -1724,8 +1724,8 @@
     "normal": "Normal",
     "notAffected": "{name} ist nicht betroffen.",
     "noTargetSelected": "Kein Ziel ausgewählt",
-    "notes": "Notizen",
     "noteBlank": "Diese Notiz wurde absichtlich leer gelassen.",
+    "notes": "Notizen",
     "noUserForDamageWarning": "Du kannst keinen Schaden an einem Ziel verursachen, der von einem anderen Benutzer stammt.",
     "noViableSkill": "Dieser Charakter hat keine geeignete Fertigkeit (Effektivwert 3 oder höher), die gewürfelt werden kann",
     "number": "Nummer",
@@ -1755,9 +1755,10 @@
       "offsetChangeHint": "Wenn Sie diesen Wert ändern, passt sich der Viewer so an, dass die angezeigte Seite dem eingegebenen Offset entspricht (z. B. Seite 5).",
       "offsetPlaceholder": "Offset: (z.B. -5, 0 oder 2)",
       "settings": {
-        "basicPDFs": "Basis Set PDF(s)",
-        "basicPDFsCombined": "Kombiniertes Basis Set (Code 'B')",
-        "basicPDFsHint": "Wählen Sie 'Kombiniert' oder 'Getrennt' und verwenden Sie die zugehörigen PDF-Codes. Hinweis: Wenn Sie 'Getrennt' wählen, sollte sich die Basis Set Kampagnen PDF während des Tests auf Seite 340 öffnen.",
+        "basicPDFs": "Basic Set PDF(s)",
+        "basicPDFsCombined": "Kombiniertes Basic Set ('B')",
+        "basicPDFsHint": "Wählen Sie 'Kombiniert' oder 'Getrennt' und verwenden Sie die zugehörigen PDF-Codes. Hinweis: Wenn Sie 'Getrennt' wählen, sollte das Basic Set Campaigns PDF während des Tests auf Seite 340 geöffnet werden. Wenn Sie 'Basic Revised' wählen, verwenden Sie einen Offset von 10.",
+        "basicPDFsRevised": "Basic Revised (B)",
         "basicPDFsSeparate": "Getrennt (Charaktere, 'B'; Kampagnen, 'BX')",
         "button": "PDF-Einstellungen",
         "hint": "Konfigurieren Sie, wie PDFs behandelt werden.",
@@ -2123,6 +2124,7 @@
         "pound": "lbs.",
         "primaryAttributes": "Primäre Attribute",
         "reactionModifiers": "Reaktionen",
+        "reference": "Ref",
         "secondaryAttributes": "Sekundäre Attribute",
         "skillLevel": "SL",
         "skillRelativeLevel": "RSL",
@@ -2130,6 +2132,7 @@
         "spells": "Zauber",
         "techLevel": "TL",
         "traits": "Merkmale",
+        "uses": "Verw.",
         "weaponAccuracy": "Gen.",
         "weaponBlock": "Block",
         "weaponBulk": "Sperr.",
@@ -2143,9 +2146,7 @@
         "weaponROF": "FGS",
         "weaponShots": "Schuss",
         "weaponST": "ST",
-        "weaponUsage": "Verwendung",
-        "reference": "Ref",
-        "uses": "Verw."
+        "weaponUsage": "Verwendung"
       },
       "hitLocation": {
         "dr": "DR",

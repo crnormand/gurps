@@ -109,17 +109,22 @@ function handlePdf(links: string): void {
     // Special case for Separate Basic Set PDFs
     const setting = getBasicSetPDFSetting()
 
-    if (book === 'B') {
-      if (page > 336)
-        if (setting === 'Separate') {
-          book = 'BX'
-          page = page - 335
-        } else page += 2
-    } else if (book === 'BX') {
-      if (setting === 'Combined') {
-        book = 'B'
-        page += 2
-      } else page -= 335
+    // Basic Revised and Basic Set PDFs have different page numbers, so we need to adjust the page number based on the setting
+    const isBasicRevised = book === 'B' && setting === 'Revised'
+
+    if (!isBasicRevised) {
+      if (book === 'B') {
+        if (page > 336)
+          if (setting === 'Separate') {
+            book = 'BX'
+            page = page - 335
+          } else page += 2
+      } else if (book === 'BX') {
+        if (setting === 'Combined') {
+          book = 'B'
+          page += 2
+        } else page -= 335
+      }
     }
 
     const pdfPages: foundry.documents.JournalEntryPage[] = []

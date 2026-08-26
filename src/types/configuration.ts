@@ -140,7 +140,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.importer.useVerboseImporterLog': foundry.data.fields.BooleanField<{ initial: false }>
 
     /** PDF */
-    'gurps.pdf.basicset': 'Combined' | 'Separate'
+    'gurps.pdf.basicset': 'Combined' | 'Separate' | 'Revised'
     'gurps.pdf.open-first': boolean
 
     /** Resource Tracker */
