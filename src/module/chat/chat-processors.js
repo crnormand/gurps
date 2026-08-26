@@ -977,7 +977,7 @@ class LightChatProcessor extends ChatProcessor {
   }
   matches(line) {
     this.match = line.match(
-      /^\/(light|li)(?: +|$)(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<luminosity>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li)(?: +|$)(?<off>none|off)? *(?<dim>[\d.]+)? *(?<bright>[\d.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<luminosity>[\d.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
 
     return !!this.match
