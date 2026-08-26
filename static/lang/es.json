@@ -1309,16 +1309,16 @@
       "feature": {
         "crChoices": {
           "0": "Nunca resistir",
-          "6": "6 (Resiste Raramente)",
-          "7": "7 (Resiste Raramente; no estándar)",
-          "8": "8 (Resiste Raramente; no estándar)",
-          "9": "9 (Resiste Con Bastante Frecuencia)",
           "10": "10 (Resiste Con Bastante Frecuencia; no estándar)",
           "11": "11 (Resiste Con Bastante Frecuencia; no estándar)",
           "12": "12 (Resiste Bastante Seguido)",
           "13": "13 (Resiste Bastante Seguido; no estándar)",
           "14": "14 (Resiste Bastante Seguido; no estándar)",
           "15": "15 (Resiste Casi Siempre)",
+          "6": "6 (Resiste Raramente)",
+          "7": "7 (Resiste Raramente; no estándar)",
+          "8": "8 (Resiste Raramente; no estándar)",
+          "9": "9 (Resiste Con Bastante Frecuencia)",
           "none": "Ninguno requerido"
         },
         "FIELDS": {
@@ -1692,6 +1692,7 @@
     "modifierVeryUnfavorable": "Muy Desfavorable",
     "modifierViewScale": "Cubo: Factor de Escala",
     "modifierViewScaleHint": "Usa esto para aumentar o disminuir el tamaño del Cubo de Modificadores.",
+    "mookGeneratorInvalidDamageInput": "Invalid damage input. Please enter one or two values in standard GURPS dice format, separated by a '/'.",
     "move": "Movimiento",
     "moveConstant": "{value} {unit}/seg ({reason})",
     "moveFull": "Completo",
@@ -1724,8 +1725,8 @@
     "normal": "Normal",
     "notAffected": "{name} no se ve afectado.",
     "noTargetSelected": "Ningún Objetivo seleccionado",
-    "notes": "Notas",
     "noteBlank": "Esta nota se dejó intencionalmente en blanco.",
+    "notes": "Notas",
     "noUserForDamageWarning": "No puedes aplicar daño a un objetivo usando daño para otro usuario.",
     "noViableSkill": "Este personaje no tiene una habilidad viable (nivel efectivo 3 o superior) que pueda tirarse",
     "number": "Número",
@@ -1756,8 +1757,9 @@
       "offsetPlaceholder": "Desplazamiento: (ej., -5, 0 o 2)",
       "settings": {
         "basicPDFs": "PDF(s) del Set Básico",
-        "basicPDFsCombined": "Set Básico Combinado (código 'B')",
-        "basicPDFsHint": "Selecciona 'Combinado' o 'Separados' y usa los códigos PDF asociados. Nota: Si seleccionas 'Separados', el PDF de Campañas del Set Básico debería abrirse en la página 340 durante la prueba.",
+        "basicPDFsCombined": "Set Básico Combinado ('B')",
+        "basicPDFsHint": "Selecciona 'Combinado' o 'Separados' y usa los códigos PDF correspondientes. Nota: Si seleccionas 'Separados', el PDF de Campañas del Set Básico debería abrirse en la página 340 durante la prueba. Si seleccionas 'Basic Revised', usa un desplazamiento de 10.",
+        "basicPDFsRevised": "Básico Revisado (B)",
         "basicPDFsSeparate": "Separados (Personajes, 'B'; Campañas, 'BX')",
         "button": "Configuración de PDF",
         "hint": "Configura cómo se manejan los PDFs.",
@@ -2123,6 +2125,7 @@
         "pound": "{value} lb",
         "primaryAttributes": "Atributos Primarios",
         "reactionModifiers": "Reacciones",
+        "reference": "Ref",
         "secondaryAttributes": "Atributos Secundarios",
         "skillLevel": "NH",
         "skillRelativeLevel": "NRH",
@@ -2130,6 +2133,7 @@
         "spells": "Hechizos",
         "techLevel": "NT",
         "traits": "Rasgos",
+        "uses": "Usos",
         "weaponAccuracy": "Pre",
         "weaponBlock": "Bloqueo",
         "weaponBulk": "Bulto",
@@ -2143,9 +2147,7 @@
         "weaponROF": "CdF",
         "weaponShots": "Disparos",
         "weaponST": "FU",
-        "weaponUsage": "Uso",
-        "reference": "Ref",
-        "uses": "Usos"
+        "weaponUsage": "Uso"
       },
       "hitLocation": {
         "dr": "RD",
@@ -2404,8 +2406,7 @@
     "yard": "yarda",
     "yards": "yardas",
     "years": "años",
-    "youDoNotHavePermission": "No tienes permiso para hacer eso.",
-    "mookGeneratorInvalidDamageInput": "Invalid damage input. Please enter one or two values in standard GURPS dice format, separated by a '/'."
+    "youDoNotHavePermission": "No tienes permiso para hacer eso."
   },
   "TYPES": {
     "Action": {

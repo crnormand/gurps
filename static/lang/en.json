@@ -1308,16 +1308,16 @@
       "feature": {
         "crChoices": {
           "0": "Never resist",
-          "6": "6 (Resist Rarely)",
-          "7": "7 (Resist Rarely; non-standard)",
-          "8": "8 (Resist Rarely; non-standard)",
-          "9": "9 (Resist Fairly Often)",
           "10": "10 (Resist Fairly Often; non-standard)",
           "11": "11 (Resist Fairly Often; non-standard)",
           "12": "12 (Resist Quite Often)",
           "13": "13 (Resist Quite Often; non-standard)",
           "14": "14 (Resist Quite Often; non-standard)",
           "15": "15 (Resist Almost All The Time)",
+          "6": "6 (Resist Rarely)",
+          "7": "7 (Resist Rarely; non-standard)",
+          "8": "8 (Resist Rarely; non-standard)",
+          "9": "9 (Resist Fairly Often)",
           "none": "None required"
         },
         "FIELDS": {
@@ -1724,8 +1724,8 @@
     "normal": "Normal",
     "notAffected": "{name} is not affected.",
     "noTargetSelected": "No Target selected",
-    "notes": "Notes",
     "noteBlank": "This note was intentionally left blank.",
+    "notes": "Notes",
     "noUserForDamageWarning": "You cant apply damage to a target using damage for another user.",
     "noViableSkill": "This character does not have a viable skill (effective level 3 or higher) that can be rolled",
     "number": "Number",
@@ -1756,8 +1756,9 @@
       "offsetPlaceholder": "Offset: (e.g., -5, 0, or 2)",
       "settings": {
         "basicPDFs": "Basic Set PDF(s)",
-        "basicPDFsCombined": "Combined Basic Set (code 'B')",
-        "basicPDFsHint": "Select 'Combined' or 'Separate' and use the associated PDF codes. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the test.",
+        "basicPDFsCombined": "Combined Basic Set ('B')",
+        "basicPDFsHint": "Select 'Combined' or 'Separate' and use the associated PDF codes. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the test. If you select 'Basic Revised', use an offset of 10.",
+        "basicPDFsRevised": "Basic Revised (B)",
         "basicPDFsSeparate": "Separate (Characters, 'B'; Campaigns, 'BX')",
         "button": "PDF Settings",
         "hint": "Configure how PDFs are handled.",

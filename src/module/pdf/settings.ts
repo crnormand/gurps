@@ -16,6 +16,7 @@ function registerPDFSettings() {
     choices: {
       Combined: 'GURPS.pdf.settings.basicPDFsCombined',
       Separate: 'GURPS.pdf.settings.basicPDFsSeparate',
+      Revised: 'GURPS.settingBasicPDFsRevised',
     },
     default: 'Combined',
     onChange: value => console.log(`Basic Set PDFs : ${value}`),

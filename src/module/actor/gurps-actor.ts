@@ -577,14 +577,69 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   /**
-   * NOTE: Both character and characterV2.
-   *
-   * @returns An array of temporary effects that are applied to the actor.
-   * This is overriden for CharacterModel where maneuvers are moved to the top of the
-   * array.
+   * Retrieve the list of ActiveEffects that are currently applied to this Actor.
+   * @type {ActiveEffect[]}
    */
-  override get temporaryEffects(): ActiveEffect.Stored[] {
-    return this.modelV2.getTemporaryEffects(super.temporaryEffects)
+  override get appliedEffects() {
+    let effects = super.appliedEffects.sort((left, right) => left.sort - right.sort)
+
+    if (effects.length > 0) {
+      // Move Maneuver and Posture effects to the front of the list, if they exist.
+      const maneuverEffect = effects.find(effect => effect.getFlag('gurps', 'statusId') === 'maneuver')
+
+      // @ts-expect-error: interface GurpsEffectFlags clearly defines `effect: { type: string }`; I don't know what's wrong here.
+      const postureEffect = effects.find(effect => effect.getFlag('gurps', 'effect.type') === 'posture')
+      const remaining = effects.filter(effect => effect !== maneuverEffect && effect !== postureEffect)
+
+      if ((maneuverEffect || postureEffect) && remaining.length > 0) {
+        const sortedArray = []
+
+        if (maneuverEffect) sortedArray.push(maneuverEffect)
+        if (postureEffect) sortedArray.push(postureEffect)
+        effects = [...sortedArray, ...remaining]
+      }
+
+      if (maneuverEffect) {
+        // If there is a maneuver effect, set what's visible to the user based on his role and the world settings.
+        const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
+
+        if (visibility === 'NoOne') maneuverEffect.showIcon = 0
+
+        if (visibility === 'GMAndOwner') {
+          if (!game.user?.isGM && !maneuverEffect.isOwner) {
+            maneuverEffect.showIcon = 0
+          } else {
+            maneuverEffect.showIcon = 2
+          }
+        }
+
+        // If the current user is neither GM nor actor owner, display the alternate image if available UNLESS the
+        // detail setting is "Full".
+        const detail = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
+
+        if (detail !== 'Full' && !game.user?.isGM && !maneuverEffect.isOwner) {
+          maneuverEffect.img = maneuverEffect.getFlag('gurps', 'altImg') ?? maneuverEffect.img
+          maneuverEffect.name = maneuverEffect.getFlag('gurps', 'altLabel') ?? maneuverEffect.name
+        }
+      }
+    }
+
+    return effects
+  }
+
+  /**
+   * @override Sort Maneuvers to the front of the temporary effects.
+   * @since Foundry v12
+   * @returns {ActiveEffect.Implementation[]} The temporary effects of the actor.
+   */
+  override get temporaryEffects() {
+    const effects = []
+
+    for (const effect of this.appliedEffects) {
+      if (effect.isTemporary) effects.push(effect)
+    }
+
+    return effects
   }
 
   /* ---------------------------------------- */
