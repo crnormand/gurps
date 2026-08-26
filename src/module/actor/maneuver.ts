@@ -21,60 +21,80 @@ const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target'
 
 const MANEUVER_NAME_AIM = 'aim'
 
-// Override Actor.temporaryEffects getter to sort maneuvers to the front of the array
-// Object.defineProperty(Actor.prototype, 'temporaryEffects', {
-//   get: function () {
-//     let results = oldTemporaryEffects?.get?.call(this)
+type ManeuverInput = {
+  name: string
+  label: string
+  img: string
+  move?: string
+  defense?: string
+  fullturn?: boolean
+  altImg?: string | null
+  altLabel?: string
+  introducedBy?: string | null
+}
 
-//     if (!!results && results.length > 1) {
-//       const maneuvers = results.filter(e => e.statuses.find(s => s === 'maneuver'))
-//       const notManeuvers = results.filter(e => !maneuvers.includes(e))
+type ManeuverChange = {
+  key: string
+  value: string
+  type: keyof typeof CONST.ACTIVE_EFFECT_CHANGE_TYPES
+}
 
-//       results = [...maneuvers, ...notManeuvers]
-//     }
-//     return results
-//   },
-// })
+type ManeuverEffectData = ActiveEffect.CreateData & {
+  id: string
+  name?: string
+  label: string
+  img: string
+  showIcon: number
+  move: string
+  flags: {
+    gurps: {
+      name: string
+      move: string
+      defense: string
+      fullturn: boolean
+      img: string
+      altImg: string | null
+      altLabel?: string
+      statusId: string
+    }
+  }
+  statuses: string[]
+}
 
-/**
- * @typedef {{id: string, flags: { gurps: { name: string, move?: string, defense?: string, fullturn?: Boolean, icon: string, alt?: string|null} } }} ManeuverEffect
- * @typedef {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData').ActiveEffectDataConstructorData & ManeuverEffect} ManeuverData
- */
-
-/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string|null, introducedBy?: string|null}} _data */
+type NormalizedManeuverInput = Omit<Required<ManeuverInput>, 'altImg'> & { altImg: string | null }
 
 /**
  * The purpose of this class is to help generate data that can be used in an ActiveEffect.
  */
 class Maneuver {
   static filepath = 'systems/gurps/icons/maneuvers/'
-  /**
-   * @param {_data} data
-   */
-  constructor(data) {
+  private _data: NormalizedManeuverInput
+
+  constructor(data: ManeuverInput) {
     data.move = data.move || MOVE_STEP
     data.defense = data.defense || DEFENSE_ANY
     data.fullturn = !!data.fullturn
-    data.icon = Maneuver.filepath + data.icon
-    data.alt = data.alt ? Maneuver.filepath + data.alt : null
+    data.img = Maneuver.filepath + data.img
+    data.altImg = data.altImg ? Maneuver.filepath + data.altImg : null
     data.introducedBy = data.introducedBy ?? null
-    this._data = data
+    this._data = data as NormalizedManeuverInput
   }
 
-  get icon() {
-    return this._data.icon
+  get img() {
+    return this._data.img
   }
 
   get move() {
     return this._data.move
   }
 
-  /** @returns {ManeuverData} */
-  get data() {
+  get data(): ManeuverEffectData {
     return {
       id: MANEUVER,
+      name: this._data.name,
       label: this._data.label,
-      icon: this._data.icon,
+      img: this._data.img,
+      showIcon: 2,
       move: this.move,
       flags: {
         gurps: {
@@ -82,8 +102,9 @@ class Maneuver {
           move: this._data.move,
           defense: this._data.defense,
           fullturn: this._data.fullturn,
-          icon: this._data.icon,
-          alt: this._data.alt,
+          img: this._data.img,
+          altImg: this._data.altImg as unknown as string,
+          altLabel: this._data.altLabel,
           statusId: MANEUVER,
         },
       },
@@ -92,20 +113,19 @@ class Maneuver {
     }
   }
 
-  /** @returns {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData').EffectChangeDataConstructorData[]} */
   get changes() {
-    let changes = []
+    const changes: ManeuverChange[] = []
 
     changes.push({
       key: 'system.conditions.maneuver',
       value: this._data.name,
-      mode: CONST.ACTIVE_EFFECT_CHANGE_TYPES.override,
+      type: 'override',
     })
 
     changes.push({
       key: PROPERTY_MOVEOVERRIDE_MANEUVER,
       value: this.move,
-      mode: CONST.ACTIVE_EFFECT_CHANGE_TYPES.override,
+      type: 'override',
     })
 
     return changes
@@ -123,7 +143,7 @@ class Maneuver {
 const maneuverDataAim = {
   name: MANEUVER_NAME_AIM,
   fullturn: true,
-  icon: 'man-aim.png',
+  img: 'man-aim.png',
   label: 'GURPS.maneuverAim',
 }
 
@@ -134,20 +154,20 @@ const maneuvers = {
   do_nothing: new Maneuver({
     name: 'do_nothing',
     label: 'GURPS.maneuverDoNothing',
-    icon: 'man-nothing.png',
+    img: 'man-nothing.png',
     move: MOVE_NONE,
   }),
   move: new Maneuver({
     name: 'move',
     label: 'GURPS.maneuverMove',
-    icon: 'man-move.png',
+    img: 'man-move.png',
     move: MOVE_FULL,
   }),
   aim: new Maneuver({ ...maneuverDataAim }),
   committed_aim: new Maneuver({
     name: 'committed_aim',
     label: 'GURPS.maneuverCommittedAim',
-    icon: 'man-aim.png',
+    img: 'man-aim.png',
     fullturn: true,
     move: MOVE_TWO_STEPS,
     introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
@@ -155,7 +175,7 @@ const maneuvers = {
   allout_aim: new Maneuver({
     name: 'allout_aim',
     label: 'GURPS.maneuverAllOutAim',
-    icon: 'man-aim.png',
+    img: 'man-aim.png',
     fullturn: true,
     move: MOVE_NONE,
     defense: DEFENSE_NONE,
@@ -164,148 +184,161 @@ const maneuvers = {
   change_posture: new Maneuver({
     name: 'change_posture',
     move: MOVE_NONE,
-    icon: 'man-change-posture.png',
+    img: 'man-change-posture.png',
     label: 'GURPS.maneuverChangePosture',
   }),
   evaluate: new Maneuver({
     name: 'evaluate',
-    icon: 'man-evaluate.png',
+    img: 'man-evaluate.png',
     label: 'GURPS.maneuverEvaluate',
   }),
   attack: new Maneuver({
     name: 'attack',
-    icon: 'man-attack.png',
+    img: 'man-attack.png',
     label: 'GURPS.maneuverAttack',
   }),
   feint: new Maneuver({
     name: 'feint',
-    icon: 'man-feint.png',
+    img: 'man-feint.png',
     label: 'GURPS.maneuverFeint',
-    alt: 'man-attack.png',
+    altImg: 'man-attack.png',
+    altLabel: 'GURPS.maneuverAttack',
   }),
   committed_attack_ranged: new Maneuver({
     name: 'committed_attack_ranged',
     move: MOVE_TWO_STEPS,
-    icon: 'man-aoa-suppress.png',
+    img: 'man-aoa-suppress.png',
     label: 'GURPS.maneuverCommittedAttackRanged',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
     introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
   }),
   allout_attack: new Maneuver({
     name: 'allout_attack',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'man-allout-attack.png',
+    img: 'man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_determined: new Maneuver({
     name: 'aoa_determined',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'man-aoa-determined.png',
+    img: 'man-aoa-determined.png',
     label: 'GURPS.maneuverAllOutAttackDetermined',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_ranged: new Maneuver({
     name: 'aoa_ranged',
     move: MOVE_NONE,
     defense: DEFENSE_NONE,
-    icon: 'man-aoa-suppress.png',
+    img: 'man-aoa-suppress.png',
     label: 'GURPS.maneuverAllOutAttackRanged',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_double: new Maneuver({
     name: 'aoa_double',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'man-aoa-double.png',
+    img: 'man-aoa-double.png',
     label: 'GURPS.maneuverAllOutAttackDouble',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_feint: new Maneuver({
     name: 'aoa_feint',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'man-aoa-feint.png',
+    img: 'man-aoa-feint.png',
     label: 'GURPS.maneuverAllOutAttackFeint',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_strong: new Maneuver({
     name: 'aoa_strong',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    alt: 'man-allout-attack.png',
-    icon: 'man-aoa-strong.png',
+    altImg: 'man-allout-attack.png',
+    img: 'man-aoa-strong.png',
     label: 'GURPS.maneuverAllOutAttackStrong',
   }),
   aoa_suppress: new Maneuver({
     name: 'aoa_suppress',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    alt: 'man-allout-attack.png',
-    icon: 'man-aoa-suppress.png',
+    img: 'man-aoa-suppress.png',
+    altImg: 'man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackSuppressFire',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   move_and_attack: new Maneuver({
     name: 'move_and_attack',
     move: MOVE_FULL,
     defense: DEFENSE_DODGEBLOCK,
-    icon: 'man-move-attack.png',
+    img: 'man-move-attack.png',
     label: 'GURPS.maneuverMoveAttack',
   }),
   allout_defense: new Maneuver({
     name: 'allout_defense',
     move: MOVE_HALF,
-    icon: 'man-defense.png',
+    img: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefense',
   }),
   aod_dodge: new Maneuver({
     name: 'aod_dodge',
     move: MOVE_HALF,
-    alt: 'man-defense.png',
-    icon: 'man-def-dodge.png',
+    img: 'man-def-dodge.png',
+    altImg: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDodge',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_parry: new Maneuver({
     name: 'aod_parry',
-    alt: 'man-defense.png',
-    icon: 'man-def-parry.png',
+    img: 'man-def-parry.png',
+    altImg: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseParry',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_block: new Maneuver({
     name: 'aod_block',
-    alt: 'man-defense.png',
-    icon: 'man-def-block.png',
+    img: 'man-def-block.png',
+    altImg: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseBlock',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_double: new Maneuver({
     name: 'aod_double',
-    alt: 'man-defense.png',
-    icon: 'man-def-double.png',
+    img: 'man-def-double.png',
+    altImg: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDouble',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   ready: new Maneuver({
     name: 'ready',
-    icon: 'man-ready.png',
+    img: 'man-ready.png',
     label: 'GURPS.maneuverReady',
   }),
   concentrate: new Maneuver({
     name: 'concentrate',
     fullturn: true,
-    icon: 'man-concentrate.png',
+    img: 'man-concentrate.png',
     label: 'GURPS.maneuverConcentrate',
   }),
   wait: new Maneuver({
     name: 'wait',
     move: MOVE_NONE,
-    icon: 'man-wait.png',
+    img: 'man-wait.png',
     label: 'GURPS.maneuverWait',
   }),
 }
 
-const filterManeuvers = (introducedBy = []) => {
-  const result = {}
+const filterManeuvers = (introducedBy: string[] = []): Record<string, Maneuver> => {
+  const result: Record<string, Maneuver> = {}
 
-  for (const key in maneuvers) {
-    let maneuver = maneuvers[key]
+  for (const [key, originalManeuver] of Object.entries(maneuvers)) {
+    let maneuver = originalManeuver
 
     // Aim maneuver has different data with On Target than without
     if (introducedBy.includes(MANEUVER_INTRODUCED_BY_ON_TARGET) && maneuver.name === MANEUVER_NAME_AIM) {
@@ -321,33 +354,28 @@ const filterManeuvers = (introducedBy = []) => {
 }
 
 export default class Maneuvers {
-  /**
-   * @param {string} id
-   * @returns {ManeuverData}
-   */
-  static get(id) {
-    // @ts-expect-error - dynamic property access returns Maneuver which has data property
+  static get(id: string): ManeuverEffectData | undefined {
     return Maneuvers.getAll()[id]?.data
   }
 
   /**
    * @param {string} text
-   * @returns {boolean} true if the text represents a maneuver icon path.
+   * @returns {boolean} true if the text represents a maneuver img path.
    * @memberof Maneuvers
    */
-  static isManeuverIcon(text) {
+  static isManeuverIcon(text: string): boolean {
     return Object.values(Maneuvers.getAll())
-      .map(maneuver => maneuver.icon)
+      .map(maneuver => maneuver.img)
       .includes(text)
   }
 
   /**
-   * Return the sublist that are Maneuver icon paths.
-   * @param {string[]} list of icon pathnames
+   * Return the sublist that are Maneuver img paths.
+   * @param {string[]} list of img pathnames
    * @returns {string[]} the pathnames that represent Maneuvers
    * @memberof Maneuvers
    */
-  static getManeuverIcons(list) {
+  static getManeuverIcons(list: string[]): string[] {
     return list.filter(it => Maneuvers.isManeuverIcon(it))
   }
 
@@ -355,7 +383,7 @@ export default class Maneuvers {
    * @param {string} maneuverText
    * @returns {ManeuverData}
    */
-  static getManeuver(maneuverText = 'do_nothing') {
+  static getManeuver(maneuverText = 'do_nothing'): ManeuverEffectData {
     if (!maneuverText || maneuverText === 'undefined') maneuverText = 'do_nothing'
 
     return Maneuvers.getAll()[maneuverText].data
@@ -365,12 +393,15 @@ export default class Maneuvers {
    * @param {string} maneuverText
    * @returns {string|null}
    */
-  static getIcon(maneuverText) {
-    return Maneuvers.getManeuver(maneuverText).icon ?? null
+  static getIcon(maneuverText: string): string | null {
+    return Maneuvers.getManeuver(maneuverText).img ?? null
   }
 
   static getAll() {
-    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = game.settings?.get(
+      Settings.SYSTEM_NAME as never,
+      Settings.SETTING_USE_ON_TARGET as never
+    ) as unknown as boolean
 
     const filter = []
 
@@ -381,11 +412,10 @@ export default class Maneuvers {
     return filterManeuvers(filter)
   }
 
-  static getAllData() {
-    let data = {}
+  static getAllData(): Record<string, ManeuverEffectData> {
+    const data: Record<string, ManeuverEffectData> = {}
 
     for (const key in Maneuvers.getAll()) {
-      // @ts-expect-error - dynamic property access returns Maneuver which has data property
       data[key] = Maneuvers.getAll()[key].data
     }
 
@@ -393,12 +423,12 @@ export default class Maneuvers {
   }
 
   /**
-   * @param {string} icon
+   * @param {string} img
    * @returns {ManeuverData[]|undefined}
    */
-  static getByIcon(icon) {
+  static getByIcon(img: string): ManeuverEffectData[] {
     return Object.values(Maneuvers.getAll())
-      .filter(it => it.icon === icon)
+      .filter(it => it.img === img)
       .map(it => it.data)
   }
 
@@ -407,16 +437,15 @@ export default class Maneuvers {
    * @param {ActiveEffect} activeEffect
    * @returns {boolean}
    */
-  static isActiveEffectManeuver(activeEffect) {
-    return activeEffect.statuses.find(status => status === 'maneuver')
-    // return activeEffect.getFlag ? activeEffect.getFlag('core', 'statusId') === MANEUVER : false
+  static isActiveEffectManeuver(activeEffect: ActiveEffect.Implementation): boolean {
+    return activeEffect.statuses.has(MANEUVER)
   }
 
   /**
    * @param {ActiveEffect.Implementation[]|undefined} effects
    * @return {ActiveEffect.Implementation[]} just the ActiveEffects that are also Maneuvers
    */
-  static getActiveEffectManeuvers(effects) {
+  static getActiveEffectManeuvers(effects: ActiveEffect.Implementation[] | undefined): ActiveEffect.Implementation[] {
     return effects ? effects.filter(it => Maneuvers.isActiveEffectManeuver(it)) : []
   }
 }

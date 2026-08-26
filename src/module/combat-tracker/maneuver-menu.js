@@ -15,27 +15,36 @@ export const addManeuverMenu = async (html, combatant, token) => {
   if (!token?.actor) return html
 
   // Determine current maneuver and icon.
-  let actorManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
+  const allManeuvers = token.actor.appliedEffects.filter(it => it.getFlag('gurps', 'statusId') === 'maneuver')
+  const actorManeuver = allManeuvers.length > 0 ? allManeuvers[0] : Maneuvers.getManeuver('do_nothing')
 
-  if (!actorManeuverName || actorManeuverName === 'undefined') actorManeuverName = 'do_nothing'
-  const actorManeuver = Maneuvers.getManeuver(actorManeuverName)
+  if (actorManeuver.showIcon === 0) {
+    const initiativeSpan = html.querySelector?.('.token-initiative')
+
+    if (initiativeSpan) initiativeSpan.replaceWith(document.createElement('span'))
+
+    return
+  }
+
+  const canModify = game.user?.isGM || actorManeuver.isOwner
 
   const currentManeuver = document.createElement('img')
 
   currentManeuver.className = 'token-effect maneuver-badge'
-  currentManeuver.src = actorManeuver.icon
+  currentManeuver.src = actorManeuver.img
 
   // Add active class if initialized.
   const initiative = combatant?.initiative
 
-  if (typeof initiative === 'number') currentManeuver.classList.add('active')
+  if (typeof initiative === 'number' && canModify) currentManeuver.classList.add('active')
   else currentManeuver.classList.remove('active')
 
   // Prepare tooltip.
   const actions = await TokenActions.fromToken(token)
   const maxMove = actions.getMaxMove()
-  const label = Maneuvers.getManeuver(actions.currentManeuver).label
+  const label = actorManeuver.name
   const allIcons = TokenActions.getManeuverIcons(actions.currentManeuver)
+
   const tooltipHtmlString = await foundry.applications.handlebars.renderTemplate(
     'systems/gurps/templates/maneuver-button-tooltip.hbs',
     {
@@ -48,57 +57,61 @@ export const addManeuverMenu = async (html, combatant, token) => {
   currentManeuver.setAttribute('aria-label', 'Maneuver Badge')
   currentManeuver.setAttribute('data-tooltip-html', tooltipHtmlString)
 
-  // Context menu handler for "Do Nothing"
-  currentManeuver.addEventListener(
-    'contextmenu',
-    async event => {
-      event.preventDefault()
-      event.stopPropagation()
+  if (canModify) {
+    // Context menu handler for "Do Nothing"
+    currentManeuver.addEventListener(
+      'contextmenu',
+      async event => {
+        event.preventDefault()
+        event.stopPropagation()
 
-      const combatantElement = event.target.closest('.combatant')
+        const combatantElement = event.target.closest('.combatant')
 
-      if (!combatantElement) return
+        if (!combatantElement) return
 
-      const combatantId = combatantElement.dataset.combatantId
+        const combatantId = combatantElement.dataset.combatantId
 
-      if (!combatantId || !game.combat) return
+        if (!combatantId || !game.combat) return
 
-      const combatant = game.combat.combatants.get(combatantId)
+        const combatant = game.combat.combatants.get(combatantId)
 
-      if (!combatant || !combatant.token) return
+        if (!combatant || !combatant.token) return
 
-      const doNothing = Maneuvers.getManeuver('do_nothing')
-      const token = canvas?.tokens?.get(combatant.token.id)
+        const doNothing = Maneuvers.getManeuver('do_nothing')
+        const token = canvas?.tokens?.get(combatant.token.id)
 
-      if (!token || !token.actor) return
-      const currentManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
+        if (!token || !token.actor) return
+        const currentManeuverName = foundry.utils.getProperty(token.actor, 'system.conditions.maneuver')
 
-      if (currentManeuverName === 'do_nothing') return
-      await token.setManeuver(doNothing.flags.gurps.name)
-    },
-    { once: true }
-  )
+        if (currentManeuverName === 'do_nothing') return
+        await token.setManeuver(doNothing.flags.gurps.name)
+      },
+      { once: true }
+    )
+  }
 
   // Replace initiative span with maneuver image.
   const initiativeSpan = html.querySelector?.('.token-initiative')
 
   if (initiativeSpan) initiativeSpan.replaceWith(currentManeuver)
 
-  // Build the maneuvers menu from template.
-  const maneuvers = Maneuvers.getAll()
-  const menuHtmlString = await foundry.applications.handlebars.renderTemplate(
-    'systems/gurps/templates/maneuver-menu.hbs',
-    {
-      combatant,
-      maneuvers,
-    }
-  )
+  if (canModify) {
+    // Build the maneuvers menu from template.
+    const maneuvers = Maneuvers.getAll()
+    const menuHtmlString = await foundry.applications.handlebars.renderTemplate(
+      'systems/gurps/templates/maneuver-menu.hbs',
+      {
+        combatant,
+        maneuvers,
+      }
+    )
 
-  // Convert HTML string to DOM element and append to html.
-  const tempDiv = document.createElement('div')
+    // Convert HTML string to DOM element and append to html.
+    const tempDiv = document.createElement('div')
 
-  tempDiv.innerHTML = menuHtmlString
-  html.appendChild(tempDiv.firstElementChild)
+    tempDiv.innerHTML = menuHtmlString
+    html.appendChild(tempDiv.firstElementChild)
+  }
 
   // Find the maneuver token-effect and remove it and its tooltip entry.
   const tokenEffects = html.querySelector('.token-effects')

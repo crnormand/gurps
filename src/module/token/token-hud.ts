@@ -65,7 +65,7 @@ class GurpsTokenHUDV2<
     const currentManeuverId = actor.system.conditions.maneuver
 
     const maneuverIcon = currentManeuverId
-      ? (GURPS.Maneuvers.get(currentManeuverId)?.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png')
+      ? (GURPS.Maneuvers.get(currentManeuverId)?.img ?? 'systems/gurps/icons/maneuvers/man-nothing.png')
       : 'systems/gurps/icons/maneuvers/man-nothing.png'
 
     const maneuvers = Object.keys(GURPS.Maneuvers.getAll()).flatMap(id => {
@@ -79,7 +79,7 @@ class GurpsTokenHUDV2<
               )
                 ? 'active'
                 : '',
-              src: maneuver.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png',
+              src: maneuver.img ?? 'systems/gurps/icons/maneuvers/man-nothing.png',
               title: game.i18n?.localize(maneuver.label) ?? maneuver.label,
               id,
             },

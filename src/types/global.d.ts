@@ -325,7 +325,8 @@ declare global {
       pdfref?: string
     }
     name?: string
-    alt?: string
+    altImg?: string
+    altLabel?: string
     move?: string
     defense?: string
     fullturn?: boolean

@@ -1018,38 +1018,6 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   /* ---------------------------------------- */
-
-  /**
-   * Special GURPS logic: Based on world settings, maneuvers may be hidden for everyone (in which case, return an empty
-   * array), or hidden for everyone except GM and Owner. Maneuvers might also be mapped to a different maneuver to
-   * prevent others from knowing exactly what the token plans to do. If visible, the Maneuver should appear first in
-   * the array.
-   */
-  getTemporaryEffects(effects: ActiveEffect.Stored[]): ActiveEffect.Stored[] {
-    const maneuver = effects.find(effect => effect.isManeuver)
-
-    if (!maneuver) return effects
-
-    const nonManeuverEffects = effects.filter(effect => !effect.isManeuver)
-
-    const visibility = this.getSetting(Settings.SETTING_MANEUVER_VISIBILITY, 'NoOne')
-
-    if (visibility === 'NoOne') return nonManeuverEffects
-
-    if (!game.user?.isGM && !this.parent.isOwner) {
-      if (visibility === 'GMAndOwner') return nonManeuverEffects
-
-      const detail = this.getSetting(Settings.SETTING_MANEUVER_DETAIL, 'General')
-
-      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
-        if (maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')!
-      }
-    }
-
-    return [maneuver, ...nonManeuverEffects]
-  }
-
-  /* ---------------------------------------- */
   /*  Legacy Functionality                    */
   /* ---------------------------------------- */
 
