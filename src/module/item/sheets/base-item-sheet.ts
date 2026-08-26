@@ -117,8 +117,7 @@ class GurpsBaseItemSheet<
    * @param selector - The candidate HTML selector for dragging
    * @returns Can the current user drag this selector?
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected _canDragStart(selector: DragDrop.DragSelector): boolean {
+  protected _canDragStart(_selector: DragDrop.DragSelector): boolean {
     return this.isEditable
   }
 
@@ -127,8 +126,7 @@ class GurpsBaseItemSheet<
    * @param selector - The candidate HTML selector for the drop target
    * @returns Can the current user drop on this selector?
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected _canDragDrop(selector: DragDrop.DragSelector): boolean {
+  protected _canDragDrop(_selector: DragDrop.DragSelector): boolean {
     return this.isEditable
   }
 

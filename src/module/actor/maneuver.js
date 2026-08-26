@@ -99,13 +99,13 @@ class Maneuver {
     changes.push({
       key: 'system.conditions.maneuver',
       value: this._data.name,
-      mode: CONST.ACTIVE_EFFECT_CHANGE_TYPES.override,
+      mode: 'override',
     })
 
     changes.push({
       key: PROPERTY_MOVEOVERRIDE_MANEUVER,
       value: this.move,
-      mode: CONST.ACTIVE_EFFECT_CHANGE_TYPES.override,
+      mode: 'override',
     })
 
     return changes
