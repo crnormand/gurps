@@ -215,7 +215,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * @returns An array of User instances who are owners of this Actor.
    */
   get owners(): User.Implementation[] {
-    return game.users?.filter(user => user.isOwner) ?? []
+    return game.users?.filter(user => this.getUserLevel(user) >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER) ?? []
   }
 
   /* ---------------------------------------- */
