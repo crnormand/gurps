@@ -4,6 +4,8 @@
 
 ### Features
 
+- Feature Request: Reorganize Status Effects \#2888
+
 ### Bugfixes
 
 - v0.18.22: Fix broken maneuver menu in Tabbed character sheet \#2881
