@@ -7,6 +7,7 @@
 ### Bugfixes
 
 - v0.18.22: Fix broken maneuver menu in Tabbed character sheet \#2881
+- Can't add new Movment Type to Actor \#2886
 
 ## Release 0.18.22 08/21/2026
 
