@@ -1,3 +1,5 @@
+import { calculateMessageMode } from '@module/dierolls/dieroll.js'
+import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import { i18nFallback } from '@module/util/i18nFallback.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
@@ -19,6 +21,8 @@ export async function rollDamage(
 
   const showRollDialog = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
 
+  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, action.blindroll, event) as MessageMode
+
   if (showRollDialog && !canRoll.isSlam) {
     // Get Actor Info
     const gmUser = game.users.find((it: User) => it.isGM && it.active)
@@ -37,7 +41,6 @@ export async function rollDamage(
     const bucketTotal = GURPS.ModifierBucket.currentSum()
     const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
     const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
-    const isBlindRoll = action.blindroll
     const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
     // Armor divisor can be (0.5) or (2) - need to regex to get the number
     const armorDivisorRegex = /\((\d*\.?\d+)\)/
@@ -102,8 +105,8 @@ export async function rollDamage(
       buttons: [
         {
           action: 'roll',
-          icon: isBlindRoll ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
-          label: isBlindRoll ? 'GURPS.blindRoll' : 'GURPS.roll',
+          icon: messageMode.isBlind ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
+          label: messageMode.isBlind ? 'GURPS.blindRoll' : 'GURPS.roll',
           default: true,
         },
         {
@@ -123,7 +126,8 @@ export async function rollDamage(
         overrideText,
         targets,
         action.extdamagetype,
-        action.hitlocation
+        action.hitlocation,
+        action.isBlindRoll
       )
 
       if (action.next) {
@@ -146,7 +150,8 @@ export async function rollDamage(
       overrideText,
       targets,
       action.extdamagetype,
-      action.hitlocation
+      action.hitlocation,
+      action.isBlindRoll
     )
 
     if (action.next) {

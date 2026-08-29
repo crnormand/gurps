@@ -1,5 +1,6 @@
 'use strict'
 
+import { calculateMessageMode } from '@module/dierolls/dieroll.js'
 import { FoundryUtils } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import selectTarget from '@module/util/select-target.js'
@@ -121,7 +122,8 @@ export default class DamageChat {
     overrideDiceText,
     tokenNames,
     extdamagetype = null,
-    hitlocation = null
+    hitlocation = null,
+    isBlindRoll = false
   ) {
     let message = new DamageChat()
 
@@ -165,7 +167,7 @@ export default class DamageChat {
     }
 
     // TODO add hitlocation to Chat message (e.g, something like 'Rolling 3d cut damage to Neck')
-    message._createChatMessage(actor, dice, targetmods, draggableData, event)
+    message._createChatMessage(actor, dice, targetmods, draggableData, event, isBlindRoll)
 
     GURPS.ModifierBucket.clear()
     GURPS.ModifierBucket.modifierStack.AUTO_EMPTY = oldAutoEmpty
@@ -401,12 +403,14 @@ export default class DamageChat {
    * @param {any[]} draggableData
    * @param {JQuery.Event|null} event
    */
-  async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
+  async _createChatMessage(actor, diceData, targetmods, draggableData, event, isBlindRoll) {
     let userTarget = null
 
     if (game.user.targets.size) {
       userTarget = game.user.targets.values().next().value
     }
+
+    const messageMode = calculateMessageMode(FoundryUtils.MessageMode, isBlindRoll, event)
 
     let damageType = diceData.damageType === 'dmg' ? '' : diceData.damageType
 
@@ -432,13 +436,7 @@ export default class DamageChat {
       speaker: speaker,
       content: html,
       rolls: [draggableData[0].roll], // only need to stringify when sending to chat
-    }
-
-    if (event?.shiftKey) {
-      if (game.user.isGM) {
-        messageData.whisper = [game.user.id]
-      } else messageData.whisper = game.users.filter(user => user.isGM).map(user => user.id)
-      messageData.blind = true
+      blind: messageMode.isBlind,
     }
 
     messageData['flags.gurps.transfer'] = {
@@ -483,7 +481,7 @@ export default class DamageChat {
       messageData.sound = CONFIG.sounds.dice
     }
 
-    const options = { messageMode: FoundryUtils.MessageMode.value }
+    const options = { messageMode: messageMode.value }
 
     ChatMessage.create(messageData, options)
   }

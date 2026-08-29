@@ -100,6 +100,27 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
   return newDice
 }
 
+export function calculateMessageMode(baseMode, blindOverride, event) {
+  //apply modifier Keys from the event and current Modifier key, so that they can be pressed when the OTF is clicked or when the roll confirmation dialog is confirmed
+  const ctrlKey =
+    (event?.ctrlKey ?? false) ||
+    (game.keyboard?.isModifierActive(KeyboardManager?.MODIFIER_KEYS.CONTROL) ?? false) ||
+    // On macOS, allow the Option key as an additional blind-roll shortcut without removing the existing Ctrl/Command shortcut.
+    (navigator.platform.includes('Mac') &&
+      (event?.altKey || game.keyboard.isModifierActive(KeyboardManager?.MODIFIER_KEYS.ALT ?? false)))
+
+  const shiftKey =
+    (event?.shiftKey ?? false) || (game.keyboard?.isModifierActive(KeyboardManager?.MODIFIER_KEYS.SHIFT) ?? false)
+
+  if (blindOverride) return MessageMode.Blind
+  if (ctrlKey && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) return MessageMode.Blind
+  if (shiftKey && game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !game.user.isGM)
+    return MessageMode.Blind
+  if (shiftKey) return MessageMode.Self
+
+  return baseMode
+}
+
 export async function doRoll({
   actor,
   formula = '3d6',
@@ -174,6 +195,12 @@ export async function doRoll({
       bucketRoll = `(${signal}${currentSum})`
     }
   }
+
+  const messageMode = calculateMessageMode(
+    FoundryUtils.MessageMode,
+    !!optionalArgs.blind || !!optionalArgs.event?.blind,
+    optionalArgs.event
+  )
 
   const showRollDialog = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
 
@@ -453,8 +480,8 @@ export async function doRoll({
       buttons: [
         {
           action: 'roll',
-          icon: optionalArgs.blind ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
-          label: optionalArgs.blind ? 'GURPS.blindRoll' : 'GURPS.roll',
+          icon: messageMode.isBlind ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
+          label: messageMode.isBlind ? 'GURPS.blindRoll' : 'GURPS.roll',
           default: true,
           callback: async () => {
             GURPS.stopActions = false
@@ -555,9 +582,11 @@ async function _doRoll({
     speaker: speaker,
   }
 
-  if (optionalArgs.event?.data?.private) {
-    messageData.whisper = [game.user.id]
-  }
+  const messageMode = calculateMessageMode(
+    FoundryUtils.MessageMode,
+    !!optionalArgs.blind || !!optionalArgs.event?.blind,
+    optionalArgs.event
+  )
 
   let roll = null // Will be the Roll
 
@@ -670,7 +699,6 @@ async function _doRoll({
     chatdata['modifier'] = modifier
   }
 
-  chatdata['isBlind'] = !!(optionalArgs.blind || optionalArgs.event?.blind)
   if (isTargeted) GURPS.setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
 
   // For last, let's consume this action in Token
@@ -682,6 +710,7 @@ async function _doRoll({
     await actions.consumeAction(optionalArgs.action, chatthing, optionalArgs.obj, usingRapidStrike)
   }
 
+  chatdata['isBlind'] = messageMode.isBlind
   let message = await foundry.applications.handlebars.renderTemplate(
     'systems/gurps/templates/die-roll-chat-message.hbs',
     chatdata
@@ -694,36 +723,13 @@ async function _doRoll({
     messageData.whisper = [game.user.id]
   }
 
-  let isCtrl = false
-  let createOptions = {}
-
-  try {
-    const hasEvent = !!optionalArgs.event
-    const hasControlModifier = hasEvent && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
-
-    // On macOS, allow the Option key as an additional blind-roll shortcut without removing the existing Ctrl/Command shortcut.
-    if (navigator.platform.includes('Mac')) {
-      isCtrl = hasControlModifier || optionalArgs.event?.altKey
-    } else {
-      isCtrl = hasControlModifier
-    }
-  } catch {
-    // Keyboard manager may not be available during initialization
-  }
-
-  if (
-    FoundryUtils.MessageMode.isBlind ||
-    !!optionalArgs.blind ||
-    !!optionalArgs.event?.blind ||
-    isCtrl ||
-    (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
-  ) {
+  if (messageMode.isBlind) {
+    //whisper has no functionality for blind rolls, so wey do we pass that?
     messageData.whisper = ChatMessage.getWhisperRecipients('GM').map(user => user.id)
     messageData.blind = true
   }
 
-  const messageMode = messageData.blind ? MessageMode.Blind : FoundryUtils.MessageMode
-  const options = { ...createOptions, messageMode: messageMode.value }
+  const options = { messageMode: messageMode.value }
 
   ChatMessage.applyRollMode(messageData, messageMode.value)
   messageData.sound = CONFIG.sounds.dice
