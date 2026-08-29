@@ -11,12 +11,13 @@ import { ModelCollection } from '@module/data/model-collection.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { BaseItemModel } from '@module/item/data/base.js'
 import { ConditionalModifier, ReactionModifier } from '@module/item/data/conditional-modifier.js'
+import { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { EquipmentV1 } from '@module/item/legacy/equipment-adapter.js'
 import { SkillV1 } from '@module/item/legacy/skill-adapter.js'
 import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { ItemType } from '@module/item/types.js'
-import { COSTS_REGEX } from '@module/otf/parselink.js'
+import { COSTS_REGEX, parselink } from '@module/otf/parselink.js'
 import { OtfActionType, OtfAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
@@ -1451,22 +1452,24 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         checks.push(
           ...this.parent.items
             .reduce((acc: (MeleeAttackModel | RangedAttackModel)[], item) => {
-              acc.push(...(item as Item.Implementation).getItemAttacks())
+              acc.push(...(item as Item.Implementation).getItemAttacks().filter(attack => attack.addToQuickRoll))
 
               return acc
             }, [])
             .map(attack => {
-              const otfName = attack.mode ? `${attack.name} (${attack.mode})` : attack.name
+              const displayItem = attack.toDisplayItem()
 
               return {
                 img: attack.img ?? '',
-                symbol: game.i18n?.localize(`GURPS.attack${attack.name}`) ?? '',
-                label: attack.name ?? '',
-                value: attack.importedLevel,
-                mode: attack.mode,
-                otf: attack.type === 'meleeAttack' ? `M:"${otfName}"` : `R:"${otfName}"`,
+                symbol: game.i18n?.localize(`TYPES.Action.${attack.type}`) ?? '',
+                label: displayItem.name,
+                value: displayItem.level,
+                mode: displayItem.usage,
+                otf: displayItem.otf.level,
+                damage: displayItem.damage,
                 isOTF: true,
-                otfDamage: `D:"${otfName}"`,
+                otfDamage: displayItem.otf.damage,
+                type: attack.type === 'meleeAttack' ? 'melee' : 'ranged',
               }
             })
         )
@@ -1475,71 +1478,81 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       case 'defenseChecks':
         checks.push(
           {
-            symbol: 'dodge',
+            symbol: game.i18n?.localize('GURPS.dodge') ?? '',
             label: game.i18n?.localize('GURPS.dodge') ?? '',
             value: this.currentdodge,
-            otf: 'dodge',
+            otf: 'Dodge',
             isOTF: true,
+            type: 'dodge',
           }
           // TODO: implement getItemAttacks on actor
         )
-        this.parent.getItemAttacks({ attackType: 'melee' }).reduce((acc, attack) => {
-          const symbol = game.i18n?.localize(`GURPS.${attack.name}`) ?? ''
-          const img = attack.img
-          const otfName = attack.mode ? `"${attack.name} (${attack.mode})"` : `"${attack.name}"`
+        this.parent
+          .getItemAttacks({ attackType: 'melee' })
+          .filter(attack => attack.addToQuickRoll)
+          .reduce((acc, attack) => {
+            const img = attack.img
+            const displayItem = attack.toDisplayItem()
 
-          if (attack.parry.canParry)
-            acc.push({
-              symbol,
-              img: img ?? '',
-              label: attack.name ?? '',
-              value: attack.parryLevel,
-              mode: attack.mode,
-              otf: `P:${otfName}`,
-              isOTF: true,
-            })
+            if (attack.parry.canParry)
+              acc.push({
+                symbol: game.i18n?.localize(`GURPS.parry`) ?? '',
+                img: img ?? '',
+                label: displayItem.name,
+                value: displayItem.parry,
+                mode: displayItem.usage,
+                otf: displayItem.otf.parry ?? '',
+                isOTF: true,
+                type: 'parry',
+              })
 
-          if (attack.block.canBlock)
-            acc.push({
-              symbol,
-              img: img ?? '',
-              label: attack.name ?? '',
-              value: attack.blockLevel,
-              mode: attack.mode,
-              otf: `B:${otfName}`,
-              isOTF: true,
-            })
+            if (attack.block.canBlock)
+              acc.push({
+                symbol: game.i18n?.localize(`GURPS.block`) ?? '',
+                img: img ?? '',
+                label: displayItem.name ?? '',
+                value: displayItem.block,
+                mode: displayItem.usage,
+                otf: displayItem.otf.block ?? '',
+                isOTF: true,
+                type: 'block',
+              })
 
-          return acc
-        }, checks)
+            return acc
+          }, checks)
 
         return { data: checks, size: checks.length }
 
       case 'markedChecks': {
-        const items = this.parent.items.filter(item =>
-          (item as Item.Implementation).isOfType(ItemType.Trait, ItemType.Skill, ItemType.Spell)
+        const skills: (GurpsItemV2<ItemType.Skill> | GurpsItemV2<ItemType.Spell>)[] = this.allSkillsV2.filter(
+          skill => skill.system.addToQuickRoll
         )
+        const spells: (GurpsItemV2<ItemType.Skill> | GurpsItemV2<ItemType.Spell>)[] = this.allSpellsV2.filter(
+          spell => spell.system.addToQuickRoll
+        )
+        const traits: GurpsItemV2<ItemType.Trait>[] = this.allAdsV2.filter(trait => trait.system.addToQuickRoll)
+        const skillsAndSpells = [...skills, ...spells]
 
-        for (const item of items) {
+        for (const item of skillsAndSpells) {
           if (item.system.addToQuickRoll) {
-            const type = item.type === ItemType.Trait ? 'ad' : item.type
-            let value = 0
-
-            if ((item as Item.Implementation).isOfType(ItemType.Skill))
-              value = (item as Item.OfType<ItemType.Skill>).system.importedLevel
-            if ((item as Item.Implementation).isOfType(ItemType.Spell))
-              value = (item as Item.OfType<ItemType.Spell>).system.importedLevel
+            const displayItem = item.system.toDisplayItem()
 
             checks.push({
-              symbol: game.i18n?.localize(`GURPS.${type}`) ?? '',
+              symbol: game.i18n?.localize(`TYPES.Item.${item.type}`) ?? '',
               img: item.img ?? '',
-              label: item.name,
-              value,
+              label: displayItem.fullName,
+              value: displayItem.level,
               notes: item.system.notes,
-              otf: `${type}:"${item.name}"`,
+              otf: displayItem.otf.level,
               isOTF: false,
             })
           }
+
+          extractOTFS(item)
+        }
+
+        for (const item of traits) {
+          extractOTFS(item)
         }
 
         return { data: checks, size: checks.length }
@@ -1547,6 +1560,29 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
       default:
         return { data: [], size: 0 }
+    }
+
+    function extractOTFS(
+      item: GurpsItemV2<ItemType.Skill> | GurpsItemV2<ItemType.Spell> | GurpsItemV2<ItemType.Trait>
+    ) {
+      const combinedNotes = item.system.notes + (item.system.vttNotes ?? '')
+      const possibleOTFs = combinedNotes.match(/\[.*?\]/g) || []
+
+      for (const otf of possibleOTFs) {
+        const parsed = parselink(otf)
+
+        if (parsed) {
+          checks.push({
+            symbol: `${game.i18n?.localize(`TYPES.Item.${item.type}`) ?? ''} ${item.name} `,
+            img: item.img ?? '',
+            label: parsed.text.replace(/[[\]]/g, ''),
+            value: '',
+            notes: item.system.notes,
+            otf: `/r ${parsed.text}`,
+            isOTF: true,
+          })
+        }
+      }
     }
   }
 
