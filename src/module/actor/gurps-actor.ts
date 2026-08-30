@@ -747,9 +747,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async addTaggedRollModifiers(
     chatThing: string,
     optionalArgs: { obj?: AnyObject },
-    attack?: Record<string, any>
+    attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
-    return this.modelV2.addTaggedRollModifiers(chatThing, optionalArgs, attack as MeleeAttackModel | RangedAttackModel)
+    return this.modelV2.addTaggedRollModifiers(chatThing, optionalArgs, attack)
   }
 
   /* ---------------------------------------- */

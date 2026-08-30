@@ -1,3 +1,4 @@
+import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
 export const OtfActionType = {
@@ -51,8 +52,69 @@ type BaseAction = {
   target: string | number
   truetext: string
   type: OtfActionType
+  equation: string
+  id: string
+  accumulate: boolean
+  formula: string
+  att: MeleeAttackModel | RangedAttackModel
 }
 
+type HttpLinkAction = {
+  type: typeof OtfActionType.href
+  orig: string
+  label: string
+}
+
+type PdfAction = {
+  type: typeof OtfActionType.pdf
+  orig: string
+  link: string
+}
+
+type IfTestAction = {
+  type: typeof OtfActionType.ifTest
+  orig: string
+  name?: string
+  equation?: string
+}
+
+type ModAction = {
+  type: typeof OtfActionType.modifier
+  orig: string
+  mod: string
+  desc: string
+  next?: OtfAction
+  spantext: string
+}
+
+type ChatAction = {
+  type: typeof OtfActionType.chat
+  quite: boolean
+  overridetxt?: string //todo verify
+}
+
+type DragDropAction = {
+  type: typeof OtfActionType.dragDrop
+  orig: string
+  link: string
+  id: string
+}
+
+type ControlRollAction = {
+  type: typeof OtfActionType.controlRoll
+  orig: string
+  traget: number
+  desc: string
+  blindroll: boolean
+  sourceId: string
+}
+
+type RollAction = {
+  blindroll: boolean
+  costs: string
+  mod: string
+  target: string | number
+}
 export type OtfAction = DeepPartial<BaseAction>
 
 export type ParserResult = {

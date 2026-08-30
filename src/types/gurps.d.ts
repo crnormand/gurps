@@ -506,5 +506,18 @@ declare global {
     SJGProductMappings: Record<string, string>
 
     /* ---------------------------------------- */
+
+    /* to do: better type*/
+    lastTargetedRoll: {
+      actorId: string
+      tokenId: string
+      isCritSuccess: boolean
+      isCritFailure: boolean
+      margin: number
+      failure: boolean
+      seventeen: boolean
+    }
+
+    /* ---------------------------------------- */
   }
 }

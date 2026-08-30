@@ -7,7 +7,7 @@ import DamageChat from './damagechat.js'
 
 export async function rollDamage(
   canRoll: any,
-  token: TokenDocument | null,
+  token: Token | null,
   actor: Actor | null,
   displayFormula: string,
   actionFormula: string,
@@ -26,7 +26,7 @@ export async function rollDamage(
   if (showRollDialog && !canRoll.isSlam) {
     // Get Actor Info
     const gmUser = game.users.find((it: User) => it.isGM && it.active)
-    const tokenImg = token?.texture?.src || actor?.img || gmUser?.avatar
+    const tokenImg = token?.document.texture.src || actor?.img || gmUser?.avatar
     const isVideo = tokenImg?.includes('webm') || tokenImg?.includes('mp4')
     const tokenName = token?.name || actor?.name || gmUser?.name
     const damageRoll = displayFormula
