@@ -40,7 +40,7 @@ import Maneuvers, {
   MOVE_TWOTHIRDS,
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
-} from './maneuver.js'
+} from '../combat/maneuver.js'
 import { OtfActionType } from '../otf/types.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
