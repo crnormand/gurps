@@ -1,8 +1,11 @@
+export const MODULE_NAME = 'combat'
+
 /**
- * These settings predate this module and are already stored in every existing world, so their keys
- * stay unprefixed -- adopting the `<module>.<key>` convention (see module/pdf/types.ts) here would
- * silently reset each GM's choices.
+ * The maneuver settings below predate this module and are already stored in every existing world, so
+ * their keys stay unprefixed -- renaming them would silently reset each GM's choices. Only the new
+ * Combat Options setting follows the `<module>.<key>` convention (see module/pdf/types.ts).
  */
+export const SETTING_COMBAT_OPTIONS = `${MODULE_NAME}.options`
 export const SETTING_USE_ON_TARGET = 'use-on-target'
 export const SETTING_MANEUVER_VISIBILITY = 'maneuver-visibility'
 export const SETTING_MANEUVER_DETAIL = 'maneuver-detail'

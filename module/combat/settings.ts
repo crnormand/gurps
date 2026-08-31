@@ -1,5 +1,14 @@
 import {
+  CombatOption,
+  CombatOptionSection,
+  CombatOptionSettings,
+  defaultCombatOptionSettings,
+  enabledOptions,
+  isManeuverEnabled,
+} from './combat-options.ts'
+import {
   SETTING_ALLOW_ROLL_BASED_ON_MANEUVER,
+  SETTING_COMBAT_OPTIONS,
   SETTING_MANEUVER_DETAIL,
   SETTING_MANEUVER_UPDATES_MOVE,
   SETTING_MANEUVER_VISIBILITY,
@@ -79,7 +88,25 @@ export function registerCombatSettings(): void {
     config: true,
     type: Boolean as any,
     default: false,
-    onChange: value => console.log(`${SETTING_USE_ON_TARGET}: ${value}`),
+    onChange: value => {
+      console.log(`${SETTING_USE_ON_TARGET}: ${value}`)
+      // On Target adds and removes maneuvers, so it has the same reach as the Combat Options dialog
+      // it can also be changed from.
+      refreshCombatOptionUI()
+    },
+  })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_COMBAT_OPTIONS, {
+    name: 'GURPS.settingCombatOptions',
+    hint: 'GURPS.settingHintCombatOptions',
+    scope: 'world',
+    config: false,
+    type: Object as any,
+    default: defaultCombatOptionSettings(),
+    onChange: value => {
+      console.log(`Combat options: ${JSON.stringify(value)}`)
+      refreshCombatOptionUI()
+    },
   })
 }
 
@@ -87,8 +114,22 @@ export function registerCombatSettings(): void {
 /*  Read-side API. Everything outside this module goes through these.                                */
 /* ---------------------------------------- */
 
+export function getCombatOptionSettings(): CombatOptionSettings {
+  return (game.settings?.get(GURPS.SYSTEM_NAME, SETTING_COMBAT_OPTIONS) ?? {}) as CombatOptionSettings
+}
+
 export function isUsingOnTarget(): boolean {
   return !!game.settings?.get(GURPS.SYSTEM_NAME, SETTING_USE_ON_TARGET)
+}
+
+/** The options the Modifier Bucket should show in one of its sections, in registry order. */
+export function enabledCombatOptions(section: CombatOptionSection): CombatOption[] {
+  return enabledOptions(section, getCombatOptionSettings(), { useOnTarget: isUsingOnTarget() })
+}
+
+/** Whether a maneuver is one the GM has left in play. */
+export function isManeuverInPlay(maneuverName: string): boolean {
+  return isManeuverEnabled(maneuverName, getCombatOptionSettings())
 }
 
 export function getManeuverVisibility(): string {
@@ -106,3 +147,21 @@ export function maneuverUpdatesMove(): boolean {
 export function getRollBasedOnManeuverPolicy(): string {
   return game.settings?.get(GURPS.SYSTEM_NAME, SETTING_ALLOW_ROLL_BASED_ON_MANEUVER) as string
 }
+
+/**
+ * The Modifier Bucket reads the combat options lazily, but it may already be open, and the combat
+ * tracker menu, the token HUD palette and the sheet dropdowns are each built once per render -- so
+ * anything already on screen has to be re-rendered when what is in play changes.
+ */
+function refreshCombatOptionUI(): void {
+  GURPS.ModifierBucket?.refresh()
+  ui.combat?.render()
+  if (canvas?.tokens?.hud?.rendered) canvas.tokens.hud.render()
+
+  // `game.actors` misses the synthetic actors behind unlinked tokens -- the usual case for mooks --
+  // so an open mook sheet would keep offering maneuvers that are no longer in play.
+  const actors = new Set([...(game.actors ?? []), ...(canvas?.tokens?.placeables ?? []).flatMap(t => t.actor ?? [])])
+  for (const actor of actors) if (actor.sheet?.rendered) actor.sheet.render()
+}
+
+/* ---------------------------------------- */

@@ -3,6 +3,7 @@ import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
 import { GurpsActor } from './module/actor/actor.js'
 import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
+import { CombatOptionSettings } from './module/combat/combat-options.ts'
 import { GurpsToken } from './module/token/gurps-token.ts'
 
 export {}
@@ -45,6 +46,7 @@ declare global {
       addModifier(mod: string, label: string, options?: { situation?: string }): void
       currentSum(): number
       clear(): Promise<void>
+      refresh(): void
       refreshPosition(): void
     }
 
@@ -211,6 +213,7 @@ declare global {
     'gurps.resource-tracker.manager': new (options?: any) => ResourceTracker.TemplateManager
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
     'gurps.use-quick-rolls': AnyMutableObject
+    'gurps.combat.options': CombatOptionSettings
     'gurps.use-on-target': boolean
     'gurps.maneuver-visibility': string
     'gurps.maneuver-detail': string

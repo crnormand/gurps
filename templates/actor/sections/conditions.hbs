@@ -38,7 +38,7 @@
                 {{localize 'GURPS.none'}}
               </option>
               {{#with system.conditions.maneuver as |maneuver|}}
-                {{#each (listAllManeuvers) as |this key|}}
+                {{#each (listAllManeuvers maneuver) as |this key|}}
                   <option value='{{key}}' {{select-if maneuver key}}>
                     {{localize this.label}}
                   </option>

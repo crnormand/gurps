@@ -13,3 +13,116 @@
     }
   }
 }
+
+#combat-options {
+  // A fixed height is what makes the content scroll; without it the window grows past the viewport.
+  max-height: 90vh;
+
+  .window-content {
+    overflow: hidden;
+  }
+
+  .gga-combat-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+  }
+
+  .gga-combat-options-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+
+  .gga-combat-options-footer {
+    flex: 0 0 auto;
+  }
+
+  .hint {
+    margin: 0 0 0.5rem;
+  }
+
+  fieldset {
+    margin: 0 0 0.5rem;
+  }
+
+  .gga-subhead {
+    margin: 0.5rem 0 0.25rem;
+    border-bottom: 1px solid var(--color-border-light-tertiary, rgba(0, 0, 0, 0.2));
+  }
+
+  .gga-option-row {
+    > label {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.15rem 0;
+      font-weight: normal;
+      cursor: pointer;
+    }
+
+    input[type='checkbox'] {
+      margin: 0;
+    }
+
+    .pdf-ref {
+      opacity: 0.6;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  }
+
+  .gga-maneuver-row > label {
+    grid-template-columns: auto auto 1fr;
+  }
+
+  .gga-maneuver-icon {
+    width: 1.4em;
+    height: 1.4em;
+    border: none;
+    flex: 0 0 auto;
+  }
+
+  .gga-option-note {
+    margin: 0 0 0.25rem 1.75rem;
+    font-size: 0.85em;
+    opacity: 0.7;
+  }
+
+  // Only shown on the rows On Target introduces, and only while it is turned off.
+  .gga-option-note-on-target {
+    display: none;
+    font-style: italic;
+    opacity: 1;
+  }
+
+  .gga-option-row.needs-on-target .gga-option-note-on-target {
+    display: block;
+  }
+
+  .gga-source-row > label {
+    font-weight: bold;
+  }
+
+  // A row that can't reach the bucket -- its source is off, or its maneuvers are all out of play --
+  // keeps its stored state, so it is struck through rather than cleared.
+  .gga-option-row.needs-on-target,
+  .gga-option-row.orphaned {
+    > label {
+      cursor: default;
+    }
+
+    .gga-option-name,
+    .pdf-ref {
+      opacity: 0.4;
+      text-decoration: line-through;
+    }
+  }
+
+  .gga-option-row.needs-on-target .gga-option-note-on-target {
+    opacity: 1;
+    text-decoration: none;
+  }
+}

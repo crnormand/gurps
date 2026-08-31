@@ -1,4 +1,4 @@
-import { isUsingOnTarget } from './settings.js'
+import { isManeuverInPlay, isUsingOnTarget } from './settings.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'
@@ -103,6 +103,10 @@ class Maneuver {
 
   get introducedBy() {
     return this._data.introducedBy
+  }
+
+  get requiresOnTarget() {
+    return this._data.introducedBy === MANEUVER_INTRODUCED_BY_ON_TARGET
   }
 
   get name() {
@@ -381,7 +385,8 @@ export default class Maneuvers {
 
   /**
    * Every maneuver in the system, in canonical (B364) order, whether or not this world uses the
-   * source book that introduced it.
+   * source book that introduced it. The Combat Options dialog lists them all, flagging the ones a
+   * disabled source would hide, so a GM isn't left wondering where they went.
    *
    * Aim appears once, with its Basic Set data -- the On Target variant only exists in a world using
    * that book, so it is not part of "every maneuver".
@@ -391,20 +396,26 @@ export default class Maneuvers {
   }
 
   /**
-   * The maneuvers a user may pick from. Anything offering a maneuver to a human -- a sheet dropdown,
-   * the token HUD palette, the combat tracker menu, `/man` -- reads this.
+   * The maneuvers a user may pick from: the ones from the source books in use, minus the ones the GM
+   * turned off in the Combat Options setting. Anything offering a maneuver to a human -- a sheet
+   * dropdown, the token HUD palette, the combat tracker menu, `/man` -- reads this.
    *
    * Kept separate from the resolution accessors above: a maneuver already applied to a token still
-   * has to resolve its icon, label and move whether or not it may still be picked.
+   * has to resolve its icon, label and move after being turned off.
    */
   static getAllInPlay() {
-    return fromSourcesInUse()
+    return Object.fromEntries(Object.entries(fromSourcesInUse()).filter(([name]) => isManeuverInPlay(name)))
   }
 
-  static getAllInPlayData() {
+  /**
+   * @param {string|null} [keep] a maneuver to include even if it has been turned off, so a dropdown
+   *   showing the actor's current maneuver doesn't silently drop it.
+   */
+  static getAllInPlayData(keep = null) {
     let data = {}
-    for (const [key, maneuver] of Object.entries(Maneuvers.getAllInPlay())) {
-      data[key] = maneuver.data
+    const inPlay = Maneuvers.getAllInPlay()
+    for (const [key, maneuver] of Object.entries(fromSourcesInUse())) {
+      if (key in inPlay || key === keep) data[key] = maneuver.data
     }
 
     return data

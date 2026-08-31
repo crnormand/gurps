@@ -3,8 +3,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { displayMod, horiz } from '../../lib/utilities.js'
 import { gurpslink } from '../../module/utilities/gurpslink.js'
-import { enabledOptions } from '../combat/combat-options.js'
-import { isUsingOnTarget } from '../combat/settings.js'
+import { enabledCombatOptions } from '../combat/settings.js'
 import GurpsWiring from '../gurps-wiring.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 /**
@@ -424,9 +423,9 @@ const ModifierLiterals = {
     return this._HitLocationModifiers
   },
 
-  /** The combat options offered in one section of the bucket. */
+  /** The combat options the GM has left in play for one bucket section. */
   _maneuverOptions(section) {
-    return enabledOptions(section, { useOnTarget: isUsingOnTarget() })
+    return enabledCombatOptions(section)
   },
 
   _maneuverOtf(option) {

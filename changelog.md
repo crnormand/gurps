@@ -4,6 +4,8 @@
 
 ### Features
 
+- Add a Combat Options GM setting: choose which maneuvers are in play (removing them from the combat tracker menu, the token HUD and the character sheet) and which attack and defense options appear in the Modifier Bucket
+
 ### Bugfixes
 
 ## Release 0.18.23 08/29/2026

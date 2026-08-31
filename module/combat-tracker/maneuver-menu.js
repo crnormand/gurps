@@ -85,7 +85,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
   if (initiativeSpan) initiativeSpan.replaceWith(currentManeuver)
 
   if (canModify) {
-    // Build the maneuvers menu from template.
+    // Build the maneuvers menu from template, omitting the maneuvers the GM has turned off.
     const maneuvers = Maneuvers.getAllInPlay()
     const menuHtmlString = await foundry.applications.handlebars.renderTemplate(
       'systems/gurps/templates/maneuver-menu.hbs',
