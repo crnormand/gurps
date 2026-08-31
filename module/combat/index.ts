@@ -4,6 +4,7 @@ import { GurpsCombatant } from './combatant.js'
 import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.ts'
 import { migrate } from './migrate.js'
 import { GurpsRange, setupRanges } from './ranges.js'
+import { registerCombatSettingsMenu } from './combat-settings-application.js'
 import {
   enabledCombatOptions,
   getInitiativeFormula,
@@ -43,6 +44,7 @@ function init() {
     }
 
     registerCombatSettings()
+    registerCombatSettingsMenu()
   })
 
   Hooks.once('ready', () => {

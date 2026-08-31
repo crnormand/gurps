@@ -8,6 +8,7 @@
 - Reorganize Combat settings under new Combat Settings menu.
 - Move Combat code into combat module.
 - Color Blind Adjustment \#2914.
+- Combat Settings: choose which maneuvers and Modifier Bucket options this world uses. A maneuver that is turned off is no longer offered in the Combat Tracker, Token HUD, character sheet or `/man`, and its modifiers leave the Modifier Bucket with it.
 
 ### Bugfixes
 
@@ -15,6 +16,7 @@
 - Cannot create a Compendium with a name that is non-ASCII \#2923
 - Character Sheet Item has " - " suffix \#2931
 - Compendium Packs / Import Equipment Library / Skill Level is populating as S:"["object Object]\*[] \#2942
+- An actor became unopenable if it held a maneuver from a source book the GM had since switched off.
 
 ## Release 0.18.23 08/29/2026
 
