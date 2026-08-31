@@ -5,28 +5,30 @@ import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiativ
 import { migrate } from './migrate.js'
 import { GurpsRange, setupRanges } from './ranges.js'
 import {
+  enabledCombatOptions,
   getInitiativeFormula,
   getManeuverDetail,
   getManeuverVisibility,
   getRangeStrategy,
   getRollBasedOnManeuverPolicy,
+  isManeuverInPlay,
   isUsingOnTarget,
   maneuverUpdatesMove,
   registerCombatSettings,
   useSizeModifierDifferenceInMelee,
 } from './settings.js'
-import { enabledOptions } from './combat-options.js'
 
 export interface GurpsCombatModule extends GurpsModule {
+  enabledOptions: typeof enabledCombatOptions
   getInitiativeFormula: typeof getInitiativeFormula
   getManeuverDetail: typeof getManeuverDetail
   getManeuverVisibility: typeof getManeuverVisibility
   getRangeStrategy: typeof getRangeStrategy
   getRollBasedOnManeuverPolicy: typeof getRollBasedOnManeuverPolicy
+  isManeuverInPlay: typeof isManeuverInPlay
   isUsingOnTarget: typeof isUsingOnTarget
   maneuverUpdatesMove: typeof maneuverUpdatesMove
   useSizeModifierDifferenceInMelee: typeof useSizeModifierDifferenceInMelee
-  enabledOptions: typeof enabledOptions
 }
 
 function init() {
@@ -68,6 +70,8 @@ export const Combat: GurpsCombatModule = {
   migrate,
 
   // -- Combat settings --
+  enabledOptions: enabledCombatOptions,
+  isManeuverInPlay,
   getManeuverDetail,
   getManeuverVisibility,
   getRangeStrategy,
@@ -76,7 +80,4 @@ export const Combat: GurpsCombatModule = {
   isUsingOnTarget,
   maneuverUpdatesMove,
   useSizeModifierDifferenceInMelee,
-
-  // -- Combat Options/Modifiers --
-  enabledOptions,
 }
