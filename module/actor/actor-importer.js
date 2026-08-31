@@ -1688,18 +1688,16 @@ export class ActorImporter {
       'Skill'
 
     if (i.type == 'technique' && !!i.default) {
-      let techniqueName = i.default.name instanceof Object ? i.default.name.qualifier : i.default.name
+      const defaultName = i.default.name instanceof Object ? i.default.name.qualifier : i.default.name
 
       // Handle replacements...
 
-      let specialiation =
+      const specialization =
         i.default.specialization instanceof Object
           ? i.default.specialization.qualifier
           : (i.default.specialization ?? '')
 
-      // Handle replacements...
-
-      const addition = parenthesize([techniqueName, parenthesize(specialiation)].join(' ').trim())
+      const addition = parenthesize([defaultName, parenthesize(specialization)].join(' ').trim())
 
       name += ` ${addition}`
     }
