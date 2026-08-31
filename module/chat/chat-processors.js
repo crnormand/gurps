@@ -1109,6 +1109,7 @@ class ManeuverChatProcessor extends ChatProcessor {
   async process(_line) {
     if (!this.match[2]) {
       this.priv(game.i18n.localize('GURPS.chatHelpManeuver'))
+      // Only the maneuvers this campaign uses -- listing one the GM turned off would just fail below.
       Object.values(Maneuvers.getAllInPlay())
         .map(e => game.i18n.localize(e.data.label))
         .forEach(e => this.priv(e))

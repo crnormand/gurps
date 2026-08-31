@@ -19,7 +19,7 @@
                 {{/with}}
               </summary>
               <div class='popup square5x4'>
-                {{#each (listAllManeuvers) as |this key|}}
+                {{#each (listAllManeuvers system.conditions.maneuver) as |this key|}}
                   <img class='button' src='{{icon}}' title='{{localize label}}' alt='{{key}}' />
                 {{/each}}
               </div>
@@ -38,7 +38,7 @@
                 {{localize 'GURPS.none'}}
               </option>
               {{#with system.conditions.maneuver as |maneuver|}}
-                {{#each (listAllManeuvers) as |this key|}}
+                {{#each (listAllManeuvers maneuver) as |this key|}}
                   <option value='{{key}}' {{select-if maneuver key}}>
                     {{localize this.label}}
                   </option>
