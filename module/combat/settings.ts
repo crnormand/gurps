@@ -1,5 +1,4 @@
 import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.ts'
-import { GurpsSettingsApplication } from '../utilities/gurps-settings-application.js'
 import {
   CombatOption,
   CombatOptionSection,
@@ -9,10 +8,8 @@ import {
   isManeuverEnabled,
 } from './combat-options.ts'
 import {
-  ICON,
   ManeuverDetail,
   ManeuverVisibility,
-  MODULE_NAME,
   RollBasedOnManeuverPolicy,
   SETTING_ALLOW_ROLL_BASED_ON_MANEUVER,
   SETTING_COMBAT_OPTIONS,
@@ -154,21 +151,6 @@ export function registerCombatSettings(): void {
       console.log(`Combat options: ${JSON.stringify(value)}`)
       refreshCombatOptionUI()
     },
-  })
-
-  class CombatSettingsApplication extends GurpsSettingsApplication {
-    constructor(options?: any) {
-      super({ title: game.i18n!.localize(`${SETTINGS}.title`), module: MODULE_NAME, icon: ICON }, options)
-    }
-  }
-
-  game.settings.registerMenu(GURPS.SYSTEM_NAME, MODULE_NAME, {
-    name: `${SETTINGS}.title`,
-    label: `${SETTINGS}.title`,
-    hint: `${SETTINGS}.hint`,
-    icon: ICON,
-    type: CombatSettingsApplication,
-    restricted: true,
   })
 }
 
