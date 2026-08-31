@@ -2875,7 +2875,22 @@ button.quick-roll-button.lg {
   height: auto;
 }
 
-.quick-roll-button .tooltip {
+.quick-roll-attack {
+    position: relative;
+    display: inline-block;
+}
+
+button.quick-roll-button.lg.dam {
+    padding-left: 0;
+    display: block;
+}
+
+button.quick-roll-button.lg.atk {
+    display: block;
+}
+
+.quick-roll-button .tooltip, 
+.quick-roll-attack .tooltip{
   visibility: hidden;
   background-color: var(--color-cool-5-90);
   color: var(--color-light-1);
@@ -2893,19 +2908,22 @@ button.quick-roll-button.lg {
   border: 1px solid #202020;
 }
 
-.quick-roll-button.sm.dmg:first-child .tooltip,
-.quick-roll-button:last-child .tooltip {
+.quick-roll-button:last-child .tooltip,
+.quick-roll-attack:last-child .tooltip
+ {
   left: auto;
   right: 0;
   margin-left: 0;
 }
 
-.quick-roll-button:first-child .tooltip {
+.quick-roll-button:first-child .tooltip,
+.quick-roll-attack:first-child .tooltip {
   left: 0;
   margin-left: 0;
 }
 
-.quick-roll-button .tooltip::after {
+.quick-roll-button .tooltip::after, 
+.quick-roll-attack .tooltip::after {
   content: '';
   position: absolute;
   top: 100%; /* Arrow at the bottom of the tooltip */
@@ -2916,19 +2934,21 @@ button.quick-roll-button.lg {
   border-color: black transparent transparent transparent;
 }
 
-.quick-roll-button.sm.dmg:first-child .tooltip::after,
-.quick-roll-button:last-child .tooltip::after {
+.quick-roll-button:last-child .tooltip::after,
+.quick-roll-attack:last-child .tooltip::after {
   left: auto;
   right: 10px;
   margin-left: 0;
 }
 
-.quick-roll-button:first-child .tooltip::after {
+.quick-roll-button:first-child .tooltip::after,
+.quick-roll-attack:first-child .tooltip::after {
   left: 10px;
   margin-left: 0;
 }
 
-.quick-roll-button:hover .tooltip {
+.quick-roll-button:hover .tooltip, 
+.quick-roll-attack:hover .tooltip {
   visibility: visible;
   opacity: 1;
   z-index: 200;
@@ -3007,21 +3027,11 @@ button.quick-roll-button.lg {
   max-height: 20px;
   margin-right: 6px;
 }
-.quick-roll-blind-toggle {
-  position: absolute;
-  right: 10px;
-  top: 0;
-  margin-top: -5px;
-  font-size: 1.2em;
-}
 .qr-green {
   color: #35713e;
 }
 .qr-blue {
   color: #6f63d9;
-}
-.qr-blind {
-  display: none;
 }
 .qr-otf {
   color: #d7b921;
