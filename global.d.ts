@@ -69,6 +69,7 @@ declare global {
     Maneuvers: {
       get(id: string): { icon?: string } | undefined
       getAll(): Record<string, { id: string; icon: string; label: string }>
+      getAllPossible(): Record<string, { id: string; img: string; label: string }>
       getAllInPlay(): Record<string, { id: string; img: string; label: string }>
     }
 
