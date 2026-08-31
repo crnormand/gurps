@@ -324,13 +324,20 @@ const filterManeuvers = (introducedBy = []) => {
   return result
 }
 
+/**
+ * The maneuvers from the source books this world has switched on. On Target both adds maneuvers and
+ * gives Aim a different allowed move, so a maneuver id already stored on a token has to be resolved
+ * against this rather than against the registry.
+ */
+const fromSourcesInUse = () => filterManeuvers(isUsingOnTarget() ? [MANEUVER_INTRODUCED_BY_ON_TARGET] : [])
+
 export default class Maneuvers {
   /**
    * @param {string} id
    * @returns {ManeuverData}
    */
   static get(id) {
-    return Maneuvers.getAll()[id]?.data
+    return fromSourcesInUse()[id]?.data
   }
 
   /**
@@ -339,7 +346,7 @@ export default class Maneuvers {
    * @memberof Maneuvers
    */
   static isManeuverIcon(text) {
-    return Object.values(Maneuvers.getAll())
+    return Object.values(fromSourcesInUse())
       .map(m => m.img)
       .includes(text)
   }
@@ -370,7 +377,7 @@ export default class Maneuvers {
     // to something from Object.prototype that has no maneuver data on it.
     const own = (map, key) => (Object.hasOwn(map, key) ? map[key] : undefined)
 
-    const maneuver = own(Maneuvers.getAll(), maneuverText) ?? own(maneuvers, maneuverText)
+    const maneuver = own(fromSourcesInUse(), maneuverText) ?? own(maneuvers, maneuverText)
     if (maneuver) return maneuver.data
 
     console.warn(`GURPS | Unrecognized maneuver "${maneuverText}", falling back to Do Nothing`)
@@ -385,27 +392,36 @@ export default class Maneuvers {
     return Maneuvers.getManeuver(maneuverText).img ?? null
   }
 
+  /**
+   * Every maneuver in the system, in canonical (B364) order, whether or not this world uses the
+   * source book that introduced it.
+   *
+   * Aim appears once, with its Basic Set data -- the On Target variant only exists in a world using
+   * that book, so it is not part of "every maneuver".
+   */
+  static getAllPossible() {
+    return { ...maneuvers }
+  }
+
+  /**
+   * @deprecated Ambiguous: this is the *resolution* set, not every maneuver and not the pickable
+   *   ones. Use `getAllPossible()` for the whole registry or `getAllInPlay()` for what a user may
+   *   pick. Kept, and kept behaving exactly as it always has, because modules outside this system
+   *   call it.
+   */
   static getAll() {
-    const useOnTarget = isUsingOnTarget()
-
-    const filter = []
-
-    if (useOnTarget) {
-      filter.push(MANEUVER_INTRODUCED_BY_ON_TARGET)
-    }
-
-    return filterManeuvers(filter)
+    return fromSourcesInUse()
   }
 
   /**
    * The maneuvers a user may pick from. Anything offering a maneuver to a human -- a sheet dropdown,
    * the token HUD palette, the combat tracker menu, `/man` -- reads this.
    *
-   * Kept separate from `getAll()`, which is the *resolution* set: a maneuver already applied to a
-   * token still has to resolve its icon, label and move whether or not it may still be picked.
+   * Kept separate from the resolution accessors above: a maneuver already applied to a token still
+   * has to resolve its icon, label and move whether or not it may still be picked.
    */
   static getAllInPlay() {
-    return Maneuvers.getAll()
+    return fromSourcesInUse()
   }
 
   /** @returns {Record<string, ManeuverData>} */
@@ -424,7 +440,7 @@ export default class Maneuvers {
    * @returns {ManeuverData[]|undefined}
    */
   static getByIcon(img) {
-    return Object.values(Maneuvers.getAll())
+    return Object.values(fromSourcesInUse())
       .filter(it => it.img === img)
       .map(it => it.data)
   }
