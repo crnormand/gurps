@@ -384,10 +384,23 @@ export default class Maneuvers {
     return filterManeuvers(filter)
   }
 
-  static getAllData() {
+  /**
+   * The maneuvers a user may pick from. Anything offering a maneuver to a human -- a sheet dropdown,
+   * the token HUD palette, the combat tracker menu, `/man` -- reads this.
+   *
+   * Kept separate from `getAll()`, which is the *resolution* set: a maneuver already applied to a
+   * token still has to resolve its icon, label and move whether or not it may still be picked.
+   */
+  static getAllInPlay() {
+    return Maneuvers.getAll()
+  }
+
+  /** @returns {Record<string, ManeuverData>} */
+  static getAllInPlayData() {
+    /** @type {Record<string, ManeuverData>} */
     let data = {}
-    for (const key in Maneuvers.getAll()) {
-      data[key] = Maneuvers.getAll()[key].data
+    for (const [key, maneuver] of Object.entries(Maneuvers.getAllInPlay())) {
+      data[key] = maneuver.data
     }
 
     return data

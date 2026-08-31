@@ -39,7 +39,7 @@ export class GurpsTokenHUDV2<
     Object.assign(context, {
       icons: { maneuvers: maneuverIcon, ...context.icons },
 
-      maneuvers: Object.entries(GURPS.Maneuvers.getAll()).map(([id, maneuver]: [string, any]) => {
+      maneuvers: Object.entries(GURPS.Maneuvers.getAllInPlay()).map(([id, maneuver]: [string, any]) => {
         return {
           cssClass: activeEffects.some(effect =>
             effect.changes.some(
