@@ -1,12 +1,21 @@
 import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.ts'
 import { GurpsSettingsApplication } from '../utilities/gurps-settings-application.js'
 import {
+  CombatOption,
+  CombatOptionSection,
+  CombatOptionSettings,
+  defaultCombatOptionSettings,
+  enabledOptions,
+  isManeuverEnabled,
+} from './combat-options.ts'
+import {
   ICON,
   ManeuverDetail,
   ManeuverVisibility,
   MODULE_NAME,
   RollBasedOnManeuverPolicy,
   SETTING_ALLOW_ROLL_BASED_ON_MANEUVER,
+  SETTING_COMBAT_OPTIONS,
   SETTING_MANEUVER_DETAIL,
   SETTING_MANEUVER_UPDATES_MOVE,
   SETTING_USE_ON_TARGET,
@@ -63,7 +72,12 @@ export function registerCombatSettings(): void {
     config: false,
     type: Boolean,
     default: false,
-    onChange: value => console.log(`${SETTING_USE_ON_TARGET}: ${value}`),
+    onChange: value => {
+      console.log(`${SETTING_USE_ON_TARGET}: ${value}`)
+      // On Target adds and removes maneuvers, so it has the same reach as the Combat Options dialog
+      // it can also be changed from.
+      refreshCombatOptionUI()
+    },
   })
 
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY, {
@@ -129,6 +143,19 @@ export function registerCombatSettings(): void {
     onChange: value => console.log(`${SETTING_ALLOW_ROLL_BASED_ON_MANEUVER}: ${value}`),
   })
 
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_COMBAT_OPTIONS, {
+    name: 'GURPS.settingCombatOptions',
+    hint: 'GURPS.settingHintCombatOptions',
+    scope: 'world',
+    config: false,
+    type: Object as any,
+    default: defaultCombatOptionSettings(),
+    onChange: value => {
+      console.log(`Combat options: ${JSON.stringify(value)}`)
+      refreshCombatOptionUI()
+    },
+  })
+
   class CombatSettingsApplication extends GurpsSettingsApplication {
     constructor(options?: any) {
       super({ title: game.i18n!.localize(`${SETTINGS}.title`), module: MODULE_NAME, icon: ICON }, options)
@@ -148,8 +175,23 @@ export function registerCombatSettings(): void {
 /* ---------------------------------------- */
 /*  Settings accessors -- use the ones exposed in this module (index.ts) for reading settings. */
 /* ---------------------------------------- */
+
+export function getCombatOptionSettings(): CombatOptionSettings {
+  return (game.settings?.get(GURPS.SYSTEM_NAME, SETTING_COMBAT_OPTIONS) ?? {}) as CombatOptionSettings
+}
+
 export function isUsingOnTarget(): boolean {
   return !!game.settings?.get(GURPS.SYSTEM_NAME, SETTING_USE_ON_TARGET)
+}
+
+/** The options the Modifier Bucket should show in one of its sections, in registry order. */
+export function enabledCombatOptions(section: CombatOptionSection): CombatOption[] {
+  return enabledOptions(section, getCombatOptionSettings(), { useOnTarget: isUsingOnTarget() })
+}
+
+/** Whether a maneuver is one the GM has left in play. */
+export function isManeuverInPlay(maneuverName: string): boolean {
+  return isManeuverEnabled(maneuverName, getCombatOptionSettings())
 }
 
 export function getManeuverVisibility(): ManeuverVisibility {
@@ -183,3 +225,31 @@ export function setInitiativeFormula(value: string): Promise<String> | undefined
 export function getRangeStrategy(): RangeStrategy {
   return game.settings?.get(GURPS.SYSTEM_NAME, SETTING_RANGE_STRATEGY) as RangeStrategy
 }
+
+/**
+ * The Modifier Bucket reads the combat options lazily, but it may already be open, and the combat
+ * tracker menu, the token HUD palette and the sheet dropdowns are each built once per render -- so
+ * anything already on screen has to be re-rendered when what is in play changes.
+ */
+function refreshCombatOptionUI(): void {
+  GURPS.ModifierBucket?.refresh()
+  ui.combat?.render()
+  if (canvas?.tokens?.hud?.rendered) canvas.tokens.hud.render()
+  for (const sheet of renderedActorSheets()) sheet.render()
+}
+
+/**
+ * The actor sheets currently on screen.
+ *
+ * Reads `_sheet` rather than `sheet`, because `sheet` is a lazy getter that *constructs and caches*
+ * an Application for any actor that hasn't got one -- asking every actor in the world whether its
+ * sheet is open would be what opened them.
+ */
+export function renderedActorSheets(): any[] {
+  // `game.actors` misses the synthetic actors behind unlinked tokens -- the usual case for mooks --
+  // so an open mook sheet would keep offering maneuvers that are no longer in play.
+  const actors = new Set([...(game.actors ?? []), ...(canvas?.tokens?.placeables ?? []).flatMap(t => t.actor ?? [])])
+  return [...actors].map(actor => (actor as any)._sheet).filter(sheet => sheet?.rendered)
+}
+
+/* ---------------------------------------- */

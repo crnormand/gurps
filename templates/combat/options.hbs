@@ -1,0 +1,62 @@
+<div class='gga-combat-options'>
+  <div class='gga-combat-options-scroll'>
+    <p class='hint'>{{localize 'GURPS.settingHintCombatOptions'}}</p>
+    <fieldset>
+      <legend>{{localize 'GURPS.settingCombatOptionsSources'}}</legend>
+      <div class='gga-option-row gga-source-row'>
+        <label>
+          <input type='checkbox' data-kind='on-target' {{checked onTarget.enabled}} />
+          <span class='gga-option-name'>{{onTarget.label}}</span>
+        </label>
+        <div class='gga-option-note'>{{onTarget.hint}}</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>{{localize 'GURPS.settingCombatOptionsManeuvers'}}</legend>
+      {{#each maneuvers}}
+        <div class='gga-option-row gga-maneuver-row' data-requires-on-target='{{this.requiresOnTarget}}'>
+          <label>
+            <input type='checkbox' data-kind='maneuver' data-key='{{this.key}}' {{checked this.enabled}} />
+            <img class='gga-maneuver-icon' src='{{this.img}}' alt='' />
+            <span class='gga-option-name'>{{this.label}}</span>
+          </label>
+          <div class='gga-option-note gga-option-note-on-target'>{{localize
+              'GURPS.settingCombatOptionsNeedsOnTarget'
+            }}</div>
+        </div>
+      {{/each}}
+    </fieldset>
+    {{#each groups}}
+      <fieldset>
+        <legend>{{this.label}}</legend>
+        {{#each this.sections}}
+          {{#if this.label}}<h4 class='gga-subhead'>{{this.label}}</h4>{{/if}}
+          {{#each this.options}}
+            <div
+              class='gga-option-row'
+              data-requires-on-target='{{this.requiresOnTarget}}'
+              data-maneuvers='{{this.maneuverKeys}}'
+              data-maneuver-names='{{this.maneuverNames}}'
+            >
+              <label>
+                <input type='checkbox' data-kind='option' data-key='{{this.id}}' {{checked this.enabled}} />
+                <span class='gga-option-name'>{{this.label}}</span>
+                {{#if this.pdf}}<span class='pdf-ref'>{{this.pdf}}</span>{{/if}}
+              </label>
+              {{#if this.maneuverNames}}
+                <div class='gga-option-note'>{{localize 'GURPS.settingCombatOptionsFrom'}}
+                  {{this.maneuverNames}}</div>
+              {{/if}}
+              <div class='gga-option-note gga-option-note-on-target'>{{localize
+                  'GURPS.settingCombatOptionsNeedsOnTarget'
+                }}</div>
+            </div>
+          {{/each}}
+        {{/each}}
+      </fieldset>
+    {{/each}}
+  </div>
+  <footer class='gga-combat-options-footer'>
+    <button type='submit'><i class='fa-solid fa-save'></i><span>{{localize 'GURPS.update'}}</span></button>
+  </footer>
+</div>
