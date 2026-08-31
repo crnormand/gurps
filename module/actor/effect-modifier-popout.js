@@ -6,7 +6,7 @@ import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'
 import { gurpslink } from '../utilities/gurpslink.js'
-import Maneuvers from './maneuver.js'
+import Maneuvers from '../combat/maneuver.js'
 
 export const calculateRange = (token1, token2) => {
   if (!token1 || !token2) return undefined

@@ -1,5 +1,5 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { MOVE_NONE, MOVE_ONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
+import { MOVE_NONE, MOVE_ONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../combat/maneuver.js'
 
 export class StatusEffect {
   static SETTING_USE_ACTIVE_EFFECTS = 'use-active-effects'

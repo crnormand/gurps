@@ -1,4 +1,4 @@
-import { isUsingOnTarget } from '../combat/settings.js'
+import { isUsingOnTarget } from './settings.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'
