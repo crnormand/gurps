@@ -355,13 +355,22 @@ export default class Maneuvers {
   }
 
   /**
+   * Resolve a maneuver id that is already applied to an actor, so it can still show its label, icon
+   * and move. Falls back past the source books in use -- switching off On Target doesn't retract the
+   * maneuver from a token already performing it -- and finally to Do Nothing, so an unrecognized id
+   * can never break the sheet that renders it.
+   *
    * @param {string} maneuverText
    * @returns {ManeuverData}
    */
   static getManeuver(maneuverText = 'do_nothing') {
     if (maneuverText === 'undefined') maneuverText = 'do_nothing'
 
-    return Maneuvers.getAll()[maneuverText].data
+    const maneuver = Maneuvers.getAll()[maneuverText] ?? maneuvers[maneuverText]
+    if (maneuver) return maneuver.data
+
+    console.warn(`GURPS | Unrecognized maneuver "${maneuverText}", falling back to Do Nothing`)
+    return maneuvers.do_nothing.data
   }
 
   /**
