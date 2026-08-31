@@ -60,6 +60,12 @@ describe('Maneuvers.getAllInPlayData', () => {
     expect(Object.keys(Maneuvers.getAllInPlayData('aoa_strong'))).toContain('aoa_strong')
   })
 
+  it('keeps the maneuver named by `keep` even though On Target has been turned off', () => {
+    worldSettings({ onTarget: false, combatOptions: { maneuvers: {} } })
+
+    expect(Object.keys(Maneuvers.getAllInPlayData('committed_aim'))).toContain('committed_aim')
+  })
+
   it('returns the maneuver data rather than the Maneuver instance', () => {
     worldSettings({ combatOptions: { maneuvers: {} } })
 

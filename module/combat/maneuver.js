@@ -409,13 +409,18 @@ export default class Maneuvers {
 
   /**
    * @param {string|null} [keep] a maneuver to include even if it has been turned off, so a dropdown
-   *   showing the actor's current maneuver doesn't silently drop it.
+   *   showing the actor's current maneuver doesn't silently drop it. Looked up in `getAll()` rather
+   *   than the source-filtered set, because switching off On Target is itself a way to take a
+   *   maneuver out from under an actor already performing it.
    */
   static getAllInPlayData(keep = null) {
     let data = {}
+    const every = Maneuvers.getAll()
     const inPlay = Maneuvers.getAllInPlay()
-    for (const [key, maneuver] of Object.entries(fromSourcesInUse())) {
-      if (key in inPlay || key === keep) data[key] = maneuver.data
+    for (const key of Object.keys(every)) {
+      // Prefer the in-play instance: with On Target on, Aim has a different allowed move.
+      if (key in inPlay) data[key] = inPlay[key].data
+      else if (key === keep) data[key] = every[key].data
     }
 
     return data
