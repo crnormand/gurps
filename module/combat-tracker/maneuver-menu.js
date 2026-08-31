@@ -86,7 +86,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   if (canModify) {
     // Build the maneuvers menu from template.
-    const maneuvers = Maneuvers.getAll()
+    const maneuvers = Maneuvers.getAllInPlay()
     const menuHtmlString = await foundry.applications.handlebars.renderTemplate(
       'systems/gurps/templates/maneuver-menu.hbs',
       {

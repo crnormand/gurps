@@ -1109,7 +1109,7 @@ class ManeuverChatProcessor extends ChatProcessor {
   async process(_line) {
     if (!this.match[2]) {
       this.priv(game.i18n.localize('GURPS.chatHelpManeuver'))
-      Object.values(Maneuvers.getAll())
+      Object.values(Maneuvers.getAllInPlay())
         .map(e => game.i18n.localize(e.data.label))
         .forEach(e => this.priv(e))
       return true
@@ -1119,7 +1119,7 @@ class ManeuverChatProcessor extends ChatProcessor {
       return false
     }
     let r = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
-    let m = Object.values(Maneuvers.getAll()).find(e => game.i18n.localize(e.data.label).toLowerCase().match(r))
+    let m = Object.values(Maneuvers.getAllInPlay()).find(e => game.i18n.localize(e.data.label).toLowerCase().match(r))
     if (!GURPS.LastActor) {
       ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
       return false
