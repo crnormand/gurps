@@ -481,9 +481,7 @@ const ModifierLiterals = {
     if (useOnTarget) {
       defenseMods.push(
         `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAttackRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAttackRanged')}]`,
-        `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAttackRanged')}] [PDF:${game.i18n.localize(
-          'GURPS.modifiers_.pdf.committedAttackRanged'
-        )}]`
+        `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAimDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAimDefense')}]`
       )
     }
 
