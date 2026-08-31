@@ -423,9 +423,9 @@ const ModifierLiterals = {
     return this._HitLocationModifiers
   },
 
-  /** The combat options offered in one section of the bucket. */
+  /** The combat options the GM has left in play for one bucket section. */
   _maneuverOptions(section) {
-    return Combat.enabledOptions(section, { useOnTarget: Combat.isUsingOnTarget() })
+    return Combat.enabledOptions(section)
   },
 
   _maneuverOtf(option) {
