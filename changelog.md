@@ -6,7 +6,6 @@
 
 - Add PageRef on Spells on Modern Sheet \#2890
 
-
 ### Bugfixes
 
 ## Release 0.18.23 08/29/2026
