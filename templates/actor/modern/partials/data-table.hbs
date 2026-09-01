@@ -6,7 +6,8 @@
         <span>{{localize 'GURPS.name'}}</span>
         {{#if hasCollege}}<span>{{localize 'GURPS.spellCollege'}}</span>{{/if}}
         <span>{{localize 'GURPS.level'}}</span>
-        <span>RSL</span>
+        <span>{{localize 'GURPS.rsl'}}</span>
+        <span>{{localize 'GURPS.pdfRef'}}</span>
         <span></span>
       </div>
       {{#each items}}
@@ -18,6 +19,7 @@
         {{#if ../hasCollege}}<span class='ms-col-college'>{{this.college}}</span>{{/if}}
         <span class='ms-col-level'>{{#if this.level}}{{>dice-button otf=(concat ../otfPrefix ':"' this.name '"') level=this.level}}{{/if}}</span>
         <span class='ms-col-rsl'>{{this.relativelevel}}</span>
+        <span class='ms-col-ref'>{{{pdflinkext this}}}</span>
         {{>row-actions editAction=../editAction deleteAction=../deleteAction key=(concat ../path '.' @key)}}
         {{>row-notes notes=this.notes}}
       </div>
