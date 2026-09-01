@@ -5,6 +5,17 @@ global.foundry = {
   },
   // @ts-ignore
   data: {},
+  utils: {
+    // @ts-ignore
+    debounce: (callback, delay) => {
+      let timeout
+      // @ts-ignore
+      return (...args) => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => callback(...args), delay)
+      }
+    },
+  },
 }
 
 global.canvas = {

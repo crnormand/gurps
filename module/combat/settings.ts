@@ -152,13 +152,17 @@ export function getRollBasedOnManeuverPolicy(): string {
  * The Modifier Bucket reads the combat options lazily, but it may already be open, and the combat
  * tracker menu, the token HUD palette and the sheet dropdowns are each built once per render -- so
  * anything already on screen has to be re-rendered when what is in play changes.
+ *
+ * Debounced because one Save from the dialog writes two settings: rebuilding on each would show the
+ * state where only the first had landed -- On Target off but its maneuvers still listed -- before
+ * correcting itself a moment later.
  */
-function refreshCombatOptionUI(): void {
+const refreshCombatOptionUI = foundry.utils.debounce(() => {
   GURPS.ModifierBucket?.refresh()
   ui.combat?.render()
   if (canvas?.tokens?.hud?.rendered) canvas.tokens.hud.render()
   for (const sheet of renderedActorSheets()) sheet.render()
-}
+}, 250)
 
 /**
  * The actor sheets currently on screen.
