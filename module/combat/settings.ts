@@ -157,11 +157,21 @@ function refreshCombatOptionUI(): void {
   GURPS.ModifierBucket?.refresh()
   ui.combat?.render()
   if (canvas?.tokens?.hud?.rendered) canvas.tokens.hud.render()
+  for (const sheet of renderedActorSheets()) sheet.render()
+}
 
+/**
+ * The actor sheets currently on screen.
+ *
+ * Reads `_sheet` rather than `sheet`, because `sheet` is a lazy getter that *constructs and caches*
+ * an Application for any actor that hasn't got one -- asking every actor in the world whether its
+ * sheet is open would be what opened them.
+ */
+export function renderedActorSheets(): any[] {
   // `game.actors` misses the synthetic actors behind unlinked tokens -- the usual case for mooks --
   // so an open mook sheet would keep offering maneuvers that are no longer in play.
   const actors = new Set([...(game.actors ?? []), ...(canvas?.tokens?.placeables ?? []).flatMap(t => t.actor ?? [])])
-  for (const actor of actors) if (actor.sheet?.rendered) actor.sheet.render()
+  return [...actors].map(actor => (actor as any)._sheet).filter(sheet => sheet?.rendered)
 }
 
 /* ---------------------------------------- */
