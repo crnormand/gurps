@@ -34,6 +34,12 @@ describe('Maneuvers.getAllInPlay', () => {
     expect(Object.keys(Maneuvers.getAllInPlay())).toContain('aoa_determined')
   })
 
+  test('Do Nothing has been turned off in the settings', () => {
+    worldSettings({ combatOptions: { maneuvers: { do_nothing: false } } })
+
+    expect(Object.keys(Maneuvers.getAllInPlay())).toContain('do_nothing')
+  })
+
   test('On Target is off', () => {
     worldSettings({ onTarget: false, combatOptions: { maneuvers: {} } })
 

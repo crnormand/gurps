@@ -106,8 +106,18 @@ export function defaultCombatOptionSettings(): CombatOptionSettings {
   return { maneuvers: {}, options: {} }
 }
 
+/**
+ * The maneuvers with no meaningful "off": Do Nothing is what the system falls back to when an actor
+ * has no maneuver at all, and Move is the baseline every other maneuver is described against. The
+ * Combat Options dialog doesn't offer them, and a settings object that turns them off anyway --
+ * written by an older build, or by hand -- is overruled rather than obeyed, because a world with no
+ * Do Nothing in play gives a player no way to pick it back.
+ */
+export const ALWAYS_IN_PLAY = ['do_nothing', 'move']
+
 /** A maneuver stays in play until the GM turns it off in the Combat Options maneuver list. */
 export function isManeuverEnabled(maneuverName: string, settings: CombatOptionSettings): boolean {
+  if (ALWAYS_IN_PLAY.includes(maneuverName)) return true
   return settings.maneuvers?.[maneuverName] !== false
 }
 

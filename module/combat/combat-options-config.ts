@@ -1,5 +1,5 @@
 import { DeepPartial } from 'fvtt-types/utils'
-import { COMBAT_OPTIONS, CombatOptionSection, isManeuverEnabled } from './combat-options.ts'
+import { ALWAYS_IN_PLAY, COMBAT_OPTIONS, CombatOptionSection, isManeuverEnabled } from './combat-options.ts'
 import Maneuvers from './maneuver.js'
 import { getCombatOptionSettings, isUsingOnTarget } from './settings.ts'
 import { MODULE_NAME, SETTING_COMBAT_OPTIONS, SETTING_USE_ON_TARGET } from './types.ts'
@@ -100,14 +100,18 @@ class CombatOptionsSettings extends foundry.applications.api.HandlebarsApplicati
     }
 
     // The On Target rows are listed whether or not that source is in use; _onRender disables them
-    // while it is off, so turning it on above lights them up without saving and reopening.
-    const maneuvers = Object.entries(Maneuvers.getAll()).map(([key, maneuver]: [string, any]) => ({
-      key,
-      label: localize(maneuver.data.label),
-      img: maneuver.img,
-      requiresOnTarget: maneuver.requiresOnTarget,
-      enabled: isManeuverEnabled(key, settings),
-    }))
+    // while it is off, so turning it on above lights them up without saving and reopening. The
+    // always-in-play maneuvers are left out rather than shown ticked and unclickable -- a checkbox
+    // that can never be anything else is noise in a list this long.
+    const maneuvers = Object.entries(Maneuvers.getAll())
+      .filter(([key]) => !ALWAYS_IN_PLAY.includes(key))
+      .map(([key, maneuver]: [string, any]) => ({
+        key,
+        label: localize(maneuver.data.label),
+        img: maneuver.img,
+        requiresOnTarget: maneuver.requiresOnTarget,
+        enabled: isManeuverEnabled(key, settings),
+      }))
 
     const maneuverLabels = new Map(maneuvers.map(maneuver => [maneuver.key, maneuver.label]))
 

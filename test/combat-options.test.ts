@@ -4,7 +4,9 @@ import {
   defaultCombatOptionSettings,
   enabledOptions,
   isManeuverEnabled,
+  ALWAYS_IN_PLAY,
 } from '../module/combat/combat-options.js'
+import Maneuvers from '../module/combat/maneuver.js'
 
 const SECTIONS: CombatOptionSection[] = ['melee', 'ranged', 'defense']
 
@@ -129,5 +131,33 @@ describe('isManeuverEnabled', () => {
 
   it('returns true for a maneuver whose modifiers are all turned off', () => {
     expect(isManeuverEnabled('aoa_determined', { options: { aoaDetermined: false } })).toBe(true)
+  })
+
+  test('Do Nothing has been turned off', () => {
+    expect(isManeuverEnabled('do_nothing', { maneuvers: { do_nothing: false } })).toBe(true)
+  })
+
+  test('Move has been turned off', () => {
+    expect(isManeuverEnabled('move', { maneuvers: { move: false } })).toBe(true)
+  })
+})
+
+describe('ALWAYS_IN_PLAY', () => {
+  it('names the maneuvers no GM is offered a checkbox for', () => {
+    expect([...ALWAYS_IN_PLAY]).toEqual(['do_nothing', 'move'])
+  })
+
+  it('names only maneuvers that exist', () => {
+    const everyManeuver = Object.keys(Maneuvers.getAll())
+
+    expect(ALWAYS_IN_PLAY.filter(name => !everyManeuver.includes(name))).toEqual([])
+  })
+
+  // The dialog leaves these maneuvers out of its list, so an option gated on one would find no
+  // checkbox to read its label or its state from.
+  it('names no maneuver that a combat option is gated on', () => {
+    const gating = COMBAT_OPTIONS.flatMap(option => option.maneuvers ?? [])
+
+    expect(ALWAYS_IN_PLAY.filter(name => gating.includes(name))).toEqual([])
   })
 })
