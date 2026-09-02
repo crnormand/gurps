@@ -124,9 +124,9 @@ describe('extractOtfs', () => {
 
   describe('chat type OTFs', () => {
     test('/if conditional with override text shows the override text', () => {
-      const result = extractOtfs(
-        ['["Shadow Strike (Skill 15)" /if [S:Innate*Attack=15] [3d cr *Costs 1 FP] /else "Miss!"]']
-      )
+      const result = extractOtfs([
+        '["Shadow Strike (Skill 15)" /if [S:Innate*Attack=15] [3d cr *Costs 1 FP] /else "Miss!"]',
+      ])
       expect(result).toHaveLength(1)
       expect(result[0].text).toBe('Shadow Strike (Skill 15)')
     })
