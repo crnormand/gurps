@@ -210,6 +210,11 @@ declare global {
     'gurps.resource-tracker.manager': new (options?: any) => ResourceTracker.TemplateManager
     'gurps.resource-tracker.templates': Record<string, ResourceTrackerTemplate>
     'gurps.use-quick-rolls': AnyMutableObject
+    'gurps.use-on-target': boolean
+    'gurps.maneuver-visibility': string
+    'gurps.maneuver-detail': string
+    'gurps.maneuver-updates-move': boolean
+    'gurps.allow-roll-based-on-maneuver': string
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.modify-dice-plus-adds': boolean
     'gurps.pdf.basicset': String

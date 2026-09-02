@@ -9,7 +9,7 @@ import Maneuvers, {
   MOVE_STEP,
   MOVE_TWO_STEPS,
   MOVE_TWOTHIRDS,
-} from './actor/maneuver.js'
+} from './combat/maneuver.js'
 
 /**
  * # Actor Actions Class
