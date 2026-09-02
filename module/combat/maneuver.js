@@ -1,4 +1,4 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import { isUsingOnTarget } from './settings.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'
@@ -373,7 +373,7 @@ export default class Maneuvers {
   }
 
   static getAll() {
-    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = isUsingOnTarget()
 
     const filter = []
     if (useOnTarget) {
