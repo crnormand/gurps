@@ -1,11 +1,6 @@
 'use strict'
 
-import {
-  getManeuverDetail,
-  getManeuverVisibility,
-  getRollBasedOnManeuverPolicy,
-  maneuverUpdatesMove,
-} from '../combat/settings.js'
+import { Combat } from '../combat/index.js'
 import { collectDeletions } from './deletion.js'
 import { commitUpdate, replaceValue } from '../utilities/foundry-compat.js'
 import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
@@ -161,7 +156,7 @@ export class GurpsActor extends Actor {
 
       if (maneuverEffect) {
         // If there is a maneuver effect, set what's visible to the user based on his role and the world settings.
-        const visibility = getManeuverVisibility()
+        const visibility = Combat.getManeuverVisibility()
         if (visibility === 'NoOne') maneuverEffect.showIcon = 0
         if (visibility === 'GMAndOwner') {
           if (!game.user?.isGM && !maneuverEffect.isOwner) {
@@ -173,7 +168,7 @@ export class GurpsActor extends Actor {
 
         // If the current user is neither GM nor actor owner, display the alternate image if available UNLESS the
         // detail setting is "Full".
-        const detail = getManeuverDetail()
+        const detail = Combat.getManeuverDetail()
         if (detail !== 'Full' && !game.user?.isGM && !maneuverEffect.isOwner) {
           maneuverEffect.img = maneuverEffect.getFlag('gurps', 'altImg') ?? maneuverEffect.img
           maneuverEffect.name = maneuverEffect.getFlag('gurps', 'altLabel') ?? maneuverEffect.name
@@ -221,7 +216,7 @@ export class GurpsActor extends Actor {
       let sizemod = this.system.traits?.sizemod?.toString() || '+0'
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
 
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+      if (!Combat.useSizeModifierDifferenceInMelee()) {
         if (sizemod !== '0' && sizemod !== '+0') {
           this.system.conditions.target.modifiers.push(
             `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #hit @sizemod`
@@ -858,7 +853,7 @@ export class GurpsActor extends Actor {
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
     } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
-    let updateMove = maneuverUpdatesMove() && inCombat
+    let updateMove = Combat.maneuverUpdatesMove() && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
@@ -3489,7 +3484,7 @@ export class GurpsActor extends Actor {
         const maneuver = Maneuvers.getManeuver(actions.currentManeuver)
         const maneuverLabel = game.i18n.localize(maneuver.label)
         const roll = game.i18n.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll')
-        const checkManeuverSettings = getRollBasedOnManeuverPolicy()
+        const checkManeuverSettings = Combat.getRollBasedOnManeuverPolicy()
         const message =
           checkManeuverSettings !== 'Allow' &&
           game.i18n.format(`GURPS.${checkManeuverSettings.toLowerCase()}CannotRollWithManeuver`, {

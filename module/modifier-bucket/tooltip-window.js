@@ -3,7 +3,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { displayMod, horiz } from '../../lib/utilities.js'
 import { gurpslink } from '../../module/utilities/gurpslink.js'
-import { isUsingOnTarget } from '../combat/settings.js'
+import { Combat } from '../combat/index.js'
 import GurpsWiring from '../gurps-wiring.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 /**
@@ -438,7 +438,7 @@ const ModifierLiterals = {
   },
 
   get RangedMods() {
-    const useOnTarget = isUsingOnTarget()
+    const useOnTarget = Combat.isUsingOnTarget()
 
     const rangedMods = [
       `[+1 ${game.i18n.localize('GURPS.modifiers_.aim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aim')}]`,
@@ -462,7 +462,7 @@ const ModifierLiterals = {
   },
 
   get DefenseMods() {
-    const useOnTarget = isUsingOnTarget()
+    const useOnTarget = Combat.isUsingOnTarget()
 
     const defenseMods = [
       `[+2 ${game.i18n.localize('GURPS.modifiers_.aodIncreased')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aodIncreased')}]`,

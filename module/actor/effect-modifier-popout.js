@@ -7,6 +7,7 @@ import GurpsWiring from '../gurps-wiring.js'
 import { TokenActions } from '../token-actions.js'
 import { gurpslink } from '../utilities/gurpslink.js'
 import Maneuvers from '../combat/maneuver.js'
+import { Combat } from '../combat/index.js'
 
 export const calculateRange = (token1, token2) => {
   if (!token1 || !token2) return undefined
@@ -61,7 +62,7 @@ export const getSizeModifier = (source, target) => {
   const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
   const baseTags = `#${meleeTag}`
   let sizeModifier
-  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+  if (Combat.useSizeModifierDifferenceInMelee()) {
     const attackerSM = foundry.utils.getProperty(source.actor, 'system.traits.sizemod') || 0
     const targetSM = foundry.utils.getProperty(target.actor, 'system.traits.sizemod') || 0
     const sizeDiff = targetSM - attackerSM

@@ -17,6 +17,18 @@ export const addManeuverMenu = async (html, combatant, token) => {
   // Determine current maneuver and icon.
   const allManeuvers = token.actor.appliedEffects.filter(it => it.getFlag('gurps', 'statusId') === 'maneuver')
   const actorManeuver = allManeuvers.length > 0 ? allManeuvers[0] : Maneuvers.getManeuver('do_nothing')
+
+  // Set the token image tooltip content.
+  const image = html.querySelector?.('.token-image')
+  const initiative = combatant?.initiative
+
+  if (image) {
+    image.setAttribute('aria-label', 'Token Image')
+
+    const replacementText = typeof initiative === 'number' ? initiative.toFixed(5) : 'N/A'
+    image.setAttribute('data-tooltip', game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText }))
+  }
+
   if (actorManeuver.showIcon === 0) {
     const initiativeSpan = html.querySelector?.('.token-initiative')
     if (initiativeSpan) initiativeSpan.replaceWith(document.createElement('span'))
@@ -30,7 +42,6 @@ export const addManeuverMenu = async (html, combatant, token) => {
   currentManeuver.src = actorManeuver.img
 
   // Add active class if initialized.
-  const initiative = combatant?.initiative
   if (typeof initiative === 'number' && canModify) currentManeuver.classList.add('active')
   else currentManeuver.classList.remove('active')
 
@@ -121,15 +132,6 @@ export const addManeuverMenu = async (html, combatant, token) => {
   }
   const maneuverEffect = tokenEffects?.querySelector(`img.token-effect[src*="/maneuvers/"]`)
   if (maneuverEffect) maneuverEffect.remove()
-
-  // Finally, set the token image tooltip content.
-  const image = html.querySelector?.('.token-image')
-  if (image) {
-    image.setAttribute('aria-label', 'Token Image')
-
-    const replacementText = typeof initiative === 'number' ? initiative.toFixed(5) : 'N/A'
-    image.setAttribute('data-tooltip', game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText }))
-  }
 
   return html
 }
