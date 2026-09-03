@@ -52,7 +52,7 @@
     "incremental": true,
     "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "include": ["module", "lib", "global.d.ts"],
+  "include": ["module", "lib", "test", "global.d.ts"],
   "exclude": [
     "build",
     "node_modules",

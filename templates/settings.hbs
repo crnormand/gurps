@@ -1,0 +1,11 @@
+<div class='gga-settings'>
+  <section class='settings-list scrollable'>
+    {{#each entries as |entry|}}
+      {{formGroup entry.field value=entry.value rootId=@root.rootId localize=true}}
+    {{/each}}
+  </section>
+
+  <footer class='form-footer'>
+    <button type='submit'><i class='fa-solid fa-floppy-disk' inert></i> {{localize 'SETTINGS.Save'}}</button>
+  </footer>
+</div>

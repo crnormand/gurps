@@ -1,4 +1,4 @@
-import { SizeAndSpeedRangeTable } from '../lib/size-speed-range-table.js'
+import { SizeAndSpeedRangeTable } from '../module/combat/size-speed-range-table.js'
 import { SlamCalculator } from '../module/chat/slam-calc.js'
 
 describe('SlamCalculator', () => {

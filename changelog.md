@@ -5,8 +5,12 @@
 ### Features
 
 - Add PageRef on Spells on Modern Sheet \#2890
+- Reorganize Combat settings under new Combat Settings menu.
+- Move Combat code into combat module.
 
 ### Bugfixes
+
+- Fixed another Move Mode editor problem ... yikes!
 
 ## Release 0.18.23 08/29/2026
 

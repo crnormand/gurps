@@ -1,8 +1,8 @@
 'use strict'
 
-import * as Settings from '../lib/miscellaneous-settings.js'
 import { SizeAndSpeedRangeTable } from './size-speed-range-table.js'
-
+import { Modifier } from '../modifier-bucket/bucket-app.js'
+import { getRangeStrategy } from './settings.ts'
 /*
   Defines the range strategy used throughout the application. A range strategy
   is defined as an ordered (closest range to farthest range) array of range 
@@ -34,6 +34,13 @@ import { SizeAndSpeedRangeTable } from './size-speed-range-table.js'
 	modifier text for the modifier bucket.
  */
 
+type RangeData = {
+  moddesc: string | undefined
+  max: number
+  penalty: number
+  description: string | undefined
+}
+
 export class GurpsRange {
   constructor() {
     // this.setup()
@@ -41,8 +48,11 @@ export class GurpsRange {
     this._buildModifiers()
   }
 
+  ranges: RangeData[] = []
+  modifiers: string[] = []
+
   static get basicSetRanges() {
-    const basicSetRanges = []
+    const basicSetRanges: RangeData[] = []
 
     // Yes, I should be able to do this programatically... but my brain hurts right now, so there.
     const r = [
@@ -76,16 +86,16 @@ export class GurpsRange {
       -13,
       500,
       -14,
-      '500+',
+      Infinity,
       -15,
     ]
 
     for (let i = 0; i < r.length; i = i + 2) {
       let d = {
-        moddesc: game.i18n.format('GURPS.modifierRange', { range: r[i] }),
+        moddesc: game.i18n?.format('GURPS.modifierRange', { range: r[i].toLocaleString() }),
         max: r[i],
         penalty: r[i + 1],
-        desc: `${r[i]} yds`,
+        description: `${r[i]} yds`,
       }
       basicSetRanges.push(d)
     }
@@ -93,65 +103,66 @@ export class GurpsRange {
   }
 
   static get monsterHunter2Ranges() {
-    const monsterHunter2Ranges = [
+    const monsterHunter2Ranges: RangeData[] = [
       {
-        moddesc: game.i18n.localize('GURPS.modifierRangeMHClose'),
+        moddesc: game.i18n?.localize('GURPS.modifierRangeMHClose'),
         max: 5,
         penalty: 0,
-        description: game.i18n.localize('GURPS.modifierRangeMHCloseDesc'),
+        description: game.i18n?.localize('GURPS.modifierRangeMHCloseDesc'),
       },
       {
-        moddesc: game.i18n.localize('GURPS.modifierRangeMHShort'),
+        moddesc: game.i18n?.localize('GURPS.modifierRangeMHShort'),
         max: 20,
         penalty: -3,
-        description: game.i18n.localize('GURPS.modifierRangeMHShortDesc'),
+        description: game.i18n?.localize('GURPS.modifierRangeMHShortDesc'),
       },
       {
-        moddesc: game.i18n.localize('GURPS.modifierRangeMHMedium'),
+        moddesc: game.i18n?.localize('GURPS.modifierRangeMHMedium'),
         max: 100,
         penalty: -7,
-        description: game.i18n.localize('GURPS.modifierRangeMHMediumDesc'),
+        description: game.i18n?.localize('GURPS.modifierRangeMHMediumDesc'),
       },
       {
-        moddesc: game.i18n.localize('GURPS.modifierRangeMHLong'),
+        moddesc: game.i18n?.localize('GURPS.modifierRangeMHLong'),
         max: 500,
         penalty: -11,
-        description: game.i18n.localize('GURPS.modifierRangeMHLongDesc'),
+        description: game.i18n?.localize('GURPS.modifierRangeMHLongDesc'),
       },
       {
-        moddesc: game.i18n.localize('GURPS.modifierRangeMHExtreme'),
-        max: '500+', // Finaly entry.   We will check for "is string" to assume infinite
+        moddesc: game.i18n?.localize('GURPS.modifierRangeMHExtreme'),
+        max: Infinity, // Final entry. We will check for "is string" to assume infinite
         penalty: -15,
-        description: game.i18n.localize('GURPS.modifierRangeMHExtremeDesc'),
+        description: game.i18n?.localize('GURPS.modifierRangeMHExtremeDesc'),
       },
     ]
     return monsterHunter2Ranges
   }
 
   static get penaltiesPerTenRanges() {
-    const penaltiesPerTenRanges = []
+    const penaltiesPerTenRanges: RangeData[] = []
     for (let i = 0; i < 50; i++) {
       penaltiesPerTenRanges.push({
-        moddesc: game.i18n.format('GURPS.modifierRange', { range: (i + 1) * 10 }),
+        moddesc: game.i18n?.format('GURPS.modifierRange', { range: ((i + 1) * 10).toLocaleString() }),
         max: (i + 1) * 10,
         penalty: -i,
-        desc: `${(i + 1) * 10} yds`,
+        description: `${(i + 1) * 10} yds`,
       })
     }
     return penaltiesPerTenRanges
   }
 
   _buildModifiers() {
-    /** @type {import('../module/modifier-bucket/bucket-app.js').Modifier[]} */
-    let m = []
+    let tempModifiers: Modifier[] = []
     this.ranges.forEach(band => {
-      if (band.penalty != 0) GURPS.ModifierBucket.addModifier(band.penalty, band.moddesc, m)
+      if (band.penalty != 0)
+        // @ts-expect-error: tempModifiers is not part of the original method signature
+        GURPS.ModifierBucket.addModifier(band.penalty.toLocaleString(), band.moddesc ?? '', tempModifiers)
     })
-    this.modifiers = m.map(e => e.mod + ' ' + e.desc)
+    this.modifiers = tempModifiers.map(e => e.mod + ' ' + e.desc)
   }
 
   async update() {
-    let currentValue = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY)
+    let currentValue = getRangeStrategy() ?? 'Standard'
     console.debug(currentValue)
 
     switch (currentValue) {
@@ -174,22 +185,14 @@ export class GurpsRange {
     // update modifier bucket
     if (!!GURPS.ModifierBucket) GURPS.ModifierBucket.refresh()
 
-    // FYI update all actors
-    for (const actor of game.actors.contents) {
-      if (actor.permission >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)
-        // Return true if the current game user has observer or owner rights to an actor
-        await actor.update({ ranges: this.ranges })
-    }
+    // TODO - Why are we updating all actors here? This might not be necessary.
+    // for (const actor of game.actors?.contents ?? []) {
+    //   if (actor.permission >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)
+    //     // Return true if the current game user has observer or owner rights to an actor
+    //     await actor.update({ ranges: this.ranges })
+    // }
   }
 }
-
-// Must be kept in order... checking range vs Max.   If >Max, go to next entry.
-/* Example code:
-		for (let range of GURPS.ranges) {
-		  if (yards <= range.max)
-			return range.penalty
-		}
-*/
 
 export function setupRanges() {
   return new SizeAndSpeedRangeTable()

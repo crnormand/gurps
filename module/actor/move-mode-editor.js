@@ -162,7 +162,7 @@ export default class MoveModeEditor extends Application {
                 default: this.moveData[k].default,
               })
           }
-          await commitUpdate(this.actor, ...replaceValue('system.move', move))
+          await commitUpdate(this.actor, replaceValue('system.move', move))
         }
         break
 

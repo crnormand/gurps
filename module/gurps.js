@@ -51,8 +51,6 @@ import { registerColorPickerSettings } from './color-character-sheet/color-chara
 import { colorGurpsActorSheet } from './color-character-sheet/color-character-sheet.js'
 
 import HitFatPoints from '../lib/hitpoints.js'
-import Initiative from '../lib/initiative.js'
-import { GurpsRange, setupRanges } from '../lib/ranges.js'
 
 import JQueryHelpers from '../lib/jquery-helper.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
@@ -1819,28 +1817,6 @@ if (!globalThis.GURPS) {
     ChatMessage.create(msgData)
   }
 
-  // TODO: Move to the combat module.
-  GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
-    let formula = /** @type {string} */ (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
-    if (!formula) {
-      formula = Initiative.defaultFormula()
-      if (game.user.isGM) game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA, formula)
-    }
-    let m = formula.match(/([^:]*):?(\d)?/)
-    let d = m && !!m[2] ? parseInt(m[2]) : 5
-    CONFIG.Combat.initiative = {
-      // @ts-ignore - technically, m could be null
-      formula: m[1],
-      decimals: d, // Important to be able to maintain resolution
-    }
-    if (broadcast && m)
-      game.socket?.emit('system.gurps', {
-        type: 'initiativeChanged',
-        formula: m[1],
-        decimals: d,
-      })
-  }
-
   GURPS.recurselist = recurselist
   GURPS.flattenContainedList = flattenContainedList
   GURPS.parselink = parselink
@@ -1874,7 +1850,6 @@ if (!globalThis.GURPS) {
     GURPS.ModifierBucket = new ModifierBucket()
     GURPS.ModifierBucket.render(true)
 
-    GURPS.initiative = new Initiative()
     GURPS.hitpoints = new HitFatPoints()
     GURPS.ConditionalInjury = new GurpsConditionalInjury()
 
@@ -2109,10 +2084,6 @@ if (!globalThis.GURPS) {
 
     GURPS.currentVersion = currentVersion
 
-    // Set up SSRT
-    GURPS.SSRT = setupRanges()
-    GURPS.rangeObject = new GurpsRange()
-
     // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
     initialize_i18nHelper()
 
@@ -2324,28 +2295,14 @@ if (!globalThis.GURPS) {
 
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'
-    // COMPATIBILITY: v12
-    if (game.release.generation >= 13) {
-      foundry.applications.handlebars.loadTemplates([
-        __dirname + '/apply-damage/effect-blunttrauma.hbs',
-        __dirname + '/apply-damage/effect-crippling.hbs',
-        __dirname + '/apply-damage/effect-headvitalshit.hbs',
-        __dirname + '/apply-damage/effect-knockback.hbs',
-        __dirname + '/apply-damage/effect-majorwound.hbs',
-        __dirname + '/apply-damage/effect-shock.hbs',
-      ])
-    } else {
-      loadTemplates([
-        __dirname + '/apply-damage/effect-blunttrauma.hbs',
-        __dirname + '/apply-damage/effect-crippling.hbs',
-        __dirname + '/apply-damage/effect-headvitalshit.hbs',
-        __dirname + '/apply-damage/effect-knockback.hbs',
-        __dirname + '/apply-damage/effect-majorwound.hbs',
-        __dirname + '/apply-damage/effect-shock.hbs',
-      ])
-    }
-
-    GURPS.setInitiativeFormula()
+    foundry.applications.handlebars.loadTemplates([
+      __dirname + '/apply-damage/effect-blunttrauma.hbs',
+      __dirname + '/apply-damage/effect-crippling.hbs',
+      __dirname + '/apply-damage/effect-headvitalshit.hbs',
+      __dirname + '/apply-damage/effect-knockback.hbs',
+      __dirname + '/apply-damage/effect-majorwound.hbs',
+      __dirname + '/apply-damage/effect-shock.hbs',
+    ])
 
     // Translate attribute mappings if not in English
     if (game.i18n.lang != 'en') {
@@ -2405,48 +2362,9 @@ if (!globalThis.GURPS) {
       GurpsWiring.hookupAllEvents(html)
     })
 
-    // TODO: Move to the combat module?  We could have a method in combat that allows other modules to request hooks into the Combat system.
-    Hooks.on('combatStart', async combat => {
-      console.log(`Combat started: ${combat.id} - resetting token actions`)
-      await resetTokenActions(combat)
-    })
-
-    if (game.user.isGM) {
-      Hooks.on('combatTurnChange', async (combat, previousTurn, newTurn) => {
-        await handleCombatTurnChange(combat, previousTurn, newTurn)
-      })
-    }
-
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
-}
-
-const handleCombatTurnChange = async (combat, previousTurn, newTurn) => {
-  if (!game.user.isGM) return
-
-  const token = canvas.tokens.get(newTurn.tokenId)
-  if (!token) {
-    console.warn(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - token not found: ${newTurn.tokenId}`)
-    return
-  }
-
-  console.info(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
-
-  const actions = await TokenActions.fromToken(token)
-  await actions.newTurn(newTurn.round)
-}
-
-const resetTokenActions = async combat => {
-  for (const combatant of combat.combatants) {
-    await resetTokenActionsForCombatant(combatant)
-  }
-}
-
-const resetTokenActionsForCombatant = async combatant => {
-  const token = canvas.tokens.get(combatant.token.id)
-  const actions = await TokenActions.fromToken(token)
-  await actions.clear()
 }
 
 const showGURPSCopyright = function () {
