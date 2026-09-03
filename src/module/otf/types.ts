@@ -1,5 +1,4 @@
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
-import { DeepPartial } from 'fvtt-types/utils'
 
 export const OtfActionType = {
   attack: 'attack',
@@ -24,98 +23,197 @@ export const OtfActionType = {
 
 export type OtfActionType = (typeof OtfActionType)[keyof typeof OtfActionType]
 
-/**
- * In the current state of the code, pretty much every attribute of this object is optional.
- */
 type BaseAction = {
-  attribute: string
-  blindroll: boolean
-  clrdmods: boolean
-  costs: string
-  desc: string
-  falsetext: string
-  floatingAttribute: string
-  floatingLabel: string
-  floatingType: string
-  isSkillOnly: boolean
-  isSpellOnly: boolean
-  label: string
-  link: string
-  mod: string
-  name: string
-  next?: OtfAction
   orig: string
-  overridetxt: string
-  quiet: boolean
-  spantext: string
-  suppressWarnings: boolean
-  target: string | number
-  truetext: string
-  type: OtfActionType
-  equation: string
-  id: string
-  accumulate: boolean
-  formula: string
-  att: MeleeAttackModel | RangedAttackModel
+  overridetxt?: string
+  spantext?: string
+  calcOnly?: boolean
+  suppressWarnings?: boolean
 }
 
 type HttpLinkAction = {
   type: typeof OtfActionType.href
-  orig: string
   label: string
-}
+} & BaseAction
 
 type PdfAction = {
   type: typeof OtfActionType.pdf
-  orig: string
   link: string
-}
+} & BaseAction
 
 type IfTestAction = {
   type: typeof OtfActionType.ifTest
-  orig: string
   name?: string
   equation?: string
-}
+} & BaseAction
 
-type ModAction = {
+export type ModAction = {
   type: typeof OtfActionType.modifier
-  orig: string
-  mod: string
+  mod?: string
   desc: string
   next?: OtfAction
-  spantext: string
-}
+} & BaseAction
 
 type ChatAction = {
   type: typeof OtfActionType.chat
-  quite: boolean
-  overridetxt?: string //todo verify
-}
+  quiet: boolean
+} & BaseAction
 
 type DragDropAction = {
   type: typeof OtfActionType.dragDrop
-  orig: string
   link: string
   id: string
-}
+} & BaseAction
 
 type ControlRollAction = {
   type: typeof OtfActionType.controlRoll
-  orig: string
-  traget: number
+  target: number
   desc: string
   blindroll: boolean
-  sourceId: string
-}
+  sourceId?: string
+} & BaseAction
+
+type CheckExistsAction = {
+  type: typeof OtfActionType.testExists
+  prefix: string
+  name: string
+} & BaseAction
+
+type AtributteRollAction = {
+  type: typeof OtfActionType.attribute
+  attribute: string
+  attrkey: string
+  name: string
+  path: string
+  desc?: string
+  mod?: string
+  blindroll: boolean
+  next?: OtfAction
+  truetext?: string
+  falsetext?: string
+  target?: string
+  melee?: string
+  sourceId?: string
+  costs?: string //todo: The parser currently don't support costs for attribute rolls, but the actionFunc supports it. Add support for costs in the parser.
+} & BaseAction
+
+export type SkillSpellRollAction = {
+  type: typeof OtfActionType.skillSpell
+  blindroll: boolean
+  costs?: string
+  desc?: string
+  floatingAttribute?: string
+  floatingLabel?: string
+  floatingType?: string
+  isSkillOnly: boolean
+  isSpellOnly: boolean
+  mod?: string
+  name: string
+  next?: OtfAction
+  sourceId?: string
+  target?: number
+  truetext?: string
+  falsetext?: string
+} & BaseAction
+
+type AttackBaseAction = {
+  name: string
+  mod?: string
+  desc?: string
+  blindroll: boolean
+  costs?: string
+  isMelee: boolean
+  isRanged: boolean
+  sourceId?: string
+} & BaseAction
+
+type AttackAction = {
+  type: typeof OtfActionType.attack
+} & AttackBaseAction
+
+type AttackDamageAction = {
+  type: typeof OtfActionType.attackDamage
+} & AttackBaseAction
+
+type ParryAction = {
+  type: typeof OtfActionType.weaponParry
+} & AttackBaseAction
+
+type BlockAction = {
+  type: typeof OtfActionType.weaponBlock
+} & AttackBaseAction
+
+type RollBaseAction = {
+  displayformula: string
+  formula: string
+  desc?: string
+  costs?: string
+  hitlocation?: string
+  accumulate: boolean
+  next?: OtfAction
+  blindroll?: boolean
+} & BaseAction
 
 type RollAction = {
-  blindroll: boolean
-  costs: string
-  mod: string
-  target: string | number
-}
-export type OtfAction = DeepPartial<BaseAction>
+  type: typeof OtfActionType.roll
+  displayformula: string
+} & RollBaseAction
+
+export type DamageAction = {
+  type: typeof OtfActionType.damage
+  damagetype: string
+  extdamagetype?: string
+  mod?: string
+  desc?: string
+  att: MeleeAttackModel | RangedAttackModel
+} & RollBaseAction
+
+type DerivedRollAction = {
+  type: typeof OtfActionType.derivedRoll
+  derivedformula: string
+} & RollBaseAction
+
+type DerivedDamageAction = {
+  type: typeof OtfActionType.derivedDamage
+  derivedformula: string
+  damagetype: string
+  extdamagetype?: string
+  mod?: string
+  desc?: string
+  att: MeleeAttackModel | RangedAttackModel
+} & RollBaseAction
+
+export type OtfAction =
+  | HttpLinkAction
+  | PdfAction
+  | IfTestAction
+  | ModAction
+  | ChatAction
+  | DragDropAction
+  | ControlRollAction
+  | CheckExistsAction
+  | AtributteRollAction
+  | SkillSpellRollAction
+  | AttackAction
+  | AttackDamageAction
+  | ParryAction
+  | BlockAction
+  | RollAction
+  | DamageAction
+  | DerivedRollAction
+  | DerivedDamageAction
+
+export type OtfRollAction =
+  | ControlRollAction
+  | AtributteRollAction
+  | SkillSpellRollAction
+  | AttackAction
+  | ParryAction
+  | BlockAction
+  | RollAction
+  | DerivedRollAction
+
+export type OtfDamageAction = AttackDamageAction | DamageAction | DerivedDamageAction
 
 export type ParserResult = {
   text: string

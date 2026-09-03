@@ -38,7 +38,7 @@ export async function findBestActionInChain({
   while (action) {
     action.overridetxt = overridetxt
     actions.push(action)
-    action = action.next
+    action = 'next' in action ? action.next : undefined
   }
 
   const calculations = []
@@ -96,7 +96,7 @@ export function findBestActionInChainSync({ action, actor, event, targets, origi
   while (action) {
     action.overridetxt = overridetxt
     actions.push(action)
-    action = action.next
+    action = 'next' in action ? action.next : undefined
   }
 
   const calculations = actions.map(action =>

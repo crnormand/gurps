@@ -12,8 +12,8 @@ export async function rollDamage(
   displayFormula: string,
   actionFormula: string,
   action: any,
-  event: Event,
-  overrideText: string,
+  event: Event | null,
+  overrideText: string | null,
   targets: any
 ): Promise<boolean> {
   if (!game.settings || !game.i18n || !game.users)

@@ -2,7 +2,7 @@ import { stripQuotes } from '@util/text-utilties.js'
 import { utoa } from '@util/utilities.js'
 
 import { parselink, PARSELINK_MAPPINGS } from './parselink.js'
-import { OtfAction, OtfActionType, ParserResult } from './types.js'
+import { ModAction, OtfAction, OtfActionType, ParserResult, SkillSpellRollAction, OtfRollAction } from './types.js'
 
 type InputArgs = {
   str: string
@@ -47,9 +47,9 @@ class HttpLinkParser extends OtfParser {
    */
   override parse(match: RegExpMatchArray, args: InputArgs): ParserResult {
     const action = {
-      orig: match.input,
+      orig: match.input ?? '',
       type: OtfActionType.href,
-      label: args.overridetxt ? args.overridetxt : match.input,
+      label: args.overridetxt ? args.overridetxt : (match.input ?? ''),
     }
 
     return {
@@ -101,7 +101,7 @@ class ModifierParser extends OtfParser {
     }
 
     const action = {
-      orig: match.input,
+      orig: match.input ?? '',
       spantext: spantext,
       type: OtfActionType.modifier,
       mod: mod,
@@ -153,7 +153,7 @@ class MarginModParser extends OtfParser {
     }
 
     const action = {
-      orig: match.input,
+      orig: match.input ?? '',
       spantext: spantext,
       type: OtfActionType.modifier,
       mod: mod,
@@ -220,7 +220,7 @@ class AdvLevelModParser extends OtfParser {
     const desc = match.input!.replace(temp, '').trim()
     const spantext = `${mod} ${desc}`
     const action = {
-      orig: match.input,
+      orig: match.input ?? '',
       spantext: spantext,
       type: OtfActionType.modifier,
       mod: mod,
@@ -265,7 +265,7 @@ class IfTestParser extends OtfParser {
   override parse(match: RegExpMatchArray, args: InputArgs): ParserResult | null {
     const action = {
       type: OtfActionType.ifTest,
-      orig: match.input,
+      orig: match.input ?? '',
       name: match.groups!.keyword,
       equation: match.groups!.expression,
     }
@@ -303,7 +303,7 @@ class FoundryLinkParser extends OtfParser {
   override parse = (match: RegExpMatchArray, _: InputArgs): ParserResult | null => {
     const action = {
       type: OtfActionType.dragDrop,
-      orig: match.input,
+      orig: match.input ?? '',
       link: match.groups!.link,
       id: match.groups!.id,
     }
@@ -338,13 +338,13 @@ class ChatParser extends OtfParser {
     return {
       text: gspan(args.overridetxt, match.input!, {
         type: OtfActionType.chat,
-        orig: match.input,
-        quiet: args.blindroll,
+        orig: match.input ?? '',
+        quiet: args.blindroll ?? false,
       }),
       action: {
         type: OtfActionType.chat,
-        orig: match.input,
-        quiet: args.blindroll,
+        orig: match.input ?? '',
+        quiet: args.blindroll ?? false,
       },
     }
   }
@@ -379,7 +379,7 @@ class PdfParser extends OtfParser {
         (args.overridetxt || match.groups!.link) +
         '</span>',
       action: {
-        orig: match.input,
+        orig: match.input ?? '',
         type: OtfActionType.pdf,
         link: match.groups!.link,
       },
@@ -409,11 +409,11 @@ class ControlRollParser extends OtfParser {
    */
   override parse = (match: RegExpMatchArray, args: InputArgs): ParserResult | null => {
     const action = {
-      orig: match.input,
+      orig: match.input ?? '',
       type: OtfActionType.controlRoll,
       target: parseInt(match.groups!.target),
       desc: match.groups!.desc,
-      blindroll: args.blindroll,
+      blindroll: args.blindroll ?? false,
       sourceId: args.sourceId,
     }
 
@@ -446,7 +446,7 @@ class CheckExistsParser extends OtfParser {
    */
   override parse(match: RegExpMatchArray, args: InputArgs): ParserResult | null {
     const action = {
-      orig: match.input,
+      orig: match.input ?? '',
       type: OtfActionType.testExists,
       prefix: match.groups!.type,
       name: match.groups!.name,
@@ -565,7 +565,7 @@ class AttributeParser extends OtfParser {
     }
 
     const action = {
-      orig: match.input,
+      orig: match.input ?? '',
       spantext: spantext.trim(),
       type: OtfActionType.attribute,
       attribute: attr,
@@ -574,7 +574,7 @@ class AttributeParser extends OtfParser {
       path: path,
       desc: desc ? desc : undefined,
       mod: match.groups!.mod,
-      blindroll: args.blindroll,
+      blindroll: args.blindroll ?? false,
       next: def?.action,
       truetext: opt?.groups?.truetext,
       falsetext: opt?.groups?.falsetext,
@@ -653,16 +653,11 @@ class SkillSpellParser extends OtfParser {
       }
     }
 
-    return {
-      text: gspan(args.overridetxt, '', {}, ''),
-      action: {},
-    }
+    return null
   }
 
-  parseSkill(input: string): OtfAction | null {
+  parseSkill(input: string): SkillSpellRollAction | null {
     if (!input) return null
-
-    const result: OtfAction = {}
 
     // 1. Split phrases
     const first = input.split('|')[0].trim()
@@ -694,23 +689,33 @@ class SkillSpellParser extends OtfParser {
     // 2. TYPE
     let matches = match(/^(s|sk|sp)\s*:/i)
 
-    if (!matches) return result
-    result.type = OtfActionType.skillSpell
-    result.isSpellOnly = !!matches[1].match(/^SP/i)
-    result.isSkillOnly = !!matches[1].match(/^SK/i)
+    if (!matches) return null
+    const type = OtfActionType.skillSpell
+    const isSpellOnly = !!matches[1].match(/^SP/i)
+    const isSkillOnly = !!matches[1].match(/^SK/i)
 
     skipWS()
 
     // 3. NAME
     matches = match(/^("[^"]+"|'[^']+'|[^ ]+?)(?=[+-](\d+\s|\d+$|@margin)|\s|$)/)
-    if (!matches) return result
-    result.name = stripQuotes(matches[1]).trim()
+    if (!matches) return null
+    const name = stripQuotes(matches[1]).trim()
 
-    const target = result.name.match(/(?<name>.*)=(?<target>\d+)/) // Targeted rolls 'Skill=12'
+    const result: SkillSpellRollAction = {
+      type,
+      orig: '',
+      blindroll: false,
+      isSpellOnly,
+      isSkillOnly,
+      name,
+      spantext: '',
+    }
 
-    if (target && target.groups) {
-      result.name = target.groups.name.trim()
-      result.target = parseInt(target.groups.target.trim(), 10)
+    const targetRgx = name.match(/(?<name>.*)=(?<target>\d+)/) // Targeted rolls 'Skill=12'
+
+    if (targetRgx && targetRgx.groups) {
+      result.name = targetRgx.groups.name.trim()
+      result.target = parseInt(targetRgx.groups.target.trim(), 10)
     }
 
     skipWS()
@@ -868,12 +873,12 @@ class AttackDamageParser extends OtfParser {
     if (args.str.match(/^P/i)) type = OtfActionType.weaponParry
     if (args.str.match(/^B/i)) type = OtfActionType.weaponBlock
     const action = {
-      orig: match.input,
+      orig: match.input ?? '',
       type: type,
       name: name,
       mod: modifier,
       desc: moddesc,
-      blindroll: args.blindroll,
+      blindroll: args.blindroll ?? false,
       costs: costs,
       isMelee: isMelee,
       isRanged: isRanged,
@@ -910,7 +915,7 @@ function resolveAttributePath(attrkey: string): string | undefined {
 export function gmspan(
   overridetxt: string | undefined,
   str: string,
-  action: OtfAction,
+  action: ModAction,
   plus: boolean,
   clrdmods: boolean = true
 ) {
@@ -922,7 +927,7 @@ export function gmspan(
   // If the action is an Advantage level modifier, then we need to create the action object to match the expected values.
   const advantageLevel = /\((?<mod>[+-]A:.+)\)/
 
-  if (action.desc!.match(advantageLevel)) {
+  if (action.desc.match(advantageLevel)) {
     const matches = action.desc!.match(advantageLevel)
 
     action.orig = matches?.groups?.mod ?? ''
@@ -931,14 +936,7 @@ export function gmspan(
     action.desc = ''
   }
 
-  const otfaction = action
-    ? " data-action='" +
-      utoa(JSON.stringify(action)) +
-      "' data-otf='" +
-      (action.blindroll ? '!' : '') +
-      action.orig +
-      "'"
-    : ''
+  const otfaction = action ? " data-action='" + utoa(JSON.stringify(action)) + "' data-otf='" + action.orig + "'" : ''
 
   if (action.type === OtfActionType.modifier) {
     if (str.startsWith('-')) str = '&minus;' + str.slice(1) // \u2212
@@ -982,7 +980,7 @@ export function gspan(
       " data-action='" +
       utoa(JSON.stringify(action)) +
       "' data-otf='" +
-      (action.blindroll ? '!' : '') +
+      ((action as OtfRollAction).blindroll ? '!' : '') +
       action.orig +
       "'"
   span += '>' + (prefix ? prefix : '') + str.trim() + '</span>'

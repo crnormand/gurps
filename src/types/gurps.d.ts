@@ -445,7 +445,7 @@ declare global {
     ModifierBucket: {
       setTempRangeMod(mod: number): void
       addTempRangeMod(): void
-      addModifier(mod: string, label: string, options?: { situation?: string }, tagged?: boolean): void
+      addModifier(mod: string, label: string, list?: Modifier[] | undefined, tagged?: boolean): void
       currentSum(): number
       clear(): Promise<void>
       refreshPosition(): void
@@ -519,5 +519,12 @@ declare global {
     }
 
     /* ---------------------------------------- */
+
+    executeOTF(
+      inputstring: string,
+      priv?: boolean,
+      event?: Event | null,
+      actor: Actor.Implementation | null
+    ): Promise<boolean>
   }
 }

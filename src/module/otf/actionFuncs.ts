@@ -1,8 +1,16 @@
-import { Damage } from "@module/damage/index.ts"
+import { MeleeAttackModel } from "@module/action/index.js"
+import { RangedAttackModel } from "@module/action/ranged-attack.js"
+import { Damage } from "@module/damage/index.js"
 import { addBucketToDamage, doRoll } from "@module/dierolls/dieroll.js"
-import { OtfAction, OtfActionType } from "@module/otf/types.js"
+import { GurpsItemV2 } from "@module/item/gurps-item.js"
+import { ItemType } from "@module/item/types.js"
+import { parseForRollOrDamage } from '@module/otf/parselink.js'
+import { OtfAction, OtfActionType, SkillSpellRollAction } from "@module/otf/types.js"
+import { GetNumberInput } from "@module/ui/get-number-input.js"
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from "@module/util/token.js"
+import { MissileWeaponAttacks } from "@rules/combat/ranged/missile-weapon-attacks.js"
+import { d6ify, quotedAttackName, stripBracketContents } from "@util/utilities.js"
 
 
   export  interface actionFuncParams {
@@ -14,7 +22,7 @@ import { getTokenForActor } from "@module/util/token.js"
         calcOnly?: boolean
       }
 
-  export type actionFunc = (param: actionFuncParams) => Promise<{ target: number } | boolean> | { target: number } | boolean
+  export type actionFunc = (param: actionFuncParams) => Promise<{ target: number } | boolean> | { target: number, thing?: string } | boolean
 
   export const actionFuncs: Record<string, actionFunc> =
   {
@@ -25,6 +33,8 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {string} data.action.link
      */
     pdf({ action }: actionFuncParams) {
+      if (action.type !== OtfActionType.pdf) return false  
+
       if (!action.link) {
         ui.notifications?.warn('no link was parsed for the pdf')
 
@@ -38,6 +48,7 @@ import { getTokenForActor } from "@module/util/token.js"
 
     //
     iftest({ action }) {
+      if (action.type !== OtfActionType.ifTest) return false
       if (!GURPS.lastTargetedRoll) return false
       if (action.name == 'isCritSuccess') return GURPS.lastTargetedRoll.isCritSuccess
       if (action.name == 'isCritFailure') return GURPS.lastTargetedRoll.isCritFailure
@@ -76,7 +87,7 @@ import { getTokenForActor } from "@module/util/token.js"
 
 
     modifier({ action }) {
-    
+      if (action.type !== OtfActionType.modifier) return false
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '')
 
       if (action.next && action.next.type === OtfActionType.modifier) {
@@ -87,6 +98,7 @@ import { getTokenForActor } from "@module/util/token.js"
     },
 
     async chat({ action, actor, event }) {
+      if (action.type !== OtfActionType.chat) return false  
       if (!event) return false
       // @ts-expect-error - Foundry VTT API not fully typed
       const ctrlKey = game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL)
@@ -111,6 +123,8 @@ import { getTokenForActor } from "@module/util/token.js"
     },
     
     dragdrop({ action }) {
+      if (action.type !== OtfActionType.dragDrop) return false
+
       if (!action.id) {
           ui.notifications?.warn(`no id in drag and drop action`)
 
@@ -165,6 +179,8 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {string[]} data.targets
      */
     async damage({ action, event, actor, targets }) {
+      if (action.type !== OtfActionType.damage) return false
+
       // accumulate action fails if there's no selected actor
       if (action.accumulate && !actor) {
         ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
@@ -194,7 +210,7 @@ import { getTokenForActor } from "@module/util/token.js"
 
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
 
-      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
+      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '') // special case where Damage comes from [D:attack + mod]
 
       const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = action.formula ?? ''
@@ -211,7 +227,7 @@ import { getTokenForActor } from "@module/util/token.js"
         displayFormula,
         action.formula ?? '',
         action,
-        event,
+        event ?? null,
         null,
         targets
       )
@@ -233,14 +249,16 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {string[]} data.targets
      */
     async deriveddamage({ action, event, actor, targets }) {
+      if (action.type !== OtfActionType.derivedDamage) return false
+
       // action fails if there's no selected actor
       if (!actor) {
-        ui.notifications?.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+        ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
         return false
       }
 
-      let df = action.derivedformula.match(/sw/i) ? actor.system.swing : actor.system.thrust
+      const df = action.derivedformula.match(/sw/i) ? actor.system.swing : actor.system.thrust
 
       // action fails if there's no formula
       if (!df) {
@@ -268,22 +286,22 @@ import { getTokenForActor } from "@module/util/token.js"
         formula = df + action.formula
       }
 
-      if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
 
-      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
+      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '') // special case where Damage comes from [D:attack + mod]
 
-      const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
       let displayFormula = formula
 
-      if (actor && taggedSettings.autoAdd) {
+      if (actor && taggedSettings?.autoAdd) {
         await actor.addTaggedRollModifiers('', { action }, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
-      let canRoll = { result: true }
-      const token = getTokenForActor(actor)
+      let canRoll = { canRoll: true, targetMessage: '' }
+      const token = getTokenForActor(actor) ?? null
 
-      if (actor) canRoll = await actor.canRoll(action, token)
+      if (actor && token) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
 
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
@@ -295,7 +313,7 @@ import { getTokenForActor } from "@module/util/token.js"
 
       const overrideText = action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1')
 
-      await Damage.rollDamage(canRoll, token, actor, displayFormula, formula, action, event, overrideText, targets)
+      await Damage.rollDamage(canRoll, token, actor, displayFormula, formula, action, event ?? null, overrideText, targets)
 
       if (action.next) {
         return GURPS.performAction(action.next, actor, event, targets)
@@ -303,6 +321,7 @@ import { getTokenForActor } from "@module/util/token.js"
 
       return true
     },
+
     /**
      * @param {Object} data
      *
@@ -319,9 +338,11 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {string[]} data.targets
      */
     attackdamage({ action, event, actor, targets }) {
-      // action fails if there's no selected actor
+      if (action.type !== OtfActionType.attackDamage) return false
+
+        // action fails if there's no selected actor
       if (!actor) {
-        ui.notifications?.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+        ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
         return false
       }
@@ -334,19 +355,20 @@ import { getTokenForActor } from "@module/util/token.js"
 
       let att = null
 
-      att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
+      att = GURPS.findAttack(actor, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
 
       if (!att) {
-        ui.notifications.warn(
+        ui.notifications?.warn(
           `No melee or ranged attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`
         )
 
         return false
       }
 
-      if (action.calcOnly) return att.damage
+      //toDo: verity that is not needed. Can't currently return a string here.
+      //if (action.calcOnly) return [att.damage].join(', ')
 
-      let dam = parseForRollOrDamage(att.damage)
+      const dam = parseForRollOrDamage([att.damage].join(', '))
 
       if (!dam) {
         ui.notifications?.warn('Damage is not rollable')
@@ -359,10 +381,11 @@ import { getTokenForActor } from "@module/util/token.js"
       dam.action.desc = action.desc
       dam.action.att = att
 
-      return performAction(dam.action, actor, event, targets)
+      return !!GURPS.performAction(dam.action, actor, event, targets)
     },
     
     roll({ action, actor, event }) {
+      if (action.type !== OtfActionType.roll) return false  
       let canRoll = true
 
       if (actor) {
@@ -382,7 +405,7 @@ import { getTokenForActor } from "@module/util/token.js"
         desc: action.desc ? ' ' + action.desc : '',
       })
 
-      if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
 
       return doRoll({
         actor,
@@ -391,7 +414,7 @@ import { getTokenForActor } from "@module/util/token.js"
         optionalArgs: { blind: action.blindroll, event },
       })
         .then(result => {
-          return result
+          return !!result
         })
         .catch(error => {
           console.error('Error during doRoll:', error)
@@ -411,14 +434,15 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {JQuery.Event|null} data.event
      */
     controlroll({ action, actor, event }) {
-      const target = parseInt(action.target)
-      let aid = actor ? `@${actor.id}@` : ''
+      if (action.type !== OtfActionType.controlRoll) return false
+      const target = action.target
+      const aid = actor ? `@${actor.id}@` : ''
       let thing
       let chatthing
 
       if (action.desc) {
         thing = action.desc
-        chatthing = `["${game.i18n.localize('GURPS.chatRollingCR')}, ${thing}"${aid}CR:${target} ${thing}]`
+        chatthing = `["${game.i18n?.localize('GURPS.chatRollingCR')}, ${thing}"${aid}CR:${target} ${thing}]`
       } else {
         chatthing = `[${aid}CR:${target}]`
       }
@@ -429,10 +453,11 @@ import { getTokenForActor } from "@module/util/token.js"
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event },
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         action,
       })
         .then(result => {
-          return result
+          return !!result
         })
         .catch(error => {
           console.error('Error during doRoll:', error)
@@ -454,34 +479,36 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {JQuery.Event|null} data.event
      */
     derivedroll({ action, actor, event }) {
+      if (action.type !== OtfActionType.derivedRoll) return false
+
       if (!action.derivedformula) {
-        ui.notifications.warn('derived roll with no derived formula')
+        ui.notifications?.warn('derived roll with no derived formula')
 
         return false
       }
 
       if (!actor) {
-        ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+        ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
         return false
       }
 
-      let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.system.swing : actor.system.thrust
+      const df = action.derivedformula.match(/[Ss][Ww]/) ? actor.system.swing : actor.system.thrust
 
-      if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
 
       // const originalFormula = action.derivedformula + action.formula
       return doRoll({
         actor,
         formula: d6ify(df + action.formula),
-        prefix: game.i18n.format('GURPS.chatRolling', {
+        prefix: game.i18n?.format('GURPS.chatRolling', {
           dice: action.derivedformula,
-          desc: action.desc,
+          desc: action.desc ?? '',
         }),
         optionalArgs: { blind: action.blindroll, event },
       })
         .then(result => {
-          return result
+          return !!result
         })
         .catch(error => {
           console.error('Error during doRoll:', error)
@@ -506,23 +533,25 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {JQuery.Event|null} data.event
      */
     async attack({ action, actor, event }) {
+      if (action.type !== OtfActionType.attack) return false
+
       if (!actor) {
-        ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+        ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
         return false
       }
 
       if (!action.name) {
-        ui.notifications.warn('attack action without name')
+        ui.notifications?.warn('attack action without name')
 
         return false
       }
 
-      let att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
+      const att = GURPS.findAttack(actor, action.name, action.isMelee, action.isRanged) // find attack possibly using wildcards
 
       if (!att) {
         if (!action.calcOnly) {
-          ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+          ui.notifications?.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
         }
 
         return false
@@ -532,21 +561,21 @@ import { getTokenForActor } from "@module/util/token.js"
 
       if (!!action.isMelee && !action.isRanged) prefix = 'M:'
       if (!action.isMelee && !!action.isRanged) prefix = 'R:'
-      let thing = stripBracketContents(att.name ? att.name : att.item.name)
-      let qn = quotedAttackName({ name: thing, mode: att.mode })
-      let aid = actor ? `@${actor.id}@` : ''
+      const thing = stripBracketContents(att.name ? att.name : att.item.name)
+      const qn = quotedAttackName({ name: thing, mode: att.mode })
+      const aid = actor ? `@${actor.id}@` : ''
       const chatthing = `[${aid}${prefix}${qn}]`
       const followon = `[${aid}D:${qn}]`
-      let target = att.level
+      const target = att.level
 
       if (!target) {
-        ui.notifications.warn(`attack named ${thing} has level of 0 or NaN`)
+        ui.notifications?.warn(`attack named ${thing} has level of 0 or NaN`)
 
         return false
       }
 
       if (action.calcOnly) {
-        let modifier = parseInt(action.mod) ?? 0
+        let modifier = parseInt(action.mod ?? '0') ?? 0
 
         if (isNaN(modifier)) modifier = 0
 
@@ -559,24 +588,27 @@ import { getTokenForActor } from "@module/util/token.js"
         obj: att, // save the attack in the optional parameters, in case it has rcl/rof
         followon,
         text: '',
+        itemPath: 'itemPath' in action ? action.itemPath : undefined,
+        shots: undefined as number | undefined,
       }
 
-      if ('itemPath' in action) opt.itemPath = action.itemPath
-      let targetmods = []
+      const targetmods: Modifier[] = []
 
+      /* @ts-expect-error - wait for fix for issue #2899*/
       if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+      /* @ts-expect-error - wait for fix for issue #2899*/
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
-      if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs, targetmods)
+      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
 
-      const parsedRateOfFire = parseInt(att.rof)
+      const parsedRateOfFire = !action.isMelee ? (att as RangedAttackModel).rateOfFire.mode1.shotsPerAttack : 0
 
       if (parsedRateOfFire > 1) {
         const shots = await GetNumberInput({
-          title: game.i18n.localize('GURPS.combat.rof.numberOfShotsTitle'),
+          title: game.i18n?.localize('GURPS.combat.rof.numberOfShotsTitle') ?? '',
           headerText: action.orig,
-          promptText: game.i18n.localize('GURPS.combat.rof.numberOfShotsPrompt'),
-          label: game.i18n.format('GURPS.combat.rof.numberOfShotsLabel', { max: parsedRateOfFire }),
+          promptText: game.i18n?.localize('GURPS.combat.rof.numberOfShotsPrompt') ?? '',
+          label: game.i18n?.format('GURPS.combat.rof.numberOfShotsLabel', { max: `${parsedRateOfFire}` }) ?? '',
           min: 1,
           max: parsedRateOfFire,
           value: parsedRateOfFire,
@@ -586,8 +618,8 @@ import { getTokenForActor } from "@module/util/token.js"
 
         if (bonusForNumberOfShots !== 0)
           GURPS.ModifierBucket.addModifier(
-            bonusForNumberOfShots,
-            game.i18n.format('GURPS.combat.rof.bonusLabel', { shots }),
+            `${bonusForNumberOfShots}`,
+            game.i18n?.format('GURPS.combat.rof.bonusLabel', { shots: `${shots}` }) ?? '',
             targetmods
           )
         opt.shots = shots
@@ -595,15 +627,17 @@ import { getTokenForActor } from "@module/util/token.js"
 
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return await doRoll({
+      return !!(await doRoll({
         actor,
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         targetmods,
         thing,
         chatthing,
         origtarget: target,
         optionalArgs: opt,
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         action,
-      })
+      }))
     },
     /**
      * @param {Object} data
@@ -621,26 +655,28 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {JQuery.Event|null} data.event
      */
     ['weapon-block']({ action, actor, event }) {
+      if (action.type !== OtfActionType.weaponBlock) return false
+
       if (!actor) {
-        ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+        ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
         return false
       }
 
-      let att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, false) // find attack possibly using wildcards
+      const att = GURPS.findAttack(actor, action.name, !!action.isMelee, false)// find attack possibly using wildcards
 
       if (!att) {
-        ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+        ui.notifications?.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
         return false
       }
 
-      let mode = att.mode ? ` (${att.mode})` : ''
+      const mode = att.mode ? ` (${att.mode})` : ''
 
-      const target = att.block.canBlock ? parseInt(att.blockLevel) : 0
+      const target = att.block.canBlock ? att.blockLevel : 0
 
       if (isNaN(target) || target === 0) {
-        ui.notifications.warn(`No Block for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+        ui.notifications?.warn(`No Block for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
         return false
       }
@@ -648,32 +684,34 @@ import { getTokenForActor } from "@module/util/token.js"
       const thing = stripBracketContents(att.name ? att.name : att.item.name)
 
       if (action.calcOnly) {
-        let modifier = parseInt(action.mod) ?? 0
+        let modifier = parseInt(action.mod ?? '0') ?? 0
 
         if (isNaN(modifier)) modifier = 0
 
         return { target: target + modifier, thing: thing }
       }
 
-      let targetmods = []
+      const targetmods: Modifier[] = []
 
-      if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      let aid = actor ? `@${actor.id}@` : ''
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs, targetmods)
+      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
+      const aid = actor ? `@${actor.id}@` : ''
       const chatthing = thing === '' ? att.name + mode : `[${aid}B:"${thing}${mode}"]`
 
       return doRoll({
         actor,
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         targetmods,
         prefix: 'Block: ',
         thing,
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event },
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         action,
       })
         .then(result => {
-          return result
+          return !!result
         })
         .catch(error => {
           console.error('Error during doRoll:', error)
@@ -697,25 +735,27 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {JQuery.Event|null} data.event
      */
     ['weapon-parry']({ action, actor, event }) {
+      if (action.type !== OtfActionType.weaponParry) return false
+
       if (!actor) {
-        ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+        ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
         return false
       }
 
-      let att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, false) // find attack possibly using wildcards
+      const att = GURPS.findAttack(actor, action.name, !!action.isMelee, false) // find attack possibly using wildcards
 
       if (!att) {
-        ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+        ui.notifications?.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
         return false
       }
 
-      let mode = att.mode ? ` (${att.mode})` : ''
+      const mode = att.mode ? ` (${att.mode})` : ''
       const target = att.parryLevel
 
       if (isNaN(target) || target == 0) {
-        ui.notifications.warn(`No Parry for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+        ui.notifications?.warn(`No Parry for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
         return false
       }
@@ -723,32 +763,34 @@ import { getTokenForActor } from "@module/util/token.js"
       const thing = stripBracketContents(att.name ? att.name : att.item.name)
 
       if (action.calcOnly) {
-        let modifier = parseInt(action.mod) ?? 0
+        let modifier = parseInt(action.mod ?? '0')
 
         if (isNaN(modifier)) modifier = 0
 
         return { target: target + modifier, thing: thing }
       }
 
-      let targetmods = []
+      const targetmods: Modifier[] = []
 
-      if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      let aid = actor ? `@${actor.id}@` : ''
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
+      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
+      const aid = actor ? `@${actor.id}@` : ''
       const chatthing = thing === '' ? att.name + mode : `[${aid}P:"${thing}${mode}"]`
 
       return doRoll({
         actor,
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         targetmods,
         prefix: 'Parry: ',
         thing,
         chatthing,
         origtarget: target,
         optionalArgs: { blind: action.blindroll, event, obj: att },
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         action,
       })
         .then(result => {
-          return result
+          return !!result
         })
         .catch(error => {
           console.error('Error during doRoll:', error)
@@ -774,8 +816,9 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {boolean} data.calcOnly
      */
     attribute({ action, actor, event, originalOtf, calcOnly }) {
-      // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor).
+      if (action.type !== OtfActionType.attribute) return false  
 
+      // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor).
       // If no actor OR action.target, then we can't do anything, so error out.
       if (!actor && (!action || !action.target)) {
         ui.notifications?.warn('You must have a character selected')
@@ -784,18 +827,18 @@ import { getTokenForActor } from "@module/util/token.js"
       }
 
       // Is it pre-targeted (e.g., ST12)? If no, target = NaN, and we'll try to find it on the actor.
-      let target = parseInt(action.target)
+      let target = action.target ? parseInt(action.target) : undefined
 
       if (!target && !!actor) {
         if (action.melee) {
           // Is it trying to match to an attack name (should only occur with Parry: & Block:
-          let meleeAttack = GURPS.findAttack(actor.system, action.melee)
+          const meleeAttack = GURPS.findAttack(actor, action.melee) as MeleeAttackModel | undefined
 
           if (meleeAttack) {
-            target = parseInt(meleeAttack[action.attribute.toLowerCase()]) // should only occur with parry & block
+            target = action.attribute.toLowerCase() === 'parry' ? meleeAttack.parryLevel : action.attribute.toLowerCase() === 'block' ? meleeAttack.blockLevel : undefined
           }
         } else {
-          target = parseInt(foundry.utils.getProperty(actor.system, action.path))
+          target = parseInt(foundry.utils.getProperty(actor.system, action.path) as string)
         }
       }
 
@@ -806,7 +849,7 @@ import { getTokenForActor } from "@module/util/token.js"
       }
 
       if (calcOnly) {
-        let modifier = parseInt(action.mod) ?? 0
+        let modifier = parseInt(action.mod ?? '0')
 
         if (isNaN(modifier)) modifier = 0
 
@@ -814,35 +857,38 @@ import { getTokenForActor } from "@module/util/token.js"
       }
 
       return (async () => {
-        let targetmods = []
-        let aid = actor ? `@${actor.id}@` : ''
+        const targetmods: Modifier[] = []
+        const aid = actor ? `@${actor.id}@` : ''
         const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}${thing}]`
-        let opt = {
+        const opt = {
           blind: action.blindroll,
           event: event,
           action: action,
+          /* @ts-expect-error - there is no obj on this kind of action. Do we need one in some cases? ToDo: investigate */
           obj: action.obj,
           text: '',
         }
 
-        if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
-        if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
+        if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor ?? null))) return false
+        if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
         opt.text = ''
-        if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-        if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+        if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
+        if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc  ?? '', targetmods)
         else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
         if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-        return doRoll({
+        return !!(await doRoll({
           actor,
+          // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
           targetmods,
-          prefix: game.i18n.localize('GURPS.rollVs'),
+          prefix: game.i18n?.localize('GURPS.rollVs') ?? '',
           thing,
           chatthing,
           origtarget: target,
           optionalArgs: opt,
+          // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
           action,
-        })
+        }))
       })()
     },
     /**
@@ -862,8 +908,10 @@ import { getTokenForActor } from "@module/util/token.js"
      * @param {boolean} data.calcOnly
      */
     ['skill-spell']({ action, actor, event, originalOtf, calcOnly }) {
+      if (action.type !== OtfActionType.skillSpell) return false
+
       if (!actor && (!action || !action.target)) {
-        ui.notifications?.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
+        ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
         return false
       }
@@ -874,10 +922,10 @@ import { getTokenForActor } from "@module/util/token.js"
         return false
       }
 
-      let thing = stripBracketContents(action.name)
+      const thing = stripBracketContents(action.name)
 
       if (calcOnly) {
-        let modifier = parseInt(action.mod) ?? 0
+        let modifier = parseInt(action.mod ?? '')
 
         if (isNaN(modifier)) modifier = 0
 
@@ -885,26 +933,28 @@ import { getTokenForActor } from "@module/util/token.js"
       }
 
       return (async () => {
-        let targetmods = []
-        let aid = actor ? `@${actor.id}@` : ''
-        let chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}S:"${thing}"]`
-        let opt = {
+        const targetmods: Modifier[] = []
+        const aid = actor ? `@${actor.id}@` : ''
+        const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}S:"${thing}"]`
+        const opt = {
           blind: action.blindroll,
           event,
           action,
+          /* @ts-expect-error - obj is dynamically added to action in processSkillSpell. ToDo: refactor later*/
           obj: action.obj,
           text: '',
         }
 
-        if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
-        if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
+        if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor ?? null))) return false
+        if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
 
-        if (action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-        if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+        if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
+        if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
         else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
         if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-        return await doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action })
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
+        return !!await doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action })
       })()
     },
 
@@ -921,6 +971,8 @@ import { getTokenForActor } from "@module/util/token.js"
                   */
     // ['test-exists']({ action, actor, _event, originalOtf, calcOnly }) {
     ['test-exists']({ action, actor }) {
+      if (action.type !== OtfActionType.testExists) return false
+
       switch (action.prefix) {
         case 'A':
           if (GURPS.findAdDisad(actor, action.name)) return true
@@ -961,6 +1013,46 @@ import { getTokenForActor } from "@module/util/token.js"
     },
     // href({ action, actor, event, originalOtf, calcOnly }) {
     href({ action }) {
+      if (action.type !== OtfActionType.href) return false
       window.open(action.orig, action.label)
+
+      return true
     },
   }
+
+  function processSkillSpell({ action, actor}: { action: SkillSpellRollAction; actor?: Actor.Implementation }): number {
+  
+      if (action.target) {
+        // Skill-12
+        return action.target
+      }
+
+      //todo: properly type thiis function
+     const skill = GURPS.findSkillSpell(actor, action.name, !!action.isSkillOnly, !!action.isSpellOnly) as GurpsItemV2<ItemType.Skill> | GurpsItemV2<ItemType.Spell> | null
+  
+      if (!skill) {
+        return 0
+      }
+  
+      let skillLevel = skill.system?.level
+
+      // @ts-expect-error - dynamically adding obj property to action
+      action.obj = skill
+      if (skill.isOfType(ItemType.Skill)) action.isSkillOnly = true
+      if (skill.isOfType(ItemType.Spell)) action.isSpellOnly = true
+  
+      // on a floating skill check, we want the skill with the highest relative skill level
+      if (action.floatingAttribute) {
+        if (actor) {
+          const value = foundry.utils.getProperty(actor.system, action.floatingAttribute) as string
+          const rsl = skill.system.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
+          const valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
+  
+          skillLevel = valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
+        } else {
+          ui.notifications?.warn('You must have a character selected to use a "Based" Skill')
+        }
+      }
+  
+      return skillLevel
+    }

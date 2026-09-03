@@ -18,7 +18,7 @@ import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { ItemType } from '@module/item/types.js'
 import { COSTS_REGEX, parselink } from '@module/otf/parselink.js'
-import { OtfActionType, OtfAction } from '@module/otf/types.js'
+import { OtfActionType, OtfAction, DamageAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { taggedModToApply } from '@module/tagged-modifiers/tagged-modifiers.js'
@@ -1253,7 +1253,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   /* ---------------------------------------- */
 
-  async accumulateDamageRoll(action: fields.SchemaField.InitializedData<DamageActionSchema>): Promise<void> {
+  async accumulateDamageRoll(action: DamageAction): Promise<void> {
     const accumulatedActions = this.conditions.damageAccumulators
 
     const existingActionIndex = accumulatedActions.findIndex(
@@ -1262,9 +1262,19 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     if (existingActionIndex !== -1) return this.incrementDamageAccumulator(existingActionIndex)
 
-    action.count = 1
-    action.accumulate = null
-    accumulatedActions.push(action)
+    const accumulator: fields.SchemaField.InitializedData<DamageActionSchema> = {
+      orig: action.orig,
+      costs: action.costs ?? '',
+      roll: action.formula,
+      formula: action.formula,
+      hitlocation: action.hitlocation ?? '',
+      extdamagetype: action.extdamagetype ?? '',
+      damagetype: action.damagetype,
+      count: 1,
+      accumulate: null,
+    }
+
+    accumulatedActions.push(accumulator)
 
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulatedActions } as Actor.UpdateData)
   }
@@ -1623,7 +1633,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   async addTaggedRollModifiers(
     chatThing: string,
-    optionalArgs: { obj?: AnyObject },
+    optionalArgs: { obj?: AnyObject; action?: OtfAction } = {},
     attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
     const taggedSettings =
