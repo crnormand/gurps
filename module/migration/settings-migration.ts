@@ -75,7 +75,8 @@ export async function migrateLegacySettings(namespacePrefix: string, migrations:
       deleteId: migration.newName !== migration.oldName ? entry.id : null,
     })
 
-    if (entry.requiresReload) requiresReload = true
+    // @ts-expect-error: generically checking if the new setting requires reload
+    if (game.settings?.settings.get(`${namespacePrefix}.${migration.newName}`)?.requiresReload) requiresReload = true
   }
 
   if (entries.length === 0) return

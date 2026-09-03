@@ -35,7 +35,7 @@ function init() {
     CONFIG.Combatant.documentClass = GurpsCombatant
     CONFIG.Combat.initiative = {
       formula: DEFAULT_INITIATIVE_FORMULA,
-      decimals: 5, // Important to be able to maint ain resolution
+      decimals: 5, // Important to be able to maintain resolution
     }
 
     registerCombatSettings()

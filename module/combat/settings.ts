@@ -36,7 +36,6 @@ export function registerCombatSettings(): void {
     name: 'GURPS.settingRangeStrategy',
     hint: 'GURPS.settingHintRangeStrategy',
     scope: 'world',
-    requiresReload: true,
     config: false,
     type: String,
     choices: {
@@ -52,7 +51,6 @@ export function registerCombatSettings(): void {
     name: `${SETTINGS}.useRelativeSizeInMelee`,
     hint: `${SETTINGS}.useRelativeSizeInMeleeHint`,
     scope: 'world',
-    requiresReload: true,
     config: false,
     type: Boolean,
     default: false,
@@ -63,7 +61,6 @@ export function registerCombatSettings(): void {
     name: `${SETTINGS}.maneuver.visibility`,
     hint: `${SETTINGS}.maneuver.visibilityHint`,
     scope: 'world',
-    requiresReload: true,
     config: false,
     type: String,
     choices: {
@@ -83,7 +80,6 @@ export function registerCombatSettings(): void {
     name: `${SETTINGS}.maneuver.detail`,
     hint: `${SETTINGS}.maneuver.detailHint`,
     scope: 'world',
-    requiresReload: true,
     config: false,
     type: String as any,
     choices: {
@@ -103,7 +99,6 @@ export function registerCombatSettings(): void {
     name: `${SETTINGS}.maneuver.updatesMove`,
     hint: `${SETTINGS}.maneuver.updatesMoveHint`,
     scope: 'world',
-    requiresReload: true,
     config: false,
     type: Boolean as any,
     default: true,
@@ -114,7 +109,6 @@ export function registerCombatSettings(): void {
     name: `${SETTINGS}.maneuver.allowRoll`,
     hint: `${SETTINGS}.maneuver.allowRollHint`,
     scope: 'world',
-    requiresReload: true,
     config: false,
     type: String as any,
     choices: {
@@ -130,7 +124,6 @@ export function registerCombatSettings(): void {
     name: `${SETTINGS}.maneuver.useOnTarget`,
     hint: `${SETTINGS}.maneuver.useOnTargetHint`,
     scope: 'world',
-    requiresReload: true,
     config: false,
     type: Boolean as any,
     default: false,
@@ -146,7 +139,7 @@ export function registerCombatSettings(): void {
   game.settings.registerMenu(GURPS.SYSTEM_NAME, MODULE_NAME, {
     name: `${SETTINGS}.title`,
     label: `${SETTINGS}.title`,
-    hint: `${SETTINGS}.titleHint`,
+    hint: `${SETTINGS}.hint`,
     icon: ICON,
     type: CombatSettingsApplication,
     restricted: true,

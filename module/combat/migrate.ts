@@ -19,7 +19,9 @@ import {
 } from './types.ts'
 
 export function migrate(): void {
-  migrateManeuverSettings()
+  if (game.user?.isGM) {
+    migrateManeuverSettings()
+  }
 }
 
 function migrateManeuverSettings(): void {
