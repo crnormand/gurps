@@ -353,9 +353,7 @@ import { d6ify, quotedAttackName, stripBracketContents } from "@util/utilities.j
         return false
       }
 
-      let att = null
-
-      att = GURPS.findAttack(actor, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
+      const att = GURPS.findAttack(actor, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
 
       if (!att) {
         ui.notifications?.warn(
@@ -368,7 +366,7 @@ import { d6ify, quotedAttackName, stripBracketContents } from "@util/utilities.j
       //toDo: verity that is not needed. Can't currently return a string here.
       //if (action.calcOnly) return [att.damage].join(', ')
 
-      const dam = parseForRollOrDamage([att.damage].join(', '))
+      const dam = parseForRollOrDamage(att.damage)
 
       if (!dam) {
         ui.notifications?.warn('Damage is not rollable')

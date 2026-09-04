@@ -146,7 +146,7 @@ export function parselink(input, htmldesc = null, _clrdmods = null) {
 }
 
 /**
- * @param {string} str
+ * @param {string | Set<string> } str
  * @param {string} [overridetxt]
  * @returns {{text: string, action: Action} | null}
  */
