@@ -117,7 +117,7 @@ class GurpsBaseItemSheet<
    * @param selector - The candidate HTML selector for dragging
    * @returns Can the current user drag this selector?
    */
-  protected _canDragStart(_selector: DragDrop.DragSelector): boolean {
+  protected override _canDragStart(_selector: DragDrop.DragSelector): boolean {
     return this.isEditable
   }
 
@@ -126,7 +126,7 @@ class GurpsBaseItemSheet<
    * @param selector - The candidate HTML selector for the drop target
    * @returns Can the current user drop on this selector?
    */
-  protected _canDragDrop(_selector: DragDrop.DragSelector): boolean {
+  protected override _canDragDrop(_selector: DragDrop.DragSelector): boolean {
     return this.isEditable
   }
 
@@ -134,7 +134,7 @@ class GurpsBaseItemSheet<
    * Callback actions which occur at the beginning of a drag start workflow.
    * @param  event       The originating DragEvent
    */
-  protected _onDragStart(event: DragEvent) {
+  protected override async _onDragStart(event: DragEvent): Promise<void> {
     // Extract the data you need
     const dragData = null
 
@@ -150,7 +150,7 @@ class GurpsBaseItemSheet<
    * Callback actions which occur when a dragged element is over a drop target.
    * @param event       The originating DragEvent
    */
-  protected _onDragOver(_event: DragEvent): void {}
+  protected override _onDragOver(_event: DragEvent): void {}
 
   /* ---------------------------------------- */
 
@@ -158,7 +158,7 @@ class GurpsBaseItemSheet<
    * Callback actions which occur when a dragged element is dropped on a target.
    * @param event       The originating DragEvent
    */
-  protected async _onDrop(_event: DragEvent): Promise<void> {}
+  protected override async _onDrop(_event: DragEvent): Promise<void> {}
 
   /* ---------------------------------------- */
 

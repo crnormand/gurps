@@ -36,8 +36,8 @@ type LengthSchema = ReturnType<typeof lengthSchema>
 
 class Length<Parent extends DataModel.Any | null = DataModel.Any | null> extends DataModel<LengthSchema, Parent> {
   // Provide a Constructor for the Length class to allow for testing.
-  constructor(data: { value: number; unit: LengthUnit }, parent?: Parent) {
-    super(data, parent === null ? undefined : parent)
+  constructor(data: { value: number; unit: LengthUnit }, options?: DataModel.ConstructionContext<Parent>) {
+    super(data, options)
     this.value = data.value
     this.unit = data.unit
   }
@@ -318,7 +318,7 @@ class LengthField<
 
   /* ---------------------------------------- */
 
-  protected override _toInput(config: fields.DataField.ToInputConfig<InitializedType>): HTMLElement | HTMLCollection {
+  protected override _toInput(config: fields.DataField.ToInputConfig<this>): HTMLElement | HTMLCollection {
     const required = config.required === null ? undefined : config.required
     const stringConfig: fields.StringField.Options = { ...config, required }
 

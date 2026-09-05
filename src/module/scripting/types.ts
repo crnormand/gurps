@@ -52,13 +52,6 @@ type ScriptResult = ScriptOkResult | ScriptErrResult
 
 /* ---------------------------------------- */
 
-const MODULE_NAME = 'scripting'
-
-/* ---------------------------------------- */
-
-const GLOBAL_RESOLVER_CACHE = `${MODULE_NAME}.globalResolverCache`
-
-/* ---------------------------------------- */
 /*  Type Guards                             */
 /* ---------------------------------------- */
 
@@ -84,7 +77,7 @@ function asNodeLocContext(value: unknown): NodeLocContext | undefined {
   return value as NodeLocContext
 }
 
-export { GLOBAL_RESOLVER_CACHE, isRecord, asThrownDetails, asNodeLocContext }
+export { isRecord, asThrownDetails, asNodeLocContext }
 export type {
   ResolverCache,
   ScriptEnvironment,

@@ -158,10 +158,10 @@ class StringCriteriaField<
   /* ---------------------------------------- */
 
   protected override _toInput(
-    config: fields.DataField.ToInputConfig<InitializedType> | fields.DataField.ToInputConfigWithOptions<InitializedType>
+    config: fields.DataField.ToInputConfig<this> | fields.DataField.ToInputConfigWithOptions<this>
   ): HTMLElement | HTMLCollection
   protected override _toInput(
-    config: fields.DataField.ToInputConfigWithChoices<InitializedType, Options['choices']>
+    config: fields.DataField.ToInputConfigWithChoices<this['fields']['compare']>
   ): HTMLElement | HTMLCollection {
     const compareField = this.fields.compare.toInput(config)
     const { choices, ...qualifierConfig } = config

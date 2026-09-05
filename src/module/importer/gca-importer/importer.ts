@@ -15,6 +15,7 @@ import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
 
 import { HitLocation, hitlocationDictionary } from '../../hitlocation/hitlocation.js'
+import { getGame } from '../../util/guards.js'
 import { createDataIsOfType, createStandardTrackers, promptDeletionOfMigratedItems } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
@@ -801,7 +802,7 @@ Portrait will not be imported.`
 
   /**
    * Imports the GCA-schema'd Trait and converts it to a GGA Trait ("feature"").
-   * TODO: trait.calcs.levelnames is a commat delimited list (as a string), with optional
+   * TODO: trait.calcs.levelnames is a comma delimited list (as a string), with optional
    * quote marks. Valid formats include: "foo","bar,"baz" or foo, bar, baz.
    * This decides what the "names" of levels of a trait are. This is used for traits
    * such as:
@@ -813,7 +814,7 @@ Portrait will not be imported.`
   #importTrait(trait: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Trait
 
-    let name = trait.name || _loc('TYPES.Item.feature')
+    let name = trait.name || getGame().i18n.localize('TYPES.Item.feature')
     const crRegex = /\[\s*CR: (\d{1,2})\s*\]/i
 
     const isLeveled = trait.calcs.cost?.includes('/') ?? false
@@ -858,7 +859,7 @@ Portrait will not be imported.`
 
   #importSkill(skill: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Skill
-    const name = skill.name || _loc('TYPES.Item.skill')
+    const name = skill.name || getGame().i18n.localize('TYPES.Item.skill')
 
     const [baseSystem, _id] = this.#importItem(skill, containedBy)
 
@@ -886,7 +887,7 @@ Portrait will not be imported.`
 
   #importSpell(spell: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Spell
-    const name = spell.name || _loc('TYPES.Item.spell')
+    const name = spell.name || getGame().i18n.localize('TYPES.Item.spell')
 
     let spellClass = ''
     let spellResist = ''
@@ -948,7 +949,7 @@ Portrait will not be imported.`
 
   #importEquipment(equipment: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Equipment
-    const name = equipment.name || _loc('TYPES.Item.equipment')
+    const name = equipment.name || getGame().i18n.localize('TYPES.Item.equipment')
 
     const [baseSystem, _id] = this.#importItem(equipment, containedBy)
 

@@ -2706,10 +2706,10 @@ li.combatant.active {
   background: var(--gga-quickroll-background, var(--color-cool-5-90));
   .cant-do-icon {
     color: var(--color-text-subtle);
-   }
+  }
   .can-do-icon {
     color: var(--color-text-primary);
-   }
+  }
 }
 
 .maneuver-combat-tracker-menu ul {
@@ -2876,21 +2876,21 @@ button.quick-roll-button.lg {
 }
 
 .quick-roll-attack {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 button.quick-roll-button.lg.dam {
-    padding-left: 0;
-    display: block;
+  padding-left: 0;
+  display: block;
 }
 
 button.quick-roll-button.lg.atk {
-    display: block;
+  display: block;
 }
 
-.quick-roll-button .tooltip, 
-.quick-roll-attack .tooltip{
+.quick-roll-button .tooltip,
+.quick-roll-attack .tooltip {
   visibility: hidden;
   background-color: var(--color-cool-5-90);
   color: var(--color-light-1);
@@ -2909,8 +2909,7 @@ button.quick-roll-button.lg.atk {
 }
 
 .quick-roll-button:last-child .tooltip,
-.quick-roll-attack:last-child .tooltip
- {
+.quick-roll-attack:last-child .tooltip {
   left: auto;
   right: 0;
   margin-left: 0;
@@ -2922,7 +2921,7 @@ button.quick-roll-button.lg.atk {
   margin-left: 0;
 }
 
-.quick-roll-button .tooltip::after, 
+.quick-roll-button .tooltip::after,
 .quick-roll-attack .tooltip::after {
   content: '';
   position: absolute;
@@ -2947,7 +2946,7 @@ button.quick-roll-button.lg.atk {
   margin-left: 0;
 }
 
-.quick-roll-button:hover .tooltip, 
+.quick-roll-button:hover .tooltip,
 .quick-roll-attack:hover .tooltip {
   visibility: visible;
   opacity: 1;
@@ -2965,7 +2964,7 @@ button.quick-roll-button.lg.atk {
 .quick-roll-section h4 {
   text-transform: uppercase;
   font-size: 0.82em;
-  padding: 10px 0px 5px 5px;;
+  padding: 10px 0px 5px 5px;
   line-height: 1.1;
   border-bottom: 1px solid #772e21;
   margin: 0 0 0.5rem 0;
@@ -3013,7 +3012,7 @@ button.quick-roll-button.lg.atk {
 }
 
 .qr-image {
-    display: inline-flex;
+  display: inline-flex;
 }
 
 .qr-image img {
