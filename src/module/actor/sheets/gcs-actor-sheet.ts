@@ -746,10 +746,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected _createItemContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
     return [
       {
-        // @ts-expect-error: label replaces name in FoundryVTT v14 but fvtt-types is not up to date
         label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        // @ts-expect-error: visible replaces condition in FoundryVTT v14 but fvtt-types is not up to date
         visible: target => target.dataset.uuid !== undefined,
         callback: async target => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
@@ -766,10 +764,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected _createPseudoDocumentContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
     return [
       {
-        // @ts-expect-error: label replaces name in FoundryVTT v14 but fvtt-types is not up to date
         label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        // @ts-expect-error: visible replaces condition in FoundryVTT v14 but fvtt-types is not up to date
         visible: target => target.dataset.uuid !== undefined,
         callback: async target => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null

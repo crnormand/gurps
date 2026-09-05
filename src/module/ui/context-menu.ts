@@ -3,16 +3,15 @@
  * Specifically, it ensures that the context menu does not overflow the boundaries of the container
  * by adjusting its horizontal position as needed.
  */
-class GgaContextMenuV2 extends foundry.applications.ux.ContextMenu {
+class GgaContextMenuV2 extends foundry.applications.ux.ContextMenu<false> {
   constructor(
-    target: HTMLElement,
+    container: HTMLElement,
     selector: string | null | undefined,
-    menuItems: ContextMenu.Entry<HTMLElement>[],
-    container?: HTMLElement | null,
-    options?: ContextMenu.ConstructorOptions<false>
+    menuItems: ContextMenu.Entry<ContextMenu.JQueryOrHTML<false>>[],
+    options: ContextMenu.ConstructorOptions<false>
   ) {
     // Force jQuery to be false.
-    super(target, selector, menuItems, { eventName: 'contextmenu', ...options, jQuery: false })
+    super(container, selector, menuItems, { eventName: 'contextmenu', ...options, jQuery: false })
 
     this.container = container ?? undefined
   }

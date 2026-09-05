@@ -23,14 +23,6 @@ export {}
 declare global {
   /* ---------------------------------------- */
 
-  var _loc: typeof game.i18n.localize
-
-  /* ---------------------------------------- */
-
-  function _replace<T>(data: T): T
-
-  /* ---------------------------------------- */
-
   interface GurpsGlobal extends GurpsUtils {
     SYSTEM_NAME: 'gurps'
 

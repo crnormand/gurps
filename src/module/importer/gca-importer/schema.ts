@@ -30,6 +30,17 @@ const nullableStringField = () =>
   new fields.StringField({ required: true, nullable: true, blank: false, initial: null })
 
 class GCASchemaBlock<Schema extends fields.DataSchema> extends DataModel<Schema> {
+  /**
+   * Return the cached schema fields with the concrete schema type for the caller.
+   *
+   * Foundry exposes the static schema as `SchemaField.Any`, so accessing it directly
+   * loses the subclass's schema type. The schema itself is still resolved through
+   * Foundry's cached `DataModel.schema` accessor.
+   */
+  static _schemaFields<Schema extends fields.DataSchema>(): fields.SchemaField<Schema>['fields'] {
+    return (this.schema as fields.SchemaField<Schema>).fields
+  }
+
   static _primitiveFieldsFromXML<Schema extends fields.DataSchema>(
     xml: HTMLElement,
     schema: fields.SchemaField<Schema>['fields'],
@@ -91,7 +102,7 @@ class GCABonusClass extends GCASchemaBlock<GCABonusClassSchema> {
   static fromXML(xml: HTMLElement): GCABonusClass {
     const data: Partial<DataModel.CreateData<GCABonusClassSchema>> = this._primitiveFieldsFromXML(
       xml,
-      this.schema.fields
+      this._schemaFields<GCABonusClassSchema>()
     )
 
     return new this(data)
@@ -127,7 +138,7 @@ class GCAGroupingOptions extends GCASchemaBlock<GCAGroupingOptionsSchema> {
   static fromXML(xml: HTMLElement): GCAGroupingOptions {
     const data: Partial<DataModel.CreateData<GCAGroupingOptionsSchema>> = this._primitiveFieldsFromXML(
       xml,
-      this.schema.fields
+      this._schemaFields<GCAGroupingOptionsSchema>()
     )
 
     return new this(data)
@@ -160,7 +171,7 @@ class GCAFlagSymbol extends GCASchemaBlock<GCAFlagSymbolSchema> {
   static fromXML(xml: HTMLElement): GCAFlagSymbol {
     const data: Partial<DataModel.CreateData<GCAFlagSymbolSchema>> = this._primitiveFieldsFromXML(
       xml,
-      this.schema.fields
+      this._schemaFields<GCAFlagSymbolSchema>()
     )
 
     return new this(data)
@@ -188,7 +199,10 @@ class GCAMessage extends GCASchemaBlock<GCAMessageSchema> {
   /* ---------------------------------------- */
 
   static fromXML(xml: HTMLElement): GCAMessage {
-    const data: Partial<DataModel.CreateData<GCAMessageSchema>> = this._primitiveFieldsFromXML(xml, this.schema.fields)
+    const data: Partial<DataModel.CreateData<GCAMessageSchema>> = this._primitiveFieldsFromXML(
+      xml,
+      this._schemaFields<GCAMessageSchema>()
+    )
 
     return new this(data)
   }
@@ -215,7 +229,7 @@ class GCAUnknownTag extends GCASchemaBlock<GCAUnknownTagSchema> {
   static fromXML(xml: HTMLElement): GCAUnknownTag {
     const data: Partial<DataModel.CreateData<GCAUnknownTagSchema>> = this._primitiveFieldsFromXML(
       xml,
-      this.schema.fields
+      this._schemaFields<GCAUnknownTagSchema>()
     )
 
     return new this(data)
@@ -243,7 +257,7 @@ class GCABonus extends GCASchemaBlock<GCABonusSchema> {
   static fromXML(xml: HTMLElement): GCABonus {
     const data: DataModel.CreateData<GCABonusSchema> = this._primitiveFieldsFromXML<GCABonusSchema>(
       xml,
-      this.schema.fields
+      this._schemaFields<GCABonusSchema>()
     )
 
     return new this(data)
@@ -294,7 +308,7 @@ class GCABodyItem extends GCASchemaBlock<GCABodyItemSchema> {
   static fromXML(xml: HTMLElement): GCABodyItem {
     const data: DataModel.CreateData<GCABodyItemSchema> = this._primitiveFieldsFromXML<GCABodyItemSchema>(
       xml,
-      this.schema.fields
+      this._schemaFields<GCABodyItemSchema>()
     )
 
     return new this(data)
@@ -336,7 +350,7 @@ class GCALayerItem extends GCASchemaBlock<GCALayerItemSchema> {
   static fromXML(xml: HTMLElement): GCALayerItem {
     const data: Partial<DataModel.CreateData<GCALayerItemSchema>> = this._primitiveFieldsFromXML(
       xml,
-      this.schema.fields
+      this._schemaFields<GCALayerItemSchema>()
     )
 
     return new this(data)
@@ -365,7 +379,10 @@ class GCACategory extends GCASchemaBlock<GCACategorySchema> {
   /* ---------------------------------------- */
 
   static fromXML(xml: HTMLElement): GCACategory {
-    const data: Partial<DataModel.CreateData<GCACategorySchema>> = this._primitiveFieldsFromXML(xml, this.schema.fields)
+    const data: Partial<DataModel.CreateData<GCACategorySchema>> = this._primitiveFieldsFromXML(
+      xml,
+      this._schemaFields<GCACategorySchema>()
+    )
 
     return new this(data)
   }
@@ -393,7 +410,7 @@ class GCAModifier extends GCASchemaBlock<GCAModifierSchema> {
   static fromXML(xml: HTMLElement): GCAModifier {
     const data: DataModel.CreateData<GCAModifierSchema> = this._primitiveFieldsFromXML<GCAModifierSchema>(
       xml,
-      this.schema.fields
+      this._schemaFields<GCAModifierSchema>()
     )
 
     return new this(data)
@@ -540,7 +557,7 @@ class GCAHitLocationLine extends GCASchemaBlock<GCAHitLocationLineSchema> {
   /* ---------------------------------------- */
 
   static fromXML(xml: HTMLElement): GCAHitLocationLine {
-    const schema = this.schema.fields
+    const schema = this._schemaFields<GCAHitLocationLineSchema>()
 
     const data: Partial<DataModel.CreateData<GCAHitLocationLineSchema>> = this._primitiveFieldsFromXML(xml, schema)
 
@@ -569,7 +586,7 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
   /* ---------------------------------------- */
 
   static fromXML(xml: HTMLElement): GCATrait {
-    const schema = this.schema.fields
+    const schema = this._schemaFields<GCATraitSchema>()
 
     const data: Partial<DataModel.CreateData<GCATraitSchema>> = this._primitiveFieldsFromXML(xml, schema)
 
@@ -591,7 +608,9 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
       xml.querySelector(':scope > attackmodes')?.querySelectorAll('attackmode') ?? []
     ).reduce((acc: DataModel.CreateData<GCAAttackModeSchema>[], node) => {
       if (node.children.length > 2)
-        acc.push(GCAAttackMode._primitiveFieldsFromXML(node as HTMLElement, GCAAttackMode.schema.fields))
+        acc.push(
+          GCAAttackMode._primitiveFieldsFromXML(node as HTMLElement, GCAAttackMode._schemaFields<GCAAttackModeSchema>())
+        )
 
       return acc
     }, [])
@@ -855,7 +874,7 @@ class GCACharacter extends GCASchemaBlock<GCACharacterSchema> {
   /* ---------------------------------------- */
 
   static fromXML(xml: HTMLElement): GCACharacter {
-    const schema = this.schema.fields
+    const schema = this._schemaFields<GCACharacterSchema>()
 
     const data: Partial<DataModel.CreateData<GCACharacterSchema>> = this._primitiveFieldsFromXML(xml, schema, [
       'bodyimagefile',
@@ -1045,9 +1064,12 @@ class GCACharacter extends GCASchemaBlock<GCACharacterSchema> {
   /* ---------------------------------------- */
 
   protected static _getLoadoutFromXML(xml: HTMLElement): Partial<DataModel.CreateData<GCALoadoutSchema>> {
-    const data: Partial<DataModel.CreateData<GCALoadoutSchema>> = this._primitiveFieldsFromXML(xml, gcaLoadoutSchema())
+    const data: Partial<DataModel.CreateData<GCALoadoutSchema>> = this._primitiveFieldsFromXML(
+      xml,
+      this._schemaFields<GCACharacterSchema>().loadouts.element.fields
+    )
 
-    const schema = this.schema.fields.loadouts.element.fields
+    const schema = this._schemaFields<GCACharacterSchema>().loadouts.element.fields
 
     data.facingdb = this._primitiveFieldsFromXML(
       xml.querySelector(':scope > facingdb') as HTMLElement,
@@ -1082,10 +1104,10 @@ class GCACharacter extends GCASchemaBlock<GCACharacterSchema> {
   protected static _getTransformFromXML(xml: HTMLElement): Partial<DataModel.CreateData<GCATransformSchema>> {
     const data: Partial<DataModel.CreateData<GCATransformSchema>> = this._primitiveFieldsFromXML(
       xml,
-      gcaTransformSchema()
+      this._schemaFields<GCACharacterSchema>().transforms.element.fields
     )
 
-    const schema = this.schema.fields.transforms.element.fields
+    const schema = this._schemaFields<GCACharacterSchema>().transforms.element.fields
 
     data.items = Array.from(xml.querySelector(':scope > items')?.querySelectorAll(':scope > item') ?? []).map(node =>
       this._primitiveFieldsFromXML(node as HTMLElement, schema.items.element.fields)
