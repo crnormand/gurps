@@ -420,11 +420,11 @@ declare global {
     /* ---------------------------------------- */
 
     performAction(
-      action: OtfAction,
-      actor: Actor | Actor.Implementation | null,
-      event?: Event | null,
+      action: OtfAction | null,
+      actor: Actor.Implementation | null = null,
+      event?: ActionFuncContext | null = null,
       targets?: string[]
-    ): Promise<any>
+    ): Promise<{ target: number } | boolean> | { target: number; thing?: string } | boolean
 
     /* ---------------------------------------- */
 
@@ -523,7 +523,7 @@ declare global {
     executeOTF(
       inputstring: string,
       priv?: boolean,
-      event?: Event | null,
+      event?: ActionFuncContext | null,
       actor: Actor.Implementation | null
     ): Promise<boolean>
   }

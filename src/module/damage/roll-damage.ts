@@ -1,4 +1,6 @@
 import { calculateMessageMode } from '@module/dierolls/dieroll.js'
+import { ActionFuncContext } from '@module/otf/actionFuncs.js'
+import { DamageAction, DerivedDamageAction } from '@module/otf/types.js'
 import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import { i18nFallback } from '@module/util/i18nFallback.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
@@ -8,13 +10,13 @@ import DamageChat from './damagechat.js'
 export async function rollDamage(
   canRoll: any,
   token: Token | null,
-  actor: Actor | null,
+  actor: Actor.Implementation | null,
   displayFormula: string,
   actionFormula: string,
-  action: any,
-  event: Event | null,
+  action: DamageAction | DerivedDamageAction,
+  event: ActionFuncContext | null,
   overrideText: string | null,
-  targets: any
+  targets: string[]
 ): Promise<boolean> {
   if (!game.settings || !game.i18n || !game.users)
     throw new Error('GURPS | rollDamage: game settings or i18n or users not available.')
@@ -119,7 +121,7 @@ export async function rollDamage(
 
     if (response === 'roll') {
       await DamageChat.create(
-        actor || game.user,
+        (actor as Actor) || (game.user as User),
         actionFormula,
         action.damagetype,
         event,
@@ -127,11 +129,15 @@ export async function rollDamage(
         targets,
         action.extdamagetype,
         action.hitlocation,
-        action.isBlindRoll
+        action.blindroll
       )
 
       if (action.next) {
-        return await GURPS.performAction(action.next, actor, event, targets)
+        const result = await GURPS.performAction(action.next, actor, event, targets)
+
+        if (result && typeof result === 'boolean') {
+          return result
+        }
       }
 
       return true
@@ -143,7 +149,7 @@ export async function rollDamage(
     }
   } else {
     await DamageChat.create(
-      actor || game.user,
+      (actor as Actor) || (game.user as User),
       actionFormula,
       action.damagetype,
       event,
@@ -151,11 +157,15 @@ export async function rollDamage(
       targets,
       action.extdamagetype,
       action.hitlocation,
-      action.isBlindRoll
+      action.blindroll
     )
 
     if (action.next) {
-      return await GURPS.performAction(action.next, actor, event, targets)
+      const result = await GURPS.performAction(action.next, actor, event, targets)
+
+      if (result && typeof result === 'boolean') {
+        return result
+      }
     }
 
     return true

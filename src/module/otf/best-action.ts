@@ -1,9 +1,11 @@
 import { OtfAction } from '@module/otf/types.js'
 
+import { ActionFuncContext } from './actionFuncs.js'
+
 export type ActionChain = {
   action: OtfAction | undefined
-  actor: Actor.Implementation
-  event: Event
+  actor: Actor.Implementation | null
+  event: ActionFuncContext | null
   targets: string[]
   originalOtf: string
 }
@@ -15,7 +17,7 @@ export type ActionChain = {
  * @param {Object} params
  * @param {OtfAction} params.action - The initial action to evaluate, which may be part of a chain of actions.
  * @param {Actor.Implementation} params.actor - The actor performing the action, used for calculating skill levels.
- * @param {Event} params.event - The event that triggered the action, used for context in calculations.
+ * @param {ActionFuncContext} params.event - The event that triggered the action, used for context in calculations.
  * @param {string[]} params.targets - The targets of the action, used for context in calculations.
  * @param {string} params.originalOtf - The original OTF string that generated the action, used for context in
  *    calculations.
@@ -79,7 +81,7 @@ export async function findBestActionInChain({
  * @param {Object} params
  * @param {OtfAction} params.action - The initial action to evaluate, which may be part of a chain of actions.
  * @param {Actor.Implementation} params.actor - The actor performing the action, used for calculating skill levels.
- * @param {Event} params.event - The event that triggered the action, used for context in calculations.
+ * @param {ActionFuncContext} params.event - The event that triggered the action, used for context in calculations.
  * @param {string[]} params.targets - The targets of the action, used for context in calculations.
  * @param {string} params.originalOtf - The original OTF string that generated the action, used for context in
  *    calculations.

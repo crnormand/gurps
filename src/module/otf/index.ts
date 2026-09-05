@@ -1,17 +1,26 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { actionFunc, actionFuncs } from './actionFuncs.js'
+import { actionFuncs } from './actionFuncs.js'
+import { executeOTF, performAction } from './executeOTF.js'
+import { parselink } from './parselink.js'
 
 interface OtfModule extends GurpsModule {
-  actionFuncs: Record<string, actionFunc>
+  performAction: typeof performAction
+  parselink: typeof parselink
+  executeOTF: typeof executeOTF
 }
 
 function init() {
   console.log('GURPS | Initializing GURPS OTF module.')
   GURPS.actionFuncs = actionFuncs
+  GURPS.parselink = parselink
+  GURPS.performAction = performAction
+  GURPS.executeOTF = executeOTF
 }
 
 export const Otf: OtfModule = {
   init,
-  actionFuncs,
+  performAction,
+  parselink,
+  executeOTF,
 }

@@ -144,7 +144,6 @@ type BlockAction = {
 } & AttackBaseAction
 
 type RollBaseAction = {
-  displayformula: string
   formula: string
   desc?: string
   costs?: string
@@ -152,9 +151,12 @@ type RollBaseAction = {
   accumulate: boolean
   next?: OtfAction
   blindroll?: boolean
+  sourceId?: string
+  mod?: string
+  att?: MeleeAttackModel | RangedAttackModel
 } & BaseAction
 
-type RollAction = {
+export type RollAction = {
   type: typeof OtfActionType.roll
   displayformula: string
 } & RollBaseAction
@@ -163,24 +165,18 @@ export type DamageAction = {
   type: typeof OtfActionType.damage
   damagetype: string
   extdamagetype?: string
-  mod?: string
-  desc?: string
-  att: MeleeAttackModel | RangedAttackModel
 } & RollBaseAction
 
-type DerivedRollAction = {
+export type DerivedRollAction = {
   type: typeof OtfActionType.derivedRoll
   derivedformula: string
 } & RollBaseAction
 
-type DerivedDamageAction = {
+export type DerivedDamageAction = {
   type: typeof OtfActionType.derivedDamage
   derivedformula: string
   damagetype: string
   extdamagetype?: string
-  mod?: string
-  desc?: string
-  att: MeleeAttackModel | RangedAttackModel
 } & RollBaseAction
 
 export type OtfAction =
@@ -218,4 +214,9 @@ export type OtfDamageAction = AttackDamageAction | DamageAction | DerivedDamageA
 export type ParserResult = {
   text: string
   action: OtfAction
+}
+
+export type ParseLinkResult = {
+  text: string
+  action?: OtfAction
 }

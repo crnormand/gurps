@@ -96,7 +96,7 @@ class ModifierParser extends OtfParser {
 
     if (match.groups?.othermods) {
       def = parselink(match.groups.othermods.slice(1).trim()) // remove the leading &
-      if (def.action?.type == OtfActionType.modifier) spantext += ' & ' + def.action.spantext
+      if (def?.action?.type == OtfActionType.modifier) spantext += ' & ' + def.action.spantext
       else def = {}
     }
 
@@ -148,7 +148,7 @@ class MarginModParser extends OtfParser {
 
     if (match.groups!.othermods) {
       def = parselink(match.groups!.othermods.slice(1).trim()) // remove the leading &
-      if (def.action?.type == OtfActionType.modifier) spantext += ' & ' + def.action.spantext
+      if (def?.action?.type == OtfActionType.modifier) spantext += ' & ' + def.action.spantext
       else def = {}
     }
 

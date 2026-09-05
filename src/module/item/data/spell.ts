@@ -86,7 +86,7 @@ class SpellModel extends BaseItemModel<SpellSchema> {
     const action = parselink(otf)
 
     // If the OTF does not return an action, we cannot set the level.
-    if (!action.action) return
+    if (!action?.action) return
 
     action.action.calcOnly = true
     action.action.suppressWarnings = true

@@ -1,8 +1,8 @@
 // Import Modules
 import { Migrator } from '@module/migration/migrator.js'
-import { findBestActionInChain, findBestActionInChainSync } from '@module/otf/best-action.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
-import { parselink, PARSELINK_MAPPINGS } from '@module/otf/parselink.js'
+import { performAction } from '@module/otf/executeOTF.js'
+import { PARSELINK_MAPPINGS } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
@@ -399,92 +399,6 @@ if (!globalThis.GURPS) {
 
   // Needed for external modules like Token Action HUD and Nordlond Bestiary
   GURPS.gurpslink = gurpslink
-
-  /**
-   * @param {string} string
-   * @param {boolean} priv
-   * @param {JQuery.Event|null} event
-   * @returns {Promise<boolean>}
-   */
-  async function executeOTF(inputstring, priv = false, event = null, actor = null) {
-    if (!inputstring) return false
-    inputstring = inputstring.trim()
-    if (inputstring[0] == '[' && inputstring[inputstring.length - 1] == ']')
-      inputstring = inputstring.substring(1, inputstring.length - 1)
-
-    // Stop splitting on double backslashes. This breaks when you have nested /chat commands, the inner ones with double backslashes.
-    // Example: /if [ST] s:{/r [+@margin Successful ST roll]\\/r [Sk:"Forced Entry"]} cs:{...}]}
-    // let strings = inputstring.split('\\\\')
-    let strings = [inputstring]
-    let answer = false
-
-    for (let string of strings) {
-      string = string.trim()
-      let action = parselink(string)
-
-      answer = false
-      if (action.action) {
-        if (!event) event = { shiftKey: priv, ctrlKey: false, data: {} }
-        let result = await GURPS.performAction(action.action, actor || GURPS.LastActor, event)
-
-        answer = !!result
-      } else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
-    }
-
-    return answer
-  }
-
-  GURPS.executeOTF = executeOTF
-
-  /**
-   * @param {Action} action
-   * @param {GurpsActorV2|null} actor
-   * @param {JQuery.Event|null} [event]
-   * @param {string[]} [targets]
-   * @returns {MaybePromise<boolean | {target: any, thing: any} | undefined>}
-   */
-  function performAction(action, actor, event = null, targets = []) {
-    if (!action || !(action.type in GURPS.actionFuncs)) return false
-
-    if (action.sourceId) {
-      const originalActor = game.actors.get(action.sourceId)
-
-      // If there is no (actor) GURPS.LastActor or the actor is the same as the original actor, use the original actor.
-      if (!actor || actor.id === originalActor.id) actor = originalActor
-    }
-
-    const originalOtf = action.orig
-    const calcOnly = action.calcOnly
-
-    if (calcOnly) {
-      if (['attribute', 'skill-spell'].includes(action.type)) {
-        action = findBestActionInChainSync({ action, event, actor, targets, originalOtf })
-      }
-
-      if (!action) return false
-
-      const result = GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
-
-      if (result && typeof result.then === 'function') {
-        throw new Error(`GURPS.performAction(calcOnly) requires a synchronous action handler for type "${action.type}"`)
-      }
-
-      return result
-    }
-
-    return (async () => {
-      if (['attribute', 'skill-spell'].includes(action.type)) {
-        action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
-      }
-
-      return !action
-        ? false
-        : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
-    })()
-  }
-
-  GURPS.performAction = performAction
-
   GURPS.arrayToObject = arrayToObject
   GURPS.objectToArray = objectToArray
 
@@ -550,7 +464,7 @@ if (!globalThis.GURPS) {
 
       for (let part of parts) {
         //let result = parseForRollOrDamage(part.trim())
-        let result = parselink(part.trim())
+        let result = GURPS.parselink(part.trim())
 
         if (result?.action) {
           if (options?.combined && result.action.type == OtfActionType.damage)
@@ -874,7 +788,6 @@ if (!globalThis.GURPS) {
 
   GURPS.recurselist = recurselist
   GURPS.flattenContainedList = flattenContainedList
-  GURPS.parselink = parselink
 
   /* -------------------------------------------- */
   /*  Foundry VTT Initialization                  */

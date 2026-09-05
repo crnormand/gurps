@@ -107,7 +107,7 @@ export default class DamageChat {
    * @param {Actor<"base" | ModuleSubtype>|User} actor that rolled the damage.
    * @param {String} diceText such as '3d-1(2)'
    * @param {String} damageType text from DamageTables.damageTypeMap
-   * @param {Event|null} event that triggered this action
+   * @param {ActionFuncContext|null} event that triggered this action
    * @param {String|null} overrideDiceText ??
    * @param {String[]|undefined} tokenNames
    * @param {String|null} extdamagetype

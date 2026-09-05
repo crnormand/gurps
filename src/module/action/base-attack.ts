@@ -84,7 +84,7 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
     const action = parselink(otf)
 
     // If the OTF does not return an action, we cannot set the level.
-    if (!action.action) {
+    if (!action?.action) {
       console.warn(`GURPS | ${this.documentName}: OTF "${otf}" did not return a valid action.`)
 
       return
