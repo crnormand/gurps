@@ -510,6 +510,14 @@
     "cancel": "Cancelar",
     "cannotDragNonFoundryEqt": "Você não pode arrastar equipamento que não é do Foundry para outro personagem.",
     "cannotDropItemAlreadyExists": "Você já possui este item.",
+    "canvas": {
+      "settings": {
+        "useBookRegionRadius": {
+          "hint": "Se marcada, o raio exibido dos modelos de medição circulares é aumentado em 0,5 jarda para cumprir B239, que define um raio de 1 como sendo composto por um único hexágono.",
+          "name": "Usar o raio da região do livro"
+        }
+      }
+    },
     "carryOnBack": "Carregar nas Costas",
     "changelog": {
       "dontShowAgain": "Não exibir LEIA-ME novamente",
