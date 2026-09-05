@@ -477,8 +477,7 @@ class GurpsItemV2<SubType extends Item.SubType = Item.SubType>
 
     const currentEnabled = (this.modelV2 as EquipmentModel).equipped
 
-    // @ts-expect-error: waiting for types to catch up
-    return this.update({ 'system.equipped': enabled === null ? !currentEnabled : enabled })
+    return this.update({ system: { equipped: enabled === null ? !currentEnabled : enabled } })
   }
 
   async toggleEquipped(equipped: boolean | null = null) {

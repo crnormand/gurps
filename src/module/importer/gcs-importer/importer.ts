@@ -1019,7 +1019,7 @@ Portrait will not be imported.`
 
   #importTrait(trait: GcsTrait, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Trait
-    const name = trait.name || _loc('TYPES.Item.feature')
+    const name = trait.name || getGame().i18n.localize('TYPES.Item.feature')
 
     const [baseSystem, _id] = this.#importItem(trait)
     let modifierNotes = ''
@@ -1069,7 +1069,7 @@ Portrait will not be imported.`
 
   #importSkill(skill: GcsSkill, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Skill
-    const name = skill.name || _loc('TYPES.Item.skill')
+    const name = skill.name || getGame().i18n.localize('TYPES.Item.skill')
 
     const [baseSystem, _id] = this.#importItem(skill)
 
@@ -1086,8 +1086,8 @@ Portrait will not be imported.`
 
           if (skill.default.specialization) defaultName += ` (${skill.default.specialization})`
 
-          if (skill.default.type === 'block') defaultName += ' ' + _loc('GURPS.block')
-          else if (skill.default.type === 'parry') defaultName += ' ' + _loc('GURPS.parry')
+          if (skill.default.type === 'block') defaultName += ' ' + getGame().i18n.localize('GURPS.block')
+          else if (skill.default.type === 'parry') defaultName += ' ' + getGame().i18n.localize('GURPS.parry')
 
           break
         }
@@ -1147,7 +1147,7 @@ Portrait will not be imported.`
 
   #importSpell(spell: GcsSpell, index: number, containedBy?: string | undefined): Item.CreateData {
     const type = ItemType.Spell
-    const name = spell.name || _loc('TYPES.Item.spell')
+    const name = spell.name || getGame().i18n.localize('TYPES.Item.spell')
 
     const [baseSystem, _id] = this.#importItem(spell)
 
@@ -1192,7 +1192,7 @@ Portrait will not be imported.`
     containedBy?: string | undefined
   ): Item.CreateData {
     const type = ItemType.Equipment
-    const name = equipment.name || _loc('TYPES.Item.equipment')
+    const name = equipment.name || getGame().i18n.localize('TYPES.Item.equipment')
 
     const weight = equipment.calc?.weight
       ? parseFloat(equipment.calc.weight)

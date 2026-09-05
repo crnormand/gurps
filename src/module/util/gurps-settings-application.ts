@@ -7,7 +7,7 @@ type GurpsSettingsConfig = {
   icon?: string // Icon to display in the title bar.
 }
 
-type SettingEntry<Field extends fields.DataField = fields.DataField.Any> = {
+type SettingEntry<Field extends fields.DataField.Any = fields.DataField.Any> = {
   value?: fields.DataField.PersistedTypeFor<Field>
   field?: Field
 }

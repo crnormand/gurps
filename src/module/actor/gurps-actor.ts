@@ -705,27 +705,20 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  // @ts-expect-error: Actor._cleanData is defined in v14 but not v13
-  static override _cleanData(
-    data: AnyMutableObject = {},
-    options: fields.DataField.CleanOptions = {},
-    _state: AnyMutableObject = {}
-  ): AnyMutableObject {
-    // @ts-expect-error: Actor._cleanData is defined in v14 but not v13
+  protected static override _cleanData(
+    data: object,
+    options: fields.DataField.CleanOptions,
+    _state: fields.DataField.UpdateState
+  ): void {
     super._cleanData(data, options, _state)
 
-    // migrateData may change the document type (e.g. "enemy" → "character") after Foundry has
-    // already captured _state.documentType. TypeDataField._cleanType then uses the stale type
-    // and, finding no DataModel for it, skips CharacterData.cleanData entirely — leaving partial
-    // collection entries (hitlocationsV2, allNotes, …) without their schema defaults.
-    // _cleanData runs after the schema pass, so we can re-clean with the actual post-migration type.
-    if (data.type === _state.documentType || !isObject(data.system)) return data
+    const source = data as AnyMutableObject
 
-    const systemModel = Object.entries(CONFIG.Actor.dataModels).find(([type]) => type === data.type)?.[1]
+    if (source.type === _state.documentType || !isObject(source.system)) return
 
-    systemModel?.cleanData(data.system, { partial: false })
+    const systemModel = Object.entries(CONFIG.Actor.dataModels).find(([type]) => type === source.type)?.[1]
 
-    return data
+    systemModel?.cleanData(source.system, { partial: false })
   }
 
   /* ---------------------------------------- */

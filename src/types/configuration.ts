@@ -97,7 +97,6 @@ declare module 'fvtt-types/configuration' {
   namespace Hooks {
     interface HookConfig {
       dropCanvasData: (canvas: Canvas, dropData: any) => void
-      applyActiveEffect: (actor: Actor.Implementation, change: any, options: any, user: User.Implementation) => void
     }
   }
 

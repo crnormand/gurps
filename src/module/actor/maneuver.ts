@@ -59,6 +59,7 @@ type ManeuverEffectData = ActiveEffect.CreateData & {
     }
   }
   statuses: string[]
+  changes: ManeuverChange[]
 }
 
 type NormalizedManeuverInput = Omit<Required<ManeuverInput>, 'altImg'> & { altImg: string | null }

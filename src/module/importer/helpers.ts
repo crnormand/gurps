@@ -9,7 +9,6 @@ import { getGame } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 
 type TypedItemCreateData<SubType extends Item.SubType> = Item.CreateData<SubType> & {
-  // @ts-expect-error: the type system doesn't like this because it doesn't extend some empty object but it does in fact work.
   system: DataModel.CreateData<DataModel.SchemaOf<Item.SystemOfType<SubType>>>
 }
 
