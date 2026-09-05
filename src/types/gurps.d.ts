@@ -46,7 +46,7 @@ import {
   ReactionModifier,
   ConditionalModifier as ConditionalModifierDocument,
 } from '@module/item/data/conditional-modifier.js'
-import { OtfAction } from '@module/otf/types.js'
+import { OtfAction, CalcOnlyAction } from '@module/otf/types.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
   ContainedQuantityPrereq,
@@ -420,11 +420,17 @@ declare global {
     /* ---------------------------------------- */
 
     performAction(
-      action: OtfAction | null,
-      actor: Actor.Implementation | null = null,
-      event?: ActionFuncContext | null = null,
+      action: (OtfAction & CalcOnlyAction) | null,
+      actor: Actor.Implementation | null,
+      event?: ActionFuncContext | null,
       targets?: string[]
-    ): Promise<{ target: number } | boolean> | { target: number; thing?: string } | boolean
+    ): { target: number; thing?: string }
+    performAction(
+      action: OtfAction | null,
+      actor?: Actor.Implementation | null,
+      event?: ActionFuncContext | null,
+      targets?: string[]
+    ): Promise<boolean> | boolean
 
     /* ---------------------------------------- */
 

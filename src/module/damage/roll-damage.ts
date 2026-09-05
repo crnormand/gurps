@@ -133,11 +133,7 @@ export async function rollDamage(
       )
 
       if (action.next) {
-        const result = await GURPS.performAction(action.next, actor, event, targets)
-
-        if (result && typeof result === 'boolean') {
-          return result
-        }
+        return await GURPS.performAction(action.next, actor, event, targets)
       }
 
       return true
@@ -161,11 +157,7 @@ export async function rollDamage(
     )
 
     if (action.next) {
-      const result = await GURPS.performAction(action.next, actor, event, targets)
-
-      if (result && typeof result === 'boolean') {
-        return result
-      }
+      return await GURPS.performAction(action.next, actor, event, targets)
     }
 
     return true

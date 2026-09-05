@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplaySkill } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@module/otf/parselink.js'
+import { CalcOnlyAction, OtfAction } from '@module/otf/types.js'
 import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -86,25 +87,15 @@ class SkillModel extends BaseItemModel<SkillSchema> {
     // If the OTF does not return an action, we cannot set the level.
     if (!action?.action) return
 
-    action.action.calcOnly = true
-    action.action.suppressWarnings = true
-
-    const result = GURPS.performAction(action.action, this.actor) as unknown as
-      | boolean
-      | { target: number; thing: any }
-      | Promise<unknown>
-      | undefined
-
-    if (
-      (result && result instanceof Promise) ||
-      (typeof result === 'object' && 'then' in result && typeof result.then === 'function')
-    ) {
-      return
+    const calcOnlyAction: OtfAction & CalcOnlyAction = {
+      ...action.action,
+      calcOnly: true,
+      suppressWarnings: true,
     }
 
-    if (result && typeof result === 'object' && typeof result.target === 'number') {
-      this.level = result.target
-    }
+    const result = GURPS.performAction(calcOnlyAction, this.actor)
+
+    this.level = result.target
   }
 
   /* ---------------------------------------- */

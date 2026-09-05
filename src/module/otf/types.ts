@@ -27,7 +27,10 @@ type BaseAction = {
   orig: string
   overridetxt?: string
   spantext?: string
-  calcOnly?: boolean
+}
+
+export type CalcOnlyAction = {
+  calcOnly: true
   suppressWarnings?: boolean
 }
 
@@ -127,7 +130,7 @@ type AttackBaseAction = {
   sourceId?: string
 } & BaseAction
 
-type AttackAction = {
+export type AttackAction = {
   type: typeof OtfActionType.attack
 } & AttackBaseAction
 

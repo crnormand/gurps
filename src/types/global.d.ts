@@ -9,7 +9,7 @@ import { Dev as ModuleDev } from '@module/dev/index.js'
 import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
 import { Migrator } from '@module/migration/migrator.js'
-import { actionFunc } from '@module/otf/actionFuncs.js'
+import { Otf as ModuleOtf } from '@module/otf/index.js'
 import { Pdf as ModulePdf } from '@module/pdf/index.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
@@ -52,6 +52,7 @@ declare global {
       Token: typeof ModuleToken
       UI: typeof ModuleUI
       Util: typeof ModuleUtil
+      Otf: typeof ModuleOtf
     }
 
     /* ---------------------------------------- */
@@ -72,8 +73,6 @@ declare global {
         SubTypes: PseudoDocumentConfig.Types
       }
     }
-
-    actionFuncs: Record<string, actionFunc>
   }
 
   var GURPS: GurpsGlobal

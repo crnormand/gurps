@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { DisplaySpell } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@module/otf/parselink.js'
+import { CalcOnlyAction, OtfAction } from '@module/otf/types.js'
 import { makeRegexPatternFrom, quotedAttackName } from '@util/utilities.js'
 import { AnyObject } from 'fvtt-types/utils'
 
@@ -88,20 +89,15 @@ class SpellModel extends BaseItemModel<SpellSchema> {
     // If the OTF does not return an action, we cannot set the level.
     if (!action?.action) return
 
-    action.action.calcOnly = true
-    action.action.suppressWarnings = true
-
-    const result = GURPS.performAction(action.action, this.actor) as unknown
-
-    if (
-      result &&
-      typeof result === 'object' &&
-      typeof (result as PromiseLike<unknown>).then !== 'function' &&
-      'target' in result &&
-      typeof result.target === 'number'
-    ) {
-      this.level = result.target
+    const calcOnlyAction: OtfAction & CalcOnlyAction = {
+      ...action.action,
+      calcOnly: true,
+      suppressWarnings: true,
     }
+
+    const result = GURPS.performAction(calcOnlyAction, this.actor)
+
+    this.level = result.target
   }
 
   /* ---------------------------------------- */

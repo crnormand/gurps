@@ -5,7 +5,7 @@ import { addBucketToDamage, doRoll } from '@module/dierolls/dieroll.js'
 import { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { ItemType } from '@module/item/types.js'
 import { parseForRollOrDamage } from '@module/otf/parselink.js'
-import { OtfAction, OtfActionType, SkillSpellRollAction } from '@module/otf/types.js'
+import { OtfAction, OtfActionType, SkillSpellRollAction, CalcOnlyAction, AttackAction } from '@module/otf/types.js'
 import { GetNumberInput } from '@module/ui/get-number-input.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
@@ -19,7 +19,7 @@ export interface ActionFuncContext {
 }
 
 export interface actionFuncParams {
-  action: OtfAction
+  action: OtfAction | (OtfAction & CalcOnlyAction)
   actor: Actor.Implementation | null
   event: ActionFuncContext | null //toDo: this can have several custom attributes. Change to an custom interface
   targets?: string[]
@@ -27,9 +27,7 @@ export interface actionFuncParams {
   calcOnly?: boolean
 }
 
-export type actionFunc = (
-  param: actionFuncParams
-) => Promise<{ target: number } | boolean> | { target: number; thing?: string } | boolean
+export type actionFunc = (param: actionFuncParams) => Promise<boolean> | { target: number; thing?: string } | boolean
 
 export const actionFuncs: Record<string, actionFunc> = {
   /**
@@ -164,23 +162,7 @@ export const actionFuncs: Record<string, actionFunc> = {
         return false
     }
   },
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.mod
-   * @param {string} data.action.desc
-   * @param {string} data.action.formula
-   * @param {string} data.action.damagetype
-   * @param {string} data.action.extdamagetype
-   * @param {string} data.action.hitlocation
-   * @param {string} data.action.costs
-   * @param {boolean} data.action.accumulate
-   *
-   * @param {JQuery.Event|null} data.event
-   * @param {GurpsActorV2|null} data.actor
-   * @param {string[]} data.targets
-   */
+
   async damage({ action, event, actor, targets }) {
     if (action.type !== OtfActionType.damage) return false
 
@@ -235,22 +217,6 @@ export const actionFuncs: Record<string, actionFunc> = {
       targets ?? []
     )
   },
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.damagetype
-   * @param {string} data.action.formula
-   * @param {string} data.action.costs
-   * @param {string} data.action.derivedformula
-   * @param {string} data.action.extdamagetype
-   * @param {string} data.action.hitlocation
-   * @param {boolean} data.action.accumulate
-   *
-   * @param {JQuery.Event|null} data.event
-   * @param {GurpsActorV2|null} data.actor
-   * @param {string[]} data.targets
-   */
   async deriveddamage({ action, event, actor, targets }) {
     if (action.type !== OtfActionType.derivedDamage) return false
 
@@ -335,21 +301,6 @@ export const actionFuncs: Record<string, actionFunc> = {
     return true
   },
 
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.name
-   * @param {boolean} data.action.isMelee
-   * @param {boolean} data.action.isRanged
-   * @param {string} data.action.costs
-   * @param {string} data.action.mod
-   * @param {string} data.action.desc
-   *
-   * @param {JQuery.Event|null} data.event
-   * @param {GurpsActorV2|null} data.actor
-   * @param {string[]} data.targets
-   */
   attackdamage({ action, event, actor, targets }) {
     if (action.type !== OtfActionType.attackDamage) return false
 
@@ -433,17 +384,6 @@ export const actionFuncs: Record<string, actionFunc> = {
         return false
       })
   },
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.target
-   * @param {string} data.action.desc
-   * @param {boolean} data.action.blindroll
-   *
-   * @param {GurpsActorV2|null} data.actor
-   * @param {JQuery.Event|null} data.event
-   */
   controlroll({ action, actor, event }) {
     if (action.type !== OtfActionType.controlRoll) return false
     const target = action.target
@@ -476,19 +416,6 @@ export const actionFuncs: Record<string, actionFunc> = {
         return false
       })
   },
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.derivedformula
-   * @param {string} data.action.desc
-   * @param {string} data.action.costs
-   * @param {string} data.action.formula
-   * @param {boolean} data.action.blindroll
-   *
-   * @param {GurpsActorV2|null} data.actor
-   * @param {JQuery.Event|null} data.event
-   */
   derivedroll({ action, actor, event }) {
     if (action.type !== OtfActionType.derivedRoll) return false
 
@@ -527,23 +454,8 @@ export const actionFuncs: Record<string, actionFunc> = {
         return false
       })
   },
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.desc
-   * @param {string} data.action.costs
-   * @param {string} data.action.name
-   * @param {string} data.action.mod
-   * @param {boolean} data.action.isMelee
-   * @param {boolean} data.action.isRanged
-   * @param {boolean} data.action.calcOnly
-   * @param {boolean} data.action.blindroll
-   *
-   * @param {GurpsActorV2|null} data.actor
-   * @param {JQuery.Event|null} data.event
-   */
-  async attack({ action, actor, event }) {
+
+  attack({ action, actor, event }) {
     if (action.type !== OtfActionType.attack) return false
 
     if (!actor) {
@@ -561,7 +473,7 @@ export const actionFuncs: Record<string, actionFunc> = {
     const att = GURPS.findAttack(actor, action.name, action.isMelee, action.isRanged) // find attack possibly using wildcards
 
     if (!att) {
-      if (!action.calcOnly) {
+      if ('calcOnly' in action && !action.calcOnly) {
         ui.notifications?.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
       }
 
@@ -585,7 +497,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       return false
     }
 
-    if (action.calcOnly) {
+    if ('calcOnly' in action && action.calcOnly) {
       let modifier = parseInt(action.mod ?? '0') ?? 0
 
       if (isNaN(modifier)) modifier = 0
@@ -593,63 +505,77 @@ export const actionFuncs: Record<string, actionFunc> = {
       return { target: target + modifier, thing: thing }
     }
 
-    const opt = {
-      blind: action.blindroll,
-      event,
-      obj: att, // save the attack in the optional parameters, in case it has rcl/rof
-      followon,
-      text: '',
-      itemPath: 'itemPath' in action ? action.itemPath : undefined,
-      shots: undefined as number | undefined,
+    return doAttack(action, att, actor, target, thing, chatthing, followon, event)
+
+    async function doAttack(
+      action: AttackAction,
+      att: MeleeAttackModel | RangedAttackModel,
+      actor: Actor.Implementation,
+      target: number,
+      thing: string,
+      chatthing: string,
+      followon: string,
+      event: ActionFuncContext | null
+    ) {
+      const opt = {
+        blind: action.blindroll,
+        event,
+        obj: att, // save the attack in the optional parameters, in case it has rcl/rof
+        followon,
+        text: '',
+        itemPath: 'itemPath' in action ? action.itemPath : undefined,
+        shots: undefined as number | undefined,
+      }
+
+      const targetmods: Modifier[] = []
+
+      /* @ts-expect-error - wait for fix for issue #2899*/
+      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+      /* @ts-expect-error - wait for fix for issue #2899*/
+      if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs, targetmods)
+      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
+
+      const parsedRateOfFire = !action.isMelee ? (att as RangedAttackModel).rateOfFire.mode1.shotsPerAttack : 0
+
+      if (parsedRateOfFire > 1) {
+        const shots = await GetNumberInput({
+          title: game.i18n?.localize('GURPS.combat.rof.numberOfShotsTitle') ?? '',
+          headerText: action.orig,
+          promptText: game.i18n?.localize('GURPS.combat.rof.numberOfShotsPrompt') ?? '',
+          label: game.i18n?.format('GURPS.combat.rof.numberOfShotsLabel', { max: `${parsedRateOfFire}` }) ?? '',
+          min: 1,
+          max: parsedRateOfFire,
+          value: parsedRateOfFire,
+        })
+
+        const bonusForNumberOfShots = MissileWeaponAttacks.calculateRoFModifier(shots)
+
+        if (bonusForNumberOfShots !== 0)
+          GURPS.ModifierBucket.addModifier(
+            `${bonusForNumberOfShots}`,
+            game.i18n?.format('GURPS.combat.rof.bonusLabel', { shots: `${shots}` }) ?? '',
+            targetmods
+          )
+        opt.shots = shots
+      }
+
+      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
+
+      return !!(await doRoll({
+        actor,
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
+        targetmods,
+        thing,
+        chatthing,
+        origtarget: target,
+        optionalArgs: opt,
+        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
+        action,
+      }))
     }
-
-    const targetmods: Modifier[] = []
-
-    /* @ts-expect-error - wait for fix for issue #2899*/
-    if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
-    /* @ts-expect-error - wait for fix for issue #2899*/
-    if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
-    if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs, targetmods)
-    if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
-
-    const parsedRateOfFire = !action.isMelee ? (att as RangedAttackModel).rateOfFire.mode1.shotsPerAttack : 0
-
-    if (parsedRateOfFire > 1) {
-      const shots = await GetNumberInput({
-        title: game.i18n?.localize('GURPS.combat.rof.numberOfShotsTitle') ?? '',
-        headerText: action.orig,
-        promptText: game.i18n?.localize('GURPS.combat.rof.numberOfShotsPrompt') ?? '',
-        label: game.i18n?.format('GURPS.combat.rof.numberOfShotsLabel', { max: `${parsedRateOfFire}` }) ?? '',
-        min: 1,
-        max: parsedRateOfFire,
-        value: parsedRateOfFire,
-      })
-
-      const bonusForNumberOfShots = MissileWeaponAttacks.calculateRoFModifier(shots)
-
-      if (bonusForNumberOfShots !== 0)
-        GURPS.ModifierBucket.addModifier(
-          `${bonusForNumberOfShots}`,
-          game.i18n?.format('GURPS.combat.rof.bonusLabel', { shots: `${shots}` }) ?? '',
-          targetmods
-        )
-      opt.shots = shots
-    }
-
-    if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
-
-    return !!(await doRoll({
-      actor,
-      // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
-      targetmods,
-      thing,
-      chatthing,
-      origtarget: target,
-      optionalArgs: opt,
-      // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
-      action,
-    }))
   },
+
   /**
    * @param {Object} data
    *
@@ -694,7 +620,7 @@ export const actionFuncs: Record<string, actionFunc> = {
 
     const thing = stripBracketContents(att.name ? att.name : att.item.name)
 
-    if (action.calcOnly) {
+    if ('calcOnly' in action && action.calcOnly) {
       let modifier = parseInt(action.mod ?? '0') ?? 0
 
       if (isNaN(modifier)) modifier = 0
@@ -730,21 +656,7 @@ export const actionFuncs: Record<string, actionFunc> = {
         return false
       })
   },
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.desc
-   * @param {string} data.action.costs
-   * @param {string} data.action.name
-   * @param {string} data.action.mod
-   * @param {boolean} data.action.isMelee
-   * @param {boolean} data.action.calcOnly
-   * @param {boolean} data.action.blindroll
-   *
-   * @param {GurpsActorV2|null} data.actor
-   * @param {JQuery.Event|null} data.event
-   */
+
   ['weapon-parry']({ action, actor, event }) {
     if (action.type !== OtfActionType.weaponParry) return false
 
@@ -773,7 +685,7 @@ export const actionFuncs: Record<string, actionFunc> = {
 
     const thing = stripBracketContents(att.name ? att.name : att.item.name)
 
-    if (action.calcOnly) {
+    if ('calcOnly' in action && action.calcOnly) {
       let modifier = parseInt(action.mod ?? '0')
 
       if (isNaN(modifier)) modifier = 0
@@ -809,23 +721,7 @@ export const actionFuncs: Record<string, actionFunc> = {
         return false
       })
   },
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.desc
-   * @param {string} data.action.costs
-   * @param {string} data.action.name
-   * @param {string} data.action.mod
-   * @param {boolean} data.action.isMelee
-   * @param {boolean} data.action.blindroll
-   * @param {string} [data.action.target]
-   *
-   * @param {GurpsActorV2|null} data.actor
-   * @param {JQuery.Event|null} data.event
-   * @param {string} data.originalOtf
-   * @param {boolean} data.calcOnly
-   */
+
   attribute({ action, actor, event, originalOtf, calcOnly }) {
     if (action.type !== OtfActionType.attribute) return false
 
@@ -907,22 +803,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       }))
     })()
   },
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.desc
-   * @param {string} data.action.costs
-   * @param {string} data.action.name
-   * @param {string} data.action.mod
-   * @param {boolean} data.action.blindroll
-   * @param {string} [data.action.target]
-   *
-   * @param {GurpsActorV2|null} data.actor
-   * @param {JQuery.Event|null} data.event
-   * @param {string} data.originalOtf
-   * @param {boolean} data.calcOnly
-   */
+
   ['skill-spell']({ action, actor, event, originalOtf, calcOnly }) {
     if (action.type !== OtfActionType.skillSpell) return false
 
@@ -1080,3 +961,4 @@ function processSkillSpell({
 
   return skillLevel
 }
+

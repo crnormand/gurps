@@ -1,9 +1,9 @@
-import { OtfAction } from '@module/otf/types.js'
+import { CalcOnlyAction, OtfAction } from '@module/otf/types.js'
 
-import { ActionFuncContext } from './actionFuncs.js'
+import { ActionFuncContext, actionFuncs } from './actionFuncs.js'
 
 export type ActionChain = {
-  action: OtfAction | undefined
+  action: OtfAction | (OtfAction & CalcOnlyAction) | undefined
   actor: Actor.Implementation | null
   event: ActionFuncContext | null
   targets: string[]
@@ -35,7 +35,7 @@ export async function findBestActionInChain({
 
   const actions: OtfAction[] = []
   const overridetxt = action.overridetxt
-  const suppressWarnings = action.suppressWarnings
+  const suppressWarnings = 'suppressWarnings' in action && action.suppressWarnings
 
   while (action) {
     action.overridetxt = overridetxt
@@ -48,7 +48,7 @@ export async function findBestActionInChain({
   for (const action of actions) {
     if (!action.type) continue
 
-    const func = GURPS.actionFuncs[action.type]
+    const func = actionFuncs[action.type]
 
     if (func.constructor.name === 'AsyncFunction') {
       calculations.push(await func({ action, actor, event, targets, originalOtf, calcOnly: true }))
@@ -93,7 +93,7 @@ export function findBestActionInChainSync({ action, actor, event, targets, origi
 
   const actions = []
   const overridetxt = action.overridetxt
-  const suppressWarnings = action.suppressWarnings
+  const suppressWarnings = 'suppressWarnings' in action && action.suppressWarnings
 
   while (action) {
     action.overridetxt = overridetxt
@@ -102,7 +102,7 @@ export function findBestActionInChainSync({ action, actor, event, targets, origi
   }
 
   const calculations = actions.map(action =>
-    GURPS.actionFuncs[action.type!]({ action: action, actor, event, targets, originalOtf, calcOnly: true })
+    actionFuncs[action.type!]({ action: action, actor, event, targets, originalOtf, calcOnly: true })
   )
 
   const levels = calculations
