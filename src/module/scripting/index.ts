@@ -2,7 +2,6 @@ import { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { ScriptInterpreter } from './interpreter.js'
 import { ScriptResolver } from './resolver.js'
-import { registerSettings } from './settings.js'
 
 interface ScriptingModule extends GurpsModule {
   interpreter: typeof ScriptInterpreter
@@ -12,9 +11,6 @@ interface ScriptingModule extends GurpsModule {
 
 function init(): void {
   console.log('GURPS | Initializing Script Resolver module.')
-  Hooks.on('init', () => {
-    registerSettings()
-  })
 }
 
 export const Scripting: ScriptingModule = {

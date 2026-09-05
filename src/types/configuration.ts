@@ -2,7 +2,6 @@ import type { CharacterModel, GcsCharacterModel, GcsLootModel } from '@module/ac
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import { ActorType } from '@module/actor/types.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
-import type { MapField } from '@module/data/fields/map-field.js'
 import type { GurpsActiveEffect } from '@module/effects/active-effect.js'
 import type {
   EquipmentModel,
@@ -149,17 +148,6 @@ declare module 'fvtt-types/configuration' {
     /** Developer */
     'gurps.dev.enableNonProductionDocumentTypes': foundry.data.fields.BooleanField
     'gurps.dev.showDebugInfo': foundry.data.fields.BooleanField
-
-    /** Scripting */
-    'gurps.scripting.globalResolverCache': MapField<
-      foundry.data.fields.StringField<{ required: true; nullable: false }>,
-      MapField<
-        foundry.data.fields.StringField<{ required: true; nullable: false }>,
-        foundry.data.fields.StringField<{ required: true; nullable: false }>,
-        { required: true; nullable: false }
-      >,
-      { required: true; nullable: false }
-    >
 
     /** Unsorted */
     'gurps.modify-dice-plus-adds': boolean
