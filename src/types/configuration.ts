@@ -107,6 +107,9 @@ declare module 'fvtt-types/configuration' {
     /** Bucket */
     'gurps.bucket-position': 'left' | 'right'
 
+    /** Canvas */
+    'gurps.canvas.useBookRegionRadius': foundry.data.fields.BooleanField
+
     /** Damage */
     'gurps.damage.apply-divisor': foundry.data.fields.BooleanField
     'gurps.damage.blunt-trauma': foundry.data.fields.BooleanField

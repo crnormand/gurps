@@ -21,6 +21,14 @@
     "abbrevRef": "Ref",
     "abbrevReference": "Ref",
     "acc": "Acc",
+    "canvas": {
+      "settings": {
+        "useBookRegionRadius": {
+          "hint": "If checked, the displayed radius of circular Measured Templates is increased by 0.5 yards to comply with B239 which defines a radius of 1 as consisting of a single hex.",
+          "name": "Use Book Region Radius"
+        }
+      }
+    },
     "accForWeapon": "Acc for {weapon}",
     "action": {
       "baseAction": {
