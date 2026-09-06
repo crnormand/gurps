@@ -36,7 +36,8 @@ export const actionFuncs: Record<string, actionFunc> = {
    * @param {Object} data.action
    * @param {string} data.action.link
    */
-  pdf({ action }: actionFuncParams) {
+  pdf({ action, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.pdf) return false
 
     if (!action.link) {
@@ -51,8 +52,10 @@ export const actionFuncs: Record<string, actionFunc> = {
   },
 
   //
-  iftest({ action }) {
+  iftest({ action, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.ifTest) return false
+
     if (!GURPS.lastTargetedRoll) return false
     if (action.name == 'isCritSuccess') return GURPS.lastTargetedRoll.isCritSuccess
     if (action.name == 'isCritFailure') return GURPS.lastTargetedRoll.isCritFailure
@@ -89,8 +92,10 @@ export const actionFuncs: Record<string, actionFunc> = {
     }
   },
 
-  modifier({ action }) {
+  modifier({ action, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.modifier) return false
+
     if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '')
 
     if (action.next && action.next.type === OtfActionType.modifier) {
@@ -100,7 +105,8 @@ export const actionFuncs: Record<string, actionFunc> = {
     return true
   },
 
-  async chat({ action, actor, event }) {
+  async chat({ action, actor, event, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.chat) return false
     if (!event) return false
     // @ts-expect-error - Foundry VTT API not fully typed
@@ -123,7 +129,8 @@ export const actionFuncs: Record<string, actionFunc> = {
     return ret
   },
 
-  dragdrop({ action }) {
+  dragdrop({ action, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.dragDrop) return false
 
     if (!action.id) {
@@ -163,7 +170,8 @@ export const actionFuncs: Record<string, actionFunc> = {
     }
   },
 
-  async damage({ action, event, actor, targets }) {
+  damage({ action, event, actor, targets, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.damage) return false
 
     // accumulate action fails if there's no selected actor
@@ -173,51 +181,55 @@ export const actionFuncs: Record<string, actionFunc> = {
       return false
     }
 
-    let canRoll = { canRoll: true, targetMessage: '' }
-    const token = getTokenForActor(actor) ?? null
+    return (async () => {
+      let canRoll = { canRoll: true, targetMessage: '' }
+      const token = getTokenForActor(actor) ?? null
 
-    if (actor && token) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
+      if (actor && token) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
 
-    if (!canRoll.canRoll) {
-      if (canRoll.targetMessage) {
-        ui.notifications?.warn(canRoll.targetMessage)
+      if (!canRoll.canRoll) {
+        if (canRoll.targetMessage) {
+          ui.notifications?.warn(canRoll.targetMessage)
 
-        return false
+          return false
+        }
       }
-    }
 
-    if (action.accumulate && actor) {
-      // store/increment value on GurpsActorV2
-      await actor.accumulateDamageRoll(action)
+      if (action.accumulate && actor) {
+        // store/increment value on GurpsActorV2
+        await actor.accumulateDamageRoll(action)
 
-      return true
-    }
+        return true
+      }
 
-    if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
 
-    if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '') // special case where Damage comes from [D:attack + mod]
+      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '') // special case where Damage comes from [D:attack + mod]
 
-    const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-    let displayFormula = action.formula ?? ''
+      const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      let displayFormula = action.formula ?? ''
 
-    if (actor && taggedSettings?.autoAdd) {
-      await actor.addTaggedRollModifiers('', { obj: action })
-      displayFormula = addBucketToDamage(displayFormula, false)
-    }
+      if (actor && taggedSettings?.autoAdd) {
+        await actor.addTaggedRollModifiers('', { obj: action })
+        displayFormula = addBucketToDamage(displayFormula, false)
+      }
 
-    return await Damage.rollDamage(
-      canRoll,
-      token,
-      actor ?? null,
-      displayFormula,
-      action.formula ?? '',
-      action,
-      event ?? null,
-      null,
-      targets ?? []
-    )
+      return await Damage.rollDamage(
+        canRoll,
+        token,
+        actor ?? null,
+        displayFormula,
+        action.formula ?? '',
+        action,
+        event ?? null,
+        null,
+        targets ?? []
+      )
+    })()
   },
-  async deriveddamage({ action, event, actor, targets }) {
+
+  deriveddamage({ action, event, actor, targets, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.derivedDamage) return false
 
     // action fails if there's no selected actor
@@ -227,81 +239,84 @@ export const actionFuncs: Record<string, actionFunc> = {
       return false
     }
 
-    const df = action.derivedformula.match(/sw/i) ? actor.system.swing : actor.system.thrust
+    return (async () => {
+      const df = action.derivedformula.match(/sw/i) ? actor.system.swing : actor.system.thrust
 
-    // action fails if there's no formula
-    if (!df) {
-      ui.notifications?.warn(`${actor.name} does not have a ${action.derivedformula.toUpperCase()} formula`)
-
-      return false
-    }
-
-    // Here we need to check if both formula and df contains +add (like +1)
-    // If so, we need to sum the adds
-    const dice = df.match(/(\d+d).*/)?.[1]
-    const dfAdd = df.match(/([+-]\d+).*/)?.[1]
-    const formulaAdd = action.formula.match(/([+-]\d+).*/)?.[1]
-    // Need to find everything else in action.formula which is not the formulaAdd. Example +2x3 -> x3
-    const formulaOther = action.formula.replace(/([+-]\d+).*/g, '')
-    let finalAdd
-    let formula
-
-    if (dfAdd && formulaAdd) {
-      finalAdd = parseInt(dfAdd) + parseInt(formulaAdd)
-      const signal = finalAdd === 0 ? '' : finalAdd > 0 ? '+' : '-'
-
-      formula = `${dice}${signal}${finalAdd !== 0 ? Math.abs(finalAdd) : ''}${formulaOther}`
-    } else {
-      formula = df + action.formula
-    }
-
-    if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
-
-    if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '') // special case where Damage comes from [D:attack + mod]
-
-    const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-    let displayFormula = formula
-
-    if (actor && taggedSettings?.autoAdd) {
-      await actor.addTaggedRollModifiers('', { action })
-      displayFormula = addBucketToDamage(displayFormula, false)
-    }
-
-    let canRoll = { canRoll: true, targetMessage: '' }
-    const token = getTokenForActor(actor) ?? null
-
-    if (actor && token) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
-
-    if (!canRoll.canRoll) {
-      if (canRoll.targetMessage) {
-        ui.notifications?.warn(canRoll.targetMessage)
+      // action fails if there's no formula
+      if (!df) {
+        ui.notifications?.warn(`${actor.name} does not have a ${action.derivedformula.toUpperCase()} formula`)
 
         return false
       }
-    }
 
-    const overrideText = action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1')
+      // Here we need to check if both formula and df contains +add (like +1)
+      // If so, we need to sum the adds
+      const dice = df.match(/(\d+d).*/)?.[1]
+      const dfAdd = df.match(/([+-]\d+).*/)?.[1]
+      const formulaAdd = action.formula.match(/([+-]\d+).*/)?.[1]
+      // Need to find everything else in action.formula which is not the formulaAdd. Example +2x3 -> x3
+      const formulaOther = action.formula.replace(/([+-]\d+).*/g, '')
+      let finalAdd
+      let formula
 
-    await Damage.rollDamage(
-      canRoll,
-      token,
-      actor,
-      displayFormula,
-      formula,
-      action,
-      event ?? null,
-      overrideText,
-      targets ?? []
-    )
+      if (dfAdd && formulaAdd) {
+        finalAdd = parseInt(dfAdd) + parseInt(formulaAdd)
+        const signal = finalAdd === 0 ? '' : finalAdd > 0 ? '+' : '-'
 
-    if (action.next) {
-      return GURPS.performAction(action.next, actor, event, targets)
-    }
+        formula = `${dice}${signal}${finalAdd !== 0 ? Math.abs(finalAdd) : ''}${formulaOther}`
+      } else {
+        formula = df + action.formula
+      }
 
-    return true
+      if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
+
+      if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '') // special case where Damage comes from [D:attack + mod]
+
+      const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+      let displayFormula = formula
+
+      if (actor && taggedSettings?.autoAdd) {
+        await actor.addTaggedRollModifiers('', { action })
+        displayFormula = addBucketToDamage(displayFormula, false)
+      }
+
+      let canRoll = { canRoll: true, targetMessage: '' }
+      const token = getTokenForActor(actor) ?? null
+
+      if (actor && token) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
+
+      if (!canRoll.canRoll) {
+        if (canRoll.targetMessage) {
+          ui.notifications?.warn(canRoll.targetMessage)
+
+          return false
+        }
+      }
+
+      const overrideText = action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1')
+
+      await Damage.rollDamage(
+        canRoll,
+        token,
+        actor,
+        displayFormula,
+        formula,
+        action,
+        event ?? null,
+        overrideText,
+        targets ?? []
+      )
+
+      if (action.next) {
+        return GURPS.performAction(action.next, actor, event, targets)
+      }
+
+      return true
+    })()
   },
 
-  attackdamage({ action, event, actor, targets }) {
+  attackdamage({ action, event, actor, targets, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.attackDamage) return false
 
     // action fails if there's no selected actor
@@ -346,7 +361,8 @@ export const actionFuncs: Record<string, actionFunc> = {
     return !!GURPS.performAction(dam.action, actor, event, targets)
   },
 
-  roll({ action, actor, event }) {
+  roll({ action, actor, event, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.roll) return false
     let canRoll = true
 
@@ -384,8 +400,10 @@ export const actionFuncs: Record<string, actionFunc> = {
         return false
       })
   },
-  controlroll({ action, actor, event }) {
-    if (action.type !== OtfActionType.controlRoll) return false
+
+  controlroll({ action, actor, event, calcOnly }: actionFuncParams) {
+    if (action.type !== OtfActionType.controlRoll) return calcOnly ? { target: 0 } : false
+    if (calcOnly) return { target: action.target }
     const target = action.target
     const aid = actor ? `@${actor.id}@` : ''
     let thing
@@ -416,19 +434,21 @@ export const actionFuncs: Record<string, actionFunc> = {
         return false
       })
   },
-  derivedroll({ action, actor, event }) {
+
+  derivedroll({ action, actor, event, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.derivedRoll) return false
 
     if (!action.derivedformula) {
       ui.notifications?.warn('derived roll with no derived formula')
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     if (!actor) {
       ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const df = action.derivedformula.match(/[Ss][Ww]/) ? actor.system.swing : actor.system.thrust
@@ -455,25 +475,26 @@ export const actionFuncs: Record<string, actionFunc> = {
       })
   },
 
-  attack({ action, actor, event }) {
-    if (action.type !== OtfActionType.attack) return false
+  attack({ action, actor, event, calcOnly }: actionFuncParams) {
+    if (action.type !== OtfActionType.attack) return calcOnly ? { target: 0 } : false
 
     if (!actor) {
       ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     if (!action.name) {
       ui.notifications?.warn('attack action without name')
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const att = GURPS.findAttack(actor, action.name, action.isMelee, action.isRanged) // find attack possibly using wildcards
 
     if (!att) {
-      if ('calcOnly' in action && !action.calcOnly) {
+      if (('calcOnly' in action && action.calcOnly) || calcOnly) return { target: 0 }
+      else {
         ui.notifications?.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
       }
 
@@ -497,7 +518,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       return false
     }
 
-    if ('calcOnly' in action && action.calcOnly) {
+    if (('calcOnly' in action && action.calcOnly) || calcOnly) {
       let modifier = parseInt(action.mod ?? '0') ?? 0
 
       if (isNaN(modifier)) modifier = 0
@@ -576,28 +597,13 @@ export const actionFuncs: Record<string, actionFunc> = {
     }
   },
 
-  /**
-   * @param {Object} data
-   *
-   * @param {Object} data.action
-   * @param {string} data.action.desc
-   * @param {string} data.action.costs
-   * @param {string} data.action.name
-   * @param {string} data.action.mod
-   * @param {boolean} data.action.isMelee
-   * @param {boolean} data.action.calcOnly
-   * @param {boolean} data.action.blindroll
-   *
-   * @param {GurpsActorV2|null} data.actor
-   * @param {JQuery.Event|null} data.event
-   */
-  ['weapon-block']({ action, actor, event }) {
-    if (action.type !== OtfActionType.weaponBlock) return false
+  ['weapon-block']({ action, actor, event, calcOnly }: actionFuncParams) {
+    if (action.type !== OtfActionType.weaponBlock) return calcOnly ? { target: 0 } : false
 
     if (!actor) {
       ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const att = GURPS.findAttack(actor, action.name, !!action.isMelee, false) // find attack possibly using wildcards
@@ -605,7 +611,7 @@ export const actionFuncs: Record<string, actionFunc> = {
     if (!att) {
       ui.notifications?.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const mode = att.mode ? ` (${att.mode})` : ''
@@ -615,12 +621,12 @@ export const actionFuncs: Record<string, actionFunc> = {
     if (isNaN(target) || target === 0) {
       ui.notifications?.warn(`No Block for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const thing = stripBracketContents(att.name ? att.name : att.item.name)
 
-    if ('calcOnly' in action && action.calcOnly) {
+    if (('calcOnly' in action && action.calcOnly) || calcOnly) {
       let modifier = parseInt(action.mod ?? '0') ?? 0
 
       if (isNaN(modifier)) modifier = 0
@@ -657,13 +663,13 @@ export const actionFuncs: Record<string, actionFunc> = {
       })
   },
 
-  ['weapon-parry']({ action, actor, event }) {
-    if (action.type !== OtfActionType.weaponParry) return false
+  ['weapon-parry']({ action, actor, event, calcOnly }: actionFuncParams) {
+    if (action.type !== OtfActionType.weaponParry) return calcOnly ? { target: 0 } : false
 
     if (!actor) {
       ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const att = GURPS.findAttack(actor, action.name, !!action.isMelee, false) // find attack possibly using wildcards
@@ -671,7 +677,7 @@ export const actionFuncs: Record<string, actionFunc> = {
     if (!att) {
       ui.notifications?.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const mode = att.mode ? ` (${att.mode})` : ''
@@ -680,12 +686,12 @@ export const actionFuncs: Record<string, actionFunc> = {
     if (isNaN(target) || target == 0) {
       ui.notifications?.warn(`No Parry for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const thing = stripBracketContents(att.name ? att.name : att.item.name)
 
-    if ('calcOnly' in action && action.calcOnly) {
+    if (('calcOnly' in action && action.calcOnly) || calcOnly) {
       let modifier = parseInt(action.mod ?? '0')
 
       if (isNaN(modifier)) modifier = 0
@@ -723,14 +729,14 @@ export const actionFuncs: Record<string, actionFunc> = {
   },
 
   attribute({ action, actor, event, originalOtf, calcOnly }) {
-    if (action.type !== OtfActionType.attribute) return false
+    if (action.type !== OtfActionType.attribute) return calcOnly ? { target: 0 } : false
 
     // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor).
     // If no actor OR action.target, then we can't do anything, so error out.
     if (!actor && (!action || !action.target)) {
       ui.notifications?.warn('You must have a character selected')
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     // Is it pre-targeted (e.g., ST12)? If no, target = NaN, and we'll try to find it on the actor.
@@ -757,7 +763,7 @@ export const actionFuncs: Record<string, actionFunc> = {
     const thing = action.name
 
     if (!target) {
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     if (calcOnly) {
@@ -805,18 +811,18 @@ export const actionFuncs: Record<string, actionFunc> = {
   },
 
   ['skill-spell']({ action, actor, event, originalOtf, calcOnly }) {
-    if (action.type !== OtfActionType.skillSpell) return false
+    if (action.type !== OtfActionType.skillSpell) return calcOnly ? { target: 0 } : false
 
     if (!actor && (!action || !action.target)) {
       ui.notifications?.warn(game.i18n?.localize('GURPS.chatYouMustHaveACharacterSelected') ?? '')
 
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const target = processSkillSpell({ action, actor })
 
     if (!action) {
-      return false
+      return calcOnly ? { target: 0 } : false
     }
 
     const thing = stripBracketContents(action.name)
@@ -867,7 +873,8 @@ export const actionFuncs: Record<string, actionFunc> = {
                   SP: spells
                   */
   // ['test-exists']({ action, actor, _event, originalOtf, calcOnly }) {
-  ['test-exists']({ action, actor }) {
+  ['test-exists']({ action, actor, calcOnly }: actionFuncParams) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.testExists) return false
 
     switch (action.prefix) {
@@ -908,8 +915,9 @@ export const actionFuncs: Record<string, actionFunc> = {
 
     return false
   },
-  // href({ action, actor, event, originalOtf, calcOnly }) {
-  href({ action }) {
+
+  href({ action, calcOnly }) {
+    if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.href) return false
     window.open(action.orig, action.label)
 

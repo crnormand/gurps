@@ -71,7 +71,7 @@ export function performAction(
       action = findBestActionInChainSync({ action, event, actor, targets, originalOtf })
     }
 
-    if (!action) return false
+    if (!action) return { target: 0 }
 
     const result = actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
 
