@@ -58,7 +58,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
       const rolls = choice.rolls || 1
       let targets = Array.from({ length: rolls }, (_, i) => (i + 1).toString())
 
-      if (isOtf) GurpsWiring.handleGurpslink(event, actor, { targets: targets })
+      if (isOtf) GurpsWiring.handleGurpslink(event, actor, undefined, { targets: targets })
       else GURPS.handleRoll(event, actor, { targets: targets })
       break
     }
@@ -66,7 +66,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
       const rolls = choice.rolls || 1
 
       if (isOtf) otf = multiplyDice(otf, rolls)
-      if (isOtf) GurpsWiring.handleGurpslink(event, actor, { combined: rolls })
+      if (isOtf) GurpsWiring.handleGurpslink(event, actor, undefined, { combined: rolls })
       else GURPS.handleRoll(event, actor, { combined: rolls })
       break
     }
