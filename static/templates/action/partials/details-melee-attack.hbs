@@ -61,3 +61,20 @@
   </div>
 
 </fieldset>
+
+<fieldset class="ms-details">
+  <legend>{{ localize "GURPS.sheet.details.otf" }}</legend>
+
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.checkotf value=source.checkotf classes="ms-double-field"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.duringotf value=source.duringotf classes="ms-double-field"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.passotf value=source.passotf classes="ms-double-field"}}
+  </div>
+  <div class="ms-field-row" style="--ms-cols: 1;">
+    {{formGroup fields.failotf value=source.failotf classes="ms-double-field"}}
+  </div>
+</fieldset>

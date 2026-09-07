@@ -8,7 +8,7 @@ import { MigrationReport } from '@module/migration/types.js'
 import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
-import { Melee, Ranged, Note } from '../actor-components.js'
+import { Melee, Ranged, Note, _AnimationMixin } from '../actor-components.js'
 import { HitLocationEntryV2 } from '../data/hit-location-entry.js'
 import { groundMoveForBasicMove, MoveModeV2 } from '../data/move-mode.js'
 import { NoteV2 } from '../data/note.js'
@@ -243,7 +243,7 @@ function migrateActorSource(source: AnyMutableObject): AnyMutableObject {
         })
 
       if (system.melee)
-        Object.values(system.melee).forEach((weapon: Melee) => {
+        Object.values(system.melee).forEach((weapon: Melee & typeof _AnimationMixin) => {
           const _id = foundry.utils.randomID()
 
           const newMelee = migrateMeleeWeapon(weapon, _id)
@@ -255,7 +255,7 @@ function migrateActorSource(source: AnyMutableObject): AnyMutableObject {
         })
 
       if (system.ranged)
-        Object.values(system.ranged).forEach((weapon: Ranged) => {
+        Object.values(system.ranged).forEach((weapon: Ranged & typeof _AnimationMixin) => {
           const _id = foundry.utils.randomID()
 
           const newRanged = migrateRangedWeapon(weapon, _id)

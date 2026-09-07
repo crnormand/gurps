@@ -111,6 +111,22 @@ class MeleeV1 {
   get weight() {
     return ''
   }
+
+  get checkotf() {
+    return this.meleeV2.checkotf
+  }
+
+  get duringotf() {
+    return this.meleeV2.duringotf
+  }
+
+  get passotf() {
+    return this.meleeV2.passotf
+  }
+
+  get failotf() {
+    return this.meleeV2.failotf
+  }
 }
 
 export { MeleeV1 }

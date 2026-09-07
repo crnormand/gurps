@@ -1,7 +1,16 @@
 import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from '../actor-components.js'
+import {
+  Advantage,
+  Equipment,
+  HitLocationEntry,
+  Melee,
+  Ranged,
+  Skill,
+  Spell,
+  _AnimationMixin,
+} from '../actor-components.js'
 import { CanRollResult, CheckInfo } from '../types.js'
 
 import { HitLocationEntryV1 } from './hit-location-entryv1.js'
@@ -236,8 +245,8 @@ interface ActorV1Model {
     unspent: number
     race: number
   }
-  melee: Record<string, Melee>
-  ranged: Record<string, Ranged>
+  melee: Record<string, Melee & typeof _AnimationMixin>
+  ranged: Record<string, Ranged & typeof _AnimationMixin>
   hitlocations: Record<string, HitLocationEntryV1>
   encumbrance: Record<string, EncumbranceLevel>
   notes: Record<string, any>
