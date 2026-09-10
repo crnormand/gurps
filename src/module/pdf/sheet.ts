@@ -29,7 +29,7 @@ class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPage
 
     return foundry.utils.mergeObject(context, {
       params: this._getViewerParams(),
-      // @ts-expect-error: I'm sure I'm missing something on how to declared the options.
+      // @ts-expect-error: I'm sure I'm missing something on how to declare the options.
       pageNumber: (this.options.pageNumber || 5) + (this.document.system.offset || 0),
     })
   }
