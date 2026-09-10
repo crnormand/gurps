@@ -167,7 +167,7 @@ export class GurpsRange {
         // @ts-expect-error: tempModifiers is not part of the original method signature
         GURPS.ModifierBucket.addModifier(band.penalty.toLocaleString(), band.moddesc ?? '', tempModifiers)
     })
-    this.modifiers = tempModifiers.map(e => e.mod + ' ' + e.desc)
+    this.modifiers = tempModifiers.map(entry => entry.mod + ' ' + entry.desc)
   }
 
   async update() {
@@ -180,6 +180,7 @@ export class GurpsRange {
         this.ranges = GurpsRange.basicSetRanges
         break
       }
+
       case 'TenPenalties': {
         this.ranges = GurpsRange.penaltiesPerTenRanges
         break
