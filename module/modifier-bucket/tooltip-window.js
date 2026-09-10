@@ -3,7 +3,6 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { displayMod, horiz } from '../../lib/utilities.js'
 import { gurpslink } from '../../module/utilities/gurpslink.js'
-import { enabledOptions } from '../combat/combat-options.js'
 import { Combat } from '../combat/index.js'
 import GurpsWiring from '../gurps-wiring.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
@@ -426,7 +425,7 @@ const ModifierLiterals = {
 
   /** The combat options offered in one section of the bucket. */
   _maneuverOptions(section) {
-    return enabledOptions(section, { useOnTarget: Combat.isUsingOnTarget() })
+    return Combat.enabledOptions(section, { useOnTarget: Combat.isUsingOnTarget() })
   },
 
   _maneuverOtf(option) {

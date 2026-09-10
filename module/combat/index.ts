@@ -15,17 +15,18 @@ import {
   registerCombatSettings,
   useSizeModifierDifferenceInMelee,
 } from './settings.js'
-import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from './types.js'
+import { enabledOptions } from './combat-options.js'
 
 export interface GurpsCombatModule extends GurpsModule {
-  getInitiativeFormula: () => string
-  getManeuverDetail: () => ManeuverDetail
-  getManeuverVisibility: () => ManeuverVisibility
-  getRangeStrategy: () => RangeStrategy
-  getRollBasedOnManeuverPolicy: () => RollBasedOnManeuverPolicy
-  isUsingOnTarget: () => boolean
-  maneuverUpdatesMove: () => boolean
-  useSizeModifierDifferenceInMelee: () => boolean
+  getInitiativeFormula: typeof getInitiativeFormula
+  getManeuverDetail: typeof getManeuverDetail
+  getManeuverVisibility: typeof getManeuverVisibility
+  getRangeStrategy: typeof getRangeStrategy
+  getRollBasedOnManeuverPolicy: typeof getRollBasedOnManeuverPolicy
+  isUsingOnTarget: typeof isUsingOnTarget
+  maneuverUpdatesMove: typeof maneuverUpdatesMove
+  useSizeModifierDifferenceInMelee: typeof useSizeModifierDifferenceInMelee
+  enabledOptions: typeof enabledOptions
 }
 
 function init() {
@@ -75,4 +76,7 @@ export const Combat: GurpsCombatModule = {
   isUsingOnTarget,
   maneuverUpdatesMove,
   useSizeModifierDifferenceInMelee,
+
+  // -- Combat Options/Modifiers --
+  enabledOptions,
 }
