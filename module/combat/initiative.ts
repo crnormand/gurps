@@ -8,11 +8,11 @@ export function updateInitiativeFormula(broadcast: boolean) {
     if (game.user?.isGM) setInitiativeFormula(formula)
   }
 
-  let match = formula.match(/([^:]*):?(\d)?/)
+  const match = formula.match(/([^:]*):?(\d)?/)
 
   if (!match) throw new Error(`Invalid initiative formula: ${formula}`)
 
-  let decimals = match && !!match[2] ? parseInt(match[2]) : 5
+  const decimals = match && !!match[2] ? parseInt(match[2]) : 5
 
   CONFIG.Combat.initiative = {
     formula: match ? match[1] : '',

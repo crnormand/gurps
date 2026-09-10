@@ -20,12 +20,8 @@ export const calculateRange = (token1, token2) => {
   const path = canvas.grid.measurePath([token1.document, token2.document])
   let dist = canvas.grid.isGridless ? path.distance : path.spaces
 
-  if (game.release.generation === 12) {
-    const verticalDistance = Math.abs(token1.document.elevation - token2.document.elevation)
-    dist = Math.sqrt(Math.pow(dist, 2) + Math.pow(verticalDistance, 2)) - 1
-  }
-
   const yards = Length.from(dist, canvas.scene.grid.units).to(Length.Unit.Yard).value
+
   return {
     yards: Math.ceil(dist),
     modifier: ruler.yardsToRangePenalty(yards),
@@ -33,11 +29,12 @@ export const calculateRange = (token1, token2) => {
 }
 
 export const getRangedModifier = (source, target) => {
-  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const taggedModifiersSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const rangedTag = taggedModifiersSetting.allRangedRolls.split(',')[0]
   const baseTags = `#${rangedTag}`
   let rangeModifier
   let mod = calculateRange(source, target)
+
   if (mod && mod.modifier !== 0) {
     rangeModifier = game.i18n.format('GURPS.rangeToTarget', {
       modifier: mod.modifier,
@@ -47,6 +44,7 @@ export const getRangedModifier = (source, target) => {
     })
     rangeModifier += ` ${baseTags} @combatmod`
   }
+
   return rangeModifier
 }
 
@@ -58,16 +56,19 @@ export const getRangedModifier = (source, target) => {
  */
 export const getSizeModifier = (source, target) => {
   if (!source || !target) return undefined
-  const taggedModifiersSetting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+  const taggedModifiersSetting = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
   const meleeTag = taggedModifiersSetting.allMeleeRolls.split(',')[0]
   const baseTags = `#${meleeTag}`
   let sizeModifier
+
   if (Combat.useSizeModifierDifferenceInMelee()) {
     const attackerSM = foundry.utils.getProperty(source.actor, 'system.traits.sizemod') || 0
     const targetSM = foundry.utils.getProperty(target.actor, 'system.traits.sizemod') || 0
     const sizeDiff = targetSM - attackerSM
+
     if (sizeDiff !== 0) {
       const smText = `${sizeDiff >= 0 ? '+' : ''}${sizeDiff}`
+
       sizeModifier = game.i18n.format('GURPS.modifiersSizeDifference', {
         sm: smText,
         sourceSM: attackerSM,
@@ -76,6 +77,7 @@ export const getSizeModifier = (source, target) => {
       sizeModifier += ` ${baseTags} @sizemod`
     }
   }
+
   return sizeModifier
 }
 
@@ -90,9 +92,10 @@ export class EffectModifierPopout extends Application {
   static get defaultOptions() {
     let x = $('#sidebar')
     let sidebarLeft = x.parent().position().left
+
     return foundry.utils.mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/actor/effect-modifier-popout.hbs',
-      classes: ['sidebar-popout effect-modifiers-app'],
+      classes: ['sidebar-popout', 'effect-modifiers-app'],
       popOut: true,
       top: 0,
       width: 550,
@@ -109,17 +112,20 @@ export class EffectModifierPopout extends Application {
   getData(options) {
     if (!this._token?.actor) return
     let selfMods = []
+
     selfMods = this.convertModifiers(this._token.actor.system.conditions.self.modifiers)
-    selfMods.push(...this.convertModifiers(this._token.actor.system.conditions.usermods))
-    selfMods.sort((a, b) => {
-      if (a.itemName === b.itemName) {
-        return a.desc.localeCompare(b.desc)
+    selfMods.push(...this.convertModifiers([...this._token.actor.system.conditions.usermods]))
+    selfMods.sort((left, right) => {
+      if (left.itemName === right.itemName) {
+        return left.desc.localeCompare(right.desc)
       }
-      return a.itemName.localeCompare(b.itemName)
+
+      return left.itemName.localeCompare(right.itemName)
     })
     const targetModifiers = this._token
       ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers)
       : []
+
     return foundry.utils.mergeObject(super.getData(options), {
       selected: this.selectedToken,
       selfmodifiers: selfMods,
@@ -130,8 +136,10 @@ export class EffectModifierPopout extends Application {
 
   get targets() {
     let results = []
+
     for (const target of Array.from(game.user.targets)) {
       let result = {}
+
       result.name = target.name
 
       result.targetmodifiers = target.actor
@@ -139,19 +147,22 @@ export class EffectModifierPopout extends Application {
         : []
 
       const smModifier = getSizeModifier(this.getToken(), target)
+
       if (smModifier) {
         result.targetmodifiers = [...result.targetmodifiers, ...this.convertModifiers([smModifier])]
       }
 
       const rangeModifier = getRangedModifier(this.getToken(), target)
+
       if (rangeModifier) {
         const data = this.convertModifiers([rangeModifier])
+
         result.targetmodifiers = [...result.targetmodifiers, ...data]
       }
 
       // Sort the target modifiers by itemId.
-      result.targetmodifiers.sort((a, b) => {
-        return a.itemId.localeCompare(b.itemId)
+      result.targetmodifiers.sort((left, right) => {
+        return left.itemId.localeCompare(right.itemId)
       })
 
       results.push(result)
@@ -205,11 +216,14 @@ export class EffectModifierPopout extends Application {
             const refValue = itemReference.match(/\w{3}:(\S+)/)[1]
 
             switch (refType) {
-              case 'man':
-                const maneuver = Maneuvers.getManeuver(refValue)
+              case 'man': {
+                const maneuver = GURPS.Maneuvers.getManeuver(refValue)
+
                 obj.name = game.i18n.localize(maneuver.label)
                 obj.type = 'maneuver'
                 break
+              }
+
               case 'eft':
                 const effect = this._token?.actor.effects.get(refValue)
                 obj.name = effect?.name || game.i18n.localize('GURPS.activeEffect')
@@ -219,6 +233,7 @@ export class EffectModifierPopout extends Application {
           } else {
             obj = this._token?.actor.items.get(itemReference) || {}
           }
+
           const itemName = obj?.name || itemReference
           const itemType = obj?.type
             ? obj.type
@@ -228,6 +243,7 @@ export class EffectModifierPopout extends Application {
                 ? itemReference.split('.')[1]
                 : 'notfound'
           const desc = this.getDescription(it, itemReference)
+
           return {
             link: gurpslink(`[${game.i18n.localize(desc)}]`),
             desc: game.i18n.localize(desc),
@@ -276,6 +292,7 @@ export class EffectModifierPopout extends Application {
 
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons()
+
     buttons.unshift({
       class: 'trash',
       icon: 'fa-solid fa-trash',
@@ -291,6 +308,7 @@ export class EffectModifierPopout extends Application {
       icon: 'fa-solid fa-rotate',
       onclick: async ev => this.refreshUserMods(ev),
     })
+
     return buttons
   }
 
@@ -357,15 +375,17 @@ export class EffectModifierPopout extends Application {
         content: `<input type='text' id='GURPS-user-mod-input' name='input' style='text-align: left;' placeholder="${game.i18n.localize('GURPS.userModInputPlaceholder')}">`,
         ok: {
           label: 'Add (or press Enter)',
-          callback: (event, button, dialog) => button.form.elements.input.value,
+          callback: (_event, button) => button.form.elements.input.value,
         },
       })
 
       if (input) {
         // Because the '@' separator is a reserved character, we will replace it with space
         let mod = input.replace('@', ' ')
-        if (!!mod) {
+
+        if (mod) {
           let action = parselink(mod)
+
           if (action.action?.type === OtfActionType.modifier) this._addUserMod(mod)
           else ui.notifications.warn(game.i18n.localize('GURPS.chatUnrecognizedFormat'))
         }
@@ -373,15 +393,17 @@ export class EffectModifierPopout extends Application {
     } else ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
-  getDescription(text, itemRef) {
+  getDescription(text) {
     const regex = /^(.*?)(?=[#@])/
     const desc = text.match(regex)?.[1]
-    return !!desc ? desc.trim() : text
+
+    return desc ? desc.trim() : text
   }
 
   getTags(text) {
     const tags = text.match(/#(\S+)/g)?.map(it => it.slice(1))
-    return !!tags ? tags : []
+
+    return tags ? tags : []
   }
 
   onRightClick(event) {
@@ -391,23 +413,31 @@ export class EffectModifierPopout extends Application {
     let text = sanitize(el.innerHTML)
     const itemId = $(el).closest('.me-link').data().itemId
     const itemType = $(el).closest('.me-link').data().type
+
     if (!!itemId && itemId.includes('system.') && itemType !== 'maneuver') {
       this._token.actor.sheet?.render(true)
+
       return
     }
+
     if (!!itemId && itemId !== 'custom' && itemType !== 'maneuver' && itemType !== 'active-effect') {
       const item = this._token.actor.items.get(itemId)
+
       if (item) {
         item.sheet.render(true)
       }
+
       return
     }
+
     if (!!itemId && itemType === 'active-effect') {
       const effectId = itemId.split(':')[1]
       const effect = this._token.actor.effects.get(effectId)
+
       if (effect) {
         effect.sheet.render(true)
       }
+
       return
     }
     let t = this.getToken()
@@ -423,20 +453,24 @@ export class EffectModifierPopout extends Application {
   handleDrop(ev) {
     ev.preventDefault()
     ev.stopImmediatePropagation()
-    if (!!ev.originalEvent) ev = ev.originalEvent
+    if (ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
     let add = ''
-    if (!!dragData.otf) {
+
+    if (dragData.otf) {
       let action = parselink(dragData.otf)
       if (action.action?.type == 'modifier' || action.action?.type == 'damage') add = dragData.otf
     }
-    if (!!dragData.bucket) {
+
+    if (dragData.bucket) {
       let sep = ''
+
       dragData.bucket.forEach(otf => {
         add += sep + otf.trim()
         sep = ' & '
       })
     }
+
     if (add.length == 0) return
     this._addUserMod(add)
   }
@@ -488,7 +522,7 @@ export class TaggedModifierSettings extends FormApplication {
 
   getData() {
     return {
-      ...game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS),
+      ...game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS),
     }
   }
 
@@ -503,8 +537,10 @@ export class TaggedModifierSettings extends FormApplication {
       } else {
         acc[key] = formData[key]
       }
+
       return acc
     }, {})
-    await game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS, cleanData)
+
+    await game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS, cleanData)
   }
 }

@@ -16,7 +16,7 @@ import {
   SETTING_RANGE_STRATEGY,
   SETTINGS,
   RangeStrategy,
-} from './types.ts'
+} from './types.js'
 
 export function registerCombatSettings(): void {
   if (!game.settings) throw new Error('GURPS | Combat module requires game.settings to be available!')
@@ -25,7 +25,6 @@ export function registerCombatSettings(): void {
     name: 'GURPS.settingCombatInitiative',
     hint: 'GURPS.settingHintCombatInitiative',
     scope: 'world',
-    requiresReload: true,
     config: false,
     type: String as any,
     default: DEFAULT_INITIATIVE_FORMULA,
@@ -57,6 +56,16 @@ export function registerCombatSettings(): void {
     onChange: value => console.log(`${SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE}: ${value}`),
   })
 
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_USE_ON_TARGET, {
+    name: `${SETTINGS}.maneuver.useOnTarget`,
+    hint: `${SETTINGS}.maneuver.useOnTargetHint`,
+    scope: 'world',
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: value => console.log(`${SETTING_USE_ON_TARGET}: ${value}`),
+  })
+
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY, {
     name: `${SETTINGS}.maneuver.visibility`,
     hint: `${SETTINGS}.maneuver.visibilityHint`,
@@ -81,11 +90,11 @@ export function registerCombatSettings(): void {
     hint: `${SETTINGS}.maneuver.detailHint`,
     scope: 'world',
     config: false,
-    type: String as any,
+    type: String,
     choices: {
-      Full: `${SETTINGS}.maneuver.values.fullDetail`,
-      NoFeint: `${SETTINGS}.maneuver.values.noFeint`,
+      Full: `${SETTINGS}.maneuver.values.full`,
       General: `${SETTINGS}.maneuver.values.general`,
+      NoFeint: `${SETTINGS}.maneuver.values.noFeint`,
     },
     default: 'General',
     onChange: value => {
@@ -100,7 +109,7 @@ export function registerCombatSettings(): void {
     hint: `${SETTINGS}.maneuver.updatesMoveHint`,
     scope: 'world',
     config: false,
-    type: Boolean as any,
+    type: Boolean,
     default: true,
     onChange: value => console.log(`${SETTING_MANEUVER_UPDATES_MOVE}: ${value}`),
   })
@@ -110,7 +119,7 @@ export function registerCombatSettings(): void {
     hint: `${SETTINGS}.maneuver.allowRollHint`,
     scope: 'world',
     config: false,
-    type: String as any,
+    type: String,
     choices: {
       Allow: `${SETTINGS}.maneuver.values.allow`,
       Warn: `${SETTINGS}.maneuver.values.warn`,
@@ -118,16 +127,6 @@ export function registerCombatSettings(): void {
     },
     default: 'Warn',
     onChange: value => console.log(`${SETTING_ALLOW_ROLL_BASED_ON_MANEUVER}: ${value}`),
-  })
-
-  game.settings.register(GURPS.SYSTEM_NAME, SETTING_USE_ON_TARGET, {
-    name: `${SETTINGS}.maneuver.useOnTarget`,
-    hint: `${SETTINGS}.maneuver.useOnTargetHint`,
-    scope: 'world',
-    config: false,
-    type: Boolean as any,
-    default: false,
-    onChange: value => console.log(`${SETTING_USE_ON_TARGET}: ${value}`),
   })
 
   class CombatSettingsApplication extends GurpsSettingsApplication {
