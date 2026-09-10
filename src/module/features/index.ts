@@ -41,7 +41,7 @@ import {
 } from './weapon-bonus.js'
 
 /* ---------------------------------------- */
-
+// TODO: Probably not a module.
 interface FeaturesModule extends GurpsModule {
   models: typeof FeatureClasses
 }

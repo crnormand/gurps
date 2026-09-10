@@ -1,16 +1,16 @@
 'use strict'
 
 import { ChatProcessors } from '@module/chat.js'
+import { Combat } from '@module/combat/index.js'
 import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 import { NpcInput } from '@module/util/npc-input.js'
 import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '@util/utilities.js'
 
-import Maneuvers from '../actor/maneuver.js'
 import { AnimChatProcessor } from '../chat/anim.js'
 import SlamChatProcessor from '../chat/slam.js'
 import StatusChatProcessor from '../chat/status.js'
-import TrackerChatProcessor from '../chat/tracker.js'
+import TrackerChatProcessor from '../chat/trackerex.js'
 
 import ChatProcessor from './chat-processor.js'
 import {
@@ -1267,7 +1267,7 @@ class ManeuverChatProcessor extends ChatProcessor {
   async process(_line) {
     if (!this.match[2]) {
       this.priv(game.i18n.localize('GURPS.chatHelpManeuver'))
-      Object.values(Maneuvers.getAll())
+      Object.values(Combat.Maneuvers.getAll())
         .map(maneuver => game.i18n.localize(maneuver.data.label))
         .forEach(maneuverLabel => this.priv(maneuverLabel))
 
@@ -1281,7 +1281,7 @@ class ManeuverChatProcessor extends ChatProcessor {
     }
 
     let regex = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
-    let match = Object.values(Maneuvers.getAll()).find(maneuver =>
+    let match = Object.values(Combat.Maneuvers.getAll()).find(maneuver =>
       game.i18n.localize(maneuver.data.label).toLowerCase().match(regex)
     )
 

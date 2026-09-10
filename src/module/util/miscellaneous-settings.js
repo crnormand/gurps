@@ -5,8 +5,6 @@ import ModifierBucketJournals from '@module/modifier-bucket/select-journals.js'
 import { QuickRollSettings } from '@module/token/quick-roll-settings.js'
 import { SemanticVersion } from '@util/semver.js'
 
-import Initiative from './initiative.js'
-
 export const SYSTEM_NAME = 'gurps'
 export const SETTING_MIGRATION_VERSION = 'migration-version'
 
@@ -31,8 +29,6 @@ export const SETTING_BUCKET_D6_IMAGE = 'bucket-d6-image'
 export const SETTING_BUCKET_JOURNALS = 'bucket-journals'
 export const SETTING_BUCKET_SCALE = 'bucket-scale-factor'
 export const SETTING_FRIGHT_CHECK_TABLE = 'frightcheck-table'
-export const SETTING_INITIATIVE_FORMULA = 'initiative-formula'
-export const SETTING_RANGE_STRATEGY = 'rangeStrategy'
 export const SETTING_USE_CONDITIONAL_INJURY = 'useConditionalInjury'
 export const SETTING_CHECK_EQUIPPED = 'check-equipped'
 export const SETTING_SHIFT_CLICK_BLIND = 'shift-click-blind'
@@ -41,24 +37,19 @@ export const SETTING_SHOW_FOUNDRY_CREATED = 'show-foundry-created'
 
 export const SETTING_SHOW_3D6 = 'show-3d6'
 export const SETTING_CONVERT_RANGED = 'convert-ranged'
-export const SETTING_MANEUVER_VISIBILITY = 'maneuver-visibility'
-export const SETTING_MANEUVER_DETAIL = 'maneuver-detail'
 export const SETTING_ALT_SHEET = 'alt-sheet'
 export const SETTING_PHYSICAL_DICE = 'physical-dice'
 export const SETTING_REMOVE_UNEQUIPPED = 'remove-unequipped-weapons'
-export const SETTING_MANEUVER_UPDATES_MOVE = 'maneuver-updates-move'
 export const SETTING_SHOW_CHAT_FOR_REELING_TIRED = 'show-chat-reeling-tired'
 export const SETTING_USE_QUINTESSENCE = 'use-quintessence'
 export const SETTING_PORTRAIT_PATH = 'portrait-path'
 export const SETTING_CTRL_KEY = 'ctrl-key'
-export const SETTING_USE_ON_TARGET = 'use-on-target'
 // export const SETTING_USE_FOUNDRY_ITEMS = 'use-foundry-items'
 export const SETTING_SHOW_FOUNDRY_GLOBAL_ITEMS = 'show-foundry-global-items'
 export const SETTING_SHOW_ITEM_IMAGE = 'show-item-image'
 
 export const SETTING_USE_QUICK_ROLLS = 'use-quick-rolls'
 export const SETTING_SHOW_CONFIRMATION_ROLL_DIALOG = 'show-confirmation-roll-dialog'
-export const SETTING_ALLOW_ROLL_BASED_ON_MANEUVER = 'allow-roll-based-on-maneuver'
 export const SETTING_ALLOW_TARGETED_ROLLS = 'allow-targeted-rolls'
 export const SETTING_USE_TAGGED_MODIFIERS = 'use-tagged-modifiers'
 export const SETTING_MODIFY_DICE_PLUS_ADDS = 'modify-dice-plus-adds'
@@ -67,7 +58,6 @@ export const SETTING_ALLOW_AFTER_MAX_ACTIONS = 'allow-after-max-actions'
 export const SETTING_ADD_SHOCK_AT_TURN = 'add-shock-at-turn'
 export const SETTING_ALLOW_ROLLS_BEFORE_COMBAT_START = 'allow-rolls-before-combat-start'
 export const SETTING_ADD_CUMULATIVE_PARRY_PENALTIES = 'add-cumulative-parry-penalties'
-export const SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE = 'use-size-modifier-difference-in-melee'
 export const SETTING_PORTRAIT_HP_TINTING = 'portrait-hp-tinting'
 
 export const SETTING_DEV_MODE = 'developerMode'
@@ -356,44 +346,6 @@ export function initializeSettings() {
       onChange: value => console.log(`Updated Modifier d6 Bucket Image: ${JSON.stringify(value)}`),
     })
 
-    // Combat options ----
-
-    game.settings.register(SYSTEM_NAME, SETTING_RANGE_STRATEGY, {
-      name: game.i18n.localize('GURPS.settingRangeStrategy'),
-      hint: game.i18n.localize('GURPS.settingHintRangeStrategy'),
-      scope: 'world',
-      config: true,
-      type: String,
-      choices: {
-        Standard: game.i18n.localize('GURPS.settingRangeStrategyStandard'),
-        Simplified: game.i18n.localize('GURPS.settingRangeStrategyRangeBands'),
-        TenPenalties: game.i18n.localize('GURPS.settingRangeStrategyTenPenalties'),
-      },
-      default: 'Standard',
-      onChange: _value => GURPS.rangeObject.update(),
-    })
-
-    game.settings.register(SYSTEM_NAME, SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE, {
-      name: game.i18n.localize('GURPS.combat.setting.useRelativeSizeInMelee'),
-      hint: game.i18n.localize('GURPS.combat.setting.useRelativeSizeInMeleeHint'),
-      scope: 'world',
-      config: true,
-      type: Boolean,
-      default: false,
-      requiresReload: true,
-      onChange: value => console.log(`${SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE}: ${value}`),
-    })
-
-    game.settings.register(SYSTEM_NAME, SETTING_INITIATIVE_FORMULA, {
-      name: game.i18n.localize('GURPS.settingCombatInitiative'),
-      hint: game.i18n.localize('GURPS.settingHintCombatInitiative'),
-      scope: 'world',
-      config: true,
-      type: String,
-      default: Initiative.defaultFormula(),
-      onChange: _value => GURPS.setInitiativeFormula(true),
-    })
-
     // Damage calculation options ----
 
     game.settings.register(SYSTEM_NAME, SETTING_USE_CONDITIONAL_INJURY, {
@@ -437,64 +389,6 @@ export function initializeSettings() {
       type: Boolean,
       default: false,
       onChange: value => console.log(`Display Reeling/Tired Status in Chat : ${value}`),
-    })
-
-    game.settings.register(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY, {
-      name: game.i18n.localize('GURPS.settingManeuverVisibility'),
-      hint: game.i18n.localize('GURPS.settingHintManeuverVisibility'),
-      scope: 'world',
-      config: true,
-      type: String,
-      choices: {
-        NoOne: game.i18n.localize('GURPS.settingManeuverNoOne'),
-        GMAndOwner: game.i18n.localize('GURPS.settingManeuverGMOnly'),
-        Everyone: game.i18n.localize('GURPS.settingManeuverEveryone'),
-      },
-      default: 'NoOne',
-      onChange: value => {
-        console.log(`${SETTING_MANEUVER_VISIBILITY}: ${value}`)
-        // Re-draw token effects immediately
-        game.scenes.active.tokens.forEach(tokenDocument => tokenDocument.object.drawEffects())
-      },
-    })
-
-    game.settings.register(SYSTEM_NAME, SETTING_MANEUVER_DETAIL, {
-      name: game.i18n.localize('GURPS.settingManeuverDetail'),
-      hint: game.i18n.localize('GURPS.settingHintManeuverDetail'),
-      scope: 'world',
-      config: true,
-      type: String,
-      choices: {
-        Full: game.i18n.localize('GURPS.settingManeuverDetailFull'),
-        NoFeint: game.i18n.localize('GURPS.settingManeuverDetailNoFeint'),
-        General: game.i18n.localize('GURPS.settingManeuverDetailGeneral'),
-      },
-      default: 'General',
-      onChange: value => {
-        console.log(`${SETTING_MANEUVER_DETAIL}: ${value}`)
-        // Re-draw token effects immediately
-        game.scenes.active.tokens.forEach(tokenDocument => tokenDocument.object.drawEffects())
-      },
-    })
-
-    game.settings.register(SYSTEM_NAME, SETTING_MANEUVER_UPDATES_MOVE, {
-      name: 'GURPS.settingManeuverMove',
-      hint: 'GURPS.settingHintManeuverMove',
-      scope: 'world',
-      config: true,
-      type: Boolean,
-      default: true,
-      onChange: value => console.log(`${SETTING_MANEUVER_UPDATES_MOVE}: ${value}`),
-    })
-
-    game.settings.register(SYSTEM_NAME, SETTING_USE_ON_TARGET, {
-      name: 'GURPS.settingOnTarget',
-      hint: 'GURPS.settingHintOnTarget',
-      scope: 'world',
-      config: true,
-      type: Boolean,
-      default: false,
-      onChange: value => console.log(`${SETTING_USE_ON_TARGET}: ${value}`),
     })
 
     game.settings.register(SYSTEM_NAME, SETTING_SHIFT_CLICK_BLIND, {
@@ -601,21 +495,6 @@ export function initializeSettings() {
 
         console.log(`Show Confirmation Roll Dialog : ${value}`)
       },
-    })
-
-    game.settings.register(SYSTEM_NAME, SETTING_ALLOW_ROLL_BASED_ON_MANEUVER, {
-      name: game.i18n.localize('GURPS.settingAllowRollBasedOnManeuver'),
-      hint: game.i18n.localize('GURPS.settingHintAllowRollBasedOnManeuver'),
-      scope: 'world',
-      config: true,
-      type: String,
-      choices: {
-        Allow: game.i18n.localize('GURPS.allow'),
-        Warn: game.i18n.localize('GURPS.warn'),
-        Forbid: game.i18n.localize('GURPS.forbid'),
-      },
-      default: 'Warn',
-      onChange: value => console.log(`Allow Roll based on Maneuver : ${value}`),
     })
 
     game.settings.register(SYSTEM_NAME, SETTING_ALLOW_TARGETED_ROLLS, {

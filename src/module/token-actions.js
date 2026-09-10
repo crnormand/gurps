@@ -1,16 +1,6 @@
+import { Combat } from '@module/combat/index.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { recurselist } from '@util/utilities.js'
-
-import Maneuvers, {
-  MOVE_FULL,
-  MOVE_HALF,
-  MOVE_NONE,
-  MOVE_ONE,
-  MOVE_ONETHIRD,
-  MOVE_STEP,
-  MOVE_TWO_STEPS,
-  MOVE_TWOTHIRDS,
-} from './actor/maneuver.js'
 
 /**
  * # Actor Actions Class
@@ -283,25 +273,25 @@ export class TokenActions {
 
   getMaxMove() {
     let currentMove = this.actor.system.currentmove
-    const maneuver = Maneuvers.getManeuver(this.currentManeuver || 'do_nothing')
+    const maneuver = Combat.Maneuvers.getManeuver(this.currentManeuver || 'do_nothing')
     const move = maneuver.flags.gurps.move
 
     switch (move) {
-      case MOVE_NONE:
+      case Combat.Movement.none:
         return 0
-      case MOVE_ONE:
+      case Combat.Movement.one:
         return 1
-      case MOVE_STEP:
+      case Combat.Movement.step:
         return game.i18n.format('GURPS.moveStep', { reason: game.i18n.localize(maneuver.label) })
-      case MOVE_TWO_STEPS:
+      case Combat.Movement.twoSteps:
         return game.i18n.format('GURPS.moveTwoSteps', { reason: game.i18n.localize(maneuver.label) })
-      case MOVE_ONETHIRD:
+      case Combat.Movement.oneThird:
         return Math.max(Math.floor(currentMove / 3), 1)
-      case MOVE_HALF:
+      case Combat.Movement.half:
         return Math.max(Math.floor(currentMove / 2), 1)
-      case MOVE_TWOTHIRDS:
+      case Combat.Movement.twoThirds:
         return Math.max(Math.floor((currentMove / 3) * 2), 1)
-      case MOVE_FULL:
+      case Combat.Movement.full:
         if (this.currentManeuver === 'move' && this.lastManeuvers[this.currentTurn]?.maneuver === 'move') {
           return currentMove + Math.max(Math.floor(currentMove * 0.2), 1)
         }
@@ -605,7 +595,7 @@ export class TokenActions {
     // If lastManeuvers[round] exists, it means GM rolls back the turn.
     if (this.lastManeuvers[round]) {
       console.info(`Recovering Combat Turn (Foundry Round: ${round}) for Token: ${this.token.name}`)
-      await this.selectManeuver(Maneuvers.getManeuver(this.lastManeuvers[round].maneuver), round)
+      await this.selectManeuver(Combat.Maneuvers.getManeuver(this.lastManeuvers[round].maneuver), round)
       // Check for Effects marked for this turn
       const effects = this.lastManeuvers[Math.max(round - 1, 0)].nextTurnEffects || []
 

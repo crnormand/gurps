@@ -1,7 +1,7 @@
 import { Document } from '@gurps-types/foundry/index.js'
 import { ActorType } from '@module/actor/types.js'
 
-import Maneuvers from '../actor/maneuver.js'
+import { Combat } from '../combat/index.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 
@@ -35,7 +35,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
     // if not in combat, do nothing
     if (!isCombatActive() || !isTokenInActiveCombat(this)) return
 
-    const maneuver = Maneuvers.get(maneuverId)
+    const maneuver = Combat.Maneuvers.get(maneuverId)
 
     if (!maneuver) return
 
@@ -45,7 +45,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
 
     await actions.selectManeuver(maneuver, game.combat?.round)
 
-    const activeManeuvers = Maneuvers.getActiveEffectManeuvers(
+    const activeManeuvers = Combat.Maneuvers.getActiveEffectManeuvers(
       Array.from(this.actor?.effects.values() ?? []) as ActiveEffect.Implementation[]
     )
 
@@ -82,7 +82,7 @@ class GurpsToken extends foundry.canvas.placeables.Token {
    * Maneuver.
    */
   async removeManeuver(): Promise<void> {
-    const maneuvers = Maneuvers.getActiveEffectManeuvers(
+    const maneuvers = Combat.Maneuvers.getActiveEffectManeuvers(
       Array.from(this.actor?.effects.values() ?? []) as ActiveEffect.Implementation[]
     )
 

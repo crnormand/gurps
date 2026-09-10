@@ -1,4 +1,6 @@
-import * as Settings from '@module/util/miscellaneous-settings.js'
+import { isUsingOnTarget } from './settings.js'
+
+import { PROPERTY_MOVEOVERRIDE_MANEUVER } from './index.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'
@@ -13,9 +15,6 @@ export const MOVE_ONETHIRD = '×1/3'
 export const MOVE_HALF = 'half'
 export const MOVE_TWOTHIRDS = '×2/3'
 export const MOVE_FULL = 'full'
-
-export const PROPERTY_MOVEOVERRIDE_MANEUVER = 'system.moveoverride.maneuver'
-export const PROPERTY_MOVEOVERRIDE_POSTURE = 'system.moveoverride.posture'
 
 const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target'
 
@@ -398,10 +397,7 @@ export default class Maneuvers {
   }
 
   static getAll() {
-    const useOnTarget = game.settings?.get(
-      Settings.SYSTEM_NAME as never,
-      Settings.SETTING_USE_ON_TARGET as never
-    ) as unknown as boolean
+    const useOnTarget = isUsingOnTarget()
 
     const filter = []
 

@@ -1,4 +1,4 @@
-import * as Settings from '@module/util/miscellaneous-settings.js'
+import { Combat } from '@module/combat/index.js'
 
 import { Length, LengthUnit } from '../data/common/index.js'
 
@@ -36,7 +36,7 @@ class GurpsRuler extends foundry.canvas.interaction.Ruler {
   /* ---------------------------------------- */
 
   yardsToRangePenalty(yards: number): number {
-    const strategy = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_RANGE_STRATEGY) ?? 'Standard'
+    const strategy = Combat.getRangeStrategy('Standard')
 
     if (strategy === 'Standard') {
       return GURPS.SSRT.getModifier(yards)

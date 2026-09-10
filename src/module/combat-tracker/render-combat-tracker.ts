@@ -155,5 +155,4 @@ export async function renderCombatTracker(_app: any, element: HTMLElement, _opti
     // Add Maneuver Menu
     await addManeuverMenu(combatantElement, combatant, token)
   }
-
 }

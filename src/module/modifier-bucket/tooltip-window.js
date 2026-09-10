@@ -1,3 +1,4 @@
+import { Combat } from '@module/combat/index.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
@@ -470,7 +471,7 @@ const ModifierLiterals = {
   },
 
   get RangedMods() {
-    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = Combat.isUsingOnTarget()
 
     const rangedMods = [
       `[+1 ${game.i18n.localize('GURPS.modifiers_.aim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aim')}]`,
@@ -494,7 +495,7 @@ const ModifierLiterals = {
   },
 
   get DefenseMods() {
-    const useOnTarget = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
+    const useOnTarget = Combat.isUsingOnTarget()
 
     const defenseMods = [
       `[+2 ${game.i18n.localize('GURPS.modifiers_.aodIncreased')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aodIncreased')}]`,
