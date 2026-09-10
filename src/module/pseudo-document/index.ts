@@ -5,6 +5,7 @@ import { PseudoDocumentSheet } from './pseudo-document-sheet.js'
 import { PseudoDocument } from './pseudo-document.js'
 import { TypedPseudoDocument } from './typed-pseudo-document.js'
 
+// TODO: Remove PseudoDocument as a GurpsModule.
 interface ActorModule extends GurpsModule {
   dataModels: {
     PseudoDocument: typeof PseudoDocument

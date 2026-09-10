@@ -1,4 +1,5 @@
 import { fields, Document } from '@gurps-types/foundry/index.js'
+import { Combat } from '@module/combat/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PostureType, statusIsPosture } from '@module/effects/posture.js'
 import { ItemMetadata } from '@module/item/data/base.js'
@@ -20,7 +21,6 @@ import { TokenActions } from '../token-actions.js'
 import { ActorMetadata, BaseActorModel } from './data/base.js'
 import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
-import Maneuvers from './maneuver.js'
 import { runSourceMigrations } from './migrate.js'
 import { ActorType, CanRollResult, CheckInfo } from './types.js'
 
@@ -601,7 +601,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
       if (maneuverEffect) {
         // If there is a maneuver effect, set what's visible to the user based on his role and the world settings.
-        const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
+        const visibility = Combat.getManeuverVisibility()
 
         if (visibility === 'NoOne') maneuverEffect.showIcon = 0
 
@@ -615,7 +615,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
         // If the current user is neither GM nor actor owner, display the alternate image if available UNLESS the
         // detail setting is "Full".
-        const detail = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
+        const detail = Combat.getManeuverDetail()
 
         if (detail !== 'Full' && !game.user?.isGM && !maneuverEffect.isOwner) {
           maneuverEffect.img = maneuverEffect.getFlag('gurps', 'altImg') ?? maneuverEffect.img
@@ -845,9 +845,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // If the current maneuver is invalid for the action, add a warning message to the
     // result and set canRoll to false depending on the maneuver settings
     if ((!actions.canAttack && isAttack) || (!actions.canDefend && isDefense)) {
-      const maneuver = game.i18n?.localize(Maneuvers.getManeuver(actions.currentManeuver).label) ?? ''
+      const maneuver = game.i18n?.localize(Combat.Maneuvers.getManeuver(actions.currentManeuver).label) ?? ''
       const rollTypeLabel = game.i18n?.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll') ?? ''
-      const checkManeuverSetting = this.getSetting(Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER, 'Warn')
+      const checkManeuverSetting = Combat.getRollBasedOnManeuverPolicy('Warn')
 
       const message =
         checkManeuverSetting !== 'Allow'

@@ -1,6 +1,5 @@
+import { Combat, PROPERTY_MOVEOVERRIDE_POSTURE } from '@module/combat/index.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
-
-import { MOVE_NONE, MOVE_ONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
 
 import { PostureType } from './posture.js'
 
@@ -96,7 +95,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
         id: PostureType.Prone,
         name: 'GURPS.status.Prone',
-        move: MOVE_ONE,
+        move: Combat.Movement.one,
         // I'm sneakily using ActiveEffects to implement postures even if the system setting is turned off.
         changes: [
           {
@@ -121,7 +120,7 @@ export class StatusEffect {
           },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: MOVE_ONE,
+            value: Combat.Movement.one,
             mode: 'override',
             priority: 10,
           },
@@ -136,7 +135,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/condition-kneel.webp',
         id: PostureType.Kneeling,
         name: 'GURPS.status.Kneel',
-        move: MOVE_ONETHIRD,
+        move: Combat.Movement.oneThird,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -155,7 +154,7 @@ export class StatusEffect {
           },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: MOVE_ONETHIRD,
+            value: Combat.Movement.oneThird,
             mode: 'override',
           },
           {
@@ -174,7 +173,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/condition-crouch.webp',
         id: PostureType.Crouching,
         name: 'GURPS.status.Crouch',
-        move: MOVE_TWOTHIRDS,
+        move: Combat.Movement.twoThirds,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -188,7 +187,7 @@ export class StatusEffect {
           },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: MOVE_TWOTHIRDS,
+            value: Combat.Movement.twoThirds,
             mode: 'override',
           },
           {
@@ -207,7 +206,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/condition-sit.webp',
         id: PostureType.Sitting,
         name: 'GURPS.status.Sit',
-        move: MOVE_NONE,
+        move: Combat.Movement.none,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -226,7 +225,7 @@ export class StatusEffect {
           },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: MOVE_NONE,
+            value: Combat.Movement.none,
             mode: 'override',
           },
           {
@@ -245,7 +244,7 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/condition-crawl.webp',
         id: PostureType.Crawling,
         name: 'GURPS.status.Crawling',
-        move: MOVE_ONETHIRD,
+        move: Combat.Movement.oneThird,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
@@ -264,7 +263,7 @@ export class StatusEffect {
           },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: MOVE_ONETHIRD,
+            value: Combat.Movement.oneThird,
             mode: 'override',
           },
           {

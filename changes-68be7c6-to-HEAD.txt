@@ -1,0 +1,168 @@
+Changes from 68be7c6 to HEAD
+================================
+
+Purpose
+-------
+This document describes the changes introduced between commit 68be7c6 and the
+current HEAD (1576a1b5). It is intended as a porting guide for applying the
+same behavior to a divergent develop branch. Treat the change as one
+coordinated refactor: the combat API moves, settings migration, consumers,
+and settings UI depend on one another.
+
+Range summary
+-------------
+- 42 paths changed.
+- 1,733 lines added and 552 removed.
+- Main themes: consolidate combat functionality under module/combat, migrate
+  legacy combat settings, add a custom settings application, and redirect all
+  consumers to the new API.
+
+Recommended port order
+----------------------
+1. Add the combat module types, public index, and moved implementations.
+2. Register the new combat settings and add the generic legacy-setting
+   migration helper.
+3. Wire combat migration into startup and preserve the GM-only execution
+   behavior.
+4. Update every consumer import and API call, including actor, chat, effects,
+   token, canvas, modifier-bucket, and combat-tracker code.
+5. Add the custom settings application, template, styles, and localization.
+6. Update declarations, TypeScript configuration, tests, and changelog.
+7. Remove obsolete files only after all imports have been redirected.
+
+Combat module reorganization
+----------------------------
+The combat module becomes the owning boundary for combat-related behavior.
+
+Moved, replaced, or added paths:
+- lib/initiative.js -> module/combat/initiative.ts
+- module/actor/maneuver.js -> module/combat/maneuver.js
+- lib/ranges.js -> module/combat/ranges.ts
+- lib/size-speed-range-table.js -> module/combat/size-speed-range-table.ts
+- Added module/combat/types.ts
+- Added module/combat/settings.ts
+- Added module/combat/migrate.ts
+- module/combat/index.ts is the public interface for combat exports,
+  maneuver registration/access, initiative helpers, range utilities,
+  size-speed utilities, settings accessors, and initialization hooks.
+- lib/miscellaneous-settings.js was removed; combat settings registration and
+  accessors now live in module/combat/settings.ts.
+- module/canvas/ruler-12.ts was removed; ruler behavior is consolidated in
+  module/canvas/ruler.ts.
+
+Update imports and references to use module/combat or its index rather than
+the old lib/initiative, lib/ranges, lib/size-speed-range-table,
+lib/miscellaneous-settings, and module/actor/maneuver paths. The moved
+JavaScript utilities were also converted to typed TypeScript implementations.
+
+Settings and migration
+----------------------
+Combat settings are registered with config=false and exposed through a
+dedicated CombatSettingsApplication. The settings accessors should be read
+through the combat module API instead of reaching into the old registration
+module.
+
+Legacy setting keys retain their values but gain the combat namespace segment:
+
+  Old key                                  New key
+  ---------------------------------------  -----------------------------------
+  use-on-target                            combat.use-on-target
+  maneuver-visibility                      combat.maneuver-visibility
+  maneuver-detail                          combat.maneuver-detail
+  maneuver-updates-move                    combat.maneuver-updates-move
+  allow-roll-based-on-maneuver             combat.allow-roll-based-on-maneuver
+  initiative-formula                       combat.initiative-formula
+  rangeStrategy                             combat.rangeStrategy
+  use-size-modifier-difference-in-melee    combat.use-size-modifier-difference-in-melee
+
+The old keys are stored under the existing GURPS namespace, so the migration
+maps GURPS.<old key> to GURPS.<new key>. Values are currently passed through
+unchanged. Keep the exact spelling and case of rangeStrategy; it is part of
+the persisted setting key.
+
+module/migration/settings-migration.ts provides the reusable migration
+engine. Its required behavior is:
+- inspect world settings under a namespace prefix;
+- match only explicitly configured oldName entries;
+- support synchronous and asynchronous value transforms;
+- save all transformed values before deleting renamed legacy entries;
+- use Promise.allSettled so one failure does not prevent other migrations;
+- delete only successful migrations whose key changed;
+- preserve failed legacy entries so a later launch can retry;
+- allow in-place migrations without deleting their setting;
+- notify when a migrated setting requires reload.
+
+module/combat/migrate.ts builds the eight mappings above and invokes the
+helper only for the GM. Startup wiring in module/gurps.js must invoke the
+combat migration/setup path and must no longer initialize the removed
+miscellaneous-settings module.
+
+Settings UI
+-----------
+Add the shared GurpsSettingsApplication in
+module/utilities/gurps-settings-application.ts, the settings template at
+templates/settings.hbs, and styles/_settings.scss. Register a combat-specific
+application with the combat title, icon, labels, hints, and setting order.
+Add the corresponding labels, hints, and value names to all six language
+files: de.json, en.json, es.json, fr.json, pt_br.json, and ru.json.
+
+Consumers and integrations
+--------------------------
+Redirect the following areas to the new combat boundary and reconcile any
+branch-specific initialization order or public exports:
+- module/combat/combat.ts and module/combat-tracker/*
+- module/actor/actor.js
+- module/actor/effect-modifier-popout.js
+- module/actor/move-mode-editor.js
+- module/chat/chat-processors.js
+- module/effects/effects.js
+- module/modifier-bucket/tooltip-window.js
+- module/token-actions.js
+- module/token/gurps-token.ts
+- module/canvas/index.ts and module/canvas/ruler.ts
+- module/gurps.js
+
+The combat tracker and maneuver menu now use the combat maneuver registry
+and settings accessors. Token image tooltip/render handling follows the
+updated token/canvas flow. The modifier bucket no longer duplicates
+Committed Attack (Ranged).
+
+Types, build metadata, and tests
+-------------------------------
+- Add combat declarations in module/combat/types.ts.
+- Update global.d.ts for the settings application and new globals/types.
+- Update tsconfig.json to include the new TypeScript combat files.
+- Add test/migration/settings-migration.test.ts, covering mappings, async
+  and synchronous transforms, defaults/order, namespace filtering, cleanup,
+  in-place behavior, and failure handling.
+- Update test/extract-otfs.test.ts and test/slam-calculator.test.ts for the
+  moved APIs/imports.
+- Update changelog.md.
+
+Files removed after import migration
+-------------------------------------
+- lib/initiative.js
+- lib/miscellaneous-settings.js
+- module/canvas/ruler-12.ts
+
+Porting cautions
+----------------
+- Do not port only module/combat in isolation; consumers still depend on the
+  old paths until their imports and calls are updated.
+- Preserve migration ordering and exact persisted keys. Partial migrations
+  can create both old and new settings, and rerunning a migration can delete
+  old entries after successful writes.
+- Reconcile Foundry compatibility declarations and initialization hooks with
+  the develop branch before removing old files.
+- Resolve conflicts in module/gurps.js, module/combat/index.ts, actor/token/
+  integrations, localization, and tsconfig.json first; those are the most
+  likely divergent surfaces.
+- Keep the migration failure policy: failed entries must not be deleted.
+
+Validation observed for this range
+-----------------------------------
+- git diff --check 68be7c6 HEAD passed with no whitespace errors.
+- The migration test suite was added, but the current test run reports an
+  async migration fixture failure at test/migration/settings-migration.test.ts
+  ("Async migration failed"). Investigate that runtime/test mismatch while
+  porting rather than assuming the migration is production-ready.

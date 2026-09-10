@@ -61,7 +61,7 @@ import {
 } from '@module/prereqs/index.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
-import { findAdDisad, findSkillSpell, findSkill, findSpell, findAttack } from '@module/util/find-item.ts'
+import { findAdDisad, findSkillSpell, findSkill, findSpell, findAttack } from '@module/util/find-item.js'
 import { AnyObject } from 'fvtt-types/utils'
 
 import { HandlebarsApplicationMixin as _HandlebarsApplicationMixin } from './foundry/handlebars.js'
@@ -448,6 +448,7 @@ declare global {
       addModifier(mod: string, label: string, options?: { situation?: string }, tagged?: boolean): void
       currentSum(): number
       clear(): Promise<void>
+      refresh(): void
       refreshPosition(): void
       render(): Promise<void>
     }
@@ -471,15 +472,13 @@ declare global {
 
     /* ---------------------------------------- */
 
-    rangeObject: {
-      ranges: Array<{ modifier: number; max: number; penalty: number }>
-    }
+    rangeObject: GurpsRange
 
     /* ---------------------------------------- */
 
     Maneuvers: {
       get(id: string): { img?: string; label: string; move: string | null } | undefined
-      getAll(): Record<string, { id: string; icon: string; label: string }>
+      getAll(): Record<string, Maneuver>
     }
 
     /* ---------------------------------------- */

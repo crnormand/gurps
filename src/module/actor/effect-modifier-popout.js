@@ -1,3 +1,4 @@
+import { Combat } from '@module/combat/index.js'
 import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
@@ -6,8 +7,6 @@ import { sanitize } from '@util/utilities.js'
 
 import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
-
-import Maneuvers from './maneuver.js'
 
 export const calculateRange = (token1, token2) => {
   if (!token1 || !token2) return undefined
@@ -61,7 +60,7 @@ export const getSizeModifier = (source, target) => {
   const baseTags = `#${meleeTag}`
   let sizeModifier
 
-  if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+  if (Combat.useSizeModifierDifferenceInMelee()) {
     const attackerSM = foundry.utils.getProperty(source.actor, 'system.profile.sizemod') || 0
     const targetSM = foundry.utils.getProperty(target.actor, 'system.profile.sizemod') || 0
     const sizeDiff = targetSM - attackerSM
@@ -217,7 +216,7 @@ export class EffectModifierPopout extends Application {
 
             switch (refType) {
               case 'man': {
-                const maneuver = Maneuvers.getManeuver(refValue)
+                const maneuver = Combat.Maneuvers.getManeuver(refValue)
 
                 obj.name = game.i18n.localize(maneuver.label)
                 obj.type = 'maneuver'

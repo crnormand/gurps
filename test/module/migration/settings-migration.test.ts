@@ -5,7 +5,7 @@ const globalMock = globalThis as typeof globalThis & {
   game: {
     settings?: {
       storage: Map<string, any>
-      set: Mock<(...args: [string, string, unknown]) => Promise<void>>
+      set: Mock<(namespace: string, key: string, value: unknown) => Promise<void>>
     }
   }
   GURPS: any
@@ -52,12 +52,18 @@ describe('migrateLegacySettings', () => {
     consoleDebugSpy.mockRestore()
   })
 
-  const createMockSetting = (key: string, value: any, id: string = key): foundry.documents.Setting => {
+  const createMockSetting = (
+    key: string,
+    value: any,
+    id: string = key,
+    requiresReload: boolean = false
+  ): foundry.documents.Setting => {
     const setting = {
       key,
       value,
       id,
       delete: vi.fn<() => Promise<void>>().mockResolvedValue(undefined),
+      requiresReload,
     } as unknown as foundry.documents.Setting
 
     mockSettings.set(id, setting)
@@ -101,8 +107,10 @@ describe('migrateLegacySettings', () => {
     it('migrates multiple settings', async () => {
       const setting1 = createMockSetting('gurps.oldSetting1', 'value1', 'id-1')
       const setting2 = createMockSetting('gurps.oldSetting2', 'value2', 'id-2')
+      const newSetting1 = createMockSetting('gurps.newSetting1', 'VALUE1', 'id-3', true)
+      const newSetting2 = createMockSetting('gurps.newSetting2', 'VALUE2', 'id-4', true)
 
-      mockStorage.contents = [setting1, setting2]
+      mockStorage.contents = [setting1, setting2, newSetting1, newSetting2]
 
       const migrations: SettingMigration[] = [
         {
