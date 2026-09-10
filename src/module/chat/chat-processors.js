@@ -10,7 +10,7 @@ import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } 
 import { AnimChatProcessor } from '../chat/anim.js'
 import SlamChatProcessor from '../chat/slam.js'
 import StatusChatProcessor from '../chat/status.js'
-import TrackerChatProcessor from '../chat/trackerex.js'
+import TrackerChatProcessor from '../chat/tracker.js'
 
 import ChatProcessor from './chat-processor.js'
 import {
