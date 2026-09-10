@@ -108,6 +108,9 @@ declare module 'fvtt-types/configuration' {
     /** Bucket */
     'gurps.bucket-position': 'left' | 'right'
 
+    /** Canvas */
+    'gurps.canvas.useBookRegionRadius': foundry.data.fields.BooleanField
+
     /** Combat **/
     'gurps.combat.allow-roll-based-on-maneuver': RollBasedOnManeuverPolicy
     'gurps.combat.initiative-formula': string
