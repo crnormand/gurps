@@ -3,6 +3,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { displayMod, horiz } from '../../lib/utilities.js'
 import { gurpslink } from '../../module/utilities/gurpslink.js'
+import { enabledOptions } from '../combat/combat-options.js'
 import { Combat } from '../combat/index.js'
 import GurpsWiring from '../gurps-wiring.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
@@ -423,70 +424,39 @@ const ModifierLiterals = {
     return this._HitLocationModifiers
   },
 
+  /** The combat options offered in one section of the bucket. */
+  _maneuverOptions(section) {
+    return enabledOptions(section, { useOnTarget: Combat.isUsingOnTarget() })
+  },
+
+  _maneuverOtf(option) {
+    const label = game.i18n.localize(`GURPS.modifiers_.${option.id}`)
+    const pdf = game.i18n.localize(`GURPS.modifiers_.pdf.${option.id}`)
+
+    return `[${option.mod} ${label}${option.suffix ?? ''}] [PDF:${pdf}]`
+  },
+
   get MeleeMods() {
-    return [
-      `[+4 ${game.i18n.localize('GURPS.modifiers_.aoaDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaDetermined')}]`,
-      `[+2 ${game.i18n.localize('GURPS.modifiers_.aoaStrong')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaStrong')}]`,
-      `[+2 ${game.i18n.localize('GURPS.modifiers_.committedDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedDetermined')}]`,
-      `[+1 ${game.i18n.localize('GURPS.modifiers_.committedStrong')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedStrong')}]`,
-      `[+4 ${game.i18n.localize('GURPS.modifiers_.telegraphic')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.telegraphic')}]`,
-      `[-4 ${game.i18n.localize('GURPS.modifiers_.moveAndAttack')} *Max:9] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.moveAndAttack')}]`,
-      `[-2 ${game.i18n.localize('GURPS.modifiers_.deceptive')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.deceptive')}]`,
-      `[-2 ${game.i18n.localize('GURPS.modifiers_.defensive')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defensive')}]`,
-      `[-6 ${game.i18n.localize('GURPS.modifiers_.rapidStrike')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.rapidStrike')}]`,
-    ]
+    return this._maneuverOptions('melee').map(option => this._maneuverOtf(option))
   },
 
   get RangedMods() {
-    const useOnTarget = Combat.isUsingOnTarget()
+    const options = this._maneuverOptions('ranged')
+    const mods = []
 
-    const rangedMods = [
-      `[+1 ${game.i18n.localize('GURPS.modifiers_.aim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aim')}]`,
-      `[–2 ${game.i18n.localize('GURPS.modifiers_.popup')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.popup')}]`,
-      `[+1 ${game.i18n.localize('GURPS.modifiers_.aoaRangedDetermined')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaRangedDetermined')}]`,
-    ]
+    for (const [index, option] of options.entries()) {
+      // The On Target aiming options are grouped under their own heading within the Ranged section.
+      if (option.requiresOnTarget && !options[index - 1]?.requiresOnTarget)
+        mods.push(horiz(game.i18n.localize('GURPS.modifiers_.onTargetAiming')))
 
-    if (useOnTarget) {
-      rangedMods.push(
-        `${horiz(game.i18n.localize('GURPS.modifiers_.onTargetAiming'))}`,
-        `[+2 ${game.i18n.localize('GURPS.modifiers_.aoaRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aoaRanged')}]`,
-        `[+1 ${game.i18n.localize('GURPS.modifiers_.committedRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedRanged')}]`,
-        `[+4 ${game.i18n.localize('GURPS.modifiers_.allOutAim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.allOutAim')}]`,
-        `[+2 ${game.i18n.localize('GURPS.modifiers_.allOutAimBraced')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.allOutAimBraced')}]`,
-        `[+2 ${game.i18n.localize('GURPS.modifiers_.committedAim')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAim')}]`,
-        `[+1 ${game.i18n.localize('GURPS.modifiers_.committedAimBraced')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAimBraced')}]`
-      )
+      mods.push(this._maneuverOtf(option))
     }
 
-    return rangedMods
+    return mods
   },
 
   get DefenseMods() {
-    const useOnTarget = Combat.isUsingOnTarget()
-
-    const defenseMods = [
-      `[+2 ${game.i18n.localize('GURPS.modifiers_.aodIncreased')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.aodIncreased')}]`,
-      `[+1 ${game.i18n.localize('GURPS.modifiers_.shieldDB')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.shieldDB')}]`,
-      `[+2 ${game.i18n.localize('GURPS.modifiers_.dodgeAcrobatic')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAcrobatic')}]`,
-      `[+3 ${game.i18n.localize('GURPS.modifiers_.dodgeAndDrop')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAndDrop')}]`,
-      `[+3 ${game.i18n.localize('GURPS.modifiers_.dodgeRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeRetreat')}]`,
-      `[+1 ${game.i18n.localize('GURPS.modifiers_.blockRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.blockRetreat')}]`,
-      `[+3 ${game.i18n.localize('GURPS.modifiers_.fencingRetreat')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.fencingRetreat')}]`,
-      `[+1 ${game.i18n.localize('GURPS.modifiers_.defensiveDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defensiveDefense')}]`,
-      `[-2 ${game.i18n.localize('GURPS.modifiers_.dodgeAcrobaticFail')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.dodgeAcrobaticFail')}]`,
-      `[-2 ${game.i18n.localize('GURPS.modifiers_.defenseSide')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.defenseSide')}]`,
-      `[-1 ${game.i18n.localize('GURPS.modifiers_.deceptiveDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.deceptiveDefense')}]`,
-      `[–1 ${game.i18n.localize('GURPS.modifiers_.riposte')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.riposte')}]`,
-    ]
-
-    if (useOnTarget) {
-      defenseMods.push(
-        `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAimDefense')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAimDefense')}]`,
-        `[-2 ${game.i18n.localize('GURPS.modifiers_.committedAttackRanged')}] [PDF:${game.i18n.localize('GURPS.modifiers_.pdf.committedAttackRanged')}]`,
-      )
-    }
-
-    return defenseMods
+    return this._maneuverOptions('defense').map(option => this._maneuverOtf(option))
   },
 
   get OtherMods1() {
