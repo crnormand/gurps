@@ -7,11 +7,14 @@ export class GurpsCombat<SubType extends Combat.SubType = Combat.SubType> extend
     user: User.Stored
   ): Promise<boolean | void> {
     await super._preDelete(options, user)
+
     if (user.id === game.user?.id) {
       for (const combatant of this.combatants) {
         const tokenId = combatant.token?.id ?? null
+
         if (tokenId === null) continue
         const token = canvas?.tokens?.get(tokenId)
+
         if (token) {
           await token.removeManeuver()
         }
@@ -32,6 +35,7 @@ const resetTokenActionsForCombatant = async (combatant: Combatant): Promise<void
 
   const token = canvas?.tokens?.get(combatant.token?.id)
   const actions = await TokenActions.fromToken(token)
+
   await actions.clear()
 }
 
@@ -52,13 +56,16 @@ export async function handleCombatTurnChange(
   if (newTurn.tokenId === null) return
 
   const token = canvas.tokens.get(newTurn.tokenId)
+
   if (!token) {
     console.warn(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - token not found: ${newTurn.tokenId}`)
+
     return
   }
 
   console.info(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
 
   const actions = await TokenActions.fromToken(token)
+
   await actions.newTurn(newTurn.round)
 }

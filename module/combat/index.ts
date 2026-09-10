@@ -15,7 +15,7 @@ import {
   registerCombatSettings,
   useSizeModifierDifferenceInMelee,
 } from './settings.js'
-import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from './types.ts'
+import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from './types.js'
 
 export interface GurpsCombatModule extends GurpsModule {
   getInitiativeFormula: () => string
@@ -30,6 +30,7 @@ export interface GurpsCombatModule extends GurpsModule {
 
 function init() {
   console.log('GURPS | Initializing GURPS Combat module.')
+
   Hooks.once('init', () => {
     CONFIG.Combat.documentClass = GurpsCombat
     CONFIG.Combatant.documentClass = GurpsCombatant

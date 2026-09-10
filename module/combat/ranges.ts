@@ -5,30 +5,30 @@ import { Modifier } from '../modifier-bucket/bucket-app.js'
 import { getRangeStrategy } from './settings.ts'
 /*
   Defines the range strategy used throughout the application. A range strategy
-  is defined as an ordered (closest range to farthest range) array of range 
+  is defined as an ordered (closest range to farthest range) array of range
   bands. A range band is defined as a structure like this:
 
   {
 	moddesc: <String: text to use in the modifier bucket>,
-	max: <num: number of yards that define the maximum distance of this band>,				
+	max: <num: number of yards that define the maximum distance of this band>,
 	penalty: <num: modifier to use for ranged attacks in this band>,
 	desc: <String: text that describes the range>
   }
 
   Responsibilities:
 
-  - Defines a world setting to set the range strategy. Currently supported: 
+  - Defines a world setting to set the range strategy. Currently supported:
 	  * Standard (Size and Speed/Range Table from Basic).
 	  * Simplified (Range bands from Monster Hunters 2: The Enemy).
 	  * -1 per 10 yards
-   
+
   - On update of the setting, update the modifier bucket and all actors.
 
-  - On start up (a 'ready' hook) set the range bands and modifiers based 
-	on the current setting value.
-    
-  - Maintains an instance variable (ranges) that contains the current set of 
-	range bands based on the chosen strategy. 
+  - On start up (a 'ready' hook) set the range bands and modifiers based
+  	on the current setting value.
+
+  - Maintains an instance variable (ranges) that contains the current set of
+	range bands based on the chosen strategy.
 
   - Maintains an instance variable (modifiers) that contains an array of 
 	modifier text for the modifier bucket.
@@ -55,7 +55,7 @@ export class GurpsRange {
     const basicSetRanges: RangeData[] = []
 
     // Yes, I should be able to do this programatically... but my brain hurts right now, so there.
-    const r = [
+    const rangeAndPenalty = [
       2,
       0,
       3,
@@ -90,15 +90,17 @@ export class GurpsRange {
       -15,
     ]
 
-    for (let i = 0; i < r.length; i = i + 2) {
-      let d = {
-        moddesc: game.i18n?.format('GURPS.modifierRange', { range: r[i].toLocaleString() }),
-        max: r[i],
-        penalty: r[i + 1],
-        description: `${r[i]} yds`,
+    for (let i = 0; i < rangeAndPenalty.length; i = i + 2) {
+      const rangeBand = {
+        moddesc: game.i18n?.format('GURPS.modifierRange', { range: rangeAndPenalty[i].toLocaleString() }),
+        max: rangeAndPenalty[i],
+        penalty: rangeAndPenalty[i + 1],
+        description: `${rangeAndPenalty[i]} yds`,
       }
-      basicSetRanges.push(d)
+
+      basicSetRanges.push(rangeBand)
     }
+
     return basicSetRanges
   }
 
@@ -135,11 +137,13 @@ export class GurpsRange {
         description: game.i18n?.localize('GURPS.modifierRangeMHExtremeDesc'),
       },
     ]
+
     return monsterHunter2Ranges
   }
 
   static get penaltiesPerTenRanges() {
     const penaltiesPerTenRanges: RangeData[] = []
+
     for (let i = 0; i < 50; i++) {
       penaltiesPerTenRanges.push({
         moddesc: game.i18n?.format('GURPS.modifierRange', { range: ((i + 1) * 10).toLocaleString() }),
@@ -148,11 +152,13 @@ export class GurpsRange {
         description: `${(i + 1) * 10} yds`,
       })
     }
+
     return penaltiesPerTenRanges
   }
 
   _buildModifiers() {
-    let tempModifiers: Modifier[] = []
+    const tempModifiers: Modifier[] = []
+
     this.ranges.forEach(band => {
       if (band.penalty != 0)
         // @ts-expect-error: tempModifiers is not part of the original method signature
@@ -162,7 +168,8 @@ export class GurpsRange {
   }
 
   async update() {
-    let currentValue = getRangeStrategy() ?? 'Standard'
+    const currentValue = getRangeStrategy() ?? 'Standard'
+
     console.debug(currentValue)
 
     switch (currentValue) {
@@ -174,6 +181,7 @@ export class GurpsRange {
         this.ranges = GurpsRange.penaltiesPerTenRanges
         break
       }
+
       default: {
         this.ranges = GurpsRange.monsterHunter2Ranges
         break
@@ -183,9 +191,9 @@ export class GurpsRange {
     this._buildModifiers()
 
     // update modifier bucket
-    if (!!GURPS.ModifierBucket) GURPS.ModifierBucket.refresh()
+    if (GURPS.ModifierBucket) GURPS.ModifierBucket.refresh()
 
-    // TODO - Why are we updating all actors here? This might not be necessary.
+    // TODO - Why are we updating all actors here? This might not be necessary. They don't even have a `ranges` property.
     // for (const actor of game.actors?.contents ?? []) {
     //   if (actor.permission >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)
     //     // Return true if the current game user has observer or owner rights to an actor

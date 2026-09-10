@@ -16,7 +16,7 @@ import {
   OLD_SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE,
   OLD_SETTING_RANGE_STRATEGY,
   OLD_SETTING_INITIATIVE_FORMULA,
-} from './types.ts'
+} from './types.js'
 
 export function migrate(): void {
   if (game.user?.isGM) {

@@ -281,9 +281,8 @@ const maneuvers = {
   }),
   aod_double: new Maneuver({
     name: 'aod_double',
-    altImg: 'man-defense.png',
     img: 'man-def-double.png',
-    img: 'man-defense.png',
+    altImg: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDouble',
     altLabel: 'GURPS.maneuverAllOutDefense',
   }),
@@ -361,6 +360,7 @@ export default class Maneuvers {
    */
   static getManeuver(maneuverText = 'do_nothing') {
     if (maneuverText === 'undefined') maneuverText = 'do_nothing'
+
     return Maneuvers.getAll()[maneuverText].data
   }
 
@@ -376,6 +376,7 @@ export default class Maneuvers {
     const useOnTarget = isUsingOnTarget()
 
     const filter = []
+
     if (useOnTarget) {
       filter.push(MANEUVER_INTRODUCED_BY_ON_TARGET)
     }
