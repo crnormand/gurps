@@ -176,8 +176,11 @@ export function maneuverUpdatesMove(fallback: boolean = false): boolean {
   return !!game.settings?.get(GURPS.SYSTEM_NAME, SETTING_MANEUVER_UPDATES_MOVE) || fallback
 }
 
-export function getRollBasedOnManeuverPolicy(): RollBasedOnManeuverPolicy {
-  return game.settings?.get(GURPS.SYSTEM_NAME, SETTING_ALLOW_ROLL_BASED_ON_MANEUVER) as RollBasedOnManeuverPolicy
+export function getRollBasedOnManeuverPolicy(fallback: RollBasedOnManeuverPolicy = 'Warn'): RollBasedOnManeuverPolicy {
+  return (
+    (game.settings?.get(GURPS.SYSTEM_NAME, SETTING_ALLOW_ROLL_BASED_ON_MANEUVER) as RollBasedOnManeuverPolicy) ||
+    fallback
+  )
 }
 
 export function useSizeModifierDifferenceInMelee(fallback: boolean = false): boolean {

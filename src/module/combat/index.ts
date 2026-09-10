@@ -1,5 +1,6 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
+import { enabledOptions } from './combat-options.js'
 import { GurpsCombat, handleCombatTurnChange, resetTokenActions } from './combat.js'
 import { GurpsCombatant } from './combatant.js'
 import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.js'
@@ -26,17 +27,17 @@ import {
   maneuverUpdatesMove,
   useSizeModifierDifferenceInMelee,
 } from './settings.js'
-import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from './types.js'
 
 export interface GurpsCombatModule extends GurpsModule {
-  getInitiativeFormula: () => string
-  getManeuverDetail: () => ManeuverDetail
-  getManeuverVisibility: () => ManeuverVisibility
-  getRangeStrategy: (fallback: RangeStrategy) => RangeStrategy
-  getRollBasedOnManeuverPolicy: (fallback: RollBasedOnManeuverPolicy) => RollBasedOnManeuverPolicy
-  isUsingOnTarget: () => boolean
-  maneuverUpdatesMove: (fallback: boolean) => boolean
-  useSizeModifierDifferenceInMelee: () => boolean
+  getInitiativeFormula: typeof getInitiativeFormula
+  getManeuverDetail: typeof getManeuverDetail
+  getManeuverVisibility: typeof getManeuverVisibility
+  getRangeStrategy: typeof getRangeStrategy
+  getRollBasedOnManeuverPolicy: typeof getRollBasedOnManeuverPolicy
+  isUsingOnTarget: typeof isUsingOnTarget
+  maneuverUpdatesMove: typeof maneuverUpdatesMove
+  useSizeModifierDifferenceInMelee: typeof useSizeModifierDifferenceInMelee
+  enabledOptions: typeof enabledOptions
   Movement: Record<string, string>
   Maneuvers: typeof Maneuvers
 }
@@ -103,6 +104,9 @@ export const Combat: GurpsCombatModule = {
   },
 
   Maneuvers,
+
+  // -- Combat options and Modifiers --
+  enabledOptions,
 }
 
 export const PROPERTY_MOVEOVERRIDE_MANEUVER = 'system.moveoverride.maneuver'
