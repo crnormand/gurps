@@ -3,7 +3,9 @@ import { Weight, WeightUnit } from '@module/data/common/weight.js'
 
 import { ScriptAttribute, ScriptEntity, ScriptGlobal } from './adapters/index.js'
 import { ScriptInterpreter } from './interpreter.js'
-import { ResolverCache, ScriptEnvironment, SelfProvider, GLOBAL_RESOLVER_CACHE } from './types.js'
+import { ResolverCache, ScriptEnvironment, SelfProvider } from './types.js'
+
+const globalResolverCache: ResolverCache = new Map()
 
 class ScriptResolver {
   static MAXIMUM_ALLOWED_DEPTH = 20
@@ -17,14 +19,6 @@ class ScriptResolver {
   constructor() {
     this.depth = 0
   }
-
-  get globalResolverCache(): ResolverCache {
-    if (!game.settings) return new Map()
-
-    return game.settings.get(GURPS.SYSTEM_NAME, GLOBAL_RESOLVER_CACHE)
-  }
-
-  /* ---------------------------------------- */
 
   static resolveToNumber(actor: Actor.Implementation | null, selfProvider: SelfProvider<any>, script: string): number {
     script = script.trim()
@@ -97,7 +91,7 @@ class ScriptResolver {
         return ''
       }
 
-      let resolverCache = this.globalResolverCache
+      let resolverCache = globalResolverCache
 
       if (actor && actor.isOfType(ActorType.GcsCharacter)) {
         resolverCache = actor.system.resolverCache

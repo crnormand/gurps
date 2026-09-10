@@ -175,16 +175,6 @@ class ModelCollection<Model extends PseudoDocument.Any = PseudoDocument.Any> ext
   /* -------------------------------------------------- */
 
   /**
-   * Test the given predicate against every entry in the Collection.
-   * @param  predicate   The predicate.
-   */
-  every(predicate: (arg0: any, arg1: number, arg2: ModelCollection<Model>) => boolean): boolean {
-    return this.reduce((pass, value, index) => pass && predicate(value, index, this), true)
-  }
-
-  /* -------------------------------------------------- */
-
-  /**
    * Convert the ModelCollection to an array of simple objects.
    * @returns The extracted array of primitive objects.
    */
