@@ -9,7 +9,7 @@ import {
   DisplaySpell,
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
-import {Combat} from '@module/combat/index.js'
+import { Combat } from '@module/combat/index.js'
 import { Weight } from '@module/data/common/weight.js'
 import type { ModelCollection } from '@module/data/model-collection.js'
 import { PostureType } from '@module/effects/posture.js'
