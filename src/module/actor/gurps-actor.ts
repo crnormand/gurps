@@ -792,7 +792,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async canRoll(
     // TODO: replace with action
     action: AnyObject, // Action parsed from OTF
-    token: Token.Implementation, // Actor Token
+    token: Token.Implementation | null, // Actor Token
     chatThing?: string, // String representation of the action
     actorComponent?: AnyObject // Actor Component for the action
   ): Promise<CanRollResult> {

@@ -1324,7 +1324,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     accumulators.splice(index, 1)
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
-    await GURPS.performAction(accumulator as unknown as OtfAction, GURPS.LastActor)
+    await GURPS.performAction({ ...accumulator, type: OtfActionType.damage } as OtfAction, GURPS.LastActor)
   }
 
   /* ---------------------------------------- */

@@ -1,4 +1,4 @@
-import { ActionFuncContext, actionFuncs } from './actionFuncs.ts'
+import { ActionFuncContext, actionFuncs } from './actionFuncs.js'
 import { findBestActionInChain, findBestActionInChainSync } from './best-action.js'
 import { CalcOnlyAction, OtfAction } from './types.js'
 

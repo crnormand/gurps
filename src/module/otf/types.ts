@@ -82,7 +82,7 @@ type CheckExistsAction = {
   name: string
 } & BaseAction
 
-type AtributteRollAction = {
+type AttributeRollAction = {
   type: typeof OtfActionType.attribute
   attribute: string
   attrkey: string
@@ -191,7 +191,7 @@ export type OtfAction =
   | DragDropAction
   | ControlRollAction
   | CheckExistsAction
-  | AtributteRollAction
+  | AttributeRollAction
   | SkillSpellRollAction
   | AttackAction
   | AttackDamageAction
@@ -204,7 +204,7 @@ export type OtfAction =
 
 export type OtfRollAction =
   | ControlRollAction
-  | AtributteRollAction
+  | AttributeRollAction
   | SkillSpellRollAction
   | AttackAction
   | ParryAction

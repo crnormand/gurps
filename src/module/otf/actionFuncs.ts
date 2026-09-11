@@ -66,8 +66,8 @@ export const actionFuncs: Record<string, actionFunc> = {
     else {
       const match = action.equation?.match(/ *([=<>]+) *([+-]?[\d.]+)/)
 
-      if (!Array.isArray(match) || match.length != 2) {
-        ui.notifications?.warn('equation for fi test could not be parsed')
+      if (!Array.isArray(match) || match.length < 3) {
+        ui.notifications?.warn('equation for if test could not be parsed')
 
         return false
       }
@@ -185,7 +185,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       let canRoll = { canRoll: true, targetMessage: '' }
       const token = getTokenForActor(actor) ?? null
 
-      if (actor && token) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
+      if (actor) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
 
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
@@ -210,7 +210,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       let displayFormula = action.formula ?? ''
 
       if (actor && taggedSettings?.autoAdd) {
-        await actor.addTaggedRollModifiers('', { obj: action })
+        await actor.addTaggedRollModifiers('', { action }, action.att )
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
@@ -276,14 +276,14 @@ export const actionFuncs: Record<string, actionFunc> = {
       let displayFormula = formula
 
       if (actor && taggedSettings?.autoAdd) {
-        await actor.addTaggedRollModifiers('', { action })
+        await actor.addTaggedRollModifiers('', { action }, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
       let canRoll = { canRoll: true, targetMessage: '' }
       const token = getTokenForActor(actor) ?? null
 
-      if (actor && token) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
+      if (actor) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
 
       if (!canRoll.canRoll) {
         if (canRoll.targetMessage) {
@@ -357,8 +357,9 @@ export const actionFuncs: Record<string, actionFunc> = {
     dam.action.mod = action.mod
     dam.action.desc = action.desc
     dam.action.att = att
+    dam.action.blindroll = action.blindroll
 
-    return !!GURPS.performAction(dam.action, actor, event, targets)
+    return GURPS.performAction(dam.action, actor, event, targets)
   },
 
   roll({ action, actor, event, calcOnly }: actionFuncParams) {
