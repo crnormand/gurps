@@ -1,3 +1,4 @@
+import slugify from '../lib/slugify/slugify.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import { zeroFill } from '../lib/utilities.js'
 
@@ -85,20 +86,28 @@ export class ItemImporter {
       return ui.notifications.error('The file you uploaded is not of the right version!')
     }
 
-    const compendiumName = filename.replace(/ /g, '_')
+    // TODO: In v1.0.0, don't slugify the name, instead ask the user to select a compendium to overwrite.
+    // Map foreign characters to ASCII equivalents for the compendium name.
+    const compendiumName = slugify(filename, '_')
+
     let pack = game.packs.find(p => p.metadata.name === compendiumName)
-    if (!pack)
-      pack = await CompendiumCollection.createCompendium({
+
+    if (!pack) {
+      pack = await foundry.documents.collections.CompendiumCollection.createCompendium({
         type: 'Item',
         label: filename,
         name: compendiumName,
         package: 'world',
       })
+    }
+
     let timestamp = new Date()
     ui.notifications.info('Importing Items from ' + filename + '...')
+
     for (let i of j.rows) {
       await this._importItem(i, pack, compendiumName, timestamp)
     }
+
     ui.notifications.info('Finished Importing ' + this.count + ' Items!')
   }
 

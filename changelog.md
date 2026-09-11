@@ -11,6 +11,7 @@
 ### Bugfixes
 
 - Fixed another Move Mode editor problem ... yikes!
+- Cannot create a Compendium with a name that is non-ASCii \#2923
 
 ## Release 0.18.23 08/29/2026
 
