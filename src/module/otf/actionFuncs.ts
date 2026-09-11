@@ -105,7 +105,7 @@ export const actionFuncs: Record<string, actionFunc> = {
     return true
   },
 
-  async chat({ action, actor, event, calcOnly }: actionFuncParams) {
+  chat({ action, actor, event, calcOnly }: actionFuncParams) {
     if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.chat) return false
     if (!event) return false
@@ -122,7 +122,7 @@ export const actionFuncs: Record<string, actionFunc> = {
 
     if (actor) GURPS.SetLastActor(actor) // try to ensure the correct last actor.
     // @ts-expect-error - custom chatmsgData property added to MouseEvent
-    const ret = await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+    const ret = !!(await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event))
 
     if (savedActor) GURPS.SetLastActor(savedActor)
 
@@ -210,7 +210,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       let displayFormula = action.formula ?? ''
 
       if (actor && taggedSettings?.autoAdd) {
-        await actor.addTaggedRollModifiers('', { action }, action.att )
+        await actor.addTaggedRollModifiers('', { action }, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
