@@ -26,52 +26,52 @@ Global Override body {
 .system-gurps {
   --gga-darkgreen-color: #2f5b3f;
 
-  --gga-pdflink-color: #003c6d;
+  --gga-pdflink-color: #005a8b;
 
-  --gga-rollable-background: #ffffbe;
-  --gga-rollable-background-hover: gold;
+  --gga-rollable-background: #fff3bf;
+  --gga-rollable-background-hover: #ffcf5c;
 
-  --gga-gmod-background: rgb(255, 230, 190);
-  --gga-gmod-background-hover: orange;
+  --gga-gmod-background: #e3f2f9;
+  --gga-gmod-background-hover: #b9e0f2;
 
-  --gga-gurpslink-color: rgb(121, 107, 73);
-  --gga-gurpslink-color-hover: #252320;
-  --gga-gurpslink-background: lightgoldenrodyellow;
-  --gga-gurpslink-bordercolor: hsl(43, 89%, 38%);
+  --gga-gurpslink-color: #4a3a00;
+  --gga-gurpslink-color-hover: #1f1a00;
+  --gga-gurpslink-background: #fff3bf;
+  --gga-gurpslink-bordercolor: #9a6700;
 
-  --gga-glinkmod-background: #e0e0e0;
-  --gga-glinkmod-bordercolor: grey;
-  --gga-glinkmod-color-hover: #252320;
+  --gga-glinkmod-background: #eef1f3;
+  --gga-glinkmod-bordercolor: #5c6770;
+  --gga-glinkmod-color-hover: #182026;
 
-  --gga-glinkmodplus-background: #d0ffd0;
-  --gga-glinkmodplus-bordercolor: darkgreen;
-  --gga-glinkmodplus-color: var(--gga-darkgreen-color);
-  --gga-glinkmodplus-background-hover: lightgreen;
+  --gga-glinkmodplus-background: #e0f5f7;
+  --gga-glinkmodplus-bordercolor: #006d77;
+  --gga-glinkmodplus-color: #006d77;
+  --gga-glinkmodplus-background-hover: #a9e0e6;
 
-  --gga-glinkmodminus-background: rgb(255, 207, 214);
-  --gga-glinkmodminus-bordercolor: rgb(122, 21, 21);
-  --gga-glinkmodminus-color: firebrick;
-  --gga-glinkmodminus-background-hover: #ff999f;
-  --gga-glinkmodminus-popup-color: hotpink;
+  --gga-glinkmodminus-background: #fff0e0;
+  --gga-glinkmodminus-bordercolor: #9c4a00;
+  --gga-glinkmodminus-color: #7a3900;
+  --gga-glinkmodminus-background-hover: #ffd09a;
+  --gga-glinkmodminus-popup-color: #9c4a00;
 }
 
 .system-gurps.theme-dark {
-  --gga-pdflink-color: #6cb4ee;
+  --gga-pdflink-color: #8bd3f7;
 
-  --gga-gurpslink-color: hsl(43, 25%, 10%);
-  --gga-gurpslink-color-hover: hsl(43, 25%, 20%);
-  --gga-gurpslink-background: hsl(43, 70%, 70%);
-  --gga-gurpslink-bordercolor: hsl(43, 25%, 20%);
+  --gga-gurpslink-color: #211a00;
+  --gga-gurpslink-color-hover: #000000;
+  --gga-gurpslink-background: #ffcf5c;
+  --gga-gurpslink-bordercolor: #4a3a00;
 
-  --gga-glinkmodplus-color: #d0ffd0;
-  --gga-glinkmodplus-background-hover: #43825a;
-  --gga-glinkmodplus-background: #2e5a3e;
-  --gga-glinkmodplus-bordercolor: #093515;
+  --gga-glinkmodplus-color: #e8f7ff;
+  --gga-glinkmodplus-background-hover: #008c99;
+  --gga-glinkmodplus-background: #006d77;
+  --gga-glinkmodplus-bordercolor: #a8edf2;
 
-  --gga-glinkmodminus-color: #ffd6d6;
-  --gga-glinkmodminus-background-hover: #7a1515;
-  --gga-glinkmodminus-background: #b22222;
-  --gga-glinkmodminus-bordercolor: #300707;
+  --gga-glinkmodminus-color: #fff5eb;
+  --gga-glinkmodminus-background-hover: #b95000;
+  --gga-glinkmodminus-background: #8a3e00;
+  --gga-glinkmodminus-bordercolor: #ffd09a;
 }
 
 .system-gurps .control-icon[data-palette='maneuvers'] img,
