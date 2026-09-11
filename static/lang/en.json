@@ -452,7 +452,7 @@
     "atLeast": "At least",
     "atNextTurn": "At Next Turn",
     "attackRoll": "Attack Roll",
-    "attackTab": "Attacks (press Ctrl to roll damage)",
+    "attackTab": "Attacks",
     "attributes": "Attributes",
     "attributesDX": "DX",
     "attributesDXNAME": "Dexterity",
@@ -510,6 +510,14 @@
     "cancel": "Cancel",
     "cannotDragNonFoundryEqt": "You cannot drag non-Foundry equipment to another character.",
     "cannotDropItemAlreadyExists": "You already have this item.",
+    "canvas": {
+      "settings": {
+        "useBookRegionRadius": {
+          "hint": "If checked, the displayed radius of circular Measured Templates is increased by 0.5 yards to comply with B239, which defines a radius of 1 as consisting of a single hex.",
+          "name": "Use Book Region Radius"
+        }
+      }
+    },
     "carryOnBack": "Carry on Back",
     "changelog": {
       "dontShowAgain": "Don't show README again",

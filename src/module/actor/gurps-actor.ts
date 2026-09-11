@@ -1,4 +1,5 @@
 import { fields, Document } from '@gurps-types/foundry/index.js'
+import { Combat } from '@module/combat/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PostureType, statusIsPosture } from '@module/effects/posture.js'
 import { ItemMetadata } from '@module/item/data/base.js'
@@ -19,7 +20,6 @@ import { TokenActions } from '../token-actions.js'
 
 import { ActorMetadata, BaseActorModel } from './data/base.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
-import Maneuvers from './maneuver.js'
 import { runSourceMigrations } from './migrate.js'
 import { ActorType, CanRollResult, CheckInfo } from './types.js'
 
@@ -600,7 +600,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
       if (maneuverEffect) {
         // If there is a maneuver effect, set what's visible to the user based on his role and the world settings.
-        const visibility = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
+        const visibility = Combat.getManeuverVisibility()
 
         if (visibility === 'NoOne') maneuverEffect.showIcon = 0
 
@@ -614,7 +614,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
         // If the current user is neither GM nor actor owner, display the alternate image if available UNLESS the
         // detail setting is "Full".
-        const detail = game.settings?.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
+        const detail = Combat.getManeuverDetail()
 
         if (detail !== 'Full' && !game.user?.isGM && !maneuverEffect.isOwner) {
           maneuverEffect.img = maneuverEffect.getFlag('gurps', 'altImg') ?? maneuverEffect.img
@@ -704,27 +704,20 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
 
   /* ---------------------------------------- */
 
-  // @ts-expect-error: Actor._cleanData is defined in v14 but not v13
-  static override _cleanData(
-    data: AnyMutableObject = {},
-    options: fields.DataField.CleanOptions = {},
-    _state: AnyMutableObject = {}
-  ): AnyMutableObject {
-    // @ts-expect-error: Actor._cleanData is defined in v14 but not v13
+  protected static override _cleanData(
+    data: object,
+    options: fields.DataField.CleanOptions,
+    _state: fields.DataField.UpdateState
+  ): void {
     super._cleanData(data, options, _state)
 
-    // migrateData may change the document type (e.g. "enemy" → "character") after Foundry has
-    // already captured _state.documentType. TypeDataField._cleanType then uses the stale type
-    // and, finding no DataModel for it, skips CharacterData.cleanData entirely — leaving partial
-    // collection entries (hitlocationsV2, allNotes, …) without their schema defaults.
-    // _cleanData runs after the schema pass, so we can re-clean with the actual post-migration type.
-    if (data.type === _state.documentType || !isObject(data.system)) return data
+    const source = data as AnyMutableObject
 
-    const systemModel = Object.entries(CONFIG.Actor.dataModels).find(([type]) => type === data.type)?.[1]
+    if (source.type === _state.documentType || !isObject(source.system)) return
 
-    systemModel?.cleanData(data.system, { partial: false })
+    const systemModel = Object.entries(CONFIG.Actor.dataModels).find(([type]) => type === source.type)?.[1]
 
-    return data
+    systemModel?.cleanData(source.system, { partial: false })
   }
 
   /* ---------------------------------------- */
@@ -844,9 +837,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
     // If the current maneuver is invalid for the action, add a warning message to the
     // result and set canRoll to false depending on the maneuver settings
     if ((!actions.canAttack && isAttack) || (!actions.canDefend && isDefense)) {
-      const maneuver = game.i18n?.localize(Maneuvers.getManeuver(actions.currentManeuver).label) ?? ''
+      const maneuver = game.i18n?.localize(Combat.Maneuvers.getManeuver(actions.currentManeuver).label) ?? ''
       const rollTypeLabel = game.i18n?.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll') ?? ''
-      const checkManeuverSetting = this.getSetting(Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER, 'Warn')
+      const checkManeuverSetting = Combat.getRollBasedOnManeuverPolicy('Warn')
 
       const message =
         checkManeuverSetting !== 'Allow'

@@ -452,7 +452,7 @@
     "atLeast": "Au moins",
     "atNextTurn": "Au prochain tour",
     "attackRoll": "Jet d'Attaque",
-    "attackTab": "Attaques (appuyez sur Ctrl pour lancer les dégâts)",
+    "attackTab": "Attaques",
     "attributes": "Caractéristiques",
     "attributesDX": "DX",
     "attributesDXNAME": "Dextérité",
@@ -510,6 +510,14 @@
     "cancel": "Annuler",
     "cannotDragNonFoundryEqt": "Vous ne pouvez pas glisser-déposer de l'équipement non-Foundry sur un autre personnage",
     "cannotDropItemAlreadyExists": "Vous avez déjà cet objet.",
+    "canvas": {
+      "settings": {
+        "useBookRegionRadius": {
+          "hint": "Si cette option est activée, le rayon affiché des gabarits de mesure circulaires est augmenté de 0,5 yard afin de respecter B239, qui définit un rayon de 1 comme correspondant à un seul hexagone.",
+          "name": "Utiliser le rayon de région du livre"
+        }
+      }
+    },
     "carryOnBack": "Porté sur le dos",
     "changelog": {
       "dontShowAgain": "Ne plus montrer le Lisez-moi",

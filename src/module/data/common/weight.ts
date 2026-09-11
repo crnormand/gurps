@@ -31,8 +31,8 @@ type WeightSchema = ReturnType<typeof weightSchema>
 
 class Weight<Parent extends DataModel.Any | null = DataModel.Any | null> extends DataModel<WeightSchema, Parent> {
   // Provide a Constructor for the Weight class to allow for testing.
-  constructor(data: { value: number; unit: WeightUnit }, parent?: Parent) {
-    super(data, parent === null ? undefined : parent)
+  constructor(data: { value: number; unit: WeightUnit }, options?: DataModel.ConstructionContext<Parent>) {
+    super(data, options)
     this.value = data.value
     this.unit = data.unit
   }
@@ -275,7 +275,7 @@ class WeightField<
 
   /* ---------------------------------------- */
 
-  protected override _toInput(config: fields.DataField.ToInputConfig<InitializedType>): HTMLElement | HTMLCollection {
+  protected override _toInput(config: fields.DataField.ToInputConfig<this>): HTMLElement | HTMLCollection {
     const required = config.required === null ? undefined : config.required
     const stringConfig: fields.StringField.Options = { ...config, required }
 

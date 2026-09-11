@@ -9,6 +9,7 @@ import {
   DisplaySpell,
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
+import { Combat } from '@module/combat/index.js'
 import { Weight } from '@module/data/common/weight.js'
 import type { ModelCollection } from '@module/data/model-collection.js'
 import { PostureType } from '@module/effects/posture.js'
@@ -25,7 +26,6 @@ import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import type { MoveModeV2 } from '../data/move-mode.js'
-import Maneuvers from '../maneuver.js'
 import { ActorType } from '../types.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
@@ -230,8 +230,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     const sortKeys = this._prepareSortKeys()
 
-    // TODO: replace once Maneuvers is updated.
-    const maneuverChoices = Maneuvers.getAllData() as Record<string, { label: string }>
+    const maneuverChoices = Combat.Maneuvers.getAllData() as Record<string, { label: string }>
 
     const postureChoices = Object.fromEntries([
       ['standing', { label: 'GURPS.status.Standing' }],
@@ -747,10 +746,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected _createItemContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
     return [
       {
-        // @ts-expect-error: label replaces name in FoundryVTT v14 but fvtt-types is not up to date
         label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        // @ts-expect-error: visible replaces condition in FoundryVTT v14 but fvtt-types is not up to date
         visible: target => target.dataset.uuid !== undefined,
         callback: async target => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
@@ -767,10 +764,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected _createPseudoDocumentContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
     return [
       {
-        // @ts-expect-error: label replaces name in FoundryVTT v14 but fvtt-types is not up to date
         label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
-        // @ts-expect-error: visible replaces condition in FoundryVTT v14 but fvtt-types is not up to date
         visible: target => target.dataset.uuid !== undefined,
         callback: async target => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null

@@ -2,7 +2,7 @@ import type { CharacterModel, GcsCharacterModel, GcsLootModel } from '@module/ac
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import { ActorType } from '@module/actor/types.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
-import type { MapField } from '@module/data/fields/map-field.js'
+import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from '@module/combat/types.js'
 import type { GurpsActiveEffect } from '@module/effects/active-effect.js'
 import type {
   EquipmentModel,
@@ -97,7 +97,6 @@ declare module 'fvtt-types/configuration' {
   namespace Hooks {
     interface HookConfig {
       dropCanvasData: (canvas: Canvas, dropData: any) => void
-      applyActiveEffect: (actor: Actor.Implementation, change: any, options: any, user: User.Implementation) => void
     }
   }
 
@@ -108,6 +107,19 @@ declare module 'fvtt-types/configuration' {
 
     /** Bucket */
     'gurps.bucket-position': 'left' | 'right'
+
+    /** Canvas */
+    'gurps.canvas.useBookRegionRadius': foundry.data.fields.BooleanField
+
+    /** Combat **/
+    'gurps.combat.allow-roll-based-on-maneuver': RollBasedOnManeuverPolicy
+    'gurps.combat.initiative-formula': string
+    'gurps.combat.rangeStrategy': RangeStrategy
+    'gurps.combat.maneuver-detail': ManeuverDetail
+    'gurps.combat.maneuver-updates-move': boolean
+    'gurps.combat.maneuver-visibility': ManeuverVisibility
+    'gurps.combat.use-on-target': boolean
+    'gurps.combat.use-size-modifier-difference-in-melee': boolean
 
     /** Damage */
     'gurps.damage.apply-divisor': foundry.data.fields.BooleanField
@@ -151,21 +163,9 @@ declare module 'fvtt-types/configuration' {
     'gurps.dev.enableNonProductionDocumentTypes': foundry.data.fields.BooleanField
     'gurps.dev.showDebugInfo': foundry.data.fields.BooleanField
 
-    /** Scripting */
-    'gurps.scripting.globalResolverCache': MapField<
-      foundry.data.fields.StringField<{ required: true; nullable: false }>,
-      MapField<
-        foundry.data.fields.StringField<{ required: true; nullable: false }>,
-        foundry.data.fields.StringField<{ required: true; nullable: false }>,
-        { required: true; nullable: false }
-      >,
-      { required: true; nullable: false }
-    >
-
     /** Unsorted */
     'gurps.modify-dice-plus-adds': boolean
     'gurps.portrait-path': 'global' | 'world'
-    'gurps.rangeStrategy': 'Standard' | 'Simplified' | 'TenPenalties'
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.use-quick-rolls': AnyMutableObject
     'gurps.portrait-hp-tinting': boolean
@@ -174,15 +174,11 @@ declare module 'fvtt-types/configuration' {
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'
-    'gurps.allow-roll-based-on-maneuver': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-rolls-before-combat-start': 'Allow' | 'Warn' | 'Forbid'
     'gurps.allow-targeted-rolls': 'Allow' | 'Warn' | 'Forbid'
     'gurps.automatic-onethird': boolean
     'gurps.check-equipped': boolean
     'gurps.convert-ranged': boolean
-    'gurps.maneuver-detail': 'Full' | 'NoFeint' | 'General'
-    'gurps.maneuver-updates-move': boolean
-    'gurps.maneuver-visibility': 'NoOne' | 'GMAndOwner' | 'Everyone'
     'gurps.show-chat-reeling-tired': boolean
     'gurps.use-max-actions': 'Disable' | 'AllCombatant' | 'AllTokens'
     'gurps.use-quintessence': boolean
@@ -213,7 +209,6 @@ declare module 'fvtt-types/configuration' {
     'gurps.show-the-math': boolean
     'gurps.tracker-templates': new (options?: any) => Record<string, IResourceTrackerTemplate>
     'gurps.use-browser-importer': boolean
-    'gurps.use-size-modifier-difference-in-melee': boolean
     'gurps.automatic-encumbrance': boolean
   }
 }

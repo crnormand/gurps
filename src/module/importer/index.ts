@@ -45,6 +45,8 @@ const Importer: ImporterModule = {
  * Convenience accessors for GCS Importer settings.
  *
  * These are separate from the Module because they may be used with other importers.
+ *
+ * TODO: Move back to the Module. Other importers should adapt accordingly.
  */
 const ImportSettings = {
   get displayPreserveQuantity(): boolean {

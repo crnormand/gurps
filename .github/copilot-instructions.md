@@ -20,10 +20,10 @@ This document provides comprehensive guidance for AI coding agents working on th
 
 ### Document Structure
 
-The system follows Foundry's dual-architecture pattern:
+The system has completed the migration to V2 documents; there are no longer separate legacy `GurpsActor`/`GurpsItem` Document subclasses:
 
-1. **Legacy V1 Documents** (`GurpsActor`, `GurpsItem`) - Original JavaScript implementation in `module/actor/_actor.js` and `module/_item.js`
-2. **Modern V2 Documents** (`GurpsActorV2`, `GurpsItemV2`) - New TypeScript implementation in `module/actor/gurps-actor.ts` and `module/item/gurps-item.ts`
+1. **Modern V2 Documents** (`GurpsActorV2`, `GurpsItemV2`) - TypeScript implementation in `module/actor/gurps-actor.ts` and `module/item/gurps-item.ts`
+2. **V1 Compatibility Layer** - `module/actor/legacy/` and `module/item/legacy/` contain adapter interfaces (e.g. `actorv1-interface.ts`, `itemv1-interface.ts`, `skill-adapter.ts`) that let V2 models expose the shape old macros/modules expect, without a separate V1 Document class
 
 Key patterns:
 
@@ -72,6 +72,7 @@ module/
 3. Write unit tests for new functionality. Use table-driven unit tests (test.each) when possible.
 4. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate
 5. Use strict TypeScript settings - the project enforces noImplicitAny, strictNullChecks, and other strict flags
+6. Prefer importing ONLY the module's `index.js` or `index.ts` entry point rather than individual files within the module. `types.ts` is the only exception.
 
 #### File Extensions and Types
 
@@ -100,19 +101,11 @@ module/
 ##### Document Extensions
 
 ```typescript
-// V2 Pattern (preferred for new code)
+// V2 Pattern (all Actor/Item documents use this now)
 class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   override prepareBaseData(): void {
     super.prepareBaseData()
     // Custom preparation
-  }
-}
-
-// Legacy Pattern (maintain for compatibility)
-export class GurpsActor extends Actor {
-  prepareData() {
-    super.prepareData()
-    // Legacy preparation
   }
 }
 ```
@@ -251,8 +244,8 @@ export const Combat: GurpsModule = {
 
 ```typescript
 // Use type guards for runtime type checking
-function isGurpsActor(actor: Actor): actor is GurpsActor {
-  return actor.type === 'character' || actor.type === 'enemy'
+function isCharacterActor(actor: Actor): actor is Actor.OfType<ActorType.Character> {
+  return actor.type === ActorType.Character
 }
 ```
 
@@ -337,6 +330,11 @@ if (!global.game.settings) {
     get: vi.fn().mockReturnValue(false),
   }
 }
+
+// Combat/Combatant are extended at runtime (e.g. GurpsCombat extends Combat<SubType>),
+// so they need real global constructors, not just fvtt-types ambient types
+global.Combat = MockBaseCombat as unknown as typeof Combat
+global.Combatant = MockBaseCombatant as unknown as typeof Combatant
 ```
 
 #### Test Commands
@@ -378,9 +376,8 @@ The project includes tests organized to mirror the module structure:
 
 **Actor Tests:**
 
-- `test/module/actor/gurps-actor.test.ts` - GurpsActorV2 instantiation and parseItemKey utility tests
-- `test/module/actor/gurps-actor-preupdate.test.ts` - GurpsActorV2.\_preUpdate method (legacy data translation)
-- `test/module/actor/gurps-actor-moveitem.test.ts` - GurpsActorV2.moveItem method (drag-drop, reordering, splitting)
+- `test/module/actor/gurps-actor.test.ts` - GurpsActorV2 instantiation and behavior
+- `test/module/actor/sheets/modern/` - V2 actor sheet tests
 
 **Chat Tests:**
 
@@ -393,12 +390,14 @@ The project includes tests organized to mirror the module structure:
 
 **Utility Tests:**
 
-- `test/module/utilities/text-utilties.test.ts` - Text utility functions
+- `test/util/text-utilties.test.ts` - Text utility functions
 
 **Library Tests:**
 
-- `test/lib/utilities.test.ts` - Utility functions (displayMod, makeSelect, splitArgs, etc.)
-- `test/lib/parselink.test.ts` - Link parsing and damage formula parsing
+- `test/lib/utilities/utilities.test.ts` - Utility functions (displayMod, makeSelect, splitArgs, etc.)
+- `test/module/otf/parselink.test.ts` - Link parsing and damage formula parsing
+
+Note: test file locations mirror `module/`/`lib/` but do drift as tests are reorganized — search for `*.test.ts` rather than relying solely on this list.
 
 Test infrastructure:
 
@@ -428,6 +427,7 @@ npm run build:code    # TypeScript compilation only
 npm run build:styles  # SCSS compilation
 npm run dev           # Development mode with watchers
 npm run watch         # Watch all file types
+npm run verify        # format:check + lint + typecheck + test (full CI-equivalent check)
 ```
 
 ### TypeScript Configuration
@@ -592,6 +592,7 @@ const formatted = game.i18n.format('GURPS.DamageFormula', { damage: '2d+1' })
 
 - English (en) - Primary
 - German (de)
+- Spanish (es)
 - French (fr)
 - Portuguese/Brazil (pt_br)
 - Russian (ru)

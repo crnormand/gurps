@@ -9,7 +9,6 @@ import { ChangeLogWindow } from '@module/util/change-log.js'
 import { HandlebarsUtil } from '@module/util/handlebars.js'
 import HitFatPoints from '@module/util/hitpoints.js'
 import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
-import Initiative from '@module/util/initiative.js'
 import { ClearLastActor, SetLastActor } from '@module/util/last-actor.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
@@ -17,7 +16,6 @@ import { multiplyDice } from '@util/damage-utils.js'
 import { gurpslink } from '@util/gurpslink.js'
 import JQueryHelpers from '@util/jquery-helper.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
-import { GurpsRange, setupRanges } from '@util/ranges.js'
 import { SemanticVersion } from '@util/semver.js'
 import {
   arrayToObject,
@@ -35,7 +33,6 @@ import {
 import { ActionModule } from './action/index.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import { Actor } from './actor/index.js'
-import Maneuvers from './actor/maneuver.js'
 import { Canvas } from './canvas/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
 import { ChatModule } from './chat/index.js'
@@ -68,7 +65,6 @@ import { Pseudo } from './pseudo-document/index.js'
 import { ResourceTrackerModule } from './resource-tracker/index.js'
 import { Scripting } from './scripting/index.js'
 import { Token } from './token/index.js'
-import { TokenActions } from './token-actions.js'
 import { UI } from './ui/index.js'
 import { FoundryUtils, MessageMode } from './util/foundry-utils.js'
 import { getUser } from './util/guards.js'
@@ -110,6 +106,8 @@ if (!globalThis.GURPS) {
   }
 
   /** @type {{ [key: string]: GurpsModule }} */
+  // TODO: Not everything should be considered a module. Some of these are just namespaces or utility objects.
+  // We do need a way to initialize some data for non-modules; perhaps a dedicated init function for each namespace.
   GURPS.modules = {
     Action: ActionModule,
     Actor,
@@ -143,9 +141,6 @@ if (!globalThis.GURPS) {
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
   // CONFIG.debug.hooks = true
-
-  // Expose Maneuvers to make them easier to use in modules
-  GURPS.Maneuvers = Maneuvers
 
   // Use the target d6 icon for rolltable entries
   // CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
@@ -467,7 +462,7 @@ if (!globalThis.GURPS) {
         let result = GURPS.parselink(part.trim())
 
         if (result?.action) {
-          if (options?.combined && result.action.type == OtfActionType.damage)
+          if (options?.combined && result.action.type === OtfActionType.damage)
             result.action.formula = multiplyDice(result.action.formula, options.combined)
           performAction({ ...result.action, blindroll }, actor, event, options?.targets)
         }
@@ -761,31 +756,6 @@ if (!globalThis.GURPS) {
     ChatMessage.create(msgData)
   }
 
-  // TODO: Move to the combat module.
-  GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
-    let formula = /** @type {string} */ (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA))
-
-    if (!formula) {
-      formula = Initiative.defaultFormula()
-      if (game.user.isGM) game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_INITIATIVE_FORMULA, formula)
-    }
-
-    let match = formula.match(/([^:]*):?(\d)?/)
-    let decimal = match && !!match[2] ? parseInt(match[2]) : 5
-
-    CONFIG.Combat.initiative = {
-      // @ts-expect-error - m could be null but is checked implicitly by context
-      formula: match[1],
-      decimals: decimal, // Important to be able to maintain resolution
-    }
-    if (broadcast && match)
-      game.socket?.emit('system.gurps', {
-        type: 'initiativeChanged',
-        formula: match[1],
-        decimals: decimal,
-      })
-  }
-
   GURPS.recurselist = recurselist
   GURPS.flattenContainedList = flattenContainedList
 
@@ -814,13 +784,9 @@ if (!globalThis.GURPS) {
     GURPS.ModifierBucket = new ModifierBucket()
     GURPS.ModifierBucket.render(true)
 
-    GURPS.initiative = new Initiative()
     GURPS.hitpoints = new HitFatPoints()
     // @deprecated in favour of new conditional injury module.
     // GURPS.ConditionalInjury = new GurpsConditionalInjury()
-
-    // do this only after we've initialized localize
-    GURPS.Maneuvers = Maneuvers
 
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
@@ -887,10 +853,6 @@ if (!globalThis.GURPS) {
     // TODO Move to a new 'bucket' module?
     // Find the element with ID "chat-message".
     document.querySelector('#chat-message')?.addEventListener('drop', handleChatInputDrop)
-
-    // Set up SSRT
-    GURPS.SSRT = setupRanges()
-    GURPS.rangeObject = new GurpsRange()
 
     // This reads the en.json file into memory. It is used by the "i18n_English" function to do reverse lookups on
     initialize_i18nHelper()
@@ -1110,7 +1072,6 @@ if (!globalThis.GURPS) {
     })
 
     GurpsJournalEntry.ready()
-    GURPS.setInitiativeFormula()
 
     // Translate attribute mappings if not in English
     if (game.i18n.lang != 'en') {
@@ -1181,52 +1142,9 @@ if (!globalThis.GURPS) {
       GurpsWiring.hookupAllEvents(html)
     })
 
-    // TODO: Move to the combat module?  We could have a method in combat that allows other modules to request hooks into the Combat system.
-    Hooks.on('combatStart', async combat => {
-      console.log(`Combat started: ${combat.id} - resetting token actions`)
-      await resetTokenActions(combat)
-    })
-
-    if (game.user.isGM) {
-      Hooks.on('combatTurnChange', async (combat, previousTurn, newTurn) => {
-        await handleCombatTurnChange(combat, previousTurn, newTurn)
-      })
-    }
-
     // End of system "READY" hook.
     Hooks.call('gurpsready')
   })
-}
-
-const handleCombatTurnChange = async (combat, previousTurn, newTurn) => {
-  if (!game.user.isGM) return
-
-  const token = canvas.tokens.get(newTurn.tokenId)
-
-  if (!token) {
-    console.warn(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - token not found: ${newTurn.tokenId}`)
-
-    return
-  }
-
-  console.info(`Combat turn changed: ${newTurn.round}/${newTurn.turn} - combatant: ${token.name}`)
-
-  const actions = await TokenActions.fromToken(token)
-
-  await actions.newTurn(newTurn.round)
-}
-
-const resetTokenActions = async combat => {
-  for (const combatant of combat.combatants) {
-    await resetTokenActionsForCombatant(combatant)
-  }
-}
-
-const resetTokenActionsForCombatant = async combatant => {
-  const token = canvas.tokens.get(combatant.token.id)
-  const actions = await TokenActions.fromToken(token)
-
-  await actions.clear()
 }
 
 // TODO Move to a new 'chat' module?

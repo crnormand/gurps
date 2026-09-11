@@ -5,7 +5,7 @@ import { systemPath } from '@module/util/misc.js'
 import { ActorType } from '../types.js'
 
 import { GurpsActorGcsSheet } from './gcs-actor-sheet.js'
-import { GurpsActorModernSheet } from './modern/sheet.ts'
+import { GurpsActorModernSheet } from './modern/sheet.js'
 
 /**
  * Recursively builds create-data for an item and all its descendants, assigning each a

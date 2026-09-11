@@ -1,4 +1,5 @@
-import Maneuvers from '../actor/maneuver.js'
+import { Combat } from '@module/combat/index.js'
+
 import { TokenActions } from '../token-actions.js'
 
 /**
@@ -16,7 +17,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   // Determine current maneuver and icon.
   const allManeuvers = token.actor.appliedEffects.filter(it => it.getFlag('gurps', 'statusId') === 'maneuver')
-  const actorManeuver = allManeuvers.length > 0 ? allManeuvers[0] : Maneuvers.getManeuver('do_nothing')
+  const actorManeuver = allManeuvers.length > 0 ? allManeuvers[0] : Combat.Maneuvers.getManeuver('do_nothing')
 
   if (actorManeuver.showIcon === 0) {
     const initiativeSpan = html.querySelector?.('.token-initiative')
@@ -77,7 +78,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
         if (!combatant || !combatant.token) return
 
-        const doNothing = Maneuvers.getManeuver('do_nothing')
+        const doNothing = Combat.Maneuvers.getManeuver('do_nothing')
         const token = canvas?.tokens?.get(combatant.token.id)
 
         if (!token || !token.actor) return
@@ -97,7 +98,7 @@ export const addManeuverMenu = async (html, combatant, token) => {
 
   if (canModify) {
     // Build the maneuvers menu from template.
-    const maneuvers = Maneuvers.getAll()
+    const maneuvers = Combat.Maneuvers.getAll()
     const menuHtmlString = await foundry.applications.handlebars.renderTemplate(
       'systems/gurps/templates/maneuver-menu.hbs',
       {

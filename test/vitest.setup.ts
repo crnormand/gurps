@@ -217,6 +217,42 @@ class MockBaseItem {
   }
 }
 
+class MockBaseCombat {
+  combatants: MockCollection<unknown>
+  active: boolean
+  started: boolean
+  round: number
+  turn: number | null
+
+  /* ---------------------------------------- */
+
+  constructor(data: { active?: boolean; started?: boolean; round?: number; turn?: number | null } = {}) {
+    this.combatants = new MockCollection()
+    this.active = data.active ?? false
+    this.started = data.started ?? false
+    this.round = data.round ?? 0
+    this.turn = data.turn ?? null
+  }
+}
+
+/* ---------------------------------------- */
+
+class MockBaseCombatant {
+  _id: string
+  token: unknown
+  actor: unknown
+
+  /* ---------------------------------------- */
+
+  constructor(data: { _id?: string; token?: unknown; actor?: unknown } = {}) {
+    this._id = data._id ?? 'COMBATANT_ID'
+    this.token = data.token ?? null
+    this.actor = data.actor ?? null
+  }
+}
+
+/* ---------------------------------------- */
+
 class MockCollection<V> extends Map<string, V> {
   constructor(entries?: readonly (readonly [string, V])[] | null) {
     super(entries)
@@ -534,6 +570,10 @@ global.ChatMessage = {
 global.Actor = MockBaseActor as unknown as typeof Actor
 
 global.Item = MockBaseItem as unknown as typeof Item
+
+global.Combat = MockBaseCombat as unknown as typeof Combat
+
+global.Combatant = MockBaseCombatant as unknown as typeof Combatant
 
 /* ---------------------------------------- */
 

@@ -1,4 +1,5 @@
 import { ActorType } from '@module/actor/types.js'
+import { Combat } from '@module/combat/index.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
 namespace GurpsTokenHUDV2 {
@@ -65,11 +66,11 @@ class GurpsTokenHUDV2<
     const currentManeuverId = actor.system.conditions.maneuver
 
     const maneuverIcon = currentManeuverId
-      ? (GURPS.Maneuvers.get(currentManeuverId)?.img ?? 'systems/gurps/icons/maneuvers/man-nothing.png')
+      ? (Combat.Maneuvers.get(currentManeuverId)?.img ?? 'systems/gurps/icons/maneuvers/man-nothing.png')
       : 'systems/gurps/icons/maneuvers/man-nothing.png'
 
-    const maneuvers = Object.keys(GURPS.Maneuvers.getAll()).flatMap(id => {
-      const maneuver = GURPS.Maneuvers.get(id)
+    const maneuvers = Object.keys(Combat.Maneuvers.getAll()).flatMap(id => {
+      const maneuver = Combat.Maneuvers.get(id)
 
       return maneuver
         ? [

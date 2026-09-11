@@ -1,7 +1,7 @@
 'use strict'
 
 import { MoveModes } from '@module/actor/gurps-actor.js'
-import Maneuvers from '@module/actor/maneuver.js'
+import { Combat } from '@module/combat/index.js'
 import * as HitLocations from '@module/hitlocation/hitlocation.js'
 import { ImportSettings } from '@module/importer/index.js'
 import { extractOtfs } from '@module/otf/extract-otf.js'
@@ -502,11 +502,11 @@ export default function () {
   })
 
   Handlebars.registerHelper('listAllManeuvers', function () {
-    return Maneuvers.getAllData()
+    return Combat.Maneuvers.getAllData()
   })
 
   Handlebars.registerHelper('getManeuver', function (name) {
-    return Maneuvers.getManeuver(name)
+    return Combat.Maneuvers.getManeuver(name)
   })
 
   Handlebars.registerHelper('listAllPostures', function () {

@@ -2706,10 +2706,10 @@ li.combatant.active {
   background: var(--gga-quickroll-background, var(--color-cool-5-90));
   .cant-do-icon {
     color: var(--color-text-subtle);
-   }
+  }
   .can-do-icon {
     color: var(--color-text-primary);
-   }
+  }
 }
 
 .maneuver-combat-tracker-menu ul {
@@ -2875,7 +2875,22 @@ button.quick-roll-button.lg {
   height: auto;
 }
 
-.quick-roll-button .tooltip {
+.quick-roll-attack {
+  position: relative;
+  display: inline-block;
+}
+
+button.quick-roll-button.lg.dam {
+  padding-left: 0;
+  display: block;
+}
+
+button.quick-roll-button.lg.atk {
+  display: block;
+}
+
+.quick-roll-button .tooltip,
+.quick-roll-attack .tooltip {
   visibility: hidden;
   background-color: var(--color-cool-5-90);
   color: var(--color-light-1);
@@ -2893,19 +2908,21 @@ button.quick-roll-button.lg {
   border: 1px solid #202020;
 }
 
-.quick-roll-button.sm.dmg:first-child .tooltip,
-.quick-roll-button:last-child .tooltip {
+.quick-roll-button:last-child .tooltip,
+.quick-roll-attack:last-child .tooltip {
   left: auto;
   right: 0;
   margin-left: 0;
 }
 
-.quick-roll-button:first-child .tooltip {
+.quick-roll-button:first-child .tooltip,
+.quick-roll-attack:first-child .tooltip {
   left: 0;
   margin-left: 0;
 }
 
-.quick-roll-button .tooltip::after {
+.quick-roll-button .tooltip::after,
+.quick-roll-attack .tooltip::after {
   content: '';
   position: absolute;
   top: 100%; /* Arrow at the bottom of the tooltip */
@@ -2916,19 +2933,21 @@ button.quick-roll-button.lg {
   border-color: black transparent transparent transparent;
 }
 
-.quick-roll-button.sm.dmg:first-child .tooltip::after,
-.quick-roll-button:last-child .tooltip::after {
+.quick-roll-button:last-child .tooltip::after,
+.quick-roll-attack:last-child .tooltip::after {
   left: auto;
   right: 10px;
   margin-left: 0;
 }
 
-.quick-roll-button:first-child .tooltip::after {
+.quick-roll-button:first-child .tooltip::after,
+.quick-roll-attack:first-child .tooltip::after {
   left: 10px;
   margin-left: 0;
 }
 
-.quick-roll-button:hover .tooltip {
+.quick-roll-button:hover .tooltip,
+.quick-roll-attack:hover .tooltip {
   visibility: visible;
   opacity: 1;
   z-index: 200;
@@ -2945,7 +2964,7 @@ button.quick-roll-button.lg {
 .quick-roll-section h4 {
   text-transform: uppercase;
   font-size: 0.82em;
-  padding: 10px 0px 5px 5px;;
+  padding: 10px 0px 5px 5px;
   line-height: 1.1;
   border-bottom: 1px solid #772e21;
   margin: 0 0 0.5rem 0;
@@ -2993,7 +3012,7 @@ button.quick-roll-button.lg {
 }
 
 .qr-image {
-    display: inline-flex;
+  display: inline-flex;
 }
 
 .qr-image img {
@@ -3007,21 +3026,11 @@ button.quick-roll-button.lg {
   max-height: 20px;
   margin-right: 6px;
 }
-.quick-roll-blind-toggle {
-  position: absolute;
-  right: 10px;
-  top: 0;
-  margin-top: -5px;
-  font-size: 1.2em;
-}
 .qr-green {
   color: #35713e;
 }
 .qr-blue {
   color: #6f63d9;
-}
-.qr-blind {
-  display: none;
 }
 .qr-otf {
   color: #d7b921;

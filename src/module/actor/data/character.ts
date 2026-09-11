@@ -4,6 +4,7 @@ import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { ActionType } from '@module/action/types.js'
+import { Combat } from '@module/combat/index.js'
 import { defaultHitLocations } from '@module/config/hit-locations.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import DiceField from '@module/data/fields/dice-field.js'
@@ -33,15 +34,6 @@ import { AnyMutableObject, AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import { HitLocationEntryV1 } from '../legacy/hit-location-entryv1.js'
 import { NoteV1 } from '../legacy/note-adapter.js'
-import {
-  MOVE_HALF,
-  MOVE_NONE,
-  MOVE_ONE,
-  MOVE_ONETHIRD,
-  MOVE_STEP,
-  MOVE_TWO_STEPS,
-  MOVE_TWOTHIRDS,
-} from '../maneuver.js'
 import { ActorType, CheckInfo } from '../types.js'
 
 import { ActorMetadata, BaseActorModel } from './base.js'
@@ -643,7 +635,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   #getCurrentMove(base: number): number {
-    const doUpdateMove = this.getSetting(Settings.SETTING_MANEUVER_UPDATES_MOVE, false) && this.parent.inCombat
+    const doUpdateMove = Combat.maneuverUpdatesMove(false) && this.parent.inCombat
 
     const moveForManeuver = this.#getMoveAdjustmentForManeuver(base)
     const moveForPosture = this.#getMoveAdjustmentForPosture(base)
@@ -662,7 +654,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #getMoveAdjustmentForManeuver(base: number): { value: number; tooltip: string } {
     let tooltip = game.i18n?.localize('GURPS.moveFull') ?? ''
-    const maneuver = GURPS.Maneuvers.get(this.conditions.maneuver!)
+    const maneuver = Combat.Maneuvers.get(this.conditions.maneuver!)
 
     if (maneuver) {
       tooltip = game.i18n?.localize(maneuver.label) ?? ''
@@ -694,42 +686,42 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
   #getMoveAdjustmentForOverride(base: number, override: string | null): { value: number; tooltip: string } | null {
     switch (override) {
-      case MOVE_NONE:
+      case Combat.Movement.none:
         return {
           value: 0,
           tooltip: game.i18n?.localize('GURPS.none') ?? '',
         }
-      case MOVE_ONE:
+      case Combat.Movement.one:
         return {
           value: 1,
           // TODO: localize
           tooltip: '1 yd/sec',
         }
-      case MOVE_STEP:
+      case Combat.Movement.step:
         return {
           value: Math.max(1, Math.ceil(base / 10)),
           // TODO: localize
           tooltip: 'Step',
         }
-      case MOVE_TWO_STEPS:
+      case Combat.Movement.twoSteps:
         return {
           value: Math.max(1, Math.ceil(base / 10)) * 2,
           // TODO: localize
           tooltip: 'Step or Two',
         }
-      case MOVE_ONETHIRD:
+      case Combat.Movement.oneThird:
         return {
           value: Math.max(1, Math.ceil(base / 3)),
           // TODO: localize
           tooltip: '×1/3',
         }
-      case MOVE_HALF:
+      case Combat.Movement.half:
         return {
           value: Math.max(1, Math.ceil(base / 2)),
           // TODO: localize
           tooltip: 'Half',
         }
-      case MOVE_TWOTHIRDS:
+      case Combat.Movement.twoThirds:
         return {
           value: Math.max(1, Math.ceil((base * 2) / 3)),
           // TODO: localize

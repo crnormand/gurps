@@ -510,6 +510,14 @@
     "cancel": "Cancelar",
     "cannotDragNonFoundryEqt": "No puedes arrastrar equipo no-Foundry a otro personaje.",
     "cannotDropItemAlreadyExists": "Ya tienes este objeto.",
+    "canvas": {
+      "settings": {
+        "useBookRegionRadius": {
+          "hint": "Si se activa, el radio mostrado de las plantillas de medición circulares aumenta en 0,5 yardas para cumplir B239, que define un radio de 1 como un solo hexágono.",
+          "name": "Usar el radio de región del libro"
+        }
+      }
+    },
     "carryOnBack": "Llevar en la Espalda",
     "changelog": {
       "dontShowAgain": "No mostrar LÉAME de nuevo",

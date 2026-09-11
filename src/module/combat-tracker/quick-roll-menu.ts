@@ -119,45 +119,6 @@ export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant
 }
 
 export const addQuickRollListeners = (html: HTMLElement) => {
-  const updateText = (event: any) => {
-    // find all buttons and make the change
-    const buttons = html.querySelectorAll('.quick-roll-button.lg.atk') as NodeListOf<HTMLElement>
-
-    buttons.forEach(function (button) {
-      const attackValue = button.querySelector('.qr-attack-value') as HTMLSpanElement
-
-      if (event.ctrlKey) {
-        attackValue.textContent = button.dataset.damage ?? ''
-      } else {
-        attackValue.textContent = button.dataset.skill ?? ''
-      }
-    })
-  }
-
-  // Resolve Ctrl Key when hovering Quick Roll menu
-  html.addEventListener('mouseover', function (event: Event) {
-    document.addEventListener('keydown', updateText)
-    document.addEventListener('keyup', updateText)
-
-    updateText(event)
-  })
-
-  html.addEventListener('mouseout', function (event: Event) {
-    if (!event.currentTarget) return
-    const button = (event.currentTarget as HTMLElement).querySelectorAll(
-      '.quick-roll-button.lg.atk'
-    ) as NodeListOf<HTMLElement>
-
-    for (const btn of button) {
-      const attackValue = btn.querySelector('.qr-attack-value') as HTMLSpanElement
-
-      attackValue.textContent = btn.dataset.skill ?? ''
-    }
-
-    document.removeEventListener('keydown', updateText)
-    document.removeEventListener('keyup', updateText)
-  })
-
   // Resolve Quick Roll Menu Button Click
   html.querySelectorAll('.quick-roll-button').forEach(item => {
     ;(item as HTMLElement).addEventListener('click', async function (event: PointerEvent) {

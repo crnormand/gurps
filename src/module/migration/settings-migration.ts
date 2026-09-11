@@ -49,6 +49,7 @@ export async function migrateLegacySettings(namespacePrefix: string, migrations:
 
   const entries: MigrationEntry[] = []
   const prefixDot = namespacePrefix + '.'
+  let requiresReload = false
 
   for (const entry of storage.contents.filter((entry: foundry.documents.Setting) => entry.key.startsWith(prefixDot))) {
     const legacyKey = entry.key.slice(prefixDot.length)
@@ -71,9 +72,14 @@ export async function migrateLegacySettings(namespacePrefix: string, migrations:
       newName: migration.newName,
       deleteId: migration.newName !== migration.oldName ? entry.id : null,
     })
+
+    // @ts-expect-error Foundry exposes requiresReload on the runtime setting data.
+    if (game.settings?.settings?.get(`${namespacePrefix}.${migration.newName}`)?.requiresReload) requiresReload = true
   }
 
   if (entries.length === 0) return
+
+  if (requiresReload) ui.notifications?.info('GURPS | Some migrations require a reload to take effect.')
 
   console.log(`GURPS | Starting migration of ${entries.length} legacy setting(s) (namespace: ${namespacePrefix})`)
 

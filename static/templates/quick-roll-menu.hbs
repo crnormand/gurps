@@ -20,17 +20,24 @@
     <h4>{{localize "GURPS.attackTab"}}</h4>
     <div class="quick-roll-row">
       {{#each attackChecks.data as |check|}}
-        <button class="quick-roll-button lg atk" data-otf="{{check.otf}}" data-skill="{{check.value}}" data-otf-damage="{{check.otfDamage}}" data-damage="{{check.damage}}" data-combatant-id="{{../combatant.id}}">
-          <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
-            <i class="fa-solid  {{#if (eq check.type 'melee')}}fa-hand-fist{{else}}fa-bow-arrow{{/if}}"></i>{{/if}}</div>
-          <div class="qr-line">
-            <div class="qr-label {{#if (gt ../attackChecks.size 6)}}hidden{{/if}}">{{check.label}}-</div>
-            <span class="qr-attack-value">{{check.value}}</span>
-          </div>
-          <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
+        <div class="quick-roll-attack">
+        <button class="quick-roll-button lg atk" data-otf="{{check.otf}}" data-combatant-id="{{../combatant.id}}">
+            <div class="qr-image">{{#if check.img}}<img src="{{check.img}}" alt="{{check.label}}" />{{else}}
+                <i class="fa-solid  {{#if (eq check.type 'melee')}}fa-hand-fist{{else}}fa-bow-arrow{{/if}}"></i>{{/if}}</div>
+            <div class="qr-line">
+                <div class="qr-label {{#if (gt ../attackChecks.size 6)}}hidden{{/if}}">{{check.label}}-</div>
+                <span class="qr-attack-value">{{check.value}}</span>
+            </div>
+        </button>
+        <button class="quick-roll-button lg dam" data-otf="{{check.otfDamage}}" data-skill="{{check.damage}}" data-combatant-id="{{../combatant.id}}">
+            <div class="qr-line">
+                <span class="qr-attack-value">{{check.damage}}</span>
+            </div>
+        </button>
+        <span class="tooltip">{{check.symbol}}:<br>{{check.label}}{{#if check.mode}}
             ({{check.mode}}){{/if}}-{{check.value}}<br>{{localize 'GURPS.damage'}}:{{check.damage}}{{#if check.notes}}
             <hr class="hr-notes">{{check.notes}}{{/if}}</span>
-        </button>
+        </div>
       {{/each}}
     </div>
   {{/if}}
