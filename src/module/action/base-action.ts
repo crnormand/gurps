@@ -58,6 +58,18 @@ const baseActionSchema = () => {
 
     /** Whether this Action is disabled. Disabled Actions are not shown in the UI. */
     disabled: new fields.BooleanField({ required: true, nullable: false, initial: false }),
+
+    /** The OTF to run before running an check against this action. the action will only proceed if the otf  returns true */
+    checkotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when using this action. */
+    duringotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when the action succeeds. */
+    passotf: new fields.StringField({ required: true, nullable: false }),
+
+    /** The OTF to run when the action fails, such as a skill roll failing. */
+    failotf: new fields.StringField({ required: true, nullable: false }),
   }
 }
 

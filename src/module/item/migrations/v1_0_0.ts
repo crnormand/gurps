@@ -6,7 +6,7 @@ import {
   RangedAttackModel,
   RangedAttackSchema,
 } from '@module/action/index.js'
-import { Melee, Ranged } from '@module/actor/actor-components.js'
+import { Melee, Ranged, _AnimationMixin } from '@module/actor/actor-components.js'
 import { numberValidate } from '@module/data/validators/number-validator.js'
 import { shouldMigrateCompendium } from '@module/migration/helpers.js'
 import { MigrationReport } from '@module/migration/types.js'
@@ -131,7 +131,7 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
   }
 
   if (oldData.melee) {
-    const melee = Object.values(oldData.melee) as Melee[]
+    const melee = Object.values(oldData.melee) as (Melee & typeof _AnimationMixin)[]
 
     melee.forEach(action => {
       const _id = foundry.utils.randomID()
@@ -142,7 +142,7 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
   }
 
   if (oldData.ranged) {
-    const ranged = Object.values(oldData.ranged) as Ranged[]
+    const ranged = Object.values(oldData.ranged) as (Ranged & typeof _AnimationMixin)[]
 
     ranged.forEach(action => {
       const _id = foundry.utils.randomID()
@@ -157,7 +157,10 @@ function migrateBaseItemSystem(oldData: OldItemData, parentId: string | null): N
 
 /* ---------------------------------------- */
 
-export function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaField.CreateData<MeleeAttackSchema> {
+export function migrateMeleeWeapon(
+  oldMelee: Melee & typeof _AnimationMixin,
+  _id: string
+): fields.SchemaField.CreateData<MeleeAttackSchema> {
   const damage = typeof oldMelee.damage === 'string' ? [oldMelee.damage] : oldMelee.damage
 
   if (!numberValidate(oldMelee.baseParryPenalty, { integerOnly: true }))
@@ -241,6 +244,10 @@ export function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaF
     reach: oldMelee.reach,
     st: oldMelee.st,
     name: oldMelee.name,
+    checkotf: oldMelee.checkotf,
+    duringotf: oldMelee.duringotf,
+    passotf: oldMelee.passotf,
+    failotf: oldMelee.failotf,
   }
 
   return newMelee
@@ -248,7 +255,10 @@ export function migrateMeleeWeapon(oldMelee: Melee, _id: string): fields.SchemaF
 
 /* ---------------------------------------- */
 
-export function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.SchemaField.CreateData<RangedAttackSchema> {
+export function migrateRangedWeapon(
+  oldRanged: Ranged & typeof _AnimationMixin,
+  _id: string
+): fields.SchemaField.CreateData<RangedAttackSchema> {
   const damage = typeof oldRanged.damage === 'string' ? [oldRanged.damage] : oldRanged.damage
 
   if (!numberValidate(oldRanged.ammo, { integerOnly: true, nonnegative: true }))
@@ -288,6 +298,10 @@ export function migrateRangedWeapon(oldRanged: Ranged, _id: string): fields.Sche
     shots: oldRanged.shots,
     st: oldRanged.st,
     name: oldRanged.name,
+    checkotf: oldRanged.checkotf,
+    duringotf: oldRanged.duringotf,
+    passotf: oldRanged.passotf,
+    failotf: oldRanged.failotf,
   }
 
   return newRanged

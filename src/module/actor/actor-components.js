@@ -292,7 +292,7 @@ export class NamedCost extends Named {
   }
 }
 
-const _AnimationMixin = {
+export const _AnimationMixin = {
   _otf: '',
   _checkotf: '',
   _duringotf: '',
