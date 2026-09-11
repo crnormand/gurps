@@ -7,11 +7,12 @@
 - Add PageRef on Spells on Modern Sheet \#2890
 - Reorganize Combat settings under new Combat Settings menu.
 - Move Combat code into combat module.
+- Color Blind Adjustment \#2914.
 
 ### Bugfixes
 
 - Fixed another Move Mode editor problem ... yikes!
-- Cannot create a Compendium with a name that is non-ASCii \#2923
+- Cannot create a Compendium with a name that is non-ASCII \#2923
 
 ## Release 0.18.23 08/29/2026
 
