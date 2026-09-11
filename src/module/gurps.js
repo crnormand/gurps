@@ -165,25 +165,7 @@ if (!globalThis.GURPS) {
   GURPS.lastInjuryRoll = {}
   GURPS.lastInjuryRolls = {} // mapped by actor and message id
 
-  GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients = false) {
-    let tmp = { ...chatdata, actorid, tokenid }
-
-    if (actorid) GURPS.lastTargetedRolls[actorid] = tmp
-    if (tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
-    GURPS.lastTargetedRoll = tmp // keep the local copy
-    // Interesting fields: GURPS.lastTargetedRoll.margin .isCritSuccess .IsCritFailure .thing
-
-    if (updateOtherClients)
-      game.socket.emit('system.gurps', {
-        type: 'setLastTargetedRoll',
-        chatdata: tmp,
-        actorid: actorid,
-        tokenid: tokenid,
-      })
-  }
-
-  GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
-  GURPS.PendingOTFs = []
+  GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS array
   GURPS.IgnoreTokenSelect = false
 
   GURPS.wait = wait
@@ -987,7 +969,7 @@ if (!globalThis.GURPS) {
       }
 
       if (resp.type == 'setLastTargetedRoll') {
-        GURPS.setLastTargetedRoll(resp.chatdata, resp.actorid, resp.tokenid, false)
+        GURPS.modules.Otf.setLastTargetedRoll(resp.chatdata, resp.actorid, resp.tokenid, false)
       }
 
       if (resp.type == 'dragEquipment1') {

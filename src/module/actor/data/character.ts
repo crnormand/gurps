@@ -1675,18 +1675,25 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
    * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
    */
   findUsingAction(
-    action: { type: string; name: string; orig: string; overridetxt?: string; attrkey?: string },
+    action: OtfAction,
     chatthing: string,
     formula: string,
     thing: string
   ): { name: string; uuid: string | null; itemId: string | null; fromItem: string | null; pageRef: string | null } {
-    const originType: string | null = action ? action.type : null
-    let name: string, mode: string | undefined
+    if (!action) {
+      return {
+        name: thing ? thing : chatthing ? chatthing.split('/[')[0] : formula,
+        uuid: null,
+        itemId: null,
+        fromItem: null,
+        pageRef: null,
+      }
+    }
 
-    switch (originType) {
+    switch (action.type) {
       case OtfActionType.attack: {
-        name = action.name.split('(')[0].trim()
-        mode = action.name.match(/\((.+)\)/)?.[1]
+        const name = action.name.split('(')[0].trim()
+        const mode = action.name.match(/\((.+)\)/)?.[1]
         const attackType = action.orig.toLowerCase().startsWith('m:') ? 'melee' : 'ranged'
         const weapon = this.parent
           // @ts-expect-error: not sure why this isn't resolving.
@@ -1712,8 +1719,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       }
       case OtfActionType.weaponBlock:
       case OtfActionType.weaponParry: {
-        name = action.name.split('(')[0].trim()
-        mode = action.name.match(/\((.+?)\)/)?.[1]
+        const name = action.name.split('(')[0].trim()
+        const mode = action.name.match(/\((.+?)\)/)?.[1]
         const weapon = this.parent
           .getItemAttacks({ attackType: 'melee' })
           .find(attackEntry => attackEntry.name === name && (!mode || attackEntry.mode === mode))

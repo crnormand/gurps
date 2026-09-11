@@ -211,8 +211,10 @@ export type OtfRollAction =
   | BlockAction
   | RollAction
   | DerivedRollAction
+  | DamageAction
+  | DerivedDamageAction
 
-export type OtfDamageAction = AttackDamageAction | DamageAction | DerivedDamageAction
+export type OtfDamageAction = DamageAction | DerivedDamageAction
 
 export type ParserResult = {
   text: string

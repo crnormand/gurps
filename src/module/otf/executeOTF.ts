@@ -25,7 +25,7 @@ export async function executeOTF(
 
     answer = false
     if (action?.action) {
-      if (!event) event = { shiftKey: priv, ctrlKey: false, data: {} }
+      if (!event) event = { shiftKey: priv, ctrlKey: false, altKey: false, data: {} }
       const result = await performAction(action.action, actor || GURPS.LastActor, event)
 
       answer = result

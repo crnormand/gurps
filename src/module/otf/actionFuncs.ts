@@ -1,7 +1,6 @@
 import { MeleeAttackModel } from '@module/action/index.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { Damage } from '@module/damage/index.js'
-import { addBucketToDamage, doRoll } from '@module/dierolls/dieroll.js'
 import { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { ItemType } from '@module/item/types.js'
 import { parseForRollOrDamage } from '@module/otf/parselink.js'
@@ -12,10 +11,14 @@ import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
 import { d6ify, quotedAttackName, stripBracketContents } from '@util/utilities.js'
 
+import { addBucketToDamage, doRoll } from './dieroll.js'
+
 export interface ActionFuncContext {
   shiftKey: boolean
   ctrlKey: boolean
+  altKey: boolean
   data?: any
+  blind?: boolean //todo: remove after refactor
 }
 
 export interface actionFuncParams {
@@ -30,12 +33,6 @@ export interface actionFuncParams {
 export type actionFunc = (param: actionFuncParams) => Promise<boolean> | { target: number; thing?: string } | boolean
 
 export const actionFuncs: Record<string, actionFunc> = {
-  /**
-   * @param {Object} data
-   * @param {Object} data.actor
-   * @param {Object} data.action
-   * @param {string} data.action.link
-   */
   pdf({ action, calcOnly }: actionFuncParams) {
     if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.pdf) return false
@@ -51,7 +48,6 @@ export const actionFuncs: Record<string, actionFunc> = {
     return true
   },
 
-  //
   iftest({ action, calcOnly }: actionFuncParams) {
     if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.ifTest) return false
@@ -399,6 +395,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       formula: action.formula,
       prefix,
       optionalArgs: { blind: action.blindroll, event },
+      action,
     })
       .then(result => {
         return !!result
@@ -431,7 +428,6 @@ export const actionFuncs: Record<string, actionFunc> = {
       chatthing,
       origtarget: target,
       optionalArgs: { blind: action.blindroll, event },
-      // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
       action,
     })
       .then(result => {
@@ -473,6 +469,7 @@ export const actionFuncs: Record<string, actionFunc> = {
         desc: action.desc ?? '',
       }),
       optionalArgs: { blind: action.blindroll, event },
+      action,
     })
       .then(result => {
         return !!result
@@ -593,13 +590,11 @@ export const actionFuncs: Record<string, actionFunc> = {
 
       return !!(await doRoll({
         actor,
-        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         targetmods,
         thing,
         chatthing,
         origtarget: target,
         optionalArgs: opt,
-        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         action,
       }))
     }
@@ -651,14 +646,12 @@ export const actionFuncs: Record<string, actionFunc> = {
 
     return doRoll({
       actor,
-      // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
       targetmods,
       prefix: 'Block: ',
       thing,
       chatthing,
       origtarget: target,
       optionalArgs: { blind: action.blindroll, event },
-      // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
       action,
     })
       .then(result => {
@@ -716,14 +709,12 @@ export const actionFuncs: Record<string, actionFunc> = {
 
     return doRoll({
       actor,
-      // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
       targetmods,
       prefix: 'Parry: ',
       thing,
       chatthing,
       origtarget: target,
       optionalArgs: { blind: action.blindroll, event, obj: att },
-      // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
       action,
     })
       .then(result => {
@@ -805,14 +796,12 @@ export const actionFuncs: Record<string, actionFunc> = {
 
       return !!(await doRoll({
         actor,
-        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         targetmods,
         prefix: game.i18n?.localize('GURPS.rollVs') ?? '',
         thing,
         chatthing,
         origtarget: target,
         optionalArgs: opt,
-        // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
         action,
       }))
     })()
@@ -864,7 +853,6 @@ export const actionFuncs: Record<string, actionFunc> = {
       else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      // @ts-expect-error -doRoll not properly typed yet. ToDo: refactor later
       return !!(await doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action }))
     })()
   },

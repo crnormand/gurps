@@ -46,6 +46,7 @@ import {
   ReactionModifier,
   ConditionalModifier as ConditionalModifierDocument,
 } from '@module/item/data/conditional-modifier.js'
+import { ModifierBucket } from '@module/modifier-bucket/bucket-app.js'
 import { OtfAction, CalcOnlyAction } from '@module/otf/types.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
@@ -457,6 +458,9 @@ declare global {
       refresh(): void
       refreshPosition(): void
       render(): Promise<void>
+      clearTaggedModifiers(update?: boolean): void
+      modifierStack: typeof ModifierBucket.modifierStack
+      applyMods(applyMods?: Modifier[]): Modifier[]
     }
 
     /* ---------------------------------------- */
@@ -515,6 +519,26 @@ declare global {
       failure: boolean
       seventeen: boolean
     }
+
+    lastTargetedRolls: Record<
+      string,
+      {
+        actorId: string
+        tokenId: string
+        isCritSuccess: boolean
+        isCritFailure: boolean
+        margin: number
+        failure: boolean
+        seventeen: boolean
+      }
+    >
+
+    setLastTargetedRoll: (
+      chatdata: any,
+      actorid?: string | null,
+      tokenid?: string | null,
+      updateOtherClients?: boolean
+    ) => void
 
     /* ---------------------------------------- */
 

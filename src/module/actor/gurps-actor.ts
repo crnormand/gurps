@@ -763,7 +763,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
    */
   findUsingAction(
-    action: { type: string; name: string; orig: string; overridetxt?: string; attrkey: string },
+    action: OtfAction,
     chatthing: string,
     formula: string,
     thing: string

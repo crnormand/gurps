@@ -1,8 +1,8 @@
 import { calculateMessageMode } from '@module/dierolls/dieroll.js'
 import { ActionFuncContext } from '@module/otf/actionFuncs.js'
+import { RollConfirmationDialog } from '@module/otf/rollConfirmationDialog.js'
 import { DamageAction, DerivedDamageAction } from '@module/otf/types.js'
 import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
-import { i18nFallback } from '@module/util/i18nFallback.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import DamageChat from './damagechat.js'
@@ -26,100 +26,17 @@ export async function rollDamage(
   const messageMode = calculateMessageMode(FoundryUtils.MessageMode, action.blindroll, event) as MessageMode
 
   if (showRollDialog && !canRoll.isSlam) {
-    // Get Actor Info
-    const gmUser = game.users.find((it: User) => it.isGM && it.active)
-    const tokenImg = token?.document.texture.src || actor?.img || gmUser?.avatar
-    const isVideo = tokenImg?.includes('webm') || tokenImg?.includes('mp4')
-    const tokenName = token?.name || actor?.name || gmUser?.name
-    const damageRoll = displayFormula
-    const damageType = GURPS.DamageTables.translate(action.damagetype)
-    const damageTypeLabel = i18nFallback(
-      `GURPS.damageTypes.${GURPS.DamageTables.woundModifiers[damageType]?.label}`,
-      damageType
-    )
-    const damageTypeIcon = GURPS.DamageTables.woundModifiers[damageType]?.icon || '<i class="fa-solid fa-dice-d6"></i>'
-    const damageTypeColor = GURPS.DamageTables.woundModifiers[damageType]?.color || '#772e21'
-    const targetRoll = action.orig
-    const bucketTotal = GURPS.ModifierBucket.currentSum()
-    const bucketRoll = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-    const bucketRollColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
-    const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
-    // Armor divisor can be (0.5) or (2) - need to regex to get the number
-    const armorDivisorRegex = /\((\d*\.?\d+)\)/
-    const armorDivisorNumber = action.extdamagetype?.match(armorDivisorRegex)?.[1]
-    // Multiplier damage is x2, X3 or *4 - need to regex to get the number
-    const multiplierRegex = /(?<=[xX*])\d+(\.\d+)?/
-    const multiplierNumber = displayFormula.match(multiplierRegex)?.[0]
-    // Simple formula is dice+add, examples: 1d, 2d+3, 1d-1
-    const simpleFormula = displayFormula.match(/\d+d[+-]?\d*/)?.[0]
-    const originalFormula = action.formula.match(/\d+d[+-]?\d*/)?.[0]
-    const damageCost = action.costs?.split(' ').pop() || ''
-    const otfDamageText = !!action.overridetxt && action.overridetxt !== action.formula ? action.overridetxt : ''
-    const usingDiceAdd = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS)
-
-    // Before open a new dialog, we need to make sure all other dialogs are closed, because bucket must be reset
-    // before we start a new roll.
-
-    if ($(document).find('.dialog-button.cancel').length > 0) {
-      // Wait for the dialog to close.
-      await new Promise(resolve => setTimeout(resolve, 500))
-
-      // If there still is a cancel button, click it.
-      for (const button of $(document).find('.dialog-button.cancel')) {
-        console.log('clicking cancel button')
-        button.click()
-      }
-    }
-
-    const response = await foundry.applications.api.DialogV2.wait({
-      window: {
-        title: game.i18n.localize('GURPS.confirmRoll'),
-        resizable: true,
-      },
-      position: {
-        height: 'auto',
-      },
-      content: await foundry.applications.handlebars.renderTemplate(
-        'systems/gurps/templates/confirmation-damage-roll.hbs',
-        {
-          tokenImg,
-          tokenName,
-          damageRoll: simpleFormula || damageRoll,
-          damageType,
-          targetRoll,
-          bucketRoll,
-          messages: canRoll.targetMessage ? [canRoll.targetMessage] : [],
-          useMinDamage,
-          armorDivisorNumber,
-          multiplierNumber,
-          damageTypeLabel,
-          damageTypeIcon,
-          damageTypeColor,
-          simpleFormula,
-          bucketRollColor,
-          originalFormula,
-          damageCost,
-          isVideo,
-          otfDamageText,
-          usingDiceAdd,
-        }
-      ),
-      buttons: [
-        {
-          action: 'roll',
-          icon: messageMode.isBlind ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
-          label: messageMode.isBlind ? 'GURPS.blindRoll' : 'GURPS.roll',
-          default: true,
-        },
-        {
-          action: 'cancel',
-          icon: 'fa-solid fa-xmark',
-          label: 'GURPS.cancel',
-        },
-      ],
+    const response = await RollConfirmationDialog.wait({
+      type: 'damage',
+      messages: canRoll.messages,
+      action,
+      actor,
+      token,
+      displayFormula,
+      messageMode,
     })
 
-    if (response === 'roll') {
+    if (response) {
       await DamageChat.create(
         (actor as Actor) || (game.user as User),
         actionFormula,
@@ -138,7 +55,7 @@ export async function rollDamage(
 
       return true
     } else {
-      await GURPS.ModifierBucket.clear()
+      await GURPS.ModifierBucket.clearTaggedModifiers()
       GURPS.stopActions = true
 
       return false

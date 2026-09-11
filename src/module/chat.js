@@ -431,18 +431,5 @@ export default function addChatHooks() {
       GurpsWiring.hookupAllEvents(html)
     })
 
-    Hooks.on(
-      'diceSoNiceRollComplete',
-      async (/** @type {any} */ _app, /** @type {any} */ _html, /** @type {any} */ _msg) => {
-        let otf = GURPS.PendingOTFs.pop()
-
-        while (otf) {
-          let action = parselink(otf)
-
-          if (action.action) await GURPS.performAction(action.action, GURPS.LastActor || game.user)
-          otf = GURPS.PendingOTFs.pop()
-        }
-      }
-    )
   }) // End of "init"
 }

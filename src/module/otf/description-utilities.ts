@@ -8,7 +8,7 @@ import type { TrackerInstance } from '@module/resource-tracker/resource-tracker.
  * @returns {null|number} an overriding MAX value if *Max is found, otherwise null.
  */
 export async function applyModifierDescription(
-  actor: Actor.Implementation,
+  actor: Actor.Implementation | null,
   description: string
 ): Promise<number | null> {
   if (!description) return null
@@ -27,7 +27,7 @@ export async function applyModifierDescription(
  * @param actor
  * @param description
  */
-async function applyCostsModifier(actor: Actor.Implementation, description: string): Promise<void> {
+async function applyCostsModifier(actor: Actor.Implementation | null, description: string): Promise<void> {
   const match = description.match(COSTS_REGEX)
 
   if (!match) return
