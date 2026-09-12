@@ -300,7 +300,7 @@ describe('parseForRollOrDamage', () => {
   })
 
   test('#> 8', () => {
-    expect(parseForRollOrDamage('8')).toBeUndefined()
+    expect(parseForRollOrDamage('8')).toBeNull()
   })
 })
 

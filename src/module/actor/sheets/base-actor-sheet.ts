@@ -369,7 +369,7 @@ class GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static async #onRollOtf(this: GurpsBaseActorSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
+  static async #onRollOtf(this: GurpsBaseActorSheet, event: PointerEvent, target: HTMLElement): Promise<any> {
     event.preventDefault()
     event.stopPropagation()
 

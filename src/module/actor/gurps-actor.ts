@@ -4,7 +4,7 @@ import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PostureType, statusIsPosture } from '@module/effects/posture.js'
 import { ItemMetadata } from '@module/item/data/base.js'
 import { ItemType } from '@module/item/types.js'
-import { OtfActionType } from '@module/otf/types.js'
+import { DamageAction, OtfAction, OtfActionType } from '@module/otf/types.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { isObject } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
@@ -19,7 +19,6 @@ import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
 import { TokenActions } from '../token-actions.js'
 
 import { ActorMetadata, BaseActorModel } from './data/base.js'
-import { DamageActionSchema } from './data/character-components.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { runSourceMigrations } from './migrate.js'
 import { ActorType, CanRollResult, CheckInfo } from './types.js'
@@ -739,10 +738,10 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    */
   async addTaggedRollModifiers(
     chatThing: string,
-    optionalArgs: { obj?: AnyObject },
-    attack?: Record<string, any>
+    optionalArgs: { obj?: AnyObject; action?: OtfAction },
+    attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
-    return this.modelV2.addTaggedRollModifiers(chatThing, optionalArgs, attack as MeleeAttackModel | RangedAttackModel)
+    return this.modelV2.addTaggedRollModifiers(chatThing, optionalArgs, attack)
   }
 
   /* ---------------------------------------- */
@@ -793,7 +792,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   async canRoll(
     // TODO: replace with action
     action: AnyObject, // Action parsed from OTF
-    token: Token.Implementation, // Actor Token
+    token: Token.Implementation | null, // Actor Token
     chatThing?: string, // String representation of the action
     actorComponent?: AnyObject // Actor Component for the action
   ): Promise<CanRollResult> {
@@ -1051,7 +1050,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /**
    * NOTE: Both character and characterV2.
    */
-  async accumulateDamageRoll(action: fields.SchemaField.InitializedData<DamageActionSchema>): Promise<void> {
+  async accumulateDamageRoll(action: DamageAction): Promise<void> {
     return this.modelV2.accumulateDamageRoll(action)
   }
 

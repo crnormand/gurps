@@ -1,6 +1,7 @@
 import { fields } from '@gurps-types/foundry/index.js'
 import { BaseDisplayAttack } from '@gurps-types/gurps/display-item.js'
 import { parselink } from '@module/otf/parselink.js'
+import { CalcOnlyAction, OtfAction } from '@module/otf/types.js'
 
 import { BaseAction } from './base-action.js'
 
@@ -84,26 +85,21 @@ class BaseAttack<Schema extends BaseAttack.Schema = BaseAttack.Schema> extends B
     const action = parselink(otf)
 
     // If the OTF does not return an action, we cannot set the level.
-    if (!action.action) {
+    if (!action?.action) {
       console.warn(`GURPS | ${this.documentName}: OTF "${otf}" did not return a valid action.`)
 
       return
     }
 
-    action.action.calcOnly = true
-    action.action.suppressWarnings = true
-
-    const otfResult = GURPS.performAction(action.action, this.actor) as unknown
-
-    if (
-      otfResult &&
-      typeof otfResult === 'object' &&
-      !('then' in otfResult) &&
-      'target' in otfResult &&
-      typeof otfResult.target === 'number'
-    ) {
-      this.level = otfResult.target
+    const calcOnlyAction: OtfAction & CalcOnlyAction = {
+      ...action.action,
+      calcOnly: true,
+      suppressWarnings: true,
     }
+
+    const result = GURPS.performAction(calcOnlyAction, this.actor)
+
+    this.level = result.target
   }
 
   /* ---------------------------------------- */

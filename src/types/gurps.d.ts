@@ -46,7 +46,7 @@ import {
   ReactionModifier,
   ConditionalModifier as ConditionalModifierDocument,
 } from '@module/item/data/conditional-modifier.js'
-import { OtfAction } from '@module/otf/types.js'
+import { OtfAction, CalcOnlyAction } from '@module/otf/types.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
   ContainedQuantityPrereq,
@@ -420,11 +420,17 @@ declare global {
     /* ---------------------------------------- */
 
     performAction(
-      action: OtfAction,
-      actor: Actor | Actor.Implementation | null,
-      event?: Event | null,
+      action: (OtfAction & CalcOnlyAction) | null,
+      actor: Actor.Implementation | null,
+      event?: ActionFuncContext | null,
       targets?: string[]
-    ): Promise<any>
+    ): { target: number; thing?: string }
+    performAction(
+      action: OtfAction | null,
+      actor?: Actor.Implementation | null,
+      event?: ActionFuncContext | null,
+      targets?: string[]
+    ): Promise<boolean> | boolean
 
     /* ---------------------------------------- */
 
@@ -445,7 +451,7 @@ declare global {
     ModifierBucket: {
       setTempRangeMod(mod: number): void
       addTempRangeMod(): void
-      addModifier(mod: string, label: string, options?: { situation?: string }, tagged?: boolean): void
+      addModifier(mod: string, label: string, list?: Modifier[] | undefined, tagged?: boolean): void
       currentSum(): number
       clear(): Promise<void>
       refresh(): void
@@ -505,5 +511,25 @@ declare global {
     SJGProductMappings: Record<string, string>
 
     /* ---------------------------------------- */
+
+    /* to do: better type*/
+    lastTargetedRoll: {
+      actorId: string
+      tokenId: string
+      isCritSuccess: boolean
+      isCritFailure: boolean
+      margin: number
+      failure: boolean
+      seventeen: boolean
+    }
+
+    /* ---------------------------------------- */
+
+    executeOTF(
+      inputstring: string,
+      priv?: boolean,
+      event?: ActionFuncContext | null,
+      actor: Actor.Implementation | null
+    ): Promise<boolean>
   }
 }

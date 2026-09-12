@@ -357,7 +357,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
       const parsedOTF = parselink(bonus)
 
-      if (parsedOTF.action) bonuses.push(parsedOTF.action)
+      if (parsedOTF?.action) bonuses.push(parsedOTF.action)
     }
 
     return bonuses

@@ -67,14 +67,14 @@ export function findAdDisad(actor: CharacterOrActor, name: string): Item.OfType<
 export function findAttack(
   actor: CharacterOrActor,
   name: string,
-  isMelee: true,
+  isMelee: boolean,
   isRanged: false
 ): MeleeAttackModel | null
 export function findAttack(
   actor: CharacterOrActor,
   name: string,
   isMelee: false,
-  isRanged: true
+  isRanged: boolean
 ): RangedAttackModel | null
 export function findAttack(
   actor: CharacterOrActor,

@@ -22,7 +22,7 @@ import { HitLocation } from '@module/hitlocation/hitlocation.js'
 import { d6ify, sanitize } from '@util/utilities.js'
 
 import { gspan, PARSERS } from './otf-parsers.js'
-import { OtfActionType } from './types.js'
+import { DamageAction, DerivedDamageAction, DerivedRollAction, OtfActionType, ParseLinkResult, RollAction } from './types.js'
 
 export const COSTS_REGEX = /.*\* ?(?<verb>(cost|per|costs))? (?<cost>\d*) ?(?<type>[ \w()]+)/i
 export const DAMAGE_REGEX =
@@ -63,14 +63,8 @@ export const PARSELINK_MAPPINGS = {
   BLOCK: 'equippedblock',
 }
 
-/**
- * @param {string} str
- * @param {string | null} [htmldesc]
- * @param {boolean | null} [_clrdmods]
- * @returns {{text: string, action?: Action}}
- */
-export function parselink(input, htmldesc = null, _clrdmods = null) {
-  let args = { str: sanitize(input), htmldesc: htmldesc, clrdmods: true }
+export function parselink(input: string, htmldesc: string | null = null, _clrdmods: boolean | null  = null): ParseLinkResult {
+  const args = { str: sanitize(input), htmldesc: htmldesc, clrdmods: true, overridetxt: undefined, blindroll: false, sourceId: undefined }
 
   // Allow display of long hyphen for minus
   args.str = args.str.replace('–', '-').replace('\u2212', '-')
@@ -93,7 +87,7 @@ export function parselink(input, htmldesc = null, _clrdmods = null) {
   // E.g., @actorid@ 2d-1 cut, @actorid@ IQ-4, etc.
   setSourceId(args)
 
-  let dam = parseForRollOrDamage(args.str, args.overridetxt)
+  const dam = parseForRollOrDamage(args.str, args.overridetxt)
 
   if (dam) {
     dam.action.blindroll = args.blindroll
@@ -103,23 +97,23 @@ export function parselink(input, htmldesc = null, _clrdmods = null) {
   }
 
   for (const parser of PARSERS) {
-    let result
+    const result = parser.parse_(args)
 
-    if ((result = parser.parse_(args))) return result
+    if (result) return result
   }
 
   return { text: args.str }
 
-  function setSourceId(args) {
-    let matches = args.str.match(/^@(?<actorid>[^@]+)@(?<text>[\s\S]*)/)
+  function setSourceId(args: { str: string; sourceId: string | undefined }) {
+    const matches = args.str.match(/^@(?<actorid>[^@]+)@(?<text>[\s\S]*)/)
 
     if (matches) {
-      args.sourceId = matches.groups.actorid
-      args.str = matches.groups.text.trim()
+      args.sourceId = matches.groups?.actorid
+      args.str = matches.groups?.text.trim() ?? args.str
     }
   }
 
-  function setBlindRoll(args) {
+  function setBlindRoll(args: { str: string; blindroll: boolean }) {
     args.blindroll = false
 
     if (args.str[0] === '!') {
@@ -128,40 +122,43 @@ export function parselink(input, htmldesc = null, _clrdmods = null) {
     }
   }
 
-  function setOverrideText(args) {
+  function setOverrideText(args: { str: string; overridetxt: string | undefined }) {
     let match = args.str.match(/^"(?<overridetext>[^"]*)"(?<text>[\s\S]*)/)
 
     if (match) {
       args.overridetxt = match.groups?.overridetext
-      args.str = match.groups?.text.trim()
+      args.str = match.groups?.text.trim() ?? args.str
     } else {
       match = args.str.match(/^'(?<overridetext>[^']*)'(?<text>[\s\S]*)/)
 
       if (match) {
         args.overridetxt = match.groups?.overridetext
-        args.str = match.groups?.text.trim()
+        args.str = match.groups?.text.trim() ?? args.str
       }
     }
   }
 }
 
 /**
- * @param {string} str
+ * @param {string | Set<string> } str
  * @param {string} [overridetxt]
  * @returns {{text: string, action: Action} | null}
  */
-export function parseForRollOrDamage(str, overridetxt) {
+export function parseForRollOrDamage(str: string | Set<string>, overridetxt?: string): {text: string, action: DamageAction | DerivedDamageAction | RollAction | DerivedRollAction} | null {
   // Straight roll 4d, 2d-1, etc. Is "damage" if it includes a damage type. Allows "!" suffix to indicate minimum of 1.
   // Supports:  2d+1x3(5), 4dX2(0.5), etc
   // Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
-  if (str instanceof Set) str = Array.from(str)
-  str = str.toString() // convert possible array to single string
+  if (str instanceof Set) {const strArr = Array.from(str)
+    
+    str = strArr.toString() // convert possible array to single string
+  }
 
   let array = str.match(DAMAGE_REGEX)
 
-  if (array) {
+  if (array?.groups) {
     const DICE = array.groups.D || '' // Can now support non-variable damage '2 cut' or '2x3(1) imp'
     const other = array.groups.other ? array.groups.other.trim() : ''
+    // eslint-disable-next-line prefer-const
     let [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
     let dmap = GURPS.DamageTables.translate(actualType.toLowerCase())
 
@@ -177,19 +174,20 @@ export function parseForRollOrDamage(str, overridetxt) {
     const woundingModifier = GURPS.DamageTables.woundModifiers[dmap]
     const [adds, multiplier, divisor, bang] = _getFormulaComponents(array.groups)
 
-    var next
+    let next
 
     if (array.groups.follow) {
       next = parseForRollOrDamage(array.groups.follow.substring(1).trim()) // remove ',')
       if (next) next = next.action
+      else next = undefined
     }
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
-      let dice = DICE === 'd' ? d6ify(DICE) : DICE
+      const dice = DICE === 'd' ? d6ify(DICE) : DICE
 
-      if (!dice) return undefined // if no damage type and no dice, not a roll, ex: [70]
-      let action = {
+      if (!dice) return null // if no damage type and no dice, not a roll, ex: [70]
+      const action: RollAction = {
         orig: str,
         type: OtfActionType.roll,
         displayformula: array.groups.roll + DICE + adds + multiplier + bang,
@@ -207,7 +205,7 @@ export function parseForRollOrDamage(str, overridetxt) {
       }
     } else {
       // Damage roll 1d+2 cut.
-      let action = {
+      const action: DamageAction = {
         orig: str,
         type: OtfActionType.damage,
         formula: array.groups.roll + DICE + adds + multiplier + divisor + bang,
@@ -228,7 +226,7 @@ export function parseForRollOrDamage(str, overridetxt) {
 
   array = str.match(DERIVED_DAMAGE_REGEX) // SW+1
 
-  if (array) {
+  if (array?.groups) {
     const basic = array.groups.att
     const other = array.groups.other ? array.groups.other.trim() : ''
     const [actualType, extDamageType, hitLocation] = _parseOtherForTypeModiferAndLocation(other)
@@ -238,7 +236,7 @@ export function parseForRollOrDamage(str, overridetxt) {
 
     if (!woundingModifier) {
       // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
-      let action = {
+      const action: DerivedRollAction = {
         orig: str,
         type: OtfActionType.derivedRoll,
         derivedformula: basic,
@@ -254,7 +252,7 @@ export function parseForRollOrDamage(str, overridetxt) {
         action: action,
       }
     } else {
-      let action = {
+      const action: DerivedDamageAction = {
         orig: str,
         type: OtfActionType.derivedDamage,
         derivedformula: basic,
@@ -273,13 +271,13 @@ export function parseForRollOrDamage(str, overridetxt) {
     }
   }
 
-  return undefined
+  return null
 }
 
 /**
  * @param {Record<string, string>} matches
  */
-function _parseOtherForTypeModiferAndLocation(other) {
+function _parseOtherForTypeModiferAndLocation(other: string) {
   // change the regex from /(w+)(.*)/ to /([A-Za-z0-9_+-]+)(.*)/ to make sure we recognize pi-, pi+ and pi++
   const dmgTypeMatch = other.match(/([A-Za-z0-9_]+[+-]?\+?)(.*)/)
   const actualType = dmgTypeMatch ? dmgTypeMatch[1] : other // only take the first word as damage type
@@ -299,9 +297,9 @@ function _parseOtherForTypeModiferAndLocation(other) {
   return [actualType, extDamageType, hitLocation]
 }
 
-function _getFormulaComponents(groups) {
+function _getFormulaComponents(groups: Record<string, string>) {
   let adds = (groups.adds || '').replace('–', '-')
-  let matches = groups.other.match(/([+-]@margin)/i)
+  const matches = groups.other.match(/([+-]@margin)/i)
 
   if (!adds && !!matches) {
     adds = matches[1]
