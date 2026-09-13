@@ -39,12 +39,12 @@ declare global {
       Dev: typeof ModuleDev
       Importer: typeof ModuleImporter
       Item: typeof ModuleItem
+      Otf: typeof ModuleOtf
       Pdf: typeof ModulePdf
       ResourceTracker: typeof ModuleResourceTracker
       Token: typeof ModuleToken
       UI: typeof ModuleUI
       Util: typeof ModuleUtil
-      Otf: typeof ModuleOtf
     }
 
     /* ---------------------------------------- */

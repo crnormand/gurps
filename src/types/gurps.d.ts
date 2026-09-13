@@ -482,13 +482,6 @@ declare global {
 
     /* ---------------------------------------- */
 
-    Maneuvers: {
-      get(id: string): { img?: string; label: string; move: string | null } | undefined
-      getAll(): Record<string, Maneuver>
-    }
-
-    /* ---------------------------------------- */
-
     ApplyDamageDialog: new (actor: Actor.Implementation, damageData: DamageData[], options?: object) => Application
 
     /* ---------------------------------------- */
