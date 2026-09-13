@@ -22,7 +22,14 @@ import { HitLocation } from '@module/hitlocation/hitlocation.js'
 import { d6ify, sanitize } from '@util/utilities.js'
 
 import { gspan, PARSERS } from './otf-parsers.js'
-import { DamageAction, DerivedDamageAction, DerivedRollAction, OtfActionType, ParseLinkResult, RollAction } from './types.js'
+import {
+  DamageAction,
+  DerivedDamageAction,
+  DerivedRollAction,
+  OtfActionType,
+  ParseLinkResult,
+  RollAction,
+} from './types.js'
 
 export const COSTS_REGEX = /.*\* ?(?<verb>(cost|per|costs))? (?<cost>\d*) ?(?<type>[ \w()]+)/i
 export const DAMAGE_REGEX =
@@ -63,8 +70,19 @@ export const PARSELINK_MAPPINGS = {
   BLOCK: 'equippedblock',
 }
 
-export function parselink(input: string, htmldesc: string | null = null, _clrdmods: boolean | null  = null): ParseLinkResult {
-  const args = { str: sanitize(input), htmldesc: htmldesc, clrdmods: true, overridetxt: undefined, blindroll: false, sourceId: undefined }
+export function parselink(
+  input: string,
+  htmldesc: string | null = null,
+  _clrdmods: boolean | null = null
+): ParseLinkResult {
+  const args = {
+    str: sanitize(input),
+    htmldesc: htmldesc,
+    clrdmods: true,
+    overridetxt: undefined,
+    blindroll: false,
+    sourceId: undefined,
+  }
 
   // Allow display of long hyphen for minus
   args.str = args.str.replace('–', '-').replace('\u2212', '-')
@@ -144,12 +162,16 @@ export function parselink(input: string, htmldesc: string | null = null, _clrdmo
  * @param {string} [overridetxt]
  * @returns {{text: string, action: Action} | null}
  */
-export function parseForRollOrDamage(str: string | Set<string>, overridetxt?: string): {text: string, action: DamageAction | DerivedDamageAction | RollAction | DerivedRollAction} | null {
+export function parseForRollOrDamage(
+  str: string | Set<string>,
+  overridetxt?: string
+): { text: string; action: DamageAction | DerivedDamageAction | RollAction | DerivedRollAction } | null {
   // Straight roll 4d, 2d-1, etc. Is "damage" if it includes a damage type. Allows "!" suffix to indicate minimum of 1.
   // Supports:  2d+1x3(5), 4dX2(0.5), etc
   // Straight roll, no damage type. 4d, 2d-1, etc. Allows "!" suffix to indicate minimum of 1.
-  if (str instanceof Set) {const strArr = Array.from(str)
-    
+  if (str instanceof Set) {
+    const strArr = Array.from(str)
+
     str = strArr.toString() // convert possible array to single string
   }
 

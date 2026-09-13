@@ -551,9 +551,8 @@ export const actionFuncs: Record<string, actionFunc> = {
 
       const targetmods: Modifier[] = []
 
-      /* @ts-expect-error - wait for fix for issue #2899*/
       if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
-      /* @ts-expect-error - wait for fix for issue #2899*/
+
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs, targetmods)
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
@@ -970,4 +969,3 @@ function processSkillSpell({
 
   return skillLevel
 }
-
