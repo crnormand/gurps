@@ -121,12 +121,20 @@ export const actionFuncs: Record<string, actionFunc> = {
     const savedActor = GURPS.LastActor
 
     if (actor) GURPS.SetLastActor(actor) // try to ensure the correct last actor.
+
     // @ts-expect-error - custom chatmsgData property added to MouseEvent
-    const ret = !!(await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event))
+    return GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+      .then((result: any) => {
+        if (savedActor) GURPS.SetLastActor(savedActor)
 
-    if (savedActor) GURPS.SetLastActor(savedActor)
+        return !!result
+      })
+      .catch((error: any) => {
+        console.log('Error during ChatProcessors.startProcessingLines', error)
+        if (savedActor) GURPS.SetLastActor(savedActor)
 
-    return ret
+        return false
+      })
   },
 
   dragdrop({ action, calcOnly }: actionFuncParams) {
