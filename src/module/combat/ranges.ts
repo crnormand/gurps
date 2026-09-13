@@ -164,7 +164,6 @@ export class GurpsRange {
 
     this.ranges.forEach(band => {
       if (band.penalty != 0)
-        // @ts-expect-error: tempModifiers is not part of the original method signature
         GURPS.ModifierBucket.addModifier(band.penalty.toLocaleString(), band.moddesc ?? '', tempModifiers)
     })
     this.modifiers = tempModifiers.map(entry => entry.mod + ' ' + entry.desc)
