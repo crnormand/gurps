@@ -63,11 +63,14 @@
   <span class='ms-effect-tag {{effectTagClass this}}' data-effect-id='{{this.id}}' title='{{this.name}}'>
     <span class='ms-effect-icon-wrapper'>
       {{#if this.img}}<img src='{{this.img}}' class='ms-effect-icon' />{{/if}}
-      <button class='ms-effect-delete' data-action='deleteEffect' data-effect-id='{{this.id}}' title='Delete'>
+      <button class='ms-effect-delete' data-action='deleteEmbedded' data-uuid='{{this.uuid}}' title='{{localize COMMON.Delete}}'>
         <i class='fa-solid fa-trash'></i>
       </button>
     </span>
     <span class='ms-tag-text'>{{this.name}}</span>
+    <button class='ms-effect-edit' data-action='editEmbedded' data-uuid='{{this.uuid}}' title='{{localize GURPS.edit}}'>
+      <i class='fa-solid fa-pen-to-square'></i>
+    </button>
   </span>
   {{/unless}}
   {{/each}}
