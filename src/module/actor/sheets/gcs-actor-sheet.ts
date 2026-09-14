@@ -279,7 +279,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       carriedWeight: Weight.fromPounds(this.actor.system.eqtsummary.eqtlbs).toString(),
       otherWeight: Weight.fromPounds(this.actor.system.eqtsummary.otherlbs).toString(),
       otherValue: '$' + this.actor.system.eqtsummary.othercost.toLocaleString(),
-      activeEffects: this.actor.effects.contents,
+      activeEffects: this.actor.effects.contents.filter(effect => !effect.isPosture && !effect.isManeuver),
     }
   }
 
