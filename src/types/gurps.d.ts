@@ -546,7 +546,8 @@ declare global {
       inputstring: string,
       priv?: boolean,
       event?: ActionFuncContext | null,
-      actor: Actor.Implementation | null
+      actor: Actor.Implementation | null,
+      targets?: string[]
     ): Promise<boolean>
   }
 }

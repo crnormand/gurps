@@ -455,7 +455,7 @@ async function _doRoll({
     chatdata.otf = (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing
     chatdata.followon = optionalArgs.followon
 
-    // If the attached obj (see handleRoll()) has Recoil information, do the additional math.
+    // If the attached obj has Recoil information, do the additional math.
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
       /** @type {import('../../rules/combat/ranged/missile-weapon-attacks.js').WeaponDescriptor} */
       const weapon = { recoil: optionalArgs.obj.rcl as string, rateOfFire: optionalArgs.obj.rof as string }
