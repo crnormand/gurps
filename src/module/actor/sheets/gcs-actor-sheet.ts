@@ -26,6 +26,7 @@ import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import type { MoveModeV2 } from '../data/move-mode.js'
+import EffectPicker from '../effect-picker.js'
 import { ActorType } from '../types.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
@@ -124,6 +125,7 @@ namespace GurpsActorGcsSheet {
     carriedWeight: string
     otherValue: string
     otherWeight: string
+    activeEffects: ActiveEffect[]
   }
 
   /* ---------------------------------------- */
@@ -171,6 +173,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       incrementQuantity: GurpsActorGcsSheet.#onChangeQuantity,
       decrementUses: GurpsActorGcsSheet.#onChangeUses,
       incrementUses: GurpsActorGcsSheet.#onChangeUses,
+      addEffect: GurpsActorGcsSheet.#onAddEffect,
     },
   }
 
@@ -276,6 +279,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       carriedWeight: Weight.fromPounds(this.actor.system.eqtsummary.eqtlbs).toString(),
       otherWeight: Weight.fromPounds(this.actor.system.eqtsummary.otherlbs).toString(),
       otherValue: '$' + this.actor.system.eqtsummary.othercost.toLocaleString(),
+      activeEffects: this.actor.effects.contents,
     }
   }
 
@@ -1036,6 +1040,23 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     } else {
       await doc.system.decrementUses()
     }
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onAddEffect(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    const theme = this.options.classes.includes('theme-dark')
+      ? 'theme-dark'
+      : this.options.classes.includes('theme-light')
+        ? 'theme-light'
+        : undefined
+
+    console.log('Opening EffectPicker with theme:', theme)
+
+    const dialog = new EffectPicker(this.actor, { parentTheme: theme })
+
+    dialog.render(true)
   }
 
   /* ---------------------------------------- */
