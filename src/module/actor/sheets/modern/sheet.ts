@@ -126,7 +126,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       resetHp: GurpsActorModernSheet.#onResetResource,
       resetFp: GurpsActorModernSheet.#onResetResource,
       addEffect: GurpsActorModernSheet.#onAddEffect,
-      deleteEffect: GurpsActorModernSheet.#onDeleteEffect,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
       decrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
@@ -401,26 +400,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     const dialog = new EffectPicker(this.actor, { parentTheme: theme })
 
     dialog.render(true)
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onDeleteEffect(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-    event.stopPropagation()
-    const effectId = target.dataset.effectId ?? ''
-    const effect = this.actor.effects.get(effectId)
-
-    if (!effect) return
-
-    const confirmed = await foundry.applications.api.DialogV2.confirm({
-      window: { title: getGame().i18n.localize('GURPS.delete') },
-      content: `<p>${getGame().i18n.localize('GURPS.delete')}: <strong>${effect.name}</strong>?</p>`,
-    })
-
-    if (confirmed) {
-      await effect.delete()
-    }
   }
 
   /* ---------------------------------------- */

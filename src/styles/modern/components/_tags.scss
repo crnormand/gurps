@@ -62,6 +62,7 @@
 }
 
 .ms-effect-icon {
+  display: block;
   width: 14px;
   height: 14px;
   border-radius: 2px;
@@ -70,29 +71,38 @@
 
 .ms-effect-icon-wrapper {
   position: relative;
+  display: grid;
+  flex: 0 0 14px;
   width: 14px;
   height: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  place-items: center;
 }
 
+.ms-effect-edit,
 .ms-effect-delete {
   display: none;
-  position: absolute;
-  inset: 0;
-  background: none;
-  border: none;
-  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
   padding: 0;
   margin: 0;
-  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  background: none;
   color: inherit;
+  cursor: pointer;
   font-size: var(--ms-font-xs);
+  line-height: 1;
 
   i {
     margin: 0;
   }
+}
+
+.ms-effect-delete {
+  position: absolute;
+  inset: 0;
 
   &:hover {
     color: var(--ms-disadvantage);
@@ -103,6 +113,7 @@
   .ms-effect-icon {
     display: none;
   }
+
   .ms-effect-delete {
     display: flex;
     align-items: center;
