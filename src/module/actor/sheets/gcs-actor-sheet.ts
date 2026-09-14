@@ -76,6 +76,7 @@ type AttributeEntry = {
   field: foundry.data.fields.DataField<any>
   name?: string
   value: unknown
+  displayValue: unknown
   nonRollable?: boolean
 }
 
@@ -286,82 +287,98 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     const systemSource = this.actor.system._source
     const attributeFields = this.actor.system.schema.fields.attributes.fields
     const attributeSource = this.actor.system._source.attributes
+    const attributeInst = this.actor.system.attributes
 
     return {
       ST: {
         field: attributeFields.ST.fields.importedValue,
         name: 'ST',
         value: attributeSource.ST.importedValue,
+        displayValue: attributeInst.ST.value,
       },
       DX: {
         field: attributeFields.DX.fields.importedValue,
         name: 'DX',
         value: attributeSource.DX.importedValue,
+        displayValue: attributeInst.DX.value,
       },
       IQ: {
         field: attributeFields.IQ.fields.importedValue,
         name: 'IQ',
         value: attributeSource.IQ.importedValue,
+        displayValue: attributeInst.IQ.value,
       },
       HT: {
         field: attributeFields.HT.fields.importedValue,
         name: 'HT',
         value: attributeSource.HT.importedValue,
+        displayValue: attributeInst.HT.value,
       },
       WILL: {
         field: attributeFields.WILL.fields.importedValue,
         name: 'WILL',
         value: attributeSource.WILL.importedValue,
+        displayValue: attributeInst.WILL.value,
       },
       frightCheck: {
         field: systemFields.frightcheck,
         name: 'frightcheck',
         value: systemSource.frightcheck,
+        displayValue: systemSource.frightcheck,
       },
       PER: {
         field: attributeFields.PER.fields.importedValue,
         name: 'PER',
         value: attributeSource.PER.importedValue,
+        displayValue: attributeSource.PER.value,
       },
       vision: {
         field: systemFields.vision,
         name: 'vision',
         value: systemSource.vision,
+        displayValue: systemSource.vision,
       },
       hearing: {
         field: systemFields.hearing,
         name: 'hearing',
         value: systemSource.hearing,
+        displayValue: systemSource.hearing,
       },
       tasteSmell: {
         field: systemFields.tastesmell,
         name: 'tastesmell',
         value: systemSource.tastesmell,
+        displayValue: systemSource.tastesmell,
       },
       touch: {
         field: systemFields.touch,
         name: 'touch',
         value: systemSource.touch,
+        displayValue: systemSource.touch,
       },
       basicSpeed: {
         field: systemFields.basicspeed.fields.value,
         value: systemSource.basicspeed.value,
         nonRollable: true,
+        displayValue: systemSource.basicspeed.value,
       },
       basicMove: {
         field: systemFields.basicmove.fields.value,
         value: systemSource.basicmove.value,
         nonRollable: true,
+        displayValue: systemSource.basicmove.value,
       },
       basicThrust: {
         field: systemFields.thrust,
         value: systemSource.thrust,
         name: `${systemSource.thrust} dmg`,
+        displayValue: `${systemSource.thrust} dmg`,
       },
       basicSwing: {
         field: systemFields.swing,
         value: systemSource.swing,
         name: `${systemSource.swing} dmg`,
+        displayValue: `${systemSource.swing} dmg`,
       },
     }
   }
