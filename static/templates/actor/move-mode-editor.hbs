@@ -45,6 +45,7 @@
             />
           </td>
           <td>
+            {{#if (gt (length ../moveModes) 1)}}
             <button
               type='button'
               data-action='deleteEmbedded'
@@ -53,6 +54,7 @@
             >
               <i class='fa-solid fa-trash'></i>
             </button>
+            {{/if}}
           </td>
         </tr>
       {{else}}
