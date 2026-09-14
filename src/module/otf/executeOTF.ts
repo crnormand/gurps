@@ -6,7 +6,8 @@ export async function executeOTF(
   inputstring: string,
   priv: boolean = false,
   event: ActionFuncContext | null = null,
-  actor: Actor.Implementation | null = null
+  actor: Actor.Implementation | null = null,
+  targets?: string[]
 ) {
   if (!inputstring) return false
   inputstring = inputstring.trim()
@@ -26,7 +27,7 @@ export async function executeOTF(
     answer = false
     if (action?.action) {
       if (!event) event = { shiftKey: priv, ctrlKey: false, altKey: false, data: {} }
-      const result = await performAction(action.action, actor || GURPS.LastActor, event)
+      const result = await performAction(action.action, actor || GURPS.LastActor, event, targets)
 
       answer = result
     } else ui.notifications?.warn(`"${string}" did not parse into a valid On-the-Fly formula`)

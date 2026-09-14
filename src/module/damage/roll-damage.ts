@@ -1,5 +1,5 @@
-import { calculateMessageMode } from '@module/dierolls/dieroll.js'
 import { ActionFuncContext } from '@module/otf/actionFuncs.js'
+import { calculateMessageMode } from '@module/otf/dieroll.js'
 import { RollConfirmationDialog } from '@module/otf/rollConfirmationDialog.js'
 import { DamageAction, DerivedDamageAction } from '@module/otf/types.js'
 import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
@@ -23,7 +23,7 @@ export async function rollDamage(
 
   const showRollDialog = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
 
-  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, action.blindroll, event) as MessageMode
+  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, action.blindroll ?? false, event) as MessageMode
 
   if (showRollDialog && !canRoll.isSlam) {
     const response = await RollConfirmationDialog.wait({

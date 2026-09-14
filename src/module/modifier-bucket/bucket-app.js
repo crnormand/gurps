@@ -3,8 +3,8 @@ import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { displayMod, generateUniqueId } from '@util/utilities.js'
 
-import { addBucketToDamage, rollData } from '../dierolls/dieroll.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+import { addBucketToDamage, rollData } from '../otf/dieroll.js'
 
 import ModifierBucketEditor from './tooltip-window.js'
 

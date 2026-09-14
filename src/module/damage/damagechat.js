@@ -1,12 +1,11 @@
 'use strict'
 
-import { calculateMessageMode } from '@module/dierolls/dieroll.js'
+import { calculateMessageMode, addBucketToDamage } from '@module/otf/dieroll.js'
 import { FoundryUtils } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import selectTarget from '@module/util/select-target.js'
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '@util/utilities.js'
 
-import { addBucketToDamage } from '../dierolls/dieroll.js'
 import { DragDropType } from '../drag-drop-types.js'
 
 /**
