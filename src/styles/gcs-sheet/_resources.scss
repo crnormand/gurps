@@ -150,6 +150,12 @@ section[data-application-part='resources'] {
         display: none;
       }
 
+      [data-action='deleteEmbedded'],
+      [data-action='editEmbedded'] {
+        display: none;
+        cursor: pointer;
+      }
+
       &:hover {
         background-color: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
 
@@ -158,6 +164,9 @@ section[data-application-part='resources'] {
         }
 
         .gcs-active-effect-delete {
+          display: inline-block;
+        }
+        [data-action='editEmbedded'] {
           display: inline-block;
         }
       }
