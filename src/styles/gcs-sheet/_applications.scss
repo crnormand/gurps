@@ -1,0 +1,51 @@
+@use 'mixins' as *;
+
+/* ---------------------------------------- */
+
+.application.move-mode-editor {
+  @include gcs-application-shell;
+
+  .window-content {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .move-mode-editor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gga-space-2);
+
+    .gcs-table {
+      width: 100%;
+      border: 1px solid var(--gcs-color-section-border);
+
+      thead {
+        border: 1px solid var(--gcs-color-section-border);
+      }
+
+      input {
+        @include gcs-input;
+      }
+
+      button {
+        @include gcs-control;
+        width: auto;
+        padding: 0 0.5rem;
+      }
+    }
+  }
+
+  .move-mode-editor-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: var(--gga-space-2);
+    border-top: 1px solid var(--gcs-color-section-border);
+
+    button {
+      @include gcs-control;
+      width: 100%;
+      padding: 0 0.75rem;
+    }
+  }
+}

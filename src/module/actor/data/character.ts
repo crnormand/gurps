@@ -1357,13 +1357,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   async setMoveDefault(value: string): Promise<void> {
-    const move = this.moveV2
+    if (!this.moveV2.has(value)) return
 
-    const updates = Object.fromEntries(
-      move.map(moveEntry => [`system.moveV2.${moveEntry.id}.default`, moveEntry.mode === value])
-    )
-
-    await this.parent.update(updates)
+    await this.parent.update({ 'system._currentMoveModeId': value } as Actor.UpdateData)
   }
 
   /* ---------------------------------------- */
