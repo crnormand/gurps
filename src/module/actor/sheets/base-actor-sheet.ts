@@ -1,5 +1,4 @@
 import {
-  Document,
   Application,
   ActorSheet,
   DragDrop,
@@ -7,12 +6,16 @@ import {
   DocumentSheet,
 } from '@gurps-types/foundry/index.js'
 import { ImportSettings } from '@module/importer/index.js'
-import { ItemType } from '@module/item/types.js'
 import { OtfActionType } from '@module/otf/types.js'
-import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { constructHTMLButton } from '@module/util/dom.js'
+import {
+  createEmbeddedAction,
+  deleteEmbeddedAction,
+  editEmbeddedAction,
+  toggleContainerAction,
+} from '@module/util/embedded-document-actions.js'
 import { getUser } from '@module/util/guards.js'
-import { AnyMutableObject, DeepPartial } from 'fvtt-types/utils'
+import { DeepPartial } from 'fvtt-types/utils'
 
 import { ActorType } from '../types.js'
 
@@ -157,10 +160,10 @@ class GurpsBaseActorSheet<
     actions: {
       importActor: GurpsBaseActorSheet.#onImportActor,
       toggleMode: GurpsBaseActorSheet.#onToggleMode,
-      createEmbedded: GurpsBaseActorSheet.#onCreateEmbedded,
-      editEmbedded: GurpsBaseActorSheet.#onEditEmbedded,
-      deleteEmbedded: GurpsBaseActorSheet.#onDeleteEmbedded,
-      toggleContainer: GurpsBaseActorSheet.#onToggleContainer,
+      createEmbedded: createEmbeddedAction,
+      editEmbedded: editEmbeddedAction,
+      deleteEmbedded: deleteEmbeddedAction,
+      toggleContainer: toggleContainerAction,
       addModifier: { handler: GurpsBaseActorSheet.#onAddModifier, buttons: [0, 2] },
       rollOtf: { handler: GurpsBaseActorSheet.#onRollOtf, buttons: [0, 2] },
     },
@@ -209,140 +212,6 @@ class GurpsBaseActorSheet<
     await this.render({
       mode: this.isPlayMode ? GurpsBaseActorSheet.MODES.EDIT : GurpsBaseActorSheet.MODES.PLAY,
     } as GurpsBaseActorSheet.RenderOptions)
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onCreateEmbedded(
-    this: GurpsBaseActorSheet,
-    event: PointerEvent | null,
-    target: HTMLElement
-  ): Promise<void> {
-    event?.preventDefault()
-
-    const documentName = target.closest<HTMLElement>('[data-document-name]')?.dataset.documentName
-
-    if (!documentName) {
-      console.error('Could not find document name for embedded document to edit.')
-
-      return
-    }
-
-    const createData: AnyMutableObject = { _id: foundry.utils.randomID() }
-
-    const type = target.closest<HTMLElement>('[data-type]')?.dataset.type
-
-    if (type) createData.type = type
-
-    if (documentName === 'Item') {
-      const defaultName = foundry.documents.Item.defaultName({
-        type: type as foundry.documents.Item.SubType,
-        parent: this.actor,
-      })
-
-      createData.name = defaultName
-    }
-
-    if (type === ItemType.Equipment) {
-      const carried = target.closest<HTMLElement>('[data-carried]')?.dataset.carried === 'true'
-
-      createData.system = { carried }
-    }
-
-    await this.actor.createEmbeddedDocuments(documentName as any, [createData], { parent: this.actor })
-  }
-
-  /* ---------------------------------------- */
-
-  protected async _getEmbedded(target: HTMLElement): Promise<Document.Any | PseudoDocument.Any | null> {
-    const uuid = target.closest<HTMLElement>('[data-uuid]')?.dataset.uuid
-
-    if (!uuid) {
-      console.error('Could not find UUID for embedded document to edit.')
-
-      return null
-    }
-
-    let doc: Document.Any | PseudoDocument.Any | null = null
-
-    if (uuid.startsWith('.')) {
-      doc = await fromUuid(uuid, { relative: this.actor })
-    } else {
-      doc = await fromUuid(uuid)
-    }
-
-    if (!doc) {
-      console.error(`Could not find document for UUID ${uuid}.`)
-
-      return null
-    }
-
-    return doc
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onEditEmbedded(
-    this: GurpsBaseActorSheet,
-    event: PointerEvent | null,
-    target: HTMLElement
-  ): Promise<void> {
-    event?.preventDefault?.()
-
-    const doc = await this._getEmbedded(target)
-
-    if (!doc) return
-
-    const sheet = 'sheet' in doc ? doc.sheet : null
-
-    if (!sheet) {
-      console.error(`Could not find sheet for document with UUID ${doc.uuid}.`)
-
-      return
-    }
-
-    await sheet.render({ force: true })
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onDeleteEmbedded(
-    this: GurpsBaseActorSheet,
-    event: PointerEvent | null,
-    target: HTMLElement
-  ): Promise<void> {
-    event?.preventDefault?.()
-
-    const doc = await this._getEmbedded(target)
-
-    if (!doc) return
-
-    if ('deleteDialog' in doc && typeof doc.deleteDialog === 'function') {
-      await doc.deleteDialog?.()
-    } else {
-      console.error(`Could not find delete method for document with UUID ${doc.uuid}.`)
-
-      return
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onToggleContainer(this: GurpsBaseActorSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-    const doc = await this._getEmbedded(target)
-
-    if (!doc) return
-
-    if ('toggleOpen' in doc && typeof doc.toggleOpen === 'function') {
-      await doc?.toggleOpen?.()
-    } else {
-      console.error(
-        'Tried to toggle open state of a pseudo-document or document, but the document does not have a toggleOpen function'
-      )
-
-      return
-    }
   }
 
   /* ---------------------------------------- */

@@ -16,6 +16,7 @@ import { ActorType } from '@module/actor/types.js'
 import { PostureType } from '@module/effects/posture.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { ItemType } from '@module/item/types.js'
+import { getEmbeddedDocument } from '@module/util/embedded-document-actions.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
@@ -460,7 +461,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   static async #onChangeQuantity(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event?.preventDefault()
 
-    const doc = await this._getEmbedded(target)
+    const doc = await getEmbeddedDocument(this.actor, target)
 
     if (!doc) return
 
@@ -488,7 +489,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   static async #onChangeUses(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event?.preventDefault()
 
-    const doc = await this._getEmbedded(target)
+    const doc = await getEmbeddedDocument(this.actor, target)
 
     if (!doc) return
 
