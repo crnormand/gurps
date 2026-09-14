@@ -30,7 +30,13 @@ import EffectPicker from '../effect-picker.js'
 import { ActorType } from '../types.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
-import { getColorForState, getTextForState, openQuickNotesEditor, resolveItemDropDetails } from './helpers.js'
+import {
+  getColorForState,
+  getTextForState,
+  invokeSheetAction,
+  openQuickNotesEditor,
+  resolveItemDropDetails,
+} from './helpers.js'
 
 /* ---------------------------------------- */
 
@@ -710,6 +716,22 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ): Promise<void> {
     super._onFirstRender(context, options)
 
+    this._createContextMenu(this._createActiveEffectContextOptions, '.gcs-active-effect', {
+      jQuery: false,
+      hookName: 'createActiveEffectContextOptions',
+      parentClassHooks: false,
+      fixed: true,
+      eventName: 'contextmenu',
+    })
+
+    this._createContextMenu(this._createActiveEffectContextOptions, '.gcs-active-effect .gcs-active-effect-icon', {
+      jQuery: false,
+      hookName: 'createActiveEffectContextOptions',
+      parentClassHooks: false,
+      fixed: true,
+      eventName: 'click',
+    })
+
     this._createContextMenu(this._createItemContextOptions, '.gcs-item-row', {
       jQuery: false,
       hookName: 'createItemContextOptions',
@@ -751,11 +773,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     return [
       {
         label: 'GURPS.delete',
-        icon: '<i class="fa-solid fa-fw fa-trash"></i>',
+        icon: 'fa-solid fa-fw fa-trash',
         visible: target => target.dataset.uuid !== undefined,
-        callback: async target => {
+        onClick: async (event, target) => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
-          const event = new PointerEvent('click', { bubbles: true })
 
           if (handler) handler.call(this, event, target)
         },
@@ -769,14 +790,30 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     return [
       {
         label: 'GURPS.delete',
-        icon: '<i class="fa-solid fa-fw fa-trash"></i>',
+        icon: 'fa-solid fa-fw fa-trash',
         visible: target => target.dataset.uuid !== undefined,
-        callback: async target => {
+        onClick: async (event, target) => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
-          const event = new PointerEvent('click', { bubbles: true })
 
           if (handler) handler.call(this, event, target)
         },
+      },
+    ]
+  }
+
+  /* ---------------------------------------- */
+
+  protected _createActiveEffectContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+    return [
+      {
+        label: 'GURPS.edit',
+        icon: 'fa-solid fa-fw fa-pen-to-square',
+        onClick: (_event, target) => invokeSheetAction(this, 'editEmbedded', target, '.gcs-active-effect'),
+      },
+      {
+        label: 'GURPS.delete',
+        icon: 'fa-solid fa-fw fa-trash',
+        onClick: (_event, target) => invokeSheetAction(this, 'deleteEmbedded', target, '.gcs-active-effect'),
       },
     ]
   }

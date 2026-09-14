@@ -1,9 +1,11 @@
+import { Application } from '@gurps-types/foundry/index.js'
 import { ItemType } from '@module/item/types.js'
 import { isHTMLElement } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
 
 import { ActorType } from '../types.js'
 
+import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 import { GurpsActorGcsSheet } from './gcs-actor-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
 
@@ -582,4 +584,23 @@ export function getTextForState(key: string, state: string | undefined): string 
   const localizationKey = key === 'CI' ? `GURPS.conditionalInjury.severity.${state}` : `GURPS.status.${state}`
 
   return game.i18n!.localize(localizationKey)
+}
+
+/* ---------------------------------------- */
+
+export async function invokeSheetAction(
+  sheet: GurpsBaseActorSheet,
+  action: string,
+  target: HTMLElement,
+  selectors: string
+): Promise<void> {
+  const contextTarget = target.closest<HTMLElement>(selectors) ?? target
+  const uuid = contextTarget.dataset.uuid
+
+  if (!uuid) return
+
+  const handler = sheet.options.actions[action] as Application.ClickAction | null
+  const event = new PointerEvent('click', { bubbles: true })
+
+  if (handler) await handler.call(sheet, event, contextTarget)
 }

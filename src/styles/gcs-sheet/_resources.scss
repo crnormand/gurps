@@ -146,29 +146,8 @@ section[data-application-part='resources'] {
         object-fit: contain;
       }
 
-      .gcs-active-effect-delete {
-        display: none;
-      }
-
-      [data-action='deleteEmbedded'],
-      [data-action='editEmbedded'] {
-        display: none;
-        cursor: pointer;
-      }
-
       &:hover {
         background-color: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
-
-        .gcs-active-effect-image {
-          display: none;
-        }
-
-        .gcs-active-effect-delete {
-          display: inline-block;
-        }
-        [data-action='editEmbedded'] {
-          display: inline-block;
-        }
       }
     }
 
