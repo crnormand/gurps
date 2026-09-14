@@ -2199,6 +2199,10 @@ details .popup.square5x4 {
   color: var(--gga-color-glinkmodplus);
 }
 
+.system-gurps .modtooltip .glinkmodplus {
+  color: darkgreen;
+}
+
 .system-gurps .glinkmodplus:hover {
   background-color: var(--gga-background-glinkmodplus-hover);
 }
