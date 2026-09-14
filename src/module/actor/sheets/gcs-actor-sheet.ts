@@ -31,6 +31,7 @@ import { ActorType } from '../types.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 import { getColorForState, getTextForState, openQuickNotesEditor, resolveItemDropDetails } from './helpers.js'
+import { GurpsMoveModeEditor } from './move-mode-editor.js'
 
 /* ---------------------------------------- */
 
@@ -172,6 +173,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       incrementQuantity: GurpsActorGcsSheet.#onChangeQuantity,
       decrementUses: GurpsActorGcsSheet.#onChangeUses,
       incrementUses: GurpsActorGcsSheet.#onChangeUses,
+      editMoveMode: GurpsActorGcsSheet.#onEditMoveMode,
     },
   }
 
@@ -1037,6 +1039,13 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     } else {
       await doc.system.decrementUses()
     }
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onEditMoveMode(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    new GurpsMoveModeEditor({ actor: this.actor }).render({ force: true })
   }
 
   /* ---------------------------------------- */

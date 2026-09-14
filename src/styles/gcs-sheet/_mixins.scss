@@ -21,6 +21,77 @@
 
 /* ---------------------------------------- */
 
+@mixin gcs-application-shell {
+  .window-header {
+    @include gcs-header;
+  }
+
+  .window-content {
+    background-color: var(--gcs-color-surface-bg);
+    font-family: 'Verdana', sans-serif;
+    gap: var(--gga-space-1);
+  }
+}
+
+/* ---------------------------------------- */
+
+@mixin gcs-input {
+  width: 100%;
+  box-sizing: border-box;
+  line-height: var(--gcs-input-height);
+  height: var(--gcs-input-height);
+  border: 1px solid var(--gcs-color-input-border);
+  border-radius: 0;
+
+  background-color: var(--gcs-color-input-bg);
+  color: var(--gcs-color-input-fg);
+  box-shadow: none;
+  text-overflow: ellipsis;
+
+  &:disabled {
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--gcs-color-input-border);
+  }
+
+  &:focus {
+    outline: 1px solid var(--gcs-color-focus-bg);
+  }
+}
+
+/* ---------------------------------------- */
+
+@mixin gcs-control {
+  width: 100%;
+  box-sizing: border-box;
+  line-height: var(--gcs-input-height);
+  height: var(--gcs-input-height);
+  min-height: 0;
+  border-radius: 0.2rem;
+  font-variant: normal;
+  font-size: var(--gcs-font-size-select);
+
+  background-color: var(--gcs-color-control-bg);
+  border: 1px solid var(--gcs-color-control-border);
+  color: var(--gcs-color-control-fg);
+
+  &:disabled {
+    background-color: transparent;
+    color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
+  }
+
+  &:focus {
+    outline: 2px solid var(--gcs-color-focus-bg);
+  }
+}
+
+/* ---------------------------------------- */
+
 /// Apply min/max width constraints to a table cell.
 /// Use on `td` (and `th` where column classes exist) inside a `table-layout: auto` table.
 /// - $min: enforced by the browser as the column minimum

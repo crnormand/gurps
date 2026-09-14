@@ -11,7 +11,7 @@ import {
 } from '@gurps-types/gurps/display-item.js'
 import { ActionType } from '@module/action/types.js'
 import EffectPicker from '@module/actor/effect-picker.js'
-import MoveModeEditor from '@module/actor/move-mode-editor.js'
+import { GurpsMoveModeEditor } from '@module/actor/sheets/move-mode-editor.js'
 import { ActorType } from '@module/actor/types.js'
 import { PostureType } from '@module/effects/posture.js'
 import GurpsWiring from '@module/gurps-wiring.js'
@@ -453,7 +453,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
 
   static async #onEditMoveMode(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
-    new MoveModeEditor(this.actor).render(true)
+    new GurpsMoveModeEditor({ actor: this.actor }).render({ force: true })
   }
 
   /* ---------------------------------------- */
@@ -573,12 +573,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   /* ---------------------------------------- */
 
   #bindMoveModeActions(html: HTMLElement): void {
-    const editButton = html.querySelector('.ms-move-mode-edit')
-
-    editButton?.addEventListener('click', () => {
-      new MoveModeEditor(this.actor).render(true)
-    })
-
     bindDropdownToggle(html, {
       dropdownSelector: '.ms-move-mode-dropdown',
       toggleSelector: '.ms-move-mode-selected',

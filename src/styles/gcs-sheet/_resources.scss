@@ -97,6 +97,31 @@ section[data-application-part='resources'] {
     }
   }
 
+  .gcs-move-mode-controls {
+    label {
+      max-width: var(--gcs-input-label-width);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .form-fields {
+      gap: var(--gga-space-1);
+    }
+
+    button {
+      flex: 0 0 auto;
+      width: auto;
+      padding: 0 0.25rem;
+    }
+
+    select {
+      flex: 1 1 auto;
+      min-width: 0;
+      width: auto;
+    }
+  }
+
   .gcs-moving {
     grid-area: moving;
 
