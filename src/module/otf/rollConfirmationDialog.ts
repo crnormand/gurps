@@ -127,10 +127,10 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
 
   static override PARTS = {
     roll: {
-      template: systemPath('templates/confirmation-roll2.hbs'),
+      template: systemPath('templates/roll-confirmation/confirmation-roll.hbs'),
     },
     damage: {
-      template: systemPath('templates/confirmation-damage-roll2.hbs'),
+      template: systemPath('templates/roll-confirmation/confirmation-damage-roll.hbs'),
     },
     footer: {
       template: 'templates/generic/form-footer.hbs',
