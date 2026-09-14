@@ -407,7 +407,7 @@ export default function addChatHooks() {
                 let action = parselink(match[2])
 
                 if (action.action) {
-                  GURPS.performAction(action.action, GURPS.LastActor, {
+                  GURPS.modules.Otf.performAction(action.action, GURPS.LastActor, {
                     shiftKey: rollCommandLine.startsWith('/pr'),
                   })
                   //          return false; // Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.

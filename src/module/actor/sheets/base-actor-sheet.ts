@@ -375,13 +375,13 @@ class GurpsBaseActorSheet<
 
     const value = target.dataset.value ?? ''
 
-    const parsed = GURPS.parselink(value)
+    const parsed = GURPS.modules.Otf.parselink(value)
 
     if (!parsed.action) return
 
     switch (event.button) {
       case 0:
-        return GURPS.performAction(parsed.action, this.actor, event)
+        return GURPS.modules.Otf.performAction(parsed.action, this.actor, event)
       case 2: {
         const isDamageRoll =
           parsed.action.type === OtfActionType.damage ||

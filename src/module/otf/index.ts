@@ -14,8 +14,6 @@ interface OtfModule extends GurpsModule {
 
 function init() {
   console.log('GURPS | Initializing GURPS OTF module.')
-  GURPS.parselink = parselink
-  GURPS.performAction = performAction
   GURPS.executeOTF = executeOTF
   Hooks.on('diceSoNiceRollComplete', async (_app: any, _html: any, _msg: any) => {
     let otf = GURPS.modules.Otf.pendingOTFs.pop()
@@ -23,7 +21,7 @@ function init() {
     while (otf) {
       const action = parselink(otf)
 
-      if (action.action) await GURPS.performAction(action.action, GURPS.LastActor ?? null)
+      if (action.action) await GURPS.modules.Otf.performAction(action.action, GURPS.LastActor ?? null)
       otf = GURPS.modules.Otf.pendingOTFs.pop()
     }
   })

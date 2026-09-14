@@ -47,7 +47,6 @@ import {
   ConditionalModifier as ConditionalModifierDocument,
 } from '@module/item/data/conditional-modifier.js'
 import { ModifierBucket } from '@module/modifier-bucket/bucket-app.js'
-import { OtfAction, CalcOnlyAction } from '@module/otf/types.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
   ContainedQuantityPrereq,
@@ -384,10 +383,6 @@ declare global {
 
     /* ---------------------------------------- */
 
-    parselink(input: string, htmldesc?: string | null, _clrdmods?: boolean | null): { text: string; action?: OtfAction }
-
-    /* ---------------------------------------- */
-
     findAdDisad: typeof findAdDisad
 
     /* ---------------------------------------- */
@@ -412,28 +407,6 @@ declare global {
 
     /* ---------------------------------------- */
 
-    handleRoll(
-      event: JQuery.MouseEventBase | Event,
-      actor: Actor.Implementation,
-      options?: { targets?: string[] }
-    ): Promise<void>
-
-    /* ---------------------------------------- */
-
-    performAction(
-      action: (OtfAction & CalcOnlyAction) | null,
-      actor: Actor.Implementation | null,
-      event?: ActionFuncContext | null,
-      targets?: string[]
-    ): { target: number; thing?: string }
-    performAction(
-      action: OtfAction | null,
-      actor?: Actor.Implementation | null,
-      event?: ActionFuncContext | null,
-      targets?: string[]
-    ): Promise<boolean> | boolean
-
-    /* ---------------------------------------- */
 
     whisperOtfToOwner(
       otf: string,

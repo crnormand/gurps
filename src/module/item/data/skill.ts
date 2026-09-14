@@ -93,7 +93,7 @@ class SkillModel extends BaseItemModel<SkillSchema> {
       suppressWarnings: true,
     }
 
-    const result = GURPS.performAction(calcOnlyAction, this.actor)
+    const result = GURPS.modules.Otf.performAction(calcOnlyAction, this.actor)
 
     this.level = result.target
   }

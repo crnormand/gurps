@@ -26,7 +26,7 @@ export function allowOtfExec(options) {
           let old = GURPS.LastActor
 
           GURPS.SetLastActor(tokenActor)
-          GURPS.executeOTF(options.command).then(() => GURPS.SetLastActor(old))
+          GURPS.modules.Otf.executeOTF(options.command).then(() => GURPS.SetLastActor(old))
         }
       }, 50)
     }

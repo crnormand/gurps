@@ -312,7 +312,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       )
 
       if (action.next) {
-        return GURPS.performAction(action.next, actor, event, targets)
+        return GURPS.modules.Otf.performAction(action.next, actor, event, targets)
       }
 
       return true
@@ -363,7 +363,7 @@ export const actionFuncs: Record<string, actionFunc> = {
     dam.action.att = att
     dam.action.blindroll = action.blindroll
 
-    return GURPS.performAction(dam.action, actor, event, targets)
+    return GURPS.modules.Otf.performAction(dam.action, actor, event, targets)
   },
 
   roll({ action, actor, event, calcOnly }: actionFuncParams) {
@@ -556,9 +556,9 @@ export const actionFuncs: Record<string, actionFunc> = {
 
       const targetmods: Modifier[] = []
 
-      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+      if (opt.obj.checkotf && !(await GURPS.modules.Otf.executeOTF(opt.obj.checkotf, false, event, actor))) return false
 
-      if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
+      if (opt.obj.duringotf) await GURPS.modules.Otf.executeOTF(opt.obj.duringotf, false, event, actor)
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs, targetmods)
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
 
@@ -786,8 +786,8 @@ export const actionFuncs: Record<string, actionFunc> = {
         text: '',
       }
 
-      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor ?? null))) return false
-      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
+      if (opt.obj?.checkotf && !(await GURPS.modules.Otf.executeOTF(opt.obj.checkotf, false, event, actor ?? null))) return false
+      if (opt.obj?.duringotf) await GURPS.modules.Otf.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
       opt.text = ''
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
@@ -845,8 +845,9 @@ export const actionFuncs: Record<string, actionFunc> = {
         text: '',
       }
 
-      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor ?? null))) return false
-      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
+      if (opt.obj?.checkotf && !(await GURPS.modules.Otf.executeOTF(opt.obj.checkotf, false, event, actor ?? null)))
+        return false
+      if (opt.obj?.duringotf) await GURPS.modules.Otf.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
 
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)

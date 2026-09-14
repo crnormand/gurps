@@ -695,7 +695,7 @@ if (!globalThis.GURPS) {
         app.render(true)
       }
 
-      GURPS.executeOTF('/help')
+      GURPS.modules.Otf.executeOTF('/help')
     }
 
     game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
@@ -803,7 +803,7 @@ if (!globalThis.GURPS) {
 
       if (resp.type == 'executeOtF') {
         if (game.users.isGM || (resp.users.length > 0 && !resp.users.includes(game.user.name))) return
-        GURPS.performAction(resp.action, GURPS.LastActor)
+        GURPS.modules.Otf.performAction(resp.action, GURPS.LastActor)
       }
 
       if (resp.type == 'setLastTargetedRoll') {

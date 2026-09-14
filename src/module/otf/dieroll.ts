@@ -477,9 +477,9 @@ async function _doRoll({
         GURPS.modules.Otf.pendingOTFs.unshift(optionalArgs.obj.passotf as string)
     } else {
       if (failure && optionalArgs.obj?.failotf)
-        GURPS.executeOTF(optionalArgs.obj.failotf as string, false, optionalArgs.event, null)
+        GURPS.modules.Otf.executeOTF(optionalArgs.obj.failotf as string, false, optionalArgs.event, null)
       if (!failure && optionalArgs.obj?.passotf)
-        GURPS.executeOTF(optionalArgs.obj.passotf as string, false, optionalArgs.event, null)
+        GURPS.modules.Otf.executeOTF(optionalArgs.obj.passotf as string, false, optionalArgs.event, null)
     }
 
     const result = {

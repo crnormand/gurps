@@ -212,7 +212,7 @@ export default class GurpsWiring {
         : undefined
     }
 
-    GURPS.performAction(action, actor, event, options?.targets)
+    GURPS.modules.Otf.performAction(action, actor, event, options?.targets)
   }
 
   /**

@@ -50,7 +50,7 @@ export async function rollDamage(
       )
 
       if (action.next) {
-        return await GURPS.performAction(action.next, actor, event, targets)
+        return await GURPS.modules.Otf.performAction(action.next, actor, event, targets)
       }
 
       return true
@@ -74,7 +74,7 @@ export async function rollDamage(
     )
 
     if (action.next) {
-      return await GURPS.performAction(action.next, actor, event, targets)
+      return await GURPS.modules.Otf.performAction(action.next, actor, event, targets)
     }
 
     return true

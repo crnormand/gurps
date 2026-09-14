@@ -151,7 +151,7 @@ class QuickDamageChatProcessor extends ChatProcessor {
       },
     }
 
-    await GURPS.performAction(this.action.action, GURPS.LastActor, event)
+    await GURPS.modules.Otf.performAction(this.action.action, GURPS.LastActor, event)
   }
 }
 
@@ -370,7 +370,7 @@ class RollAgainstChatProcessor extends ChatProcessor {
     let action = parselink('S:' + skill)
 
     this.send() // send what we have
-    await GURPS.performAction(action.action, GURPS.LastActor, {
+    await GURPS.modules.Otf.performAction(action.action, GURPS.LastActor, {
       shiftKey: line.substr(1).startsWith('pra') || this.msgs().event?.shiftKey,
     })
   }
@@ -792,7 +792,7 @@ class RollChatProcessor extends ChatProcessor {
 
       for (const actor of actors) {
         GURPS.LastActor = actor
-        let result = await GURPS.performAction(action.action, actor, ev)
+        let result = await GURPS.modules.Otf.performAction(action.action, actor, ev)
 
         GURPS.LastActor = last
         atLeastOne = atLeastOne || result
@@ -1160,7 +1160,7 @@ class ShowChatProcessor extends ChatProcessor {
 
           if (action.action) {
             action.action.calcOnly = true
-            let ret = await GURPS.performAction(action.action, actor)
+            let ret = await GURPS.modules.Otf.performAction(action.action, actor)
 
             if (ret.target) {
               let lbl = `["${ret.thing} (${ret.target}) : ${actor.name}"!/sel ${token.id}\\\\/r [${arg}]]`
@@ -1349,7 +1349,7 @@ class RepeatChatProcessor extends ChatProcessor {
       }
       let command = anim + ' @' + pos.x + ',' + pos.y
 
-      await GURPS.executeOTF(command)
+      await GURPS.modules.Otf.executeOTF(command)
       await GURPS.wait(delay)
     }
 

@@ -22,7 +22,7 @@ export async function executeOTF(
 
   for (let string of strings) {
     string = string.trim()
-    const action = GURPS.parselink(string)
+    const action = GURPS.modules.Otf.parselink(string)
 
     answer = false
     if (action?.action) {
@@ -77,7 +77,9 @@ export function performAction(
     const result = actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
 
     if (result && typeof (result as PromiseLike<unknown>).then === 'function') {
-      throw new Error(`GURPS.performAction(calcOnly) requires a synchronous action handler for type "${action.type}"`)
+      throw new Error(
+        `GURPS.modules.Otf.performAction(calcOnly) requires a synchronous action handler for type "${action.type}"`
+      )
     }
 
     return result

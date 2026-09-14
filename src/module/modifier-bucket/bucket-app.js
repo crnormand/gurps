@@ -561,7 +561,7 @@ export class ModifierBucket extends foundry.appv1.api.Application {
 
     if (action) {
       this.modifierStack.modifierList = []
-      GURPS.performAction(action)
+      GURPS.modules.Otf.performAction(action)
     }
 
     let _users = game.users
@@ -719,7 +719,7 @@ export class ModifierBucket extends foundry.appv1.api.Application {
         if (link.action) {
           link.action.blindroll = true
           if (link.action.type == OtfActionType.modifier || !!dragData.actor)
-            GURPS.performAction(link.action, game.actors?.get(dragData.actor))
+            GURPS.modules.Otf.performAction(link.action, game.actors?.get(dragData.actor))
         }
       }
     })
@@ -760,7 +760,7 @@ export class ModifierBucket extends foundry.appv1.api.Application {
         let action = parselink(dragData.otf)
 
         action.action.blindroll = true
-        GURPS.performAction(action.action, game.actors?.get(dragData.actor), {
+        GURPS.modules.Otf.performAction(action.action, game.actors?.get(dragData.actor), {
           shiftKey: game.user?.isGM,
           ctrlKey: false,
           data: {},
@@ -819,7 +819,7 @@ export class ModifierBucket extends foundry.appv1.api.Application {
       desc: '',
     }
 
-    GURPS.performAction(action, GURPS.LastActor || game.user, event)
+    GURPS.modules.Otf.performAction(action, GURPS.LastActor || game.user, event)
   }
 
   async _on3dRightClick(event) {
@@ -830,7 +830,7 @@ export class ModifierBucket extends foundry.appv1.api.Application {
       desc: '',
     }
 
-    GURPS.performAction(action, GURPS.LastActor || game.user, event)
+    GURPS.modules.Otf.performAction(action, GURPS.LastActor || game.user, event)
   }
 
   /**

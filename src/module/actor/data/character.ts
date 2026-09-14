@@ -1324,7 +1324,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     accumulators.splice(index, 1)
     // @ts-expect-error: not sure why the path is not recognised
     await this.parent.update({ 'system.conditions.damageAccumulators': accumulators })
-    await GURPS.performAction({ ...accumulator, type: OtfActionType.damage } as OtfAction, GURPS.LastActor)
+    await GURPS.modules.Otf.performAction({ ...accumulator, type: OtfActionType.damage } as OtfAction, GURPS.LastActor)
   }
 
   /* ---------------------------------------- */
@@ -1663,7 +1663,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /**
    * Parse roll info based on action type.
    *
-   * @param {object} action - Object from GURPS.parselink
+   * @param {object} action - Object from GURPS.modules.Otf.parselink
    * @param {string} chatthing - internal code for roll
    * @param {string} formula - formula for roll
    * @param {string} thing - name of the source of the roll
