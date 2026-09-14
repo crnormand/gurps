@@ -13,12 +13,6 @@ export default class GurpsActiveEffectConfig extends foundry.applications.sheets
     return data
   }
 
-  /** @override */
-  async close(options) {
-    super.close(options)
-    this._parentWindow.render()
-  }
-
   /**
    * @override
    * Add a reference to the 'parent' window into options so we can refresh it.

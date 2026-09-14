@@ -710,6 +710,14 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ): Promise<void> {
     super._onFirstRender(context, options)
 
+    this._createContextMenu(() => this._createActiveEffectContextOptions(), '.gcs-active-effect', {
+      jQuery: false,
+      hookName: 'createActiveEffectContextOptions',
+      parentClassHooks: false,
+      fixed: true,
+      eventName: 'contextmenu',
+    })
+
     this._createContextMenu(this._createItemContextOptions, '.gcs-item-row', {
       jQuery: false,
       hookName: 'createItemContextOptions',
@@ -753,9 +761,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
         visible: target => target.dataset.uuid !== undefined,
-        callback: async target => {
+        onClick: async (event, target) => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
-          const event = new PointerEvent('click', { bubbles: true })
 
           if (handler) handler.call(this, event, target)
         },
@@ -771,12 +778,40 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
         visible: target => target.dataset.uuid !== undefined,
-        callback: async target => {
+        onClick: async (event, target) => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
-          const event = new PointerEvent('click', { bubbles: true })
 
           if (handler) handler.call(this, event, target)
         },
+      },
+    ]
+  }
+
+  /* ---------------------------------------- */
+
+  protected _createActiveEffectContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+    const invokeAction = async (action: 'editEmbedded' | 'deleteEmbedded', target: HTMLElement): Promise<void> => {
+      const contextTarget = target.closest<HTMLElement>('.gcs-active-effect') ?? target
+      const uuid = contextTarget.dataset.uuid
+
+      if (!uuid) return
+
+      const handler = this.options.actions[action] as Application.ClickAction | null
+      const event = new PointerEvent('click', { bubbles: true })
+
+      if (handler) await handler.call(this, event, contextTarget)
+    }
+
+    return [
+      {
+        label: 'GURPS.edit',
+        icon: '<i class="fa-solid fa-fw fa-pen-to-square"></i>',
+        onClick: (_event, target) => invokeAction('editEmbedded', target),
+      },
+      {
+        label: 'GURPS.delete',
+        icon: '<i class="fa-solid fa-fw fa-trash"></i>',
+        onClick: (_event, target) => invokeAction('deleteEmbedded', target),
       },
     ]
   }
