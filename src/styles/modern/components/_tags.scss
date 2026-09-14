@@ -50,6 +50,15 @@
     color: var(--ms-disadvantage);
     border: 1px solid var(--ms-disadvantage);
   }
+
+  &.ms-effect-disabled {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+
+  .ms-tag-text {
+    cursor: pointer;
+  }
 }
 
 .ms-effect-icon {
@@ -98,5 +107,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    height: unset;
   }
 }

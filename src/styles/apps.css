@@ -1866,7 +1866,7 @@ details .popup.square5x4 {
 #modtooltipbucket {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 2fr auto 4fr;
+  grid-template-rows: auto auto auto;
   gap: 0.35em;
   height: 100%;
 }
@@ -2042,7 +2042,7 @@ details .popup.square5x4 {
 .modttt {
   text-align: center;
   border-radius: 10px;
-  width: 63.5em;
+  max-width: 75em;
   position: fixed;
   z-index: 999;
 }
@@ -2247,8 +2247,7 @@ details .popup.square5x4 {
 
 .gga-popup-window .glinkmodminus {
   background-color: transparent;
-  color: var(--gga-color-popup-glinkmodminus);
-  border-color: var(--gga-color-glinkmodminus);
+  color: salmon;
 }
 
 .gga-popup-window .glinkmodplus {
