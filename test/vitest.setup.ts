@@ -457,6 +457,11 @@ global.foundry = {
 
       return true
     },
+    randomID: (len = 16): string => {
+      return Math.random()
+        .toString(36)
+        .substring(2, Math.min(len + 2, 18))
+    },
   },
   appv1: {
     sheets: {
@@ -474,8 +479,30 @@ global.foundry = {
           this.options = options
         }
       },
-      ApplicationV2: class {},
-      DocumentSheetV2: class {},
+      ApplicationV2: class {
+        options: unknown
+
+        constructor(options?: unknown) {
+          this.options = options
+        }
+
+        async _prepareContext(_options?: unknown): Promise<any> {
+          return {}
+        }
+      },
+      DocumentSheetV2: class {
+        options: any
+        document: any
+
+        constructor(options?: any) {
+          this.options = options
+          this.document = options?.document
+        }
+
+        async _prepareContext(_options?: any): Promise<any> {
+          return { document: this.document }
+        }
+      },
       HandlebarsApplicationMixin: <T extends abstract new (...args: unknown[]) => object>(Base: T): T =>
         class extends (Base as abstract new (...args: unknown[]) => object) {} as unknown as T,
     },
@@ -488,10 +515,49 @@ global.foundry = {
       renderTemplate: async (): Promise<string> => '',
     },
     sheets: {
-      ActorSheet: class {},
+      ActorSheet: class {
+        options: any
+        document: any
+
+        constructor(options?: any) {
+          const defaultOptions = (this.constructor as any).DEFAULT_OPTIONS ?? {}
+
+          this.options = { ...defaultOptions, ...options, actions: { ...defaultOptions.actions, ...options?.actions } }
+          this.document = options?.document
+        }
+
+        get actor() {
+          return this.document
+        }
+
+        async _prepareContext(_options?: any): Promise<any> {
+          return { actor: this.document }
+        }
+
+        _canDragStart() {
+          return true
+        }
+
+        _canDragDrop() {
+          return true
+        }
+
+        _onDragStart() {}
+
+        _onDragOver() {}
+
+        _onDrop() {}
+      },
       ItemSheet: class {},
     },
     ux: {
+      DragDrop: class {
+        options: unknown
+        constructor(options?: unknown) {
+          this.options = options
+        }
+        bind() {}
+      },
       ContextMenu: class {
         element: unknown
         selector: string
@@ -508,6 +574,16 @@ global.foundry = {
     },
   },
 } as unknown as typeof foundry
+
+/* ---------------------------------------- */
+;(global as unknown as Record<string, unknown>).Handlebars = {
+  SafeString: class {
+    constructor(public string: string) {}
+    toString() {
+      return this.string
+    }
+  },
+}
 
 /* ---------------------------------------- */
 ;(global as unknown as Record<string, unknown>).canvas = {
@@ -570,6 +646,8 @@ global.ChatMessage = {
 global.Actor = MockBaseActor as unknown as typeof Actor
 
 global.Item = MockBaseItem as unknown as typeof Item
+
+global.ActiveEffect = class ActiveEffect {} as unknown as typeof ActiveEffect
 
 global.Combat = MockBaseCombat as unknown as typeof Combat
 

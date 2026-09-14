@@ -119,6 +119,20 @@ export default class EffectPicker extends Application {
       this.filterEffects(event.currentTarget.value)
     })
 
+    html.find('[data-action="createCustom"]').on('click', async event => {
+      event.preventDefault()
+      const [effect] = await this.actor.createEmbeddedDocuments('ActiveEffect', [
+        {
+          name: game.i18n.localize('GURPS.effectNew'),
+          icon: 'icons/svg/aura.svg',
+          disabled: false,
+        },
+      ])
+
+      this.close()
+      await effect?.sheet?.render({ force: true })
+    })
+
     html.find('.effect-picker-item').on('click', async event => {
       event.preventDefault()
       const effectId = event.currentTarget.dataset.effectId
@@ -168,7 +182,7 @@ export default class EffectPicker extends Application {
 
     const effectData = {
       name: game.i18n.localize(statusEffect.name),
-      icon: statusEffect.img,
+      img: statusEffect.img,
       disabled: false,
       statuses: [statusEffect.id],
       ...(statusEffect.changes && { changes: statusEffect.changes }),

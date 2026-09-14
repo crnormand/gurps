@@ -29,6 +29,30 @@ body {
   background: var(--ms-bg-card);
 }
 
+.effect-picker-search-row {
+  display: flex;
+  gap: var(--ms-space-4);
+  align-items: center;
+}
+
+.effect-picker-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ms-space-2);
+  white-space: nowrap;
+  padding: var(--ms-space-4) var(--ms-space-6);
+  border: 1px solid var(--ms-accent);
+  background: var(--ms-accent);
+  color: #fff;
+  border-radius: var(--ms-radius-md);
+  font-size: var(--ms-font-sm);
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
 .effect-picker-search {
   width: 100%;
   padding: var(--ms-space-4) var(--ms-space-6);

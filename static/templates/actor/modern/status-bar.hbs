@@ -57,21 +57,21 @@
   <div class='ms-status-item'>
     <span>{{localize 'GURPS.conditionsCombatMove'}}: <strong>{{system.conditions.move}}</strong></span>
   </div>
-  {{!-- ACTIVE EFFECTS TAGS (enabled only) --}}
+  {{!-- ACTIVE EFFECTS TAGS --}}
   {{#each effects}}
-  {{#unless this.disabled}}
-  <span class='ms-effect-tag {{effectTagClass this}}' data-effect-id='{{this.id}}' title='{{this.name}}'>
+  {{#if (or (not this.disabled) (not @root.isPlayMode))}}
+  <span class='ms-effect-tag {{effectTagClass this}} {{ifThen this.disabled "ms-effect-disabled" ""}}' data-effect-id='{{this.id}}' data-uuid='{{this.uuid}}' title='{{this.name}}'>
     <span class='ms-effect-icon-wrapper'>
       {{#if this.img}}<img src='{{this.img}}' class='ms-effect-icon' />{{/if}}
-      <button class='ms-effect-delete' data-action='deleteEffect' data-effect-id='{{this.id}}' title='Delete'>
+      <button type='button' class='ms-effect-delete' data-action='deleteEffect' data-effect-id='{{this.id}}' data-uuid='{{this.uuid}}' title='{{localize "GURPS.delete"}}'>
         <i class='fa-solid fa-trash'></i>
       </button>
     </span>
-    <span class='ms-tag-text'>{{this.name}}</span>
+    <span class='ms-tag-text' data-action='editEffect' data-effect-id='{{this.id}}' data-uuid='{{this.uuid}}'>{{this.name}}</span>
   </span>
-  {{/unless}}
+  {{/if}}
   {{/each}}
-  <button type='button' class='ms-effect-add' data-action='addEffect' title='Add Effect'>
+  <button type='button' class='ms-effect-add' data-action='addEffect' title='{{localize "GURPS.effectPicker.title"}}'>
     <i class='fa-solid fa-plus'></i>
   </button>
 </div>

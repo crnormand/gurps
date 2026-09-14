@@ -30,6 +30,7 @@ import { ActorType } from '../types.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 import { getColorForState, getTextForState, openQuickNotesEditor, resolveItemDropDetails } from './helpers.js'
+import { isPostureOrManeuver } from './modern/utils/effect.js'
 
 /* ---------------------------------------- */
 
@@ -124,6 +125,7 @@ namespace GurpsActorGcsSheet {
     carriedWeight: string
     otherValue: string
     otherWeight: string
+    effects: ActiveEffect[]
   }
 
   /* ---------------------------------------- */
@@ -182,6 +184,9 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     },
     resources: {
       template: systemPath('templates/actor/gcs/resources.hbs'),
+    },
+    activeEffects: {
+      template: systemPath('templates/actor/gcs/active-effects.hbs'),
     },
     resourceTrackers: {
       template: systemPath('templates/actor/gcs/resource-trackers.hbs'),
@@ -245,6 +250,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       ? new Date(this.actor.system.profile.modifiedon).toLocaleString()
       : ''
 
+    const effects = this.actor.effects.contents.filter(effect => !isPostureOrManeuver(effect))
+
     return {
       ...superContext,
       isPlay: this.isPlayMode,
@@ -255,6 +262,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       moveModeChoices,
       createdDate,
       modifiedDate,
+      effects,
       pools: this._preparePools(),
       liftingMoving: this._prepareLiftingMoving(),
       traits: this.actor.system.adsV2.map(item => item.system.toDisplayItem()),
@@ -409,7 +417,10 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       pools.push(this.#prepareAttributePool('QP', []))
     }
 
-    const defaultPoolColor = getCssVariable(document.body, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK)
+    const defaultPoolColor =
+      typeof document !== 'undefined' && document.body
+        ? getCssVariable(document.body, POOL_COLOR_VARIABLE, POOL_COLOR_FALLBACK)
+        : POOL_COLOR_FALLBACK
 
     for (const tracker of this.actor.system.additionalresources.tracker) {
       const currentThreshold = tracker.currentThreshold

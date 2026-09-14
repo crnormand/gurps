@@ -6,12 +6,13 @@ import {
   HandlebarsApplicationMixin,
   DocumentSheet,
 } from '@gurps-types/foundry/index.js'
+import EffectPicker from '@module/actor/effect-picker.js'
 import { ImportSettings } from '@module/importer/index.js'
 import { ItemType } from '@module/item/types.js'
 import { OtfActionType } from '@module/otf/types.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { constructHTMLButton } from '@module/util/dom.js'
-import { getUser } from '@module/util/guards.js'
+import { getGame, getUser } from '@module/util/guards.js'
 import { AnyMutableObject, DeepPartial } from 'fvtt-types/utils'
 
 import { ActorType } from '../types.js'
@@ -103,15 +104,15 @@ class GurpsBaseActorSheet<
    */
   #createDragDropHandlers(): DragDrop[] {
     return (
-      this.options.dragDrop?.map(dragDrop => {
+      this.options?.dragDrop?.map(dragDrop => {
         dragDrop.permissions = {
-          dragstart: this._canDragStart.bind(this),
-          drop: this._canDragDrop.bind(this),
+          dragstart: this._canDragStart?.bind(this) ?? (() => true),
+          drop: this._canDragDrop?.bind(this) ?? (() => true),
         }
         dragDrop.callbacks = {
-          dragstart: this._onDragStart.bind(this),
-          dragover: this._onDragOver.bind(this),
-          drop: this._onDrop.bind(this),
+          dragstart: this._onDragStart?.bind(this) ?? (() => {}),
+          dragover: this._onDragOver?.bind(this) ?? (() => {}),
+          drop: this._onDrop?.bind(this) ?? (() => {}),
         }
 
         return new foundry.applications.ux.DragDrop(dragDrop)
@@ -163,6 +164,11 @@ class GurpsBaseActorSheet<
       toggleContainer: GurpsBaseActorSheet.#onToggleContainer,
       addModifier: { handler: GurpsBaseActorSheet.#onAddModifier, buttons: [0, 2] },
       rollOtf: { handler: GurpsBaseActorSheet.#onRollOtf, buttons: [0, 2] },
+      addEffect: GurpsBaseActorSheet.#onAddEffect,
+      createEffect: GurpsBaseActorSheet.#onCreateEffect,
+      editEffect: GurpsBaseActorSheet.#onEditEffect,
+      deleteEffect: GurpsBaseActorSheet.#onDeleteEffect,
+      toggleEffect: GurpsBaseActorSheet.#onToggleEffect,
     },
     dragDrop: [{ dragSelector: '[draggable]', dropSelector: null }],
   }
@@ -243,13 +249,27 @@ class GurpsBaseActorSheet<
       createData.name = defaultName
     }
 
+    if (documentName === 'ActiveEffect') {
+      const defaultName = getGame().i18n.localize('GURPS.effectNew')
+
+      createData.name = defaultName
+      createData.img = 'icons/svg/aura.svg'
+      createData.disabled = false
+    }
+
     if (type === ItemType.Equipment) {
       const carried = target.closest<HTMLElement>('[data-carried]')?.dataset.carried === 'true'
 
       createData.system = { carried }
     }
 
-    await this.actor.createEmbeddedDocuments(documentName as any, [createData], { parent: this.actor })
+    const [created] = await this.actor.createEmbeddedDocuments(documentName as any, [createData], {
+      parent: this.actor,
+    })
+
+    if (created && 'sheet' in created && documentName === 'ActiveEffect') {
+      await (created as any).sheet?.render({ force: true })
+    }
   }
 
   /* ---------------------------------------- */
@@ -257,27 +277,37 @@ class GurpsBaseActorSheet<
   protected async _getEmbedded(target: HTMLElement): Promise<Document.Any | PseudoDocument.Any | null> {
     const uuid = target.closest<HTMLElement>('[data-uuid]')?.dataset.uuid
 
-    if (!uuid) {
-      console.error('Could not find UUID for embedded document to edit.')
+    if (uuid) {
+      let doc: Document.Any | PseudoDocument.Any | null = null
 
-      return null
+      if (uuid.startsWith('.')) {
+        doc = await fromUuid(uuid, { relative: this.actor })
+      } else {
+        doc = await fromUuid(uuid)
+      }
+
+      if (doc) return doc
     }
 
-    let doc: Document.Any | PseudoDocument.Any | null = null
+    const effectId = target.closest<HTMLElement>('[data-effect-id]')?.dataset.effectId
 
-    if (uuid.startsWith('.')) {
-      doc = await fromUuid(uuid, { relative: this.actor })
-    } else {
-      doc = await fromUuid(uuid)
+    if (effectId) {
+      const effect = this.actor.effects.get(effectId)
+
+      if (effect) return effect
     }
 
-    if (!doc) {
-      console.error(`Could not find document for UUID ${uuid}.`)
+    const itemId = target.closest<HTMLElement>('[data-item-id]')?.dataset.itemId
 
-      return null
+    if (itemId) {
+      const item = this.actor.items.get(itemId)
+
+      if (item) return item
     }
 
-    return doc
+    console.error('Could not find document for target element.')
+
+    return null
   }
 
   /* ---------------------------------------- */
@@ -319,11 +349,114 @@ class GurpsBaseActorSheet<
 
     if ('deleteDialog' in doc && typeof doc.deleteDialog === 'function') {
       await doc.deleteDialog?.()
+    } else if ('delete' in doc && typeof doc.delete === 'function') {
+      await doc.delete?.()
     } else {
       console.error(`Could not find delete method for document with UUID ${doc.uuid}.`)
 
       return
     }
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onAddEffect(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    const theme = this.options.classes.includes('theme-dark')
+      ? 'theme-dark'
+      : this.options.classes.includes('theme-light')
+        ? 'theme-light'
+        : undefined
+
+    const dialog = new EffectPicker(this.actor, { parentTheme: theme })
+
+    dialog.render(true)
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onCreateEffect(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    const [effect] = await this.actor.createEmbeddedDocuments('ActiveEffect', [
+      {
+        name: getGame().i18n.localize('GURPS.effectNew'),
+        img: 'icons/svg/aura.svg',
+        disabled: false,
+      },
+    ])
+
+    await (effect as any)?.sheet?.render({ force: true })
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onEditEffect(
+    this: GurpsBaseActorSheet,
+    event: PointerEvent | null,
+    target: HTMLElement
+  ): Promise<void> {
+    event?.preventDefault?.()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc) return
+
+    const sheet = 'sheet' in doc ? (doc as any).sheet : null
+
+    if (!sheet) {
+      console.error(`Could not find sheet for document with UUID ${doc.uuid}.`)
+
+      return
+    }
+
+    await sheet.render({ force: true })
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onDeleteEffect(
+    this: GurpsBaseActorSheet,
+    event: PointerEvent | null,
+    target: HTMLElement
+  ): Promise<void> {
+    event?.preventDefault?.()
+    event?.stopPropagation?.()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc) return
+
+    if ('deleteDialog' in doc && typeof doc.deleteDialog === 'function') {
+      await doc.deleteDialog?.()
+    } else if ('delete' in doc && typeof doc.delete === 'function') {
+      const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: { title: getGame().i18n.localize('GURPS.delete') },
+        content: `<p>${getGame().i18n.localize('GURPS.delete')}: <strong>${doc.name}</strong>?</p>`,
+      })
+
+      if (confirmed) {
+        await doc.delete()
+      }
+    } else {
+      console.error(`Could not find delete method for document with UUID ${doc.uuid}.`)
+    }
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onToggleEffect(
+    this: GurpsBaseActorSheet,
+    event: PointerEvent | null,
+    target: HTMLElement
+  ): Promise<void> {
+    event?.preventDefault?.()
+    event?.stopPropagation?.()
+
+    const doc = await this._getEmbedded(target)
+
+    if (!doc || !(doc instanceof ActiveEffect)) return
+
+    await doc.update({ disabled: !doc.disabled } as ActiveEffect.UpdateData)
   }
 
   /* ---------------------------------------- */

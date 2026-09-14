@@ -1,6 +1,12 @@
 <div class='effect-picker-container {{parentTheme}}'>
   <div class='effect-picker-search-wrapper'>
-    <input type='text' class='effect-picker-search' placeholder='{{localize "GURPS.effectPicker.search"}}' />
+    <div class='effect-picker-search-row'>
+      <input type='text' class='effect-picker-search' placeholder='{{localize "GURPS.effectPicker.search"}}' />
+      <button type='button' class='effect-picker-create-btn' data-action='createCustom' title='{{localize "GURPS.effectNew"}}'>
+        <i class='fa-solid fa-plus'></i>
+        <span>{{localize "GURPS.effectNew"}}</span>
+      </button>
+    </div>
   </div>
 
   <div class='effect-picker-list'>

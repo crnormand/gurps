@@ -6,8 +6,10 @@ export default class GurpsActiveEffectConfig extends foundry.applications.sheets
   async getData(options = {}) {
     const data = await super.getData(options)
 
-    for (let i = 0; i < data.data.changes.length; i++) {
-      data.data.changes[i].value = game.i18n.localize(data.data.changes[i].value)
+    if (data?.data?.changes) {
+      for (let i = 0; i < data.data.changes.length; i++) {
+        data.data.changes[i].value = game.i18n.localize(data.data.changes[i].value)
+      }
     }
 
     return data
@@ -15,8 +17,8 @@ export default class GurpsActiveEffectConfig extends foundry.applications.sheets
 
   /** @override */
   async close(options) {
-    super.close(options)
-    this._parentWindow.render()
+    await super.close(options)
+    this._parentWindow?.render()
   }
 
   /**
@@ -27,6 +29,9 @@ export default class GurpsActiveEffectConfig extends foundry.applications.sheets
    */
   render(force, options = {}) {
     if (Object.hasOwn(options, 'parentWindow')) this._parentWindow = options.parentWindow
+    else if (force && typeof force === 'object' && Object.hasOwn(force, 'parentWindow')) {
+      this._parentWindow = force.parentWindow
+    }
 
     return super.render(force, options)
   }

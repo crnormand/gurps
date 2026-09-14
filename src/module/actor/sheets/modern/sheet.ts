@@ -10,7 +10,6 @@ import {
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
 import { ActionType } from '@module/action/types.js'
-import EffectPicker from '@module/actor/effect-picker.js'
 import MoveModeEditor from '@module/actor/move-mode-editor.js'
 import { ActorType } from '@module/actor/types.js'
 import { PostureType } from '@module/effects/posture.js'
@@ -125,8 +124,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     actions: {
       resetHp: GurpsActorModernSheet.#onResetResource,
       resetFp: GurpsActorModernSheet.#onResetResource,
-      addEffect: GurpsActorModernSheet.#onAddEffect,
-      deleteEffect: GurpsActorModernSheet.#onDeleteEffect,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
       decrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
@@ -383,43 +380,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       await this.actor.update({ 'system.HP.damage': 0 } as Actor.UpdateData)
     } else if (action === 'resetFp' || action === 'reset-fp') {
       await this.actor.update({ 'system.FP.damage': 0 } as Actor.UpdateData)
-    }
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onAddEffect(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
-    event.preventDefault()
-    const theme = this.options.classes.includes('theme-dark')
-      ? 'theme-dark'
-      : this.options.classes.includes('theme-light')
-        ? 'theme-light'
-        : undefined
-
-    console.log('Opening EffectPicker with theme:', theme)
-
-    const dialog = new EffectPicker(this.actor, { parentTheme: theme })
-
-    dialog.render(true)
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onDeleteEffect(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-    event.stopPropagation()
-    const effectId = target.dataset.effectId ?? ''
-    const effect = this.actor.effects.get(effectId)
-
-    if (!effect) return
-
-    const confirmed = await foundry.applications.api.DialogV2.confirm({
-      window: { title: getGame().i18n.localize('GURPS.delete') },
-      content: `<p>${getGame().i18n.localize('GURPS.delete')}: <strong>${effect.name}</strong>?</p>`,
-    })
-
-    if (confirmed) {
-      await effect.delete()
     }
   }
 
