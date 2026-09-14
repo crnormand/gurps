@@ -264,36 +264,30 @@ body {
       background-size: 0.5rem;
       background-image: var(--gcs-caret-down);
     }
+  }
 
-    button,
-    select {
-      width: 100%;
-      box-sizing: border-box;
-      line-height: var(--gcs-input-height);
-      height: var(--gcs-input-height);
-      min-height: 0;
-      border: 0.1rem solid rgba(255, 255, 255, 0.25);
-      border-radius: 0.2rem;
-      font-variant: normal;
-      font-size: var(--gcs-font-size-select);
+  button,
+  select {
+    width: 100%;
+    line-height: var(--gcs-input-height);
+    min-height: 0;
+    font-variant: normal;
+    font-size: var(--gcs-font-size-select);
 
-      background-color: var(--gcs-color-control-bg);
-      border: 1px solid var(--gcs-color-control-border);
-      color: var(--gcs-color-control-fg);
+    @include gcs-control;
 
-      &:disabled {
-        background-color: transparent;
-        color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
-        cursor: not-allowed;
-      }
+    &:disabled {
+      background-color: transparent;
+      color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
+      cursor: not-allowed;
+    }
 
-      &:hover:not(:disabled) {
-        background-color: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
-      }
+    &:hover:not(:disabled) {
+      background-color: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
+    }
 
-      &:focus {
-        outline: 2px solid var(--gcs-color-focus-bg);
-      }
+    &:focus {
+      outline: 2px solid var(--gcs-color-focus-bg);
     }
   }
 }
