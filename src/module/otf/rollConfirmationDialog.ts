@@ -5,6 +5,7 @@ import { i18nFallback } from '@module/util/i18nFallback.js'
 import { systemPath } from '@module/util/misc.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
+import { rollData } from './dieroll.js'
 import { OtfActionType, OtfDamageAction, OtfRollAction } from './types.js'
 
 interface DieRollConfirmationData {
@@ -92,6 +93,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
   }
 
   async reset(data: RollConfirmationData) {
+    //we need to close the instance if open before reusing, so that the modifier bucket is reset
     await this.close()
     this._data = data
   }
@@ -148,30 +150,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     }
   }
 
-  static rollData = (target: number) => {
-    let targetColor, rollChance
-
-    if (target < 6) {
-      targetColor = '#b30000'
-      rollChance = game.i18n?.localize('GURPS.veryHardRoll')
-    } else if (target < 11) {
-      targetColor = '#cc6600'
-      rollChance = game.i18n?.localize('GURPS.hardRoll')
-    } else if (target < 14) {
-      targetColor = '#fdfdbd'
-      rollChance = game.i18n?.localize('GURPS.fairRoll')
-    } else if (target < 17) {
-      targetColor = '#5cbd58'
-      rollChance = game.i18n?.localize('GURPS.easyRoll')
-    } else {
-      targetColor = '#0a8d0a'
-      rollChance = game.i18n?.localize('GURPS.veryEasyRoll')
-    }
-
-    return { targetColor, rollChance: rollChance ?? '' }
-  }
-
-  actionData = () => {
+  actionData() {
     if (this._data.type !== 'roll') return { itemIcon: '', itemColor: '', rollType: '' }
     const action = this._data.action
     let itemIcon, itemColor, rollType
@@ -290,8 +269,8 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
 
       case OtfActionType.damage:
       case OtfActionType.derivedDamage:
-        itemIcon = 'fa-solid fa-dice' //toDo: damage type icon
-        itemColor = '#015401' //toDo: damage type color
+        itemIcon = 'fa-solid fa-dice'
+        itemColor = '#015401'
         rollType = this._data.formula
     }
 
@@ -316,7 +295,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
 
       const item = this._data.item
       const itemImage = item?.img || ''
-      const { targetColor, rollChance } = RollConfirmationDialog.rollData(totalRoll)
+      const { targetColor, rollChance } = rollData(totalRoll)
 
       const targetRoll = this._data.name + (this._data.origTarget > 0 ? `-${this._data.origTarget}` : '')
       const { itemIcon, itemColor, rollType } = this.actionData()
@@ -414,7 +393,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
       const useMinDamage = displayFormula.includes('!') && !displayFormula.startsWith('!')
       // Armor divisor can be (0.5) or (2) - need to regex to get the number
       const armorDivisorRegex = /\((\d*\.?\d+)\)/
-      const armorDivisorNumber = action.extdamagetype?.match(armorDivisorRegex)?.[1]
+      const armorDivisorNumber = action.formula?.match(armorDivisorRegex)?.[1]
       // Multiplier damage is x2, X3 or *4 - need to regex to get the number
       const multiplierRegex = /(?<=[xX*])\d+(\.\d+)?/
       const multiplierNumber = displayFormula.match(multiplierRegex)?.[0]
@@ -476,7 +455,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
   }
 
   /*
-      Only one Roll Confimation Dialog can be Open at one time, so wie reuse the instance.
+      Only one Roll Confirmation Dialog can be Open at one time, so we reuse the instance.
     */
   static instance: RollConfirmationDialog | null = null
 
