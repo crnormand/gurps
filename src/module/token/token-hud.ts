@@ -89,7 +89,7 @@ class GurpsTokenHUDV2<
     })
 
     return Object.assign(context, {
-      icons: { maneuvers: maneuverIcon },
+      icons: { maneuvers: maneuverIcon, ...context.icons },
       maneuvers,
     })
   }
