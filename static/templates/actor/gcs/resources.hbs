@@ -188,13 +188,23 @@
     <div class="gcs-section-header">{{localize "GURPS.activeEffects"}}</div>
     <div class="gcs-section-content flexrow">
       {{#each activeEffects as |effect|}}
-      <button type="button" data-action="deleteEmbedded" data-uuid="{{effect.uuid}}" class="gcs-active-effect">
+      <div class="gcs-active-effect">
         <span class="gcs-active-effect-icon">
           <img class="gcs-active-effect-image" src="{{effect.img}}" title="{{effect.name}}" />
-          <i  class="fa-solid fa-trash gcs-active-effect-delete" aria-hidden="true"></i>
+          <i
+            class="fa-solid fa-trash gcs-active-effect-delete"
+            data-action="deleteEmbedded"
+            data-uuid="{{effect.uuid}}"
+            title="{{localize 'GURPS.delete'}}"
+          ></i>
         </span>
         <span>{{effect.name}}</span>
-      </button>
+        <i
+        data-action="editEmbedded"
+        data-uuid="{{effect.uuid}}"
+        class="fa-solid fa-pen-to-square">
+        </i>
+      </div>
       {{/each}}
       <button type="button" data-action="addEffect">
         <i class="fa-solid fa-plus"></i>
