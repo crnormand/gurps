@@ -1,10 +1,12 @@
 import { Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
-import { CanRollResult } from '@module/actor/types.js'
+import { MeleeAttackModel } from '@module/action/melee-attack.js'
+import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { MessageMode } from '@module/util/foundry-utils.js'
 import { i18nFallback } from '@module/util/i18nFallback.js'
 import { systemPath } from '@module/util/misc.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
+import { CanRollResult, canConsumeAction } from './canRoll.js'
 import { rollData } from './dieroll.js'
 import { OtfActionType, OtfDamageAction, OtfRollAction } from './types.js'
 
@@ -19,8 +21,8 @@ interface DieRollConfirmationData {
   formula: string
   canRollResult: CanRollResult
   name: string
-  obj: any //toDo Type better
   messageMode: MessageMode
+  attack?: MeleeAttackModel | RangedAttackModel
 }
 
 interface DamageRollConfirmationData {
@@ -310,15 +312,15 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         (!this._data.canRollResult.isCombatant && settingsUseMaxActions === 'AllCombatant') ||
         settingsAllowAfterMaxActions === 'Allow'
 
-      const canConsumeAction = dontShowMaxActions
+      const canConsume = dontShowMaxActions
         ? undefined
-        : actor.canConsumeAction(this._data.action, '', this._data.obj)
+        : canConsumeAction(this._data.action, actor, this._data.attack, this._data.item)
 
       const consumeActionIcon = dontShowMaxActions
         ? undefined
         : !this._data.canRollResult.hasActions
           ? '<i class="fa-solid fa-exclamation"></i>'
-          : canConsumeAction
+          : canConsume
             ? '<i class="fa-solid fa-plus"></i>'
             : '<i class="fa-solid fa-check"></i>'
 
@@ -326,7 +328,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         ? undefined
         : !this._data.canRollResult.hasActions
           ? game.i18n?.localize('GURPS.noActionsAvailable')
-          : canConsumeAction
+          : canConsume
             ? game.i18n?.localize('GURPS.willConsumeAction')
             : game.i18n?.localize('GURPS.isFreeAction')
 
@@ -334,7 +336,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         ? undefined
         : !this._data.canRollResult.hasActions
           ? 'rgb(215,185,33)'
-          : canConsumeAction
+          : canConsume
             ? 'rgba(20,119,180,0.7)'
             : 'rgba(51,114,68,0.7)'
 

@@ -1,4 +1,5 @@
 import { Combat } from '@module/combat/index.js'
+import { canConsumeAction } from '@module/otf/canRoll.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { recurselist } from '@util/utilities.js'
 
@@ -801,14 +802,15 @@ export class TokenActions {
   /**
    * Consume Action in Token
    *
-   * @param {object} [action]
+   * @param {OtfRollAction} [action]
    * @param {string} chatThing
-   * @param {object} [actionObj]
+   * @param {Item.Implementation?} [item]
+   * @param {MeleeAttackModel | RangedAttackModel | undefined} [attack]
    * @param {boolean} [usingRapidStrike]
    * @returns {Promise<void>}
    */
-  async consumeAction(action, chatThing, actionObj, usingRapidStrike = false) {
-    if (!this.actor.canConsumeAction(action, chatThing, actionObj)) return
+  async consumeAction(action, chatThing, item, attack, usingRapidStrike = false) {
+    if (!canConsumeAction(action, this.actor, attack, item)) return
     const actionType = chatThing.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase()
 
     switch (actionType) {

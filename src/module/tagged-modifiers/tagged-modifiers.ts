@@ -2,7 +2,8 @@ import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { ActionType } from '@module/action/types.js'
 import { cleanTags } from '@module/actor/effect-modifier-popout.js'
-import { AnyObject } from 'fvtt-types/utils'
+import { ItemType } from '@module/item/types.js'
+import { OtfActionType, OtfRollAction } from '@module/otf/types.js'
 
 import { TaggedModifiersSettings } from './index.js'
 
@@ -54,94 +55,118 @@ const rollTypeTagSettings: Record<ROLL_TYPE, (keyof TaggedModifiersSettings)[]> 
   [ROLL_TYPE.UNKNOWN]: ['allRolls'],
 }
 
-function toValidRoleType(value: string | undefined): ROLL_TYPE {
-  if (!value) return ROLL_TYPE.UNKNOWN
-
-  const enumValues = Object.values(ROLL_TYPE) as string[]
-
-  return enumValues.includes(value) ? (value as ROLL_TYPE) : ROLL_TYPE.UNKNOWN
-}
-
 function tagsForRollType(rollType: ROLL_TYPE, taggedSettings: TaggedModifiersSettings): string[] {
   return rollTypeTagSettings[rollType].flatMap(setting =>
     (taggedSettings[setting] as string).split(',').map(it => it.trim().toLowerCase())
   )
 }
 
-/**
- * Extract the roll/attribute reference code from a chat thing string with attribute format: `[ST]` or `dodge` or the roll format like `@R:attackname` or `@sk:skillname`
- * @param {string} chatThing - The chat thing string
- * @returns {ROLL_TYPE} The reference code (e.g., 'st', 'dodge')
- */
-function extractRollTypeFromChatThing(chatThing: string): ROLL_TYPE {
-  const ref = chatThing.split('@')?.pop()?.toLowerCase()?.replace(' ', '')?.slice(0, -1)?.split(':')[0]
+export function getRollTypeFromAction(action: OtfRollAction) {
+  switch (action.type) {
+    case OtfActionType.attack:
+      if (action.isMelee) {
+        return ROLL_TYPE.MELEE
+      } else {
+        return ROLL_TYPE.RANGED
+      }
 
-  return toValidRoleType(ref)
-}
+      break
+    case OtfActionType.weaponParry:
+      return ROLL_TYPE.PARRY
+      break
+    case OtfActionType.weaponBlock:
+      return ROLL_TYPE.BLOCK
+      break
+    case OtfActionType.skillSpell:
+      if (action.isSkillOnly) {
+        return ROLL_TYPE.SKILL
+      } else {
+        return ROLL_TYPE.SPELL
+      }
 
-export function getRollTypeFromData(
-  chatThing: string,
-  attack: MeleeAttackModel | RangedAttackModel | undefined,
-  optionalArgs: { action?: { type?: string } }
-): ROLL_TYPE {
-  function defaultRef() {
-    if (optionalArgs?.action?.type === 'damage' || optionalArgs?.action?.type === 'deriveddamage')
+      break
+    case OtfActionType.controlRoll:
+      return ROLL_TYPE.CR
+      break
+    case OtfActionType.attribute:
+      {
+        switch (action.attribute) {
+          case 'ST':
+            return ROLL_TYPE.ST
+            break
+          case 'DX':
+            return ROLL_TYPE.DX
+            break
+          case 'HT':
+            return ROLL_TYPE.HT
+            break
+          case 'IQ':
+            return ROLL_TYPE.IQ
+            break
+          case 'WILL':
+            return ROLL_TYPE.WILL
+            break
+          case 'Vision':
+            return ROLL_TYPE.VISION
+            break
+          case 'PER':
+            return ROLL_TYPE.PER
+            break
+          case 'Fright Check':
+            return ROLL_TYPE.FRIGHT_CHECK
+            break
+          case 'Hearing':
+            return ROLL_TYPE.HEARING
+            break
+          case 'Taste Smell':
+            return ROLL_TYPE.TASTE_SMELL
+            break
+          case 'Touch':
+            return ROLL_TYPE.TOUCH
+            break
+          case 'Dodge':
+            return ROLL_TYPE.DODGE
+            break
+          default:
+            return ROLL_TYPE.UNKNOWN
+        }
+      }
+
+      break
+    case OtfActionType.roll:
+    case OtfActionType.derivedRoll:
+      return ROLL_TYPE.UNKNOWN
+      break
+    case OtfActionType.damage:
+    case OtfActionType.derivedDamage:
       return ROLL_TYPE.DAMAGE
-
-    return attack ? (attack.isOfType(ActionType.MeleeAttack) ? ROLL_TYPE.MELEE : ROLL_TYPE.RANGED) : ROLL_TYPE.DAMAGE
+      break
+    default:
+      return ROLL_TYPE.UNKNOWN
   }
-
-  const rollType = chatThing ? extractRollTypeFromChatThing(chatThing) : defaultRef()
-
-  return rollType
 }
 
-/*
- * Extracts the applicable tags from the roll data
- *
- * We get the roll type from the chat string and add the appropriate tags from the taggedSettings
- * For some roll types the optionalArgs contain the item or element the roll origins from in the obj property. We also get the tags from the modifierTags property of this element.
- * If chatThing is empty, we treat the roll as an attack roll if the attack parameter is provided or as a damage roll otherwise
- *
- */
 export function getTagsForRoll(
   taggedSettings: TaggedModifiersSettings,
   rollType: ROLL_TYPE,
-  optionalArgs: { obj?: { system?: AnyObject } }
+  item?: Item.Implementation,
+  attack?: MeleeAttackModel | RangedAttackModel
 ): Set<string> {
   const rollTypeTags = tagsForRollType(rollType, taggedSettings)
 
-  // the modifierTags should always be a set stored in obj.system in GGA 1.0.0 or higher
-  const itemTags =
-    optionalArgs.obj?.system?.modifierTags instanceof Set ? [...optionalArgs.obj.system.modifierTags] : []
+  const itemTags = item?.system?.modifierTags instanceof Set ? [...item.system.modifierTags] : []
+  const attackTags = attack?.modifierTags instanceof Set ? [...attack.modifierTags] : []
 
   const spellTags =
-    rollType === ROLL_TYPE.SPELL &&
-    taggedSettings.useSpellCollegeAsTag &&
-    optionalArgs.obj?.system?.colleges instanceof Set
-      ? Array.from(optionalArgs.obj?.system?.colleges).flatMap(college => cleanTags(college))
+    rollType === ROLL_TYPE.SPELL && taggedSettings.useSpellCollegeAsTag && item?.isOfType(ItemType.Spell)
+      ? Array.from(item?.system?.college).flatMap(college => cleanTags(college))
       : []
 
-  return new Set([...rollTypeTags, ...itemTags, ...spellTags])
+  return new Set([...rollTypeTags, ...itemTags, ...attackTags, ...spellTags])
 }
 
-function getItemRefFromChatThing(chatThing: string): string | undefined {
-  const regex = /(?<="|:).+(?=\s\(|"|])/gm
-  let itemRef = chatThing.match(regex)?.[0]
-
-  if (itemRef) {
-    itemRef = itemRef.replace(/"/g, '').split('(')[0].trim()
-  }
-
-  return itemRef
-}
-
-function getItemRef(
-  chatThing: string,
-  optionalArgs: { obj?: { uuid?: string; system?: AnyObject } },
-  attack?: MeleeAttackModel | RangedAttackModel
-): string {
-  return (optionalArgs?.obj?.uuid as string) ?? getItemRefFromChatThing(chatThing) ?? attack?.uuid ?? ''
+function getItemRef(obj: Item.Implementation | MeleeAttackModel | RangedAttackModel | undefined): string {
+  return obj?.uuid as string
 }
 
 /*
@@ -159,10 +184,9 @@ function canModApply(
   //do any tags match
   const tagHit = userModsTags.some(tag => allTags.has(tag))
 
-  //mods that include '#maneuver' are added by then TokenActions to the . If they include '@man:' they ar from the current manuever should be applied if a tag matches
-  //otherwise they are from multiple parrys oder previous aim manuevers, exists per attack row and has the system path of the attack as source.
+  //mods that include '#maneuver' are added by then TokenActions to the . If they include '@man:' they are from the current manuever should be applied if a tag matches
+  //otherwise they are from multiple parrys oder previous aim manuevers, exists per attack row and has the UUID of the attack as source.
   // These should be applied only, if the attack of the roll matches the item reference.
-  // This whole logic here is quite fragile, the item matching should use item IDs.
   const tokenActionModsFits = !mod.includes('#maneuver') || mod.includes('@man:') || mod.includes(itemRef)
 
   //check for combat/noncombat
@@ -184,27 +208,17 @@ function canModApply(
   return tagHit && tokenActionModsFits && nonCombatModFits && combatModFits
 }
 
-/**
- * Finds all tagged modifiers that should be applied to a roll
- * @param {string} chatThing - The chat thing string fro the roll
- * @param {MeleeAttackModel | RangedAttackModel | undefined} attack --attack from the roll
- * @param {{ obj?: AnyObject }} optionalArgs optional arguments from the roll
- * @param {TaggedModifiersSettings} taggedSettings - settings
- * @param {string[]} allMods - all mods of the actor
- * @param {boolean} actorInCombat - is the actor in combat
- * @returns {{ modsToApply: string[], isDamageRoll: boolean }}
- */
 export function taggedModToApply(
-  chatThing: string,
+  action: OtfRollAction,
+  item: Item.Implementation | undefined,
   attack: MeleeAttackModel | RangedAttackModel | undefined,
-  optionalArgs: { obj?: AnyObject; action?: { type?: string } },
   taggedSettings: TaggedModifiersSettings,
   allMods: string[],
   actorInCombat: boolean
 ): { modsToApply: string[]; isDamageRoll: boolean } {
-  const rollType = getRollTypeFromData(chatThing, attack, optionalArgs)
-  const allTags = getTagsForRoll(taggedSettings, rollType, optionalArgs)
-  const itemRef = getItemRef(chatThing, optionalArgs, attack)
+  const rollType = getRollTypeFromAction(action)
+  const allTags = getTagsForRoll(taggedSettings, rollType, item, attack)
+  const itemRef = getItemRef(attack ?? item)
   const isDamageRoll = rollType === ROLL_TYPE.DAMAGE
 
   let modsToApply = allMods.filter(mod => canModApply(taggedSettings, itemRef, actorInCombat, allTags, mod))
@@ -212,8 +226,8 @@ export function taggedModToApply(
   if (rollType === ROLL_TYPE.RANGED) {
     const bulkMod = modsToApply.find(mod => mod.includes('#maneuver') && mod.includes('@man:move_and_attack'))
 
-    if (bulkMod) {
-      const parsedBulk = parseInt((optionalArgs?.obj as unknown as RangedAttackModel)?.bulkText ?? '0', 10)
+    if (bulkMod && attack?.isOfType(ActionType.RangedAttack)) {
+      const parsedBulk = attack.bulk.normal <= 0 ? attack.bulk.normal : 0
       const bulkPenalty = Number.isNaN(parsedBulk) ? 0 : parsedBulk
       const DEFAULT_PENALTY = -2
 
