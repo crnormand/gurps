@@ -64,6 +64,12 @@ describe('Maneuvers.getManeuver', () => {
 
     expect(Maneuvers.getManeuver().flags.gurps.name).toBe('do_nothing')
   })
+
+  test('the maneuver name is a key inherited from Object.prototype', () => {
+    worldSettings({ onTarget: false })
+
+    expect(Maneuvers.getManeuver('constructor').flags.gurps.name).toBe('do_nothing')
+  })
 })
 
 describe('Maneuvers.getManeuver warnings', () => {

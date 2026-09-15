@@ -366,7 +366,11 @@ export default class Maneuvers {
   static getManeuver(maneuverText = 'do_nothing') {
     if (maneuverText === 'undefined') maneuverText = 'do_nothing'
 
-    const maneuver = Maneuvers.getAll()[maneuverText] ?? maneuvers[maneuverText]
+    // Own keys only -- these are plain objects, so "constructor" and friends would otherwise resolve
+    // to something from Object.prototype that has no maneuver data on it.
+    const own = (map, key) => (Object.hasOwn(map, key) ? map[key] : undefined)
+
+    const maneuver = own(Maneuvers.getAll(), maneuverText) ?? own(maneuvers, maneuverText)
     if (maneuver) return maneuver.data
 
     console.warn(`GURPS | Unrecognized maneuver "${maneuverText}", falling back to Do Nothing`)
