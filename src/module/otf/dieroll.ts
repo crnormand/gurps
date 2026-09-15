@@ -1,4 +1,6 @@
-import { CanRollResult } from '@module/actor/types.js'
+import { MeleeAttackModel } from '@module/action/melee-attack.js'
+import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { ActionType } from '@module/action/types.js'
 import { GurpsRoll } from '@module/modifier-bucket/bucket-app.js'
 import { OtfActionType, OtfRollAction } from '@module/otf/types.js'
 import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
@@ -9,6 +11,7 @@ import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attack
 import { TokenActions } from '../token-actions.js'
 
 import { ActionFuncContext } from './actionFuncs.js'
+import { CanRollResult, canRoll } from './canRoll.js'
 import { applyModifierDescription } from './description-utilities.js'
 import { RollConfirmationDialog } from './rollConfirmationDialog.js'
 
@@ -164,9 +167,11 @@ export async function doRoll({
   thing = '',
   chatthing = '',
   origtarget = -1,
-  optionalArgs = {},
+  context,
   fromUser = game.user,
   action,
+  item,
+  attack,
 }: {
   actor: Actor.Implementation | null
   formula?: string
@@ -175,16 +180,11 @@ export async function doRoll({
   thing?: string
   chatthing?: string
   origtarget?: number
-  optionalArgs?: {
-    obj?: any
-    blind?: boolean
-    event?: ActionFuncContext | null
-    followon?: string
-    text?: string
-    shots?: number
-  }
+  context?: ActionFuncContext | null
   fromUser?: User | null
   action: OtfRollAction
+  item?: Item.Implementation
+  attack?: MeleeAttackModel | RangedAttackModel
 }) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 
@@ -210,7 +210,7 @@ export async function doRoll({
 
   const result: CanRollResult =
     actor && action
-      ? await actor.canRoll(action, token ?? null, chatthing, optionalArgs.obj)
+      ? await canRoll(action, actor, token ?? null, attack, item)
       : { canRoll: true, hasActions: true, isSlam: false, isCombatant: false }
 
   const messages = Object.keys(result)
@@ -237,14 +237,10 @@ export async function doRoll({
     }
 
     targetmods = []
-    await actor.addTaggedRollModifiers(chatthing, optionalArgs)
+    await actor.addTaggedRollModifiers(action, item, attack)
   }
 
-  const messageMode = calculateMessageMode(
-    FoundryUtils.MessageMode,
-    !!optionalArgs.blind || !!optionalArgs.event?.blind,
-    optionalArgs.event
-  )
+  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
 
   const showRollDialog = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
 
@@ -265,7 +261,7 @@ export async function doRoll({
       formula,
       canRollResult: result,
       name: targetData.name,
-      obj: optionalArgs.obj,
+      attack: attack,
       messageMode,
     })
 
@@ -280,9 +276,11 @@ export async function doRoll({
         thing,
         chatthing,
         origtarget,
-        optionalArgs,
+        context,
         fromUser,
         action,
+        item,
+        attack,
       })
     } else {
       await GURPS.ModifierBucket.clearTaggedModifiers()
@@ -299,9 +297,11 @@ export async function doRoll({
       thing,
       chatthing,
       origtarget,
-      optionalArgs,
+      context,
       fromUser,
       action,
+      item,
+      attack,
     })
   }
 }
@@ -330,7 +330,7 @@ type RollChatData = {
   rof?: string
   rcl?: string
   rofrcl?: number
-  optlabel?: string
+  optlabel: string[]
   multiples: { rtotal: number; loaded: boolean; rolls: string }[]
   isBlind: boolean
 }
@@ -349,9 +349,11 @@ async function _doRoll({
   thing,
   chatthing,
   origtarget,
-  optionalArgs,
+  context,
   fromUser,
   action,
+  item,
+  attack,
 }: {
   actor: Actor.Implementation | null
   formula: string
@@ -360,16 +362,11 @@ async function _doRoll({
   thing: string
   chatthing: string
   origtarget: number
-  optionalArgs: {
-    obj?: any
-    blind?: boolean
-    event?: ActionFuncContext | null
-    followon?: string
-    text?: string
-    shots?: number
-  }
+  context?: ActionFuncContext | null
   fromUser?: User | null
   action: OtfRollAction
+  item?: Item.Implementation
+  attack?: MeleeAttackModel | RangedAttackModel
 }) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   const isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
@@ -389,11 +386,8 @@ async function _doRoll({
 
   const speaker = ChatMessage.getSpeaker({ actor: actor as Actor.Stored })
 
-  const messageMode = calculateMessageMode(
-    FoundryUtils.MessageMode,
-    !!optionalArgs.blind || !!optionalArgs.event?.blind,
-    optionalArgs.event
-  )
+  //check message mode again as modifier keys may have changed
+  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
 
   let roll = null // Will be the Roll
 
@@ -408,6 +402,11 @@ async function _doRoll({
     targetmods,
     multiples,
     isBlind: false,
+    optlabel: action.overridetxt ? [action.overridetxt] : [],
+  }
+
+  if (action.desc && !action.mod) {
+    chatdata.optlabel.unshift(action.desc)
   }
 
   if (isTargeted) {
@@ -453,33 +452,29 @@ async function _doRoll({
     chatdata.seventeen = seventeen
     chatdata.isDraggable = !seventeen && margin != 0
     chatdata.otf = (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing
-    chatdata.followon = optionalArgs.followon
+    chatdata.followon = action.type === OtfActionType.attack ? action.followon : undefined
 
     // If the attached obj has Recoil information, do the additional math.
-    if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
+    if (margin > 0 && action.type === OtfActionType.attack && attack?.isOfType(ActionType.RangedAttack)) {
       /** @type {import('../../rules/combat/ranged/missile-weapon-attacks.js').WeaponDescriptor} */
-      const weapon = { recoil: optionalArgs.obj.rcl as string, rateOfFire: optionalArgs.obj.rof as string }
-      const potentialHits = MissileWeaponAttacks.computePotentialHits(weapon, optionalArgs.shots, margin)
+      const weapon = { recoil: attack.recoilText, rateOfFire: attack.rofText }
+      const potentialHits = MissileWeaponAttacks.computePotentialHits(weapon, action.shots, margin)
 
       chatdata.rof = potentialHits.rateOfFire
       chatdata.rcl = potentialHits.recoil
       chatdata.rofrcl = potentialHits.potentialHits
     }
 
-    chatdata['optlabel'] = optionalArgs.text || ''
+    const obj = attack ?? item?.system
 
     //detecting DiceSoNice module via custom property of the game object
     if ((game as any).dice3d && !(game as any).dice3d.messageHookDisabled) {
       // save for after roll animation is complete
-      if (failure && optionalArgs.obj?.failotf)
-        GURPS.modules.Otf.pendingOTFs.unshift(optionalArgs.obj.failotf as string)
-      if (!failure && optionalArgs.obj?.passotf)
-        GURPS.modules.Otf.pendingOTFs.unshift(optionalArgs.obj.passotf as string)
+      if (failure && obj?.failotf) GURPS.modules.Otf.pendingOTFs.unshift(obj.failotf)
+      if (!failure && obj?.passotf) GURPS.modules.Otf.pendingOTFs.unshift(obj.passotf)
     } else {
-      if (failure && optionalArgs.obj?.failotf)
-        GURPS.modules.Otf.executeOTF(optionalArgs.obj.failotf as string, false, optionalArgs.event, null)
-      if (!failure && optionalArgs.obj?.passotf)
-        GURPS.modules.Otf.executeOTF(optionalArgs.obj.passotf as string, false, optionalArgs.event, null)
+      if (failure && obj?.failotf) GURPS.modules.Otf.executeOTF(obj.failotf, false, context, null)
+      if (!failure && obj?.passotf) GURPS.modules.Otf.executeOTF(obj.passotf as string, false, context, null)
     }
 
     const result = {
@@ -500,7 +495,7 @@ async function _doRoll({
       min = 1
     }
 
-    const max = +optionalArgs.event?.data?.repeat || 1
+    const max = +context?.data?.repeat || 1
 
     if (max > 1) chatdata['chatthing'] = 'x' + max
 
@@ -535,7 +530,7 @@ async function _doRoll({
   if (actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
 
-    await actions.consumeAction(action, chatthing, optionalArgs.obj, usingRapidStrike)
+    await actions.consumeAction(action, chatthing, item, attack, usingRapidStrike)
   }
 
   chatdata.isBlind = messageMode.isBlind
@@ -552,7 +547,7 @@ async function _doRoll({
     rolls: [roll],
     sound: CONFIG.sounds.dice,
     //whisper has no functionality for blind rolls, so wey do we pass that?
-    whisper: optionalArgs.event?.shiftKey
+    whisper: context?.shiftKey
       ? game.user?.id
       : messageMode.isBlind
         ? ChatMessage.getWhisperRecipients('GM').map(user => user.id)
