@@ -1,38 +1,74 @@
-<form class='{{cssClass}}' autocomplete='off'>
-  <div class='move-mode-editor table'>
-    <div class='label'>{{localize 'GURPS.moveModeType'}}</div>
-    <div class='label'>{{localize 'GURPS.basic'}}</div>
-    <div class='label'>{{localize 'GURPS.enhanced'}}</div>
-    <div class='label'>{{localize 'GURPS.default'}}</div>
-    <a id='template-add' class='move-mode-control button icon' data-action='create'><i class='fa-solid fa-plus'></i></a>
-
-    {{#each modes}}
-      <div style='display: flex; flex-flow: column nowrap'>
-        <select class='move-mode-control' data-action='mode' data-key='{{@key}}' style='width: 100%;'>
-          {{#each (moveOptions this)}}
-            <option value='{{this}}' {{select-if this ../mode}}>{{localize this}}</option>
-          {{/each}}
-          <option value='other'>&lt;{{localize 'GURPS.moveModeOther'}}&gt;</option>
-        </select>
-        <div class='expand-container' style='overflow: hidden; line-height: 0;'>
-          <input id='expand-contract-{{@key}}' class='expand-contract move-mode-control contracted' data-action='other'
-            data-key='{{@key}}' type='text' value='{{localize mode}}' />
-        </div>
-      </div>
-      <input class='move-mode-control' data-action='basic' data-key='{{@key}}' type='number' value='{{basic}}'
-        style='text-align: center;' />
-      <input class='move-mode-control' data-action='enhanced' data-key='{{@key}}' type='number' value='{{enhanced}}'
-        style='text-align: center;' />
-      <input class='move-mode-control' data-action='default' data-key='{{@key}}' type='checkbox' {{checked default}}
-        {{disabled (lt (length ../modes) 2)}} />
-      {{#unless default}}
-        <a class='move-mode-control' data-action='delete' data-key='{{@key}}' title='{{localize "GURPS.delete"}}'
-          style='padding: 6px 20px 0 10px;' {{disabled default}}>
-          <i class='fa-solid fa-trash'></i>
-        </a>
+<div class='move-mode-editor'>
+  <table class='gcs-table'>
+    <colgroup>
+      <col class='gcs-col-name'>
+      <col class='gcs-col-basic'>
+      <col class='gcs-col-enhanced'>
+      <col class='gcs-col-delete'>
+    </colgroup>
+    <thead>
+      <tr>
+        <th>{{localize 'GURPS.moveModeType'}}</th>
+        <th>{{localize 'GURPS.basic'}}</th>
+        <th>{{localize 'GURPS.enhanced'}}</th>
+        <th>
+          <button type='button' data-action='createEmbedded' data-document-name='MoveMode' title='{{localize "GURPS.add"}}'>
+            <i class='fa-solid fa-plus'></i>
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each moveModes}}
+        <tr data-uuid='{{uuid}}'>
+          <td>
+            <input
+              type='text'
+              name='system.moveV2.{{_id}}.mode'
+              value='{{mode}}'
+            />
+          </td>
+          <td>
+            <input
+              type='number'
+              name='system.moveV2.{{_id}}.basic'
+              value='{{basic}}'
+              step='1'
+            />
+          </td>
+          <td>
+            <input
+              type='number'
+              name='system.moveV2.{{_id}}.enhanced'
+              value='{{enhanced}}'
+              step='1'
+            />
+          </td>
+          <td>
+            {{#if (gt (length ../moveModes) 1)}}
+            <button
+              type='button'
+              data-action='deleteEmbedded'
+              data-uuid='{{uuid}}'
+              title='{{localize "GURPS.delete"}}'
+            >
+              <i class='fa-solid fa-trash'></i>
+            </button>
+            {{/if}}
+          </td>
+        </tr>
       {{else}}
-        <div></div>
-      {{/unless}}
-    {{/each}}
-  </div>
-</form>
+        <tr class='gcs-item-empty'>
+          <td colspan='4'>{{localize 'GURPS.none'}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+<footer class='move-mode-editor-footer'>
+  <button type='submit'>
+    <i class='fa-solid fa-floppy-disk'></i>
+    {{localize 'GURPS.update'}}
+  </button>
+</footer>
+</div>
+

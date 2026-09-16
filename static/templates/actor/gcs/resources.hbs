@@ -165,7 +165,17 @@
       <tfoot>
         <tr>
           <th colspan="5">
-            {{formGroup  systemFields._currentMoveModeId value=system._currentMoveModeId classes="flexrow" blank=false  choices=moveModeChoices localize=true}}
+            <div class="form-group gcs-move-mode-controls">
+              <label>{{localize "GURPS.actor.character.FIELDS._currentMoveModeId.label"}}</label>
+              <div class="form-fields">
+                <button type='button' data-action='editMoveMode' aria-label='{{localize "GURPS.moveMode"}}' title='{{localize "GURPS.moveMode"}}'>
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <select name="system._currentMoveModeId">
+                  {{selectOptions moveModeChoices selected=system._currentMoveModeId localize=true blank=false }}
+                </select>
+              </div>
+            </div>
           </th>
         </tr>
       </tfoot>
