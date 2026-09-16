@@ -407,7 +407,6 @@ declare global {
 
     /* ---------------------------------------- */
 
-
     whisperOtfToOwner(
       otf: string,
       overridetxt: string | null,
