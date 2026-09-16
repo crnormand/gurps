@@ -94,6 +94,7 @@ export class GlobalActiveEffectDataControl {
   }
 }
 
+// TODO: Convert to ApplicationV2
 class ActiveEffectManagerPopout extends Application {
   constructor(callback, options = {}) {
     super(options)
@@ -218,6 +219,7 @@ class ActiveEffectManagerPopout extends Application {
     flags: object;
 }
 */
+// TODO: Convert to ApplicationV2
 class ActiveEffectDataConfig extends FormApplication {
   constructor(effect, index, callback, options = {}) {
     super(effect, options)

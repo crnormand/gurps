@@ -34,6 +34,7 @@ const simpleDialogHeight = 160
  *     armorDivisor: 2
  *   }
  */
+// TODO: Convert to ApplicationV2
 export default class ApplyDamageDialog extends Application {
   /**
    * Create a new ADD.

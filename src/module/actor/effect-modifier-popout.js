@@ -80,6 +80,7 @@ export const getSizeModifier = (source, target) => {
   return sizeModifier
 }
 
+// TODO: Convert to ApplicationV2
 export class EffectModifierPopout extends Application {
   constructor(token, callback, options = {}) {
     super(options)
@@ -512,6 +513,7 @@ export const cleanTags = tags =>
     .map(it => it.toLowerCase())
     .map(it => it.replace(/\W/g, ''))
 
+// TODO: Convert to ApplicationV2
 export class TaggedModifierSettings extends FormApplication {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {

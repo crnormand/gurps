@@ -7,6 +7,7 @@ export const commaSeparatedNumbers = /^\d*([ ,0-9.+-])*$/
  * @typedef {{oldValue?: string, oldSelectionStart?: number|null, oldSelectionEnd?: number|null}} SelectionHistory
  */
 
+// TODO: Convert to ApplicationV2
 export default class ResolveDiceRoll extends Application {
   /**
    * @param {import('./bucket-app.js').GurpsDie} diceTerm

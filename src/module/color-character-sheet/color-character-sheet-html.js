@@ -31,6 +31,7 @@ export function colorSettingsSaveUpdate() {
   colorGurpsActorSheet()
 }
 
+// TODO: Convert to ApplicationV2
 export default class ColorCharacterSheetSettings extends FormApplication {
   static getSheetColors() {
     const colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)

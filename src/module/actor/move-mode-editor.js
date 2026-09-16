@@ -1,3 +1,4 @@
+// TODO: Convert to ApplicationV2
 export default class MoveModeEditor extends Application {
   constructor(actor, options) {
     super(options)

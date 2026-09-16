@@ -1,6 +1,7 @@
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { arrayToObject, objectToArray } from '@util/utilities.js'
 
+// TODO: Convert to ApplicationV2
 export default class ModifierBucketJournals extends FormApplication {
   static getJournalIds() {
     let journals = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS)

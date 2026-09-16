@@ -1,3 +1,4 @@
+// TODO: Convert to ApplicationV2
 export default class EffectPicker extends Application {
   static EFFECT_CATEGORIES = {
     postures: {

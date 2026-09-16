@@ -11,6 +11,7 @@ import GurpsWiring from '../gurps-wiring.js'
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
  * to the current or other actors.
  */
+// TODO: Convert to ApplicationV2
 export default class ModifierBucketEditor extends Application {
   constructor(bucket, options = {}) {
     super(options)

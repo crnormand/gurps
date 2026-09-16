@@ -1,3 +1,4 @@
+// TODO: Convert to ApplicationV2
 export default class SplitDREditor extends Application {
   constructor(actor, key, options) {
     super(options)

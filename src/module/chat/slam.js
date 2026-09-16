@@ -55,6 +55,7 @@ export default class SlamChatProcessor extends ChatProcessor {
   }
 }
 
+// TODO: Convert to ApplicationV2
 class SlamCalculatorForm extends FormApplication {
   static process(actor, target) {
     let calc = new SlamCalculatorForm(actor, target)
