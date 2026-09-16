@@ -168,7 +168,7 @@ export default class EffectPicker extends Application {
 
     const effectData = {
       name: game.i18n.localize(statusEffect.name),
-      icon: statusEffect.img,
+      img: statusEffect.img,
       disabled: false,
       statuses: [statusEffect.id],
       ...(statusEffect.changes && { changes: statusEffect.changes }),

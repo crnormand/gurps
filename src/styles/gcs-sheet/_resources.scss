@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 section[data-application-part='resources'] {
   display: grid;
   gap: var(--gcs-section-gap);
@@ -6,7 +8,8 @@ section[data-application-part='resources'] {
   // attributes | body | moving
   grid-template-areas:
     'attributes body encumbrance'
-    'attributes body moving';
+    'attributes body moving'
+    'effects effects effects';
   grid-template-columns: max-content auto auto;
 
   /* ---------------------------------------- */
@@ -103,6 +106,53 @@ section[data-application-part='resources'] {
     .gcs-lifting-value {
       text-align: right;
       font-weight: 700;
+    }
+  }
+
+  .gcs-active-effects {
+    grid-area: effects;
+
+    .gcs-section-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--gga-space-1);
+
+      > * {
+        flex: 0 0 auto;
+        width: fit-content;
+      }
+    }
+
+    .gcs-active-effect {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0 0.25rem;
+
+      @include gcs-control;
+
+      .gcs-active-effect-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 15px;
+        height: 15px;
+      }
+
+      img {
+        width: 15px;
+        height: 15px;
+        object-fit: contain;
+      }
+
+      &:hover {
+        background-color: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
+      }
+    }
+
+    [data-action='addEffect'] {
+      padding: 0 0.25rem;
     }
   }
 }
