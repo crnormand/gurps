@@ -2,7 +2,7 @@
   This is a subset of Dynamic effects for Active Effects module (which only work with DnD5e).
   Mainly for the 'teleport token function.   ;-)
 **/
-
+// TODO: Evaluate if we can remove this!
 export var socketlibSocket = undefined
 
 export let setupSocket = () => {
