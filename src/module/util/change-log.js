@@ -2,10 +2,11 @@ import '@lib/markdown-it.js'
 import { SemanticVersion } from '../../util/semver.js'
 
 export class ChangeLogWindow extends FormApplication {
-  constructor(lastVersion) {
+  constructor(lastVersion, force = true) {
     super({}, {})
 
     this.lastVersion = lastVersion
+    this.force = force
   }
 
   static get defaultOptions() {
@@ -46,24 +47,31 @@ export class ChangeLogWindow extends FormApplication {
     return promise
   }
 
-  _processChangelog(md) {
-    const MD = window.markdownit()
+  _processChangelog(markdownContent) {
+    const converter = new window.showdown.Converter(CONST.SHOWDOWN_OPTIONS)
+    const semverRegex =
+      /(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?/
 
-    md = md.replace(/<a href=.*<\/a>/g, '') // Remove HTML link from internal changelog display
+    let lines = markdownContent
+      .replace(/<a href=.*<\/a>/g, '') // Remove HTML link from internal changelog display
+      .split(/[\n\r]/) // Split into lines
 
     // Cut off irrelevant changelog entries
-    let lines = md.split(/[\n\r]/)
     let count = 0 // Max at 5
 
     if (this.lastVersion) {
       for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         let line = lines[lineIndex]
 
-        if (line.match(/([0-9]+\.[0-9]+\.[0-9]+)/)) {
-          count++
-          const version = SemanticVersion.fromString(RegExp.$1)
+        const matches = line.match(semverRegex)
 
-          if (count > 5 || !version.isHigherThan(this.lastVersion)) {
+        console.log(matches)
+
+        if (matches) {
+          count++
+          const version = SemanticVersion.fromString(matches[0])
+
+          if (count > 5 || (!version.isHigherThan(this.lastVersion) && !this.force)) {
             lines = lines.slice(0, lineIndex)
             break
           }
@@ -71,6 +79,6 @@ export class ChangeLogWindow extends FormApplication {
       }
     }
 
-    return MD.render(lines.join('\n'))
+    return converter.makeHtml(lines.join('\n'))
   }
 }
