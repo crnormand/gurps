@@ -148,9 +148,9 @@ export class SlamCalculator {
 
     game.user.targets.forEach(target => targets.push(target))
     game.user.targets.clear()
-    await GURPS.executeOTF(`/r [${attackerResult} cr @${data.targetToken.name} "slam damage"]`)
+    await GURPS.modules.Otf.executeOTF(`/r [${attackerResult} cr @${data.targetToken.name} "slam damage"]`)
     GURPS.LastActor = data.targetToken.actor
-    await GURPS.executeOTF(`/r [${targetResult} cr @${data.attackerToken.name} "slam damage"]`)
+    await GURPS.modules.Otf.executeOTF(`/r [${targetResult} cr @${data.attackerToken.name} "slam damage"]`)
     GURPS.LastActor = data.attackerToken.actor
     targets.forEach(target => game.user.targets.add(target))
   }

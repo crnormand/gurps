@@ -228,7 +228,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     ChatMessage.applyRollMode(messageData, messageMode.value)
 
     await ChatMessage.create(messageData, options).then(async () => {
-      GURPS.setLastTargetedRoll({ margin: -margin }, actor)
+      GURPS.modules.Otf.setLastTargetedRoll({ margin: -margin }, actor)
 
       if (failure) {
         // Draw results using a custom roll formula. Use the negated margin for the rolltable only

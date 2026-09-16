@@ -76,7 +76,7 @@ export class EveryoneBChatProcessor extends ChatProcessor {
             let event = { data: {} }
 
             event.blind = this.msgs().quiet
-            await GURPS.performAction(action.action, actor, event)
+            await GURPS.modules.Otf.performAction(action.action, actor, event)
           }
         }
 

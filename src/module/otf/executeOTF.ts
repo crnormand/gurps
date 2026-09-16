@@ -6,7 +6,8 @@ export async function executeOTF(
   inputstring: string,
   priv: boolean = false,
   event: ActionFuncContext | null = null,
-  actor: Actor.Implementation | null = null
+  actor: Actor.Implementation | null = null,
+  targets?: string[]
 ) {
   if (!inputstring) return false
   inputstring = inputstring.trim()
@@ -21,12 +22,12 @@ export async function executeOTF(
 
   for (let string of strings) {
     string = string.trim()
-    const action = GURPS.parselink(string)
+    const action = GURPS.modules.Otf.parselink(string)
 
     answer = false
     if (action?.action) {
-      if (!event) event = { shiftKey: priv, ctrlKey: false, data: {} }
-      const result = await performAction(action.action, actor || GURPS.LastActor, event)
+      if (!event) event = { shiftKey: priv, ctrlKey: false, altKey: false, data: {} }
+      const result = await performAction(action.action, actor || GURPS.LastActor, event, targets)
 
       answer = result
     } else ui.notifications?.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
@@ -76,7 +77,9 @@ export function performAction(
     const result = actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
 
     if (result && typeof (result as PromiseLike<unknown>).then === 'function') {
-      throw new Error(`GURPS.performAction(calcOnly) requires a synchronous action handler for type "${action.type}"`)
+      throw new Error(
+        `GURPS.modules.Otf.performAction(calcOnly) requires a synchronous action handler for type "${action.type}"`
+      )
     }
 
     return result

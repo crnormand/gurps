@@ -97,6 +97,7 @@ declare module 'fvtt-types/configuration' {
   namespace Hooks {
     interface HookConfig {
       dropCanvasData: (canvas: Canvas, dropData: any) => void
+      diceSoNiceRollComplete: (_app: any, _html: any, _msg: any) => void
     }
   }
 
@@ -171,6 +172,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.portrait-hp-tinting': boolean
     'gurps.migration-version': string
     'gurps.shift-click-blind': boolean
+    'gurps.ctrl-key': boolean
 
     // NOTE: These settings will be deprecated in the future, but their updated equivalents do not yet exist.
     'gurps.allow-after-max-actions': 'Allow' | 'Warn' | 'Forbid'

@@ -76,6 +76,6 @@ export default class TriggerHappySupport {
   }
   otf(args) {
     args = args.join(' ')
-    GURPS.executeOTF(args)
+    GURPS.modules.Otf.executeOTF(args)
   }
 }

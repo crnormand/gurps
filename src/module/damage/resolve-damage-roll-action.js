@@ -59,7 +59,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
       let targets = Array.from({ length: rolls }, (_, i) => (i + 1).toString())
 
       if (isOtf) GurpsWiring.handleGurpslink(event, actor, undefined, { targets: targets })
-      else GURPS.handleRoll(event, actor, { targets: targets })
+      else GURPS.modules.Otf.executeOTF(otf, false, event, actor)
       break
     }
     case 'combine': {
@@ -67,7 +67,7 @@ export async function resolveDamageRollAction(event, actor, otf, overridetxt, is
 
       if (isOtf) otf = multiplyDice(otf, rolls)
       if (isOtf) GurpsWiring.handleGurpslink(event, actor, undefined, { combined: rolls })
-      else GURPS.handleRoll(event, actor, { combined: rolls })
+      else GURPS.modules.Otf.executeOTF(otf, false, event, actor)
       break
     }
   }

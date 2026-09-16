@@ -46,7 +46,7 @@ import {
   ReactionModifier,
   ConditionalModifier as ConditionalModifierDocument,
 } from '@module/item/data/conditional-modifier.js'
-import { OtfAction, CalcOnlyAction } from '@module/otf/types.js'
+import { ModifierBucket } from '@module/modifier-bucket/bucket-app.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
 import {
   ContainedQuantityPrereq,
@@ -383,10 +383,6 @@ declare global {
 
     /* ---------------------------------------- */
 
-    parselink(input: string, htmldesc?: string | null, _clrdmods?: boolean | null): { text: string; action?: OtfAction }
-
-    /* ---------------------------------------- */
-
     findAdDisad: typeof findAdDisad
 
     /* ---------------------------------------- */
@@ -411,28 +407,6 @@ declare global {
 
     /* ---------------------------------------- */
 
-    handleRoll(
-      event: JQuery.MouseEventBase | Event,
-      actor: Actor.Implementation,
-      options?: { targets?: string[] }
-    ): Promise<void>
-
-    /* ---------------------------------------- */
-
-    performAction(
-      action: (OtfAction & CalcOnlyAction) | null,
-      actor: Actor.Implementation | null,
-      event?: ActionFuncContext | null,
-      targets?: string[]
-    ): { target: number; thing?: string }
-    performAction(
-      action: OtfAction | null,
-      actor?: Actor.Implementation | null,
-      event?: ActionFuncContext | null,
-      targets?: string[]
-    ): Promise<boolean> | boolean
-
-    /* ---------------------------------------- */
 
     whisperOtfToOwner(
       otf: string,
@@ -457,6 +431,9 @@ declare global {
       refresh(): void
       refreshPosition(): void
       render(): Promise<void>
+      clearTaggedModifiers(update?: boolean): void
+      modifierStack: typeof ModifierBucket.modifierStack
+      applyMods(applyMods?: Modifier[]): Modifier[]
     }
 
     /* ---------------------------------------- */
@@ -516,13 +493,34 @@ declare global {
       seventeen: boolean
     }
 
+    lastTargetedRolls: Record<
+      string,
+      {
+        actorId: string
+        tokenId: string
+        isCritSuccess: boolean
+        isCritFailure: boolean
+        margin: number
+        failure: boolean
+        seventeen: boolean
+      }
+    >
+
+    setLastTargetedRoll: (
+      chatdata: any,
+      actorid?: string | null,
+      tokenid?: string | null,
+      updateOtherClients?: boolean
+    ) => void
+
     /* ---------------------------------------- */
 
     executeOTF(
       inputstring: string,
       priv?: boolean,
       event?: ActionFuncContext | null,
-      actor: Actor.Implementation | null
+      actor: Actor.Implementation | null,
+      targets?: string[]
     ): Promise<boolean>
   }
 }

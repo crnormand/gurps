@@ -1,9 +1,7 @@
 // Import Modules
 import { Migrator } from '@module/migration/migrator.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
-import { performAction } from '@module/otf/executeOTF.js'
 import { PARSELINK_MAPPINGS } from '@module/otf/parselink.js'
-import { OtfActionType } from '@module/otf/types.js'
 import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
 import { HandlebarsUtil } from '@module/util/handlebars.js'
@@ -12,7 +10,6 @@ import { initialize_i18nHelper, translate } from '@module/util/i18n.js'
 import { ClearLastActor, SetLastActor } from '@module/util/last-actor.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import MoustacheWax, { findTracker } from '@module/util/moustachewax.js'
-import { multiplyDice } from '@util/damage-utils.js'
 import { gurpslink } from '@util/gurpslink.js'
 import JQueryHelpers from '@util/jquery-helper.js'
 import { parseDecimalNumber } from '@util/parse-decimal-number/parse-decimal-number.js'
@@ -20,11 +17,9 @@ import { SemanticVersion } from '@util/semver.js'
 import {
   arrayToObject,
   atou,
-  d6ify,
   flattenContainedList,
   objectToArray,
   recurselist,
-  stripBracketContents,
   utoa,
   wait,
   zeroFill,
@@ -45,7 +40,6 @@ import { Compendium } from './compendium/index.js'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { Dev } from './dev/index.js'
-import { doRoll } from './dierolls/dieroll.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import { GurpsActiveEffect } from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
@@ -165,25 +159,7 @@ if (!globalThis.GURPS) {
   GURPS.lastInjuryRoll = {}
   GURPS.lastInjuryRolls = {} // mapped by actor and message id
 
-  GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients = false) {
-    let tmp = { ...chatdata, actorid, tokenid }
-
-    if (actorid) GURPS.lastTargetedRolls[actorid] = tmp
-    if (tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
-    GURPS.lastTargetedRoll = tmp // keep the local copy
-    // Interesting fields: GURPS.lastTargetedRoll.margin .isCritSuccess .IsCritFailure .thing
-
-    if (updateOtherClients)
-      game.socket.emit('system.gurps', {
-        type: 'setLastTargetedRoll',
-        chatdata: tmp,
-        actorid: actorid,
-        tokenid: tokenid,
-      })
-  }
-
-  GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
-  GURPS.PendingOTFs = []
+  GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS array
   GURPS.IgnoreTokenSelect = false
 
   GURPS.wait = wait
@@ -418,162 +394,6 @@ if (!globalThis.GURPS) {
   }
 
   GURPS.findTargetedRoll = findTargetedRoll
-
-  /**
-   * The user clicked on a field that would allow a dice roll. Use the element
-   * information to try to determine what type of roll.
-   * @param {JQuery.MouseEventBase} event
-   * @param {GurpsActorV2 | null} actor
-   * @param {string[]} targets - labels for multiple Damage rolls
-   */
-  async function handleRoll(event, actor, options) {
-    event.preventDefault()
-
-    let formula = ''
-    let targetmods = null
-    let element = event.currentTarget
-    let prefix = ''
-    let thing = ''
-    let action = null
-    var chatthing
-    /** @type {Record<string, any>} */
-    let opt = { event: event }
-    let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
-
-    if (actor) GURPS.SetLastActor(actor)
-
-    const blindroll =
-      event.ctrlKey ||
-      FoundryUtils.MessageMode.isBlind ||
-      (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && event.shiftKey)
-
-    if (OtfActionType.damage in element.dataset) {
-      // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
-      let text = element.dataset.otf ? element.dataset.otf : element.innerText.trim()
-
-      let parts = [text]
-
-      // If text starts with an OTF-style prefix (e.g. "M:", "R:", "D:", "A:", "P:", "B:"), it's an attack roll that
-      // only specifies the weapon (or similar), not the dice. Don't split it.
-      if (!text.match(/^[MRADPB]:/i)) parts = text.includes(',') ? text.split(',') : [text]
-
-      for (let part of parts) {
-        //let result = parseForRollOrDamage(part.trim())
-        let result = GURPS.parselink(part.trim())
-
-        if (result?.action) {
-          if (options?.combined && result.action.type === OtfActionType.damage)
-            result.action.formula = multiplyDice(result.action.formula, options.combined)
-          performAction({ ...result.action, blindroll }, actor, event, options?.targets)
-        }
-      }
-
-      return
-    } else if ('key' in element.dataset) {
-      formula = '3d6'
-      const path = element.dataset.key
-
-      opt.itemPath = `@${path}`
-
-      const item = foundry.utils.getProperty(actor, path)
-
-      if (item && 'level' in item) target = item.level
-      opt.obj = item
-
-      let srcid = actor ? '@' + actor.id + '@' : ''
-
-      if ('name' in element.dataset) thing = element.dataset.name
-
-      if ('otf' in element.dataset) {
-        const parsedLink = GURPS.parselink(element.dataset.otf)
-
-        if ('action' in parsedLink) action = parsedLink.action
-        chatthing = '[' + srcid + element.dataset.otf + ']'
-        action.itemPath = opt.itemPath
-
-        return performAction({ ...action, blindroll }, actor, event, options?.targets)
-      }
-    } else if ('path' in element.dataset) {
-      let srcid = actor ? '@' + actor.id + '@' : ''
-
-      prefix = game.i18n.localize('GURPS.rollVs')
-      thing = GURPS._mapAttributePath(element.dataset.path)
-      formula = '3d6'
-      target = parseInt(element.innerText)
-      if ('otf' in element.dataset)
-        if (thing.toUpperCase() != element.dataset.otf.toUpperCase())
-          chatthing = thing + '/[' + srcid + element.dataset.otf + ']'
-        else chatthing = '[' + srcid + element.dataset.otf + ']'
-    } else if ('otf' in element.dataset) {
-      // strip out any inner OtFs when coming from the UI.   Mainly attack names
-      let otf = element.dataset.otf.trim()
-      // But there is a special case where the OtF is the first thing
-      // "M:"["Quarterstaff"A:"Quarterstaff (Thrust)"] (Thrust)""
-      let match = otf.match(/^([sSmMrRaA]):"\["([^"]+)([^\]]+)]( *\(\w*\))?/)
-
-      if (match) otf = match[1] + ':' + match[2] + (match[4] ? match[4] : '')
-      otf = stripBracketContents(otf)
-
-      return GURPS.executeOTF(otf)
-    } else if ('name' in element.dataset) {
-      prefix = '' // "Attempting ";
-      let text = /** @type {string} */ (element.dataset.name || element.dataset.otf)
-
-      text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
-      thing = text.replace(/(.*?)\(.*\)/g, '$1')
-      opt.text = text.replace(/.*?\((.*)\)/g, '$1')
-
-      if (opt.text === text) opt.text = ''
-      else opt.text = "<span style='font-size:85%'>(" + opt.text + ')</span>'
-      let key = $(element).closest('[data-key]').attr('data-key')
-
-      if (!key) key = element.dataset.key
-
-      if (key) {
-        if (actor) opt.obj = foundry.utils.getProperty(actor, key) // During the roll, we may want to extract something from the object
-        if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
-        if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return
-      }
-
-      formula = '3d6'
-      let eText = element.innerText
-
-      if (eText) {
-        let textParts = eText.trim().split(' ')
-
-        eText = textParts[0]
-        if (eText) target = parseInt(eText)
-
-        if (isNaN(target)) target = 0
-        // Can't roll against a non-integer
-        else {
-          textParts.shift()
-          let mod = textParts.join(' ')
-
-          if (mod) GURPS.ModifierBucket.addModifier(0, mod)
-        }
-      }
-    } else if ('roll' in element.dataset) {
-      target = -1 // Set flag to indicate a non-targeted roll
-      formula = element.innerText
-      prefix = 'Rolling ' + formula
-      formula = d6ify(formula)
-    }
-
-    await doRoll({
-      action: { ...action, blindroll },
-      actor,
-      formula,
-      targetmods,
-      prefix,
-      thing,
-      chatthing,
-      origtarget: target,
-      optionalArgs: opt,
-    })
-  }
-
-  GURPS.handleRoll = handleRoll
 
   GURPS.applyModifierDesc = applyModifierDescription
 
@@ -875,7 +695,7 @@ if (!globalThis.GURPS) {
         app.render(true)
       }
 
-      GURPS.executeOTF('/help')
+      GURPS.modules.Otf.executeOTF('/help')
     }
 
     game.settings.set(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
@@ -983,11 +803,11 @@ if (!globalThis.GURPS) {
 
       if (resp.type == 'executeOtF') {
         if (game.users.isGM || (resp.users.length > 0 && !resp.users.includes(game.user.name))) return
-        GURPS.performAction(resp.action, GURPS.LastActor)
+        GURPS.modules.Otf.performAction(resp.action, GURPS.LastActor)
       }
 
       if (resp.type == 'setLastTargetedRoll') {
-        GURPS.setLastTargetedRoll(resp.chatdata, resp.actorid, resp.tokenid, false)
+        GURPS.modules.Otf.setLastTargetedRoll(resp.chatdata, resp.actorid, resp.tokenid, false)
       }
 
       if (resp.type == 'dragEquipment1') {

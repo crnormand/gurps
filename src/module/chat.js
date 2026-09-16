@@ -407,7 +407,7 @@ export default function addChatHooks() {
                 let action = parselink(match[2])
 
                 if (action.action) {
-                  GURPS.performAction(action.action, GURPS.LastActor, {
+                  GURPS.modules.Otf.performAction(action.action, GURPS.LastActor, {
                     shiftKey: rollCommandLine.startsWith('/pr'),
                   })
                   //          return false; // Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
@@ -431,18 +431,5 @@ export default function addChatHooks() {
       GurpsWiring.hookupAllEvents(html)
     })
 
-    Hooks.on(
-      'diceSoNiceRollComplete',
-      async (/** @type {any} */ _app, /** @type {any} */ _html, /** @type {any} */ _msg) => {
-        let otf = GURPS.PendingOTFs.pop()
-
-        while (otf) {
-          let action = parselink(otf)
-
-          if (action.action) await GURPS.performAction(action.action, GURPS.LastActor || game.user)
-          otf = GURPS.PendingOTFs.pop()
-        }
-      }
-    )
   }) // End of "init"
 }

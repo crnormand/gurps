@@ -751,7 +751,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    *
    * Parse roll info based on action type.
    *
-   * @param {object} action - Object from GURPS.parselink
+   * @param {object} action - Object from GURPS.modules.Otf.parselink
    * @param {string} chatthing - internal code for roll
    * @param {string} formula - formula for roll
    * @param {string} thing - name of the source of the roll
@@ -763,7 +763,7 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * @returns {[string]} result.pageRef - Page reference of the item that originates the roll
    */
   findUsingAction(
-    action: { type: string; name: string; orig: string; overridetxt?: string; attrkey: string },
+    action: OtfAction,
     chatthing: string,
     formula: string,
     thing: string
@@ -1161,9 +1161,9 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * NOTE: Both character and characterV2.
    */
   async runOTF(otf: string): Promise<void> {
-    const action = GURPS.parselink(otf)
+    const action = GURPS.modules.Otf.parselink(otf)
 
-    await GURPS.performAction(action.action!, this)
+    await GURPS.modules.Otf.performAction(action.action!, this)
   }
 
   /* ---------------------------------------- */

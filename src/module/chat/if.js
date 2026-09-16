@@ -27,7 +27,7 @@ export class IfChatProcessor extends ChatProcessor {
           // only need to show modifiers, everything else does something.
           this.priv(then)
         else this.send() // send what we have
-        await GURPS.performAction(action.action, GURPS.LastActor, this.msgs().event)
+        await GURPS.modules.Otf.performAction(action.action, GURPS.LastActor, this.msgs().event)
       }
     } else await this.registry.processLines(then)
   }
@@ -84,7 +84,7 @@ export class IfChatProcessor extends ChatProcessor {
         let event = this.msgs().event
 
         event.chatmsgData = this.msgs().data
-        let pass = await GURPS.performAction(action.action, GURPS.LastActor, event)
+        let pass = await GURPS.modules.Otf.performAction(action.action, GURPS.LastActor, event)
 
         if (GURPS.stopActions) {
           console.log('Stop actions after dialog canceled')
