@@ -685,6 +685,7 @@ if (!globalThis.GURPS) {
     const version = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
     const changelogVersion = SemanticVersion.fromString(version)
 
+    
     if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
       // If it isn't already in the chat log somewhere
       if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0) showGURPSCopyright()
@@ -692,7 +693,7 @@ if (!globalThis.GURPS) {
       if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CHANGELOG)) {
         const app = new ChangeLogWindow(changelogVersion)
 
-        app.render(true)
+        app.render({ force: true })
       }
 
       GURPS.modules.Otf.executeOTF('/help')
