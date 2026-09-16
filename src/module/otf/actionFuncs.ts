@@ -786,7 +786,8 @@ export const actionFuncs: Record<string, actionFunc> = {
         text: '',
       }
 
-      if (opt.obj?.checkotf && !(await GURPS.modules.Otf.executeOTF(opt.obj.checkotf, false, event, actor ?? null))) return false
+      if (opt.obj?.checkotf && !(await GURPS.modules.Otf.executeOTF(opt.obj.checkotf, false, event, actor ?? null)))
+        return false
       if (opt.obj?.duringotf) await GURPS.modules.Otf.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
       opt.text = ''
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)

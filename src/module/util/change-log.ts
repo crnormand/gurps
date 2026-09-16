@@ -14,7 +14,7 @@ export class ChangeLogWindow extends foundry.applications.api.HandlebarsApplicat
 
   /**
    * Arguments:
-   *   lastVersion - The last version of the application that was run -- if force === false, the changelog will only be shown for versions higher than this one.
+   *   lastVersion - The last version of the application that was run -- if force === false,
    *   force - Whether to force the display of the changelog.
    */
   constructor(lastVersion: SemanticVersion | null, force = true) {

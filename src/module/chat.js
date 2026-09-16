@@ -430,6 +430,5 @@ export default function addChatHooks() {
     Hooks.on('renderChatMessageHTML', (_app, html, _msg) => {
       GurpsWiring.hookupAllEvents(html)
     })
-
   }) // End of "init"
 }
