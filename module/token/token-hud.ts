@@ -34,7 +34,7 @@ export class GurpsTokenHUDV2<
 
     // @ts-expect-error: Waiting for DataModel migration for actor
     const currentManeuverId = this.object.actor?.system.conditions.maneuver
-    const maneuverIcon = GURPS.Maneuvers.get(currentManeuverId)?.icon ?? 'systems/gurps/icons/maneuvers/man-nothing.png'
+    const maneuverIcon = GURPS.Maneuvers.get(currentManeuverId)?.img ?? 'systems/gurps/icons/maneuvers/man-nothing.png'
 
     Object.assign(context, {
       icons: { maneuvers: maneuverIcon, ...context.icons },
