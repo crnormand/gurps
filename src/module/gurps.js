@@ -686,7 +686,7 @@ if (!globalThis.GURPS) {
     const changelogVersion = SemanticVersion.fromString(version)
 
     // TODO For testing only:
-    new ChangeLogWindow(changelogVersion, true).render(true)
+    new ChangeLogWindow(changelogVersion, true).render({ force: true })
 
     if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
       // If it isn't already in the chat log somewhere
@@ -695,7 +695,7 @@ if (!globalThis.GURPS) {
       if (game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CHANGELOG)) {
         const app = new ChangeLogWindow(changelogVersion)
 
-        app.render(true)
+        app.render({ force: true })
       }
 
       GURPS.modules.Otf.executeOTF('/help')

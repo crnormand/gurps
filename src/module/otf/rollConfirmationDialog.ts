@@ -1,4 +1,4 @@
-import {  Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
+import { Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import { CanRollResult } from '@module/actor/types.js'
 import { MessageMode } from '@module/util/foundry-utils.js'
 import { i18nFallback } from '@module/util/i18nFallback.js'
@@ -477,6 +477,5 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     })
   }
 }
-
 
 export { RollConfirmationDialog }

@@ -9,6 +9,71 @@
 
 ### Bugfixes
 
+## Release 0.18.23 08/29/2026
+
+### Features
+
+- Feature Request: Reorganize Status Effects \#2888
+
+### Bugfixes
+
+- Fix broken maneuver menu in Tabbed character sheet \#2881
+- Can't add new Movment Type to Actor \#2886
+
+## Release 0.18.22 08/21/2026
+
+### Features
+
+### Bugfixes
+
+- Token HUD images are mising \#2864
+- Tweak the initial size of the PDF Journal Page to show a whole page \#2866
+- Maneuver icons do not display \#2870
+
+## Release 0.18.21 08/19/2026
+
+### Features
+
+### Bugfixes
+
+- 17.17 The `/light` command has multiple bugs \#2134
+- Inventory of unlinked tokens \#2052
+- Multiple Foundry Native Items with Features + Bonuses negate one Bonus \#1861
+- GCS Body Plan not uploaded correctly \#1832
+- Max in resource tracker template not being copied to characters \#1796
+- `/slam` does not output after clicking Resolve \#2809
+- Modern sheet does not show melee attack's Block score \#2824
+- NPC Mini Sheet - Nowhere to Roll Block \#2780
+- Ordered lists in Journal Entries clip two-digit list markers \#2777
+- Offset Problem with Basic Revised \#2829
+  - After installing the update, go to the settings for `GURPS 4e Game Aid > PDF Settings`, and change `Basic Set PDFs` to "Basic Revised ('B')".
+- Detached combat tracker window/popout! window not allowing updates to maneuvers. \#2796
+- GCS v5 import: spell points inside containers are not summed (+ minor: importSp never sets spl.level) \#2772
+- Techniques include "[object Object]" string literal since recent GCS update \#2781
+  - You may need to delete the techniques and reimport to apply the fix.
+- Can't modify Advantage points to be negative. \#2844
+- Roll Confirmation dialog shows "Spell" if the OTF has "S:" even if the item is a Skill \#2851
+- `/showmbs` is not working \#2853
+- `/reimport` fails with "Cannot read properties of undefined (reading 'filter')" \#2856
+
+## Release 0.18.20 06/18/2026
+
+### Features
+
+### Bugfixes
+
+- Dark mode fix for modifier bucket.
+
+## Release 0.18.19 06/16/2026
+
+### Features
+
+### Bugfixes
+
+- Weapons can't be equipped \#2756
+- Reimplement colored OTF modifiers \#2758
+- V14 Damage rolls are still public despite roll option \#2754.
+
 ## Release 0.18.18 05/27/2026
 
 ## Features

@@ -1,39 +1,51 @@
-import '@lib/markdown-it.js'
 import { SemanticVersion } from '../../util/semver.js'
 
-export class ChangeLogWindow extends FormApplication {
+export class ChangeLogWindow extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.api.ApplicationV2
+) {
   constructor(lastVersion, force = true) {
-    super({}, {})
+    super()
 
     this.lastVersion = lastVersion
     this.force = force
   }
 
-  static get defaultOptions() {
-    const options = super.defaultOptions
-
-    return foundry.utils.mergeObject(options, {
-      id: 'changelog',
-      classes: ['gurps', 'changelog'],
-      template: 'systems/gurps/templates/changelog.hbs',
+  static DEFAULT_OPTIONS = {
+    id: 'changelog',
+    classes: ['gurps', 'changelog'],
+    tag: 'form',
+    window: {
+      resizable: true,
+    },
+    position: {
       width: 700,
+      height: 'auto',
+    },
+    form: {
       submitOnChange: true,
       closeOnSubmit: false,
-    })
+    },
+  }
+
+  static PARTS = {
+    main: {
+      template: 'systems/gurps/templates/changelog.hbs',
+      scrollable: ['content'],
+    },
   }
 
   get title() {
     return `${game.i18n.localize('GURPS.changelog.title')} ~ ${game.i18n.localize('GURPS.changelog.readme')}`
   }
 
-  async getData() {
-    let data = await super.getData()
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options)
 
-    let xhr = new XMLHttpRequest()
+    const xhr = new XMLHttpRequest()
 
     xhr.open('GET', 'systems/gurps/changelog.md')
 
-    let promise = new Promise(resolve => {
+    const promise = new Promise(resolve => {
       xhr.onload = () => {
         if (xhr.status === 200) {
           data.changelog = this._processChangelog(xhr.response)
