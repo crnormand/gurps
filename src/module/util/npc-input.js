@@ -65,7 +65,6 @@ const POSSIBLE_ATTRIBUTE_KEYS = {
   advantages: true,
 }
 
-
 // TODO: Convert to ApplicationV2
 export class NpcInput extends FormApplication {
   constructor(actor, options = {}) {
