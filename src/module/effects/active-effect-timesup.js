@@ -40,12 +40,12 @@ export function readyTimesUpSetup() {
         // game.combat should be the current users combat
         const unexpireUpdate = getUnexpireEffectUpdate(effect, game.combat, durationToUse)
 
-        update = mergeObject(update, unexpireUpdate, { inplace: true })
+        update = foundry.utils.mergeObject(update, unexpireUpdate, { inplace: true })
       } else if (update.disabled ?? effect.disabled === true) {
         if (debugEnabled > 0) warn('expiring effect', effect.uuid, effect.updateDuration(), isTransferEffect(effect))
         const expireUpdate = getExpireTransferEffectUpdate(effect)
 
-        update = mergeObject(update, expireUpdate, { inplace: true })
+        update = foundry.utils.mergeObject(update, expireUpdate, { inplace: true })
       }
     }
 

@@ -47,6 +47,8 @@ export class GGADebugger {
       srcLink.innerHTML = '<i class="fa-solid fa-bug"></i>'
       srcLink.addEventListener('click', async event => {
         event.preventDefault()
+
+        // TODO: Convert to DialogV2
         const dialog = new Dialog({
           title: `Debug: ${name} (${label})`,
           content: `<div class="debug-content" style="max-height: 500px; overflow-y: auto;"><pre>${JSON.stringify(this.object, null, 2)}</pre></div>`,
