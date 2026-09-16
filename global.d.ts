@@ -68,6 +68,7 @@ declare global {
 
     Maneuvers: {
       get(id: string): { icon?: string } | undefined
+      getManeuver(id?: string): { img?: string; label?: string }
       getAll(): Record<string, { id: string; icon: string; label: string }>
     }
 
