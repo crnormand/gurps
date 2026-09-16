@@ -5,6 +5,16 @@ global.foundry = {
   },
   // @ts-ignore
   data: {},
+  // Settings modules extend ApplicationV2 at import time, so it has to exist before any of them load.
+  applications: {
+    // @ts-ignore
+    api: {
+      // @ts-ignore
+      ApplicationV2: class {},
+      // @ts-ignore
+      HandlebarsApplicationMixin: Base => class extends Base {},
+    },
+  },
 }
 
 global.canvas = {

@@ -1,0 +1,46 @@
+<div class='gga-settings gga-combat-settings'>
+  <section class='settings-list scrollable'>
+    {{#each entries as |entry|}}
+      {{formGroup entry.field value=entry.value rootId=@root.rootId localize=true}}
+    {{/each}}
+    <fieldset>
+      <legend>{{localize 'GURPS.settingCombatOptionsManeuvers'}}</legend>
+      <p class='hint'>{{localize 'GURPS.settingCombatManeuversHint'}}</p>
+      {{#each maneuvers}}
+        <div class='gga-option-row gga-maneuver-row' data-requires-on-target='{{this.requiresOnTarget}}'>
+          <label>
+            <input type='checkbox' data-kind='maneuver' data-key='{{this.key}}' {{checked this.enabled}} />
+            <img class='gga-maneuver-icon' src='{{this.img}}' alt='' />
+            <span class='gga-option-name'>{{this.label}}</span>
+          </label>
+          <div class='gga-option-note gga-option-note-on-target'>{{localize
+              'GURPS.settingCombatOptionsNeedsOnTarget'
+            }}</div>
+        </div>
+      {{/each}}
+    </fieldset>
+    <fieldset>
+      <legend>{{localize 'GURPS.modifiers'}}</legend>
+      <p class='hint'>{{localize 'GURPS.settingCombatModifiersHint'}}</p>
+      {{#each sections}}
+        <h4 class='gga-subhead'>{{this.label}}</h4>
+        {{#each this.options}}
+          <div class='gga-option-row' data-requires-on-target='{{this.requiresOnTarget}}'>
+            <label>
+              <input type='checkbox' data-kind='option' data-key='{{this.id}}' {{checked this.enabled}} />
+              <span class='gga-option-name'>{{this.label}}</span>
+              {{#if this.pdf}}<span class='pdf-ref'>{{this.pdf}}</span>{{/if}}
+            </label>
+            <div class='gga-option-note gga-option-note-on-target'>{{localize
+                'GURPS.settingCombatOptionsNeedsOnTarget'
+              }}</div>
+          </div>
+        {{/each}}
+      {{/each}}
+    </fieldset>
+  </section>
+
+  <footer class='form-footer'>
+    <button type='submit'><i class='fa-solid fa-floppy-disk' inert></i> {{localize 'SETTINGS.Save'}}</button>
+  </footer>
+</div>
