@@ -8,6 +8,8 @@ export interface IfNode {
   invert: boolean
   thenBranch: Block | undefined
   elseBranch?: Block | undefined
+  critSuccessBranch?: Block | undefined
+  critFailureBranch?: Block | undefined
   line: string
 }
 
@@ -41,8 +43,6 @@ export class IfBlockParser {
   private parseBlock(): Block {
     if (this.consumeLiteral('/if')) return this.parseIf()
 
-    // if (this.peek() === '{') return this.parseGroup()
-
     return this.parseText()
   }
 
@@ -65,11 +65,59 @@ export class IfBlockParser {
       return this.parseIfSimpleFormat(condition, invert, input)
     } else if (this.peek() === '/') {
       return this.parseIfChatCommandFormat(condition, invert, input)
+    } else if (this.isCritFormat()) {
+      return this.parseCritBranches(condition, invert, input)
     } else {
       return this.parseIfChatTextFormat(condition, invert, input)
     }
   }
 
+  /**
+   * This only handles the curly braces format for the then-branch and optional else-branch. For example,
+   * `/if [condition] { then-branch }`
+   * `/if [condition] { then-branch } { else-branch }`
+   * `/if [condition] { then-branch } /else { else-branch }`
+   * @param condition
+   * @param invert
+   * @param input
+   * @returns
+   */
+  private parseIfCurlyBracesFormat(condition: string, invert: boolean, input: string): IfNode {
+    if (this.peek() !== '{') {
+      throw new ParseError(`Expected "{" to open the then-branch at ${this.pos}`)
+    }
+
+    this.expect('{')
+    const thenBranch = this.parseBlock()
+
+    this.expect('}')
+
+    let elseBranch: Block | undefined
+    const checkpoint = this.pos
+
+    this.skipWhitespace()
+
+    if (this.peek() === '{') {
+      this.expect('{')
+      elseBranch = this.parseBlock()
+      this.expect('}')
+    } else {
+      this.pos = checkpoint
+    }
+
+    return { line: input, type: 'if', condition, invert, thenBranch, elseBranch }
+  }
+
+  /**
+   * This handles the chat command format for the then-branch and optional else-branch. For example,
+   * `/if [condition] /command`
+   * `/if [condition] /command /else /command`
+   *
+   * @param condition
+   * @param invert
+   * @param input
+   * @returns
+   */
   private parseIfChatCommandFormat(condition: string, invert: boolean, input: string): IfNode {
     let thenBranch: Block | undefined = undefined
 
@@ -96,6 +144,16 @@ export class IfBlockParser {
     return { line: input, type: 'if', condition, invert, thenBranch, elseBranch }
   }
 
+  /**
+   * This handles the chat text format for the then-branch and optional else-branch. For example,
+   * `/if [condition] some text`
+   * `/if [condition] some text /else some other text`
+   *
+   * @param condition
+   * @param invert
+   * @param input
+   * @returns
+   */
   private parseIfChatTextFormat(condition: string, invert: boolean, input: string): IfNode {
     let thenBranch: Block | undefined = undefined
 
@@ -122,6 +180,17 @@ export class IfBlockParser {
     return { line: input, type: 'if', condition, invert, thenBranch, elseBranch }
   }
 
+  /**
+   * This handles the simple format for the then-branch and optional else-branch. For example,
+   * `/if [condition] [then-branch]`
+   * `/if [condition] [then-branch] [else-branch]`
+   * `/if [condition] [then-branch] /else [else-branch]`
+   *
+   * @param condition
+   * @param invert
+   * @param input
+   * @returns
+   */
   private parseIfSimpleFormat(condition: string, invert: boolean, input: string): IfNode {
     let thenBranch: Block | undefined = undefined
     let elseBranch: Block | undefined = undefined
@@ -178,38 +247,93 @@ export class IfBlockParser {
     return elseBranch
   }
 
-  private parseIfCurlyBracesFormat(condition: string, invert: boolean, input: string): IfNode {
-    if (this.peek() !== '{') {
-      throw new ParseError(`Expected "{" to open the then-branch at ${this.pos}`)
+  /**
+   * This handles the critSucess and critFailure branches for the if-block. Examples:
+   * `/if [condition] cs:{crit-success-branch} s:{then-branch} f:{else-branch} cf:{crit-failure-branch}`
+   * `/if [condition] cs:{crit-success-branch} {then-branch} {else-branch} cf:{crit-failure-branch}`
+   * `/if [condition] cs:{crit-success-branch}`
+   * `/if [condition] cs:{crit-success-branch} {then-branch}`
+   * `/if [condition] cs:{crit-success-branch} s:{then-branch}`
+   * `/if [condition] cs:{crit-success-branch} f:{else-branch}`
+   * `/if [condition] cf:{crit-failure-branch}`
+   * `/if [condition] cf:{crit-failure-branch} {then-branch}`
+   * `/if [condition] cf:{crit-failure-branch} s:{then-branch}`
+   * `/if [condition] cf:{crit-failure-branch} f:{else-branch}`
+   * `/if [condition] cs:{crit-success-branch} {then-branch} {else-branch}`
+   * `/if [condition] cs:{crit-success-branch} s:{then-branch} f:{else-branch}`
+   * `/if [condition] cf:{crit-failure-branch} {then-branch} {else-branch}`
+   *
+   * Crit-success and crit-failure branches must always have prefixes (cs: and cf: respectively).
+   * The then-branch and else-branch can be specified with or without prefixes (s: and f: respectively), and they will
+   * be selected by position.
+   * @returns
+   */
+  private parseCritBranches(condition: string, invert: boolean, input: string): IfNode {
+    if (!this.isCritFormat()) {
+      throw new ParseError(`Expected "cs:{", "cf:{", "s:{", or "f:{" to open the branches at ${this.pos}`)
     }
 
-    this.expect('{')
-    const thenBranch = this.parseBlock()
-
-    this.expect('}')
-
-    // const thenBranch = this.parseGroup().children
-
+    let thenBranch: Block | undefined
     let elseBranch: Block | undefined
-    const checkpoint = this.pos
+    let critSuccessBranch = undefined
+    let critFailureBranch = undefined
 
-    this.skipWhitespace()
+    while (!this.atEnd()) {
+      this.skipWhitespace()
 
-    if (this.peek() === '{') {
-      this.expect('{')
-      elseBranch = this.parseBlock()
+      let branch: 'cs' | 'cf' | 's' | 'f' | undefined
+
+      for (const prefix of ['cs', 'cf', 's', 'f'] as const) {
+        if (this.peekString(`${prefix}:{`)) {
+          branch = prefix
+          this.consumeLiteral(`${prefix}:{`)
+          break
+        }
+      }
+
+      if (!branch && this.peek() === '{') {
+        this.expect('{')
+        const positionalBranch = this.parseBlock()
+
+        this.expect('}')
+
+        if (!thenBranch) thenBranch = positionalBranch
+        else if (!elseBranch) elseBranch = positionalBranch
+        else break
+
+        continue
+      }
+
+      if (!branch) break
+
+      const parsedBranch = this.parseBlock()
+
       this.expect('}')
-    } else {
-      this.pos = checkpoint
+
+      if (branch === 'cs') critSuccessBranch = parsedBranch
+      else if (branch === 'cf') critFailureBranch = parsedBranch
+      else if (branch === 's') thenBranch = parsedBranch
+      else elseBranch = parsedBranch
     }
 
-    return { line: input, type: 'if', condition, invert, thenBranch, elseBranch }
+    return { line: input, type: 'if', condition, invert, thenBranch, elseBranch, critSuccessBranch, critFailureBranch }
+  }
+
+  private isCritFormat(): boolean {
+    return this.peekStrings(['cs:{', 'cf:{', 's:{', 'f:{'])
   }
 
   private parseText(): TextNode {
     const start = this.pos
 
-    while (!this.atEnd() && this.peek() !== '{' && this.peek() !== '}' && !this.input.startsWith('/if', this.pos)) {
+    while (
+      !this.atEnd() &&
+      this.peek() !== '{' &&
+      this.peek() !== '}' &&
+      // this.peek() !== '[' &&
+      // this.peek() !== ']' &&
+      !this.input.startsWith('/if', this.pos)
+    ) {
       this.pos++
     }
 
@@ -269,6 +393,18 @@ export class IfBlockParser {
       else break
     }
   }
+
+  private peekStrings(texts: string[], position: number = this.pos): boolean {
+    for (const text of texts) {
+      if (this.peekString(text, position)) return true
+    }
+
+    return false
+  }
+
+  private peekString(text: string, position: number = this.pos): boolean {
+    return this.input.startsWith(text, position)
+  }
 }
 
 // ---------- Evaluator ----------
@@ -285,20 +421,15 @@ export async function evaluateBlock(block: Block, resolve: ConditionResolver): P
     case 'if': {
       const temp = await resolve(block.condition, block.line)
       const pass = block.invert ? !temp : temp
-      const branch = pass ? block.thenBranch : block.elseBranch
+      const branch = pass
+        ? GURPS.lastTargetedRoll?.isCritSuccess && block.critSuccessBranch
+          ? block.critSuccessBranch
+          : block.thenBranch
+        : GURPS.lastTargetedRoll?.isCritFailure && block.critFailureBranch
+          ? block.critFailureBranch
+          : block.elseBranch
 
       return branch ? await evaluateBlock(branch, resolve) : ''
     }
   }
 }
-
-// ---------- Public entry point (drop-in for IfChatProcessor.process) ----------
-
-// class IfChatProcessor {
-
-//   static process(input: string, resolveCondition: ConditionResolver): string {
-//     const blocks = IfBlockParser.parse(input)
-
-//     return evaluateBlocks(blocks, resolveCondition)
-//   }
-// }

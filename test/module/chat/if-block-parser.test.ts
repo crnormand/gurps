@@ -113,5 +113,93 @@ describe('IfBlockParser', () => {
       expect(ifBlock.elseBranch).toEqual({ type: 'text', value: 'failure' })
       expect(ifBlock.invert).toBe(true)
     })
+
+    describe('critical branch format', () => {
+      test.each([
+        [
+          'all prefixed branches',
+          '/if [DX] cs:{crit-success} s:{success} f:{failure} cf:{crit-failure}',
+          {
+            critSuccessBranch: 'crit-success',
+            thenBranch: 'success',
+            elseBranch: 'failure',
+            critFailureBranch: 'crit-failure',
+          },
+        ],
+        [
+          'critical branches with positional success and failure branches',
+          '/if [DX] cs:{crit-success} {success} {failure} cf:{crit-failure}',
+          {
+            critSuccessBranch: 'crit-success',
+            thenBranch: 'success',
+            elseBranch: 'failure',
+            critFailureBranch: 'crit-failure',
+          },
+        ],
+        ['critical success branch only', '/if [DX] cs:{crit-success}', { critSuccessBranch: 'crit-success' }],
+        [
+          'critical success followed by positional success branch',
+          '/if [DX] cs:{crit-success} {success}',
+          { critSuccessBranch: 'crit-success', thenBranch: 'success' },
+        ],
+        [
+          'critical success followed by prefixed success branch',
+          '/if [DX] cs:{crit-success} s:{success}',
+          { critSuccessBranch: 'crit-success', thenBranch: 'success' },
+        ],
+        [
+          'critical success followed by prefixed failure branch',
+          '/if [DX] cs:{crit-success} f:{failure}',
+          { critSuccessBranch: 'crit-success', elseBranch: 'failure' },
+        ],
+        ['critical failure branch only', '/if [DX] cf:{crit-failure}', { critFailureBranch: 'crit-failure' }],
+        [
+          'critical failure followed by positional success branch',
+          '/if [DX] cf:{crit-failure} {success}',
+          { critFailureBranch: 'crit-failure', thenBranch: 'success' },
+        ],
+        [
+          'critical failure followed by prefixed success branch',
+          '/if [DX] cf:{crit-failure} s:{success}',
+          { critFailureBranch: 'crit-failure', thenBranch: 'success' },
+        ],
+        [
+          'critical failure followed by prefixed failure branch',
+          '/if [DX] cf:{crit-failure} f:{failure}',
+          { critFailureBranch: 'crit-failure', elseBranch: 'failure' },
+        ],
+        [
+          'critical success with positional success and failure branches',
+          '/if [DX] cs:{crit-success} {success} {failure}',
+          { critSuccessBranch: 'crit-success', thenBranch: 'success', elseBranch: 'failure' },
+        ],
+        [
+          'critical success with prefixed success and failure branches',
+          '/if [DX] cs:{crit-success} s:{success} f:{failure}',
+          { critSuccessBranch: 'crit-success', thenBranch: 'success', elseBranch: 'failure' },
+        ],
+        [
+          'critical failure with positional success and failure branches',
+          '/if [DX] cf:{crit-failure} {success} {failure}',
+          { critFailureBranch: 'crit-failure', thenBranch: 'success', elseBranch: 'failure' },
+        ],
+      ])('%s', (_description, input, expected) => {
+        const block = IfBlockParser.parse(input)
+
+        expect(block.condition).toBe('DX')
+        expect(block.invert).toBe(false)
+
+        const ifBlock = block as IfNode
+        const expectedBranches = expected as Record<string, string>
+
+        for (const [branch, value] of Object.entries(expectedBranches)) {
+          expect(ifBlock[branch as keyof IfNode]).toEqual({ type: 'text', value })
+        }
+
+        for (const branch of ['thenBranch', 'elseBranch', 'critSuccessBranch', 'critFailureBranch']) {
+          if (!(branch in expectedBranches)) expect(ifBlock[branch as keyof IfNode]).toBeUndefined()
+        }
+      })
+    })
   })
 })

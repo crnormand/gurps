@@ -113,6 +113,26 @@ describe('IfChatProcessor', () => {
     expect(registry.processLines).toHaveBeenCalledWith('failure')
   })
 
+  test.each([
+    [true, { isCritSuccess: true }, 'critical success'],
+    [true, {}, 'success'],
+    [false, { isCritFailure: true }, 'critical failure'],
+    [false, {}, 'failure'],
+  ])('runs the %s branch for the corresponding check result', async (checkResult, targetedRoll, expectedBranch) => {
+    const { processor, registry } = createProcessor()
+
+    mockParselink.mockReturnValue({ action: { type: OtfActionType.attribute } } as any)
+    performAction.mockImplementation(async () => {
+      GURPS.lastTargetedRoll = targetedRoll as any
+
+      return checkResult
+    })
+
+    await processor.process('/if [DX] cs:{critical success} s:{success} f:{failure} cf:{critical failure}')
+
+    expect(registry.processLines).toHaveBeenCalledWith(expectedBranch)
+  })
+
   test('reports unsupported On-the-Fly actions privately', async () => {
     const { processor, registry } = createProcessor()
 
