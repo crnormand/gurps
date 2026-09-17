@@ -25,9 +25,9 @@
   "compatibility": {
     "minimum": "14",
     "maximum": "14",
-    "verified": "14.361"
+    "verified": "14.368"
   },
-  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
+  "esmodules": ["module/gurps.js"],
   "scripts": ["lib/jquery.tinycolorpicker.js"],
   "styles": ["styles/gurps.css"],
   "languages": [
