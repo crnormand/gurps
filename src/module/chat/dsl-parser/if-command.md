@@ -85,10 +85,10 @@ otf-bracket = "[", [ label, white-space ], otf-body, "]" ;
    formula as defined in the broader On-the-Fly grammar — and may
    itself be an if-command *)
 
-chat-command = "/", non-whitepace-character, {non-whitespace-character}, non-else-string
+chat-command = "/", non-whitespace-character, { non-whitespace-character }, non-else-string ;
 
-non-whitepace-character = { character - white-space }
-(* any characters that does not include whitepace *)
+non-whitespace-character = character - white-space ;
+(* any character that does not include whitespace *)
 
 non-else-string = { character - "/else" }
 (* any sequence of characters that does not include "/else" *)
