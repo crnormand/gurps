@@ -18,7 +18,8 @@ class HelpChatProcessor extends ChatProcessor {
 
   /** @param {string} line */
   matches(line) {
-    return line.match(/[!/?]help/i)
+    // Matches lines that start with !help, /help, or ?help.
+    return line.match(/^[!/?]help/i)
   }
 
   /**
