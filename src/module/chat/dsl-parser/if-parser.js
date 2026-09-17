@@ -493,7 +493,7 @@ function buildOutcomeBlockFromInner(inner) {
       const otfBrackets = parseOtfBracketSequenceFromIsolatedText(trimmed)
 
       return { kind: 'OutcomeBlock', nestedIf: null, otfBrackets, chatText: null, raw: inner }
-    } catch (e) {
+    } catch (_error) {
       // Not a valid OTF-bracket sequence after all -- fall through to
       // treating it as narrative chat text.
     }
@@ -520,7 +520,6 @@ function parseOtfBracketSequenceFromIsolatedText(text) {
 
   parser.skipWs()
   const brackets = [parser.parseOtfBracket()]
-
 
   while (true) {
     const save = parser.pos
@@ -559,7 +558,7 @@ if (typeof module !== 'undefined') {
 // ---------------------------------------------------------------------
 // Self-test / demo (only runs when this file is executed directly)
 // ---------------------------------------------------------------------
-
+/*
 if (typeof require !== 'undefined' && require.main === module) {
   const util = require('util')
   const show = ast => util.inspect(ast, { depth: null, colors: false })
@@ -649,3 +648,4 @@ if (typeof require !== 'undefined' && require.main === module) {
     show(parseIfCommand('/if [S:Acrobatics] cs:{Amazing!} s:{[Dodge+2]} f:{[Dodge-2]} cf:{You stumble badly.}'))
   )
 }
+  */
