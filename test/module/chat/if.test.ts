@@ -37,8 +37,6 @@ function createProcessor(): { processor: IfChatProcessor; registry: Registry } {
   return { processor, registry }
 }
 
-let input: string
-
 beforeEach(() => {
   vi.clearAllMocks()
 
@@ -57,8 +55,6 @@ beforeEach(() => {
       localize: (key: string) => key,
     },
   } as any
-
-  input = expect.getState().currentTestName!.split('#> ')[1]
 })
 
 describe('IfChatProcessor', () => {
@@ -71,7 +67,7 @@ describe('IfChatProcessor', () => {
   test('does not match other chat commands', () => {
     const { processor } = createProcessor()
 
-    expect(processor.matches('/roll 3d6')).toBeNull()
+    expect(processor.matches('/roll 3d6')).toBeFalsy()
   })
 
   test('runs the success result when the check passes', async () => {
@@ -99,6 +95,11 @@ describe('IfChatProcessor', () => {
     await processor.process('/if [DX] success /else failure')
 
     expect(registry.processLines).toHaveBeenCalledWith('failure')
+
+    // Test inverse
+    await processor.process('/if ! [DX] success /else failure')
+
+    expect(registry.processLines).toHaveBeenCalledWith('success')
   })
 
   test('inverts the check result when requested', async () => {
@@ -142,13 +143,49 @@ describe('IfChatProcessor', () => {
   test('recursively processes nested /if commands', async () => {
     const { processor, registry } = createProcessor()
 
-    mockParselink.mockReturnValue({ action: { type: OtfActionType.skillSpell } } as any)
+    // Mock parselink to return action.orig equal to the first parameter
+    mockParselink.mockImplementation((orig: string) => ({ action: { type: OtfActionType.skillSpell, orig } }) as any)
+
+    // First test with all actions returning true
     performAction.mockResolvedValue(true)
 
-    await processor.process(
+    const command =
       '/if [ST] {/if [Sk:Tracking] {/if [IQ-2] {You found the Grail!} {Ah so close}} {Failed tracking}} {Failed ST}'
-    )
 
-    expect(registry.processLines).toHaveBeenCalledWith('success')
+    await processor.process(command)
+
+    expect(registry.processLines).toHaveBeenCalledWith('You found the Grail!')
+
+    // Now test with ST failing
+    performAction.mockImplementation(async action => (action.orig === 'ST' ? false : true))
+
+    await processor.process(command)
+
+    expect(registry.processLines).toHaveBeenCalledWith('Failed ST')
+
+    // Now test with Sk:Tracking failing
+    performAction.mockImplementation(async action => (action.orig === 'Sk:Tracking' ? false : true))
+
+    await processor.process(command)
+
+    expect(registry.processLines).toHaveBeenCalledWith('Failed tracking')
+
+    // Now test with IQ-2 failing
+    performAction.mockImplementation(async action => (action.orig === 'IQ-2' ? false : true))
+
+    await processor.process(command)
+
+    expect(registry.processLines).toHaveBeenCalledWith('Ah so close')
+  })
+
+  test('unrecognized format is reported privately', async () => {
+    const { processor, registry } = createProcessor()
+
+    mockParselink.mockReturnValue({ action: null } as any)
+
+    await processor.process('/if [???] success')
+
+    expect(performAction).not.toHaveBeenCalled()
+    expect(registry.priv).toHaveBeenCalledWith('GURPS.chatUnrecognizedFormat: [???]', undefined)
   })
 })

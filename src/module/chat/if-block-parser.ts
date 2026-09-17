@@ -1,22 +1,17 @@
 // ---------- AST ----------
 
-type Block = IfNode | GroupNode | TextNode
+export type Block = IfNode | TextNode | undefined
 
-interface IfNode {
+export interface IfNode {
   type: 'if'
   condition: string
   invert: boolean
-  thenBranch: Block[]
-  elseBranch?: Block[]
+  thenBranch: Block | undefined
+  elseBranch?: Block | undefined
   line: string
 }
 
-interface GroupNode {
-  type: 'group'
-  children: Block[]
-}
-
-interface TextNode {
+export interface TextNode {
   type: 'text'
   value: string
 }
@@ -30,9 +25,9 @@ export class IfBlockParser {
 
   private constructor(private readonly input: string) {}
 
-  static parse(input: string): Block[] {
+  static parse(input: string): IfNode {
     const parser = new IfBlockParser(input)
-    const blocks = parser.parseBlocks()
+    const block = parser.parseBlock()
 
     parser.skipWhitespace()
 
@@ -40,27 +35,13 @@ export class IfBlockParser {
       throw new ParseError(`Unexpected trailing input at ${parser.pos}: "${parser.input.slice(parser.pos)}"`)
     }
 
-    return blocks
-  }
-
-  // Sibling blocks, until EOF or a '}' owned by an enclosing group.
-  private parseBlocks(): Block[] {
-    const blocks: Block[] = []
-
-    for (;;) {
-      this.skipWhitespace()
-
-      if (this.atEnd() || this.peek() === '}') break
-      blocks.push(this.parseBlock())
-    }
-
-    return blocks
+    return block as IfNode
   }
 
   private parseBlock(): Block {
     if (this.consumeLiteral('/if')) return this.parseIf()
 
-    if (this.peek() === '{') return this.parseGroup()
+    // if (this.peek() === '{') return this.parseGroup()
 
     return this.parseText()
   }
@@ -78,36 +59,151 @@ export class IfBlockParser {
     this.expect(']')
     this.skipWhitespace()
 
-    if (this.peek() !== '{') {
-      throw new ParseError(`Expected "{" to open the then-branch at ${this.pos}`)
+    if (this.peek() === '{') {
+      return this.parseIfCurlyBracesFormat(condition, invert, input)
+    } else if (this.peek() === '[') {
+      return this.parseIfSimpleFormat(condition, invert, input)
+    } else if (this.peek() === '/') {
+      return this.parseIfChatCommandFormat(condition, invert, input)
+    } else {
+      return this.parseIfChatTextFormat(condition, invert, input)
     }
+  }
 
-    const thenBranch = this.parseGroup().children
-
-    // An /if consumes at most ONE more adjacent brace group as its else-branch.
-    // Anything after that is a sibling block, not part of this /if.
-
-    let elseBranch: Block[] | undefined
-    const checkpoint = this.pos
+  private parseIfChatCommandFormat(condition: string, invert: boolean, input: string): IfNode {
+    let thenBranch: Block | undefined = undefined
 
     this.skipWhitespace()
 
-    if (this.peek() === '{') {
-      elseBranch = this.parseGroup().children
+    const start = this.pos
+
+    while (!this.atEnd() && !this.input.startsWith('/if', this.pos) && !this.input.startsWith('/else', this.pos)) {
+      this.pos++
+    }
+
+    const command = this.input.slice(start, this.pos).trim()
+
+    if (command) {
+      thenBranch = { type: 'text', value: command }
+    }
+
+    // if the next block is an /else, parse it as the elseBranch
+    const checkpoint = this.pos
+
+    this.skipWhitespace()
+    const elseBranch: Block | undefined = this.parseElseBranch(checkpoint)
+
+    return { line: input, type: 'if', condition, invert, thenBranch, elseBranch }
+  }
+
+  private parseIfChatTextFormat(condition: string, invert: boolean, input: string): IfNode {
+    let thenBranch: Block | undefined = undefined
+
+    this.skipWhitespace()
+
+    const start = this.pos
+
+    while (!this.atEnd() && !this.input.startsWith('/else', this.pos)) {
+      this.pos++
+    }
+
+    const text = this.input.slice(start, this.pos).trim()
+
+    if (text) {
+      thenBranch = { type: 'text', value: text }
+    }
+
+    // if the next block is an /else, parse it as the elseBranch
+    const checkpoint = this.pos
+
+    this.skipWhitespace()
+    const elseBranch: Block | undefined = this.parseElseBranch(checkpoint)
+
+    return { line: input, type: 'if', condition, invert, thenBranch, elseBranch }
+  }
+
+  private parseIfSimpleFormat(condition: string, invert: boolean, input: string): IfNode {
+    let thenBranch: Block | undefined = undefined
+    let elseBranch: Block | undefined = undefined
+
+    this.skipWhitespace()
+
+    if (this.peek() === '[') {
+      this.expect('[')
+      thenBranch = { type: 'text', value: `[${this.readUntil(']')}]` }
+      this.expect(']')
+    }
+
+    this.skipWhitespace()
+
+    if (this.peek() === '[') {
+      this.expect('[')
+      elseBranch = { type: 'text', value: `[${this.readUntil(']')}]` }
+      this.expect(']')
     } else {
-      this.pos = checkpoint // don't swallow whitespace that belongs to the parent
+      // if the next block is an /else, parse it as the elseBranch
+      const checkpoint = this.pos
+
+      this.skipWhitespace()
+      elseBranch = this.parseElseBranch(checkpoint)
     }
 
     return { line: input, type: 'if', condition, invert, thenBranch, elseBranch }
   }
 
-  private parseGroup(): GroupNode {
+  private parseElseBranch(checkpoint: number): Block | undefined {
+    if (this.input.startsWith('/else', this.pos)) {
+      this.consumeLiteral('/else')
+      this.skipWhitespace()
+
+      return this.parseElseData()
+    } else {
+      this.pos = checkpoint
+    }
+
+    return undefined
+  }
+
+  private parseElseData() {
+    let elseBranch: Block | undefined = undefined
+
+    if (this.peek() === '[') {
+      this.expect('[')
+      elseBranch = { type: 'text', value: `[${this.readUntil(']')}]` }
+      this.expect(']')
+    } else if (!this.atEnd()) {
+      elseBranch = { type: 'text', value: this.readUntilEOL() }
+    }
+
+    return elseBranch
+  }
+
+  private parseIfCurlyBracesFormat(condition: string, invert: boolean, input: string): IfNode {
+    if (this.peek() !== '{') {
+      throw new ParseError(`Expected "{" to open the then-branch at ${this.pos}`)
+    }
+
     this.expect('{')
-    const children = this.parseBlocks()
+    const thenBranch = this.parseBlock()
 
     this.expect('}')
 
-    return { type: 'group', children }
+    // const thenBranch = this.parseGroup().children
+
+    let elseBranch: Block | undefined
+    const checkpoint = this.pos
+
+    this.skipWhitespace()
+
+    if (this.peek() === '{') {
+      this.expect('{')
+      elseBranch = this.parseBlock()
+      this.expect('}')
+    } else {
+      this.pos = checkpoint
+    }
+
+    return { line: input, type: 'if', condition, invert, thenBranch, elseBranch }
   }
 
   private parseText(): TextNode {
@@ -147,6 +243,14 @@ export class IfBlockParser {
     return this.input.slice(start, this.pos)
   }
 
+  private readUntilEOL(): string {
+    const start = this.pos
+
+    while (!this.atEnd() && this.input[this.pos] !== '\n') this.pos++
+
+    return this.input.slice(start, this.pos)
+  }
+
   private consumeLiteral(literal: string): boolean {
     if (this.input.startsWith(literal, this.pos)) {
       this.pos += literal.length
@@ -171,24 +275,19 @@ export class IfBlockParser {
 
 export type ConditionResolver = (condition: string, line: string) => Promise<boolean>
 
-export async function evaluateBlocks(blocks: Block[], resolve: ConditionResolver): Promise<string> {
-  return (await Promise.all(blocks.map(async block => await evaluateBlock(block, resolve)))).join('')
-}
+export async function evaluateBlock(block: Block, resolve: ConditionResolver): Promise<string> {
+  if (!block) return ''
 
-async function evaluateBlock(block: Block, resolve: ConditionResolver): Promise<string> {
   switch (block.type) {
     case 'text':
       return block.value
-
-    case 'group':
-      return await evaluateBlocks(block.children, resolve)
 
     case 'if': {
       const temp = await resolve(block.condition, block.line)
       const pass = block.invert ? !temp : temp
       const branch = pass ? block.thenBranch : block.elseBranch
 
-      return branch ? await evaluateBlocks(branch, resolve) : ''
+      return branch ? await evaluateBlock(branch, resolve) : ''
     }
   }
 }
