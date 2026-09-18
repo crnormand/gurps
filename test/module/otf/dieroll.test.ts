@@ -1,6 +1,67 @@
-import { calcFailure, calcFinalTarget, detectCriticals } from '@module/otf/dieroll.js'
-import { describe, expect, test } from 'vitest'
+import { calcFailure, calcFinalTarget, calculateMessageMode, detectCriticals } from '@module/otf/dieroll.js'
+import { MessageMode } from '@module/util/foundry-utils.js'
+import * as Settings from '@module/util/miscellaneous-settings.js'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
+describe('calculateMessageMode', () => {
+  const originalGame = (globalThis as any).game
+
+  beforeEach(() => {
+    ;(globalThis as any).game = {
+      keyboard: {
+        isModifierActive: vi.fn(() => false),
+      },
+      settings: {
+        get: vi.fn(() => false),
+      },
+      user: { isGM: false },
+    }
+    ;(globalThis as any).foundry = {
+      helpers: {
+        interaction: {
+          KeyboardManager: {
+            MODIFIER_KEYS: {
+              CONTROL: 'Control',
+              SHIFT: 'Shift',
+            },
+          },
+        },
+      },
+    }
+  })
+
+  afterEach(() => {
+    ;(globalThis as any).game = originalGame
+  })
+
+  test('returns blind when blindOverride is true', () => {
+    expect(calculateMessageMode(MessageMode.Public, true)).toStrictEqual(MessageMode.Blind)
+  })
+
+  test('returns blind when ctrl key modifier is active and the setting is enabled', () => {
+    ;(globalThis as any).game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Control')
+    ;(globalThis as any).game.settings.get = vi.fn((system: string, key: string) =>
+      key === Settings.SETTING_CTRL_KEY ? true : false
+    )
+
+    expect(calculateMessageMode(MessageMode.Public, false)).toStrictEqual(MessageMode.Blind)
+  })
+
+  test('returns blind when shift key modifier is active for a non-GM player and the setting is enabled', () => {
+    ;(globalThis as any).game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Shift')
+    ;(globalThis as any).game.settings.get = vi.fn((system: string, key: string) =>
+      key === Settings.SETTING_SHIFT_CLICK_BLIND ? true : false
+    )
+
+    expect(calculateMessageMode(MessageMode.Public, false)).toStrictEqual(MessageMode.Blind)
+  })
+
+  test('returns self when shift key modifier is active without the blind override', () => {
+    ;(globalThis as any).game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Shift')
+
+    expect(calculateMessageMode(MessageMode.Public, false)).toStrictEqual(MessageMode.Self)
+  })
+})
 
 describe('calcFailure', () => {
   test.each([
