@@ -62,7 +62,7 @@ export const rollData = (target: number) => {
 }
 
 export function calculateMessageMode(baseMode: MessageMode, blindOverride: boolean, event?: ActionFuncContext | null) {
-  const KeyboardManager = globalThis.foundry?.helpers?.interaction?.KeyboardManager
+  const KeyboardManager = foundry.helpers.interaction.KeyboardManager
 
   //apply modifier Keys from the event and current Modifier key, so that they can be pressed when the OTF is clicked or when the roll confirmation dialog is confirmed
   const ctrlKey =
@@ -70,7 +70,7 @@ export function calculateMessageMode(baseMode: MessageMode, blindOverride: boole
     // @ts-expect-error - Foundry VTT API not fully typed
     (game?.keyboard.isModifierActive(KeyboardManager?.MODIFIER_KEYS.CONTROL) ?? false) ||
     // On macOS, allow the Option key as an additional blind-roll shortcut without removing the existing Ctrl/Command shortcut.
-    (navigator.platform.includes('Mac') &&
+    (globalThis.navigator?.platform?.includes('Mac') &&
       (event?.altKey ||
         // @ts-expect-error - Foundry VTT API not fully typed
         game.keyboard.isModifierActive(KeyboardManager?.MODIFIER_KEYS.ALT ?? false)))
