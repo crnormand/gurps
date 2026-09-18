@@ -1,5 +1,6 @@
 import { MeleeAttackModel } from '@module/action/index.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { addBucketToDamage } from '@module/damage/addBucketToDamage.js'
 import { Damage } from '@module/damage/index.js'
 import { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { ItemType } from '@module/item/types.js'
@@ -12,7 +13,7 @@ import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attack
 import { d6ify, quotedAttackName, stripBracketContents } from '@util/utilities.js'
 
 import { canRoll } from './canRoll.js'
-import { addBucketToDamage, doRoll } from './dieroll.js'
+import { doRoll } from './dieroll.js'
 
 export interface ActionFuncContext {
   shiftKey: boolean
