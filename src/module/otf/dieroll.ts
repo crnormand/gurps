@@ -7,6 +7,7 @@ import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
+import { stripBracketContents } from '@util/utilities.js'
 
 import { TokenActions } from '../token-actions.js'
 
@@ -14,8 +15,6 @@ import { ActionFuncContext } from './actionFuncs.js'
 import { CanRollResult, canRoll } from './canRoll.js'
 import { applyModifierDescription } from './description-utilities.js'
 import { RollConfirmationDialog } from './rollConfirmationDialog.js'
-
-const KeyboardManager = foundry.helpers.interaction.KeyboardManager
 
 export function setLastTargetedRoll(
   chatdata: any,
@@ -62,83 +61,14 @@ export const rollData = (target: number) => {
   return { targetColor, rollChance }
 }
 
-/**
- * Recalculate the formula based on Modifier Bucket total.
- *
- * Formula examples: 2d+2, 1d-1, 3d6, 1d-2. (Must also handle literal damage, such as '13').
- * Can use the optional rule (B269) to round damage: +7 points = +2d and +4 points = +1d
- *
- * Examples:
- * * with armor divisor: 2d+2 (2)
- * * with damage type: 2d+2 cut
- * * with cost formula: 2d+2 (0.5) cut *Costs 1FP
- * * with armor divisor and damage type: 2d+2(2) cut
- * * with multiplier: 2d*2
- * * with minimum damage: 2d+2!
- * * Everything: 4d+2! (2) cut *Costs 1FP
- *
- * @param {string} formula
- * @param {boolean} addDamageType
- * @returns {string}
- */
-export const addBucketToDamage = (formula: string, addDamageType = true) => {
-  let dice = undefined
-  let value = undefined
-
-  if (formula.match(/^(?<dice>\d+)d/)) {
-    dice = parseInt(formula.match(/^(?<dice>\d+)d/)?.groups?.dice ?? '')
-  } else if (formula.match(/^(?<number>\d+)/)) {
-    value = parseInt(formula.match(/^(?<number>\d+)/)?.groups?.number ?? '')
-  }
-
-  const add = parseInt(formula.match(/([+-]\d+)/)?.[1] ?? '0')
-  const damageType = formula.match(/\s(\w+)/)?.[1] ?? ''
-
-  const armorDivisor = formula.match(/(?<=\()\S+(?=\))/)?.[0]
-  const hasMinDamage = formula.includes('!')
-  const multiplier = formula.match(/(?<=[xX*])\d+(\.\d+)?/)?.[0] || ''
-  const costFormula = formula.match(/(?<=\*)\D.+/)?.[0] || ''
-
-  const bucketMod = GURPS.ModifierBucket.currentSum()
-  let newAdd = add + bucketMod
-
-  if (!dice && value) {
-    return `${value + newAdd} ${addDamageType ? damageType : ''}`.trim()
-  }
-
-  if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) && dice) {
-    while (newAdd >= 7) {
-      newAdd -= 7
-      dice += 2
-    }
-
-    while (newAdd >= 4) {
-      newAdd -= 4
-      dice += 1
-    }
-  }
-
-  const plus = newAdd > 0 ? '+' : ''
-  const addText = newAdd !== 0 ? newAdd : ''
-  const minDamageText = hasMinDamage ? '! ' : ''
-  const armorDivisorText = armorDivisor ? `(${armorDivisor})` : ''
-  const damageTypeText = addDamageType ? ` ${damageType}` : ''
-  const costFormulaText = costFormula ? ` *${costFormula}` : ''
-  const multiplierText = multiplier ? `*${multiplier}` : ''
-  const newDice =
-    `${dice}d${plus}${addText}${multiplierText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
-
-  console.debug(`addBucketToDamage: ${formula} => ${newDice}`)
-
-  return newDice
-}
-
 export function calculateMessageMode(baseMode: MessageMode, blindOverride: boolean, event?: ActionFuncContext | null) {
+  const KeyboardManager = globalThis.foundry?.helpers?.interaction?.KeyboardManager
+
   //apply modifier Keys from the event and current Modifier key, so that they can be pressed when the OTF is clicked or when the roll confirmation dialog is confirmed
   const ctrlKey =
     (event?.ctrlKey ?? false) ||
     // @ts-expect-error - Foundry VTT API not fully typed
-    (game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL) ?? false) ||
+    (game?.keyboard.isModifierActive(KeyboardManager?.MODIFIER_KEYS.CONTROL) ?? false) ||
     // On macOS, allow the Option key as an additional blind-roll shortcut without removing the existing Ctrl/Command shortcut.
     (navigator.platform.includes('Mac') &&
       (event?.altKey ||
@@ -148,7 +78,7 @@ export function calculateMessageMode(baseMode: MessageMode, blindOverride: boole
   const shiftKey =
     (event?.shiftKey ?? false) ||
     // @ts-expect-error - Foundry VTT API not fully typed
-    (game.keyboard?.isModifierActive(KeyboardManager?.MODIFIER_KEYS.SHIFT) ?? false)
+    (game?.keyboard?.isModifierActive(KeyboardManager?.MODIFIER_KEYS.SHIFT) ?? false)
 
   if (blindOverride) return MessageMode.Blind
   if (ctrlKey && game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) return MessageMode.Blind
@@ -370,26 +300,14 @@ async function _doRoll({
 }) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   const isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
-  let failure = false
 
   // Let's collect up the modifiers, they are used differently depending on the type of roll
-  let modifier = 0
-  let maxtarget = null // If not null, then the target cannot be any higher than this.
-  const usingRapidStrike = GURPS.ModifierBucket.modifierStack.usingRapidStrike
-
   targetmods = await GURPS.ModifierBucket.applyMods(targetmods) // append any global mods
-
-  for (const mod of targetmods) {
-    modifier += mod.modint
-    maxtarget = (await applyModifierDescription(actor, mod.desc)) || maxtarget
-  }
 
   const speaker = ChatMessage.getSpeaker({ actor: actor as Actor.Stored })
 
   //check message mode again as modifier keys may have changed
   const messageMode = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
-
-  let roll = null // Will be the Roll
 
   const multiples: { rtotal: number; loaded: boolean; rolls: string }[] = [] // The roll results (to display the individual dice rolls)
 
@@ -409,22 +327,21 @@ async function _doRoll({
     chatdata.optlabel.unshift(action.desc)
   }
 
+  const { modifier, maxtarget } = await calcModifierAndApplyCosts(targetmods, actor)
+
+  let roll = null // Will be the Roll
+
   if (isTargeted) {
     // This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
-    let finaltarget = origtarget + modifier
-
-    if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
+    const finaltarget = calcFinalTarget(origtarget, modifier, maxtarget)
 
     if (thing) {
-      //let flav = thing.replace(/\[.*\] */, '') // Flavor text cannot handle internal []
-      const r1 = /\[/g
-      const r2 = /\]/g
-      const flav = thing.replaceAll(r1, '').replaceAll(r2, '') // Flavor text cannot handle internal []
+      const flav = stripBracketContents(thing) // Flavor text cannot handle internal []
 
       formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
     }
 
-    const roll = Roll.create(formula) as GurpsRoll // The formula will always be "3d6" for a "targetted" roll
+    roll = Roll.create(formula) as GurpsRoll // The formula will always be "3d6" for a "targetted" roll
 
     await roll.evaluate()
     const rtotal = roll.total!
@@ -437,13 +354,9 @@ async function _doRoll({
     chatdata.finaltarget = finaltarget
 
     // Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
-    const isCritSuccess = rtotal <= 4 || (rtotal == 5 && finaltarget >= 15) || (rtotal == 6 && finaltarget >= 16)
-    const isCritFailure =
-      rtotal >= 18 || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0)
-    const margin = finaltarget - rtotal
-    const seventeen = rtotal >= 17
-
-    failure = seventeen || margin < 0
+    const margin = calcMargin(finaltarget, rtotal)
+    const { seventeen, failure } = calcFailure(rtotal, margin)
+    const { isCritSuccess, isCritFailure } = detectCriticals(rtotal, finaltarget)
 
     chatdata.isCritSuccess = isCritSuccess
     chatdata.isCritFailure = isCritFailure
@@ -519,7 +432,7 @@ async function _doRoll({
       multiples.push(result)
     }
 
-    chatdata['modifier'] = modifier
+    chatdata.modifier = modifier
   }
 
   if (isTargeted) setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
@@ -529,6 +442,7 @@ async function _doRoll({
 
   if (actorToken) {
     const actions = await TokenActions.fromToken(actorToken)
+    const usingRapidStrike = GURPS.ModifierBucket.modifierStack.usingRapidStrike
 
     await actions.consumeAction(action, chatthing, item, attack, usingRapidStrike)
   }
@@ -567,7 +481,7 @@ async function _doRoll({
     const users = actor?.getOwners() ?? []
     const ids = users.map(it => it.id)
 
-    if (!failure && !!action.truetext) {
+    if (!chatdata.failure && !!action.truetext) {
       const messageData = {
         whisper: ids,
         content: action.truetext,
@@ -576,7 +490,7 @@ async function _doRoll({
       ChatMessage.create(messageData)
     }
 
-    if (failure && !!action.falsetext) {
+    if (chatdata.failure && !!action.falsetext) {
       const messageData = {
         whisper: ids,
         content: action.falsetext,
@@ -586,5 +500,47 @@ async function _doRoll({
     }
   }
 
-  return !failure
+  return !chatdata.failure
 }
+
+export function calcFailure(rtotal: number, margin: number) {
+  const seventeen = rtotal >= 17
+
+  const failure = seventeen || margin < 0
+
+  return { seventeen, failure }
+}
+
+async function calcModifierAndApplyCosts(targetmods: Modifier[], actor: Actor.Implementation | null) {
+  let modifier = 0
+  let maxtarget = null // If not null, then the target cannot be any higher than this.
+
+  for (const mod of targetmods) {
+    modifier += mod.modint
+    //this claculates maxTarget and applys costs to the actor
+    maxtarget = (await applyModifierDescription(actor, mod.desc)) || maxtarget
+  }
+
+  return { modifier, maxtarget }
+}
+
+export function calcFinalTarget(origtarget: number, modifier: number, maxtarget: number | null) {
+  let finaltarget = origtarget + modifier
+
+  if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
+
+  return finaltarget
+}
+
+function calcMargin(finaltarget: number, rtotal: number) {
+  return finaltarget - rtotal
+}
+
+export function detectCriticals(rtotal: number, finaltarget: number) {
+  const isCritSuccess = rtotal <= 4 || (rtotal == 5 && finaltarget >= 15) || (rtotal == 6 && finaltarget >= 16)
+  const isCritFailure =
+    rtotal >= 18 || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0)
+
+  return { isCritSuccess, isCritFailure }
+}
+
