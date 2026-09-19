@@ -24,7 +24,6 @@ export class IfChatProcessor extends ChatProcessor {
       const result = await IfParser.visit(block, this.resolveCondition.bind(this))
 
       await this.handleResult(result)
-      // Catch RollCancelError separately to avoid showing an error notification.
     } catch (error) {
       if (error instanceof RollCancelError) {
         console.log('Roll canceled:', error)
