@@ -2,7 +2,7 @@ import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 
 import ChatProcessor from './chat-processor.js'
-import { IfParser } from './dsl-parser/if-parser.ts'
+import { IfParser } from './dsl-parser/if-parser.js'
 
 export class IfChatProcessor extends ChatProcessor {
   override help(): string {
