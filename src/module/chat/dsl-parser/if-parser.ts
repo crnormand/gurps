@@ -40,7 +40,7 @@
  * for dangling else.
  */
 
-import { findMatchingDelimiter, ParseError } from './parser-helpers.ts'
+import { findMatchingDelimiter, ParseError } from './parser-helpers.js'
 
 export namespace IfParser {
   // ---------------------------------------------------------------------
