@@ -1,9 +1,5 @@
 'use strict'
 
-import { Combat } from '../combat/index.js'
-import { collectDeletions } from './deletion.js'
-import { commitUpdate, replaceValue } from '../utilities/foundry-compat.js'
-import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
@@ -15,16 +11,7 @@ import {
   splitArgs,
   zeroFill,
 } from '../../lib/utilities.js'
-import ApplyDamageDialog from '../damage/applydamage.js'
-import * as HitLocations from '../hitlocation/hitlocation.js'
-import { HitLocation } from '../hitlocation/hitlocation.js'
-import { GurpsItem } from '../item.js'
-import { ResourceTracker } from '../resource-tracker/index.js'
-import { TokenActions } from '../token-actions.js'
-import { multiplyDice } from '../utilities/damage-utils.js'
-import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
-import { ActorImporter } from './actor-importer.js'
-import { cleanTags, getRangedModifier, getSizeModifier } from './effect-modifier-popout.js'
+import { Combat } from '../combat/index.js'
 import Maneuvers, {
   MOVE_HALF,
   MOVE_NONE,
@@ -36,7 +23,19 @@ import Maneuvers, {
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
 } from '../combat/maneuver.js'
+import ApplyDamageDialog from '../damage/applydamage.js'
+import * as HitLocations from '../hitlocation/hitlocation.js'
+import { HitLocation } from '../hitlocation/hitlocation.js'
+import { GurpsItem } from '../item.js'
 import { OtfActionType } from '../otf/types.js'
+import { ResourceTracker } from '../resource-tracker/index.js'
+import { TokenActions } from '../token-actions.js'
+import { multiplyDice } from '../utilities/damage-utils.js'
+import { commitUpdate, replaceValue } from '../utilities/foundry-compat.js'
+import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
+import { ActorImporter } from './actor-importer.js'
+import { collectDeletions } from './deletion.js'
+import { cleanTags, getRangedModifier, getSizeModifier } from './effect-modifier-popout.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -1957,13 +1956,13 @@ export class GurpsActor extends Actor {
       case 'melee':
         actorComp = Melee.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
-        actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        actorComp.name = `${parentItem.name}${actorComp.mode ? ' - ' + actorComp.mode : ''}`
         actorComp.fromItem = parentItem.uuid
         break
       case 'ranged':
         actorComp = Ranged.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
-        actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        actorComp.name = `${parentItem.name}${actorComp.mode ? ' - ' + actorComp.mode : ''}`
         actorComp.fromItem = parentItem.uuid
         break
     }

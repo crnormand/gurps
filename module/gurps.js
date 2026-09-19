@@ -31,7 +31,6 @@ import { GurpsActor } from './actor/actor.js'
 import { prepareRemoveKey } from './actor/deletion.js'
 import { GurpsActorModernSheet, GurpsActorNpcModernSheet } from './actor/modern/index.js'
 import RegisterChatProcessors from './chat/chat-processors.js'
-import { calculateRoFModifier } from './combat/utilities.js'
 import { addBucketToDamage, doRoll } from './dierolls/dieroll.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
 import { AddImportEquipmentButton } from './item-import.js'
@@ -70,7 +69,6 @@ import { GlobalActiveEffectDataControl } from './effects/global-active-effect-da
 import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import GurpsConditionalInjury from './injury/foundry/conditional-injury.js'
-import { TokenActions } from './token-actions.js'
 import { allowOtfExec } from './utilities/allow-otf-exec.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import { gurpslink } from './utilities/gurpslink.js'
@@ -79,6 +77,7 @@ import { ClearLastActor, SetLastActor } from './utilities/last-actor.js'
 import { Canvas } from './canvas/index.js'
 import { CombatTracker } from './combat-tracker/index.js'
 import { Combat } from './combat/index.js'
+import { calculateRoFModifier } from './combat/utilities.ts'
 import { Damage } from './damage/index.js'
 import { Length } from './data/common/length.js'
 import { findBestActionInChain } from './otf/best-action.ts'
@@ -1051,7 +1050,7 @@ if (!globalThis.GURPS) {
           value: parsedRateOfFire,
         })
 
-        const bonusForNumberOfShots = MissileWeaponAttacks.calculateRoFModifier(shots)
+        const bonusForNumberOfShots = calculateRoFModifier(shots)
 
         if (bonusForNumberOfShots !== 0)
           GURPS.ModifierBucket.addModifier(
