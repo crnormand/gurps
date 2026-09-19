@@ -126,8 +126,8 @@ outcome-if-statement = "/if", white-space, condition, white-space,
     [ white-space, "cf:", outcome-clause ] ;
 (* at least one clause must be present (this is what disambiguates an
     outcome-if-statement from a simple-if-statement to begin with); when
-    present, clauses must appear in this fixed order, and every clause is
-    always explicitly labeled -- there is no more "bare" branch form *)
+    present, clauses must appear in this fixed order. After the first labeled
+    clause, the success/failure clauses may omit the "s:"/"f:" label. *)
 
 outcome-clause = "{", ( if-statement | opaque-text ), "}" ;
 ```
