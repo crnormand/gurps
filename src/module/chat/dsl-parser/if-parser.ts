@@ -148,6 +148,10 @@ export namespace IfParser {
       }
     }
 
+    private textSince(start: number): string {
+      return this.input.slice(start, this.pos)
+    }
+
     private error(msg: string): never {
       const context = this.input.slice(this.pos, this.pos + 20)
 
@@ -206,14 +210,14 @@ export namespace IfParser {
       if (!negated && this.matchesOutcomeLookahead()) {
         const node = this.parseOutcomeIfTail(condition)
 
-        node.text = this.input.slice(conditionStart, this.pos)
+        node.text = this.textSince(conditionStart).trim()
 
         return node
       }
 
       const node = this.parseSimpleIfTail(negated, condition)
 
-      node.text = this.input.slice(conditionStart, this.pos)
+      node.text = this.textSince(conditionStart).trim()
 
       return node
     }
@@ -270,7 +274,7 @@ export namespace IfParser {
         // so it needs no pre-extracted boundary.
         const node = this.parseIfStatement()
 
-        node.text = this.input.slice(actionStart, this.pos)
+        node.text = this.textSince(actionStart).trim()
 
         return node
       }
@@ -283,7 +287,7 @@ export namespace IfParser {
         const node = {
           type: 'Block' as const,
           value: `[${this.consumeBracketContent()}]`,
-          text: this.input.slice(actionStart, this.pos),
+          text: this.textSince(actionStart).trim(),
         }
 
         return node
@@ -292,7 +296,7 @@ export namespace IfParser {
       if (this.peek() === '{') {
         const node = braceContentToNode(this.consumeBraceContent())
 
-        node.text = this.input.slice(actionStart, this.pos)
+        node.text = this.textSince(actionStart).trim()
 
         return node
       }
@@ -314,7 +318,7 @@ export namespace IfParser {
       value = value.trim()
       if (value.length === 0) this.error('expected an action (a nested /if, a bracket, a block, or text)')
 
-      return { type: 'Block', value, text: this.input.slice(actionStart, this.pos) }
+      return { type: 'Block', value, text: this.textSince(actionStart).trim() }
     }
 
     // -------------------------------------------------------------

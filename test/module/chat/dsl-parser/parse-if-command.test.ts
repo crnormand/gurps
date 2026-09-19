@@ -18,6 +18,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: '[failure]',
         },
+        text: '/if ! [DX] [success] /else [failure]',
       },
     ],
     [
@@ -35,6 +36,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: '[failure]',
         },
+        text: '/if [DX] [success] /else [failure]',
       },
     ],
     [
@@ -48,6 +50,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: '[success]',
         },
+        text: '/if [DX] [success]',
       },
     ],
     [
@@ -65,6 +68,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: '[failure]',
         },
+        text: '/if [DX] [success] [failure]',
       },
     ],
     [
@@ -79,6 +83,7 @@ describe('parseIfCommand', () => {
           value: '/roll 1d20',
         },
         // elseAction is omitted when not present
+        text: '/if [DX] /roll 1d20',
       },
     ],
     [
@@ -96,6 +101,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: '/help',
         },
+        text: '/if [DX] /roll 1d20 /else /help',
       },
     ],
     [
@@ -109,6 +115,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: 'This is a narrative text',
         },
+        text: '/if [DX] This is a narrative text',
       },
     ],
     [
@@ -126,6 +133,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: 'This is the else narrative text',
         },
+        text: '/if [DX] This is a narrative text /else This is the else narrative text',
       },
     ],
     [
@@ -143,6 +151,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: 'This is the else narrative text in curly braces',
         },
+        text: '/if [DX] {This is a narrative text in curly braces} /else {This is the else narrative text in curly braces}',
       },
     ],
     [
@@ -156,6 +165,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: 'This is a narrative text in curly braces',
         },
+        text: '/if [DX] {This is a narrative text in curly braces}',
       },
     ],
     [
@@ -177,7 +187,9 @@ describe('parseIfCommand', () => {
             type: 'Block',
             value: '[B]',
           },
+          text: '/if [IQ] [A] [B]',
         },
+        text: '/if [DX] /if [IQ] [A] [B]',
       },
     ],
     [
@@ -195,6 +207,7 @@ describe('parseIfCommand', () => {
           type: 'Block',
           value: 'This is an else block',
         },
+        text: '/if [DX] {This is a narrative text} {This is an else block}',
       },
     ],
     [
@@ -216,7 +229,9 @@ describe('parseIfCommand', () => {
             type: 'Block',
             value: '[Y]',
           },
+          text: '/if [B] [X] /else [Y]',
         },
+        text: '/if [A] /if [B] [X] /else [Y]',
       },
     ],
     [
@@ -242,16 +257,19 @@ describe('parseIfCommand', () => {
               type: 'Block',
               value: 'Ah so close',
             },
+            text: '{/if [IQ-2] {You found the Grail!} {Ah so close}}',
           },
           elseAction: {
             type: 'Block',
             value: 'Failed tracking',
           },
+          text: '{/if [S:Tra] {/if [IQ-2] {You found the Grail!} {Ah so close}} {Failed tracking}}',
         },
         elseAction: {
           type: 'Block',
           value: 'Failed ST',
         },
+        text: '/if [ST] {/if [S:Tra] {/if [IQ-2] {You found the Grail!} {Ah so close}} {Failed tracking}} {Failed ST}',
       },
     ],
   ])('parses %s', (_name, input, expected) => {
@@ -271,6 +289,7 @@ describe('parseIfCommand', () => {
         successAction: { type: 'Block', value: 'success' },
         failureAction: { type: 'Block', value: 'failure' },
         critFailureAction: { type: 'Block', value: 'crit-failure' },
+        text: '/if [DX] cs:{crit-success} s:{success} f:{failure} cf:{crit-failure}',
       },
     ],
     [
@@ -281,6 +300,7 @@ describe('parseIfCommand', () => {
         condition: 'DX',
         successAction: { type: 'Block', value: 'success' },
         failureAction: { type: 'Block', value: 'failure' },
+        text: '/if [DX] s:{success} f:{failure}',
       },
     ],
     [
@@ -291,6 +311,7 @@ describe('parseIfCommand', () => {
         condition: 'DX',
         critSuccessAction: { type: 'Block', value: 'crit-success' },
         critFailureAction: { type: 'Block', value: 'crit-failure' },
+        text: '/if [DX] cs:{crit-success} cf:{crit-failure}',
       },
     ],
     [
@@ -300,6 +321,7 @@ describe('parseIfCommand', () => {
         type: 'OutcomeIfStatement',
         condition: 'DX',
         critSuccessAction: { type: 'Block', value: 'crit-success' },
+        text: '/if [DX] cs:{crit-success}',
       },
     ],
     [
@@ -309,6 +331,7 @@ describe('parseIfCommand', () => {
         type: 'OutcomeIfStatement',
         condition: 'DX',
         critFailureAction: { type: 'Block', value: 'crit-failure' },
+        text: '/if [DX] cf:{crit-failure}',
       },
     ],
     [
@@ -320,6 +343,45 @@ describe('parseIfCommand', () => {
         critSuccessAction: { type: 'Block', value: 'crit-success' },
         successAction: { type: 'Block', value: 'success' },
         failureAction: { type: 'Block', value: 'failure' },
+        text: '/if [DX] cs:{crit-success} {success} {failure}',
+      },
+    ],
+    [
+      'outcome if statement with nested simple if',
+      '/if [DX] cs:{crit-success} {success} {/if [HT] {You hang on!}}',
+      {
+        type: 'OutcomeIfStatement',
+        condition: 'DX',
+        critSuccessAction: { type: 'Block', value: 'crit-success' },
+        successAction: { type: 'Block', value: 'success' },
+        failureAction: {
+          type: 'SimpleIfStatement',
+          condition: 'HT',
+          text: '/if [HT] {You hang on!}',
+          negated: false,
+          thenAction: { type: 'Block', value: 'You hang on!' },
+        },
+        text: '/if [DX] cs:{crit-success} {success} {/if [HT] {You hang on!}}',
+      },
+    ],
+    [
+      'outcome if statement with nested outcome if',
+      '/if [DX] cs:{crit-success} {success} {/if [HT] cs:{Unaffected} {You hang on!} {You faint!} cf:{You pass out!}}',
+      {
+        type: 'OutcomeIfStatement',
+        condition: 'DX',
+        critSuccessAction: { type: 'Block', value: 'crit-success' },
+        successAction: { type: 'Block', value: 'success' },
+        failureAction: {
+          type: 'OutcomeIfStatement',
+          condition: 'HT',
+          critSuccessAction: { type: 'Block', value: 'Unaffected' },
+          successAction: { type: 'Block', value: 'You hang on!' },
+          failureAction: { type: 'Block', value: 'You faint!' },
+          critFailureAction: { type: 'Block', value: 'You pass out!' },
+          text: '/if [HT] cs:{Unaffected} {You hang on!} {You faint!} cf:{You pass out!}',
+        },
+        text: '/if [DX] cs:{crit-success} {success} {/if [HT] cs:{Unaffected} {You hang on!} {You faint!} cf:{You pass out!}}',
       },
     ],
   ])('parses %s', (_name, input, expected) => {
