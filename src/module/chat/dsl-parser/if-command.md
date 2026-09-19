@@ -1,6 +1,6 @@
 # If Chat Command
 
-Use this command to select different outcomes based on the sucess, or degree of success, of an OTF.
+Use this command to select different outcomes based on the success, or degree of success, of an OTF.
 
 ## Description
 
