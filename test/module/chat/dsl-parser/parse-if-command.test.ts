@@ -69,32 +69,32 @@ describe('parseIfCommand', () => {
     ],
     [
       'simple if statement with chat-commands',
-      '/if [DX] /chatcmd args',
+      '/if [DX] /roll 1d20',
       {
         type: 'SimpleIfStatement',
         negated: false,
         condition: 'DX',
         thenAction: {
           type: 'Block',
-          value: '/chatcmd args',
+          value: '/roll 1d20',
         },
         // elseAction is omitted when not present
       },
     ],
     [
       'simple if statement with chat-commands and else branch',
-      '/if [DX] /chatcmd args /else /chatcmd else-args',
+      '/if [DX] /roll 1d20 /else /help',
       {
         type: 'SimpleIfStatement',
         negated: false,
         condition: 'DX',
         thenAction: {
           type: 'Block',
-          value: '/chatcmd args',
+          value: '/roll 1d20',
         },
         elseAction: {
           type: 'Block',
-          value: '/chatcmd else-args',
+          value: '/help',
         },
       },
     ],
@@ -142,6 +142,19 @@ describe('parseIfCommand', () => {
         elseAction: {
           type: 'Block',
           value: 'This is the else narrative text in curly braces',
+        },
+      },
+    ],
+    [
+      'simple if statement with curly braces',
+      '/if [DX] {This is a narrative text in curly braces}',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'This is a narrative text in curly braces',
         },
       },
     ],
@@ -217,7 +230,7 @@ describe('parseIfCommand', () => {
       },
     ],
     [
-      'outcome if statement with only success and failure branches',
+      'outcome if statement with only success and failure',
       '/if [DX] s:{success} f:{failure}',
       {
         type: 'OutcomeIfStatement',
@@ -227,12 +240,30 @@ describe('parseIfCommand', () => {
       },
     ],
     [
-      'outcome if statement with only critical success and critical failure branches',
+      'outcome if statement with only critical success and critical failure',
       '/if [DX] cs:{crit-success} cf:{crit-failure}',
       {
         type: 'OutcomeIfStatement',
         condition: 'DX',
         critSuccessAction: { type: 'Block', value: 'crit-success' },
+        critFailureAction: { type: 'Block', value: 'crit-failure' },
+      },
+    ],
+    [
+      'outcome if statement with only critical success',
+      '/if [DX] cs:{crit-success}',
+      {
+        type: 'OutcomeIfStatement',
+        condition: 'DX',
+        critSuccessAction: { type: 'Block', value: 'crit-success' },
+      },
+    ],
+    [
+      'outcome if statement with only critical failure',
+      '/if [DX] cf:{crit-failure}',
+      {
+        type: 'OutcomeIfStatement',
+        condition: 'DX',
         critFailureAction: { type: 'Block', value: 'crit-failure' },
       },
     ],
