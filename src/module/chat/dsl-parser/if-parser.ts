@@ -62,30 +62,36 @@ export namespace IfParser {
   export type Node = IfStatement | Block
 
   export interface Block {
-    kind: 'Block'
+    type: 'Block'
     /** Opaque text, taken verbatim from the source (brackets/braces
      *  stripped if it was bracketed/braced). Never interpreted further. */
-    text: string
+    value: string
+    /** The original text of the block, before any further parsing. */
+    text?: string
   }
 
   export type IfStatement = SimpleIfStatement | OutcomeIfStatement
 
   export interface SimpleIfStatement {
-    kind: 'SimpleIfStatement'
+    type: 'SimpleIfStatement'
     negated: boolean
     /** Opaque bracket content; a condition is never itself a nested if. */
     condition: string
     thenAction: Node
-    elseAction: Node | null
+    elseAction?: Node
+    /** The original text of the simple if statement, before any further parsing. */
+    text?: string
   }
 
   export interface OutcomeIfStatement {
-    kind: 'OutcomeIfStatement'
+    type: 'OutcomeIfStatement'
     condition: string
-    cs: Node | null
-    s: Node | null
-    f: Node | null
-    cf: Node | null
+    critSuccessAction?: Node
+    successAction?: Node
+    failureAction?: Node
+    critFailureAction?: Node
+    /** The original text of the outcome if statement, before any further parsing. */
+    text?: string
   }
 
   // ---------------------------------------------------------------------
@@ -93,35 +99,38 @@ export namespace IfParser {
   // ---------------------------------------------------------------------
 
   class Parser {
-    private src: string
+    private input: string
     private pos: number
 
     constructor(src: string) {
-      this.src = src
+      this.input = src
       this.pos = 0
     }
 
-    private eof(): boolean {
-      return this.pos >= this.src.length
+    private atEnd(): boolean {
+      return this.pos >= this.input.length
     }
 
-    private peekChar(): string {
-      return this.eof() ? '' : this.src[this.pos]
+    private peek(): string {
+      return this.input[this.pos]
     }
 
     /** Skips zero or more literal spaces/tabs (the grammar's `white-space`
      *  rule technically requires one-or-more in most spots, but this parser
      *  is deliberately lenient about whitespace counts). */
-    private skipWs(): void {
-      while (!this.eof() && (this.peekChar() === ' ' || this.peekChar() === '\t')) {
-        this.pos++
+    private skipWhitespace(): void {
+      while (!this.atEnd()) {
+        const char = this.input[this.pos]
+
+        if (char === ' ' || char === '\t' || char === '\n' || char === '\r') this.pos++
+        else break
       }
     }
 
     /** Case-insensitively consumes `word` if it appears at the current
      *  position; returns whether it matched. */
-    private matchKeyword(word: string): boolean {
-      if (this.src.slice(this.pos, this.pos + word.length).toLowerCase() === word.toLowerCase()) {
+    private consumeLiteral(word: string): boolean {
+      if (this.input.toLowerCase().startsWith(word.toLowerCase(), this.pos)) {
         this.pos += word.length
 
         return true
@@ -133,24 +142,26 @@ export namespace IfParser {
     /** Non-consuming (lookahead) test for `name:` at the current position,
      *  e.g. matchesPrefix('cs') tests for "cs:" case-insensitively. */
     private matchesPrefix(name: string): boolean {
-      return new RegExp('^' + name + ':', 'i').test(this.src.slice(this.pos))
+      return new RegExp('^' + name + ':', 'i').test(this.input.slice(this.pos))
     }
 
-    /** Non-consuming test for a bare `/if` at the current position. */
-    private matchesIfLookahead(): boolean {
-      return /^\/if\b/i.test(this.src.slice(this.pos))
+    /** Non-consuming (lookahead) test for `word` at the current position. */
+    private matchesLookahead(word: string): boolean {
+      const pattern = new RegExp('^' + word + '\\b', 'i')
+
+      return pattern.test(this.input.slice(this.pos))
     }
 
     expectEnd(): void {
-      this.skipWs()
+      this.skipWhitespace()
 
-      if (!this.eof()) {
-        this.error(`unexpected trailing input: '${this.src.slice(this.pos, this.pos + 30)}'`)
+      if (!this.atEnd()) {
+        this.error(`unexpected trailing input: '${this.input.slice(this.pos, this.pos + 30)}'`)
       }
     }
 
     private error(msg: string): never {
-      const context = this.src.slice(this.pos, this.pos + 20)
+      const context = this.input.slice(this.pos, this.pos + 20)
 
       throw new ParseError(`${msg} (at position ${this.pos}, near '${context}')`)
     }
@@ -158,10 +169,10 @@ export namespace IfParser {
     /** Extracts and consumes the content between a `[` at the current
      *  position and its matching `]`. */
     private consumeBracketContent(): string {
-      if (this.peekChar() !== '[') this.error("expected '['")
+      if (this.peek() !== '[') this.error("expected '['")
       const openIdx = this.pos
-      const closeIdx = findMatchingDelimiter(this.src, openIdx, '[', ']')
-      const inner = this.src.slice(openIdx + 1, closeIdx)
+      const closeIdx = findMatchingDelimiter(this.input, openIdx, '[', ']')
+      const inner = this.input.slice(openIdx + 1, closeIdx)
 
       this.pos = closeIdx + 1
 
@@ -171,10 +182,10 @@ export namespace IfParser {
     /** Extracts and consumes the content between a `{` at the current
      *  position and its matching `}`. */
     private consumeBraceContent(): string {
-      if (this.peekChar() !== '{') this.error("expected '{'")
+      if (this.peek() !== '{') this.error("expected '{'")
       const openIdx = this.pos
-      const closeIdx = findMatchingDelimiter(this.src, openIdx, '{', '}')
-      const inner = this.src.slice(openIdx + 1, closeIdx)
+      const closeIdx = findMatchingDelimiter(this.input, openIdx, '{', '}')
+      const inner = this.input.slice(openIdx + 1, closeIdx)
 
       this.pos = closeIdx + 1
 
@@ -186,39 +197,45 @@ export namespace IfParser {
     // -------------------------------------------------------------
 
     parseIfStatement(): IfStatement {
-      this.skipWs()
-      if (!this.matchKeyword('/if')) this.error("expected '/if'")
-      this.skipWs()
+      const conditionStart = this.pos
+
+      this.skipWhitespace()
+      if (!this.consumeLiteral('/if')) this.error("expected '/if'")
+      this.skipWhitespace()
 
       let negated = false
 
-      if (this.peekChar() === '!') {
+      if (this.peek() === '!') {
         negated = true
         this.pos++
-        this.skipWs()
+        this.skipWhitespace()
       }
 
       const condition = this.parseCondition()
 
-      this.skipWs()
+      this.skipWhitespace()
 
       if (!negated && this.matchesOutcomeLookahead()) {
         return this.parseOutcomeIfTail(condition)
       }
 
-      return this.parseSimpleIfTail(negated, condition)
+      const node = this.parseSimpleIfTail(negated, condition)
+
+      node.text = this.input.slice(conditionStart, this.pos)
+
+      return node
     }
 
     /** True if the upcoming tokens look like the start of an
      *  outcome-if-statement's clause list (cs:/s:/f:/cf:). */
     private matchesOutcomeLookahead(): boolean {
-      return /^(cs|cf|s|f):/i.test(this.src.slice(this.pos))
+      return /^(cs|cf|s|f):/i.test(this.input.slice(this.pos))
     }
 
     // condition = "[", opaque-text, "]"
     private parseCondition(): string {
-      this.skipWs()
-      if (this.peekChar() !== '[') this.error("expected condition starting with '['")
+      this.skipWhitespace()
+      if (this.peek() !== '[') this.error("expected condition starting with '['")
       const text = this.consumeBracketContent()
 
       if (text.length === 0) this.error('condition must not be empty')
@@ -233,59 +250,75 @@ export namespace IfParser {
     private parseSimpleIfTail(negated: boolean, condition: string): SimpleIfStatement {
       const thenAction = this.parseAction()
 
-      this.skipWs()
+      this.skipWhitespace()
 
-      let elseAction: Node | null = null
+      let elseAction: Node | undefined = undefined
 
-      if (!this.eof()) {
-        this.matchKeyword('/else') // optional literal keyword
-        this.skipWs()
+      if (!this.atEnd()) {
+        this.consumeLiteral('/else') // optional literal keyword
+        this.skipWhitespace()
 
-        if (!this.eof()) {
+        if (!this.atEnd()) {
           elseAction = this.parseAction()
-          this.skipWs()
+          this.skipWhitespace()
         }
       }
 
-      return { kind: 'SimpleIfStatement', negated, condition, thenAction, elseAction }
+      return { type: 'SimpleIfStatement', negated, condition, thenAction, elseAction }
     }
 
     // action = if-statement | "[" opaque-text "]" | "{" (if-statement | opaque-text) "}" | opaque-text
     private parseAction(): Node {
-      this.skipWs()
+      const actionStart = this.pos
 
-      if (this.matchesIfLookahead()) {
+      this.skipWhitespace()
+
+      if (this.matchesLookahead('/if')) {
         // Parsed in place: a bare nested if-statement is self-terminating,
         // so it needs no pre-extracted boundary.
-        return this.parseIfStatement()
+        const node = this.parseIfStatement()
+
+        node.text = this.input.slice(actionStart, this.pos)
+
+        return node
       }
 
-      if (this.peekChar() === '[') {
-        return { kind: 'Block', text: this.consumeBracketContent() }
+      if (this.peek() === '[') {
+        const node = {
+          type: 'Block' as const,
+          value: this.consumeBracketContent(),
+          text: this.input.slice(actionStart, this.pos),
+        }
+
+        return node
       }
 
-      if (this.peekChar() === '{') {
-        return braceContentToNode(this.consumeBraceContent())
+      if (this.peek() === '{') {
+        const node = braceContentToNode(this.consumeBraceContent())
+
+        node.text = this.input.slice(actionStart, this.pos)
+
+        return node
       }
 
       // Bare opaque text: runs until a top-level "/else" keyword, or end of
       // input. We don't care what it looks like -- kept verbatim.
-      const rest = this.src.slice(this.pos)
+      const rest = this.input.slice(this.pos)
       const elseMatch = rest.match(/\/else\b/i)
-      let text: string
+      let value: string
 
       if (elseMatch) {
-        text = rest.slice(0, elseMatch.index)
+        value = rest.slice(0, elseMatch.index)
         this.pos += elseMatch.index!
       } else {
-        text = rest
-        this.pos = this.src.length
+        value = rest
+        this.pos = this.input.length
       }
 
-      text = text.trim()
-      if (text.length === 0) this.error('expected an action (a nested /if, a bracket, a block, or text)')
+      value = value.trim()
+      if (value.length === 0) this.error('expected an action (a nested /if, a bracket, a block, or text)')
 
-      return { kind: 'Block', text }
+      return { type: 'Block', value, text: this.input.slice(actionStart, this.pos) }
     }
 
     // -------------------------------------------------------------
@@ -294,38 +327,45 @@ export namespace IfParser {
     // -------------------------------------------------------------
 
     private parseOutcomeIfTail(condition: string): OutcomeIfStatement {
-      let critSuccess: Node | null = null
-      let success: Node | null = null
-      let failure: Node | null = null
-      let critFailure: Node | null = null
+      let critSuccess: Node | undefined = undefined
+      let success: Node | undefined = undefined
+      let failure: Node | undefined = undefined
+      let critFailure: Node | undefined = undefined
 
       if (this.matchesPrefix('cs')) {
         critSuccess = this.parseOutcomeClause('cs')
-        this.skipWs()
+        this.skipWhitespace()
       }
 
-      if (!this.eof() && this.matchesPrefix('s')) {
+      if (!this.atEnd() && this.matchesPrefix('s')) {
         success = this.parseOutcomeClause('s')
-        this.skipWs()
+        this.skipWhitespace()
       }
 
-      if (!this.eof() && this.matchesPrefix('f')) {
+      if (!this.atEnd() && this.matchesPrefix('f')) {
         failure = this.parseOutcomeClause('f')
-        this.skipWs()
+        this.skipWhitespace()
       }
 
-      if (!this.eof() && this.matchesPrefix('cf')) {
+      if (!this.atEnd() && this.matchesPrefix('cf')) {
         critFailure = this.parseOutcomeClause('cf')
-        this.skipWs()
+        this.skipWhitespace()
       }
 
-      return { kind: 'OutcomeIfStatement', condition, cs: critSuccess, s: success, f: failure, cf: critFailure }
+      return {
+        type: 'OutcomeIfStatement',
+        condition,
+        critSuccessAction: critSuccess,
+        successAction: success,
+        failureAction: failure,
+        critFailureAction: critFailure,
+      }
     }
 
     // outcome-clause = "{" (if-statement | opaque-text) "}", preceded by "name:"
     private parseOutcomeClause(name: string): Node {
-      if (!this.matchKeyword(name + ':')) this.error(`expected '${name}:'`)
-      this.skipWs()
+      if (!this.consumeLiteral(name + ':')) this.error(`expected '${name}:'`)
+      this.skipWhitespace()
 
       return braceContentToNode(this.consumeBraceContent())
     }
@@ -342,7 +382,7 @@ export namespace IfParser {
       return parseIfStatementFromIsolatedText(inner.trim())
     }
 
-    return { kind: 'Block', text: inner }
+    return { type: 'Block', value: inner }
   }
 
   // ---------------------------------------------------------------------
@@ -368,5 +408,39 @@ export namespace IfParser {
    */
   export function parse(text: string): IfStatement {
     return parseIfStatementFromIsolatedText(text)
+  }
+
+  // ---------- Visitor/Evaluator ----------
+
+  export type ConditionResolver = (condition: string, line: string) => Promise<boolean>
+
+  export async function visit(node: Node, resolve: ConditionResolver): Promise<string> {
+    if (!node) return ''
+
+    switch (node.type) {
+      case 'Block':
+        return node.value
+
+      case 'SimpleIfStatement': {
+        const temp = await resolve(node.condition, node.text ?? '')
+        const pass = node.negated ? !temp : temp
+        const branch = pass ? node.thenAction : node.elseAction
+
+        return branch ? await visit(branch, resolve) : ''
+      }
+
+      case 'OutcomeIfStatement': {
+        const temp = await resolve(node.condition, node.text ?? '')
+        const branch = temp
+          ? GURPS.lastTargetedRoll?.isCritSuccess && node.critSuccessAction
+            ? node.critSuccessAction
+            : node.successAction
+          : GURPS.lastTargetedRoll?.isCritFailure && node.critFailureAction
+            ? node.critFailureAction
+            : node.failureAction
+
+        return branch ? await visit(branch, resolve) : ''
+      }
+    }
   }
 }

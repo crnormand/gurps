@@ -2,7 +2,7 @@ import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 
 import ChatProcessor from './chat-processor.js'
-import { evaluateBlock, IfBlockParser } from './if-block-parser.js'
+import { IfParser } from './dsl-parser/if-parser.ts'
 
 export class IfChatProcessor extends ChatProcessor {
   override help(): string {
@@ -16,10 +16,10 @@ export class IfChatProcessor extends ChatProcessor {
   }
 
   override async process(line: string) {
-    const block = IfBlockParser.parse(line)
+    const block = IfParser.parse(line)
 
     try {
-      const result = await evaluateBlock(block, this.resolveCondition.bind(this))
+      const result = await IfParser.visit(block, this.resolveCondition.bind(this))
 
       await this.handleResult(result)
     } catch (error) {

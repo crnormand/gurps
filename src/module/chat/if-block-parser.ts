@@ -284,7 +284,7 @@ export class IfBlockParser {
       let branch: 'cs' | 'cf' | 's' | 'f' | undefined
 
       for (const prefix of ['cs', 'cf', 's', 'f'] as const) {
-        if (this.peekString(`${prefix}:{`)) {
+        if (this.matchesLookahead(`${prefix}:{`)) {
           branch = prefix
           this.consumeLiteral(`${prefix}:{`)
           break
@@ -320,7 +320,7 @@ export class IfBlockParser {
   }
 
   private isCritFormat(): boolean {
-    return this.peekStrings(['cs:{', 'cf:{', 's:{', 'f:{'])
+    return this.matchesAllLookahead(['cs:{', 'cf:{', 's:{', 'f:{'])
   }
 
   private parseText(): TextNode {
@@ -376,7 +376,7 @@ export class IfBlockParser {
   }
 
   private consumeLiteral(literal: string): boolean {
-    if (this.input.startsWith(literal, this.pos)) {
+    if (this.input.toLowerCase().startsWith(literal.toLowerCase(), this.pos)) {
       this.pos += literal.length
 
       return true
@@ -394,16 +394,19 @@ export class IfBlockParser {
     }
   }
 
-  private peekStrings(texts: string[], position: number = this.pos): boolean {
+  /** Non-consuming (lookahead) test for `word` at the current position. */
+  private matchesLookahead(word: string): boolean {
+    const pattern = new RegExp('^' + word + '\\b', 'i')
+
+    return pattern.test(this.input.slice(this.pos))
+  }
+
+  private matchesAllLookahead(texts: string[]): boolean {
     for (const text of texts) {
-      if (this.peekString(text, position)) return true
+      if (this.matchesLookahead(text)) return true
     }
 
     return false
-  }
-
-  private peekString(text: string, position: number = this.pos): boolean {
-    return this.input.startsWith(text, position)
   }
 }
 

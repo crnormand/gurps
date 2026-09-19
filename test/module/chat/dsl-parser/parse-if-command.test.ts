@@ -2,22 +2,205 @@ import { IfParser } from '@module/chat/dsl-parser/if-parser.js'
 import { ParseError } from '@module/chat/dsl-parser/parser-helpers.js'
 
 describe('parseIfCommand', () => {
-  test('parses a simple if statement with a negation flag and else branch', () => {
-    const result = IfParser.parse('/if ! [DX] [success] /else [failure]')
+  test.each([
+    [
+      'simple if statement with negation and else branch',
+      '/if ! [DX] [success] /else [failure]',
+      {
+        type: 'SimpleIfStatement',
+        negated: true,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'success',
+        },
+        elseAction: {
+          type: 'Block',
+          value: 'failure',
+        },
+      },
+    ],
+    [
+      'simple if statement without negation and else branch',
+      '/if [DX] [success] /else [failure]',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'success',
+        },
+        elseAction: {
+          type: 'Block',
+          value: 'failure',
+        },
+      },
+    ],
+    [
+      'simple if statement with no else branch',
+      '/if [DX] [success]',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'success',
+        },
+      },
+    ],
+    [
+      'simple if statement without else keyword',
+      '/if [DX] [success] [failure]',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'success',
+        },
+        elseAction: {
+          type: 'Block',
+          value: 'failure',
+        },
+      },
+    ],
+    [
+      'simple if statement with chat-commands',
+      '/if [DX] /chatcmd args',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: '/chatcmd args',
+        },
+        // elseAction is omitted when not present
+      },
+    ],
+    [
+      'simple if statement with chat-commands and else branch',
+      '/if [DX] /chatcmd args /else /chatcmd else-args',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: '/chatcmd args',
+        },
+        elseAction: {
+          type: 'Block',
+          value: '/chatcmd else-args',
+        },
+      },
+    ],
+    [
+      'simple if statement with narrative text',
+      '/if [DX] This is a narrative text',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'This is a narrative text',
+        },
+      },
+    ],
+    [
+      'simple if statement with narrative text and else',
+      '/if [DX] This is a narrative text /else This is the else narrative text',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'This is a narrative text',
+        },
+        elseAction: {
+          type: 'Block',
+          value: 'This is the else narrative text',
+        },
+      },
+    ],
+    [
+      'simple if statement with curly braces',
+      '/if [DX] {This is a narrative text in curly braces} /else {This is the else narrative text in curly braces}',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'This is a narrative text in curly braces',
+        },
+        elseAction: {
+          type: 'Block',
+          value: 'This is the else narrative text in curly braces',
+        },
+      },
+    ],
+    [
+      'simple if statement with curly braces without /else',
+      '/if [DX] {This is a narrative text} {This is an else block}',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'Block',
+          value: 'This is a narrative text',
+        },
+        elseAction: {
+          type: 'Block',
+          value: 'This is an else block',
+        },
+      },
+    ],
+    [
+      'simple if statement with nested if',
+      '/if [ST] {/if [S:Tra] {/if [IQ-2] {You found the Grail!} {Ah so close}} {Failed tracking}} {Failed ST}',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'ST',
+        thenAction: {
+          type: 'SimpleIfStatement',
+          negated: false,
+          condition: 'S:Tra',
+          thenAction: {
+            type: 'SimpleIfStatement',
+            negated: false,
+            condition: 'IQ-2',
+            thenAction: {
+              type: 'Block',
+              value: 'You found the Grail!',
+            },
+            elseAction: {
+              type: 'Block',
+              value: 'Ah so close',
+            },
+          },
+          elseAction: {
+            type: 'Block',
+            value: 'Failed tracking',
+          },
+        },
+        elseAction: {
+          type: 'Block',
+          value: 'Failed ST',
+        },
+      },
+    ],
+  ])('parses %s', (_name, input, expected) => {
+    const result = IfParser.parse(input)
 
-    expect(result).toMatchObject({
-      kind: 'SimpleIfStatement',
-      negated: true,
-      condition: 'DX',
-      thenAction: {
-        kind: 'Block',
-        text: 'success',
-      },
-      elseAction: {
-        kind: 'Block',
-        text: 'failure',
-      },
-    })
+    expect(result).toMatchObject(expected)
   })
 
   test.each([
@@ -25,12 +208,32 @@ describe('parseIfCommand', () => {
       'all explicit outcome branches',
       '/if [DX] cs:{crit-success} s:{success} f:{failure} cf:{crit-failure}',
       {
-        kind: 'OutcomeIfStatement',
+        type: 'OutcomeIfStatement',
         condition: 'DX',
-        cs: { kind: 'Block', text: 'crit-success' },
-        s: { kind: 'Block', text: 'success' },
-        f: { kind: 'Block', text: 'failure' },
-        cf: { kind: 'Block', text: 'crit-failure' },
+        critSuccessAction: { type: 'Block', value: 'crit-success' },
+        successAction: { type: 'Block', value: 'success' },
+        failureAction: { type: 'Block', value: 'failure' },
+        critFailureAction: { type: 'Block', value: 'crit-failure' },
+      },
+    ],
+    [
+      'outcome if statement with only success and failure branches',
+      '/if [DX] s:{success} f:{failure}',
+      {
+        type: 'OutcomeIfStatement',
+        condition: 'DX',
+        successAction: { type: 'Block', value: 'success' },
+        failureAction: { type: 'Block', value: 'failure' },
+      },
+    ],
+    [
+      'outcome if statement with only critical success and critical failure branches',
+      '/if [DX] cs:{crit-success} cf:{crit-failure}',
+      {
+        type: 'OutcomeIfStatement',
+        condition: 'DX',
+        critSuccessAction: { type: 'Block', value: 'crit-success' },
+        critFailureAction: { type: 'Block', value: 'crit-failure' },
       },
     ],
   ])('parses %s', (_name, input, expected) => {
