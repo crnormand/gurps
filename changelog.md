@@ -13,6 +13,7 @@
 
 - Fixed another Move Mode editor problem ... yikes!
 - Cannot create a Compendium with a name that is non-ASCII \#2923
+- Character Sheet Item has " - " suffix \#2931
 
 ## Release 0.18.23 08/29/2026
 
