@@ -176,6 +176,28 @@ describe('parseIfCommand', () => {
       },
     ],
     [
+      'disambiguating dangling /else',
+      '/if [A] /if [B] [X] /else [Y]',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'A',
+        thenAction: {
+          type: 'SimpleIfStatement',
+          negated: false,
+          condition: 'B',
+          thenAction: {
+            type: 'Block',
+            value: 'X',
+          },
+          elseAction: {
+            type: 'Block',
+            value: 'Y',
+          },
+        },
+      },
+    ],
+    [
       'simple if statement with nested if',
       '/if [ST] {/if [S:Tra] {/if [IQ-2] {You found the Grail!} {Ah so close}} {Failed tracking}} {Failed ST}',
       {
@@ -265,6 +287,17 @@ describe('parseIfCommand', () => {
         type: 'OutcomeIfStatement',
         condition: 'DX',
         critFailureAction: { type: 'Block', value: 'crit-failure' },
+      },
+    ],
+    [
+      'outcome if statement with positional success and failure',
+      '/if [DX] cs:{crit-success} {success} {failure}',
+      {
+        type: 'OutcomeIfStatement',
+        condition: 'DX',
+        critSuccessAction: { type: 'Block', value: 'crit-success' },
+        successAction: { type: 'Block', value: 'success' },
+        failureAction: { type: 'Block', value: 'failure' },
       },
     ],
   ])('parses %s', (_name, input, expected) => {

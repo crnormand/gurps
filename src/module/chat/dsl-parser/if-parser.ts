@@ -23,18 +23,6 @@
  * command, plain narrative) becomes a `Block` holding the raw text
  * verbatim. The parser never tries to interpret that text further.
  *
- * GRAMMAR SIMPLIFICATION: no more bare outcome branches
- * ------------------------------------------------------
- * A previous version of this grammar allowed an outcome-if's success/
- * failure branches to be written "bare" (`{success}` with no `s:`
- * label), inferring their role positionally (first bare block after
- * `cs:` is success, a second is failure, etc). That machinery existed
- * only to support an AST that distinguished "explicit" from "bare"
- * branches. Since this AST no longer makes that distinction -- a branch
- * is just present or absent under its `cs`/`s`/`f`/`cf` field -- bare
- * branches have been dropped from the grammar entirely. Every branch
- * must now carry its explicit label, and labels that are present must
- * appear in the fixed order cs, s, f, cf.
  *
  * DISAMBIGUATION (simple vs. outcome)
  * ------------------------------------
@@ -337,13 +325,15 @@ export namespace IfParser {
         this.skipWhitespace()
       }
 
-      if (!this.atEnd() && this.matchesPrefix('s')) {
-        success = this.parseOutcomeClause('s')
+      // CHANGED: success now also accepts a bare "{...}" with no "s:" label.
+      if (!this.atEnd() && (this.matchesPrefix('s') || this.peek() === '{')) {
+        success = this.matchesPrefix('s') ? this.parseOutcomeClause('s') : this.parseBareOutcomeClause()
         this.skipWhitespace()
       }
 
-      if (!this.atEnd() && this.matchesPrefix('f')) {
-        failure = this.parseOutcomeClause('f')
+      // CHANGED: failure now also accepts a bare "{...}" with no "f:" label.
+      if (!this.atEnd() && (this.matchesPrefix('f') || this.peek() === '{')) {
+        failure = this.matchesPrefix('f') ? this.parseOutcomeClause('f') : this.parseBareOutcomeClause()
         this.skipWhitespace()
       }
 
@@ -367,6 +357,11 @@ export namespace IfParser {
       if (!this.consumeLiteral(name + ':')) this.error(`expected '${name}:'`)
       this.skipWhitespace()
 
+      return braceContentToNode(this.consumeBraceContent())
+    }
+
+    // NEW: a bare, unlabeled "{...}" used for an implicit success/failure branch.
+    private parseBareOutcomeClause(): Node {
       return braceContentToNode(this.consumeBraceContent())
     }
   }
