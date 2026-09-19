@@ -144,6 +144,18 @@ describe('IfChatProcessor', () => {
     expect(registry.priv).toHaveBeenCalledWith('GURPS.chatMustBeACheck: [1d cr]', undefined)
   })
 
+  test('does not run either branch when the condition is not a check', async () => {
+    const { processor, registry } = createProcessor()
+
+    mockParselink.mockReturnValue({ action: { type: OtfActionType.modifier } } as any)
+
+    await processor.process('/if [+1 bonus] [/hp +1d] /else [/hp -1d]')
+
+    expect(performAction).not.toHaveBeenCalled()
+    expect(registry.priv).toHaveBeenCalledWith('GURPS.chatMustBeACheck: [+1 bonus]', undefined)
+    expect(registry.processLines).not.toHaveBeenCalled()
+  })
+
   test('stops without running a branch when the action is cancelled', async () => {
     const { processor, registry } = createProcessor()
 
@@ -198,14 +210,15 @@ describe('IfChatProcessor', () => {
     expect(registry.processLines).toHaveBeenCalledWith('Ah so close')
   })
 
-  test('unrecognized format is reported privately', async () => {
+  test('unrecognized format is reported privately and does not run a branch', async () => {
     const { processor, registry } = createProcessor()
 
     mockParselink.mockReturnValue({ action: null } as any)
 
-    await processor.process('/if [???] success')
+    await processor.process('/if [???] success /else failure')
 
     expect(performAction).not.toHaveBeenCalled()
     expect(registry.priv).toHaveBeenCalledWith('GURPS.chatUnrecognizedFormat: [???]', undefined)
+    expect(registry.processLines).not.toHaveBeenCalled()
   })
 })

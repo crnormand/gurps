@@ -159,6 +159,28 @@ describe('parseIfCommand', () => {
       },
     ],
     [
+      'simple if statement nested',
+      '/if [DX] /if [IQ] [A] [B] ',
+      {
+        type: 'SimpleIfStatement',
+        negated: false,
+        condition: 'DX',
+        thenAction: {
+          type: 'SimpleIfStatement',
+          negated: false,
+          condition: 'IQ',
+          thenAction: {
+            type: 'Block',
+            value: 'A',
+          },
+          elseAction: {
+            type: 'Block',
+            value: 'B',
+          },
+        },
+      },
+    ],
+    [
       'simple if statement with curly braces without /else',
       '/if [DX] {This is a narrative text} {This is an else block}',
       {

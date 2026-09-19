@@ -16,14 +16,14 @@ export class IfChatProcessor extends ChatProcessor {
   }
 
   override async process(line: string) {
-    const block = IfParser.parse(line)
-
     try {
+      const block = IfParser.parse(line)
       const result = await IfParser.visit(block, this.resolveCondition.bind(this))
 
       await this.handleResult(result)
     } catch (error) {
       console.error('Error processing if block:', error)
+      ui.notifications?.warn(`${game.i18n?.localize('GURPS.chatUnrecognizedFormat')} '${line}'`)
     }
   }
 
@@ -59,17 +59,15 @@ export class IfChatProcessor extends ChatProcessor {
 
     if (!action.action) {
       this.priv(`${game.i18n?.localize('GURPS.chatUnrecognizedFormat')}: [${condition}]`)
-
-      return false
+      throw new Error(`${game.i18n?.localize('GURPS.chatUnrecognizedFormat')}: [${condition}]`)
     }
 
     if (this.isOtfAction(action)) {
       return !!(await this.performOtfAction(action.action, line))
-    } else {
-      this.priv(`${game.i18n?.localize('GURPS.chatMustBeACheck')}: [${condition}]`)
     }
 
-    return false // or true based on the condition
+    this.priv(`${game.i18n?.localize('GURPS.chatMustBeACheck')}: [${condition}]`)
+    throw new Error(`${game.i18n?.localize('GURPS.chatMustBeACheck')}: [${condition}]`)
   }
 
   private isOtfAction(action: any) {
