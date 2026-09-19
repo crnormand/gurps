@@ -1,5 +1,5 @@
-import slugify from '../lib/slugify/slugify.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
+import slugify from '../lib/slugify/slugify.js'
 import { zeroFill } from '../lib/utilities.js'
 
 export const AddImportEquipmentButton = async function (html) {
@@ -148,6 +148,7 @@ export class ItemImporter {
       for (let ch of i.children) {
         await this._importItem(ch, pack, filename, timestamp)
       }
+
     let itemData = {
       name: i.description,
       type: 'equipment',
@@ -179,15 +180,25 @@ export class ItemImporter {
         carried: true,
       },
     }
+
     if (i.weapons?.length)
       for (let w of i.weapons) {
         let otf_list = []
+
         if (w.defaults)
           for (let d of w.defaults) {
             let mod = !!d.modifier ? (d.modifier > -1 ? `+${d.modifier}` : d.modifier.toString()) : ''
+
             if (d.type === 'skill') {
-              //otf_list.push(`S:${d.name.replace(/ /g, "*")}` + (d.specialization ? `*(${d.specialization.replace(/ /g, "*")})` : "") + mod);
-              otf_list.push(`S:"${d.name}` + (d.specialization ? `*(${d.specialization})` : '') + '"' + mod)
+              // If d.name is an object, use its qualifier property if its compare property is "is"
+              const name = typeof d.name === 'object' && d.name.compare === 'is' ? d.name.qualifier : d.name
+
+              const specialization =
+                typeof d.specialization === 'object' && d.specialization.compare === 'is'
+                  ? d.specialization.qualifier
+                  : d.specialization
+
+              otf_list.push(`S:"${name}` + (specialization ? `*(${specialization})` : '') + '"' + mod)
             } else if (
               [
                 '10',
@@ -208,6 +219,7 @@ export class ItemImporter {
               otf_list.push(d.type.replace('_', ' ') + mod)
             }
           }
+
         if (this.isMeleeWeapon(w)) {
           let wep = {
             block: w.block || '',
