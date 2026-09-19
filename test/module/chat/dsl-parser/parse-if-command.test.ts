@@ -12,11 +12,11 @@ describe('parseIfCommand', () => {
         condition: 'DX',
         thenAction: {
           type: 'Block',
-          value: 'success',
+          value: '[success]',
         },
         elseAction: {
           type: 'Block',
-          value: 'failure',
+          value: '[failure]',
         },
       },
     ],
@@ -29,11 +29,11 @@ describe('parseIfCommand', () => {
         condition: 'DX',
         thenAction: {
           type: 'Block',
-          value: 'success',
+          value: '[success]',
         },
         elseAction: {
           type: 'Block',
-          value: 'failure',
+          value: '[failure]',
         },
       },
     ],
@@ -46,7 +46,7 @@ describe('parseIfCommand', () => {
         condition: 'DX',
         thenAction: {
           type: 'Block',
-          value: 'success',
+          value: '[success]',
         },
       },
     ],
@@ -59,11 +59,11 @@ describe('parseIfCommand', () => {
         condition: 'DX',
         thenAction: {
           type: 'Block',
-          value: 'success',
+          value: '[success]',
         },
         elseAction: {
           type: 'Block',
-          value: 'failure',
+          value: '[failure]',
         },
       },
     ],
@@ -171,11 +171,11 @@ describe('parseIfCommand', () => {
           condition: 'IQ',
           thenAction: {
             type: 'Block',
-            value: 'A',
+            value: '[A]',
           },
           elseAction: {
             type: 'Block',
-            value: 'B',
+            value: '[B]',
           },
         },
       },
@@ -210,11 +210,11 @@ describe('parseIfCommand', () => {
           condition: 'B',
           thenAction: {
             type: 'Block',
-            value: 'X',
+            value: '[X]',
           },
           elseAction: {
             type: 'Block',
-            value: 'Y',
+            value: '[Y]',
           },
         },
       },

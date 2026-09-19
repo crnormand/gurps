@@ -204,7 +204,11 @@ export namespace IfParser {
       this.skipWhitespace()
 
       if (!negated && this.matchesOutcomeLookahead()) {
-        return this.parseOutcomeIfTail(condition)
+        const node = this.parseOutcomeIfTail(condition)
+
+        node.text = this.input.slice(conditionStart, this.pos)
+
+        return node
       }
 
       const node = this.parseSimpleIfTail(negated, condition)
@@ -272,9 +276,13 @@ export namespace IfParser {
       }
 
       if (this.peek() === '[') {
+        /**
+         * This is a special case for bracketed content -- we include the surrounding brackets in the value to tell
+         * GGA that this is an OTF to be parsed and executed.
+         */
         const node = {
           type: 'Block' as const,
-          value: this.consumeBracketContent(),
+          value: `[${this.consumeBracketContent()}]`,
           text: this.input.slice(actionStart, this.pos),
         }
 

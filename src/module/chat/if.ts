@@ -3,6 +3,9 @@ import { OtfActionType } from '@module/otf/types.js'
 
 import ChatProcessor from './chat-processor.js'
 import { IfParser } from './dsl-parser/if-parser.js'
+import { ParseError } from './dsl-parser/parser-helpers.ts'
+
+class RollCancelError extends Error {}
 
 export class IfChatProcessor extends ChatProcessor {
   override help(): string {
@@ -21,9 +24,17 @@ export class IfChatProcessor extends ChatProcessor {
       const result = await IfParser.visit(block, this.resolveCondition.bind(this))
 
       await this.handleResult(result)
+      // Catch RollCancelError separately to avoid showing an error notification.
     } catch (error) {
-      console.error('Error processing if block:', error)
-      ui.notifications?.warn(`${game.i18n?.localize('GURPS.chatUnrecognizedFormat')} '${line}'`)
+      if (error instanceof RollCancelError) {
+        console.log('Roll canceled:', error)
+      } else if (error instanceof ParseError) {
+        console.error('Parser error processing if block:', error)
+        ui.notifications?.warn(`${game.i18n?.localize('GURPS.chatUnrecognizedFormat')} '${line}'`)
+      } else {
+        console.error('Error processing if block:', error)
+        ui.notifications?.warn('Unknown error processing if block: ' + line)
+      }
     }
   }
 
@@ -96,7 +107,7 @@ export class IfChatProcessor extends ChatProcessor {
 
     if (GURPS.stopActions) {
       GURPS.stopActions = false
-      throw new Error('Stop actions after dialog canceled')
+      throw new RollCancelError('Stop actions after dialog canceled')
     }
 
     return pass
