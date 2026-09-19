@@ -67,8 +67,8 @@ declare global {
     rangeObject: GurpsRange
 
     Maneuvers: {
-      get(id: string): { icon?: string } | undefined
-      getAll(): Record<string, { id: string; icon: string; label: string }>
+      get(id: string): { img?: string } | undefined
+      getAll(): Record<string, { id: string; img: string; label: string }>
     }
 
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
