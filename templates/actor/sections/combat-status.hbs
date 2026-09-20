@@ -11,7 +11,7 @@
             {{/with}}
           </summary>
           <div class='popup square5x4'>
-            {{#each (listAllManeuvers) as |this key|}}
+            {{#each (listAllManeuvers system.conditions.maneuver) as |this key|}}
               <img class='button' src='{{img}}' title='{{localize label}}' alt='{{key}}' />
             {{/each}}
           </div>

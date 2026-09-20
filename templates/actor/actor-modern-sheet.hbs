@@ -60,7 +60,7 @@
           {{/with}}
         </div>
         <div class='ms-maneuver-options'>
-          {{#each (listAllManeuvers) as |this key|}}
+          {{#each (listAllManeuvers system.conditions.maneuver) as |this key|}}
           <div class='ms-maneuver-option' data-value='{{key}}'>
             <span>{{localize this.label}}</span>
             <img src='{{this.img}}' />
