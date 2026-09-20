@@ -36,7 +36,7 @@ import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } f
 import { ActorImporter } from './actor-importer.js'
 import { collectDeletions } from './deletion.js'
 import { cleanTags, getRangedModifier, getSizeModifier } from './effect-modifier-popout.js'
-import { fractionOfMove } from './move.js'
+import { currentMove, fractionOfMove } from './move.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -785,18 +785,16 @@ export class GurpsActor extends Actor {
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
       const level0 = encs[zeroFill(0)] // if there are encumbrances, there will always be a level0
-      let effectiveMove = parseInt(level0.move)
+      const basicMove = parseInt(level0.move)
       let effectiveDodge = isNaN(parseInt(level0.dodge)) ? '–' : parseInt(level0.dodge) + data.currentdodge
       let effectiveSprint = this._getSprintMove()
 
       if (isReeling) {
-        effectiveMove = Math.ceil(effectiveMove / 2)
         effectiveDodge = isNaN(effectiveDodge) ? '–' : Math.ceil(effectiveDodge / 2)
         effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
 
       if (isTired) {
-        effectiveMove = Math.ceil(effectiveMove / 2)
         effectiveDodge = isNaN(effectiveDodge) ? '–' : Math.ceil(effectiveDodge / 2)
         effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
@@ -807,7 +805,10 @@ export class GurpsActor extends Actor {
         let threshold = 10 - 2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         threshold /= 10 // JS likes to calculate 0.2*3 = 3.99999, but handles 2*3/10 fine.
 
-        enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
+        // Encumbrance takes its share of Basic Move before reeling and fatigue take theirs (B17).
+        const move = currentMove(basicMove, parseInt(enc.level), { reeling: isReeling, exhausted: isTired })
+
+        enc.currentmove = this._getCurrentMove(move, parseInt(enc.level))
         enc.currentdodge = isNaN(effectiveDodge) ? '–' : Math.max(1, effectiveDodge - parseInt(enc.level))
         enc.currentsprint = Math.max(enc.currentmove + 1, Math.floor(effectiveSprint * threshold))
         enc.currentmovedisplay = enc.currentmove
@@ -844,29 +845,25 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {number} move
-   * @param {number} threshold
+   * @param {number} move - Move already reduced for encumbrance, reeling and fatigue.
+   * @param {number} level - The encumbrance level `move` was reduced for.
    * @returns {number}
    */
-  _getCurrentMove(move, threshold) {
+  _getCurrentMove(move, level) {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
     } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = Combat.maneuverUpdatesMove() && inCombat
 
-    let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
-    let posture = this._getMoveAdjustedForPosture(move, threshold)
+    let maneuver = this._getMoveAdjustedForManeuver(move)
+    let posture = this._getMoveAdjustedForPosture(move)
 
-    if (threshold == 1.0) this.system.conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
-    return updateMove
-      ? maneuver.move < posture.move
-        ? maneuver.move
-        : posture.move
-      : Math.max(1, Math.floor(move * threshold))
+    if (level === 0) this.system.conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
+    return updateMove ? (maneuver.move < posture.move ? maneuver.move : posture.move) : Math.max(1, move)
   }
 
-  _getMoveAdjustedForManeuver(move, threshold) {
+  _getMoveAdjustedForManeuver(move) {
     let adjustment = null
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_MANEUVER)) {
@@ -874,17 +871,17 @@ export class GurpsActor extends Actor {
       let mv = GURPS.Maneuvers.get(this.system.conditions.maneuver)
       let reason = !!mv ? game.i18n.localize(mv.label) : ''
 
-      adjustment = this._adjustMove(move, threshold, value, reason)
+      adjustment = this._adjustMove(move, value, reason)
     }
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
+          move: Math.max(1, move),
           text: game.i18n.localize('GURPS.moveFull'),
         }
   }
 
-  _adjustMove(move, threshold, value, reason) {
+  _adjustMove(move, value, reason) {
     switch (value.toString()) {
       case MOVE_NONE:
         return {
@@ -914,20 +911,20 @@ export class GurpsActor extends Actor {
 
       case MOVE_ONETHIRD:
         return {
-          move: fractionOfMove(move * threshold, 1, 3),
+          move: fractionOfMove(move, 1, 3),
           text: '×1/3',
           //          text: game.i18n.format('GURPS.moveOneThird', { reason: reason }),
         }
 
       case MOVE_HALF:
         return {
-          move: fractionOfMove(move * threshold, 1, 2),
+          move: fractionOfMove(move, 1, 2),
           text: game.i18n.localize('GURPS.half'),
         }
 
       case MOVE_TWOTHIRDS:
         return {
-          move: fractionOfMove(move * threshold, 2, 3),
+          move: fractionOfMove(move, 2, 3),
           text: '×2/3',
           //          text: game.i18n.format('GURPS.moveTwoThirds', { reason: reason }),
         }
@@ -936,19 +933,19 @@ export class GurpsActor extends Actor {
     return null
   }
 
-  _getMoveAdjustedForPosture(move, threshold) {
+  _getMoveAdjustedForPosture(move) {
     let adjustment = null
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)) {
       let value = foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)
       let reason = game.i18n.localize(GURPS.StatusEffect.lookup(this.system.conditions.posture).name)
-      adjustment = this._adjustMove(move, threshold, value, reason)
+      adjustment = this._adjustMove(move, value, reason)
     }
 
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
+          move: Math.max(1, move),
           text: game.i18n.localize('GURPS.moveFull'),
         }
   }

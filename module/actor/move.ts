@@ -19,3 +19,27 @@
 export function fractionOfMove(move: number, numerator: number, denominator: number): number {
   return Math.max(1, Math.floor((move * numerator) / denominator))
 }
+
+/** The conditions that halve Move: reeling from wounds (B380) and very tired (B426). */
+export interface MoveConditions {
+  reeling?: boolean
+  exhausted?: boolean
+}
+
+/**
+ * The Move a character has before any posture or maneuver limits it.
+ *
+ * The order is the books'. B17 defines Move as "your Basic Move modified for your encumbrance
+ * level," so encumbrance takes its share first, dropping the fraction it leaves per B9. B380 and
+ * B426 then halve "your Move" -- the score encumbrance has already made -- each rounding up, as
+ * both rules say in so many words.
+ *
+ * The encumbrance level is applied as tenths rather than as a ratio so that Light encumbrance
+ * leaves an exact 0.8 of Basic Move rather than a float a hair under or over it.
+ */
+export function currentMove(basicMove: number, encumbranceLevel: number, conditions: MoveConditions = {}): number {
+  let move = Math.floor((basicMove * (10 - 2 * encumbranceLevel)) / 10)
+  if (conditions.reeling) move = Math.ceil(move / 2)
+  if (conditions.exhausted) move = Math.ceil(move / 2)
+  return move
+}

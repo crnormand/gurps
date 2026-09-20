@@ -1,4 +1,4 @@
-import { fractionOfMove } from '../module/actor/move.js'
+import { currentMove, fractionOfMove } from '../module/actor/move.js'
 
 /**
  * B9 sets the default: when math decides "what a character can do," fractions round *down*, and
@@ -33,5 +33,42 @@ describe('fractionOfMove', () => {
   // B387: "You can *always* move at least one hex per turn, no matter how severe the penalties."
   it('leaves a kneeling Move 2 character 1 yard rather than none', () => {
     expect(fractionOfMove(2, 1, 3)).toBe(1)
+  })
+})
+
+/**
+ * The order these reductions apply in is fixed by the books' own definitions. B17 defines Move as
+ * "your Basic Move modified for your encumbrance level" -- encumbrance is part of what makes the
+ * Move score, and B9 drops the fraction it leaves. B380 and B426 then say to halve "your Move,"
+ * meaning the score you already have, so the conditions come second.
+ *
+ * Both conditions round *up*: B380 says "Halve your Basic Speed and Move (round up)" and B426 says
+ * "Halve your Move, Dodge, and ST (round *up*)." Those are the explicit exceptions B9 anticipates.
+ */
+describe('currentMove', () => {
+  it('reduces Basic Move to 0.8 of itself under Light encumbrance', () => {
+    expect(currentMove(10, 1)).toBe(8)
+  })
+
+  it('drops the fraction encumbrance leaves', () => {
+    expect(currentMove(14, 1)).toBe(11)
+  })
+
+  it('halves the Move of a reeling character, rounding up', () => {
+    expect(currentMove(5, 0, { reeling: true })).toBe(3)
+  })
+
+  it('halves the Move of a very tired character, rounding up', () => {
+    expect(currentMove(5, 0, { exhausted: true })).toBe(3)
+  })
+
+  test('the character is both reeling and very tired', () => {
+    expect(currentMove(5, 0, { reeling: true, exhausted: true })).toBe(2)
+  })
+
+  // Basic Move 14 under Light encumbrance is 11, which reeling halves to 6. Halving first gives 7,
+  // and encumbrance then cuts that to 5.
+  test('a reeling character under Light encumbrance', () => {
+    expect(currentMove(14, 1, { reeling: true })).toBe(6)
   })
 })
