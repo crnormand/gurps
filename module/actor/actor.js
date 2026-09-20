@@ -36,6 +36,7 @@ import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } f
 import { ActorImporter } from './actor-importer.js'
 import { collectDeletions } from './deletion.js'
 import { cleanTags, getRangedModifier, getSizeModifier } from './effect-modifier-popout.js'
+import { fractionOfMove } from './move.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -913,20 +914,20 @@ export class GurpsActor extends Actor {
 
       case MOVE_ONETHIRD:
         return {
-          move: Math.max(1, Math.ceil((move / 3) * threshold)),
+          move: fractionOfMove(move * threshold, 1, 3),
           text: '×1/3',
           //          text: game.i18n.format('GURPS.moveOneThird', { reason: reason }),
         }
 
       case MOVE_HALF:
         return {
-          move: Math.max(1, Math.ceil((move / 2) * threshold)),
+          move: fractionOfMove(move * threshold, 1, 2),
           text: game.i18n.localize('GURPS.half'),
         }
 
       case MOVE_TWOTHIRDS:
         return {
-          move: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
+          move: fractionOfMove(move * threshold, 2, 3),
           text: '×2/3',
           //          text: game.i18n.format('GURPS.moveTwoThirds', { reason: reason }),
         }

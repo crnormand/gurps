@@ -15,6 +15,7 @@
 - Cannot create a Compendium with a name that is non-ASCII \#2923
 - Character Sheet Item has " - " suffix \#2931
 - Compendium Packs / Import Equipment Library / Skill Level is populating as S:"["object Object]\*[] \#2942
+- A posture or maneuver that allows a fraction of Move rounded that fraction up. A crouching Move 5 character now moves 3 yards, not 4 (B9, B551, B387).
 
 ## Release 0.18.23 08/29/2026
 
