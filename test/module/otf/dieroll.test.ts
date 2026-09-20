@@ -1,7 +1,72 @@
-import { calcFailure, calcFinalTarget, calculateMessageMode, detectCriticals } from '@module/otf/dieroll.js'
+import { ActionType } from '@module/action/types.js'
+import {
+  calcFailure,
+  calcFinalTarget,
+  calculateMessageMode,
+  detectCriticals,
+  getTargetedRollChatData,
+} from '@module/otf/dieroll.js'
+import { OtfActionType } from '@module/otf/types.js'
 import { MessageMode } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+
+describe('getTargetedRollChatData', () => {
+  const makeRoll = (total: number) =>
+    ({
+      total,
+      isLoaded: false,
+      dice: [{ results: [{ result: total }, { result: 1 }] }],
+    }) as any
+
+  test.each([
+    [15, 18, false, 3, false, false, '+3 margin for Test target', OtfActionType.attack],
+    [5, 15, true, 10, false, false, '+10 margin for Test target', OtfActionType.attack],
+    [17, 15, false, -2, true, true, '-2 margin for Test target', OtfActionType.attack],
+    [12, 16, false, 4, false, false, '+4 margin for Test target', OtfActionType.skillSpell],
+  ])(
+    'builds chat data for roll=%s target=%s',
+    (rtotal, finaltarget, isCritSuccess, margin, isCritFailure, failure, otf, actionType) => {
+      const action = {
+        type: actionType,
+        followon: actionType === OtfActionType.attack ? 'follow-up' : undefined,
+      } as any
+      const result = getTargetedRollChatData(makeRoll(rtotal), finaltarget, action, undefined, 'Test target')
+
+      expect(result.finaltarget).toBe(finaltarget)
+      expect(result.rtotal).toBe(rtotal)
+      expect(result.margin).toBe(margin)
+      expect(result.failure).toBe(failure)
+      expect(result.isCritSuccess).toBe(isCritSuccess)
+      expect(result.isCritFailure).toBe(isCritFailure)
+      expect(result.otf).toBe(otf)
+      expect(result.followon).toBe(actionType === OtfActionType.attack ? 'follow-up' : undefined)
+      expect(result.multiples).toHaveLength(1)
+    }
+  )
+
+  test('includes rof and recoil data for a ranged attack with a positive margin', () => {
+    const action = {
+      type: OtfActionType.attack,
+      shots: 4,
+      followon: 'follow-up',
+    } as any
+
+    const attack = {
+      isOfType: (type: string) => type === ActionType.RangedAttack,
+      recoilText: '2',
+      rofText: '4',
+    } as any
+
+    const result = getTargetedRollChatData(makeRoll(10), 15, action, attack, 'Test target')
+
+    expect(result.margin).toBe(5)
+    expect(result.rof).toBe('4')
+    expect(result.rcl).toBe('2')
+    expect(result.rofrcl).toBe(3)
+    expect(result.followon).toBe('follow-up')
+  })
+})
 
 describe('calculateMessageMode', () => {
   const originalGame = (globalThis as any).game
