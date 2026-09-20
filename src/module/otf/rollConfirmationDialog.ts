@@ -25,6 +25,16 @@ interface DieRollConfirmationData {
   attack?: MeleeAttackModel | RangedAttackModel
 }
 
+interface SimpleDieRollConfirmationData {
+  type: 'simpleRoll'
+  messages: string[]
+  action: OtfRollAction
+  actor?: Actor.Implementation | null
+  token?: Token | null
+  formula: string
+  name: string
+  messageMode: MessageMode
+}
 interface DamageRollConfirmationData {
   type: 'damage'
   messages: string[]
@@ -35,7 +45,7 @@ interface DamageRollConfirmationData {
   messageMode: MessageMode
 }
 
-type RollConfirmationData = DieRollConfirmationData | DamageRollConfirmationData
+export type RollConfirmationData = DieRollConfirmationData | DamageRollConfirmationData | SimpleDieRollConfirmationData
 
 namespace RollConfirmationDialog {
   export interface RollRenderContext extends foundry.applications.api.ApplicationV2.RenderContext {
@@ -147,6 +157,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         options.parts = ['roll', 'footer']
         break
       case 'damage':
+      case 'simpleRoll':
         options.parts = ['damage', 'footer']
         break
     }
@@ -377,7 +388,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
           // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
         ],
       }
-    } else {
+    } else if (this._data.type === 'damage'){
       const action = this._data.action
       const displayFormula = this._data.displayFormula
       const damageType = GURPS.DamageTables.translate(action.damagetype)
@@ -442,6 +453,42 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         ],
       }
     }
+    else
+    {
+      const displayFormula = this._data.formula
+      const usingDiceAdd = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
+
+      return {
+        type: 'damage',
+        messages: this._data.messages,
+        isVideo,
+        tokenImage,
+        tokenName,
+        damageRoll: displayFormula,
+        originalFormula: displayFormula,
+        usingDiceAdd,
+        targetRoll: this._data.name,
+        useMinDamage: false,
+        bucketRoll: '',
+        bucketRollColor: '',
+        buttons: [
+          {
+            type: 'submit',
+            icon: this._data.messageMode.isBlind ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
+            label: this._data.messageMode.isBlind ? 'GURPS.blindRoll' : 'GURPS.roll',
+            default: true,
+            action: 'roll',
+          },
+          {
+            type: 'submit',
+            icon: 'fa-solid fa-xmark',
+            label: 'GURPS.cancel',
+            action: 'cancel',
+          },
+          // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
+        ],
+      }    
+    }  
   }
 
   static async #onRollButton(this: RollConfirmationDialog, event: PointerEvent, _target: HTMLElement): Promise<void> {

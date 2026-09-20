@@ -14,7 +14,7 @@ import { TokenActions } from '../token-actions.js'
 import { ActionFuncContext } from './actionFuncs.js'
 import { CanRollResult, canRoll } from './canRoll.js'
 import { applyModifierDescription } from './description-utilities.js'
-import { RollConfirmationDialog } from './rollConfirmationDialog.js'
+import { RollConfirmationData, RollConfirmationDialog } from './rollConfirmationDialog.js'
 
 export function setLastTargetedRoll(
   chatdata: any,
@@ -180,20 +180,34 @@ export async function doRoll({
     const itemId = targetData.fromItem || targetData.itemId
     const item = actor.items.get(itemId ?? '')
 
-    const rollApproved = await RollConfirmationDialog.wait({
-      type: 'roll',
-      messages,
-      action,
-      actor,
-      token,
-      item,
-      origTarget: origtarget,
-      formula,
-      canRollResult: result,
-      name: targetData.name,
-      attack: attack,
-      messageMode,
-    })
+    const isSimpleRoll = ([OtfActionType.roll, OtfActionType.derivedRoll] as OtfActionType[]).includes(action.type)
+    const dialogData: RollConfirmationData = isSimpleRoll
+      ? {
+          type: 'simpleRoll',
+          messages,
+          action,
+          actor,
+          token,
+          formula,
+          name: targetData.name,
+          messageMode,
+        }
+      : {
+          type: 'roll',
+          messages,
+          action,
+          actor,
+          token,
+          item,
+          origTarget: origtarget,
+          formula,
+          canRollResult: result,
+          name: targetData.name,
+          attack: attack,
+          messageMode,
+        }
+
+    const rollApproved = await RollConfirmationDialog.wait(dialogData)
 
     if (rollApproved) {
       GURPS.stopActions = false
@@ -311,7 +325,9 @@ async function _doRoll({
 
   const multiples: { rtotal: number; loaded: boolean; rolls: string }[] = [] // The roll results (to display the individual dice rolls)
 
-  const chatdata: RollChatData = {
+  const { modifier, maxtarget } = await calcModifierAndApplyCosts(targetmods, actor)
+
+  let chatdata: RollChatData = {
     prefix: prefix.trim(),
     chatthing: chatthing,
     thing: thing,
@@ -321,91 +337,36 @@ async function _doRoll({
     multiples,
     isBlind: false,
     optlabel: action.overridetxt ? [action.overridetxt] : [],
+    modifier,
   }
 
   if (action.desc && !action.mod) {
     chatdata.optlabel.unshift(action.desc)
   }
 
-  const { modifier, maxtarget } = await calcModifierAndApplyCosts(targetmods, actor)
-
   let roll = null // Will be the Roll
 
   if (isTargeted) {
     // This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
     const finaltarget = calcFinalTarget(origtarget, modifier, maxtarget)
-
-    if (thing) {
-      const flav = stripBracketContents(thing) // Flavor text cannot handle internal []
-
-      formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
-    }
-
-    roll = Roll.create(formula) as GurpsRoll // The formula will always be "3d6" for a "targetted" roll
-
-    await roll.evaluate()
-    const rtotal = roll.total!
-
-    chatdata.showPlus = true
-    chatdata.rtotal = rtotal
-    chatdata.loaded = !!roll.isLoaded
-    chatdata.rolls = roll.dice[0] ? roll.dice[0].results.map(it => it.result.toString()).join(',') : ''
-    chatdata.modifier = modifier
-    chatdata.finaltarget = finaltarget
+    const flavoredFormula = addFlavorTextToFormula(thing, formula)
 
     // Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
-    const margin = calcMargin(finaltarget, rtotal)
-    const { seventeen, failure } = calcFailure(rtotal, margin)
-    const { isCritSuccess, isCritFailure } = detectCriticals(rtotal, finaltarget)
+    roll = await createAndEvaluateRoll(flavoredFormula)
 
-    chatdata.isCritSuccess = isCritSuccess
-    chatdata.isCritFailure = isCritFailure
-    chatdata.margin = margin
-    chatdata.failure = failure
-    chatdata.seventeen = seventeen
-    chatdata.isDraggable = !seventeen && margin != 0
-    chatdata.otf = (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing
-    chatdata.followon = action.type === OtfActionType.attack ? action.followon : undefined
+    const targedtedRollData = getTargetedRollChatData(roll, finaltarget, action, attack, thing)
 
-    // If the attached obj has Recoil information, do the additional math.
-    if (margin > 0 && action.type === OtfActionType.attack && attack?.isOfType(ActionType.RangedAttack)) {
-      /** @type {import('../../rules/combat/ranged/missile-weapon-attacks.js').WeaponDescriptor} */
-      const weapon = { recoil: attack.recoilText, rateOfFire: attack.rofText }
-      const potentialHits = MissileWeaponAttacks.computePotentialHits(weapon, action.shots, margin)
+    chatdata = { ...chatdata, ...targedtedRollData }
 
-      chatdata.rof = potentialHits.rateOfFire
-      chatdata.rcl = potentialHits.recoil
-      chatdata.rofrcl = potentialHits.potentialHits
-    }
-
-    const obj = attack ?? item?.system
-
-    //detecting DiceSoNice module via custom property of the game object
-    if ((game as any).dice3d && !(game as any).dice3d.messageHookDisabled) {
-      // save for after roll animation is complete
-      if (failure && obj?.failotf) GURPS.modules.Otf.pendingOTFs.unshift(obj.failotf)
-      if (!failure && obj?.passotf) GURPS.modules.Otf.pendingOTFs.unshift(obj.passotf)
-    } else {
-      if (failure && obj?.failotf) GURPS.modules.Otf.executeOTF(obj.failotf, false, context, null)
-      if (!failure && obj?.passotf) GURPS.modules.Otf.executeOTF(obj.passotf as string, false, context, null)
-    }
-
-    const result = {
-      rtotal: rtotal,
-      loaded: !!roll.isLoaded,
-      rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : '',
-    }
-
-    multiples.push(result)
+    executePassFailOtfs(attack, item, targedtedRollData.failure, context)
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
 
-    let min = 0
+    const min = formula.slice(-1) === '!' ? 1 : 0
 
-    if (formula.slice(-1) === '!') {
+    if (min === 1) {
       formula = formula.slice(0, -1)
-      min = 1
     }
 
     const max = +context?.data?.repeat || 1
@@ -413,8 +374,7 @@ async function _doRoll({
     if (max > 1) chatdata['chatthing'] = 'x' + max
 
     for (let i = 0; i < max; i++) {
-      roll = Roll.create(formula + `+${modifier}`) as GurpsRoll
-      await roll.evaluate()
+      roll = await createAndEvaluateRoll(formula + `+${modifier}`)
 
       let rtotal = roll.total!
 
@@ -431,8 +391,6 @@ async function _doRoll({
 
       multiples.push(result)
     }
-
-    chatdata.modifier = modifier
   }
 
   if (isTargeted) setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
@@ -460,7 +418,7 @@ async function _doRoll({
     content: message,
     rolls: [roll],
     sound: CONFIG.sounds.dice,
-    //whisper has no functionality for blind rolls, so wey do we pass that?
+    //whisper has no functionality for blind rolls, so why do we pass that?
     whisper: context?.shiftKey
       ? game.user?.id
       : messageMode.isBlind
@@ -501,6 +459,89 @@ async function _doRoll({
   }
 
   return !chatdata.failure
+}
+
+export function getTargetedRollChatData(
+  roll: GurpsRoll,
+  finaltarget: number,
+  action: OtfRollAction,
+  attack?: MeleeAttackModel | RangedAttackModel,
+  thing?: string
+) {
+  const rtotal = roll.total!
+  const margin = calcMargin(finaltarget, rtotal)
+  const { seventeen, failure } = calcFailure(rtotal, margin)
+  const { isCritSuccess, isCritFailure } = detectCriticals(rtotal, finaltarget)
+  // If the attached obj has Recoil information, do the additional math.
+  const { rof, rcl, rofrcl } = calculateRofHits(margin, action, attack)
+
+  const multiples = []
+  const result = {
+    rtotal: rtotal,
+    loaded: !!roll.isLoaded,
+    rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : '',
+  }
+
+  multiples.push(result)
+
+  return {
+    showPlus: true,
+    rtotal,
+    loaded: !!roll.isLoaded,
+    rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result.toString()).join(',') : '',
+    finaltarget,
+    isCritSuccess,
+    isCritFailure,
+    margin,
+    failure,
+    seventeen,
+    isDraggable: !failure,
+    otf: (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing,
+    followon: action.type === OtfActionType.attack ? action.followon : undefined,
+    rof,
+    rcl,
+    rofrcl,
+    multiples,
+  }
+}
+
+function addFlavorTextToFormula(thing: string, formula: string) {
+  let newFormula = formula
+
+  if (thing) {
+    const flav = stripBracketContents(thing) // Flavor text cannot handle internal []
+
+    newFormula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
+  }
+
+  return newFormula
+}
+
+async function createAndEvaluateRoll(formula: string) {
+  const roll = Roll.create(formula) as GurpsRoll // The formula will always be "3d6" for a "targetted" roll
+
+  await roll.evaluate()
+
+  return roll
+}
+
+function executePassFailOtfs(
+  attack: MeleeAttackModel | RangedAttackModel | undefined,
+  item: Item.Implementation | undefined,
+  failure: boolean,
+  context: ActionFuncContext | null | undefined
+) {
+  const obj = attack ?? item?.system
+
+  //detecting DiceSoNice module via custom property of the game object
+  if ((game as any).dice3d && !(game as any).dice3d.messageHookDisabled) {
+    // save for after roll animation is complete
+    if (failure && obj?.failotf) GURPS.modules.Otf.pendingOTFs.unshift(obj.failotf)
+    if (!failure && obj?.passotf) GURPS.modules.Otf.pendingOTFs.unshift(obj.passotf)
+  } else {
+    if (failure && obj?.failotf) GURPS.modules.Otf.executeOTF(obj.failotf, false, context, null)
+    if (!failure && obj?.passotf) GURPS.modules.Otf.executeOTF(obj.passotf as string, false, context, null)
+  }
 }
 
 export function calcFailure(rtotal: number, margin: number) {
@@ -544,3 +585,16 @@ export function detectCriticals(rtotal: number, finaltarget: number) {
   return { isCritSuccess, isCritFailure }
 }
 
+function calculateRofHits(
+  margin: number,
+  action: OtfRollAction,
+  attack?: MeleeAttackModel | RangedAttackModel
+): { rof?: string; rcl?: string; rofrcl?: number } {
+  if (margin > 0 && action.type === OtfActionType.attack && attack?.isOfType(ActionType.RangedAttack)) {
+    /** @type {import('../../rules/combat/ranged/missile-weapon-attacks.js').WeaponDescriptor} */
+    const weapon = { recoil: attack.recoilText, rateOfFire: attack.rofText }
+    const potentialHits = MissileWeaponAttacks.computePotentialHits(weapon, action.shots, margin)
+
+    return { rof: potentialHits.rateOfFire, rcl: potentialHits.recoil, rofrcl: potentialHits.potentialHits }
+  } else return {}
+}
