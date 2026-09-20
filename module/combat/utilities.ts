@@ -7,4 +7,18 @@ function calculateRoFModifier(rof: number): number {
   return Math.floor(rof / 100) + 6
 }
 
-export { calculateRoFModifier }
+/**
+ * Whether the actor has a combatant in the encounter currently being tracked.
+ *
+ * `game.combat` throws rather than returning undefined while the game is still starting up, hence
+ * the try/catch: an actor prepared that early is in no encounter.
+ */
+function isActorInCombat(actorId: string): boolean {
+  try {
+    return !!game.combat?.combatants.some(c => c.actorId === actorId)
+  } catch (err) {
+    return false
+  }
+}
+
+export { calculateRoFModifier, isActorInCombat }
