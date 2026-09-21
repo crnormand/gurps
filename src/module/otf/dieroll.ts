@@ -277,6 +277,7 @@ type RollChatData = {
   optlabel: string[]
   multiples: { rtotal: number; loaded: boolean; rolls: string }[]
   isBlind: boolean
+  roll?: GurpsRoll
 }
 
 /*
@@ -344,56 +345,28 @@ async function _doRoll({
     chatdata.optlabel.unshift(action.desc)
   }
 
-  let roll = null // Will be the Roll
-
   if (isTargeted) {
     // This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
     const finaltarget = calcFinalTarget(origtarget, modifier, maxtarget)
     const flavoredFormula = addFlavorTextToFormula(thing, formula)
 
     // Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
-    roll = await createAndEvaluateRoll(flavoredFormula)
+    const roll = await createAndEvaluateRoll(flavoredFormula)
 
     const targedtedRollData = getTargetedRollChatData(roll, finaltarget, action, attack, thing)
 
-    chatdata = { ...chatdata, ...targedtedRollData }
+    chatdata = { ...chatdata, ...targedtedRollData, roll: roll }
 
     executePassFailOtfs(attack, item, targedtedRollData.failure, context)
+    setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
 
-    const min = formula.slice(-1) === '!' ? 1 : 0
+    const simpleRollData = await handleSimpleRoll(formula, context, modifier)
 
-    if (min === 1) {
-      formula = formula.slice(0, -1)
-    }
-
-    const max = +context?.data?.repeat || 1
-
-    if (max > 1) chatdata['chatthing'] = 'x' + max
-
-    for (let i = 0; i < max; i++) {
-      roll = await createAndEvaluateRoll(formula + `+${modifier}`)
-
-      let rtotal = roll.total!
-
-      if (rtotal < min) {
-        rtotal = min
-      }
-
-      // ? if (rtotal == 1) thing = thing.replace('points', 'point')
-      const result = {
-        rtotal: rtotal,
-        loaded: roll.isLoaded,
-        rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : '',
-      }
-
-      multiples.push(result)
-    }
+    chatdata = { ...chatdata, ...simpleRollData }
   }
-
-  if (isTargeted) setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
 
   // For last, let's consume this action in Token
   const actorToken = canvas?.tokens?.placeables.find(token => token.id === speaker.token)
@@ -416,7 +389,7 @@ async function _doRoll({
     user: game.user?.id,
     speaker: speaker,
     content: message,
-    rolls: [roll],
+    rolls: [chatdata.roll],
     sound: CONFIG.sounds.dice,
     //whisper has no functionality for blind rolls, so why do we pass that?
     whisper: context?.shiftKey
@@ -505,6 +478,53 @@ export function getTargetedRollChatData(
   }
 }
 
+export const dieRoller = {
+  createAndEvaluateRoll,
+}
+
+export async function handleSimpleRoll(
+  formula: string,
+  context: ActionFuncContext | null | undefined,
+  modifier: number
+) {
+  const min = formula.slice(-1) === '!' ? 1 : 0
+
+  if (min === 1) {
+    formula = formula.slice(0, -1)
+  }
+
+  const max = +context?.data?.repeat || 1
+  const chatthing = max > 1 ? `x${max}` : ''
+
+  const multiples = []
+  let roll
+
+  for (let i = 0; i < max; i++) {
+    roll = await dieRoller.createAndEvaluateRoll(formula + `+${modifier}`)
+
+    let rtotal = roll.total!
+
+    if (rtotal < min) {
+      rtotal = min
+    }
+
+    // ? if (rtotal == 1) thing = thing.replace('points', 'point')
+    const result = {
+      rtotal: rtotal,
+      loaded: roll.isLoaded,
+      rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : '',
+    }
+
+    multiples.push(result)
+  }
+
+  return {
+    chatthing,
+    multiples,
+    roll,
+  }
+}
+
 function addFlavorTextToFormula(thing: string, formula: string) {
   let newFormula = formula
 
@@ -517,7 +537,7 @@ function addFlavorTextToFormula(thing: string, formula: string) {
   return newFormula
 }
 
-async function createAndEvaluateRoll(formula: string) {
+export async function createAndEvaluateRoll(formula: string) {
   const roll = Roll.create(formula) as GurpsRoll // The formula will always be "3d6" for a "targetted" roll
 
   await roll.evaluate()
