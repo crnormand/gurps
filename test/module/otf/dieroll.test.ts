@@ -1,10 +1,13 @@
 import { ActionType } from '@module/action/types.js'
+import { ActionFuncContext } from '@module/otf/actionFuncs.js'
+import * as dierollModule from '@module/otf/dieroll.js'
 import {
   calcFailure,
   calcFinalTarget,
   calculateMessageMode,
   detectCriticals,
   getTargetedRollChatData,
+  handleSimpleRoll,
 } from '@module/otf/dieroll.js'
 import { OtfActionType } from '@module/otf/types.js'
 import { MessageMode } from '@module/util/foundry-utils.js'
@@ -65,6 +68,48 @@ describe('getTargetedRollChatData', () => {
     expect(result.rcl).toBe('2')
     expect(result.rofrcl).toBe(3)
     expect(result.followon).toBe('follow-up')
+  })
+})
+
+describe('handleSimpleRoll', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  test('repeats a simple roll, strips the exclamation point, and floors results at 1', async () => {
+    const createAndEvaluateRollSpy = vi.spyOn(dierollModule.dieRoller, 'createAndEvaluateRoll')
+
+    createAndEvaluateRollSpy
+      .mockResolvedValueOnce({ total: 6, isLoaded: false, dice: [{ results: [{ result: 6 }] }] } as any)
+      .mockResolvedValueOnce({ total: 0, isLoaded: false, dice: [{ results: [{ result: 0 }] }] } as any)
+
+    const result = await handleSimpleRoll('1d6!', { data: { repeat: 2 } } as ActionFuncContext, 3)
+
+    expect(createAndEvaluateRollSpy).toHaveBeenCalledTimes(2)
+    expect(createAndEvaluateRollSpy).toHaveBeenNthCalledWith(1, '1d6+3')
+    expect(createAndEvaluateRollSpy).toHaveBeenNthCalledWith(2, '1d6+3')
+    expect(result.chatthing).toBe('x2')
+    expect(result.multiples).toEqual([
+      { rtotal: 6, loaded: false, rolls: '6' },
+      { rtotal: 1, loaded: false, rolls: '0' },
+    ])
+  })
+
+  test('does not floor low results when no exclamation mark is present', async () => {
+    const createAndEvaluateRollSpy = vi.spyOn(dierollModule.dieRoller, 'createAndEvaluateRoll')
+
+    createAndEvaluateRollSpy.mockResolvedValueOnce({
+      total: 0,
+      isLoaded: false,
+      dice: [{ results: [{ result: 0 }] }],
+    } as any)
+
+    const result = await handleSimpleRoll('2d6', { data: { repeat: 1 } } as ActionFuncContext, 2)
+
+    expect(createAndEvaluateRollSpy).toHaveBeenCalledTimes(1)
+    expect(createAndEvaluateRollSpy).toHaveBeenCalledWith('2d6+2')
+    expect(result.chatthing).toBe('')
+    expect(result.multiples).toEqual([{ rtotal: 0, loaded: false, rolls: '0' }])
   })
 })
 
