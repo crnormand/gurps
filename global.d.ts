@@ -3,6 +3,7 @@ import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
 import { GurpsActor } from './module/actor/actor.js'
 import { GurpsCombatant } from './module/combat/combatant.ts'
 import { GurpsItem } from './module/item.js'
+import { CombatOptionSettings } from './module/combat/combat-options.ts'
 import { GurpsToken } from './module/token/gurps-token.ts'
 import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from 'module/combat/types.ts'
 import { GurpsRange } from 'module/combat/ranges.js'
@@ -70,6 +71,8 @@ declare global {
       get(id: string): { icon?: string } | undefined
       getManeuver(id?: string): { img?: string; label?: string }
       getAll(): Record<string, { id: string; icon: string; label: string }>
+      getAllPossible(): Record<string, { id: string; img: string; label: string }>
+      getAllInPlay(): Record<string, { id: string; img: string; label: string }>
     }
 
     ApplyDamageDialog: new (actor: GurpsActor, damageData: DamageData[], options?: object) => Application
@@ -219,6 +222,7 @@ declare global {
     'gurps.combat.allow-roll-based-on-maneuver': RollBasedOnManeuverPolicy
     'gurps.combat.use-size-modifier-difference-in-melee': boolean
     'gurps.combat.initiative-formula': String
+    'gurps.combat.options': CombatOptionSettings
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.modify-dice-plus-adds': boolean
     'gurps.pdf.basicset': String

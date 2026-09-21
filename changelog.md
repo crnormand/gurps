@@ -8,6 +8,7 @@
 - Reorganize Combat settings under new Combat Settings menu.
 - Move Combat code into combat module.
 - Color Blind Adjustment \#2914.
+- Combat Settings: choose which maneuvers and Modifier Bucket options this world uses. A maneuver that is turned off is no longer offered in the Combat Tracker, Token HUD, character sheet or `/man`, and its modifiers leave the Modifier Bucket with it.
 
 ### Bugfixes
 
@@ -17,6 +18,8 @@
 - Compendium Packs / Import Equipment Library / Skill Level is populating as S:"["object Object]\*[] \#2942
 - A posture or maneuver that allows a fraction of Move rounded that fraction up. A crouching Move 5 character now moves 3 yards, not 4 (B9, B551, B387).
 - Reeling and fatigue halved Move before encumbrance reduced it. Encumbrance now goes first, as B17 defines Move (a Basic Move 14 character under Light encumbrance and reeling has Move 6, not 5).
+- "Maneuver Updates Move" applied a maneuver's and posture's Move limit to every actor whenever any encounter was running, not just the actors in it.
+- An actor became unopenable if it held a maneuver from a source book the GM had since switched off.
 
 ## Release 0.18.23 08/29/2026
 

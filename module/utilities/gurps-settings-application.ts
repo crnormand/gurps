@@ -13,6 +13,20 @@ type SettingEntry<Field extends foundry.data.fields.DataField> = {
 }
 
 /**
+ * The settings of one module that this dialog can edit. Anything not a Boolean, Number or DataField
+ * is rendered as a text input and written back as a string on save, so an Object or Array setting --
+ * which has a dialog of its own -- is left out rather than saved as "[object Object]".
+ */
+export function settingsForModule<T extends { id: string; type?: unknown }>(
+  module: string,
+  settings: Iterable<T>
+): T[] {
+  return Array.from(settings).filter(
+    setting => setting.id.startsWith(`gurps.${module}.`) && setting.type !== Object && setting.type !== Array
+  )
+}
+
+/**
  * GURPS Settings Application.
  *
  * This application is used to display and manage settings for a specific GURPS module. Settings are determined by the
@@ -74,10 +88,7 @@ export class GurpsSettingsApplication extends foundry.applications.api.Handlebar
   ): Promise<foundry.applications.api.ApplicationV2.RenderContext> {
     const context = await super._prepareContext(options)
 
-    const settings =
-      (Array.from(game.settings!.settings.values()).filter((settingEntry: any) =>
-        settingEntry.id.startsWith(`gurps.${this._module}.`)
-      ) as any) || []
+    const settings = settingsForModule(this._module, game.settings!.settings.values() as Iterable<any>)
 
     // @ts-expect-error: missing types
     const entries: SettingEntry[] = []
