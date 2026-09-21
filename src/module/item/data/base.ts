@@ -356,8 +356,15 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       if (internalOTF) bonus = internalOTF[1].trim()
 
       const parsedOTF = parselink(bonus)
+      let action: AnyObject | undefined = parsedOTF?.action
 
-      if (parsedOTF?.action) bonuses.push(parsedOTF.action)
+      if (action && 'mod' in action && typeof action.mod === 'string' && /^[+-]\d+$/.test(action.mod)) {
+        action = { ...action, mod: Number(action.mod) }
+      }
+
+      if (action) {
+        bonuses.push(action)
+      }
     }
 
     return bonuses
