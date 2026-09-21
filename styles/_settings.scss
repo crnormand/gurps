@@ -64,3 +64,89 @@
 .theme-dark .gga-settings .settings-list > div:nth-child(odd) {
   background-color: rgb(255, 255, 255, 5%);
 }
+
+// The combat options live below the module's plain settings, inside the same scrolling list.
+.gga .gga-combat-settings {
+  .settings-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+  }
+
+  fieldset > .hint {
+    margin: 0 0 0.5rem;
+    padding: 0;
+  }
+
+  fieldset {
+    margin: 0 0 0.5rem;
+  }
+
+  .gga-subhead {
+    margin: 0.5rem 0 0.25rem;
+    border-bottom: 1px solid var(--color-border-light-tertiary, rgba(0, 0, 0, 0.2));
+  }
+
+  .gga-option-row {
+    > label {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.15rem 0;
+      font-weight: normal;
+      cursor: pointer;
+    }
+
+    input[type='checkbox'] {
+      margin: 0;
+    }
+
+    .pdf-ref {
+      opacity: 0.6;
+      font-size: 0.85em;
+      white-space: nowrap;
+    }
+  }
+
+  .gga-maneuver-row > label {
+    grid-template-columns: auto auto 1fr;
+  }
+
+  .gga-maneuver-icon {
+    width: 1.4em;
+    height: 1.4em;
+    border: none;
+    flex: 0 0 auto;
+  }
+
+  .gga-option-note {
+    margin: 0 0 0.25rem 1.75rem;
+    font-size: 0.85em;
+    opacity: 0.7;
+  }
+
+  // Only shown on the rows On Target introduces, and only while it is turned off.
+  .gga-option-note-on-target {
+    display: none;
+    font-style: italic;
+    opacity: 1;
+    text-decoration: none;
+  }
+
+  .gga-option-row.needs-on-target .gga-option-note-on-target {
+    display: block;
+  }
+
+  // A row whose source is off keeps its stored state, so it is struck through rather than cleared.
+  .gga-option-row.needs-on-target {
+    > label {
+      cursor: default;
+    }
+
+    .gga-option-name,
+    .pdf-ref {
+      opacity: 0.4;
+      text-decoration: line-through;
+    }
+  }
+}
