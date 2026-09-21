@@ -138,6 +138,11 @@ section[data-application-part='resources'] {
         justify-content: center;
         width: 15px;
         height: 15px;
+        cursor: pointer;
+      }
+
+      .gcs-active-effect-menu-icon {
+        display: none;
       }
 
       img {
@@ -148,6 +153,16 @@ section[data-application-part='resources'] {
 
       &:hover {
         background-color: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
+
+        .gcs-active-effect-image {
+          display: none;
+        }
+
+        .gcs-active-effect-menu-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
     }
 
