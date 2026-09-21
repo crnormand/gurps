@@ -16,6 +16,7 @@
 - Cannot create a Compendium with a name that is non-ASCII \#2923
 - Character Sheet Item has " - " suffix \#2931
 - Compendium Packs / Import Equipment Library / Skill Level is populating as S:"["object Object]\*[] \#2942
+- "Maneuver Updates Move" applied a maneuver's and posture's Move limit to every actor whenever any encounter was running, not just the actors in it.
 - An actor became unopenable if it held a maneuver from a source book the GM had since switched off.
 
 ## Release 0.18.23 08/29/2026

@@ -12,6 +12,7 @@ import {
   zeroFill,
 } from '../../lib/utilities.js'
 import { Combat } from '../combat/index.js'
+import { isActorInCombat } from '../combat/utilities.js'
 import Maneuvers, {
   MOVE_HALF,
   MOVE_NONE,
@@ -848,11 +849,7 @@ export class GurpsActor extends Actor {
    * @returns {number}
    */
   _getCurrentMove(move, threshold) {
-    let inCombat = false
-    try {
-      inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
-    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
-    let updateMove = Combat.maneuverUpdatesMove() && inCombat
+    let updateMove = Combat.maneuverUpdatesMove() && isActorInCombat(this.id)
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
