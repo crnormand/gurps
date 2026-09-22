@@ -592,7 +592,7 @@ async function calcModifierAndApplyCosts(targetmods: Modifier[], actor: Actor.Im
 
   for (const mod of targetmods) {
     modifier += mod.modint
-    //this claculates maxTarget and applys costs to the actor
+    //this calculates maxTarget and applys costs to the actor
     maxtarget = (await applyModifierDescription(actor, mod.desc)) || maxtarget
   }
 

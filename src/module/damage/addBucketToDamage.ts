@@ -1,5 +1,16 @@
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
+type ParsedDamage = {
+  dice?: number
+  value?: number
+  add: number
+  damageType: string
+  armorDivisor?: string
+  hasMinDamage: boolean
+  multiplier?: string
+  costFormula?: string
+}
+
 /**
  * Recalculate the formula based on Modifier Bucket total.
  *
@@ -16,35 +27,62 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
  * * Everything: 4d+2! (2) cut *Costs 1FP
  *
  */
+
+function parseDamageFormula(formula: string): ParsedDamage {
+  const trimmed = formula.trim()
+
+  const costMatch = trimmed.match(/\*Costs(.+)$/)
+  const costFormula = costMatch?.[1] ?? undefined
+  const formulaBody = costMatch ? formula.slice(0, costMatch.index ?? 0).trim() : trimmed
+
+  const damageTypeMatch = formulaBody.match(/\s+([A-Za-z][A-Za-z0-9_-]*)\s*$/)
+  const damageType = damageTypeMatch?.[1] ?? ''
+
+  const armorDivisor = formulaBody.match(/\(([^)]+)\)/)?.[1] ?? undefined
+  const hasMinDamage = formulaBody.includes('!')
+  const multiplier = formulaBody.match(/(?:[xX*])(\d+(?:\.\d+)?)/)?.[1] ?? undefined
+
+  const diceMatch = formulaBody.match(/^(\d+)d/i)
+  const literalMatch = formulaBody.match(/^(\d+)(?!d)/)
+
+  const dice = diceMatch ? Number.parseInt(diceMatch[1], 10) : undefined
+  const value = !diceMatch && literalMatch ? Number.parseInt(literalMatch[1], 10) : undefined
+
+  const addMatch = formulaBody.match(/([+-]\d+)/)
+  const add = addMatch ? Number.parseInt(addMatch[1], 10) : 0
+
+  return {
+    dice,
+    value,
+    add,
+    damageType,
+    armorDivisor,
+    hasMinDamage,
+    multiplier,
+    costFormula,
+  }
+}
+
 export function addBucketToDamage(formula: string, addDamageType: boolean = true) {
   const bucketMod = GURPS.ModifierBucket.currentSum()
   const dicePlusAdds = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
- 
+
   return _addBucketToDamage(formula, addDamageType, dicePlusAdds, bucketMod)
 }
 
 export function _addBucketToDamage(formula: string, addDamageType: boolean, dicePlusAdds: boolean, bucketMod: number) {
-  let dice = undefined
-  let value = undefined
-
-  if (formula.match(/^(?<dice>\d+)d/)) {
-    dice = parseInt(formula.match(/^(?<dice>\d+)d/)?.groups?.dice ?? '')
-  } else if (formula.match(/^(?<number>\d+)/)) {
-    value = parseInt(formula.match(/^(?<number>\d+)/)?.groups?.number ?? '')
-  }
-
-  const add = parseInt(formula.match(/([+-]\d+)/)?.[1] ?? '0')
-  const damageType = formula.match(/\s(\w+)/)?.[1] ?? ''
-
-  const armorDivisor = formula.match(/(?<=\()\S+(?=\))/)?.[0]
-  const hasMinDamage = formula.includes('!')
-  const multiplier = formula.match(/(?<=[xX*])\d+(\.\d+)?/)?.[0] || ''
-  const costFormula = formula.match(/(?<=\*)\D.+/)?.[0] || ''
-
+  const parsed = parseDamageFormula(formula)
+  const { value, add } = parsed
   let newAdd = add + bucketMod
 
-  if (!dice && value) {
-    return `${value + newAdd} ${addDamageType ? damageType : ''}`.trim()
+  if (value !== undefined) {
+    return `${value + newAdd} ${addDamageType ? parsed.damageType : ''}`.trim()
+  }
+
+  let { dice } = parsed
+
+  if (!dice) {
+    return formula
   }
 
   if (dicePlusAdds && dice) {
@@ -60,16 +98,15 @@ export function _addBucketToDamage(formula: string, addDamageType: boolean, dice
   }
 
   const plus = newAdd > 0 ? '+' : ''
-  const addText = newAdd !== 0 ? newAdd : ''
-  const minDamageText = hasMinDamage ? '! ' : ''
-  const armorDivisorText = armorDivisor ? `(${armorDivisor})` : ''
-  const damageTypeText = addDamageType ? ` ${damageType}` : ''
-  const costFormulaText = costFormula ? ` *${costFormula}` : ''
-  const multiplierText = multiplier ? `*${multiplier}` : ''
+  const addText = newAdd !== 0 ? String(newAdd) : ''
+  const multiplierText = parsed.multiplier ? `x${parsed.multiplier}` : ''
+  const minDamageText = parsed.hasMinDamage ? '! ' : ''
+  const armorDivisorText = parsed.armorDivisor ? `(${parsed.armorDivisor})` : ''
+  const damageTypeText = addDamageType && parsed.damageType ? ` ${parsed.damageType}` : ''
+  const costFormulaText = parsed.costFormula ? ` *Costs${parsed.costFormula}` : ''
+
   const newDice =
     `${dice}d${plus}${addText}${multiplierText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
-
-  console.debug(`addBucketToDamage: ${formula} => ${newDice}`)
 
   return newDice
 }
