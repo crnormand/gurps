@@ -280,12 +280,6 @@ type RollChatData = {
   roll?: GurpsRoll
 }
 
-/*
-  This is the BIG method that does the roll and prepares the chat message.
-  unfortunately, it has a lot fo hard coded junk in it.
-  */
-// formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn',
-// target=skill level or -1=damage roll
 async function _doRoll({
   actor,
   formula,
@@ -321,11 +315,6 @@ async function _doRoll({
 
   const speaker = ChatMessage.getSpeaker({ actor: actor as Actor.Stored })
 
-  //check message mode again as modifier keys may have changed
-  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
-
-  const multiples: { rtotal: number; loaded: boolean; rolls: string }[] = [] // The roll results (to display the individual dice rolls)
-
   const { modifier, maxtarget } = await calcModifierAndApplyCosts(targetmods, actor)
 
   let chatdata: RollChatData = {
@@ -335,7 +324,7 @@ async function _doRoll({
     origtarget: origtarget,
     fromUser: fromUser?.id,
     targetmods,
-    multiples,
+    multiples: [],
     isBlind: false,
     optlabel: action.overridetxt ? [action.overridetxt] : [],
     modifier,
@@ -369,17 +358,47 @@ async function _doRoll({
   }
 
   // For last, let's consume this action in Token
-  const actorToken = canvas?.tokens?.placeables.find(token => token.id === speaker.token)
+  await consumeAction(speaker.token as string, action, chatthing, item, attack)
 
-  if (actorToken) {
-    const actions = await TokenActions.fromToken(actorToken)
-    const usingRapidStrike = GURPS.ModifierBucket.modifierStack.usingRapidStrike
-
-    await actions.consumeAction(action, chatthing, item, attack, usingRapidStrike)
-  }
+  //check message mode again as modifier keys may have changed
+  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
 
   chatdata.isBlind = messageMode.isBlind
 
+  await createRollChatMessage(chatdata, speaker, context, messageMode)
+
+  createAdditionalMeesageForTrueOrFalseText(isTargeted, action, actor, chatdata)
+
+  return !chatdata.failure
+}
+
+function createAdditionalMeesageForTrueOrFalseText(isTargeted: boolean, action: OtfRollAction, actor: Actor.Implementation | null, chatdata: RollChatData) {
+  if (isTargeted && (action.type === OtfActionType.attribute || action.type === OtfActionType.skillSpell)) {
+    const users = actor?.getOwners() ?? []
+    const ids = users.map(it => it.id)
+
+    if (!chatdata.failure && !!action.truetext) {
+      const messageData = {
+        whisper: ids,
+        content: action.truetext,
+      }
+
+      ChatMessage.create(messageData)
+    }
+
+    if (chatdata.failure && !!action.falsetext) {
+      const messageData = {
+        whisper: ids,
+        content: action.falsetext,
+      }
+
+      ChatMessage.create(messageData)
+    }
+  }
+}
+
+async function createRollChatMessage(chatdata: RollChatData, speaker: ChatMessage.SpeakerData, context: ActionFuncContext | null | undefined, messageMode: MessageMode) {
+  
   const message = await foundry.applications.handlebars.renderTemplate(
     'systems/gurps/templates/die-roll-chat-message.hbs',
     chatdata
@@ -408,30 +427,24 @@ async function _doRoll({
   // @ts-expect-error: Create Options for Chat Messages seems not to be properly typed
   ChatMessage.create(messageData, options)
 
-  if (isTargeted && (action.type === OtfActionType.attribute || action.type === OtfActionType.skillSpell)) {
-    const users = actor?.getOwners() ?? []
-    const ids = users.map(it => it.id)
+}
 
-    if (!chatdata.failure && !!action.truetext) {
-      const messageData = {
-        whisper: ids,
-        content: action.truetext,
-      }
+async function consumeAction(
+  tokenId: string,
+  action: OtfRollAction,
+  chatthing: string,
+  item?: Item.Implementation,
+  attack?: MeleeAttackModel | RangedAttackModel
+) {
+  const actorToken = canvas?.tokens?.placeables.find(token => token.id === tokenId)
 
-      ChatMessage.create(messageData)
-    }
+  if (actorToken) {
+    const actions = await TokenActions.fromToken(actorToken)
+    const usingRapidStrike = GURPS.ModifierBucket.modifierStack.usingRapidStrike
 
-    if (chatdata.failure && !!action.falsetext) {
-      const messageData = {
-        whisper: ids,
-        content: action.falsetext,
-      }
-
-      ChatMessage.create(messageData)
-    }
+    //todo: Refactor actions.consumeAction
+    await actions.consumeAction(action, chatthing, item, attack, usingRapidStrike)
   }
-
-  return !chatdata.failure
 }
 
 export function getTargetedRollChatData(
@@ -478,6 +491,7 @@ export function getTargetedRollChatData(
   }
 }
 
+//to make createAndEvaluateRoll mockable 
 export const dieRoller = {
   createAndEvaluateRoll,
 }
