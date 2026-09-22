@@ -345,7 +345,7 @@ declare global {
 
     /* ---------------------------------------- */
 
-    SetLastActor(actor: Actor.Implementation, tokenDocument?: TokenDocument.Implementation): void
+    SetLastActor(actor: Actor.Implementation | null, tokenDocument?: TokenDocument.Implementation): void
 
     /* ---------------------------------------- */
 
