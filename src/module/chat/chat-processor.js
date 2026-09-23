@@ -7,10 +7,10 @@ export default class ChatProcessor {
   /**
    * Override
    * @param {string} line - chat command
-   * @returns {RegExpMatchArray|null|undefined} true if this processor will handle this chat command
+   * @returns {boolean} true if this processor will handle this chat command
    */
-  matches() {
-    return null
+  matches(_line) {
+    return false
   }
 
   /**
