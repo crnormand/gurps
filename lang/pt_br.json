@@ -1097,9 +1097,22 @@
     "pass": "Sucesso",
     "pasteStatBlockHere": "Cole seu bloco de estatísticas aqui",
     "pdf": {
-      "settingsButton": "Configurações de PDF",
-      "settingsHint": "Configure como os PDFs são tratados.",
-      "settingsName": "PDFs"
+      "setting": {
+        "basicSet": {
+          "combined": "Módulo Básico Combinado ('B')",
+          "hint": "Selecione 'Combinado' ou 'Separado' e utilize os códigos de PDF associados quando for configurar o PDFoundry. Nota: Se você selecionar 'Separado', o PDF do Módulo Básico Campanhas deve abrir a partir da página 340 ao executar os testes do PDFoundry.",
+          "name": "PDF(s) do Módulo Básico",
+          "revised": "Básico Revisado ('B')",
+          "separate": "Separado (Personagens, 'B'; Campanhas, 'BX')"
+        },
+        "button": "Configurações de PDF",
+        "hint": "Configure como os PDFs são tratados.",
+        "name": "PDFs",
+        "openFirst": {
+          "hint": "Se marcado, o sistema vai abrir o primeiro PDF encontrado quando múltiplos PDFs forem informados. Se desmarcado, o sistema vai abrir todos os PDFs informados.",
+          "name": "Abrir o primeiro PDF encontrado"
+        }
+      }
     },
     "pdfCode": "Código do PDF",
     "pdfCodePlaceholder": "Código PDF: (ex. 'B' ou 'MA')",
@@ -1261,10 +1274,6 @@
     "settingApplyBasedOnTarget": "'Alvo'",
     "settingAutoAddTaggedModifiers": "Adicionar Automaticamente Modificadores Marcados",
     "settingAutoIgnoreQty": "Importar: Salvar automaticamente a Qtd/Contagem do Foundry",
-    "settingBasicPDFs": "PDF(s) do Módulo Básico",
-    "settingBasicPDFsCombined": "Módulo Básico Combinado ('B')",
-    "settingBasicPDFsRevised": "Básico Revisado ('B')",
-    "settingBasicPDFsSeparate": "Separado (Personagens, 'B'; Campanhas, 'BX')",
     "settingBlockImport": "Apenas jogadores CONFIÁVEIS podem Importar",
     "settingCalculateEnc": "Ator: Calcular Base de Carga",
     "settingCheckConditionalModifiers": "Verificar modificadores condicionais na ficha do ator",
@@ -1296,7 +1305,6 @@
     "settingHintAnnounceCriticalRolls": "Se marcado, o sistema anunciará, com animação e som, acertos e falhas críticas. Apenas para jogadores e rolagens não ocultas. Necessita do Sequencer instalado.",
     "settingHintAutoAddTaggedModifiers": "Se marcado, o sistema adicionará automaticamente os modificadores marcados à rolagem.",
     "settingHintAutoIgnoreQty": "Se marcada, esta opção vai configurar automaticamente a opção 'Salvar QTD/Contagem atual na importação' em um determinado equipamento quando o usuário mudar a QTD/Contagem (e vai exibir um pequeno ícone azul de arquivo). NOTA: Isto não detecta mudanças nos 'Usos'. Se você precisar se lembrar dos 'Usos' entre as importações, você precisa configurar manualmente isso no equipamento.",
-    "settingHintBasicPDFs": "Selecione 'Combinado' ou 'Separado' e utilize os códigos de PDF associados quando for configurar o PDFoundry. Nota: Se você selecionar 'Separado', o PDF do Módulo Básico Campanhas deve abrir a partir da página 340 ao executar os testes do PDFoundry.",
     "settingHintBlockImport": "Se marcado, o botão 'Importar' só será exibido na planilha de personagem caso o jogador em questão possuir o nível de permissão 'Confiável', 'Assistente' ou 'GameMaster'",
     "settingHintCalculateEnc": "Se marcado, o nível de Base de Carga será configurado automaticamente baseado no equipamento portado (e você não poderá modificar o nível de Base de Carga manualmente). Se desmarcado, você pode modificar o nível de Base de Carga clicando no nível desejado.",
     "settingHintCheckConditionalModifiers": "Se ativado, o sistema procurará modificadores condicionais na ficha do ator e os adicionará à janela pop-up de modificadores de efeito.",
@@ -1319,7 +1327,6 @@
     "settingHintImportIgnoreName": "Se marcado, o sistema vai ignorar o atributo 'nome' do Ator durante a importação. Isso é útil caso o nome que você utiliza no Foundry for diferente daquele que consta no GCA/GCS e se você não quiser ter que modificá-lo cada vez que fizer uma importação.",
     "settingHintModifyDicePlusAdds": "Se marcado, o sistema usará a regra opcional 'Modificar Dados + Adicionar' quando você adicionar modificadores de dano, conforme B269.",
     "settingHintMookGenerator": "Editar os valores iniciais do Gerador de Mook",
-    "settingHintPDFOpenFirst": "Se marcado, o sistema vai abrir o primeiro PDF encontrado quando múltiplos PDFs forem informados. Se desmarcado, o sistema vai abrir todos os PDFs informados.",
     "settingHintPlayerBlindRoll": "Se não estiver marcado, segurar a tecla SHIFT quando for fazer uma rolagem de dados resultará numa rolagem Oculta (só você pode ver, não importa quem você seja). Se marcado, quando os jogadores segurarem a tecla SHIFT eles farão uma Rolagem às Cegas (O MJ vê como uma Rolagem Oculta).",
     "settingHintPlayerChatPrivate": "Se marcado, a maioria dos comandos de chat (ex.: /hp, /fp, /qty, etc.) serão exibidas como sussurros para o jogador (ao invés de uma mensagem pública). Se você confia nos seus jogadores e não gosta de ver o chat repleto de comandos de chat, desative isto.",
     "settingHintPortraitHPTinting": "Exibir sobreposição de tonalidade vermelha em retratos de personagem baseado em perda de PV na planilha Moderna.",
@@ -1372,7 +1379,6 @@
     "settingNoEditAllowed": "Edição de Equipamento Não Permitida",
     "settingNoEquipAllowedHint": "Aviso: Você está tentando editar um equipamento que não está vinculado a um item do Foundry quando a configuração 'Usar Itens do Foundry para Equipamentos' está ativa. Por favor, reimporte a planilha de personagem para criar o item do Foundry para este ator.",
     "settingNoItemAllowedHint": "Aviso: Você está tentando editar um Item importado quando a configuração 'Usar Itens do Foundry para Equipamentos' está desativada. Por favor, reimporte a planilha de personagem para recriar o Equipamento para este ator.",
-    "settingPDFOpenFirst": "Abrir o primeiro PDF encontrado",
     "settingPlayerBlindRoll": "Permitir rolagens às cegas para os Jogadores",
     "settingPlayerChatPrivate": "Comandos privados no Chat de Jogadores",
     "settingPortraitHPTinting": "Tonalidade de PV do Retrato",

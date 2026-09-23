@@ -1097,9 +1097,22 @@
     "pass": "Superar",
     "pasteStatBlockHere": "Pega tu bloque de estadísticas aquí",
     "pdf": {
-      "settingsButton": "Ajustes de PDF",
-      "settingsHint": "Configura cómo se gestionan los PDFs.",
-      "settingsName": "PDFs"
+      "setting": {
+        "basicSet": {
+          "combined": "Manual Básico Combinado ('B')",
+          "hint": "Selecciona 'Combinado' o 'Separado' y usa los códigos PDF asociados al configurar PDFoundry. Nota: Si seleccionas 'Separado', el PDF de Campañas del Manual Básico debería abrirse en la página 340 durante la prueba de PDFoundry.",
+          "name": "PDF(s) del Manual Básico",
+          "revised": "Básico Revisado ('B')",
+          "separate": "Separado (Personajes, 'B'; Campañas, 'BX')"
+        },
+        "button": "Ajustes de PDF",
+        "hint": "Configura cómo se gestionan los PDFs.",
+        "name": "PDFs",
+        "openFirst": {
+          "hint": "Si está marcado, el sistema abrirá el primer PDF encontrado cuando se ingresen múltiples PDFs. Si no está marcado, el sistema abrirá todos los PDFs ingresados.",
+          "name": "Abrir el primer PDF encontrado"
+        }
+      }
     },
     "pdfCode": "Código de Libro PDF",
     "pdfCodePlaceholder": "Código PDF: (p.ej., 'B' o 'MA')",
@@ -1261,10 +1274,6 @@
     "settingApplyBasedOnTarget": "'Objetivo'",
     "settingAutoAddTaggedModifiers": "Añadir Automáticamente Modificadores con Etiqueta",
     "settingAutoIgnoreQty": "Importar: Guardar automáticamente Cantidad/Cuenta de Foundry",
-    "settingBasicPDFs": "PDF(s) del Manual Básico",
-    "settingBasicPDFsCombined": "Manual Básico Combinado ('B')",
-    "settingBasicPDFsRevised": "Básico Revisado ('B')",
-    "settingBasicPDFsSeparate": "Separado (Personajes, 'B'; Campañas, 'BX')",
     "settingBlockImport": "Solo jugadores de CONFIANZA pueden Importar",
     "settingCalculateEnc": "Personaje: Calcular Encumbramiento",
     "settingCheckConditionalModifiers": "Comprobar Modificadores Condicionales en la Hoja del Personaje",
@@ -1296,7 +1305,6 @@
     "settingHintAnnounceCriticalRolls": "Si está marcado, el sistema anunciará, con animación y sonido, los golpes y fallos críticos. Solo para jugadores y tiradas no ciegas. Requiere Sequencer instalado.",
     "settingHintAutoAddTaggedModifiers": "Si está marcado, el sistema añadirá automáticamente modificadores con etiqueta a la tirada.",
     "settingHintAutoIgnoreQty": "Si está marcado, esto establecerá automáticamente el indicador 'Guardar Cantidad/Cuenta actual en la importación' en un equipo cuando el usuario cambie la Cantidad/Cuenta (y mostrará el pequeño icono de archivo azul). NOTA: Esto no detecta cambios en 'Usos'. Si necesitas recordar los 'Usos' entre importaciones, deberás establecer manualmente el indicador para ese equipo.",
-    "settingHintBasicPDFs": "Selecciona 'Combinado' o 'Separado' y usa los códigos PDF asociados al configurar PDFoundry. Nota: Si seleccionas 'Separado', el PDF de Campañas del Manual Básico debería abrirse en la página 340 durante la prueba de PDFoundry.",
     "settingHintBlockImport": "Si está marcado, el botón 'Importar' solo se mostrará en la hoja de personaje si el nivel de permiso del jugador es 'De Confianza', 'Asistente' o 'GameMaster'",
     "settingHintCalculateEnc": "Si está marcado, el nivel de Encumbramiento se establecerá automáticamente según el equipo portado (y no podrás cambiar el nivel de Encumbramiento manualmente). Si está desactivado, puedes cambiar el nivel de Encumbramiento haciendo clic en el nuevo nivel.",
     "settingHintCheckConditionalModifiers": "Si está marcado, el sistema buscará Modificadores Condicionales en la Hoja del Personaje y los añadirá al Emergente de Modificadores de Efecto.",
@@ -1319,7 +1327,6 @@
     "settingHintImportIgnoreName": "Si está marcado, el sistema ignorará el atributo 'nombre' del Personaje durante las importaciones. Esto es útil si el nombre que usas en Foundry difiere de GCA/GCS y no quieres que se sobreescriba en cada importación.",
     "settingHintModifyDicePlusAdds": "Si está marcado, el sistema usará la regla opcional 'Modificar Dados + Añadidos' cuando añadas modificadores de cubo para tiradas de daño, según B269.",
     "settingHintMookGenerator": "Edita los valores iniciales del Generador de Secuaces",
-    "settingHintPDFOpenFirst": "Si está marcado, el sistema abrirá el primer PDF encontrado cuando se ingresen múltiples PDFs. Si no está marcado, el sistema abrirá todos los PDFs ingresados.",
     "settingHintPlayerBlindRoll": "Si no está marcado, mantener presionada la tecla SHIFT al hacer una tirada hará una tirada Personal (solo tú puedes verla, sin importar quién seas). Si está marcado, cuando los jugadores mantengan presionada la tecla SHIFT, hará una Tirada Ciega (los GMs aún obtienen una tirada Personal).",
     "settingHintPlayerChatPrivate": "Si está marcado, la mayoría de los comandos de chat (p.ej. /hp, /fp, /qty, etc.) se mostrarán como un susurro al jugador (en lugar de un mensaje Fuera de Personaje). Si confías en tus jugadores y no quieres ver el chat lleno de sus comandos de chat, activa esto.",
     "settingHintPortraitHPTinting": "Mostrar superposición de tinte rojo en los retratos de personajes según la pérdida de PG en la hoja Moderna.",
@@ -1372,7 +1379,6 @@
     "settingNoEditAllowed": "No se Permite Editar Equipo",
     "settingNoEquipAllowedHint": "Advertencia: Estás intentando editar un equipo que no está vinculado a un objeto de Foundry cuando el ajuste 'Usar Objetos de Foundry para Equipo' está activo. Por favor, reimporta la hoja de personaje para recrear el objeto de Foundry para este personaje.",
     "settingNoItemAllowedHint": "Advertencia: Estás intentando editar un Objeto importado cuando el ajuste 'Usar Objetos de Foundry para Equipo' está desactivado. Por favor, reimporta la hoja de personaje para recrear el Equipo para este personaje.",
-    "settingPDFOpenFirst": "Abrir el primer PDF encontrado",
     "settingPlayerBlindRoll": "Activar tiradas Ciegas para Jugadores",
     "settingPlayerChatPrivate": "Comandos de chat del jugador privados",
     "settingPortraitHPTinting": "Tinte de PG en Retrato",

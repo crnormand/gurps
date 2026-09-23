@@ -1,7 +1,6 @@
-import { getBasicSetPDFSetting, isOpenFirstPDFSetting } from './settings.js'
-import { createGurpsPDFSheetViewer } from './sheet.js'
+import { getBasicSetPDFSetting, isOpenFirstPDFSetting } from './settings.ts'
 
-export const SJGProductMappings = {
+export const SJGProductMappings: Record<string, string> = {
   ACT1: 'http://www.warehouse23.com/products/gurps-action-1-heroes',
   ACT3: 'http://www.warehouse23.com/products/gurps-action-3-furious-fists',
   B: 'http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns',
@@ -65,42 +64,90 @@ export const SJGProductMappings = {
   'DFRPG:E': 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
 }
 
-export function handleOnPdf(event) {
+export function handleOnPdf(event: MouseEvent): void {
   event.preventDefault()
   event.stopPropagation()
-  let pdf = event.currentTarget.dataset?.pdf || event.currentTarget.innerText
+
+  const target = event.currentTarget as (HTMLElement & { dataset?: DOMStringMap }) | null
+  const pdf = target?.dataset?.pdf || target?.innerText || ''
+
   handlePdf(pdf)
 }
 
-export function handlePdf(links) {
+export function handlePdf(links: string): void {
   // Just in case we get sent multiple links separated by commas, we will open them all
   // or just the first found, depending on SETTING_PDF_OPEN_FIRST
   let success = false
-  for (let link of links.split(',')) {
-    if (!!success && isOpenFirstPDFSetting()) continue
-    let t = link.trim()
-    let i = t.indexOf(':')
-    let book = ''
-    let page = 0
-    if (i > 0) {
-      // Special case for refs like "PU8:12" or "DFRPG:A12"
-      // First we need to check if after the colon is only numbers or has a letter
-      let afterColon = t.substring(i + 1).trim()
-      if (afterColon.match(/^[0-9]+$/)) {
-        book = t.substring(0, i).trim()
-        page = parseInt(afterColon)
-      } else {
-        let codeBefore = t.substring(0, i).trim() // e.g. "DFRPG"
-        let codeAfter = afterColon.replace(/[0-9]*/g, '').trim() // e.g. "A"
-        book = `${codeBefore}:${codeAfter}` // e.g. "DFRPG:A"
-        page = parseInt(afterColon.replace(/[a-zA-Z]*/g, '')) // e.g. 12
-      }
-    } else {
-      book = t.replace(/(.*?)[0-9].*/g, '$1').trim()
-      page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
+
+  for (const link of links.split(',')) {
+    if (success && isOpenFirstPDFSetting()) continue
+
+    let bookAndPage = extractBookAndPage(link)
+    if (!bookAndPage) {
+      ui.notifications?.warn("Unable to match book code '" + link + "'.")
+      continue
     }
+
+    const pdfPages = getPdfJournalPages()
+
+    // @ts-expect-error: page may not be recognized by TypeScript
+    const journalPage = pdfPages.length ? pdfPages.find(page => page.system.code === bookAndPage.book) : undefined
+
+    if (journalPage) {
+      const viewer = createGurpsPDFSheetViewer(journalPage, bookAndPage)
+      viewer.render({ force: true })
+      success = true
+    } else {
+      const url = GURPS.SJGProductMappings[bookAndPage.book ?? '']
+      if (url)
+        // url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
+        window.open(url, '_blank')
+      else ui.notifications?.warn("Unable to match book code '" + bookAndPage.book + "'.")
+    }
+  }
+}
+
+export type BookPageReference = {
+  book: string
+  page: number | null
+  pageLabel: string | null
+}
+
+/** Exported only for testing. */
+export function extractBookAndPage(link: string): null | BookPageReference {
+  if (!link) return null
+
+  const text = link.trim()
+
+  let book = null
+  let page: number | null = null
+  let pageLabel: string | null = null
+
+  if (text.includes(':')) {
+    // Special case for refs like "PU8:12" or "DFRPG:A12"
+    const [beforeColon, afterColon] = text.split(':', 2)
+
+    book = beforeColon.trim()
+    pageLabel = afterColon.trim()
+  } else {
+    // If there is no colon, we assume the format is like "B10" where the book is the first character(s) and the page is the number following it
+    let match = text.match(/^(?<book>[A-Za-z]+)(?<page>[0-9]+)$/)
+
+    if (match && match.groups) {
+      book = match.groups.book
+      pageLabel = match.groups.page
+    }
+  }
+
+  if (!book || !pageLabel) return null
+
+  // Only adjust page if it is a valid number string.
+  if (pageLabel && typeof pageLabel === 'string' && !isNaN(parseInt(pageLabel))) {
+    page = parseInt(pageLabel)
+    pageLabel = null
+
     // Special case for Separate Basic Set PDFs
-    let setting = getBasicSetPDFSetting()
+    const setting = getBasicSetPDFSetting()
 
     // Basic Revised and Basic Set PDFs have different page numbers, so we need to adjust the page number based on the setting
     const isBasicRevised = book === 'B' && setting === 'Revised'
@@ -118,26 +165,52 @@ export function handlePdf(links) {
         } else page -= 335
       }
     }
-
-    const pdfPages = []
-    game.journal.forEach(j => {
-      j.pages.forEach(p => {
-        if (p.type === 'pdf') pdfPages.push(p)
-      })
-    })
-    
-    let journalPage = null
-    if (pdfPages.length) journalPage = pdfPages.find(e => e.system.code === book)
-    if (journalPage) {
-      const viewer = createGurpsPDFSheetViewer(journalPage, page)
-      viewer.render(true)
-      success = true
-    } else {
-      let url = GURPS.SJGProductMappings[book]
-      if (url)
-        // url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
-        window.open(url, '_blank')
-      else ui.notifications?.warn("Unable to match book code '" + book + "'.")
-    }
   }
+
+  return { book, page, pageLabel }
+}
+
+function getPdfJournalPages(): foundry.documents.JournalEntryPage[] {
+  const pdfPages: foundry.documents.JournalEntryPage[] = []
+
+  // @ts-expect-error: game.journal may not be recognized by TypeScript
+  game.journal.forEach((journal: foundry.documents.JournalEntry) => {
+    journal.pages.forEach((page: foundry.documents.JournalEntryPage) => {
+      if (page.type === 'pdf') pdfPages.push(page)
+    })
+  })
+
+  return pdfPages
+}
+
+/**
+ * Create and return the appropriate GURPS PDF sheet instance for the current Foundry version.
+ */
+function createGurpsPDFSheetViewer(journalPage: foundry.documents.JournalEntryPage, bookAndPage: BookPageReference) {
+  // Workaround for missing types
+  type PageRegistrationDescriptor = DocumentSheetConfig.SheetRegistrationDescriptor<typeof JournalEntryPage> & {
+    default?: boolean
+    cls?: typeof foundry.applications.api.ApplicationV2
+  }
+
+  const pdfSheetClasses = CONFIG.JournalEntryPage.sheetClasses.pdf as
+    | undefined
+    | Record<string, PageRegistrationDescriptor>
+
+  if (!pdfSheetClasses) throw new Error('PDF sheet classes not found.')
+
+  const sheetConfig = Object.values(pdfSheetClasses).find(config => config.default)
+
+  if (!sheetConfig) throw new Error('Default PDF sheet configuration not found.')
+
+  if (!sheetConfig.cls) throw new Error('Default PDF sheet class not found.')
+
+  const pdfSheet = new sheetConfig.cls({
+    // @ts-expect-error: document may not be recognized
+    document: journalPage,
+    bookPageReference: bookAndPage,
+    mode: 'view', // or 'edit'
+  })
+
+  return pdfSheet
 }

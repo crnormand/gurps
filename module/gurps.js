@@ -36,7 +36,6 @@ import TriggerHappySupport from './effects/triggerhappy.js'
 import { AddImportEquipmentButton } from './item-import.js'
 import { GurpsItemSheet } from './item-sheet.js'
 import { GurpsItem } from './item.js'
-import GurpsJournalEntry from './journal.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { deleteKey as deleteKeyCompat, Foundry, MessageMode } from './utilities/foundry-compat.js'
 import { getTokenForActor } from './utilities/token.js'
@@ -136,7 +135,7 @@ if (!globalThis.GURPS) {
   GURPS.EffectModifierControl = new EffectModifierControl()
   GURPS.GlobalActiveEffectDataControl = new GlobalActiveEffectDataControl()
 
-  // CONFIG.debug.hooks = true;
+  // CONFIG.debug.hooks = true
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
@@ -2465,8 +2464,6 @@ if (!globalThis.GURPS) {
         }
       }
     })
-
-    GurpsJournalEntry.ready()
 
     // define Handlebars partials for ADD:
     const __dirname = 'systems/gurps/templates'

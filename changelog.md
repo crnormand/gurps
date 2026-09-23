@@ -9,6 +9,7 @@
 - Move Combat code into combat module.
 - Color Blind Adjustment \#2914.
 - Combat Settings: choose which maneuvers and Modifier Bucket options this world uses. A maneuver that is turned off is no longer offered in the Combat Tracker, Token HUD, character sheet or `/man`, and its modifiers leave the Modifier Bucket with it.
+- Add support for PDF links like `DFC:A-10` \#2908
 
 ### Bugfixes
 
