@@ -1,5 +1,7 @@
 import { GurpsModule } from 'module/gurps-module.js'
-import { handleOnPdf, handlePdf, SJGProductMappings } from './pdf-refs.js'
+import { _renderJournalPagePDFSheet, _renderJournalPageSheet } from './journal.js'
+import { handleOnPdf, handlePdf, SJGProductMappings } from './pdf-refs.ts'
+import { registerPDFSettingsApp } from './settings-app.ts'
 import { getBasicSetPDFSetting, isOpenFirstPDFSetting, registerPDFSettings } from './settings.js'
 import { registerPDFSheet } from './sheet.js'
 
@@ -21,6 +23,13 @@ function init(): void {
 
   Hooks.once('ready', () => {
     registerPDFSettings()
+    registerPDFSettingsApp()
+    Hooks.on('renderJournalEntryPageTextSheet', async (app, html, document, options) =>
+      _renderJournalPageSheet(app, html, document, options)
+    )
+    Hooks.on('renderJournalEntryPagePDFSheet', (app, html, document, options) =>
+      _renderJournalPagePDFSheet(app, html, document, options)
+    )
   })
 }
 

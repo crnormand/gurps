@@ -11,6 +11,7 @@ export default class GurpsWiring {
    * @param {*} html - a JQuery element to search within for elements to attach click handlers to.
    */
   static hookupAllEvents(html) {
+    if (html instanceof HTMLElement) html = $(html)
     html
       .find('.gurpslink, .gmod, .glinkmod, .glinkmodplus, .glinkmodminus, .pdflink, [data-otf]')
       .each((_, element) => {

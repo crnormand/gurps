@@ -1097,9 +1097,22 @@
     "pass": "Pass",
     "pasteStatBlockHere": "Paste your stat block here",
     "pdf": {
-      "settingsButton": "PDF Settings",
-      "settingsHint": "Configure how PDFs are handled.",
-      "settingsName": "PDFs"
+      "setting": {
+        "basicSet": {
+          "combined": "Combined Basic Set ('B')",
+          "hint": "Select 'Combined' or 'Separate' and use the associated PDF codes when configuring PDFoundry. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.",
+          "name": "Basic Set PDF(s)",
+          "revised": "Basic Revised ('B')",
+          "separate": "Separate (Characters, 'B'; Campaigns, 'BX')"
+        },
+        "button": "PDF Settings",
+        "hint": "Configure how PDFs are handled.",
+        "name": "PDFs",
+        "openFirst": {
+          "hint": "If checked, the system will open the first PDF found when multiple PDFs are entered. If unchecked, system will open all PDFs entered.",
+          "name": "Open First PDF Found"
+        }
+      }
     },
     "pdfCode": "PDF Book Code",
     "pdfCodePlaceholder": "PDF Code: (e.g., 'B' or 'MA')",
@@ -1261,19 +1274,15 @@
     "settingApplyBasedOnTarget": "'Target'",
     "settingAutoAddTaggedModifiers": "Auto Add Tagged Modifiers",
     "settingAutoIgnoreQty": "Import: Auto save Foundry Qty/Count",
-    "settingBasicPDFs": "Basic Set PDF(s)",
-    "settingBasicPDFsCombined": "Combined Basic Set ('B')",
-    "settingBasicPDFsRevised": "Basic Revised ('B')",
-    "settingBasicPDFsSeparate": "Separate (Characters, 'B'; Campaigns, 'BX')",
     "settingBlockImport": "Only TRUSTED players may Import",
     "settingCalculateEnc": "Actor: Calculate Encumbrance",
     "settingCheckConditionalModifiers": "Check Conditional Modifiers in Actor Sheet",
     "settingColorSheetMenuHint": "Color Character Sheet Settings",
     "settingColorSheetMenuTitle": "Color Character Sheet",
     "settingCombatInitiative": "Combat: Turn Sequence Formula",
-    "settingCombatOptions": "Combat Options",
     "settingCombatManeuversHint": "A maneuver that is turned off is no longer shown anywhere a maneuver can be picked — Combat Tracker, Token HUD, and character sheet — and its modifiers removed from the Modifier Bucket.",
     "settingCombatModifiersHint": "The optional modifiers presented by the Modifier Bucket. If turned off, it is no longer listed in the Modifier Bucket. The modifier can still be entered manually.",
+    "settingCombatOptions": "Combat Options",
     "settingCombatOptionsManeuvers": "Maneuvers",
     "settingCombatOptionsNeedsOnTarget": "Not in play: Use On Target is turned off, above.",
     "settingConvertRanged": "Actor: Convert 'x2/x5' range to yards",
@@ -1301,7 +1310,6 @@
     "settingHintAnnounceCriticalRolls": "If checked, the system will announce, with animation and sound, critical hits and misses. Only for players and non blind rolls. Need Sequencer installed.",
     "settingHintAutoAddTaggedModifiers": "If checked, the system will automatically add tagged modifiers to the roll.",
     "settingHintAutoIgnoreQty": "If checked, this will automatically set the 'Save current QTY/Count on import' flag on a peice of equipment when the user changes the QTY/Count (and it will display the little blue file icon). NOTE: This does not detect changes in 'Uses'. If you need to remember 'Uses' between imports, you will need to manually set the flag for that equipment.",
-    "settingHintBasicPDFs": "Select 'Combined' or 'Separate' and use the associated PDF codes when configuring PDFoundry. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.",
     "settingHintBlockImport": "If checked, the 'Import' button will only be displayed on the character sheet if the player permission level is 'Trusted', 'Assistant' or 'GameMaster'",
     "settingHintCalculateEnc": "If checked, the Encumbrance level will be set automatically based on the carried equipment (and you cannot change the Encumbrance level manually). If this is turned off, you can change the Encumbrance level by clicking on the new level.",
     "settingHintCheckConditionalModifiers": "If checked, the system will look for Conditional Modifiers in the Actor Sheet and add them to Effect Modifiers Popout.",
@@ -1325,7 +1333,6 @@
     "settingHintImportIgnoreName": "If checked, the system will ignore the 'name' attribute of the Actor during imports. This is useful if the name that you use in Foundry differs from GCA/GCS and you don't want it overwritten on every import.",
     "settingHintModifyDicePlusAdds": "If checked, the system will use the 'Modify Dice + Adds' optional rule, when you add bucket modifiers for damage rolls, as per B269.",
     "settingHintMookGenerator": "Edit the initial values of the Mook Generator",
-    "settingHintPDFOpenFirst": "If checked, the system will open the first PDF found when multiple PDFs are entered. If unchecked, system will open all PDFs entered.",
     "settingHintPlayerBlindRoll": "If not checked, holding down the SHIFT key when you are making a roll will make a Self roll (only you can see it, no matter who you are). If checked, when players hold down the SHIFT key, it will make it a Blind Roll instead (GMs still get a Self roll).",
     "settingHintPlayerChatPrivate": "If checked, most of the chat commands (e.g. /hp, /fp, /qty, etc.) will display as a whisper to the player (instead of an Out Of Character message). If you trust your players, and don't like to see the chat fill up with their chat commands, turn this on.",
     "settingHintPortraitHPTinting": "Show red tint overlay on character portraits based on HP loss in the Modern sheet.",
@@ -1378,7 +1385,6 @@
     "settingNoEditAllowed": "No Equipment Editing Allowed",
     "settingNoEquipAllowedHint": "Warning: You're trying to edit an equipment that is not linked to a Foundry item when settings 'Use Foundry Items for Equipment' is active. Please reimport the character sheet to recreate the Foundry item for this actor.",
     "settingNoItemAllowedHint": "Warning: You're trying to edit an imported Item when settings 'Use Foundry Items for Equipment' is disabled. Please reimport the character sheet to recreate the Equipment for this actor.",
-    "settingPDFOpenFirst": "Open first PDF found",
     "settingPlayerBlindRoll": "Enable Blind rolls for Players",
     "settingPlayerChatPrivate": "Player Chat commands private",
     "settingPortraitHPTinting": "Portrait HP Tinting",
