@@ -89,6 +89,36 @@ export function calculateMessageMode(baseMode: MessageMode, blindOverride: boole
   return baseMode
 }
 
+type RollChatData = {
+  prefix: string
+  chatthing: string
+  thing: string
+  origtarget: number
+  fromUser?: string | null
+  targetmods: Modifier[]
+  showPlus?: boolean
+  rtotal?: number
+  loaded?: boolean
+  rolls?: string
+  modifier?: number
+  finaltarget?: number
+  isCritSuccess?: boolean
+  isCritFailure?: boolean
+  margin?: number
+  failure?: boolean
+  seventeen?: boolean
+  isDraggable?: boolean
+  otf?: string
+  followon?: string
+  rof?: string
+  rcl?: string
+  rofrcl?: number
+  optlabel: string[]
+  multiples: { rtotal: number; loaded: boolean; rolls: string }[]
+  isBlind: boolean
+  roll?: GurpsRoll
+}
+
 export async function doRoll({
   actor,
   formula = '3d6',
@@ -120,23 +150,7 @@ export async function doRoll({
 
   const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
 
-  let token
-
-  if (actor instanceof Actor) {
-    const actorTokens =
-      canvas?.tokens?.placeables.filter(token => {
-        if (token.actor) return token.actor.id === actor.id
-        ui.notifications?.warn(`Token is not linked to an actor [${token.id}]`)
-
-        return false
-      }) || []
-
-    if (actorTokens.length === 1) {
-      token = actorTokens[0]
-    } else {
-      token = getTokenForActor(actor)
-    }
-  }
+  const token = getToken(actor)
 
   const result: CanRollResult =
     actor && action
@@ -211,103 +225,14 @@ export async function doRoll({
 
     if (rollApproved) {
       GURPS.stopActions = false
-
-      return await _doRoll({
-        actor,
-        formula,
-        targetmods,
-        prefix,
-        thing,
-        chatthing,
-        origtarget,
-        context,
-        fromUser,
-        action,
-        item,
-        attack,
-      })
     } else {
       await GURPS.ModifierBucket.clearTaggedModifiers()
       GURPS.stopActions = true
 
       return false
     }
-  } else {
-    return await _doRoll({
-      actor,
-      formula,
-      targetmods,
-      prefix,
-      thing,
-      chatthing,
-      origtarget,
-      context,
-      fromUser,
-      action,
-      item,
-      attack,
-    })
   }
-}
 
-type RollChatData = {
-  prefix: string
-  chatthing: string
-  thing: string
-  origtarget: number
-  fromUser?: string | null
-  targetmods: Modifier[]
-  showPlus?: boolean
-  rtotal?: number
-  loaded?: boolean
-  rolls?: string
-  modifier?: number
-  finaltarget?: number
-  isCritSuccess?: boolean
-  isCritFailure?: boolean
-  margin?: number
-  failure?: boolean
-  seventeen?: boolean
-  isDraggable?: boolean
-  otf?: string
-  followon?: string
-  rof?: string
-  rcl?: string
-  rofrcl?: number
-  optlabel: string[]
-  multiples: { rtotal: number; loaded: boolean; rolls: string }[]
-  isBlind: boolean
-  roll?: GurpsRoll
-}
-
-async function _doRoll({
-  actor,
-  formula,
-  targetmods,
-  prefix,
-  thing,
-  chatthing,
-  origtarget,
-  context,
-  fromUser,
-  action,
-  item,
-  attack,
-}: {
-  actor: Actor.Implementation | null
-  formula: string
-  targetmods: Modifier[]
-  prefix: string
-  thing: string
-  chatthing: string
-  origtarget: number
-  context?: ActionFuncContext | null
-  fromUser?: User | null
-  action: OtfRollAction
-  item?: Item.Implementation
-  attack?: MeleeAttackModel | RangedAttackModel
-}) {
-  if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   const isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
 
   // Let's collect up the modifiers, they are used differently depending on the type of roll
@@ -315,6 +240,76 @@ async function _doRoll({
 
   const speaker = ChatMessage.getSpeaker({ actor: actor as Actor.Stored })
 
+  const chatdata: RollChatData = await executeRollandBuildChatData(
+    targetmods,
+    actor,
+    prefix,
+    chatthing,
+    thing,
+    origtarget,
+    fromUser,
+    action,
+    isTargeted,
+    formula,
+    attack,
+    item,
+    context,
+    speaker
+  )
+
+  // For last, let's consume this action in Token
+  await consumeAction(speaker.token as string, action, chatthing, item, attack)
+
+  //check message mode again as modifier keys may have changed
+  const messageMode2 = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
+
+  chatdata.isBlind = messageMode2.isBlind
+
+  await createRollChatMessage(chatdata, speaker, context, messageMode2)
+
+  createAdditionalMessageForTrueOrFalseText(isTargeted, action, actor, chatdata)
+
+  return !chatdata.failure
+}
+
+function getToken(actor: Actor.Implementation | null) {
+  let token
+
+  if (actor instanceof Actor) {
+    const actorTokens =
+      canvas?.tokens?.placeables.filter(token => {
+        if (token.actor) return token.actor.id === actor.id
+        ui.notifications?.warn(`Token is not linked to an actor [${token.id}]`)
+
+        return false
+      }) || []
+
+    if (actorTokens.length === 1) {
+      token = actorTokens[0]
+    } else {
+      token = getTokenForActor(actor)
+    }
+  }
+
+  return token
+}
+
+async function executeRollandBuildChatData(
+  targetmods: Modifier[],
+  actor: Actor.Implementation | null,
+  prefix: string,
+  chatthing: string,
+  thing: string,
+  origtarget: number,
+  fromUser: User | null | undefined,
+  action: OtfRollAction,
+  isTargeted: boolean,
+  formula: string,
+  attack: MeleeAttackModel | RangedAttackModel | undefined,
+  item: Item.Implementation | undefined,
+  context: ActionFuncContext | null | undefined,
+  speaker: ChatMessage.SpeakerData
+) {
   const { modifier, maxtarget } = await calcModifierAndApplyCosts(targetmods, actor)
 
   let chatdata: RollChatData = {
@@ -351,28 +346,20 @@ async function _doRoll({
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
-
     const simpleRollData = await handleSimpleRoll(formula, context, modifier)
 
     chatdata = { ...chatdata, ...simpleRollData }
   }
 
-  // For last, let's consume this action in Token
-  await consumeAction(speaker.token as string, action, chatthing, item, attack)
-
-  //check message mode again as modifier keys may have changed
-  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
-
-  chatdata.isBlind = messageMode.isBlind
-
-  await createRollChatMessage(chatdata, speaker, context, messageMode)
-
-  createAdditionalMeesageForTrueOrFalseText(isTargeted, action, actor, chatdata)
-
-  return !chatdata.failure
+  return chatdata
 }
 
-function createAdditionalMeesageForTrueOrFalseText(isTargeted: boolean, action: OtfRollAction, actor: Actor.Implementation | null, chatdata: RollChatData) {
+function createAdditionalMessageForTrueOrFalseText(
+  isTargeted: boolean,
+  action: OtfRollAction,
+  actor: Actor.Implementation | null,
+  chatdata: RollChatData
+) {
   if (isTargeted && (action.type === OtfActionType.attribute || action.type === OtfActionType.skillSpell)) {
     const users = actor?.getOwners() ?? []
     const ids = users.map(it => it.id)
