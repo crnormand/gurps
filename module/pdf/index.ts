@@ -5,6 +5,7 @@ import { registerPDFSettingsApp } from './settings-app.ts'
 import { getBasicSetPDFSetting, isOpenFirstPDFSetting, registerPDFSettings } from './settings.js'
 import { registerPDFSheet } from './sheet.js'
 
+// TODO Rename this module "journal"
 export interface PdfModuleType extends GurpsModule {
   handlePdf: typeof handlePdf
   handleOnPdf: (event: any) => void
