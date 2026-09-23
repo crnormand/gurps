@@ -36,6 +36,17 @@
 
 /* ---------------------------------------- */
 
+@mixin gcs-control {
+  box-sizing: border-box;
+  height: var(--gcs-input-height);
+  border: 1px solid var(--gcs-color-control-border);
+  border-radius: 0.2rem;
+  background-color: var(--gcs-color-control-bg);
+  color: var(--gcs-color-control-fg);
+}
+
+/* ---------------------------------------- */
+
 @mixin gcs-banding {
   background-color: var(--gcs-color-banding-bg);
   color: var(--gcs-color-banding-fg);

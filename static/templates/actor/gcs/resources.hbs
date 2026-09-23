@@ -93,12 +93,6 @@
             <span>{{system.conditions.actions.maxBlocks}}</span>
           </div>
         </div>
-        <div class="form-group">
-          <label>{{localize "GURPS.activeEffects"}}</label>
-          <div class="form-fields">
-            <span>{{status.blocksPerTurn}}</span>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -188,6 +182,27 @@
         {{/each}}
       </tbody>
     </table>
+    </div>
+  </div>
+  <div class="gcs-active-effects gcs-section">
+    <div class="gcs-section-header">{{localize "GURPS.activeEffects"}}</div>
+    <div class="gcs-section-content flexrow">
+      {{#each activeEffects as |effect|}}
+      <div class="gcs-active-effect" data-uuid="{{effect.uuid}}" tabindex="0" aria-haspopup="menu">
+        <span class="gcs-active-effect-icon">
+          <img class="gcs-active-effect-image" src="{{effect.img}}" title="{{effect.name}}" />
+        </span>
+        <span>{{effect.name}}</span>
+      </div>
+      {{/each}}
+      <button
+        type="button"
+        data-action="addEffect"
+        aria-label="{{localize 'GURPS.effectPicker.title'}}"
+        title="{{localize 'GURPS.effectPicker.title'}}"
+      >
+        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
 </section>

@@ -26,6 +26,7 @@ import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
 
 import type { MoveModeV2 } from '../data/move-mode.js'
+import EffectPicker from '../effect-picker.js'
 import { ActorType } from '../types.js'
 
 import { GurpsBaseActorSheet } from './base-actor-sheet.js'
@@ -124,6 +125,7 @@ namespace GurpsActorGcsSheet {
     carriedWeight: string
     otherValue: string
     otherWeight: string
+    activeEffects: ActiveEffect[]
   }
 
   /* ---------------------------------------- */
@@ -171,6 +173,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       incrementQuantity: GurpsActorGcsSheet.#onChangeQuantity,
       decrementUses: GurpsActorGcsSheet.#onChangeUses,
       incrementUses: GurpsActorGcsSheet.#onChangeUses,
+      addEffect: GurpsActorGcsSheet.#onAddEffect,
     },
   }
 
@@ -276,6 +279,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       carriedWeight: Weight.fromPounds(this.actor.system.eqtsummary.eqtlbs).toString(),
       otherWeight: Weight.fromPounds(this.actor.system.eqtsummary.otherlbs).toString(),
       otherValue: '$' + this.actor.system.eqtsummary.othercost.toLocaleString(),
+      activeEffects: this.actor.effects.contents.filter(effect => !effect.isPosture && !effect.isManeuver),
     }
   }
 
@@ -706,6 +710,14 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ): Promise<void> {
     super._onFirstRender(context, options)
 
+    this._createContextMenu(() => this._createActiveEffectContextOptions(), '.gcs-active-effect', {
+      jQuery: false,
+      hookName: 'createActiveEffectContextOptions',
+      parentClassHooks: false,
+      fixed: true,
+      eventName: 'contextmenu',
+    })
+
     this._createContextMenu(this._createItemContextOptions, '.gcs-item-row', {
       jQuery: false,
       hookName: 'createItemContextOptions',
@@ -749,9 +761,8 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
         visible: target => target.dataset.uuid !== undefined,
-        callback: async target => {
+        onClick: async (event, target) => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
-          const event = new PointerEvent('click', { bubbles: true })
 
           if (handler) handler.call(this, event, target)
         },
@@ -767,12 +778,40 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
         label: 'GURPS.delete',
         icon: '<i class="fa-solid fa-fw fa-trash"></i>',
         visible: target => target.dataset.uuid !== undefined,
-        callback: async target => {
+        onClick: async (event, target) => {
           const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
-          const event = new PointerEvent('click', { bubbles: true })
 
           if (handler) handler.call(this, event, target)
         },
+      },
+    ]
+  }
+
+  /* ---------------------------------------- */
+
+  protected _createActiveEffectContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+    const invokeAction = async (action: 'editEmbedded' | 'deleteEmbedded', target: HTMLElement): Promise<void> => {
+      const contextTarget = target.closest<HTMLElement>('.gcs-active-effect') ?? target
+      const uuid = contextTarget.dataset.uuid
+
+      if (!uuid) return
+
+      const handler = this.options.actions[action] as Application.ClickAction | null
+      const event = new PointerEvent('click', { bubbles: true })
+
+      if (handler) await handler.call(this, event, contextTarget)
+    }
+
+    return [
+      {
+        label: 'GURPS.edit',
+        icon: '<i class="fa-solid fa-fw fa-pen-to-square"></i>',
+        onClick: (_event, target) => invokeAction('editEmbedded', target),
+      },
+      {
+        label: 'GURPS.delete',
+        icon: '<i class="fa-solid fa-fw fa-trash"></i>',
+        onClick: (_event, target) => invokeAction('deleteEmbedded', target),
       },
     ]
   }
@@ -1036,6 +1075,23 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
     } else {
       await doc.system.decrementUses()
     }
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onAddEffect(this: GurpsActorGcsSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+    const theme = this.options.classes.includes('theme-dark')
+      ? 'theme-dark'
+      : this.options.classes.includes('theme-light')
+        ? 'theme-light'
+        : undefined
+
+    console.log('Opening EffectPicker with theme:', theme)
+
+    const dialog = new EffectPicker(this.actor, { parentTheme: theme })
+
+    dialog.render(true)
   }
 
   /* ---------------------------------------- */
