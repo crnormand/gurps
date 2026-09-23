@@ -26,6 +26,7 @@ export class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEn
   Configuration
 > {
   static override DEFAULT_OPTIONS = {
+    ...super.DEFAULT_OPTIONS,
     position: { width: 600, height: 780 },
   }
 
