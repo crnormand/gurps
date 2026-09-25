@@ -2,7 +2,6 @@
 import { Migrator } from '@module/migration/migrator.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
 import { PARSELINK_MAPPINGS } from '@module/otf/parselink.js'
-import { allowOtfExec } from '@module/util/allow-otf-exec.js'
 import { ChangeLogWindow } from '@module/util/change-log.js'
 import { HandlebarsUtil } from '@module/util/handlebars.js'
 import HitFatPoints from '@module/util/hitpoints.js'
@@ -798,7 +797,7 @@ if (!globalThis.GURPS) {
       }
 
       if (resp.type == 'allowOtFExec') {
-        allowOtfExec(resp)
+        GURPS.modueles.OTF.allowOtfExec(resp)
       }
 
       if (resp.type == 'executeOtF') {

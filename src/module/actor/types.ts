@@ -21,20 +21,4 @@ interface CheckInfo {
 }
 /* ---------------------------------------- */
 
-interface CanRollResult {
-  canRoll: boolean
-  isSlam: boolean
-  hasActions: boolean
-  isCombatant: boolean
-  message?: string
-  targetMessage?: string
-  maxActionMessage?: string
-  maxAttackMessage?: string
-  maxBlockmessage?: string
-  maxParryMessage?: string
-  rollBeforeStartMessage?: string
-}
-
-/* ---------------------------------------- */
-
-export { type CheckInfo, type CanRollResult }
+export { type CheckInfo }

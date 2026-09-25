@@ -1,5 +1,6 @@
 import { MeleeAttackModel } from '@module/action/index.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { addBucketToDamage } from '@module/damage/addBucketToDamage.js'
 import { Damage } from '@module/damage/index.js'
 import { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { ItemType } from '@module/item/types.js'
@@ -11,7 +12,8 @@ import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
 import { d6ify, quotedAttackName, stripBracketContents } from '@util/utilities.js'
 
-import { addBucketToDamage, doRoll } from './dieroll.js'
+import { canRoll } from './canRoll.js'
+import { doRoll } from './dieroll.js'
 
 export interface ActionFuncContext {
   shiftKey: boolean
@@ -186,14 +188,14 @@ export const actionFuncs: Record<string, actionFunc> = {
     }
 
     return (async () => {
-      let canRoll = { canRoll: true, targetMessage: '' }
+      let canRollData = { canRoll: true, targetMessage: '' }
       const token = getTokenForActor(actor) ?? null
 
-      if (actor) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
+      if (actor) canRollData = (await canRoll(action, actor, token, action.att)) as { canRoll: true; targetMessage: '' }
 
-      if (!canRoll.canRoll) {
-        if (canRoll.targetMessage) {
-          ui.notifications?.warn(canRoll.targetMessage)
+      if (!canRollData.canRoll) {
+        if (canRollData.targetMessage) {
+          ui.notifications?.warn(canRollData.targetMessage)
 
           return false
         }
@@ -214,7 +216,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       let displayFormula = action.formula ?? ''
 
       if (actor && taggedSettings?.autoAdd) {
-        await actor.addTaggedRollModifiers('', { action }, action.att)
+        await actor.addTaggedRollModifiers(action, undefined, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
@@ -280,18 +282,18 @@ export const actionFuncs: Record<string, actionFunc> = {
       let displayFormula = formula
 
       if (actor && taggedSettings?.autoAdd) {
-        await actor.addTaggedRollModifiers('', { action }, action.att)
+        await actor.addTaggedRollModifiers(action, undefined, action.att)
         displayFormula = addBucketToDamage(displayFormula, false)
       }
 
-      let canRoll = { canRoll: true, targetMessage: '' }
+      let canRollData = { canRoll: true, targetMessage: '' }
       const token = getTokenForActor(actor) ?? null
 
-      if (actor) canRoll = (await actor.canRoll(action, token)) as { canRoll: true; targetMessage: '' }
+      if (actor) canRollData = (await canRoll(action, actor, token, action.att)) as { canRoll: true; targetMessage: '' }
 
-      if (!canRoll.canRoll) {
-        if (canRoll.targetMessage) {
-          ui.notifications?.warn(canRoll.targetMessage)
+      if (!canRollData.canRoll) {
+        if (canRollData.targetMessage) {
+          ui.notifications?.warn(canRollData.targetMessage)
 
           return false
         }
@@ -369,19 +371,6 @@ export const actionFuncs: Record<string, actionFunc> = {
   roll({ action, actor, event, calcOnly }: actionFuncParams) {
     if (calcOnly) return { target: 0 }
     if (action.type !== OtfActionType.roll) return false
-    let canRoll = true
-
-    if (actor) {
-      if (actor instanceof User) {
-        canRoll = true
-      } else {
-        const token = actor.getActiveTokens()[0]
-
-        actor.canRoll(action, token).then(rollPermission => (canRoll = rollPermission.canRoll))
-      }
-    }
-
-    if (!canRoll) return false
 
     const prefix = game.i18n?.format('GURPS.chatRolling', {
       dice: action.displayformula ? action.displayformula : action.formula,
@@ -394,7 +383,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       actor,
       formula: action.formula,
       prefix,
-      optionalArgs: { blind: action.blindroll, event },
+      context: event,
       action,
     })
       .then(result => {
@@ -427,7 +416,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       thing,
       chatthing,
       origtarget: target,
-      optionalArgs: { blind: action.blindroll, event },
+      context: event,
       action,
     })
       .then(result => {
@@ -468,7 +457,7 @@ export const actionFuncs: Record<string, actionFunc> = {
         dice: action.derivedformula,
         desc: action.desc ?? '',
       }),
-      optionalArgs: { blind: action.blindroll, event },
+      context: event,
       action,
     })
       .then(result => {
@@ -515,7 +504,8 @@ export const actionFuncs: Record<string, actionFunc> = {
     const qn = quotedAttackName({ name: thing, mode: att.mode })
     const aid = actor ? `@${actor.id}@` : ''
     const chatthing = `[${aid}${prefix}${qn}]`
-    const followon = `[${aid}D:${qn}]`
+
+    action.followon = `[${aid}D:${qn}]`
     const target = att.level
 
     if (!target) {
@@ -532,7 +522,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       return { target: target + modifier, thing: thing }
     }
 
-    return doAttack(action, att, actor, target, thing, chatthing, followon, event)
+    return doAttack(action, att, actor, target, thing, chatthing, event)
 
     async function doAttack(
       action: AttackAction,
@@ -541,24 +531,13 @@ export const actionFuncs: Record<string, actionFunc> = {
       target: number,
       thing: string,
       chatthing: string,
-      followon: string,
       event: ActionFuncContext | null
     ) {
-      const opt = {
-        blind: action.blindroll,
-        event,
-        obj: att, // save the attack in the optional parameters, in case it has rcl/rof
-        followon,
-        text: '',
-        itemPath: 'itemPath' in action ? action.itemPath : undefined,
-        shots: undefined as number | undefined,
-      }
-
       const targetmods: Modifier[] = []
 
-      if (opt.obj.checkotf && !(await GURPS.modules.Otf.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+      if (att.checkotf && !(await GURPS.modules.Otf.executeOTF(att.checkotf, false, event, actor))) return false
 
-      if (opt.obj.duringotf) await GURPS.modules.Otf.executeOTF(opt.obj.duringotf, false, event, actor)
+      if (att.duringotf) await GURPS.modules.Otf.executeOTF(att.duringotf, false, event, actor)
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs, targetmods)
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
 
@@ -583,10 +562,8 @@ export const actionFuncs: Record<string, actionFunc> = {
             game.i18n?.format('GURPS.combat.rof.bonusLabel', { shots: `${shots}` }) ?? '',
             targetmods
           )
-        opt.shots = shots
+        action.shots = shots
       }
-
-      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
       return !!(await doRoll({
         actor,
@@ -594,8 +571,9 @@ export const actionFuncs: Record<string, actionFunc> = {
         thing,
         chatthing,
         origtarget: target,
-        optionalArgs: opt,
+        context: event,
         action,
+        attack: att,
       }))
     }
   },
@@ -651,8 +629,9 @@ export const actionFuncs: Record<string, actionFunc> = {
       thing,
       chatthing,
       origtarget: target,
-      optionalArgs: { blind: action.blindroll, event },
+      context: event,
       action,
+      attack: att,
     })
       .then(result => {
         return !!result
@@ -714,8 +693,9 @@ export const actionFuncs: Record<string, actionFunc> = {
       thing,
       chatthing,
       origtarget: target,
-      optionalArgs: { blind: action.blindroll, event, obj: att },
+      context: event,
       action,
+      attack: att,
     })
       .then(result => {
         return !!result
@@ -777,24 +757,10 @@ export const actionFuncs: Record<string, actionFunc> = {
       const targetmods: Modifier[] = []
       const aid = actor ? `@${actor.id}@` : ''
       const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}${thing}]`
-      const opt = {
-        blind: action.blindroll,
-        event: event,
-        action: action,
-        /* @ts-expect-error - there is no obj on this kind of action. Do we need one in some cases? ToDo: investigate */
-        obj: action.obj,
-        text: '',
-      }
 
-      if (opt.obj?.checkotf && !(await GURPS.modules.Otf.executeOTF(opt.obj.checkotf, false, event, actor ?? null)))
-        return false
-      if (opt.obj?.duringotf) await GURPS.modules.Otf.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
-      opt.text = ''
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
-      else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
-      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
-
+    
       return !!(await doRoll({
         actor,
         targetmods,
@@ -802,7 +768,7 @@ export const actionFuncs: Record<string, actionFunc> = {
         thing,
         chatthing,
         origtarget: target,
-        optionalArgs: opt,
+        context: event,
         action,
       }))
     })()
@@ -817,7 +783,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       return calcOnly ? { target: 0 } : false
     }
 
-    const target = processSkillSpell({ action, actor })
+    const { skillLevel: target, item } = processSkillSpell({ action, actor })
 
     if (!action) {
       return calcOnly ? { target: 0 } : false
@@ -837,25 +803,28 @@ export const actionFuncs: Record<string, actionFunc> = {
       const targetmods: Modifier[] = []
       const aid = actor ? `@${actor.id}@` : ''
       const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}S:"${thing}"]`
-      const opt = {
-        blind: action.blindroll,
-        event,
-        action,
-        /* @ts-expect-error - obj is dynamically added to action in processSkillSpell. ToDo: refactor later*/
-        obj: action.obj,
-        text: '',
-      }
 
-      if (opt.obj?.checkotf && !(await GURPS.modules.Otf.executeOTF(opt.obj.checkotf, false, event, actor ?? null)))
+      if (
+        item?.system.checkotf &&
+        !(await GURPS.modules.Otf.executeOTF(item.system.checkotf, false, event, actor ?? null))
+      )
         return false
-      if (opt.obj?.duringotf) await GURPS.modules.Otf.executeOTF(opt.obj.duringotf, false, event, actor ?? null)
+
+      if (item?.system.duringotf) await GURPS.modules.Otf.executeOTF(item.system.duringotf, false, event, actor ?? null)
 
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
-      else if (action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
-      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
-      return !!(await doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt, action }))
+      return !!(await doRoll({
+        actor,
+        targetmods,
+        thing,
+        chatthing,
+        origtarget: target,
+        context: event,
+        action,
+        item: item ?? undefined,
+      }))
     })()
   },
 
@@ -923,26 +892,23 @@ export const actionFuncs: Record<string, actionFunc> = {
   },
 }
 
-function processSkillSpell({
-  action,
-  actor,
-}: {
-  action: SkillSpellRollAction
-  actor: Actor.Implementation | null
-}): number {
+function processSkillSpell({ action, actor }: { action: SkillSpellRollAction; actor: Actor.Implementation | null }): {
+  skillLevel: number
+  item: GurpsItemV2<ItemType.Skill> | GurpsItemV2<ItemType.Spell> | null
+} {
   if (action.target) {
     // Skill-12
-    return action.target
+    return { skillLevel: action.target, item: null }
   }
 
-  //todo: properly type thiis function
+  //todo: properly type this function
   const skill = GURPS.findSkillSpell(actor, action.name, !!action.isSkillOnly, !!action.isSpellOnly) as
     | GurpsItemV2<ItemType.Skill>
     | GurpsItemV2<ItemType.Spell>
     | null
 
   if (!skill) {
-    return 0
+    return { skillLevel: 0, item: null }
   }
 
   let skillLevel = skill.system?.level
@@ -965,5 +931,5 @@ function processSkillSpell({
     }
   }
 
-  return skillLevel
+  return { skillLevel, item: skill }
 }

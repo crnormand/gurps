@@ -1,18 +1,20 @@
-import { CanRollResult } from '@module/actor/types.js'
+import { MeleeAttackModel } from '@module/action/melee-attack.js'
+import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { ActionType } from '@module/action/types.js'
 import { GurpsRoll } from '@module/modifier-bucket/bucket-app.js'
 import { OtfActionType, OtfRollAction } from '@module/otf/types.js'
 import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
+import { stripBracketContents } from '@util/utilities.js'
 
 import { TokenActions } from '../token-actions.js'
 
 import { ActionFuncContext } from './actionFuncs.js'
+import { CanRollResult, canRoll } from './canRoll.js'
 import { applyModifierDescription } from './description-utilities.js'
-import { RollConfirmationDialog } from './rollConfirmationDialog.js'
-
-const KeyboardManager = foundry.helpers.interaction.KeyboardManager
+import { RollConfirmationData, RollConfirmationDialog } from './rollConfirmationDialog.js'
 
 export function setLastTargetedRoll(
   chatdata: any,
@@ -59,85 +61,16 @@ export const rollData = (target: number) => {
   return { targetColor, rollChance }
 }
 
-/**
- * Recalculate the formula based on Modifier Bucket total.
- *
- * Formula examples: 2d+2, 1d-1, 3d6, 1d-2. (Must also handle literal damage, such as '13').
- * Can use the optional rule (B269) to round damage: +7 points = +2d and +4 points = +1d
- *
- * Examples:
- * * with armor divisor: 2d+2 (2)
- * * with damage type: 2d+2 cut
- * * with cost formula: 2d+2 (0.5) cut *Costs 1FP
- * * with armor divisor and damage type: 2d+2(2) cut
- * * with multiplier: 2d*2
- * * with minimum damage: 2d+2!
- * * Everything: 4d+2! (2) cut *Costs 1FP
- *
- * @param {string} formula
- * @param {boolean} addDamageType
- * @returns {string}
- */
-export const addBucketToDamage = (formula: string, addDamageType = true) => {
-  let dice = undefined
-  let value = undefined
-
-  if (formula.match(/^(?<dice>\d+)d/)) {
-    dice = parseInt(formula.match(/^(?<dice>\d+)d/)?.groups?.dice ?? '')
-  } else if (formula.match(/^(?<number>\d+)/)) {
-    value = parseInt(formula.match(/^(?<number>\d+)/)?.groups?.number ?? '')
-  }
-
-  const add = parseInt(formula.match(/([+-]\d+)/)?.[1] ?? '0')
-  const damageType = formula.match(/\s(\w+)/)?.[1] ?? ''
-
-  const armorDivisor = formula.match(/(?<=\()\S+(?=\))/)?.[0]
-  const hasMinDamage = formula.includes('!')
-  const multiplier = formula.match(/(?<=[xX*])\d+(\.\d+)?/)?.[0] || ''
-  const costFormula = formula.match(/(?<=\*)\D.+/)?.[0] || ''
-
-  const bucketMod = GURPS.ModifierBucket.currentSum()
-  let newAdd = add + bucketMod
-
-  if (!dice && value) {
-    return `${value + newAdd} ${addDamageType ? damageType : ''}`.trim()
-  }
-
-  if (game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) && dice) {
-    while (newAdd >= 7) {
-      newAdd -= 7
-      dice += 2
-    }
-
-    while (newAdd >= 4) {
-      newAdd -= 4
-      dice += 1
-    }
-  }
-
-  const plus = newAdd > 0 ? '+' : ''
-  const addText = newAdd !== 0 ? newAdd : ''
-  const minDamageText = hasMinDamage ? '! ' : ''
-  const armorDivisorText = armorDivisor ? `(${armorDivisor})` : ''
-  const damageTypeText = addDamageType ? ` ${damageType}` : ''
-  const costFormulaText = costFormula ? ` *${costFormula}` : ''
-  const multiplierText = multiplier ? `*${multiplier}` : ''
-  const newDice =
-    `${dice}d${plus}${addText}${multiplierText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
-
-  console.debug(`addBucketToDamage: ${formula} => ${newDice}`)
-
-  return newDice
-}
-
 export function calculateMessageMode(baseMode: MessageMode, blindOverride: boolean, event?: ActionFuncContext | null) {
+  const KeyboardManager = foundry.helpers.interaction.KeyboardManager
+
   //apply modifier Keys from the event and current Modifier key, so that they can be pressed when the OTF is clicked or when the roll confirmation dialog is confirmed
   const ctrlKey =
     (event?.ctrlKey ?? false) ||
     // @ts-expect-error - Foundry VTT API not fully typed
-    (game.keyboard.isModifierActive(foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.CONTROL) ?? false) ||
+    (game?.keyboard.isModifierActive(KeyboardManager?.MODIFIER_KEYS.CONTROL) ?? false) ||
     // On macOS, allow the Option key as an additional blind-roll shortcut without removing the existing Ctrl/Command shortcut.
-    (navigator.platform.includes('Mac') &&
+    (globalThis.navigator?.platform?.includes('Mac') &&
       (event?.altKey ||
         // @ts-expect-error - Foundry VTT API not fully typed
         game.keyboard.isModifierActive(KeyboardManager?.MODIFIER_KEYS.ALT ?? false)))
@@ -145,7 +78,7 @@ export function calculateMessageMode(baseMode: MessageMode, blindOverride: boole
   const shiftKey =
     (event?.shiftKey ?? false) ||
     // @ts-expect-error - Foundry VTT API not fully typed
-    (game.keyboard?.isModifierActive(KeyboardManager?.MODIFIER_KEYS.SHIFT) ?? false)
+    (game?.keyboard?.isModifierActive(KeyboardManager?.MODIFIER_KEYS.SHIFT) ?? false)
 
   if (blindOverride) return MessageMode.Blind
   if (ctrlKey && game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) return MessageMode.Blind
@@ -154,156 +87,6 @@ export function calculateMessageMode(baseMode: MessageMode, blindOverride: boole
   if (shiftKey) return MessageMode.Self
 
   return baseMode
-}
-
-export async function doRoll({
-  actor,
-  formula = '3d6',
-  targetmods = [],
-  prefix = '',
-  thing = '',
-  chatthing = '',
-  origtarget = -1,
-  optionalArgs = {},
-  fromUser = game.user,
-  action,
-}: {
-  actor: Actor.Implementation | null
-  formula?: string
-  targetmods?: Modifier[]
-  prefix?: string
-  thing?: string
-  chatthing?: string
-  origtarget?: number
-  optionalArgs?: {
-    obj?: any
-    blind?: boolean
-    event?: ActionFuncContext | null
-    followon?: string
-    text?: string
-    shots?: number
-  }
-  fromUser?: User | null
-  action: OtfRollAction
-}) {
-  if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
-
-  const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-
-  let token
-
-  if (actor instanceof Actor) {
-    const actorTokens =
-      canvas?.tokens?.placeables.filter(token => {
-        if (token.actor) return token.actor.id === actor.id
-        ui.notifications?.warn(`Token is not linked to an actor [${token.id}]`)
-
-        return false
-      }) || []
-
-    if (actorTokens.length === 1) {
-      token = actorTokens[0]
-    } else {
-      token = getTokenForActor(actor)
-    }
-  }
-
-  const result: CanRollResult =
-    actor && action
-      ? await actor.canRoll(action, token ?? null, chatthing, optionalArgs.obj)
-      : { canRoll: true, hasActions: true, isSlam: false, isCombatant: false }
-
-  const messages = Object.keys(result)
-    // @ts-expect-error CanRollResult needs refactoring
-    .filter(key => key.toLowerCase().includes('message') && !!result[key])
-    // @ts-expect-error CanRollResult needs refactoring
-    .map(key => result[key])
-
-  if (!result.canRoll) {
-    for (const message of messages) {
-      ui.notifications?.warn(message)
-    }
-
-    return false
-  }
-
-  if (actor instanceof Actor && taggedSettings?.autoAdd) {
-    // We need to clear all tagged modifiers from the bucket when user starts
-    // a new targeted roll (for the same actor or another)
-    await GURPS.ModifierBucket.clearTaggedModifiers()
-
-    for (const mod of targetmods || []) {
-      GURPS.ModifierBucket.addModifier(mod.mod, mod.desc || 'from action')
-    }
-
-    targetmods = []
-    await actor.addTaggedRollModifiers(chatthing, optionalArgs)
-  }
-
-  const messageMode = calculateMessageMode(
-    FoundryUtils.MessageMode,
-    !!optionalArgs.blind || !!optionalArgs.event?.blind,
-    optionalArgs.event
-  )
-
-  const showRollDialog = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
-
-  if (showRollDialog && actor instanceof Actor) {
-    // Get Target Info
-    const targetData = actor.findUsingAction(action, chatthing, formula, thing)
-    const itemId = targetData.fromItem || targetData.itemId
-    const item = actor.items.get(itemId ?? '')
-
-    const rollApproved = await RollConfirmationDialog.wait({
-      type: 'roll',
-      messages,
-      action,
-      actor,
-      token,
-      item,
-      origTarget: origtarget,
-      formula,
-      canRollResult: result,
-      name: targetData.name,
-      obj: optionalArgs.obj,
-      messageMode,
-    })
-
-    if (rollApproved) {
-      GURPS.stopActions = false
-
-      return await _doRoll({
-        actor,
-        formula,
-        targetmods,
-        prefix,
-        thing,
-        chatthing,
-        origtarget,
-        optionalArgs,
-        fromUser,
-        action,
-      })
-    } else {
-      await GURPS.ModifierBucket.clearTaggedModifiers()
-      GURPS.stopActions = true
-
-      return false
-    }
-  } else {
-    return await _doRoll({
-      actor,
-      formula,
-      targetmods,
-      prefix,
-      thing,
-      chatthing,
-      origtarget,
-      optionalArgs,
-      fromUser,
-      action,
-    })
-  }
 }
 
 type RollChatData = {
@@ -330,216 +113,279 @@ type RollChatData = {
   rof?: string
   rcl?: string
   rofrcl?: number
-  optlabel?: string
+  optlabel: string[]
   multiples: { rtotal: number; loaded: boolean; rolls: string }[]
   isBlind: boolean
+  roll?: GurpsRoll
 }
 
-/*
-  This is the BIG method that does the roll and prepares the chat message.
-  unfortunately, it has a lot fo hard coded junk in it.
-  */
-// formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn',
-// target=skill level or -1=damage roll
-async function _doRoll({
+export async function doRoll({
   actor,
-  formula,
-  targetmods,
-  prefix,
-  thing,
-  chatthing,
-  origtarget,
-  optionalArgs,
-  fromUser,
+  formula = '3d6',
+  targetmods = [],
+  prefix = '',
+  thing = '',
+  chatthing = '',
+  origtarget = -1,
+  context,
+  fromUser = game.user,
   action,
+  item,
+  attack,
 }: {
   actor: Actor.Implementation | null
-  formula: string
-  targetmods: Modifier[]
-  prefix: string
-  thing: string
-  chatthing: string
-  origtarget: number
-  optionalArgs: {
-    obj?: any
-    blind?: boolean
-    event?: ActionFuncContext | null
-    followon?: string
-    text?: string
-    shots?: number
-  }
+  formula?: string
+  targetmods?: Modifier[]
+  prefix?: string
+  thing?: string
+  chatthing?: string
+  origtarget?: number
+  context?: ActionFuncContext | null
   fromUser?: User | null
   action: OtfRollAction
+  item?: Item.Implementation
+  attack?: MeleeAttackModel | RangedAttackModel
 }) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
+
+  const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
+
+  const token = getToken(actor)
+
+  const result: CanRollResult =
+    actor && action
+      ? await canRoll(action, actor, token ?? null, attack, item)
+      : { canRoll: true, hasActions: true, isSlam: false, isCombatant: false }
+
+  const messages = Object.keys(result)
+    // @ts-expect-error CanRollResult needs refactoring
+    .filter(key => key.toLowerCase().includes('message') && !!result[key])
+    // @ts-expect-error CanRollResult needs refactoring
+    .map(key => result[key])
+
+  if (!result.canRoll) {
+    for (const message of messages) {
+      ui.notifications?.warn(message)
+    }
+
+    return false
+  }
+
+  if (actor instanceof Actor && taggedSettings?.autoAdd) {
+    // We need to clear all tagged modifiers from the bucket when user starts
+    // a new targeted roll (for the same actor or another)
+    await GURPS.ModifierBucket.clearTaggedModifiers()
+
+    for (const mod of targetmods || []) {
+      GURPS.ModifierBucket.addModifier(mod.mod, mod.desc || 'from action')
+    }
+
+    targetmods = []
+    await actor.addTaggedRollModifiers(action, item, attack)
+  }
+
+  const messageMode = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
+
+  const showRollDialog = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_SHOW_CONFIRMATION_ROLL_DIALOG)
+
+  if (showRollDialog && actor instanceof Actor) {
+    // Get Target Info
+    const targetData = actor.findUsingAction(action, chatthing, formula, thing)
+    const itemId = targetData.fromItem || targetData.itemId
+    const item = actor.items.get(itemId ?? '')
+
+    const isSimpleRoll = ([OtfActionType.roll, OtfActionType.derivedRoll] as OtfActionType[]).includes(action.type)
+    const dialogData: RollConfirmationData = isSimpleRoll
+      ? {
+          type: 'simpleRoll',
+          messages,
+          action,
+          actor,
+          token,
+          formula,
+          name: targetData.name,
+          messageMode,
+        }
+      : {
+          type: 'roll',
+          messages,
+          action,
+          actor,
+          token,
+          item,
+          origTarget: origtarget,
+          formula,
+          canRollResult: result,
+          name: targetData.name,
+          attack: attack,
+          messageMode,
+        }
+
+    const rollApproved = await RollConfirmationDialog.wait(dialogData)
+
+    if (rollApproved) {
+      GURPS.stopActions = false
+    } else {
+      await GURPS.ModifierBucket.clearTaggedModifiers()
+      GURPS.stopActions = true
+
+      return false
+    }
+  }
+
   const isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
-  let failure = false
 
   // Let's collect up the modifiers, they are used differently depending on the type of roll
-  let modifier = 0
-  let maxtarget = null // If not null, then the target cannot be any higher than this.
-  const usingRapidStrike = GURPS.ModifierBucket.modifierStack.usingRapidStrike
-
   targetmods = await GURPS.ModifierBucket.applyMods(targetmods) // append any global mods
-
-  for (const mod of targetmods) {
-    modifier += mod.modint
-    maxtarget = (await applyModifierDescription(actor, mod.desc)) || maxtarget
-  }
 
   const speaker = ChatMessage.getSpeaker({ actor: actor as Actor.Stored })
 
-  const messageMode = calculateMessageMode(
-    FoundryUtils.MessageMode,
-    !!optionalArgs.blind || !!optionalArgs.event?.blind,
-    optionalArgs.event
+  const chatdata: RollChatData = await executeRollandBuildChatData(
+    targetmods,
+    actor,
+    prefix,
+    chatthing,
+    thing,
+    origtarget,
+    fromUser,
+    action,
+    isTargeted,
+    formula,
+    attack,
+    item,
+    context,
+    speaker
   )
 
-  let roll = null // Will be the Roll
+  // For last, let's consume this action in Token
+  await consumeAction(speaker.token as string, action, chatthing, item, attack)
 
-  const multiples: { rtotal: number; loaded: boolean; rolls: string }[] = [] // The roll results (to display the individual dice rolls)
+  //check message mode again as modifier keys may have changed
+  const messageMode2 = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
 
-  const chatdata: RollChatData = {
+  chatdata.isBlind = messageMode2.isBlind
+
+  await createRollChatMessage(chatdata, speaker, context, messageMode2)
+
+  createAdditionalMessageForTrueOrFalseText(isTargeted, action, actor, chatdata)
+
+  return !chatdata.failure
+}
+
+function getToken(actor: Actor.Implementation | null) {
+  let token
+
+  if (actor instanceof Actor) {
+    const actorTokens =
+      canvas?.tokens?.placeables.filter(token => {
+        if (token.actor) return token.actor.id === actor.id
+        ui.notifications?.warn(`Token is not linked to an actor [${token.id}]`)
+
+        return false
+      }) || []
+
+    if (actorTokens.length === 1) {
+      token = actorTokens[0]
+    } else {
+      token = getTokenForActor(actor)
+    }
+  }
+
+  return token
+}
+
+async function executeRollandBuildChatData(
+  targetmods: Modifier[],
+  actor: Actor.Implementation | null,
+  prefix: string,
+  chatthing: string,
+  thing: string,
+  origtarget: number,
+  fromUser: User | null | undefined,
+  action: OtfRollAction,
+  isTargeted: boolean,
+  formula: string,
+  attack: MeleeAttackModel | RangedAttackModel | undefined,
+  item: Item.Implementation | undefined,
+  context: ActionFuncContext | null | undefined,
+  speaker: ChatMessage.SpeakerData
+) {
+  const { modifier, maxtarget } = await calcModifierAndApplyCosts(targetmods, actor)
+
+  let chatdata: RollChatData = {
     prefix: prefix.trim(),
     chatthing: chatthing,
     thing: thing,
     origtarget: origtarget,
     fromUser: fromUser?.id,
     targetmods,
-    multiples,
+    multiples: [],
     isBlind: false,
+    optlabel: action.overridetxt ? [action.overridetxt] : [],
+    modifier,
+  }
+
+  if (action.desc && !action.mod) {
+    chatdata.optlabel.unshift(action.desc)
   }
 
   if (isTargeted) {
     // This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
-    let finaltarget = origtarget + modifier
-
-    if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
-
-    if (thing) {
-      //let flav = thing.replace(/\[.*\] */, '') // Flavor text cannot handle internal []
-      const r1 = /\[/g
-      const r2 = /\]/g
-      const flav = thing.replaceAll(r1, '').replaceAll(r2, '') // Flavor text cannot handle internal []
-
-      formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
-    }
-
-    const roll = Roll.create(formula) as GurpsRoll // The formula will always be "3d6" for a "targetted" roll
-
-    await roll.evaluate()
-    const rtotal = roll.total!
-
-    chatdata.showPlus = true
-    chatdata.rtotal = rtotal
-    chatdata.loaded = !!roll.isLoaded
-    chatdata.rolls = roll.dice[0] ? roll.dice[0].results.map(it => it.result.toString()).join(',') : ''
-    chatdata.modifier = modifier
-    chatdata.finaltarget = finaltarget
+    const finaltarget = calcFinalTarget(origtarget, modifier, maxtarget)
+    const flavoredFormula = addFlavorTextToFormula(thing, formula)
 
     // Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
-    const isCritSuccess = rtotal <= 4 || (rtotal == 5 && finaltarget >= 15) || (rtotal == 6 && finaltarget >= 16)
-    const isCritFailure =
-      rtotal >= 18 || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0)
-    const margin = finaltarget - rtotal
-    const seventeen = rtotal >= 17
+    const roll = await createAndEvaluateRoll(flavoredFormula)
 
-    failure = seventeen || margin < 0
+    const targedtedRollData = getTargetedRollChatData(roll, finaltarget, action, attack, thing)
 
-    chatdata.isCritSuccess = isCritSuccess
-    chatdata.isCritFailure = isCritFailure
-    chatdata.margin = margin
-    chatdata.failure = failure
-    chatdata.seventeen = seventeen
-    chatdata.isDraggable = !seventeen && margin != 0
-    chatdata.otf = (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing
-    chatdata.followon = optionalArgs.followon
+    chatdata = { ...chatdata, ...targedtedRollData, roll: roll }
 
-    // If the attached obj has Recoil information, do the additional math.
-    if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
-      /** @type {import('../../rules/combat/ranged/missile-weapon-attacks.js').WeaponDescriptor} */
-      const weapon = { recoil: optionalArgs.obj.rcl as string, rateOfFire: optionalArgs.obj.rof as string }
-      const potentialHits = MissileWeaponAttacks.computePotentialHits(weapon, optionalArgs.shots, margin)
-
-      chatdata.rof = potentialHits.rateOfFire
-      chatdata.rcl = potentialHits.recoil
-      chatdata.rofrcl = potentialHits.potentialHits
-    }
-
-    chatdata['optlabel'] = optionalArgs.text || ''
-
-    //detecting DiceSoNice module via custom property of the game object
-    if ((game as any).dice3d && !(game as any).dice3d.messageHookDisabled) {
-      // save for after roll animation is complete
-      if (failure && optionalArgs.obj?.failotf)
-        GURPS.modules.Otf.pendingOTFs.unshift(optionalArgs.obj.failotf as string)
-      if (!failure && optionalArgs.obj?.passotf)
-        GURPS.modules.Otf.pendingOTFs.unshift(optionalArgs.obj.passotf as string)
-    } else {
-      if (failure && optionalArgs.obj?.failotf)
-        GURPS.modules.Otf.executeOTF(optionalArgs.obj.failotf as string, false, optionalArgs.event, null)
-      if (!failure && optionalArgs.obj?.passotf)
-        GURPS.modules.Otf.executeOTF(optionalArgs.obj.passotf as string, false, optionalArgs.event, null)
-    }
-
-    const result = {
-      rtotal: rtotal,
-      loaded: !!roll.isLoaded,
-      rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : '',
-    }
-
-    multiples.push(result)
+    executePassFailOtfs(attack, item, targedtedRollData.failure, context)
+    setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
+    const simpleRollData = await handleSimpleRoll(formula, context, modifier)
 
-    let min = 0
-
-    if (formula.slice(-1) === '!') {
-      formula = formula.slice(0, -1)
-      min = 1
-    }
-
-    const max = +optionalArgs.event?.data?.repeat || 1
-
-    if (max > 1) chatdata['chatthing'] = 'x' + max
-
-    for (let i = 0; i < max; i++) {
-      roll = Roll.create(formula + `+${modifier}`) as GurpsRoll
-      await roll.evaluate()
-
-      let rtotal = roll.total!
-
-      if (rtotal < min) {
-        rtotal = min
-      }
-
-      // ? if (rtotal == 1) thing = thing.replace('points', 'point')
-      const result = {
-        rtotal: rtotal,
-        loaded: roll.isLoaded,
-        rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : '',
-      }
-
-      multiples.push(result)
-    }
-
-    chatdata['modifier'] = modifier
+    chatdata = { ...chatdata, ...simpleRollData }
   }
 
-  if (isTargeted) setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
+  return chatdata
+}
 
-  // For last, let's consume this action in Token
-  const actorToken = canvas?.tokens?.placeables.find(token => token.id === speaker.token)
+function createAdditionalMessageForTrueOrFalseText(
+  isTargeted: boolean,
+  action: OtfRollAction,
+  actor: Actor.Implementation | null,
+  chatdata: RollChatData
+) {
+  if (isTargeted && (action.type === OtfActionType.attribute || action.type === OtfActionType.skillSpell)) {
+    const users = actor?.getOwners() ?? []
+    const ids = users.map(it => it.id)
 
-  if (actorToken) {
-    const actions = await TokenActions.fromToken(actorToken)
+    if (!chatdata.failure && !!action.truetext) {
+      const messageData = {
+        whisper: ids,
+        content: action.truetext,
+      }
 
-    await actions.consumeAction(action, chatthing, optionalArgs.obj, usingRapidStrike)
+      ChatMessage.create(messageData)
+    }
+
+    if (chatdata.failure && !!action.falsetext) {
+      const messageData = {
+        whisper: ids,
+        content: action.falsetext,
+      }
+
+      ChatMessage.create(messageData)
+    }
   }
+}
 
-  chatdata.isBlind = messageMode.isBlind
-
+async function createRollChatMessage(chatdata: RollChatData, speaker: ChatMessage.SpeakerData, context: ActionFuncContext | null | undefined, messageMode: MessageMode) {
+  
   const message = await foundry.applications.handlebars.renderTemplate(
     'systems/gurps/templates/die-roll-chat-message.hbs',
     chatdata
@@ -549,10 +395,10 @@ async function _doRoll({
     user: game.user?.id,
     speaker: speaker,
     content: message,
-    rolls: [roll],
+    rolls: [chatdata.roll],
     sound: CONFIG.sounds.dice,
-    //whisper has no functionality for blind rolls, so wey do we pass that?
-    whisper: optionalArgs.event?.shiftKey
+    //whisper has no functionality for blind rolls, so why do we pass that?
+    whisper: context?.shiftKey
       ? game.user?.id
       : messageMode.isBlind
         ? ChatMessage.getWhisperRecipients('GM').map(user => user.id)
@@ -568,28 +414,208 @@ async function _doRoll({
   // @ts-expect-error: Create Options for Chat Messages seems not to be properly typed
   ChatMessage.create(messageData, options)
 
-  if (isTargeted && (action.type === OtfActionType.attribute || action.type === OtfActionType.skillSpell)) {
-    const users = actor?.getOwners() ?? []
-    const ids = users.map(it => it.id)
+}
 
-    if (!failure && !!action.truetext) {
-      const messageData = {
-        whisper: ids,
-        content: action.truetext,
-      }
+async function consumeAction(
+  tokenId: string,
+  action: OtfRollAction,
+  chatthing: string,
+  item?: Item.Implementation,
+  attack?: MeleeAttackModel | RangedAttackModel
+) {
+  const actorToken = canvas?.tokens?.placeables.find(token => token.id === tokenId)
 
-      ChatMessage.create(messageData)
-    }
+  if (actorToken) {
+    const actions = await TokenActions.fromToken(actorToken)
+    const usingRapidStrike = GURPS.ModifierBucket.modifierStack.usingRapidStrike
 
-    if (failure && !!action.falsetext) {
-      const messageData = {
-        whisper: ids,
-        content: action.falsetext,
-      }
+    //todo: Refactor actions.consumeAction
+    await actions.consumeAction(action, chatthing, item, attack, usingRapidStrike)
+  }
+}
 
-      ChatMessage.create(messageData)
-    }
+export function getTargetedRollChatData(
+  roll: GurpsRoll,
+  finaltarget: number,
+  action: OtfRollAction,
+  attack?: MeleeAttackModel | RangedAttackModel,
+  thing?: string
+) {
+  const rtotal = roll.total!
+  const margin = calcMargin(finaltarget, rtotal)
+  const { seventeen, failure } = calcFailure(rtotal, margin)
+  const { isCritSuccess, isCritFailure } = detectCriticals(rtotal, finaltarget)
+  // If the attached obj has Recoil information, do the additional math.
+  const { rof, rcl, rofrcl } = calculateRofHits(margin, action, attack)
+
+  const multiples = []
+  const result = {
+    rtotal: rtotal,
+    loaded: !!roll.isLoaded,
+    rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : '',
   }
 
-  return !failure
+  multiples.push(result)
+
+  return {
+    showPlus: true,
+    rtotal,
+    loaded: !!roll.isLoaded,
+    rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result.toString()).join(',') : '',
+    finaltarget,
+    isCritSuccess,
+    isCritFailure,
+    margin,
+    failure,
+    seventeen,
+    isDraggable: !failure,
+    otf: (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing,
+    followon: action.type === OtfActionType.attack ? action.followon : undefined,
+    rof,
+    rcl,
+    rofrcl,
+    multiples,
+  }
+}
+
+//to make createAndEvaluateRoll mockable 
+export const dieRoller = {
+  createAndEvaluateRoll,
+}
+
+export async function handleSimpleRoll(
+  formula: string,
+  context: ActionFuncContext | null | undefined,
+  modifier: number
+) {
+  const min = formula.slice(-1) === '!' ? 1 : 0
+
+  if (min === 1) {
+    formula = formula.slice(0, -1)
+  }
+
+  const max = +context?.data?.repeat || 1
+  const chatthing = max > 1 ? `x${max}` : ''
+
+  const multiples = []
+  let roll
+
+  for (let i = 0; i < max; i++) {
+    roll = await dieRoller.createAndEvaluateRoll(formula + `+${modifier}`)
+
+    let rtotal = roll.total!
+
+    if (rtotal < min) {
+      rtotal = min
+    }
+
+    // ? if (rtotal == 1) thing = thing.replace('points', 'point')
+    const result = {
+      rtotal: rtotal,
+      loaded: roll.isLoaded,
+      rolls: roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : '',
+    }
+
+    multiples.push(result)
+  }
+
+  return {
+    chatthing,
+    multiples,
+    roll,
+  }
+}
+
+function addFlavorTextToFormula(thing: string, formula: string) {
+  let newFormula = formula
+
+  if (thing) {
+    const flav = stripBracketContents(thing) // Flavor text cannot handle internal []
+
+    newFormula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
+  }
+
+  return newFormula
+}
+
+export async function createAndEvaluateRoll(formula: string) {
+  const roll = Roll.create(formula) as GurpsRoll // The formula will always be "3d6" for a "targetted" roll
+
+  await roll.evaluate()
+
+  return roll
+}
+
+function executePassFailOtfs(
+  attack: MeleeAttackModel | RangedAttackModel | undefined,
+  item: Item.Implementation | undefined,
+  failure: boolean,
+  context: ActionFuncContext | null | undefined
+) {
+  const obj = attack ?? item?.system
+
+  //detecting DiceSoNice module via custom property of the game object
+  if ((game as any).dice3d && !(game as any).dice3d.messageHookDisabled) {
+    // save for after roll animation is complete
+    if (failure && obj?.failotf) GURPS.modules.Otf.pendingOTFs.unshift(obj.failotf)
+    if (!failure && obj?.passotf) GURPS.modules.Otf.pendingOTFs.unshift(obj.passotf)
+  } else {
+    if (failure && obj?.failotf) GURPS.modules.Otf.executeOTF(obj.failotf, false, context, null)
+    if (!failure && obj?.passotf) GURPS.modules.Otf.executeOTF(obj.passotf as string, false, context, null)
+  }
+}
+
+export function calcFailure(rtotal: number, margin: number) {
+  const seventeen = rtotal >= 17
+
+  const failure = seventeen || margin < 0
+
+  return { seventeen, failure }
+}
+
+async function calcModifierAndApplyCosts(targetmods: Modifier[], actor: Actor.Implementation | null) {
+  let modifier = 0
+  let maxtarget = null // If not null, then the target cannot be any higher than this.
+
+  for (const mod of targetmods) {
+    modifier += mod.modint
+    //this calculates maxTarget and applys costs to the actor
+    maxtarget = (await applyModifierDescription(actor, mod.desc)) || maxtarget
+  }
+
+  return { modifier, maxtarget }
+}
+
+export function calcFinalTarget(origtarget: number, modifier: number, maxtarget: number | null) {
+  let finaltarget = origtarget + modifier
+
+  if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
+
+  return finaltarget
+}
+
+function calcMargin(finaltarget: number, rtotal: number) {
+  return finaltarget - rtotal
+}
+
+export function detectCriticals(rtotal: number, finaltarget: number) {
+  const isCritSuccess = rtotal <= 4 || (rtotal == 5 && finaltarget >= 15) || (rtotal == 6 && finaltarget >= 16)
+  const isCritFailure =
+    rtotal >= 18 || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0)
+
+  return { isCritSuccess, isCritFailure }
+}
+
+function calculateRofHits(
+  margin: number,
+  action: OtfRollAction,
+  attack?: MeleeAttackModel | RangedAttackModel
+): { rof?: string; rcl?: string; rofrcl?: number } {
+  if (margin > 0 && action.type === OtfActionType.attack && attack?.isOfType(ActionType.RangedAttack)) {
+    /** @type {import('../../rules/combat/ranged/missile-weapon-attacks.js').WeaponDescriptor} */
+    const weapon = { recoil: attack.recoilText, rateOfFire: attack.rofText }
+    const potentialHits = MissileWeaponAttacks.computePotentialHits(weapon, action.shots, margin)
+
+    return { rof: potentialHits.rateOfFire, rcl: potentialHits.recoil, rofrcl: potentialHits.potentialHits }
+  } else return {}
 }

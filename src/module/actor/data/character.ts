@@ -19,7 +19,7 @@ import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { ItemType } from '@module/item/types.js'
 import { COSTS_REGEX, parselink } from '@module/otf/parselink.js'
-import { OtfActionType, OtfAction, DamageAction } from '@module/otf/types.js'
+import { OtfActionType, OtfAction, DamageAction, OtfRollAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { taggedModToApply } from '@module/tagged-modifiers/tagged-modifiers.js'
@@ -1625,8 +1625,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   async addTaggedRollModifiers(
-    chatThing: string,
-    optionalArgs: { obj?: AnyObject; action?: OtfAction } = {},
+    action: OtfRollAction,
+    item?: Item.Implementation,
     attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
     const taggedSettings =
@@ -1637,14 +1637,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const actorInCombat = this.parent.inCombat
     const allMods = this.allModifiers()
 
-    const { modsToApply, isDamageRoll } = taggedModToApply(
-      chatThing,
-      attack,
-      optionalArgs,
-      taggedSettings,
-      allMods,
-      actorInCombat
-    )
+    const { modsToApply, isDamageRoll } = taggedModToApply(action, item, attack, taggedSettings, allMods, actorInCombat)
 
     for (const mod of modsToApply) {
       const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)

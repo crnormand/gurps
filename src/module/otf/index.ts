@@ -1,7 +1,7 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import { setLastTargetedRoll } from './dieroll.js'
-import { executeOTF, performAction } from './executeOTF.js'
+import { executeOTF, performAction, allowOtfExec } from './executeOTF.js'
 import { parselink } from './parselink.js'
 
 interface OtfModule extends GurpsModule {
@@ -9,6 +9,7 @@ interface OtfModule extends GurpsModule {
   parselink: typeof parselink
   executeOTF: typeof executeOTF
   setLastTargetedRoll: typeof setLastTargetedRoll
+  allowOtfExec: typeof allowOtfExec
   pendingOTFs: string[]
 }
 
@@ -33,5 +34,6 @@ export const Otf: OtfModule = {
   parselink,
   executeOTF,
   setLastTargetedRoll,
+  allowOtfExec,
   pendingOTFs: [],
 }
