@@ -16,6 +16,7 @@ import { AnyMutableObject, DeepPartial } from 'fvtt-types/utils'
 
 import { ActorType } from '../types.js'
 
+import { GurpsEffectPicker } from './effect-picker.js'
 import { invokeSheetAction } from './helpers.js'
 
 /* ---------------------------------------- */
@@ -165,6 +166,7 @@ class GurpsBaseActorSheet<
       toggleContainer: GurpsBaseActorSheet.#onToggleContainer,
       addModifier: { handler: GurpsBaseActorSheet.#onAddModifier, buttons: [0, 2] },
       rollOtf: { handler: GurpsBaseActorSheet.#onRollOtf, buttons: [0, 2] },
+      addEffect: GurpsBaseActorSheet.#onAddEffect,
     },
     dragDrop: [{ dragSelector: '[draggable]', dropSelector: null }],
   }
@@ -189,6 +191,14 @@ class GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
   /*   Event handlers                         */
+  /* ---------------------------------------- */
+
+  static async #onAddEffect(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+
+    await new GurpsEffectPicker({ actor: this.actor }).render({ force: true })
+  }
+
   /* ---------------------------------------- */
 
   static async #onImportActor(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {

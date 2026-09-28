@@ -5,7 +5,6 @@ import { systemPath } from '@module/util/misc.js'
 
 import { ActorType } from '../types.js'
 
-import { GurpsBaseActorSheet } from './base-actor-sheet.js'
 import { GurpsActorGcsSheet } from './gcs-actor-sheet.js'
 import { GurpsActorModernSheet } from './modern/sheet.js'
 
@@ -589,7 +588,7 @@ export function getTextForState(key: string, state: string | undefined): string 
 /* ---------------------------------------- */
 
 export async function invokeSheetAction(
-  sheet: GurpsBaseActorSheet,
+  sheet: { options: { actions: Record<string, unknown> } },
   action: string,
   target: HTMLElement,
   selectors: string

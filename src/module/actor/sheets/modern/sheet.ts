@@ -10,7 +10,6 @@ import {
   DisplayTrait,
 } from '@gurps-types/gurps/display-item.js'
 import { ActionType } from '@module/action/types.js'
-import EffectPicker from '@module/actor/effect-picker.js'
 import MoveModeEditor from '@module/actor/move-mode-editor.js'
 import { ActorType } from '@module/actor/types.js'
 import { PostureType } from '@module/effects/posture.js'
@@ -125,7 +124,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     actions: {
       resetHp: GurpsActorModernSheet.#onResetResource,
       resetFp: GurpsActorModernSheet.#onResetResource,
-      addEffect: GurpsActorModernSheet.#onAddEffect,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
       decrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
@@ -408,23 +406,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     } else if (action === 'resetFp' || action === 'reset-fp') {
       await this.actor.update({ 'system.FP.damage': 0 } as Actor.UpdateData)
     }
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onAddEffect(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
-    event.preventDefault()
-    const theme = this.options.classes.includes('theme-dark')
-      ? 'theme-dark'
-      : this.options.classes.includes('theme-light')
-        ? 'theme-light'
-        : undefined
-
-    console.log('Opening EffectPicker with theme:', theme)
-
-    const dialog = new EffectPicker(this.actor, { parentTheme: theme })
-
-    dialog.render(true)
   }
 
   /* ---------------------------------------- */

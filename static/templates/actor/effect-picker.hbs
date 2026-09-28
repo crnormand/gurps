@@ -1,6 +1,12 @@
 <div class='effect-picker-container {{parentTheme}}'>
-  <div class='effect-picker-search-wrapper'>
-    <input type='text' class='effect-picker-search' placeholder='{{localize "GURPS.effectPicker.search"}}' />
+  <div class='effect-picker-search-wrapper flexrow'>
+    <input name="search" type='text' class='effect-picker-search' placeholder='{{localize "GURPS.effectPicker.search"}}' />
+    <button
+      type="button" data-action="addNewEffect"
+      title='{{localize "DOCUMENT.New" type=(localize "DOCUMENT.ActiveEffect")}}'
+      aria-label='{{localize "DOCUMENT.New" type=(localize "DOCUMENT.ActiveEffect")}}'>
+      <i class="fa-solid fa-plus"></i>
+    </button>
   </div>
 
   <div class='effect-picker-list'>
@@ -13,7 +19,7 @@
         </div>
         <div class='effect-picker-category-content'>
           {{#each this.effects}}
-            <div class='effect-picker-item' data-effect-id='{{this.id}}'>
+            <div class='effect-picker-item' data-action='chooseEffect' data-effect-id='{{this.id}}'>
               <img src='{{this.img}}' class='effect-picker-icon' />
               <span class='effect-picker-name'>{{this.localizedName}}</span>
             </div>
