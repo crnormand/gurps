@@ -78,8 +78,7 @@
   place-items: center;
 }
 
-.ms-effect-edit,
-.ms-effect-delete {
+.ms-effect-menu {
   display: none;
   align-items: center;
   justify-content: center;
@@ -100,7 +99,7 @@
   }
 }
 
-.ms-effect-delete {
+.ms-effect-menu {
   position: absolute;
   inset: 0;
 
@@ -114,7 +113,7 @@
     display: none;
   }
 
-  .ms-effect-delete {
+  .ms-effect-menu {
     display: flex;
     align-items: center;
     justify-content: center;

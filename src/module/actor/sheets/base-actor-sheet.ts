@@ -16,6 +16,8 @@ import { AnyMutableObject, DeepPartial } from 'fvtt-types/utils'
 
 import { ActorType } from '../types.js'
 
+import { invokeSheetAction } from './helpers.js'
+
 /* ---------------------------------------- */
 
 namespace GurpsBaseActorSheet {
@@ -460,6 +462,70 @@ class GurpsBaseActorSheet<
         event.preventDefault()
       }
     })
+  }
+
+  /* ---------------------------------------- */
+
+  protected _createItemContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+    return [
+      {
+        label: 'GURPS.delete',
+        icon: 'fa-solid fa-fw fa-trash',
+        visible: target => target.dataset.uuid !== undefined,
+        onClick: async (event, target) => {
+          const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
+
+          if (handler) handler.call(this, event, target)
+        },
+      },
+    ]
+  }
+
+  /* ---------------------------------------- */
+
+  protected _createPseudoDocumentContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+    return [
+      {
+        label: 'GURPS.delete',
+        icon: 'fa-solid fa-fw fa-trash',
+        visible: target => target.dataset.uuid !== undefined,
+        onClick: async (event, target) => {
+          const handler = this.options.actions['deleteEmbedded'] as Application.ClickAction | null
+
+          if (handler) handler.call(this, event, target)
+        },
+      },
+    ]
+  }
+
+  /* ---------------------------------------- */
+
+  protected _createActiveEffectContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
+    return [
+      {
+        label: 'GURPS.toggle',
+        icon: 'fa-solid fa-fw fa-square-check',
+        onClick: async (_event, target) => {
+          const effect = await this._getEmbedded(target)
+
+          if (!effect || !(effect instanceof ActiveEffect)) return
+
+          const disabled = effect.disabled
+
+          await effect.update({ disabled: !disabled })
+        },
+      },
+      {
+        label: 'GURPS.edit',
+        icon: 'fa-solid fa-fw fa-pen-to-square',
+        onClick: (_event, target) => invokeSheetAction(this, 'editEmbedded', target, '.gcs-active-effect'),
+      },
+      {
+        label: 'GURPS.delete',
+        icon: 'fa-solid fa-fw fa-trash',
+        onClick: (_event, target) => invokeSheetAction(this, 'deleteEmbedded', target, '.gcs-active-effect'),
+      },
+    ]
   }
 
   /* ---------------------------------------- */

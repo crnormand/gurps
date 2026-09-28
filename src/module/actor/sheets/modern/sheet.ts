@@ -374,6 +374,31 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
+  protected override async _onFirstRender(
+    context: DeepPartial<GurpsActorGcsSheet.RenderContext>,
+    options: DeepPartial<GurpsBaseActorSheet.RenderOptions>
+  ): Promise<void> {
+    super._onFirstRender(context, options)
+
+    this._createContextMenu(this._createActiveEffectContextOptions, '.ms-effect-tag', {
+      jQuery: false,
+      hookName: 'createActiveEffectContextOptions',
+      parentClassHooks: false,
+      fixed: true,
+      eventName: 'contextmenu',
+    })
+
+    this._createContextMenu(this._createActiveEffectContextOptions, '.ms-effect-tag .ms-effect-icon-wrapper', {
+      jQuery: false,
+      hookName: 'createActiveEffectContextOptions',
+      parentClassHooks: false,
+      fixed: true,
+      eventName: 'click',
+    })
+  }
+
+  /* ---------------------------------------- */
+
   static async #onResetResource(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
     const action = target.dataset.action
