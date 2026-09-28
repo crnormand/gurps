@@ -806,6 +806,19 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   protected _createActiveEffectContextOptions(): foundry.applications.ux.ContextMenu.Entry<HTMLElement>[] {
     return [
       {
+        label: 'GURPS.toggle',
+        icon: 'fa-solid fa-fw fa-square-check',
+        onClick: async (_event, target) => {
+          const effect = await this._getEmbedded(target)
+
+          if (!effect || !(effect instanceof ActiveEffect)) return
+
+          const disabled = effect.disabled
+
+          await effect.update({ disabled: !disabled })
+        },
+      },
+      {
         label: 'GURPS.edit',
         icon: 'fa-solid fa-fw fa-pen-to-square',
         onClick: (_event, target) => invokeSheetAction(this, 'editEmbedded', target, '.gcs-active-effect'),

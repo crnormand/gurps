@@ -188,7 +188,7 @@
     <div class="gcs-section-header">{{localize "GURPS.activeEffects"}}</div>
     <div class="gcs-section-content flexrow">
       {{#each activeEffects as |effect|}}
-      <div class="gcs-active-effect" data-uuid="{{effect.uuid}}" tabindex="0" aria-haspopup="menu">
+      <div class="gcs-active-effect {{#if effect.disabled}}gcs-active-effect-disabled{{/if}}" data-uuid="{{effect.uuid}}" tabindex="0" aria-haspopup="menu">
         <span class="gcs-active-effect-icon">
           <img class="gcs-active-effect-image" src="{{effect.img}}" title="{{effect.name}}" />
           <i class="gcs-active-effect-menu-icon fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>

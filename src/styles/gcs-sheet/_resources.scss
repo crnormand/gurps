@@ -132,6 +132,13 @@ section[data-application-part='resources'] {
 
       @include gcs-control;
 
+      &.gcs-active-effect-disabled {
+        opacity: 0.5;
+        span {
+          text-decoration: line-through;
+        }
+      }
+
       .gcs-active-effect-icon {
         display: inline-flex;
         align-items: center;
