@@ -603,3 +603,11 @@ export async function invokeSheetAction(
 
   if (handler) await handler.call(sheet, event, contextTarget)
 }
+
+export function getSheetTheme(sheet: Application): string {
+  return sheet.options.classes.includes('theme-dark')
+    ? 'theme-dark'
+    : sheet.options.classes.includes('theme-light')
+      ? 'theme-light'
+      : ''
+}

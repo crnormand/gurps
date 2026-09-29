@@ -17,7 +17,7 @@ import { AnyMutableObject, DeepPartial } from 'fvtt-types/utils'
 import { ActorType } from '../types.js'
 
 import { GurpsEffectPicker } from './effect-picker.js'
-import { invokeSheetAction } from './helpers.js'
+import { getSheetTheme, invokeSheetAction } from './helpers.js'
 
 /* ---------------------------------------- */
 
@@ -196,7 +196,7 @@ class GurpsBaseActorSheet<
   static async #onAddEffect(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
 
-    await new GurpsEffectPicker({ actor: this.actor }).render({ force: true })
+    await new GurpsEffectPicker({ actor: this.actor, classes: [getSheetTheme(this)] }).render({ force: true })
   }
 
   /* ---------------------------------------- */
