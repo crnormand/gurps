@@ -1,20 +1,36 @@
 {
   "DOCUMENT": {
     "Action": "Ação",
+    "Actions": "Ações",
     "Attribute": "Atributo",
     "AttributeDefinition": "Definição de Atributo",
+    "AttributeDefinitions": "Definições de Atributos",
+    "Attributes": "Atributos",
     "AttributeThreshold": "Limiar de Atributo",
+    "AttributeThresholds": "Limiares de Atributos",
     "Body": "Plano Corporal",
+    "Bodys": "Planos Corporais",
     "ConditionalModifier": "Modificador Condicional",
+    "ConditionalModifiers": "Modificadores Condicionais",
+    "Edit": "Editar {type}",
     "Feature": "Característica",
+    "Features": "Características",
     "GcsSubTable": "Sub-tabela de Localização",
+    "GcsSubTables": "Sub-tabelas de Localização",
     "HitLocation": "Localização do Golpe",
+    "HitLocations": "Localizações dos Golpes",
     "MoveMode": "Modo de Movimento",
+    "MoveModes": "Modos de Movimento",
     "Note": "Nota",
+    "Notes": "Notas",
     "Prereq": "Pré-requisito",
+    "Prereqs": "Pré-requisitos",
     "ReactionModifier": "Modificador de Reação",
+    "ReactionModifiers": "Modificadores de Reação",
     "ResourceTracker": "Rastreador de Recursos",
-    "Study": "Entrada de Estudo"
+    "ResourceTrackers": "Rastreadores de Recursos",
+    "Study": "Entrada de Estudo",
+    "Studys": "Entradas de Estudo"
   },
   "GURPS": {
     "abbrevPoints": "Ptos",
@@ -911,7 +927,6 @@
     "dxCheckOrFallApplyProne": "{name}: faça um teste de DX ou sofra uma queda!",
     "dxJudoAcrobaticsCheckToRemainStanding": "Faça um teste de [DX, Judô, ou Acrobacia] {modifierText} para permanecer de pé.",
     "easyRoll": "Chance fácil",
-    "edit": "Editar",
     "editorAddItem": "Adicionar {name} no final",
     "effect": {
       "listTitle": "Efeitos Ativos para {name}"

@@ -1,20 +1,36 @@
 {
   "DOCUMENT": {
     "Action": "Aktion",
+    "Actions": "Aktionen",
     "Attribute": "Attribut",
     "AttributeDefinition": "Attributdefinition",
+    "AttributeDefinitions": "Attributdefinitionen",
+    "Attributes": "Attribute",
     "AttributeThreshold": "Attributschwelle",
+    "AttributeThresholds": "Attributschwellen",
     "Body": "Körperplan",
+    "Bodys": "Körperpläne",
     "ConditionalModifier": "Bedingter Modifikator",
+    "ConditionalModifiers": "Bedingte Modifikatoren",
+    "Edit": "{type} bearbeiten",
     "Feature": "Merkmal",
+    "Features": "Merkmale",
     "GcsSubTable": "Trefferzonen-Untertabelle",
+    "GcsSubTables": "Trefferzonen-Untertabellen",
     "HitLocation": "Trefferzone",
+    "HitLocations": "Trefferzonen",
     "MoveMode": "Bewegungsmodus",
+    "MoveModes": "Bewegungsmodi",
     "Note": "Notiz",
+    "Notes": "Notizen",
     "Prereq": "Voraussetzung",
+    "Prereqs": "Voraussetzungen",
     "ReactionModifier": "Reaktionsmodifikator",
+    "ReactionModifiers": "Reaktionsmodifikatoren",
     "ResourceTracker": "Ressourcen-Tracker",
-    "Study": "Studieneintrag"
+    "ResourceTrackers": "Ressourcen-Tracker",
+    "Study": "Studieneintrag",
+    "Studys": "Studieneinträge"
   },
   "GURPS": {
     "abbrevPoints": "Pkt",
@@ -911,7 +927,6 @@
     "dxCheckOrFallApplyProne": "{name}: würfle DX oder stürze!",
     "dxJudoAcrobaticsCheckToRemainStanding": "Würfle [DX, Judo, oder Akrobatik] {modifierText} um stehen zu bleiben.",
     "easyRoll": "Gute Chance",
-    "edit": "Bearbeiten",
     "editorAddItem": "Füge {name} am Ende hinzu",
     "effect": {
       "listTitle": "Aktive Effekte für {name}"

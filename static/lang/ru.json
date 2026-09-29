@@ -1,20 +1,36 @@
 {
   "DOCUMENT": {
     "Action": "Действие",
+    "Actions": "Действия",
     "Attribute": "Атрибут",
     "AttributeDefinition": "Определение атрибута",
+    "AttributeDefinitions": "Определения атрибутов",
+    "Attributes": "Атрибуты",
     "AttributeThreshold": "Порог атрибута",
+    "AttributeThresholds": "Пороги атрибутов",
     "Body": "План тела",
+    "Bodys": "Планы тела",
     "ConditionalModifier": "Условный модификатор",
+    "ConditionalModifiers": "Условные модификаторы",
+    "Edit": "Изменить {type}",
     "Feature": "Особенность",
+    "Features": "Особенности",
     "GcsSubTable": "Подтаблица мест попадания",
+    "GcsSubTables": "Подтаблицы мест попадания",
     "HitLocation": "Место попадания",
+    "HitLocations": "Места попадания",
     "MoveMode": "Режим передвижения",
+    "MoveModes": "Режимы передвижения",
     "Note": "Заметка",
+    "Notes": "Заметки",
     "Prereq": "Предпосылка",
+    "Prereqs": "Предпосылки",
     "ReactionModifier": "Модификатор реакции",
+    "ReactionModifiers": "Модификаторы реакции",
     "ResourceTracker": "Трекер ресурсов",
-    "Study": "Запись об обучении"
+    "ResourceTrackers": "Трекеры ресурсов",
+    "Study": "Запись об обучении",
+    "Studys": "Записи об обучении"
   },
   "GURPS": {
     "abbrevPoints": "Очк",
@@ -911,7 +927,6 @@
     "dxCheckOrFallApplyProne": "{name}: бросьте ЛВ или упадите!",
     "dxJudoAcrobaticsCheckToRemainStanding": "Бросьте [ЛВ, Дзюдо или Акробатика] {modifierText}, чтобы остаться стоять.",
     "easyRoll": "Легкий шанс",
-    "edit": "Редактировать",
     "editorAddItem": "Добавить {name} в конец",
     "effect": {
       "listTitle": "Активные эффекты для {name}"

@@ -1,20 +1,36 @@
 {
   "DOCUMENT": {
     "Action": "Action",
+    "Actions": "Actions",
     "Attribute": "Attribute",
     "AttributeDefinition": "Attribute Definition",
+    "AttributeDefinitions": "Attribute Definitions",
+    "Attributes": "Attributes",
     "AttributeThreshold": "Attribute Threshold",
+    "AttributeThresholds": "Attribute Thresholds",
     "Body": "Body Plan",
+    "Bodys": "Body Plans",
     "ConditionalModifier": "Conditional Modifier",
+    "ConditionalModifiers": "Conditional Modifiers",
+    "Edit": "Edit {type}",
     "Feature": "Feature",
+    "Features": "Features",
     "GcsSubTable": "Hit Location Sub-Table",
+    "GcsSubTables": "Hit Location Sub-Tables",
     "HitLocation": "Hit Location",
+    "HitLocations": "Hit Locations",
     "MoveMode": "Move Mode",
+    "MoveModes": "Move Modes",
     "Note": "Note",
+    "Notes": "Notes",
     "Prereq": "Prerequisite",
+    "Prereqs": "Prerequisites",
     "ReactionModifier": "Reaction Modifier",
+    "ReactionModifiers": "Reaction Modifiers",
     "ResourceTracker": "Resource Tracker",
-    "Study": "Study Entry"
+    "ResourceTrackers": "Resource Trackers",
+    "Study": "Study Entry",
+    "Studys": "Study Entries"
   },
   "GURPS": {
     "abbrevPoints": "Pts",
@@ -911,7 +927,6 @@
     "dxCheckOrFallApplyProne": "{name}: roll DX or fall!",
     "dxJudoAcrobaticsCheckToRemainStanding": "Roll [DX, Judo, or Acrobatics] {modifierText} to remain standing.",
     "easyRoll": "Good chance",
-    "edit": "Edit",
     "editorAddItem": "Add {name} at the end",
     "effect": {
       "listTitle": "Active Effects for {name}"

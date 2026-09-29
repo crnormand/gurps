@@ -1,20 +1,36 @@
 {
   "DOCUMENT": {
     "Action": "Acción",
+    "Actions": "Acciones",
     "Attribute": "Atributo",
     "AttributeDefinition": "Definición de Atributo",
+    "AttributeDefinitions": "Definiciones de Atributos",
+    "Attributes": "Atributos",
     "AttributeThreshold": "Umbral de Atributo",
+    "AttributeThresholds": "Umbrales de Atributos",
     "Body": "Plan Corporal",
+    "Bodys": "Planes Corporales",
     "ConditionalModifier": "Modificador Condicional",
+    "ConditionalModifiers": "Modificadores Condicionales",
+    "Edit": "Editar {type}",
     "Feature": "Característica",
+    "Features": "Características",
     "GcsSubTable": "Subtabla de Ubicación de Impacto",
+    "GcsSubTables": "Subtablas de Ubicación de Impacto",
     "HitLocation": "Ubicación de Impacto",
+    "HitLocations": "Ubicaciones de Impacto",
     "MoveMode": "Modo de Movimiento",
+    "MoveModes": "Modos de Movimiento",
     "Note": "Nota",
+    "Notes": "Notas",
     "Prereq": "Prerrequisito",
+    "Prereqs": "Prerrequisitos",
     "ReactionModifier": "Modificador de Reacción",
+    "ReactionModifiers": "Modificadores de Reacción",
     "ResourceTracker": "Rastreador de Recursos",
-    "Study": "Entrada de Estudio"
+    "ResourceTrackers": "Rastreadores de Recursos",
+    "Study": "Entrada de Estudio",
+    "Studys": "Entradas de Estudio"
   },
   "GURPS": {
     "abbrevPoints": "Pts",
@@ -911,7 +927,6 @@
     "dxCheckOrFallApplyProne": "{name}: ¡tira DX o cae!",
     "dxJudoAcrobaticsCheckToRemainStanding": "Tira [DX, Judo o Acrobacia] {modifierText} para mantenerse de pie.",
     "easyRoll": "Buena oportunidad",
-    "edit": "Editar",
     "editorAddItem": "Agregar {name} al final",
     "effect": {
       "listTitle": "Efectos Activos para {name}"

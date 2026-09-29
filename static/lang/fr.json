@@ -1,20 +1,36 @@
 {
   "DOCUMENT": {
     "Action": "Action",
+    "Actions": "Actions",
     "Attribute": "Attribut",
     "AttributeDefinition": "Définition d'attribut",
+    "AttributeDefinitions": "Définitions d'attributs",
+    "Attributes": "Attributs",
     "AttributeThreshold": "Seuil d'attribut",
+    "AttributeThresholds": "Seuils d'attribut",
     "Body": "Plan corporel",
+    "Bodys": "Plans corporels",
     "ConditionalModifier": "Modificateur conditionnel",
+    "ConditionalModifiers": "Modificateurs conditionnels",
+    "Edit": "Modifier {type}",
     "Feature": "Capacité",
+    "Features": "Capacités",
     "GcsSubTable": "Sous-table de localisation",
+    "GcsSubTables": "Sous-tables de localisation",
     "HitLocation": "Localisation des coups",
+    "HitLocations": "Localisations des coups",
     "MoveMode": "Mode de déplacement",
+    "MoveModes": "Modes de déplacement",
     "Note": "Note",
+    "Notes": "Notes",
     "Prereq": "Prérequis",
+    "Prereqs": "Prérequis",
     "ReactionModifier": "Modificateur de réaction",
+    "ReactionModifiers": "Modificateurs de réaction",
     "ResourceTracker": "Suivi des ressources",
-    "Study": "Entrée d'étude"
+    "ResourceTrackers": "Suivis des ressources",
+    "Study": "Entrée d'étude",
+    "Studys": "Entrées d'étude"
   },
   "GURPS": {
     "abbrevPoints": "Pts",
@@ -911,7 +927,6 @@
     "dxCheckOrFallApplyProne": "{name}: jet DX ou chute!",
     "dxJudoAcrobaticsCheckToRemainStanding": "Jet [DX, Karaté, ou Acrobaties] {modifierText} pour rester debout.",
     "easyRoll": "Bonne chance",
-    "edit": "Modifier",
     "editorAddItem": "Ajouter {name} à la fin",
     "effect": {
       "listTitle": "Effets Actifs pour {name}"
