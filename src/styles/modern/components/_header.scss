@@ -443,38 +443,3 @@
     }
   }
 }
-
-.ms-senses-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ms-space-6);
-  padding: var(--ms-space-3) var(--ms-space-6);
-  background: var(--ms-bg-section);
-  border-bottom: 1px solid var(--ms-border-light);
-  font-size: var(--ms-font-xs);
-
-  .ms-sense-item {
-    display: flex;
-    align-items: center;
-    gap: var(--ms-space-2);
-
-    .ms-sense-label {
-      color: var(--ms-text-muted);
-    }
-
-    .ms-sense-value {
-      font-weight: var(--ms-weight-semibold);
-      @include tabular-nums;
-      color: var(--ms-text);
-
-      &.rollable {
-        color: var(--ms-accent);
-        cursor: pointer;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
-}
