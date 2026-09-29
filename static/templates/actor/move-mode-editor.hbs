@@ -1,74 +1,66 @@
-<div class='move-mode-editor'>
-  <table class='gcs-table'>
-    <colgroup>
-      <col class='gcs-col-name'>
-      <col class='gcs-col-basic'>
-      <col class='gcs-col-enhanced'>
-      <col class='gcs-col-delete'>
-    </colgroup>
-    <thead>
-      <tr>
-        <th>{{localize 'GURPS.moveModeType'}}</th>
-        <th>{{localize 'GURPS.basic'}}</th>
-        <th>{{localize 'GURPS.enhanced'}}</th>
-        <th>
-          <button type='button' data-action='createEmbedded' data-document-name='MoveMode' title='{{localize "GURPS.add"}}'>
-            <i class='fa-solid fa-plus'></i>
+<table class='gcs-table'>
+  <colgroup>
+    <col class='gcs-col-name'>
+    <col class='gcs-col-basic'>
+    <col class='gcs-col-enhanced'>
+    <col class='gcs-col-delete'>
+  </colgroup>
+  <thead>
+    <tr>
+      <th>{{localize 'GURPS.moveModeType'}}</th>
+      <th>{{localize 'GURPS.basic'}}</th>
+      <th>{{localize 'GURPS.enhanced'}}</th>
+      <th>
+        <button type='button' data-action='createEmbedded' data-document-name='MoveMode' title='{{localize "DOCUMENT.New" type=(localize "DOCUMENT.MoveMode")}}'>
+          <i class='fa-solid fa-plus'></i>
+        </button>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each moveModes}}
+      <tr data-uuid='{{uuid}}'>
+        <td>
+          <input
+            type='text'
+            name='system.moveV2.{{_id}}.mode'
+            value='{{mode}}'
+          />
+        </td>
+        <td>
+          <input
+            type='number'
+            name='system.moveV2.{{_id}}.basic'
+            value='{{basic}}'
+            step='1'
+          />
+        </td>
+        <td>
+          <input
+            type='number'
+            name='system.moveV2.{{_id}}.enhanced'
+            value='{{enhanced}}'
+            step='1'
+          />
+        </td>
+        <td>
+          <button
+            type='button'
+            data-action='deleteEmbedded'
+            data-uuid='{{uuid}}'
+            title='{{localize "GURPS.delete"}}'
+            {{#unless (gt (length ../moveModes) 1)}}
+            disabled
+            {{/unless}}
+          >
+            <i class='fa-solid fa-trash'></i>
           </button>
-        </th>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      {{#each moveModes}}
-        <tr data-uuid='{{uuid}}'>
-          <td>
-            <input
-              type='text'
-              name='system.moveV2.{{_id}}.mode'
-              value='{{mode}}'
-            />
-          </td>
-          <td>
-            <input
-              type='number'
-              name='system.moveV2.{{_id}}.basic'
-              value='{{basic}}'
-              step='1'
-            />
-          </td>
-          <td>
-            <input
-              type='number'
-              name='system.moveV2.{{_id}}.enhanced'
-              value='{{enhanced}}'
-              step='1'
-            />
-          </td>
-          <td>
-            {{#if (gt (length ../moveModes) 1)}}
-            <button
-              type='button'
-              data-action='deleteEmbedded'
-              data-uuid='{{uuid}}'
-              title='{{localize "GURPS.delete"}}'
-            >
-              <i class='fa-solid fa-trash'></i>
-            </button>
-            {{/if}}
-          </td>
-        </tr>
-      {{else}}
-        <tr class='gcs-item-empty'>
-          <td colspan='4'>{{localize 'GURPS.none'}}</td>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
-<footer class='move-mode-editor-footer'>
-  <button type='submit'>
-    <i class='fa-solid fa-floppy-disk'></i>
-    {{localize 'GURPS.update'}}
-  </button>
-</footer>
-</div>
-
+    {{else}}
+      <tr class='gcs-item-empty'>
+        <td colspan='4'>{{localize 'GURPS.none'}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

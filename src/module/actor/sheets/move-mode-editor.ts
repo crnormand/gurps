@@ -24,6 +24,8 @@ interface GurpsMoveModeEditorRenderContext extends Application.RenderContext {
 class GurpsMoveModeEditor extends HandlebarsApplicationMixin(Application) {
   actor: MoveModeActor
 
+  /* ---------------------------------------- */
+
   get document(): MoveModeActor {
     return this.actor
   }
@@ -48,9 +50,9 @@ class GurpsMoveModeEditor extends HandlebarsApplicationMixin(Application) {
   /* ---------------------------------------- */
 
   static override DEFAULT_OPTIONS: Application.DefaultOptions = {
-    classes: ['gurps', 'move-mode-editor'],
+    classes: ['gurps', 'gcs-app'],
     tag: 'form',
-    position: { width: 600, height: 300 },
+    position: { width: 600, height: 400 },
     window: { resizable: true },
     form: {
       handler: GurpsMoveModeEditor.#onSubmitForm,
@@ -66,8 +68,11 @@ class GurpsMoveModeEditor extends HandlebarsApplicationMixin(Application) {
   /* ---------------------------------------- */
 
   static override PARTS: Record<string, HandlebarsApplicationMixin.HandlebarsTemplatePart> = {
-    body: {
+    table: {
       template: systemPath('templates/actor/move-mode-editor.hbs'),
+    },
+    footer: {
+      template: systemPath('templates/footer-buttons.hbs'),
     },
   }
 
