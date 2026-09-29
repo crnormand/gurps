@@ -20,6 +20,7 @@ import { contrastColor, toHexColor } from '@module/util/color-utils.js'
 import { getCssVariable } from '@module/util/get-css-value.js'
 import { getGame } from '@module/util/guards.js'
 import { systemPath } from '@module/util/misc.js'
+import { sheetActions } from '@module/util/sheet-actions.js'
 import { ConditionalInjury } from '@rules/injury/conditional-injury/conditional-injury.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
@@ -665,7 +666,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
       noteRow.addEventListener('dblclick', async event => {
         event.preventDefault()
         const target = event.currentTarget as HTMLElement
-        const doc = await this._getEmbedded(target)
+        const doc = await sheetActions.getEmbeddedDocument(this.actor, target)
 
         if (!doc) return
 
@@ -853,7 +854,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
   static async #onToggleNotes(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event.preventDefault()
-    const doc = await this._getEmbedded(target)
+    const doc = await sheetActions.getEmbeddedDocument(this.actor, target)
 
     if (!doc) return
 
@@ -937,7 +938,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   ): Promise<void> {
     event.preventDefault()
 
-    const tracker = await this._getEmbedded(target)
+    const tracker = await sheetActions.getEmbeddedDocument(this.actor, target)
 
     if (!(tracker instanceof TrackerInstance)) {
       console.error(
@@ -982,7 +983,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   static async #onChangeQuantity(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event?.preventDefault()
 
-    const doc = await this._getEmbedded(target)
+    const doc = await sheetActions.getEmbeddedDocument(this.actor, target)
 
     if (!doc) return
 
@@ -1013,7 +1014,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   static async #onChangeUses(this: GurpsActorGcsSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event?.preventDefault()
 
-    const doc = await this._getEmbedded(target)
+    const doc = await sheetActions.getEmbeddedDocument(this.actor, target)
 
     if (!doc) return
 
