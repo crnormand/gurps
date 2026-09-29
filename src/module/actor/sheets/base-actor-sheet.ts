@@ -12,6 +12,7 @@ import {
   createEmbeddedAction,
   deleteEmbeddedAction,
   editEmbeddedAction,
+  getEmbeddedDocument,
   toggleContainerAction,
 } from '@module/util/embedded-document-actions.js'
 import { getUser } from '@module/util/guards.js'
@@ -385,7 +386,7 @@ class GurpsBaseActorSheet<
         label: 'GURPS.toggle',
         icon: 'fa-solid fa-fw fa-square-check',
         onClick: async (_event, target) => {
-          const effect = await this._getEmbedded(target)
+          const effect = await getEmbeddedDocument(this.actor, target)
 
           if (!effect || !(effect instanceof ActiveEffect)) return
 
