@@ -1814,7 +1814,7 @@ if (!globalThis.GURPS) {
     targetActor.ignoreRender = true
 
     try {
-      await targetActor.update({ [deleteKey]: null })
+      await targetActor.update({ [objectPath]: _del })
       await targetActor.update({ [objectPath]: updatedObject }, { diff: false })
 
       if (Object.keys(updatedObject).length === 0) {

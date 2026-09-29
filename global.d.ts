@@ -1,12 +1,13 @@
 import { AnyMutableObject } from 'fvtt-types/utils'
-import { ResourceTrackerTemplate } from 'module/resource-tracker/types.ts'
 import { GurpsActor } from './module/actor/actor.js'
-import { GurpsCombatant } from './module/combat/combatant.ts'
-import { GurpsItem } from './module/item.js'
 import { CombatOptionSettings } from './module/combat/combat-options.ts'
+import { GurpsCombatant } from './module/combat/combatant.ts'
+import { GurpsRange } from './module/combat/ranges.js'
+import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from './module/combat/types.ts'
+import { GurpsItem } from './module/item.js'
+import { PdfReference } from './module/pdf/types.ts'
+import { ResourceTrackerTemplate } from './module/resource-tracker/types.ts'
 import { GurpsToken } from './module/token/gurps-token.ts'
-import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from 'module/combat/types.ts'
-import { GurpsRange } from 'module/combat/ranges.js'
 
 export {}
 
@@ -91,7 +92,7 @@ declare global {
       isGM: boolean,
       isOtf?: boolean
     ) => Promise<void>
-    SJGProductMappings: Record<string, string>
+    SJGProductMappings: Record<string, PdfReference>
 
     actionFuncs: Record<
       string,
