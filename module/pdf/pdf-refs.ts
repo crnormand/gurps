@@ -67,6 +67,9 @@ export function extractBookAndPage(link: string, bookCodes: string[] = [], setti
   let pageLabel: string | null = null
 
   if (bookCodes.length) {
+    // sort book codes by length in descending order to match the longest code first
+    bookCodes.sort((a, b) => b.length - a.length)
+
     const matchedBookCode = bookCodes.find(code => text.startsWith(code))
     if (matchedBookCode) {
       book = matchedBookCode
