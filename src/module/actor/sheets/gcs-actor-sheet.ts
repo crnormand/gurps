@@ -154,7 +154,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
   /* ---------------------------------------- */
 
   static override DEFAULT_OPTIONS: GurpsBaseActorSheet.DefaultOptions = {
-    classes: ['gcs-sheet'],
+    classes: ['gcs-app', 'gcs-actor-sheet'],
     position: {
       width: 800,
       height: 800,

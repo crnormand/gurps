@@ -1,0 +1,148 @@
+.application.gcs-actor-sheet {
+  section[data-application-part='resources'] {
+    display: grid;
+    gap: var(--gcs-section-gap);
+    grid-template-areas:
+      'attributes body encumbrance'
+      'attributes body moving';
+    grid-template-columns: max-content auto auto;
+
+    .gcs-attributes {
+      grid-area: attributes;
+      display: grid;
+      gap: 0.1rem;
+      grid-template-areas:
+        'primary secondary'
+        'damage secondary'
+        'maneuver maneuver';
+
+      .gcs-section-content {
+        height: fit-content;
+      }
+
+      input {
+        text-align: right;
+      }
+
+      .gcs-primary-attributes {
+        grid-area: primary;
+      }
+      .gcs-secondary-attributes {
+        grid-area: secondary;
+      }
+
+      .gcs-basic-damage {
+        grid-area: damage;
+      }
+
+      .gcs-maneuver-status {
+        grid-area: maneuver;
+      }
+    }
+
+    .gcs-body {
+      grid-area: body;
+
+      .gcs-section-content {
+        padding: 0;
+      }
+      .gcs-row-roll {
+        text-align: center;
+      }
+      .gcs-row-dr {
+        text-align: right;
+      }
+    }
+
+    .gcs-encumbrance {
+      grid-area: encumbrance;
+
+      .gcs-encumbrance-control {
+        cursor: pointer;
+      }
+
+      .gcs-row-enc-load,
+      .gcs-row-enc-move,
+      .gcs-row-enc-dodge {
+        text-align: right;
+      }
+    }
+
+    .gcs-moving {
+      grid-area: moving;
+
+      .gcs-lifting-value {
+        text-align: right;
+        font-weight: 700;
+      }
+    }
+  }
+
+  [data-application-part='resourceTrackers'] {
+    display: flex;
+    flex-direction: row;
+    gap: 0.1rem;
+    overflow-x: auto;
+
+    .form-fields {
+      height: auto;
+
+      input,
+      span {
+        max-width: var(--gcs-attribute-field-width);
+      }
+      input {
+        text-align: center;
+      }
+    }
+
+    .gcs-pool-attribute {
+      flex: 0 0 auto;
+
+      .gcs-section-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .notes {
+        font-size: var(--gcs-font-size-notes);
+      }
+    }
+
+    button.gcs-pool-control {
+      font: inherit;
+
+      &:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+      }
+
+      &.gcs-pool-decrement {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      &.gcs-pool-increment {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+
+      &.gcs-pool-reset {
+        margin-left: 0.5rem;
+      }
+    }
+
+    pool-value {
+      min-width: var(--gcs-attribute-field-width);
+    }
+
+    .pool-state {
+      white-space: nowrap;
+      text-align: center;
+      padding: 0.1rem;
+      min-height: 1.2rem;
+      border: 1px solid color-mix(in hsl, var(--gcs-color-surface-bg), white 15%);
+    }
+  }
+}

@@ -1,12 +1,12 @@
-@mixin gcs-header {
+@mixin header {
   justify-content: space-evenly;
 
   padding: var(--gcs-padding-label);
   padding-bottom: 0.2rem;
   border-bottom: 2px solid var(--gcs-color-section-border);
 
-  background-color: var(--gga-color-darkest-grey);
-  color: var(--gga-color-header-text);
+  background-color: var(--gcs-color-header-bg);
+  color: var(--gcs-color-header-fg);
 
   font-variant: all-small-caps;
   font-size: var(--gcs-font-size-header);
@@ -19,13 +19,7 @@
   }
 }
 
-/* ---------------------------------------- */
-
-/// Apply min/max width constraints to a table cell.
-/// Use on `td` (and `th` where column classes exist) inside a `table-layout: auto` table.
-/// - $min: enforced by the browser as the column minimum
-/// - $max: clips overflow; column won't shrink below content width, but content is hidden if wider
-@mixin gcs-col($min: 0, $max: null) {
+@mixin col($min: 0, $max: null) {
   min-width: $min;
 
   @if $max {
@@ -34,13 +28,11 @@
   }
 }
 
-/* ---------------------------------------- */
-
-@mixin gcs-banding {
+@mixin banding {
   background-color: var(--gcs-color-banding-bg);
   color: var(--gcs-color-banding-fg);
 
-  [data-action='rollOtf'] {
+  .gcs-otf-roll {
     background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-banding-bg) 30%);
 
     &:hover {
@@ -52,7 +44,7 @@
     }
   }
 
-  .gcs-mod-positive[data-action='addModifier'] {
+  .gcs-otf-mod.gcs-mod-positive {
     background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-banding-bg) 40%);
 
     &:hover {
@@ -64,7 +56,7 @@
     }
   }
 
-  .gcs-mod-negative[data-action='addModifier'] {
+  .gcs-otf-mod.gcs-mod-negative {
     background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-banding-bg) 20%);
 
     &:hover {

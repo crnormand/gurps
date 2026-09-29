@@ -281,7 +281,7 @@ class GurpsBaseActorSheet<
     const buttons = [
       constructHTMLButton({
         label: '',
-        classes: ['header-control', 'icon', 'fa-solid', 'fa-user-lock'],
+        classes: ['header-control', 'sheet-mode-toggle', 'icon', 'fa-solid', 'fa-user-lock'],
         dataset: { action: 'toggleMode', tooltip: 'GURPS.sheet.toggleMode' },
       }),
     ]

@@ -12,7 +12,7 @@
       {{quantity}}
       <i class='fa-solid fa-circle-plus equipmentbutton' data-action='incrementQuantity'></i>
     </td>
-    <td class="gcs-item-name-cell">
+    <td class="gcs-item-name">
       <div class="gcs-drag-handle" data-item-id="{{id}}" data-uuid="{{uuid}}" draggable="true"><i
           class="fa-solid fa-grip-vertical"></i>
       </div>
@@ -118,7 +118,7 @@
         {{> ".equipmentEntry" carriedTable=true}}
       {{else}}
         <tr class="gcs-item-empty">
-          <td colspan="9">{{localize "GURPS.none"}}</td>
+          <td colspan="11">{{localize "GURPS.none"}}</td>
         </tr>
       {{/each}}
     </tbody>
@@ -178,7 +178,7 @@
         {{> ".equipmentEntry" carriedTable=false}}
       {{else}}
         <tr class="gcs-item-empty">
-          <td colspan="8">{{localize "GURPS.none"}}</td>
+          <td colspan="10">{{localize "GURPS.none"}}</td>
         </tr>
       {{/each}}
     </tbody>
