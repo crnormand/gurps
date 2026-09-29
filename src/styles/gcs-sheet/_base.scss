@@ -12,9 +12,7 @@ body {
   @include gga.css-spacing-variables;
 
   &.theme-dark .application.gcs-sheet:not(.theme-light),
-  &.theme-dark .application.move-mode-editor:not(.theme-light),
-  .application.gcs-sheet.theme-dark,
-  .application.move-mode-editor.theme-dark {
+  .application.gcs-sheet.theme-dark {
     @include css-variables-dark;
     @include gga.css-color-variables-dark;
   }

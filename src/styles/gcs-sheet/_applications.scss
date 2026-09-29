@@ -1,44 +1,54 @@
 @use 'mixins' as *;
+@use 'variables' as *;
+@use '../_variables' as gga;
 
-/* ---------------------------------------- */
+body {
+  @include css-variables;
+  @include gga.css-color-variables;
+  @include gga.css-spacing-variables;
 
-.application.move-mode-editor {
+  &.theme-dark .application.gcs-app:not(.theme-light),
+  .application.gcs-app.theme-dark {
+    @include css-variables-dark;
+    @include gga.css-color-variables-dark;
+  }
+}
+
+.application.gcs-app {
   @include gcs-application-shell;
+
+  padding: var(--gga-space-2);
 
   .window-content {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    padding: var(--gga-space-2);
+    gap: var(--gga-space-2);
   }
 
-  .move-mode-editor {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gga-space-2);
+  table.gcs-table {
+    width: 100%;
+    border: 1px solid var(--gcs-color-section-border);
 
-    .gcs-table {
-      width: 100%;
+    thead {
       border: 1px solid var(--gcs-color-section-border);
+    }
 
-      thead {
-        border: 1px solid var(--gcs-color-section-border);
-      }
+    input {
+      @include gcs-input;
+    }
 
-      input {
-        @include gcs-input;
-      }
-
-      button {
-        @include gcs-control;
-        width: auto;
-        padding: 0 0.5rem;
-      }
+    button {
+      @include gcs-control;
+      width: auto;
+      padding: 0 0.5rem;
     }
   }
 
-  .move-mode-editor-footer {
+  [data-application-part='footer'] {
     display: flex;
-    justify-content: flex-end;
+    margin-top: auto;
     padding-top: var(--gga-space-2);
     border-top: 1px solid var(--gcs-color-section-border);
 
