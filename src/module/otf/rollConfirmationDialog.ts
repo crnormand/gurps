@@ -195,14 +195,14 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         break
 
       case OtfActionType.skillSpell:
-        if (action.isSkillOnly) {
-          itemIcon = 'fa-solid fa-book'
-          itemColor = '#015401'
-          rollType = game.i18n?.localize('GURPS.skill') ?? ''
-        } else {
+        if (action.isSpellOnly) {
           itemIcon = 'fa-solid fa-wand-magic-sparkles'
           itemColor = '#6f63d9'
           rollType = game.i18n?.localize('GURPS.spell') ?? ''
+        } else {
+          itemIcon = 'fa-solid fa-book'
+          itemColor = '#015401'
+          rollType = game.i18n?.localize('GURPS.skill') ?? ''
         }
 
         break

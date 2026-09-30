@@ -78,10 +78,10 @@ export function getRollTypeFromAction(action: OtfRollAction) {
       return ROLL_TYPE.BLOCK
       break
     case OtfActionType.skillSpell:
-      if (action.isSkillOnly) {
-        return ROLL_TYPE.SKILL
-      } else {
+      if (action.isSpellOnly) {
         return ROLL_TYPE.SPELL
+      } else {
+        return ROLL_TYPE.SKILL
       }
 
       break
