@@ -363,6 +363,12 @@
           "visibility": "Visibilidade de Ícones de Manobra",
           "visibilityHint": "Determina quem pode ver o ícone de manobra de uma miniatura."
         },
+        "maneuversHint": "Uma manobra desativada não é mais exibida em nenhum lugar onde uma manobra possa ser escolhida — Rastreador de Combate, HUD do Token e ficha de personagem — e seus modificadores são removidos do Balde de Modificadores.",
+        "modifiersHint": "Os modificadores opcionais apresentados pelo Balde de Modificadores. Se desativado, o modificador não será mais listado no Balde de Modificadores. O modificador ainda pode ser inserido manualmente.",
+        "options": "Opções de Combate",
+        "optionsHint": "Escolha as opções de combate usadas por este mundo. Uma manobra desativada não é mais exibida em nenhum lugar onde uma manobra possa ser escolhida — Rastreador de Combate, HUD do Token e ficha de personagem — e seus modificadores são removidos do Balde de Modificadores.",
+        "optionsManeuvers": "Manobras",
+        "optionsNeedsOnTarget": "Fora de uso: Usar On Target está desativado acima.",
         "title": "Configurações de Combate",
         "useRelativeSizeInMelee": "Usar Diferença de Modificador de Tamanho no Corpo a Corpo",
         "useRelativeSizeInMeleeHint": "Aplicar a diferença no Modificador de Tamanho (SM) entre atacante e defensor nas rolagens de ataque corpo a corpo."

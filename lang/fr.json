@@ -363,6 +363,12 @@
           "visibility": "Visibility des Icônes de Manoeuvre",
           "visibilityHint": "Détermine qui peut voir les icônes de manoeuvre d'un token."
         },
+        "maneuversHint": "Une manœuvre désactivée n'est plus affichée partout où une manœuvre peut être choisie — Suivi de combat, HUD du token et feuille de personnage — et ses modificateurs sont retirés du Réservoir de modificateurs.",
+        "modifiersHint": "Les modificateurs facultatifs proposés par le Réservoir de modificateurs. S'il est désactivé, le modificateur n'y est plus répertorié. Il peut toujours être saisi manuellement.",
+        "options": "Options de combat",
+        "optionsHint": "Choisissez les options de combat utilisées par ce monde. Une manœuvre désactivée n'est plus affichée partout où une manœuvre peut être choisie — Suivi de combat, HUD du token et feuille de personnage — et ses modificateurs sont retirés du Réservoir de modificateurs.",
+        "optionsManeuvers": "Manœuvres",
+        "optionsNeedsOnTarget": "Non utilisé : Utiliser les modificateurs de portée On Target est désactivé ci-dessus.",
         "title": "Paramètres de combat",
         "useRelativeSizeInMelee": "Utiliser la différence de modificateur de taille au corps à corps",
         "useRelativeSizeInMeleeHint": "Appliquer la différence de modificateur de taille (SM) entre l'attaquant et le défenseur aux jets d'attaque au corps à corps."

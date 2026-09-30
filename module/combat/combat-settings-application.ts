@@ -151,7 +151,7 @@ class CombatSettingsApplication extends GurpsSettingsApplication {
 
       row.classList.toggle('needs-on-target', needsOnTarget)
 
-      if (needsOnTarget) row.dataset.tooltip = game.i18n?.localize('GURPS.settingCombatOptionsNeedsOnTarget')
+      if (needsOnTarget) row.dataset.tooltip = game.i18n?.localize('GURPS.combat.setting.optionsNeedsOnTarget')
       else delete row.dataset.tooltip
     }
   }

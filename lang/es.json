@@ -363,6 +363,12 @@
           "visibility": "Visibilidad del Icono de Maniobra",
           "visibilityHint": "Determina quién puede ver el icono de maniobra de un token."
         },
+        "maneuversHint": "Una maniobra desactivada deja de mostrarse en cualquier lugar donde se pueda elegir una maniobra — Rastreador de Combate, HUD del Token y hoja de personaje — y sus modificadores se eliminan del Contenedor de Modificadores.",
+        "modifiersHint": "Los modificadores opcionales que presenta el Contenedor de Modificadores. Si se desactiva, deja de aparecer en el Contenedor de Modificadores. El modificador aún puede introducirse manualmente.",
+        "options": "Opciones de Combate",
+        "optionsHint": "Elige las opciones de combate utilizadas por este mundo. Una maniobra desactivada deja de mostrarse en cualquier lugar donde se pueda elegir una maniobra — Rastreador de Combate, HUD del Token y hoja de personaje — y sus modificadores se eliminan del Contenedor de Modificadores.",
+        "optionsManeuvers": "Maniobras",
+        "optionsNeedsOnTarget": "No está disponible: Usar Modificadores de Distancia En el Objetivo está desactivado arriba.",
         "title": "Ajustes de Combate",
         "useRelativeSizeInMelee": "Usar Diferencia de Modificador de Tamaño en Melé",
         "useRelativeSizeInMeleeHint": "Aplica la diferencia en Modificador de Tamaño (MT) entre atacante y defensor a las tiradas de ataque en melé."

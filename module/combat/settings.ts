@@ -1,4 +1,3 @@
-import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.ts'
 import {
   CombatOption,
   CombatOptionSection,
@@ -7,21 +6,22 @@ import {
   enabledOptions,
   isManeuverEnabled,
 } from './combat-options.ts'
+import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.ts'
 import {
   ManeuverDetail,
   ManeuverVisibility,
+  RangeStrategy,
   RollBasedOnManeuverPolicy,
   SETTING_ALLOW_ROLL_BASED_ON_MANEUVER,
   SETTING_COMBAT_OPTIONS,
+  SETTING_INITIATIVE_FORMULA,
   SETTING_MANEUVER_DETAIL,
   SETTING_MANEUVER_UPDATES_MOVE,
-  SETTING_USE_ON_TARGET,
   SETTING_MANEUVER_VISIBILITY,
-  SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE,
-  SETTING_INITIATIVE_FORMULA,
   SETTING_RANGE_STRATEGY,
+  SETTING_USE_ON_TARGET,
+  SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE,
   SETTINGS,
-  RangeStrategy,
 } from './types.js'
 
 export function registerCombatSettings(): void {
@@ -141,8 +141,8 @@ export function registerCombatSettings(): void {
   })
 
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_COMBAT_OPTIONS, {
-    name: 'GURPS.settingCombatOptions',
-    hint: 'GURPS.settingHintCombatOptions',
+    name: 'GURPS.combat.setting.options',
+    hint: 'GURPS.combat.setting.optionsHint',
     scope: 'world',
     config: false,
     type: Object as any,
