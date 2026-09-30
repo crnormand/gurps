@@ -7,7 +7,6 @@ import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { getTokenForActor } from '@module/util/token.js'
 import { MissileWeaponAttacks } from '@rules/combat/ranged/missile-weapon-attacks.js'
-import { stripBracketContents } from '@util/utilities.js'
 
 import { TokenActions } from '../token-actions.js'
 
@@ -384,8 +383,12 @@ function createAdditionalMessageForTrueOrFalseText(
   }
 }
 
-async function createRollChatMessage(chatdata: RollChatData, speaker: ChatMessage.SpeakerData, context: ActionFuncContext | null | undefined, messageMode: MessageMode) {
-  
+async function createRollChatMessage(
+  chatdata: RollChatData,
+  speaker: ChatMessage.SpeakerData,
+  context: ActionFuncContext | null | undefined,
+  messageMode: MessageMode
+) {
   const message = await foundry.applications.handlebars.renderTemplate(
     'systems/gurps/templates/die-roll-chat-message.hbs',
     chatdata
@@ -413,7 +416,6 @@ async function createRollChatMessage(chatdata: RollChatData, speaker: ChatMessag
 
   // @ts-expect-error: Create Options for Chat Messages seems not to be properly typed
   ChatMessage.create(messageData, options)
-
 }
 
 async function consumeAction(
@@ -478,7 +480,7 @@ export function getTargetedRollChatData(
   }
 }
 
-//to make createAndEvaluateRoll mockable 
+//to make createAndEvaluateRoll mockable
 export const dieRoller = {
   createAndEvaluateRoll,
 }
@@ -526,11 +528,11 @@ export async function handleSimpleRoll(
   }
 }
 
-function addFlavorTextToFormula(thing: string, formula: string) {
+export function addFlavorTextToFormula(thing: string, formula: string) {
   let newFormula = formula
 
   if (thing) {
-    const flav = stripBracketContents(thing) // Flavor text cannot handle internal []
+    const flav = thing.replace(/[[\]]/g, '') // Flavor text cannot handle internal []
 
     newFormula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
   }

@@ -2,6 +2,7 @@ import { ActionType } from '@module/action/types.js'
 import { ActionFuncContext } from '@module/otf/actionFuncs.js'
 import * as dierollModule from '@module/otf/dieroll.js'
 import {
+  addFlavorTextToFormula,
   calcFailure,
   calcFinalTarget,
   calculateMessageMode,
@@ -110,6 +111,17 @@ describe('handleSimpleRoll', () => {
     expect(createAndEvaluateRollSpy).toHaveBeenCalledWith('2d6+2')
     expect(result.chatthing).toBe('')
     expect(result.multiples).toEqual([{ rtotal: 0, loaded: false, rolls: '0' }])
+  })
+})
+
+describe('addFlavorTextToFormula', () => {
+  test.each([
+    ['3d6', '', '3d6'],
+    ['3d6', 'Slam', '3d6[Slam]'],
+    ['2d6+1', 'Attack [Right Hook]', '2d6[Attack Right Hook]+1'],
+    ['1d6!', 'Skill [Brawling]', '1d6[Skill Brawling]!'],
+  ])('adds flavor text to %s when thing is %s', (formula, thing, expected) => {
+    expect(addFlavorTextToFormula(thing, formula)).toBe(expected)
   })
 })
 
