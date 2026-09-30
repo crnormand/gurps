@@ -1,17 +1,19 @@
 'use strict'
 
-import { isAtLeastFoundryVersion } from '../utilities/foundry-compat.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { parselink } from '../../lib/parselink.js'
 import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '../../lib/utilities.js'
 import { ChatProcessors } from '../../module/chat.js'
 import { ActorImporter } from '../actor/actor-importer.js'
-import Maneuvers from '../combat/maneuver.js'
 import { AnimChatProcessor } from '../chat/anim.js'
 import SlamChatProcessor from '../chat/slam.js'
 import StatusChatProcessor from '../chat/status.js'
 import TrackerChatProcessor from '../chat/tracker.js'
+import Maneuvers from '../combat/maneuver.js'
+import { OtfActionType } from '../otf/types.js'
+import { isAtLeastFoundryVersion } from '../utilities/foundry-compat.js'
 import ChatProcessor from './chat-processor.js'
+import { ChatTextProcessor } from './chat-text.js'
 import {
   EveryoneAChatProcessor,
   EveryoneBChatProcessor,
@@ -20,7 +22,6 @@ import {
 } from './everything.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
 import { IfChatProcessor } from './if.js'
-import { OtfActionType } from '../otf/types.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -61,6 +62,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new StopChatProcessor())
   ChatProcessors.registerProcessor(new ModChatProcessor())
   ChatProcessors.registerProcessor(new DRChatProcessor())
+  ChatProcessors.registerProcessor(new ChatTextProcessor())
 }
 
 class SoundChatProcessor extends ChatProcessor {

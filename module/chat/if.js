@@ -1,13 +1,14 @@
 'use strict'
 
-import { OtfActionType } from '../otf/types.js'
 import { parselink } from '../../lib/parselink.js'
+import { OtfActionType } from '../otf/types.js'
 import ChatProcessor from './chat-processor.js'
 
 export class IfChatProcessor extends ChatProcessor {
   help() {
     return '/if [OtF] [thenOTF] /else [elseOTF]<br>/if [OtF] {thenChatCmd} {elseChatCmd}'
   }
+
   matches(line) {
     // Since this can get called recursively, we cannot use an instance variable to save the match status
     let m = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
