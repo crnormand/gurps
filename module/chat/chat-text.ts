@@ -6,7 +6,7 @@ const REGEX = new RegExp(`^${COMMAND}(.*)$`)
 // TODO Expand this to allow the user to select players, style text, etc.
 export class ChatTextProcessor extends ChatProcessor {
   override help() {
-    return `${COMMAND}[text-to-display]`
+    return `${COMMAND}<text-to-display>`
   }
 
   override matches(line: string) {
