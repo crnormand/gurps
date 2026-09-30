@@ -797,7 +797,7 @@ if (!globalThis.GURPS) {
       }
 
       if (resp.type == 'allowOtFExec') {
-        GURPS.modueles.OTF.allowOtfExec(resp)
+        GURPS.modules.Otf.allowOtfExec(resp)
       }
 
       if (resp.type == 'executeOtF') {
