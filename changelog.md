@@ -11,6 +11,7 @@
 - Combat Settings: choose which maneuvers and Modifier Bucket options this world uses. A maneuver that is turned off is no longer offered in the Combat Tracker, Token HUD, character sheet or `/man`, and its modifiers leave the Modifier Bucket with it.
 - Add support for PDF links like `DFC:A-10` \#2908
 - PDF links now match against the codes registered in your PDF journal pages; this means you can use almost any code (e.g., `[PDF:DFRPG Spells:20]` should open a PDF you've assigned code "DFRPG Spells" to page 20).
+- Added chat command `/chat <your text here>` that simply puts "your text here" into the Foundry chat. Turn this into an OTF with `[/chat <your text here>]`. \#2964
 
 ### Bugfixes
 
