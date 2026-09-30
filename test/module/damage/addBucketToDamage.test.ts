@@ -23,6 +23,7 @@ describe('_addBucketToDamage', () => {
     ['2d+2', true, true, 7, '4d+2'],
     ['2d+2', true, true, 4, '3d+2'],
     ['2d+2', true, true, 9, '5d'],
+    [' 2d+2 cut *Costs 1FP', true, true, 1, '2d+3 cut *Costs 1FP'],
   ])('applies bucket modifier to %s', (formula, addDamageType, dicePlusAdds, bucketMod, expected) => {
     expect(_addBucketToDamage(formula, addDamageType, dicePlusAdds, bucketMod)).toBe(expected)
   })
