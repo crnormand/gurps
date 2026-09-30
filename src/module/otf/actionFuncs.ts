@@ -221,7 +221,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       }
 
       return await Damage.rollDamage(
-        canRoll,
+        canRollData,
         token,
         actor ?? null,
         displayFormula,
@@ -302,7 +302,7 @@ export const actionFuncs: Record<string, actionFunc> = {
       const overrideText = action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1')
 
       await Damage.rollDamage(
-        canRoll,
+        canRollData,
         token,
         actor,
         displayFormula,
