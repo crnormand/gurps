@@ -14,7 +14,7 @@ describe('ChatTextProcessor', () => {
 
   it('should return help text', () => {
     const processor = new ChatTextProcessor()
-    expect(processor.help()).toEqual('/chat [text-to-display]')
+    expect(processor.help()).toEqual('/chat <text-to-display>')
   })
 
   it('should match lines correctly', () => {
