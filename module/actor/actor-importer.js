@@ -1,9 +1,9 @@
-import { replaceValue, deleteKey, commitUpdate } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
+import { commitUpdate, deleteKey, replaceValue } from '../utilities/foundry-compat.js'
 import { calculateEncumbranceLevels, readXmlText } from '../utilities/import-utilities.js'
 import {
   Advantage,

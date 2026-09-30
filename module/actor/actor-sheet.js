@@ -1,20 +1,20 @@
-import { DragDropType } from '../drag-drop-types.js'
-import { commitUpdate, deleteKey, Foundry, replaceValue } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
+import { DragDropType } from '../drag-drop-types.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
+import { OtfActionType } from '../otf/types.js'
 import { ResourceTracker } from '../resource-tracker/index.js'
+import { commitUpdate, deleteKey, Foundry, replaceValue } from '../utilities/foundry-compat.js'
 import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
 import { ActorImporter } from './actor-importer.js'
 import { cleanTags } from './effect-modifier-popout.js'
 import MoveModeEditor from './move-mode-editor.js'
 import SplitDREditor from './splitdr-editor.js'
-import { OtfActionType } from '../otf/types.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications

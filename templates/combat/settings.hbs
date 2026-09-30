@@ -4,8 +4,8 @@
       {{formGroup entry.field value=entry.value rootId=@root.rootId localize=true}}
     {{/each}}
     <fieldset>
-      <legend>{{localize 'GURPS.settingCombatOptionsManeuvers'}}</legend>
-      <p class='hint'>{{localize 'GURPS.settingCombatManeuversHint'}}</p>
+      <legend>{{localize 'GURPS.combat.setting.optionsManeuvers'}}</legend>
+      <p class='hint'>{{localize 'GURPS.combat.setting.maneuversHint'}}</p>
       {{#each maneuvers}}
         <div class='gga-option-row gga-maneuver-row' data-requires-on-target='{{this.requiresOnTarget}}'>
           <label>
@@ -14,14 +14,14 @@
             <span class='gga-option-name'>{{this.label}}</span>
           </label>
           <div class='gga-option-note gga-option-note-on-target'>{{localize
-              'GURPS.settingCombatOptionsNeedsOnTarget'
+              'GURPS.combat.setting.optionsNeedsOnTarget'
             }}</div>
         </div>
       {{/each}}
     </fieldset>
     <fieldset>
       <legend>{{localize 'GURPS.modifiers'}}</legend>
-      <p class='hint'>{{localize 'GURPS.settingCombatModifiersHint'}}</p>
+      <p class='hint'>{{localize 'GURPS.combat.setting.modifiersHint'}}</p>
       {{#each sections}}
         <h4 class='gga-subhead'>{{this.label}}</h4>
         {{#each this.options}}
@@ -32,7 +32,7 @@
               {{#if this.pdf}}<span class='pdf-ref'>{{this.pdf}}</span>{{/if}}
             </label>
             <div class='gga-option-note gga-option-note-on-target'>{{localize
-                'GURPS.settingCombatOptionsNeedsOnTarget'
+                'GURPS.combat.setting.optionsNeedsOnTarget'
               }}</div>
           </div>
         {{/each}}
