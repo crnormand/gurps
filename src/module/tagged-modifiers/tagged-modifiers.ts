@@ -90,7 +90,7 @@ export function getRollTypeFromAction(action: OtfRollAction) {
       break
     case OtfActionType.attribute:
       {
-        switch (action.attribute) {
+        switch (action.attrkey) {
           case 'ST':
             return ROLL_TYPE.ST
             break
@@ -106,25 +106,25 @@ export function getRollTypeFromAction(action: OtfRollAction) {
           case 'WILL':
             return ROLL_TYPE.WILL
             break
-          case 'Vision':
+          case 'VISION':
             return ROLL_TYPE.VISION
             break
           case 'PER':
             return ROLL_TYPE.PER
             break
-          case 'Fright Check':
+          case 'FRIGHT CHECK':
             return ROLL_TYPE.FRIGHT_CHECK
             break
-          case 'Hearing':
+          case 'HEARING':
             return ROLL_TYPE.HEARING
             break
-          case 'Taste Smell':
+          case 'TASTE SMELL':
             return ROLL_TYPE.TASTE_SMELL
             break
-          case 'Touch':
+          case 'TOUCH':
             return ROLL_TYPE.TOUCH
             break
-          case 'Dodge':
+          case 'DODGE':
             return ROLL_TYPE.DODGE
             break
           default:

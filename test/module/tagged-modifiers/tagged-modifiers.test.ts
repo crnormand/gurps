@@ -172,22 +172,64 @@ describe('getRollTypeFromAction', () => {
     [{ type: OtfActionType.attack, accumulate: false, formula: '3d', isMelee: false }, ROLL_TYPE.RANGED],
     [{ type: OtfActionType.skillSpell, accumulate: false, formula: '3d', isSkillOnly: false }, ROLL_TYPE.SPELL],
     [{ type: OtfActionType.skillSpell, accumulate: false, formula: '3d', isSkillOnly: true }, ROLL_TYPE.SKILL],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'ST' }, ROLL_TYPE.ST],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'DX' }, ROLL_TYPE.DX],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'IQ' }, ROLL_TYPE.IQ],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'HT' }, ROLL_TYPE.HT],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'WILL' }, ROLL_TYPE.WILL],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'PER' }, ROLL_TYPE.PER],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Dodge' }, ROLL_TYPE.DODGE],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Vision' }, ROLL_TYPE.VISION],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Hearing' }, ROLL_TYPE.HEARING],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Touch' }, ROLL_TYPE.TOUCH],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'ST', attrkey: 'ST' }, ROLL_TYPE.ST],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'st', attrkey: 'ST' }, ROLL_TYPE.ST],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'St', attrkey: 'ST' }, ROLL_TYPE.ST],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'DX', attrkey: 'DX' }, ROLL_TYPE.DX],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'IQ', attrkey: 'IQ' }, ROLL_TYPE.IQ],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'HT', attrkey: 'HT' }, ROLL_TYPE.HT],
     [
-      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Taste Smell' },
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'WILL', attrkey: 'WILL' },
+      ROLL_TYPE.WILL,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'PER', attrkey: 'PER' },
+      ROLL_TYPE.PER,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Dodge', attrkey: 'DODGE' },
+      ROLL_TYPE.DODGE,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Vision', attrkey: 'VISION' },
+      ROLL_TYPE.VISION,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Hearing', attrkey: 'HEARING' },
+      ROLL_TYPE.HEARING,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Touch', attrkey: 'TOUCH' },
+      ROLL_TYPE.TOUCH,
+    ],
+    [
+      {
+        type: OtfActionType.attribute,
+        accumulate: false,
+        formula: '3d',
+        attribute: 'Taste Smell',
+        attrkey: 'TASTE SMELL',
+      },
       ROLL_TYPE.TASTE_SMELL,
     ],
     [
-      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Fright Check' },
+      {
+        type: OtfActionType.attribute,
+        accumulate: false,
+        formula: '3d',
+        attribute: 'Fright Check',
+        attrkey: 'FRIGHT CHECK',
+      },
+      ROLL_TYPE.FRIGHT_CHECK,
+    ],
+    [
+      {
+        type: OtfActionType.attribute,
+        accumulate: false,
+        formula: '3d',
+        attribute: 'fright check',
+        attrkey: 'FRIGHT CHECK',
+      },
       ROLL_TYPE.FRIGHT_CHECK,
     ],
   ])('Extracts Roll Type from Otf Action', ([action, expected]) => {
@@ -203,7 +245,7 @@ vi.stubGlobal('game', {
 
 describe('taggedModToApply', () => {
   test.for([
-    [{ type: OtfActionType.attribute, attribute: 'IQ' }, ['+4 to IQ rolls #iq']],
+    [{ type: OtfActionType.attribute, attribute: 'IQ', attrkey: 'IQ' }, ['+4 to IQ rolls #iq']],
     [{ type: OtfActionType.attack, isMelee: true }, ['+1 to hit in melee #melee', '+3 to hit #hit']],
     [{ type: OtfActionType.attack, isMelee: false }, ['+2 to hit in ranged #ranged', '+3 to hit #hit']],
     [{ type: OtfActionType.damage }, []],
@@ -233,7 +275,7 @@ describe('taggedModToApply', () => {
     ]
 
     const result = taggedModToApply(
-      { type: OtfActionType.attribute, attribute: 'IQ' } as unknown as OtfRollAction,
+      { type: OtfActionType.attribute, attribute: 'IQ', attrkey: 'IQ' } as unknown as OtfRollAction,
       undefined,
       undefined,
       defaultSettings,

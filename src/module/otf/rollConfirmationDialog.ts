@@ -216,7 +216,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
       case OtfActionType.attribute: {
         itemColor = '#620707'
 
-        switch (action.attribute) {
+        switch (action.attrkey) {
           case 'ST':
             itemIcon = 'fa-solid fa-dumbbell'
             rollType = game.i18n?.localize('GURPS.attributesSTNAME') ?? ''
@@ -237,7 +237,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
             itemIcon = 'fa-solid fa-brain'
             rollType = game.i18n?.localize('GURPS.attributesWILLNAME') ?? ''
             break
-          case 'Vision':
+          case 'VISION':
             itemIcon = 'fa-solid fa-eye'
             rollType = game.i18n?.localize('GURPS.vision') ?? ''
             break
@@ -245,23 +245,23 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
             itemIcon = 'fa-solid fa-signal-stream'
             rollType = game.i18n?.localize('GURPS.attributesPERNAME') ?? ''
             break
-          case 'Fright Check':
+          case 'FRIGHT CHECK':
             itemIcon = 'fa-solid fa-face-scream'
             rollType = game.i18n?.localize('GURPS.frightcheck') ?? ''
             break
-          case 'Hearing':
+          case 'HEARING':
             itemIcon = 'fa-solid fa-ear'
             rollType = game.i18n?.localize('GURPS.hearing') ?? ''
             break
-          case 'Taste Smell':
+          case 'TASTE SMELL':
             itemIcon = 'fa-solid fa-nose'
             rollType = game.i18n?.localize('GURPS.tastesmell') ?? ''
             break
-          case 'Touch':
+          case 'TOUCH':
             itemIcon = 'fa-solid fa-hand-point-up'
             rollType = game.i18n?.localize('GURPS.touch') ?? ''
             break
-          case 'Dodge':
+          case 'DODGE':
             itemIcon = 'fa-solid fa-person-running-fast'
             rollType = game.i18n?.localize('GURPS.dodge') ?? ''
             break
@@ -457,6 +457,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     {
       const displayFormula = this._data.formula
       const usingDiceAdd = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
+      const bucketTotal = GURPS.ModifierBucket.currentSum()
 
       return {
         type: 'damage',
@@ -469,8 +470,8 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         usingDiceAdd,
         targetRoll: this._data.name,
         useMinDamage: false,
-        bucketRoll: '',
-        bucketRollColor: '',
+        bucketRoll: bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : '',
+        bucketRollColor: bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8',
         buttons: [
           {
             type: 'submit',
