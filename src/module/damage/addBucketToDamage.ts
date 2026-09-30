@@ -35,7 +35,7 @@ function parseDamageFormula(formula: string): ParsedDamage {
   const costFormula = costMatch?.[1] ?? undefined
   const formulaBody = costMatch ? trimmed.slice(0, costMatch.index ?? 0).trim() : trimmed
 
-  const damageTypeMatch = formulaBody.match(/\s+([A-Za-z][A-Za-z0-9_-]*)\s*$/)
+  const damageTypeMatch = formulaBody.match(/\s+([A-Za-z][A-Za-z0-9_+-]*)\s*$/)
   const damageType = damageTypeMatch?.[1] ?? ''
 
   const armorDivisor = formulaBody.match(/\(([^)]+)\)/)?.[1] ?? undefined
