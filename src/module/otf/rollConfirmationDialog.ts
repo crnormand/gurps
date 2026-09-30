@@ -216,7 +216,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
       case OtfActionType.attribute: {
         itemColor = '#620707'
 
-        switch (action.attrkey) {
+        switch (action.attrkey.replace(' ', '')) {
           case 'ST':
             itemIcon = 'fa-solid fa-dumbbell'
             rollType = game.i18n?.localize('GURPS.attributesSTNAME') ?? ''
@@ -245,7 +245,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
             itemIcon = 'fa-solid fa-signal-stream'
             rollType = game.i18n?.localize('GURPS.attributesPERNAME') ?? ''
             break
-          case 'FRIGHT CHECK':
+          case 'FRIGHTCHECK':
             itemIcon = 'fa-solid fa-face-scream'
             rollType = game.i18n?.localize('GURPS.frightcheck') ?? ''
             break
@@ -253,7 +253,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
             itemIcon = 'fa-solid fa-ear'
             rollType = game.i18n?.localize('GURPS.hearing') ?? ''
             break
-          case 'TASTE SMELL':
+          case 'TASTESMELL':
             itemIcon = 'fa-solid fa-nose'
             rollType = game.i18n?.localize('GURPS.tastesmell') ?? ''
             break

@@ -1758,8 +1758,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       case OtfActionType.attribute: {
         let attrName = action?.overridetxt
 
-        if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.toLowerCase()}`) ?? ''
-        if (attrName.startsWith('GURPS')) attrName = game.i18n?.localize(`GURPS.attributes${action.attrkey}NAME`) ?? ''
+        if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.replace(' ', '').toLowerCase()}`) ?? ''
+        if (attrName.startsWith('GURPS'))
+          attrName = game.i18n?.localize(`GURPS.attributes${action.attrkey.replace(' ', '')}NAME`) ?? ''
 
         return {
           name: attrName,
