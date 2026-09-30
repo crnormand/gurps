@@ -7,7 +7,7 @@
 {{/if}}
 <div class='ms-tagline'>
   {{#if system.profile.race}}
-    <span class='ms-tag ms-tag-race'>
+    <span class='ms-tag'>
       <span class='ms-tag-display'>{{system.profile.race}}</span>
       <input
         type='text'
@@ -20,7 +20,7 @@
     </span>
   {{/if}}
   {{#if system.profile.gender}}
-    <span class='ms-tag ms-tag-gender'>
+    <span class='ms-tag'>
       <span class='ms-tag-display'>{{system.profile.gender}}</span>
       <input
         type='text'
@@ -33,7 +33,7 @@
     </span>
   {{/if}}
   {{#if system.profile.age}}
-    <span class='ms-tag ms-tag-age'>
+    <span class='ms-tag'>
       <span class='ms-tag-display'>{{system.profile.age}} {{localize 'GURPS.years'}}</span>
       <input
         type='text'
@@ -46,7 +46,7 @@
     </span>
   {{/if}}
   {{#if system.profile.techlevel}}
-    <span class='ms-tag ms-tag-tl'>
+    <span class='ms-tag'>
       <span class='ms-tag-display'>TL{{system.profile.techlevel}}</span>
       <input
         type='text'

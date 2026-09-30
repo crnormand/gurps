@@ -7,7 +7,7 @@
     {{else}}
       {{#if @root.isPlay}}
       <div
-          class="form-fields"
+          class="form-fields gcs-otf-roll"
           data-action="rollOtf"
           data-value="{{name}}"
         >
@@ -119,7 +119,7 @@
               <td class="gcs-row-roll">{{location.rollText}}</td>
               <td>{{location.where}}</td>
               <td
-                class="form-fields {{ifThen (gte location.penalty 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
+                class="form-fields gcs-otf-mod {{ifThen (gte location.penalty 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
                 data-action="addModifier"
                 data-value="{{location.penalty}}"
                 data-comment="{{localize 'GURPS.hitLocationPenalty'}}: {{location.where}}"
@@ -146,7 +146,7 @@
       <tbody>
         {{#each system.encumbrance as |enc|}}
         <tr class="{{#if enc.current}}selected{{/if}}">
-            <td data-action="setEncumbrance" data-index="{{@index}}" >
+            <td class="gcs-encumbrance-control" data-action="setEncumbrance" data-index="{{@index}}" >
               {{#if enc.current}}
               <i class="fa-solid fa-weight-hanging"></i>
               {{/if}}
@@ -155,7 +155,7 @@
             <td class="gcs-row-enc-load">{{ localize "GURPS.sheet.gcsActorSheet.pound" value=enc.weight }}</td>
             <td class="gcs-row-enc-move">{{enc.currentmove}}</td>
             {{#if enc.current}}
-            <td class="gcs-row-enc-dodge" data-action="rollOtf" data-value="Dodge" >{{enc.currentdodge}}</td>
+            <td class="gcs-row-enc-dodge gcs-otf-roll" data-action="rollOtf" data-value="Dodge" >{{enc.currentdodge}}</td>
             {{else}}
             <td class="gcs-row-enc-dodge">{{enc.currentdodge}}</td>
             {{/if}}

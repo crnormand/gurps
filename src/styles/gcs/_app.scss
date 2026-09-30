@@ -1,0 +1,197 @@
+@use 'mixins' as gcs;
+@use 'variables' as vars;
+@use '../_variables' as gga;
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+body {
+  @include vars.css-variables;
+  @include gga.css-color-variables;
+  @include gga.css-spacing-variables;
+
+  &.theme-dark .application.gcs-app:not(.theme-light),
+  .application.gcs-app.theme-dark {
+    @include vars.css-variables-dark;
+    @include gga.css-color-variables-dark;
+  }
+}
+
+.application .window-header button.header-control.sheet-mode-toggle.editable {
+  background: var(--gga-color-red);
+}
+
+.application.gcs-app {
+  .window-header {
+    @include gcs.header;
+  }
+
+  .window-content {
+    margin: var(--gga-space-2);
+    background-color: var(--gcs-color-surface-bg);
+    font-family: 'Verdana', sans-serif;
+
+    select {
+      appearance: none;
+      padding-right: 1.25rem;
+      background-repeat: no-repeat;
+      background-position: right 0.25rem center;
+      background-size: 0.5rem;
+      background-image: var(--gcs-caret-down);
+    }
+
+    .gcs-control,
+    button,
+    select {
+      padding: 0 0.25rem;
+      width: 100%;
+      box-sizing: border-box;
+      line-height: var(--gcs-input-height);
+      height: var(--gcs-input-height);
+      min-height: 0;
+      border-radius: 0.2rem;
+      font-variant: normal;
+      font-size: var(--gcs-font-size-select);
+
+      background-color: var(--gcs-color-control-bg);
+      border: 1px solid var(--gcs-color-control-border);
+      color: var(--gcs-color-control-fg);
+
+      &:disabled {
+        background-color: transparent;
+        color: color-mix(in hsl, var(--gcs-color-surface-fg), var(--gcs-color-surface-bg) 50%);
+        cursor: not-allowed;
+      }
+
+      &:hover:not(:disabled) {
+        background-color: color-mix(in hsl, var(--gcs-color-control-bg), black 15%);
+      }
+
+      &:focus {
+        outline: 2px solid var(--gcs-color-focus-bg);
+      }
+    }
+
+    .gcs-table {
+      margin: 0;
+
+      thead,
+      tfoot {
+        th {
+          @include gcs.header;
+          font-size: var(--gcs-font-size-content);
+        }
+      }
+
+      td,
+      th {
+        padding: var(--gcs-padding-label);
+        white-space: nowrap;
+      }
+
+      td {
+        overflow-x: clip;
+      }
+
+      tbody {
+        background-color: var(--gcs-color-surface-bg);
+        color: var(--gcs-color-surface-fg);
+
+        tr {
+          background-color: var(--gcs-color-surface-bg);
+          font-size: var(--gcs-font-size-content);
+        }
+
+        td + td {
+          border-left: 1px solid var(--gcs-color-section-border-inner);
+        }
+
+        tr:nth-child(odd) {
+          @include gcs.banding;
+        }
+
+        tr.selected {
+          background-color: var(--gcs-color-focus-bg);
+          color: var(--gcs-color-focus-fg);
+        }
+      }
+    }
+  }
+
+  label {
+    padding: var(--gga-space-2);
+  }
+
+  .gcs-otf-roll,
+  .gcs-otf-mod {
+    height: var(--gcs-input-height);
+    line-height: var(--gcs-input-height);
+    cursor: pointer;
+    text-align: center;
+
+    span {
+      width: 100%;
+    }
+  }
+
+  .gcs-otf-roll {
+    background-color: var(--gcs-color-roll-bg);
+    color: var(--gcs-color-roll-fg);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-roll-bg), var(--gcs-color-roll-bg-hover) 40%);
+    }
+  }
+
+  .gcs-otf-mod.gcs-mod-positive {
+    background-color: var(--gcs-color-positive-bg);
+    color: var(--gcs-color-positive-fg);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-positive-bg), var(--gcs-color-positive-bg-hover) 40%);
+    }
+  }
+
+  .gcs-otf-mod.gcs-mod-negative {
+    background-color: var(--gcs-color-negative-bg);
+    color: var(--gcs-color-negative-fg);
+
+    &:hover {
+      background-color: color-mix(in hsl, var(--gcs-color-negative-bg), var(--gcs-color-negative-bg-hover) 15%);
+    }
+  }
+
+  .form-fields {
+    display: flex;
+    height: 100%;
+    min-width: 0;
+    white-space: nowrap;
+
+    > * {
+      align-self: center;
+    }
+
+    :is(input, textarea) {
+      width: 100%;
+      box-sizing: border-box;
+      line-height: var(--gcs-input-height);
+      height: var(--gcs-input-height);
+      border: 1px solid var(--gcs-color-input-border);
+      border-radius: 0;
+
+      background-color: var(--gcs-color-input-bg);
+      color: var(--gcs-color-input-fg);
+      box-shadow: none;
+      text-overflow: ellipsis;
+
+      &:disabled {
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-bottom: 1px solid var(--gcs-color-input-border);
+      }
+
+      &:focus {
+        outline: 1px solid var(--gcs-color-focus-bg);
+      }
+    }
+  }
+}

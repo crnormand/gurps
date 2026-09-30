@@ -12,7 +12,7 @@
       {{quantity}}
       <i class='fa-solid fa-circle-plus equipmentbutton' data-action='incrementQuantity'></i>
     </td>
-    <td class="gcs-item-name-cell">
+    <td class="gcs-item-name">
       <div class="gcs-drag-handle" data-item-id="{{id}}" data-uuid="{{uuid}}" draggable="true"><i
           class="fa-solid fa-grip-vertical"></i>
       </div>
@@ -60,20 +60,7 @@
 {{/inline}}
 
 <section>
-  <table data-table-id="carriedEquipment" class="gcs-table gcs-item-table gcs-skill-table ">
-    <colgroup>
-      <col class="gcs-col-equipped">
-      <col class="gcs-col-quantity">
-      <col class="gcs-col-name">
-      <col class="gcs-col-uses">
-      <col class="gcs-col-tl">
-      <col class="gcs-col-lc">
-      <col class="gcs-col-value">
-      <col class="gcs-col-weight">
-      <col class="gcs-col-extended-value">
-      <col class="gcs-col-extended-weight">
-      <col class="gcs-col-reference">
-    </colgroup>
+  <table data-table-id="carriedEquipment" class="gcs-table gcs-item-table">
     <thead>
       <tr>
         <th class="gcs-sortable">
@@ -118,25 +105,13 @@
         {{> ".equipmentEntry" carriedTable=true}}
       {{else}}
         <tr class="gcs-item-empty">
-          <td colspan="9">{{localize "GURPS.none"}}</td>
+          <td colspan="11">{{localize "GURPS.none"}}</td>
         </tr>
       {{/each}}
     </tbody>
   </table>
 
-  <table data-table-id="otherEquipment" class="gcs-table gcs-item-table gcs-skill-table ">
-    <colgroup>
-      <col class="gcs-col-quantity">
-      <col class="gcs-col-name">
-      <col class="gcs-col-uses">
-      <col class="gcs-col-tl">
-      <col class="gcs-col-lc">
-      <col class="gcs-col-value">
-      <col class="gcs-col-weight">
-      <col class="gcs-col-extended-value">
-      <col class="gcs-col-extended-weight">
-      <col class="gcs-col-reference">
-    </colgroup>
+  <table data-table-id="otherEquipment" class="gcs-table gcs-item-table">
     <thead>
       <tr>
         <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.equipment.quantity}}">
@@ -178,7 +153,7 @@
         {{> ".equipmentEntry" carriedTable=false}}
       {{else}}
         <tr class="gcs-item-empty">
-          <td colspan="8">{{localize "GURPS.none"}}</td>
+          <td colspan="10">{{localize "GURPS.none"}}</td>
         </tr>
       {{/each}}
     </tbody>

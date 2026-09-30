@@ -11,8 +11,6 @@
     color: inherit;
   }
 
-  /* ---------------------------------------- */
-
   h1,
   h2,
   h3,
@@ -34,8 +32,6 @@
   h3 {
     font-size: 1.1em;
   }
-
-  /* ---------------------------------------- */
 
   p {
     margin: 0;
@@ -72,8 +68,6 @@
     list-style: decimal;
   }
 
-  /* ---------------------------------------- */
-
   table {
     border-collapse: collapse;
     margin: 0.4em 0;
@@ -81,7 +75,6 @@
     tbody {
       background: transparent;
     }
-
     tr:nth-child(even) {
       background: transparent;
     }
@@ -100,8 +93,6 @@
       font-weight: bold;
     }
   }
-
-  /* ---------------------------------------- */
 
   code {
     background: var(--gcs-color-quote-bg);

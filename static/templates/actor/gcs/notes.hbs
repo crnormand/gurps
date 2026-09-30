@@ -3,7 +3,7 @@
       data-uuid="{{uuid}}"
       data-has-children="{{hasChildren}}"
       draggable="true">
-    <td class="gcs-item-name-cell">
+    <td class="gcs-item-name">
       <div class="gcs-item-name-line indent{{indent}}">
         {{#if hasChildren}}
         <i
@@ -34,9 +34,6 @@
 
 <div class="gcs-item-table-container">
 <table data-table-id="notes" class="gcs-table gcs-item-table gcs-note-table ">
-  <colgroup>
-    <col class="gcs-col-name">
-  </colgroup>
   <thead>
     <tr>
       <th class="gcs-sortable" data-action="sortItems" data-sort-by="{{sortKeys.notes.name}}">

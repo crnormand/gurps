@@ -1,6 +1,6 @@
 <!-- Just a reversed form-group element with more limited options -->
 {{#*inline ".pointTotal"}}
-  <div class="gcs-point-total form-group">
+  <div class="form-group">
     <div class="form-fields">
       {{formInput field value=value localize=true disabled=@root.isPlay}}
     </div>
@@ -35,7 +35,7 @@
   </div>
   <div class="gcs-description gcs-section">
     <div class="gcs-section-header">{{localize "GURPS.sheet.gcsActorSheet.description"}}</div>
-    <div class="gcs-field-columns gcs-section-content">
+    <div class="flexrow gcs-section-content gcs-field-columns">
       <div class="gcs-field-rows">
         {{formField systemFields.profile.fields.gender value=systemSource.profile.gender localize=true disabled=isPlay}}
         {{formField systemFields.profile.fields.age value=systemSource.profile.age localize=true disabled=isPlay}}
@@ -49,7 +49,7 @@
         <div class="form-group">
           <label>{{localize "GURPS.actor.character.FIELDS.profile.sizemod.label"}}</label>
           <div
-            class="form-fields gcs-link-mod gcs-item-modifier {{ifThen (gte systemSource.profile.sizemod 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
+            class="form-fields gcs-item-modifier gcs-otf-mod {{ifThen (gte systemSource.profile.sizemod 0) 'gcs-mod-positive' 'gcs-mod-negative' }}"
             data-action="addModifier"
             data-value="{{systemSource.profile.sizemod}}"
             data-comment="{{localize 'GURPS.actor.character.FIELDS.profile.sizemod.label'}}"

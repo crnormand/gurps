@@ -1,0 +1,190 @@
+@use '../mixins' as gcs;
+
+.application.gcs-actor-sheet {
+  .window-header {
+    margin-bottom: var(--gga-space-1);
+  }
+
+  .window-content {
+    gap: var(--gga-space-1);
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    > * {
+      flex: 0 0 100%;
+    }
+
+    [data-application-part='traits'],
+    [data-application-part='skills'] {
+      flex: 1 0;
+    }
+
+    [data-application-part='reactions'] {
+      gap: var(--gga-space-1);
+      background-color: var(--gcs-color-surface-bg);
+
+      > table {
+        align-self: start;
+      }
+    }
+
+    [data-application-part='footer'] {
+      text-align: center;
+      color: var(--gga-color-text-callout);
+      font-size: var(--font-size-10);
+    }
+  }
+
+  section[data-application-part='header'] {
+    display: grid;
+    gap: var(--gcs-section-gap);
+    grid-template-areas:
+      'portrait identity miscellaneous points'
+      'portrait description description points';
+    grid-template-columns: 0fr auto auto 0fr;
+
+    .gcs-portrait {
+      grid-area: portrait;
+      width: 12.5rem;
+
+      img {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: contain;
+      }
+    }
+
+    .gcs-identity {
+      grid-area: identity;
+      align-content: start;
+    }
+
+    .gcs-description {
+      grid-area: description;
+      align-content: start;
+    }
+
+    .gcs-miscellaneous {
+      grid-area: miscellaneous;
+      align-content: start;
+    }
+
+    .gcs-point-totals {
+      grid-area: points;
+      align-content: start;
+      width: 10rem;
+    }
+  }
+
+  .gcs-section {
+    display: grid;
+    grid-template-rows: 0fr auto;
+    border: 0.1rem solid var(--gcs-color-section-border);
+
+    background-color: var(--gcs-color-surface-bg);
+    color: var(--gcs-color-surface-fg);
+
+    .gcs-section-header {
+      @include gcs.header;
+      min-height: 1.4rem;
+
+      display: flex;
+      gap: var(--gga-space-2);
+    }
+
+    .gcs-section-content {
+      padding: var(--gga-space-2);
+      font-size: var(--gcs-font-size-content);
+
+      &.gcs-field-columns,
+      &.gcs-field-rows {
+        padding: 0;
+      }
+
+      &.gcs-field-columns {
+        display: flex;
+        gap: var(--gga-space-1);
+        align-items: start;
+      }
+    }
+
+    // Subgrid keeps labels from separate form groups on one shared max-content track.
+    .gcs-field-rows {
+      display: grid;
+      grid-gap: var(--gga-space-1);
+      grid-template-columns: max-content minmax(4ch, 1fr);
+      flex: 1 1 0;
+      min-width: 0;
+      width: 100%;
+
+      > .form-group {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: subgrid;
+
+        &:nth-child(odd) {
+          @include gcs.banding;
+        }
+
+        > label {
+          grid-column: 1;
+          justify-self: stretch;
+          text-align: end;
+          white-space: nowrap;
+          padding-left: 0.5rem;
+          padding-right: 0.25rem;
+          align-content: center;
+        }
+
+        > .form-fields {
+          grid-column: 2;
+        }
+
+        &.flexrow {
+          display: flex;
+          flex-direction: row;
+        }
+
+        &.flexcol {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+
+      &.gcs-field-rows-reverse {
+        > .form-group {
+          > .form-fields {
+            grid-column: 1;
+            width: var(--gcs-attribute-field-width);
+          }
+
+          > label {
+            grid-column: 2;
+            text-align: start;
+          }
+        }
+      }
+    }
+  }
+
+  .gcs-point-totals {
+    input[type='number'] {
+      text-align: right;
+    }
+  }
+
+  [data-application-part='quickNotes'] {
+    .gcs-section-header {
+      align-items: center;
+
+      span.gcs-title {
+        flex: 1;
+      }
+
+      .gcs-quick-notes-edit {
+        margin-left: auto;
+      }
+    }
+  }
+}

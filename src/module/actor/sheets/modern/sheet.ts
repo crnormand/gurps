@@ -18,6 +18,7 @@ import GurpsWiring from '@module/gurps-wiring.js'
 import { ItemType } from '@module/item/types.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { sheetActions } from '@module/util/sheet-actions.js'
 import { Fatigue } from '@rules/injury/fatigue.js'
 import { HitPoints, ThresholdDescriptor } from '@rules/injury/hit-points.js'
 import { AnyObject, DeepPartial } from 'fvtt-types/utils'
@@ -126,7 +127,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       resetHp: GurpsActorModernSheet.#onResetResource,
       resetFp: GurpsActorModernSheet.#onResetResource,
       addEffect: GurpsActorModernSheet.#onAddEffect,
-      deleteEffect: GurpsActorModernSheet.#onDeleteEffect,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
       editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
       decrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
@@ -405,26 +405,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
 
   /* ---------------------------------------- */
 
-  static async #onDeleteEffect(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
-    event.preventDefault()
-    event.stopPropagation()
-    const effectId = target.dataset.effectId ?? ''
-    const effect = this.actor.effects.get(effectId)
-
-    if (!effect) return
-
-    const confirmed = await foundry.applications.api.DialogV2.confirm({
-      window: { title: getGame().i18n.localize('GURPS.delete') },
-      content: `<p>${getGame().i18n.localize('GURPS.delete')}: <strong>${effect.name}</strong>?</p>`,
-    })
-
-    if (confirmed) {
-      await effect.delete()
-    }
-  }
-
-  /* ---------------------------------------- */
-
   static async #onEditQuickNotes(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
     event.preventDefault()
     await this.#openQuickNoteEditor()
@@ -460,7 +440,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   static async #onChangeQuantity(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event?.preventDefault()
 
-    const doc = await this._getEmbedded(target)
+    const doc = await sheetActions.getEmbeddedDocument(this.actor, target)
 
     if (!doc) return
 
@@ -488,7 +468,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
   static async #onChangeUses(this: GurpsActorModernSheet, event: PointerEvent, target: HTMLElement): Promise<void> {
     event?.preventDefault()
 
-    const doc = await this._getEmbedded(target)
+    const doc = await sheetActions.getEmbeddedDocument(this.actor, target)
 
     if (!doc) return
 

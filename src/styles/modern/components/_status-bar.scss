@@ -210,37 +210,11 @@
   }
 }
 
-.ms-status-grid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ms-space-4);
-}
-
 .ms-status-item {
   display: flex;
   align-items: center;
   gap: var(--ms-space-4);
   font-size: var(--ms-font-xs);
-
-  .ms-status-label {
-    color: var(--ms-text-muted);
-    min-width: 80px;
-  }
-
-  .ms-status-value {
-    font-weight: var(--ms-weight-semibold);
-    @include tabular-nums;
-    color: var(--ms-text);
-
-    &.rollable {
-      color: var(--ms-accent);
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
 
   select {
     flex: 1;
@@ -250,37 +224,5 @@
     background: var(--ms-bg);
     font-size: var(--ms-font-xs);
     color: var(--ms-text);
-  }
-}
-
-.ms-senses-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--ms-space-3);
-}
-
-.ms-sense-item {
-  display: flex;
-  align-items: center;
-  gap: var(--ms-space-2);
-  font-size: var(--ms-font-xs);
-
-  .ms-sense-label {
-    color: var(--ms-text-muted);
-  }
-
-  .ms-sense-value {
-    font-weight: var(--ms-weight-semibold);
-    @include tabular-nums;
-    color: var(--ms-text);
-
-    &.rollable {
-      color: var(--ms-accent);
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
   }
 }

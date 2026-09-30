@@ -118,7 +118,7 @@
         gap: var(--ms-space-1);
 
         input {
-          max-width: 4rem;
+          max-width: var(--gcs-input-label-width);
         }
       }
 

@@ -27,6 +27,12 @@ body {
   padding: var(--ms-space-6);
   border-bottom: 1px solid var(--ms-border);
   background: var(--ms-bg-card);
+  gap: var(--ms-gap);
+
+  button {
+    flex: 0 0 auto;
+    width: fit-content;
+  }
 }
 
 .effect-picker-search {
