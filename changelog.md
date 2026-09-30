@@ -1,16 +1,75 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.21
+## Release 0.18.24
+
+### Features
+
+- Add PageRef on Spells on Modern Sheet \#2890
+- Reorganize Combat settings under new Combat Settings menu.
+- Move Combat code into combat module.
+- Color Blind Adjustment \#2914.
+- Combat Settings: choose which maneuvers and Modifier Bucket options this world uses. A maneuver that is turned off is no longer offered in the Combat Tracker, Token HUD, character sheet or `/man`, and its modifiers leave the Modifier Bucket with it.
+- Add support for PDF links like `DFC:A-10` \#2908
+- PDF links now match against the codes registered in your PDF journal pages; this means you can use almost any code (e.g., `[PDF:DFRPG Spells:20]` should open a PDF you've assigned code "DFRPG Spells" to page 20).
+- Added chat command `/chat <your text here>` that simply puts "your text here" into the Foundry chat. Turn this into an OTF with `[/chat <your text here>]`. \#2964
+
+### Bugfixes
+
+- Fixed another Move Mode editor problem ... yikes!
+- Cannot create a Compendium with a name that is non-ASCII \#2923
+- Character Sheet Item has " - " suffix \#2931
+- Compendium Packs / Import Equipment Library / Skill Level is populating as S:"["object Object]\*[] \#2942
+- A posture or maneuver that allows a fraction of Move rounded that fraction up. A crouching Move 5 character now moves 3 yards, not 4 (B9, B551, B387).
+- Reeling and fatigue halved Move before encumbrance reduced it. Encumbrance now goes first, as B17 defines Move (a Basic Move 14 character under Light encumbrance and reeling has Move 6, not 5).
+- "Maneuver Updates Move" applied a maneuver's and posture's Move limit to every actor whenever any encounter was running, not just the actors in it.
+- An actor became unopenable if it held a maneuver from a source book the GM had since switched off.
+
+## Release 0.18.23 08/29/2026
+
+### Features
+
+- Feature Request: Reorganize Status Effects \#2888
+
+### Bugfixes
+
+- v0.18.22: Fix broken maneuver menu in Tabbed character sheet \#2881
+- Can't add new Movment Type to Actor \#2886
+
+## Release 0.18.22 08/21/2026
 
 ### Features
 
 ### Bugfixes
 
-- 17.17 The /light command has multiple bugs \#2134
+- v0.18.21: Token HUD images are mising \#2864
+- Tweak the initial size of the PDF Journal Page to show a whole page \#2866
+- v0.18.21: Maneuver icons do not display \#2870
+
+## Release 0.18.21 08/19/2026
+
+### Features
+
+### Bugfixes
+
+- 17.17 The `/light` command has multiple bugs \#2134
 - Inventory of unlinked tokens \#2052
 - Multiple Foundry Native Items with Features + Bonuses negate one Bonus \#1861
 - GCS Body Plan not uploaded correctly \#1832
 - Max in resource tracker template not being copied to characters \#1796
+- `/slam` does not output after clicking Resolve \#2809
+- Modern sheet does not show melee attack's Block score \#2824
+- NPC Mini Sheet - Nowhere to Roll Block \#2780
+- Ordered lists in Journal Entries clip two-digit list markers \#2777
+- Offset Problem with Basic Revised \#2829
+  - After installing the update, go to the settings for `GURPS 4e Game Aid > PDF Settings`, and change `Basic Set PDFs` to "Basic Revised ('B')".
+- Detached combat tracker window/popout! window not allowing updates to maneuvers. \#2796
+- GCS v5 import: spell points inside containers are not summed (+ minor: importSp never sets spl.level) \#2772
+- Techniques include "[object Object]" string literal since recent GCS update \#2781
+  - You may need to delete the techniques and reimport to apply the fix.
+- Can't modify Advantage points to be negative. \#2844
+- Roll Confirmation dialog shows "Spell" if the OTF has "S:" even if the item is a Skill \#2851
+- `/showmbs` is not working \#2853
+- `/reimport` fails with "Cannot read properties of undefined (reading 'filter')" \#2856
 
 ## Release 0.18.20 06/18/2026
 

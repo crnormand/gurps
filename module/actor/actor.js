@@ -1,8 +1,5 @@
 'use strict'
 
-import { collectDeletions } from './deletion.js'
-import { commitUpdate, replaceValue } from '../utilities/foundry-compat.js'
-import { calculateEncumbranceLevels } from '../utilities/import-utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { COSTS_REGEX, parselink } from '../../lib/parselink.js'
 import {
@@ -14,16 +11,8 @@ import {
   splitArgs,
   zeroFill,
 } from '../../lib/utilities.js'
-import ApplyDamageDialog from '../damage/applydamage.js'
-import * as HitLocations from '../hitlocation/hitlocation.js'
-import { HitLocation } from '../hitlocation/hitlocation.js'
-import { GurpsItem } from '../item.js'
-import { ResourceTracker } from '../resource-tracker/index.js'
-import { TokenActions } from '../token-actions.js'
-import { multiplyDice } from '../utilities/damage-utils.js'
-import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
-import { ActorImporter } from './actor-importer.js'
-import { cleanTags, getRangedModifier, getSizeModifier } from './effect-modifier-popout.js'
+import { Combat } from '../combat/index.js'
+import { isActorInCombat } from '../combat/utilities.js'
 import Maneuvers, {
   MOVE_HALF,
   MOVE_NONE,
@@ -34,8 +23,21 @@ import Maneuvers, {
   MOVE_TWOTHIRDS,
   PROPERTY_MOVEOVERRIDE_MANEUVER,
   PROPERTY_MOVEOVERRIDE_POSTURE,
-} from './maneuver.js'
-import { OtfActionType } from '../otf/index.js'
+} from '../combat/maneuver.js'
+import ApplyDamageDialog from '../damage/applydamage.js'
+import * as HitLocations from '../hitlocation/hitlocation.js'
+import { HitLocation } from '../hitlocation/hitlocation.js'
+import { GurpsItem } from '../item.js'
+import { OtfActionType } from '../otf/types.js'
+import { ResourceTracker } from '../resource-tracker/index.js'
+import { TokenActions } from '../token-actions.js'
+import { multiplyDice } from '../utilities/damage-utils.js'
+import { commitUpdate, replaceValue } from '../utilities/foundry-compat.js'
+import { Advantage, Equipment, HitLocationEntry, Melee, Ranged, Skill, Spell } from './actor-components.js'
+import { ActorImporter } from './actor-importer.js'
+import { collectDeletions } from './deletion.js'
+import { cleanTags, getRangedModifier, getSizeModifier } from './effect-modifier-popout.js'
+import { currentMove, fractionOfMove } from './move.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -133,21 +135,70 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * Retrieve the list of ActiveEffects that are currently applied to this Actor.
+   * @type {ActiveEffect[]}
+   */
+  get appliedEffects() {
+    let effects = super.appliedEffects.sort((a, b) => a.sort - b.sort)
+
+    if (effects.length > 0) {
+      // Move Maneuver and Posture effects to the front of the list, if they exist.
+      const maneuverEffect = effects.find(e => e.getFlag('gurps', 'statusId') === 'maneuver')
+      const postureEffect = effects.find(e => e.getFlag('gurps', 'effect.type') === 'posture')
+      const remaining = effects.filter(e => e !== maneuverEffect && e !== postureEffect)
+
+      if ((maneuverEffect || postureEffect) && remaining.length > 0) {
+        const sortedArray = []
+        if (maneuverEffect) sortedArray.push(maneuverEffect)
+        if (postureEffect) sortedArray.push(postureEffect)
+        effects = [...sortedArray, ...remaining]
+      }
+
+      if (maneuverEffect) {
+        // If there is a maneuver effect, set what's visible to the user based on his role and the world settings.
+        const visibility = Combat.getManeuverVisibility()
+        if (visibility === 'NoOne') maneuverEffect.showIcon = 0
+        if (visibility === 'GMAndOwner') {
+          if (!game.user?.isGM && !maneuverEffect.isOwner) {
+            maneuverEffect.showIcon = 0
+          } else {
+            maneuverEffect.showIcon = 2
+          }
+        }
+
+        // If the current user is neither GM nor actor owner, display the alternate image if available UNLESS the
+        // detail setting is "Full".
+        const detail = Combat.getManeuverDetail()
+        if (detail !== 'Full' && !game.user?.isGM && !maneuverEffect.isOwner) {
+          maneuverEffect.img = maneuverEffect.getFlag('gurps', 'altImg') ?? maneuverEffect.img
+          maneuverEffect.name = maneuverEffect.getFlag('gurps', 'altLabel') ?? maneuverEffect.name
+        }
+      }
+    }
+
+    return effects
+  }
+
+  /**
+   * @override Sort Maneuvers to the front of the temporary effects.
+   * @since Foundry v12
+   * @returns {ActiveEffect.Implementation[]} The temporary effects of the actor.
+   */
+  get temporaryEffects() {
+    const effects = []
+    for (const effect of this.appliedEffects) {
+      if (effect.isTemporary) effects.push(effect)
+    }
+    return effects
+  }
+
   /** @override */
   _onUpdate(changed, options, userId) {
     if (changed.flags?.core?.sheetClass !== undefined && game.user.id !== userId) {
       delete changed.flags.core.sheetClass
     }
     super._onUpdate(changed, options, userId)
-  }
-
-  prepareData() {
-    super.prepareData()
-    // By default, it does this:
-    // this.data.reset()
-    // this.prepareBaseData()
-    // this.prepareEmbeddedEntities()
-    // this.prepareDerivedData()
   }
 
   prepareBaseData() {
@@ -166,7 +217,7 @@ export class GurpsActor extends Actor {
       let sizemod = this.system.traits?.sizemod?.toString() || '+0'
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
 
-      if (!game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE)) {
+      if (!Combat.useSizeModifierDifferenceInMelee()) {
         if (sizemod !== '0' && sizemod !== '+0') {
           this.system.conditions.target.modifiers.push(
             `${game.i18n.format('GURPS.modifiersSize', { sm: sizemod })} #hit @sizemod`
@@ -193,11 +244,6 @@ export class GurpsActor extends Actor {
     }
 
     this.system.trackersByName = this.trackersByName
-  }
-
-  prepareEmbeddedEntities() {
-    // Calls this.applyActiveEffects()
-    super.prepareEmbeddedEntities()
   }
 
   prepareDerivedData() {
@@ -740,18 +786,16 @@ export class GurpsActor extends Actor {
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
       const level0 = encs[zeroFill(0)] // if there are encumbrances, there will always be a level0
-      let effectiveMove = parseInt(level0.move)
+      const basicMove = parseInt(level0.move)
       let effectiveDodge = isNaN(parseInt(level0.dodge)) ? '–' : parseInt(level0.dodge) + data.currentdodge
       let effectiveSprint = this._getSprintMove()
 
       if (isReeling) {
-        effectiveMove = Math.ceil(effectiveMove / 2)
         effectiveDodge = isNaN(effectiveDodge) ? '–' : Math.ceil(effectiveDodge / 2)
         effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
 
       if (isTired) {
-        effectiveMove = Math.ceil(effectiveMove / 2)
         effectiveDodge = isNaN(effectiveDodge) ? '–' : Math.ceil(effectiveDodge / 2)
         effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
@@ -762,7 +806,10 @@ export class GurpsActor extends Actor {
         let threshold = 10 - 2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         threshold /= 10 // JS likes to calculate 0.2*3 = 3.99999, but handles 2*3/10 fine.
 
-        enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
+        // Encumbrance takes its share of Basic Move before reeling and fatigue take theirs (B17).
+        const move = currentMove(basicMove, parseInt(enc.level), { reeling: isReeling, exhausted: isTired })
+
+        enc.currentmove = this._getCurrentMove(move, parseInt(enc.level))
         enc.currentdodge = isNaN(effectiveDodge) ? '–' : Math.max(1, effectiveDodge - parseInt(enc.level))
         enc.currentsprint = Math.max(enc.currentmove + 1, Math.floor(effectiveSprint * threshold))
         enc.currentmovedisplay = enc.currentmove
@@ -799,29 +846,25 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {number} move
-   * @param {number} threshold
+   * @param {number} move - Move already reduced for encumbrance, reeling and fatigue.
+   * @param {number} level - The encumbrance level `move` was reduced for.
    * @returns {number}
    */
-  _getCurrentMove(move, threshold) {
+  _getCurrentMove(move, level) {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.actorId == this.id)
     } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
-    let updateMove = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
+    let updateMove = Combat.maneuverUpdatesMove() && inCombat
 
-    let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
-    let posture = this._getMoveAdjustedForPosture(move, threshold)
+    let maneuver = this._getMoveAdjustedForManeuver(move)
+    let posture = this._getMoveAdjustedForPosture(move)
 
-    if (threshold == 1.0) this.system.conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
-    return updateMove
-      ? maneuver.move < posture.move
-        ? maneuver.move
-        : posture.move
-      : Math.max(1, Math.floor(move * threshold))
+    if (level === 0) this.system.conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
+    return updateMove ? (maneuver.move < posture.move ? maneuver.move : posture.move) : Math.max(1, move)
   }
 
-  _getMoveAdjustedForManeuver(move, threshold) {
+  _getMoveAdjustedForManeuver(move) {
     let adjustment = null
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_MANEUVER)) {
@@ -829,17 +872,17 @@ export class GurpsActor extends Actor {
       let mv = GURPS.Maneuvers.get(this.system.conditions.maneuver)
       let reason = !!mv ? game.i18n.localize(mv.label) : ''
 
-      adjustment = this._adjustMove(move, threshold, value, reason)
+      adjustment = this._adjustMove(move, value, reason)
     }
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
+          move: Math.max(1, move),
           text: game.i18n.localize('GURPS.moveFull'),
         }
   }
 
-  _adjustMove(move, threshold, value, reason) {
+  _adjustMove(move, value, reason) {
     switch (value.toString()) {
       case MOVE_NONE:
         return {
@@ -869,20 +912,20 @@ export class GurpsActor extends Actor {
 
       case MOVE_ONETHIRD:
         return {
-          move: Math.max(1, Math.ceil((move / 3) * threshold)),
+          move: fractionOfMove(move, 1, 3),
           text: '×1/3',
           //          text: game.i18n.format('GURPS.moveOneThird', { reason: reason }),
         }
 
       case MOVE_HALF:
         return {
-          move: Math.max(1, Math.ceil((move / 2) * threshold)),
+          move: fractionOfMove(move, 1, 2),
           text: game.i18n.localize('GURPS.half'),
         }
 
       case MOVE_TWOTHIRDS:
         return {
-          move: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
+          move: fractionOfMove(move, 2, 3),
           text: '×2/3',
           //          text: game.i18n.format('GURPS.moveTwoThirds', { reason: reason }),
         }
@@ -891,19 +934,19 @@ export class GurpsActor extends Actor {
     return null
   }
 
-  _getMoveAdjustedForPosture(move, threshold) {
+  _getMoveAdjustedForPosture(move) {
     let adjustment = null
 
     if (foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)) {
       let value = foundry.utils.getProperty(this, PROPERTY_MOVEOVERRIDE_POSTURE)
       let reason = game.i18n.localize(GURPS.StatusEffect.lookup(this.system.conditions.posture).name)
-      adjustment = this._adjustMove(move, threshold, value, reason)
+      adjustment = this._adjustMove(move, value, reason)
     }
 
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
+          move: Math.max(1, move),
           text: game.i18n.localize('GURPS.moveFull'),
         }
   }
@@ -1912,13 +1955,13 @@ export class GurpsActor extends Actor {
       case 'melee':
         actorComp = Melee.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
-        actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        actorComp.name = `${parentItem.name}${actorComp.mode ? ' - ' + actorComp.mode : ''}`
         actorComp.fromItem = parentItem.uuid
         break
       case 'ranged':
         actorComp = Ranged.fromObject(childItemData, this)
         actorComp['import'] = await this._getSkillLevelFromOTF(childItemData.otf)
-        actorComp.name = `${parentItem.name} - ${actorComp.mode}`
+        actorComp.name = `${parentItem.name}${actorComp.mode ? ' - ' + actorComp.mode : ''}`
         actorComp.fromItem = parentItem.uuid
         break
     }
@@ -2378,33 +2421,6 @@ export class GurpsActor extends Actor {
     }
 
     return defenses
-  }
-
-  /**
-   * @override Sort Maneuvers to the front of the temporary effects.
-   * @since Foundry v12
-   * @returns {ActiveEffect.Implementation[]} The temporary effects of the actor.
-   */
-  get temporaryEffects() {
-    const allEffects = super.temporaryEffects
-    const maneuver = allEffects.find(e => e.isManeuver)
-    if (!maneuver) return allEffects
-
-    const effects = allEffects.filter(e => !e.isManeuver)
-
-    const visibility = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_VISIBILITY)
-    if (visibility === 'NoOne') return effects
-
-    if (!game.user?.isGM && !this.isOwner) {
-      if (visibility === 'GMAndOwner') return effects
-
-      const detail = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MANEUVER_DETAIL)
-      if (detail === 'General' || (detail === 'NoFeint' && maneuver?.flags.gurps?.name === 'feint')) {
-        if (!!maneuver.flags.gurps?.alt) maneuver.img = maneuver.getFlag('gurps', 'alt')
-      }
-    }
-
-    return [maneuver, ...effects]
   }
 
   /**
@@ -3466,10 +3482,7 @@ export class GurpsActor extends Actor {
         const maneuver = Maneuvers.getManeuver(actions.currentManeuver)
         const maneuverLabel = game.i18n.localize(maneuver.label)
         const roll = game.i18n.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll')
-        const checkManeuverSettings = game.settings.get(
-          Settings.SYSTEM_NAME,
-          Settings.SETTING_ALLOW_ROLL_BASED_ON_MANEUVER
-        )
+        const checkManeuverSettings = Combat.getRollBasedOnManeuverPolicy()
         const message =
           checkManeuverSettings !== 'Allow' &&
           game.i18n.format(`GURPS.${checkManeuverSettings.toLowerCase()}CannotRollWithManeuver`, {

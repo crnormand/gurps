@@ -74,6 +74,7 @@ export function bindNoteCrudActions(html: JQuery, actor: GurpsActor, sheet: Gurp
       buttons: {
         one: {
           label: 'Create',
+          // @ts-expect-error: Assume that the dialogHtml is a JQuery object with the expected structure
           callback: async (dialogHtml: JQuery) => {
             newNote.notes = dialogHtml.find('.notes').val() as string
             newNote.title = dialogHtml.find('.title').val() as string

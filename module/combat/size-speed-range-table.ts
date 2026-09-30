@@ -1,23 +1,24 @@
 'use strict'
 
 export class SizeAndSpeedRangeTable {
+  _table: RepeatingSequenceConverter
   constructor() {
     this._table = new RepeatingSequenceConverter([2, 3, 5, 7, 10, 15])
   }
 
   // pass in distance in yards, get back modifier
-  getModifier(yards) {
+  getModifier(yards: number) {
     return -this._table.valueToIndex(yards)
   }
 
   // pass in modifier, get distance in yards
-  getDistance(modifier) {
+  getDistance(modifier: number) {
     return this._table.indexToValue(modifier)
   }
 
   // pass in distance in yards, get back the furthest distance that has the same modifier
-  ceil(yards) {
-    return this._table.ceil(measure)
+  ceil(yards: number) {
+    return this._table.ceil(yards)
   }
 }
 
@@ -33,7 +34,10 @@ export class SizeAndSpeedRangeTable {
 /// value (ordinalToValue), or from some value to the index that represents the
 /// lowest value in the sequence that is equal to or greater than the given value (valueToOrdinal).
 export default class RepeatingSequenceConverter {
-  constructor(pattern, base) {
+  _pattern: number[]
+  _base: number
+
+  constructor(pattern: number[], base?: number) {
     this._pattern = pattern
     this._base = base ?? 10
   }
@@ -43,7 +47,7 @@ export default class RepeatingSequenceConverter {
   // int x = index % pattern.length = 1
   // int y = floor(index / pattern.length) = 2
   // return pattern[x] * 10^y = 30 * 100 = 3000
-  indexToValue(index) {
+  indexToValue(index: number) {
     let i = index % this._pattern.length
     let exponent = Math.floor(index / this._pattern.length)
     let other = Math.pow(this._base, exponent)
@@ -51,7 +55,7 @@ export default class RepeatingSequenceConverter {
     return j
   }
 
-  valueToIndex(value) {
+  valueToIndex(value: number) {
     let loops = this._numberOfLoops(value) // 0
 
     let val = value / Math.pow(this._base, loops) // 3 / 1 = 3
@@ -62,7 +66,7 @@ export default class RepeatingSequenceConverter {
 
   /// Return the least value from the repeating sequence greater than or equal
   /// to the passed value.
-  ceil(value) {
+  ceil(value: number) {
     if (value < 0) throw 'must be non-negative'
     let index = 0
     let temp = 0
@@ -73,11 +77,11 @@ export default class RepeatingSequenceConverter {
     return temp
   }
 
-  _smallestTableValueGreaterThanOrEqualTo(val) {
-    return this._pattern.find(i => i >= val)
+  _smallestTableValueGreaterThanOrEqualTo(val: number) {
+    return this._pattern.find(i => i >= val) ?? 0
   }
 
-  _numberOfLoops(value) {
+  _numberOfLoops(value: number) {
     let loops = 0
     while (value > this._lastElementOf(this._pattern) * Math.pow(this._base, loops)) {
       loops++
@@ -85,7 +89,7 @@ export default class RepeatingSequenceConverter {
     return loops
   }
 
-  _lastElementOf(array) {
+  _lastElementOf(array: number[]) {
     return array[array.length - 1]
   }
 }

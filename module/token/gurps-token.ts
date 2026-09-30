@@ -1,4 +1,4 @@
-import Maneuvers from '../actor/maneuver.js'
+import Maneuvers from '../combat/maneuver.js'
 import { isCombatActive, isTokenInActiveCombat } from '../game-utils.js'
 import { TokenActions } from '../token-actions.js'
 

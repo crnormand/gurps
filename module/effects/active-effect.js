@@ -13,9 +13,9 @@ export default class GurpsActiveEffect extends ActiveEffect {
   }
 
   /**
-   * On Actor.applyEffect: Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM.
+   * On Actor.applyEffect: Applies only to changes that have type: 'custom'.
    * @param {Actor|Item} actor
-   * @param {ChangeData} change - the change to apply
+   * @param {EffectChangeData} change - the change to apply
    * @param {*} _options
    * @param {*} _user
    */
@@ -131,6 +131,10 @@ export default class GurpsActiveEffect extends ActiveEffect {
         $(span).attr('title', game.i18n.localize(`GURPS.remove${status}Effect`))
       }
     }
+  }
+
+  isPosture() {
+    return this.getFlag('gurps', 'effect.type') === 'posture'
   }
 
   get endCondition() {

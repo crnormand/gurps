@@ -1,9 +1,9 @@
-import { replaceValue, deleteKey, commitUpdate } from '../utilities/foundry-compat.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 import { aRecurselist, arrayBuffertoBase64, recurselist, xmlTextToJson } from '../../lib/utilities.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { SmartImporter } from '../smart-importer.js'
+import { commitUpdate, deleteKey, replaceValue } from '../utilities/foundry-compat.js'
 import { calculateEncumbranceLevels, readXmlText } from '../utilities/import-utilities.js'
 import {
   Advantage,
@@ -1682,17 +1682,26 @@ export class ActorImporter {
     if (this.GCSVersion === 5) {
       i.type = i.id.startsWith('q') ? 'technique' : i.id.startsWith('s') ? 'skill' : 'skill_container'
     }
+
     let name =
       i.name + (!!i.tech_level ? `/TL${i.tech_level}` : '') + (!!i.specialization ? ` (${i.specialization})` : '') ||
       'Skill'
+
     if (i.type == 'technique' && !!i.default) {
-      let addition = ''
-      addition = ' (' + i.default.name
-      if (!!i.default.specialization) {
-        addition += ' (' + i.default.specialization + ')'
-      }
-      name += addition + ')'
+      const defaultName = i.default.name instanceof Object ? i.default.name.qualifier : i.default.name
+
+      // Handle replacements...
+
+      const specialization =
+        i.default.specialization instanceof Object
+          ? i.default.specialization.qualifier
+          : (i.default.specialization ?? '')
+
+      const addition = parenthesize([defaultName, parenthesize(specialization)].join(' ').trim())
+
+      name += ` ${addition}`
     }
+
     let s = new Skill(name, '')
     s.originalName = name
     s.pageRef(i.reference || '')
@@ -1719,6 +1728,12 @@ export class ActorImporter {
       for (let j of i.children) ch = ch.concat(await this.importSk(j, i.id))
     }
     return [s].concat(ch)
+
+    function parenthesize(str) {
+      if (!str) return ''
+      if (str.startsWith('(') && str.endsWith(')')) return str
+      return '(' + str + ')'
+    }
   }
 
   async importSpellsFromGCS(sps) {
@@ -1768,6 +1783,7 @@ export class ActorImporter {
       s.points = i.points || ''
       s.casttime = i.casting_time || ''
       s.import = i.calc?.level || 0
+      s.level = s.import
     }
 
     s = this._substituteItemReplacements(s, i)
@@ -2367,9 +2383,15 @@ export class ActorImporter {
       if (i.id.startsWith('p')) i.type = 'spell'
       if (i.id.startsWith('P')) i.type = 'spell_container'
     }
-    if (i.type == ('skill_container' || 'spell_container') && i.children?.length)
-      for (let j of i.children) skills = this.skPointCount(j, skills)
-    else skills += i.points ?? 0
+
+    if ((i.type == 'skill_container' || i.type == 'spell_container') && i.children?.length) {
+      for (let j of i.children) {
+        skills = this.skPointCount(j, skills)
+      }
+    } else {
+      skills += i.points ?? 0
+    }
+
     return skills
   }
 
@@ -2579,8 +2601,8 @@ export class ActorImporter {
         actorComp.itemInfo = item.getItemInfo()
         actorComp.uuid = item.system[item.itemSysKey].uuid
       } else if (!!existingItem) {
-        actorComp.name = existingItem.name
         actorComp.itemid = existingItem._id
+        existingItem.name = actorComp.name
         actorComp.itemInfo = existingItem.getItemInfo()
         actorComp.uuid = existingItem.system[existingItem.itemSysKey].uuid
         actorComp.itemModifiers = existingItem.system.itemModifiers

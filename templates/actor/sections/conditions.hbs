@@ -12,15 +12,15 @@
                 {{#with (getManeuver system.conditions.maneuver) as |maneuver|}}
                   <img
                     class='button'
-                    src='{{maneuver.icon}}'
+                    src='{{maneuver.img}}'
                     title='{{localize maneuver.label}}'
                     alt='{{maneuver.name}}'
                   />
                 {{/with}}
               </summary>
               <div class='popup square5x4'>
-                {{#each (listAllManeuvers) as |this key|}}
-                  <img class='button' src='{{icon}}' title='{{localize label}}' alt='{{key}}' />
+                {{#each (listAllManeuvers system.conditions.maneuver) as |this key|}}
+                  <img class='button' src='{{img}}' title='{{localize label}}' alt='{{key}}' />
                 {{/each}}
               </div>
             </details>
@@ -38,7 +38,7 @@
                 {{localize 'GURPS.none'}}
               </option>
               {{#with system.conditions.maneuver as |maneuver|}}
-                {{#each (listAllManeuvers) as |this key|}}
+                {{#each (listAllManeuvers maneuver) as |this key|}}
                   <option value='{{key}}' {{select-if maneuver key}}>
                     {{localize this.label}}
                   </option>

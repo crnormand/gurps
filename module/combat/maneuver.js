@@ -1,4 +1,4 @@
-import * as Settings from '../../lib/miscellaneous-settings.js'
+import { isManeuverInPlay, isUsingOnTarget } from './settings.js'
 
 export const MANEUVER = 'maneuver'
 export const DEFENSE_ANY = 'any'
@@ -21,29 +21,12 @@ const MANEUVER_INTRODUCED_BY_ON_TARGET = 'on-target'
 
 const MANEUVER_NAME_AIM = 'aim'
 
-const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
-
-// Override Actor.temporaryEffects getter to sort maneuvers to the front of the array
-// Object.defineProperty(Actor.prototype, 'temporaryEffects', {
-//   get: function () {
-//     let results = oldTemporaryEffects?.get?.call(this)
-
-//     if (!!results && results.length > 1) {
-//       const maneuvers = results.filter(e => e.statuses.find(s => s === 'maneuver'))
-//       const notManeuvers = results.filter(e => !maneuvers.includes(e))
-
-//       results = [...maneuvers, ...notManeuvers]
-//     }
-//     return results
-//   },
-// })
-
 /**
- * @typedef {{id: string, flags: { gurps: { name: string, move?: string, defense?: string, fullturn?: Boolean, icon: string, alt?: string|null} } }} ManeuverEffect
+ * @typedef {{id: string, flags: { gurps: { name: string, move?: string, defense?: string, fullturn?: Boolean, img: string, altImg?: string|null} } }} ManeuverEffect
  * @typedef {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData').ActiveEffectDataConstructorData & ManeuverEffect} ManeuverData
  */
 
-/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string|null, introducedBy?: string|null}} _data */
+/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, img: string, altImg?: string|null, introducedBy?: string|null}} _data */
 
 /**
  * The purpose of this class is to help generate data that can be used in an ActiveEffect.
@@ -57,14 +40,18 @@ class Maneuver {
     data.move = data.move || MOVE_STEP
     data.defense = data.defense || DEFENSE_ANY
     data.fullturn = !!data.fullturn
-    data.icon = Maneuver.filepath + data.icon
-    data.alt = !!data.alt ? Maneuver.filepath + data.alt : null
+    data.img = Maneuver.filepath + data.img
+    data.altImg = !!data.altImg ? Maneuver.filepath + data.altImg : null
     data.introducedBy = data.introducedBy ?? null
     this._data = data
   }
 
-  get icon() {
-    return this._data.icon
+  /**
+   * Based on the world settings, return the maneuver's image or its alternate image if the world settings say to use alternate images.
+   * @returns {string}
+   * */
+  get img() {
+    return this._data.img
   }
 
   get move() {
@@ -76,15 +63,17 @@ class Maneuver {
     return {
       id: MANEUVER,
       label: this._data.label,
-      icon: this._data.icon,
+      img: this._data.img,
+      showIcon: 2,
       flags: {
         gurps: {
           name: this._data.name,
           move: this._data.move,
           defense: this._data.defense,
           fullturn: this._data.fullturn,
-          icon: this._data.icon,
-          alt: this._data.alt,
+          img: this._data.img,
+          altImg: this._data.altImg,
+          altLabel: this._data.altLabel,
           statusId: MANEUVER,
         },
       },
@@ -100,16 +89,24 @@ class Maneuver {
     changes.push({
       key: 'system.conditions.maneuver',
       value: this._data.name,
-      mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      type: 'override',
     })
 
-    changes.push({ key: PROPERTY_MOVEOVERRIDE_MANEUVER, value: this.move, mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE })
+    changes.push({
+      key: PROPERTY_MOVEOVERRIDE_MANEUVER,
+      value: this.move,
+      type: 'override',
+    })
 
     return changes
   }
 
   get introducedBy() {
     return this._data.introducedBy
+  }
+
+  get requiresOnTarget() {
+    return this._data.introducedBy === MANEUVER_INTRODUCED_BY_ON_TARGET
   }
 
   get name() {
@@ -120,7 +117,7 @@ class Maneuver {
 const maneuverDataAim = {
   name: MANEUVER_NAME_AIM,
   fullturn: true,
-  icon: 'man-aim.png',
+  img: 'man-aim.png',
   label: 'GURPS.maneuverAim',
 }
 
@@ -131,20 +128,20 @@ const maneuvers = {
   do_nothing: new Maneuver({
     name: 'do_nothing',
     label: 'GURPS.maneuverDoNothing',
-    icon: 'man-nothing.png',
+    img: 'man-nothing.png',
     move: MOVE_NONE,
   }),
   move: new Maneuver({
     name: 'move',
     label: 'GURPS.maneuverMove',
-    icon: 'man-move.png',
+    img: 'man-move.png',
     move: MOVE_FULL,
   }),
   aim: new Maneuver({ ...maneuverDataAim }),
   committed_aim: new Maneuver({
     name: 'committed_aim',
     label: 'GURPS.maneuverCommittedAim',
-    icon: 'man-aim.png',
+    img: 'man-aim.png',
     fullturn: true,
     move: MOVE_TWO_STEPS,
     introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
@@ -152,7 +149,7 @@ const maneuvers = {
   allout_aim: new Maneuver({
     name: 'allout_aim',
     label: 'GURPS.maneuverAllOutAim',
-    icon: 'man-aim.png',
+    img: 'man-aim.png',
     fullturn: true,
     move: MOVE_NONE,
     defense: DEFENSE_NONE,
@@ -161,139 +158,153 @@ const maneuvers = {
   change_posture: new Maneuver({
     name: 'change_posture',
     move: MOVE_NONE,
-    icon: 'man-change-posture.png',
+    img: 'man-change-posture.png',
     label: 'GURPS.maneuverChangePosture',
   }),
   evaluate: new Maneuver({
     name: 'evaluate',
-    icon: 'man-evaluate.png',
+    img: 'man-evaluate.png',
     label: 'GURPS.maneuverEvaluate',
   }),
   attack: new Maneuver({
     name: 'attack',
-    icon: 'man-attack.png',
+    img: 'man-attack.png',
     label: 'GURPS.maneuverAttack',
   }),
   feint: new Maneuver({
     name: 'feint',
-    icon: 'man-feint.png',
+    img: 'man-feint.png',
     label: 'GURPS.maneuverFeint',
-    alt: 'man-attack.png',
+    altImg: 'man-attack.png',
+    altLabel: 'GURPS.maneuverAttack',
   }),
   committed_attack_ranged: new Maneuver({
     name: 'committed_attack_ranged',
     move: MOVE_TWO_STEPS,
-    icon: 'man-aoa-suppress.png',
+    img: 'man-aoa-suppress.png',
     label: 'GURPS.maneuverCommittedAttackRanged',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
     introducedBy: MANEUVER_INTRODUCED_BY_ON_TARGET,
   }),
   allout_attack: new Maneuver({
     name: 'allout_attack',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'man-allout-attack.png',
+    img: 'man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_determined: new Maneuver({
     name: 'aoa_determined',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'man-aoa-determined.png',
+    img: 'man-aoa-determined.png',
     label: 'GURPS.maneuverAllOutAttackDetermined',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_ranged: new Maneuver({
     name: 'aoa_ranged',
     move: MOVE_NONE,
     defense: DEFENSE_NONE,
-    icon: 'man-aoa-suppress.png',
+    img: 'man-aoa-suppress.png',
+    altImg: 'man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackRanged',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_double: new Maneuver({
     name: 'aoa_double',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'man-aoa-double.png',
+    img: 'man-aoa-double.png',
     label: 'GURPS.maneuverAllOutAttackDouble',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_feint: new Maneuver({
     name: 'aoa_feint',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'man-aoa-feint.png',
+    img: 'man-aoa-feint.png',
     label: 'GURPS.maneuverAllOutAttackFeint',
-    alt: 'man-allout-attack.png',
+    altImg: 'man-allout-attack.png',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_strong: new Maneuver({
     name: 'aoa_strong',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    alt: 'man-allout-attack.png',
-    icon: 'man-aoa-strong.png',
+    altImg: 'man-allout-attack.png',
+    img: 'man-aoa-strong.png',
     label: 'GURPS.maneuverAllOutAttackStrong',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_suppress: new Maneuver({
     name: 'aoa_suppress',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    alt: 'man-allout-attack.png',
-    icon: 'man-aoa-suppress.png',
+    altImg: 'man-allout-attack.png',
+    img: 'man-aoa-suppress.png',
     label: 'GURPS.maneuverAllOutAttackSuppressFire',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   move_and_attack: new Maneuver({
     name: 'move_and_attack',
     move: MOVE_FULL,
     defense: DEFENSE_DODGEBLOCK,
-    icon: 'man-move-attack.png',
+    img: 'man-move-attack.png',
     label: 'GURPS.maneuverMoveAttack',
   }),
   allout_defense: new Maneuver({
     name: 'allout_defense',
     move: MOVE_HALF,
-    icon: 'man-defense.png',
+    img: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefense',
   }),
   aod_dodge: new Maneuver({
     name: 'aod_dodge',
     move: MOVE_HALF,
-    alt: 'man-defense.png',
-    icon: 'man-def-dodge.png',
+    altImg: 'man-defense.png',
+    img: 'man-def-dodge.png',
     label: 'GURPS.maneuverAllOutDefenseDodge',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_parry: new Maneuver({
     name: 'aod_parry',
-    alt: 'man-defense.png',
-    icon: 'man-def-parry.png',
+    altImg: 'man-defense.png',
+    img: 'man-def-parry.png',
     label: 'GURPS.maneuverAllOutDefenseParry',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_block: new Maneuver({
     name: 'aod_block',
-    alt: 'man-defense.png',
-    icon: 'man-def-block.png',
+    altImg: 'man-defense.png',
+    img: 'man-def-block.png',
     label: 'GURPS.maneuverAllOutDefenseBlock',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   aod_double: new Maneuver({
     name: 'aod_double',
-    alt: 'man-defense.png',
-    icon: 'man-def-double.png',
+    img: 'man-def-double.png',
+    altImg: 'man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDouble',
+    altLabel: 'GURPS.maneuverAllOutDefense',
   }),
   ready: new Maneuver({
     name: 'ready',
-    icon: 'man-ready.png',
+    img: 'man-ready.png',
     label: 'GURPS.maneuverReady',
   }),
   concentrate: new Maneuver({
     name: 'concentrate',
     fullturn: true,
-    icon: 'man-concentrate.png',
+    img: 'man-concentrate.png',
     label: 'GURPS.maneuverConcentrate',
   }),
   wait: new Maneuver({
     name: 'wait',
     move: MOVE_NONE,
-    icon: 'man-wait.png',
+    img: 'man-wait.png',
     label: 'GURPS.maneuverWait',
   }),
 }
@@ -317,30 +328,36 @@ const filterManeuvers = (introducedBy = []) => {
   return result
 }
 
+/**
+ * The maneuvers from the source books this world has switched on. On Target both adds maneuvers and
+ * gives Aim a different allowed move, so a maneuver id already stored on a token has to be resolved
+ * against this rather than against the registry.
+ */
+const fromSourcesInUse = () => filterManeuvers(isUsingOnTarget() ? [MANEUVER_INTRODUCED_BY_ON_TARGET] : [])
+
 export default class Maneuvers {
   /**
    * @param {string} id
    * @returns {ManeuverData}
    */
   static get(id) {
-    // @ts-ignore
-    return Maneuvers.getAll()[id]?.data
+    return fromSourcesInUse()[id]?.data
   }
 
   /**
    * @param {string} text
-   * @returns {boolean} true if the text represents a maneuver icon path.
+   * @returns {boolean} true if the text represents a maneuver img path.
    * @memberof Maneuvers
    */
   static isManeuverIcon(text) {
-    return Object.values(Maneuvers.getAll())
-      .map(m => m.icon)
+    return Object.values(fromSourcesInUse())
+      .map(m => m.img)
       .includes(text)
   }
 
   /**
-   * Return the sublist that are Maneuver icon paths.
-   * @param {string[]} list of icon pathnames
+   * Return the sublist that are Maneuver img paths.
+   * @param {string[]} list of img pathnames
    * @returns {string[]} the pathnames that represent Maneuvers
    * @memberof Maneuvers
    */
@@ -349,12 +366,26 @@ export default class Maneuvers {
   }
 
   /**
+   * Resolve a maneuver id that is already applied to an actor, so it can still show its label, icon
+   * and move. Falls back past the source books in use -- switching off On Target doesn't retract the
+   * maneuver from a token already performing it -- and finally to Do Nothing, so an unrecognized id
+   * can never break the sheet that renders it.
+   *
    * @param {string} maneuverText
    * @returns {ManeuverData}
    */
   static getManeuver(maneuverText = 'do_nothing') {
     if (maneuverText === 'undefined') maneuverText = 'do_nothing'
-    return Maneuvers.getAll()[maneuverText].data
+
+    // Own keys only -- these are plain objects, so "constructor" and friends would otherwise resolve
+    // to something from Object.prototype that has no maneuver data on it.
+    const own = (map, key) => (Object.hasOwn(map, key) ? map[key] : undefined)
+
+    const maneuver = own(fromSourcesInUse(), maneuverText) ?? own(maneuvers, maneuverText)
+    if (maneuver) return maneuver.data
+
+    console.warn(`GURPS | Unrecognized maneuver "${maneuverText}", falling back to Do Nothing`)
+    return maneuvers.do_nothing.data
   }
 
   /**
@@ -362,37 +393,71 @@ export default class Maneuvers {
    * @returns {string|null}
    */
   static getIcon(maneuverText) {
-    return Maneuvers.getManeuver(maneuverText).icon ?? null
+    return Maneuvers.getManeuver(maneuverText).img ?? null
   }
 
+  /**
+   * Every maneuver in the system, in canonical (B364) order, whether or not this world uses the
+   * source book that introduced it. The Combat Options dialog lists them all, flagging the ones a
+   * disabled source would hide, so a GM isn't left wondering where they went.
+   *
+   * Aim appears once, with its Basic Set data -- the On Target variant only exists in a world using
+   * that book, so it is not part of "every maneuver".
+   */
+  static getAllPossible() {
+    return { ...maneuvers }
+  }
+
+  /**
+   * @deprecated Ambiguous: this is the *resolution* set, not every maneuver and not the pickable
+   *   ones. Use `getAllPossible()` for the whole registry or `getAllInPlay()` for what a user may
+   *   pick. Kept, and kept behaving exactly as it always has, because modules outside this system
+   *   call it.
+   */
   static getAll() {
-    const useOnTarget = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_ON_TARGET)
-
-    const filter = []
-    if (useOnTarget) {
-      filter.push(MANEUVER_INTRODUCED_BY_ON_TARGET)
-    }
-
-    return filterManeuvers(filter)
+    return fromSourcesInUse()
   }
 
-  static getAllData() {
+  /**
+   * The maneuvers a user may pick from: the ones from the source books in use, minus the ones the GM
+   * turned off in the Combat Options setting. Anything offering a maneuver to a human -- a sheet
+   * dropdown, the token HUD palette, the combat tracker menu, `/man` -- reads this.
+   *
+   * Kept separate from the resolution accessors above: a maneuver already applied to a token still
+   * has to resolve its icon, label and move after being turned off.
+   */
+  static getAllInPlay() {
+    return Object.fromEntries(Object.entries(fromSourcesInUse()).filter(([name]) => isManeuverInPlay(name)))
+  }
+
+  /**
+   * @param {string|null} [keep] a maneuver to include even if it has been turned off, so a dropdown
+   *   showing the actor's current maneuver doesn't silently drop it. Looked up in `getAllPossible()` rather
+   *   than the source-filtered set, because switching off On Target is itself a way to take a
+   *   maneuver out from under an actor already performing it.
+   * @returns {Record<string, ManeuverData>}
+   */
+  static getAllInPlayData(keep = null) {
+    /** @type {Record<string, ManeuverData>} */
     let data = {}
-    for (const key in Maneuvers.getAll()) {
-      // @ts-ignore
-      data[key] = Maneuvers.getAll()[key].data
+    const every = Maneuvers.getAllPossible()
+    const inPlay = Maneuvers.getAllInPlay()
+    for (const key of Object.keys(every)) {
+      // Prefer the in-play instance: with On Target on, Aim has a different allowed move.
+      if (key in inPlay) data[key] = inPlay[key].data
+      else if (key === keep) data[key] = every[key].data
     }
 
     return data
   }
 
   /**
-   * @param {string} icon
+   * @param {string} img
    * @returns {ManeuverData[]|undefined}
    */
-  static getByIcon(icon) {
-    return Object.values(Maneuvers.getAll())
-      .filter(it => it.icon === icon)
+  static getByIcon(img) {
+    return Object.values(fromSourcesInUse())
+      .filter(it => it.img === img)
       .map(it => it.data)
   }
 
@@ -403,7 +468,6 @@ export default class Maneuvers {
    */
   static isActiveEffectManeuver(activeEffect) {
     return activeEffect.statuses.find(s => s === 'maneuver')
-    // return activeEffect.getFlag ? activeEffect.getFlag('core', 'statusId') === MANEUVER : false
   }
 
   /**

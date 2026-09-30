@@ -1,17 +1,19 @@
 'use strict'
 
-import { isAtLeastFoundryVersion } from '../utilities/foundry-compat.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { parselink } from '../../lib/parselink.js'
 import { escapeHtml, isNiceDiceEnabled, makeRegexPatternFrom, splitArgs, wait } from '../../lib/utilities.js'
 import { ChatProcessors } from '../../module/chat.js'
 import { ActorImporter } from '../actor/actor-importer.js'
-import Maneuvers from '../actor/maneuver.js'
 import { AnimChatProcessor } from '../chat/anim.js'
 import SlamChatProcessor from '../chat/slam.js'
 import StatusChatProcessor from '../chat/status.js'
 import TrackerChatProcessor from '../chat/tracker.js'
+import Maneuvers from '../combat/maneuver.js'
+import { OtfActionType } from '../otf/types.js'
+import { isAtLeastFoundryVersion } from '../utilities/foundry-compat.js'
 import ChatProcessor from './chat-processor.js'
+import { ChatTextProcessor } from './chat-text.js'
 import {
   EveryoneAChatProcessor,
   EveryoneBChatProcessor,
@@ -61,6 +63,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new StopChatProcessor())
   ChatProcessors.registerProcessor(new ModChatProcessor())
   ChatProcessors.registerProcessor(new DRChatProcessor())
+  ChatProcessors.registerProcessor(new ChatTextProcessor())
 }
 
 class SoundChatProcessor extends ChatProcessor {
@@ -250,7 +253,7 @@ class ReimportChatProcessor extends ChatProcessor {
     this.priv(line)
     let actornames = line.replace(/^\/reimport/, '').trim()
     actornames = splitArgs(actornames)
-    let allPlayerActors = game.actors.entities.filter(a => a.hasPlayerOwner)
+    let allPlayerActors = game.actors.contents.filter(a => a.hasPlayerOwner)
     let actors = []
     for (const name of actornames) {
       let actor = allPlayerActors.find(a => a.name.match(makeRegexPattern(name, false)))
@@ -634,7 +637,7 @@ class SelectChatProcessor extends ChatProcessor {
           return game.actors.get(t.actorId)
         }) || []
 
-      if (!!m[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
+      if (!!m[4]) list = game.actors.contents // ! means check all actors, not just ones on scene
       let a = list.filter(a => a?.name?.match(pat))
       let msg = game.i18n.localize('GURPS.chatMoreThanOneActor') + " '" + m[3] + "': " + a.map(e => e.name).join(', ')
       if (a.length == 0 || a.length > 1) {
@@ -857,7 +860,7 @@ class LightChatProcessor extends ChatProcessor {
   }
   matches(line) {
     this.match = line.match(
-/^\/(light|li)(?: +|$)(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<luminosity>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li)(?: +|$)(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<luminosity>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
     return !!this.match
   }
@@ -1109,7 +1112,8 @@ class ManeuverChatProcessor extends ChatProcessor {
   async process(_line) {
     if (!this.match[2]) {
       this.priv(game.i18n.localize('GURPS.chatHelpManeuver'))
-      Object.values(Maneuvers.getAll())
+      // Only the maneuvers this campaign uses -- listing one the GM turned off would just fail below.
+      Object.values(Maneuvers.getAllInPlay())
         .map(e => game.i18n.localize(e.data.label))
         .forEach(e => this.priv(e))
       return true
@@ -1119,7 +1123,7 @@ class ManeuverChatProcessor extends ChatProcessor {
       return false
     }
     let r = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
-    let m = Object.values(Maneuvers.getAll()).find(e => game.i18n.localize(e.data.label).toLowerCase().match(r))
+    let m = Object.values(Maneuvers.getAllInPlay()).find(e => game.i18n.localize(e.data.label).toLowerCase().match(r))
     if (!GURPS.LastActor) {
       ui.notifications.warn(game.i18n.localize('GURPS.chatYouMustHaveACharacterSelected'))
       return false

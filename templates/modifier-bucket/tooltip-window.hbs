@@ -60,24 +60,30 @@
 
       <div class='gurps-2col' style='grid-template-columns: 1fr 1fr; gap: 0;'>
         <div class="gga-group gurps-space-between gurps-sparse-list" style="width: 325px">
-          <div class='shaded-group'>
-            <h4>{{localize "GURPS.meleeAttack"}}</h4>
-            {{#each meleemods}}
-              <div>{{{gurpslink this true}}}</div>
-            {{/each}}
-          </div>
-          <div class='shaded-group'>
-            <h4>{{localize "GURPS.ranged"}}</h4>
-            {{#each rangedmods}}
-              <div>{{{gurpslink this true}}}</div>
-            {{/each}}
-          </div>
-          <div class='shaded-group'>
-            <h4>{{localize "GURPS.defense"}}</h4>
-            {{#each defensemods}}
-              <div>{{{gurpslink this true}}}</div>
-            {{/each}}
-          </div>
+          {{#if meleemods.length}}
+            <div class='shaded-group'>
+              <h4>{{localize "GURPS.meleeAttack"}}</h4>
+              {{#each meleemods}}
+                <div>{{{gurpslink this true}}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
+          {{#if rangedmods.length}}
+            <div class='shaded-group'>
+              <h4>{{localize "GURPS.ranged"}}</h4>
+              {{#each rangedmods}}
+                <div>{{{gurpslink this true}}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
+          {{#if defensemods.length}}
+            <div class='shaded-group'>
+              <h4>{{localize "GURPS.defense"}}</h4>
+              {{#each defensemods}}
+                <div>{{{gurpslink this true}}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
         </div>
 
         <div class="gga-group gurps-space-between gurps-sparse-list" style="padding: 0 0 0 0.5em;">

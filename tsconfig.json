@@ -9,7 +9,10 @@
     "module": "NodeNext" /* Specify what module code is generated. */,
     "rootDir": "." /* Specify the root folder within your source files. */,
     "moduleResolution": "NodeNext" /* Specify how TypeScript looks up a file from a given module specifier. */,
-    "baseUrl": "." /* Specify the base directory to resolve non-relative module names. */,
+    "paths": {
+      "module/*": ["./module/*"],
+      "lib/*": ["./lib/*"]
+    } /* Specify a set of entries that re-map imports to additional lookup locations. */,
     "types": [
       "jquery",
       "jest",
@@ -24,7 +27,7 @@
     "checkJs": false /* Enable error reporting in type-checked JavaScript files. */,
 
     /* Emit */
-    "outDir": "dist" /* Specify an output folder for all emitted files. */,
+    "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     // "sourceMap": true,
 
     /* Interop Constraints */
@@ -43,13 +46,13 @@
     "noImplicitOverride": true /* Ensure overriding members in derived classes are marked with an override modifier. */,
 
     /* Completeness */
-    "skipLibCheck": true, /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true /* Skip type checking all .d.ts files. */,
 
     /* Performance */
     "incremental": true,
     "tsBuildInfoFile": ".tsbuildinfo"
   },
-  "include": ["./**/*"],
+  "include": ["module", "lib", "test", "global.d.ts"],
   "exclude": [
     "build",
     "node_modules",

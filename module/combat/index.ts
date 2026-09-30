@@ -1,15 +1,85 @@
 import { GurpsModule } from 'module/gurps-module.js'
-import { GurpsCombat } from './combat.js'
+import { GurpsCombat, handleCombatTurnChange, resetTokenActions } from './combat.js'
 import { GurpsCombatant } from './combatant.js'
+import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.ts'
+import { migrate } from './migrate.js'
+import { GurpsRange, setupRanges } from './ranges.js'
+import { registerCombatSettingsMenu } from './combat-settings-application.js'
+import {
+  enabledCombatOptions,
+  getInitiativeFormula,
+  getManeuverDetail,
+  getManeuverVisibility,
+  getRangeStrategy,
+  getRollBasedOnManeuverPolicy,
+  isManeuverInPlay,
+  isUsingOnTarget,
+  maneuverUpdatesMove,
+  registerCombatSettings,
+  useSizeModifierDifferenceInMelee,
+} from './settings.js'
+
+export interface GurpsCombatModule extends GurpsModule {
+  enabledOptions: typeof enabledCombatOptions
+  getInitiativeFormula: typeof getInitiativeFormula
+  getManeuverDetail: typeof getManeuverDetail
+  getManeuverVisibility: typeof getManeuverVisibility
+  getRangeStrategy: typeof getRangeStrategy
+  getRollBasedOnManeuverPolicy: typeof getRollBasedOnManeuverPolicy
+  isManeuverInPlay: typeof isManeuverInPlay
+  isUsingOnTarget: typeof isUsingOnTarget
+  maneuverUpdatesMove: typeof maneuverUpdatesMove
+  useSizeModifierDifferenceInMelee: typeof useSizeModifierDifferenceInMelee
+}
 
 function init() {
   console.log('GURPS | Initializing GURPS Combat module.')
+
   Hooks.once('init', () => {
     CONFIG.Combat.documentClass = GurpsCombat
     CONFIG.Combatant.documentClass = GurpsCombatant
+    CONFIG.Combat.initiative = {
+      formula: DEFAULT_INITIATIVE_FORMULA,
+      decimals: 5, // Important to be able to maintain resolution
+    }
+
+    registerCombatSettings()
+    registerCombatSettingsMenu()
+  })
+
+  Hooks.once('ready', () => {
+    Hooks.on('combatStart', async combat => {
+      console.log(`Combat started: ${combat.id} - resetting token actions`)
+      await resetTokenActions(combat)
+    })
+
+    if (game.user?.isGM) {
+      Hooks.on('combatTurnChange', async (combat, previousTurn, newTurn) => {
+        await handleCombatTurnChange(combat, previousTurn, newTurn)
+      })
+    }
+
+    updateInitiativeFormula(true)
+
+    // Set up SSRT
+    GURPS.SSRT = setupRanges()
+    GURPS.rangeObject = new GurpsRange()
   })
 }
 
-export const Combat: GurpsModule = {
+export const Combat: GurpsCombatModule = {
   init,
+  migrate,
+
+  // -- Combat settings --
+  enabledOptions: enabledCombatOptions,
+  isManeuverInPlay,
+  getManeuverDetail,
+  getManeuverVisibility,
+  getRangeStrategy,
+  getRollBasedOnManeuverPolicy,
+  getInitiativeFormula,
+  isUsingOnTarget,
+  maneuverUpdatesMove,
+  useSizeModifierDifferenceInMelee,
 }

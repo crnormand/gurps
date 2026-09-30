@@ -56,7 +56,7 @@
 	<div class="palette movement-actions" data-palette="movementActions">
 	{{#each movementActions as |action|}}
 		<a class="movement-action-control {{action.cssClass}}" data-action="movementAction" data-movement-action="{{action.id}}">
-			<span>{{#if action.icon}}<i class="{{action.icon}} fa-fw" inert></i>{{/if}} {{action.label}}</span>
+			<span>{{#if action.img}}<i class="{{action.img}} fa-fw" inert></i>{{/if}} {{action.label}}</span>
 		</a>
 	{{/each}}
 	</div>
