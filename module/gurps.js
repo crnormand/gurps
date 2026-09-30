@@ -37,7 +37,7 @@ import { AddImportEquipmentButton } from './item-import.js'
 import { GurpsItemSheet } from './item-sheet.js'
 import { GurpsItem } from './item.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
-import { deleteKey as deleteKeyCompat, Foundry, MessageMode } from './utilities/foundry-compat.js'
+import { Foundry, MessageMode } from './utilities/foundry-compat.js'
 import { getTokenForActor } from './utilities/token.js'
 
 /**
@@ -1808,13 +1808,13 @@ if (!globalThis.GURPS) {
     // actor, not the synthetic one. Always use the actor passed in for token actors.
     const targetActor = actor.isToken ? actor : (game.actors.get(actor.id) ?? actor)
     const objectData = foundry.utils.duplicate(GURPS.decode(targetActor, path.substring(0, path.lastIndexOf('.'))))
-    const { deleteKey, objectPath, updatedObject } = prepareRemoveKey(path, objectData)
+    const { _deleteKey, objectPath, updatedObject } = prepareRemoveKey(path, objectData)
 
     const savedIgnoreRender = targetActor.ignoreRender
     targetActor.ignoreRender = true
 
     try {
-      await targetActor.update({ [objectPath]: _del })
+      await targetActor.update(Foundry.deleteKey(objectPath))
       await targetActor.update({ [objectPath]: updatedObject }, { diff: false })
 
       if (Object.keys(updatedObject).length === 0) {
@@ -1840,7 +1840,7 @@ if (!globalThis.GURPS) {
     let key = path.substring(indexPath + 1)
 
     let object = GURPS.decode(actor, objpath)
-    await actor.internalUpdate(deleteKeyCompat(objpath)) // Delete the whole object
+    await actor.internalUpdate(Foundry.deleteKey(objpath)) // Delete the whole object
     let start = parseInt(key)
 
     let i = start + 1
