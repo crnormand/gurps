@@ -103,7 +103,7 @@ export function registerCombatSettings(): void {
     config: false,
     type: String,
     choices: {
-      Full: `${SETTINGS}.maneuver.values.full`,
+      Full: `${SETTINGS}.maneuver.values.fullDetail`,
       General: `${SETTINGS}.maneuver.values.general`,
       NoFeint: `${SETTINGS}.maneuver.values.noFeint`,
     },
