@@ -234,10 +234,12 @@ export async function doRoll({
 
   const isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
 
+  const speaker = ChatMessage.getSpeaker({ actor: actor as Actor.Stored })
+  // let's consume this action in Token. We need to do that before potentaolyy clearing the bucket in applyMods to be able to check for rapid strike  
+  await consumeAction(speaker.token as string, action, chatthing, item, attack)
+
   // Let's collect up the modifiers, they are used differently depending on the type of roll
   targetmods = await GURPS.ModifierBucket.applyMods(targetmods) // append any global mods
-
-  const speaker = ChatMessage.getSpeaker({ actor: actor as Actor.Stored })
 
   const chatdata: RollChatData = await executeRollandBuildChatData(
     targetmods,
@@ -255,9 +257,6 @@ export async function doRoll({
     context,
     speaker
   )
-
-  // For last, let's consume this action in Token
-  await consumeAction(speaker.token as string, action, chatthing, item, attack)
 
   //check message mode again as modifier keys may have changed
   const messageMode2 = calculateMessageMode(FoundryUtils.MessageMode, !!action.blindroll || !!context?.blind, context)
