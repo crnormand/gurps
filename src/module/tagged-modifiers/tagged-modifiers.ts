@@ -61,15 +61,15 @@ function tagsForRollType(rollType: ROLL_TYPE, taggedSettings: TaggedModifiersSet
   )
 }
 
-export function getRollTypeFromAction(action: OtfRollAction) {
+export function getRollTypeFromAction(action: OtfRollAction, attack: MeleeAttackModel | RangedAttackModel | undefined) {
   switch (action.type) {
     case OtfActionType.attack:
-      if (action.isMelee) {
+      if (attack?.isOfType(ActionType.MeleeAttack)) {
         return ROLL_TYPE.MELEE
-      } else {
+      }
+      else {
         return ROLL_TYPE.RANGED
       }
-
       break
     case OtfActionType.weaponParry:
       return ROLL_TYPE.PARRY
@@ -216,7 +216,7 @@ export function taggedModToApply(
   allMods: string[],
   actorInCombat: boolean
 ): { modsToApply: string[]; isDamageRoll: boolean } {
-  const rollType = getRollTypeFromAction(action)
+  const rollType = getRollTypeFromAction(action, attack)
   const allTags = getTagsForRoll(taggedSettings, rollType, item, attack)
   const itemRef = getItemRef(attack ?? item)
   const isDamageRoll = rollType === ROLL_TYPE.DAMAGE
