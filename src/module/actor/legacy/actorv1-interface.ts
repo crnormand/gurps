@@ -11,7 +11,7 @@ import {
   Spell,
   _AnimationMixin,
 } from '../actor-components.js'
-import { CanRollResult, CheckInfo } from '../types.js'
+import { CheckInfo } from '../types.js'
 
 import { HitLocationEntryV1 } from './hit-location-entryv1.js'
 
@@ -75,13 +75,6 @@ interface ActorV1Interface {
   applyDamageAccumulator(index: number): Promise<void>
   applyItemModEffects(commit: Record<string, any>, append?: boolean): void
   applyTrackerTemplate(path: string, template: Record<string, any>): Promise<void>
-  canConsumeAction(action: Record<string, any>, chatThing: string, actorComponent?: AnyObject): boolean
-  canRoll(
-    action: Record<string, any>,
-    token: Token.Implementation,
-    chatThing?: string,
-    actorComponent?: AnyObject
-  ): Promise<CanRollResult>
   changeDR(
     drFormula: string,
     drLocations: string[]

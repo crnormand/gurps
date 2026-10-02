@@ -4,7 +4,7 @@ import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PostureType, statusIsPosture } from '@module/effects/posture.js'
 import { ItemMetadata } from '@module/item/data/base.js'
 import { ItemType } from '@module/item/types.js'
-import { DamageAction, OtfAction, OtfActionType } from '@module/otf/types.js'
+import { DamageAction, OtfAction, OtfRollAction } from '@module/otf/types.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { isObject } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
@@ -16,12 +16,11 @@ import { ContainerUtils } from '../data/mixins/container-utils.js'
 import { ModelCollection } from '../data/model-collection.js'
 import { ImportSettings } from '../importer/index.js'
 import { PseudoDocument } from '../pseudo-document/pseudo-document.js'
-import { TokenActions } from '../token-actions.js'
 
 import { ActorMetadata, BaseActorModel } from './data/base.js'
 import { HitLocationEntryV2 } from './data/hit-location-entry.js'
 import { runSourceMigrations } from './migrate.js'
-import { ActorType, CanRollResult, CheckInfo } from './types.js'
+import { ActorType, CheckInfo } from './types.js'
 
 function DamageModule() {
   return GURPS.modules.Damage
@@ -737,11 +736,11 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
    * NOTE: Both character and characterV2
    */
   async addTaggedRollModifiers(
-    chatThing: string,
-    optionalArgs: { obj?: AnyObject; action?: OtfAction },
+    action: OtfRollAction,
+    item?: Item.Implementation,
     attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
-    return this.modelV2.addTaggedRollModifiers(chatThing, optionalArgs, attack)
+    return this.modelV2.addTaggedRollModifiers(action, item, attack)
   }
 
   /* ---------------------------------------- */
@@ -781,205 +780,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   }
 
   /* ---------------------------------------- */
-
-  /**
-   * NOTE: Both character and characterV2
-   *
-   * Check if a roll can be performed.
-   * NOTE: there doesn't seem to be much reason for this method to be in the Actor class.
-   * Consider moving it to roll or elsewhere.
-   */
-  async canRoll(
-    // TODO: replace with action
-    action: AnyObject, // Action parsed from OTF
-    token: Token.Implementation | null, // Actor Token
-    chatThing?: string, // String representation of the action
-    actorComponent?: AnyObject // Actor Component for the action
-  ): Promise<CanRollResult> {
-    const isAttack = action.type === OtfActionType.attack
-    const isDefense =
-      action.attribute === 'dodge' ||
-      action.type === OtfActionType.weaponParry ||
-      action.type === OtfActionType.weaponBlock
-    const isAttribute = action.type === OtfActionType.attribute
-    const isSlam =
-      action.type === OtfActionType.damage &&
-      (action.orig as string).includes('slam') &&
-      (action.orig as string).includes('@')
-    const isCombatActive = game.combat?.active === true
-    const isCombatant = this.inCombat
-    const isCombatStarted = isCombatActive && game.combat.started === true
-
-    const result: Awaited<ReturnType<typeof this.canRoll>> = {
-      canRoll: true,
-      isSlam,
-      hasActions: true,
-      isCombatant,
-    }
-
-    if (!isCombatActive || !isCombatant || !this.isNewActorType) return result
-
-    const needTarget = !isSlam && (isAttack || action.isSpellOnly || action.type === OtfActionType.damage)
-    const checkForTargetSettings = this.getSetting(Settings.SETTING_ALLOW_TARGETED_ROLLS, 'Allow')
-
-    if (isCombatant && needTarget && game.user?.targets.size === 0) {
-      result.canRoll = result.canRoll && checkForTargetSettings !== 'Forbid'
-      result.targetMessage =
-        checkForTargetSettings !== 'Allow'
-          ? game.i18n?.localize(`GURPS.${checkForTargetSettings.toLowerCase()}NoTargetSelected`)
-          : ''
-    }
-
-    if (!(token && isCombatActive && isCombatant && !isSlam)) return result
-
-    const actions = await TokenActions.fromToken(token)
-
-    // If the current maneuver is invalid for the action, add a warning message to the
-    // result and set canRoll to false depending on the maneuver settings
-    if ((!actions.canAttack && isAttack) || (!actions.canDefend && isDefense)) {
-      const maneuver = game.i18n?.localize(Combat.Maneuvers.getManeuver(actions.currentManeuver).label) ?? ''
-      const rollTypeLabel = game.i18n?.localize(isAttack ? 'GURPS.attackRoll' : 'GURPS.defenseRoll') ?? ''
-      const checkManeuverSetting = Combat.getRollBasedOnManeuverPolicy('Warn')
-
-      const message =
-        checkManeuverSetting !== 'Allow'
-          ? game.i18n?.format(`GURPS.${checkManeuverSetting.toLowerCase()}CannotRollWithManeuver`, {
-              rollTypeLabel,
-              maneuver,
-            })
-          : ''
-
-      result.canRoll = result.canRoll && checkManeuverSetting !== 'Forbid'
-      result.message = message
-    }
-
-    // If the maximum actions limit has been reached, add a warning message to the
-    // result and set canRoll to false depending on the actions settings
-    const checkMaxActionsSetting = this.getSetting(Settings.SETTING_ALLOW_AFTER_MAX_ACTIONS, 'Warn')
-    const maxActions = this.modelV2.conditions.actions.maxActions ?? 1
-    const extraActions = actions.extraActions ?? 0
-    const canConsumeAction = this.canConsumeAction(action, chatThing, actorComponent)
-
-    if (
-      !isAttack &&
-      !isDefense &&
-      !isAttribute &&
-      actions.totalActions >= maxActions + extraActions &&
-      canConsumeAction
-    ) {
-      result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
-      result.hasActions = false
-      result.maxActionMessage =
-        checkMaxActionsSetting !== 'Allow'
-          ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxActionsReached`)
-          : ''
-    }
-
-    // Same as above, but for maximum attacks per round
-    // using things like Extra Attack
-    const itemExtraAttacks = actorComponent?.extraAttacks ?? 0
-    const rapidStrikeBonus = actorComponent?.rapidStrikeBonus ?? 0
-
-    if (
-      isAttack &&
-      canConsumeAction &&
-      Math.max(actions.totalAttacks, actions.totalActions) >=
-        maxActions + extraActions + (actions.extraAttacks ?? 0) + itemExtraAttacks + rapidStrikeBonus
-    ) {
-      result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
-      result.hasActions = false
-      result.maxAttackMessage =
-        checkMaxActionsSetting !== 'Allow'
-          ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxAttacksReached`)
-          : ''
-    }
-
-    // Same as above, but for maximum blocks per round
-    const maxBlocks = this.modelV2.conditions.actions.maxBlocks ?? 1
-
-    if (
-      isDefense &&
-      canConsumeAction &&
-      action.type === OtfActionType.weaponBlock &&
-      actions.totalBlocks >= maxBlocks + (actions.extraBlocks ?? 0) + extraActions
-    ) {
-      result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
-      result.hasActions = false
-      result.maxBlockmessage =
-        checkMaxActionsSetting !== 'Allow'
-          ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxBlocksReached`)
-          : ''
-    }
-
-    // Same as above, but for maximum parries per round
-    if (
-      isDefense &&
-      canConsumeAction &&
-      action.type === OtfActionType.weaponParry &&
-      actions.totalParries >= extraActions + (actions.maxParries ?? 0)
-    ) {
-      result.canRoll = result.canRoll && checkMaxActionsSetting !== 'Forbid'
-      result.hasActions = false
-      result.maxParryMessage =
-        checkMaxActionsSetting !== 'Allow'
-          ? game.i18n?.localize(`GURPS.${checkMaxActionsSetting.toLowerCase()}MaxParriesReached`)
-          : ''
-    }
-
-    // Check if combat has started
-    if (!isCombatStarted) {
-      const checkCombatStartedSetting = this.getSetting(Settings.SETTING_ALLOW_ROLLS_BEFORE_COMBAT_START, 'Warn')
-
-      result.canRoll = result.canRoll && checkCombatStartedSetting !== 'Forbid'
-      result.rollBeforeStartMessage =
-        checkCombatStartedSetting !== 'Allow'
-          ? game.i18n?.localize(`GURPS.${checkCombatStartedSetting.toLowerCase()}RollsBeforeCombatStarted`)
-          : ''
-    }
-
-    return result
-  }
-
-  /* ---------------------------------------- */
-
-  /**
-   * NOTE: Both character and characterV2
-   *
-   * Check if the current action consumes an action slot from the actor.
-   * False by default to handle things like attribute rolls.
-   */
-  canConsumeAction(action: AnyObject, chatThing?: string, actorComponent?: AnyObject): boolean {
-    if (!action && !chatThing) return false
-
-    const useMaxActions = this.getSetting(Settings.SETTING_USE_MAX_ACTIONS, 'Disable')
-
-    if (useMaxActions === 'Disable') return false
-
-    const isCombatant = this.inCombat
-
-    if (!isCombatant && useMaxActions === 'AllCombatant') return false
-
-    const actionType = chatThing?.match(/(?<=@|)(\w+)(?=:)/g)?.[0].toLowerCase() ?? ''
-    const isAttack = action?.type === OtfActionType.attack || ['m', 'r'].includes(actionType)
-    const isDefense =
-      action?.attribute === 'dodge' ||
-      action?.type === OtfActionType.weaponParry ||
-      action?.type === OtfActionType.weaponBlock ||
-      ['dodge', 'p', 'b'].includes(actionType)
-    const isDodge = action?.attribute === 'dodge' || actionType === 'dodge'
-    const isSkill = (action?.type === OtfActionType.skillSpell && action.isSkillOnly) || actionType === 'sk'
-    const isSpell = (action?.type === OtfActionType.skillSpell && action.isSpellOnly) || actionType === 'sp'
-
-    const actionIsMarkedAsConsume: boolean | null = (actorComponent?.consumeAction as boolean | undefined) ?? null
-
-    if ((isSpell || isAttack || isDefense) && !isDodge) {
-      return actionIsMarkedAsConsume !== null ? actionIsMarkedAsConsume : true
-    } else if (isSkill) {
-      return actionIsMarkedAsConsume !== null ? actionIsMarkedAsConsume : false
-    }
-
-    return false
-  }
 
   /**
    * NOTE: Both character and characterV2.

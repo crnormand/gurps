@@ -1,10 +1,12 @@
 import { Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
-import { CanRollResult } from '@module/actor/types.js'
+import { MeleeAttackModel } from '@module/action/melee-attack.js'
+import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { MessageMode } from '@module/util/foundry-utils.js'
 import { i18nFallback } from '@module/util/i18nFallback.js'
 import { systemPath } from '@module/util/misc.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
+import { CanRollResult, canConsumeAction } from './canRoll.js'
 import { rollData } from './dieroll.js'
 import { OtfActionType, OtfDamageAction, OtfRollAction } from './types.js'
 
@@ -19,10 +21,20 @@ interface DieRollConfirmationData {
   formula: string
   canRollResult: CanRollResult
   name: string
-  obj: any //toDo Type better
   messageMode: MessageMode
+  attack?: MeleeAttackModel | RangedAttackModel
 }
 
+interface SimpleDieRollConfirmationData {
+  type: 'simpleRoll'
+  messages: string[]
+  action: OtfRollAction
+  actor?: Actor.Implementation | null
+  token?: Token | null
+  formula: string
+  name: string
+  messageMode: MessageMode
+}
 interface DamageRollConfirmationData {
   type: 'damage'
   messages: string[]
@@ -33,7 +45,7 @@ interface DamageRollConfirmationData {
   messageMode: MessageMode
 }
 
-type RollConfirmationData = DieRollConfirmationData | DamageRollConfirmationData
+export type RollConfirmationData = DieRollConfirmationData | DamageRollConfirmationData | SimpleDieRollConfirmationData
 
 namespace RollConfirmationDialog {
   export interface RollRenderContext extends foundry.applications.api.ApplicationV2.RenderContext {
@@ -145,6 +157,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         options.parts = ['roll', 'footer']
         break
       case 'damage':
+      case 'simpleRoll':
         options.parts = ['damage', 'footer']
         break
     }
@@ -182,14 +195,14 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         break
 
       case OtfActionType.skillSpell:
-        if (action.isSkillOnly) {
-          itemIcon = 'fa-solid fa-book'
-          itemColor = '#015401'
-          rollType = game.i18n?.localize('GURPS.skill') ?? ''
-        } else {
+        if (action.isSpellOnly) {
           itemIcon = 'fa-solid fa-wand-magic-sparkles'
           itemColor = '#6f63d9'
           rollType = game.i18n?.localize('GURPS.spell') ?? ''
+        } else {
+          itemIcon = 'fa-solid fa-book'
+          itemColor = '#015401'
+          rollType = game.i18n?.localize('GURPS.skill') ?? ''
         }
 
         break
@@ -203,7 +216,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
       case OtfActionType.attribute: {
         itemColor = '#620707'
 
-        switch (action.attribute) {
+        switch (action.attrkey.replace(' ', '')) {
           case 'ST':
             itemIcon = 'fa-solid fa-dumbbell'
             rollType = game.i18n?.localize('GURPS.attributesSTNAME') ?? ''
@@ -224,7 +237,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
             itemIcon = 'fa-solid fa-brain'
             rollType = game.i18n?.localize('GURPS.attributesWILLNAME') ?? ''
             break
-          case 'Vision':
+          case 'VISION':
             itemIcon = 'fa-solid fa-eye'
             rollType = game.i18n?.localize('GURPS.vision') ?? ''
             break
@@ -232,23 +245,23 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
             itemIcon = 'fa-solid fa-signal-stream'
             rollType = game.i18n?.localize('GURPS.attributesPERNAME') ?? ''
             break
-          case 'Fright Check':
+          case 'FRIGHTCHECK':
             itemIcon = 'fa-solid fa-face-scream'
             rollType = game.i18n?.localize('GURPS.frightcheck') ?? ''
             break
-          case 'Hearing':
+          case 'HEARING':
             itemIcon = 'fa-solid fa-ear'
             rollType = game.i18n?.localize('GURPS.hearing') ?? ''
             break
-          case 'Taste Smell':
+          case 'TASTESMELL':
             itemIcon = 'fa-solid fa-nose'
             rollType = game.i18n?.localize('GURPS.tastesmell') ?? ''
             break
-          case 'Touch':
+          case 'TOUCH':
             itemIcon = 'fa-solid fa-hand-point-up'
             rollType = game.i18n?.localize('GURPS.touch') ?? ''
             break
-          case 'Dodge':
+          case 'DODGE':
             itemIcon = 'fa-solid fa-person-running-fast'
             rollType = game.i18n?.localize('GURPS.dodge') ?? ''
             break
@@ -310,15 +323,15 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         (!this._data.canRollResult.isCombatant && settingsUseMaxActions === 'AllCombatant') ||
         settingsAllowAfterMaxActions === 'Allow'
 
-      const canConsumeAction = dontShowMaxActions
+      const canConsume = dontShowMaxActions
         ? undefined
-        : actor.canConsumeAction(this._data.action, '', this._data.obj)
+        : canConsumeAction(this._data.action, actor, this._data.attack, this._data.item)
 
       const consumeActionIcon = dontShowMaxActions
         ? undefined
         : !this._data.canRollResult.hasActions
           ? '<i class="fa-solid fa-exclamation"></i>'
-          : canConsumeAction
+          : canConsume
             ? '<i class="fa-solid fa-plus"></i>'
             : '<i class="fa-solid fa-check"></i>'
 
@@ -326,7 +339,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         ? undefined
         : !this._data.canRollResult.hasActions
           ? game.i18n?.localize('GURPS.noActionsAvailable')
-          : canConsumeAction
+          : canConsume
             ? game.i18n?.localize('GURPS.willConsumeAction')
             : game.i18n?.localize('GURPS.isFreeAction')
 
@@ -334,7 +347,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         ? undefined
         : !this._data.canRollResult.hasActions
           ? 'rgb(215,185,33)'
-          : canConsumeAction
+          : canConsume
             ? 'rgba(20,119,180,0.7)'
             : 'rgba(51,114,68,0.7)'
 
@@ -375,7 +388,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
           // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
         ],
       }
-    } else {
+    } else if (this._data.type === 'damage'){
       const action = this._data.action
       const displayFormula = this._data.displayFormula
       const damageType = GURPS.DamageTables.translate(action.damagetype)
@@ -440,6 +453,43 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         ],
       }
     }
+    else
+    {
+      const displayFormula = this._data.formula
+      const usingDiceAdd = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
+      const bucketTotal = GURPS.ModifierBucket.currentSum()
+
+      return {
+        type: 'damage',
+        messages: this._data.messages,
+        isVideo,
+        tokenImage,
+        tokenName,
+        damageRoll: displayFormula,
+        originalFormula: displayFormula,
+        usingDiceAdd,
+        targetRoll: this._data.name,
+        useMinDamage: false,
+        bucketRoll: bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : '',
+        bucketRollColor: bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8',
+        buttons: [
+          {
+            type: 'submit',
+            icon: this._data.messageMode.isBlind ? 'fa-solid fa-eye-slash' : 'fa-solid fa-dice',
+            label: this._data.messageMode.isBlind ? 'GURPS.blindRoll' : 'GURPS.roll',
+            default: true,
+            action: 'roll',
+          },
+          {
+            type: 'submit',
+            icon: 'fa-solid fa-xmark',
+            label: 'GURPS.cancel',
+            action: 'cancel',
+          },
+          // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
+        ],
+      }    
+    }  
   }
 
   static async #onRollButton(this: RollConfirmationDialog, event: PointerEvent, _target: HTMLElement): Promise<void> {
