@@ -190,8 +190,9 @@ export async function doRoll({
   if (showRollDialog && actor instanceof Actor) {
     // Get Target Info
     const targetData = actor.findUsingAction(action, chatthing, formula, thing)
-    const itemId = targetData.fromItem || targetData.itemId
-    const item = actor.items.get(itemId ?? '')
+    //for actions that provide a item (SkillSpell and CR) we want to use that item for the roll confirmation dialog,
+    // otherwise we will use the item of the attack from targetData.fromItem
+    const ItemforDialog = actor.items.get(targetData.fromItem ?? '') || item
 
     const isSimpleRoll = ([OtfActionType.roll, OtfActionType.derivedRoll] as OtfActionType[]).includes(action.type)
     const dialogData: RollConfirmationData = isSimpleRoll
@@ -211,7 +212,7 @@ export async function doRoll({
           action,
           actor,
           token,
-          item,
+          item: ItemforDialog,
           origTarget: origtarget,
           formula,
           canRollResult: result,
@@ -235,7 +236,8 @@ export async function doRoll({
   const isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
 
   const speaker = ChatMessage.getSpeaker({ actor: actor as Actor.Stored })
-  // let's consume this action in Token. We need to do that before potentaolyy clearing the bucket in applyMods to be able to check for rapid strike  
+  // let's consume this action in Token. We need to do that before potentaolyy clearing the bucket in applyMods to be able to check for rapid strike
+
   await consumeAction(speaker.token as string, action, chatthing, item, attack)
 
   // Let's collect up the modifiers, they are used differently depending on the type of roll
