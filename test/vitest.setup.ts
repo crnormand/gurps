@@ -418,6 +418,7 @@ global.foundry = {
     },
     getType,
     mergeObject,
+    randomID: (): string => `mock-id-${Math.random().toString(36).slice(2, 10)}`,
     isEmpty: (value: unknown): boolean => {
       const type = global.foundry.utils.getType(value)
 
@@ -509,8 +510,7 @@ global.foundry = {
   },
 } as unknown as typeof foundry
 
-/* ---------------------------------------- */
-;(global as unknown as Record<string, unknown>).canvas = {
+/* ---------------------------------------- */(global as unknown as Record<string, unknown>).canvas = {
   layer: {
     get: (): Record<string, unknown> => ({}),
   },

@@ -28,7 +28,7 @@ type ParsedDamage = {
  *
  */
 
-function parseDamageFormula(formula: string): ParsedDamage {
+export function parseDamageFormula(formula: string): ParsedDamage {
   const trimmed = formula.trim()
 
   const costMatch = trimmed.match(/\*Costs(.+)$/)
@@ -40,7 +40,7 @@ function parseDamageFormula(formula: string): ParsedDamage {
 
   const armorDivisor = formulaBody.match(/\(([^)]+)\)/)?.[1] ?? undefined
   const hasMinDamage = formulaBody.includes('!')
-  const multiplier = formulaBody.match(/(?:[xX*])(\d+(?:\.\d+)?)/)?.[1] ?? undefined
+  const multiplier = formulaBody.match(/(?:[×xX*])(\d+(?:\.\d+)?)/)?.[1] ?? undefined
 
   const diceMatch = formulaBody.match(/^(\d+)d/i)
   const literalMatch = formulaBody.match(/^(\d+)(?!d)/)

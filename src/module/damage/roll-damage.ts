@@ -38,7 +38,7 @@ export async function rollDamage(
 
     if (response) {
       await DamageChat.create(
-        (actor as Actor) || (game.user as User),
+        actor,
         actionFormula,
         action.damagetype,
         event,
@@ -62,7 +62,7 @@ export async function rollDamage(
     }
   } else {
     await DamageChat.create(
-      (actor as Actor) || (game.user as User),
+      actor,
       actionFormula,
       action.damagetype,
       event,
