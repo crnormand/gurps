@@ -3,6 +3,16 @@ import { SETTING_MODIFY_DICE_PLUS_ADDS } from '@module/util/miscellaneous-settin
 import { describe, expect, test, vi } from 'vitest'
 
 describe('parseDamageFormula', () => {
+  const warn = vi.fn()
+
+  beforeEach(() => {
+    warn.mockReset()
+    ;(globalThis as any).ui = { notifications: { warn } }
+    ;(globalThis as any).GURPS = {
+      lastTargetedRoll: { margin: 4 },
+    }
+  })
+
   test.each([
     [
       '2d+2 cut',
@@ -18,15 +28,28 @@ describe('parseDamageFormula', () => {
       },
     ],
     [
+      '2d−2 cut',
+      {
+        dice: 2,
+        value: undefined,
+        add: -2,
+        damageType: 'cut',
+        armorDivisor: undefined,
+        hasMinDamage: false,
+        multiplier: undefined,
+        costFormula: undefined,
+      },
+    ],
+    [
       '2d+2x3(2) cut *Costs 1FP',
       {
         dice: 2,
         value: undefined,
         add: 2,
         damageType: 'cut',
-        armorDivisor: '2',
+        armorDivisor: 2,
         hasMinDamage: false,
-        multiplier: '3',
+        multiplier: 3,
         costFormula: ' 1FP',
       },
     ],
@@ -37,9 +60,9 @@ describe('parseDamageFormula', () => {
         value: undefined,
         add: 2,
         damageType: 'cut',
-        armorDivisor: '2',
+        armorDivisor: 2,
         hasMinDamage: false,
-        multiplier: '4',
+        multiplier: 4,
         costFormula: undefined,
       },
     ],
@@ -50,9 +73,9 @@ describe('parseDamageFormula', () => {
         value: undefined,
         add: 2,
         damageType: 'cut',
-        armorDivisor: '2',
+        armorDivisor: 2,
         hasMinDamage: false,
-        multiplier: '3',
+        multiplier: 3,
         costFormula: undefined,
       },
     ],
@@ -63,9 +86,9 @@ describe('parseDamageFormula', () => {
         value: undefined,
         add: 2,
         damageType: 'cut',
-        armorDivisor: '2',
+        armorDivisor: 2,
         hasMinDamage: false,
-        multiplier: '3',
+        multiplier: 3,
         costFormula: undefined,
       },
     ],
@@ -76,20 +99,46 @@ describe('parseDamageFormula', () => {
         value: undefined,
         add: 2,
         damageType: 'cut',
-        armorDivisor: '2',
+        armorDivisor: 2,
         hasMinDamage: false,
-        multiplier: '3',
+        multiplier: 3,
         costFormula: undefined,
       },
     ],
     [
-      '4d+2! (2) cut',
+      '2d+2*3 (2) cut',
+      {
+        dice: 2,
+        value: undefined,
+        add: 2,
+        damageType: 'cut',
+        armorDivisor: 2,
+        hasMinDamage: false,
+        multiplier: 3,
+        costFormula: undefined,
+      },
+    ],
+    [
+      '2d+2*0.5 (0.5) cut',
+      {
+        dice: 2,
+        value: undefined,
+        add: 2,
+        damageType: 'cut',
+        armorDivisor: 0.5,
+        hasMinDamage: false,
+        multiplier: 0.5,
+        costFormula: undefined,
+      },
+    ],
+    [
+      '4d+2 (2)! cut',
       {
         dice: 4,
         value: undefined,
         add: 2,
         damageType: 'cut',
-        armorDivisor: '2',
+        armorDivisor: 2,
         hasMinDamage: true,
         multiplier: undefined,
         costFormula: undefined,
@@ -102,7 +151,20 @@ describe('parseDamageFormula', () => {
         value: undefined,
         add: 2,
         damageType: 'cut',
-        armorDivisor: '2',
+        armorDivisor: 2,
+        hasMinDamage: false,
+        multiplier: undefined,
+        costFormula: undefined,
+      },
+    ],
+    [
+      '4d+2(0.5) cut',
+      {
+        dice: 4,
+        value: undefined,
+        add: 2,
+        damageType: 'cut',
+        armorDivisor: 0.5,
         hasMinDamage: false,
         multiplier: undefined,
         costFormula: undefined,
@@ -121,12 +183,45 @@ describe('parseDamageFormula', () => {
         costFormula: undefined,
       },
     ],
+    [
+      '1d+1+2 cut',
+      {
+        dice: 1,
+        value: undefined,
+        add: 3,
+        damageType: 'cut',
+        armorDivisor: undefined,
+        hasMinDamage: false,
+        multiplier: undefined,
+        costFormula: undefined,
+      },
+    ],
+    [
+      '1d+@margin cut',
+      {
+        dice: 1,
+        value: undefined,
+        add: 0,
+        damageType: 'cut',
+        armorDivisor: undefined,
+        hasMinDamage: false,
+        multiplier: undefined,
+        costFormula: undefined,
+        addMargin: '+@margin',
+      },
+    ],
   ])('parses %s', (formula, expected) => {
     expect(parseDamageFormula(formula)).toMatchObject(expected)
   })
 })
 
 describe('_addBucketToDamage', () => {
+  beforeEach(() => {
+    ;(globalThis as any).GURPS = {
+      lastTargetedRoll: { margin: 4 },
+    }
+  })
+
   test.each([
     ['2d+2', true, false, 3, '2d+5'],
     ['2d+2', true, false, -2, '2d'],
@@ -142,7 +237,7 @@ describe('_addBucketToDamage', () => {
     ['2d*2 *Costs 1FP', true, false, 3, '2d+3x2 *Costs 1FP'],
     ['3d+2x4(2)', true, false, 1, '3d+3x4(2)'],
     ['2d+2 cut *Costs 1FP', false, false, 2, '2d+4 *Costs 1FP'],
-    ['2d+2! (2) cut *Costs 1FP', true, false, 1, '2d+3! (2) cut *Costs 1FP'],
+    ['2d+2 (2)! cut *Costs 1FP', true, false, 1, '2d+3(2)! cut *Costs 1FP'],
     ['2d+2', false, false, 3, '2d+5'],
     ['2d+2 cut', false, false, 3, '2d+5'],
     ['2d+2', true, true, 7, '4d+2'],
@@ -151,6 +246,7 @@ describe('_addBucketToDamage', () => {
     [' 2d+2 cut *Costs 1FP', true, true, 1, '2d+3 cut *Costs 1FP'],
     ['2d+2 pi++', true, true, 1, '2d+3 pi++'],
     ['2d+2 pi+', true, true, 1, '2d+3 pi+'],
+    ['2d+@margin pi+', true, false, 1, '2d+5 pi+'],
   ])('applies bucket modifier to %s', (formula, addDamageType, dicePlusAdds, bucketMod, expected) => {
     expect(_addBucketToDamage(formula, addDamageType, dicePlusAdds, bucketMod)).toBe(expected)
   })
@@ -173,6 +269,7 @@ describe('addBucketToDamage', () => {
     ;(globalThis as any).GURPS = {
       SYSTEM_NAME: 'gurps',
       ModifierBucket: { currentSum: vi.fn().mockReturnValue(bucketMod) },
+      lastTargetedRoll: { margin: 4 },
     }
     ;(globalThis as any).game = {
       settings: { get: getSetting },

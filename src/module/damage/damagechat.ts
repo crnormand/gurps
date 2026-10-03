@@ -1,5 +1,3 @@
-'use strict'
-
 import { addBucketToDamage } from '@module/damage/addBucketToDamage.js'
 import { GurpsRoll } from '@module/modifier-bucket/bucket-app.js'
 import { ActionFuncContext } from '@module/otf/actionFuncs.js'
@@ -917,7 +915,6 @@ export default class DamageChat {
   static fullRegex =
     /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-](?:\d+|@?\w+))?(?<adds2>[+-]\d+)?)(?:[×xX*](?<mult>\d+\.?\d*))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 }
-
 
 /*
 let transfer = {
