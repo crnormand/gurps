@@ -8,6 +8,7 @@ import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from
 
 import { DragDropType } from '../drag-drop-types.js'
 
+//parsed dice data from a damage roll formula, such as 3d-1x5(2) or 1d-2+3
 type DiceData = {
   formula: string
   rolled: boolean
@@ -20,9 +21,9 @@ type DiceData = {
   adds1: number
   adds2: number
   min: number
-  loaded?: boolean
 }
 
+//result of a single damage roll
 export type DamageRollData = {
   id: string
   attacker: string | null
@@ -39,13 +40,14 @@ export type DamageRollData = {
   roll: GurpsRoll
   target: string
   hitlocation: string | null
+  loaded: boolean
 }
 
+// context Data for the damage chat message. This is used to render the damage chat message template.
 type ChatContextData = {
   draggableData: DamageRollData[]
   rolled: boolean
   dice: string
-  loaded: boolean
   damageTypeText: string
   modifiers: Modifier[]
   userTarget: string | undefined
@@ -54,6 +56,7 @@ type ChatContextData = {
   numtimes: string
 }
 
+// Message data for the damage chat message. flags.gurps.transfer is used for damage drag-and-drop. The damage roll data is stored in the payload.
 type MessageData = {
   user?: string
   speaker: ChatMessage.SpeakerData
@@ -231,7 +234,6 @@ export function makeChatContextData(
     draggableData: draggableData,
     rolled: diceData.rolled,
     dice: diceData.diceText,
-    loaded: diceData.loaded ?? false,
     damageTypeText: `${damageType} `,
     modifiers: targetmods,
     userTarget: userTarget?.name,
@@ -334,7 +336,7 @@ export function createDamageRollData(
   const dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
   const rolledTotal = roll.total || 0
 
-  diceData.loaded = roll.isLoaded
+  const loaded = roll.isLoaded
 
   const b378 = rolledTotal < diceData.min && diceData.damageType !== 'cr'
   const rollTotal = rolledTotal < diceData.min ? diceData.min : rolledTotal
@@ -379,6 +381,7 @@ export function createDamageRollData(
     roll: roll,
     target: tokenName,
     hitlocation: hitlocation,
+    loaded: loaded,
   }
 
   return contentData
