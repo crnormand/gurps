@@ -624,27 +624,6 @@ ul#result-effects li {
   max-height: 130vh;
 }
 
-.damage-message .label-toggle {
-  font-size: small;
-  font-family: var(--font-family-icons);
-}
-
-.damage-message .label-toggle:after {
-  font: var(--fa-font-solid);
-  font-size: 12px;
-  line-height: 1;
-  content: '\f078';
-  float: right;
-}
-
-.damage-message .toggle:checked + .label-toggle:after {
-  font: var(--fa-font-solid);
-  font-size: 12px;
-  line-height: 1;
-  content: '\f077';
-  float: right;
-}
-
 .gga-chat-message * {
   /* font-family: var(--font-family-icons); */
   font-size: 13px;

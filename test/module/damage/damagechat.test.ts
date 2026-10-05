@@ -1,7 +1,8 @@
-import DamageChat, { createDamageRollData, getDiceData, prepareChatData } from '@module/damage/damagechat.js'
+import { createDamageRollData, getDiceData, prepareChatData } from '@module/damage/damagechat.js'
 import { GurpsRoll } from '@module/modifier-bucket/bucket-app.js'
 import type { ActionFuncContext } from '@module/otf/actionFuncs.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
+import { SETTING_MODIFY_DICE_PLUS_ADDS, SETTING_USE_TAGGED_MODIFIERS } from '@module/util/miscellaneous-settings.js'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 vi.mock('@module/otf/description-utilities.js', () => ({
@@ -82,8 +83,8 @@ describe('DamageChat.getDiceData', () => {
         damageType: 'burn',
         multiplier: 1,
         divisor: 0,
-        adds1: -2,
-        adds2: 3,
+        adds1: 1,
+        adds2: 0,
         min: 1,
       },
     ],
@@ -184,12 +185,6 @@ describe('DamageChat.getDiceData', () => {
     expect(result?.diceText).toBe('1d-1')
     expect(result?.formula).toBe('1d6[Damage]-1')
   })
-
-  test('matches the expected regex structure', () => {
-    expect(DamageChat.fullRegex.test('3d+2x4(2)')).toBe(true)
-    expect(DamageChat.fullRegex.test('1d-2+3')).toBe(true)
-    expect(DamageChat.fullRegex.test('abc')).toBe(false)
-  })
 })
 
 describe('prepareChatData', () => {
@@ -253,6 +248,28 @@ describe('prepareChatData', () => {
     expect(mockApplyModifierDescription).not.toHaveBeenCalled()
   })
 
+  test.each([true, false])(
+    'honors the modify-dice-plus-adds setting when preparing damage rolls with tagged modifiers autoAdd=%s',
+    async autoAdd => {
+      const getSetting = vi.fn().mockImplementation((_system: string, setting: string) => {
+        if (setting === SETTING_MODIFY_DICE_PLUS_ADDS) return true
+        if (setting === SETTING_USE_TAGGED_MODIFIERS) return { autoAdd }
+
+        return false
+      })
+
+      mockApplyMods.mockReturnValue([{ modint: 7, mod: '+7', desc: 'test' }] as Modifier[])
+      mockCurrentSum.mockReturnValue(7)
+      ;(globalThis as any).game.settings.get = getSetting
+
+      const result = await prepareChatData(null, '2d+2', 'cut', null, null, undefined)
+
+      expect(getSetting).toHaveBeenCalledWith('gurps', SETTING_MODIFY_DICE_PLUS_ADDS)
+      expect(mockRollCreate).toHaveBeenCalledWith('4d6[Damage]+2+0')
+      expect(result?.dice).toBe('4d+2')
+    }
+  )
+
   test.each([
     [
       '3d+2x4(2)',
@@ -270,7 +287,7 @@ describe('prepareChatData', () => {
         damageModifier: null,
         armorDivisor: 2,
         explainLineOne: 'Rolled (4,4) + 3 = 11.',
-        explainLineTwo: 'Total = (11 + 0) × 4 = 32.',
+        explainLineTwo: 'Total = 11 × 4 = 32.',
       },
     ],
     [
