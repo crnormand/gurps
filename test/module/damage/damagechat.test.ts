@@ -262,11 +262,12 @@ describe('prepareChatData', () => {
       mockCurrentSum.mockReturnValue(7)
       ;(globalThis as any).game.settings.get = getSetting
 
-      const result = await prepareChatData(null, '2d+2', 'cut', null, null, undefined)
+      const result = await prepareChatData(null, '2d+5', 'cut', null, null, undefined)
 
       expect(getSetting).toHaveBeenCalledWith('gurps', SETTING_MODIFY_DICE_PLUS_ADDS)
-      expect(mockRollCreate).toHaveBeenCalledWith('4d6[Damage]+2+0')
-      expect(result?.dice).toBe('4d+2')
+      expect(mockRollCreate).toHaveBeenCalledWith('5d6[Damage]+1+0')
+      expect(result?.dice).toBe('3d+1')
+      expect(result?.modifiedDice).toBe('5d+1')
     }
   )
 
@@ -278,11 +279,12 @@ describe('prepareChatData', () => {
       {
         formula: '3d6[Damage]+3+0',
         rolled: true,
-        dice: '3d+3×4 (2)',
+        dice: '3d+2×4 (2)',
+        modifiedDice: '3d+3×4 (2)',
         damageType: 'cut',
         contextDamageTypeText: 'cut ',
         damageTypeText: "'cut' ",
-        modifiers: ['+1 damage'],
+        modifiers: [{ desc: 'damage', mod: '+1', modint: 1 }],
         damage: 32,
         damageModifier: null,
         armorDivisor: 2,
@@ -298,6 +300,7 @@ describe('prepareChatData', () => {
         formula: '3d6[Damage]+2+0',
         rolled: true,
         dice: '3d+2×4 (2)',
+        modifiedDice: '3d+2×4 (2)',
         damageType: 'cut',
         contextDamageTypeText: 'cut ',
         damageTypeText: "'cut' ",
@@ -317,6 +320,7 @@ describe('prepareChatData', () => {
         formula: '3d6[Damage]+2+0',
         rolled: true,
         dice: '3d+2×4 (2)',
+        modifiedDice: '3d+2×4 (2)',
         damageType: 'cut',
         contextDamageTypeText: 'cut ',
         damageTypeText: "'cut' ",
@@ -336,6 +340,7 @@ describe('prepareChatData', () => {
         formula: '1d6[Damage]+1+0',
         rolled: true,
         dice: '1d+1',
+        modifiedDice: '1d+1',
         damageType: 'burn',
         contextDamageTypeText: 'burn ',
         damageTypeText: "'burn' ",
@@ -355,6 +360,7 @@ describe('prepareChatData', () => {
         formula: '2d6[Damage]+0',
         rolled: true,
         dice: '2d',
+        modifiedDice: '2d',
         damageType: 'cr',
         contextDamageTypeText: 'cr ',
         damageTypeText: "'cr' ",
@@ -374,6 +380,7 @@ describe('prepareChatData', () => {
         formula: '1d6[Damage]-3+0',
         rolled: true,
         dice: '1d-3!',
+        modifiedDice: '1d-3!',
         damageType: 'cr',
         contextDamageTypeText: 'cr ',
         damageTypeText: "'cr' ",
@@ -393,6 +400,7 @@ describe('prepareChatData', () => {
         formula: '5+0',
         rolled: false,
         dice: '5',
+        modifiedDice: '5',
         damageType: 'cr',
         contextDamageTypeText: 'cr ',
         damageTypeText: "'cr' ",
@@ -415,7 +423,7 @@ describe('prepareChatData', () => {
     expect(result).toMatchObject({
       rolled: expected.rolled,
       dice: expected.dice,
-      loaded: false,
+      modifiedDice: expected.modifiedDice,
       damageTypeText: expected.contextDamageTypeText,
       modifiers: expected.modifiers,
       userTarget: undefined,
@@ -424,7 +432,7 @@ describe('prepareChatData', () => {
     })
     expect(damageRoll).toMatchObject({
       attacker: 'ACTOR_ID',
-      dice: expected.dice,
+      dice: expected.modifiedDice,
       damageType: expected.damageType,
       damageTypeText: expected.damageTypeText,
       damageModifier: expected.damageModifier,
@@ -436,6 +444,7 @@ describe('prepareChatData', () => {
       isB378: false,
       target: 'Target',
       hitlocation: 'torso',
+      loaded: false,
     })
     expect(damageRoll?.roll).toBe(mockRoll)
     expect(mockRollCreate).toHaveBeenCalledWith(expected.formula)

@@ -92,42 +92,69 @@ export function addBucketToDamage(formula: string, addDamageType: boolean = true
   return _addBucketToDamage(formula, addDamageType, dicePlusAdds, bucketMod)
 }
 
+export function applyDicePlusAddsToDamage(formula: string, addDamageType: boolean = true): string {
+  const parsed = parseDamageFormula(formula)
+
+  if (!parsed) return formula
+
+  const dicePlusAdds = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
+
+  const newParsed = _applyDicePlusAddsToDamage(parsed, dicePlusAdds)
+  const newDice = rebuildDamageFormula(newParsed, addDamageType)
+
+  return newDice
+}
+
+function _applyDicePlusAddsToDamage(damage: ParsedDamage, dicePlusAdds: boolean): ParsedDamage {
+  if (!dicePlusAdds) return damage
+
+  let { dice, add } = damage
+
+  if (!dice) {
+    return damage
+  }
+
+  if (dicePlusAdds && dice) {
+    while (add >= 7) {
+      add -= 7
+      dice += 2
+    }
+
+    while (add >= 4) {
+      add -= 4
+      dice += 1
+    }
+  }
+
+  return {
+    ...damage,
+    dice,
+    add,
+  }
+}
+
 export function _addBucketToDamage(formula: string, addDamageType: boolean, dicePlusAdds: boolean, bucketMod: number) {
   const parsed = parseDamageFormula(formula)
 
   if (!parsed) return formula
 
-  const { value, add, addMargin } = parsed
-  let newAdd =
+  const { add, addMargin } = parsed
+  const newAdd =
     add +
     bucketMod +
     (addMargin === '+@margin' ? (GURPS.lastTargetedRoll?.margin ?? 0) : 0) -
     (addMargin === '-@margin' ? (GURPS.lastTargetedRoll?.margin ?? 0) : 0)
 
-  if (value !== undefined) {
-    return `${value + newAdd} ${addDamageType ? parsed.damageType : ''}`.trim()
-  }
+  const newParsed = _applyDicePlusAddsToDamage({ ...parsed, add: newAdd }, dicePlusAdds)
+  const newDice = rebuildDamageFormula(newParsed, addDamageType)
 
-  let { dice } = parsed
+  return newDice
+}
 
-  if (!dice) {
-    return formula
-  }
-
-  if (dicePlusAdds && dice) {
-    while (newAdd >= 7) {
-      newAdd -= 7
-      dice += 2
-    }
-
-    while (newAdd >= 4) {
-      newAdd -= 4
-      dice += 1
-    }
-  }
-
-  const plus = newAdd > 0 ? '+' : ''
-  const addText = newAdd !== 0 ? String(newAdd) : ''
+function rebuildDamageFormula(parsed: ParsedDamage, addDamageType: boolean) {
+  const dice = parsed.dice ? `${parsed.dice}d` : `${(parsed.value ?? 0) + parsed.add}`
+  const plus = parsed.dice && parsed.add > 0 ? '+' : ''
+  const addText = parsed.dice && parsed.add !== 0 ? String(parsed.add) : ''
   const multiplierText = parsed.multiplier ? `x${parsed.multiplier}` : ''
   const minDamageText = parsed.hasMinDamage ? '!' : ''
   const armorDivisorText = parsed.armorDivisor ? `(${parsed.armorDivisor})` : ''
@@ -135,7 +162,8 @@ export function _addBucketToDamage(formula: string, addDamageType: boolean, dice
   const costFormulaText = parsed.costFormula ? ` *Costs${parsed.costFormula}` : ''
 
   const newDice =
-    `${dice}d${plus}${addText}${multiplierText}${armorDivisorText}${minDamageText}${damageTypeText}${costFormulaText}`.trim()
+    `${dice}${plus}${addText}${multiplierText}${armorDivisorText}${minDamageText}${damageTypeText}${costFormulaText}`.trim()
 
   return newDice
 }
+

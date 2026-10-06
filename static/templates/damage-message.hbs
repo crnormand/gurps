@@ -1,7 +1,7 @@
 <div>
   <div class='prefix'>
     {{#if rolled}}
-      {{localize "GURPS.chatRollingDamage" dice=dice damageTypeText=damageTypeText numtimes=numtimes}}
+          {{localize "GURPS.chatRollingDamage" dice=dice damageTypeText=damageTypeText numtimes=numtimes}}
     {{else}}
       {{localize "GURPS.chatFixedDamage" dice=dice damageTypeText=damageTypeText}}
     {{/if}}
@@ -19,6 +19,7 @@
           <li><div class='roll-result'>[{{{displayNumber mod}}}{{#if desc}} {{desc}}{{/if}}]</div></li>
         {{/each}}
       </ul> 
+      {{localize "GURPS.chatModifiedDamage" dice=modifiedDice}}
     {{/if}}
   </div>
   <div class='damage-chat-message'>

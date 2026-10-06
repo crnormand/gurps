@@ -1,4 +1,4 @@
-import { addBucketToDamage, parseDamageFormula } from '@module/damage/addBucketToDamage.js'
+import { addBucketToDamage, applyDicePlusAddsToDamage, parseDamageFormula } from '@module/damage/addBucketToDamage.js'
 import { GurpsRoll } from '@module/modifier-bucket/bucket-app.js'
 import { ActionFuncContext } from '@module/otf/actionFuncs.js'
 import { applyModifierDescription } from '@module/otf/description-utilities.js'
@@ -48,6 +48,7 @@ type ChatContextData = {
   draggableData: DamageRollData[]
   rolled: boolean
   dice: string
+  modifiedDice: string
   damageTypeText: string
   modifiers: Modifier[]
   userTarget: string | undefined
@@ -189,11 +190,16 @@ export async function prepareChatData(
   hitlocation: string | null = null
 ): Promise<ChatContextData | null> {
   const draggableData = []
-  const diceFormula = addBucketToDamage(diceText, true)
-  const targetmods = GURPS.ModifierBucket.applyMods()
+  const diceFormula = applyDicePlusAddsToDamage(diceText, true)
   const dice = getDiceData(diceFormula, damageType, [], overrideDiceText, extdamagetype)
 
   if (dice == null) return null
+
+  const modifedDiceFormula = addBucketToDamage(diceText, true)
+  const targetmods = GURPS.ModifierBucket.applyMods()
+  const modifiedDice = getDiceData(modifedDiceFormula, damageType, [], null, extdamagetype)
+
+  if (modifiedDice == null) return null
 
   const repeats =
     (tokenNames?.length ?? 0) > 0
@@ -206,7 +212,7 @@ export async function prepareChatData(
   const descriptions = targetmods.filter(it => !!it.desc).map(it => it.desc)
 
   for (const tokenName of repeats) {
-    draggableData.push(await executeDamageRoll(actor, dice, tokenName, [], hitlocation))
+    draggableData.push(await executeDamageRoll(actor, modifiedDice, tokenName, [], hitlocation))
 
     //apply costs to actor
     for (const it of descriptions) {
@@ -214,13 +220,14 @@ export async function prepareChatData(
     }
   }
 
-  const chatContextData = makeChatContextData(dice, targetmods, draggableData)
+  const chatContextData = makeChatContextData(dice, modifiedDice, targetmods, draggableData)
 
   return chatContextData
 }
 
-export function makeChatContextData(
+function makeChatContextData(
   diceData: DiceData,
+  modifiedDice: DiceData,
   targetmods: Modifier[],
   draggableData: DamageRollData[]
 ): ChatContextData {
@@ -234,6 +241,7 @@ export function makeChatContextData(
     draggableData: draggableData,
     rolled: diceData.rolled,
     dice: diceData.diceText,
+    modifiedDice: modifiedDice.diceText,
     damageTypeText: `${damageType} `,
     modifiers: targetmods,
     userTarget: userTarget?.name,
