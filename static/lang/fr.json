@@ -674,9 +674,15 @@
             "noOne": "Personne",
             "warn": "Avertir"
           },
-          "visibility": "Visibility des Icônes de Manoeuvre",
+          "visibility": "Visibilité des Icônes de Manoeuvre",
           "visibilityHint": "Détermine qui peut voir les icônes de manoeuvre d'un token."
         },
+        "maneuversHint": "Une manœuvre désactivée n'est plus affichée partout où une manœuvre peut être choisie — Suivi de combat, HUD du token et feuille de personnage — et ses modificateurs sont retirés du Réservoir de modificateurs.",
+        "modifiersHint": "Les modificateurs facultatifs proposés par le Réservoir de modificateurs. S'il est désactivé, le modificateur n'y est plus répertorié. Il peut toujours être saisi manuellement.",
+        "options": "Options de combat",
+        "optionsHint": "Choisissez les options de combat utilisées par ce monde. Une manœuvre désactivée n'est plus affichée partout où une manœuvre peut être choisie — Suivi de combat, HUD du token et feuille de personnage — et ses modificateurs sont retirés du Réservoir de modificateurs.",
+        "optionsManeuvers": "Manœuvres",
+        "optionsNeedsOnTarget": "Non utilisé : Utiliser les modificateurs de portée On Target est désactivé ci-dessus.",
         "title": "Paramètres de combat",
         "useRelativeSizeInMelee": "Utiliser la différence de modificateur de taille au corps à corps",
         "useRelativeSizeInMeleeHint": "Appliquer la différence de modificateur de taille (SM) entre l'attaquant et le défenseur aux jets d'attaque au corps à corps."
@@ -1788,17 +1794,21 @@
       "offset": "Décalage de Page",
       "offsetChangeHint": "Lorsque vous modifiez cette valeur, le lecteur ajuste l'affichage afin que la page corresponde au décalage indiqué (par ex., page 5).",
       "offsetPlaceholder": "Décalage : (ex. : -5, 0 ou 2)",
-      "settings": {
-        "basicPDFs": "Ensemble de base PDF(s)",
-        "basicPDFsCombined": "Ensemble de base Combiné ('B')",
-        "basicPDFsHint": "Sélectionnez 'Combiné' ou 'Séparé' et utilisez les codes PDF associés. Remarque : si vous sélectionnez 'Séparé', le PDF des campagnes du jeu de base doit s'ouvrir jusqu'à la page 340 pendant le test. Si vous sélectionnez 'Basic Revised', utilisez un décalage de 10.",
-        "basicPDFsRevised": "Basic Revised (B)",
-        "basicPDFsSeparate": "Séparé (Personnages, 'B' ; Campagnes, 'BX')",
+      "setting": {
+        "basicSet": {
+          "combined": "Basic Set Combiné ('B')",
+          "hint": "Sélectionnez 'Combiné' ou 'Separé' et utilisez les codes PDF associés lors de la configuration de PDFFoundry. Note: Si vous sélectionnez 'Separate', le PDF Basic Set Campaigns devrait s'ouvrir à la page 340 pendant le test de PDFoundry.",
+          "name": "PDF(s) du Livre de base",
+          "revised": "Basic Révisé ('B')",
+          "separate": "Séparé (Personnages, 'B'; Campagnes, 'BX')"
+        },
         "button": "Paramètres PDF",
-        "hint": "Configurer la gestion des fichiers PDF.",
+        "hint": "Configurez la gestion des PDF.",
         "name": "PDFs",
-        "openFirst": "Ouvrir le premier PDF trouvé",
-        "openFirstHint": "Si coché, le système ouvrira le premier PDF trouvé lorsque plusieurs PDF sont saisis. Si décoché, le système ouvrira tous les PDF saisis."
+        "openFirst": {
+          "hint": "Si coché, le système ouvrira le premier PDF trouvé lorsque plusieurs PDF sont saisis. Si décoché, le système ouvrira tous les PDF saisis.",
+          "name": "Ouvrir le premier PDF trouvé"
+        }
       }
     },
     "pdfCrippling": "B420",

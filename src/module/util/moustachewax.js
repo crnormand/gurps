@@ -501,8 +501,10 @@ export default function () {
     return HitLocations.getHitLocationTableNames()
   })
 
-  Handlebars.registerHelper('listAllManeuvers', function () {
-    return Combat.Maneuvers.getAllData()
+  // Omits the maneuvers the GM has turned off. `current` keeps the actor's own maneuver in the list
+  // even when it has been turned off, so a <select> can't silently reassign it.
+  Handlebars.registerHelper('listAllManeuvers', function (current) {
+    return Combat.Maneuvers.getAllInPlayData(typeof current === 'string' ? current : null)
   })
 
   Handlebars.registerHelper('getManeuver', function (name) {

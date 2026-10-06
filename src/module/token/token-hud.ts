@@ -64,12 +64,14 @@ class GurpsTokenHUDV2<
     const activeEffects = actor.effects.contents ?? []
 
     const currentManeuverId = actor.system.conditions.maneuver
-
+    // getManeuver(), not get(): a token mid Committed Aim keeps its icon after the GM switches off
+    // the source book that offered the maneuver, rather than reverting to the Do Nothing image.
     const maneuverIcon = currentManeuverId
-      ? (Combat.Maneuvers.get(currentManeuverId)?.img ?? 'systems/gurps/icons/maneuvers/man-nothing.png')
+      ? (Combat.Maneuvers.getManeuver(currentManeuverId || 'do_nothing')?.img ??
+        'systems/gurps/icons/maneuvers/man-nothing.png')
       : 'systems/gurps/icons/maneuvers/man-nothing.png'
 
-    const maneuvers = Object.keys(Combat.Maneuvers.getAll()).flatMap(id => {
+    const maneuvers = Object.keys(Combat.Maneuvers.getAllInPlay()).flatMap(id => {
       const maneuver = Combat.Maneuvers.get(id)
 
       return maneuver

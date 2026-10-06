@@ -43,8 +43,8 @@ import {
   WeaponSwitch,
 } from '@module/features/weapon-bonus.js'
 import {
-  ReactionModifier,
   ConditionalModifier as ConditionalModifierDocument,
+  ReactionModifier,
 } from '@module/item/data/conditional-modifier.js'
 import { ModifierBucket } from '@module/modifier-bucket/bucket-app.js'
 import { AttributePrereq } from '@module/prereqs/attribute-prereq.js'
@@ -61,10 +61,10 @@ import {
 } from '@module/prereqs/index.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { TrackerInstance } from '@module/resource-tracker/index.js'
-import { findAdDisad, findSkillSpell, findSkill, findSpell, findAttack } from '@module/util/find-item.js'
+import { findAdDisad, findAttack, findSkill, findSkillSpell, findSpell } from '@module/util/find-item.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { HandlebarsApplicationMixin as _HandlebarsApplicationMixin } from './foundry/handlebars.js'
+import { PdfReference } from '@/module/pdf/types.js'
 
 export {}
 
@@ -477,7 +477,7 @@ declare global {
 
     /* ---------------------------------------- */
 
-    SJGProductMappings: Record<string, string>
+    SJGProductMappings: Record<string, PdfReference>
 
     /* ---------------------------------------- */
 

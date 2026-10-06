@@ -677,6 +677,12 @@
           "visibility": "Manöver Symbol Sichtbarkeit",
           "visibilityHint": "Legt fest, wer das Manöversymbol eines Tokens sehen kann."
         },
+        "maneuversHint": "Ein deaktiviertes Manöver wird nirgendwo mehr angezeigt, wo ein Manöver ausgewählt werden kann — Kampf-Tracker, Token-HUD und Charakterbogen — und seine Modifikatoren werden aus dem Modifikator-Bucket entfernt.",
+        "modifiersHint": "Die optionalen Modifikatoren, die vom Modifikator-Bucket angeboten werden. Bei Deaktivierung wird der Modifikator nicht mehr im Modifikator-Bucket aufgeführt. Er kann weiterhin manuell eingegeben werden.",
+        "options": "Kampfoptionen",
+        "optionsHint": "Wählen Sie die Kampfoptionen aus, die in dieser Welt verwendet werden sollen. Ein deaktiviertes Manöver wird nirgendwo mehr angezeigt, wo ein Manöver ausgewählt werden kann — Kampf-Tracker, Token-HUD und Charakterbogen — und seine Modifikatoren werden aus dem Modifikator-Bucket entfernt.",
+        "optionsManeuvers": "Manöver",
+        "optionsNeedsOnTarget": "Nicht im Einsatz: „On Target verwenden“ ist oben deaktiviert.",
         "title": "Kampfeinstellungen",
         "useRelativeSizeInMelee": "Größenmodifikator-Unterschied im Nahkampf verwenden",
         "useRelativeSizeInMeleeHint": "Wendet die Differenz im Größenmodifikator (SM) zwischen Angreifer und Verteidiger auf Nahkampf-Angriffswürfe an."
@@ -1788,17 +1794,21 @@
       "offset": "Seitenoffset",
       "offsetChangeHint": "Wenn Sie diesen Wert ändern, passt sich der Viewer so an, dass die angezeigte Seite dem eingegebenen Offset entspricht (z. B. Seite 5).",
       "offsetPlaceholder": "Offset: (z.B. -5, 0 oder 2)",
-      "settings": {
-        "basicPDFs": "Basic Set PDF(s)",
-        "basicPDFsCombined": "Kombiniertes Basic Set ('B')",
-        "basicPDFsHint": "Wählen Sie 'Kombiniert' oder 'Getrennt' und verwenden Sie die zugehörigen PDF-Codes. Hinweis: Wenn Sie 'Getrennt' wählen, sollte das Basic Set Campaigns PDF während des Tests auf Seite 340 geöffnet werden. Wenn Sie 'Basic Revised' wählen, verwenden Sie einen Offset von 10.",
-        "basicPDFsRevised": "Basic Revised (B)",
-        "basicPDFsSeparate": "Getrennt (Charaktere, 'B'; Kampagnen, 'BX')",
+      "setting": {
+        "basicSet": {
+          "combined": "Kombiniertes Basic Set ('B')",
+          "hint": "Wähle 'Kombiniert' oder 'Getrennt' und verwende die entsprechenden PDF-Codes bei der Konfiguration von PDFoundry. Hinweis: Wenn 'Getrennt' gewählt wird, sollte sich das Basic Set Campaigns PDF während des PDFoundry-Tests auf Seite 340 öffnen.",
+          "name": "Grundregelwerk PDF(s)",
+          "revised": "Basic Revised ('B')",
+          "separate": "Getrennt (Characters, 'B'; Campaigns, 'BX')"
+        },
         "button": "PDF-Einstellungen",
         "hint": "Konfigurieren Sie, wie PDFs behandelt werden.",
         "name": "PDFs",
-        "openFirst": "Öffne erste gefundene PDF",
-        "openFirstHint": "Wenn aktiviert, öffnet das System die erste gefundene PDF, wenn mehrere PDFs eingegeben werden. Wenn deaktiviert, öffnet das System alle eingegebenen PDFs."
+        "openFirst": {
+          "hint": "Wenn diese Option aktiviert ist, öffnet das System das erste gefundene PDF, wenn mehrere PDFs eingegeben wurden. Wenn sie deaktiviert ist, öffnet das System alle eingegebenen PDFs.",
+          "name": "Öffne das erste gefundene PDF"
+        }
       }
     },
     "pdfCrippling": "B420",

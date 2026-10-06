@@ -677,6 +677,12 @@
           "visibility": "Maneuver Icon Visibility",
           "visibilityHint": "Determines who can see a token's maneuver icon."
         },
+        "maneuversHint": "A maneuver that is turned off is no longer shown anywhere a maneuver can be picked — Combat Tracker, Token HUD, and character sheet — and its modifiers removed from the Modifier Bucket.",
+        "modifiersHint": "The optional modifiers presented by the Modifier Bucket. If turned off, it is no longer listed in the Modifier Bucket. The modifier can still be entered manually.",
+        "options": "Combat Options",
+        "optionsHint": "Choose the combat options used by this world. A maneuver that is turned off is no longer shown anywhere a maneuver can be picked — Combat Tracker, Token HUD, and character sheet — and its modifiers removed from the Modifier Bucket.",
+        "optionsManeuvers": "Maneuvers",
+        "optionsNeedsOnTarget": "Not in play: Use On Target is turned off, above.",
         "title": "Combat Settings",
         "useRelativeSizeInMelee": "Use Size Modifier Difference in Melee",
         "useRelativeSizeInMeleeHint": "Apply the difference in Size Modifier (SM) between attacker and defender to melee attack rolls."
@@ -1788,17 +1794,21 @@
       "offset": "Page Offset",
       "offsetChangeHint": "When you change this value, the viewer adjusts so that the displayed page corresponds to the entered offset (e.g., page 5).",
       "offsetPlaceholder": "Offset: (e.g., -5, 0, or 2)",
-      "settings": {
-        "basicPDFs": "Basic Set PDF(s)",
-        "basicPDFsCombined": "Combined Basic Set ('B')",
-        "basicPDFsHint": "Select 'Combined' or 'Separate' and use the associated PDF codes. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the test. If you select 'Basic Revised', use an offset of 10.",
-        "basicPDFsRevised": "Basic Revised (B)",
-        "basicPDFsSeparate": "Separate (Characters, 'B'; Campaigns, 'BX')",
+      "setting": {
+        "basicSet": {
+          "combined": "Combined Basic Set ('B')",
+          "hint": "Select 'Combined' or 'Separate' and use the associated PDF codes when configuring PDFoundry. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.",
+          "name": "Basic Set PDF(s)",
+          "revised": "Basic Revised ('B')",
+          "separate": "Separate (Characters, 'B'; Campaigns, 'BX')"
+        },
         "button": "PDF Settings",
         "hint": "Configure how PDFs are handled.",
         "name": "PDFs",
-        "openFirst": "Open first PDF found",
-        "openFirstHint": "If checked, the system will open the first PDF found when multiple PDFs are entered. If unchecked, system will open all PDFs entered."
+        "openFirst": {
+          "hint": "If checked, the system will open the first PDF found when multiple PDFs are entered. If unchecked, system will open all PDFs entered.",
+          "name": "Open First PDF Found"
+        }
       }
     },
     "pdfCrippling": "B420",

@@ -677,6 +677,12 @@
           "visibility": "Visibilidade de Ícones de Manobra",
           "visibilityHint": "Determina quem pode ver o ícone de manobra de uma miniatura."
         },
+        "maneuversHint": "Uma manobra desativada não é mais exibida em nenhum lugar onde uma manobra possa ser escolhida — Rastreador de Combate, HUD do Token e ficha de personagem — e seus modificadores são removidos do Balde de Modificadores.",
+        "modifiersHint": "Os modificadores opcionais apresentados pelo Balde de Modificadores. Se desativado, o modificador não será mais listado no Balde de Modificadores. O modificador ainda pode ser inserido manualmente.",
+        "options": "Opções de Combate",
+        "optionsHint": "Escolha as opções de combate usadas por este mundo. Uma manobra desativada não é mais exibida em nenhum lugar onde uma manobra possa ser escolhida — Rastreador de Combate, HUD do Token e ficha de personagem — e seus modificadores são removidos do Balde de Modificadores.",
+        "optionsManeuvers": "Manobras",
+        "optionsNeedsOnTarget": "Fora de uso: Usar On Target está desativado acima.",
         "title": "Configurações de Combate",
         "useRelativeSizeInMelee": "Usar Diferença de Modificador de Tamanho no Corpo a Corpo",
         "useRelativeSizeInMeleeHint": "Aplicar a diferença no Modificador de Tamanho (SM) entre atacante e defensor nas rolagens de ataque corpo a corpo."
@@ -1788,17 +1794,21 @@
       "offset": "Ajuste de página",
       "offsetChangeHint": "Ao alterar este valor, o visualizador ajusta para que a página exibida corresponda ao ajuste informado (por exemplo, página 5).",
       "offsetPlaceholder": "Ajuste: (ex.: -5, 0 ou 2)",
-      "settings": {
-        "basicPDFs": "PDFs do Basic Set",
-        "basicPDFsCombined": "Basic Set Combinado ('B')",
-        "basicPDFsHint": "Selecione 'Combinado' ou 'Separado' e use os códigos de PDF correspondentes. Observação: se você selecionar 'Separado', o PDF de Campanhas do Basic Set deve abrir até a página 340 durante o teste. Se você selecionar 'Basic Revised', use um ajuste de 10.",
-        "basicPDFsRevised": "Basic Revised (B)",
-        "basicPDFsSeparate": "Separado (Personagens, 'B'; Campanhas, 'BX')",
+      "setting": {
+        "basicSet": {
+          "combined": "Módulo Básico Combinado ('B')",
+          "hint": "Selecione 'Combinado' ou 'Separado' e utilize os códigos de PDF associados quando for configurar o PDFoundry. Nota: Se você selecionar 'Separado', o PDF do Módulo Básico Campanhas deve abrir a partir da página 340 ao executar os testes do PDFoundry.",
+          "name": "PDF(s) do Módulo Básico",
+          "revised": "Básico Revisado ('B')",
+          "separate": "Separado (Personagens, 'B'; Campanhas, 'BX')"
+        },
         "button": "Configurações de PDF",
-        "hint": "Configure como os PDFs são manipulados.",
+        "hint": "Configure como os PDFs são tratados.",
         "name": "PDFs",
-        "openFirst": "Abrir primeiro PDF encontrado",
-        "openFirstHint": "Se marcado, o sistema abrirá o primeiro PDF encontrado quando vários PDFs forem inseridos. Se desmarcado, o sistema abrirá todos os PDFs inseridos."
+        "openFirst": {
+          "hint": "Se marcado, o sistema vai abrir o primeiro PDF encontrado quando múltiplos PDFs forem informados. Se desmarcado, o sistema vai abrir todos os PDFs informados.",
+          "name": "Abrir o primeiro PDF encontrado"
+        }
       }
     },
     "pdfCrippling": "B420",

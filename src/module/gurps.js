@@ -50,10 +50,9 @@ import GurpsWiring from './gurps-wiring.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 import { Importer, ImportSettings } from './importer/index.js'
 import { Item } from './item/index.js'
-import GurpsJournalEntry from './journal.js'
+import { Journal } from './journal/index.ts'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { Otf } from './otf/index.js'
-import { Pdf } from './pdf/index.js'
 import { Prereqs } from './prereqs/index.js'
 import { Pseudo } from './pseudo-document/index.js'
 import { ResourceTrackerModule } from './resource-tracker/index.js'
@@ -115,7 +114,7 @@ if (!globalThis.GURPS) {
     Features,
     Importer,
     Item,
-    Pdf,
+    Pdf: Journal,
     Prereqs,
     Pseudo,
     ResourceTracker: ResourceTrackerModule,
@@ -890,8 +889,6 @@ if (!globalThis.GURPS) {
         }
       }
     })
-
-    GurpsJournalEntry.ready()
 
     // Translate attribute mappings if not in English
     if (game.i18n.lang != 'en') {

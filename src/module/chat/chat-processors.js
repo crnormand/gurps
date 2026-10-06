@@ -13,6 +13,7 @@ import StatusChatProcessor from '../chat/status.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 
 import ChatProcessor from './chat-processor.js'
+import { ChatTextChatProcessor } from './chat-text.ts'
 import {
   EveryoneAChatProcessor,
   EveryoneBChatProcessor,
@@ -61,6 +62,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new StopChatProcessor())
   ChatProcessors.registerProcessor(new ModChatProcessor())
   ChatProcessors.registerProcessor(new DRChatProcessor())
+  ChatProcessors.registerProcessor(new ChatTextChatProcessor())
 }
 
 class SoundChatProcessor extends ChatProcessor {
@@ -1267,7 +1269,9 @@ class ManeuverChatProcessor extends ChatProcessor {
   async process(_line) {
     if (!this.match[2]) {
       this.priv(game.i18n.localize('GURPS.chatHelpManeuver'))
-      Object.values(Combat.Maneuvers.getAll())
+
+      // Only the maneuvers this campaign uses -- listing one the GM turned off would just fail below.
+      Object.values(Combat.Maneuvers.getAllInPlay())
         .map(maneuver => game.i18n.localize(maneuver.data.label))
         .forEach(maneuverLabel => this.priv(maneuverLabel))
 
@@ -1281,7 +1285,7 @@ class ManeuverChatProcessor extends ChatProcessor {
     }
 
     let regex = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
-    let match = Object.values(Combat.Maneuvers.getAll()).find(maneuver =>
+    let match = Object.values(Combat.Maneuvers.getAllInPlay()).find(maneuver =>
       game.i18n.localize(maneuver.data.label).toLowerCase().match(regex)
     )
 

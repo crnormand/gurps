@@ -1,4 +1,4 @@
-import { HandlebarsApplicationMixin, ActorSheet, Application } from '@gurps-types/foundry/index.js'
+import { ActorSheet, Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import {
   DisplayConditionalModifier,
   DisplayEquipment,
@@ -231,7 +231,7 @@ class GurpsActorGcsSheet extends GurpsBaseActorSheet<
 
     const sortKeys = this._prepareSortKeys()
 
-    const maneuverChoices = Combat.Maneuvers.getAllData() as Record<string, { label: string }>
+    const maneuverChoices = Combat.Maneuvers.getAllInPlayData() as Record<string, { label: string }>
 
     const postureChoices = Object.fromEntries([
       ['standing', { label: 'GURPS.status.Standing' }],

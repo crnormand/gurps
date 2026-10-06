@@ -1,9 +1,9 @@
 import {
-  Application,
   ActorSheet,
+  Application,
+  DocumentSheet,
   DragDrop,
   HandlebarsApplicationMixin,
-  DocumentSheet,
 } from '@gurps-types/foundry/index.js'
 import { ImportSettings } from '@module/importer/index.js'
 import { OtfActionType } from '@module/otf/types.js'

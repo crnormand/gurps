@@ -677,6 +677,12 @@
           "visibility": "Visibilidad del Icono de Maniobra",
           "visibilityHint": "Determina quién puede ver el icono de maniobra de un token."
         },
+        "maneuversHint": "Una maniobra desactivada deja de mostrarse en cualquier lugar donde se pueda elegir una maniobra — Rastreador de Combate, HUD del Token y hoja de personaje — y sus modificadores se eliminan del Contenedor de Modificadores.",
+        "modifiersHint": "Los modificadores opcionales que presenta el Contenedor de Modificadores. Si se desactiva, deja de aparecer en el Contenedor de Modificadores. El modificador aún puede introducirse manualmente.",
+        "options": "Opciones de Combate",
+        "optionsHint": "Elige las opciones de combate utilizadas por este mundo. Una maniobra desactivada deja de mostrarse en cualquier lugar donde se pueda elegir una maniobra — Rastreador de Combate, HUD del Token y hoja de personaje — y sus modificadores se eliminan del Contenedor de Modificadores.",
+        "optionsManeuvers": "Maniobras",
+        "optionsNeedsOnTarget": "No está disponible: Usar Modificadores de Distancia En el Objetivo está desactivado arriba.",
         "title": "Ajustes de Combate",
         "useRelativeSizeInMelee": "Combate: Usar Diferencia de Modificador de Tamaño en Combate",
         "useRelativeSizeInMeleeHint": "Aplica la diferencia en Modificador de Tamaño (MT) entre atacante y defensor en los tiros de ataque de combate."
@@ -1795,11 +1801,20 @@
         "basicPDFsHint": "Selecciona 'Combinado' o 'Separados' y usa los códigos PDF correspondientes. Nota: Si seleccionas 'Separados', el PDF de Campañas del Set Básico debería abrirse en la página 340 durante la prueba. Si seleccionas 'Basic Revised', usa un desplazamiento de 10.",
         "basicPDFsRevised": "Básico Revisado (B)",
         "basicPDFsSeparate": "Separados (Personajes, 'B'; Campañas, 'BX')",
-        "button": "Configuración de PDF",
-        "hint": "Configura cómo se manejan los PDFs.",
+        "basicSet": {
+          "combined": "Manual Básico Combinado ('B')",
+          "hint": "Selecciona 'Combinado' o 'Separado' y usa los códigos PDF asociados al configurar PDFoundry. Nota: Si seleccionas 'Separado', el PDF de Campañas del Manual Básico debería abrirse en la página 340 durante la prueba de PDFoundry.",
+          "name": "PDF(s) del Manual Básico",
+          "revised": "Básico Revisado ('B')",
+          "separate": "Separado (Personajes, 'B'; Campañas, 'BX')"
+        },
+        "button": "Ajustes de PDF",
+        "hint": "Configura cómo se gestionan los PDFs.",
         "name": "PDFs",
-        "openFirst": "Abrir el primer PDF encontrado",
-        "openFirstHint": "Si se marca, el sistema abrirá el primer PDF encontrado cuando se ingresen múltiples PDFs. Si no se marca, el sistema abrirá todos los PDFs ingresados."
+        "openFirst": {
+          "hint": "Si está marcado, el sistema abrirá el primer PDF encontrado cuando se ingresen múltiples PDFs. Si no está marcado, el sistema abrirá todos los PDFs ingresados.",
+          "name": "Abrir el primer PDF encontrado"
+        }
       }
     },
     "pdfCrippling": "B420",
