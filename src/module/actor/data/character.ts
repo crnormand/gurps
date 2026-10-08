@@ -720,13 +720,13 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
       case Combat.Movement.step:
         return {
-          value: Movement.fractionOfMove(base, 1, 10),
+          value: Movement.step(base),
           // TODO: localize
           tooltip: 'Step',
         }
       case Combat.Movement.twoSteps:
         return {
-          value: Movement.fractionOfMove(base, 1, 10) * 2,
+          value: Movement.step(base) * 2,
           // TODO: localize
           tooltip: 'Step or Two',
         }

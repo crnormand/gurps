@@ -21,6 +21,10 @@ export namespace Movement {
     return Math.max(1, Math.floor((move * numerator) / denominator))
   }
 
+  export function step(move: number): number {
+    return Math.max(1, Math.ceil(move / 10))
+  }
+
   /** The conditions that halve Move: reeling from wounds (B380) and very tired (B426). */
   export interface MoveConditions {
     reeling?: boolean
