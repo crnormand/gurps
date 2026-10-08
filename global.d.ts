@@ -226,7 +226,7 @@ declare global {
     'gurps.combat.options': CombatOptionSettings
     'gurps.show-confirmation-roll-dialog': boolean
     'gurps.modify-dice-plus-adds': boolean
-    'gurps.pdf.basicset': String
+    'gurps.pdf.basicset': 'Combined' | 'Separate' | 'Revised'
     'gurps.pdf.open-first': boolean
     'gurps.use-foundry-items': boolean
     // TODO: Deprecated settings.

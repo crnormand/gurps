@@ -54,7 +54,7 @@ export class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEn
     let context = await super._prepareContext(options)
 
     // @ts-expect-error: document.system.offset may not be recognized by TypeScript
-    const page = (this.options.bookPageReference?.page || 0) + (this.document.system.offset || 0)
+    const page = (this.options.bookPageReference?.page ?? 5) + (this.document.system.offset || 0)
 
     context = foundry.utils.mergeObject(context, {
       // @ts-expect-error: _getViewerParams may not be recognized by TypeScript

@@ -340,6 +340,8 @@
       "rollTotalHits": "Total hits due to RoF ({rof}) & Rcl ({rcl}) is <span class='roll-value'>{rofrcl}</span>. ({link})",
       "setting": {
         "hint": "These settings control various aspects of combat in the game.",
+        "initiative": "Combat: Turn Sequence Formula",
+        "initiativeHint": "This is the formula used by Foundry to determine turn order in combat. Warning: Only change this if you know what you are doing! We do not parse this for correctness. Set this field blank to reset the formula back to the GURPS Combat Turn Sequence, B362.",
         "maneuver": {
           "allowRoll": "Allow Roll Based on Maneuver",
           "allowRollHint": "During combat, system will check the roll is valid, based on selected maneuver.",
@@ -369,6 +371,11 @@
         "optionsHint": "Choose the combat options used by this world. A maneuver that is turned off is no longer shown anywhere a maneuver can be picked — Combat Tracker, Token HUD, and character sheet — and its modifiers removed from the Modifier Bucket.",
         "optionsManeuvers": "Maneuvers",
         "optionsNeedsOnTarget": "Not in play: Use On Target is turned off, above.",
+        "rangeStrategy": "Combat: Range modifier strategy",
+        "rangeStrategyHint": "Sets the formula to use to calculate range penalties.",
+        "rangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
+        "rangeStrategyStandard": "Size and Speed/Range Table",
+        "rangeStrategyTenPenalties": "-1 for every 10 hexes/yards/meters",
         "title": "Combat Settings",
         "useRelativeSizeInMelee": "Use Size Modifier Difference in Melee",
         "useRelativeSizeInMeleeHint": "Apply the difference in Size Modifier (SM) between attacker and defender to melee attack rolls."
@@ -1285,7 +1292,6 @@
     "settingCheckConditionalModifiers": "Check Conditional Modifiers in Actor Sheet",
     "settingColorSheetMenuHint": "Color Character Sheet Settings",
     "settingColorSheetMenuTitle": "Color Character Sheet",
-    "settingCombatInitiative": "Combat: Turn Sequence Formula",
     "settingConvertRanged": "Actor: Convert 'x2/x5' range to yards",
     "settingDamageAD": "Damage: Armor Divisors",
     "settingDamageBluntTrauma": "Damage: Blunt Trauma",
@@ -1314,7 +1320,6 @@
     "settingHintBlockImport": "If checked, the 'Import' button will only be displayed on the character sheet if the player permission level is 'Trusted', 'Assistant' or 'GameMaster'",
     "settingHintCalculateEnc": "If checked, the Encumbrance level will be set automatically based on the carried equipment (and you cannot change the Encumbrance level manually). If this is turned off, you can change the Encumbrance level by clicking on the new level.",
     "settingHintCheckConditionalModifiers": "If checked, the system will look for Conditional Modifiers in the Actor Sheet and add them to Effect Modifiers Popout.",
-    "settingHintCombatInitiative": "This is the formula used by Foundry to determine turn order in combat. Warning: Only change this if you know what you are doing! We do not parse this for correctness. Set this field blank to reset the formula back to the GURPS Combat Turn Sequence, B362.",
     "settingHintConvertRanged": "If checked, range fields in the form 'xN' or 'xN/xM' will be multiplied by the character's ST to determine the actual range for a thrown weapon. NOTE: This only occurs during import.",
     "settingHintDamagCondInjury": "From Pyramid #3/120: Conditional Injury removes Hit Points from the game as the basis for wound tracking, and replaces them with an effects based method for injury.",
     "settingHintDamageAD": "If checked, adjust the target's DR by the armor divisor on the attack.",
@@ -1337,7 +1342,6 @@
     "settingHintPlayerChatPrivate": "If checked, most of the chat commands (e.g. /hp, /fp, /qty, etc.) will display as a whisper to the player (instead of an Out Of Character message). If you trust your players, and don't like to see the chat fill up with their chat commands, turn this on.",
     "settingHintPortraitHPTinting": "Show red tint overlay on character portraits based on HP loss in the Modern sheet.",
     "settingHintQtyItems": "If checked, a small icon will appear after equipment where the QTY/Count will be saved during imports",
-    "settingHintRangeStrategy": "Sets the formula to use to calculate range penalties.",
     "settingHintRemoveUnequipped": "If checked, the names of the Melee and Ranged attacks will be compared to the carried equipment list, and if a name match is found, the attack will only be listed if the equipment is Equipped",
     "settingHintSheetDetail": "Select the character sheet that you want as the 'Quick Sheet'. It will be displayed in the title bar, and the user can click between it and the 'Full (GCS)' sheet",
     "settingHintShowChatReeling": "When checked, changes to any actor's Reeling or Tired status will be displayed as a chat message.",
@@ -1389,10 +1393,6 @@
     "settingPlayerChatPrivate": "Player Chat commands private",
     "settingPortraitHPTinting": "Portrait HP Tinting",
     "settingQtyItems": "Actor: Display QTY/Count saved Flag",
-    "settingRangeStrategy": "Combat: Range modifier strategy",
-    "settingRangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
-    "settingRangeStrategyStandard": "Size and Speed/Range Table",
-    "settingRangeStrategyTenPenalties": "-1 for every 10 hexes/yards/meters",
     "settingRemoveUnequipped": "Actor: Remove Unequipped weapons from Melee and Ranged lists",
     "settings": {
       "physicalDiceTooltip": "ex: 1,2,3 or 6"

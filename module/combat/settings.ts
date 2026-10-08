@@ -6,7 +6,7 @@ import {
   enabledOptions,
   isManeuverEnabled,
 } from './combat-options.ts'
-import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.ts'
+import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.js'
 import {
   ManeuverDetail,
   ManeuverVisibility,
@@ -28,8 +28,8 @@ export function registerCombatSettings(): void {
   if (!game.settings) throw new Error('GURPS | Combat module requires game.settings to be available!')
 
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_INITIATIVE_FORMULA, {
-    name: 'GURPS.settingCombatInitiative',
-    hint: 'GURPS.settingHintCombatInitiative',
+    name: `${SETTINGS}.initiative`,
+    hint: `${SETTINGS}.initiativeHint`,
     scope: 'world',
     config: false,
     type: String as any,
@@ -38,15 +38,15 @@ export function registerCombatSettings(): void {
   })
 
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_RANGE_STRATEGY, {
-    name: 'GURPS.settingRangeStrategy',
-    hint: 'GURPS.settingHintRangeStrategy',
+    name: `${SETTINGS}.rangeStrategy`,
+    hint: `${SETTINGS}.rangeStrategyHint`,
     scope: 'world',
     config: false,
     type: String,
     choices: {
-      Standard: 'GURPS.settingRangeStrategyStandard',
-      Simplified: 'GURPS.settingRangeStrategyRangeBands',
-      TenPenalties: 'GURPS.settingRangeStrategyTenPenalties',
+      Standard: `${SETTINGS}.rangeStrategyStandard`,
+      Simplified: `${SETTINGS}.rangeStrategyRangeBands`,
+      TenPenalties: `${SETTINGS}.rangeStrategyTenPenalties`,
     },
     default: 'Standard',
     onChange: value => GURPS.rangeObject.update(),

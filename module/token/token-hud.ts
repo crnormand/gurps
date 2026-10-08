@@ -34,6 +34,7 @@ export class GurpsTokenHUDV2<
 
     // @ts-expect-error: Waiting for DataModel migration for actor
     const currentManeuverId = this.object.actor?.system.conditions.maneuver
+
     // getManeuver(), not get(): a token mid Committed Aim keeps its icon after the GM switches off
     // the source book that offered the maneuver, rather than reverting to the Do Nothing image.
     const maneuverIcon =

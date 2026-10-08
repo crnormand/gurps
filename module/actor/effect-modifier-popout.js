@@ -1,13 +1,12 @@
-import { OtfActionType } from '../otf/types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { recurselist, sanitize } from '../../lib/utilities.js'
+import { Combat } from '../combat/index.js'
 import { Length } from '../data/common/length.js'
 import GurpsWiring from '../gurps-wiring.js'
+import { OtfActionType } from '../otf/types.js'
 import { TokenActions } from '../token-actions.js'
 import { gurpslink } from '../utilities/gurpslink.js'
-import Maneuvers from '../combat/maneuver.js'
-import { Combat } from '../combat/index.js'
 
 export const calculateRange = (token1, token2) => {
   if (!token1 || !token2) return undefined

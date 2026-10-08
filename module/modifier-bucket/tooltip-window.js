@@ -1,4 +1,3 @@
-import { OtfActionType } from '../otf/types.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
 import { displayMod, horiz } from '../../lib/utilities.js'
@@ -6,6 +5,7 @@ import { gurpslink } from '../../module/utilities/gurpslink.js'
 import { Combat } from '../combat/index.js'
 import GurpsWiring from '../gurps-wiring.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
+import { OtfActionType } from '../otf/types.js'
 /**
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
  * to the current or other actors.
@@ -111,22 +111,28 @@ export default class ModifierBucketEditor extends Application {
 
     if (!!GURPS.LastActor) {
       let self = this.convertModifiers(GURPS.LastActor.system.conditions.self.modifiers)
-      self.forEach(e => data.currentmods.push(e))
+
+      self.forEach(modifierText => data.currentmods.push(modifierText))
 
       let target = this.convertModifiers(GURPS.LastActor.system.conditions.target.modifiers)
+
       if (target.length > 0) {
         data.currentmods.push(horiz(game.i18n.localize('GURPS.targetedModifiers')))
         target.forEach(e => data.currentmods.push(e))
       }
+
       let user = this.convertModifiers(
         GURPS.LastActor.system.conditions.usermods ? GURPS.LastActor.system.conditions.usermods : []
       )
+
       if (user.length > 0) {
         let uc = '(' + game.i18n.localize('GURPS.equipmentUserCreated') + ')'
+
         data.currentmods.push(horiz(game.i18n.localize('GURPS.equipmentUserCreated')))
         user.forEach(e => data.currentmods.push(e.replace(uc, '')))
       }
     }
+
     return data
   }
 
@@ -149,6 +155,7 @@ export default class ModifierBucketEditor extends Application {
       const width = parseFloat(html.css('width').replace('px', ''))
 
       let left = 0
+
       if (positionSetting === 'left') {
         left = Math.max(buttonLeft + buttonWidth / 2 - width / 2, 10)
       } else {
@@ -179,11 +186,13 @@ export default class ModifierBucketEditor extends Application {
 
     // get the tabs
     let tabs = html.find('.tabbedcontent')
+
     this.numberOfTabs = tabs.length
 
     // make the current tab visible
     for (let index = 0; index < tabs.length; index++) {
       const element = tabs[index]
+
       if (index === this.tabIndex) {
         element.classList.remove('invisible')
       } else {
@@ -202,6 +211,7 @@ export default class ModifierBucketEditor extends Application {
     } else {
       this.tabIndex--
     }
+
     this.render(false)
   }
 
@@ -211,11 +221,13 @@ export default class ModifierBucketEditor extends Application {
     } else {
       this.tabIndex = 0
     }
+
     this.render(false)
   }
 
   _onClickClose(ev) {
     let name = ev.currentTarget.id
+
     if (name === this._currentlyShowing) {
       ev.currentTarget.checked = false
       this._currentlyShowing = null
@@ -232,6 +244,7 @@ export default class ModifierBucketEditor extends Application {
     // find the toggle input above this element and remove the checked property
     let div = $(ev.currentTarget).parent().closest('.collapsible-content')
     let toggle = div.siblings('input')
+
     $(toggle).prop('checked', false)
     this._onSimpleList(ev, '')
   }
@@ -256,6 +269,7 @@ export default class ModifierBucketEditor extends Application {
     event.stopPropagation()
     let element = event.currentTarget
     let parsed = parselink(element.value)
+
     if (!!parsed.action && parsed.action.type === OtfActionType.modifier) {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else {
@@ -341,6 +355,7 @@ const ModifierLiterals = {
         game.i18n.localize('GURPS.modifierAfflictionRetch'),
       ]
     }
+
     return this._statusModifiers
   },
 
@@ -405,6 +420,7 @@ const ModifierLiterals = {
 
       for (let loc in HitLocations.hitlocationRolls) {
         let hit = HitLocations.hitlocationRolls[loc]
+
         // Only include the items in the menu is skip is false (or empty)
         if (!hit.skip) {
           let parts = [
@@ -413,13 +429,15 @@ const ModifierLiterals = {
             game.i18n.localize('GURPS.hitLocation' + loc),
           ]
 
-          if (!!hit.desc) {
+          if (hit.desc) {
             parts.push(`[${hit.desc.map(it => game.i18n.localize(it)).join(', ')}]`)
           }
+
           this._HitLocationModifiers.push(parts.join(' '))
         }
       }
     }
+
     return this._HitLocationModifiers
   },
 

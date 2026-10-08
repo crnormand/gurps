@@ -340,6 +340,8 @@
       "rollTotalHits": "<span class='roll-value'>{rofrcl}</span> acertos possíveis<br/>devido à CdT ({rof}) e o RCO ({rcl}). ({link})",
       "setting": {
         "hint": "Estas configurações controlam vários aspectos do combate no jogo.",
+        "initiative": "Combate: Fórmula da Sequência de Turnos",
+        "initiativeHint": "Trata-se da fórmula utilizada pelo Foundry para determinar a ordem dos turnos no combate. Aviso: Só mude isto se você souber o que está fazendo! Nós não avaliamos o que está aqui para determinar se está correto ou não. Deixe este campo em branco para redefinir a fórmula para a Sequência de Combate do GURPS, B362.",
         "maneuver": {
           "allowRoll": "Permitir Rolagem baseada na Manobra",
           "allowRollHint": "Durante o combate, o sistema verificará se a rolagem é válida com base na manobra selecionada.",
@@ -369,6 +371,11 @@
         "optionsHint": "Escolha as opções de combate usadas por este mundo. Uma manobra desativada não é mais exibida em nenhum lugar onde uma manobra possa ser escolhida — Rastreador de Combate, HUD do Token e ficha de personagem — e seus modificadores são removidos do Balde de Modificadores.",
         "optionsManeuvers": "Manobras",
         "optionsNeedsOnTarget": "Fora de uso: Usar On Target está desativado acima.",
+        "rangeStrategy": "Configura a fórmula a ser utilizada para calcular as penalidades de distância.",
+        "rangeStrategyHint": "Combate: Estratégia de modificador de Distância",
+        "rangeStrategyRangeBands": "Bandas de Distância de Monster Hunters 2",
+        "rangeStrategyStandard": "Tabela de Tamanho e Velocidade/Distância",
+        "rangeStrategyTenPenalties": "-1 para cada 10 hexágonos/jardas/metros",
         "title": "Configurações de Combate",
         "useRelativeSizeInMelee": "Usar Diferença de Modificador de Tamanho no Corpo a Corpo",
         "useRelativeSizeInMeleeHint": "Aplicar a diferença no Modificador de Tamanho (SM) entre atacante e defensor nas rolagens de ataque corpo a corpo."
@@ -1285,7 +1292,6 @@
     "settingCheckConditionalModifiers": "Verificar modificadores condicionais na ficha do ator",
     "settingColorSheetMenuHint": "Configuração de Cor da Planilha de Personagem",
     "settingColorSheetMenuTitle": "Cor da Planilha de Personagem",
-    "settingCombatInitiative": "Combate: Fórmula da Sequência de Turnos",
     "settingConvertRanged": "Ator: Converter distância 'x2/x5' para jardas",
     "settingDamageAD": "Dano: Divisores de Armadura",
     "settingDamageBluntTrauma": "Dano: Trauma por Impacto",
@@ -1314,7 +1320,6 @@
     "settingHintBlockImport": "Se marcado, o botão 'Importar' só será exibido na planilha de personagem caso o jogador em questão possuir o nível de permissão 'Confiável', 'Assistente' ou 'GameMaster'",
     "settingHintCalculateEnc": "Se marcado, o nível de Base de Carga será configurado automaticamente baseado no equipamento portado (e você não poderá modificar o nível de Base de Carga manualmente). Se desmarcado, você pode modificar o nível de Base de Carga clicando no nível desejado.",
     "settingHintCheckConditionalModifiers": "Se ativado, o sistema procurará modificadores condicionais na ficha do ator e os adicionará à janela pop-up de modificadores de efeito.",
-    "settingHintCombatInitiative": "Trata-se da fórmula utilizada pelo Foundry para determinar a ordem dos turnos no combate. Aviso: Só mude isto se você souber o que está fazendo! Nós não avaliamos o que está aqui para determinar se está correto ou não. Deixe este campo em branco para redefinir a fórmula para a Sequência de Combate do GURPS, B362.",
     "settingHintConvertRanged": "Se marcado, os campos de distância na forma 'xN' ou 'xN/xM' serão multiplicados pela ST do personagem para determinar a distância real para uma arma de arremesso. NOTA: Isto só acontece numa importação.",
     "settingHintDamagCondInjury": "Da Pyramid #3/120: Lesão Condicional retira os Pontos de Vida do jogo como base para acompanhar as lesões, e os substitui por método baseado em efeitos, para fins de lesão.",
     "settingHintDamageAD": "Se marcado, ajusta a RD do alvo de acordo com o divisor de armadura do ataque.",
@@ -1337,7 +1342,6 @@
     "settingHintPlayerChatPrivate": "Se marcado, a maioria dos comandos de chat (ex.: /hp, /fp, /qty, etc.) serão exibidas como sussurros para o jogador (ao invés de uma mensagem pública). Se você confia nos seus jogadores e não gosta de ver o chat repleto de comandos de chat, desative isto.",
     "settingHintPortraitHPTinting": "Exibir sobreposição de tonalidade vermelha em retratos de personagem baseado em perda de PV na planilha Moderna.",
     "settingHintQtyItems": "Se marcado, um pequeno ícone vai aparecer na frente de equipamento cuja QTD/Contagem será mantida durante importações",
-    "settingHintRangeStrategy": "Configura a fórmula a ser utilizada para calcular as penalidades de distância.",
     "settingHintRemoveUnequipped": "Se marcado, os nomes dos ataques Corpo a Corpo e à Distância serão comparados à lista de equipamentos portados, e se for encontrada alguma equivalência, o ataque será listado somente se estiver Equipado",
     "settingHintSheetDetail": "Seleciona a planilha de personagem que você deseja que seja a 'Planilha Rápida'. Ela será exibida na barra de título e o usuário pode escolher entre ela e a 'Planilha completa'",
     "settingHintShowChatReeling": "Quando marcado, quaisquer mudanças no status de algum ator em relação ao estado de Cambaleando ou Cansado será exibida como mensagem de chat.",
@@ -1389,10 +1393,6 @@
     "settingPlayerChatPrivate": "Comandos privados no Chat de Jogadores",
     "settingPortraitHPTinting": "Tonalidade de PV do Retrato",
     "settingQtyItems": "Ator: Marcar QTD/Contagem salva",
-    "settingRangeStrategy": "Combate: Estratégia de modificador de Distância",
-    "settingRangeStrategyRangeBands": "Bandas de Distância de Monster Hunters 2",
-    "settingRangeStrategyStandard": "Tabela de Tamanho e Velocidade/Distância",
-    "settingRangeStrategyTenPenalties": "-1 para cada 10 hexágonos/jardas/metros",
     "settingRemoveUnequipped": "Ator: Remover armas Não-Equipadas das listas de armas Corpo a Corpo e à Distância",
     "settings": {
       "physicalDiceTooltip": "ex.: 1,2,3 ou 6"

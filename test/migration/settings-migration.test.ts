@@ -358,9 +358,8 @@ describe('migrateLegacySettings', () => {
     it('rejects when deleting a migrated legacy setting fails', async () => {
       const setting = createMockSetting('gurps.settingToDelete', 'value', 'id-1')
 
-      ;(setting as unknown as { delete: jest.MockedFunction<() => Promise<void>> }).delete.mockRejectedValueOnce(
-        new Error('Delete failed')
-      )
+      const settingMock = setting as unknown as { delete: jest.MockedFunction<() => Promise<void>> }
+      settingMock.delete.mockRejectedValueOnce(new Error('Delete failed'))
       mockStorage.contents = [setting]
 
       const migrations: SettingMigration[] = [

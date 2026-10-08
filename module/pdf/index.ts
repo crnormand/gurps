@@ -1,7 +1,8 @@
 import { GurpsModule } from 'module/gurps-module.js'
+
 import { renderJournalPagePDFSheet, renderJournalPageSheet } from './journal.js'
 import { SJGProductMappings } from './pdf-ref-mappings.ts'
-import { handleOnPdf, handlePdf } from './pdf-refs.ts'
+import { handleOnPdf, handlePdf } from './pdf-refs.js'
 import { registerPDFSettingsApp } from './settings-app.ts'
 import { getBasicSetPDFSetting, isOpenFirstPDFSetting, registerPDFSettings } from './settings.js'
 import { registerPDFSheet } from './sheet.js'
@@ -10,8 +11,10 @@ import { registerPDFSheet } from './sheet.js'
 export interface PdfModuleType extends GurpsModule {
   handlePdf: typeof handlePdf
   handleOnPdf: (event: any) => void
-  isOpenFirstPDFSetting: boolean
-  basicSetPDFSetting: string
+  settings: {
+    isOpenFirstPDFSetting: boolean
+    basicSetPDFSetting: string
+  }
 }
 
 function init(): void {
@@ -41,10 +44,12 @@ export const Pdf: PdfModuleType = {
   init,
   handlePdf,
   handleOnPdf,
-  get isOpenFirstPDFSetting(): boolean {
-    return isOpenFirstPDFSetting()
-  },
-  get basicSetPDFSetting(): string {
-    return getBasicSetPDFSetting()
+  settings: {
+    get isOpenFirstPDFSetting(): boolean {
+      return isOpenFirstPDFSetting()
+    },
+    get basicSetPDFSetting(): string {
+      return getBasicSetPDFSetting()
+    },
   },
 }
