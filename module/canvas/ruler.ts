@@ -1,5 +1,5 @@
-import { Length, LengthUnit } from '../data/common/index.js'
 import { Combat } from '../combat/index.js'
+import { Length, LengthUnit } from '../data/common/index.js'
 
 function registerRuler() {
   class GurpsRuler extends foundry.canvas.interaction.Ruler {

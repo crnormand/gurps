@@ -1,5 +1,7 @@
 import { DeepPartial } from 'fvtt-types/utils'
+
 import { GurpsSettingsApplication } from '../utilities/gurps-settings-application.js'
+
 import { ALWAYS_IN_PLAY, CombatOptionSection, configurableOptions, isManeuverEnabled } from './combat-options.ts'
 import Maneuvers from './maneuver.js'
 import { getCombatOptionSettings } from './settings.ts'
@@ -147,6 +149,7 @@ class CombatSettingsApplication extends GurpsSettingsApplication {
       const needsOnTarget = row.dataset.requiresOnTarget === 'true' && !useOnTarget
 
       const checkbox = row.querySelector<HTMLInputElement>('input[type="checkbox"]')
+
       if (checkbox) checkbox.disabled = needsOnTarget
 
       row.classList.toggle('needs-on-target', needsOnTarget)

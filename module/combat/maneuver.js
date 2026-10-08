@@ -41,15 +41,11 @@ class Maneuver {
     data.defense = data.defense || DEFENSE_ANY
     data.fullturn = !!data.fullturn
     data.img = Maneuver.filepath + data.img
-    data.altImg = !!data.altImg ? Maneuver.filepath + data.altImg : null
+    data.altImg = data.altImg ? Maneuver.filepath + data.altImg : null
     data.introducedBy = data.introducedBy ?? null
     this._data = data
   }
 
-  /**
-   * Based on the world settings, return the maneuver's image or its alternate image if the world settings say to use alternate images.
-   * @returns {string}
-   * */
   get img() {
     return this._data.img
   }
@@ -58,7 +54,6 @@ class Maneuver {
     return this._data.move
   }
 
-  /** @returns {ManeuverData} */
   get data() {
     return {
       id: MANEUVER,
@@ -82,7 +77,6 @@ class Maneuver {
     }
   }
 
-  /** @returns {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData').EffectChangeDataConstructorData[]} */
   get changes() {
     let changes = []
 
@@ -382,9 +376,11 @@ export default class Maneuvers {
     const own = (map, key) => (Object.hasOwn(map, key) ? map[key] : undefined)
 
     const maneuver = own(fromSourcesInUse(), maneuverText) ?? own(maneuvers, maneuverText)
+
     if (maneuver) return maneuver.data
 
     console.warn(`GURPS | Unrecognized maneuver "${maneuverText}", falling back to Do Nothing`)
+
     return maneuvers.do_nothing.data
   }
 
@@ -439,9 +435,10 @@ export default class Maneuvers {
    */
   static getAllInPlayData(keep = null) {
     /** @type {Record<string, ManeuverData>} */
-    let data = {}
+    const data = {}
     const every = Maneuvers.getAllPossible()
     const inPlay = Maneuvers.getAllInPlay()
+
     for (const key of Object.keys(every)) {
       // Prefer the in-play instance: with On Target on, Aim has a different allowed move.
       if (key in inPlay) data[key] = inPlay[key].data
@@ -449,16 +446,6 @@ export default class Maneuvers {
     }
 
     return data
-  }
-
-  /**
-   * @param {string} img
-   * @returns {ManeuverData[]|undefined}
-   */
-  static getByIcon(img) {
-    return Object.values(fromSourcesInUse())
-      .filter(it => it.img === img)
-      .map(it => it.data)
   }
 
   /**

@@ -396,7 +396,6 @@ data-react-profiling="false"
         <div itemscope itemtype="http://schema.org/SoftwareSourceCode" class="">
     <main id="js-repo-pjax-container" >
 
-
   <div id="repository-container-header" data-turbo-replace hidden ></div>
 
 <turbo-frame id="repo-content-turbo-frame" target="_top" data-turbo-action="advance" class="">

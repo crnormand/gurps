@@ -30,12 +30,16 @@ export class StatusEffect {
 
     for (const key in this.rawStatusEffects) {
       let value = this.rawStatusEffects[key]
+
       if (this.useActiveEffects) {
         let activeEffectData = _getActiveEffectsData(key)
+
         value = foundry.utils.mergeObject(value, activeEffectData)
       }
+
       this._statusEffects[key] = value
     }
+
     // Hack to add back in 'dead' status (to allow dead icon to show on token)
     this._statusEffects['dead'] = { id: 'dead', name: 'EFFECT.StatusDead', img: 'icons/svg/skull.svg' }
 
@@ -71,8 +75,10 @@ export class StatusEffect {
     let postures = Object.keys(this._statusEffects).reduce((accumulator, key) => {
       if (foundry.utils.getProperty(this._statusEffects[key], 'flags.gurps.effect.type') == 'posture')
         accumulator[key] = this._statusEffects[key]
+
       return accumulator
     }, {})
+
     return postures
   }
 
@@ -1156,11 +1162,15 @@ const _getActiveEffectsData = function (id) {
   }
 
   let data = activeEffectsData[id]
+
   data?.changes.map(change => {
     const tags = [`#${id}`, ...(change.tags || []).map(tag => `#${tag}`)].join(' ')
+
     change.value = `${change.value} ${tags} @combatmod`
+
     return change
   })
+
   return data
 }
 
