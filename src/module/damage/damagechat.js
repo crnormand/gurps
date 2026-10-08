@@ -1,6 +1,7 @@
 'use strict'
 
-import { calculateMessageMode, addBucketToDamage } from '@module/otf/dieroll.js'
+import { addBucketToDamage } from '@module/damage/addBucketToDamage.js'
+import { calculateMessageMode } from '@module/otf/dieroll.js'
 import { FoundryUtils } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import selectTarget from '@module/util/select-target.js'

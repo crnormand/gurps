@@ -72,6 +72,7 @@ type ControlRollAction = {
   type: typeof OtfActionType.controlRoll
   target: number
   desc: string
+  mod?: string
   blindroll: boolean
   sourceId?: string
 } & BaseAction
@@ -132,6 +133,8 @@ type AttackBaseAction = {
 
 export type AttackAction = {
   type: typeof OtfActionType.attack
+  followon?: string
+  shots?: number
 } & AttackBaseAction
 
 type AttackDamageAction = {

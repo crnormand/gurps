@@ -1,8 +1,10 @@
 import { MeleeAttackModel, RangedAttackModel } from '@module/action/index.js'
 import { ActionType } from '@module/action/types.js'
+import { ItemType } from '@module/item/types.js'
+import { OtfActionType, OtfRollAction } from '@module/otf/types.js'
 import {
   getTagsForRoll,
-  getRollTypeFromData,
+  getRollTypeFromAction,
   ROLL_TYPE,
   taggedModToApply,
 } from '@module/tagged-modifiers/tagged-modifiers.js'
@@ -13,6 +15,7 @@ const defaultSettings = {
   checkReactions: true,
   useSpellCollegeAsTag: false,
   allRolls: 'all',
+
   allAttributesRolls: 'attribute',
   allSkillRolls: 'skill',
   allSpellRolls: 'spell',
@@ -48,7 +51,7 @@ describe('getTagsForRoll', () => {
     [ROLL_TYPE.DX, 'dx'],
     [ROLL_TYPE.HT, 'ht'],
   ])('finds the appropriate tag for %s rolls', ([rollType, expected]) => {
-    const result = getTagsForRoll(defaultSettings, rollType as ROLL_TYPE, {})
+    const result = getTagsForRoll(defaultSettings, rollType as ROLL_TYPE)
 
     expect(result).toHaveLength(3)
     expect(result).toContain('attribute')
@@ -68,7 +71,7 @@ describe('getTagsForRoll', () => {
     [ROLL_TYPE.SPELL, 'spell'],
     [ROLL_TYPE.DAMAGE, 'damage'],
   ])('finds the appropriate tag for %s rolls', ([rollType, expected]) => {
-    const result = getTagsForRoll(defaultSettings, rollType as ROLL_TYPE, {})
+    const result = getTagsForRoll(defaultSettings, rollType as ROLL_TYPE)
 
     expect(result).toHaveLength(2)
     expect(result).toContain(expected)
@@ -76,7 +79,7 @@ describe('getTagsForRoll', () => {
   })
 
   test('finds the appropriate tag for taste/smell rolls', () => {
-    const result = getTagsForRoll(defaultSettings, ROLL_TYPE.TASTE_SMELL, {})
+    const result = getTagsForRoll(defaultSettings, ROLL_TYPE.TASTE_SMELL)
 
     expect(result).toHaveLength(3)
     expect(result).toContain('taste')
@@ -89,7 +92,7 @@ describe('getTagsForRoll', () => {
     [ROLL_TYPE.DODGE, 'dodge'],
     [ROLL_TYPE.BLOCK, 'block'],
   ])('finds the appropriate tag for %s rolls', ([rollType, expected]) => {
-    const result = getTagsForRoll(defaultSettings, rollType as ROLL_TYPE, {})
+    const result = getTagsForRoll(defaultSettings, rollType as ROLL_TYPE)
 
     expect(result).toHaveLength(3)
     expect(result).toContain('defense')
@@ -101,7 +104,7 @@ describe('getTagsForRoll', () => {
     [ROLL_TYPE.RANGED, 'ranged'],
     [ROLL_TYPE.MELEE, 'melee'],
   ])('finds the appropriate tag for %s rolls', ([rollType, expected]) => {
-    const result = getTagsForRoll(defaultSettings, rollType as ROLL_TYPE, {})
+    const result = getTagsForRoll(defaultSettings, rollType as ROLL_TYPE)
 
     expect(result).toHaveLength(3)
     expect(result).toContain('hit')
@@ -115,7 +118,7 @@ describe('getTagsForRoll', () => {
         modifierTags: new Set(['itemTag1', 'itemTag2']),
       },
     }
-    const result = getTagsForRoll(defaultSettings, ROLL_TYPE.IQ, { obj: item })
+    const result = getTagsForRoll(defaultSettings, ROLL_TYPE.IQ, item as Item.Implementation)
 
     expect(result).toContain('itemTag1')
     expect(result).toContain('itemTag2')
@@ -124,10 +127,15 @@ describe('getTagsForRoll', () => {
   test('adds spell college from the provided item', () => {
     const item = {
       system: {
-        colleges: new Set(['college1', 'college2']),
+        college: new Set(['college1', 'college2']),
       },
+      isOfType: (x: ItemType) => x === ItemType.Spell,
     }
-    const result = getTagsForRoll({ ...defaultSettings, useSpellCollegeAsTag: true }, ROLL_TYPE.SPELL, { obj: item })
+    const result = getTagsForRoll(
+      { ...defaultSettings, useSpellCollegeAsTag: true },
+      ROLL_TYPE.SPELL,
+      item as unknown as Item.Implementation
+    )
 
     expect(result).toContain('college1')
     expect(result).toContain('college2')
@@ -136,86 +144,118 @@ describe('getTagsForRoll', () => {
   test('adds spell college from the provided item only for spells', () => {
     const item = {
       system: {
-        colleges: new Set(['college1', 'college2']),
+        college: new Set(['college1', 'college2']),
       },
+      isOfType: (x: ItemType) => x === ItemType.Spell,
     }
-    const result = getTagsForRoll({ ...defaultSettings, useSpellCollegeAsTag: true }, ROLL_TYPE.SKILL, { obj: item })
+    const result = getTagsForRoll(
+      { ...defaultSettings, useSpellCollegeAsTag: true },
+      ROLL_TYPE.SKILL,
+      item as unknown as Item.Implementation
+    )
 
     expect(result).not.toContain('college1')
     expect(result).not.toContain('college2')
   })
 })
 
-describe('getRollTypeFromData', () => {
+describe('getRollTypeFromAction', () => {
   test.for([
-    ['[@YNPi9JgE440B2egj@WILL]', ROLL_TYPE.WILL],
-    ['[@TKhYpsMQ4KmECA5z@M:" (Swung)"]', ROLL_TYPE.MELEE],
-    ['[@TKhYpsMQ4KmECA5z@R:" (Thrown)"]', ROLL_TYPE.RANGED],
-    ['[@TKhYpsMQ4KmECA5z@D:" (Swung)"]', ROLL_TYPE.DAMAGE],
-  ])('Extracts Roll Type from chat thing', ([chatThing, expected]) => {
-    const result = getRollTypeFromData(chatThing, undefined, {})
+    [{ type: OtfActionType.weaponParry, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.PARRY],
+    [{ type: OtfActionType.weaponBlock, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.BLOCK],
+    [{ type: OtfActionType.damage, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.DAMAGE],
+    [{ type: OtfActionType.derivedDamage, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.DAMAGE],
+    [{ type: OtfActionType.roll, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.UNKNOWN],
+    [{ type: OtfActionType.derivedRoll, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.UNKNOWN],
+    [{ type: OtfActionType.controlRoll, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.CR],
+    [{ type: OtfActionType.attack, accumulate: false, formula: '3d', isMelee: true }, {isOfType: (x: ActionType) => x === ActionType.MeleeAttack}, ROLL_TYPE.MELEE],
+    [{ type: OtfActionType.attack, accumulate: false, formula: '3d', isMelee: false }, {isOfType: (x: ActionType) => x === ActionType.RangedAttack}, ROLL_TYPE.RANGED],
+    [{ type: OtfActionType.skillSpell, accumulate: false, formula: '3d', isSkillOnly: false , isSpellOnly: true }, undefined, ROLL_TYPE.SPELL],
+    [{ type: OtfActionType.skillSpell, accumulate: false, formula: '3d', isSkillOnly: true, isSpellOnly: false }, undefined, ROLL_TYPE.SKILL],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'ST', attrkey: 'ST' }, undefined, ROLL_TYPE.ST],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'st', attrkey: 'ST' }, undefined, ROLL_TYPE.ST],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'St', attrkey: 'ST' }, undefined, ROLL_TYPE.ST],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'DX', attrkey: 'DX' }, undefined, ROLL_TYPE.DX],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'IQ', attrkey: 'IQ' }, undefined, ROLL_TYPE.IQ],
+    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'HT', attrkey: 'HT' }, undefined, ROLL_TYPE.HT],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'WILL', attrkey: 'WILL' },
+      undefined,
+      ROLL_TYPE.WILL,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'PER', attrkey: 'PER' },
+      undefined,
+      ROLL_TYPE.PER,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Dodge', attrkey: 'DODGE' },
+      undefined,
+      ROLL_TYPE.DODGE,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Vision', attrkey: 'VISION' },
+      undefined,
+      ROLL_TYPE.VISION,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Hearing', attrkey: 'HEARING' },
+      undefined,
+      ROLL_TYPE.HEARING,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'Touch', attrkey: 'TOUCH' },
+      undefined,
+      ROLL_TYPE.TOUCH,
+    ],
+    [
+      {
+        type: OtfActionType.attribute,
+        accumulate: false,
+        formula: '3d',
+        attribute: 'Taste Smell',
+        attrkey: 'TASTE SMELL',
+      },
+      undefined,
+      ROLL_TYPE.TASTE_SMELL,
+    ],
+    [
+      {
+        type: OtfActionType.attribute,
+        accumulate: false,
+        formula: '3d',
+        attribute: 'tastesmell',
+        attrkey: 'TASTESMELL',
+      },
+      undefined,
+      ROLL_TYPE.TASTE_SMELL,
+    ],
+    [
+      {
+        type: OtfActionType.attribute,
+        accumulate: false,
+        formula: '3d',
+        attribute: 'Fright Check',
+        attrkey: 'FRIGHT CHECK',
+      },
+      undefined,
+      ROLL_TYPE.FRIGHT_CHECK,
+    ],
+    [
+      {
+        type: OtfActionType.attribute,
+        accumulate: false,
+        formula: '3d',
+        attribute: 'frightcheck',
+        attrkey: 'FRIGHTCHECK', 
+      },
+      undefined,
+      ROLL_TYPE.FRIGHT_CHECK,
+    ],
+  ])('Extracts Roll Type from Otf Action', ([action, attack, expected]) => {
+    const result = getRollTypeFromAction(action as unknown as OtfRollAction, attack as unknown as MeleeAttackModel | RangedAttackModel | undefined)
 
     expect(result).toBe(expected)
-  })
-
-  test('Returns unknown for invalid chat thing', () => {
-    const result = getRollTypeFromData('invalid_chat_thing', undefined, {})
-
-    expect(result).toBe(ROLL_TYPE.UNKNOWN)
-  })
-
-  test('Assumes damage roll if no chatthing and no attack is provided', () => {
-    const result = getRollTypeFromData('', undefined, {})
-
-    expect(result).toBe(ROLL_TYPE.DAMAGE)
-  })
-
-  test('Tests for melee attack if no chatthing is provided', () => {
-    const result = getRollTypeFromData(
-      '',
-      {
-        isOfType: (type: ActionType) => type === ActionType.MeleeAttack,
-      } as unknown as MeleeAttackModel,
-      {}
-    )
-
-    expect(result).toBe(ROLL_TYPE.MELEE)
-  })
-
-  test('Tests for ranged attack if no chatthing is provided', () => {
-    const result = getRollTypeFromData(
-      '',
-      {
-        isOfType: (type: ActionType) => type === ActionType.RangedAttack,
-      } as unknown as RangedAttackModel,
-      {}
-    )
-
-    expect(result).toBe(ROLL_TYPE.RANGED)
-  })
-
-  test('Tests for damage action if no chatthing is provided', () => {
-    const result = getRollTypeFromData(
-      '',
-      {
-        isOfType: (type: ActionType) => type === ActionType.RangedAttack,
-      } as unknown as RangedAttackModel,
-      { action: { type: 'damage' } }
-    )
-
-    expect(result).toBe(ROLL_TYPE.DAMAGE)
-  })
-
-  test('Tests for deriveddamage action if no chatthing is provided', () => {
-    const result = getRollTypeFromData(
-      '',
-      {
-        isOfType: (type: ActionType) => type === ActionType.RangedAttack,
-      } as unknown as RangedAttackModel,
-      { action: { type: 'deriveddamage' } }
-    )
-
-    expect(result).toBe(ROLL_TYPE.DAMAGE)
   })
 })
 
@@ -225,14 +265,21 @@ vi.stubGlobal('game', {
 
 describe('taggedModToApply', () => {
   test.for([
-    ['[@YNPi9JgE440B2egj@IQ]', ['+4 to IQ rolls #iq']],
-    ['[@TKhYpsMQ4KmECA5z@M:" (Swung)"]', ['+1 to hit in melee #melee', '+3 to hit #hit']],
-    ['[@TKhYpsMQ4KmECA5z@R:" (Thrown)"]', ['+2 to hit in ranged #ranged', '+3 to hit #hit']],
-    ['[@TKhYpsMQ4KmECA5z@D:" (Swung)"]', []],
-  ])('selects appropriate modifiers based on roll type', ([chatThing, expected]) => {
+    [{ type: OtfActionType.attribute, attribute: 'IQ', attrkey: 'IQ' }, undefined, ['+4 to IQ rolls #iq']],
+    [{ type: OtfActionType.attack, isMelee: true }, { isOfType: (x: ActionType) => x === ActionType.MeleeAttack }, ['+1 to hit in melee #melee', '+3 to hit #hit']],
+    [{ type: OtfActionType.attack, isMelee: false }, { isOfType: (x: ActionType) => x === ActionType.RangedAttack }, ['+2 to hit in ranged #ranged', '+3 to hit #hit']],
+    [{ type: OtfActionType.damage }, undefined, []],
+  ])('selects appropriate modifiers based on roll type', ([action, attack, expected]) => {
     const allMods = ['+1 to hit in melee #melee', '+2 to hit in ranged #ranged', '+3 to hit #hit', '+4 to IQ rolls #iq']
 
-    const result = taggedModToApply(chatThing as string, undefined, { obj: undefined }, defaultSettings, allMods, false)
+    const result = taggedModToApply(
+      action as unknown as OtfRollAction,
+      undefined,
+      attack as unknown as MeleeAttackModel | RangedAttackModel | undefined,
+      defaultSettings,
+      allMods,
+      false
+    )
 
     expect(result.modsToApply.sort()).toEqual((expected as Array<string>).sort())
   })
@@ -248,9 +295,9 @@ describe('taggedModToApply', () => {
     ]
 
     const result = taggedModToApply(
-      '[@YNPi9JgE440B2egj@IQ]',
+      { type: OtfActionType.attribute, attribute: 'IQ', attrkey: 'IQ' } as unknown as OtfRollAction,
       undefined,
-      { obj: undefined },
+      undefined,
       defaultSettings,
       allMods,
       inCombat as boolean
@@ -260,17 +307,20 @@ describe('taggedModToApply', () => {
   })
 
   test.for([
-    ['-4', ['-4 for bulk #ranged #maneuver @man:move_and_attack']],
-    ['-3', ['-3 for bulk #ranged #maneuver @man:move_and_attack']],
-    ['', ['-2 for bulk #ranged #maneuver @man:move_and_attack']],
-    ['-1', ['-2 for bulk #ranged #maneuver @man:move_and_attack']],
-  ])('adjusts bulk penalty for ranged attack if bulk < -2', ([bulkText, expected]) => {
+    [-4, ['-4 for bulk #ranged #maneuver @man:move_and_attack']],
+    [-3, ['-3 for bulk #ranged #maneuver @man:move_and_attack']],
+    [0, ['-2 for bulk #ranged #maneuver @man:move_and_attack']],
+    [-1, ['-2 for bulk #ranged #maneuver @man:move_and_attack']],
+  ])('adjusts bulk penalty for ranged attack if bulk < -2', ([bulk, expected]) => {
     const allMods = ['-2 for bulk #ranged #maneuver @man:move_and_attack']
 
     const result = taggedModToApply(
-      '[@TKhYpsMQ4KmECA5z@R:" (Thrown)"]',
+      { type: OtfActionType.attack, isMelee: false } as unknown as OtfRollAction,
       undefined,
-      { obj: { bulkText: bulkText } },
+      {
+        bulk: { normal: bulk },
+        isOfType: (x: ActionType) => x === ActionType.RangedAttack,
+      } as unknown as RangedAttackModel,
       defaultSettings,
       allMods,
       true
@@ -287,9 +337,9 @@ describe('taggedModToApply', () => {
     ]
 
     const result = taggedModToApply(
-      '[@TKhYpsMQ4KmECA5z@P:"Katana (Thrust)"]',
+      { type: OtfActionType.weaponParry, isMelee: true } as unknown as OtfRollAction,
       undefined,
-      { obj: { uuid: 'Actor.TKhYpsMQ4KmECA5z.Item.7VGrPxDSS5epo5dD.Action.1P8If0c1CNiqZZu5' } },
+      { uuid: 'Actor.TKhYpsMQ4KmECA5z.Item.7VGrPxDSS5epo5dD.Action.1P8If0c1CNiqZZu5', isOfType: (x: ActionType) => x === ActionType.MeleeAttack } as unknown as MeleeAttackModel,
       defaultSettings,
       allMods,
       true
@@ -310,9 +360,9 @@ describe('taggedModToApply', () => {
     ]
 
     const result = taggedModToApply(
-      '[@TKhYpsMQ4KmECA5z@R:"Large Knife (Thrown)"]',
+      { type: OtfActionType.attack, isMelee: false } as unknown as OtfRollAction,
       undefined,
-      { obj: { uuid: '@Actor.TKhYpsMQ4KmECA5z.Item.T6jZE3aTfcbGIAb0.Action.Xx6F0fLdynnNhQon' } },
+      { uuid: '@Actor.TKhYpsMQ4KmECA5z.Item.T6jZE3aTfcbGIAb0.Action.Xx6F0fLdynnNhQon', isOfType: (x: ActionType) => x === ActionType.RangedAttack } as unknown as RangedAttackModel,
       defaultSettings,
       allMods,
       true
