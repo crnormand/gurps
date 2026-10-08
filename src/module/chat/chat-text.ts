@@ -18,7 +18,7 @@ export class ChatTextChatProcessor extends ChatProcessor {
     line = line.trim()
     const result = line.replace(REGEX, '$1')
 
-    ChatMessage.create({ content: result })
+    await ChatMessage.create({ content: result })
 
     return result
   }

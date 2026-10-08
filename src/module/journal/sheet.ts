@@ -26,7 +26,7 @@ interface PdfRenderContext extends foundry.applications.sheets.journal.JournalEn
   v13: boolean
 }
 
-interface PdfRende4rOptions extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet.RenderOptions {
+interface PdfRenderOptions extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet.RenderOptions {
   params?: URLSearchParams
   pageNumber?: number
   v13?: boolean
@@ -35,7 +35,7 @@ interface PdfRende4rOptions extends foundry.applications.sheets.journal.JournalE
 export class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEntryPagePDFSheet<
   PdfRenderContext,
   PdfConfiguration,
-  PdfRende4rOptions
+  PdfRenderOptions
 > {
   static override DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
@@ -55,7 +55,7 @@ export class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEn
   /** @inheritDoc */
   static override VIEW_PARTS = {
     content: {
-      template: 'systems/gurps/templates/pdf/view.hbs',
+      template: 'systems/gurps/templates/journal/view.hbs',
       root: true,
     },
   }
@@ -63,7 +63,7 @@ export class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEn
   override async _prepareContext(options: any) {
     let context = await super._prepareContext(options)
 
-    const page = (this.options.bookPageReference?.page || 0) + (this.document.system.offset || 0)
+    const page = (this.options.bookPageReference?.page ?? 5) + (this.document.system.offset || 0)
 
     context = {
       ...context,

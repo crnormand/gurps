@@ -18,6 +18,3 @@ export function registerPDFSettingsApp() {
     restricted: false,
   })
 }
-//   name: 'GURPS.pdf.settingsName',
-//   hint: 'GURPS.pdf.settingsHint',
-//   label: 'GURPS.pdf.settingsButton',

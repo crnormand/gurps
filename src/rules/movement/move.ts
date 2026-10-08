@@ -39,7 +39,7 @@ export namespace Movement {
    * leaves an exact 0.8 of Basic Move rather than a float a hair under or over it.
    */
   export function currentMove(basicMove: number, encumbranceLevel: number, conditions: MoveConditions = {}): number {
-    let move = Math.floor((basicMove * (10 - 2 * encumbranceLevel)) / 10)
+    let move = Math.max(1, Math.floor((basicMove * (10 - 2 * encumbranceLevel)) / 10))
 
     if (conditions.reeling) move = Math.ceil(move / 2)
     if (conditions.exhausted) move = Math.ceil(move / 2)

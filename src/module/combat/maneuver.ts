@@ -465,7 +465,7 @@ export default class Maneuvers {
    *   maneuver out from under an actor already performing it.
    * @returns {Record<string, ManeuverData>}
    */
-  static getAllInPlayData(keep = null) {
+  static getAllInPlayData(keep: string | null = null) {
     /** @type {Record<string, ManeuverData>} */
     const data: Record<string, ManeuverData> = {}
     const every: Record<string, Maneuver> = Maneuvers.getAllPossible()

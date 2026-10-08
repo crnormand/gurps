@@ -64,7 +64,7 @@ import { TrackerInstance } from '@module/resource-tracker/index.js'
 import { findAdDisad, findAttack, findSkill, findSkillSpell, findSpell } from '@module/util/find-item.js'
 import { AnyObject } from 'fvtt-types/utils'
 
-import { PdfReference } from '@/module/pdf/types.js'
+import { PdfReference } from '@/module/journal/types.js'
 
 export {}
 
