@@ -411,7 +411,7 @@ async function createRollChatMessage(
   }
 
   // @ts-expect-error: not sure how this is supposed to work
-  ChatMessage.applyRollMode(messageData, messageMode.value)
+  ChatMessage.applyMode(messageData, messageMode.value)
 
   const options = { messageMode: messageMode.value }
 
