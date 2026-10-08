@@ -371,8 +371,8 @@
         "optionsHint": "Escolha as opções de combate usadas por este mundo. Uma manobra desativada não é mais exibida em nenhum lugar onde uma manobra possa ser escolhida — Rastreador de Combate, HUD do Token e ficha de personagem — e seus modificadores são removidos do Balde de Modificadores.",
         "optionsManeuvers": "Manobras",
         "optionsNeedsOnTarget": "Fora de uso: Usar On Target está desativado acima.",
-        "rangeStrategy": "Configura a fórmula a ser utilizada para calcular as penalidades de distância.",
-        "rangeStrategyHint": "Combate: Estratégia de modificador de Distância",
+        "rangeStrategy": "Combate: Estratégia de modificador de Distância",
+        "rangeStrategyHint": "Configura a fórmula a ser utilizada para calcular as penalidades de distância."
         "rangeStrategyRangeBands": "Bandas de Distância de Monster Hunters 2",
         "rangeStrategyStandard": "Tabela de Tamanho e Velocidade/Distância",
         "rangeStrategyTenPenalties": "-1 para cada 10 hexágonos/jardas/metros",
