@@ -46,7 +46,7 @@ export class GurpsPDFSheet extends foundry.applications.sheets.journal.JournalEn
   static override EDIT_PARTS = {
     header: super.EDIT_PARTS?.header,
     content: {
-      template: 'systems/gurps/templates/pdf/edit.hbs',
+      template: 'systems/gurps/templates/journal/edit.hbs',
       classes: ['standard-form'],
     },
     footer: super.EDIT_PARTS?.footer,
