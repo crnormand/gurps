@@ -527,7 +527,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         dodge,
         current,
         currentmove,
-        currentsprint: currentmove * 1.2,
+        currentsprint: this.#getSprintMove(),
         currentdodge: dodge,
         currentmovedisplay: `${currentmove}`,
       })

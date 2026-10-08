@@ -36,15 +36,15 @@ describe('ChatTextProcessor', () => {
     expect(processor.matches('   /chat Hello')).toBeTruthy()
   })
 
-  it('should process chat text correctly', () => {
+  it('should process chat text correctly', async () => {
     const processor = new ChatTextChatProcessor()
 
     // Call the process method
-    const result = processor.process('/chat Hello')
+    const result = await processor.process('/chat Hello')
 
     // expect ChatMessage.create to be called with the correct arguments
     expect(ChatMessage.create).toHaveBeenCalledWith({ content: 'Hello' })
 
-    expect(result).resolves.toEqual('Hello')
+    expect(result).toEqual('Hello')
   })
 })
