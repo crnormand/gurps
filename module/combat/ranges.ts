@@ -4,8 +4,8 @@
 
 import { SizeAndSpeedRangeTable } from './size-speed-range-table.js'
 
+import { Modifier } from '../modifier-bucket/bucket-app.js'
 import { getRangeStrategy } from './settings.ts'
-import { Modifier } from 'module/modifier-bucket/bucket-app.js'
 
 /*
   Defines the range strategy used throughout the application. A range strategy

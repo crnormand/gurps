@@ -6,6 +6,7 @@ import { Combat } from '../combat/index.js'
 import GurpsWiring from '../gurps-wiring.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import { OtfActionType } from '../otf/types.js'
+
 /**
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
  * to the current or other actors.
