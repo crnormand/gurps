@@ -68,6 +68,7 @@ namespace RollConfirmationDialog {
     consumeActionColor?: string
     consumeActionLabel?: string
     targetRoll: string
+    modifiers: Modifier[]
     buttons: any[]
   }
   export interface DamageRenderContext extends foundry.applications.api.ApplicationV2.RenderContext {
@@ -90,6 +91,7 @@ namespace RollConfirmationDialog {
     targetRoll: string
     bucketRoll: string
     bucketRollColor: string
+    modifiers: Modifier[]
     buttons: any[]
   }
 
@@ -128,6 +130,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
       closeOnSubmit: true,
     },
     actions: {
+      removeMod: RollConfirmationDialog.#onClickRemoveMod,
       cancel: RollConfirmationDialog.#onCancelButton,
       roll: RollConfirmationDialog.#onRollButton,
     },
@@ -298,6 +301,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     const tokenImage = token?.document.texture.src ?? this._data.actor?.img ?? gmUser?.avatar ?? ''
     const isVideo = tokenImage.includes('webm') || tokenImage.includes('mp4')
     const tokenName = (token?.name || this._data.actor?.name) ?? gmUser?.name ?? ''
+    const modifiers = GURPS.ModifierBucket.modifierStack.modifierList
 
     if (this._data.type === 'roll') {
       const actor = this._data.actor
@@ -371,6 +375,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         consumeActionColor,
         consumeActionLabel,
         targetRoll: targetRoll,
+        modifiers,
         buttons: [
           {
             type: 'submit',
@@ -388,7 +393,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
           // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
         ],
       }
-    } else if (this._data.type === 'damage') {
+    } else if (this._data.type === 'damage')  {
       const action = this._data.action
       const displayFormula = this._data.displayFormula
       const damageType = GURPS.DamageTables.translate(action.damagetype)
@@ -435,6 +440,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         targetRoll,
         bucketRoll,
         bucketRollColor,
+        modifiers,
         buttons: [
           {
             type: 'submit',
@@ -470,6 +476,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         useMinDamage: false,
         bucketRoll: bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : '',
         bucketRollColor: bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8',
+        modifiers,
         buttons: [
           {
             type: 'submit',
@@ -502,6 +509,17 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     this.close({ submitted: true })
   }
 
+  static async #onClickRemoveMod(
+    this: RollConfirmationDialog,
+    event: PointerEvent,
+    target: HTMLElement
+  ): Promise<void> {
+    event.preventDefault()
+    const index = target.dataset.index
+
+    GURPS.ModifierBucket.modifierStack.removeIndex(index)
+    GURPS.ModifierBucket.refresh()
+  }
   /*
       Only one Roll Confirmation Dialog can be Open at one time, so we reuse the instance.
     */

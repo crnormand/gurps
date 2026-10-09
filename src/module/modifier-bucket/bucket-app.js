@@ -1,11 +1,9 @@
-import { addBucketToDamage } from '@module/damage/addBucketToDamage.js'
 import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { displayMod, generateUniqueId } from '@util/utilities.js'
 
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
-import { rollData } from '../otf/dieroll.js'
 
 import ModifierBucketEditor from './tooltip-window.js'
 
@@ -219,8 +217,6 @@ class ModifierStack {
   }
 
   sum() {
-    const oldSum = this.currentSum
-
     this.currentSum = 0
 
     for (let mod of this.modifierList) {
@@ -241,37 +237,8 @@ class ModifierStack {
     this.usingRapidStrike = !!rs
 
     // Update the Confirmation Dialog if opened
-    const taggedSettings = game.settings.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-
-    if (taggedSettings.autoAdd && this.currentSum !== oldSum) {
-      const signal = this.minus ? '-' : '+'
-      const target = $('#cr-target').text()
-
-      if (!!target && !isNaN(target)) {
-        let total = Math.max(3, parseInt(target) + this.currentSum)
-
-        if (this.maxTotal) total = Math.min(total, this.maxTotal)
-        const { targetColor, rollChance } = rollData(total)
-
-        $('#cr-operator').text(signal)
-        $('#cr-totalmods').text(Math.abs(this.currentSum))
-        $('#cr-total').text(total).css('color', targetColor)
-        $('.cr-tooltip').text(rollChance)
-      }
-
-      const damage = $('#cr-damage').text()
-      const formula = $('#cr-formula').text()
-      const originalFormula = $('#cr-damage').data('original')
-
-      if (!!formula && !!damage && !!originalFormula) {
-        const newFormula = addBucketToDamage(originalFormula, false)
-        const bucketTotal = this.currentSum
-        const bucketRollModifier = bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : ''
-        const bucketRollModifierColor = bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8'
-
-        $('#cr-damage').text(newFormula)
-        $('#cr-bucket').text(bucketRollModifier).css('color', bucketRollModifierColor)
-      }
+    if (GURPS.modules.Otf.rollConfirmationDialog.instance?.rendered) {
+      GURPS.modules.Otf.rollConfirmationDialog.instance?.render(false)
     }
   }
 

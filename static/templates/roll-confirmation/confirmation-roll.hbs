@@ -9,6 +9,23 @@
     </div>
   {{/if}}
   <div class='cr-container'>
+    <div class='cr-modifiers-section'>
+        <h4>{{localize "GURPS.modifierCurrentModifiers"}}</h4>
+        <div class='shaded-group overflowy'>
+          <aside>({{localize "GURPS.clickToRemove"}})</aside>
+          {{#each modifiers}}
+            <div class=" {{#if this.plus}}plus{{else}}minus{{/if}}" data-index="{{@index}}" data-action="removeMod">
+              {{this.mod}} : {{this.desc}}
+            </div>
+          {{/each}}
+        </div>
+        <div class='modttlabel'>Total:&nbsp;
+          <div {{#if (gt totalMods 0)}}class='plus' {{/if}}{{#if (lt totalMods 0)}}class='minus'
+            {{/if}}>
+            {{totalMods}}
+          </div>
+        </div>
+    </div>    
     <div class='cr-token-section'>
       {{#if isVideo}}
         <video class='cr-token-img' src='{{tokenImage}}' autoplay loop muted></video>
