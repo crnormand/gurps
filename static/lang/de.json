@@ -654,6 +654,8 @@
       "rollTotalHits": "Gesamttreffer<br/>aufgrund von Feuerrate ({rof}) & Rückstoß ({rcl}) ist <span class='roll-value'>{rofrcl}</span>. ({link})",
       "setting": {
         "hint": "Diese Einstellungen steuern verschiedene Aspekte des Kampfes im Spiel.",
+        "initiative": "Kampf: Zugreihenfolge Formel",
+        "initiativeHint": "Dies ist die Formel, die von Foundry verwendet wird, um die Zugreihenfolge im Kampf zu bestimmen. Achtung! Ändere dies nur, wenn Du weist, was Du tust!  Dies wird nicht auf Korrektheit überprüft. Dieses Feld leer lassen, um die Formel auf die GURPS Combat Turn Sequence, B362, zurückzusetzen.",
         "maneuver": {
           "allowRoll": "Erlaube Wurf basierend auf Manöver",
           "allowRollHint": "Während des Kampfes wird das System den Wurf auf Gültigkeit prüfen, basierend auf",
@@ -677,6 +679,17 @@
           "visibility": "Manöver Symbol Sichtbarkeit",
           "visibilityHint": "Legt fest, wer das Manöversymbol eines Tokens sehen kann."
         },
+        "maneuversHint": "Ein deaktiviertes Manöver wird nirgendwo mehr angezeigt, wo ein Manöver ausgewählt werden kann — Kampf-Tracker, Token-HUD und Charakterbogen — und seine Modifikatoren werden aus dem Modifikator-Bucket entfernt.",
+        "modifiersHint": "Die optionalen Modifikatoren, die vom Modifikator-Bucket angeboten werden. Bei Deaktivierung wird der Modifikator nicht mehr im Modifikator-Bucket aufgeführt. Er kann weiterhin manuell eingegeben werden.",
+        "options": "Kampfoptionen",
+        "optionsHint": "Wählen Sie die Kampfoptionen aus, die in dieser Welt verwendet werden sollen. Ein deaktiviertes Manöver wird nirgendwo mehr angezeigt, wo ein Manöver ausgewählt werden kann — Kampf-Tracker, Token-HUD und Charakterbogen — und seine Modifikatoren werden aus dem Modifikator-Bucket entfernt.",
+        "optionsManeuvers": "Manöver",
+        "optionsNeedsOnTarget": "Nicht im Einsatz: „On Target verwenden“ ist oben deaktiviert.",
+        "rangeStrategy": "Kampf: Fernkampf Modifikator Auswahl",
+        "rangeStrategyHint": "Legt die Formel fest, die zur Berechnung von Fernkampf Modifikator verwendet wird.",
+        "rangeStrategyRangeBands": "Monster Hunters 2 Reichweiten Bereich",
+        "rangeStrategyStandard": "Tabelle für Größe und Geschwindigkeit/Entfernung",
+        "rangeStrategyTenPenalties": "-1 für alle 10 Hexes/Yards/Meter",
         "title": "Kampfeinstellungen",
         "useRelativeSizeInMelee": "Größenmodifikator-Unterschied im Nahkampf verwenden",
         "useRelativeSizeInMeleeHint": "Wendet die Differenz im Größenmodifikator (SM) zwischen Angreifer und Verteidiger auf Nahkampf-Angriffswürfe an."
@@ -1788,17 +1801,21 @@
       "offset": "Seitenoffset",
       "offsetChangeHint": "Wenn Sie diesen Wert ändern, passt sich der Viewer so an, dass die angezeigte Seite dem eingegebenen Offset entspricht (z. B. Seite 5).",
       "offsetPlaceholder": "Offset: (z.B. -5, 0 oder 2)",
-      "settings": {
-        "basicPDFs": "Basic Set PDF(s)",
-        "basicPDFsCombined": "Kombiniertes Basic Set ('B')",
-        "basicPDFsHint": "Wählen Sie 'Kombiniert' oder 'Getrennt' und verwenden Sie die zugehörigen PDF-Codes. Hinweis: Wenn Sie 'Getrennt' wählen, sollte das Basic Set Campaigns PDF während des Tests auf Seite 340 geöffnet werden. Wenn Sie 'Basic Revised' wählen, verwenden Sie einen Offset von 10.",
-        "basicPDFsRevised": "Basic Revised (B)",
-        "basicPDFsSeparate": "Getrennt (Charaktere, 'B'; Kampagnen, 'BX')",
+      "setting": {
+        "basicSet": {
+          "combined": "Kombiniertes Basic Set ('B')",
+          "hint": "Wähle 'Kombiniert' oder 'Getrennt' und verwende die entsprechenden PDF-Codes bei der Konfiguration von PDFoundry. Hinweis: Wenn 'Getrennt' gewählt wird, sollte sich das Basic Set Campaigns PDF während des PDFoundry-Tests auf Seite 340 öffnen.",
+          "name": "Grundregelwerk PDF(s)",
+          "revised": "Basic Revised ('B')",
+          "separate": "Getrennt (Characters, 'B'; Campaigns, 'BX')"
+        },
         "button": "PDF-Einstellungen",
         "hint": "Konfigurieren Sie, wie PDFs behandelt werden.",
         "name": "PDFs",
-        "openFirst": "Öffne erste gefundene PDF",
-        "openFirstHint": "Wenn aktiviert, öffnet das System die erste gefundene PDF, wenn mehrere PDFs eingegeben werden. Wenn deaktiviert, öffnet das System alle eingegebenen PDFs."
+        "openFirst": {
+          "hint": "Wenn diese Option aktiviert ist, öffnet das System das erste gefundene PDF, wenn mehrere PDFs eingegeben wurden. Wenn sie deaktiviert ist, öffnet das System alle eingegebenen PDFs.",
+          "name": "Öffne das erste gefundene PDF"
+        }
       }
     },
     "pdfCrippling": "B420",
@@ -2003,7 +2020,6 @@
     "settingCalculateEnc": "Akteur Berechnen der Belastung",
     "settingColorSheetMenuHint": "Farbige Charakterbogen-Einstellungen",
     "settingColorSheetMenuTitle": "Farbiger Charakterbogen",
-    "settingCombatInitiative": "Kampf: Zugreihenfolge Formel",
     "settingConvertRanged": "Akteur: Konvertiere 'x2/x5' Reichweite in Meter",
     "settingDamageCondInjury": "Schaden: Conditional Injury",
     "settingEnhancedInput": "Akteur: Verbesserte numerische Eingaben",
@@ -2017,7 +2033,6 @@
     "settingHintAllowRollsBeforeCombatStart": "Wenn aktiviert, erlaubt das System dem Spieler, Würfe vor dem Kampfbeginn zu machen.",
     "settingHintAllowTargetedRolls": "Wenn aktiviert, überprüft das System, ob ein Ziel ausgewählt ist, bevor ein Wurf durchgeführt wird.",
     "settingHintCalculateEnc": "Wenn diese Option aktiviert ist, wird die Belastungsstufe automatisch auf der Grundlage der mitgeführten Ausrüstung festgelegt (und die Belastungsstufe kann nicht manuell geändert werden). Wenn dies deaktiviert ist, kann die Belastungsstufe geändert werden, indem auf die neue Stufe geklickt wird.",
-    "settingHintCombatInitiative": "Dies ist die Formel, die von Foundry verwendet wird, um die Zugreihenfolge im Kampf zu bestimmen. Achtung! Ändere dies nur, wenn Du weist, was Du tust!  Dies wird nicht auf Korrektheit überprüft. Dieses Feld leer lassen, um die Formel auf die GURPS Combat Turn Sequence, B362, zurückzusetzen.",
     "settingHintConvertRanged": "Wenn diese Option aktiviert ist, werden Reichweiten in der Form 'xN' oder 'xN/xM' mit der ST des Charakters multipliziert, um die tatsächliche Reichweite für eine geworfene Waffe zu bestimmen. HINWEIS: Dies geschieht nur während des Imports.",
     "settingHintDamagCondInjury": "Aus Pyramid #3/120: Conditional Injury entfernt Trefferpunkte aus dem Spiel als Basis für die Wundverwaltung, und ersetzt sie mit einer Effekt-basierten Methode für Verletzungen.",
     "settingHintEnhancedInput": "Wenn diese Option aktiviert ist, werden in bestimmten Feldern (z. B. AP) Schaltflächen zum Addieren und Subtrahieren angezeigt, wenn sie ausgewählt sind.",
@@ -2030,7 +2045,6 @@
     "settingHintPlayerChatPrivate": "Wenn diese Option aktiviert ist, werden die meisten Chat-Befehle (z.B. /hp, /fp, /qty, etc.) als Flüstern für den Spieler angezeigt (anstelle einer 'Out of Character'-Nachricht). Wenn du deinen Spielern vertraust und nicht möchtest, dass sich der Chat mit ihren Chat-Befehlen füllt, aktiviere diese Option.",
     "settingHintPortraitHPTinting": "Zeige roten Farbton-Overlay auf Charakterportraits basierend auf TP-Verlust im Modern Sheet.",
     "settingHintQtyItems": "Wenn diese Option aktiviert ist, wird ein kleines Symbol hinter von Benutzer-erstellten (nicht importierten) Gegenständen und vor vom Benutzer-erstellten Notizen angezeigt.",
-    "settingHintRangeStrategy": "Legt die Formel fest, die zur Berechnung von Fernkampf Modifikator verwendet wird.",
     "settingHintRemoveUnequipped": "Wenn diese Option aktiviert ist, werden die Namen der Nahkampf- und Fernkampfangriffe mit der Liste der getragenen Ausrüstung verglichen, und wenn eine Namensübereinstimmung gefunden wird, wird der Angriff nur aufgeführt, wenn die Ausrüstung ausgerüstet ist",
     "settingHintSheetDetail": "Wähle den Charakterbogen, der als 'Quick Sheet' verwenden werden soll. Er wird in der Titelleiste angezeigt, und der Benutzer kann zwischen ihm und dem 'Vollständigen (GCS)' Blatt wählen.",
     "settingHintShowChatReeling": "Wenn aktiviert, werden Änderungen am Schwankend- oder Ermüdet-Status eines Akteurs als Chat-Nachricht angezeigt.",
@@ -2063,10 +2077,6 @@
     "settingPlayerChatPrivate": "Private Spieler-Chat-Befehle",
     "settingPortraitHPTinting": "Portrait TP-Färbung",
     "settingQtyItems": "Akteur: Zeige Anzahl gespeichert Markierung",
-    "settingRangeStrategy": "Kampf: Fernkampf Modifikator Auswahl",
-    "settingRangeStrategyRangeBands": "Monster Hunters 2 Reichweiten Bereich",
-    "settingRangeStrategyStandard": "Tabelle für Größe und Geschwindigkeit/Entfernung",
-    "settingRangeStrategyTenPenalties": "-1 für alle 10 Hexes/Yards/Meter",
     "settingRemoveUnequipped": "Akteur: Unausgerüstete Waffen aus Nah- und Fernkampf-Listen entfernen",
     "settings": {
       "physicalDiceTooltip": "z.B.: 1,2,3 oder 6"

@@ -91,239 +91,16 @@ export class StatusEffect {
     }
 
     return {
-      [PostureType.Prone]: {
-        img: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
-        id: PostureType.Prone,
-        name: 'GURPS.status.Prone',
-        move: Combat.Movement.one,
-        // I'm sneakily using ActiveEffects to implement postures even if the system setting is turned off.
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureProneDefend', [defenseTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureProneMelee', [meleeTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.target.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.posture',
-            value: 'prone',
-            mode: 'override',
-          },
-          {
-            key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: Combat.Movement.one,
-            mode: 'override',
-            priority: 10,
-          },
-        ],
-        flags: {
-          gurps: {
-            effect: { pdfref: 'GURPS.pdfPostureLyingDown', type: 'posture' },
-          },
-        },
-      },
-      [PostureType.Kneeling]: {
-        img: 'systems/gurps/icons/statuses/condition-kneel.webp',
-        id: PostureType.Kneeling,
-        name: 'GURPS.status.Kneel',
-        move: Combat.Movement.oneThird,
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureKneelDefend', [defenseTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureKneelMelee', [meleeTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.target.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureCrouchRanged', [rangedTag]),
-            mode: 'add',
-          },
-          {
-            key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: Combat.Movement.oneThird,
-            mode: 'override',
-          },
-          {
-            key: 'system.conditions.posture',
-            value: 'kneel',
-            mode: 'override',
-          },
-        ],
-        flags: {
-          gurps: {
-            effect: { pdfref: 'GURPS.pdfPostureKneeling', type: 'posture' },
-          },
-        },
-      },
-      [PostureType.Crouching]: {
-        img: 'systems/gurps/icons/statuses/condition-crouch.webp',
-        id: PostureType.Crouching,
-        name: 'GURPS.status.Crouch',
-        move: Combat.Movement.twoThirds,
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureCrouchMelee', [meleeTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.target.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureCrouchRanged', [rangedTag]),
-            mode: 'add',
-          },
-          {
-            key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: Combat.Movement.twoThirds,
-            mode: 'override',
-          },
-          {
-            key: 'system.conditions.posture',
-            value: 'crouch',
-            mode: 'override',
-          },
-        ],
-        flags: {
-          gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrouching' },
-          },
-        },
-      },
-      [PostureType.Sitting]: {
-        img: 'systems/gurps/icons/statuses/condition-sit.webp',
-        id: PostureType.Sitting,
-        name: 'GURPS.status.Sit',
-        move: Combat.Movement.none,
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureKneelMelee', [meleeTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureKneelDefend', [defenseTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.target.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
-            mode: 'add',
-          },
-          {
-            key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: Combat.Movement.none,
-            mode: 'override',
-          },
-          {
-            key: 'system.conditions.posture',
-            value: 'sit',
-            mode: 'override',
-          },
-        ],
-        flags: {
-          gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureSitting' },
-          },
-        },
-      },
-      [PostureType.Crawling]: {
-        img: 'systems/gurps/icons/statuses/condition-crawl.webp',
-        id: PostureType.Crawling,
-        name: 'GURPS.status.Crawling',
-        move: Combat.Movement.oneThird,
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureProneMelee', [meleeTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.self.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureProneDefend', [defenseTag]),
-            mode: 'add',
-          },
-          {
-            key: 'system.conditions.target.modifiers',
-            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
-            mode: 'add',
-          },
-          {
-            key: PROPERTY_MOVEOVERRIDE_POSTURE,
-            value: Combat.Movement.oneThird,
-            mode: 'override',
-          },
-          {
-            key: 'system.conditions.posture',
-            value: 'crawl',
-            mode: 'override',
-          },
-        ],
-        flags: {
-          gurps: {
-            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrawling' },
-          },
-        },
-      },
-      grapple: {
-        img: 'systems/gurps/icons/statuses/path-condition-grappled.webp',
-        id: 'grapple',
-        name: 'GURPS.status.Grapple',
-      },
-      stun: {
-        img: 'systems/gurps/icons/statuses/dd-condition-stunned.webp',
-        id: 'stun',
-        name: 'EFFECT.StatusStunned',
-        tint: '', // #FEAEF4 #AEFEAE
-      },
-      mentalstun: {
-        img: 'systems/gurps/icons/statuses/dd-condition-stunned-iq.webp',
-        id: 'mentalstun',
-        name: 'GURPS.status.StunnedMental',
-        tint: '', // #FEAEF4 #AEFEAE
-      },
-      shock1: {
-        img: 'systems/gurps/icons/statuses/condition-shock1.webp',
-        id: 'shock1',
-        name: 'GURPS.shock1',
-      },
-      shock2: {
-        img: 'systems/gurps/icons/statuses/condition-shock2.webp',
-        id: 'shock2',
-        name: 'GURPS.shock2',
-      },
-      shock3: {
-        img: 'systems/gurps/icons/statuses/condition-shock3.webp',
-        id: 'shock3',
-        name: 'GURPS.shock3',
-      },
-      shock4: {
-        img: 'systems/gurps/icons/statuses/condition-shock4.webp',
-        id: 'shock4',
-        name: 'GURPS.shock4',
-      },
       reeling: {
         img: 'systems/gurps/icons/statuses/cth-condition-major-wound.webp',
         id: 'reeling',
         name: 'GURPS.status.Reeling',
+        order: 110,
         changes: [
           {
             key: 'system.conditions.reeling',
             value: true,
-            mode: 'override',
+            type: 'override',
           },
         ],
         flags: {
@@ -338,16 +115,17 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/path-condition-exhausted.webp',
         id: 'exhausted',
         name: 'GURPS.status.Exhausted',
+        order: 120,
         changes: [
           {
             key: 'system.conditions.exhausted',
             value: true,
-            mode: 'override',
+            type: 'override',
           },
           {
             key: 'system.attributes.ST.import',
             value: 0.5,
-            mode: 'multiply',
+            type: 'multiply',
           },
         ],
         flags: {
@@ -358,296 +136,438 @@ export class StatusEffect {
           },
         },
       },
-      fly: {
-        img: 'systems/gurps/icons/statuses/x-flying.webp',
-        id: 'fly',
-        name: 'GURPS.status.Fly',
+      stun: {
+        img: 'systems/gurps/icons/statuses/dd-condition-stunned.webp',
+        id: 'stun',
+        name: 'EFFECT.StatusStunned',
+        tint: '', // #FEAEF4 #AEFEAE
+        order: 130,
       },
-      fall: {
-        img: 'systems/gurps/icons/statuses/condition-fall.webp',
-        id: 'fall',
-        name: 'GURPS.status.Fall',
+      mentalstun: {
+        img: 'systems/gurps/icons/statuses/dd-condition-stunned-iq.webp',
+        id: 'mentalstun',
+        name: 'GURPS.status.StunnedMental',
+        tint: '', // #FEAEF4 #AEFEAE
+        order: 140,
       },
-      pinned: {
-        img: 'systems/gurps/icons/statuses/path-condition-pinned.webp',
-        id: 'pinned',
-        name: 'GURPS.status.Pin',
+      [PostureType.Crouching]: {
+        img: 'systems/gurps/icons/statuses/condition-crouch.webp',
+        id: PostureType.Crouching,
+        name: 'GURPS.status.Crouch',
+        move: Combat.Movement.twoThirds,
+        order: 210,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureCrouchMelee', [meleeTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.target.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureCrouchRanged', [rangedTag]),
+            type: 'add',
+          },
+          {
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
+            value: Combat.Movement.twoThirds,
+            type: 'override',
+          },
+          {
+            key: 'system.conditions.posture',
+            value: 'crouch',
+            type: 'override',
+          },
+        ],
+        flags: {
+          gurps: {
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrouching' },
+          },
+        },
+      },
+      [PostureType.Kneeling]: {
+        img: 'systems/gurps/icons/statuses/condition-kneel.webp',
+        id: PostureType.Kneeling,
+        name: 'GURPS.status.Kneel',
+        move: Combat.Movement.oneThird,
+        order: 220,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureKneelDefend', [defenseTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureKneelMelee', [meleeTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.target.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureCrouchRanged', [rangedTag]),
+            type: 'add',
+          },
+          {
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
+            value: Combat.Movement.oneThird,
+            type: 'override',
+          },
+          {
+            key: 'system.conditions.posture',
+            value: 'kneel',
+            type: 'override',
+          },
+        ],
+        flags: {
+          gurps: {
+            effect: { pdfref: 'GURPS.pdfPostureKneeling', type: 'posture' },
+          },
+        },
+      },
+      [PostureType.Crawling]: {
+        img: 'systems/gurps/icons/statuses/condition-crawl.webp',
+        id: PostureType.Crawling,
+        name: 'GURPS.status.Crawling',
+        move: Combat.Movement.oneThird,
+        order: 230,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureProneMelee', [meleeTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureProneDefend', [defenseTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.target.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
+            type: 'add',
+          },
+          {
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
+            value: Combat.Movement.oneThird,
+            type: 'override',
+          },
+          {
+            key: 'system.conditions.posture',
+            value: 'crawl',
+            type: 'override',
+          },
+        ],
+        flags: {
+          gurps: {
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrawling' },
+          },
+        },
+      },
+      [PostureType.Sitting]: {
+        img: 'systems/gurps/icons/statuses/condition-sit.webp',
+        id: PostureType.Sitting,
+        name: 'GURPS.status.Sit',
+        move: Combat.Movement.none,
+        order: 240,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureKneelMelee', [meleeTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureKneelDefend', [defenseTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.target.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
+            type: 'add',
+          },
+          {
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
+            value: Combat.Movement.none,
+            type: 'override',
+          },
+          {
+            key: 'system.conditions.posture',
+            value: 'sit',
+            type: 'override',
+          },
+        ],
+        flags: {
+          gurps: {
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureSitting' },
+          },
+        },
+      },
+      [PostureType.Prone]: {
+        img: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
+        id: PostureType.Prone,
+        name: 'GURPS.status.Prone',
+        move: Combat.Movement.one,
+        order: 250,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureProneDefend', [defenseTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.self.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureProneMelee', [meleeTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.target.modifiers',
+            value: getTaggedValue('GURPS.modifierPostureProneRanged', [rangedTag]),
+            type: 'add',
+          },
+          {
+            key: 'system.conditions.posture',
+            value: 'prone',
+            type: 'override',
+          },
+          {
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
+            value: Combat.Movement.one,
+            type: 'override',
+            priority: 10,
+          },
+        ],
+        flags: {
+          gurps: {
+            effect: { pdfref: 'GURPS.pdfPostureLyingDown', type: 'posture' },
+          },
+        },
+      },
+      shock1: {
+        img: 'systems/gurps/icons/statuses/condition-shock1.webp',
+        id: 'shock1',
+        name: 'GURPS.shock1',
+        order: 610,
+      },
+      shock2: {
+        img: 'systems/gurps/icons/statuses/condition-shock2.webp',
+        id: 'shock2',
+        name: 'GURPS.shock2',
+        order: 620,
+      },
+      shock3: {
+        img: 'systems/gurps/icons/statuses/condition-shock3.webp',
+        id: 'shock3',
+        name: 'GURPS.shock3',
+        order: 630,
+      },
+      shock4: {
+        img: 'systems/gurps/icons/statuses/condition-shock4.webp',
+        id: 'shock4',
+        name: 'GURPS.shock4',
+        order: 640,
+      },
+      // ---- Conditions ----
+      grapple: {
+        img: 'systems/gurps/icons/statuses/path-condition-grappled.webp',
+        id: 'grapple',
+        name: 'GURPS.status.Grapple',
+        order: 705,
+      },
+      disarmed: {
+        img: 'systems/gurps/icons/statuses/disarmed.webp',
+        id: 'disarmed',
+        name: 'GURPS.status.Disarmed',
+        order: 710,
+      },
+      blind: {
+        img: 'systems/gurps/icons/statuses/dd-condition-blinded.webp',
+        id: 'blind',
+        name: 'GURPS.status.Blind',
+        order: 715,
+      },
+      deaf: {
+        img: 'systems/gurps/icons/statuses/dd-condition-deafened.webp',
+        id: 'deaf',
+        name: 'GURPS.status.Deaf',
+        order: 720,
+      },
+      silence: {
+        img: 'systems/gurps/icons/statuses/x-silenced.webp',
+        id: 'silence',
+        name: 'GURPS.status.Silence',
+        order: 725,
+      },
+      disabled: {
+        img: 'systems/gurps/icons/statuses/dd-condition-unconscious.webp',
+        id: 'disabled',
+        name: 'GURPS.status.Disable',
+        order: 730,
+      },
+      // ---- Afflictions ----
+      burn: {
+        img: 'systems/gurps/icons/statuses/x-burning.webp',
+        id: 'burn',
+        name: 'GURPS.status.Burn',
+        order: 740,
+      },
+      bleed: {
+        img: 'systems/gurps/icons/statuses/path-condition-bleeding.webp',
+        id: 'bleed',
+        name: 'GURPS.status.Bleed',
+        order: 745,
+      },
+      poison: {
+        img: 'systems/gurps/icons/statuses/dd-condition-poisoned.webp',
+        id: 'poison',
+        name: 'GURPS.status.Poison',
+        order: 750,
       },
       nauseated: {
         img: 'systems/gurps/icons/statuses/path-condition-nauseated.webp',
         id: 'nauseated',
         name: 'GURPS.status.Nauseated',
+        order: 755,
       },
       coughing: {
         img: 'systems/gurps/icons/statuses/condition-cough.webp',
         id: 'coughing',
         name: 'GURPS.status.Coughing',
+        order: 760,
       },
       retching: {
         img: 'systems/gurps/icons/statuses/condition-wretch.webp',
         id: 'retching',
         name: 'GURPS.status.Retching',
-      },
-      drowsy: {
-        img: 'systems/gurps/icons/statuses/x-drowsy.webp',
-        id: 'drowsy',
-        name: 'GURPS.status.Drowsy',
-      },
-      sleeping: {
-        img: 'systems/gurps/icons/statuses/x-asleep.webp',
-        id: 'sleeping',
-        name: 'GURPS.status.Sleep',
+        order: 765,
       },
       tipsy: {
         img: 'systems/gurps/icons/statuses/condition-drunk1.webp',
         id: 'tipsy',
         name: 'GURPS.status.Tipsy',
+        order: 770,
       },
       drunk: {
         img: 'systems/gurps/icons/statuses/condition-drunk2.webp',
         id: 'drunk',
         name: 'GURPS.status.Drunk',
+        order: 775,
       },
       euphoria: {
         img: 'systems/gurps/icons/statuses/path-condition-fascinated.webp',
         id: 'euphoria',
         name: 'GURPS.status.Euphoria',
+        order: 780,
       },
+      drowsy: {
+        img: 'systems/gurps/icons/statuses/x-drowsy.webp',
+        id: 'drowsy',
+        name: 'GURPS.status.Drowsy',
+        order: 785,
+      },
+      sleeping: {
+        img: 'systems/gurps/icons/statuses/x-asleep.webp',
+        id: 'sleeping',
+        name: 'GURPS.status.Sleep',
+        order: 790,
+      },
+      suffocate: {
+        img: 'systems/gurps/icons/statuses/condition-suffocate.webp',
+        id: 'suffocate',
+        name: 'GURPS.status.Suffocate',
+        order: 795,
+      },
+      // ---- Pain ----
       mild_pain: {
         // README No such condition in Basic -- map to Moderate Pain with HPT?
         img: 'systems/gurps/icons/statuses/condition-pain1.webp',
         id: 'mild_pain',
         name: 'GURPS.status.MildPain',
+        order: 810,
       },
       moderate_pain: {
         img: 'systems/gurps/icons/statuses/condition-pain2.webp',
         id: 'moderate_pain',
         name: 'GURPS.status.ModeratePain2',
+        order: 820,
       },
       moderate_pain2: {
         // README No such condition in Basic -- map to Terrible Pain with HPT?
         img: 'systems/gurps/icons/statuses/condition-pain3.webp',
         id: 'moderate_pain2',
         name: 'GURPS.status.ModeratePain3',
+        order: 830,
       },
       severe_pain: {
         img: 'systems/gurps/icons/statuses/condition-pain4.webp',
         id: 'severe_pain',
         name: 'GURPS.status.SeverePain4',
+        order: 840,
       },
       severe_pain2: {
         img: 'systems/gurps/icons/statuses/condition-pain5.webp',
         id: 'severe_pain2',
         name: 'GURPS.status.SeverePain5',
+        order: 850,
       },
       terrible_pain: {
         img: 'systems/gurps/icons/statuses/condition-pain6.webp',
         id: 'terrible_pain',
         name: 'GURPS.status.TerriblePain',
+        order: 860,
       },
       agony: {
         img: 'systems/gurps/icons/statuses/path-condition-helpless.webp',
         id: 'agony',
         name: 'GURPS.status.Agony',
+        order: 870,
       },
-      bleed: {
-        img: 'systems/gurps/icons/statuses/path-condition-bleeding.webp',
-        id: 'bleed',
-        name: 'GURPS.status.Bleed',
+      // ----- Movement -----
+      fly: {
+        img: 'systems/gurps/icons/statuses/x-flying.webp',
+        id: 'fly',
+        name: 'GURPS.status.Fly',
+        order: 900,
       },
-      poison: {
-        img: 'systems/gurps/icons/statuses/dd-condition-poisoned.webp',
-        id: 'poison',
-        name: 'GURPS.status.Poison',
+      fall: {
+        img: 'systems/gurps/icons/statuses/condition-fall.webp',
+        id: 'fall',
+        name: 'GURPS.status.Fall',
+        order: 900,
       },
-      burn: {
-        img: 'systems/gurps/icons/statuses/x-burning.webp',
-        id: 'burn',
-        name: 'GURPS.status.Burn',
-      },
-      suffocate: {
-        img: 'systems/gurps/icons/statuses/condition-suffocate.webp',
-        id: 'suffocate',
-        name: 'GURPS.status.Suffocate',
-      },
-      disabled: {
-        img: 'systems/gurps/icons/statuses/dd-condition-unconscious.webp',
-        id: 'disabled',
-        name: 'GURPS.status.Disable',
-      },
-      blind: {
-        img: 'systems/gurps/icons/statuses/dd-condition-blinded.webp',
-        id: 'blind',
-        name: 'GURPS.status.Blind',
-      },
-      deaf: {
-        img: 'systems/gurps/icons/statuses/dd-condition-deafened.webp',
-        id: 'deaf',
-        name: 'GURPS.status.Deaf',
-      },
-      silence: {
-        img: 'systems/gurps/icons/statuses/x-silenced.webp',
-        id: 'silence',
-        name: 'GURPS.status.Silence',
+      pinned: {
+        img: 'systems/gurps/icons/statuses/path-condition-pinned.webp',
+        id: 'pinned',
+        name: 'GURPS.status.Pin',
+        order: 900,
       },
       stealth: {
         img: 'systems/gurps/icons/statuses/x-stealth.webp',
         id: 'stealth',
         name: 'GURPS.status.Stealth',
+        order: 900,
       },
       waiting: {
         img: 'systems/gurps/icons/statuses/x-low-light-vision.webp',
         id: 'waiting',
         name: 'GURPS.status.Wait',
+        order: 900,
       },
       sprint: {
         img: 'systems/gurps/icons/statuses/x-haste.webp',
         id: 'sprint',
         name: 'GURPS.status.Sprint',
+        order: 900,
       },
-      num1: {
-        img: 'systems/gurps/icons/statuses/number-1.webp',
-        id: 'num1',
-        name: 'GURPS.status.Counter1',
-      },
-      num2: {
-        img: 'systems/gurps/icons/statuses/number-2.webp',
-        id: 'num2',
-        name: 'GURPS.status.Counter2',
-      },
-      num3: {
-        img: 'systems/gurps/icons/statuses/number-3.webp',
-        id: 'num3',
-        name: 'GURPS.status.Counter3',
-      },
-      num4: {
-        img: 'systems/gurps/icons/statuses/number-4.webp',
-        id: 'num4',
-        name: 'GURPS.status.Counter4',
-      },
-      num5: {
-        img: 'systems/gurps/icons/statuses/number-5.webp',
-        id: 'num5',
-        name: 'GURPS.status.Counter5',
-      },
-      num6: {
-        img: 'systems/gurps/icons/statuses/number-6.webp',
-        id: 'num6',
-        name: 'GURPS.status.Counter6',
-      },
-      num7: {
-        img: 'systems/gurps/icons/statuses/number-7.webp',
-        id: 'num7',
-        name: 'GURPS.status.Counter7',
-      },
-      num8: {
-        img: 'systems/gurps/icons/statuses/number-8.webp',
-        id: 'num8',
-        name: 'GURPS.status.Counter8',
-      },
-      num9: {
-        img: 'systems/gurps/icons/statuses/number-9.webp',
-        id: 'num9',
-        name: 'GURPS.status.Counter9',
-      },
-      num10: {
-        img: 'systems/gurps/icons/statuses/number-10.webp',
-        id: 'num10',
-        name: 'GURPS.status.Counter10',
-      },
-      'bad+1': {
-        img: 'systems/gurps/icons/statuses/BAD+1.webp',
-        id: 'bad+1',
-        name: 'GURPS.status.Bad+1',
+      // ---- BAD ----
+      'bad-5': {
+        img: 'systems/gurps/icons/statuses/BAD-5.webp',
+        id: 'bad-5',
+        name: 'GURPS.status.Bad-5',
+        order: 1010,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad+1',
-            mode: 'add',
-          },
-        ],
-      },
-      'bad+2': {
-        img: 'systems/gurps/icons/statuses/BAD+2.webp',
-        id: 'bad+2',
-        name: 'GURPS.status.Bad+2',
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad+2',
-            mode: 'add',
-          },
-        ],
-      },
-      'bad+3': {
-        img: 'systems/gurps/icons/statuses/BAD+3.webp',
-        id: 'bad+3',
-        name: 'GURPS.status.Bad+3',
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad+3',
-            mode: 'add',
-          },
-        ],
-      },
-      'bad+4': {
-        img: 'systems/gurps/icons/statuses/BAD+4.webp',
-        id: 'bad+4',
-        name: 'GURPS.status.Bad+4',
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad+4',
-            mode: 'add',
-          },
-        ],
-      },
-      'bad+5': {
-        img: 'systems/gurps/icons/statuses/BAD+5.webp',
-        id: 'bad+5',
-        name: 'GURPS.status.Bad+5',
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad+5',
-            mode: 'add',
-          },
-        ],
-      },
-      'bad-1': {
-        img: 'systems/gurps/icons/statuses/BAD-1.webp',
-        id: 'bad-1',
-        name: 'GURPS.status.Bad-1',
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad-1',
-            mode: 'add',
-          },
-        ],
-      },
-      'bad-2': {
-        img: 'systems/gurps/icons/statuses/BAD-2.webp',
-        id: 'bad-2',
-        name: 'GURPS.status.Bad-2',
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad-2',
-            mode: 'add',
-          },
-        ],
-      },
-      'bad-3': {
-        img: 'systems/gurps/icons/statuses/BAD-3.webp',
-        id: 'bad-3',
-        name: 'GURPS.status.Bad-3',
-        changes: [
-          {
-            key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad-3',
-            mode: 'add',
+            value: 'GURPS.status.Bad-5',
+            type: 'add',
           },
         ],
       },
@@ -655,30 +575,179 @@ export class StatusEffect {
         img: 'systems/gurps/icons/statuses/BAD-4.webp',
         id: 'bad-4',
         name: 'GURPS.status.Bad-4',
+        order: 1020,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
             value: 'GURPS.status.Bad-4',
-            mode: 'add',
+            type: 'add',
           },
         ],
       },
-      'bad-5': {
-        img: 'systems/gurps/icons/statuses/BAD-5.webp',
-        id: 'bad-5',
-        name: 'GURPS.status.Bad-5',
+      'bad-3': {
+        img: 'systems/gurps/icons/statuses/BAD-3.webp',
+        id: 'bad-3',
+        name: 'GURPS.status.Bad-3',
+        order: 1030,
         changes: [
           {
             key: 'system.conditions.self.modifiers',
-            value: 'GURPS.status.Bad-5',
-            mode: 'add',
+            value: 'GURPS.status.Bad-3',
+            type: 'add',
           },
         ],
       },
-      disarmed: {
-        img: 'systems/gurps/icons/statuses/disarmed.webp',
-        id: 'disarmed',
-        name: 'GURPS.status.Disarmed',
+      'bad-2': {
+        img: 'systems/gurps/icons/statuses/BAD-2.webp',
+        id: 'bad-2',
+        name: 'GURPS.status.Bad-2',
+        order: 1040,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.status.Bad-2',
+            type: 'add',
+          },
+        ],
+      },
+      'bad-1': {
+        img: 'systems/gurps/icons/statuses/BAD-1.webp',
+        id: 'bad-1',
+        name: 'GURPS.status.Bad-1',
+        order: 1050,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.status.Bad-1',
+            type: 'add',
+          },
+        ],
+      },
+      'bad+1': {
+        img: 'systems/gurps/icons/statuses/BAD+1.webp',
+        id: 'bad+1',
+        name: 'GURPS.status.Bad+1',
+        order: 1060,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.status.Bad+1',
+            type: 'add',
+          },
+        ],
+      },
+      'bad+2': {
+        img: 'systems/gurps/icons/statuses/BAD+2.webp',
+        id: 'bad+2',
+        name: 'GURPS.status.Bad+2',
+        order: 1070,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.status.Bad+2',
+            type: 'add',
+          },
+        ],
+      },
+      'bad+3': {
+        img: 'systems/gurps/icons/statuses/BAD+3.webp',
+        id: 'bad+3',
+        name: 'GURPS.status.Bad+3',
+        order: 1080,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.status.Bad+3',
+            type: 'add',
+          },
+        ],
+      },
+      'bad+4': {
+        img: 'systems/gurps/icons/statuses/BAD+4.webp',
+        id: 'bad+4',
+        name: 'GURPS.status.Bad+4',
+        order: 1090,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.status.Bad+4',
+            type: 'add',
+          },
+        ],
+      },
+      'bad+5': {
+        img: 'systems/gurps/icons/statuses/BAD+5.webp',
+        id: 'bad+5',
+        name: 'GURPS.status.Bad+5',
+        order: 1100,
+        changes: [
+          {
+            key: 'system.conditions.self.modifiers',
+            value: 'GURPS.status.Bad+5',
+            type: 'add',
+          },
+        ],
+      },
+      // ---- Numbers ----
+      num1: {
+        img: 'systems/gurps/icons/statuses/number-1.webp',
+        id: 'num1',
+        name: 'GURPS.status.Counter1',
+        order: 2000,
+      },
+      num2: {
+        img: 'systems/gurps/icons/statuses/number-2.webp',
+        id: 'num2',
+        name: 'GURPS.status.Counter2',
+        order: 2001,
+      },
+      num3: {
+        img: 'systems/gurps/icons/statuses/number-3.webp',
+        id: 'num3',
+        name: 'GURPS.status.Counter3',
+        order: 2002,
+      },
+      num4: {
+        img: 'systems/gurps/icons/statuses/number-4.webp',
+        id: 'num4',
+        name: 'GURPS.status.Counter4',
+        order: 2003,
+      },
+      num5: {
+        img: 'systems/gurps/icons/statuses/number-5.webp',
+        id: 'num5',
+        name: 'GURPS.status.Counter5',
+        order: 2004,
+      },
+      num6: {
+        img: 'systems/gurps/icons/statuses/number-6.webp',
+        id: 'num6',
+        name: 'GURPS.status.Counter6',
+        order: 2005,
+      },
+      num7: {
+        img: 'systems/gurps/icons/statuses/number-7.webp',
+        id: 'num7',
+        name: 'GURPS.status.Counter7',
+        order: 2006,
+      },
+      num8: {
+        img: 'systems/gurps/icons/statuses/number-8.webp',
+        id: 'num8',
+        name: 'GURPS.status.Counter8',
+        order: 2007,
+      },
+      num9: {
+        img: 'systems/gurps/icons/statuses/number-9.webp',
+        id: 'num9',
+        name: 'GURPS.status.Counter9',
+        order: 2008,
+      },
+      num10: {
+        img: 'systems/gurps/icons/statuses/number-10.webp',
+        id: 'num10',
+        name: 'GURPS.status.Counter10',
+        order: 2009,
       },
     }
   }
@@ -702,7 +771,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock1',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
@@ -720,7 +789,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock2',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
@@ -738,7 +807,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock3',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
@@ -756,7 +825,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock4',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, hitTag, spellTag, skillTag],
         },
       ],
@@ -774,13 +843,13 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusStunned',
-          mode: 'add',
+          type: 'add',
           tags: [defenseTag],
         },
         {
           key: 'system.conditions.maneuver',
           value: 'do_nothing',
-          mode: 'custom',
+          type: 'custom',
         },
       ],
       flags: {
@@ -798,13 +867,13 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierStatusStunned',
-          mode: 'add',
+          type: 'add',
           tags: [defenseTag],
         },
         {
           key: 'system.conditions.maneuver',
           value: 'do_nothing',
-          mode: 'custom',
+          type: 'custom',
         },
       ],
       flags: {
@@ -822,7 +891,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierGrappling',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag],
         },
       ],
@@ -837,13 +906,13 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionNausea',
-          mode: 'add',
+          type: 'add',
           tags: [attributesTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionNauseaDef',
-          mode: 'add',
+          type: 'add',
           tags: [defenseTag],
         },
       ],
@@ -858,13 +927,13 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionCough',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionCoughIQ',
-          mode: 'add',
+          type: 'add',
           tags: [iqTag],
         },
       ],
@@ -879,7 +948,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionRetch',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, perTag],
         },
       ],
@@ -898,7 +967,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrowsy',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, perTag],
         },
       ],
@@ -913,13 +982,13 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTipsy',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTipsyCR',
-          mode: 'add',
+          type: 'add',
           tags: [crTag],
         },
       ],
@@ -934,13 +1003,13 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrunk',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrunkCR',
-          mode: 'add',
+          type: 'add',
           tags: [crTag],
         },
       ],
@@ -955,7 +1024,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionEuphoria',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, crTag],
         },
       ],
@@ -970,7 +1039,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionModerateHPT',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, crTag],
         },
       ],
@@ -985,7 +1054,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionModerate',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, crTag],
         },
       ],
@@ -1000,7 +1069,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTerribleHPT',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, crTag],
         },
       ],
@@ -1015,7 +1084,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionSevere',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, crTag],
         },
       ],
@@ -1030,7 +1099,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTerrible',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, crTag],
         },
       ],
@@ -1045,7 +1114,7 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifierSuffocate',
-          mode: 'add',
+          type: 'add',
           tags: [dxTag, iqTag, crTag],
         },
       ],
@@ -1063,13 +1132,13 @@ const _getActiveEffectsData = function (id) {
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifiersBlindAttack',
-          mode: 'add',
+          type: 'add',
           tags: [hitTag],
         },
         {
           key: 'system.conditions.self.modifiers',
           value: 'GURPS.modifiersBlindDefend',
-          mode: 'add',
+          type: 'add',
           tags: [defenseTag],
         },
       ],

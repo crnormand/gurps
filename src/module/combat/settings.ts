@@ -1,8 +1,9 @@
-import { GurpsSettingsApplication } from '@module/util/gurps-settings-application.js'
-
+import { defaultCombatOptionSettings, enabledOptions, isManeuverEnabled } from './combat-options.ts'
 import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.js'
 import {
-  ICON,
+  CombatOption,
+  CombatOptionSection,
+  CombatOptionSettings,
   ManeuverDetail,
   ManeuverVisibility,
   MODULE_NAME,
@@ -11,157 +12,174 @@ import {
   SETTINGS,
 } from './types.js'
 
-export const SETTING_ALLOW_ROLL_BASED_ON_MANEUVER: any = 'combat.allow-roll-based-on-maneuver'
-export const SETTING_INITIATIVE_FORMULA: any = 'combat.initiative-formula'
-export const SETTING_MANEUVER_DETAIL: any = 'combat.maneuver-detail'
-export const SETTING_MANEUVER_UPDATES_MOVE: any = 'combat.maneuver-updates-move'
-export const SETTING_MANEUVER_VISIBILITY: any = 'combat.maneuver-visibility'
-export const SETTING_RANGE_STRATEGY: any = 'combat.rangeStrategy'
-export const SETTING_USE_ON_TARGET: any = 'combat.use-on-target'
-export const SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE: any = 'combat.use-size-modifier-difference-in-melee'
+export const SETTING_ALLOW_ROLL_BASED_ON_MANEUVER: any = `${MODULE_NAME}.allow-roll-based-on-maneuver`
+export const SETTING_INITIATIVE_FORMULA: any = `${MODULE_NAME}.initiative-formula`
+export const SETTING_MANEUVER_DETAIL: any = `${MODULE_NAME}.maneuver-detail`
+export const SETTING_MANEUVER_UPDATES_MOVE: any = `${MODULE_NAME}.maneuver-updates-move`
+export const SETTING_MANEUVER_VISIBILITY: any = `${MODULE_NAME}.maneuver-visibility`
+export const SETTING_RANGE_STRATEGY: any = `${MODULE_NAME}.rangeStrategy`
+export const SETTING_USE_ON_TARGET: any = `${MODULE_NAME}.use-on-target`
+export const SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE: any = `${MODULE_NAME}.use-size-modifier-difference-in-melee`
+export const SETTING_COMBAT_OPTIONS = `${MODULE_NAME}.options`
 
-export function initializeCombatSettings(): void {
-  Hooks.once('init', () => {
-    if (!game.settings) throw new Error('GURPS | Combat module requires game.settings to be available!')
+export function registerCombatSettings(): void {
+  if (!game.settings) throw new Error('GURPS | Combat module requires game.settings to be available!')
 
-    game.settings.register(GURPS.SYSTEM_NAME, SETTING_INITIATIVE_FORMULA, {
-      name: 'GURPS.settingCombatInitiative',
-      hint: 'GURPS.settingHintCombatInitiative',
-      scope: 'world',
-      config: false,
-      type: String,
-      default: DEFAULT_INITIATIVE_FORMULA,
-      onChange: value => {
-        console.log(`${SETTING_INITIATIVE_FORMULA}: ${value}`)
-        updateInitiativeFormula(true)
-      },
-    })
-
-    game.settings.register(GURPS.SYSTEM_NAME, SETTING_RANGE_STRATEGY, {
-      name: 'GURPS.settingRangeStrategy',
-      hint: 'GURPS.settingHintRangeStrategy',
-      scope: 'world',
-      config: false,
-      type: String,
-      choices: {
-        Standard: 'GURPS.settingRangeStrategyStandard',
-        Simplified: 'GURPS.settingRangeStrategyRangeBands',
-        TenPenalties: 'GURPS.settingRangeStrategyTenPenalties',
-      },
-      default: 'Standard',
-      onChange: value => {
-        console.log(`${SETTING_RANGE_STRATEGY}: ${value}`)
-        GURPS.rangeObject.update()
-      },
-    })
-
-    game.settings.register(GURPS.SYSTEM_NAME, SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE, {
-      name: `${SETTINGS}.useRelativeSizeInMelee`,
-      hint: `${SETTINGS}.useRelativeSizeInMeleeHint`,
-      scope: 'world',
-      config: false,
-      type: Boolean,
-      default: false,
-      onChange: value => console.log(`${SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE}: ${value}`),
-    })
-
-    game.settings.register(GURPS.SYSTEM_NAME, SETTING_USE_ON_TARGET, {
-      name: `${SETTINGS}.maneuver.useOnTarget`,
-      hint: `${SETTINGS}.maneuver.useOnTargetHint`,
-      scope: 'world',
-      config: false,
-      type: Boolean,
-      default: false,
-      onChange: value => console.log(`${SETTING_USE_ON_TARGET}: ${value}`),
-    })
-
-    game.settings.register(GURPS.SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY, {
-      name: `${SETTINGS}.maneuver.visibility`,
-      hint: `${SETTINGS}.maneuver.visibilityHint`,
-      scope: 'world',
-      config: false,
-      type: String,
-      choices: {
-        NoOne: `${SETTINGS}.maneuver.values.noOne`,
-        GMAndOwner: `${SETTINGS}.maneuver.values.gmAndOwner`,
-        Everyone: `${SETTINGS}.maneuver.values.everyone`,
-      },
-      default: 'NoOne',
-      onChange: value => {
-        console.log(`${SETTING_MANEUVER_VISIBILITY}: ${value}`)
-        redrawAllTokenEffects()
-      },
-    })
-
-    game.settings.register(GURPS.SYSTEM_NAME, SETTING_MANEUVER_DETAIL, {
-      name: `${SETTINGS}.maneuver.detail`,
-      hint: `${SETTINGS}.maneuver.detailHint`,
-      scope: 'world',
-      config: false,
-      type: String,
-      choices: {
-        Full: `${SETTINGS}.maneuver.values.full`,
-        General: `${SETTINGS}.maneuver.values.general`,
-        NoFeint: `${SETTINGS}.maneuver.values.noFeint`,
-      },
-      default: 'General',
-      onChange: value => {
-        console.log(`${SETTING_MANEUVER_DETAIL}: ${value}`)
-        redrawAllTokenEffects()
-      },
-    })
-
-    game.settings.register(GURPS.SYSTEM_NAME, SETTING_MANEUVER_UPDATES_MOVE, {
-      name: `${SETTINGS}.maneuver.updatesMove`,
-      hint: `${SETTINGS}.maneuver.updatesMoveHint`,
-      scope: 'world',
-      config: false,
-      type: Boolean,
-      default: true,
-      onChange: value => console.log(`${SETTING_MANEUVER_UPDATES_MOVE}: ${value}`),
-    })
-
-    game.settings.register(GURPS.SYSTEM_NAME, SETTING_ALLOW_ROLL_BASED_ON_MANEUVER, {
-      name: `${SETTINGS}.maneuver.allowRoll`,
-      hint: `${SETTINGS}.maneuver.allowRollHint`,
-      scope: 'world',
-      config: false,
-      type: String,
-      choices: {
-        Allow: `${SETTINGS}.maneuver.values.allow`,
-        Warn: `${SETTINGS}.maneuver.values.warn`,
-        Forbid: `${SETTINGS}.maneuver.values.forbid`,
-      },
-      default: 'Warn',
-      onChange: value => console.log(`${SETTING_ALLOW_ROLL_BASED_ON_MANEUVER}: ${value}`),
-    })
-
-    class CombatSettingsApplication extends GurpsSettingsApplication {
-      constructor(options?: any) {
-        super({ title: game.i18n!.localize(`${SETTINGS}.title`), module: MODULE_NAME, icon: ICON }, options)
-      }
-    }
-
-    game.settings.registerMenu(GURPS.SYSTEM_NAME, MODULE_NAME, {
-      name: `${SETTINGS}.title`,
-      label: `${SETTINGS}.title`,
-      hint: `${SETTINGS}.hint`,
-      icon: ICON,
-      type: CombatSettingsApplication,
-      restricted: true,
-    })
-
-    function redrawAllTokenEffects() {
-      game.scenes?.active?.tokens.forEach(token => token.object?.drawEffects())
-    }
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_INITIATIVE_FORMULA, {
+    name: `${SETTINGS}.initiative`,
+    hint: `${SETTINGS}.initiativeHint`,
+    scope: 'world',
+    config: false,
+    type: String,
+    default: DEFAULT_INITIATIVE_FORMULA,
+    onChange: value => {
+      console.log(`${SETTING_INITIATIVE_FORMULA}: ${value}`)
+      updateInitiativeFormula(true)
+    },
   })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_RANGE_STRATEGY, {
+    name: `${SETTINGS}.rangeStrategy`,
+    hint: `${SETTINGS}.rangeStrategyHint`,
+    scope: 'world',
+    config: false,
+    type: String,
+    choices: {
+      Standard: `${SETTINGS}.rangeStrategyStandard`,
+      Simplified: `${SETTINGS}.rangeStrategyRangeBands`,
+      TenPenalties: `${SETTINGS}.rangeStrategyTenPenalties`,
+    },
+    default: 'Standard',
+    onChange: value => {
+      console.log(`${SETTING_RANGE_STRATEGY}: ${value}`)
+      GURPS.rangeObject.update()
+    },
+  })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE, {
+    name: `${SETTINGS}.useRelativeSizeInMelee`,
+    hint: `${SETTINGS}.useRelativeSizeInMeleeHint`,
+    scope: 'world',
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: value => console.log(`${SETTING_USE_SIZE_MODIFIER_DIFFERENCE_IN_MELEE}: ${value}`),
+  })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_USE_ON_TARGET, {
+    name: `${SETTINGS}.maneuver.useOnTarget`,
+    hint: `${SETTINGS}.maneuver.useOnTargetHint`,
+    scope: 'world',
+    config: false,
+    type: Boolean,
+    default: false,
+    onChange: value => {
+      console.log(`${SETTING_USE_ON_TARGET}: ${value}`)
+      // On Target adds and removes maneuvers, so it has the same reach as the Combat Options dialog
+      // it can also be changed from.
+      refreshCombatOptionUI()
+    },
+  })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY, {
+    name: `${SETTINGS}.maneuver.visibility`,
+    hint: `${SETTINGS}.maneuver.visibilityHint`,
+    scope: 'world',
+    config: false,
+    type: String,
+    choices: {
+      NoOne: `${SETTINGS}.maneuver.values.noOne`,
+      GMAndOwner: `${SETTINGS}.maneuver.values.gmAndOwner`,
+      Everyone: `${SETTINGS}.maneuver.values.everyone`,
+    },
+    default: 'NoOne',
+    onChange: value => {
+      console.log(`${SETTING_MANEUVER_VISIBILITY}: ${value}`)
+      redrawAllTokenEffects()
+    },
+  })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_MANEUVER_DETAIL, {
+    name: `${SETTINGS}.maneuver.detail`,
+    hint: `${SETTINGS}.maneuver.detailHint`,
+    scope: 'world',
+    config: false,
+    type: String,
+    choices: {
+      Full: `${SETTINGS}.maneuver.values.fullDetail`,
+      General: `${SETTINGS}.maneuver.values.general`,
+      NoFeint: `${SETTINGS}.maneuver.values.noFeint`,
+    },
+    default: 'General',
+    onChange: value => {
+      console.log(`${SETTING_MANEUVER_DETAIL}: ${value}`)
+      redrawAllTokenEffects()
+    },
+  })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_MANEUVER_UPDATES_MOVE, {
+    name: `${SETTINGS}.maneuver.updatesMove`,
+    hint: `${SETTINGS}.maneuver.updatesMoveHint`,
+    scope: 'world',
+    config: false,
+    type: Boolean,
+    default: true,
+    onChange: value => console.log(`${SETTING_MANEUVER_UPDATES_MOVE}: ${value}`),
+  })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_ALLOW_ROLL_BASED_ON_MANEUVER, {
+    name: `${SETTINGS}.maneuver.allowRoll`,
+    hint: `${SETTINGS}.maneuver.allowRollHint`,
+    scope: 'world',
+    config: false,
+    type: String,
+    choices: {
+      Allow: `${SETTINGS}.maneuver.values.allow`,
+      Warn: `${SETTINGS}.maneuver.values.warn`,
+      Forbid: `${SETTINGS}.maneuver.values.forbid`,
+    },
+    default: 'Warn',
+    onChange: value => console.log(`${SETTING_ALLOW_ROLL_BASED_ON_MANEUVER}: ${value}`),
+  })
+
+  game.settings.register(GURPS.SYSTEM_NAME, SETTING_COMBAT_OPTIONS, {
+    name: 'GURPS.combat.setting.options',
+    hint: 'GURPS.combat.setting.optionsHint',
+    scope: 'world',
+    config: false,
+    type: Object as any,
+    default: defaultCombatOptionSettings(),
+    onChange: value => {
+      console.log(`Combat options: ${JSON.stringify(value)}`)
+      refreshCombatOptionUI()
+    },
+  })
+
+  function redrawAllTokenEffects() {
+    game.scenes?.active?.tokens.forEach(token => token.object?.drawEffects())
+  }
 }
 
 /* ---------------------------------------- */
 /*  Settings accessors -- use the ones exposed in this module (index.ts) for reading settings. */
 /* ---------------------------------------- */
+
+export function getCombatOptionSettings(): CombatOptionSettings {
+  return (game.settings?.get(GURPS.SYSTEM_NAME, SETTING_COMBAT_OPTIONS) ?? {}) as CombatOptionSettings
+}
+
 export function isUsingOnTarget(): boolean {
   return !!game.settings?.get(GURPS.SYSTEM_NAME, SETTING_USE_ON_TARGET)
+}
+
+/** The options the Modifier Bucket should show in one of its sections, in registry order. */
+export function enabledCombatOptions(section: CombatOptionSection): CombatOption[] {
+  return enabledOptions(section, getCombatOptionSettings(), { useOnTarget: isUsingOnTarget() })
+}
+
+/** Whether a maneuver is one the GM has left in play. */
+export function isManeuverInPlay(maneuverName: string): boolean {
+  return isManeuverEnabled(maneuverName, getCombatOptionSettings())
 }
 
 export function getManeuverVisibility(): ManeuverVisibility {
@@ -198,3 +216,35 @@ export function setInitiativeFormula(value: string): void {
 export function getRangeStrategy(fallback: RangeStrategy = 'Standard'): RangeStrategy {
   return (game.settings?.get(GURPS.SYSTEM_NAME, SETTING_RANGE_STRATEGY) as RangeStrategy) || fallback
 }
+
+/**
+ * The Modifier Bucket reads the combat options lazily, but it may already be open, and the combat
+ * tracker menu, the token HUD palette and the sheet dropdowns are each built once per render -- so
+ * anything already on screen has to be re-rendered when what is in play changes.
+ */
+function refreshCombatOptionUI(): void {
+  GURPS.ModifierBucket?.refresh()
+  ui.combat?.render()
+  if (canvas?.tokens?.hud?.rendered) canvas.tokens.hud.render()
+  for (const sheet of renderedActorSheets()) sheet.render()
+}
+
+/**
+ * The actor sheets currently on screen.
+ *
+ * Reads `_sheet` rather than `sheet`, because `sheet` is a lazy getter that *constructs and caches*
+ * an Application for any actor that hasn't got one -- asking every actor in the world whether its
+ * sheet is open would be what opened them.
+ */
+export function renderedActorSheets(): any[] {
+  // `game.actors` misses the synthetic actors behind unlinked tokens -- the usual case for mooks --
+  // so an open mook sheet would keep offering maneuvers that are no longer in play.
+  const actors = new Set([
+    ...(game.actors ?? []),
+    ...(canvas?.tokens?.placeables ?? []).flatMap(token => token.actor ?? []),
+  ])
+
+  return [...actors].map(actor => (actor as any)._sheet).filter(sheet => sheet?.rendered)
+}
+
+/* ---------------------------------------- */

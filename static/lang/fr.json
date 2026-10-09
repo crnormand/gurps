@@ -654,6 +654,8 @@
       "rollTotalHits": "Total des coups possibles<br/>en raison de CdT ({rof}) & Recul ({rcl}) est <span class='roll-value'>{rofrcl}</span>. ({link})",
       "setting": {
         "hint": "Ces paramètres contrôlent différents aspects du combat dans le jeu.",
+        "initiative": "Combat: Formule de Séquence de Tour",
+        "initiativeHint": "C'est la formule utilisée par Foundry pour déterminer l'ordre des tours en combat. Avertissement: Ne changez cela que si vous savez ce que vous faites! Nous n'analysons pas cela pour plus de justesse. Laissez ce champ vierge pour réinitialiser la formule à la séquence de tours de combat GURPS, B362.",
         "maneuver": {
           "allowRoll": "Permettre le Jet basé sur la Manœuvre",
           "allowRollHint": "Pendant le combat, le système vérifiera si le jet est valide",
@@ -674,9 +676,20 @@
             "noOne": "Personne",
             "warn": "Avertir"
           },
-          "visibility": "Visibility des Icônes de Manoeuvre",
+          "visibility": "Visibilité des Icônes de Manoeuvre",
           "visibilityHint": "Détermine qui peut voir les icônes de manoeuvre d'un token."
         },
+        "maneuversHint": "Une manœuvre désactivée n'est plus affichée partout où une manœuvre peut être choisie — Suivi de combat, HUD du token et feuille de personnage — et ses modificateurs sont retirés du Réservoir de modificateurs.",
+        "modifiersHint": "Les modificateurs facultatifs proposés par le Réservoir de modificateurs. S'il est désactivé, le modificateur n'y est plus répertorié. Il peut toujours être saisi manuellement.",
+        "options": "Options de combat",
+        "optionsHint": "Choisissez les options de combat utilisées par ce monde. Une manœuvre désactivée n'est plus affichée partout où une manœuvre peut être choisie — Suivi de combat, HUD du token et feuille de personnage — et ses modificateurs sont retirés du Réservoir de modificateurs.",
+        "optionsManeuvers": "Manœuvres",
+        "optionsNeedsOnTarget": "Non utilisé : Utiliser les modificateurs de portée On Target est désactivé ci-dessus.",
+        "rangeStrategy": "Combat: Stratégie de modification de Portée",
+        "rangeStrategyHint": "Définit la formule à utiliser pour calculer les pénalités de portée.",
+        "rangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
+        "rangeStrategyStandard": "Table de Taille et Vitesse/Portée",
+        "rangeStrategyTenPenalties": "Penalités pour chaque 10 mètres",
         "title": "Paramètres de combat",
         "useRelativeSizeInMelee": "Utiliser la différence de modificateur de taille au corps à corps",
         "useRelativeSizeInMeleeHint": "Appliquer la différence de modificateur de taille (SM) entre l'attaquant et le défenseur aux jets d'attaque au corps à corps."
@@ -1788,17 +1801,21 @@
       "offset": "Décalage de Page",
       "offsetChangeHint": "Lorsque vous modifiez cette valeur, le lecteur ajuste l'affichage afin que la page corresponde au décalage indiqué (par ex., page 5).",
       "offsetPlaceholder": "Décalage : (ex. : -5, 0 ou 2)",
-      "settings": {
-        "basicPDFs": "Ensemble de base PDF(s)",
-        "basicPDFsCombined": "Ensemble de base Combiné ('B')",
-        "basicPDFsHint": "Sélectionnez 'Combiné' ou 'Séparé' et utilisez les codes PDF associés. Remarque : si vous sélectionnez 'Séparé', le PDF des campagnes du jeu de base doit s'ouvrir jusqu'à la page 340 pendant le test. Si vous sélectionnez 'Basic Revised', utilisez un décalage de 10.",
-        "basicPDFsRevised": "Basic Revised (B)",
-        "basicPDFsSeparate": "Séparé (Personnages, 'B' ; Campagnes, 'BX')",
+      "setting": {
+        "basicSet": {
+          "combined": "Basic Set Combiné ('B')",
+          "hint": "Sélectionnez 'Combiné' ou 'Separé' et utilisez les codes PDF associés lors de la configuration de PDFFoundry. Note: Si vous sélectionnez 'Separate', le PDF Basic Set Campaigns devrait s'ouvrir à la page 340 pendant le test de PDFoundry.",
+          "name": "PDF(s) du Livre de base",
+          "revised": "Basic Révisé ('B')",
+          "separate": "Séparé (Personnages, 'B'; Campagnes, 'BX')"
+        },
         "button": "Paramètres PDF",
-        "hint": "Configurer la gestion des fichiers PDF.",
+        "hint": "Configurez la gestion des PDF.",
         "name": "PDFs",
-        "openFirst": "Ouvrir le premier PDF trouvé",
-        "openFirstHint": "Si coché, le système ouvrira le premier PDF trouvé lorsque plusieurs PDF sont saisis. Si décoché, le système ouvrira tous les PDF saisis."
+        "openFirst": {
+          "hint": "Si coché, le système ouvrira le premier PDF trouvé lorsque plusieurs PDF sont saisis. Si décoché, le système ouvrira tous les PDF saisis.",
+          "name": "Ouvrir le premier PDF trouvé"
+        }
       }
     },
     "pdfCrippling": "B420",
@@ -2003,7 +2020,6 @@
     "settingCalculateEnc": "Acteur: Calcul de l'Encombrement",
     "settingColorSheetMenuHint": "Paramètres Coloration Feuille Personnage",
     "settingColorSheetMenuTitle": "Coloration Feuille Personnage",
-    "settingCombatInitiative": "Combat: Formule de Séquence de Tour",
     "settingConvertRanged": "Acteur: Convertit 'x2/x5' portée en yards",
     "settingDamageCondInjury": "Dégâts: Blessure Conditionnelle",
     "settingEnhancedInput": "Acteur: Entrées numériques améliorées",
@@ -2017,7 +2033,6 @@
     "settingHintAllowRollsBeforeCombatStart": "Si coché, le système permettra au joueur de faire des jets avant le début du combat.",
     "settingHintAllowTargetedRolls": "Si coché, le système vérifiera si une cible est sélectionnée avant de faire un jet.",
     "settingHintCalculateEnc": "Si coché, le niveau d'Encombrement sera automatiquement basé sur les équipements portés (et vous ne pourrez changer le niveau d'encombrement manuellement). Si désactivé, vous pouvez changer le niveau d'encombrement en cliquant sur le nouveau niveau.",
-    "settingHintCombatInitiative": "C'est la formule utilisée par Foundry pour déterminer l'ordre des tours en combat. Avertissement: Ne changez cela que si vous savez ce que vous faites! Nous n'analysons pas cela pour plus de justesse. Laissez ce champ vierge pour réinitialiser la formule à la séquence de tours de combat GURPS, B362.",
     "settingHintConvertRanged": "Si coché, les champs de portée sous la forme 'xN' ou 'xN/xM' seront multipliés par la F du personnage pour déterminer la portée actuelle pour une arme lancée. NOTE: Cela arrive uniquement pendant l'importe.",
     "settingHintDamagCondInjury": "Depuis la Pyramide #3/120: Blessure Conditionnelle retire les PV du jeucomme base du suivi des blessures, et les remplace par une méthode basée sur les effets pour les blessures.",
     "settingHintEnhancedInput": "Si coché, certain champs (comme les PF) verront s'ajouter et retirer des boutons raccourcis quand ils sont sélectionnés.",
@@ -2030,7 +2045,6 @@
     "settingHintPlayerChatPrivate": "Si coché, la plupart des commandes du chat(e.g. /hp, /fp, /qty, etc.) seront affichées comme message privé au joueur (au lieu d'un message hors personnage). Si vous faites confiance à vos personnages, et n'aimez pas voir le chat rempli par leurs commandes, activez-le.",
     "settingHintPortraitHPTinting": "Afficher une teinte rouge superposée sur les portraits de personnages en fonction de la perte de PV dans la feuille moderne.",
     "settingHintQtyItems": "Si coché, une petite icône apparaîtra après l'équipement où QTE/compte sera sauvegardé pendant les imports",
-    "settingHintRangeStrategy": "Définit la formule à utiliser pour calculer les pénalités de portée.",
     "settingHintRemoveUnequipped": "Si coché, les noms des attaques de Mêlée et à Distance seront comparés à la liste des équipements portés, et si une correspondance est trouvée, l'attaque sera seulement listée si l'équipement est équipé",
     "settingHintSheetDetail": "Sélectionnez la feuille de personnage que vous voulez comme 'Feuille Rapide'. Cela s'affichera la bar de titre, et l'utilisateur peut cliquer pour cycler entre celle-ci et la 'Feuille (GCS)' Complète",
     "settingHintShowChatReeling": "Si coché, les changements de statut Vacillant ou Fatigué de tout acteur seront affichés comme message de chat.",
@@ -2063,10 +2077,6 @@
     "settingPlayerChatPrivate": "Commande de chat des joueurs privées",
     "settingPortraitHPTinting": "Teinte de Portrait selon les PV",
     "settingQtyItems": "Acteur: Afficher le Flag QTE/compte sauvegardé",
-    "settingRangeStrategy": "Combat: Stratégie de modification de Portée",
-    "settingRangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
-    "settingRangeStrategyStandard": "Table de Taille et Vitesse/Portée",
-    "settingRangeStrategyTenPenalties": "Penalités pour chaque 10 mètres",
     "settingRemoveUnequipped": "Acteur: Retire les armes Non-Equipées des listes de Mêlée et à Distance.",
     "settings": {
       "physicalDiceTooltip": "par exemple : 1,2,3 ou 6"

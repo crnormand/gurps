@@ -1,4 +1,4 @@
-import { Document, DataModel, fields, TypeDataModel } from '@gurps-types/foundry/index.js'
+import { DataModel, Document, fields, TypeDataModel } from '@gurps-types/foundry/index.js'
 import { MeleeV1 } from '@module/action/legacy/meleev1.js'
 import { RangedV1 } from '@module/action/legacy/rangedv1.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
@@ -19,7 +19,7 @@ import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { ItemType } from '@module/item/types.js'
 import { COSTS_REGEX, parselink } from '@module/otf/parselink.js'
-import { OtfActionType, OtfAction, DamageAction } from '@module/otf/types.js'
+import { DamageAction, OtfAction, OtfActionType } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { taggedModToApply } from '@module/tagged-modifiers/tagged-modifiers.js'
@@ -27,6 +27,8 @@ import { GurpsToken } from '@module/token/index.js'
 import { TokenActions } from '@module/token-actions.js'
 import { getGame } from '@module/util/guards.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
+import { Combat as CombatRules } from '@rules/combat/defenses/dodge.js'
+import { Movement as MovementRules } from '@rules/movement/move.js'
 import { multiplyDice } from '@util/damage-utils.js'
 import { roundTo } from '@util/math.js'
 import { arrayToObject, makeRegexPatternFrom, splitArgs, zeroFill } from '@util/utilities.js'
@@ -484,21 +486,15 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const carriedWeight = this.eqtsummary.eqtlbs ?? 0
 
     for (let encumbranceLevel = 0; encumbranceLevel < liftBrackets.length; encumbranceLevel++) {
-      let move = Math.floor(Math.max(1, basicMove * (1 - encumbranceLevel * 0.2)))
-      let dodge = Math.max(1, basicDodge - encumbranceLevel)
-      let sprint = Math.max(1, move * 1.2)
+      const dodge = CombatRules.calculateDodge(basicDodge, encumbranceLevel, {
+        reeling: this.conditions.reeling,
+        exhausted: this.conditions.exhausted,
+      })
 
-      if (this.conditions.reeling) {
-        move = Math.ceil(move / 2)
-        dodge = Math.ceil(dodge / 2)
-        sprint = Math.ceil(sprint / 2)
-      }
-
-      if (this.conditions.exhausted) {
-        move = Math.ceil(move / 2)
-        dodge = Math.ceil(dodge / 2)
-        sprint = Math.ceil(sprint / 2)
-      }
+      const move = MovementRules.currentMove(basicMove, encumbranceLevel, {
+        reeling: this.conditions.reeling,
+        exhausted: this.conditions.exhausted,
+      })
 
       let current = false
 
@@ -514,7 +510,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
       }
 
-      const currentmove = this.#getCurrentMove(move)
+      const currentmove = this.#getCurrentMove(move, encumbranceLevel)
+      const currentsprint = this.#getSprintMove(encumbranceLevel)
 
       this.encumbrance.push({
         key: `enc${encumbranceLevel}`,
@@ -524,11 +521,26 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         dodge,
         current,
         currentmove,
-        currentsprint: currentmove * 1.2,
+        currentsprint,
         currentdodge: dodge,
         currentmovedisplay: `${currentmove}`,
       })
     }
+  }
+
+  /* ---------------------------------------- */
+
+  /**
+   * If you have Enhanced Move, you can accelerate by your Basic Move every second until you reach top speed.
+   * Use your Enhanced Move multiplier instead of the 20% bonus (B354).
+   */
+  #getSprintMove(encumbranceLevel: number = 0) {
+    const current = this.currentMoveMode
+
+    if (!current) return 0
+    if (current?.enhanced) return MovementRules.sprintingMove(current.enhanced, encumbranceLevel)
+
+    return MovementRules.sprintingMove(current.basic, encumbranceLevel)
   }
 
   /* ---------------------------------------- */
@@ -634,14 +646,21 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     await this.#prepareUserModifiers()
   }
 
-  #getCurrentMove(base: number): number {
+  /**
+   * @param {number} base - Move already reduced for encumbrance, reeling and fatigue.
+   * @param {number} level - The encumbrance level `move` was reduced for.
+   * @returns {number}
+   */
+  #getCurrentMove(base: number, level: number): number {
     const doUpdateMove = Combat.maneuverUpdatesMove(false) && this.parent.inCombat
 
     const moveForManeuver = this.#getMoveAdjustmentForManeuver(base)
     const moveForPosture = this.#getMoveAdjustmentForPosture(base)
 
-    this.conditions.move =
-      moveForManeuver.value < moveForPosture.value ? moveForManeuver.tooltip : moveForPosture.tooltip
+    if (level === 0) {
+      this.conditions.move =
+        moveForManeuver.value < moveForPosture.value ? moveForManeuver.tooltip : moveForPosture.tooltip
+    }
 
     if (doUpdateMove) {
       return Math.min(moveForManeuver.value, moveForPosture.value)
@@ -699,31 +718,31 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
         }
       case Combat.Movement.step:
         return {
-          value: Math.max(1, Math.ceil(base / 10)),
+          value: MovementRules.step(base),
           // TODO: localize
           tooltip: 'Step',
         }
       case Combat.Movement.twoSteps:
         return {
-          value: Math.max(1, Math.ceil(base / 10)) * 2,
+          value: MovementRules.step(base) * 2,
           // TODO: localize
           tooltip: 'Step or Two',
         }
       case Combat.Movement.oneThird:
         return {
-          value: Math.max(1, Math.ceil(base / 3)),
+          value: MovementRules.fractionOfMove(base, 1, 3),
           // TODO: localize
           tooltip: '×1/3',
         }
       case Combat.Movement.half:
         return {
-          value: Math.max(1, Math.ceil(base / 2)),
+          value: MovementRules.fractionOfMove(base, 1, 2),
           // TODO: localize
           tooltip: 'Half',
         }
       case Combat.Movement.twoThirds:
         return {
-          value: Math.max(1, Math.ceil((base * 2) / 3)),
+          value: MovementRules.fractionOfMove(base, 2, 3),
           // TODO: localize
           tooltip: '×2/3',
         }

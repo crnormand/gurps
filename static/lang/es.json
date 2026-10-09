@@ -654,6 +654,8 @@
       "rollTotalHits": "El total de impactos por CdF ({rof}) y Rtr ({rcl}) es <span class='roll-value'>{rofrcl}</span>. ({link})",
       "setting": {
         "hint": "Estos ajustes controlan varios aspectos del combate en el juego.",
+        "initiative": "Combate: Fórmula de Secuencia de Turnos",
+        "initiativeHint": "Esta es la fórmula utilizada por Foundry para determinar el orden de turnos en combate. Advertencia: ¡Solo cambia esto si sabes lo que estás haciendo! No verificamos la corrección de este campo. Déjalo en blanco para restablecer la fórmula a la Secuencia de Combate GURPS, B362.",
         "maneuver": {
           "allowRoll": "Permitir Tirada basada en Maniobra",
           "allowRollHint": "Durante el combate, el sistema comprobará si la tirada es válida, según la maniobra seleccionada.",
@@ -677,6 +679,17 @@
           "visibility": "Visibilidad del Icono de Maniobra",
           "visibilityHint": "Determina quién puede ver el icono de maniobra de un token."
         },
+        "maneuversHint": "Una maniobra desactivada deja de mostrarse en cualquier lugar donde se pueda elegir una maniobra — Rastreador de Combate, HUD del Token y hoja de personaje — y sus modificadores se eliminan del Contenedor de Modificadores.",
+        "modifiersHint": "Los modificadores opcionales que presenta el Contenedor de Modificadores. Si se desactiva, deja de aparecer en el Contenedor de Modificadores. El modificador aún puede introducirse manualmente.",
+        "options": "Opciones de Combate",
+        "optionsHint": "Elige las opciones de combate utilizadas por este mundo. Una maniobra desactivada deja de mostrarse en cualquier lugar donde se pueda elegir una maniobra — Rastreador de Combate, HUD del Token y hoja de personaje — y sus modificadores se eliminan del Contenedor de Modificadores.",
+        "optionsManeuvers": "Maniobras",
+        "optionsNeedsOnTarget": "No está disponible: Usar Modificadores de Distancia En el Objetivo está desactivado arriba.",
+        "rangeStrategy": "Combate: Estrategia de modificador de alcance",
+        "rangeStrategyHint": "Establece la fórmula a usar para calcular las penalizaciones de alcance.",
+        "rangeStrategyRangeBands": "Bandas de Alcance de Cazadores de Monstruos 2",
+        "rangeStrategyStandard": "Tabla de Tamaño y Velocidad/Alcance",
+        "rangeStrategyTenPenalties": "-1 por cada 10 hexes/yardas/metros",
         "title": "Ajustes de Combate",
         "useRelativeSizeInMelee": "Combate: Usar Diferencia de Modificador de Tamaño en Combate",
         "useRelativeSizeInMeleeHint": "Aplica la diferencia en Modificador de Tamaño (MT) entre atacante y defensor en los tiros de ataque de combate."
@@ -1789,17 +1802,21 @@
       "offset": "Desplazamiento de Página",
       "offsetChangeHint": "Cuando cambias este valor, el visor se ajusta para que la página mostrada corresponda al desplazamiento ingresado (ej., página 5).",
       "offsetPlaceholder": "Desplazamiento: (ej., -5, 0 o 2)",
-      "settings": {
-        "basicPDFs": "PDF(s) del Set Básico",
-        "basicPDFsCombined": "Set Básico Combinado ('B')",
-        "basicPDFsHint": "Selecciona 'Combinado' o 'Separados' y usa los códigos PDF correspondientes. Nota: Si seleccionas 'Separados', el PDF de Campañas del Set Básico debería abrirse en la página 340 durante la prueba. Si seleccionas 'Basic Revised', usa un desplazamiento de 10.",
-        "basicPDFsRevised": "Básico Revisado (B)",
-        "basicPDFsSeparate": "Separados (Personajes, 'B'; Campañas, 'BX')",
-        "button": "Configuración de PDF",
-        "hint": "Configura cómo se manejan los PDFs.",
+      "setting": {
+        "basicSet": {
+          "combined": "Manual Básico Combinado ('B')",
+          "hint": "Selecciona 'Combinado' o 'Separado' y usa los códigos PDF asociados al configurar PDFoundry. Nota: Si seleccionas 'Separado', el PDF de Campañas del Manual Básico debería abrirse en la página 340 durante la prueba de PDFoundry.",
+          "name": "PDF(s) del Manual Básico",
+          "revised": "Básico Revisado ('B')",
+          "separate": "Separado (Personajes, 'B'; Campañas, 'BX')"
+        },
+        "button": "Ajustes de PDF",
+        "hint": "Configura cómo se gestionan los PDFs.",
         "name": "PDFs",
-        "openFirst": "Abrir el primer PDF encontrado",
-        "openFirstHint": "Si se marca, el sistema abrirá el primer PDF encontrado cuando se ingresen múltiples PDFs. Si no se marca, el sistema abrirá todos los PDFs ingresados."
+        "openFirst": {
+          "hint": "Si está marcado, el sistema abrirá el primer PDF encontrado cuando se ingresen múltiples PDFs. Si no está marcado, el sistema abrirá todos los PDFs ingresados.",
+          "name": "Abrir el primer PDF encontrado"
+        }
       }
     },
     "pdfCrippling": "B420",
@@ -2004,7 +2021,6 @@
     "settingCalculateEnc": "Actor: Calcular Encumbramiento",
     "settingColorSheetMenuHint": "Configuración de Color de Hoja del Personaje",
     "settingColorSheetMenuTitle": "Color de Hoja del Personaje",
-    "settingCombatInitiative": "Combate: Fórmula de Secuencia de Turnos",
     "settingConvertRanged": "Actor: Convertir rango 'x2/x5' a yardas",
     "settingDamageCondInjury": "Daño: Lesión Condicional",
     "settingEnhancedInput": "Actor: Entradas numéricas mejoradas",
@@ -2018,7 +2034,6 @@
     "settingHintAllowRollsBeforeCombatStart": "Si se marca, el sistema permitirá al jugador realizar tiros antes de que comience el combate.",
     "settingHintAllowTargetedRolls": "Si se marca, el sistema verificará si hay un objetivo seleccionado antes de realizar un tiro.",
     "settingHintCalculateEnc": "Si se marca, el nivel de Encumbramiento se establecerá automáticamente según el equipo portado (y no podrás cambiar el nivel de Encumbramiento manualmente). Si se desactiva, puedes cambiar el nivel de Encumbramiento haciendo clic en el nuevo nivel.",
-    "settingHintCombatInitiative": "Esta es la fórmula utilizada por Foundry para determinar el orden de turnos en combate. Advertencia: ¡Solo cambia esto si sabes lo que estás haciendo! No verificamos la corrección de este campo. Déjalo en blanco para restablecer la fórmula a la Secuencia de Combate GURPS, B362.",
     "settingHintConvertRanged": "Si se marca, los campos de rango en la forma 'xN' o 'xN/xM' se multiplicarán por la FU del personaje para determinar el rango real de un arma arrojadiza. NOTA: Esto solo ocurre durante la importación.",
     "settingHintDamagCondInjury": "De Pyramid #3/120: La Lesión Condicional elimina los Puntos de Golpe del juego como base para el seguimiento de heridas, y los reemplaza con un método basado en efectos para las lesiones.",
     "settingHintEnhancedInput": "Si se marca, ciertos campos (como PF) mostrarán botones de acceso directo de suma y resta cuando tengan el foco.",
@@ -2031,7 +2046,6 @@
     "settingHintPlayerChatPrivate": "Si se marca, la mayoría de los comandos de chat (ej. /hp, /fp, /qty, etc.) se mostrarán como un susurro al jugador (en lugar de un mensaje Fuera de Personaje). Si confías en tus jugadores y no quieres ver el chat lleno de sus comandos de chat, activa esto.",
     "settingHintPortraitHPTinting": "Mostrar superposición de tinte rojo en los retratos del personaje según la pérdida de PG en la hoja Moderna.",
     "settingHintQtyItems": "Si se marca, aparecerá un pequeño ícono después del equipo donde se guardará la CANT/Cantidad durante las importaciones",
-    "settingHintRangeStrategy": "Establece la fórmula a usar para calcular las penalizaciones de alcance.",
     "settingHintRemoveUnequipped": "Si se marca, los nombres de los ataques Cuerpo a Cuerpo y A Distancia se compararán con la lista de equipo portado, y si se encuentra una coincidencia de nombre, el ataque solo se listará si el equipo está Equipado",
     "settingHintSheetDetail": "Selecciona la hoja del personaje que quieres como la 'Hoja Rápida'. Se mostrará en la barra de título, y el usuario puede hacer clic entre ella y la hoja 'Completa (GCS)'",
     "settingHintShowChatReeling": "Cuando se marca, los cambios en el estado de Tambaleando o Cansado de cualquier actor se mostrarán como un mensaje de chat.",
@@ -2064,10 +2078,6 @@
     "settingPlayerChatPrivate": "Comandos de chat del jugador privados",
     "settingPortraitHPTinting": "Tinte de PG en Retrato",
     "settingQtyItems": "Actor: Mostrar Indicador de CANT/Cantidad guardada",
-    "settingRangeStrategy": "Combate: Estrategia de modificador de alcance",
-    "settingRangeStrategyRangeBands": "Bandas de Alcance de Cazadores de Monstruos 2",
-    "settingRangeStrategyStandard": "Tabla de Tamaño y Velocidad/Alcance",
-    "settingRangeStrategyTenPenalties": "-1 por cada 10 hexes/yardas/metros",
     "settingRemoveUnequipped": "Actor: Eliminar armas No Equipadas de las listas de Combate y A Distancia",
     "settings": {
       "physicalDiceTooltip": "ej: 1,2,3 o 6"

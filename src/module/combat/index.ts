@@ -1,51 +1,53 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
-import { enabledOptions } from './combat-options.js'
+import { registerCombatSettingsMenu } from './combat-settings-application.js'
 import { GurpsCombat, handleCombatTurnChange, resetTokenActions } from './combat.js'
 import { GurpsCombatant } from './combatant.js'
 import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.js'
 import Maneuvers, {
+  MOVE_FULL,
+  MOVE_HALF,
   MOVE_NONE,
   MOVE_ONE,
+  MOVE_ONETHIRD,
   MOVE_STEP,
   MOVE_TWO_STEPS,
-  MOVE_ONETHIRD,
-  MOVE_HALF,
   MOVE_TWOTHIRDS,
-  MOVE_FULL,
 } from './maneuver.js'
 import { migrateCombatSettings } from './migrate.js'
 import { GurpsRange, setupRanges } from './ranges.js'
 import {
+  enabledCombatOptions,
   getInitiativeFormula,
   getManeuverDetail,
   getManeuverVisibility,
   getRangeStrategy,
   getRollBasedOnManeuverPolicy,
-  initializeCombatSettings,
+  isManeuverInPlay,
   isUsingOnTarget,
   maneuverUpdatesMove,
+  registerCombatSettings,
   useSizeModifierDifferenceInMelee,
 } from './settings.js'
 
 export interface GurpsCombatModule extends GurpsModule {
+  enabledOptions: typeof enabledCombatOptions
   getInitiativeFormula: typeof getInitiativeFormula
   getManeuverDetail: typeof getManeuverDetail
   getManeuverVisibility: typeof getManeuverVisibility
   getRangeStrategy: typeof getRangeStrategy
   getRollBasedOnManeuverPolicy: typeof getRollBasedOnManeuverPolicy
+  isManeuverInPlay: typeof isManeuverInPlay
   isUsingOnTarget: typeof isUsingOnTarget
   maneuverUpdatesMove: typeof maneuverUpdatesMove
   useSizeModifierDifferenceInMelee: typeof useSizeModifierDifferenceInMelee
-  enabledOptions: typeof enabledOptions
+
   Movement: Record<string, string>
   Maneuvers: typeof Maneuvers
 }
 
 function init() {
   console.log('GURPS | Initializing GURPS Combat module.')
-
-  initializeCombatSettings()
 
   Hooks.once('init', () => {
     CONFIG.Combat.documentClass = GurpsCombat
@@ -54,6 +56,9 @@ function init() {
       formula: DEFAULT_INITIATIVE_FORMULA,
       decimals: 5, // Important to be able to maintain resolution
     }
+
+    registerCombatSettings()
+    registerCombatSettingsMenu()
   })
 
   Hooks.once('ready', migrateCombatSettings)
@@ -82,6 +87,8 @@ export const Combat: GurpsCombatModule = {
   init,
 
   // -- Combat settings --
+  enabledOptions: enabledCombatOptions,
+  isManeuverInPlay,
   getManeuverDetail,
   getManeuverVisibility,
   getRangeStrategy,
@@ -104,9 +111,6 @@ export const Combat: GurpsCombatModule = {
   },
 
   Maneuvers,
-
-  // -- Combat options and Modifiers --
-  enabledOptions,
 }
 
 export const PROPERTY_MOVEOVERRIDE_MANEUVER = 'system.moveoverride.maneuver'
