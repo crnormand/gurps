@@ -21,6 +21,12 @@ export namespace Movement {
     return Math.max(1, Math.floor((move * numerator) / denominator))
   }
 
+  /**
+   * Calculate the Step a character has based on their Move.
+   *
+   * Step is equal to 1/10 of Move, but never less than 1 yard. Round all fractions up. (B368)
+   */
+
   export function step(move: number): number {
     return Math.max(1, Math.ceil(move / 10))
   }
@@ -49,5 +55,16 @@ export namespace Movement {
     if (conditions.exhausted) move = Math.ceil(move / 2)
 
     return move
+  }
+
+  /**
+   * Sprinting adds 20% to Move after one second (B354). On a battlemap, where distances are measured in
+   * hexes, drop all fractions to get a round Move score. Assume even the slowest runners gets +1 Move.
+   */
+  export function sprintingMove(move: number, encumbranceLevel: number, conditions: MoveConditions = {}): number {
+    const current = currentMove(move, encumbranceLevel, conditions)
+    const additionalMove = Math.max(1, Math.ceil(current * 0.2))
+
+    return current + additionalMove
   }
 }
