@@ -31,7 +31,7 @@ export interface CanRollResult {
   ): Promise<CanRollResult> {
     const isAttack = action.type === OtfActionType.attack
     const isDefense =
-      (action.type === OtfActionType.attribute && action.attribute === 'dodge') ||
+      (action.type === OtfActionType.attribute && action.attrkey === 'DODGE') ||
       action.type === OtfActionType.weaponParry ||
       action.type === OtfActionType.weaponBlock
     const isAttribute = action.type === OtfActionType.attribute
