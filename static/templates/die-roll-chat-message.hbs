@@ -2,7 +2,7 @@
   <div class='prefix'>
     {{prefix}}
     <div class='roll-result'>{{chatthing}}</div>
-    {{#if (not (eq origtarget -1))}} Level: ({{origtarget}}){{/if}}
+    {{#if (not (eq origtarget -1))}} {{localize 'GURPS.level'}}: ({{origtarget}}){{/if}}
   </div>
   {{#each optlabel as |label|}}
       <span style='font-size:85%'>{{{label}}}</span>
