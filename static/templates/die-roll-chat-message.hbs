@@ -1,9 +1,12 @@
 <div class='roll-message gga-chat-message'>
   <div class='prefix'>
     {{prefix}}
-    <div class='roll-result'>{{chatthing}}</div>{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}}
+    <div class='roll-result'>{{chatthing}}</div>
+    {{#if (not (eq origtarget -1))}} Level: ({{origtarget}}){{/if}}
   </div>
-  {{#if optlabel}}&nbsp;&nbsp;{{{optlabel}}}{{/if}}
+  {{#each optlabel as |label|}}
+      <span style='font-size:85%'>{{{label}}}</span>
+  {{/each}}
   {{#if targetmods}}
     <div>
       <ul class='modifier-list'>

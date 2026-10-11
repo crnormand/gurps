@@ -19,7 +19,7 @@ import { SpellV1 } from '@module/item/legacy/spell-adapter.js'
 import { TraitV1 } from '@module/item/legacy/trait-adapter.js'
 import { ItemType } from '@module/item/types.js'
 import { COSTS_REGEX, parselink } from '@module/otf/parselink.js'
-import { DamageAction, OtfAction, OtfActionType } from '@module/otf/types.js'
+import { OtfActionType, OtfAction, DamageAction, OtfRollAction } from '@module/otf/types.js'
 import { TrackerInstance } from '@module/resource-tracker/resource-tracker.js'
 import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import { taggedModToApply } from '@module/tagged-modifiers/tagged-modifiers.js'
@@ -1644,8 +1644,8 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   }
 
   async addTaggedRollModifiers(
-    chatThing: string,
-    optionalArgs: { obj?: AnyObject; action?: OtfAction } = {},
+    action: OtfRollAction,
+    item?: Item.Implementation,
     attack?: MeleeAttackModel | RangedAttackModel
   ): Promise<boolean> {
     const taggedSettings =
@@ -1656,14 +1656,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     const actorInCombat = this.parent.inCombat
     const allMods = this.allModifiers()
 
-    const { modsToApply, isDamageRoll } = taggedModToApply(
-      chatThing,
-      attack,
-      optionalArgs,
-      taggedSettings,
-      allMods,
-      actorInCombat
-    )
+    const { modsToApply, isDamageRoll } = taggedModToApply(action, item, attack, taggedSettings, allMods, actorInCombat)
 
     for (const mod of modsToApply) {
       const regex = new RegExp(/^[+-]\d+(.*?)(?=[#@])/)
@@ -1784,8 +1777,9 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
       case OtfActionType.attribute: {
         let attrName = action?.overridetxt
 
-        if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.toLowerCase()}`) ?? ''
-        if (attrName.startsWith('GURPS')) attrName = game.i18n?.localize(`GURPS.attributes${action.attrkey}NAME`) ?? ''
+        if (!attrName) attrName = game.i18n?.localize(`GURPS.${action.attrkey?.replace(' ', '').toLowerCase()}`) ?? ''
+        if (attrName.startsWith('GURPS'))
+          attrName = game.i18n?.localize(`GURPS.attributes${action.attrkey.replace(' ', '')}NAME`) ?? ''
 
         return {
           name: attrName,

@@ -1,10 +1,11 @@
+import { addBucketToDamage } from '@module/damage/addBucketToDamage.js'
 import { parselink } from '@module/otf/parselink.js'
 import { OtfActionType } from '@module/otf/types.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 import { displayMod, generateUniqueId } from '@util/utilities.js'
 
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
-import { addBucketToDamage, rollData } from '../otf/dieroll.js'
+import { rollData } from '../otf/dieroll.js'
 
 import ModifierBucketEditor from './tooltip-window.js'
 
