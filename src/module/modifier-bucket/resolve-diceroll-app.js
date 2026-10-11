@@ -134,7 +134,7 @@ export default class ResolveDiceRoll extends Application {
       let result = this.getValues(diceTerm)
 
       result.forEach(res => diceTerm.term.results.push({ active: true, result: res }))
-      // diceTerm.term._loaded = result
+      diceTerm.term._loaded = result
     }
 
     // @ts-expect-error - applyCallback accepts a boolean parameter at runtime
