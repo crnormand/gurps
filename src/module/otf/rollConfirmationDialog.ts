@@ -1,6 +1,9 @@
 import { Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/index.js'
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
+import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
+import { ModelCollection } from '@module/data/model-collection.js'
+import GurpsWiring from '@module/gurps-wiring.js'
 import { MessageMode } from '@module/util/foundry-utils.js'
 import { i18nFallback } from '@module/util/i18nFallback.js'
 import { systemPath } from '@module/util/misc.js'
@@ -68,7 +71,9 @@ namespace RollConfirmationDialog {
     consumeActionColor?: string
     consumeActionLabel?: string
     targetRoll: string
-    modifiers: Modifier[]
+    currentModifiers: Modifier[]
+    genericModifiers: string[]
+    hitLocations?: string[]
     buttons: any[]
   }
   export interface DamageRenderContext extends foundry.applications.api.ApplicationV2.RenderContext {
@@ -91,7 +96,8 @@ namespace RollConfirmationDialog {
     targetRoll: string
     bucketRoll: string
     bucketRollColor: string
-    modifiers: Modifier[]
+    currentModifiers: Modifier[]
+    genericModifiers: string[]
     buttons: any[]
   }
 
@@ -293,6 +299,36 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     return { itemIcon, itemColor, rollType }
   }
 
+  #showHitLocations() {
+    if (this._data.type !== 'roll') return false
+    if (this._data.action.type === OtfActionType.attack) return true
+
+    return false
+  }
+
+  #getHitLocations() {
+    const target = game.user?.targets.first()
+
+    if (target?.actor?.system.hitlocationsV2) {
+      const locations = target.actor.system.hitlocationsV2
+
+      return makeHilLocationModifiers(locations)
+    } else if (this._data.actor?.system.hitlocationsV2) {
+      const locations = this._data.actor.system.hitlocationsV2
+
+      return makeHilLocationModifiers(locations)
+    }
+
+    return undefined
+
+    function makeHilLocationModifiers(locations: ModelCollection<HitLocationEntryV2>) {
+      return locations
+        .filter(it => it.penalty !== 0)
+        .map(it => `${it.penalty.signedString()} ${it.where}`)
+        .map(it => GURPS.modules.Otf.parselink(it).text)
+    }
+  }
+
   override async _prepareContext(
     _options: foundry.applications.api.ApplicationV2.RenderOptions
   ): Promise<RollConfirmationDialog.RenderContext> {
@@ -301,7 +337,10 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     const tokenImage = token?.document.texture.src ?? this._data.actor?.img ?? gmUser?.avatar ?? ''
     const isVideo = tokenImage.includes('webm') || tokenImage.includes('mp4')
     const tokenName = (token?.name || this._data.actor?.name) ?? gmUser?.name ?? ''
-    const modifiers = GURPS.ModifierBucket.modifierStack.modifierList
+    const currentModifiers = GURPS.ModifierBucket.modifierStack.modifierList
+    const genericModifiers = ['+1', '+2', '+3', '+4', '+5', '-1', '-2', '-3', '-4', '-5'].map(
+      it => GURPS.modules.Otf.parselink(it).text
+    )
 
     if (this._data.type === 'roll') {
       const actor = this._data.actor
@@ -355,6 +394,8 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
             ? 'rgba(20,119,180,0.7)'
             : 'rgba(51,114,68,0.7)'
 
+      const hitLocations = this.#showHitLocations() ? this.#getHitLocations() : undefined
+
       return {
         type: 'roll',
         messages: this._data.messages,
@@ -375,7 +416,9 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         consumeActionColor,
         consumeActionLabel,
         targetRoll: targetRoll,
-        modifiers,
+        currentModifiers,
+        genericModifiers,
+        hitLocations,
         buttons: [
           {
             type: 'submit',
@@ -440,7 +483,8 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         targetRoll,
         bucketRoll,
         bucketRollColor,
-        modifiers,
+        currentModifiers,
+        genericModifiers,
         buttons: [
           {
             type: 'submit',
@@ -476,7 +520,8 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         useMinDamage: false,
         bucketRoll: bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : '',
         bucketRollColor: bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8',
-        modifiers,
+        currentModifiers,
+        genericModifiers,
         buttons: [
           {
             type: 'submit',
@@ -495,6 +540,14 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         ],
       }
     }
+  }
+
+  protected override async _onRender(
+    context: foundry.applications.api.ApplicationV2.RenderContext,
+    options: foundry.applications.api.ApplicationV2.RenderOptions
+  ): Promise<void> {
+    super._onRender(context, options)
+    GurpsWiring.hookupAllEvents(this.element)
   }
 
   static async #onRollButton(this: RollConfirmationDialog, event: PointerEvent, _target: HTMLElement): Promise<void> {
@@ -520,6 +573,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     GURPS.ModifierBucket.modifierStack.removeIndex(index)
     GURPS.ModifierBucket.refresh()
   }
+
   /*
       Only one Roll Confirmation Dialog can be Open at one time, so we reuse the instance.
     */

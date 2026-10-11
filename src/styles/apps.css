@@ -3275,8 +3275,13 @@ button.quick-roll-button.lg.atk {
 
 .cr-result-section,
 .cr-item-section,
-.cr-token-section {
+.cr-token-section,
+.cr-modifiers-section,
+.cr-current-modifiers-section {
   flex: 1;
+}
+.cr-current-modifiers-section {
+  min-width: 250px;
 }
 .cr-damage-section {
   display: flex;
@@ -3440,6 +3445,25 @@ button.quick-roll-button.lg.atk {
 .cr-item-img-container {
   position: relative;
   display: inline-block;
+}
+
+.cr-section-header{
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.cr-section-subheader{
+  font-weight: bold;
+}
+
+.cr-generic-modifiers{
+  display: grid;
+  grid-template-columns: repeat(5, min-content);
+}
+
+.cr-hitLocations{
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
 }
 
 .consume-action-badge {
