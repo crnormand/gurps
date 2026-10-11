@@ -97,13 +97,7 @@ export default class ModifierBucketEditor extends Application {
     data.meleemods = ModifierLiterals.MeleeMods
     data.rangedmods = ModifierLiterals.RangedMods
     data.defensemods = ModifierLiterals.DefenseMods
-    data.meleemods = ModifierLiterals.MeleeMods
-    data.rangedmods = ModifierLiterals.RangedMods
-    data.defensemods = ModifierLiterals.DefenseMods
     data.speedrangemods = [game.i18n.localize('GURPS.modifierRangeTitle')].concat(GURPS.rangeObject.modifiers)
-    data.actorname = GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
-    data.othermods1 = ModifierLiterals.OtherMods1
-    data.othermods2 = ModifierLiterals.OtherMods2
     data.actorname = GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
     data.othermods1 = ModifierLiterals.OtherMods1
     data.othermods2 = ModifierLiterals.OtherMods2
@@ -457,9 +451,9 @@ const ModifierLiterals = {
     return this._HitLocationModifiers
   },
 
-  /** The combat options offered in one section of the bucket. */
+  /** The combat options the GM has left in play for one bucket section. */
   _maneuverOptions(section) {
-    return Combat.enabledOptions(section, { useOnTarget: Combat.isUsingOnTarget() })
+    return Combat.enabledOptions(section)
   },
 
   _maneuverOtf(option) {

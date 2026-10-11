@@ -2,7 +2,13 @@ import type { CharacterModel, GcsCharacterModel, GcsLootModel } from '@module/ac
 import type { GurpsActorV2 } from '@module/actor/gurps-actor.js'
 import { ActorType } from '@module/actor/types.js'
 import type { GurpsCombatant } from '@module/combat/combatant.js'
-import { ManeuverDetail, ManeuverVisibility, RangeStrategy, RollBasedOnManeuverPolicy } from '@module/combat/types.js'
+import {
+  CombatOptionSettings,
+  ManeuverDetail,
+  ManeuverVisibility,
+  RangeStrategy,
+  RollBasedOnManeuverPolicy,
+} from '@module/combat/types.js'
 import type { GurpsActiveEffect } from '@module/effects/active-effect.js'
 import type {
   EquipmentModel,
@@ -19,6 +25,7 @@ import type {
 } from '@module/item/data/index.js'
 import type { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { ItemType } from '@module/item/types.js'
+import type { PdfPageModel } from '@module/journal/data-model.js'
 import type { IResourceTrackerTemplate, ResourceTrackerManagerV2 } from '@module/resource-tracker/index.js'
 import type { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import type { GurpsToken } from '@module/token/gurps-token.js'
@@ -84,6 +91,9 @@ declare module 'fvtt-types/configuration' {
       [ItemType.GcsSpell]: typeof GcsSpellModel
       [ItemType.GcsNote]: typeof GcsNoteModel
     }
+    JournalEntryPage: {
+      pdf: typeof PdfPageModel
+    }
   }
 
   /* ---------------------------------------- */
@@ -121,6 +131,7 @@ declare module 'fvtt-types/configuration' {
     'gurps.combat.maneuver-visibility': ManeuverVisibility
     'gurps.combat.use-on-target': boolean
     'gurps.combat.use-size-modifier-difference-in-melee': boolean
+    'gurps.combat.options': CombatOptionSettings
 
     /** Damage */
     'gurps.damage.apply-divisor': foundry.data.fields.BooleanField

@@ -53,7 +53,7 @@ Click on "**Releases**"
 
 Then "**Draft a new release**"
 
-Click on "**Choose a tag**" and create a new tag, using the exact same version string "0.17.2".
+Click on "Tag: **Select tag**" and create a new tag, using the exact same version string "0.17.2".
 
 As we have found out... you must NOT prefix number with zero. Example: "0.17.02".
 
@@ -61,10 +61,10 @@ Click on "**Target: main**" and select the "release" branch.
 
 Enter the version "0.17.2" as the Release title.
 
-Paste the changelog enrties into the "Describe this release" text area.
+Paste the changelog entries into the "Describe this release" text area.
 
-Click "**Public release**".
+Click "**Publish release**".
 
-Let me know that you have created a new release. I need to update the Foundry website.
+If the workflow runs successfully, the release will be created and packaged and automatically uploaded to Foundry as the current release.
 
-NOTE: Existing customers will be able to upgrade to the new release immediately. New customers will get the version identified on the Foundry website.
+NOTE: Existing users will be able to upgrade to the new release immediately. New users will get the version identified on the Foundry website.

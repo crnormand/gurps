@@ -1,4 +1,4 @@
-import { TokenActions } from '@module/token-actions.js'
+import { TokenActions } from '../token-actions.js'
 
 export class GurpsCombat<SubType extends Combat.SubType = Combat.SubType> extends Combat<SubType> {
   // Remove maneuvers for all combatants on combat deletion
@@ -20,7 +20,6 @@ export class GurpsCombat<SubType extends Combat.SubType = Combat.SubType> extend
           const actions = await TokenActions.fromToken(token)
 
           await actions.clear()
-
           await token.removeManeuver()
         }
       }

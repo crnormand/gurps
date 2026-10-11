@@ -1,4 +1,4 @@
-import { isUsingOnTarget } from './settings.js'
+import { isManeuverInPlay, isUsingOnTarget } from './settings.js'
 
 import { PROPERTY_MOVEOVERRIDE_MANEUVER } from './index.js'
 
@@ -95,7 +95,7 @@ class Maneuver {
       label: this._data.label,
       img: this._data.img,
       showIcon: 2,
-      move: this.move,
+      move: this._data.move,
       flags: {
         gurps: {
           name: this._data.name,
@@ -133,6 +133,10 @@ class Maneuver {
 
   get introducedBy() {
     return this._data.introducedBy
+  }
+
+  get requiresOnTarget() {
+    return this._data.introducedBy === MANEUVER_INTRODUCED_BY_ON_TARGET
   }
 
   get name() {
@@ -263,6 +267,7 @@ const maneuvers = {
     altImg: 'man-allout-attack.png',
     img: 'man-aoa-strong.png',
     label: 'GURPS.maneuverAllOutAttackStrong',
+    altLabel: 'GURPS.maneuverAllOutAttack',
   }),
   aoa_suppress: new Maneuver({
     name: 'aoa_suppress',
@@ -353,9 +358,16 @@ const filterManeuvers = (introducedBy: string[] = []): Record<string, Maneuver> 
   return result
 }
 
+/**
+ * The maneuvers from the source books this world has switched on. On Target both adds maneuvers and
+ * gives Aim a different allowed move, so a maneuver id already stored on a token has to be resolved
+ * against this rather than against the registry.
+ */
+const fromSourcesInUse = () => filterManeuvers(isUsingOnTarget() ? [MANEUVER_INTRODUCED_BY_ON_TARGET] : [])
+
 export default class Maneuvers {
   static get(id: string): ManeuverEffectData | undefined {
-    return Maneuvers.getAll()[id]?.data
+    return fromSourcesInUse()[id]?.data
   }
 
   /**
@@ -364,7 +376,7 @@ export default class Maneuvers {
    * @memberof Maneuvers
    */
   static isManeuverIcon(text: string): boolean {
-    return Object.values(Maneuvers.getAll())
+    return Object.values(fromSourcesInUse())
       .map(maneuver => maneuver.img)
       .includes(text)
   }
@@ -380,13 +392,28 @@ export default class Maneuvers {
   }
 
   /**
+   * Resolve a maneuver id that is already applied to an actor, so it can still show its label, icon
+   * and move. Falls back past the source books in use -- switching off On Target doesn't retract the
+   * maneuver from a token already performing it -- and finally to Do Nothing, so an unrecognized id
+   * can never break the sheet that renders it.
+   *
    * @param {string} maneuverText
    * @returns {ManeuverData}
    */
   static getManeuver(maneuverText = 'do_nothing'): ManeuverEffectData {
     if (!maneuverText || maneuverText === 'undefined') maneuverText = 'do_nothing'
 
-    return Maneuvers.getAll()[maneuverText].data
+    // Own keys only -- these are plain objects, so "constructor" and friends would otherwise resolve
+    // to something from Object.prototype that has no maneuver data on it.
+    const own = (map: Record<string, any>, key: string) => (Object.hasOwn(map, key) ? map[key] : undefined)
+
+    const maneuver = own(fromSourcesInUse(), maneuverText) ?? own(maneuvers, maneuverText)
+
+    if (maneuver) return maneuver.data
+
+    console.warn(`GURPS | Unrecognized maneuver "${maneuverText}", falling back to Do Nothing`)
+
+    return maneuvers.do_nothing.data
   }
 
   /**
@@ -397,23 +424,60 @@ export default class Maneuvers {
     return Maneuvers.getManeuver(maneuverText).img ?? null
   }
 
-  static getAll() {
-    const useOnTarget = isUsingOnTarget()
-
-    const filter = []
-
-    if (useOnTarget) {
-      filter.push(MANEUVER_INTRODUCED_BY_ON_TARGET)
-    }
-
-    return filterManeuvers(filter)
+  /**
+   * Every maneuver in the system, in canonical (B364) order, whether or not this world uses the
+   * source book that introduced it. The Combat Options dialog lists them all, flagging the ones a
+   * disabled source would hide, so a GM isn't left wondering where they went.
+   *
+   * Aim appears once, with its Basic Set data -- the On Target variant only exists in a world using
+   * that book, so it is not part of "every maneuver".
+   */
+  static getAllPossible() {
+    return { ...maneuvers }
   }
 
-  static getAllData(): Record<string, ManeuverEffectData> {
-    const data: Record<string, ManeuverEffectData> = {}
+  /**
+   * @deprecated Ambiguous: this is the *resolution* set, not every maneuver and not the pickable
+   *   ones. Use `getAllPossible()` for the whole registry or `getAllInPlay()` for what a user may
+   *   pick. Kept, and kept behaving exactly as it always has, because modules outside this system
+   *   call it.
+   */
+  static getAll() {
+    return fromSourcesInUse()
+  }
 
-    for (const key in Maneuvers.getAll()) {
-      data[key] = Maneuvers.getAll()[key].data
+  /**
+   * The maneuvers a user may pick from: the ones from the source books in use, minus the ones the GM
+   * turned off in the Combat Options setting. Anything offering a maneuver to a human -- a sheet
+   * dropdown, the token HUD palette, the combat tracker menu, `/man` -- reads this.
+   *
+   * Kept separate from the resolution accessors above: a maneuver already applied to a token still
+   * has to resolve its icon, label and move after being turned off.
+   */
+  static getAllInPlay() {
+    return Object.fromEntries(Object.entries(fromSourcesInUse()).filter(([name]) => isManeuverInPlay(name)))
+  }
+
+  /**
+   * @param {string|null} [keep] a maneuver to include even if it has been turned off, so a dropdown
+   *   showing the actor's current maneuver doesn't silently drop it. Looked up in `getAllPossible()` rather
+   *   than the source-filtered set, because switching off On Target is itself a way to take a
+   *   maneuver out from under an actor already performing it.
+   * @returns {Record<string, ManeuverData>}
+   */
+  static getAllInPlayData(keep: string | null = null) {
+    /** @type {Record<string, ManeuverData>} */
+    const data: Record<string, ManeuverData> = {}
+    const every: Record<string, Maneuver> = Maneuvers.getAllPossible()
+    const inPlay: Record<string, Maneuver> = Maneuvers.getAllInPlay()
+
+    for (const key of Object.keys(every)) {
+      // Prefer the in-play instance: with On Target on, Aim has a different allowed move.
+      if (key in inPlay) {
+        data[key] = inPlay[key].data
+      } else if (keep && key === keep) {
+        data[key] = every[key].data
+      }
     }
 
     return data
@@ -421,12 +485,15 @@ export default class Maneuvers {
 
   /**
    * @param {string} img
-   * @returns {ManeuverData[]|undefined}
+   * @returns {ManeuverEffectData[]|undefined}
    */
-  static getByIcon(img: string): ManeuverEffectData[] {
-    return Object.values(Maneuvers.getAll())
+  static getByIcon(img: string): ManeuverEffectData[] | undefined {
+    const matchedManeuverData = Object.values(fromSourcesInUse())
       .filter(it => it.img === img)
       .map(it => it.data)
+      .at(0)
+
+    return matchedManeuverData ? [matchedManeuverData] : undefined
   }
 
   /**

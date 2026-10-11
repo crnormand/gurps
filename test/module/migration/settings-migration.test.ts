@@ -1,5 +1,5 @@
 import { migrateLegacySettings, SettingMigration } from '@module/migration/settings-migration.js'
-import { vi, Mock } from 'vitest'
+import { Mock, vi } from 'vitest'
 
 const globalMock = globalThis as typeof globalThis & {
   game: {
@@ -356,10 +356,9 @@ describe('migrateLegacySettings', () => {
 
     it('rejects when deleting a migrated legacy setting fails', async () => {
       const setting = createMockSetting('gurps.settingToDelete', 'value', 'id-1')
+      const settingAsMock = setting as unknown as { delete: Mock<() => Promise<void>> }
 
-      ;(setting as unknown as { delete: Mock<() => Promise<void>> }).delete.mockRejectedValueOnce(
-        new Error('Delete failed')
-      )
+      settingAsMock.delete.mockRejectedValueOnce(new Error('Delete failed'))
       mockStorage.contents = [setting]
 
       const migrations: SettingMigration[] = [

@@ -1,4 +1,4 @@
-import { fields, Document } from '@gurps-types/foundry/index.js'
+import { Document, fields } from '@gurps-types/foundry/index.js'
 import { Combat } from '@module/combat/index.js'
 import { CollectionField } from '@module/data/fields/collection-field.js'
 import { PostureType, statusIsPosture } from '@module/effects/posture.js'

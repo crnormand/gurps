@@ -8,9 +8,9 @@ import { Damage as ModuleDamage } from '@module/damage/index.js'
 import { Dev as ModuleDev } from '@module/dev/index.js'
 import { Importer as ModuleImporter } from '@module/importer/index.js'
 import { Item as ModuleItem } from '@module/item/index.js'
+import { Journal as ModulePdf } from '@module/journal/index.ts'
 import { Migrator } from '@module/migration/migrator.js'
 import { Otf as ModuleOtf } from '@module/otf/index.js'
-import { Pdf as ModulePdf } from '@module/pdf/index.js'
 import { PseudoDocument } from '@module/pseudo-document/pseudo-document.js'
 import { TypedPseudoDocument } from '@module/pseudo-document/typed-pseudo-document.js'
 import { ResourceTrackerModule as ModuleResourceTracker } from '@module/resource-tracker/index.js'
@@ -89,7 +89,7 @@ declare global {
     move: string | null
     defense?: string
     fullturn?: boolean
-    icon: string
+    img: string
     alt?: string | null
     introducedBy?: string | null
   }

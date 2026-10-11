@@ -19,6 +19,18 @@ export const addManeuverMenu = async (html, combatant, token) => {
   const allManeuvers = token.actor.appliedEffects.filter(it => it.getFlag('gurps', 'statusId') === 'maneuver')
   const actorManeuver = allManeuvers.length > 0 ? allManeuvers[0] : Combat.Maneuvers.getManeuver('do_nothing')
 
+  // Set the token image tooltip content.
+  const image = html.querySelector?.('.token-image')
+  const initiative = combatant?.initiative
+
+  if (image) {
+    image.setAttribute('aria-label', 'Token Image')
+
+    const replacementText = typeof initiative === 'number' ? initiative.toFixed(5) : 'N/A'
+
+    image.setAttribute('data-tooltip', game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText }))
+  }
+
   if (actorManeuver.showIcon === 0) {
     const initiativeSpan = html.querySelector?.('.token-initiative')
 
@@ -35,8 +47,6 @@ export const addManeuverMenu = async (html, combatant, token) => {
   currentManeuver.src = actorManeuver.img
 
   // Add active class if initialized.
-  const initiative = combatant?.initiative
-
   if (typeof initiative === 'number' && canModify) currentManeuver.classList.add('active')
   else currentManeuver.classList.remove('active')
 
@@ -97,8 +107,8 @@ export const addManeuverMenu = async (html, combatant, token) => {
   if (initiativeSpan) initiativeSpan.replaceWith(currentManeuver)
 
   if (canModify) {
-    // Build the maneuvers menu from template.
-    const maneuvers = Combat.Maneuvers.getAll()
+    // Build the maneuvers menu from template, omitting the maneuvers the GM has turned off.
+    const maneuvers = Combat.Maneuvers.getAllInPlay()
     const menuHtmlString = await foundry.applications.handlebars.renderTemplate(
       'systems/gurps/templates/maneuver-menu.hbs',
       {
@@ -141,17 +151,6 @@ export const addManeuverMenu = async (html, combatant, token) => {
   const maneuverEffect = tokenEffects?.querySelector(`img.token-effect[src*="/maneuvers/"]`)
 
   if (maneuverEffect) maneuverEffect.remove()
-
-  // Finally, set the token image tooltip content.
-  const image = html.querySelector?.('.token-image')
-
-  if (image) {
-    image.setAttribute('aria-label', 'Token Image')
-
-    const replacementText = typeof initiative === 'number' ? initiative.toFixed(5) : 'N/A'
-
-    image.setAttribute('data-tooltip', game.i18n.format('GURPS.combatTracker.initiative', { value: replacementText }))
-  }
 
   return html
 }

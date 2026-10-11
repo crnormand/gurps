@@ -6,7 +6,7 @@
           <h4>{{localize "GURPS.modifierCurrentEffects"}}</h4>
           <div class='actorname'>{{actorname}}</div>
           {{#each currentmods}}
-            <div class="roll-result">{{{gurpslink this}}}</div>
+            <div class="roll-result">{{{gurpslink this true}}}</div>
           {{/each}}
         </div>
 
@@ -60,24 +60,30 @@
 
       <div class='gurps-2col' style='grid-template-columns: 1fr 1fr; gap: 0;'>
         <div class="gga-group gurps-space-between gurps-sparse-list" style="width: 325px">
-          <div class='shaded-group'>
-            <h4>{{localize "GURPS.meleeAttack"}}</h4>
-            {{#each meleemods}}
-              <div>{{{gurpslink this}}}</div>
-            {{/each}}
-          </div>
-          <div class='shaded-group'>
-            <h4>{{localize "GURPS.ranged"}}</h4>
-            {{#each rangedmods}}
-              <div>{{{gurpslink this}}}</div>
-            {{/each}}
-          </div>
-          <div class='shaded-group'>
-            <h4>{{localize "GURPS.defense"}}</h4>
-            {{#each defensemods}}
-              <div>{{{gurpslink this}}}</div>
-            {{/each}}
-          </div>
+          {{#if meleemods.length}}
+            <div class='shaded-group'>
+              <h4>{{localize "GURPS.meleeAttack"}}</h4>
+              {{#each meleemods}}
+                <div>{{{gurpslink this true}}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
+          {{#if rangedmods.length}}
+            <div class='shaded-group'>
+              <h4>{{localize "GURPS.ranged"}}</h4>
+              {{#each rangedmods}}
+                <div>{{{gurpslink this true}}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
+          {{#if defensemods.length}}
+            <div class='shaded-group'>
+              <h4>{{localize "GURPS.defense"}}</h4>
+              {{#each defensemods}}
+                <div>{{{gurpslink this true}}}</div>
+              {{/each}}
+            </div>
+          {{/if}}
         </div>
 
         <div class="gga-group gurps-space-between gurps-sparse-list" style="padding: 0 0 0 0.5em;">
@@ -102,7 +108,7 @@
             {{#each journals}}
               <div class='tabbedcontent'>
                 <h2>{{this.name}}</h2>
-                {{{gurpslink this.text.content}}}
+                {{{gurpslink this.text.content true}}}
               </div>
             {{/each}}
             <div class='tabbedcontent'>
@@ -113,10 +119,10 @@
             <h4>{{localize "GURPS.modifierOthers"}}</h4>
             <div class='modifier-row'>
               {{#each othermods1}}
-                <div>{{{gurpslink this}}}</div>
+                <div>{{{gurpslink this true}}}</div>
               {{/each}}
               {{#each othermods2}}
-                <div>{{{gurpslink this}}}</div>
+                <div>{{{gurpslink this true}}}</div>
               {{/each}}
             </div>
             <div style='display: flex; flex-flow: column;'>
