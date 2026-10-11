@@ -1,5 +1,6 @@
 import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
+import { dropCanvasData } from './dropData.js'
 import { GurpsRegion } from './region.js'
 import { GurpsRuler } from './ruler.js'
 import { registerSettings } from './settings.js'
@@ -7,6 +8,7 @@ import { registerSettings } from './settings.js'
 function init() {
   console.log('GURPS | Initializing GURPS Canvas Module')
 
+  Hooks.on('dropCanvasData', dropCanvasData)
   Hooks.once('init', () => {
     registerSettings()
 

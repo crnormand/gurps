@@ -1,8 +1,10 @@
+import { GurpsToken } from "@module/token/index.js";
+
 /**
  * Multiple tokens are selected -- prompt the user for which tokens to apply some function to.
  */
 export default async function selectTarget(
-  targets: HTMLElement[],
+  targets: GurpsToken[],
   selectOptions: { selectAll?: boolean; single?: boolean } = { selectAll: false, single: false }
 ): Promise<any[]> {
   const result = await foundry.applications.api.DialogV2.prompt({

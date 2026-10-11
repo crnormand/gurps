@@ -5,7 +5,7 @@ import { DamageAction, DerivedDamageAction } from '@module/otf/types.js'
 import { FoundryUtils, MessageMode } from '@module/util/foundry-utils.js'
 import * as Settings from '@module/util/miscellaneous-settings.js'
 
-import DamageChat from './damagechat.js'
+import { createDamageChatMessage } from './damagechat.js'
 
 export async function rollDamage(
   canRoll: any,
@@ -37,16 +37,16 @@ export async function rollDamage(
     })
 
     if (response) {
-      await DamageChat.create(
-        (actor as Actor) || (game.user as User),
+      await createDamageChatMessage(
+        actor,
         actionFormula,
         action.damagetype,
         event,
         overrideText,
         targets,
-        action.extdamagetype,
-        action.hitlocation,
-        action.blindroll
+        action.extdamagetype ?? null,
+        action.hitlocation ?? null,
+        action.blindroll ?? false
       )
 
       if (action.next) {
@@ -61,16 +61,16 @@ export async function rollDamage(
       return false
     }
   } else {
-    await DamageChat.create(
-      (actor as Actor) || (game.user as User),
+    await createDamageChatMessage(
+      actor,
       actionFormula,
       action.damagetype,
       event,
       overrideText,
       targets,
-      action.extdamagetype,
-      action.hitlocation,
-      action.blindroll
+      action.extdamagetype ?? null,
+      action.hitlocation ?? null,
+      action.blindroll ?? false
     )
 
     if (action.next) {

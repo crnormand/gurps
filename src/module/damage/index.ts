@@ -2,7 +2,8 @@ import type { GurpsModule } from '@gurps-types/gurps-module.js'
 
 import ApplyDamageDialog from './applydamage.js'
 import { DamageTable } from './damage-tables.js'
-import DamageChat from './damagechat.js'
+import { preloadDamageDragImage, renderDamageChat } from './damagechat.js'
+import { calculateAndSelectTargetsForDamage } from './damageDrop.js'
 import { resolveDamageRollAction } from './resolve-damage-roll-action.js'
 import { rollDamage } from './roll-damage.js'
 import initializeGameSettings, {
@@ -19,6 +20,7 @@ import initializeGameSettings, {
 
 interface DamageModule extends GurpsModule {
   rollDamage: typeof rollDamage
+  calculateAndSelectTargetsForDamage: typeof calculateAndSelectTargetsForDamage
   settings: {
     isSimpleADD: () => boolean
     onlyGMsCanOpenADD: () => boolean
@@ -34,22 +36,14 @@ interface DamageModule extends GurpsModule {
 
 function init() {
   console.log('GURPS | Initializing GURPS Damage module.')
-  Hooks.on('renderChatMessageHTML', DamageChat._renderDamageChat)
-  Hooks.on('dropCanvasData', DamageChat._dropCanvasData)
+  Hooks.on('renderChatMessageHTML', renderDamageChat)
   Hooks.on('init', () => {
     GURPS.ApplyDamageDialog = ApplyDamageDialog
-    GURPS.DamageChat = DamageChat
     GURPS.DamageTables = new DamageTable()
     GURPS.resolveDamageRoll = resolveDamageRollAction
 
     // preload drag-and-drop image
-    {
-      const img = new Image()
-
-      img.src = 'systems/gurps/icons/blood-splatter-clipart-small.webp'
-      DamageChat.damageDragImage = img // used in DamageChat._dropCanvasData
-    }
-
+    preloadDamageDragImage()
     initializeGameSettings()
   })
 
@@ -71,6 +65,7 @@ function init() {
 export const Damage: DamageModule = {
   init,
   rollDamage,
+  calculateAndSelectTargetsForDamage,
   settings: {
     isSimpleADD,
     onlyGMsCanOpenADD,
