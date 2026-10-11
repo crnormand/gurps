@@ -510,7 +510,8 @@ global.foundry = {
   },
 } as unknown as typeof foundry
 
-/* ---------------------------------------- */(global as unknown as Record<string, unknown>).canvas = {
+/* ---------------------------------------- */
+(global as unknown as Record<string, unknown>).canvas = {
   layer: {
     get: (): Record<string, unknown> => ({}),
   },

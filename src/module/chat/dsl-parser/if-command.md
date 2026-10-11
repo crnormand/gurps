@@ -1,6 +1,6 @@
 # If Chat Command
 
-Use this command to select different outcomes based on the sucess, or degree of success, of an OTF.
+Use this command to select different outcomes based on the success, or degree of success, of an OTF.
 
 ## Description
 
@@ -117,13 +117,6 @@ action = if-statement
     that text came bracketed, braced, or bare makes no structural
     difference once parsed *)
 
-chat-command = "/", non-whitespace-character, { non-whitespace-character }, non-else-string ;
-
-non-whitespace-character = character - white-space ;
-(* any character that does not include whitespace *)
-
-non-else-string = { character - "/else" }
-(* any sequence of characters that does not include "/else" *)
 (* ==================== Outcome IF statement ==================== *)
 
 outcome-if-statement = "/if", white-space, condition, white-space,
