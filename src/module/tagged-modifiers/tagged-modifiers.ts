@@ -31,7 +31,7 @@ export enum ROLL_TYPE {
   UNKNOWN = 'unknown',
 }
 
-const rollTypeTagSettings: Record<ROLL_TYPE, (keyof TaggedModifiersSettings)[]> = {
+export const rollTypeTagSettings: Record<ROLL_TYPE, (keyof TaggedModifiersSettings)[]> = {
   [ROLL_TYPE.MELEE]: ['allAttackRolls', 'allMeleeRolls', 'allRolls'],
   [ROLL_TYPE.RANGED]: ['allAttackRolls', 'allRangedRolls', 'allRolls'],
   [ROLL_TYPE.PARRY]: ['allDefenseRolls', 'allParryRolls', 'allRolls'],
@@ -55,7 +55,7 @@ const rollTypeTagSettings: Record<ROLL_TYPE, (keyof TaggedModifiersSettings)[]> 
   [ROLL_TYPE.UNKNOWN]: ['allRolls'],
 }
 
-function tagsForRollType(rollType: ROLL_TYPE, taggedSettings: TaggedModifiersSettings): string[] {
+export function tagsForRollType(rollType: ROLL_TYPE, taggedSettings: TaggedModifiersSettings): string[] {
   return rollTypeTagSettings[rollType].flatMap(setting =>
     (taggedSettings[setting] as string).split(',').map(it => it.trim().toLowerCase())
   )

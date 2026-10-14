@@ -18,6 +18,7 @@ import { migrateCombatSettings } from './migrate.js'
 import { GurpsRange, setupRanges } from './ranges.js'
 import {
   enabledCombatOptions,
+  allEnabledCombatOptions,
   getInitiativeFormula,
   getManeuverDetail,
   getManeuverVisibility,
@@ -32,6 +33,7 @@ import {
 
 export interface GurpsCombatModule extends GurpsModule {
   enabledOptions: typeof enabledCombatOptions
+  allEnabledOptions: typeof allEnabledCombatOptions
   getInitiativeFormula: typeof getInitiativeFormula
   getManeuverDetail: typeof getManeuverDetail
   getManeuverVisibility: typeof getManeuverVisibility
@@ -88,6 +90,7 @@ export const Combat: GurpsCombatModule = {
 
   // -- Combat settings --
   enabledOptions: enabledCombatOptions,
+  allEnabledOptions: allEnabledCombatOptions,
   isManeuverInPlay,
   getManeuverDetail,
   getManeuverVisibility,

@@ -1,4 +1,4 @@
-import { defaultCombatOptionSettings, enabledOptions, isManeuverEnabled } from './combat-options.ts'
+import { allEnabledOptions, defaultCombatOptionSettings, enabledOptions, isManeuverEnabled } from './combat-options.ts'
 import { DEFAULT_INITIATIVE_FORMULA, updateInitiativeFormula } from './initiative.js'
 import {
   CombatOption,
@@ -175,6 +175,10 @@ export function isUsingOnTarget(): boolean {
 /** The options the Modifier Bucket should show in one of its sections, in registry order. */
 export function enabledCombatOptions(section: CombatOptionSection): CombatOption[] {
   return enabledOptions(section, getCombatOptionSettings(), { useOnTarget: isUsingOnTarget() })
+}
+
+export function allEnabledCombatOptions(): CombatOption[] {
+  return allEnabledOptions(getCombatOptionSettings(), { useOnTarget: isUsingOnTarget() })
 }
 
 /** Whether a maneuver is one the GM has left in play. */

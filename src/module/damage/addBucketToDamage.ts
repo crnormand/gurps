@@ -30,7 +30,7 @@ type ParsedDamage = {
  *
  */
 
-export export function parseDamageFormula(formula: string): ParsedDamage | null {
+export function parseDamageFormula(formula: string): ParsedDamage | null {
   const trimmed = formula.replace('−', '-').trim()
 
   const costMatch = trimmed.match(/\*Costs(.+)$/)

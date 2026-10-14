@@ -10,51 +10,100 @@ import type { CombatOption, CombatOptionSection, CombatOptionSettings } from './
 
 export const COMBAT_OPTIONS: readonly CombatOption[] = [
   // --- Melee Attack (B365, MA99-100, MA113, B369-370) ---
-  { id: 'aoaDetermined', section: 'melee', mod: '+4', maneuvers: ['aoa_determined'] },
-  { id: 'aoaStrong', section: 'melee', mod: '+2', maneuvers: ['aoa_strong'] },
+  { id: 'aoaDetermined', section: 'melee', mod: '+4', maneuvers: ['aoa_determined'], rollTypes: ['allMeleeRolls'] },
+  { id: 'aoaStrong', section: 'melee', mod: '+2', maneuvers: ['aoa_strong'], rollTypes: ['allMeleeRolls'] },
   // Committed Attack (MA99) has no melee maneuver of its own; only the On Target ranged variants exist.
-  { id: 'committedDetermined', section: 'melee', mod: '+2' },
-  { id: 'committedStrong', section: 'melee', mod: '+1' },
-  { id: 'telegraphic', section: 'melee', mod: '+4' },
-  { id: 'moveAndAttack', section: 'melee', mod: '-4', suffix: ' *Max:9', maneuvers: ['move_and_attack'] },
-  { id: 'deceptive', section: 'melee', mod: '-2' },
-  { id: 'defensive', section: 'melee', mod: '-2' },
-  { id: 'rapidStrike', section: 'melee', mod: '-6' },
+  { id: 'committedDetermined', section: 'melee', mod: '+2', rollTypes: ['allMeleeRolls'] },
+  { id: 'committedStrong', section: 'melee', mod: '+1', rollTypes: ['allMeleeRolls'] },
+  { id: 'telegraphic', section: 'melee', mod: '+4', rollTypes: ['allMeleeRolls'] },
+  {
+    id: 'moveAndAttack',
+    section: 'melee',
+    mod: '-4',
+    suffix: ' *Max:9',
+    maneuvers: ['move_and_attack'],
+    rollTypes: ['allMeleeRolls'],
+  },
+  { id: 'deceptive', section: 'melee', mod: '-2', rollTypes: ['allMeleeRolls'] },
+  { id: 'defensive', section: 'melee', mod: '-2', rollTypes: ['allMeleeRolls'] },
+  { id: 'rapidStrike', section: 'melee', mod: '-6', rollTypes: ['allMeleeRolls'] },
 
   // --- Ranged (B364, B365, B390) ---
-  { id: 'aim', section: 'ranged', mod: '+1', maneuvers: ['aim'] },
-  { id: 'popup', section: 'ranged', mod: '–2' },
-  { id: 'aoaRangedDetermined', section: 'ranged', mod: '+1', maneuvers: ['aoa_ranged'] },
+  { id: 'aim', section: 'ranged', mod: '+1', maneuvers: ['aim'], rollTypes: ['allRangedRolls'] },
+  { id: 'popup', section: 'ranged', mod: '–2', rollTypes: ['allRangedRolls'] },
+  { id: 'aoaRangedDetermined', section: 'ranged', mod: '+1', maneuvers: ['aoa_ranged'], rollTypes: ['allRangedRolls'] },
 
   // --- Ranged, On Target (Pyramid #3/77) ---
-  { id: 'aoaRanged', section: 'ranged', mod: '+2', requiresOnTarget: true, maneuvers: ['aoa_ranged'] },
+  {
+    id: 'aoaRanged',
+    section: 'ranged',
+    mod: '+2',
+    requiresOnTarget: true,
+    maneuvers: ['aoa_ranged'],
+    rollTypes: ['allRangedRolls'],
+  },
   {
     id: 'committedRanged',
     section: 'ranged',
     mod: '+1',
     requiresOnTarget: true,
     maneuvers: ['committed_attack_ranged'],
+    rollTypes: ['allRangedRolls'],
   },
-  { id: 'allOutAim', section: 'ranged', mod: '+4', requiresOnTarget: true, maneuvers: ['allout_aim'] },
-  { id: 'allOutAimBraced', section: 'ranged', mod: '+2', requiresOnTarget: true, maneuvers: ['allout_aim'] },
-  { id: 'committedAim', section: 'ranged', mod: '+2', requiresOnTarget: true, maneuvers: ['committed_aim'] },
-  { id: 'committedAimBraced', section: 'ranged', mod: '+1', requiresOnTarget: true, maneuvers: ['committed_aim'] },
+  {
+    id: 'allOutAim',
+    section: 'ranged',
+    mod: '+4',
+    requiresOnTarget: true,
+    maneuvers: ['allout_aim'],
+    rollTypes: ['allRangedRolls'],
+  },
+  {
+    id: 'allOutAimBraced',
+    section: 'ranged',
+    mod: '+2',
+    requiresOnTarget: true,
+    maneuvers: ['allout_aim'],
+    rollTypes: ['allRangedRolls'],
+  },
+  {
+    id: 'committedAim',
+    section: 'ranged',
+    mod: '+2',
+    requiresOnTarget: true,
+    maneuvers: ['committed_aim'],
+    rollTypes: ['allRangedRolls'],
+  },
+  {
+    id: 'committedAimBraced',
+    section: 'ranged',
+    mod: '+1',
+    requiresOnTarget: true,
+    maneuvers: ['committed_aim'],
+    rollTypes: ['allRangedRolls'],
+  },
 
   // --- Defense (B366, B374, B377, B390, MA100, MA124) ---
   // Increased Defense (B366) is +2 to one of Dodge/Parry/Block; Double Defense is the separate
   // aod_double maneuver, so this option does not gate it.
-  { id: 'aodIncreased', section: 'defense', mod: '+2', maneuvers: ['aod_dodge', 'aod_parry', 'aod_block'] },
-  { id: 'shieldDB', section: 'defense', mod: '+1' },
-  { id: 'dodgeAcrobatic', section: 'defense', mod: '+2' },
-  { id: 'dodgeAndDrop', section: 'defense', mod: '+3' },
-  { id: 'dodgeRetreat', section: 'defense', mod: '+3' },
-  { id: 'blockRetreat', section: 'defense', mod: '+1' },
-  { id: 'fencingRetreat', section: 'defense', mod: '+3' },
-  { id: 'defensiveDefense', section: 'defense', mod: '+1' },
-  { id: 'dodgeAcrobaticFail', section: 'defense', mod: '-2' },
-  { id: 'defenseSide', section: 'defense', mod: '-2' },
-  { id: 'deceptiveDefense', section: 'defense', mod: '-1' },
-  { id: 'riposte', section: 'defense', mod: '–1' },
+  {
+    id: 'aodIncreased',
+    section: 'defense',
+    mod: '+2',
+    maneuvers: ['aod_dodge', 'aod_parry', 'aod_block'],
+    rollTypes: ['allDefenseRolls'],
+  },
+  { id: 'shieldDB', section: 'defense', mod: '+1', rollTypes: ['allDefenseRolls'] },
+  { id: 'dodgeAcrobatic', section: 'defense', mod: '+2', rollTypes: ['allDODGERolls'] },
+  { id: 'dodgeAndDrop', section: 'defense', mod: '+3', rollTypes: ['allDODGERolls'] },
+  { id: 'dodgeRetreat', section: 'defense', mod: '+3', rollTypes: ['allDODGERolls'] },
+  { id: 'blockRetreat', section: 'defense', mod: '+1', rollTypes: ['allBlockRolls'] },
+  { id: 'fencingRetreat', section: 'defense', mod: '+3', rollTypes: ['allParryRolls'] },
+  { id: 'defensiveDefense', section: 'defense', mod: '+1', rollTypes: ['allDefenseRolls'] },
+  { id: 'dodgeAcrobaticFail', section: 'defense', mod: '-2', rollTypes: ['allDODGERolls'] },
+  { id: 'defenseSide', section: 'defense', mod: '-2', rollTypes: ['allDefenseRolls'] },
+  { id: 'deceptiveDefense', section: 'defense', mod: '-1', rollTypes: ['allDefenseRolls'] },
+  { id: 'riposte', section: 'defense', mod: '–1', rollTypes: ['allParryRolls'] },
 
   // --- Defense, On Target (Pyramid #3/77) ---
   {
@@ -63,6 +112,7 @@ export const COMBAT_OPTIONS: readonly CombatOption[] = [
     mod: '-2',
     requiresOnTarget: true,
     maneuvers: ['committed_aim'],
+    rollTypes: ['allDefenseRolls'],
   },
   {
     id: 'committedAttackRanged',
@@ -70,6 +120,7 @@ export const COMBAT_OPTIONS: readonly CombatOption[] = [
     mod: '-2',
     requiresOnTarget: true,
     maneuvers: ['committed_attack_ranged'],
+    rollTypes: ['allDefenseRolls'],
   },
 ]
 
@@ -125,5 +176,14 @@ export function enabledOptions(
   return COMBAT_OPTIONS.filter(
     option =>
       option.section === section && (useOnTarget || !option.requiresOnTarget) && isOptionEnabled(option.id, settings)
+  )
+}
+
+export function allEnabledOptions(
+  settings: CombatOptionSettings,
+  { useOnTarget }: { useOnTarget: boolean }
+): CombatOption[] {
+  return COMBAT_OPTIONS.filter(
+    option => (useOnTarget || !option.requiresOnTarget) && isOptionEnabled(option.id, settings)
   )
 }

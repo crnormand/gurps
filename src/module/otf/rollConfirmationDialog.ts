@@ -2,8 +2,10 @@ import { Application, HandlebarsApplicationMixin } from '@gurps-types/foundry/in
 import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
+import { CombatOption } from '@module/combat/types.js'
 import { ModelCollection } from '@module/data/model-collection.js'
 import GurpsWiring from '@module/gurps-wiring.js'
+import { getRollTypeFromAction, ROLL_TYPE, rollTypeTagSettings } from '@module/tagged-modifiers/tagged-modifiers.js'
 import { MessageMode } from '@module/util/foundry-utils.js'
 import { i18nFallback } from '@module/util/i18nFallback.js'
 import { systemPath } from '@module/util/misc.js'
@@ -74,6 +76,7 @@ namespace RollConfirmationDialog {
     currentModifiers: Modifier[]
     genericModifiers: string[]
     hitLocations?: string[]
+    rollModifers: string[]
     buttons: any[]
   }
   export interface DamageRenderContext extends foundry.applications.api.ApplicationV2.RenderContext {
@@ -172,131 +175,120 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     }
   }
 
-  actionData() {
-    if (this._data.type !== 'roll') return { itemIcon: '', itemColor: '', rollType: '' }
-    const action = this._data.action
-    let itemIcon, itemColor, rollType
+  rollTypeData: Record<ROLL_TYPE, { itemIcon: string; itemColor: string; rollTypeName: string }> = {
+    [ROLL_TYPE.MELEE]: {
+      itemIcon: 'fa-solid fa-sword',
+      itemColor: 'rgb(12,79,119)',
+      rollTypeName: game.i18n?.localize('GURPS.melee') ?? '',
+    },
+    [ROLL_TYPE.RANGED]: {
+      itemIcon: 'fa-solid fa-crosshairs',
+      itemColor: 'rgb(12,79,119)',
+      rollTypeName: game.i18n?.localize('GURPS.ranged') ?? '',
+    },
+    [ROLL_TYPE.PARRY]: {
+      itemIcon: 'fa-solid fa-swords',
+      itemColor: '#9a5f16',
+      rollTypeName: game.i18n?.localize('GURPS.parry') ?? '',
+    },
+    [ROLL_TYPE.BLOCK]: {
+      itemIcon: 'fa-solid fa-shield-halved',
+      itemColor: '#9a5f16',
+      rollTypeName: game.i18n?.localize('GURPS.block') ?? '',
+    },
+    [ROLL_TYPE.DAMAGE]: {
+      itemIcon: 'fa-solid fa-dice',
+      itemColor: '#015401',
+      rollTypeName: '',
+    },
+    [ROLL_TYPE.SKILL]: {
+      itemIcon: 'fa-solid fa-book',
+      itemColor: '#015401',
+      rollTypeName: game.i18n?.localize('GURPS.skill') ?? '',
+    },
+    [ROLL_TYPE.SPELL]: {
+      itemIcon: 'fa-solid fa-wand-magic-sparkles',
+      itemColor: '#6f63d9',
+      rollTypeName: game.i18n?.localize('GURPS.spell') ?? '',
+    },
+    [ROLL_TYPE.DODGE]: {
+      itemIcon: 'fa-solid fa-person-running-fast',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.dodge') ?? '',
+    },
+    [ROLL_TYPE.ST]: {
+      itemIcon: 'fa-solid fa-dumbbell',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.attributesSTNAME') ?? '',
+    },
+    [ROLL_TYPE.DX]: {
+      itemIcon: 'fa-solid fa-person-running',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.attributesDXNAME') ?? '',
+    },
+    [ROLL_TYPE.IQ]: {
+      itemIcon: 'fa-solid fa-brain',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.attributesIQNAME') ?? '',
+    },
+    [ROLL_TYPE.HT]: {
+      itemIcon: 'fa-solid fa-heart',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.attributesHTNAME') ?? '',
+    },
+    [ROLL_TYPE.WILL]: {
+      itemIcon: 'fa-solid fa-brain',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.attributesWILLNAME') ?? '',
+    },
+    [ROLL_TYPE.PER]: {
+      itemIcon: 'fa-solid fa-signal-stream',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.attributesPERNAME') ?? '',
+    },
+    [ROLL_TYPE.FRIGHT_CHECK]: {
+      itemIcon: 'fa-solid fa-face-scream',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.frightcheck') ?? '',
+    },
+    [ROLL_TYPE.VISION]: {
+      itemIcon: 'fa-solid fa-eye',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.vision') ?? '',
+    },
+    [ROLL_TYPE.HEARING]: {
+      itemIcon: 'fa-solid fa-ear',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.hearing') ?? '',
+    },
+    [ROLL_TYPE.TASTE_SMELL]: {
+      itemIcon: 'fa-solid fa-nose',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.tastesmell') ?? '',
+    },
+    [ROLL_TYPE.TOUCH]: {
+      itemIcon: 'fa-solid fa-hand-point-up',
+      itemColor: '#620707',
+      rollTypeName: game.i18n?.localize('GURPS.touch') ?? '',
+    },
+    [ROLL_TYPE.CR]: {
+      itemIcon: 'fa-solid fa-head-side-gear',
+      itemColor: '#c5360b',
+      rollTypeName: game.i18n?.localize('GURPS.ControlRoll') ?? '',
+    },
+    [ROLL_TYPE.UNKNOWN]: {
+      itemIcon: 'fa-solid fa-dice',
+      itemColor: '#620707',
+      rollTypeName: '',
+    },
+  }
 
-    switch (action.type) {
-      case OtfActionType.attack:
-        if (action.isMelee) {
-          itemIcon = 'fa-solid fa-sword'
-          itemColor = 'rgb(12,79,119)'
-          rollType = game.i18n?.localize('GURPS.melee') ?? ''
-        } else {
-          itemIcon = 'fa-solid fa-crosshairs'
-          itemColor = 'rgb(12,79,119)'
-          rollType = game.i18n?.localize('GURPS.ranged') ?? ''
-        }
+  #getRollData(rollType: ROLL_TYPE) {
+    const { itemIcon, itemColor, rollTypeName } = this.rollTypeData[rollType]
+    const displayRollType =
+      rollTypeName !== '' && this._data.type === 'roll' ? this._data.formula || this._data.name : rollTypeName
 
-        break
-
-      case OtfActionType.weaponParry:
-        itemIcon = 'fa-solid fa-swords'
-        itemColor = '#9a5f16'
-        rollType = game.i18n?.localize('GURPS.parry') ?? ''
-        break
-
-      case OtfActionType.weaponBlock:
-        itemIcon = 'fa-solid fa-shield-halved'
-        itemColor = '#9a5f16'
-        rollType = game.i18n?.localize('GURPS.block') ?? ''
-        break
-
-      case OtfActionType.skillSpell:
-        if (action.isSpellOnly) {
-          itemIcon = 'fa-solid fa-wand-magic-sparkles'
-          itemColor = '#6f63d9'
-          rollType = game.i18n?.localize('GURPS.spell') ?? ''
-        } else {
-          itemIcon = 'fa-solid fa-book'
-          itemColor = '#015401'
-          rollType = game.i18n?.localize('GURPS.skill') ?? ''
-        }
-
-        break
-
-      case OtfActionType.controlRoll:
-        itemIcon = 'fa-solid fa-head-side-gear'
-        itemColor = '#c5360b'
-        rollType = game.i18n?.localize('GURPS.ControlRoll') ?? ''
-        break
-
-      case OtfActionType.attribute: {
-        itemColor = '#620707'
-
-        switch (action.attrkey.replace(' ', '')) {
-          case 'ST':
-            itemIcon = 'fa-solid fa-dumbbell'
-            rollType = game.i18n?.localize('GURPS.attributesSTNAME') ?? ''
-            break
-          case 'DX':
-            itemIcon = 'fa-solid fa-person-running'
-            rollType = game.i18n?.localize('GURPS.attributesDXNAME') ?? ''
-            break
-          case 'HT':
-            itemIcon = 'fa-solid fa-heart'
-            rollType = game.i18n?.localize('GURPS.attributesHTNAME') ?? ''
-            break
-          case 'IQ':
-            itemIcon = 'fa-solid fa-brain'
-            rollType = game.i18n?.localize('GURPS.attributesIQNAME') ?? ''
-            break
-          case 'WILL':
-            itemIcon = 'fa-solid fa-brain'
-            rollType = game.i18n?.localize('GURPS.attributesWILLNAME') ?? ''
-            break
-          case 'VISION':
-            itemIcon = 'fa-solid fa-eye'
-            rollType = game.i18n?.localize('GURPS.vision') ?? ''
-            break
-          case 'PER':
-            itemIcon = 'fa-solid fa-signal-stream'
-            rollType = game.i18n?.localize('GURPS.attributesPERNAME') ?? ''
-            break
-          case 'FRIGHTCHECK':
-            itemIcon = 'fa-solid fa-face-scream'
-            rollType = game.i18n?.localize('GURPS.frightcheck') ?? ''
-            break
-          case 'HEARING':
-            itemIcon = 'fa-solid fa-ear'
-            rollType = game.i18n?.localize('GURPS.hearing') ?? ''
-            break
-          case 'TASTESMELL':
-            itemIcon = 'fa-solid fa-nose'
-            rollType = game.i18n?.localize('GURPS.tastesmell') ?? ''
-            break
-          case 'TOUCH':
-            itemIcon = 'fa-solid fa-hand-point-up'
-            rollType = game.i18n?.localize('GURPS.touch') ?? ''
-            break
-          case 'DODGE':
-            itemIcon = 'fa-solid fa-person-running-fast'
-            rollType = game.i18n?.localize('GURPS.dodge') ?? ''
-            break
-          default:
-            itemIcon = 'fa-solid fa-dice'
-            rollType = this._data.name ?? action.name.charAt(0).toUpperCase() + action.name.toLowerCase().slice(1)
-        }
-
-        break
-      }
-
-      case OtfActionType.roll:
-      case OtfActionType.derivedRoll:
-        itemIcon = 'fa-solid fa-dice'
-        itemColor = '#015401'
-        rollType = this._data.formula
-        break
-
-      case OtfActionType.damage:
-      case OtfActionType.derivedDamage:
-        itemIcon = 'fa-solid fa-dice'
-        itemColor = '#015401'
-        rollType = this._data.formula
-    }
-
-    return { itemIcon, itemColor, rollType }
+    return { itemIcon, itemColor, rollTypeName: displayRollType }
   }
 
   #showHitLocations() {
@@ -329,6 +321,12 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     }
   }
 
+  static #combatOptionOtf(option: CombatOption) {
+    const label = game.i18n?.localize(`GURPS.modifiers_.${option.id}`)
+
+    return GURPS.modules.Otf.parselink(`${option.mod} ${label}${option.suffix ?? ''}`).text
+  }
+
   override async _prepareContext(
     _options: foundry.applications.api.ApplicationV2.RenderOptions
   ): Promise<RollConfirmationDialog.RenderContext> {
@@ -354,7 +352,8 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
       const { targetColor, rollChance } = rollData(totalRoll)
 
       const targetRoll = this._data.name + (this._data.origTarget > 0 ? `-${this._data.origTarget}` : '')
-      const { itemIcon, itemColor, rollType } = this.actionData()
+      const rollType = getRollTypeFromAction(this._data.action, this._data.attack)
+      const { itemIcon, itemColor, rollTypeName } = this.#getRollData(rollType)
 
       const settingsAllowAfterMaxActions = game.settings?.get(
         GURPS.SYSTEM_NAME,
@@ -396,6 +395,11 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
 
       const hitLocations = this.#showHitLocations() ? this.#getHitLocations() : undefined
 
+      const modiferTypes = rollTypeTagSettings[rollType]
+      const rollModifers = GURPS.modules.Combat.allEnabledOptions()
+        .filter(it => !it.rollTypes || it.rollTypes.some(tag => modiferTypes.includes(tag)))
+        .map(it => RollConfirmationDialog.#combatOptionOtf(it))
+
       return {
         type: 'roll',
         messages: this._data.messages,
@@ -408,7 +412,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         totalMods: Math.abs(totalMods),
         totalRoll: Math.max(totalRoll, 3),
         rollChance,
-        rollType,
+        rollType: rollTypeName,
         itemImage: itemImage,
         itemColor,
         itemIcon,
@@ -419,6 +423,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         currentModifiers,
         genericModifiers,
         hitLocations,
+        rollModifers,
         buttons: [
           {
             type: 'submit',
