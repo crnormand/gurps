@@ -11,10 +11,10 @@ import type { CombatOption, CombatOptionSection, CombatOptionSettings } from './
 export const COMBAT_OPTIONS: readonly CombatOption[] = [
   // --- Melee Attack (B365, MA99-100, MA113, B369-370) ---
   { id: 'aoaDetermined', section: 'melee', mod: '+4', maneuvers: ['aoa_determined'], rollTypes: ['allMeleeRolls'] },
-  { id: 'aoaStrong', section: 'melee', mod: '+2', maneuvers: ['aoa_strong'], rollTypes: ['allMeleeRolls'] },
+  { id: 'aoaStrong', section: 'melee', mod: '+2', maneuvers: ['aoa_strong'], rollTypes: ['allDamageRolls'] },
   // Committed Attack (MA99) has no melee maneuver of its own; only the On Target ranged variants exist.
   { id: 'committedDetermined', section: 'melee', mod: '+2', rollTypes: ['allMeleeRolls'] },
-  { id: 'committedStrong', section: 'melee', mod: '+1', rollTypes: ['allMeleeRolls'] },
+  { id: 'committedStrong', section: 'melee', mod: '+1', rollTypes: ['allDamageRolls'] },
   { id: 'telegraphic', section: 'melee', mod: '+4', rollTypes: ['allMeleeRolls'] },
   {
     id: 'moveAndAttack',
@@ -122,7 +122,37 @@ export const COMBAT_OPTIONS: readonly CombatOption[] = [
     maneuvers: ['committed_attack_ranged'],
     rollTypes: ['allDefenseRolls'],
   },
+  // ---Extra Effort
+  {
+    id: 'feverishDefense',
+    section: 'extraEffort',
+    mod: '+2',
+    rollTypes: ['allDefenseRolls'],
+    suffix: ' *Cost 1FP',
+  },
+  {
+    id: 'mightyBlow',
+    section: 'extraEffort',
+    mod: '+2',
+    rollTypes: ['allDamageRolls'],
+    suffix: ' *Cost 1FP',
+  },
+  {
+    id: 'heroicCharge',
+    section: 'extraEffort',
+    mod: '+0',
+    rollTypes: ['allAttackRolls'],
+    suffix: ' *Cost 1FP',
+  },
+  {
+    id: 'flurryOfBlows',
+    section: 'extraEffort',
+    mod: '-3',
+    rollTypes: ['allMeleeRolls'],
+    suffix: ' *Cost 1FP',
+  },
 ]
+
 
 /** Nothing turned off. Used as the setting's default. */
 export function defaultCombatOptionSettings(): CombatOptionSettings {

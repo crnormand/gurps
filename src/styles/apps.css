@@ -3192,6 +3192,10 @@ button.quick-roll-button.lg.atk {
     *                                 *
     ***********************************
  */
+form.cr-dialog {
+    gap: 0;
+}
+
 .cr-container {
   display: flex;
   align-items: flex-start;
@@ -3279,9 +3283,6 @@ button.quick-roll-button.lg.atk {
 .cr-modifiers-section,
 .cr-current-modifiers-section {
   flex: 1;
-}
-.cr-current-modifiers-section {
-  min-width: 250px;
 }
 .cr-damage-section {
   display: flex;
@@ -3424,11 +3425,11 @@ button.quick-roll-button.lg.atk {
 .cr-messages {
   height: auto;
   width: 100%;
-  padding: 4px;
-  margin-bottom: 4px;
+  margin-bottom: 12px;
 }
 .cr-message {
   margin-bottom: 2px;
+  text-align: center;
 }
 .cr-message i {
   color: #d7b921;
@@ -3447,23 +3448,79 @@ button.quick-roll-button.lg.atk {
   display: inline-block;
 }
 
+.cr-current-modifiers-section {
+  min-width: 250px;
+  max-width: 290px;
+  font-size: var(--font-size-12);
+  padding-right: 8px;
+  padding-bottom: 16px;
+  aside{
+    text-align: center;
+  }
+}
+
+.cr-current-modifiers-list {
+  font-weight: bold;
+  font-size: var(--font-size-14);
+  .removemod.minus:hover{
+    font-weight: bold;
+  }
+  .removemod:hover::after{
+    display: inline;
+  }
+}
+
+.cr-modifiers-section {
+  min-width: 290px;
+  max-width: 290px;
+  font-size: var(--font-size-12);
+  padding-left: 8px;
+  padding-bottom: 16px;
+}
+
+ 
 .cr-section-header{
   font-size: 1.2em;
-  font-weight: bold;
+  font-weight: bold;      
+  text-align: center;
 }
 
 .cr-section-subheader{
   font-weight: bold;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 4px;
 }
 
-.cr-generic-modifiers{
+.cr-modifier-list{
+  font-size: var(--font-size-11);
   display: grid;
-  grid-template-columns: repeat(5, min-content);
+  grid-template-columns: repeat(2, auto);
+  gap: 2px;
 }
 
-.cr-hitLocations{
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
+.cr-modifier-list.cr-generic-modifiers{
+  grid-template-columns: repeat(5, auto);
+}
+
+.cr-modifier-list.cr-hitLocations{
+  grid-template-columns: repeat(3, auto);
+}
+
+.cr-modifier-list.cr-speedRange{
+  grid-template-columns: repeat(3, auto);
+}
+
+.cr-modifier-list.cr-rollModifiers{
+  grid-template-columns: repeat(1, auto);
+}
+
+.cr-modifier-list.cr-cover{
+  grid-template-columns: repeat(1, auto);
+}
+
+.cr-modifier-list.cr-lightning{
+    grid-template-columns: repeat(1, auto);
 }
 
 .consume-action-badge {

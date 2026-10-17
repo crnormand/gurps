@@ -3,7 +3,7 @@ import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { MoveModeV2 } from '@module/actor/data/move-mode.js'
 import { NoteV2 } from '@module/actor/data/note.js'
 import { EffectModifierControl } from '@module/actor/effect-modifier-control.js'
-import DamageChat from '@module/damage/damagechat.js'
+import { GurpsRange } from '@module/combat/ranges.js'
 import { AttributeBonus } from '@module/features/attribute-bonus.js'
 import { ConditionalModifier } from '@module/features/conditional-modifier.js'
 import { ContainedWeightReduction } from '@module/features/contained-weight-reduction.js'
@@ -459,10 +459,6 @@ declare global {
     /* ---------------------------------------- */
 
     ApplyDamageDialog: new (actor: Actor.Implementation, damageData: DamageData[], options?: object) => Application
-
-    /* ---------------------------------------- */
-
-    DamageChat: typeof DamageChat
 
     /* ---------------------------------------- */
 

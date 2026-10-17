@@ -5,6 +5,7 @@ import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { CombatOption } from '@module/combat/types.js'
 import { ModelCollection } from '@module/data/model-collection.js'
 import GurpsWiring from '@module/gurps-wiring.js'
+import { ModifierLiterals } from '@module/modifier-bucket/tooltip-window.js'
 import { getRollTypeFromAction, ROLL_TYPE, rollTypeTagSettings } from '@module/tagged-modifiers/tagged-modifiers.js'
 import { MessageMode } from '@module/util/foundry-utils.js'
 import { i18nFallback } from '@module/util/i18nFallback.js'
@@ -13,7 +14,7 @@ import * as Settings from '@module/util/miscellaneous-settings.js'
 
 import { CanRollResult, canConsumeAction } from './canRoll.js'
 import { rollData } from './dieroll.js'
-import { OtfActionType, OtfDamageAction, OtfRollAction } from './types.js'
+import { OtfDamageAction, OtfRollAction } from './types.js'
 
 interface DieRollConfirmationData {
   type: 'roll'
@@ -50,6 +51,8 @@ interface DamageRollConfirmationData {
   messageMode: MessageMode
 }
 
+type ModifierData = { title: string; class: string; modifiers: string[] }[]
+
 export type RollConfirmationData = DieRollConfirmationData | DamageRollConfirmationData | SimpleDieRollConfirmationData
 
 namespace RollConfirmationDialog {
@@ -74,9 +77,7 @@ namespace RollConfirmationDialog {
     consumeActionLabel?: string
     targetRoll: string
     currentModifiers: Modifier[]
-    genericModifiers: string[]
-    hitLocations?: string[]
-    rollModifers: string[]
+    modifierData: ModifierData
     buttons: any[]
   }
   export interface DamageRenderContext extends foundry.applications.api.ApplicationV2.RenderContext {
@@ -100,7 +101,7 @@ namespace RollConfirmationDialog {
     bucketRoll: string
     bucketRollColor: string
     currentModifiers: Modifier[]
-    genericModifiers: string[]
+    modifierData: ModifierData
     buttons: any[]
   }
 
@@ -132,7 +133,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     tag: 'form',
     classes: ['standard-form', 'cr-dialog'],
     window: {
-      resizable: true,
+      resizable: false,
     },
     form: {
       submitOnChange: false,
@@ -291,11 +292,111 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     return { itemIcon, itemColor, rollTypeName: displayRollType }
   }
 
-  #showHitLocations() {
-    if (this._data.type !== 'roll') return false
-    if (this._data.action.type === OtfActionType.attack) return true
+  #getModiferData(rollType: ROLL_TYPE): ModifierData {
+    const result: ModifierData = []
 
-    return false
+    const genericModifiers = ['+1', '+2', '+3', '+4', '+5', '-1', '-2', '-3', '-4', '-5'].map(
+      it => GURPS.modules.Otf.parselink(it).text
+    )
+
+    result.push({
+      title: game.i18n?.localize('GURPS.modifierOthers') ?? '',
+      class: 'cr-generic-modifiers',
+      modifiers: genericModifiers,
+    })
+
+    if (rollType === ROLL_TYPE.RANGED || rollType === ROLL_TYPE.MELEE) {
+      result.unshift({
+        title: game.i18n?.localize('GURPS.modifiers_.hitLocations') ?? '',
+        class: 'cr-hitLocations',
+        modifiers: this.#getHitLocations() ?? [],
+      })
+    }
+
+    if (rollType === ROLL_TYPE.RANGED || rollType === ROLL_TYPE.VISION || rollType === ROLL_TYPE.PER) {
+      result.unshift({
+        title: game.i18n?.localize('GURPS.modifierRangeTitle') ?? '',
+        class: 'cr-speedRange',
+        modifiers: GURPS.rangeObject.ranges
+          .filter(it => it.penalty < 0)
+          .map(
+            it =>
+              GURPS.modules.Otf.parselink(`" ${it.penalty} ${it.max.toLocaleString()} yd" ${it.penalty} ${it.moddesc}`)
+                .text
+          ),
+      })
+    }
+
+    if (rollType === ROLL_TYPE.VISION || rollType === ROLL_TYPE.PER) {
+      const modifiersRaw = [...ModifierLiterals.LightingModifiers]
+      const title = modifiersRaw.shift() ?? ''
+      const modifiers = modifiersRaw.map(it => GURPS.modules.Otf.parselink(it).text)
+
+      result.unshift({
+        title: title,
+        class: 'cr-lightning',
+        modifiers: modifiers,
+      })
+    }
+
+    if (rollType === ROLL_TYPE.RANGED) {
+      const coverModifiers = [
+        game.i18n?.localize('GURPS.modifierCoverHead') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverHeadShoulder') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverHalfExposed') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverLight') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverBehindFigure') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverProne') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverProneHeadUp') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverProneHeadDown') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverCrouch') ?? '',
+        game.i18n?.localize('GURPS.modifierCoverThroughHex') ?? '',
+      ].map(it => GURPS.modules.Otf.parselink(it).text)
+
+      result.unshift({
+        title: game.i18n?.localize('GURPS.modifierCover') ?? '',
+        class: 'cr-cover',
+        modifiers: coverModifiers,
+      })
+    }
+
+    if (
+      ![
+        ROLL_TYPE.MELEE,
+        ROLL_TYPE.RANGED,
+        ROLL_TYPE.DAMAGE,
+        ROLL_TYPE.PARRY,
+        ROLL_TYPE.BLOCK,
+        ROLL_TYPE.DODGE,
+        ROLL_TYPE.SPELL,
+        ROLL_TYPE.UNKNOWN,
+      ].includes(rollType)
+    ) {
+      const modifiersRaw = [...ModifierLiterals.TaskDifficultyModifiers]
+      const title = modifiersRaw.shift() ?? ''
+      const modifiers = modifiersRaw.map(it => GURPS.modules.Otf.parselink(it).text)
+
+      result.unshift({
+        title: title,
+        class: 'cr-task-difficulty',
+        modifiers: modifiers,
+      })
+    }
+
+    const modifierTypes = rollTypeTagSettings[rollType]
+    const rollModifiers = GURPS.modules.Combat.allEnabledOptions()
+      .filter(it => !it.rollTypes || it.rollTypes.some(tag => modifierTypes.includes(tag)))
+      .map(it => RollConfirmationDialog.#combatOptionOtf(it))
+
+    if (rollModifiers.length !== 0) {
+      result.unshift({
+        title: game.i18n?.localize('GURPS.modifiers_.rollModifiers') ?? '',
+        class: 'cr-rollModifiers',
+        modifiers: rollModifiers,
+      })
+    }
+
+    return result
   }
 
   #getHitLocations() {
@@ -336,9 +437,6 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     const isVideo = tokenImage.includes('webm') || tokenImage.includes('mp4')
     const tokenName = (token?.name || this._data.actor?.name) ?? gmUser?.name ?? ''
     const currentModifiers = GURPS.ModifierBucket.modifierStack.modifierList
-    const genericModifiers = ['+1', '+2', '+3', '+4', '+5', '-1', '-2', '-3', '-4', '-5'].map(
-      it => GURPS.modules.Otf.parselink(it).text
-    )
 
     if (this._data.type === 'roll') {
       const actor = this._data.actor
@@ -393,13 +491,6 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
             ? 'rgba(20,119,180,0.7)'
             : 'rgba(51,114,68,0.7)'
 
-      const hitLocations = this.#showHitLocations() ? this.#getHitLocations() : undefined
-
-      const modiferTypes = rollTypeTagSettings[rollType]
-      const rollModifers = GURPS.modules.Combat.allEnabledOptions()
-        .filter(it => !it.rollTypes || it.rollTypes.some(tag => modiferTypes.includes(tag)))
-        .map(it => RollConfirmationDialog.#combatOptionOtf(it))
-
       return {
         type: 'roll',
         messages: this._data.messages,
@@ -421,9 +512,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         consumeActionLabel,
         targetRoll: targetRoll,
         currentModifiers,
-        genericModifiers,
-        hitLocations,
-        rollModifers,
+        modifierData: this.#getModiferData(rollType),
         buttons: [
           {
             type: 'submit',
@@ -489,7 +578,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         bucketRoll,
         bucketRollColor,
         currentModifiers,
-        genericModifiers,
+        modifierData: this.#getModiferData(ROLL_TYPE.DAMAGE),
         buttons: [
           {
             type: 'submit',
@@ -526,7 +615,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         bucketRoll: bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : '',
         bucketRollColor: bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8',
         currentModifiers,
-        genericModifiers,
+        modifierData: this.#getModiferData(ROLL_TYPE.UNKNOWN),
         buttons: [
           {
             type: 'submit',

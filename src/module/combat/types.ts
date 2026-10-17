@@ -19,7 +19,7 @@ export type ManeuverDetail = 'Full' | 'General' | 'NoFeint'
 export type ManeuverVisibility = 'NoOne' | 'Everyone' | 'GMAndOwner'
 export type RangeStrategy = 'Standard' | 'Simplified' | 'TenPenalties'
 
-export type CombatOptionSection = 'melee' | 'ranged' | 'defense'
+export type CombatOptionSection = 'melee' | 'ranged' | 'defense' | 'extraEffort'
 
 export interface CombatOption {
   /** Stable key. Doubles as the `GURPS.modifiers_.<id>` and `GURPS.modifiers_.pdf.<id>` lookup. */

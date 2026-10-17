@@ -9,48 +9,6 @@
     </div>
   {{/if}}
   <div class='cr-container'>
-    <div class='cr-modifiers-section'>
-      <div class='cr-section-header'>{{localize "GURPS.addModifiers"}}</div>
-      {{#if rollModifers.length}}
-        <div class='cr-section-subheader'>{{localize "GURPS.rollModifiers"}}</div>
-        <div class='cr-rollModifers'>
-          {{#each rollModifers}}
-            {{{this}}}
-          {{/each}}
-        </div>
-      {{/if}}
-      {{#if hitLocations}}
-        <div class='cr-section-subheader'>{{localize "GURPS.hitLocations"}}</div>
-        <div class='cr-hitLocations'>
-          {{#each hitLocations}}
-            {{{this}}}
-          {{/each}}
-        </div>
-      {{/if}}
-      <div class='cr-section-subheader'>{{localize "GURPS.modifierOthers"}}</div>
-      <div class='cr-generic-modifiers'>
-        {{#each genericModifiers}}
-          {{{this}}}
-        {{/each}}
-      </div>
-    </div>    
-    <div class='cr-current-modifiers-section'>
-      <div class='cr-section-header'>{{localize "GURPS.modifierCurrentModifiers"}}</div>
-      <div class='shaded-group overflowy'>
-        <aside>({{localize "GURPS.clickToRemove"}})</aside>
-        {{#each currentModifiers}}
-          <div class="removemod {{#if this.plus}}plus{{else}}minus{{/if}}" data-index="{{@index}}" data-action="removeMod">
-            {{this.mod}} : {{this.desc}}
-          </div>
-        {{/each}}
-      </div>
-      <div class='modttlabel'>Total:&nbsp;
-        <div {{#if (gt totalMods 0)}}class='plus' {{/if}}{{#if (lt totalMods 0)}}class='minus'
-          {{/if}}>
-          {{totalMods}}
-        </div>
-      </div>
-    </div>    
     <div class='cr-token-section'>
       {{#if isVideo}}
         <video class='cr-token-img' src='{{tokenImage}}' autoplay loop muted></video>
@@ -87,4 +45,34 @@
       <div class='cr-item-roll'>{{targetRoll}}</div>
     </div>
   </div>
+  <div class='cr-container'>
+    <div class='cr-current-modifiers-section'>
+      <div class='cr-section-header'>{{localize "GURPS.modifierCurrentModifiers"}}</div>
+        <div class='cr-section-subheader'>({{localize "GURPS.clickToRemove"}})</div>
+      <div class='cr-current-modifiers-list'>
+        {{#each currentModifiers}}
+          <div class="removemod {{#if this.plus}}plus{{else}}minus{{/if}}" data-index="{{@index}}" data-action="removeMod">
+            {{this.mod}} : {{this.desc}}
+          </div>
+        {{/each}}
+      </div>
+      <div class='modttlabel'>Total:&nbsp;
+        <div {{#if (gt totalMods 0)}}class='plus' {{/if}}{{#if (lt totalMods 0)}}class='minus'
+          {{/if}}>
+          {{totalMods}}
+        </div>
+      </div>
+    </div> 
+    <div class='cr-modifiers-section'>
+      <div class='cr-section-header'>{{localize "GURPS.addModifiers"}}</div>
+      {{#each modifierData}}
+        <div class='cr-section-subheader'>{{this.title}}</div>
+        <div class='{{this.class}} cr-modifier-list'>
+          {{#each this.modifiers}}
+            {{{this}}}
+          {{/each}}
+        </div>
+      {{/each}}
+    </div>    
+  </div> 
 </div>
