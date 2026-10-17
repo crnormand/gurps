@@ -1,6 +1,5 @@
 import { MeleeAttackModel } from '@module/action/index.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
-import { addBucketToDamage } from '@module/damage/addBucketToDamage.js'
 import { Damage } from '@module/damage/index.js'
 import { GurpsItemV2 } from '@module/item/gurps-item.js'
 import { ItemType } from '@module/item/types.js'
@@ -213,18 +212,15 @@ export const actionFuncs: Record<string, actionFunc> = {
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '') // special case where Damage comes from [D:attack + mod]
 
       const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-      let displayFormula = action.formula ?? ''
 
       if (actor && taggedSettings?.autoAdd) {
         await actor.addTaggedRollModifiers(action, undefined, action.att)
-        displayFormula = addBucketToDamage(displayFormula, false)
       }
 
       return await Damage.rollDamage(
         canRollData,
         token,
         actor ?? null,
-        displayFormula,
         action.formula ?? '',
         action,
         event ?? null,
@@ -279,11 +275,9 @@ export const actionFuncs: Record<string, actionFunc> = {
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '') // special case where Damage comes from [D:attack + mod]
 
       const taggedSettings = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_USE_TAGGED_MODIFIERS)
-      let displayFormula = formula
 
       if (actor && taggedSettings?.autoAdd) {
         await actor.addTaggedRollModifiers(action, undefined, action.att)
-        displayFormula = addBucketToDamage(displayFormula, false)
       }
 
       let canRollData = { canRoll: true, targetMessage: '' }
@@ -301,17 +295,7 @@ export const actionFuncs: Record<string, actionFunc> = {
 
       const overrideText = action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1')
 
-      await Damage.rollDamage(
-        canRollData,
-        token,
-        actor,
-        displayFormula,
-        formula,
-        action,
-        event ?? null,
-        overrideText,
-        targets ?? []
-      )
+      await Damage.rollDamage(canRollData, token, actor, formula, action, event ?? null, overrideText, targets ?? [])
 
       if (action.next) {
         return GURPS.modules.Otf.performAction(action.next, actor, event, targets)

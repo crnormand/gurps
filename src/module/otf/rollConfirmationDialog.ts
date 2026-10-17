@@ -3,6 +3,7 @@ import { MeleeAttackModel } from '@module/action/melee-attack.js'
 import { RangedAttackModel } from '@module/action/ranged-attack.js'
 import { HitLocationEntryV2 } from '@module/actor/data/hit-location-entry.js'
 import { CombatOption } from '@module/combat/types.js'
+import { addBucketToDamage } from '@module/damage/addBucketToDamage.js'
 import { ModelCollection } from '@module/data/model-collection.js'
 import GurpsWiring from '@module/gurps-wiring.js'
 import { ModifierLiterals } from '@module/modifier-bucket/tooltip-window.js'
@@ -151,11 +152,17 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
   }
 
   static override PARTS = {
+    messages: {
+      template: systemPath('templates/roll-confirmation/roll-confirmation-messages.hbs'),
+    },
     roll: {
       template: systemPath('templates/roll-confirmation/confirmation-roll.hbs'),
     },
     damage: {
       template: systemPath('templates/roll-confirmation/confirmation-damage-roll.hbs'),
+    },
+    modifier: {
+      template: systemPath('templates/roll-confirmation/roll-modifier.hbs'),
     },
     footer: {
       template: 'templates/generic/form-footer.hbs',
@@ -167,11 +174,11 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
 
     switch (this._data.type) {
       case 'roll':
-        options.parts = ['roll', 'footer']
+        options.parts = ['messages', 'roll', 'modifier', 'footer']
         break
       case 'damage':
       case 'simpleRoll':
-        options.parts = ['damage', 'footer']
+        options.parts = ['messages', 'damage', 'modifier', 'footer']
         break
     }
   }
@@ -563,6 +570,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
       const damageCost = action.costs?.split(' ').pop() || ''
       const otfDamageText = !!action.overridetxt && action.overridetxt !== action.formula ? action.overridetxt : ''
       const usingDiceAdd = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
+      const damageRoll = addBucketToDamage(displayFormula, false)
 
       return {
         type: 'damage',
@@ -570,7 +578,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         isVideo,
         tokenImage,
         tokenName,
-        damageRoll: displayFormula,
+        damageRoll,
         originalFormula,
         damageTypeLabel,
         damageTypeIcon,

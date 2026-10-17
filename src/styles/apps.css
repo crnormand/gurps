@@ -3209,6 +3209,7 @@ form.cr-dialog {
   border: none;
 }
 .cr-item-section,
+.cr-damage-type-section,
 .cr-token-section {
   display: flex;
   flex-direction: column;
@@ -3216,6 +3217,7 @@ form.cr-dialog {
   text-align: center;
 }
 .cr-item-roll,
+.cr-damage-type,
 .cr-token-name {
   font-size: 0.8em;
   font-weight: bold;
@@ -3255,7 +3257,8 @@ form.cr-dialog {
   text-align: center;
   justify-content: center;
 }
-.cr-item-icon {
+.cr-item-icon,
+.cr-damage-type-icon {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -3285,36 +3288,16 @@ form.cr-dialog {
   flex: 1;
 }
 .cr-damage-section {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: baseline;
-  justify-content: flex-start;
-  margin-left: 5px;
-}
-.cr-damage-type {
-  width: 30px;
-  height: 30px;
-  background-color: rgba(56, 37, 32, 0.82);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 8px;
-}
-.cr-damage-type span {
-  color: whitesmoke;
-  text-transform: uppercase;
-  font-size: 0.8em;
-  text-align: center;
-  line-height: 0.8em;
-  font-weight: bold;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    align-items: baseline;
+    margin-left: 6px;
 }
 .cr-damage-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  margin-bottom: 16px;
 }
 .cr-damage-formula {
   font-size: 4.5em;
@@ -3336,11 +3319,14 @@ form.cr-dialog {
   line-height: 0.9;
   border-top: darkgrey 2px solid;
   padding-top: 6px;
+  justify-content: center;
 }
 .cr-damage-info {
-  display: flex;
-  gap: 4px;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: row;
 }
 .cr-badge {
   display: flex;
@@ -3443,7 +3429,9 @@ form.cr-dialog {
   line-height: 1.1;
 }
 
-.cr-item-img-container {
+.cr-item-img-container,
+.cr-damage-type-img-container
+ {
   position: relative;
   display: inline-block;
 }
