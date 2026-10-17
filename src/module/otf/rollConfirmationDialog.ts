@@ -51,7 +51,7 @@ interface DamageRollConfirmationData {
   messageMode: MessageMode
 }
 
-type ModifierData = { title: string; class: string; modifiers: string[] }[]
+type ModifierData = { title: string; class: string; modifiers: string[]; open: boolean }[]
 
 export type RollConfirmationData = DieRollConfirmationData | DamageRollConfirmationData | SimpleDieRollConfirmationData
 
@@ -303,6 +303,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
       title: game.i18n?.localize('GURPS.modifierOthers') ?? '',
       class: 'cr-generic-modifiers',
       modifiers: genericModifiers,
+      open: true,
     })
 
     if (rollType === ROLL_TYPE.RANGED || rollType === ROLL_TYPE.MELEE) {
@@ -310,6 +311,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         title: game.i18n?.localize('GURPS.modifiers_.hitLocations') ?? '',
         class: 'cr-hitLocations',
         modifiers: this.#getHitLocations() ?? [],
+        open: false,
       })
     }
 
@@ -324,6 +326,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
               GURPS.modules.Otf.parselink(`" ${it.penalty} ${it.max.toLocaleString()} yd" ${it.penalty} ${it.moddesc}`)
                 .text
           ),
+        open: false,
       })
     }
 
@@ -336,6 +339,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         title: title,
         class: 'cr-lightning',
         modifiers: modifiers,
+        open: false,
       })
     }
 
@@ -357,6 +361,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         title: game.i18n?.localize('GURPS.modifierCover') ?? '',
         class: 'cr-cover',
         modifiers: coverModifiers,
+        open: false,
       })
     }
 
@@ -380,6 +385,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         title: title,
         class: 'cr-task-difficulty',
         modifiers: modifiers,
+        open: true,
       })
     }
 
@@ -393,6 +399,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         title: game.i18n?.localize('GURPS.modifiers_.rollModifiers') ?? '',
         class: 'cr-rollModifiers',
         modifiers: rollModifiers,
+        open: true,
       })
     }
 
