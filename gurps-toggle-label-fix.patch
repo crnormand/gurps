@@ -1,0 +1,40 @@
+From 9662ce968fc53aa9fb35cdd04d9c0dcede173f13 Mon Sep 17 00:00:00 2001
+From: David Berkompas <david.berkompas@gmail.com>
+Date: Sat, 10 Oct 2026 21:53:37 -0500
+Subject: [PATCH] Fix toggle button label not returning to alt sheet name
+
+getCustomHeaderButtons() compared the actor's sheetClass flag against
+'GURPS.GurpsActorSheet', but the sheet is registered as
+'gurps.GurpsActorSheet'. After toggling to the alt sheet and back, the
+flag holds the lowercase ID, so the Full sheet's button kept showing
+'Full View' instead of the alt sheet name. The toggle itself still worked
+because _onToggleSheet uses the correct ID.
+
+Also resolve an unset/empty flag to the default character sheet, matching
+_onToggleSheet.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01EN8MqdqMpYwozymMY2C5x9
+---
+ module/actor/actor-sheet.js | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/module/actor/actor-sheet.js b/module/actor/actor-sheet.js
+index 1cf3c0e..782c35d 100755
+--- a/module/actor/actor-sheet.js
++++ b/module/actor/actor-sheet.js
+@@ -1681,7 +1681,10 @@ export class GurpsActorSheet extends ActorSheet {
+     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
+     const altsheet = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
+ 
+-    const isFull = sheet === undefined || sheet === 'GURPS.GurpsActorSheet'
++    // Resolve the effective sheet the same way _onToggleSheet does: an actor with no sheetClass flag
++    // (or an empty one) uses the default character sheet. Sheet IDs are registered as 'gurps.<ClassName>'.
++    const currentSheet = sheet || Object.values(CONFIG.Actor.sheetClasses['character']).find(s => s.default)?.id
++    const isFull = currentSheet === 'gurps.GurpsActorSheet'
+     let b = [
+       {
+         label: isFull ? altsheet : 'Full View',
+-- 
+2.43.0
+

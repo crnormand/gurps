@@ -1681,7 +1681,10 @@ export class GurpsActorSheet extends ActorSheet {
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
     const altsheet = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_ALT_SHEET)
 
-    const isFull = sheet === undefined || sheet === 'GURPS.GurpsActorSheet'
+    // Resolve the effective sheet the same way _onToggleSheet does: an actor with no sheetClass flag
+    // (or an empty one) uses the default character sheet. Sheet IDs are registered as 'gurps.<ClassName>'.
+    const currentSheet = sheet || Object.values(CONFIG.Actor.sheetClasses['character']).find(s => s.default)?.id
+    const isFull = currentSheet === 'gurps.GurpsActorSheet'
     let b = [
       {
         label: isFull ? altsheet : 'Full View',
