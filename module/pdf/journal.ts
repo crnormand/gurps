@@ -1,5 +1,6 @@
 import { atou } from '../../lib/utilities.js'
 import GurpsWiring from '../gurps-wiring.js'
+
 import { GurpsPDFSheet } from './sheet.ts'
 
 /**
@@ -29,7 +30,7 @@ export async function renderJournalPageSheet(
 
   GurpsWiring.hookupAllEvents(html)
 
-  if (!!parent) {
+  if (parent) {
     parent?.addEventListener('drop', event => dropHandler(event))
   } else {
     console.warn('Failed to find JournalPageEntryTextSheet HTML parent element after waiting.', html.parentElement)
@@ -45,20 +46,23 @@ export async function renderJournalPageSheet(
     if (!!data && !!data.otf) {
       let cmd = ''
 
-      if (!!data.encodedAction) {
+      if (data.encodedAction) {
         const action = JSON.parse(atou(data.encodedAction))
+
         if (action.quiet) cmd += '!'
       }
 
       cmd += data.otf
 
-      if (!!data.displayname) {
+      if (data.displayname) {
         const quoteCharacter = data.displayname.includes('"') ? "'" : '"'
+
         cmd = quoteCharacter + data.displayname + quoteCharacter + cmd
       }
 
       cmd = '[' + cmd + ']'
       const content = app.document.text.content
+
       if (content) cmd = '<br>' + cmd
       // @ts-expect-error: Ignore TypeScript error for updating the document content
       app.document.update({ 'text.content': content + cmd })
@@ -86,6 +90,7 @@ export function renderJournalPagePDFSheet(
 
   if (targetLabel) {
     const iframe = html.querySelector('iframe')
+
     if (!iframe) return
 
     iframe.addEventListener(
@@ -114,19 +119,24 @@ async function goToPageLabel(iframe: HTMLIFrameElement, targetLabel: string) {
 
   // @ts-expect-error: Ignore TypeScript error for accessing PDFViewerApplication on the iframe content window
   const app = win?.PDFViewerApplication
+
   if (!app) return false
 
   await app.initializedPromise
+
   if (!app.pdfDocument) {
     await new Promise(resolve => app.eventBus.on('documentloaded', resolve, { once: true }))
   }
 
   const labels = await app.pdfDocument.getPageLabels() // e.g. ['i','ii','iii','A-1',...,'B-30',...]
+
   if (!labels) return false
 
   const idx = labels.indexOf(targetLabel)
+
   if (idx < 0) return false
 
   app.pdfViewer.currentPageNumber = idx + 1 // physical page, 1-based
+
   return true
 }

@@ -340,6 +340,8 @@
       "rollTotalHits": "Total de impactos debido a CaD ({rof}) & Rcl ({rcl}) es <span class='roll-value'>{rofrcl}</span>. ({link})",
       "setting": {
         "hint": "Estos ajustes controlan varios aspectos del combate en el juego.",
+        "initiative": "Combate: Fórmula de Secuencia de Turno",
+        "initiativeHint": "Esta es la fórmula que usa Foundry para determinar el orden de turnos en combate. Advertencia: ¡Solo cambia esto si sabes lo que estás haciendo! No analizamos esto en busca de corrección. Deja este campo en blanco para restablecer la fórmula a la Secuencia de Turno de Combate GURPS, B362.",
         "maneuver": {
           "allowRoll": "Permitir Tirada basada en Maniobra",
           "allowRollHint": "Durante el combate, el sistema comprobará si la tirada es válida, según la maniobra seleccionada.",
@@ -369,6 +371,11 @@
         "optionsHint": "Elige las opciones de combate utilizadas por este mundo. Una maniobra desactivada deja de mostrarse en cualquier lugar donde se pueda elegir una maniobra — Rastreador de Combate, HUD del Token y hoja de personaje — y sus modificadores se eliminan del Contenedor de Modificadores.",
         "optionsManeuvers": "Maniobras",
         "optionsNeedsOnTarget": "No está disponible: Usar Modificadores de Distancia En el Objetivo está desactivado arriba.",
+        "rangeStrategy": "Combate: Estrategia de modificador de distancia",
+        "rangeStrategyHint": "Establece la fórmula a usar para calcular las penalizaciones de distancia.",
+        "rangeStrategyRangeBands": "Bandas de Distancia de Monster Hunters 2",
+        "rangeStrategyStandard": "Tabla de Tamaño y Velocidad/Distancia",
+        "rangeStrategyTenPenalties": "-1 por cada 10 hexágonos/yardas/metros",
         "title": "Ajustes de Combate",
         "useRelativeSizeInMelee": "Usar Diferencia de Modificador de Tamaño en Melé",
         "useRelativeSizeInMeleeHint": "Aplica la diferencia en Modificador de Tamaño (MT) entre atacante y defensor a las tiradas de ataque en melé."
@@ -1285,7 +1292,6 @@
     "settingCheckConditionalModifiers": "Comprobar Modificadores Condicionales en la Hoja del Personaje",
     "settingColorSheetMenuHint": "Ajustes de Color de la Hoja de Personaje",
     "settingColorSheetMenuTitle": "Color de la Hoja de Personaje",
-    "settingCombatInitiative": "Combate: Fórmula de Secuencia de Turno",
     "settingConvertRanged": "Personaje: Convertir rango 'x2/x5' a yardas",
     "settingDamageAD": "Daño: Divisores de Armadura",
     "settingDamageBluntTrauma": "Daño: Trauma Contundente",
@@ -1314,7 +1320,6 @@
     "settingHintBlockImport": "Si está marcado, el botón 'Importar' solo se mostrará en la hoja de personaje si el nivel de permiso del jugador es 'De Confianza', 'Asistente' o 'GameMaster'",
     "settingHintCalculateEnc": "Si está marcado, el nivel de Encumbramiento se establecerá automáticamente según el equipo portado (y no podrás cambiar el nivel de Encumbramiento manualmente). Si está desactivado, puedes cambiar el nivel de Encumbramiento haciendo clic en el nuevo nivel.",
     "settingHintCheckConditionalModifiers": "Si está marcado, el sistema buscará Modificadores Condicionales en la Hoja del Personaje y los añadirá al Emergente de Modificadores de Efecto.",
-    "settingHintCombatInitiative": "Esta es la fórmula que usa Foundry para determinar el orden de turnos en combate. Advertencia: ¡Solo cambia esto si sabes lo que estás haciendo! No analizamos esto en busca de corrección. Deja este campo en blanco para restablecer la fórmula a la Secuencia de Turno de Combate GURPS, B362.",
     "settingHintConvertRanged": "Si está marcado, los campos de rango con la forma 'xN' o 'xN/xM' se multiplicarán por la FU del personaje para determinar el rango real de un arma arrojadiza. NOTA: Esto solo ocurre durante la importación.",
     "settingHintDamagCondInjury": "De Pyramid #3/120: La Lesión Condicional elimina los Puntos de Golpe del juego como base para el seguimiento de heridas, y los reemplaza con un método basado en efectos para las lesiones.",
     "settingHintDamageAD": "Si está marcado, ajusta la RD del objetivo por el divisor de armadura en el ataque.",
@@ -1337,7 +1342,6 @@
     "settingHintPlayerChatPrivate": "Si está marcado, la mayoría de los comandos de chat (p.ej. /hp, /fp, /qty, etc.) se mostrarán como un susurro al jugador (en lugar de un mensaje Fuera de Personaje). Si confías en tus jugadores y no quieres ver el chat lleno de sus comandos de chat, activa esto.",
     "settingHintPortraitHPTinting": "Mostrar superposición de tinte rojo en los retratos de personajes según la pérdida de PG en la hoja Moderna.",
     "settingHintQtyItems": "Si está marcado, aparecerá un pequeño icono después del equipo donde la Cantidad/Cuenta se guardará durante las importaciones",
-    "settingHintRangeStrategy": "Establece la fórmula a usar para calcular las penalizaciones de distancia.",
     "settingHintRemoveUnequipped": "Si está marcado, los nombres de los ataques de Melé y Distancia se compararán con la lista de equipo portado, y si se encuentra una coincidencia de nombre, el ataque solo se listará si el equipo está Equipado",
     "settingHintSheetDetail": "Selecciona la hoja de personaje que quieres como 'Hoja Rápida'. Se mostrará en la barra de título, y el usuario puede hacer clic entre ella y la hoja 'Completa (GCS)'",
     "settingHintShowChatReeling": "Cuando está marcado, los cambios en el estado Tambaleante o Cansado de cualquier personaje se mostrarán como un mensaje de chat.",
@@ -1389,10 +1393,6 @@
     "settingPlayerChatPrivate": "Comandos de chat del jugador privados",
     "settingPortraitHPTinting": "Tinte de PG en Retrato",
     "settingQtyItems": "Personaje: Mostrar indicador de Cantidad/Cuenta guardada",
-    "settingRangeStrategy": "Combate: Estrategia de modificador de distancia",
-    "settingRangeStrategyRangeBands": "Bandas de Distancia de Monster Hunters 2",
-    "settingRangeStrategyStandard": "Tabla de Tamaño y Velocidad/Distancia",
-    "settingRangeStrategyTenPenalties": "-1 por cada 10 hexágonos/yardas/metros",
     "settingRemoveUnequipped": "Personaje: Eliminar armas no Equipadas de las listas de Melé y Distancia",
     "settings": {
       "physicalDiceTooltip": "ej: 1,2,3 o 6"

@@ -1,8 +1,12 @@
 'use strict'
 
+// TODO: Detach from FoundryVTT, move to @rules
+
 import { SizeAndSpeedRangeTable } from './size-speed-range-table.js'
+
 import { Modifier } from '../modifier-bucket/bucket-app.js'
 import { getRangeStrategy } from './settings.ts'
+
 /*
   Defines the range strategy used throughout the application. A range strategy
   is defined as an ordered (closest range to farthest range) array of range
@@ -30,7 +34,7 @@ import { getRangeStrategy } from './settings.ts'
   - Maintains an instance variable (ranges) that contains the current set of
 	range bands based on the chosen strategy.
 
-  - Maintains an instance variable (modifiers) that contains an array of 
+  - Maintains an instance variable (modifiers) that contains an array of
 	modifier text for the modifier bucket.
  */
 
@@ -132,7 +136,7 @@ export class GurpsRange {
       },
       {
         moddesc: game.i18n?.localize('GURPS.modifierRangeMHExtreme'),
-        max: Infinity, // Final entry. We will check for "is string" to assume infinite
+        max: Infinity, // Final entry.
         penalty: -15,
         description: game.i18n?.localize('GURPS.modifierRangeMHExtremeDesc'),
       },
@@ -164,7 +168,7 @@ export class GurpsRange {
         // @ts-expect-error: tempModifiers is not part of the original method signature
         GURPS.ModifierBucket.addModifier(band.penalty.toLocaleString(), band.moddesc ?? '', tempModifiers)
     })
-    this.modifiers = tempModifiers.map(e => e.mod + ' ' + e.desc)
+    this.modifiers = tempModifiers.map(entry => entry.mod + ' ' + entry.desc)
   }
 
   async update() {
@@ -177,6 +181,7 @@ export class GurpsRange {
         this.ranges = GurpsRange.basicSetRanges
         break
       }
+
       case 'TenPenalties': {
         this.ranges = GurpsRange.penaltiesPerTenRanges
         break

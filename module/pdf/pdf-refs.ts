@@ -1,4 +1,4 @@
-import { getBasicSetPDFSetting, isOpenFirstPDFSetting } from './settings.ts'
+import { getBasicSetPDFSetting, isOpenFirstPDFSetting } from './settings.js'
 
 export function handleOnPdf(event: MouseEvent): void {
   event.preventDefault()
@@ -26,7 +26,8 @@ export function handlePdf(links: string): void {
     // Special case for Separate Basic Set PDFs
     const setting = getBasicSetPDFSetting()
 
-    let bookAndPage = extractBookAndPage(link, bookCodes, setting)
+    const bookAndPage = extractBookAndPage(link, bookCodes, setting)
+
     if (!bookAndPage) {
       ui.notifications?.warn("Unable to match book code '" + link + "'.")
       continue
@@ -37,11 +38,13 @@ export function handlePdf(links: string): void {
 
     if (journalPage) {
       const viewer = createGurpsPDFSheetViewer(journalPage, bookAndPage)
+
       viewer.render({ force: true })
       success = true
     } else {
       const pdfref = GURPS.SJGProductMappings[bookAndPage.book]
       const url = pdfref?.url
+
       if (url) {
         // url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
         window.open(url, '_blank')
@@ -68,9 +71,10 @@ export function extractBookAndPage(link: string, bookCodes: string[] = [], setti
 
   if (bookCodes.length) {
     // sort book codes by length in descending order to match the longest code first
-    bookCodes.sort((a, b) => b.length - a.length)
+    bookCodes.sort((left, right) => right.length - left.length)
 
     const matchedBookCode = bookCodes.find(code => text.startsWith(code))
+
     if (matchedBookCode) {
       book = matchedBookCode
       pageLabel = text.slice(matchedBookCode.length)
@@ -91,7 +95,7 @@ export function extractBookAndPage(link: string, bookCodes: string[] = [], setti
       pageLabel = afterColon.trim()
     } else {
       // If there is no colon, we assume the format is like "B10" where the book is the first character(s) and the page is the number following it
-      let match = text.match(/^(?<book>[A-Za-z]+)(?<page>[0-9]+)$/)
+      const match = text.match(/^(?<book>[A-Za-z]+)(?<page>[0-9]+)$/)
 
       if (match && match.groups) {
         book = match.groups.book
@@ -111,6 +115,7 @@ export function extractBookAndPage(link: string, bookCodes: string[] = [], setti
 
     // Basic Revised and Basic Set PDFs have different page numbers, so we need to adjust the page number based on the setting
     const isBasicRevised = book === 'B' && setting === 'Revised'
+
     if (!isBasicRevised) {
       if (book === 'B') {
         if (page > 336)

@@ -340,6 +340,8 @@
       "rollTotalHits": "Total des coups possibles<br/>en raison de CdT ({rof}) & Recul ({rcl}) est <span class='roll-value'>{rofrcl}</span>. ({link})",
       "setting": {
         "hint": "Ces paramètres contrôlent différents aspects du combat dans le jeu.",
+        "initiative": "Combat: Formule de Séquence de Tour",
+        "initiativeHint": "C'est la formule utilisée par Foundry pour déterminer l'ordre des tours en combat. Avertissement: Ne changez cela que si vous savez ce que vous faites! Nous n'analysons pas cela pour plus de justesse. Laissez ce champ vierge pour réinitialiser la formule à la séquence de tours de combat GURPS, B362.",
         "maneuver": {
           "allowRoll": "Permettre le Jet basé sur la Manœuvre",
           "allowRollHint": "Pendant le combat, le système vérifiera si le jet est valide",
@@ -369,6 +371,11 @@
         "optionsHint": "Choisissez les options de combat utilisées par ce monde. Une manœuvre désactivée n'est plus affichée partout où une manœuvre peut être choisie — Suivi de combat, HUD du token et feuille de personnage — et ses modificateurs sont retirés du Réservoir de modificateurs.",
         "optionsManeuvers": "Manœuvres",
         "optionsNeedsOnTarget": "Non utilisé : Utiliser les modificateurs de portée On Target est désactivé ci-dessus.",
+        "rangeStrategy": "Combat: Stratégie de modification de Portée",
+        "rangeStrategyHint": "Définit la formule à utiliser pour calculer les pénalités de portée.",
+        "rangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
+        "rangeStrategyStandard": "Table de Taille et Vitesse/Portée",
+        "rangeStrategyTenPenalties": "Penalités pour chaque 10 mètres",
         "title": "Paramètres de combat",
         "useRelativeSizeInMelee": "Utiliser la différence de modificateur de taille au corps à corps",
         "useRelativeSizeInMeleeHint": "Appliquer la différence de modificateur de taille (SM) entre l'attaquant et le défenseur aux jets d'attaque au corps à corps."
@@ -1285,7 +1292,6 @@
     "settingCheckConditionalModifiers": "Vérifier les modificateurs conditionnels sur la feuille de l'acteur",
     "settingColorSheetMenuHint": "Paramètres Coloration Feuille Personnage",
     "settingColorSheetMenuTitle": "Coloration Feuille Personnage",
-    "settingCombatInitiative": "Combat: Formule de Séquence de Tour",
     "settingConvertRanged": "Acteur: Convertit 'x2/x5' portée en yards",
     "settingDamageAD": "Dégâts: Diviseurs d'Armure",
     "settingDamageBluntTrauma": "Dégâts: Traumatisme Contondant",
@@ -1314,7 +1320,6 @@
     "settingHintBlockImport": "Si coché, le bouton 'Import' sera seulement affiché sur la fiche de personnage si le niveau de permission est 'Trusted', 'Assistant' or 'GameMaster'",
     "settingHintCalculateEnc": "Si coché, le niveau d'Encombrement sera automatiquement basé sur les équipements portés (et vous ne pourrez changer le niveau d'encombrement manuellement). Si désactivé, vous pouvez changer le niveau d'encombrement en cliquant sur le nouveau niveau.",
     "settingHintCheckConditionalModifiers": "Si activé, le système recherchera des modificateurs conditionnels sur la feuille de l'acteur et les ajoutera à la fenêtre contextuelle des modificateurs d'effet.",
-    "settingHintCombatInitiative": "C'est la formule utilisée par Foundry pour déterminer l'ordre des tours en combat. Avertissement: Ne changez cela que si vous savez ce que vous faites! Nous n'analysons pas cela pour plus de justesse. Laissez ce champ vierge pour réinitialiser la formule à la séquence de tours de combat GURPS, B362.",
     "settingHintConvertRanged": "Si coché, les champs de portée sous la forme 'xN' ou 'xN/xM' seront multipliés par la F du personnage pour déterminer la portée actuelle pour une arme lancée. NOTE: Cela arrive uniquement pendant l'importe.",
     "settingHintDamagCondInjury": "Depuis la Pyramide #3/120: Blessure Conditionnelle retire les PV du jeucomme base du suivi des blessures, et les remplace par une méthode basée sur les effets pour les blessures.",
     "settingHintDamageAD": "Si coché, ajuste la RD de la cible par le diviseur d'armure de l'attaque.",
@@ -1337,7 +1342,6 @@
     "settingHintPlayerChatPrivate": "Si coché, la plupart des commandes du chat(e.g. /hp, /fp, /qty, etc.) seront affichées comme message privé au joueur (au lieu d'un message hors personnage). Si vous faites confiance à vos personnages, et n'aimez pas voir le chat rempli par leurs commandes, activez-le.",
     "settingHintPortraitHPTinting": "Afficher une teinte rouge superposée sur les portraits de personnages en fonction de la perte de PV dans la feuille moderne.",
     "settingHintQtyItems": "Si coché, une petite icône apparaîtra après l'équipement où QTE/compte sera sauvegardé pendant les imports",
-    "settingHintRangeStrategy": "Définit la formule à utiliser pour calculer les pénalités de portée.",
     "settingHintRemoveUnequipped": "Si coché, les noms des attaques de Mêlée et à Distance seront comparés à la liste des équipements portés, et si une correspondance est trouvée, l'attaque sera seulement listée si l'équipement est équipé",
     "settingHintSheetDetail": "Sélectionnez la feuille de personnage que vous voulez comme 'Feuille Rapide'. Cela s'affichera la bar de titre, et l'utilisateur peut cliquer pour cycler entre celle-ci et la 'Feuille (GCS)' Complète",
     "settingHintShowChatReeling": "Si coché, les changements de statut Vacillant ou Fatigué de tout acteur seront affichés comme message de chat.",
@@ -1389,10 +1393,6 @@
     "settingPlayerChatPrivate": "Commande de chat des joueurs privées",
     "settingPortraitHPTinting": "Teinte de Portrait selon les PV",
     "settingQtyItems": "Acteur: Afficher le Flag QTE/compte sauvegardé",
-    "settingRangeStrategy": "Combat: Stratégie de modification de Portée",
-    "settingRangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
-    "settingRangeStrategyStandard": "Table de Taille et Vitesse/Portée",
-    "settingRangeStrategyTenPenalties": "Penalités pour chaque 10 mètres",
     "settingRemoveUnequipped": "Acteur: Retire les armes Non-Equipées des listes de Mêlée et à Distance.",
     "settings": {
       "physicalDiceTooltip": "par exemple : 1,2,3 ou 6"

@@ -1,15 +1,16 @@
 import { SETTING_BASICSET_PDF, SETTING_PDF_OPEN_FIRST, SETTINGS } from './types.js'
 
 export function registerPDFSettings() {
-  if (!game.settings) throw new Error('GURPS | PDF module requires game.settings to be available!')
+  if (!game.settings || !game.i18n)
+    throw new Error('GURPS | PDF module requires game.settings and game.i18n to be available!')
 
+  // Support for combined or separate Basic Set PDFs
   game.settings.register(GURPS.SYSTEM_NAME, SETTING_BASICSET_PDF, {
     name: `${SETTINGS}.basicSet.name`,
     hint: `${SETTINGS}.basicSet.hint`,
     scope: 'world',
     config: false,
     type: String as any,
-    // @ts-expect-error: choices may not be typed in Foundry's API
     choices: {
       Combined: `${SETTINGS}.basicSet.combined`,
       Separate: `${SETTINGS}.basicSet.separate`,
@@ -25,7 +26,7 @@ export function registerPDFSettings() {
     scope: 'world',
     config: false,
     type: Boolean as any,
-    default: false, // Migrate old setting if needed
+    default: false,
     onChange: value => console.log(`On multiple Page Refs open first PDF found : ${value}`),
   })
 }

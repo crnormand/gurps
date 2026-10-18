@@ -119,6 +119,7 @@ export const ALWAYS_IN_PLAY = ['do_nothing', 'move']
 /** A maneuver stays in play until the GM turns it off in the Combat Options maneuver list. */
 export function isManeuverEnabled(maneuverName: string, settings: CombatOptionSettings): boolean {
   if (ALWAYS_IN_PLAY.includes(maneuverName)) return true
+
   return settings.maneuvers?.[maneuverName] !== false
 }
 
@@ -137,6 +138,7 @@ const definesManeuver = (option: CombatOption): boolean => (option.maneuvers?.le
  */
 export function isOptionEnabled(id: string, settings: CombatOptionSettings): boolean {
   const option = COMBAT_OPTIONS.find(it => it.id === id)
+
   if (!option) return false
 
   if (definesManeuver(option)) return option.maneuvers!.some(name => isManeuverEnabled(name, settings))

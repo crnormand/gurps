@@ -12,7 +12,6 @@ import {
   zeroFill,
 } from '../../lib/utilities.js'
 import { Combat } from '../combat/index.js'
-import { isActorInCombat } from '../combat/utilities.js'
 import Maneuvers, {
   MOVE_HALF,
   MOVE_NONE,
@@ -835,7 +834,7 @@ export class GurpsActor extends Actor {
     let current = this.getCurrentMoveMode()
     if (!current) return 0
     if (current?.enhanced) return current.enhanced
-    return Math.floor(current.basic * 1.2)
+    return Math.max(1, Math.floor(current.basic * 1.2))
   }
 
   getCurrentMoveMode() {
