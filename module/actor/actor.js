@@ -834,7 +834,7 @@ export class GurpsActor extends Actor {
     let current = this.getCurrentMoveMode()
     if (!current) return 0
     if (current?.enhanced) return current.enhanced
-    return Math.floor(current.basic * 1.2)
+    return Math.max(1, Math.floor(current.basic * 1.2))
   }
 
   getCurrentMoveMode() {
