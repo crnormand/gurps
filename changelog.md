@@ -1,6 +1,6 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
-## Release 0.18.24
+## Release 0.18.24 19-Oct-2026
 
 ### Features
 
@@ -23,6 +23,7 @@
 - Reeling and fatigue halved Move before encumbrance reduced it. Encumbrance now goes first, as B17 defines Move (a Basic Move 14 character under Light encumbrance and reeling has Move 6, not 5).
 - "Maneuver Updates Move" applied a maneuver's and posture's Move limit to every actor whenever any encounter was running, not just the actors in it.
 - An actor became unopenable if it held a maneuver from a source book the GM had since switched off.
+- Need to check if dragged objects to the map have an Owner and if not, allow it if it's an item. \#2983
 
 ## Release 0.18.23 08/29/2026
 
