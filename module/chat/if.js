@@ -1,6 +1,5 @@
 'use strict'
 
-import { OtfActionType } from '../otf/index.js'
 import { parselink } from '../../lib/parselink.js'
 import { OtfActionType } from '../otf/types.js'
 import ChatProcessor from './chat-processor.js'

@@ -22,7 +22,6 @@ import {
 } from './everything.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
 import { IfChatProcessor } from './if.js'
-import { OtfActionType } from '../otf/index.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())

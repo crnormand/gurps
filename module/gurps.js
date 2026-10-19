@@ -87,7 +87,6 @@ import { ResourceTracker } from './resource-tracker/index.js'
 import { Token } from './token/index.js'
 import { GetNumberInput } from './ui/get-number-input.js'
 
-import { OtfActionType } from './otf/index.ts'
 import { OtfModule } from './otf/index.ts'
 import { UI } from './ui/index.js'
 
