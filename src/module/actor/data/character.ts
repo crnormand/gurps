@@ -1212,7 +1212,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     let bestLevel = 0
 
     for (const skill of this.allSkillsV2) {
-      if (skill.name?.match(nameRegex) && skill.system.level > bestLevel) {
+      if (skill.system._displayName.match(nameRegex) && skill.system.level > bestLevel) {
         best = skill
         bestLevel = skill.system.level
       }
@@ -1229,7 +1229,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
     let bestLevel = 0
 
     for (const spell of this.allSpellsV2) {
-      if (spell.name?.match(nameRegex) && spell.system.level > bestLevel) {
+      if (spell.system._displayName.match(nameRegex) && spell.system.level > bestLevel) {
         best = spell
         bestLevel = spell.system.level
       }
