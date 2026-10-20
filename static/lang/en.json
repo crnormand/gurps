@@ -1618,7 +1618,6 @@
     "modifierRangeMHShortDesc": "Can talk to foe; pistol or muscle-powered missile range",
     "modifierRangeTitle": "Speed / Range",
     "modifiers": "Modifiers",
-    "rollModifiers": "Roll type modifiers",
     "modifiers_": {
       "aim": "to hit (Aim)",
       "allOutAim": "to Aiming (All-Out Aim)",
@@ -2004,6 +2003,7 @@
     "rollMadeBy": "Made it by {margin}.",
     "rollMissedBy": "Missed it by {margin}.",
     "rollNewTarget": "New Target: ({target})",
+    "repeatRoll": "repeat",
     "rollSuccess": "Success!",
     "rollTotal": "Rolled ({rolls}) = {rtotal}.",
     "rollVs": "Roll vs",

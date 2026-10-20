@@ -2002,6 +2002,7 @@
     "rollMadeBy": "Réussi de {margin}.",
     "rollMissedBy": "Raté de {margin}.",
     "rollNewTarget": "Nouvelle Cible: ({target})",
+    "repeatRoll": "Répéter",
     "rollSuccess": "Succès!",
     "rollTotal": "Jeté ({rolls}) = {rtotal}.",
     "rollVs": "Jet contre",

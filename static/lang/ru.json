@@ -2002,6 +2002,7 @@
     "rollMadeBy": "Получилось с разницей {margin}.",
     "rollMissedBy": "Промахнулся на {margin}.",
     "rollNewTarget": "Новая цель: ({target})",
+    "repeatRoll": "Повторить",
     "rollSuccess": "Успех!",
     "rollTotal": "Бросок ({rolls}) = {rtotal}.",
     "rollVs": "Бросок против",

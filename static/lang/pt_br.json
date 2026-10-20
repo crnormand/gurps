@@ -2002,6 +2002,7 @@
     "rollMadeBy": "Margem de acerto {margin}.",
     "rollMissedBy": "Margem de fracasso {margin}.",
     "rollNewTarget": "Novo alvo: ({target})",
+    "repeatRoll": "Repetir",
     "rollSuccess": "Sucesso!",
     "rollTotal": "Resultado da rolagem ({rolls}) = {rtotal}.",
     "rollVs": "Rolagem contra",

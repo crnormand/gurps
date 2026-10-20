@@ -39,6 +39,7 @@ interface SimpleDieRollConfirmationData {
   actor?: Actor.Implementation | null
   token?: Token | null
   formula: string
+  repeat: number
   name: string
   messageMode: MessageMode
 }
@@ -88,6 +89,7 @@ namespace RollConfirmationDialog {
     tokenImage: string
     tokenName: string
     damageRoll: string
+    totalMods: number
     originalFormula?: string
     damageTypeLabel?: string
     damageTypeIcon?: string
@@ -106,7 +108,24 @@ namespace RollConfirmationDialog {
     buttons: any[]
   }
 
-  export type RenderContext = RollRenderContext | DamageRenderContext
+  export interface SimpleRollRenderContext extends foundry.applications.api.ApplicationV2.RenderContext {
+    type: 'simpleRoll'
+    messages: string[]
+    isVideo: boolean
+    tokenImage: string
+    tokenName: string
+    roll: string
+    repeat: number
+    totalMods: number
+    targetRoll: string
+    bucketRoll: string
+    bucketRollColor: string
+    currentModifiers: Modifier[]
+    modifierData: ModifierData
+    buttons: any[]
+  }
+
+  export type RenderContext = RollRenderContext | DamageRenderContext | SimpleRollRenderContext
 }
 
 class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
@@ -161,6 +180,9 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
     damage: {
       template: systemPath('templates/roll-confirmation/confirmation-damage-roll.hbs'),
     },
+    simpleRoll: {
+      template: systemPath('templates/roll-confirmation/confirmation-simple-roll.hbs'),
+    },
     modifier: {
       template: systemPath('templates/roll-confirmation/roll-modifier.hbs'),
     },
@@ -177,8 +199,10 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         options.parts = ['messages', 'roll', 'modifier', 'footer']
         break
       case 'damage':
-      case 'simpleRoll':
         options.parts = ['messages', 'damage', 'modifier', 'footer']
+        break
+      case 'simpleRoll':
+        options.parts = ['messages', 'simpleRoll', 'modifier', 'footer']
         break
     }
   }
@@ -544,7 +568,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
           // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
         ],
       }
-    } else if (this._data.type === 'damage')  {
+    } else if (this._data.type === 'damage') {
       const action = this._data.action
       const displayFormula = this._data.displayFormula
       const damageType = GURPS.DamageTables.translate(action.damagetype)
@@ -579,6 +603,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         tokenImage,
         tokenName,
         damageRoll,
+        totalMods: bucketTotal,
         originalFormula,
         damageTypeLabel,
         damageTypeIcon,
@@ -612,23 +637,20 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
         ],
       }
     } else {
-      const displayFormula = this._data.formula
-      const usingDiceAdd = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
       const bucketTotal = GURPS.ModifierBucket.currentSum()
 
       return {
-        type: 'damage',
+        type: 'simpleRoll',
         messages: this._data.messages,
         isVideo,
         tokenImage,
         tokenName,
-        damageRoll: displayFormula,
-        originalFormula: displayFormula,
-        usingDiceAdd,
+        roll: this._data.formula,
+        repeat: this._data.repeat,
         targetRoll: this._data.name,
-        useMinDamage: false,
         bucketRoll: bucketTotal !== 0 ? `(${bucketTotal > 0 ? '+' : ''}${bucketTotal})` : '',
         bucketRollColor: bucketTotal > 0 ? 'darkgreen' : bucketTotal < 0 ? 'darkred' : '#a8a8a8',
+        totalMods: bucketTotal,
         currentModifiers,
         modifierData: this.#getModiferData(ROLL_TYPE.UNKNOWN),
         buttons: [

@@ -2003,6 +2003,7 @@
     "rollMadeBy": "Lo logró por {margin}.",
     "rollMissedBy": "Falló por {margin}.",
     "rollNewTarget": "Nuevo Objetivo: ({target})",
+    "repeatRoll": "Repetir",
     "rollSuccess": "¡Éxito!",
     "rollTotal": "Tirado ({rolls}) = {rtotal}.",
     "rollVs": "Tirar contra",

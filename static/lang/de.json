@@ -2002,6 +2002,7 @@
     "rollMadeBy": "Geschafft mit {margin}.",
     "rollMissedBy": "Verfehlt um {margin}.",
     "rollNewTarget": "Neues Ziel: ({target})",
+    "repeatRoll": "Wiederholen",
     "rollSuccess": "Erfolg!",
     "rollTotal": "Gewürfelt ({rolls}) = {rtotal}.",
     "rollVs": "Wurf gegen",
