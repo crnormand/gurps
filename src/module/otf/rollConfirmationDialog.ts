@@ -388,7 +388,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
           // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
         ],
       }
-    } else if (this._data.type === 'damage'){
+    } else if (this._data.type === 'damage') {
       const action = this._data.action
       const displayFormula = this._data.displayFormula
       const damageType = GURPS.DamageTables.translate(action.damagetype)
@@ -452,9 +452,7 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
           // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
         ],
       }
-    }
-    else
-    {
+    } else {
       const displayFormula = this._data.formula
       const usingDiceAdd = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
       const bucketTotal = GURPS.ModifierBucket.currentSum()
@@ -488,8 +486,8 @@ class RollConfirmationDialog extends HandlebarsApplicationMixin(Application) {
           },
           // { type: "reset", action: "reset", icon: "fa-solid fa-undo", label: "SETTINGS.Reset" },
         ],
-      }    
-    }  
+      }
+    }
   }
 
   static async #onRollButton(this: RollConfirmationDialog, event: PointerEvent, _target: HTMLElement): Promise<void> {

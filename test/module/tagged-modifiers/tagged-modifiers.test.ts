@@ -168,16 +168,56 @@ describe('getRollTypeFromAction', () => {
     [{ type: OtfActionType.roll, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.UNKNOWN],
     [{ type: OtfActionType.derivedRoll, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.UNKNOWN],
     [{ type: OtfActionType.controlRoll, accumulate: false, formula: '3d' }, undefined, ROLL_TYPE.CR],
-    [{ type: OtfActionType.attack, accumulate: false, formula: '3d', isMelee: true }, {isOfType: (x: ActionType) => x === ActionType.MeleeAttack}, ROLL_TYPE.MELEE],
-    [{ type: OtfActionType.attack, accumulate: false, formula: '3d', isMelee: false }, {isOfType: (x: ActionType) => x === ActionType.RangedAttack}, ROLL_TYPE.RANGED],
-    [{ type: OtfActionType.skillSpell, accumulate: false, formula: '3d', isSkillOnly: false , isSpellOnly: true }, undefined, ROLL_TYPE.SPELL],
-    [{ type: OtfActionType.skillSpell, accumulate: false, formula: '3d', isSkillOnly: true, isSpellOnly: false }, undefined, ROLL_TYPE.SKILL],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'ST', attrkey: 'ST' }, undefined, ROLL_TYPE.ST],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'st', attrkey: 'ST' }, undefined, ROLL_TYPE.ST],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'St', attrkey: 'ST' }, undefined, ROLL_TYPE.ST],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'DX', attrkey: 'DX' }, undefined, ROLL_TYPE.DX],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'IQ', attrkey: 'IQ' }, undefined, ROLL_TYPE.IQ],
-    [{ type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'HT', attrkey: 'HT' }, undefined, ROLL_TYPE.HT],
+    [
+      { type: OtfActionType.attack, accumulate: false, formula: '3d', isMelee: true },
+      { isOfType: (x: ActionType) => x === ActionType.MeleeAttack },
+      ROLL_TYPE.MELEE,
+    ],
+    [
+      { type: OtfActionType.attack, accumulate: false, formula: '3d', isMelee: false },
+      { isOfType: (x: ActionType) => x === ActionType.RangedAttack },
+      ROLL_TYPE.RANGED,
+    ],
+    [
+      { type: OtfActionType.skillSpell, accumulate: false, formula: '3d', isSkillOnly: false, isSpellOnly: true },
+      undefined,
+      ROLL_TYPE.SPELL,
+    ],
+    [
+      { type: OtfActionType.skillSpell, accumulate: false, formula: '3d', isSkillOnly: true, isSpellOnly: false },
+      undefined,
+      ROLL_TYPE.SKILL,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'ST', attrkey: 'ST' },
+      undefined,
+      ROLL_TYPE.ST,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'st', attrkey: 'ST' },
+      undefined,
+      ROLL_TYPE.ST,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'St', attrkey: 'ST' },
+      undefined,
+      ROLL_TYPE.ST,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'DX', attrkey: 'DX' },
+      undefined,
+      ROLL_TYPE.DX,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'IQ', attrkey: 'IQ' },
+      undefined,
+      ROLL_TYPE.IQ,
+    ],
+    [
+      { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'HT', attrkey: 'HT' },
+      undefined,
+      ROLL_TYPE.HT,
+    ],
     [
       { type: OtfActionType.attribute, accumulate: false, formula: '3d', attribute: 'WILL', attrkey: 'WILL' },
       undefined,
@@ -247,13 +287,16 @@ describe('getRollTypeFromAction', () => {
         accumulate: false,
         formula: '3d',
         attribute: 'frightcheck',
-        attrkey: 'FRIGHTCHECK', 
+        attrkey: 'FRIGHTCHECK',
       },
       undefined,
       ROLL_TYPE.FRIGHT_CHECK,
     ],
   ])('Extracts Roll Type from Otf Action', ([action, attack, expected]) => {
-    const result = getRollTypeFromAction(action as unknown as OtfRollAction, attack as unknown as MeleeAttackModel | RangedAttackModel | undefined)
+    const result = getRollTypeFromAction(
+      action as unknown as OtfRollAction,
+      attack as unknown as MeleeAttackModel | RangedAttackModel | undefined
+    )
 
     expect(result).toBe(expected)
   })
@@ -266,8 +309,16 @@ vi.stubGlobal('game', {
 describe('taggedModToApply', () => {
   test.for([
     [{ type: OtfActionType.attribute, attribute: 'IQ', attrkey: 'IQ' }, undefined, ['+4 to IQ rolls #iq']],
-    [{ type: OtfActionType.attack, isMelee: true }, { isOfType: (x: ActionType) => x === ActionType.MeleeAttack }, ['+1 to hit in melee #melee', '+3 to hit #hit']],
-    [{ type: OtfActionType.attack, isMelee: false }, { isOfType: (x: ActionType) => x === ActionType.RangedAttack }, ['+2 to hit in ranged #ranged', '+3 to hit #hit']],
+    [
+      { type: OtfActionType.attack, isMelee: true },
+      { isOfType: (x: ActionType) => x === ActionType.MeleeAttack },
+      ['+1 to hit in melee #melee', '+3 to hit #hit'],
+    ],
+    [
+      { type: OtfActionType.attack, isMelee: false },
+      { isOfType: (x: ActionType) => x === ActionType.RangedAttack },
+      ['+2 to hit in ranged #ranged', '+3 to hit #hit'],
+    ],
     [{ type: OtfActionType.damage }, undefined, []],
   ])('selects appropriate modifiers based on roll type', ([action, attack, expected]) => {
     const allMods = ['+1 to hit in melee #melee', '+2 to hit in ranged #ranged', '+3 to hit #hit', '+4 to IQ rolls #iq']
@@ -339,7 +390,10 @@ describe('taggedModToApply', () => {
     const result = taggedModToApply(
       { type: OtfActionType.weaponParry, isMelee: true } as unknown as OtfRollAction,
       undefined,
-      { uuid: 'Actor.TKhYpsMQ4KmECA5z.Item.7VGrPxDSS5epo5dD.Action.1P8If0c1CNiqZZu5', isOfType: (x: ActionType) => x === ActionType.MeleeAttack } as unknown as MeleeAttackModel,
+      {
+        uuid: 'Actor.TKhYpsMQ4KmECA5z.Item.7VGrPxDSS5epo5dD.Action.1P8If0c1CNiqZZu5',
+        isOfType: (x: ActionType) => x === ActionType.MeleeAttack,
+      } as unknown as MeleeAttackModel,
       defaultSettings,
       allMods,
       true
@@ -362,7 +416,10 @@ describe('taggedModToApply', () => {
     const result = taggedModToApply(
       { type: OtfActionType.attack, isMelee: false } as unknown as OtfRollAction,
       undefined,
-      { uuid: '@Actor.TKhYpsMQ4KmECA5z.Item.T6jZE3aTfcbGIAb0.Action.Xx6F0fLdynnNhQon', isOfType: (x: ActionType) => x === ActionType.RangedAttack } as unknown as RangedAttackModel,
+      {
+        uuid: '@Actor.TKhYpsMQ4KmECA5z.Item.T6jZE3aTfcbGIAb0.Action.Xx6F0fLdynnNhQon',
+        isOfType: (x: ActionType) => x === ActionType.RangedAttack,
+      } as unknown as RangedAttackModel,
       defaultSettings,
       allMods,
       true

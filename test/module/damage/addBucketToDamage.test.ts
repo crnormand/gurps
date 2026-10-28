@@ -1,7 +1,6 @@
 import { _addBucketToDamage } from '@module/damage/addBucketToDamage.js'
 import { describe, expect, test } from 'vitest'
 
-
 describe('_addBucketToDamage', () => {
   test.each([
     ['2d+2', true, false, 3, '2d+5'],
