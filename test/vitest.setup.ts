@@ -548,6 +548,15 @@ global.foundry = {
 // Minimal CONFIG stub
 ;(global as unknown as Record<string, unknown>).CONFIG = {
   statusEffects: [],
+  ChatMessage: {
+    modes: {
+      public: { label: 'CHAT.MODES.public', icon: 'fa-solid fa-globe' },
+      gm: { label: 'CHAT.MODES.gm', icon: 'fa-solid fa-user-secret' },
+      blind: { label: 'CHAT.MODES.blind', icon: 'fa-solid fa-eye-slash' },
+      self: { label: 'CHAT.MODES.self', icon: 'fa-solid fa-user' },
+      ic: { label: 'CHAT.MODES.ic', icon: 'fa-solid fa-hat-wizard' },
+    },
+  },
 } as unknown as CONFIG
 
 /* ---------------------------------------- */
