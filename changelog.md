@@ -1,5 +1,17 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.25 29-Oct-2026
+
+### Features
+
+- Replaced AI cover art with human-drawn art
+
+### Bugfixes
+
+- Traits do not display Notes if there is a Self-Control roll \#2990
+- Fright Check (/fc) text unreadable in dark mode \#2992
+- Can not correcty match different attacks on the same item with the same usage name \#2987
+
 ## Release 0.18.24 19-Oct-2026
 
 ### Features
