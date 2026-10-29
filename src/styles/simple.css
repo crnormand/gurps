@@ -2027,6 +2027,17 @@ div#other {
   justify-content: center;
 }
 
+.damage-message .roll-result {
+  display: block;
+  font-size: small;
+  font-family: var(--font-family-icons);
+}
+
+.damage-message .roll-result.has-explanation {
+  display: list-item;
+}
+
+
 .roll-result .roll-value {
   font-size: medium;
   font-weight: bold;
