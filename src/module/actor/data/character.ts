@@ -1814,12 +1814,7 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
   /* ---------------------------------------- */
 
   findAttack(name: string, isMelee: boolean, isRanged: boolean): MeleeAttackModel | RangedAttackModel | null {
-    const usage = name.match(/ \((?<usage>[^()]+)\)/)?.groups?.usage ?? ''
-    let nameWithoutUsage = name
-
-    if (usage) {
-      nameWithoutUsage = name.replace(` (${usage})`, '')
-    }
+    const nameRegex = CharacterModel.buildNameRegex(name)
 
     const attackType: ActionType.MeleeAttack | ActionType.RangedAttack | 'both' | null =
       isMelee && isRanged
@@ -1834,13 +1829,15 @@ class CharacterModel extends BaseActorModel<CharacterSchema> {
 
     const weapons = this.parent.getItemAttacks().filter(attack => attackType === 'both' || attack.type === attackType)
 
-    let weapon = weapons.find(attack => attack._displayName === nameWithoutUsage && (!usage || attack.mode === usage))
-
-    if (!weapon) {
-      // Account for the possibility that the usage was matched incorrectly as part of the name (e.g. "Guns (Pistol)")
-      // and usage does not exist
-      weapon = weapons.find(attack => attack.item.name === name && !attack.mode)
-    }
+    /*
+    if multiple items match, take the one with the highest level
+    if there are multiple with the same level, the one with the shortest name is considerd the best match as it contains the least non matching characters
+    */
+    const weapon = weapons
+      .sort(
+        (fst, scd) => scd.level - fst.level || fst.toDisplayItem().fullName.length - scd.toDisplayItem().fullName.length
+      )
+      .find(attack => attack.toDisplayItem().fullName.match(nameRegex))
 
     if (!weapon) return null
 
