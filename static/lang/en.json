@@ -553,6 +553,7 @@
     "chatHelpUses": "Modify the USES column of equipment<hr>parameters:\n&lt;formula&gt;\n&lt;equipment&gt;\no:&lt;equipment&gt;: only search 'other' list\nreset: set USES to MAX_USES<hr>examples:\n/uses +1 equipment\n/uses -2 equipment\n/uses =20 equipment\n/uses +1 o:equipment\n/uses reset equipment",
     "chatHelpW": "Whisper to players or the owners of the selected tokens<hr>parameters:\n&lt;[player names]&gt;\n@: whisper to the owners of the selected tokens\n<hr>examples:\n/w [Chris] msg sent to Player Chris\n/w @ msg sent to owners of selected tokens",
     "chatHelpWait": "Wait X milliseconds before executing the next chat command<hr>parameters:\nX: the number of milliseconds to wait\n<hr>examples:\n/wait 500",
+    "chatModifiedDamage": "Modified formula: {dice}.",
     "chatMoreThanOneActor": "More than one Actor found matching",
     "chatMoreThanOneToken": "More than one Token found matching",
     "chatMultipleOwnedFound": "You own more than one token in this scene. You can either select one and retry this command without the '@self' keyword, or use the ':name' option.",

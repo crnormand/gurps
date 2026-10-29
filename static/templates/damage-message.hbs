@@ -1,7 +1,7 @@
 <div>
   <div class='prefix'>
     {{#if rolled}}
-      {{localize "GURPS.chatRollingDamage" dice=dice damageTypeText=damageTypeText numtimes=numtimes}}
+          {{localize "GURPS.chatRollingDamage" dice=dice damageTypeText=damageTypeText numtimes=numtimes}}
     {{else}}
       {{localize "GURPS.chatFixedDamage" dice=dice damageTypeText=damageTypeText}}
     {{/if}}
@@ -14,12 +14,12 @@
   {{/if}}
   <div class='roll-message'>
     {{#if modifiers}}
-      <hr />
       <ul class='modifier-list'>
         {{#each modifiers}}
-          <li>{{this}}</li>
+          <li><div class='roll-result'>[{{{displayNumber mod}}}{{#if desc}} {{desc}}{{/if}}]</div></li>
         {{/each}}
       </ul> 
+      {{localize "GURPS.chatModifiedDamage" dice=modifiedDice}}
     {{/if}}
   </div>
   <div class='damage-chat-message'>
@@ -27,26 +27,25 @@
       <div class='gurps damage-message' data-transfer='{{transfer}}'>
 
         <div class='roll-message'>
-          <div class='collapsible-wrapper'>
-            <!-- <input id='collapsible-{{id}}' class='toggle offscreen-only' type='checkbox'> -->
-            <label for='collapsible-{{id}}' class='roll-result {{#if hasExplanation}}label-toggle{{/if}}'>
-              <span>{{#if target}}&nbsp;{{target}}:{{/if}} 
-                {{#if ../loaded}}
-                  <i style='color:darkred' class='fa-solid fa-user'></i>
-                {{else}}
-                  <i class='fa-solid fa-dice'></i>
-                {{/if}}
-                <i class='fa-solid fa-right-long' style='color:dimgray'></i>
-                <span class='roll-detail'>
-                  {{#if (eq damage 1)}}
-                    {{{localize "GURPS.pointDamage" damage=damage}}}
+          <details>
+            <summary class='roll-result {{#if hasExplanation}}has-explanation{{/if}}'>
+                <span>{{#if target}}&nbsp;{{target}}:{{/if}} 
+                  {{#if loaded}}
+                    <i style='color:darkred' class='fa-solid fa-user'></i>
                   {{else}}
-                    {{{localize "GURPS.pointsDamage" damage=damage}}}
-                  {{/if}}</span>
-              </span>
-            </label>
+                    <i class='fa-solid fa-dice'></i>
+                  {{/if}}
+                  <i class='fa-solid fa-right-long' style='color:dimgray'></i>
+                  <span class='roll-detail'>
+                    {{#if (eq damage 1)}}
+                      {{{localize "GURPS.pointDamage" damage=damage}}}
+                    {{else}}
+                      {{{localize "GURPS.pointsDamage" damage=damage}}}
+                    {{/if}}</span>
+                </span>
+            </summary>
             {{#if hasExplanation}}
-              <div class='gga-group collapsible-content'>
+              <div class='gga-group'>
                 <div class='content-inner'>
                   <hr />
                   {{#if explainLineOne}}
@@ -62,7 +61,7 @@
                 </div>
               </div>
             {{/if}}
-          </div>
+          </details>
         </div>
 
       </div>

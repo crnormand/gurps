@@ -5,10 +5,12 @@ type ParsedDamage = {
   value?: number
   add: number
   damageType: string
-  armorDivisor?: string
+  armorDivisor?: number
   hasMinDamage: boolean
-  multiplier?: string
+  multiplier?: number
   costFormula?: string
+  addMargin?: string
+  rollFormula: string
 }
 
 /**
@@ -28,28 +30,46 @@ type ParsedDamage = {
  *
  */
 
-function parseDamageFormula(formula: string): ParsedDamage {
-  const trimmed = formula.trim()
+export function parseDamageFormula(formula: string): ParsedDamage | null {
+  const trimmed = formula.replace('−', '-').trim()
 
   const costMatch = trimmed.match(/\*Costs(.+)$/)
   const costFormula = costMatch?.[1] ?? undefined
-  const formulaBody = costMatch ? trimmed.slice(0, costMatch.index ?? 0).trim() : trimmed
+  const formulaBodyWithType = costMatch ? trimmed.slice(0, costMatch.index ?? 0).trim() : trimmed
 
-  const damageTypeMatch = formulaBody.match(/\s+([A-Za-z][A-Za-z0-9_+-]*)\s*$/)
+  const damageTypeMatch = formulaBodyWithType.match(/\s+([A-Za-z][A-Za-z0-9_+-]*)\s*$/)
   const damageType = damageTypeMatch?.[1] ?? ''
 
-  const armorDivisor = formulaBody.match(/\(([^)]+)\)/)?.[1] ?? undefined
+  const formulaBody = damageTypeMatch ? formulaBodyWithType.slice(0, damageTypeMatch.index).trim() : formulaBodyWithType
+
   const hasMinDamage = formulaBody.includes('!')
-  const multiplier = formulaBody.match(/(?:[xX*])(\d+(?:\.\d+)?)/)?.[1] ?? undefined
 
-  const diceMatch = formulaBody.match(/^(\d+)d/i)
-  const literalMatch = formulaBody.match(/^(\d+)(?!d)/)
+  const rollFormulaRegex =
+    /^(?<roll>(?<value>\d+)(?<D>d\d*)?(?<adds1>[+-](?:\d+|@?\w+))?(?<adds2>[+-](?:\d+|@?\w+))?)(?:[×xX*](?<multiplier>\d+\.?\d*))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
-  const dice = diceMatch ? Number.parseInt(diceMatch[1], 10) : undefined
-  const value = !diceMatch && literalMatch ? Number.parseInt(literalMatch[1], 10) : undefined
+  const match = formulaBody.match(rollFormulaRegex)
 
-  const addMatch = formulaBody.match(/([+-]\d+)/)
-  const add = addMatch ? Number.parseInt(addMatch[1], 10) : 0
+  if (!match || !match.groups) {
+    ui.notifications?.warn(`Invalid Dice formula: "${formula}"`)
+
+    return null
+  }
+
+  const rollFormula = match.groups.roll
+
+  const armorDivisor = Number.parseFloat(match.groups.divisor) || undefined
+  const multiplier = Number.parseFloat(match.groups.multiplier) || undefined
+
+  const dice = match.groups.D ? Number.parseInt(match.groups.value, 10) : undefined
+  const value = !match.groups.D ? Number.parseInt(match.groups.value, 10) : undefined
+
+  const add =
+    (match.groups.adds1 ? Number.parseInt(match.groups.adds1, 10) || 0 : 0) +
+    (match.groups.adds2 ? Number.parseInt(match.groups.adds2, 10) || 0 : 0)
+
+  const addMargin =
+    (match.groups.adds1?.includes('@') ? match.groups.adds1 : '') +
+      (match.groups.adds2?.includes('@') ? match.groups.adds2 : '') || undefined
 
   return {
     dice,
@@ -60,6 +80,8 @@ function parseDamageFormula(formula: string): ParsedDamage {
     hasMinDamage,
     multiplier,
     costFormula,
+    addMargin,
+    rollFormula,
   }
 }
 
@@ -70,43 +92,78 @@ export function addBucketToDamage(formula: string, addDamageType: boolean = true
   return _addBucketToDamage(formula, addDamageType, dicePlusAdds, bucketMod)
 }
 
-export function _addBucketToDamage(formula: string, addDamageType: boolean, dicePlusAdds: boolean, bucketMod: number) {
+export function applyDicePlusAddsToDamage(formula: string, addDamageType: boolean = true): string {
   const parsed = parseDamageFormula(formula)
-  const { value, add } = parsed
-  let newAdd = add + bucketMod
 
-  if (value !== undefined) {
-    return `${value + newAdd} ${addDamageType ? parsed.damageType : ''}`.trim()
-  }
+  if (!parsed) return formula
 
-  let { dice } = parsed
+  const dicePlusAdds = game.settings?.get(GURPS.SYSTEM_NAME, Settings.SETTING_MODIFY_DICE_PLUS_ADDS) ?? false
+
+  const newParsed = _applyDicePlusAddsToDamage(parsed, dicePlusAdds)
+  const newDice = rebuildDamageFormula(newParsed, addDamageType)
+
+  return newDice
+}
+
+function _applyDicePlusAddsToDamage(damage: ParsedDamage, dicePlusAdds: boolean): ParsedDamage {
+  if (!dicePlusAdds) return damage
+
+  let { dice, add } = damage
 
   if (!dice) {
-    return formula
+    return damage
   }
 
   if (dicePlusAdds && dice) {
-    while (newAdd >= 7) {
-      newAdd -= 7
+    while (add >= 7) {
+      add -= 7
       dice += 2
     }
 
-    while (newAdd >= 4) {
-      newAdd -= 4
+    while (add >= 4) {
+      add -= 4
       dice += 1
     }
   }
 
-  const plus = newAdd > 0 ? '+' : ''
-  const addText = newAdd !== 0 ? String(newAdd) : ''
+  return {
+    ...damage,
+    dice,
+    add,
+  }
+}
+
+export function _addBucketToDamage(formula: string, addDamageType: boolean, dicePlusAdds: boolean, bucketMod: number) {
+  const parsed = parseDamageFormula(formula)
+
+  if (!parsed) return formula
+
+  const { add, addMargin } = parsed
+  const newAdd =
+    add +
+    bucketMod +
+    (addMargin === '+@margin' ? (GURPS.lastTargetedRoll?.margin ?? 0) : 0) -
+    (addMargin === '-@margin' ? (GURPS.lastTargetedRoll?.margin ?? 0) : 0)
+
+  const newParsed = _applyDicePlusAddsToDamage({ ...parsed, add: newAdd }, dicePlusAdds)
+  const newDice = rebuildDamageFormula(newParsed, addDamageType)
+
+  return newDice
+}
+
+function rebuildDamageFormula(parsed: ParsedDamage, addDamageType: boolean) {
+  const dice = parsed.dice ? `${parsed.dice}d` : `${(parsed.value ?? 0) + parsed.add}`
+  const plus = parsed.dice && parsed.add > 0 ? '+' : ''
+  const addText = parsed.dice && parsed.add !== 0 ? String(parsed.add) : ''
   const multiplierText = parsed.multiplier ? `x${parsed.multiplier}` : ''
-  const minDamageText = parsed.hasMinDamage ? '! ' : ''
+  const minDamageText = parsed.hasMinDamage ? '!' : ''
   const armorDivisorText = parsed.armorDivisor ? `(${parsed.armorDivisor})` : ''
   const damageTypeText = addDamageType && parsed.damageType ? ` ${parsed.damageType}` : ''
   const costFormulaText = parsed.costFormula ? ` *Costs${parsed.costFormula}` : ''
 
   const newDice =
-    `${dice}d${plus}${addText}${multiplierText}${minDamageText}${armorDivisorText}${damageTypeText}${costFormulaText}`.trim()
+    `${dice}${plus}${addText}${multiplierText}${armorDivisorText}${minDamageText}${damageTypeText}${costFormulaText}`.trim()
 
   return newDice
 }
+

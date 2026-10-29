@@ -9,6 +9,8 @@ import {
   RangeStrategy,
   RollBasedOnManeuverPolicy,
 } from '@module/combat/types.js'
+import { DamageRollData } from '@module/damage/damagechat.js'
+import { DragDropType } from '@module/drag-drop-types.js'
 import type { GurpsActiveEffect } from '@module/effects/active-effect.js'
 import type {
   EquipmentModel,
@@ -29,7 +31,7 @@ import type { PdfPageModel } from '@module/journal/data-model.js'
 import type { IResourceTrackerTemplate, ResourceTrackerManagerV2 } from '@module/resource-tracker/index.js'
 import type { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
 import type { GurpsToken } from '@module/token/gurps-token.js'
-import type { AnyMutableObject, AnyObject } from 'fvtt-types/utils'
+import type { AnyMutableObject } from 'fvtt-types/utils'
 
 declare module 'fvtt-types/configuration' {
   interface DocumentClassConfig {
@@ -65,7 +67,11 @@ declare module 'fvtt-types/configuration' {
     }
     ChatMessage: {
       gurps: {
-        transfer: AnyObject
+        transfer: {
+          type: DragDropType
+          payload: DamageRollData[]
+          userTarget: string | null
+        }
       }
     }
   }
