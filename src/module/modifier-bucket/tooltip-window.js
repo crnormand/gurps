@@ -332,7 +332,7 @@ export default class ModifierBucketEditor extends Application {
  * These constants were moved to an object literal to allow for delayed instantiation.
  * This allows us to localize the values.
  */
-const ModifierLiterals = {
+export const ModifierLiterals = {
   _statusModifiers: null,
 
   get StatusModifiers() {
@@ -568,10 +568,15 @@ const ModifierLiterals = {
   get ExtraEffortModifiers() {
     return [
       game.i18n.localize('GURPS.modifiers_.extraEffort'),
+      ...this._maneuverOptions('extraEffort').map(
+        option => `${option.mod} ${game.i18n.localize(`GURPS.modifiers_.${option.id}`)}${option.suffix}`
+      ),
+      /*
       `+2 ${game.i18n.localize('GURPS.modifiers_.feverishDefense')} *Cost 1FP`,
       `+2 ${game.i18n.localize('GURPS.modifiers_.mightyBlow')} *Cost 1FP`,
       `+0 ${game.i18n.localize('GURPS.modifiers_.heroicCharge')} *Cost 1FP`,
       `-3 penalty for Rapid Strike (Flurry of Blows) *Cost 1FP`,
+      */
     ]
   },
 }

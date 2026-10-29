@@ -11,7 +11,6 @@ export async function rollDamage(
   canRoll: any,
   token: Token | null,
   actor: Actor.Implementation | null,
-  displayFormula: string,
   actionFormula: string,
   action: DamageAction | DerivedDamageAction,
   event: ActionFuncContext | null,
@@ -32,7 +31,7 @@ export async function rollDamage(
       action,
       actor,
       token,
-      displayFormula,
+      displayFormula: actionFormula,
       messageMode,
     })
 
