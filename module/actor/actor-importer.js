@@ -1621,7 +1621,12 @@ export class ActorImporter {
 
     if (i.cr) {
       a.notes =
-        '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + a.name + ']' + (!!a.notes ? '\n' + a.notes : '')
+        '[' +
+        game.i18n.localize('GURPS.CR' + i.cr.toString()) +
+        ': ' +
+        a.name +
+        ']' +
+        (!!a.notes ? '<br>' + a.notes : '')
     }
 
     if (i.modifiers?.length) {
