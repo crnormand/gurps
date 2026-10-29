@@ -2239,6 +2239,7 @@ export class ActorImporter {
             m.notes = i.notes || ''
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
+            if (w.usage_notes) m.mode += ' [' + w.usage_notes + ']'
             m.import = w.calc?.level?.toString() || '0'
             m.damage = w.calc?.damage || ''
             m.reach = w.reach || ''
