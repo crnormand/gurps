@@ -25,7 +25,11 @@ export class MessageMode {
     return new MessageMode('ic')
   }
 
-  constructor(public readonly value: 'gm' | 'public' | 'self' | 'blind' | 'ic') {}
+  constructor(public readonly value: ChatMessage.Mode) {
+    if (!Object.hasOwn(CONFIG.ChatMessage.modes, value)) {
+      throw new Error(`Invalid Message Mode: ${value}`)
+    }
+  }
 
   get isSelf(): boolean {
     return this.value === 'self'
@@ -65,7 +69,7 @@ export class FoundryUtils {
   static get MessageMode(): MessageMode {
     const mode = getGame().settings.get('core', 'messageMode') ?? 'public'
 
-    return new MessageMode(mode)
+    return new MessageMode(mode as keyof CONFIG.ChatMessage.Modes)
   }
 
   /**

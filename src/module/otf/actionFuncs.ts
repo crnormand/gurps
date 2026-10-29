@@ -760,7 +760,7 @@ export const actionFuncs: Record<string, actionFunc> = {
 
       if (action.costs) GURPS.ModifierBucket.addModifier('0', action.costs)
       if (action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc ?? '', targetmods)
-    
+
       return !!(await doRoll({
         actor,
         targetmods,

@@ -120,7 +120,12 @@ export function performAction(
  * @param {string} options.actorname - The name of the actor.
  * @param {Array} options.targets - The target tokens for the command.
  */
-export function allowOtfExec(options: {actorId: string, command: string, actorname: string, targets: [string, string][]}) {
+export function allowOtfExec(options: {
+  actorId: string
+  command: string
+  actorname: string
+  targets: [string, string][]
+}) {
   options.targets.forEach(tuple => {
     const tokenActor = game.canvas?.tokens?.get(tuple[1])?.actor
     const tokenOwner = tuple[0] ? game.users?.get(tuple[0]) : game.user

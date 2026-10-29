@@ -410,12 +410,10 @@ async function createRollChatMessage(
     blind: messageMode.isBlind,
   }
 
-  // @ts-expect-error: not sure how this is supposed to work
   ChatMessage.applyMode(messageData, messageMode.value)
 
   const options = { messageMode: messageMode.value }
 
-  // @ts-expect-error: Create Options for Chat Messages seems not to be properly typed
   ChatMessage.create(messageData, options)
 }
 

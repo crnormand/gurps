@@ -66,10 +66,10 @@ export function getRollTypeFromAction(action: OtfRollAction, attack: MeleeAttack
     case OtfActionType.attack:
       if (attack?.isOfType(ActionType.MeleeAttack)) {
         return ROLL_TYPE.MELEE
-      }
-      else {
+      } else {
         return ROLL_TYPE.RANGED
       }
+
       break
     case OtfActionType.weaponParry:
       return ROLL_TYPE.PARRY
