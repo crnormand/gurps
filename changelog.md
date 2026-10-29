@@ -4,7 +4,7 @@
 
 ### Features
 
-- Replaced AI cover art with human-drawn art
+- Replaced AI cover art with human-drawn art (by Pablo Morrós Calvo)
 
 ### Bugfixes
 
