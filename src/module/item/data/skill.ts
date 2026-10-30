@@ -150,6 +150,7 @@ class SkillModel extends BaseItemModel<SkillSchema> {
 
     if (this.techlevel) fullName += `/TL${this.techlevel}`
     if (this.specialization) fullName += ` (${this.specialization})`
+    if (this.techniqueBase) fullName += ` (${this.techniqueBase})`
 
     return fullName
   }
@@ -174,8 +175,11 @@ const skillSchema = () => {
     /** The Skill Difficulty of this skill, e.g. "DX/A". */
     difficulty: new fields.StringField({ required: true, nullable: false }),
 
-    /** The level of this skill relative to its controlling attriute, e.g. "DX+1" */
+    /** The level of this skill relative to its controlling attribute, e.g. "DX+1" */
     relativelevel: new fields.StringField({ required: true, nullable: false }),
+
+    /** Only for techniques: Name of the Skill (or other Value like a defense) this is based on. Used to distinguish the same technique with different bases */
+    techniqueBase: new fields.StringField({ required: true, nullable: true, initial: null }),
 
     /** Any OTF formulas associated witht this skill. */
     otf: new fields.StringField({ required: true, nullable: false }),

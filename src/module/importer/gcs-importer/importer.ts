@@ -1075,9 +1075,9 @@ Portrait will not be imported.`
 
     let notes = baseSystem.notes || ''
 
-    if (skill.isTechnique && skill.default) {
-      let defaultName = ''
+    let defaultName = ''
 
+    if (skill.isTechnique && skill.default) {
       switch (skill.default.type) {
         case 'parry':
         case 'block':
@@ -1103,11 +1103,11 @@ Portrait will not be imported.`
         }
       }
 
-      if (skill.default.modifier) {
-        defaultName += skill.default.modifier.signedString()
-      }
+      const defaultNameWithMod = defaultName + (skill.default.modifier ? skill.default.modifier.signedString() : '')
 
-      const defaultNote = getGame().i18n.format('GURPS.item.skill.techniqueDefaultNote', { defaultName })
+      const defaultNote = getGame().i18n.format('GURPS.item.skill.techniqueDefaultNote', {
+        defaultName: defaultNameWithMod,
+      })
 
       if (notes) {
         notes = defaultNote + '\n' + notes
@@ -1126,6 +1126,7 @@ Portrait will not be imported.`
       importedLevel: skill.calc?.level ?? 0,
       specialization: skill.specialization ?? '',
       techlevel: skill.tech_level ?? '',
+      techniqueBase: defaultName,
     }
 
     skill.childItems?.forEach((child: GcsSkill, childIndex: number) => this.#importSkill(child, childIndex, _id))
