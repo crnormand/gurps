@@ -1,3 +1,5 @@
+import { TaggedModifiersSettings } from '@module/tagged-modifiers/index.js'
+
 export const MODULE_NAME = 'combat'
 
 export const OLD_SETTING_USE_ON_TARGET = 'use-on-target'
@@ -17,7 +19,7 @@ export type ManeuverDetail = 'Full' | 'General' | 'NoFeint'
 export type ManeuverVisibility = 'NoOne' | 'Everyone' | 'GMAndOwner'
 export type RangeStrategy = 'Standard' | 'Simplified' | 'TenPenalties'
 
-export type CombatOptionSection = 'melee' | 'ranged' | 'defense'
+export type CombatOptionSection = 'melee' | 'ranged' | 'defense' | 'extraEffort'
 
 export interface CombatOption {
   /** Stable key. Doubles as the `GURPS.modifiers_.<id>` and `GURPS.modifiers_.pdf.<id>` lookup. */
@@ -36,6 +38,11 @@ export interface CombatOption {
    * layered on top of a maneuver rather than maneuvers, so they map to nothing and have a checkbox.
    */
   maneuvers?: string[]
+  /**
+   * Rolltypes for that the display the Modifier should be displayed in the roll confirmation dialog
+   * Display for all if empty
+   */
+  rollTypes?: (keyof TaggedModifiersSettings)[]
 }
 
 /**

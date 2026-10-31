@@ -1,0 +1,30 @@
+<div class='cr-damage-container'>
+  <div class='cr-token-section'>
+    {{#if isVideo}}
+      <video class='cr-token-img' src='{{tokenImage}}' autoplay loop muted></video>
+    {{else}}
+      <img class='cr-token-img' src='{{tokenImage}}' alt='' />
+    {{/if}}
+    <div class='cr-token-name'>{{tokenName}}</div>
+  </div>
+  <div class='cr-damage-section'>
+    <div id='cr-damage' class='cr-damage-formula' data-original='{{originalFormula}}'>{{roll}}</div>
+    <div class='cr-damage-info'>
+      {{#if (gt repeat 1)}}
+        <div class='cr-badge'>
+          <span>{{localize 'GURPS.repeatRoll'}}</span>
+          <span class='cr-text green'>x {{repeat}}</span>
+        </div>
+      {{/if}}
+    </div>
+    <div class='cr-damage-section'>
+      <div id='cr-formula' class='cr-damage-roll'>{{targetRoll}}
+        <span id='cr-bucket' style='color: {{bucketRollColor}}'>{{bucketRoll}}</span></div>
+    </div>
+  </div>
+  <div class='cr-damage-type-section'>
+    <div class='cr-damage-type-img-container'>
+      <div class='cr-damage-type-icon'><i class="fa-solid fa-dice-d6"></i></div>
+    </div>
+  </div>
+</div>

@@ -195,6 +195,7 @@ export async function doRoll({
     const ItemforDialog = actor.items.get(targetData.fromItem ?? '') || item
 
     const isSimpleRoll = ([OtfActionType.roll, OtfActionType.derivedRoll] as OtfActionType[]).includes(action.type)
+    const repeat = context?.data?.repeat || 1
     const dialogData: RollConfirmationData = isSimpleRoll
       ? {
           type: 'simpleRoll',
@@ -203,6 +204,7 @@ export async function doRoll({
           actor,
           token,
           formula,
+          repeat,
           name: targetData.name,
           messageMode,
         }
