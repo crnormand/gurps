@@ -815,7 +815,7 @@ Portrait will not be imported.`
     const type = ItemType.Trait
 
     let name = trait.name || getGame().i18n.localize('TYPES.Item.feature')
-    
+
     if (trait.nameext) {
       name += ` (${trait.nameext})`
     }

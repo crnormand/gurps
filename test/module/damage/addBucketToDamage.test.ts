@@ -2,13 +2,15 @@ import { _addBucketToDamage, addBucketToDamage, parseDamageFormula } from '@modu
 import { SETTING_MODIFY_DICE_PLUS_ADDS } from '@module/util/miscellaneous-settings.js'
 import { describe, expect, test, vi } from 'vitest'
 
+const globalAny = globalThis as any
+
 describe('parseDamageFormula', () => {
   const warn = vi.fn()
 
   beforeEach(() => {
     warn.mockReset()
-    ;(globalThis as any).ui = { notifications: { warn } }
-    ;(globalThis as any).GURPS = {
+    globalAny.ui = { notifications: { warn } }
+    globalAny.GURPS = {
       lastTargetedRoll: { margin: 4 },
     }
   })
@@ -217,7 +219,7 @@ describe('parseDamageFormula', () => {
 
 describe('_addBucketToDamage', () => {
   beforeEach(() => {
-    ;(globalThis as any).GURPS = {
+    globalAny.GURPS = {
       lastTargetedRoll: { margin: 4 },
     }
   })
@@ -266,12 +268,12 @@ describe('addBucketToDamage', () => {
   ])('uses modify-dice-plus-adds=%s for bucket modifier %i', (modifyDicePlusAdds, bucketMod, expected) => {
     const getSetting = vi.fn().mockReturnValue(modifyDicePlusAdds)
 
-    ;(globalThis as any).GURPS = {
+    globalAny.GURPS = {
       SYSTEM_NAME: 'gurps',
       ModifierBucket: { currentSum: vi.fn().mockReturnValue(bucketMod) },
       lastTargetedRoll: { margin: 4 },
     }
-    ;(globalThis as any).game = {
+    globalAny.game = {
       settings: { get: getSetting },
     }
 

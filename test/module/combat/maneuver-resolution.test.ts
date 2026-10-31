@@ -6,7 +6,9 @@ import { SETTING_USE_ON_TARGET } from '@module/combat/settings.js'
  * value so the whole setup is visible next to the assertion.
  */
 const worldSettings = ({ onTarget = false } = {}) => {
-  ;(globalThis as any).game.settings = {
+  const globalAny = globalThis as any
+
+  globalAny.game.settings = {
     get: (_namespace: string, key: string) => {
       if (key === SETTING_USE_ON_TARGET) return onTarget
 

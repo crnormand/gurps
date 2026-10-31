@@ -1,4 +1,4 @@
-import { GurpsToken } from "@module/token/index.js";
+import { GurpsToken } from '@module/token/index.js'
 
 /**
  * Multiple tokens are selected -- prompt the user for which tokens to apply some function to.

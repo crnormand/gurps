@@ -97,7 +97,9 @@ class ScriptInterpreter {
     if (!isRecord(thrown)) return thrown
 
     try {
-      ;(thrown as Record<string, unknown> & { __nodeLoc?: NodeLocContext }).__nodeLoc = {
+      const thrownRecord = thrown as Record<string, unknown> & { __nodeLoc?: NodeLocContext }
+
+      thrownRecord.__nodeLoc = {
         start: node.start,
         end: node.end,
         loc: node.loc,

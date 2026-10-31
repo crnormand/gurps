@@ -121,7 +121,9 @@ export const addQuickRollButton = async (html: HTMLElement, combatant: Combatant
 export const addQuickRollListeners = (html: HTMLElement) => {
   // Resolve Quick Roll Menu Button Click
   html.querySelectorAll('.quick-roll-button').forEach(item => {
-    ;(item as HTMLElement).addEventListener('click', async function (event: PointerEvent) {
+    const itemElement = item as HTMLElement
+
+    itemElement.addEventListener('click', async function (event: PointerEvent) {
       event.preventDefault()
       event.stopPropagation()
 

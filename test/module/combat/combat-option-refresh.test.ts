@@ -20,8 +20,10 @@ const actorWithLazySheet = ({ open = false } = {}) => {
 }
 
 const world = ({ actors = [] as any[], tokens = [] as any[] } = {}) => {
-  ;(globalThis as any).game.actors = actors
-  ;(globalThis as any).canvas = { tokens: { placeables: tokens } }
+  const globalAny = globalThis as any
+
+  globalAny.game.actors = actors
+  globalAny.canvas = { tokens: { placeables: tokens } }
 }
 
 describe('renderedActorSheets', () => {

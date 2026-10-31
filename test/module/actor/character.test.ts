@@ -57,7 +57,7 @@ describe('CharacterModel', () => {
     it('prefers the shorter display name when matching attacks have the same level', () => {
       const longerName = makeAttack(ActionType.MeleeAttack, 12, 'Fine Sword')
       const shorterName = makeAttack(ActionType.MeleeAttack, 12, 'Sword')
-      
+
       character = makeCharacterWithAttacks([longerName, shorterName])
 
       expect(character.findAttack('Sword', true, false)).toBe(shorterName)

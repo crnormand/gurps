@@ -166,4 +166,3 @@ function rebuildDamageFormula(parsed: ParsedDamage, addDamageType: boolean) {
 
   return newDice
 }
-

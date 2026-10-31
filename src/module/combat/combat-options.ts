@@ -153,7 +153,6 @@ export const COMBAT_OPTIONS: readonly CombatOption[] = [
   },
 ]
 
-
 /** Nothing turned off. Used as the setting's default. */
 export function defaultCombatOptionSettings(): CombatOptionSettings {
   return { maneuvers: {}, options: {} }

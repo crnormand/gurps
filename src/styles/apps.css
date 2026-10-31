@@ -3193,7 +3193,7 @@ button.quick-roll-button.lg.atk {
     ***********************************
  */
 form.cr-dialog {
-    gap: 0;
+  gap: 0;
 }
 
 .cr-container {
@@ -3288,11 +3288,11 @@ form.cr-dialog {
   flex: 1;
 }
 .cr-damage-section {
-    display: grid;
-    grid-template-columns: 1fr;
-    width: 100%;
-    align-items: baseline;
-    margin-left: 6px;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  align-items: baseline;
+  margin-left: 6px;
 }
 .cr-damage-container {
   display: grid;
@@ -3322,11 +3322,11 @@ form.cr-dialog {
   justify-content: center;
 }
 .cr-damage-info {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-    justify-content: center;
-    flex-direction: row;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
 }
 .cr-badge {
   display: flex;
@@ -3430,8 +3430,7 @@ form.cr-dialog {
 }
 
 .cr-item-img-container,
-.cr-damage-type-img-container
- {
+.cr-damage-type-img-container {
   position: relative;
   display: inline-block;
 }
@@ -3442,7 +3441,7 @@ form.cr-dialog {
   font-size: var(--font-size-12);
   padding-right: 8px;
   padding-bottom: 16px;
-  aside{
+  aside {
     text-align: center;
   }
 }
@@ -3450,10 +3449,10 @@ form.cr-dialog {
 .cr-current-modifiers-list {
   font-weight: bold;
   font-size: var(--font-size-14);
-  .removemod.minus:hover{
+  .removemod.minus:hover {
     font-weight: bold;
   }
-  .removemod:hover::after{
+  .removemod:hover::after {
     display: inline;
   }
 }
@@ -3466,49 +3465,48 @@ form.cr-dialog {
   padding-bottom: 16px;
 }
 
- 
-.cr-section-header{
+.cr-section-header {
   font-size: 1.2em;
-  font-weight: bold;      
+  font-weight: bold;
   text-align: center;
 }
 
-.cr-section-subheader{
+.cr-section-subheader {
   font-weight: bold;
   text-align: center;
   margin-top: 8px;
   margin-bottom: 4px;
 }
 
-.cr-modifier-list{
+.cr-modifier-list {
   font-size: var(--font-size-11);
   display: grid;
   grid-template-columns: repeat(2, auto);
   gap: 2px;
 }
 
-.cr-modifier-list.cr-generic-modifiers{
+.cr-modifier-list.cr-generic-modifiers {
   grid-template-columns: repeat(5, auto);
 }
 
-.cr-modifier-list.cr-hitLocations{
+.cr-modifier-list.cr-hitLocations {
   grid-template-columns: repeat(3, auto);
 }
 
-.cr-modifier-list.cr-speedRange{
+.cr-modifier-list.cr-speedRange {
   grid-template-columns: repeat(3, auto);
 }
 
-.cr-modifier-list.cr-rollModifiers{
+.cr-modifier-list.cr-rollModifiers {
   grid-template-columns: repeat(1, auto);
 }
 
-.cr-modifier-list.cr-cover{
+.cr-modifier-list.cr-cover {
   grid-template-columns: repeat(1, auto);
 }
 
-.cr-modifier-list.cr-lightning{
-    grid-template-columns: repeat(1, auto);
+.cr-modifier-list.cr-lightning {
+  grid-template-columns: repeat(1, auto);
 }
 
 .consume-action-badge {

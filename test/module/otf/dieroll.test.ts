@@ -126,10 +126,11 @@ describe('addFlavorTextToFormula', () => {
 })
 
 describe('calculateMessageMode', () => {
-  const originalGame = (globalThis as any).game
+  const globalAny = globalThis as any
+  const originalGame = globalAny.game
 
   beforeEach(() => {
-    ;(globalThis as any).game = {
+    globalAny.game = {
       keyboard: {
         isModifierActive: vi.fn(() => false),
       },
@@ -138,7 +139,7 @@ describe('calculateMessageMode', () => {
       },
       user: { isGM: false },
     }
-    ;(globalThis as any).foundry = {
+    globalAny.foundry = {
       helpers: {
         interaction: {
           KeyboardManager: {
@@ -153,7 +154,7 @@ describe('calculateMessageMode', () => {
   })
 
   afterEach(() => {
-    ;(globalThis as any).game = originalGame
+    globalAny.game = originalGame
   })
 
   test('returns blind when blindOverride is true', () => {
@@ -161,8 +162,8 @@ describe('calculateMessageMode', () => {
   })
 
   test('returns blind when ctrl key modifier is active and the setting is enabled', () => {
-    ;(globalThis as any).game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Control')
-    ;(globalThis as any).game.settings.get = vi.fn((system: string, key: string) =>
+    globalAny.game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Control')
+    globalAny.game.settings.get = vi.fn((system: string, key: string) =>
       key === Settings.SETTING_CTRL_KEY ? true : false
     )
 
@@ -170,8 +171,8 @@ describe('calculateMessageMode', () => {
   })
 
   test('returns blind when shift key modifier is active for a non-GM player and the setting is enabled', () => {
-    ;(globalThis as any).game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Shift')
-    ;(globalThis as any).game.settings.get = vi.fn((system: string, key: string) =>
+    globalAny.game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Shift')
+    globalAny.game.settings.get = vi.fn((system: string, key: string) =>
       key === Settings.SETTING_SHIFT_CLICK_BLIND ? true : false
     )
 
@@ -179,7 +180,7 @@ describe('calculateMessageMode', () => {
   })
 
   test('returns self when shift key modifier is active without the blind override', () => {
-    ;(globalThis as any).game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Shift')
+    globalAny.game.keyboard.isModifierActive = vi.fn((key: string) => key === 'Shift')
 
     expect(calculateMessageMode(MessageMode.Public, false)).toStrictEqual(MessageMode.Self)
   })

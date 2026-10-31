@@ -9,13 +9,15 @@ vi.mock('@module/otf/description-utilities.js', () => ({
   applyModifierDescription: vi.fn(),
 }))
 
+const globalAny = globalThis as any
+
 describe('DamageChat.getDiceData', () => {
   const warn = vi.fn()
 
   beforeEach(() => {
     warn.mockReset()
-    ;(globalThis as any).ui = { notifications: { warn } }
-    ;(globalThis as any).GURPS = {
+    globalAny.ui = { notifications: { warn } }
+    globalAny.GURPS = {
       lastTargetedRoll: { margin: 4 },
     }
   })
@@ -207,7 +209,7 @@ describe('prepareChatData', () => {
     mockRollCreate.mockReset().mockReturnValue(mockRoll)
     mockCurrentSum.mockReset().mockReturnValue(0)
     mockRoll.evaluate.mockReset().mockResolvedValue(mockRoll as unknown as GurpsRoll)
-    ;(globalThis as any).GURPS = {
+    globalAny.GURPS = {
       ModifierBucket: {
         applyMods: mockApplyMods,
         currentSum: mockCurrentSum,
@@ -215,11 +217,11 @@ describe('prepareChatData', () => {
       lastTargetedRoll: {},
       SYSTEM_NAME: 'gurps',
     }
-    ;(globalThis as any).game = {
+    globalAny.game = {
       user: { targets: new Set() },
       settings: { get: vi.fn().mockReturnValue(false) },
     }
-    ;(globalThis as any).Roll = { create: mockRollCreate }
+    globalAny.Roll = { create: mockRollCreate }
   })
 
   test('rolls each target and applies modifier descriptions for every roll', async () => {
@@ -260,7 +262,7 @@ describe('prepareChatData', () => {
 
       mockApplyMods.mockReturnValue([{ modint: 7, mod: '+7', desc: 'test' }] as Modifier[])
       mockCurrentSum.mockReturnValue(7)
-      ;(globalThis as any).game.settings.get = getSetting
+      globalAny.game.settings.get = getSetting
 
       const result = await prepareChatData(null, '2d+5', 'cut', null, null, undefined)
 
@@ -465,7 +467,7 @@ describe('prepareChatData', () => {
 
 describe('createDamageRollData', () => {
   beforeEach(() => {
-    ;(globalThis as any).game = {
+    globalAny.game = {
       user: { id: 'USER_ID' },
     }
   })

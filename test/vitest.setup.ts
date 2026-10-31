@@ -43,7 +43,9 @@ class MockTypeDataModel {
     if (data) {
       for (const [key, value] of Object.entries(data)) {
         if (isGetterProperty(this, key)) continue
-        ;(this as Record<string, unknown>)[key] = value
+        const thisRecord = this as Record<string, unknown>
+
+        thisRecord[key] = value
       }
     }
   }
@@ -511,14 +513,16 @@ global.foundry = {
 } as unknown as typeof foundry
 
 /* ---------------------------------------- */
-(global as unknown as Record<string, unknown>).canvas = {
+const theGlobal = global as unknown as Record<string, unknown>
+
+theGlobal.canvas = {
   layer: {
     get: (): Record<string, unknown> => ({}),
   },
 } as unknown as Canvas
 
 /* ---------------------------------------- */
-;(global as unknown as Record<string, unknown>).game = {
+theGlobal.game = {
   ready: true,
   i18n: {
     localize: (key: string): string => {
@@ -536,7 +540,7 @@ global.foundry = {
 } as unknown as Game
 
 /* ---------------------------------------- */
-;(global as unknown as Record<string, unknown>).ui = {
+theGlobal.ui = {
   notifications: {
     info: (): void => {},
     warn: (): void => {},
@@ -547,7 +551,7 @@ global.foundry = {
 /* ---------------------------------------- */
 
 // Minimal CONFIG stub
-;(global as unknown as Record<string, unknown>).CONFIG = {
+theGlobal.CONFIG = {
   statusEffects: [],
   ChatMessage: {
     modes: {
@@ -563,38 +567,38 @@ global.foundry = {
 /* ---------------------------------------- */
 
 // Minimal ChatMessage stub
-global.ChatMessage = {
+theGlobal.ChatMessage = {
   create: async (): Promise<Record<string, unknown>> => ({}),
 } as unknown as typeof ChatMessage
 
 /* ---------------------------------------- */
 
 // Minimal Hooks stub
-;(global as unknown as Record<string, unknown>).Hooks = {
+theGlobal.Hooks = {
   once: (): void => {},
   on: (): void => {},
 } as unknown as typeof Hooks
 
 /* ---------------------------------------- */
 
-global.Actor = MockBaseActor as unknown as typeof Actor
+theGlobal.Actor = MockBaseActor as unknown as typeof Actor
 
-global.Item = MockBaseItem as unknown as typeof Item
+theGlobal.Item = MockBaseItem as unknown as typeof Item
 
-global.Combat = MockBaseCombat as unknown as typeof Combat
+theGlobal.Combat = MockBaseCombat as unknown as typeof Combat
 
-global.Combatant = MockBaseCombatant as unknown as typeof Combatant
+theGlobal.Combatant = MockBaseCombatant as unknown as typeof Combatant
 
 /* ---------------------------------------- */
 
 // Minimal Application base class for sheet subclasses used by imports
-global.Application = class {
+theGlobal.Application = class {
   constructor(_options: Record<string, unknown> = {}) {}
 
   render(): void {}
 } as unknown as typeof Application
 
-global.GURPS = { SYSTEM_NAME: 'gurps' } as unknown as typeof GURPS
+theGlobal.GURPS = { SYSTEM_NAME: 'gurps' } as unknown as typeof GURPS
 
 /* ---------------------------------------- */
 
@@ -612,7 +616,7 @@ type MockFormApplicationOptions = {
 /* ---------------------------------------- */
 
 // Mock Foundry VTT FormApplication class
-global.FormApplication = class FormApplication {
+theGlobal.FormApplication = class FormApplication {
   object: unknown
   options: MockFormApplicationOptions
 
