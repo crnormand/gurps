@@ -77,7 +77,7 @@ export default class DamageChat {
         await DamageChat._calculateAndSelectTargets(canvas, dropData)
         break
       case 'Item':
-        await actor.handleItemDrop(dropData)
+        if (actor) await actor.handleItemDrop(dropData)
         break
       case 'equipment':
         const token = await DamageChat.selectTokensAtPosition(dropData.x, dropData.y, true)
@@ -88,7 +88,7 @@ export default class DamageChat {
         await token[0].actor.handleEquipmentDrop(dropData)
         break
     }
-    return false
+    return true
   }
 
   /**

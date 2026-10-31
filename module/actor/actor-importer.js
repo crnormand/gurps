@@ -1620,7 +1620,13 @@ export class ActorImporter {
     a.cr = i.cr || null
 
     if (i.cr) {
-      a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + a.name + ']'
+      a.notes =
+        '[' +
+        game.i18n.localize('GURPS.CR' + i.cr.toString()) +
+        ': ' +
+        a.name +
+        ']' +
+        (!!a.notes ? '<br>' + a.notes : '')
     }
 
     if (i.modifiers?.length) {
@@ -2239,6 +2245,7 @@ export class ActorImporter {
             m.notes = i.notes || ''
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
+            if (w.usage_notes) m.mode += ' [' + w.usage_notes + ']'
             m.import = w.calc?.level?.toString() || '0'
             m.damage = w.calc?.damage || ''
             m.reach = w.reach || ''
