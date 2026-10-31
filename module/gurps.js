@@ -2036,11 +2036,6 @@ if (!globalThis.GURPS) {
     console.log(`Initializing GURPS 4e Game Aid`)
     console.log(GURPS.LEGAL)
 
-    let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'
-
-    $('#logo').attr('src', src)
-    $('#logo').attr('height', '32px')
-
     // set up all hitlocation tables (must be done before MB)
     HitLocation.init()
 
@@ -2223,6 +2218,16 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
+    let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/assets/gurps4e-br.webp' : 'systems/gurps/assets/gurps4e.webp'
+
+    const pauseImage = document.querySelector('#pause img')
+    if (pauseImage) {
+      pauseImage.src = src
+      pauseImage.style.width = '150px'
+      pauseImage.style.height = '50px'
+      pauseImage.style.opacity = '0.6'
+    }
+
     const currentVersion = SemanticVersion.fromString(game.system.version)
     const previousVersion = SemanticVersion.fromString(
       game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION) ?? '0.0.1'
