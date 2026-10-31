@@ -66,14 +66,12 @@ describe('Maneuvers.getAllInPlayData', () => {
   it('keeps the maneuver named by `keep` even though it is turned off', () => {
     worldSettings({ combatOptions: { maneuvers: { aoa_strong: false } } })
 
-    // @ts-expect-error Unexpected type
     expect(Object.keys(Maneuvers.getAllInPlayData('aoa_strong'))).toContain('aoa_strong')
   })
 
   it('keeps the maneuver named by `keep` even though On Target has been turned off', () => {
     worldSettings({ onTarget: false, combatOptions: { maneuvers: {} } })
 
-    // @ts-expect-error Unexpected type
     expect(Object.keys(Maneuvers.getAllInPlayData('committed_aim'))).toContain('committed_aim')
   })
 
