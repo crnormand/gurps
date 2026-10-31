@@ -665,6 +665,17 @@ if (!globalThis.GURPS) {
   })
 
   Hooks.once('ready', async function () {
+    const pauseImage = document.querySelector('#pause img')
+
+    if (pauseImage) {
+      let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/assets/gurps4e-br.webp' : 'systems/gurps/assets/gurps4e.webp'
+
+      pauseImage.src = src
+      pauseImage.style.width = '150px'
+      pauseImage.style.height = '50px'
+      pauseImage.style.opacity = '0.6'
+    }
+
     // Run any needed migrations.
     await Migrator.migrateWorld()
 
