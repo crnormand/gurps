@@ -815,6 +815,11 @@ Portrait will not be imported.`
     const type = ItemType.Trait
 
     let name = trait.name || getGame().i18n.localize('TYPES.Item.feature')
+    
+    if (trait.nameext) {
+      name += ` (${trait.nameext})`
+    }
+
     const crRegex = /\[\s*CR: (\d{1,2})\s*\]/i
 
     const isLeveled = trait.calcs.cost?.includes('/') ?? false
@@ -823,7 +828,7 @@ Portrait will not be imported.`
 
     const system: DataModel.CreateData<TraitSchema> = {
       ...baseSystem,
-      cr: 0,
+      cr: null,
       level: isLeveled ? (trait.level ?? 0) : null,
       userdesc: trait.ref?.description ?? '',
       points: trait.points ?? 0,
@@ -859,7 +864,11 @@ Portrait will not be imported.`
 
   #importSkill(skill: GCATrait, containedBy: string | null = null): void {
     const type = ItemType.Skill
-    const name = skill.name || getGame().i18n.localize('TYPES.Item.skill')
+    let name = skill.name || getGame().i18n.localize('TYPES.Item.skill')
+
+    if (skill.nameext) {
+      name += ` (${skill.nameext})`
+    }
 
     const [baseSystem, _id] = this.#importItem(skill, containedBy)
 
