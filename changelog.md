@@ -1,5 +1,11 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 
+## Release 0.18.27 01-Nov-2026
+
+### Bugfixes
+
+- Fixed text color on modifier bucket.
+
 ## Release 0.18.26 30-Oct-2026
 
 ### Features
