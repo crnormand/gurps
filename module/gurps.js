@@ -2220,13 +2220,16 @@ if (!globalThis.GURPS) {
   Hooks.once('ready', async function () {
     let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/assets/gurps4e-br.webp' : 'systems/gurps/assets/gurps4e.webp'
 
-    const pauseImage = document.querySelector('#pause img')
-    if (pauseImage) {
-      pauseImage.src = src
-      pauseImage.style.width = '150px'
-      pauseImage.style.height = '50px'
-      pauseImage.style.opacity = '0.6'
-    }
+    const pauseDiv = document.querySelector('#pause')
+    updatePauseImage(document.querySelector('#pause img'), src)
+
+    const observer = new MutationObserver(() => {
+      if (pauseDiv?.classList.contains('paused')) {
+        updatePauseImage(document.querySelector('#pause img'), src)
+      }
+    })
+
+    if (pauseDiv) observer.observe(pauseDiv, { attributes: true, attributeFilter: ['class'] })
 
     const currentVersion = SemanticVersion.fromString(game.system.version)
     const previousVersion = SemanticVersion.fromString(
@@ -2572,4 +2575,15 @@ const showGURPSCopyright = function () {
     // @ts-ignore
     whisper: [game.user],
   })
+}
+
+function updatePauseImage(pauseImage, src) {
+  if (!pauseImage) return
+
+  pauseImage.src = src
+  pauseImage.style.width = '150px'
+  pauseImage.style.height = '50px'
+  pauseImage.style.opacity = '0.6'
+  pauseImage.classList.remove('fa-spin')
+  pauseImage.classList.add('fa-beat')
 }
