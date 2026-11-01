@@ -114,7 +114,11 @@ Global Override body {
 /* GURPS App CSS */
 .gga-app {
   justify-items: center;
-  /* color: black; */
+  color: black;
+}
+
+.gga-app.fright-check {
+  color: var(--color-text-primary);
 }
 
 /* using h3 elements as a row label -- remove margin */
