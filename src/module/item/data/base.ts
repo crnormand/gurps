@@ -372,6 +372,18 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
 
   /* ---------------------------------------- */
 
+  concatDisplayNotes(): string {
+    let unformattedNotes = this.notes.trim()
+
+    if (unformattedNotes.length > 0) unformattedNotes += '\n'
+
+    const vttNotesTrimmed = this.vttNotes?.trim() ?? ''
+
+    unformattedNotes += vttNotesTrimmed
+
+    return unformattedNotes
+  }
+
   /**
    * Convert this item's data to a format used for display in the character sheet and other UI elements.
    * This format should be shared between all items representing the same underlying GURPS entity.
@@ -381,13 +393,7 @@ abstract class BaseItemModel<Schema extends BaseItemModelSchema = BaseItemModelS
       .filter(child => !!child && !!child.system)
       .map(child => child!.system!.toDisplayItem!())
 
-    let unformattedNotes = this.notes.trim()
-
-    if (unformattedNotes.length > 0) unformattedNotes += '\n'
-
-    const vttNotesTrimmed = this.vttNotes?.trim() ?? ''
-
-    unformattedNotes += vttNotesTrimmed
+    const unformattedNotes = this.concatDisplayNotes()
 
     const notes = MarkdownUtil.toHTML(unformattedNotes)
 

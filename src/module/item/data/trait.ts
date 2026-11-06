@@ -66,6 +66,13 @@ class TraitModel extends BaseItemModel<TraitSchema> {
 
   /* ---------------------------------------- */
 
+  override concatDisplayNotes(): string {
+    const orignalNotes = super.concatDisplayNotes()
+    const userdesc = this.userdesc.trim()
+
+    return orignalNotes + (userdesc.length > 0 ? '\n' + userdesc : '')
+  }
+
   override toDisplayItem(): DisplayTrait {
     const fullName = this.level !== null ? `${this.parent.name} ${this.level}` : this.parent.name
 
@@ -75,6 +82,7 @@ class TraitModel extends BaseItemModel<TraitSchema> {
       points: this.points,
       cr: this.cr !== null ? `GURPS.CR${this.cr}` : null,
       enabled: this.enabled,
+
       otf: {
         cr: this.selfControlNote,
       },
