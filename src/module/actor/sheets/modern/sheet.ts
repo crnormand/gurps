@@ -11,7 +11,6 @@ import {
 } from '@gurps-types/gurps/display-item.js'
 import { ActionType } from '@module/action/types.js'
 import EffectPicker from '@module/actor/effect-picker.js'
-import MoveModeEditor from '@module/actor/move-mode-editor.js'
 import { ActorType } from '@module/actor/types.js'
 import { PostureType } from '@module/effects/posture.js'
 import GurpsWiring from '@module/gurps-wiring.js'
@@ -128,7 +127,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       resetFp: GurpsActorModernSheet.#onResetResource,
       addEffect: GurpsActorModernSheet.#onAddEffect,
       editQuickNotes: GurpsActorModernSheet.#onEditQuickNotes,
-      editMoveMode: GurpsActorModernSheet.#onEditMoveMode,
       decrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
       incrementQuantity: GurpsActorModernSheet.#onChangeQuantity,
       decrementUses: GurpsActorModernSheet.#onChangeUses,
@@ -348,7 +346,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     // Bind dropdown handlers
     this.#bindPostureActions(html)
     this.#bindManeuverActions(html)
-    this.#bindMoveModeActions(html)
 
     // Wire up OTF rollable elements
     GurpsWiring.hookupAllEvents(html)
@@ -426,13 +423,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     if (getGame().settings.get(GURPS.SYSTEM_NAME, 'automatic-encumbrance')) return
 
     await this.actor.update({ 'system.additionalresources.currentEncumbrance': parseInt(index) } as Actor.UpdateData)
-  }
-
-  /* ---------------------------------------- */
-
-  static async #onEditMoveMode(this: GurpsActorModernSheet, event: PointerEvent): Promise<void> {
-    event.preventDefault()
-    new MoveModeEditor(this.actor).render(true)
   }
 
   /* ---------------------------------------- */
@@ -546,23 +536,6 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       toggleSelector: '.ms-maneuver-selected',
       optionSelector: '.ms-maneuver-option',
       onSelect: (maneuver: string) => this.actor.replaceManeuver(maneuver),
-    })
-  }
-
-  /* ---------------------------------------- */
-
-  #bindMoveModeActions(html: HTMLElement): void {
-    const editButton = html.querySelector('.ms-move-mode-edit')
-
-    editButton?.addEventListener('click', () => {
-      new MoveModeEditor(this.actor).render(true)
-    })
-
-    bindDropdownToggle(html, {
-      dropdownSelector: '.ms-move-mode-dropdown',
-      toggleSelector: '.ms-move-mode-selected',
-      optionSelector: '.ms-move-mode-option',
-      onSelect: (mode: string) => this.actor.setMoveDefault(mode),
     })
   }
 

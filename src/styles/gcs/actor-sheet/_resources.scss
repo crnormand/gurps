@@ -66,6 +66,11 @@
       .gcs-row-enc-dodge {
         text-align: right;
       }
+
+      [data-action='editMoveModes'] {
+        flex: 0 0 auto;
+        width: auto;
+      }
     }
 
     .gcs-moving {
