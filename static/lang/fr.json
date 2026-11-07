@@ -1654,7 +1654,6 @@
       "moveAndAttackBulkPenaltyApplied": "Pénalité de Masse appliquée (Attaque Mobile)",
       "moveAndAttackRangedBulk": "ou la Masse de l’arme, la pire des deux",
       "onTargetAiming": "Sur Cible",
-      "rollModifiers": "Modificateurs de type de jet",
       "pdf": {
         "aim": "B364",
         "allOutAim": "PY77:25",
@@ -1697,6 +1696,7 @@
       "popup": "pour toucher (Attaque Surprise)",
       "rapidStrike": "pour toucher (Frappe Rapide)",
       "riposte": "pour attaque ou défense (Riposte)",
+      "rollModifiers": "Modificateurs de type de jet",
       "shieldDB": "à la défense (DB Bouclier)",
       "telegraphic": "pour toucher (Attaque Télégraphique)"
     },
@@ -1749,12 +1749,17 @@
     "moveHalf": "Moitié ({reason})",
     "moveMode": "Mode",
     "moveModeAir": "Air",
-    "moveModeEditorTitle": "Modes de Déplacement pour {name}",
+    "moveModeEditor": {
+      "basic": "Basique",
+      "enhanced": "Amélioré",
+      "mode": "Type de Déplacement",
+      "open": "Modifier les modes de déplacement",
+      "title": "Modes de déplacement : {name}"
+    },
     "moveModeGround": "Sol",
     "moveModeOther": "Autre...",
     "moveModeSpace": "Espace",
     "moveModeSpiderClimb": "Escalade d'Araignée",
-    "moveModeType": "Type de Déplacement",
     "moveModeWater": "Eau",
     "moveNone": "Aucun ({reason})",
     "moveOneThird": "×1/3 ({reason})",
@@ -1932,6 +1937,7 @@
     "removedShockEffect": "Effet de choc retiré au tour suivant.",
     "removeItem": "Supprimer Objet",
     "removeproneEffect": "Retirer l'effet Allongé sur la cible.",
+    "repeatRoll": "Répéter",
     "reset": "Effacer Configuration",
     "resolve": "Résoudre",
     "resolveDamage": {
@@ -2002,7 +2008,6 @@
     "rollMadeBy": "Réussi de {margin}.",
     "rollMissedBy": "Raté de {margin}.",
     "rollNewTarget": "Nouvelle Cible: ({target})",
-    "repeatRoll": "Répéter",
     "rollSuccess": "Succès!",
     "rollTotal": "Jeté ({rolls}) = {rtotal}.",
     "rollVs": "Jet contre",

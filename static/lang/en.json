@@ -1655,7 +1655,6 @@
       "moveAndAttackBulkPenaltyApplied": "Bulk penalty applied (Move and Attack)",
       "moveAndAttackRangedBulk": "or Bulk of weapon, whichever is worse",
       "onTargetAiming": "On Target",
-      "rollModifiers": "Roll type modifiers",
       "pdf": {
         "aim": "B364",
         "allOutAim": "PY77:25",
@@ -1698,6 +1697,7 @@
       "popup": "to hit (Popup Attack)",
       "rapidStrike": "to hit (Rapid Strike)",
       "riposte": "to attack or defense (Riposte)",
+      "rollModifiers": "Roll type modifiers",
       "shieldDB": "to defense (Shield DB)",
       "telegraphic": "to hit (Telegraphic Attack)"
     },
@@ -1750,12 +1750,17 @@
     "moveHalf": "Half ({reason})",
     "moveMode": "Mode",
     "moveModeAir": "Air",
-    "moveModeEditorTitle": "Movement Modes for {name}",
+    "moveModeEditor": {
+      "basic": "Basic",
+      "enhanced": "Enhanced",
+      "mode": "Move Type",
+      "open": "Edit Move Modes",
+      "title": "Movement Modes: {name}"
+    },
     "moveModeGround": "Ground",
     "moveModeOther": "Other...",
     "moveModeSpace": "Space",
     "moveModeSpiderClimb": "Spider-Climb",
-    "moveModeType": "Move Type",
     "moveModeWater": "Water",
     "moveNone": "None ({reason})",
     "moveOneThird": "×1/3 ({reason})",
@@ -1933,6 +1938,7 @@
     "removedShockEffect": "Removed Shock effect on target.",
     "removeItem": "Remove Item",
     "removeproneEffect": "Remove Prone effect on target.",
+    "repeatRoll": "repeat",
     "reset": "Clear Configuration",
     "resolve": "Resolve",
     "resolveDamage": {
@@ -2003,7 +2009,6 @@
     "rollMadeBy": "Made it by {margin}.",
     "rollMissedBy": "Missed it by {margin}.",
     "rollNewTarget": "New Target: ({target})",
-    "repeatRoll": "repeat",
     "rollSuccess": "Success!",
     "rollTotal": "Rolled ({rolls}) = {rtotal}.",
     "rollVs": "Roll vs",

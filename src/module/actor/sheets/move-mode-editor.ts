@@ -68,7 +68,7 @@ class MoveModeEditorV2 extends HandlebarsApplicationMixin(Application)<MoveModeE
   /* ---------------------------------------- */
 
   override get title() {
-    return getGame().i18n.format('GURPS.moveModeEditorTitle', { name: this.#actor.name })
+    return getGame().i18n.format('GURPS.moveModeEditor.title', { name: this.#actor.name })
   }
 
   /* ---------------------------------------- */
