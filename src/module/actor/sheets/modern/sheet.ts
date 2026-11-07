@@ -351,6 +351,7 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
       toggleSelector: '.ms-move-mode-selected',
       optionSelector: '.ms-move-mode-option',
       onSelect: async (key: string) => {
+        // @ts-expect-error - TypeScript doesn't know that this.actor.system.move[key] exists, but we know it does.
         await this.actor.update({ 'system._currentMoveModeId': this.actor.system.move[key].id })
       },
     })
