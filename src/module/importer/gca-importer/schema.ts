@@ -615,6 +615,10 @@ class GCATrait extends GCASchemaBlock<GCATraitSchema> {
       return acc
     }, [])
 
+    data.modifiers = Array.from(xml.querySelector(':scope > modifiers')?.querySelectorAll('modifier') ?? []).map(node =>
+      GCAModifier._primitiveFieldsFromXML(node as HTMLElement, GCAModifier._schemaFields<GCAModifierSchema>())
+    )
+
     return new this(data)
   }
 
