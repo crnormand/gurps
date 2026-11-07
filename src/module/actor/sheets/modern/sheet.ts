@@ -346,6 +346,14 @@ export class GurpsActorModernSheet extends GurpsBaseActorSheet<
     // Bind dropdown handlers
     this.#bindPostureActions(html)
     this.#bindManeuverActions(html)
+    bindDropdownToggle(html, {
+      dropdownSelector: '.ms-move-mode-dropdown',
+      toggleSelector: '.ms-move-mode-selected',
+      optionSelector: '.ms-move-mode-option',
+      onSelect: async (key: string) => {
+        await this.actor.update({ 'system._currentMoveModeId': this.actor.system.move[key].id })
+      },
+    })
 
     // Wire up OTF rollable elements
     GurpsWiring.hookupAllEvents(html)
