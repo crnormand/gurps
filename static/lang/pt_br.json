@@ -1654,7 +1654,6 @@
       "moveAndAttackBulkPenaltyApplied": "Penalidade de Magnitude aplicada (Avançar e Atacar)",
       "moveAndAttackRangedBulk": "ou Magnitude da arma, o que for pior",
       "onTargetAiming": "No Alvo",
-      "rollModifiers": "Modificadores do tipo de jogada",
       "pdf": {
         "aim": "B364",
         "allOutAim": "PY77:25",
@@ -1697,6 +1696,7 @@
       "popup": "para acertar (Ataque Surpresa)",
       "rapidStrike": "para acertar (Golpe Rápido)",
       "riposte": "ao ataque ou defesa (Riposte)",
+      "rollModifiers": "Modificadores do tipo de jogada",
       "shieldDB": "para defesa (BD de Escudo)",
       "telegraphic": "ao ataque (Ataque Telegráfico)"
     },
@@ -1749,12 +1749,17 @@
     "moveHalf": "Metade ({reason})",
     "moveMode": "Modo",
     "moveModeAir": "Ar",
-    "moveModeEditorTitle": "Modos de Movimento para {name}",
+    "moveModeEditor": {
+      "basic": "Básico",
+      "enhanced": "Aprimorado",
+      "mode": "Tipo de Deslocamento",
+      "open": "Editar modos de deslocamento",
+      "title": "Modos de deslocamento: {name}"
+    },
     "moveModeGround": "Solo",
     "moveModeOther": "Outro...",
     "moveModeSpace": "Espaço",
     "moveModeSpiderClimb": "Escalada de Aranha",
-    "moveModeType": "Tipo de Deslocamento",
     "moveModeWater": "Água",
     "moveNone": "Nenhum ({reason})",
     "moveOneThird": "×1/3 ({reason})",
@@ -1932,6 +1937,7 @@
     "removedShockEffect": "Efeito de Choque removido do próximo turno.",
     "removeItem": "Remover Item",
     "removeproneEffect": "Remover efeito Caído no alvo.",
+    "repeatRoll": "Repetir",
     "reset": "Limpar Configuração",
     "resolve": "Resolver",
     "resolveDamage": {
@@ -2002,7 +2008,6 @@
     "rollMadeBy": "Margem de acerto {margin}.",
     "rollMissedBy": "Margem de fracasso {margin}.",
     "rollNewTarget": "Novo alvo: ({target})",
-    "repeatRoll": "Repetir",
     "rollSuccess": "Sucesso!",
     "rollTotal": "Resultado da rolagem ({rolls}) = {rtotal}.",
     "rollVs": "Rolagem contra",

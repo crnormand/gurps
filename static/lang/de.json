@@ -1654,7 +1654,6 @@
       "moveAndAttackBulkPenaltyApplied": "Handlichkeits-Malus angewendet (Bewegen und Angreifen)",
       "moveAndAttackRangedBulk": "oder Handlichkeit der Waffe, je nachdem was schlechter ist",
       "onTargetAiming": "Auf Ziel",
-      "rollModifiers": "Rolltyp-Modifikatoren",
       "pdf": {
         "aim": "B364",
         "allOutAim": "PY77:25",
@@ -1697,6 +1696,7 @@
       "popup": "auf Treffer (Popup Angriff)",
       "rapidStrike": "auf Treffer (Schneller Schlag)",
       "riposte": "auf Angriff oder Verteidigung (Riposte)",
+      "rollModifiers": "Rolltyp-Modifikatoren",
       "shieldDB": "auf Verteidigung (Schild DB)",
       "telegraphic": "auf Treffer (Telegraphischer Angriff)"
     },
@@ -1749,12 +1749,17 @@
     "moveHalf": "Halbe ({reason})",
     "moveMode": "Modus",
     "moveModeAir": "Luft",
-    "moveModeEditorTitle": "Bewegungsmodi für {name}",
+    "moveModeEditor": {
+      "basic": "Basis",
+      "enhanced": "Verbessert",
+      "mode": "Bewegungsart",
+      "open": "Bewegungsmodi bearbeiten",
+      "title": "Bewegungsmodi: {name}"
+    },
     "moveModeGround": "Boden",
     "moveModeOther": "Andere...",
     "moveModeSpace": "Weltraum",
     "moveModeSpiderClimb": "Spinnen-Klettern",
-    "moveModeType": "Bewegungsart",
     "moveModeWater": "Wasser",
     "moveNone": "Keine ({reason})",
     "moveOneThird": "×1/3 ({reason})",
@@ -1932,6 +1937,7 @@
     "removedShockEffect": "Schockeffekt auf Ziel entfernt.",
     "removeItem": "Gegenstand entfernen",
     "removeproneEffect": "Liegend-Effekt vom Ziel entfernen.",
+    "repeatRoll": "Wiederholen",
     "reset": "Konfiguration löschen",
     "resolve": "Kläre",
     "resolveDamage": {
@@ -2002,7 +2008,6 @@
     "rollMadeBy": "Geschafft mit {margin}.",
     "rollMissedBy": "Verfehlt um {margin}.",
     "rollNewTarget": "Neues Ziel: ({target})",
-    "repeatRoll": "Wiederholen",
     "rollSuccess": "Erfolg!",
     "rollTotal": "Gewürfelt ({rolls}) = {rtotal}.",
     "rollVs": "Wurf gegen",

@@ -1654,7 +1654,6 @@
       "moveAndAttackBulkPenaltyApplied": "Штраф за Разм применён (Движение и атака)",
       "moveAndAttackRangedBulk": "или Разм оружия, что хуже",
       "onTargetAiming": "На Цели",
-      "rollModifiers": "Модификаторы типа броска",
       "pdf": {
         "aim": "B364",
         "allOutAim": "PY77:25",
@@ -1697,6 +1696,7 @@
       "popup": "к попаданию (Всплывающая Атака)",
       "rapidStrike": "к попаданию (Быстрый Удар)",
       "riposte": "к атаке или защите (Рипост)",
+      "rollModifiers": "Модификаторы типа броска",
       "shieldDB": "к защите (Щит DB)",
       "telegraphic": "к попаданию (Телеграфная Атака)"
     },
@@ -1749,12 +1749,17 @@
     "moveHalf": "Половина ({reason})",
     "moveMode": "Режим",
     "moveModeAir": "Воздух",
-    "moveModeEditorTitle": "Режимы движения для {name}",
+    "moveModeEditor": {
+      "basic": "Базовый",
+      "enhanced": "Улучшенный",
+      "mode": "Тип движения",
+      "open": "Редактировать режимы движения",
+      "title": "Режимы движения: {name}"
+    },
     "moveModeGround": "Земля",
     "moveModeOther": "Другое...",
     "moveModeSpace": "Космос",
     "moveModeSpiderClimb": "Лазание по стенам",
-    "moveModeType": "Тип движения",
     "moveModeWater": "Вода",
     "moveNone": "Нет ({reason})",
     "moveOneThird": "×1/3 ({reason})",
@@ -1932,6 +1937,7 @@
     "removedShockEffect": "Эффект шока удален на цели.",
     "removeItem": "Удалить предмет",
     "removeproneEffect": "Удалить эффект Лежит с цели.",
+    "repeatRoll": "Повторить",
     "reset": "Очистить конфигурацию",
     "resolve": "Решить",
     "resolveDamage": {
@@ -2002,7 +2008,6 @@
     "rollMadeBy": "Получилось с разницей {margin}.",
     "rollMissedBy": "Промахнулся на {margin}.",
     "rollNewTarget": "Новая цель: ({target})",
-    "repeatRoll": "Повторить",
     "rollSuccess": "Успех!",
     "rollTotal": "Бросок ({rolls}) = {rtotal}.",
     "rollVs": "Бросок против",

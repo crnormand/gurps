@@ -337,22 +337,22 @@ Portrait will not be imported.`
 
     // Import speeds for move modes(based on attributes in GGA)
     const groundMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      mode: 'GURPS.moveModeGround',
+      mode: getGame().i18n.localize('GURPS.moveModeGround'),
       ...this.#importMoveType('Ground Move'),
     }
 
     const airMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      mode: 'GURPS.moveModeAir',
+      mode: getGame().i18n.localize('GURPS.moveModeAir'),
       ...this.#importMoveType('Air Move'),
     }
 
     const waterMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      mode: 'GURPS.moveModeWater',
+      mode: getGame().i18n.localize('GURPS.moveModeWater'),
       ...this.#importMoveType('Water Move'),
     }
 
     const spaceMove: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
-      mode: 'GURPS.moveModeSpace',
+      mode: getGame().i18n.localize('GURPS.moveModeSpace'),
       ...this.#importMoveType('Space Move'),
     }
 

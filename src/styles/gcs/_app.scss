@@ -26,7 +26,6 @@ body {
   }
 
   .window-content {
-    margin: var(--gga-space-2);
     background-color: var(--gcs-color-surface-bg);
     font-family: 'Verdana', sans-serif;
 
@@ -165,6 +164,7 @@ body {
     height: 100%;
     min-width: 0;
     white-space: nowrap;
+    gap: 0.2rem;
 
     > * {
       align-self: center;
@@ -193,5 +193,13 @@ body {
         outline: 1px solid var(--gcs-color-focus-bg);
       }
     }
+  }
+
+  /* ---------------------------------------- */
+  /*  Application-Specific Styles             */
+  /* ---------------------------------------- */
+
+  .gcs-move-mode-table {
+    border: 0.1rem solid var(--gcs-color-section-border);
   }
 }
