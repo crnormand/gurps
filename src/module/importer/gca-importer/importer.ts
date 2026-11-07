@@ -19,6 +19,7 @@ import { getGame } from '../../util/guards.js'
 import { createDataIsOfType, createStandardTrackers, promptDeletionOfMigratedItems } from '../helpers.js'
 import { ImportSettings } from '../index.js'
 
+import { rtfToText } from './rtf-to-text.js'
 import { GCAAttackMode, GCACharacter, GCATrait } from './schema.js'
 
 /**
@@ -665,9 +666,17 @@ Portrait will not be imported.`
     item: GCATrait,
     containedBy: string | null = null
   ): [DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>>, string] {
+    const modifierNames = (item.modifiers?.map(modifier => modifier.shortname ?? modifier.name) ?? []).join(', ')
+
+    const notes =
+      (modifierNames ? `(${modifierNames})` : '') +
+      rtfToText(item.ref?.notes ?? '') +
+      rtfToText(item.ref?.usernotes ?? '') +
+      rtfToText(item.ref?.itemnotes ?? '')
+
     const system: DataModel.CreateData<DataModel.SchemaOf<BaseItemModel>> = {
       // name: item.name ?? '',
-      notes: item.ref?.notes ?? '',
+      notes,
       pageref: item.ref?.page ?? '',
       vttNotes: item.ref?.vttnotes ?? '',
       importFrom: 'GCA',
@@ -830,7 +839,7 @@ Portrait will not be imported.`
       ...baseSystem,
       cr: null,
       level: isLeveled ? (trait.level ?? 0) : null,
-      userdesc: trait.ref?.description ?? '',
+      userdesc: rtfToText(trait.ref?.description ?? ''),
       points: trait.points ?? 0,
     }
 
@@ -872,12 +881,14 @@ Portrait will not be imported.`
 
     const [baseSystem, _id] = this.#importItem(skill, containedBy)
 
+    const description = rtfToText(skill.ref?.description ?? '')
     const system: DataModel.CreateData<SkillSchema> = {
       ...baseSystem,
       points: skill.points ?? 0,
       difficulty: skill.type ?? '',
       relativelevel: `${skill.stepoff}${skill.step}`,
       importedLevel: skill.level ?? 0,
+      notes: baseSystem.notes + description ? `\n${description}` : '',
     }
 
     skill.getChildren(this.input.traits.skills)?.forEach((child: GCATrait) => this.#importSkill(child, _id))
@@ -927,6 +938,7 @@ Portrait will not be imported.`
 
     const [baseSystem, _id] = this.#importItem(spell, containedBy)
 
+    const description = rtfToText(spell.ref?.description ?? '')
     const system: DataModel.CreateData<SpellSchema> = {
       ...baseSystem,
       points: spell.points ?? 0,
@@ -940,6 +952,7 @@ Portrait will not be imported.`
       duration: spell.ref?.duration ?? '',
       resist: spellResist,
       casttime: spell.ref?.time ?? '',
+      notes: baseSystem.notes + description ? `\n${description}` : '',
     }
 
     spell.getChildren(this.input.traits.spells)?.forEach((child: GCATrait) => this.#importSpell(child, _id))
@@ -964,6 +977,7 @@ Portrait will not be imported.`
 
     const legalityclass = equipment.ref?.description?.match(/LC:(\d)/)?.[1] ?? ''
 
+    const description = rtfToText(equipment.ref?.description ?? '')
     const system: DataModel.CreateData<EquipmentSchema> = {
       ...baseSystem,
       count: equipment.count ?? 1,
@@ -977,6 +991,7 @@ Portrait will not be imported.`
       categories: equipment.cat,
       uses: 0,
       maxuses: 0,
+      notes: baseSystem.notes + description ? `\n${description}` : '',
     }
 
     equipment.getChildren(this.input.traits.equipment)?.forEach((child: GCATrait) => this.#importEquipment(child, _id))
