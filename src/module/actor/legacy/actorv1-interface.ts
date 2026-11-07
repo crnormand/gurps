@@ -118,7 +118,6 @@ interface ActorV1Interface {
   replacePosture(changeData: any): Promise<void>
   runOTF(otf: string): Promise<void>
   sendChatMessage(message: string): void
-  setMoveDefault(value: string): Promise<void>
   toggleExpand(path: string, expanded: boolean): Promise<void>
   toggleStatusEffect(
     id: string,
