@@ -1,6 +1,6 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { parselink } from '../../lib/parselink.js'
-import { arrayToObject, atou, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
+import { arrayToObject, atou, flattenContainedList, isEmptyObject, objectToArray, zeroFill } from '../../lib/utilities.js'
 import { DragDropType } from '../drag-drop-types.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import { isConfigurationAllowed } from '../game-utils.js'
@@ -1951,6 +1951,78 @@ export class GurpsActorSheetReduced extends GurpsActorSheet {
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
     return 'systems/gurps/templates/actor/actor-sheet-gcs-reduced.hbs'
+  }
+}
+
+/** A print-inspired, two-page character sheet matching the classic GURPS form. */
+export class GurpsActorClassicSheet extends GurpsActorSheet {
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      classes: ['gurps', 'sheet', 'actor', 'gurps-classic-sheet'],
+      width: 1080,
+      height: 900,
+      resizable: true,
+      scrollY: ['.classic-pages'],
+    })
+  }
+
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/actor-sheet-classic.hbs'
+  }
+
+  getData() {
+    const sheetData = super.getData()
+    sheetData.classicAppearance = [
+      this.actor.system.traits?.eyes,
+      this.actor.system.traits?.hair,
+      this.actor.system.traits?.skin,
+      this.actor.system.traits?.hand,
+      this.actor.system.traits?.appearance,
+    ]
+      .map(value => String(value ?? '').trim())
+      .filter(Boolean)
+      .join(', ')
+    sheetData.classicSpeedRanges = [
+      '2 yd or less', '3 yd', '5 yd', '7 yd', '10 yd', '15 yd', '20 yd', '30 yd',
+      '50 yd', '70 yd', '100 yd', '150 yd', '200 yd', '300 yd', '500 yd', '700 yd',
+    ].map((distance, index) => ({ modifier: -index, distance }))
+    const encumbranceLabels = ['None', 'Light', 'Medium', 'Heavy', 'X-Heavy']
+    const loadFactors = [1, 2, 3, 6, 10]
+    const moveFactors = [1, 0.8, 0.6, 0.4, 0.2]
+    const basicMove = Number.parseFloat(this.actor.system.basicmove?.value) || 0
+    const unmodifiedDodge = Number.parseFloat(this.actor.system.dodge?.value)
+    const dodgeBonus = Number.parseFloat(this.actor.system.defenses?.dodge?.bonus) || 0
+    const baseDodge = Number.isFinite(unmodifiedDodge)
+      ? unmodifiedDodge + dodgeBonus
+      : Number.parseFloat(this.actor.system.currentdodge) || 0
+    sheetData.classicEncumbrance = Object.entries(this.actor.system.encumbrance ?? {}).map(([key, entry], index) => {
+      const level = Number(entry.level ?? index)
+      let fallbackMove = Math.floor((basicMove * (10 - 2 * level)) / 10)
+      if (this.actor.system.conditions?.reeling) fallbackMove = Math.ceil(fallbackMove / 2)
+      if (this.actor.system.conditions?.exhausted) fallbackMove = Math.ceil(fallbackMove / 2)
+      let fallbackDodge = Math.max(1, baseDodge - level)
+      if (this.actor.system.conditions?.reeling) fallbackDodge = Math.ceil(fallbackDodge / 2)
+      if (this.actor.system.conditions?.exhausted) fallbackDodge = Math.ceil(fallbackDodge / 2)
+      return {
+        key,
+        level,
+        name: encumbranceLabels[level] ?? `Level ${level}`,
+        loadFactor: loadFactors[level] ?? '',
+        moveFactor: moveFactors[level] ?? 0,
+        maxLoad: entry.weight ?? '',
+        move: entry.currentmovedisplay ?? entry.currentmove ?? fallbackMove,
+        dodge: entry.currentdodge ?? fallbackDodge,
+        current: !!entry.current,
+      }
+    })
+    const features = flattenContainedList(this.actor.system.ads ?? {})
+    sheetData.classicAdvantages = features.filter(
+      feature => (feature.points == null || Number(feature.points) >= 0) && !/cultural familiarity/i.test(feature.name ?? '')
+    )
+    sheetData.classicDisadvantages = features.filter(feature => Number(feature.points) < 0)
+    sheetData.classicCulturalFamiliarities = features.filter(feature => /cultural familiarity/i.test(feature.name ?? ''))
+    return sheetData
   }
 }
 

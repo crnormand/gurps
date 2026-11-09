@@ -20,6 +20,7 @@ import {
 } from '../lib/utilities.js'
 import {
   GurpsActorCombatSheet,
+  GurpsActorClassicSheet,
   GurpsActorEditorSheet,
   GurpsActorSheet,
   GurpsActorSheetReduced,
@@ -2116,6 +2117,10 @@ if (!globalThis.GURPS) {
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheetReduced, {
       label: 'Reduced Mode',
+      makeDefault: false,
+    })
+    foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorClassicSheet, {
+      label: 'Character Sheet (Classic)',
       makeDefault: false,
     })
     foundry.documents.collections.Actors.registerSheet('gurps', GurpsActorSheet, {

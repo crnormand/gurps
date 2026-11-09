@@ -1,0 +1,124 @@
+<form class='{{cssClass}} gurpsactorsheet classic-form' autocomplete='off'>
+  <div class='classic-pages'>
+    <article class='classic-page classic-page-one'>
+      <header class='classic-topline'>
+        <div class='classic-brand'><img src='systems/gurps/assets/gurps4e.webp' alt='GURPS' /><span>CHARACTER SHEET</span></div>
+        <div class='classic-identity'>
+          <div class='classic-identity-row primary'>
+            <div class='classic-rule-field'><b>Name</b><span>{{actor.name}}</span></div>
+            <div class='classic-rule-field'><b>Player</b><span>{{system.traits.player}}</span></div>
+            <div class='classic-rule-field'><b>Point Total</b><span>{{system.totalpoints.total}}</span></div>
+          </div>
+          <div class='classic-identity-row secondary'>
+            <div class='classic-rule-field'><b>Ht</b><span>{{system.traits.height}}</span></div>
+            <div class='classic-rule-field'><b>Wt</b><span>{{system.traits.weight}}</span></div>
+            <div class='classic-rule-field'><b>Size</b><span>{{system.traits.sizemod}}</span></div>
+            <div class='classic-rule-field'><b>Age</b><span>{{system.traits.age}}</span></div>
+            <div class='classic-rule-field'><b>Unspent</b><span>{{system.totalpoints.unspent}}</span></div>
+          </div>
+          <div class='classic-rule-field full'><b>Appearance</b><span>{{classicAppearance}}</span></div>
+        </div>
+      </header>
+
+      <div class='classic-page-one-top'>
+        <div class='classic-left-top'>
+        <section class='classic-box classic-attributes'>
+          <div class='classic-attribute'><strong>ST</strong><span class='classic-value rollable' data-path='attributes.ST.value' data-otf='ST'>{{system.attributes.ST.value}}</span><small>[{{system.attributes.ST.points}}]</small></div>
+          <div class='classic-attribute'><strong>DX</strong><span class='classic-value rollable' data-path='attributes.DX.value' data-otf='DX'>{{system.attributes.DX.value}}</span><small>[{{system.attributes.DX.points}}]</small></div>
+          <div class='classic-attribute'><strong>IQ</strong><span class='classic-value rollable' data-path='attributes.IQ.value' data-otf='IQ'>{{system.attributes.IQ.value}}</span><small>[{{system.attributes.IQ.points}}]</small></div>
+          <div class='classic-attribute'><strong>HT</strong><span class='classic-value rollable' data-path='attributes.HT.value' data-otf='HT'>{{system.attributes.HT.value}}</span><small>[{{system.attributes.HT.points}}]</small></div>
+          <div class='classic-attribute'><strong>HP</strong><div class='classic-resource-pair' data-gurps-resource='HP'><span class='classic-value'>{{system.HP.max}}</span><span class='classic-value classic-resource-current'><button type='button' data-operation='resource-dec' aria-label='Decrease HP'>-</button><b>{{system.HP.value}}</b><button type='button' data-operation='resource-inc' aria-label='Increase HP'>+</button></span></div><small>[{{system.HP.points}}]</small></div>
+          <div class='classic-attribute'><strong>WILL</strong><span class='classic-value rollable' data-path='attributes.WILL.value' data-otf='WILL'>{{system.attributes.WILL.value}}</span><small>[{{system.attributes.WILL.points}}]</small></div>
+          <div class='classic-attribute'><strong>PER</strong><span class='classic-value rollable' data-path='attributes.PER.value' data-otf='PER'>{{system.attributes.PER.value}}</span><small>[{{system.attributes.PER.points}}]</small></div>
+          <div class='classic-attribute'><strong>FP</strong><div class='classic-resource-pair' data-gurps-resource='FP'><span class='classic-value'>{{system.FP.max}}</span><span class='classic-value classic-resource-current'><button type='button' data-operation='resource-dec' aria-label='Decrease FP'>-</button><b>{{system.FP.value}}</b><button type='button' data-operation='resource-inc' aria-label='Increase FP'>+</button></span></div><small>[{{system.FP.points}}]</small></div>
+        </section>
+        <div class='classic-right-top'>
+          <section class='classic-box classic-derived'>
+            <div><b>BASIC LIFT</b><span>{{system.liftingmoving.basiclift}}</span></div>
+            <div><b>DAMAGE</b><span>Thr {{system.thrust}} &nbsp; Sw {{system.swing}}</span></div>
+            <div><b>BASIC SPEED</b><span>{{system.basicspeed.value}}</span><b>BASIC MOVE</b><span>{{system.basicmove.value}}</span></div>
+          </section>
+        </div>
+        </div>
+        <div class='classic-page-one-side'>
+        <section class='classic-box classic-language'>
+          <h2>LANGUAGES <span>Spoken &nbsp;&nbsp;&nbsp; Written</span></h2>
+          {{#each (flatlist system.languages)}}{{#unless isCollapsed}}<div class='classic-list-row'><span>{{name}}</span><b>{{spoken}} &nbsp; {{written}}</b></div>{{/unless}}{{/each}}
+          <h2 class='classic-subhead'>TL / CULTURAL FAMILIARITIES</h2>
+          <div class='classic-list-row'><span>Tech Level</span><b>{{system.traits.techlevel}}</b></div>
+          {{#each classicCulturalFamiliarities}}<div class='classic-list-row'><span>{{name}}</span><b>{{points}}</b></div>{{/each}}
+        </section>
+        <div class='classic-bottom-right'>
+        <section class='classic-box classic-defenses'>
+          <button type='button' class='classic-defense-button rollable' data-otf='Parry'><b>PARRY</b><span>{{system.equippedparry}}</span></button>
+          <button type='button' class='classic-defense-button rollable' data-otf='Block'><b>BLOCK</b><span>{{system.equippedblock}}</span></button>
+        </section>
+        <section class='classic-box classic-reactions'>
+          <h2>REACTION MODIFIERS</h2>
+          {{#each system.reactions}}<div class='classic-list-row'><span>{{situation}}</span><b>{{displayNumber modifier}}</b></div>{{/each}}
+          {{#if system.traits.appearance}}<div class='classic-list-row'><span>Appearance</span><b>{{system.traits.appearance}}</b></div>{{/if}}
+          {{#if system.traits.reputation}}<div class='classic-list-row'><span>Reputation</span><b>{{system.traits.reputation}}</b></div>{{/if}}
+        </section>
+        </div>
+        <section class='classic-box classic-encumbrance'>
+          <h2><span>ENCUMBRANCE</span><span>MOVE</span><span>DODGE</span></h2>
+          {{#each classicEncumbrance as |enc|}}
+            <div class='classic-enc-row {{#if enc.current}}current{{/if}}'><b>{{enc.name}} ({{enc.level}}) = {{enc.loadFactor}} × BL: {{enc.maxLoad}}</b><span>BM ×{{enc.moveFactor}} &nbsp; {{enc.move}}</span><span class='{{#if enc.current}}rollable{{/if}}' {{#if enc.current}}data-otf='Dodge'{{/if}}>Dodge {{enc.dodge}}</span></div>
+          {{/each}}
+        </section>
+        </div>
+      </div>
+
+      <div class='classic-page-one-lists'>
+        <section class='classic-box classic-list'>
+          <h2>ADVANTAGES AND PERKS</h2>
+          {{#each classicAdvantages}}<div class='classic-list-row'><span>{{{gurpslink name}}}</span><b>[{{points}}]</b></div>{{/each}}
+          <h2 class='classic-subhead'>DISADVANTAGES AND QUIRKS</h2>
+          {{#each classicDisadvantages}}<div class='classic-list-row'><span>{{{gurpslink name}}}</span><b>[{{points}}]</b></div>{{/each}}
+        </section>
+        <section class='classic-box classic-list classic-skills'>
+          <h2 class='classic-skill-head'><span>Skill</span><span>Level</span><span>Relative Lvl</span><span>Pts</span></h2>
+          {{#each (flatlist system.skills)}}
+            {{#unless isCollapsed}}<div class='classic-skill-row skldraggable' data-key='system.skills.{{@key}}'><span>{{{gurpslink name}}}</span><b class='rollable' data-name='{{name}}' data-key='system.skills.{{@key}}' data-otf='Sk:&quot;{{name}}&quot;'>{{level}}</b><span>{{relativelevel}}</span><span>[{{points}}]</span></div>{{/unless}}
+          {{/each}}
+        </section>
+      </div>
+    </article>
+
+    <article class='classic-page classic-page-two'>
+      <header class='classic-page-two-head'><div class='classic-brand small'><img src='systems/gurps/assets/gurps4e.webp' alt='GURPS' /><span>CHARACTER SHEET</span></div><div class='classic-rule-field wide'><b>Name</b><span>{{actor.name}}</span></div></header>
+      <section class='classic-box classic-weapons'>
+        <h2>HAND WEAPONS <span>Damage &nbsp;&nbsp; Reach &nbsp;&nbsp; Parry &nbsp;&nbsp; Notes</span></h2>
+        <div class='classic-table-head melee-grid'><b>Weapon</b><b>Damage</b><b>Reach</b><b>Parry</b><b>Notes</b></div>
+        {{#each (attackflatlist system.melee)}}{{#unless isCollapsed}}<div class='classic-table-row melee-grid meleedraggable' data-key='system.melee.{{@key}}'><span>{{{gurpslink name}}} ({{mode}})</span><span class='rollable' data-damage data-otf='{{quotedAttackName "D" this}}'>{{damage}}</span><span>{{reach}}</span><span class='parry-cell'><span class='rollable' data-otf='{{quotedAttackName "P" this}}'>{{parry}}</span>{{#if (isNum ../system.defenses.parry.bonus)}}<span class='rollable bonus' data-otf='{{quotedAttackName "P" this}} {{displayNumber ../system.defenses.parry.bonus}} DB'>{{displayNumber ../system.defenses.parry.bonus}}</span>{{/if}}</span><span>{{notes}}</span></div>{{/unless}}{{/each}}
+      </section>
+      <section class='classic-box classic-weapons ranged-weapons'>
+        <h2>RANGED WEAPONS <span>Damage &nbsp; Acc &nbsp; Range &nbsp; RoF &nbsp; Shots &nbsp; ST &nbsp; Bulk &nbsp; Rcl &nbsp; LC</span></h2>
+        <div class='classic-table-head ranged-grid'><b>Weapon</b><b>Damage</b><b>Acc</b><b>Range</b><b>RoF</b><b>Shots</b><b>ST</b><b>Bulk</b><b>Rcl</b><b>Notes</b></div>
+        {{#each (attackflatlist system.ranged)}}{{#unless isCollapsed}}<div class='classic-table-row ranged-grid rangeddraggable' data-key='system.ranged.{{@key}}'><span>{{{gurpslink name}}} ({{mode}})</span><span class='rollable' data-damage data-otf='{{quotedAttackName "D" this}}'>{{damage}}</span><span>{{acc}}</span><span>{{range}}</span><span>{{rof}}</span><span>{{shots}}</span><span>{{st}}</span><span>{{bulk}}</span><span>{{rcl}}</span><span>{{notes}}</span></div>{{/unless}}{{/each}}
+      </section>
+      <div class='classic-page-two-columns'>
+        <div class='classic-left-lower'>
+          <section class='classic-box classic-speed'>
+            <h2>SPEED/RANGE TABLE</h2><p>For complete table, see p. 550.</p>
+            <div class='classic-table-head'><b>Speed/Range Modifier</b><b>Linear Measurement</b></div>
+            {{#each classicSpeedRanges}}<div class='classic-table-row'><span>{{modifier}}</span><span>{{distance}}</span></div>{{/each}}
+          </section>
+          <section class='classic-box classic-hit'>
+            <h2>HIT LOCATION</h2><div class='classic-table-head'><b>Modifier</b><b>Location</b></div>
+            {{#each system.hitlocations as |loc key|}}<div class='classic-table-row'><span>{{displayNumber loc.penalty}}</span><span>{{localize (concat 'GURPS.hitLocation' loc.where) loc.where}} <small>DR {{loc.dr}}</small></span></div>{{/each}}
+            <p><i>Imp</i> or <i>Pi</i> attacks can target vitals at -3 or eyes at -9.</p>
+          </section>
+          <section class='classic-box classic-notes'><h2>CHARACTER NOTES</h2>{{#each (flatlist system.notes)}}{{#unless isCollapsed}}<div class='classic-note-row'>{{title}} {{notes}}</div>{{/unless}}{{/each}}<h2 class='classic-subhead'>POINTS SUMMARY</h2><div class='classic-points-summary'><span>Attributes/Secondary Characteristics <b>{{system.totalpoints.attributes}}</b></span><span>Advantages/Perks/TL/Languages/Cultural Familiarity <b>{{system.totalpoints.ads}}</b></span><span>Disadvantages/Quirks <b>{{system.totalpoints.disads}} / {{system.totalpoints.quirks}}</b></span><span>Skills/Techniques <b>{{system.totalpoints.skills}}</b></span><span>Other <b>{{system.totalpoints.other}}</b></span></div></section>
+        </div>
+        <section class='classic-box classic-gear'>
+          <h2>ARMOR &amp; POSSESSIONS <span>Location &nbsp;&nbsp; Cost &nbsp;&nbsp; Weight</span></h2>
+          <div class='classic-table-head gear-grid'><b>Item</b><b>Location</b><b>Cost</b><b>Weight</b></div>
+          {{#each (flatlist system.equipment.carried)}}{{#unless isCollapsed}}<div class='classic-table-row gear-grid eqtdraggable' data-key='system.equipment.carried.{{@key}}'><span>{{{gurpslink name}}} ×{{count}}</span><span>{{location}}</span><span>{{cost}}</span><span>{{weight}}</span></div>{{/unless}}{{/each}}
+          {{#each (flatlist system.equipment.other)}}{{#unless isCollapsed}}<div class='classic-table-row gear-grid eqtdraggable' data-key='system.equipment.other.{{@key}}'><span>{{{gurpslink name}}} ×{{count}}</span><span>{{location}}</span><span>{{cost}}</span><span>{{weight}}</span></div>{{/unless}}{{/each}}
+          <div class='classic-gear-total'><b>Totals:</b><span>$ {{eqtsummary.eqtcost}}</span><span>{{eqtsummary.eqtlbs}} lbs.</span></div>
+        </section>
+      </div>
+    </article>
+  </div>
+</form>
