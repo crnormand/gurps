@@ -328,6 +328,8 @@ export default class ApplyDamageDialog extends Application {
 
     // if checked, target has flexible armor; check for blunt trauma
     html.find('#explosion-damage').click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isExplosion'))
+    html.find('#area-effect-damage').click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isAreaEffect'))
+    html.find('#cone-damage').click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isCone'))
 
     html.find('#explosion-yards').on('change', ev => {
       let currentValue = $(ev.currentTarget).val()

@@ -5,6 +5,7 @@ import { objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { TokenActions } from '../token-actions.js'
+import { applyDiffuseInjuryLimit } from './injury-rules.js'
 
 /* 
   Crippling injury:
@@ -116,6 +117,8 @@ export class CompositeDamageCalculator {
     this._damageReductionLevel = null
 
     this._isExplosion = false
+    this._isAreaEffect = false
+    this._isCone = false
     this._hexesFromExplosion = 1
     this._explosionDivisor = 1
 
@@ -737,6 +740,22 @@ export class CompositeDamageCalculator {
     this._isExplosion = value
   }
 
+  get isAreaEffect() {
+    return this._isAreaEffect
+  }
+
+  set isAreaEffect(value) {
+    this._isAreaEffect = value
+  }
+
+  get isCone() {
+    return this._isCone
+  }
+
+  set isCone(value) {
+    this._isCone = value
+  }
+
   get isFlexibleArmor() {
     return this._isFlexibleArmor
   }
@@ -1176,15 +1195,16 @@ class DamageCalculator {
 
     // B380: A target with Injury Tolerance (Diffuse) is even harder to damage!
     if (this._parent.isInjuryTolerance && this._parent.injuryToleranceType === DIFFUSE) {
-      // ...Impaling and piercing attacks (of any size) never do more than 1 HP of injury,
-      // regardless of penetrating damage!
-      if (['imp', ...piercing].includes(this._parent.damageType)) {
-        this._maxInjuryForDiffuse = Math.min(1, injury)
-        return this._maxInjuryForDiffuse
-      }
-
-      // ...Other attacks can never do more than 2 HP of injury.
-      this._maxInjuryForDiffuse = Math.min(2, injury)
+      this._maxInjuryForDiffuse = applyDiffuseInjuryLimit(
+        injury,
+        this._parent.damageType,
+        true,
+        {
+          isExplosion: this._parent.isExplosion,
+          isAreaEffect: this._parent.isAreaEffect,
+          isCone: this._parent.isCone,
+        }
+      )
       return this._maxInjuryForDiffuse
     }
 

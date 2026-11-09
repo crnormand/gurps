@@ -40,6 +40,8 @@
     "addedShockAtNextTurnEffect": "Efecto de Conmoción añadido en la siguiente ronda.",
     "addEnterModifier": "Ingresar Modificador",
     "addExplosion": "Explosión",
+    "addAreaEffect": "Ataque de área",
+    "addCone": "Ataque de cono",
     "addExplosionHex": "{hex} hex desde el centro",
     "addExplosionHexes": "{hex} hexes desde el centro",
     "addFlexibleArmor": "Armadura Flexible",

@@ -3,6 +3,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { TokenActions } from '../token-actions.js'
 import { getTokenForActor } from '../utilities/token.js'
 import { computePotentialHits } from './compute-potential-hits.js'
+import { isCriticalFailure } from '../combat/targeted-roll-rules.js'
 
 export const rollData = target => {
   let targetColor, rollChance
@@ -441,6 +442,7 @@ export async function doRoll({
               origtarget,
               optionalArgs,
               fromUser,
+              action,
             })
           },
         },
@@ -469,6 +471,7 @@ export async function doRoll({
       origtarget,
       optionalArgs,
       fromUser,
+      action,
     })
   }
 }
@@ -489,6 +492,7 @@ async function _doRoll({
   origtarget = -1,
   optionalArgs = {},
   fromUser = game.user,
+  action = null,
 }) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   let isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
@@ -553,8 +557,7 @@ async function _doRoll({
 
     // Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
     let isCritSuccess = rtotal <= 4 || (rtotal == 5 && finaltarget >= 15) || (rtotal == 6 && finaltarget >= 16)
-    let isCritFailure =
-      rtotal >= 18 || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0)
+    let isCritFailure = isCriticalFailure(rtotal, finaltarget, action?.isRanged === true)
     let margin = finaltarget - rtotal
     let seventeen = rtotal >= 17
     failure = seventeen || margin < 0

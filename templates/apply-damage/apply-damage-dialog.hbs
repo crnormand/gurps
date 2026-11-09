@@ -347,6 +347,15 @@
               </div>
             </div>
 
+            <div class='gurps-3col'>
+              <input id='area-effect-damage' type='checkbox' value='area-effect-damage' {{checked CALC.isAreaEffect}}>
+              <label for='area-effect-damage'>&nbsp;{{localize "GURPS.addAreaEffect"}}</label>
+            </div>
+            <div class='gurps-3col'>
+              <input id='cone-damage' type='checkbox' value='cone-damage' {{checked CALC.isCone}}>
+              <label for='cone-damage'>&nbsp;{{localize "GURPS.addCone"}}</label>
+            </div>
+
             {{#if CALC.useBluntTrauma}}
               <div style='display: flex; flex-direction: column; justify-content: center;'>
                 <div id='specials-insert-point' class='gurps-3col'>

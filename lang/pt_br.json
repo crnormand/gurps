@@ -40,6 +40,8 @@
     "addedShockAtNextTurnEffect": "Efeito de choque adicionado na próxima rodada.",
     "addEnterModifier": "Informe modificador",
     "addExplosion": "Explosão",
+    "addAreaEffect": "Ataque de efeito de área",
+    "addCone": "Ataque de cone",
     "addExplosionHex": "{hex} hexágono do centro",
     "addExplosionHexes": "{hex} hexágonos do centro",
     "addFlexibleArmor": "Armadura Flexível",
@@ -372,7 +374,7 @@
         "optionsManeuvers": "Manobras",
         "optionsNeedsOnTarget": "Fora de uso: Usar On Target está desativado acima.",
         "rangeStrategy": "Combate: Estratégia de modificador de Distância",
-        "rangeStrategyHint": "Configura a fórmula a ser utilizada para calcular as penalidades de distância."
+        "rangeStrategyHint": "Configura a fórmula a ser utilizada para calcular as penalidades de distância.",
         "rangeStrategyRangeBands": "Bandas de Distância de Monster Hunters 2",
         "rangeStrategyStandard": "Tabela de Tamanho e Velocidade/Distância",
         "rangeStrategyTenPenalties": "-1 para cada 10 hexágonos/jardas/metros",
