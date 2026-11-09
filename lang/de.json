@@ -40,6 +40,8 @@
     "addedShockAtNextTurnEffect": "Schockeffekt in der nächsten Runde hinzugefügt.",
     "addEnterModifier": "Trage Modifikator ein",
     "addExplosion": "Explosion",
+    "addAreaEffect": "Flächenangriff",
+    "addCone": "Kegel-Angriff",
     "addExplosionHex": "{hex} Hex vom Zentrum",
     "addExplosionHexes": "{hex} Hex vom Zentrum",
     "addFlexibleArmor": "Flexible Rüstung",

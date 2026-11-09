@@ -40,6 +40,8 @@
     "addedShockAtNextTurnEffect": "Added Shock effect on next round.",
     "addEnterModifier": "Enter Modifier",
     "addExplosion": "Explosion",
+    "addAreaEffect": "Area Effect attack",
+    "addCone": "Cone attack",
     "addExplosionHex": "{hex} hex from center",
     "addExplosionHexes": "{hex} hexes from center",
     "addFlexibleArmor": "Flexible Armor",

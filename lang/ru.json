@@ -40,6 +40,8 @@
     "addedShockAtNextTurnEffect": "Эффект шока добавлен в следующем раунде.",
     "addEnterModifier": "Введите модификатор",
     "addExplosion": "Взрыв",
+    "addAreaEffect": "Атака по области",
+    "addCone": "Конусная атака",
     "addExplosionHex": "{hex} гекс от центра",
     "addExplosionHexes": "{hex} гексов от центра",
     "addFlexibleArmor": "Гибкая броня",
@@ -372,7 +374,7 @@
         "optionsManeuvers": "Манёвры",
         "optionsNeedsOnTarget": "Не используется: параметр «Использовать модификаторы дальнего боя On Target» выше выключен.",
         "rangeStrategy": "Бой: Стратегия модификатора дальности",
-        "rangeStrategyHint": "Устанавливает формулу, используемую для расчёта штрафов за дальность."
+        "rangeStrategyHint": "Устанавливает формулу, используемую для расчёта штрафов за дальность.",
         "rangeStrategyRangeBands": "Диапазоны дальности Monster Hunters 2",
         "rangeStrategyStandard": "Таблица размера и скорости/дальности",
         "rangeStrategyTenPenalties": "-1 за каждые 10 гексов/ярдов/метров",
