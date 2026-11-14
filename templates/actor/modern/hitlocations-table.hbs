@@ -14,7 +14,7 @@
     {{#each system.hitlocations}}
     <div class='ms-loc-row'>
       <span class='ms-loc-roll'>{{hitlocationroll where roll ../parent}}</span>
-      <span class='ms-loc-where'>{{localize (concat 'GURPS.hitLocation' where) where}}</span>
+      <span class='ms-loc-where'>{{localize-if (concat 'GURPS.hitLocation' where) default=where}}</span>
       <span class='ms-loc-penalty {{gmod penalty}}' data-name='to hit {{where}}' data-otf='{{penalty}} to hit {{where}}'>{{{displayNumber (hitlocationpenalty where penalty ../parent)}}}</span>
       <div class='ms-loc-dr {{#if (DRisModified this)}}ms-modified{{/if}}'>
         {{#if ../document.limited}}

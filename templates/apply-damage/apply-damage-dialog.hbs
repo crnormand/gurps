@@ -103,9 +103,9 @@
                 <div>
                   <label>
                     <input type='radio' name='hitlocation' value='{{this.where}}' {{checked (eq
-									../CALC.hitLocation this.where)}}>&nbsp;{{localize (concat "GURPS.hitLocation"
+									../CALC.hitLocation this.where)}}>&nbsp;{{localize-if (concat "GURPS.hitLocation"
 								this.where)
-								this.where}}
+								default=this.where}}
                   </label>
                 </div>
                 <div>{{this.rollText}}</div>
@@ -156,11 +156,10 @@
 
                   {{#each CALC.effectiveWoundModifiers}}
                     <div><label><input type='radio' name='woundmodifier' {{checked (eq ../CALC.damageType
-											@key)}} value='{{@key}}'>&nbsp;{{i18nFallback (concat "GURPS.damageType" this.label)
-										this.label}}</label>
+											@key)}} value='{{@key}}'>&nbsp;{{localize-if (concat "GURPS.damageType" this.label) default=this.label}}</label>
                     </div>
                     <div>
-                      {{i18nFallback (concat "GURPS.damageAbbrev" @key) @key}}
+                      {{localize-if (concat "GURPS.damageAbbrev" @key) default=@key}}
                     </div>
                     <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>
                       ×{{fractionalize

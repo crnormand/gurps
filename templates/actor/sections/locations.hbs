@@ -44,7 +44,7 @@
       {{#if ../isEditing}}
         <input name='system.hitlocations.{{@key}}.where' class='gcs-input-5' type='text' value='{{where}}' />
       {{else}}
-        {{localize (concat 'GURPS.hitLocation' where) where}}
+        {{localize-if (concat 'GURPS.hitLocation' where) default=where}}
       {{/if}}
     </div>
     {{#if ../isEditing}}

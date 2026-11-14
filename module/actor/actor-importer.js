@@ -1998,58 +1998,75 @@ export class ActorImporter {
 
   async importProtectionFromGCS(hls) {
     if (!hls) return
+
     let data = this.actor.system
     if (!!data.additionalresources.ignoreinputbodyplan) return
 
     /** @type {HitLocations.HitLocation[]} */
     let locations = []
+
+    // Create hit location objects from the imported hit location data.
     for (let i of hls.locations) {
       let l = new HitLocations.HitLocation(i.table_name)
       l.import = i.calc?.dr.all?.toString() || '0'
+
       for (let [key, value] of Object.entries(i.calc?.dr))
         if (key != 'all') {
           let damtype = GURPS.DamageTables.damageTypeMap[key]
           if (!l.split) l.split = {}
           l.split[damtype] = +l.import + value
         }
+
       l.penalty = i.hit_penalty?.toString() || '0'
+
       if (i.calc?.roll_range && i.calc.roll_range !== HitLocations.HitLocation.DEFAULT) {
         l.roll = i.calc.roll_range
       }
+
       while (locations.filter(it => it.where == l.where).length > 0) {
         l.where = l.where + '*'
       }
+
       locations.push(l)
     }
-    let vitals = locations.filter(value => value.where === HitLocations.HitLocation.VITALS)
-    if (vitals.length === 0) {
-      let hl = new HitLocations.HitLocation(HitLocations.HitLocation.VITALS)
-      hl.penalty = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].penalty
-      hl.roll = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].roll
-      hl.import = '0'
-      locations.push(hl)
+
+    // For now, let's assume GCS contains all necessary hit locations. Besides, trait "No Vitals" would prevent the
+    // need for a Vitals hit location anyway.
+    if (false) {
+      let vitals = locations.filter(value => value.where === HitLocations.HitLocation.VITALS)
+
+      // Are there no Vitals? If not, add a default Vitals hit location.
+      if (vitals.length === 0) {
+        let hl = new HitLocations.HitLocation(HitLocations.HitLocation.VITALS)
+        hl.penalty = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].penalty
+        hl.roll = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].roll
+        hl.import = '0'
+        locations.push(hl)
+      }
     }
-    // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and
-    // potentially other features) will not work. Sometime in the future, we will look at
-    // user-entered hit locations.
+
+    // The ADD depends on knowing the "role" of the bady part (e.g., whether it's an extremity, limb, etc.), so we need
+    // to map hit locations to a known body plan to get the role.
     let bodyplan = hls.name.toLowerCase() // Was a body plan actually in the import?
     if (bodyplan === 'snakemen') bodyplan = 'snakeman'
     let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
     let tableFromName = !!table // track whether the table was found by exact name match
 
     /** @type {HitLocations.HitLocation[]}  */
-    let locs = []
-    locations.forEach(e => {
-      if (!!table && !!table[e.where]) {
-        // if e.where already exists in table, don't map
-        locs.push(e)
-      } else {
-        // map to new name(s) ... sometimes we map 'Legs' to ['Right Leg', 'Left Leg'], for example.
-        e.locations(false).forEach(l => locs.push(l)) // Map to new names
-      }
-    })
-    locations = locs
+    if (false) {
+      let locs = []
+      locations.forEach(e => {
+        if (!!table && !!table[e.where]) {
+          locs.push(e)
+        } else {
+          // map to new name(s) ... sometimes we map 'Legs' to ['Right Leg', 'Left Leg'], for example.
+          e.locations(false).forEach(l => locs.push(l)) // Map to new names
+        }
+      })
+      locations = locs
+    }
 
+    // Guess at the body plan if we didn't find a matching table by name.
     if (!table) {
       locs = []
       locations.forEach(e => {
@@ -2058,6 +2075,7 @@ export class ActorImporter {
       bodyplan = this._getBodyPlan(locs)
       table = HitLocations.hitlocationDictionary[bodyplan]
     }
+
     // update location's roll and penalty based on the bodyplan
 
     if (!!table) {
@@ -2066,44 +2084,46 @@ export class ActorImporter {
         if (!!entry) {
           it.where = lbl // It might be renamed (ex: Skull -> Brain)
           if (!it.penalty) it.penalty = entry.penalty
-          if (!it.roll || it.roll.length === 0 || it.roll === HitLocations.HitLocation.DEFAULT) it.roll = entry.roll
+          if (!it.roll || it.roll.length === 0) it.roll = entry.roll
+          it.role = entry.role
         }
       })
     }
 
-    // write the hit locations out in bodyplan hit location table order. If there are
-    // other entries, append them at the end.
+    // UPDATE: Don't change the order of locations that are not in the bodyplan hit location table.
+    // Write the hit locations out in bodyplan hit location table order. If there are other entries, append them at the end.
     /** @type {HitLocations.HitLocation[]}  */
-    let temp = []
-    Object.keys(table).forEach(key => {
-      let results = Object.values(locations).filter(loc => loc.where === key)
-      if (results.length > 0) {
-        if (results.length > 1) {
-          // If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
-          let d = ''
+    let temp = [...locations]
+    if (false) {
+      Object.keys(table).forEach(key => {
+        let results = Object.values(locations).filter(loc => loc.where === key)
+        if (results.length > 0) {
+          if (results.length > 1) {
+            // If multiple locs have same where, concat the DRs. Leg 7 & Leg 8 both map to "Leg 7-8"
+            let d = ''
 
-          /** @type {string | null} */
-          let last = null
-          results.forEach(r => {
-            if (r.import != last) {
-              d += '|' + r.import
-              last = r.import
-            }
-          })
+            /** @type {string | null} */
+            let last = null
+            results.forEach(r => {
+              if (r.import != last) {
+                d += '|' + r.import
+                last = r.import
+              }
+            })
 
-          if (!!d) d = d.substring(1)
-          results[0].import = d
+            if (!!d) d = d.substring(1)
+            results[0].import = d
+          }
+
+          temp.push(results[0])
+          locations = locations.filter(it => it.where !== key)
+        } else if (tableFromName) {
+          // Didn't find loc that should be in the table. Make a default entry if the body plan matched a known table by name
+          temp.push(new HitLocations.HitLocation(key, '0', table[key].penalty, table[key].roll))
         }
-        temp.push(results[0])
-        locations = locations.filter(it => it.where !== key)
-      } else if (tableFromName) {
-        // Didn't find loc that should be in the table.
-        // Make a default entry if the body plan matched a
-        // known table by name
-        temp.push(new HitLocations.HitLocation(key, '0', table[key].penalty, table[key].roll))
-      }
-    })
-    locations.forEach(it => temp.push(it))
+      })
+      locations.forEach(it => temp.push(it))
+    }
 
     let prot = {}
     let index = 0
@@ -2245,7 +2265,11 @@ export class ActorImporter {
             m.notes = i.notes || ''
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
-            if (w.usage_notes) m.mode += ' [' + w.usage_notes + ']'
+
+            if (requiresTwoHands(w.strength)) {
+              m.mode += ' [2-Handed]'
+            }
+
             m.import = w.calc?.level?.toString() || '0'
             m.damage = w.calc?.damage || ''
             m.reach = w.reach || ''
@@ -2291,6 +2315,12 @@ export class ActorImporter {
     return {
       ...replaceValue('system.melee', melee),
       ...replaceValue('system.ranged', ranged),
+    }
+
+    function requiresTwoHands(strength) {
+      if (!strength) return false
+      if (strength.endsWith('†') || strength.endsWith('‡')) return true
+      return false
     }
   }
 
