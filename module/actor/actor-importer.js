@@ -2068,7 +2068,7 @@ export class ActorImporter {
 
     // Guess at the body plan if we didn't find a matching table by name.
     if (!table) {
-      locs = []
+      const locs = []
       locations.forEach(e => {
         e.locations(true).forEach(l => locs.push(l)) // Map to new names, but include original to help match against tables
       })

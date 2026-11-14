@@ -77,7 +77,7 @@ export const addBucketToDamage = (formula, addDamageType = true) => {
 
     armorDivisor = formula.match(/(?<=\()\S+(?=\))/)?.[0]
     hasMinDamage = formula.includes('!')
-    multiplier = formula.match(/(?<=[xX*])\d+(\.\d+)?/)?.[0] || ''
+    multiplier = formula.match(/(?<=[xX*×])\d+(\.\d+)?/)?.[0] || ''
     costFormula = formula.match(/(?<=\*)\D.+/)?.[0] || ''
   }
 
