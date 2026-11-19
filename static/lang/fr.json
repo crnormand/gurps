@@ -1751,6 +1751,8 @@
     "moveModeAir": "Air",
     "moveModeEditor": {
       "basic": "Basique",
+      "custom": "Personnalisé",
+      "customName": "Type de déplacement personnalisé",
       "enhanced": "Amélioré",
       "mode": "Type de Déplacement",
       "open": "Modifier les modes de déplacement",

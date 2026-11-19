@@ -5,7 +5,6 @@ import { migrateItemSource, migrateMeleeWeapon, migrateRangedWeapon } from '@mod
 import { ItemType } from '@module/item/types.js'
 import { shouldMigrateCompendium } from '@module/migration/helpers.js'
 import { MigrationReport } from '@module/migration/types.js'
-import { getGame } from '@module/util/guards.js'
 import { HitLocationRole } from '@rules/hit-locations/types.js'
 import { AnyMutableObject } from 'fvtt-types/utils'
 
@@ -511,7 +510,7 @@ function migrateActorSystem(
 
       const move: DataModel.CreateData<DataModel.SchemaOf<MoveModeV2>> = {
         _id: id,
-        mode: getGame().i18n.localize(data.mode),
+        mode: data.mode,
         basic: Number.isFinite(Number(data.basic)) ? Number(data.basic) : 0,
         enhanced: data.enhanced != null ? Number(data.enhanced) || 0 : null,
       }

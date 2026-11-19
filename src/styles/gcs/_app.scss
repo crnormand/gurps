@@ -201,5 +201,16 @@ body {
 
   .gcs-move-mode-table {
     border: 0.1rem solid var(--gcs-color-section-border);
+
+    .move-mode-fields {
+      flex-direction: column;
+      align-items: stretch;
+      min-width: 12rem;
+
+      > * {
+        flex: none;
+        align-self: stretch;
+      }
+    }
   }
 }

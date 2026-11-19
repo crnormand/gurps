@@ -6,10 +6,17 @@ import { sheetActions } from '@module/util/sheet-actions.js'
 import { DeepPartial } from 'fvtt-types/utils'
 
 import { MoveModeV2 } from '../data/move-mode.js'
+import { MoveModes } from '../gurps-actor.js'
 
 namespace MoveModeEditorV2 {
   export interface RenderContext extends Application.RenderContext {
-    moveModes: MoveModeV2[]
+    moveModes: {
+      move: MoveModeV2
+      isCustom: boolean
+      selectedMode: string
+      modeValue: string
+    }[]
+    modeChoices: Record<string, string>
   }
 
   export type Configuration = DeepPartial<Application.Configuration> & {
@@ -21,6 +28,7 @@ namespace MoveModeEditorV2 {
 
 class MoveModeEditorV2 extends HandlebarsApplicationMixin(Application)<MoveModeEditorV2.RenderContext> {
   #actor: Actor.Implementation
+  #customModes = new Set<string>()
 
   constructor(public readonly configuration: MoveModeEditorV2.Configuration) {
     super(configuration)
@@ -77,10 +85,22 @@ class MoveModeEditorV2 extends HandlebarsApplicationMixin(Application)<MoveModeE
     options: Application.RenderOptions
   ): Promise<MoveModeEditorV2.RenderContext> {
     const superContext = await super._prepareContext(options)
+    const modes = Object.values(MoveModes)
 
     return {
       ...superContext,
-      moveModes: this.#actor.pseudoCollections.MoveMode.contents,
+      modeChoices: Object.fromEntries(modes.map(mode => [mode, mode])),
+      moveModes: this.#actor.pseudoCollections.MoveMode.contents.map(move => {
+        const isStandard = modes.includes(move.mode)
+        const isCustom = this.#customModes.has(move._id) || !isStandard
+
+        return {
+          move,
+          isCustom,
+          selectedMode: isCustom ? '' : move.mode,
+          modeValue: isCustom && isStandard ? getGame().i18n.localize(move.mode) : move.mode,
+        }
+      }),
     }
   }
 
@@ -102,6 +122,35 @@ class MoveModeEditorV2 extends HandlebarsApplicationMixin(Application)<MoveModeE
     super._onClose(options)
 
     delete this.document.apps[this.id]
+  }
+
+  /* ---------------------------------------- */
+
+  protected override async _onChangeForm(formConfig: Application.FormConfiguration, event: Event): Promise<void> {
+    const target = event.target
+
+    if (target instanceof HTMLSelectElement && target.matches('[data-move-mode]')) {
+      const row = target.closest<HTMLElement>('.move-entry')!
+      const input = row.querySelector<HTMLInputElement>('[data-move-mode-name]')!
+      const id = row.dataset.moveId!
+
+      if (!target.value) {
+        this.#customModes.add(id)
+        input.value = getGame().i18n.localize(input.value)
+        input.hidden = false
+        input.focus()
+        input.select()
+
+        // Custom is editor state, not a value to persist. Save when the name is edited.
+        return
+      }
+
+      this.#customModes.delete(id)
+      input.value = target.value
+      input.hidden = true
+    }
+
+    return super._onChangeForm(formConfig, event)
   }
 
   /* ---------------------------------------- */

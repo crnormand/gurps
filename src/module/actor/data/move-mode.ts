@@ -1,6 +1,5 @@
 import { fields, DataModel } from '@gurps-types/foundry/index.js'
 import { PseudoDocument, pseudoDocumentSchema } from '@module/pseudo-document/pseudo-document.js'
-import { getGame } from '@module/util/guards.js'
 
 class MoveModeV2 extends PseudoDocument<MoveSchema> {
   static override defineSchema(): MoveSchema {
@@ -34,11 +33,9 @@ const moveSchema = () => {
 type MoveSchema = ReturnType<typeof moveSchema>
 
 function groundMoveForBasicMove(move: number): DataModel.CreateData<MoveSchema> {
-  const mode = getGame().i18n.localize('GURPS.moveModeGround')
-
   return {
     _id: foundry.utils.randomID(),
-    mode,
+    mode: 'GURPS.moveModeGround',
     basic: move,
     enhanced: 0,
   }

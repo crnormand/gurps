@@ -1751,6 +1751,8 @@
     "moveModeAir": "Ar",
     "moveModeEditor": {
       "basic": "Básico",
+      "custom": "Personalizado",
+      "customName": "Tipo de deslocamento personalizado",
       "enhanced": "Aprimorado",
       "mode": "Tipo de Deslocamento",
       "open": "Editar modos de deslocamento",

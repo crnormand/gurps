@@ -1,26 +1,32 @@
 {{#*inline ".entry"}}
-<tr class="move-entry" data-uuid="{{uuid}}">
+<tr class="move-entry" data-uuid="{{move.uuid}}" data-move-id="{{move._id}}">
+  <td>
+    <div class="form-fields move-mode-fields">
+      <select data-move-mode aria-label="{{localize 'GURPS.moveModeEditor.mode'}}">
+        {{selectOptions @root.modeChoices selected=selectedMode localize=true}}
+        <option value="" {{#if isCustom}}selected{{/if}}>{{localize 'GURPS.moveModeEditor.custom'}}</option>
+      </select>
+      <input type="text" data-move-mode-name
+        name="{{move.fieldPath}}.{{move._id}}.mode"
+        value="{{modeValue}}"
+        aria-label="{{localize 'GURPS.moveModeEditor.customName'}}"
+        {{#unless isCustom}}hidden{{/unless}}
+      />
+    </div>
+  </td>
   <td>
     <div class="form-fields">
-    {{formInput schema.fields.mode
-      name=(concat fieldPath "." _id ".mode")
-      value=_source.mode
+    {{formInput move.schema.fields.basic
+      name=(concat move.fieldPath "." move._id ".basic")
+      value=move._source.basic
     }}
     </div>
   </td>
   <td>
     <div class="form-fields">
-    {{formInput schema.fields.basic
-      name=(concat fieldPath "." _id ".basic")
-      value=_source.basic
-    }}
-    </div>
-  </td>
-  <td>
-    <div class="form-fields">
-    {{formInput schema.fields.enhanced
-      name=(concat fieldPath "." _id ".enhanced")
-      value=_source.enhanced
+    {{formInput move.schema.fields.enhanced
+      name=(concat move.fieldPath "." move._id ".enhanced")
+      value=move._source.enhanced
     }}
     </div>
   </td>
@@ -45,7 +51,7 @@
         <th><button type="button" data-action="createEmbedded" data-document-name="MoveMode"><i class="fa-solid fa-plus"></i></button></th>
       </tr>
     </thead>
-    </tbody>
+    <tbody>
     {{#each moveModes}}
       {{> ".entry"}}
     {{else}}

@@ -1751,6 +1751,8 @@
     "moveModeAir": "Luft",
     "moveModeEditor": {
       "basic": "Basis",
+      "custom": "Benutzerdefiniert",
+      "customName": "Benutzerdefinierte Bewegungsart",
       "enhanced": "Verbessert",
       "mode": "Bewegungsart",
       "open": "Bewegungsmodi bearbeiten",

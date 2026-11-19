@@ -1752,6 +1752,8 @@
     "moveModeAir": "Air",
     "moveModeEditor": {
       "basic": "Basic",
+      "custom": "Custom",
+      "customName": "Custom move type",
       "enhanced": "Enhanced",
       "mode": "Move Type",
       "open": "Edit Move Modes",
