@@ -1,5 +1,26 @@
 @use '../mixins' as *;
 
+.modern-sheet .ms-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: auto;
+  gap: var(--ms-space-2);
+  padding: var(--ms-space-2) var(--ms-space-4);
+  background: var(--ms-bg-card);
+  color: var(--ms-text);
+  border: 1px solid var(--ms-border);
+  border-radius: var(--ms-radius-sm);
+  font-size: var(--ms-font-xs);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--ms-bg-hover);
+    border-color: var(--ms-accent);
+  }
+}
+
 .ms-use-button {
   display: inline-flex;
   align-items: center;

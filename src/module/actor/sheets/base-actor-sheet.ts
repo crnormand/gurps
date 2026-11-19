@@ -14,6 +14,8 @@ import { DeepPartial } from 'fvtt-types/utils'
 
 import { ActorType } from '../types.js'
 
+import { MoveModeEditorV2 } from './move-mode-editor.js'
+
 /* ---------------------------------------- */
 
 namespace GurpsBaseActorSheet {
@@ -161,6 +163,7 @@ class GurpsBaseActorSheet<
       toggleContainer: sheetActions.toggleContainerExpanded,
       addModifier: { handler: GurpsBaseActorSheet.#onAddModifier, buttons: [0, 2] },
       rollOtf: { handler: GurpsBaseActorSheet.#onRollOtf, buttons: [0, 2] },
+      editMoveModes: GurpsBaseActorSheet.#onEditMoveModes,
     },
     dragDrop: [{ dragSelector: '[draggable]', dropSelector: null }],
   }
@@ -261,6 +264,19 @@ class GurpsBaseActorSheet<
         )
       }
     }
+  }
+
+  /* ---------------------------------------- */
+
+  static async #onEditMoveModes(this: GurpsBaseActorSheet, event: PointerEvent): Promise<void> {
+    event.preventDefault()
+
+    const themeClasses = ['theme-light', 'theme-dark'].filter(theme => this.element.classList.contains(theme))
+
+    await new MoveModeEditorV2({
+      actor: this.actor,
+      classes: themeClasses,
+    }).render({ force: true })
   }
 
   /* ---------------------------------------- */

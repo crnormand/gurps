@@ -153,7 +153,7 @@ async function _createChatMessage(
 function show3DDice(rollData: DamageRollData[]) {
   const rolls = rollData.map(data => data.roll)
   const throws = []
-  const dice: { result: any; resultLabel: any; type: string; vectors: never[]; options: {} }[] = []
+  const dice: { result: any; resultLabel: any; type: string; vectors: never[]; options: object }[] = []
 
   rolls.shift() // The first roll will be handled by DSN's chat handler... the rest we will manually roll
   rolls.forEach(roll => {

@@ -6,6 +6,7 @@
 
 - Added new revised character and item schema, with automatic migration for existing characters and items.
 - Added direct import support for characters from GCA 5.
+- Move Mode editor: choose localized Ground, Air, Water, or Space presets, or Custom to enter a name. Standard modes retain language-independent keys; existing custom names are preserved.
 
 ### Bugfixes
 

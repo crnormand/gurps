@@ -1025,13 +1025,6 @@ class GurpsActorV2<SubType extends Actor.SubType> extends Actor<SubType> {
   /* ---------------------------------------- */
 
   /**
-   * NOTE: Both character and characterV2.
-   */
-  async setMoveDefault(value: string) {
-    return this.modelV2.setMoveDefault(value)
-  }
-
-  /**
    * Both for new and legacy actors, add a new item to the actor.
    */
   handleDamageDrop(damageData: any) {
