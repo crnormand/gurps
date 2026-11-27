@@ -2394,6 +2394,7 @@ export class GurpsActor extends Actor {
   getEquippedParry() {
     let [txt, val] = this.getEquipped('parry')
     this.system.equippedparryisfencing = !!txt && /f$/i.test(txt)
+    this.system.equippedparryisunbalanced = !!txt && /u$/i.test(txt)
     return val
   }
 
